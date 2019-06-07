@@ -2,142 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F354739675
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD4639676
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:09:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfFGUIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 16:08:47 -0400
-Received: from mga18.intel.com ([134.134.136.126]:45809 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729172AbfFGUIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 16:08:47 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 13:08:46 -0700
-X-ExtLoop1: 1
-Received: from sbreyer-mobl.amr.corp.intel.com (HELO [10.252.201.95]) ([10.252.201.95])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jun 2019 13:08:45 -0700
-Subject: Re: [alsa-devel] next/master boot bisection: next-20190528 on
- sun8i-h3-libretech-all-h3-cc
-To:     Mark Brown <broonie@kernel.org>,
-        Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        tomeu.vizoso@collabora.com, mgalka@collabora.com,
-        matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, "kernelci.org bot" <bot@kernelci.org>,
-        linux-kernel@vger.kernel.org
-References: <5cef9f66.1c69fb81.39f30.21e8@mx.google.com>
- <s5hr28gszvj.wl-tiwai@suse.de>
- <8ca25787-fc03-7942-0705-3ec7d88862a6@collabora.com>
- <20190607190021.GK2456@sirena.org.uk>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <6959db6d-1ab4-8f94-7e58-57606b8b42f6@linux.intel.com>
-Date:   Fri, 7 Jun 2019 15:08:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1730128AbfFGUJ1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 7 Jun 2019 16:09:27 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:46050 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728724AbfFGUJ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 16:09:27 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 12E096074CC1;
+        Fri,  7 Jun 2019 22:09:25 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kNthjU-GYg1E; Fri,  7 Jun 2019 22:09:24 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id B8741608310F;
+        Fri,  7 Jun 2019 22:09:24 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id qx-a-PPfJeha; Fri,  7 Jun 2019 22:09:24 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 8D0BC608F45A;
+        Fri,  7 Jun 2019 22:09:24 +0200 (CEST)
+Date:   Fri, 7 Jun 2019 22:09:24 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Emil Lenngren <emil.lenngren@gmail.com>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Sebastian Andrzej Siewior <sebastian@breakpoint.cc>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michele Dionisio <michele.dionisio@gmail.com>
+Message-ID: <1644731533.84685.1559938164477.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAO1O6sdU=kAYS2sTKwiagxrbg+fMer9nvbwA9C4LoFMgH7e1dQ@mail.gmail.com>
+References: <20190515210202.21169-1-richard@nod.at> <CAO1O6sdU=kAYS2sTKwiagxrbg+fMer9nvbwA9C4LoFMgH7e1dQ@mail.gmail.com>
+Subject: Re: [PATCH] ubifs: Add support for zstd compression.
 MIME-Version: 1.0
-In-Reply-To: <20190607190021.GK2456@sirena.org.uk>
-Content-Type: multipart/mixed;
- boundary="------------00ECFFF18126FC8F2B9D28E7"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
+Thread-Topic: ubifs: Add support for zstd compression.
+Thread-Index: rnvHZUv9ubNCdBXV/imbNn3Xo5b/uw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------00ECFFF18126FC8F2B9D28E7
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Emil,
 
-
-
-On 6/7/19 2:00 PM, Mark Brown wrote:
-> On Fri, Jun 07, 2019 at 05:31:12PM +0100, Guillaume Tucker wrote:
->> On 30/05/2019 16:53, Takashi Iwai wrote:
+----- Ursprüngliche Mail -----
+> In fs/ubifs/sb.c we have
 > 
->>>> +	mutex_lock(&client_mutex);
->>>>   	for_each_rtdcom(rtd, rtdcom) {
->>>>   		component = rtdcom->component;
->>>>   
->>>>   		if (component->driver->remove_order == order)
->>>>   			soc_remove_component(component);
->>>>   	}
->>>> +	mutex_unlock(&client_mutex);
+> static int get_default_compressor(struct ubifs_info *c)
+> {
+>    if (ubifs_compr_present(c, UBIFS_COMPR_LZO))
+>        return UBIFS_COMPR_LZO;
 > 
->>> Ranjani, which code path your patch tries to address?  Maybe better to
->>> wrap client_mutex() in the caller side like snd_soc_unbind_card()?
+>    if (ubifs_compr_present(c, UBIFS_COMPR_ZLIB))
+>        return UBIFS_COMPR_ZLIB;
 > 
->> Is anyone looking into this issue?
+>    return UBIFS_COMPR_NONE;
+> }
 > 
->> It is still occurring in next-20190606, there was a bisection
->> today which landed on the same commit.  There just hasn't been
->> any new bisection reports because they have been temporarily
->> disabled while we fix some issues on kernelci.org.
-> 
-> I was expecting that Ranjani or one of the other Intel people was
-> looking into it...
+> Maybe add an entry for zstd here as well?
 
-Ack. We've all been underwater this week and this wasn't addressed, 
-sorry about the delay. It's probably wise to revert this commit at this 
-point while we look for an alternate solution?
+Where would you add it? If we add it after UBIFS_COMPR_ZLIB,
+it will effectively never get selected, unless someone builds a kernel
+without lzo and zlib but zstd.
+If we add it before UBIFS_COMPR_ZLIB, it will be used always and users
+end up with unreadable files if they reboot to an older kernel.
+Please note that we didn't raise the UBIFS format version for zstd.
 
-There was an initial proposal submitted on GitHub [1] (patch attached) 
-which implemented what Takashi suggested in his comments. This proposal 
-was later optimized further, it could be that the optimization was one 
-bridge too far.
+So I'm not sure what is the best choice for the default filesystem.
 
-Could you let us know if this attached patch has any negative effects on 
-non-Intel platforms?
-
-Thanks!
-
-[1] 
-https://github.com/thesofproject/linux/commit/9fd09dd417bc8be7a4a8bdd1621558151f8d117b
-
---------------00ECFFF18126FC8F2B9D28E7
-Content-Type: text/x-patch;
- name="9fd09dd417bc8be7a4a8bdd1621558151f8d117b.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="9fd09dd417bc8be7a4a8bdd1621558151f8d117b.patch"
-
-From 9fd09dd417bc8be7a4a8bdd1621558151f8d117b Mon Sep 17 00:00:00 2001
-From: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Date: Wed, 22 May 2019 10:52:40 -0700
-Subject: [PATCH] ASoC: core: lock client_mutex while removing link components
-
-Removing link components results in topology unloading. So,
-acquire the client_mutex before removing components in
-snd_soc_unbind_card(). This will prevent lockdep warning
-when the dai link is removed.
-
-Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
----
- sound/soc/soc-core.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 2403bec2fccf3..5609398f05d80 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2839,12 +2839,14 @@ static void snd_soc_unbind_card(struct snd_soc_card *card, bool unregister)
- 		snd_soc_dapm_shutdown(card);
- 		snd_soc_flush_all_delayed_work(card);
- 
-+		mutex_lock(&client_mutex);
- 		/* remove all components used by DAI links on this card */
- 		for_each_comp_order(order) {
- 			for_each_card_rtds(card, rtd) {
- 				soc_remove_link_components(card, rtd, order);
- 			}
- 		}
-+		mutex_unlock(&client_mutex);
- 
- 		soc_cleanup_card_resources(card);
- 		if (!unregister)
-
---------------00ECFFF18126FC8F2B9D28E7--
+Thanks,
+//richard
