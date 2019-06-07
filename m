@@ -2,61 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D4938DB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C0F238DCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbfFGOrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:47:49 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54851 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729516AbfFGOro (ORCPT
+        id S1729695AbfFGOsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:48:22 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:41166 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728486AbfFGOsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:47:44 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g135so2376600wme.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:47:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tPTyfVIwA34LPg5YDvt9kvbQsjNuXGIsGhvwwUrhRvE=;
-        b=oOjhENZqL4BhiLGy7B2SBUqZvF7HNB+Ur1xaBXLbkm9NDN7Wkxmv7Vn5iGauOR0BF/
-         J/nlHAa6pwsIQsnWpFMnrHygtnbVU211VIDTH+eGKlf0K8dvS8qOJv3j9MRR6m0b6QF1
-         c8g8TMX/8Gny7E+W+4eC3qHWXiTDPv27VPRFGqs39ax/KM5jtxrb2GgbwxZOZhQtkcHf
-         meLo0oJwYZjBCggIl1Jt+vULGFaNDtLUcZRjR0kjoyzpP34NRtCqp4yhyna1iB57+12W
-         Y1/iIu0aWZ8qtUtpbytmj2QAaM9xLz5HAEk45cdqhePq8a+CUcGkAA5msHhXjbmxQiAc
-         pBmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tPTyfVIwA34LPg5YDvt9kvbQsjNuXGIsGhvwwUrhRvE=;
-        b=ngVTGkKUvVfbsrzEetYYar6+hjjv2UG8lEKGNut84IRvDJvbf3AmMbjuPZDnU0O1Xp
-         xy+IQSvWLHLHYEnY3fmnmn9z5UVCyohkjQD9CA4anSUFbInaO3c4TjLouWRNO8JF3Vqf
-         2NVzxTwh77LE4OVJBSjK3puJkCwOiJYfLY8UoluTDvZ9dttD4/7tvOecfeQ+hc6/8orf
-         MddU7F3bYHY7KwXaevWOE+y0QJq65rkIw+N6D6BzK5G6xa71C6PYHKXhRQGBnBMoxH+y
-         f33nCmT4hwgnEd89HYFoP/Lzy2mrWnMazsDPPipuE4EWvl6IgNEsFoN9RuWLCCBFf5b5
-         ATeg==
-X-Gm-Message-State: APjAAAUxKdQ7f69wcmk7O81VySfyZyY0IW3Cv2foMIcSmMBI7BF4NyIj
-        vqB0yLlxAR+hEn86bE7ka2e4wQ==
-X-Google-Smtp-Source: APXvYqwWILUiwv79FHy2wYdmky8oGaRLMAzo72z4Mc1oYEnJ9iaUVsVj578xtD5mptsqtY9zca9QSg==
-X-Received: by 2002:a1c:a848:: with SMTP id r69mr3830844wme.12.1559918862691;
-        Fri, 07 Jun 2019 07:47:42 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q20sm5184516wra.36.2019.06.07.07.47.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 07 Jun 2019 07:47:41 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 3/3] arm64: dts: meson-g12a-sei510: Enable Wifi SDIO module
-Date:   Fri,  7 Jun 2019 16:47:35 +0200
-Message-Id: <20190607144735.3829-4-narmstrong@baylibre.com>
+        Fri, 7 Jun 2019 10:48:21 -0400
+Received: from mailhost.synopsys.com (unknown [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 0571EC01B1;
+        Fri,  7 Jun 2019 14:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559918900; bh=c4JCx7xGqtA6Q0yYJPhCoJ8QkXgg6kd7SK1vh9WrDpA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PsP48qsv3Wqvn9GbjqndsazHYaUFh6HfW0T1b4/xc3NS53eIoi0XDfmtTL4nl5I+/
+         WCXBUwfEa+H5TQM78cUR213pce50BiJWxmoEugYKGGcwPWeoClterp19B4I5QBgJRl
+         TlYL7HUgTY/Fr4uLpvwLCicGPshnEGFSr6ib9r3+LVU33ZcUAwdc379FBXoi5F3Dwf
+         rGtnafJqCtr/Kc1XqL2Ji8pPyIUiOH0CrhEavpF3Od9+EMYY2ZTExywWbNd+A5r6ks
+         A9BW5vADvRGDNLFPHnRyu0+/L5Jtacnug8n2TJ7z0xLaeJ7sRc7Q0xBu1h7mRSDvc/
+         lUasJSAdl1Ocw==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.20])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 57C63A022E;
+        Fri,  7 Jun 2019 14:48:17 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] ARC: [plat-hsdk]: enable DW SPI controller
+Date:   Fri,  7 Jun 2019 17:48:00 +0300
+Message-Id: <20190607144800.19234-1-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607144735.3829-1-narmstrong@baylibre.com>
-References: <20190607144735.3829-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,88 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SEI510 embeds an AP6398S SDIO module, let's add the
-corresponding SDIO, PWM clock and mmc-pwrseq nodes.
+HSDK SoC has DW SPI controller. Enable it in preparation of
+enabling on-board SPI peripherals.
 
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- .../boot/dts/amlogic/meson-g12a-sei510.dts    | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ arch/arc/boot/dts/hsdk.dts      | 14 ++++++++++++++
+ arch/arc/configs/hsdk_defconfig |  3 +++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-index be1d9ed6d521..a1821d850a6d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-@@ -128,6 +128,20 @@
- 			no-map;
+diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
+index e57b24dd02e7..42e1c961ba48 100644
+--- a/arch/arc/boot/dts/hsdk.dts
++++ b/arch/arc/boot/dts/hsdk.dts
+@@ -11,6 +11,7 @@
+  */
+ /dts-v1/;
+ 
++#include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/reset/snps,hsdk-reset.h>
+ 
+ / {
+@@ -233,6 +234,19 @@
+ 			dma-coherent;
  		};
- 	};
-+
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
-+		clocks = <&wifi32k>;
-+		clock-names = "ext_clock";
-+	};
-+
-+	wifi32k: wifi32k {
-+		compatible = "pwm-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
-+	};
- };
  
- &cec_AO {
-@@ -174,11 +188,47 @@
- 	pinctrl-names = "default";
- };
- 
-+&pwm_ef {
-+	status = "okay";
-+	pinctrl-0 = <&pwm_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin0";
-+};
++		spi0: spi@20000 {
++			compatible = "snps,dw-apb-ssi";
++			reg = <0x20000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <16>;
++			num-cs = <2>;
++			reg-io-width = <4>;
++			clocks = <&input_clk>;
++			cs-gpios = <&creg_gpio 0 GPIO_ACTIVE_LOW>,
++				   <&creg_gpio 1 GPIO_ACTIVE_LOW>;
++		};
 +
- &saradc {
- 	status = "okay";
- 	vref-supply = <&vddio_ao1v8>;
- };
- 
-+/* SDIO */
-+&sd_emmc_a {
-+	status = "okay";
-+	pinctrl-0 = <&sdio_pins>;
-+	pinctrl-1 = <&sdio_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	sd-uhs-sdr50;
-+	max-frequency = <100000000>;
-+
-+	non-removable;
-+	disable-wp;
-+
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddio_ao1v8>;
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+	};
-+};
-+
- /* SD card */
- &sd_emmc_b {
- 	status = "okay";
+ 		creg_gpio: gpio@14b0 {
+ 			compatible = "snps,creg-gpio-hsdk";
+ 			reg = <0x14b0 0x4>;
+diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
+index 0c4411f50948..ccfa744fe755 100644
+--- a/arch/arc/configs/hsdk_defconfig
++++ b/arch/arc/configs/hsdk_defconfig
+@@ -46,6 +46,9 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
++CONFIG_SPI=y
++CONFIG_SPI_DESIGNWARE=y
++CONFIG_SPI_DW_MMIO=y
+ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIO_DWAPB=y
 -- 
 2.21.0
 
