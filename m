@@ -2,82 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FB53952F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B190B38B9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 15:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbfFGTCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 15:02:32 -0400
-Received: from efa.ideam.gov.co ([181.225.72.75]:56771 "EHLO efa.ideam.gov.co"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728595AbfFGTCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 15:02:32 -0400
-X-Greylist: delayed 10724 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 15:02:31 EDT
-X-Spam-Status: No
-X-IDEAM-MailScanner-EFA-Watermark: 1560518913.67542@Epb7aI2XRTElqy+maVSkSg
-X-IDEAM-MailScanner-EFA-From: jduque@ideam.gov.co
-X-IDEAM-MailScanner-EFA-SpamScore: ss
-X-IDEAM-MailScanner-EFA: Found to be clean
-X-IDEAM-MailScanner-EFA-ID: E683B62F1D.A5FA9
-X-IDEAM-MailScanner-EFA-Information: Please contact admin@ideam.gov.co for more information
-Received: from mail.ideam.gov.co (mail.ideam.gov.co [172.16.1.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by efa.ideam.gov.co (Postfix) with ESMTPS id E683B62F1D;
-        Fri,  7 Jun 2019 08:28:32 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.ideam.gov.co (Postfix) with ESMTP id B40CB24DB0;
-        Fri,  7 Jun 2019 08:28:32 -0500 (-05)
-Received: from mail.ideam.gov.co ([127.0.0.1])
-        by localhost (mail.ideam.gov.co [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id cFXr2MjDaqUv; Fri,  7 Jun 2019 08:28:32 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.ideam.gov.co (Postfix) with ESMTP id E2E6BD6FE;
-        Fri,  7 Jun 2019 08:27:45 -0500 (-05)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.ideam.gov.co E2E6BD6FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ideam.gov.co;
-        s=C28C4FE0-3C2C-11E9-B1E5-EF6AB883519B; t=1559914066;
-        bh=ZO/BkS7Vsb/GxK7okDo4uAE5/nsLTNJXcCAEPsXCYII=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=s2+SLhaVxPY8hh0r9eNBzXd+vqeK2u1VHLBGQ5uwd2H0dDHm6DMfWHe0Ffb5/jzhH
-         XrFVRuadjVOWhdFqHbWCrjSR3wBe7pEyX5co3AoueOVT8EdWQCQQPqsRvKm8Bz0JCi
-         tsToL7GX8eAVoOkRDt4zwlAeDFEYkDTLa12CVTuSKBmx5tbcnu6maC6sPWRzzTTYSC
-         BmQLIC0wT0LqtOCMsA2bp4xahJJErYBoaqdk1yKMIH8aii1jLWLGyXmut1DCmR3iu7
-         Hg7BVGzKqjYMXxUVBH+2RCS898kaGeqpCcWyAxq5P30b9frJEC4OZcoiMJGEdVwXjn
-         CTh65/Ebvh3zg==
-X-Virus-Scanned: amavisd-new at ideam.gov.co
-Received: from mail.ideam.gov.co ([127.0.0.1])
-        by localhost (mail.ideam.gov.co [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 67QNHQhHBmmg; Fri,  7 Jun 2019 08:27:45 -0500 (-05)
-Received: from [169.254.123.48] (unknown [103.206.129.230])
-        by mail.ideam.gov.co (Postfix) with ESMTPSA id 1A5074FF4A;
-        Fri,  7 Jun 2019 08:27:10 -0500 (-05)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1728773AbfFGN1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 09:27:09 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37913 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728247AbfFGN1J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 09:27:09 -0400
+Received: by mail-wm1-f67.google.com with SMTP id t5so1930150wmh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 06:27:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lhbrQuJABuaDxncms4eZbC3z/E1oBNqlH5KBxisoGi4=;
+        b=EpJLl+DMeC14qkC30yFe8qvNCxgGcILFRcbsx8bz8sQn4BXuHt979jC//zZL5DDg13
+         PJBLPL35Mjn/Nv90YmyN0dfag4OVv30+fw+IROylJZwHJfoO4Vj+IqcK3fC+481Cn6hz
+         YceNmeMjJCMRxsV4CyXg1kuPDPDhZJeehSkd2/CsUKBDgOZ4sIY1RS5q6ftorqt/G5VD
+         cTeRkj5ut4YaoQ0tcuknBNg7WVxK34WmxqTDiR3tYtebo2MoYsGGtzaW4yQ20T40nL1o
+         cfNUFpYoG/893awlx5bcpKqUPaxT2Pz+l4lqstZwpGYe2T2ByfPXicl+PLGpEIsJnZ7r
+         ICbg==
+X-Gm-Message-State: APjAAAX2Zk6ZPuY0tPsPR7rRAelFWn4KpB3Awo/gILDlt/+j88UW4zN2
+        j8piBM60Sew+tG48T1OdLT6Grg==
+X-Google-Smtp-Source: APXvYqwlbrW5803loZwfI57pKwa/8DYb5Sd/eSd+MIsFUZpPApFO52rx59tTBF02rz8nSbOY6P7r6A==
+X-Received: by 2002:a1c:345:: with SMTP id 66mr2417630wmd.8.1559914027357;
+        Fri, 07 Jun 2019 06:27:07 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:657f:501:149f:5617? ([2001:b07:6468:f312:657f:501:149f:5617])
+        by smtp.gmail.com with ESMTPSA id h23sm2103672wmb.25.2019.06.07.06.27.02
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 06:27:06 -0700 (PDT)
+Subject: Re: [PATCH v3 0/9] Enable Sub-page Write Protection Support
+To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, rkrcmar@redhat.com,
+        jmattson@google.com, yu.c.zhang@intel.com
+References: <20190606152812.13141-1-weijiang.yang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <415e571a-47db-b0b5-0215-a7ef1b9be81d@redhat.com>
+Date:   Fri, 7 Jun 2019 15:27:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: re
-To:     Recipients <jduque@ideam.gov.co>
-From:   "Ella Golan" <jduque@ideam.gov.co>
-Date:   Fri, 07 Jun 2019 14:26:53 +0100
-Reply-To: egolan2@foxmail.com
-X-Antivirus: Avast (VPS 190607-0, 07/06/2019), Outbound message
-X-Antivirus-Status: Clean
-Message-Id: <20190607132712.1A5074FF4A@mail.ideam.gov.co>
+In-Reply-To: <20190606152812.13141-1-weijiang.yang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My name is Ella Golan, I am the Executive Vice President Banking Division w=
-ith FIRST INTERNATIONAL BANK OF ISRAEL LTD (FIBI), here in Isreal. I have a=
- business proposal for you. I will need you to assist me in executing this =
-project to your country. I need to know if you will be able to handle this =
-transaction with me before I explain to you in details.
+On 06/06/19 17:28, Yang Weijiang wrote:
+> EPT-Based Sub-Page write Protection(SPP)is a HW capability which
+> allows Virtual Machine Monitor(VMM) to specify write-permission for
+> guest physical memory at a sub-page(128 byte) granularity. When this
+> capability is enabled, the CPU enforces write-access check for
+> sub-pages within a 4KB page.
+> 
+> The feature is targeted to provide fine-grained memory protection
+> for usages such as device virtualization, memory check-point and
+> VM introspection etc.
+> 
+> SPP is active when the "sub-page write protection" (bit 23) is 1 in
+> Secondary VM-Execution Controls. The feature is backed with a Sub-Page
+> Permission Table(SPPT), SPPT is referenced via a 64-bit control field
+> called Sub-Page Permission Table Pointer (SPPTP) which contains a
+> 4K-aligned physical address.
+> 
+> Right now, only 4KB physical pages are supported for SPP. To enable SPP
+> for certain physical page, we need to first make the physical page
+> write-protected, then set bit 61 of the corresponding EPT leaf entry. 
+> While HW walks EPT, if bit 61 is set, it traverses SPPT with the guset
+> physical address to find out the sub-page permissions at the leaf entry.
+> If the corresponding bit is set, write to sub-page is permitted,
+> otherwise, SPP induced EPT vilation is generated.
+> 
+> Please refer to the SPP introduction document in this patch set and Intel SDM
+> for details:
+> 
+> Intel SDM:
+> https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+> 
+> Previous patch:
+> https://lkml.org/lkml/2018/11/30/605
+> 
+> Patch 1: Introduction to SPP.
+> Patch 2: Add SPP related flags and control bits.
+> Patch 3: Functions for SPPT setup.
+> Patch 4: Add SPP access bitmaps for memslots.
+> Patch 5: Low level implementation of SPP operations.
+> Patch 6: Implement User space access IOCTLs.
+> Patch 7: Handle SPP induced VMExit and EPT violation.
+> Patch 8: Enable lazy mode SPPT setup.
+> Patch 9: Handle memory remapping and reclaim.
+> 
+> 
+> Change logs:
+> 
+> V2 - V3:                                                                
+>  1. Rebased patches to kernel 5.1 release                                
+>  2. Deferred SPPT setup to EPT fault handler if the page is not available
+>     while set_subpage() is being called.                                 
+>  3. Added init IOCTL to reduce extra cost if SPP is not used.            
+>  4. Refactored patch structure, cleaned up cross referenced functions.    
+>  5. Added code to deal with memory swapping/migration/shrinker cases.    
+>                                                                            
+> V2 - V1:                                                                
+>  1. Rebased to 4.20-rc1                                                  
+>  2. Move VMCS change to a separated patch.                               
+>  3. Code refine and Bug fix 
+> 
+> 
+> Yang Weijiang (9):
+>   Documentation: Introduce EPT based Subpage Protection
+>   KVM: VMX: Add control flags for SPP enabling
+>   KVM: VMX: Implement functions for SPPT paging setup
+>   KVM: VMX: Introduce SPP access bitmap and operation functions
+>   KVM: VMX: Add init/set/get functions for SPP
+>   KVM: VMX: Introduce SPP user-space IOCTLs
+>   KVM: VMX: Handle SPP induced vmexit and page fault
+>   KVM: MMU: Enable Lazy mode SPPT setup
+>   KVM: MMU: Handle host memory remapping and reclaim
+> 
+>  Documentation/virtual/kvm/spp_kvm.txt | 216 ++++++++++++
+>  arch/x86/include/asm/cpufeatures.h    |   1 +
+>  arch/x86/include/asm/kvm_host.h       |  26 +-
+>  arch/x86/include/asm/vmx.h            |  10 +
+>  arch/x86/include/uapi/asm/vmx.h       |   2 +
+>  arch/x86/kernel/cpu/intel.c           |   4 +
+>  arch/x86/kvm/mmu.c                    | 469 ++++++++++++++++++++++++++
+>  arch/x86/kvm/mmu.h                    |   1 +
+>  arch/x86/kvm/vmx/capabilities.h       |   5 +
+>  arch/x86/kvm/vmx/vmx.c                | 138 ++++++++
+>  arch/x86/kvm/x86.c                    | 141 ++++++++
+>  include/linux/kvm_host.h              |   9 +
+>  include/uapi/linux/kvm.h              |  17 +
+>  13 files changed, 1038 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
+> 
 
-Should you be interested, please get back to me immediately so as to provid=
-e you with the details.
+Please add testcases in tools/testing/selftests/kvm.
 
-Kind Regards,
-Ms. Ella Golan
-
-
+Paolo
