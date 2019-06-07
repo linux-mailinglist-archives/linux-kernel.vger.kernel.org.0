@@ -2,94 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B09B397DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9BA9397B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731254AbfFGVgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:36:01 -0400
-Received: from mga06.intel.com ([134.134.136.31]:56868 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729731AbfFGVgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:36:01 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 14:36:00 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2019 14:36:00 -0700
-Date:   Fri, 7 Jun 2019 14:26:45 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     James Morse <james.morse@arm.com>
-Cc:     linux-doc@vger.kernel.org, x86@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Babu Moger <Babu.Moger@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] Documentation: x86: Remove cdpl2 unspported
- statement and fix capitalisation
-Message-ID: <20190607212645.GB143433@romley-ivt3.sc.intel.com>
-References: <20190607151409.15476-1-james.morse@arm.com>
- <20190607151409.15476-3-james.morse@arm.com>
+        id S1730879AbfFGV0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:26:55 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36530 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729125AbfFGV0z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:26:55 -0400
+Received: by mail-lj1-f194.google.com with SMTP id i21so2950967ljj.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 14:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q6sGj4udjdudlOgOeP/H6pDDZcmuzFdAkSUlLYTz7Hc=;
+        b=z23mfVUe0uLJ/lnbrCPAfFLlJoZeq+fXYSy3t319XR2mXsJF2HJBlsHc72bDowYPbr
+         BKlcfggdOUpnzKEOcmo/gWDJBafNeMAp2aw7/FOy/CEMhLhZAkJiqltxY9gqYHhdPADe
+         LWRluJiEIcw2pJBdRmdTdrAVM13WBgOAg9klKPj6zLBbvJjcvG0SF3UGpq5K05+1nydQ
+         YVvrkZaXl+tnN/7TgP1T8xCinH9HAqs6lCo00edbK7wHMvW8WMzCuFvKYkfX8GduJi99
+         j0wanfih+iwQg+9v0kDSq7XaxRBoHZrhq0vIpY4sKoaShnKX2Gdts7XNyc78ZgcYCS/j
+         ih7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q6sGj4udjdudlOgOeP/H6pDDZcmuzFdAkSUlLYTz7Hc=;
+        b=E5hob0NtPhp9DiRpcqICc7nTOafW/KvplvyFl7VvVYXG44rvGl8eFkdfBfOguYBmtJ
+         xhW+ohoLxdGy/KNp+xSk1l0HrpYw8rF5hrqitLmwXuvU6tfLHMPIuKt318MuhL1tjs8k
+         90xp10bNg3BRykQDBnZnQUqShUnl8VD7ILLlo+IKa/JOCJfkti8b+hSvjhGkfZA5zWQH
+         T6TpRwsOMQ+QV9d+2KMgL9OVeUL+QmjvDe6SWvMIJh9PLdo0NT3gsC5Ee3XvAM2lKMX/
+         djSzoV7T+bgE0eqYcdfpx91upACcSQJfONQxbTi30FhXTjVXR8IFREpDuaIk/L7p9Abe
+         xbMw==
+X-Gm-Message-State: APjAAAXXfdUHlTqpc13Yn9MvJsFAcX00l7GrOmf/0QLYxqQW1hw3+EFg
+        5xrDxVxruCgJWZp9L4vpaXPsyQzLL4b5eNUMJcBuEg==
+X-Google-Smtp-Source: APXvYqwIajTpMSgCMZav18YPN+TlLmExrYklafV6rIWWxNFhS1pNAPS/UUbCntmRCn13SfjJkYCmG7CoaruMAno9FuY=
+X-Received: by 2002:a2e:7508:: with SMTP id q8mr13158846ljc.165.1559942813429;
+ Fri, 07 Jun 2019 14:26:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607151409.15476-3-james.morse@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190604072001.9288-1-bjorn.andersson@linaro.org> <20190604072001.9288-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20190604072001.9288-2-bjorn.andersson@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Jun 2019 23:26:46 +0200
+Message-ID: <CACRpkdazzRV5XydKHmXRQiU2Mx+=HyRgNCEpNqsOsCdycXmMOg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: qcom: sdm845: Expose ufs_reset as gpio
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 04:14:07PM +0100, James Morse wrote:
-> "L2 cache does not support code and data prioritization". This isn't
-> true, elsewhere the document says it can be enabled with the cdpl2
-> mount option.
-> 
-> While we're here, these sample strings have lower-case code/data,
-> which isn't how the kernel exports them.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->  Documentation/x86/resctrl_ui.rst | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/x86/resctrl_ui.rst b/Documentation/x86/resctrl_ui.rst
-> index 066f94e53418..638cd987937d 100644
-> --- a/Documentation/x86/resctrl_ui.rst
-> +++ b/Documentation/x86/resctrl_ui.rst
-> @@ -418,16 +418,22 @@ L3 schemata file details (CDP enabled via mount option to resctrl)
->  When CDP is enabled L3 control is split into two separate resources
->  so you can specify independent masks for code and data like this::
->  
-> -	L3data:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
-> -	L3code:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
-> +	L3DATA:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
-> +	L3CODE:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
->  
->  L2 schemata file details
->  ------------------------
-> -L2 cache does not support code and data prioritization, so the
-> -schemata format is always::
-> +CDP is supported at L2 using the 'cdpl2' mount option. The schemata
-> +format is either::
->  
->  	L2:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
->  
-> +or
-> +
-> +	L2DATA:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
-> +	L2CODE:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
-> +
-> +
->  Memory bandwidth Allocation (default mode)
->  ------------------------------------------
->  
-> -- 
-> 2.20.1
-> 
+On Tue, Jun 4, 2019 at 9:20 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-Acked-by: Fenghua Yu <fenghua.yu@intel.com>
+> The ufs_reset pin is expected to be wired to the reset pin of the
+> primary UFS memory but is pretty much just a general purpose output pinr
+>
+> Reorder the pins and expose it as gpio 150, so that the UFS driver can
+> toggle it.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Thanks.
+Patch applied.
 
--Fenghua
+Yours,
+Linus Walleij
