@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D962438FD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE2D38F96
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbfFGPqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:46:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58136 "EHLO mail.kernel.org"
+        id S1730772AbfFGPnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:43:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731332AbfFGPqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:46:01 -0400
+        id S1730758AbfFGPnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:43:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B807C21479;
-        Fri,  7 Jun 2019 15:46:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AA1F2146E;
+        Fri,  7 Jun 2019 15:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922361;
-        bh=lpVnHrOhXnHDWbDmDmFCylcgs7yZIyvru+8hMUgC59k=;
+        s=default; t=1559922183;
+        bh=GgIZ8eLPJY5n6oldnJA9c/z8gnD/onV7h+HKjMpu8R0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QleyKyPkxIRYnSXeFqQMoxsCyK/CtRkQJmdjfYc/x0W2TV1SnaCT020UrZfHTywl/
-         h7mgvDXN4lGRDlFNq9FuSAh+a6i0kW2eXqcID9QrIoQUCsi2vaqR0W3BDxaqSolsq7
-         uOa5s4ejbGUKnTwx90dHGsGrK96OmslBmIrUCedY=
+        b=vQpKtaFt5X0pCm5k1tGt+do2WtRtx4hOCEDA0zHb6CYEzzarSe2hlQce6LAg4Gqlh
+         ZPS3ue7/2Hz7UoU8DRIsfouUyvEwToImJvsDOLqEa6cC4WZL+dnw8ZOIdBryEA0a94
+         5UG5ji5YfeIPUc44dQLYWTJjICLGuKXMR8pEpVuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 4.19 59/73] drm/sun4i: Fix sun8i HDMI PHY configuration for > 148.5 MHz
-Date:   Fri,  7 Jun 2019 17:39:46 +0200
-Message-Id: <20190607153855.582846992@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alec Ari <neotheuser@gmail.com>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 66/69] Revert "x86/build: Move _etext to actual end of .text"
+Date:   Fri,  7 Jun 2019 17:39:47 +0200
+Message-Id: <20190607153856.019104910@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 831adffb3b7b8df4c8e20b7b00843129fb87a166 upstream.
+This reverts commit 392bef709659abea614abfe53cf228e7a59876a4.
 
-Vendor provided documentation says that EMP bits should be set to 3 for
-pixel clocks greater than 148.5 MHz.
+It seems to cause lots of problems when using the gold linker, and no
+one really needs this at the moment, so just revert it from the stable
+trees.
 
-Fix that.
-
-Cc: stable@vger.kernel.org # 4.17+
-Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190514204337.11068-3-jernej.skrabec@siol.net
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Reported-by: Kees Cook <keescook@chromium.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Alec Ari <neotheuser@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/vmlinux.lds.S |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -177,7 +177,8 @@ static int sun8i_hdmi_phy_config_h3(stru
- 				 SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSW |
- 				 SUN8I_HDMI_PHY_ANA_CFG2_REG_SLV(4);
- 		ana_cfg3_init |= SUN8I_HDMI_PHY_ANA_CFG3_REG_AMPCK(9) |
--				 SUN8I_HDMI_PHY_ANA_CFG3_REG_AMP(13);
-+				 SUN8I_HDMI_PHY_ANA_CFG3_REG_AMP(13) |
-+				 SUN8I_HDMI_PHY_ANA_CFG3_REG_EMP(3);
- 	}
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -131,10 +131,10 @@ SECTIONS
+ 		*(.text.__x86.indirect_thunk)
+ 		__indirect_thunk_end = .;
+ #endif
+-	} :text = 0x9090
  
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
+-	/* End of text section */
+-	_etext = .;
++		/* End of text section */
++		_etext = .;
++	} :text = 0x9090
+ 
+ 	NOTES :text :note
+ 
 
 
