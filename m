@@ -2,77 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56283396BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF18D396CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730251AbfFGUXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 16:23:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51190 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729345AbfFGUXe (ORCPT
+        id S1729915AbfFGU1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 16:27:18 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33217 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729118AbfFGU1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 16:23:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=29IHtlE/6a2OmsjukbA5ARdURIqIUHQIsBKMPglCt88=; b=euVUIRYYwirfKp1eF63MPhWtA
-        h65H/xfzayNNM0RK/crrmRly06xyRlwtDyji01aJeYiGVMptnaDAKUx9v3C+Tj9+gAuorKlIW4S82
-        d5CbwG/lfyaVEto7ZGvkHohrnf1BDq3S8TNorgQtXkHeOO6qeNxRcHtxWT70zbL09KPXIXLcOztpf
-        WPbsInwzqHPV5HeY/6U6DSshJLL2Euuq3AozPw2bsWLcfaArkkWmvnnj4yL9+n801n1I86FcCBnLM
-        CIYfFTKfY0lcDpIOXbzn/F6YLyZo/q8T9EN7vbD4EZn1M12pslE/PKEydQVfUEp9iW4P2VRlNvlpo
-        XJ8JVqfJA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZLOe-0006dJ-IG; Fri, 07 Jun 2019 20:23:32 +0000
-Date:   Fri, 7 Jun 2019 13:23:32 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        peterz@infradead.org, vishal.l.verma@intel.com,
-        dave.hansen@linux.intel.com, ard.biesheuvel@linaro.org,
-        linux-nvdimm@lists.01.org, x86@kernel.org,
-        linux-efi@vger.kernel.org
-Subject: Re: [PATCH v3 07/10] lib/memregion: Uplevel the pmem "region" ida to
- a global allocator
-Message-ID: <20190607202332.GB32656@bombadil.infradead.org>
-References: <155993563277.3036719.17400338098057706494.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155993567002.3036719.5748845658364934737.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Fri, 7 Jun 2019 16:27:18 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x15so1824059pfq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 13:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hSzQpwAiM+NRy/HIwuQOaL4l6Fd+62I0ixlRApmIXxg=;
+        b=QuSDK9d/92EWHndE25zvgWp5ImGBwWWZLLMC1zNMpDzzq2SJoPio9YmJtPPXQ93DSw
+         RNfFLtMfA2defydY7h8wb4mOvvVP8Dz01WJ6rpmYK3WAn8BkwSLNBhsfDihBBsrQPtmR
+         Sh0rTT/7nJxNJRDkkDq4tJ/fV6CBkRMG8nEfQwuMySYIsF9ILZAJfb8ooiPyhUxcEHPk
+         4J9JdkPre9sn5hA17a8qKwUvKjv60eSOln5Gbe4vRsfPXpa9BCgzg1kok79jRa8krR3d
+         +u/d2gO28o6A4jsFWc9NrbwkjScwmcoZrTXNtsqI7GG1Cd0zQL9Ld0GfVfJHqc//fZai
+         cEbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hSzQpwAiM+NRy/HIwuQOaL4l6Fd+62I0ixlRApmIXxg=;
+        b=DM+Xz7PGxouJ2pxOJCUhDd109nTJnbEYjrozyv8hWlLbv2bDyHns+ydtEKZTeBmW0B
+         uIZc7yzIufe64TQDckHPs7bHdG3tyvSa8PUxxcSX2XgLOGcNDyMpJ4fwjxSNQo8wyH/p
+         sFKm0tPRebrtEriAISVlW3Fe+BYpCCgo6gFV9zzt2HXEp3J/e+xUhSt7mTDbA0tiPimq
+         SEqsVuMQOxbzL8i55yjb6hKrSYvJCDQR/I/Un+av7Hd2wPijj+MPGeHtaqaa456YGI4X
+         U++ZBr2stfRTq7rR+dMizzp/hiwy1gtKptNuaJoFaBtPd5swArnQgH0pjn4mJexIFrzO
+         0WVQ==
+X-Gm-Message-State: APjAAAUC2Vt7/CqF2rV8Y46Qobg8q4QDRmic+7m+ofH1FqGImNQ6YPnj
+        kdwpqftSIGnglrmwB9baGOO1N5yjvFmTNB/xxYEnUlW1s6M=
+X-Google-Smtp-Source: APXvYqxamtxpEwMuMupwWMYImT3V0G9LaFfCOuX3uNXVmG//mY/dryDOWxY312/Qol7k8NpB0wtkuyyykyC6pSMxi9g=
+X-Received: by 2002:aa7:82d6:: with SMTP id f22mr62257168pfn.151.1559939237240;
+ Fri, 07 Jun 2019 13:27:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155993567002.3036719.5748845658364934737.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20190515210202.21169-1-richard@nod.at> <CAO1O6sdU=kAYS2sTKwiagxrbg+fMer9nvbwA9C4LoFMgH7e1dQ@mail.gmail.com>
+ <1644731533.84685.1559938164477.JavaMail.zimbra@nod.at>
+In-Reply-To: <1644731533.84685.1559938164477.JavaMail.zimbra@nod.at>
+From:   Emil Lenngren <emil.lenngren@gmail.com>
+Date:   Fri, 7 Jun 2019 22:27:09 +0200
+Message-ID: <CAO1O6scuNXfgtaex_Ty4-5=DmBV43Sg28ntkzNgB5T2KwfXG3g@mail.gmail.com>
+Subject: Re: [PATCH] ubifs: Add support for zstd compression.
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Sebastian Andrzej Siewior <sebastian@breakpoint.cc>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michele Dionisio <michele.dionisio@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 12:27:50PM -0700, Dan Williams wrote:
-> diff --git a/lib/memregion.c b/lib/memregion.c
-> new file mode 100644
-> index 000000000000..f6c6a94c7921
-> --- /dev/null
-> +++ b/lib/memregion.c
-> @@ -0,0 +1,15 @@
-> +#include <linux/idr.h>
-> +
-> +static DEFINE_IDA(region_ids);
-> +
-> +int memregion_alloc(gfp_t gfp)
-> +{
-> +	return ida_alloc(&region_ids, gfp);
-> +}
-> +EXPORT_SYMBOL(memregion_alloc);
-> +
-> +void memregion_free(int id)
-> +{
-> +	ida_free(&region_ids, id);
-> +}
-> +EXPORT_SYMBOL(memregion_free);
+Hi,
 
-Does this trivial abstraction have to live in its own file?  I'd make
-memregion_alloc/free static inlines that live in a header file, then
-all you need do is find a suitable .c file to store memregion_ids in,
-and export that one symbol instead of two.
+Den fre 7 juni 2019 kl 22:09 skrev Richard Weinberger <richard@nod.at>:
+>
+> Emil,
+>
+> ----- Urspr=C3=BCngliche Mail -----
+> > In fs/ubifs/sb.c we have
+> >
+> > static int get_default_compressor(struct ubifs_info *c)
+> > {
+> >    if (ubifs_compr_present(c, UBIFS_COMPR_LZO))
+> >        return UBIFS_COMPR_LZO;
+> >
+> >    if (ubifs_compr_present(c, UBIFS_COMPR_ZLIB))
+> >        return UBIFS_COMPR_ZLIB;
+> >
+> >    return UBIFS_COMPR_NONE;
+> > }
+> >
+> > Maybe add an entry for zstd here as well?
+>
+> Where would you add it? If we add it after UBIFS_COMPR_ZLIB,
+> it will effectively never get selected, unless someone builds a kernel
+> without lzo and zlib but zstd.
+> If we add it before UBIFS_COMPR_ZLIB, it will be used always and users
+> end up with unreadable files if they reboot to an older kernel.
+> Please note that we didn't raise the UBIFS format version for zstd.
+>
+> So I'm not sure what is the best choice for the default filesystem.
+
+My idea was at the end, i.e. it will only be used when LZO and ZLIB
+are not selected to be included for UBIFS, for example when someone
+compiles a minimal kernel who knows exactly which compression
+algorithms will be used on that system. I guess that's the same reason
+why zlib exists at all and is placed after lzo.
+But of course the other positions also have their pros. If we perform
+more benchmarks speed/size and conclude that zstd outperforms zlib for
+all aspects, then maybe placing it between lzo and zlib could be an
+option, but as you say we should avoid breaking compatibility with
+older systems.
+I did a single test today and compared lzo and zstd and on that test
+lzo had faster decompression speed but resulted in larger space. I'll
+do more tests later.
+
+/Emil
