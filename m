@@ -2,77 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C801398B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D691398BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:31:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731496AbfFGWbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:31:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39470 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730078AbfFGWbR (ORCPT
+        id S1731641AbfFGWbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:31:53 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:32790 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbfFGWbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:31:17 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 196so1862643pgc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:31:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=DjeIfF6JVcOuy3AfVkOGht8864fNBaz7bDSsSWoX9TU=;
-        b=ZaRcvhRJt+lWFHNijIWNhrnilHwAsieAqy37yaaaiRUxylGw+20sUHDgYTvLwZXoLQ
-         7Kz8Wr0w2D1hgQgm8qwXPISrC/NsfiVyGa0Ays+kZ12z05H2xaVjwsSI54FDH+4vgaXb
-         DKW2YYHK6FYOHtehJJ7mwFSm272oTXDX/+bKAqtSKIHNTP/1Yc9ts3dK6dNVo5AmMRQu
-         RVMEHaN2lksBao7riU/CVRglNW5yVlvDzQVHNpypOeXl6E0z6nWrOK4bVmi0ee634i+h
-         U07KQLErwYvKttiJYrkU8RURfL/zNKTY6JyTWFQVTLRM2wWnJUmoAFJYBxrCQoHjEX6q
-         g3lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=DjeIfF6JVcOuy3AfVkOGht8864fNBaz7bDSsSWoX9TU=;
-        b=Wkdlp5If3RRDu9MhnkXk3DzmJYFsYKraoRwtcpVi6g/7f8CdsjVzv4tmKYdazmkqEb
-         F4nazPoAdg6n2fwyFEdZJP3XOHFzKpUCF7YMVhTGUkvef/3GeIzzEDrrZk9nWnLXhkEa
-         V7TzNosD6ZgoxTEL+Pxl0qzhkNp4KNbgPHMH+4mdikygRHJ8K3RmFv0iUIsCXpm/fLnH
-         tQM2779lfTqSyqRbKf8nR60BgNf9HurzDUK23U6+uIL3kmj0RfPUZlNXqOe97OwEbZPP
-         8v9iD4jPigDcrg7WxQkxcXiCT2XZmRu0HEpSg/qN4soaXpuesF566PzN5SesRHXq4DSK
-         vs7w==
-X-Gm-Message-State: APjAAAW/EBVcmPkTgWLGTjGuLI2ESSInfuPV9v3M0yuKL0YgBlMi2PaB
-        QeZKx+GIMvJOO6r000j8bgFLeA==
-X-Google-Smtp-Source: APXvYqy1arVJLueel+cI+iNSxrU0sdtYKURzlXY9sOv3HhCRaoXzJNw0gelleuoSn1Mvz1PB8ZaEkg==
-X-Received: by 2002:a63:514:: with SMTP id 20mr4976382pgf.272.1559946676909;
-        Fri, 07 Jun 2019 15:31:16 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id ds14sm2846230pjb.32.2019.06.07.15.31.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2019 15:31:15 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: meson-g12a-sei510: Enable Wifi SDIO module
-In-Reply-To: <20190607144735.3829-4-narmstrong@baylibre.com>
-References: <20190607144735.3829-1-narmstrong@baylibre.com> <20190607144735.3829-4-narmstrong@baylibre.com>
-Date:   Fri, 07 Jun 2019 15:31:14 -0700
-Message-ID: <7ho939auz1.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 7 Jun 2019 18:31:53 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id BA5FD20B46F1;
+        Fri,  7 Jun 2019 15:31:51 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
+        mpatocka@redhat.com
+Subject: [RFC PATCH v3 0/1] Add dm verity root hash pkcs7 sig validation.
+Date:   Fri,  7 Jun 2019 15:31:39 -0700
+Message-Id: <20190607223140.16979-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+This patch set adds in-kernel pkcs7 signature checking for the roothash of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
-> The SEI510 embeds an AP6398S SDIO module, let's add the
-> corresponding SDIO, PWM clock and mmc-pwrseq nodes.
->
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Why we are doing validation in the Kernel?
 
-Queued for v5.3,
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so we
+can trust it.
 
-Thanks,
+What about attacker mounting non dm-verity volumes to run executable
+code?
 
-Kevin
+This verification can be used to have a security architecture where a LSM
+can enforce this verification for all the volumes and by doing this it can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
+
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
+
+How are these changes tested?
+
+veritysetup part of cryptsetup library was modified to take a optional
+root-hash-sig parameter.
+
+Commandline used to test the changes:
+
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
+
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+Changelog:
+
+v3:
+  - Code review feedback given by Sasha Levin.
+  - Removed EXPORT_SYMBOL_GPL since this was not required.
+  - Removed "This file is released under the GPLv2" since we have SPDX
+    identifier.  
+  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
+    descriptor is not specified but due to force option being set it is
+    expected.
+  - Moved CONFIG check to inside verity_verify_get_sig_from_key.  
+     (Did not move the sig_opts_cleanup to inside verity_dtr as the
+     sig_opts do not need to be allocated for the entire duration the block
+     device is active unlike the verity structure, note verity_dtr is called
+     only if verity_ctr fails or after the lifetime of the block device.)
+
+v2:
+  - Code review feedback to pass the signature binary blob as a key that can be
+Jaskaran Khurana (1):
+  Adds in-kernel pkcs7 sig checking the roothash of the dm-verity hash
+    tree
+
+ drivers/md/Kconfig                |  23 ++++++
+ drivers/md/Makefile               |   2 +-
+ drivers/md/dm-verity-target.c     |  34 +++++++-
+ drivers/md/dm-verity-verify-sig.c | 132 ++++++++++++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h |  30 +++++++
+ 5 files changed, 216 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
+
+-- 
+2.17.1
+
