@@ -2,108 +2,426 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 877F538DFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF24938E13
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbfFGOtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:49:46 -0400
-Received: from mail-eopbgr730067.outbound.protection.outlook.com ([40.107.73.67]:32448
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728446AbfFGOtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:49:45 -0400
+        id S1729701AbfFGOvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:51:07 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46400 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbfFGOvG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:51:06 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h10so3360786edi.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b0hjsscWqNJJ5vRHA6SBePtSA7WR1luZIOLFq/NYB6c=;
- b=ePbaYKCUo+ywPdzZlo860wOXWYIGfgbVXXsBjAsuhCR/8sgOBVKcbfhuX3y3yV+v0BVA8XPNFF511PPONOqDdf+Ijf7J1cRb8bWojXLiHyMsGT+AIn20ScCdObQ2deBbuWrVr6aXv0P9NOP4PirU+RwDGM5HSWmMao9H1kh9Hkg=
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2784.namprd12.prod.outlook.com (52.135.107.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Fri, 7 Jun 2019 14:49:42 +0000
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::69b5:19ac:b63d:2b82]) by SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::69b5:19ac:b63d:2b82%3]) with mapi id 15.20.1965.011; Fri, 7 Jun 2019
- 14:49:42 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "Luck, Tony" <tony.luck@intel.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=b9MoBnPdEv35gVI/LQ50fOD7wW71S9DADAQSbD0wJq8=;
+        b=Eb8fGTa3/AZvBBYkOTTFEV+CfC+dEAmF2bs+Y9HGCL5LZK2XPKLsU5QZYI+1Jf+k+o
+         WbWBa0DOmgSc+QRiUIb35BzqJzoLIGbAUSLQjZH88XFjKJO3keO2KMJlanuwcoMPDtId
+         I1ysXm1+BM7ZxVFCIPSA5DT6d9sulvG66JL0c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=b9MoBnPdEv35gVI/LQ50fOD7wW71S9DADAQSbD0wJq8=;
+        b=D8R2OMUgY5Kk/H5hGwQK0py1A89LA1TYNhU9znyQOLtAenacMHvgG4TsAJn0mK7ZSO
+         4t/HeOTFkvX2XsHNx5+pLP2K7DMGk3/BsGK/pjT/d933SOrPCOnfneU68sumBag54Wmk
+         dPU+qb/b8tjJICVCO0xIg6ECIkEVOu0vU4KfIf0Nv8RtI/dvdxpbIfNPM3QdXXQ9A0vD
+         2u7komwW4mqngk32liIQtaVQXzmIaPC4ZzXLOaXdASj60wbKBKzcZqPiDrC+lG3AAKUW
+         zE+pu0OiViEYedLKmQVnWJr0+GPe57i3yL4FnB2yg8AM/Sc7roht4FUBp7XLR+NzBrT6
+         1Ddg==
+X-Gm-Message-State: APjAAAVFZXJ5DZLJdgPNI2xL9zVsn0Liqu68CoZjZpJHPLdhTL02Jixw
+        MhWvmTtuGbrBNoT6lF5mKPWPkA==
+X-Google-Smtp-Source: APXvYqxeZMv3GsA6tdk8j7FMo2aP7nceseOJVsulOt9hYc1jfTJ7zTIw/kAcTk6z2Ln/rcnfijSZLA==
+X-Received: by 2002:a17:906:5c12:: with SMTP id e18mr46961584ejq.157.1559919064099;
+        Fri, 07 Jun 2019 07:51:04 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id w6sm391765ejf.0.2019.06.07.07.51.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 07 Jun 2019 07:51:03 -0700 (PDT)
+Date:   Fri, 7 Jun 2019 16:51:01 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Brian Starkey <Brian.Starkey@arm.com>
+Cc:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Simon Ser <contact@emersion.fr>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v3 5/6] x86/MCE: Save MCA control bits that get set in
- hardware
-Thread-Topic: [PATCH v3 5/6] x86/MCE: Save MCA control bits that get set in
- hardware
-Thread-Index: AQHU/5PPbonhoiIaT0+tpMBUt0fOpKZt/3MAgAAEtbCAAA1jAIAAAELggAAGlYCAADB8kIAABZ8AgAAG7YCAANzUAIAAUaUwgAAal4CAAA3JgIAABf+AgAAE/ICAABizgIAAAygAgAAEo4CACWuboIAGhWIAgBC3iXA=
-Date:   Fri, 7 Jun 2019 14:49:42 +0000
-Message-ID: <SN6PR12MB263998ECCDF1E345FEB0869AF8100@SN6PR12MB2639.namprd12.prod.outlook.com>
-References: <20190517101006.GA32065@zn.tnic>
- <SN6PR12MB26391A0C3979030082EE38F8F80B0@SN6PR12MB2639.namprd12.prod.outlook.com>
- <20190517163729.GE13482@zn.tnic> <20190517172648.GA18164@agluck-desk>
- <20190517174817.GG13482@zn.tnic> <20190517180607.GA21710@agluck-desk>
- <20190517193431.GI13482@zn.tnic>
- <SN6PR12MB2639C5427366AC3004C35CC0F80B0@SN6PR12MB2639.namprd12.prod.outlook.com>
- <20190517200225.GK13482@zn.tnic>
- <SN6PR12MB26390759DB43763D3A482918F8010@SN6PR12MB2639.namprd12.prod.outlook.com>
- <20190527232849.GC8209@cz.tnic>
-In-Reply-To: <20190527232849.GC8209@cz.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [165.204.84.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ece35cb9-9527-4cb4-3728-08d6eb576046
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2784;
-x-ms-traffictypediagnostic: SN6PR12MB2784:
-x-microsoft-antispam-prvs: <SN6PR12MB2784B80BBE025AE0D5137105F8100@SN6PR12MB2784.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0061C35778
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(346002)(39860400002)(396003)(189003)(199004)(13464003)(102836004)(229853002)(6506007)(53546011)(5660300002)(6436002)(316002)(76176011)(74316002)(256004)(6916009)(54906003)(72206003)(99286004)(52536014)(71190400001)(7696005)(478600001)(71200400001)(68736007)(186003)(86362001)(2906002)(66066001)(486006)(26005)(8676002)(33656002)(14454004)(6246003)(305945005)(4326008)(9686003)(66446008)(66476007)(11346002)(476003)(64756008)(66556008)(66946007)(446003)(7736002)(3846002)(6116002)(53936002)(73956011)(81156014)(76116006)(8936002)(25786009)(55016002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2784;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Cfnd7yfoVWUY/9B+6maghkkL1i8VqEX/eICo03/HJ2vxVfSQAXnA+HevAVVaVxkmwk1iRtkkwhQSy8Fq28GiTNCP0jI2sS22aUDNKuP1nCl/6Q/wus2rus3dRSIn1kBnzgREXbwyPCsqFViDgwHsZJ6TEw2Hoh4xfZPJQoP1GDZzjBB72LlrEWS3lpNCE66A2apWaH6XhgVT/jbg3OcjUxK8UjF8vcEfeNVGrCxKClrcwOJIdzLxPlS9k074plZdbTF7nQKp6c5uRPpMbw9gCxAVrli4RlSoQU2dzGWo0MqxhHDSjM+9/ssZH4LviH2K1l0QPRL5u7zsfLKoRHZ/6XjgoiCRCFkYhnXRKKFOdWgmcn2jPFJNcWBMARAlGTHBmuOv4gTJeCy4P1zsFq1+uaR5B8FXzKI/ei8pR5cMDEc=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        nd <nd@arm.com>
+Subject: Re: [PATCH 2/2] drm/vkms: Add support for writeback
+Message-ID: <20190607145101.GH21222@phenom.ffwll.local>
+Mail-Followup-To: Brian Starkey <Brian.Starkey@arm.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Simon Ser <contact@emersion.fr>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+References: <cover.1559860606.git.rodrigosiqueiramelo@gmail.com>
+ <0acd74232d988970668298be0111c485bc68ec87.1559860606.git.rodrigosiqueiramelo@gmail.com>
+ <20190607141719.3ruo3vudqyc32wey@DESKTOP-E1NTVVP.localdomain>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ece35cb9-9527-4cb4-3728-08d6eb576046
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2019 14:49:42.8910
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yghannam@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2784
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190607141719.3ruo3vudqyc32wey@DESKTOP-E1NTVVP.localdomain>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3YgPGJw
-QGFsaWVuOC5kZT4NCj4gU2VudDogTW9uZGF5LCBNYXkgMjcsIDIwMTkgNjoyOSBQTQ0KPiBUbzog
-R2hhbm5hbSwgWWF6ZW4gPFlhemVuLkdoYW5uYW1AYW1kLmNvbT4NCj4gQ2M6IEx1Y2ssIFRvbnkg
-PHRvbnkubHVja0BpbnRlbC5jb20+OyBsaW51eC1lZGFjQHZnZXIua2VybmVsLm9yZzsgbGludXgt
-a2VybmVsQHZnZXIua2VybmVsLm9yZzsgeDg2QGtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSCB2MyA1LzZdIHg4Ni9NQ0U6IFNhdmUgTUNBIGNvbnRyb2wgYml0cyB0aGF0IGdldCBzZXQg
-aW4gaGFyZHdhcmUNCj4gDQo+IA0KPiBJIGd1ZXNzIHRoZSBjbGVhbmVzdCB3YXkgdG8gaGFuZGxl
-IGhpcyBwcm9wZXJseSB3b3VsZCBiZSB0byBoYXZlIGENCj4gZnVuY3Rpb24gY2FsbGVkIHNvbWV0
-aGluZyBsaWtlIF9fbWNoZWNrX2NwdV9pbml0X2JhbmtzKCkgd2hpY2ggZ2V0cw0KPiBjYWxsZWQg
-aW4gbWNoZWNrX2NwdV9pbml0KCkgYWZ0ZXIgdGhlIHF1aXJrcyBoYXZlIHJ1biBhbmQgdGhlbiBk
-b2VzIHRoZQ0KPiBmaW5hbCBwb2tpbmcgb2YgdGhlIGJhbmtzIGFuZCBzZXRzIGItPmluaXQgcHJv
-cGVybHkuDQo+IA0KPiBfX21jaGVja19jcHVfaW5pdF9jbGVhcl9iYW5rcygpIHNob3VsZCB0aGVu
-IGJlIHJlbmFtZWQgdG8NCj4gX19tY2hlY2tfY3B1X2NsZWFyX2JhbmtzKCkgdG8gZGVub3RlIHRo
-YXQgaXQgb25seSBjbGVhcnMgdGhlIGJhbmtzIGFuZA0KPiB3b3VsZCBvbmx5IGRvOg0KPiANCj4g
-ICAgICAgICAgICAgICAgIGlmICghYi0+aW5pdCkNCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-Y29udGludWU7DQo+IA0KPiAgICAgICAgICAgICAgICAgd3Jtc3JsKG1zcl9vcHMuY3RsKGkpLCBi
-LT5jdGwpOw0KPiAgICAgICAgICAgICAgICAgd3Jtc3JsKG1zcl9vcHMuc3RhdHVzKGkpLCAwKTsN
-Cj4gDQoNCldvdWxkIHlvdSBtaW5kIGlmIHRoZSBmdW5jdGlvbiBuYW1lIHN0YXllZCB0aGUgc2Ft
-ZT8gVGhlIHJlYXNvbiBpcyB0aGF0IE1DQV9DVEwgaXMgd3JpdHRlbiBoZXJlLCB3aGljaCBpcyB0
-aGUgImluaXQiIHBhcnQsIGFuZCBNQ0FfU1RBVFVTIGlzIGNsZWFyZWQuDQoNCkkgY2FuIHVzZSBh
-bm90aGVyIG5hbWUgZm9yIHRoZSBjaGVjaywgZS5nLiBfX21jaGVja19jcHVfY2hlY2tfYmFua3Mo
-KSBvciBfX21jaGVja19jcHVfYmFua3NfY2hlY2tfaW5pdCgpLg0KDQpUaGFua3MsDQpZYXplbg0K
+On Fri, Jun 07, 2019 at 02:17:20PM +0000, Brian Starkey wrote:
+> Hi Rodrigo,
+> 
+> On Thu, Jun 06, 2019 at 07:41:01PM -0300, Rodrigo Siqueira wrote:
+> > This patch implements the necessary functions to add writeback support
+> > for vkms. This feature is useful for testing compositors if you don’t
+> > have hardware with writeback support.
+> > 
+> > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > ---
+> >  drivers/gpu/drm/vkms/Makefile         |   9 +-
+> >  drivers/gpu/drm/vkms/vkms_crtc.c      |   5 +
+> >  drivers/gpu/drm/vkms/vkms_drv.c       |  10 ++
+> >  drivers/gpu/drm/vkms/vkms_drv.h       |  12 ++
+> >  drivers/gpu/drm/vkms/vkms_output.c    |   6 +
+> >  drivers/gpu/drm/vkms/vkms_writeback.c | 165 ++++++++++++++++++++++++++
+> >  6 files changed, 206 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/gpu/drm/vkms/vkms_writeback.c
+> > 
+> > diff --git a/drivers/gpu/drm/vkms/Makefile b/drivers/gpu/drm/vkms/Makefile
+> > index 89f09bec7b23..90eb7acd618d 100644
+> > --- a/drivers/gpu/drm/vkms/Makefile
+> > +++ b/drivers/gpu/drm/vkms/Makefile
+> > @@ -1,4 +1,11 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> > -vkms-y := vkms_drv.o vkms_plane.o vkms_output.o vkms_crtc.o vkms_gem.o vkms_crc.o
+> > +vkms-y := \
+> > +	vkms_drv.o \
+> > +	vkms_plane.o \
+> > +	vkms_output.o \
+> > +	vkms_crtc.o \
+> > +	vkms_gem.o \
+> > +	vkms_crc.o \
+> > +	vkms_writeback.o
+> >  
+> >  obj-$(CONFIG_DRM_VKMS) += vkms.o
+> > diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+> > index 1bbe099b7db8..ce797e265b1b 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_crtc.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+> > @@ -23,6 +23,11 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+> >  	if (!ret)
+> >  		DRM_ERROR("vkms failure on handling vblank");
+> >  
+> > +	if (output->writeback_status == WB_START) {
+> > +		drm_writeback_signal_completion(&output->wb_connector, 0);
+> > +		output->writeback_status = WB_STOP;
+> > +	}
+> > +
+> >  	if (state && output->crc_enabled) {
+> >  		u64 frame = drm_crtc_accurate_vblank_count(crtc);
+> >  
+> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> > index 92296bd8f623..d5917d5a45e3 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> > @@ -29,6 +29,10 @@ bool enable_cursor;
+> >  module_param_named(enable_cursor, enable_cursor, bool, 0444);
+> >  MODULE_PARM_DESC(enable_cursor, "Enable/Disable cursor support");
+> >  
+> > +int enable_writeback;
+> > +module_param_named(enable_writeback, enable_writeback, int, 0444);
+> > +MODULE_PARM_DESC(enable_writeback, "Enable/Disable writeback connector");
+> > +
+> >  static const struct file_operations vkms_driver_fops = {
+> >  	.owner		= THIS_MODULE,
+> >  	.open		= drm_open,
+> > @@ -123,6 +127,12 @@ static int __init vkms_init(void)
+> >  		goto out_fini;
+> >  	}
+> >  
+> > +	vkms_device->output.writeback_status = WB_DISABLED;
+> > +	if (enable_writeback) {
+> > +		vkms_device->output.writeback_status = WB_STOP;
+> > +		DRM_INFO("Writeback connector enabled");
+> > +	}
+> > +
+> >  	ret = vkms_modeset_init(vkms_device);
+> >  	if (ret)
+> >  		goto out_fini;
+> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> > index e81073dea154..ca1f9ee63ec8 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> > @@ -7,6 +7,7 @@
+> >  #include <drm/drm.h>
+> >  #include <drm/drm_gem.h>
+> >  #include <drm/drm_encoder.h>
+> > +#include <drm/drm_writeback.h>
+> >  #include <linux/hrtimer.h>
+> >  
+> >  #define XRES_MIN    20
+> > @@ -60,14 +61,22 @@ struct vkms_crtc_state {
+> >  	u64 frame_end;
+> >  };
+> >  
+> > +enum wb_status {
+> > +	WB_DISABLED,
+> > +	WB_START,
+> > +	WB_STOP,
+> > +};
+> > +
+> >  struct vkms_output {
+> >  	struct drm_crtc crtc;
+> >  	struct drm_encoder encoder;
+> >  	struct drm_connector connector;
+> > +	struct drm_writeback_connector wb_connector;
+> >  	struct hrtimer vblank_hrtimer;
+> >  	ktime_t period_ns;
+> >  	struct drm_pending_vblank_event *event;
+> >  	bool crc_enabled;
+> > +	enum wb_status writeback_status;
+> >  	/* ordered wq for crc_work */
+> >  	struct workqueue_struct *crc_workq;
+> >  	/* protects concurrent access to crc_data */
+> > @@ -141,4 +150,7 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
+> >  			   size_t *values_cnt);
+> >  void vkms_crc_work_handle(struct work_struct *work);
+> >  
+> > +/* Writeback */
+> > +int enable_writeback_connector(struct vkms_device *vkmsdev);
+> > +
+> >  #endif /* _VKMS_DRV_H_ */
+> > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> > index 1442b447c707..1fc1d4e9585c 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_output.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> > @@ -91,6 +91,12 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+> >  		goto err_attach;
+> >  	}
+> >  
+> > +	if (vkmsdev->output.writeback_status != WB_DISABLED) {
+> > +		ret = enable_writeback_connector(vkmsdev);
+> > +		if (ret)
+> > +			DRM_ERROR("Failed to init writeback connector\n");
+> > +	}
+> > +
+> >  	drm_mode_config_reset(dev);
+> >  
+> >  	return 0;
+> > diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> > new file mode 100644
+> > index 000000000000..f7b962ae5646
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> > @@ -0,0 +1,165 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +
+> > +#include "vkms_drv.h"
+> > +#include <drm/drm_writeback.h>
+> > +#include <drm/drm_probe_helper.h>
+> > +#include <drm/drm_atomic_helper.h>
+> > +#include <drm/drm_gem_framebuffer_helper.h>
+> > +
+> > +static const struct drm_connector_funcs vkms_wb_connector_funcs = {
+> > +	.fill_modes = drm_helper_probe_single_connector_modes,
+> > +	.destroy = drm_connector_cleanup,
+> > +	.reset = drm_atomic_helper_connector_reset,
+> > +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> > +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> > +};
+> > +
+> > +static int vkms_wb_encoder_atomic_check(struct drm_encoder *encoder,
+> > +					struct drm_crtc_state *crtc_state,
+> > +					struct drm_connector_state *conn_state)
+> > +{
+> > +	struct drm_framebuffer *fb;
+> > +	const struct drm_display_mode *mode = &crtc_state->mode;
+> > +
+> > +	if (!conn_state->writeback_job || !conn_state->writeback_job->fb)
+> > +		return 0;
+> > +
+> > +	fb = conn_state->writeback_job->fb;
+> > +	if (fb->width != mode->hdisplay || fb->height != mode->vdisplay) {
+> > +		DRM_DEBUG_KMS("Invalid framebuffer size %ux%u\n",
+> > +			      fb->width, fb->height);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (fb->format->format != DRM_FORMAT_XRGB8888) {
+> > +		struct drm_format_name_buf format_name;
+> > +
+> > +		DRM_DEBUG_KMS("Invalid pixel format %s\n",
+> > +			      drm_get_format_name(fb->format->format,
+> > +						  &format_name));
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct drm_encoder_helper_funcs vkms_wb_encoder_helper_funcs = {
+> > +	.atomic_check = vkms_wb_encoder_atomic_check,
+> > +};
+> > +
+> > +static int vkms_wb_connector_get_modes(struct drm_connector *connector)
+> > +{
+> > +	struct drm_device *dev = connector->dev;
+> > +
+> > +	return drm_add_modes_noedid(connector, dev->mode_config.max_width,
+> > +				    dev->mode_config.max_height);
+> > +}
+> > +
+> > +static int vkms_wb_prepare_job(struct drm_writeback_connector *wb_connector,
+> > +			       struct drm_writeback_job *job)
+> > +{
+> > +	struct vkms_gem_object *vkms_obj;
+> > +	struct drm_gem_object *gem_obj;
+> > +	int ret;
+> > +
+> > +	if (!job->fb)
+> > +		return 0;
+> > +
+> > +	gem_obj = drm_gem_fb_get_obj(job->fb, 0);
+> > +	ret = vkms_gem_vmap(gem_obj);
+> > +	if (ret) {
+> > +		DRM_ERROR("vmap failed: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	vkms_obj = drm_gem_to_vkms_gem(gem_obj);
+> > +	job->priv = vkms_obj->vaddr;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void vkms_wb_cleanup_job(struct drm_writeback_connector *connector,
+> > +				struct drm_writeback_job *job)
+> > +{
+> > +	struct drm_gem_object *gem_obj;
+> > +
+> > +	if (!job->fb)
+> > +		return;
+> > +
+> > +	gem_obj = drm_gem_fb_get_obj(job->fb, 0);
+> > +	vkms_gem_vunmap(gem_obj);
+> > +}
+> > +
+> > +static void vkms_wb_atomic_commit(struct drm_connector *conn,
+> > +				  struct drm_connector_state *state)
+> > +{
+> > +	struct vkms_device *vkmsdev = drm_device_to_vkms_device(conn->dev);
+> > +	struct vkms_output *output = &vkmsdev->output;
+> > +	struct drm_writeback_connector *wb_conn = &output->wb_connector;
+> > +	struct drm_connector_state *conn_state = wb_conn->base.state;
+> > +	void *priv_data = conn_state->writeback_job->priv;
+> > +	struct vkms_crc_data *primary_data = NULL;
+> > +	struct drm_framebuffer *fb = NULL;
+> > +	struct vkms_gem_object *vkms_obj;
+> > +	struct drm_gem_object *gem_obj;
+> > +	struct drm_plane *plane;
+> > +
+> > +	if (!conn_state)
+> > +		return;
+> > +
+> > +	if (!conn_state->writeback_job || !conn_state->writeback_job->fb) {
+> > +		output->writeback_status = WB_STOP;
+> > +		DRM_DEBUG_DRIVER("Disable writeback\n");
+> > +		return;
+> > +	}
+> > +
+> > +	drm_for_each_plane(plane, &vkmsdev->drm) {
+> > +		struct vkms_plane_state *vplane_state;
+> > +		struct vkms_crc_data *plane_data;
+> > +
+> > +		vplane_state = to_vkms_plane_state(plane->state);
+> > +		plane_data = vplane_state->crc_data;
+> > +
+> > +		if (drm_framebuffer_read_refcount(&plane_data->fb) == 0)
+> > +			continue;
+> 
+> It's not really specific to this patch, but this looks kinda
+> weird to me. You've got a copy of the fb struct in plane_data?
+> 
+> It seems like that would break a bunch of refcounting if nothing else.
+> 
+> Can't you use plane->state->fb directly, and just check if it's NULL?
+
+It's complicated, and I'm working on some patches to fix that.
+Prep/infrastructure work is now on the mailing list.
+-Daniel
+
+> 
+> > +
+> > +		if (plane->type == DRM_PLANE_TYPE_PRIMARY)
+> > +			primary_data = plane_data;
+> > +	}
+> > +
+> > +	if (!primary_data)
+> > +		return;
+> > +
+> > +	fb = &primary_data->fb;
+> > +	gem_obj = drm_gem_fb_get_obj(fb, 0);
+> > +	vkms_obj = drm_gem_to_vkms_gem(gem_obj);
+> > +
+> > +	if (!vkms_obj->vaddr || !priv_data)
+> > +		return;
+> > +
+> > +	memcpy(priv_data, vkms_obj->vaddr, vkms_obj->gem.size);
+> > +	drm_writeback_queue_job(wb_conn, state);
+> > +	output->writeback_status = WB_START;
+> 
+> You probably don't need the deferred completion signaling. I'd expect
+> this to work OK (and it matches the API semantics):
+> 
+>   drm_writeback_queue_job(wb_conn, state);
+>   memcpy(priv_data, vkms_obj->vaddr, vkms_obj->gem.size);
+>   drm_writeback_signal_completion(wb_conn, 0);
+> 
+> 
+> Cheers,
+> -Brian
+> 
+> > +}
+> > +
+> > +static const struct drm_connector_helper_funcs vkms_wb_conn_helper_funcs = {
+> > +	.get_modes = vkms_wb_connector_get_modes,
+> > +	.prepare_writeback_job = vkms_wb_prepare_job,
+> > +	.cleanup_writeback_job = vkms_wb_cleanup_job,
+> > +	.atomic_commit = vkms_wb_atomic_commit,
+> > +};
+> > +
+> > +int enable_writeback_connector(struct vkms_device *vkmsdev)
+> > +{
+> > +	struct drm_writeback_connector *wb = &vkmsdev->output.wb_connector;
+> > +
+> > +	vkmsdev->output.wb_connector.encoder.possible_crtcs = 1;
+> > +	drm_connector_helper_add(&wb->base, &vkms_wb_conn_helper_funcs);
+> > +
+> > +	return drm_writeback_connector_init(&vkmsdev->drm, wb,
+> > +					    &vkms_wb_connector_funcs,
+> > +					    &vkms_wb_encoder_helper_funcs,
+> > +					    vkms_formats,
+> > +					    ARRAY_SIZE(vkms_formats));
+> > +}
+> > +
+> > -- 
+> > 2.21.0
+> 
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
