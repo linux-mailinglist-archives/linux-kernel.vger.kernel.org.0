@@ -2,102 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6646A392A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB26392AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbfFGQ7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:59:55 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33832 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729241AbfFGQ7z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:59:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c85so1540487pfc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 09:59:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=MNcJZMA4q9Qof1r/YfMqt/g7trBAYJtueHwu9fzJ0WI=;
-        b=L4akB9WNfbBACsOjFsABrYcUMZ0d45A2WBoImzWXvmDzcQfL5Z9zXF5ol6MTI1/Igh
-         7pKIWrGAuHb4n0nXZdg1NdjUDchGYPC9QOZxMuh5PCgJCTKwZsxN9o/q3Irps0B2LtlG
-         Lh2FWJdktH2VCUfpDaSfHxG62xGrNmB/kuoRpbzK4gS3dLpokLfSX2eW7ExInlFDuc1m
-         ziXEQzAH5J1A1ad/7Ud2x/Wii4u1RO/16chpf8v3a1Y4CSHsixCLtbRaPbd2B6RuCK4I
-         cMleBhOaoan2iZh3a0aZwuic7Cedsvi9+vfrLbNo3XN2Wp6J1kkJxyJ1Wgqj25K+yaSF
-         iUoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=MNcJZMA4q9Qof1r/YfMqt/g7trBAYJtueHwu9fzJ0WI=;
-        b=fqrq5dePRy1QBPzAlW/mGHAQzz1eEjvoX1fZ2oz+adSXsio4KG1Imk2cCj+79p/F09
-         Q5bFrMkZB9suxBOR7ERwAeiyqgTjnVCpGEK3DeqBZnCbsroLYfPv6EL8CG09OHCf4CBg
-         qluKsSJFHj/3P/2tNJbyNkmdngSRPM7ZdNPDtOmCem+4bl35m5nOrModPfoI4NXs/yDm
-         SRWn/2MWDG3a8yjngmSWpC7Er9tEKgEnwfrh2ETHUQb0YDkX5MlTrkH/0IAOCVXPLd52
-         UV02URYbkGuY4gnPSOjMd6UVdg3DiEqjZ2N7P9YgofrB0Jhg+VB7rcx6EOf0nIGbGj4z
-         vCIA==
-X-Gm-Message-State: APjAAAUPKw4G7EIiOQ9rV6wMrLWT8x+U9aePKvxYgTg5jVDn8+3N58e4
-        3cM2trHE0CdQ9WKdN33j2Ipgvg==
-X-Google-Smtp-Source: APXvYqxjjfrU5qo3ODqkgEdkborlSAFDI2qtFKnUIi8CiMXFsJ1sXPjdIpXVmVAhK7v1FC47cE9/Hw==
-X-Received: by 2002:a62:640e:: with SMTP id y14mr57808577pfb.109.1559926794332;
-        Fri, 07 Jun 2019 09:59:54 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id k6sm3828350pfi.86.2019.06.07.09.59.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2019 09:59:53 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] arm64: dts: meson-gxm-khadas-vim2: fix gpio-keys-polled node
-In-Reply-To: <c8144470-361b-ca26-71c7-d152f976ae19@baylibre.com>
-References: <20190527132200.17377-1-narmstrong@baylibre.com> <20190527132200.17377-2-narmstrong@baylibre.com> <7hy32ecwlu.fsf@baylibre.com> <c8144470-361b-ca26-71c7-d152f976ae19@baylibre.com>
-Date:   Fri, 07 Jun 2019 09:59:53 -0700
-Message-ID: <7hblz9covq.fsf@baylibre.com>
+        id S1731169AbfFGRBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:01:44 -0400
+Received: from nbd.name ([46.4.11.11]:59356 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731099AbfFGRBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:01:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+         s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UP3HYaBRyyZCgrGkjreuXPoJQnusxc/pp3ork1+U7J0=; b=NvvbWXHuJRSTpWUc/rF5CX0QxG
+        wG2uEqYO38wVscQkr6Apxn9JLac0sUUMgviV7orNAv5vVOSXymrV0r6gSaj4maQgAGKbq+cSzg6Gg
+        7Y2F1Bc8IifKwDNxZm1EKYe3tzjPDb7gGTy7yGkQ2zy3AMRwo8DhdtYa61Q/yUpDiVyM=;
+Received: from p4ff13bc7.dip0.t-ipconnect.de ([79.241.59.199] helo=nf.local)
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <nbd@nbd.name>)
+        id 1hZIFF-00011f-Hm; Fri, 07 Jun 2019 19:01:37 +0200
+Subject: Re: [PATCH] mt76: Remove set but not used variables 'pid' and
+ 'final_mpdu'
+To:     YueHaibing <yuehaibing@huawei.com>, lorenzo.bianconi83@gmail.com,
+        ryder.lee@mediatek.com, royluo@google.com, kvalo@codeaurora.org,
+        matthias.bgg@gmail.com, sgruszka@redhat.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, davem@davemloft.net
+References: <20190529145356.13872-1-yuehaibing@huawei.com>
+From:   Felix Fietkau <nbd@nbd.name>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nbd@nbd.name; prefer-encrypt=mutual; keydata=
+ mQGiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwbQcRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPohgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQuQINBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabiEkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCfTKx80VvCR/PvsUlrvdOLsIgeRGAAn1ee
+ RjMaxwtSdaCKMw3j33ZbsWS4
+Message-ID: <f3e5d386-e1de-d707-397d-2ef99e09f345@nbd.name>
+Date:   Fri, 7 Jun 2019 19:01:36 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190529145356.13872-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+On 2019-05-29 16:53, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warnings:
+> 
+> drivers/net/wireless/mediatek/mt76/mt7603/mac.c: In function mt7603_fill_txs:
+> drivers/net/wireless/mediatek/mt76/mt7603/mac.c:969:5: warning: variable pid set but not used [-Wunused-but-set-variable]
+> drivers/net/wireless/mediatek/mt76/mt7603/mac.c:961:7: warning: variable final_mpdu set but not used [-Wunused-but-set-variable]
+> drivers/net/wireless/mediatek/mt76/mt7615/mac.c: In function mt7615_fill_txs:
+> drivers/net/wireless/mediatek/mt76/mt7615/mac.c:555:5: warning: variable pid set but not used [-Wunused-but-set-variable]
+> drivers/net/wireless/mediatek/mt76/mt7615/mac.c:552:19: warning: variable final_mpdu set but not used [-Wunused-but-set-variable]
+> 
+> They are never used, so can be removed.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-> On 06/06/2019 22:00, Kevin Hilman wrote:
->> Neil Armstrong <narmstrong@baylibre.com> writes:
->> 
->>> From: Christian Hewitt <christianshewitt@gmail.com>
->>>
->>> Fix DTC warnings:
->>>
->>> meson-gxm-khadas-vim2.dtb: Warning (avoid_unnecessary_addr_size):
->>>    /gpio-keys-polled: unnecessary #address-cells/#size-cells
->>> 	without "ranges" or child "reg" property
->>>
->>> Fixes: b8b74dda3908 ("ARM64: dts: meson-gxm: Add support for Khadas VIM2")
->>> Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> 
->> This patch is missing a S-o-B from the author (Christian?)
->> 
->> The From, Suggested-by and Signed-off-by send mixed messages.  Please
->> clarify if if this is missing a signoff from Christian or if the author
->> is Neil.
->> 
->> Thanks,
->> 
->> Kevin
->> 
->
-> The author is Christian Hewitt <christianshewitt@gmail.com>
->
-> so s/Suggested-by/Signed-off-by/
->
-> Do you need a resend ?
+Applied, thanks.
 
-No need, I'll fix up locally.
-
-Thanks for clarifying,
-
-Kevin
+- Felix
