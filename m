@@ -2,130 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF0B39335
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A44DF39345
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731436AbfFGRaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 13:30:18 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:38676 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729355AbfFGRaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:30:17 -0400
-Received: from zn.tnic (p200300EC2F066300951FA2F4E0AD5C5F.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:6300:951f:a2f4:e0ad:5c5f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5767C1EC0997;
-        Fri,  7 Jun 2019 19:30:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1559928616;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=T0oiUeJJ4yH6JALjOP9aRLwwDXx5xLU0ccWzcZC6ki4=;
-        b=g+D00ICTFdwzwW2g2mw6pYLS2tw6CFd78aj88RlbG+UudJFX5v1G2Qr50L2t370gSzDuah
-        fbf1AxA1DawepNa5oYEDfZWdYREuWnV0rHFi2VZ3k1whhodsJAZip5vYDtMhH8QziCP7+l
-        EYhRUyv7hXiaT2CQkn/t6NX+JFZ2ngU=
-Date:   Fri, 7 Jun 2019 19:30:16 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Young <dyoung@redhat.com>, Pingfan Liu <kernelfans@gmail.com>
-Cc:     kexec@lists.infradead.org, Baoquan He <bhe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190607173016.GM20269@zn.tnic>
-References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
- <20190125103924.GB27998@zn.tnic>
- <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
- <20190125140823.GC27998@zn.tnic>
- <20190128095809.GC3732@dhcp-128-65.nay.redhat.com>
- <20190128101831.GA27154@zn.tnic>
+        id S1731507AbfFGRbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:31:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50960 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729355AbfFGRbw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:31:52 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57HIpx6178003;
+        Fri, 7 Jun 2019 17:30:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=g9qgPYWy2UeZZX7Q5xvayFUZ5+Jlv5AgZT4Wz1d17eI=;
+ b=GquEmfpf1HBT7vX2CzX+dMvzNB0wpOB4iQtcXeOAyF2DoiXBKIsxxFSTqxuQEeD3dFsE
+ NW/2qE6nTYp8yIdaZlmQWE+LLZF9hQdENVg3wyoapAls1vxX2q+9hAztXIlTcBohI7iE
+ puGOc+EVwd+Wj8du+nhWNsaHMeyQXzpQZb9TZBrehPH95mB9xQPTriWtztvyVvBfZJSY
+ ZvDGQ2w0kte1RG2ckQVBBt6EnYhIHB7zOIRVQHpveA/dR7UH9rQ/u//0E/s5itVU17r+
+ 9iPvrwQcznyJ2mXDhgxzinr5bV6Wic02t6r2sOO0mi4aLy1ulC69fy/YracyVTUd+Ixp yw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2suj0qyhpc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Jun 2019 17:30:37 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57HU97U102069;
+        Fri, 7 Jun 2019 17:30:36 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2swngk4vhc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Jun 2019 17:30:36 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x57HUY6s025234;
+        Fri, 7 Jun 2019 17:30:34 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Jun 2019 10:30:34 -0700
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>, linux-block@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+        linux-hyperv@vger.kernel.org, linux-usb@vger.kernel.org,
+        usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
+Subject: Re: properly communicate queue limits to the DMA layer
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190605190836.32354-1-hch@lst.de>
+        <591cfa1e-fecb-7d00-c855-3b9eb8eb8a2a@kernel.dk>
+        <20190605192405.GA18243@lst.de>
+        <f07d0abf-b3eb-f530-37b9-e66454740b3f@kernel.dk>
+Date:   Fri, 07 Jun 2019 13:30:30 -0400
+In-Reply-To: <f07d0abf-b3eb-f530-37b9-e66454740b3f@kernel.dk> (Jens Axboe's
+        message of "Thu, 6 Jun 2019 23:52:35 -0600")
+Message-ID: <yq1o939i9qh.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190128101831.GA27154@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9281 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=528
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906070116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9281 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=574 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906070116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:18:31AM +0100, Borislav Petkov wrote:
-> On Mon, Jan 28, 2019 at 05:58:09PM +0800, Dave Young wrote:
-> > Another reason is in case ,high we will need automatically reserve a
-> > region in low area for swiotlb.  So for example one use
-> > crashkernel=256M,high,  actual reserved memory is 256M above 4G and
-> > another 256M under 4G for swiotlb.  Normally it is not necessary for
-> > most people.  Thus we can not make ,high as default.
-> 
-> And how is the poor user to figure out that we decided for her/him that
-> swiotlb reservation is something not necessary for most people and thus
-> we fail the crashkernel= reservation?
-> 
-> IOW, that "logic" above doesn't make a whole lot of sense to me from
-> user friendliness perspective.
 
-So to show what I mean: I'm trying to reserve a crash kernel region on a
-box here. I tried:
+Jens,
 
-crashkernel=64M@16M
+>> The SCSI bits will need a bit more review, and possibly tweaking
+>> fo megaraid and mpt3sas.  But they are really independent of the
+>> other patches, so maybe skip them for now and leave them for Martin
+>> to deal with.
+>
+> I dropped the SCSI bits.
 
-as it is stated in Documentation/kdump/kdump.txt.
-
-Box said:
-
-[    0.000000] crashkernel reservation failed - memory is in use.
-
-Oh great.
-
-Then I tried:
-
-crashkernel=64M@64M
-
-Box said:
-
-[    0.000000] crashkernel reservation failed - memory is in use.
-
-So I simply did:
-
-crashkernel=64M
-
-and the box said:
-
-[    0.000000] Reserving 64MB of memory at 3392MB for crashkernel (System RAM: 16271MB)
-
-So I could've gone a long time poking at the memory to find a suitable
-address.
-
-So do you see what I mean with making this as user-friendly and as
-robust as possible?
-
-In this case I don't care about *where* my crash kernel is - I only want
-to have one loaded *somewhere*.
-
-And the same strategy should be applied to other reservation attempts
-- we should try hard to reserve and if we cannot reserve, then try an
-alternating range.
-
-I even think that
-
-crashkernel=X@Y
-
-should not simply fail if Y is occupied but keep trying and say
-
-[    0.000000] Reserving 64MB of memory at alternative address 3392MB for crashkernel (System RAM: 16271MB)
-
-and only fail when the user doesn't really want the kernel to try hard
-by booting with
-
-crashkernel=X@Y,strict
-
-But that's for another day.
+I'll monitor and merge them.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Martin K. Petersen	Oracle Linux Engineering
