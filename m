@@ -2,180 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93752394E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 599AD394FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731136AbfFGS4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:56:05 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15695 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732313AbfFGS4B (ORCPT
+        id S1732071AbfFGS4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:56:42 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45219 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732102AbfFGS4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:56:01 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cfab33e0000>; Fri, 07 Jun 2019 11:55:58 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 07 Jun 2019 11:56:00 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 07 Jun 2019 11:56:00 -0700
-Received: from [10.19.65.14] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 7 Jun
- 2019 18:55:57 +0000
-Subject: Re: [PATCH V1 6/6] i2c: tegra: remove BUG, BUG_ON
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1559908507-31192-1-git-send-email-bbiswas@nvidia.com>
- <1559908507-31192-6-git-send-email-bbiswas@nvidia.com>
- <4aec6d7a-0dea-18c9-efde-96cc1a54b945@gmail.com>
- <2281ef29-6e69-78e7-4d07-77f33c2f2d5a@gmail.com>
- <9adcde41-2450-27dc-36a0-b3b99022b43d@gmail.com>
-From:   Bitan Biswas <bbiswas@nvidia.com>
-Message-ID: <75a7f16f-5d54-797d-fb72-445411f20424@nvidia.com>
-Date:   Fri, 7 Jun 2019 11:55:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 7 Jun 2019 14:56:36 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m23so2611939lje.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ldUxE0mi4WaCkQbvj9tDP1Y3dc9QMW/mTJhHqgLzTEc=;
+        b=RKAsnvIg7cohPa9ftFN/RAF3uODOQevDuoFKHSPc0Xl7WdRdmcZdyGnMNLHluRHbqx
+         u1w+QeICOks1DEl+AX3rcan7uhfcKxu3t+qYGPITFJ/CPSgD+SwNUDgnEQevDh4687CE
+         28hm9HoLaAqEQO2OQjx2RFtlsWUqCO4SqrVko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ldUxE0mi4WaCkQbvj9tDP1Y3dc9QMW/mTJhHqgLzTEc=;
+        b=MXP/lsE4v19JeU2vDZi/yxb5iwetP3ARfGcyUZ8oIcY9ByTDvzDBEWZV/UKNajHZr5
+         itEC8yaaw1MKoyEa7nDmiS1PN1XqpsqRB+b652R/UCGi7y/uvZPsQUGRQT3NZVDUUBjQ
+         1HMSb7piew1vdZa5pk5XAb2qnSggBY5TY/D8ykwhZhanNd/LAVVOBh6Pg8aL4MPs/RwQ
+         AhMIe6a9eWZ50JMmvCy0tW+qMd6BDjvsB3asfzGo8zc3dsfZOAP/8YTF8CZrzRKXGQ3U
+         yVBG7PfFd5QmwwGjtzTxEEs4+yOcJHMqqs+aAp4RAoFUhw4lNNeyawmcrcKcTOZNMEu4
+         zA4g==
+X-Gm-Message-State: APjAAAXNqmdCB6FwTQTDFkrgxzhCmI2QDMJlfASNvbUKOSh4TbFf1oHJ
+        Xku+rUqgHSdGgiplAF4KVAA3cSIkBAA=
+X-Google-Smtp-Source: APXvYqw4k9h+8l5LYLSMziyoCreWth1YzG5MAY4PdS3bFULzowNlRHtRX7KCNXXIDKiN7H3Uf4Isvg==
+X-Received: by 2002:a2e:1201:: with SMTP id t1mr3323397lje.153.1559933793637;
+        Fri, 07 Jun 2019 11:56:33 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id t21sm502921ljg.60.2019.06.07.11.56.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 11:56:33 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id a21so2630359ljh.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:56:32 -0700 (PDT)
+X-Received: by 2002:a2e:635d:: with SMTP id x90mr19091410ljb.140.1559933792458;
+ Fri, 07 Jun 2019 11:56:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <9adcde41-2450-27dc-36a0-b3b99022b43d@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559933758; bh=uCIuy8rH6YJsc+yfcuZuDGYINzs4oKq/K+wz218dMQY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=M4arfBVACmw1/pC2JeZFWgiz8tnHqrKaAdWNoIHxOKemsUv+YfBPsmCrmeFLH5MLA
-         cfg83/NLK5j8NvXYO5rA2zArplHXysMUKSxB+Nw0Ru7MUbswLOCvyCtVLYfCftQdHw
-         3mnodvVhLEGbw4cK9g0QSg1F5GhtM5sKqM7jJZAZpmW0Jl+a3tqm+cbtVHnK788k7P
-         O5HvvpUcdLGguNTjB88UJr5FcNIF5ZrAfmpzkSb9/XyUNI/5q8rIgDAn78qvVFxoUh
-         lLITiVRD0Za1AbRyGSV2+e3WAjd9masCdBhM1ultRq20Ir9jjK0OL10CCzmLS9APS5
-         XfZtRe420ANbg==
+References: <20190319165123.3967889-1-arnd@arndb.de> <alpine.DEB.2.21.1905072249570.19308@digraph.polyomino.org.uk>
+ <87tvd2j9ye.fsf@oldenburg2.str.redhat.com> <CAHk-=wio1e4=WUUwmo-Ph55BEgH_X3oXzBpvPyLQg2TxzfGYuw@mail.gmail.com>
+ <871s05fd8o.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <871s05fd8o.fsf@oldenburg2.str.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 7 Jun 2019 11:56:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg4ijSoPq-w7ct_VuZvgHx+tUv_QX-We-62dEwK+AOf2w@mail.gmail.com>
+Message-ID: <CAHk-=wg4ijSoPq-w7ct_VuZvgHx+tUv_QX-We-62dEwK+AOf2w@mail.gmail.com>
+Subject: Re: [PATCH] uapi: avoid namespace conflict in linux/posix_types.h
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Joseph Myers <joseph@codesourcery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Paul Burton <pburton@wavecomp.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 7, 2019 at 11:43 AM Florian Weimer <fweimer@redhat.com> wrote:
+>
+> On the glibc side, we nowadays deal with this by splitting headers
+> further.  (We used to suppress definitions with macros, but that tended
+> to become convoluted.)  In this case, moving the definition of
+> __kernel_long_t to its own header, so that
+> include/uapi/asm-generic/socket.h can include that should fix it.
 
+I think we should strive to do that on the kernel side too, since
+clearly we shouldn't expose that "val[]" thing in the core posix types
+due to namespace rules, but at the same time I think the patch to
+rename val[] is fundamentally broken too.
 
-On 6/7/19 5:18 AM, Dmitry Osipenko wrote:
-> 07.06.2019 15:12, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 07.06.2019 15:08, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> 07.06.2019 14:55, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
->>>> as needed. Replace BUG() with error handling code.
->>>> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
->>>>
->>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>>> ---
->>>>   drivers/i2c/busses/i2c-tegra.c | 15 ++++++++-------
->>>>   1 file changed, 8 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-t=
-egra.c
->>>> index 4dfb4c1..c407bd7 100644
->>>> --- a/drivers/i2c/busses/i2c-tegra.c
->>>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>>> @@ -73,6 +73,7 @@
->>>>   #define I2C_ERR_NO_ACK				BIT(0)
->>>>   #define I2C_ERR_ARBITRATION_LOST		BIT(1)
->>>>   #define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
->>>> +#define I2C_ERR_UNEXPECTED_STATUS		BIT(3)
->>>>  =20
->>>>   #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
->>>>   #define PACKET_HEADER0_PACKET_ID_SHIFT		16
->>>> @@ -515,7 +516,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2=
-c_dev *i2c_dev)
->>>>   	 * prevent overwriting past the end of buf
->>>>   	 */
->>>>   	if (rx_fifo_avail > 0 && buf_remaining > 0) {
->>>> -		BUG_ON(buf_remaining > 3);
->>>>   		val =3D i2c_readl(i2c_dev, I2C_RX_FIFO);
->>>>   		val =3D cpu_to_le32(val);
->>>>   		memcpy(buf, &val, buf_remaining);
->>>> @@ -523,7 +523,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2=
-c_dev *i2c_dev)
->>>>   		rx_fifo_avail--;
->>>>   	}
->>>>  =20
->>>> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
->>>>   	i2c_dev->msg_buf_remaining =3D buf_remaining;
->>>>   	i2c_dev->msg_buf =3D buf;
->>>>  =20
->>>> @@ -581,7 +580,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c=
-_dev *i2c_dev)
->>>>   	 * boundary and fault.
->>>>   	 */
->>>>   	if (tx_fifo_avail > 0 && buf_remaining > 0) {
->>>> -		BUG_ON(buf_remaining > 3);
->>>>   		memcpy(&val, buf, buf_remaining);
->>>>   		val =3D le32_to_cpu(val);
->>>>  =20
->>>> @@ -847,10 +845,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *=
-dev_id)
->>>>  =20
->>>>   	if (!i2c_dev->is_curr_dma_xfer) {
->>>>   		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->>>> -			if (i2c_dev->msg_buf_remaining)
->>>> +			if (i2c_dev->msg_buf_remaining) {
->>>>   				tegra_i2c_empty_rx_fifo(i2c_dev);
->>>> -			else
->>>> -				BUG();
->>>> +			} else {
->>>> +				dev_err(i2c_dev->dev, "unexpected rx data request\n");
->>>> +				i2c_dev->msg_err |=3D I2C_ERR_UNEXPECTED_STATUS;
->>>> +				goto err;
->>>> +			}
->>>>   		}
->>>>  =20
->>>>   		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
->>>> @@ -876,7 +877,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *de=
-v_id)
->>>>   	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->>>>   		if (i2c_dev->is_curr_dma_xfer)
->>>>   			i2c_dev->msg_buf_remaining =3D 0;
->>>> -		BUG_ON(i2c_dev->msg_buf_remaining);
->>>> +		WARN_ON_ONCE(i2c_dev->msg_buf_remaining);
->>>>   		complete(&i2c_dev->msg_complete);
->>>>   	}
->>>>   	goto done;
->>>>
->>>
->>> Very nice, thank you very much! BTW, I think it may worth to add anothe=
-r
->>> patch that will reset hardware state in a case of the warning since we
->>> know that something gone wrong.
->>>
->>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>>
->>
->> Something like that:
->>
->>   	complete(&i2c_dev->msg_complete);
->>
->> 	if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
->> 		goto err;
->>
->=20
-> Ah, that's inside the ISR, so maybe will make sense to just not complete
-> the transfer and let it timeout:
->=20
-> 	if (!WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
-> 		complete(&i2c_dev->msg_complete);
-OK. I shall send the updated patch.
+Can you describe how you split things (perhaps even with a patch ;)?
+Is this literally the only issue you currently have? Because I'd
+expect similar issues to show up elsewhere too, but who knows.. You
+presumably do.
 
--Thanks,
-  Bitan
-
+                Linus
