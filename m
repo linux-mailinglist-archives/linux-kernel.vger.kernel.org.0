@@ -2,93 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8360F3852E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F2538549
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfFGHky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 03:40:54 -0400
-Received: from swift.blarg.de ([138.201.185.127]:39136 "EHLO swift.blarg.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfFGHky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 03:40:54 -0400
-Received: by swift.blarg.de (Postfix, from userid 1000)
-        id 3B03B4061F; Fri,  7 Jun 2019 09:40:52 +0200 (CEST)
-Date:   Fri, 7 Jun 2019 09:40:52 +0200
-From:   Max Kellermann <max@blarg.de>
-To:     Justin Piszcz <jpiszcz@lucidpixels.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: 5.1 kernel: khugepaged stuck at 100%
-Message-ID: <20190607074052.GA30233@swift.blarg.de>
-Mail-Followup-To: Justin Piszcz <jpiszcz@lucidpixels.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
- <20190509111343.rvmy5noqlf4os3zk@box>
- <CAO9zADww2v2ckHsNDwRgiyMr9b3JH1xOOSiRJ0Uh2XZT5c=MEQ@mail.gmail.com>
- <20190606172440.GA24838@swift.blarg.de>
+        id S1727866AbfFGHoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:44:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47308 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFGHoX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 03:44:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JShvpN7WursRgWDXz41S2caRK10woHUgD4tuDRKgTsc=; b=1S7ljWD5ClCiKXft78kkDXYzu
+        BR5E9SvvKZIxdJe1mhQhdLj/GwLRgpPtPTkqFWmg9yqjwQNhVjrPRSIeL/OoZlxczwx//D68q1XJs
+        FfByu9/q4FNFB5MXMSXJOJgnvL+2AJsWyK9lsq/Ah8896IEYsL9RTqGpSzTSuB3kfr8fec3EzuxQ/
+        65SeGDN5iK4k08dfXCNFi4ombF+WbCqRMUKIS3vXBM5VM3WBfBI8n3Yv55ZdItHAuZ42Kr9bR+wpr
+        j2D8T94McWzfsRBDWW4DzC7eThiUDI9XwBhKlICynz4wC6UJFeY7+mKw6hOTG2CA3XB8AR1FgneV1
+        THzrvW5Mw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hZ9X3-0002X3-7w; Fri, 07 Jun 2019 07:43:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 394D5202CD6B2; Fri,  7 Jun 2019 09:43:22 +0200 (CEST)
+Date:   Fri, 7 Jun 2019 09:43:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v7 18/27] mm: Introduce do_mmap_locked()
+Message-ID: <20190607074322.GP3419@hirez.programming.kicks-ass.net>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+ <20190606200646.3951-19-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606172440.GA24838@swift.blarg.de>
+In-Reply-To: <20190606200646.3951-19-yu-cheng.yu@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/06/06 19:24, Max Kellermann <max@blarg.de> wrote:
-> I have the same problem (kernel 5.1.7), but over here, it's a PHP
-> process, not khugepaged, which is looping inside compaction_alloc.
+On Thu, Jun 06, 2019 at 01:06:37PM -0700, Yu-cheng Yu wrote:
+> There are a few places that need do_mmap() with mm->mmap_sem held.
+> Create an in-line function for that.
+> 
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  include/linux/mm.h | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 398f1e1c35e5..7cf014604848 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2411,6 +2411,24 @@ static inline void mm_populate(unsigned long addr, unsigned long len)
+>  static inline void mm_populate(unsigned long addr, unsigned long len) {}
+>  #endif
+>  
+> +static inline unsigned long do_mmap_locked(unsigned long addr,
+> +	unsigned long len, unsigned long prot, unsigned long flags,
+> +	vm_flags_t vm_flags)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	unsigned long populate;
+> +
+> +	down_write(&mm->mmap_sem);
+> +	addr = do_mmap(NULL, addr, len, prot, flags, vm_flags, 0,
+> +		       &populate, NULL);
 
-This is what happened an hour later:
+Funny thing how do_mmap() takes a file pointer as first argument and
+this thing explicitly NULLs that. That more or less invalidates the name
+do_mmap_locked().
 
- kernel tried to execute NX-protected page - exploit attempt? (uid: 33333)
- BUG: unable to handle kernel paging request at ffffffffc036f00f
- #PF error: [PROT] [INSTR]
- PGD 35fa10067 P4D 35fa10067 PUD 35fa12067 PMD 105ba71067 PTE 800000022d28e061
- Oops: 0011 [#1] SMP PTI
- CPU: 12 PID: 263514 Comm: php-cgi7.0 Not tainted 5.1.7-cmag1-th+ #5
- Hardware name: HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 10/17/2018
- RIP: 0010:0xffffffffc036f00f
- Code: Bad RIP value.
- RSP: 0018:ffffb63c4d547928 EFLAGS: 00010216
- RAX: 0000000000000000 RBX: ffffb63c4d547b10 RCX: 0000ffc004d021bd
- RDX: ffff9ac83fffc500 RSI: 7fe0026810dee7ff RDI: 7fe0026810dee400
- RBP: 7fe0026810dee400 R08: 0000000000000002 R09: 0000000000020300
- R10: 00010642641a0d3a R11: 0000000000000001 R12: 7fe0026810dee800
- R13: 0000000000000001 R14: 0000000000000000 R15: ffff9ac83fffc500
- FS:  00007fa5c1000740(0000) GS:ffff9ad01f600000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: ffffffffc036efe5 CR3: 00000008eb8a0005 CR4: 00000000001606e0
- Call Trace:
-  ? move_freelist_tail+0xd0/0xd0
-  ? migrate_pages+0xaa/0x780
-  ? isolate_freepages_block+0x380/0x380
-  ? compact_zone+0x6ec/0xca0
-  ? compact_zone_order+0xd8/0x120
-  ? try_to_compact_pages+0xb1/0x260
-  ? __alloc_pages_direct_compact+0x87/0x160
-  ? __alloc_pages_slowpath+0x427/0xd50
-  ? __alloc_pages_nodemask+0x2d6/0x310
-  ? do_huge_pmd_anonymous_page+0x131/0x680
-  ? vma_merge+0x24f/0x3a0
-  ? __handle_mm_fault+0xbca/0x1260
-  ? handle_mm_fault+0x135/0x1b0
-  ? __do_page_fault+0x242/0x4b0
-  ? page_fault+0x8/0x30
-  ? page_fault+0x1e/0x30
- Modules linked in:
- CR2: ffffffffc036f00f
- ---[ end trace 0f31edf3041f5d9e ]---
- RIP: 0010:0xffffffffc036f00f
- Code: Bad RIP value.
- RSP: 0018:ffffb63c4d547928 EFLAGS: 00010216
- RAX: 0000000000000000 RBX: ffffb63c4d547b10 RCX: 0000ffc004d021bd
- RDX: ffff9ac83fffc500 RSI: 7fe0026810dee7ff RDI: 7fe0026810dee400
- RBP: 7fe0026810dee400 R08: 0000000000000002 R09: 0000000000020300
- R10: 00010642641a0d3a R11: 0000000000000001 R12: 7fe0026810dee800
- R13: 0000000000000001 R14: 0000000000000000 R15: ffff9ac83fffc500
- FS:  00007fa5c1000740(0000) GS:ffff9ad01f600000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: ffffffffc036efe5 CR3: 00000008eb8a0005 CR4: 00000000001606e0
+> +	up_write(&mm->mmap_sem);
+> +
+> +	if (populate)
+> +		mm_populate(addr, populate);
+> +
+> +	return addr;
+> +}
+
+
