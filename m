@@ -2,170 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE0BD38427
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3E43841D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfFGGIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 02:08:16 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50096 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726948AbfFGGIP (ORCPT
+        id S1726928AbfFGGHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:07:53 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53565 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFGGHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:08:15 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R751e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TTcZLUN_1559887677;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TTcZLUN_1559887677)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 07 Jun 2019 14:08:11 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
-        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
-        shakeelb@google.com, rientjes@google.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] mm: shrinker: make shrinker not depend on memcg kmem
-Date:   Fri,  7 Jun 2019 14:07:39 +0800
-Message-Id: <1559887659-23121-5-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1559887659-23121-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1559887659-23121-1-git-send-email-yang.shi@linux.alibaba.com>
+        Fri, 7 Jun 2019 02:07:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id x15so688981wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 23:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=6xJ4Zi0fEzF1tamGyEeDu2gwAQnQnxhNg41rFECCkME=;
+        b=j1kxod//g55v+aH9PBXXXCXwL4CPf5Z5ng1IQ85XBMkKZwUXVz5JzjKRrl3YV3MYHh
+         5QEo9EtbKVWSFhvsQtEQ2knHJfp8/9EMq86MrSnhNT4HwGUG3qGK8yv1go7PKxIHtv8Z
+         x5i7xnmgrN1ki+HZ7iA7v1Wph8U7c+hVnMbbx8KOCpC3fYGHojp59mY5/Aplw/ZA3Zxv
+         85hT6g0MPadKGjRjBGVtxFU2sZ1brlAS8opEUswBxGegwMLqGXA3xzu3FJkTNxuzsfBT
+         /Krk/5igaBPzGDw04EUyRZzCFNUIa8lEdQE8fzUlhyt1uPb2dsF2j9eWvylzbOPusXGo
+         ShGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=6xJ4Zi0fEzF1tamGyEeDu2gwAQnQnxhNg41rFECCkME=;
+        b=cksgA0fLrLEzWze/RHmSlWJGrt/KVnkIoAaDJT974vDAloIcHreIVIzxDPmr5ewCGq
+         oj1YBz/0nef035cGsAQBHeNPiwL6ZDOEpHU/FHvDwebxjbUgaWkIJizqYKDfXTRsJwiS
+         7nsflgdJGgt8zNRf8/bJWS2j2ry/puqdOtpcC5xLT91B0ewrsvbfR6BI7a+lxJAjWoD6
+         htMkheCHJn2LqB7cQklMovze6B59ud/r1kbUwwcYzvSP7qj+xdxpNJI+uMyIR956gnjE
+         HfPjq/T7Em+oVutrMIQrXRz7fbwT3vIGDVml58+jS/YPrj11b59IIAxabbjMGosF7cwD
+         /OEg==
+X-Gm-Message-State: APjAAAUfAccXqb6zqyeeLTr6hFcKzHtp/wsMwsHZDOIQRJ/NBatpeTa1
+        7Okgg/ovlyrEF2UvYZBy3Tqglg==
+X-Google-Smtp-Source: APXvYqwISqB3DmYuwmFsvD/7tOs53RmwCC1Gt1bRtzf4ND71VN50Ybj8wEoqZJLBWqG9rrbs3alEZA==
+X-Received: by 2002:a1c:c2d5:: with SMTP id s204mr2338221wmf.174.1559887670872;
+        Thu, 06 Jun 2019 23:07:50 -0700 (PDT)
+Received: from [192.168.0.102] (88-147-34-172.dyn.eolo.it. [88.147.34.172])
+        by smtp.gmail.com with ESMTPSA id n7sm787465wrw.64.2019.06.06.23.07.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 23:07:50 -0700 (PDT)
+From:   Paolo Valente <paolo.valente@linaro.org>
+Message-Id: <3F21E6DF-2688-46A8-8A41-320BCBA86D05@linaro.org>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_5E4D2C27-0D0A-4856-A512-45033AE94569";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: [PATCH 5/6] bfq-iosched: move bfq_stat_recursive_sum into the
+ only caller
+Date:   Fri, 7 Jun 2019 08:07:48 +0200
+In-Reply-To: <20190606102624.3847-6-hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Christoph Hellwig <hch@lst.de>
+References: <20190606102624.3847-1-hch@lst.de>
+ <20190606102624.3847-6-hch@lst.de>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently shrinker is just allocated and can work when memcg kmem is
-enabled.  But, THP deferred split shrinker is not slab shrinker, it
-doesn't make too much sense to have such shrinker depend on memcg kmem.
-It should be able to reclaim THP even though memcg kmem is disabled.
 
-Introduce a new shrinker flag, SHRINKER_NONSLAB, for non-slab shrinker,
-i.e. THP deferred split shrinker.  When memcg kmem is disabled, just
-such shrinkers can be called in shrinking memcg slab.
+--Apple-Mail=_5E4D2C27-0D0A-4856-A512-45033AE94569
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: David Rientjes <rientjes@google.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- include/linux/shrinker.h |  3 +--
- mm/huge_memory.c         |  3 ++-
- mm/vmscan.c              | 27 ++++++---------------------
- 3 files changed, 9 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 9443caf..e14f68e 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -69,10 +69,8 @@ struct shrinker {
- 
- 	/* These are for internal use */
- 	struct list_head list;
--#ifdef CONFIG_MEMCG_KMEM
- 	/* ID in shrinker_idr */
- 	int id;
--#endif
- 	/* objs pending delete, per node */
- 	atomic_long_t *nr_deferred;
- };
-@@ -81,6 +79,7 @@ struct shrinker {
- /* Flags */
- #define SHRINKER_NUMA_AWARE	(1 << 0)
- #define SHRINKER_MEMCG_AWARE	(1 << 1)
-+#define SHRINKER_NONSLAB	(1 << 2)
- 
- extern int prealloc_shrinker(struct shrinker *shrinker);
- extern void register_shrinker_prepared(struct shrinker *shrinker);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 50f4720..e77a9fc 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2913,7 +2913,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	.count_objects = deferred_split_count,
- 	.scan_objects = deferred_split_scan,
- 	.seeks = DEFAULT_SEEKS,
--	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE,
-+	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE |
-+		 SHRINKER_NONSLAB,
- };
- 
- #ifdef CONFIG_DEBUG_FS
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 7acd0af..62000ae 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -174,8 +174,6 @@ struct scan_control {
- static LIST_HEAD(shrinker_list);
- static DECLARE_RWSEM(shrinker_rwsem);
- 
--#ifdef CONFIG_MEMCG_KMEM
--
- /*
-  * We allow subsystems to populate their shrinker-related
-  * LRU lists before register_shrinker_prepared() is called
-@@ -227,16 +225,6 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
- 	idr_remove(&shrinker_idr, id);
- 	up_write(&shrinker_rwsem);
- }
--#else /* CONFIG_MEMCG_KMEM */
--static int prealloc_memcg_shrinker(struct shrinker *shrinker)
--{
--	return 0;
--}
--
--static void unregister_memcg_shrinker(struct shrinker *shrinker)
--{
--}
--#endif /* CONFIG_MEMCG_KMEM */
- 
- #ifdef CONFIG_MEMCG
- static bool global_reclaim(struct scan_control *sc)
-@@ -579,7 +567,6 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	return freed;
- }
- 
--#ifdef CONFIG_MEMCG_KMEM
- static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 			struct mem_cgroup *memcg, int priority)
- {
-@@ -587,7 +574,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 	unsigned long ret, freed = 0;
- 	int i;
- 
--	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
-+	if (!mem_cgroup_online(memcg))
- 		return 0;
- 
- 	if (!down_read_trylock(&shrinker_rwsem))
-@@ -613,6 +600,11 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 			continue;
- 		}
- 
-+		/* Call non-slab shrinkers even though kmem is disabled */
-+		if (!memcg_kmem_enabled() &&
-+		    !(shrinker->flags & SHRINKER_NONSLAB))
-+			continue;
-+
- 		ret = do_shrink_slab(&sc, shrinker, priority);
- 		if (ret == SHRINK_EMPTY) {
- 			clear_bit(i, map->map);
-@@ -649,13 +641,6 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 	up_read(&shrinker_rwsem);
- 	return freed;
- }
--#else /* CONFIG_MEMCG_KMEM */
--static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
--			struct mem_cgroup *memcg, int priority)
--{
--	return 0;
--}
--#endif /* CONFIG_MEMCG_KMEM */
- 
- /**
-  * shrink_slab - shrink slab caches
--- 
-1.8.3.1
 
+> Il giorno 6 giu 2019, alle ore 12:26, Christoph Hellwig <hch@lst.de> =
+ha scritto:
+>=20
+> This function was moved from core block code and is way to generic.
+> Fold it into the only caller and simplify it based on the actually
+> passed arguments.
+>=20
+
+Acked-by: Paolo Valente <paolo.valente@linaro.org>
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+> block/bfq-cgroup.c | 62 ++++++++++++++--------------------------------
+> 1 file changed, 19 insertions(+), 43 deletions(-)
+>=20
+> diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
+> index a691dca7e966..d84302445e30 100644
+> --- a/block/bfq-cgroup.c
+> +++ b/block/bfq-cgroup.c
+> @@ -80,47 +80,6 @@ static inline void bfq_stat_add_aux(struct bfq_stat =
+*to,
+> 		     &to->aux_cnt);
+> }
+>=20
+> -/**
+> - * bfq_stat_recursive_sum - collect hierarchical bfq_stat
+> - * @blkg: blkg of interest
+> - * @pol: blkcg_policy which contains the bfq_stat
+> - * @off: offset to the bfq_stat in blkg_policy_data or @blkg
+> - *
+> - * Collect the bfq_stat specified by @blkg, @pol and @off and all its
+> - * online descendants and their aux counts.  The caller must be =
+holding the
+> - * queue lock for online tests.
+> - *
+> - * If @pol is NULL, bfq_stat is at @off bytes into @blkg; otherwise, =
+it is
+> - * at @off bytes into @blkg's blkg_policy_data of the policy.
+> - */
+> -static u64 bfq_stat_recursive_sum(struct blkcg_gq *blkg,
+> -			    struct blkcg_policy *pol, int off)
+> -{
+> -	struct blkcg_gq *pos_blkg;
+> -	struct cgroup_subsys_state *pos_css;
+> -	u64 sum =3D 0;
+> -
+> -	lockdep_assert_held(&blkg->q->queue_lock);
+> -
+> -	rcu_read_lock();
+> -	blkg_for_each_descendant_pre(pos_blkg, pos_css, blkg) {
+> -		struct bfq_stat *stat;
+> -
+> -		if (!pos_blkg->online)
+> -			continue;
+> -
+> -		if (pol)
+> -			stat =3D (void *)blkg_to_pd(pos_blkg, pol) + =
+off;
+> -		else
+> -			stat =3D (void *)blkg + off;
+> -
+> -		sum +=3D bfq_stat_read(stat) + =
+atomic64_read(&stat->aux_cnt);
+> -	}
+> -	rcu_read_unlock();
+> -
+> -	return sum;
+> -}
+> -
+> /**
+>  * blkg_prfill_stat - prfill callback for bfq_stat
+>  * @sf: seq_file to print to
+> @@ -1045,8 +1004,25 @@ static int bfqg_print_rwstat(struct seq_file =
+*sf, void *v)
+> static u64 bfqg_prfill_stat_recursive(struct seq_file *sf,
+> 				      struct blkg_policy_data *pd, int =
+off)
+> {
+> -	u64 sum =3D bfq_stat_recursive_sum(pd_to_blkg(pd),
+> -					  &blkcg_policy_bfq, off);
+> +	struct blkcg_gq *blkg =3D pd_to_blkg(pd);
+> +	struct blkcg_gq *pos_blkg;
+> +	struct cgroup_subsys_state *pos_css;
+> +	u64 sum =3D 0;
+> +
+> +	lockdep_assert_held(&blkg->q->queue_lock);
+> +
+> +	rcu_read_lock();
+> +	blkg_for_each_descendant_pre(pos_blkg, pos_css, blkg) {
+> +		struct bfq_stat *stat;
+> +
+> +		if (!pos_blkg->online)
+> +			continue;
+> +
+> +		stat =3D (void *)blkg_to_pd(pos_blkg, &blkcg_policy_bfq) =
++ off;
+> +		sum +=3D bfq_stat_read(stat) + =
+atomic64_read(&stat->aux_cnt);
+> +	}
+> +	rcu_read_unlock();
+> +
+> 	return __blkg_prfill_u64(sf, pd, sum);
+> }
+>=20
+> --
+> 2.20.1
+>=20
+
+
+--Apple-Mail=_5E4D2C27-0D0A-4856-A512-45033AE94569
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEpYoduex+OneZyvO8OAkCLQGo9oMFAlz5/zQACgkQOAkCLQGo
+9oMJ1g//Uq6rihqfY8N/SIZ5zFCHuk8eizqXtFV4p1MKbm84R2YUTOZWifce95vW
+5R5XVD7mRQ2h4hzwDW1r7aE+reoCCAlCIGqXITUpT/e2PpUvRmY+6Wcs6Vwcd9vR
+GfZjKIGqydgbxRfdBho352yUN+/QYJxR+XSkwVLzNQVKKuuzbGQFh3kafY/mjE1b
+m1WoyOmUgjve+ui4TGyU5M3Mn3aRCSzoYWzIj1QyOqjgaFp9FFkFKGv46fu2C2zP
+SGYbSvn+WuLxBhh+Wh8A0gDREuV7MyPyOVCZMA8VN7fCBykrCT6d6TKjTmc20WuY
+7mT6MNFF0mom6dIX2spjTL0rnAdgKkRInwaI5RJm1fQXVVPZTm4hArKfK0Yl/68D
+BM1kqYh2T8OLEiTQLCL5IRX844El11g/btmlNLlhBPeUeNkERe6CucSX0++UllA6
+TREKdlmE1Jy/8uZKgCEgJpAOB8mCnU+MxrpXSGrY+V/iBtZt12R5M8nXLmWgiJ1p
+xXPyvE5JMYg6xgAMTBO9mnBsTALF11WRQl9PVWdmOxWUFiZhRgzdp3zgpoaFAFjW
+YAOxsLp2LY7iz7TT9KGoE/uN6rArHIVYnMTuzWfCv547wnwQXlYXaJBSSqKxEoj/
+5P52zzCamgtxlKahQHQ/JJQcvRloGKFgZNm2N5igas9duc07e+o=
+=25My
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_5E4D2C27-0D0A-4856-A512-45033AE94569--
