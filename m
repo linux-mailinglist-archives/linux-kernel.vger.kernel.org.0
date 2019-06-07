@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6CB39847
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA0D39844
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731578AbfFGWKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:10:21 -0400
+        id S1731548AbfFGWKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:10:09 -0400
 Received: from mga06.intel.com ([134.134.136.31]:58792 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727213AbfFGWKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731524AbfFGWKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Jun 2019 18:10:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 15:10:03 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 15:10:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,564,1557212400"; 
-   d="scan'208";a="182814107"
+   d="scan'208";a="182814110"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2019 15:10:03 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -30,9 +30,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait C0.2 state
-Date:   Fri,  7 Jun 2019 15:00:35 -0700
-Message-Id: <1559944837-149589-4-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v4 4/5] x86/umwait: Add sysfs interface to control umwait maximum time
+Date:   Fri,  7 Jun 2019 15:00:36 -0700
+Message-Id: <1559944837-149589-5-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
 References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
@@ -41,110 +41,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-C0.2 state in umwait and tpause instructions can be enabled or disabled
-on a processor through IA32_UMWAIT_CONTROL MSR register.
+IA32_UMWAIT_CONTROL[31:2] determines the maximum time in TSC-quanta
+that processor can stay in C0.1 or C0.2. A zero value means no maximum
+time.
 
-By default, C0.2 is enabled and the user wait instructions result in
-lower power consumption with slower wakeup time.
+Each instruction sets its own deadline in the instruction's implicit
+input EDX:EAX value. The instruction wakes up if the time-stamp counter
+reaches or exceeds the specified deadline, or the umwait maximum time
+expires, or a store happens in the monitored address range in umwait.
 
-But in real time systems which require faster wakeup time although power
-savings could be smaller, the administrator needs to disable C0.2 and all
-C0.2 requests from user applications revert to C0.1.
-
-A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c02" is
-created to allow the administrator to control C0.2 state during run time.
+Users can write an unsigned 32-bit number to
+/sys/devices/system/cpu/umwait_control/max_time to change the default
+value. Note that a value of zero means there is no limit. Low order
+two bits must be zero.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/power/umwait.c | 89 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 88 insertions(+), 1 deletion(-)
+ arch/x86/power/umwait.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
-index 23151e77c138..9c176f3e59b6 100644
+index 9c176f3e59b6..7fa381e3fd4e 100644
 --- a/arch/x86/power/umwait.c
 +++ b/arch/x86/power/umwait.c
-@@ -11,10 +11,18 @@
-  */
- static u32 umwait_control_cached = 100000;
- 
-+/*
-+ * Serialize access to umwait_control_cached and IA32_UMWAIT_CONTROL MSR
-+ * to guarantee all CPUs have the same MSR value.
-+ */
-+static DEFINE_MUTEX(umwait_lock);
-+
- /* Set up IA32_UMWAIT_CONTROL MSR on CPU using the current global setting. */
- static int umwait_cpu_online(unsigned int cpu)
- {
-+	mutex_lock(&umwait_lock);
- 	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
-+	mutex_unlock(&umwait_lock);
- 
- 	return 0;
+@@ -104,8 +104,47 @@ static ssize_t enable_c02_store(struct device *dev,
  }
-@@ -30,6 +38,7 @@ static int umwait_cpu_online(unsigned int cpu)
-  */
- static void umwait_syscore_resume(void)
- {
-+	/* No need to lock because only BP is running now. */
- 	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
- }
+ static DEVICE_ATTR_RW(enable_c02);
  
-@@ -37,17 +46,95 @@ static struct syscore_ops umwait_syscore_ops = {
- 	.resume	= umwait_syscore_resume,
- };
- 
-+static void umwait_control_msr_update(void *unused)
-+{
-+	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
-+}
-+
-+static u32 get_umwait_control_c02(void)
-+{
-+	return umwait_control_cached & MSR_IA32_UMWAIT_CONTROL_C02;
-+}
-+
-+static u32 get_umwait_control_max_time(void)
-+{
-+	return umwait_control_cached & MSR_IA32_UMWAIT_CONTROL_MAX_TIME;
-+}
-+
 +static ssize_t
-+enable_c02_show(struct device *dev, struct device_attribute *attr, char *buf)
++max_time_show(struct device *kobj, struct device_attribute *attr, char *buf)
 +{
-+	 /*
-+	  * When bit 0 in IA32_UMWAIT_CONTROL MSR is 1, C0.2 is disabled.
-+	  * Otherwise, C0.2 is enabled. Show the opposite of bit 0.
-+	  */
-+	return sprintf(buf, "%d\n", !(bool)get_umwait_control_c02());
++	return sprintf(buf, "%u\n", get_umwait_control_max_time());
 +}
 +
-+static ssize_t enable_c02_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
++static ssize_t max_time_store(struct device *kobj,
++			      struct device_attribute *attr,
++			      const char *buf, size_t count)
 +{
-+	u32 umwait_control_c02;
-+	bool c02_enabled;
++	u32 max_time;
 +	int ret;
 +
-+	ret = kstrtobool(buf, &c02_enabled);
++	ret = kstrtou32(buf, 0, &max_time);
 +	if (ret)
 +		return ret;
 +
++	/* bits[1:0] must be zero */
++	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_MAX_TIME)
++		return -EINVAL;
++
 +	mutex_lock(&umwait_lock);
 +
-+	/*
-+	 * The value of bit 0 in IA32_UMWAIT_CONTROL MSR is opposite of
-+	 * c02_enabled.
-+	 */
-+	umwait_control_c02 = (u32)!c02_enabled;
-+	if (umwait_control_c02 == get_umwait_control_c02())
++	if (max_time == get_umwait_control_max_time())
 +		goto out_unlock;
 +
-+	umwait_control_cached = umwait_control_c02 | get_umwait_control_max_time();
-+	/* Enable/disable C0.2 state on all CPUs */
++	umwait_control_cached = max_time | get_umwait_control_c02();
++
++	/* Update umwait max time on all CPUs */
 +	on_each_cpu(umwait_control_msr_update, NULL, 1);
 +
 +out_unlock:
@@ -152,42 +106,13 @@ index 23151e77c138..9c176f3e59b6 100644
 +
 +	return count;
 +}
-+static DEVICE_ATTR_RW(enable_c02);
++static DEVICE_ATTR_RW(max_time);
 +
-+static struct attribute *umwait_attrs[] = {
-+	&dev_attr_enable_c02.attr,
-+	NULL
-+};
-+
-+static struct attribute_group umwait_attr_group = {
-+	.attrs = umwait_attrs,
-+	.name = "umwait_control",
-+};
-+
- static int __init umwait_init(void)
- {
-+	struct device *dev;
- 	int ret;
- 
- 	if (!boot_cpu_has(X86_FEATURE_WAITPKG))
- 		return -ENODEV;
- 
-+	/* Add umwait control interface. */
-+	dev = cpu_subsys.dev_root;
-+	ret = sysfs_create_group(&dev->kobj, &umwait_attr_group);
-+	if (ret)
-+		return ret;
-+
- 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
- 				umwait_cpu_online, NULL);
--	if (ret < 0)
-+	if (ret < 0) {
-+		sysfs_remove_group(&dev->kobj, &umwait_attr_group);
-+
- 		return ret;
-+	}
- 
- 	register_syscore_ops(&umwait_syscore_ops);
+ static struct attribute *umwait_attrs[] = {
+ 	&dev_attr_enable_c02.attr,
++	&dev_attr_max_time.attr,
+ 	NULL
+ };
  
 -- 
 2.19.1
