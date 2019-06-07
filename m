@@ -2,110 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74447390B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D35F390C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbfFGPxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:53:47 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:60736 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731635AbfFGPxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:53:44 -0400
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x57FrX3q006174;
-        Sat, 8 Jun 2019 00:53:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x57FrX3q006174
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1559922813;
-        bh=dRixWfLZ7SzgcepcHFcC37ckogGIK76yARpWp2NLO9o=;
-        h=From:Date:Subject:To:Cc:From;
-        b=fjJ0UvNMrIc0crb412Fdm6ENuLvowMAwXj/pRw6DhDw0p6JbYZXnHG6MLsI4sTWmj
-         FlxaWCsUhv8QzmbpCdS3BkEjq+xHDPS0lvH5VLcTmRiuKTkK7/ktSD+eIWAjarQmvY
-         OO6DKtoEpv+tyE5TURRv26M7HYnDCYE2UeGOvWC52QKWTgJIy9Av6+PbNXwde1TRyl
-         xMGbjWJgznSAAsTrIIbeoUK2g4Eu7NUxACRV1gzwmfBAEVAUNmhTSzTvi4UjhAxWz8
-         QZ/qfGMLNb3J91GR0cmPKrcJ8dsUzo8BtRDvGuZM0/Z4zGKqCfrf+LOMnAQjbFlyks
-         DFP2jDcD8yuug==
-X-Nifty-SrcIP: [209.85.217.41]
-Received: by mail-vs1-f41.google.com with SMTP id c24so1431486vsp.7;
-        Fri, 07 Jun 2019 08:53:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAV+9Uw76SB1ZQAUVg6dRjfqGJEL3Nz4V9jDvnrCDFmaXBF+VHrj
-        B2itRNBhUBmf6pVS0UpnDSv7Hd/PW0jOEKvaC/c=
-X-Google-Smtp-Source: APXvYqy59eu7M81YqfHo3Tzr2QVpEsq2twQ88Qqs3e3wKUfg6+Eny6o+8BA34I/XUFvrWrqsI4PuLMTJ8Cih8y6PzKI=
-X-Received: by 2002:a67:ed04:: with SMTP id l4mr10531967vsp.179.1559922812584;
- Fri, 07 Jun 2019 08:53:32 -0700 (PDT)
+        id S1732071AbfFGPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:54:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:43498 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729748AbfFGPyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:54:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41E62337;
+        Fri,  7 Jun 2019 08:54:11 -0700 (PDT)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7739B3F718;
+        Fri,  7 Jun 2019 08:54:09 -0700 (PDT)
+Subject: Re: [PATCH v3 4/8] arm64: Fix interrupt tracing in the presence of
+ NMIs
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     mark.rutland@arm.com, Jason Cooper <jason@lakedaemon.net>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        james.morse@arm.com, yuzenghui@huawei.com,
+        wanghaibin.wang@huawei.com, Thomas Gleixner <tglx@linutronix.de>,
+        liwei391@huawei.com
+References: <1559813517-41540-1-git-send-email-julien.thierry@arm.com>
+ <1559813517-41540-5-git-send-email-julien.thierry@arm.com>
+ <72cc234e-1c70-9356-bf53-0e3aa4ba43c5@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <2e8805e1-7b47-e578-0fae-58d2fdcab885@arm.com>
+Date:   Fri, 7 Jun 2019 16:54:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 8 Jun 2019 00:52:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQZ2FAZcc367eCPqhwYRVvP+65hDa5hx6qfTwh2qVGL=w@mail.gmail.com>
-Message-ID: <CAK7LNAQZ2FAZcc367eCPqhwYRVvP+65hDa5hx6qfTwh2qVGL=w@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v5.2-rc4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <72cc234e-1c70-9356-bf53-0e3aa4ba43c5@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-Please pull some Kbuild fixes.
-Thanks.
 
 
+On 07/06/2019 16:42, Marc Zyngier wrote:
+> On 06/06/2019 10:31, Julien Thierry wrote:
+>> In the presence of any form of instrumentation, nmi_enter() should be
+>> done before calling any traceable code and any instrumentation code.
+>>
+>> Currently, nmi_enter() is done in handle_domain_nmi(), which is much
+>> too late as instrumentation code might get called before. Move the
+>> nmi_enter/exit() calls to the arch IRQ vector handler.
+>>
+>> On arm64, it is not possible to know if the IRQ vector handler was
+>> called because of an NMI before acknowledging the interrupt. However, It
+>> is possible to know whether normal interrupts could be taken in the
+>> interrupted context (i.e. if taking an NMI in that context could
+>> introduce a potential race condition).
+>>
+>> When interrupting a context with IRQs disabled, call nmi_enter() as soon
+>> as possible. In contexts with IRQs enabled, defer this to the interrupt
+>> controller, which is in a better position to know if an interrupt taken
+>> is an NMI.
+>>
+>> Fixes: bc3c03ccb ("arm64: Enable the support of pseudo-NMIs")
+>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Jason Cooper <jason@lakedaemon.net>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> ---
+>>  arch/arm64/kernel/entry.S    | 44 +++++++++++++++++++++++++++++++++-----------
+>>  arch/arm64/kernel/irq.c      | 17 +++++++++++++++++
+>>  drivers/irqchip/irq-gic-v3.c |  6 ++++++
+>>  kernel/irq/irqdesc.c         |  8 ++++++--
+>>  4 files changed, 62 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+>> index 89ab6bd..46358a3 100644
+>> --- a/arch/arm64/kernel/entry.S
+>> +++ b/arch/arm64/kernel/entry.S
+>> @@ -435,6 +435,20 @@ tsk	.req	x28		// current thread_info
+>>  	irq_stack_exit
+>>  	.endm
+>>
+>> +#ifdef CONFIG_ARM64_PSEUDO_NMI
+>> +	/*
+>> +	 * Set res to 0 if irqs were masked in interrupted context.
+> 
+> Is that comment right? This macro seems to return 0 if PMR is equal to
+> GIC_PRIO_IRQON, meaning that irqs are unmasked...
 
-The following changes since commit f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a:
+You're right, the comment is wrong. At least the references to the macro
+seem to be doing the right thing and interpreting 0 as "irqs were
+unmasked" :) .
 
-  Linux 5.2-rc3 (2019-06-02 13:55:33 -0700)
+> 
+>> +	 * Otherwise set res to non-0 value.
+>> +	 */
+>> +	.macro	test_irqs_unmasked res:req, pmr:req
+>> +alternative_if ARM64_HAS_IRQ_PRIO_MASKING
+>> +	sub	\res, \pmr, #GIC_PRIO_IRQON
+>> +alternative_else
+>> +	mov	\res, xzr
+>> +alternative_endif
+>> +	.endm
+>> +#endif
+>> +
+>>  	.text
+>>
+>>  /*
+>> @@ -631,19 +645,19 @@ ENDPROC(el1_sync)
+>>  el1_irq:
+>>  	kernel_entry 1
+>>  	enable_da_f
+>> -#ifdef CONFIG_TRACE_IRQFLAGS
+>> +
+>>  #ifdef CONFIG_ARM64_PSEUDO_NMI
+>>  alternative_if ARM64_HAS_IRQ_PRIO_MASKING
+>>  	ldr	x20, [sp, #S_PMR_SAVE]
+>> -alternative_else
+>> -	mov	x20, #GIC_PRIO_IRQON
+>> -alternative_endif
+>> -	cmp	x20, #GIC_PRIO_IRQOFF
+>> -	/* Irqs were disabled, don't trace */
+>> -	b.ls	1f
+>> +alternative_else_nop_endif
+>> +	test_irqs_unmasked	res=x0, pmr=x20
+>> +	cbz	x0, 1f
+>> +	bl	asm_nmi_enter
+>> +1:
+>>  #endif
+>> +
+>> +#ifdef CONFIG_TRACE_IRQFLAGS
+>>  	bl	trace_hardirqs_off
+>> -1:
+>>  #endif
+>>
+>>  	irq_handler
+>> @@ -662,14 +676,22 @@ alternative_else_nop_endif
+>>  	bl	preempt_schedule_irq		// irq en/disable is done inside
+>>  1:
+>>  #endif
+>> -#ifdef CONFIG_TRACE_IRQFLAGS
+>> +
+>>  #ifdef CONFIG_ARM64_PSEUDO_NMI
+>>  	/*
+>>  	 * if IRQs were disabled when we received the interrupt, we have an NMI
+>>  	 * and we are not re-enabling interrupt upon eret. Skip tracing.
+>>  	 */
+>> -	cmp	x20, #GIC_PRIO_IRQOFF
+>> -	b.ls	1f
+>> +	test_irqs_unmasked	res=x0, pmr=x20
+>> +	cbz	x0, 1f
+>> +	bl	asm_nmi_exit
+>> +1:
+>> +#endif
+>> +
+>> +#ifdef CONFIG_TRACE_IRQFLAGS
+>> +#ifdef CONFIG_ARM64_PSEUDO_NMI
+>> +	test_irqs_unmasked	res=x0, pmr=x20
+>> +	cbnz	x0, 1f
+>>  #endif
+>>  	bl	trace_hardirqs_on
+>>  1:
+>> diff --git a/arch/arm64/kernel/irq.c b/arch/arm64/kernel/irq.c
+>> index 92fa817..fdd9cb2 100644
+>> --- a/arch/arm64/kernel/irq.c
+>> +++ b/arch/arm64/kernel/irq.c
+>> @@ -27,8 +27,10 @@
+>>  #include <linux/smp.h>
+>>  #include <linux/init.h>
+>>  #include <linux/irqchip.h>
+>> +#include <linux/kprobes.h>
+>>  #include <linux/seq_file.h>
+>>  #include <linux/vmalloc.h>
+>> +#include <asm/daifflags.h>
+>>  #include <asm/vmap_stack.h>
+>>
+>>  unsigned long irq_err_count;
+>> @@ -76,3 +78,18 @@ void __init init_IRQ(void)
+>>  	if (!handle_arch_irq)
+>>  		panic("No interrupt controller found.");
+>>  }
+>> +
+>> +/*
+>> + * Stubs to make nmi_enter/exit() code callable from ASM
+>> + */
+>> +asmlinkage void notrace asm_nmi_enter(void)
+>> +{
+>> +	nmi_enter();
+>> +}
+>> +NOKPROBE_SYMBOL(asm_nmi_enter);
+>> +
+>> +asmlinkage void notrace asm_nmi_exit(void)
+>> +{
+>> +	nmi_exit();
+>> +}
+>> +NOKPROBE_SYMBOL(asm_nmi_exit);
+>> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+>> index f44cd89..0bf0fc4 100644
+>> --- a/drivers/irqchip/irq-gic-v3.c
+>> +++ b/drivers/irqchip/irq-gic-v3.c
+>> @@ -495,7 +495,13 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+>>
+>>  	if (gic_supports_nmi() &&
+>>  	    unlikely(gic_read_rpr() == GICD_INT_NMI_PRI)) {
+>> +		if (interrupts_enabled(regs))
+>> +			nmi_enter();
+>> +
+>>  		gic_handle_nmi(irqnr, regs);
+>> +
+>> +		if (interrupts_enabled(regs))
+>> +			nmi_exit();
+> 
+> Just to be on the safe side, I'd rather sample interrupts_enabled(regs)
+> and use the same value to decide whether to do nmi_exit or not.
+> 
 
-are available in the Git repository at:
+Fair enough.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v5.2-2
+In case there are no other issues, can this (and the comment) be amended
+or shall respin the series? (If there are other isues raised I'll just
+respin).
 
-for you to fetch changes up to 913ab9780fc021298949cc5514d6255a008e69f9:
-
-  kbuild: use more portable 'command -v' for cc-cross-prefix
-(2019-06-08 00:38:47 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v5.2 (2nd)
-
- - fix kselftest-merge to find config fragments in deeper directories
-
- - fix kconfig unit test, which was broken by SPDX tag addition
-
- - add + prefix to buildtar to suppress jobserver unavailable warning
-
- - fix checkstack.pl to recognize arch=arm64
-
- - suppress noisy warning from cc-cross-prefix
-
-----------------------------------------------------------------
-Dan Rue (1):
-      kbuild: teach kselftest-merge to find nested config files
-
-George G. Davis (1):
-      scripts/checkstack.pl: Fix arm64 wrong or unknown architecture
-
-Masahiro Yamada (2):
-      kconfig: tests: fix recursive inclusion unit test
-      kbuild: use more portable 'command -v' for cc-cross-prefix
-
-Trevor Bourget (1):
-      kbuild: tar-pkg: enable communication with jobserver
-
- Makefile                                                | 5 ++---
- scripts/Kbuild.include                                  | 7 ++++++-
- scripts/checkstack.pl                                   | 2 +-
- scripts/kconfig/tests/err_recursive_inc/expected_stderr | 6 +++---
- scripts/package/Makefile                                | 2 +-
- 5 files changed, 13 insertions(+), 9 deletions(-)
-
+Thanks,
 
 -- 
-Best Regards
-Masahiro Yamada
+Julien Thierry
