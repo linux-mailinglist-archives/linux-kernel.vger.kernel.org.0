@@ -2,95 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB9AC391EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA468391C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:20:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730794AbfFGQZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:25:10 -0400
-Received: from mga09.intel.com ([134.134.136.24]:13437 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730634AbfFGQZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:25:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 09:25:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,563,1557212400"; 
-   d="scan'208";a="182720042"
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2019 09:25:08 -0700
-Message-ID: <1b5778f8f1336ad7a63f4621f189b7f04a56a9ed.camel@intel.com>
-Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
- ELF file
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Fri, 07 Jun 2019 09:17:06 -0700
-In-Reply-To: <20190607075822.GR3419@hirez.programming.kicks-ass.net>
-References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
-         <20190606200646.3951-23-yu-cheng.yu@intel.com>
-         <20190607075822.GR3419@hirez.programming.kicks-ass.net>
+        id S1729996AbfFGQUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:20:04 -0400
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:47013 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729127AbfFGQUD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 12:20:03 -0400
+Received: by mail-lj1-f173.google.com with SMTP id m15so2227850ljg.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 09:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sah1sze9qZQXC9dhxye7WQeDvgCv5Q6wpPURRp8bWQs=;
+        b=GZp/BOH8X5Pg721SyiLtnieCJ/ZD2Ktw+FSJGwq590YKHcmVc4mKv9e4VgZjoepG+N
+         L9grIrK4IatsF2cxfARKtaaDuUoOOYkIk1HZzSNsBgIVd6L0FrIRl1HF5p2lKnJv9IyM
+         mXYfqUagFtpgySX1R/W0DkVdRgXr8y5qemuHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sah1sze9qZQXC9dhxye7WQeDvgCv5Q6wpPURRp8bWQs=;
+        b=f/88a2EA4QBeQOmqXUv1SQijkGQzsKM7VDn02vFfJLKORgZdzOuz7tE69AEFtzmpyP
+         JFxkdX1mTha4gDpGABAbciqkKhVt2BB1jGRvyGJA7SfPuq5VBnuzzbkAZEPAQQ5+7biZ
+         biveTYxFEqp3s7OPP/93rUJNx3TmZFjYx6LlCNnpgdNU4lCgdWC0lpuTZRyIebZMgeu6
+         nfaU+kyXL4kyfOOHm4L3jU5V1NdWaCDb9DOfSJ41qE+Kh3qfGXXjrIX0kdkeZdmsQQRm
+         tRf13ebOJZ8X/qUfsSuQjpOhgVX6hv7VuEH8tHZ19fu5fV6WcmHKaoVezne/EMWrwkiv
+         4kqg==
+X-Gm-Message-State: APjAAAUIo9SkONQHq2mwqfOy3cJF4MsPp7jGj5leK5GpH5v7ouaDMHds
+        xywzaC1Y6MDvWJxWevnCl07O0p0OEvw=
+X-Google-Smtp-Source: APXvYqz8x/toTXpgkdtAerSapWe9y71n+HmIaR9PR7hrG2is45ZgwO/EZkn2lUAVuvS92IPZLy1+vg==
+X-Received: by 2002:a2e:9c03:: with SMTP id s3mr13147824lji.209.1559924399645;
+        Fri, 07 Jun 2019 09:19:59 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id q1sm477157lfc.79.2019.06.07.09.19.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 09:19:58 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id y198so2079692lfa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 09:19:58 -0700 (PDT)
+X-Received: by 2002:a19:521a:: with SMTP id m26mr2437446lfb.134.1559924398137;
+ Fri, 07 Jun 2019 09:19:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190603200301.GM28207@linux.ibm.com> <Pine.LNX.4.44L0.1906041026570.1731-100000@iolanthe.rowland.org>
+ <CAHk-=wgGnCw==uY8radrB+Tg_CEmzOtwzyjfMkuh7JmqFh+jzQ@mail.gmail.com>
+ <20190607140949.tzwyprrhmqdx33iu@gondor.apana.org.au> <da5eedfe-92f9-6c50-b9e7-68886047dd25@gmail.com>
+In-Reply-To: <da5eedfe-92f9-6c50-b9e7-68886047dd25@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 7 Jun 2019 09:19:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgtY1hNQX9TM=4ono-UJ-hsoFA0OT36ixFWBG2eeO011w@mail.gmail.com>
+Message-ID: <CAHk-=wgtY1hNQX9TM=4ono-UJ-hsoFA0OT36ixFWBG2eeO011w@mail.gmail.com>
+Subject: Re: inet: frags: Turn fqdir->dead into an int for old Alphas
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Jade Alglave <j.alglave@ucl.ac.uk>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-07 at 09:58 +0200, Peter Zijlstra wrote:
-> On Thu, Jun 06, 2019 at 01:06:41PM -0700, Yu-cheng Yu wrote:
-> > An ELF file's .note.gnu.property indicates features the executable file
-> > can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
-> > indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
-> > GNU_PROPERTY_X86_FEATURE_1_SHSTK.
-> > 
-> > With this patch, if an arch needs to setup features from ELF properties,
-> > it needs CONFIG_ARCH_USE_GNU_PROPERTY to be set, and a specific
-> > arch_setup_property().
-> > 
-> > For example, for X86_64:
-> > 
-> > int arch_setup_property(void *ehdr, void *phdr, struct file *f, bool inter)
-> > {
-> > 	int r;
-> > 	uint32_t property;
-> > 
-> > 	r = get_gnu_property(ehdr, phdr, f, GNU_PROPERTY_X86_FEATURE_1_AND,
-> > 			     &property);
-> > 	...
-> > }
-> > 
-> > Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> 
-> Did HJ write this patch as suggested by that SoB chain? If so, you lost
-> a From: line on top, if not, the SoB thing is invalid.
+On Fri, Jun 7, 2019 at 8:26 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+> There is common knowledge among us programmers that bit fields
+> (or bool) sharing a common 'word' need to be protected
+> with a common lock.
+>
+> Converting all bit fields to plain int/long would be quite a waste of memory.
 
-I will fix that.
+Yeah, and we really don't care about alpha. So 'char' should be safe.
 
-Yu-cheng
+No compiler actually turns a 'bool' in a struct into a bitfield,
+afaik, because you're still supposed to be able to take the address of
+a boolean.
+
+But on the whole, I do not believe that we should ever use 'bool' in
+structures anyway, because it's such a badly defined type. I think
+it's 'char' in practice on just about all architectures, but there
+really were traditional use cases where 'bool' was int.
+
+But:
+
+ - we shouldn't turn them into 'int' anyway - alpha is dead, and no
+sane architecture will make the same mistake anyway. People learnt.
+
+ - we might want to make sure 'bool' really is 'char' in practice, to
+double-check that fthe compiler doesn't do anything stupid.
+
+ - bitfields obviously do need locks. 'char' does not.
+
+If there's somebody who really notices the alpha issue in PRACTICE, we
+can then bother to fix it. But there is approximately one user, and
+it's not a heavy-duty one.
+
+                   Linus
