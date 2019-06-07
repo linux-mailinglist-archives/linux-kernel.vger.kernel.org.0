@@ -2,91 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CA5339858
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0763983B
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfFGWNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:13:22 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41321 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730185AbfFGWNW (ORCPT
+        id S1731091AbfFGWIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:08:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43411 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbfFGWIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:13:22 -0400
-Received: by mail-lf1-f68.google.com with SMTP id 136so2700855lfa.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:13:21 -0700 (PDT)
+        Fri, 7 Jun 2019 18:08:20 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 16so2991326ljv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:08:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7jg1F7lO7uVdQ9tdkXQLyc2uUklR2L0U9AiiLwg+uvg=;
-        b=aoO38c3t9rsjPFOteILVcuGQgCSWmQvFmxqe1O+LyeoYe2aN68r4/UJ6/k8U6kDF+9
-         k5nu15rfkguUHB69Ug3k1zaCjiMfZbLwrN5OOkDfDyFaGoeL8MWvfl6J09wlT65fi1IT
-         7aToDUMiC1CDBV3U4Q7S4ZrpIP6miijco5Te8=
+        bh=yHlZ/09HVQo+stV3OrPMedEmO1HgLZq5U7B9/c6/p7Y=;
+        b=QrGIZKbx5k7Xqdv8z/yDPKaoDJuxRaggORVS9azbjG280GDunTQtibk90YWn/nobhR
+         wiD+GkdtLQmOI3rndTluSkSSzvyxl0QYWwTNX/kjxbjMzi08Of0f5IrjSjj71JN/63Cz
+         N5J4b5LskZkGWp5+qJ4eV/dmhkOEssyIvvHvNFJmi8JVuZxuMELvRlejSE35OkQeVZtj
+         lMYPOdya2Q8etIbvyQX6M8Ab84uY9UKBtWdIYJ5LvaNmwpJn2svZpvCPpMPQmss/z6Oq
+         PKWfQhNWjleRXUuugMH14Gm6sK4aSig5EcoJLhtJ2bVhRzZIUrKCFWP3NnlAgDhybrif
+         5cDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7jg1F7lO7uVdQ9tdkXQLyc2uUklR2L0U9AiiLwg+uvg=;
-        b=sSBU4+YAyBL4YAjsPnnYB9RqBGQRmku1U8C0PhWISmj5SnODlWXyjYFrc7PPy5sD/d
-         JwRNtEHNrA7Sqbe6mLeVbMtEvnwq9jvU98kWIhQP0kxZDLBljEdEF5O9YtYg6RK9WVY8
-         T7R0jLB1XShY4MIbMpzhTRb6dSJK0iiewtiUmPIUy4Vtp+p0JOzohTmMdcKrSclVdsUk
-         2wy9e8nghnApgrPRcBxrp7mPKTPQNjnLigxBGSp+2HnptTEp9R2GlO0tK/RWW6VV9x4J
-         3q+8384J5lYDxcoZn9C6biAe14teCkwSeTogBFsbsP8dGGYcjolnxD/Ac0SdW78at/Eu
-         kVsA==
-X-Gm-Message-State: APjAAAW3CWE3WTZaeRFXDLQP+WwZbSzFn54B14uBCFNXT0Ti0TIp1PB5
-        iKUdRYMhjSUTWM3ewAk0BCGpH29Z3MmyGA==
-X-Google-Smtp-Source: APXvYqyNQ1FCYcaQgzM/uDJXbFZG3DKe7/L7xXmDk9ya9Z03S4/8GS17KVj/VPoK40VU7nEPfc68Ng==
-X-Received: by 2002:ac2:44d3:: with SMTP id d19mr24383327lfm.30.1559945600221;
-        Fri, 07 Jun 2019 15:13:20 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id o8sm574079ljh.42.2019.06.07.15.13.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 15:13:19 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id k18so2995376ljc.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:13:19 -0700 (PDT)
-X-Received: by 2002:a2e:4246:: with SMTP id p67mr29323271lja.44.1559945263826;
- Fri, 07 Jun 2019 15:07:43 -0700 (PDT)
+        bh=yHlZ/09HVQo+stV3OrPMedEmO1HgLZq5U7B9/c6/p7Y=;
+        b=mY78ewnoQ0ZEgi2qN7H05sEw3btrkmycJO6qwmUM1Pj8YWbzrx3vfNKL4cIBJcegMD
+         5QzGW9R0mep14A8h3R34yM90EdY85wH90DPVjZ2JR9GPCZ7MWSQ9+n5yq6XL8F3XBJz0
+         GGa91NMCXFYu9mx/ZWlesSk0uUPn9+pv4VK8J+LkM1CL4sYgTjSfIun5sCHflGXzQKyB
+         7KaP7Uj2FlyG+rUmKhtqD/benFxz+G94SH2+55sZTQemtkj+BYbqMpe7S/BkyY7XZ+1o
+         WUbWFzS1+ivIjkoAbXF40jeVyxwq9ZZiNvYRzrcFMFCpJnpAYJGBv4gD4eEtH6oDqCD0
+         Z3XQ==
+X-Gm-Message-State: APjAAAWsp+ZXxOA7fV/2+QeI5RFnGHslUnW6f2m4wmJe4hKxoTXlX6j8
+        njrOaUE/G4dSShCrGkygn0/HxydpSm1d1B/qS8Dh0Q==
+X-Google-Smtp-Source: APXvYqxXuBhhgn7MmZAfsZykWUQKNY/KzC0S0yVRQlT2pFkpO2Tn+jLM+faONvbgsZcuBOlTxFOjmjWE8oPicI3r45M=
+X-Received: by 2002:a2e:8902:: with SMTP id d2mr29274449lji.94.1559945298255;
+ Fri, 07 Jun 2019 15:08:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com> <87ef45axa4.fsf_-_@xmission.com>
-In-Reply-To: <87ef45axa4.fsf_-_@xmission.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 7 Jun 2019 15:07:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjVnEKSv3pV_dvgmqGDZDcw+N+Bgcorq7uqS86f1gwXA@mail.gmail.com>
-Message-ID: <CAHk-=wjjVnEKSv3pV_dvgmqGDZDcw+N+Bgcorq7uqS86f1gwXA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arch <linux-arch@vger.kernel.org>
+References: <cover.1559656538.git.mchehab+samsung@kernel.org> <ee8f4f56658247a0ab0d9e2c16a9afafefe38da0.1559656538.git.mchehab+samsung@kernel.org>
+In-Reply-To: <ee8f4f56658247a0ab0d9e2c16a9afafefe38da0.1559656538.git.mchehab+samsung@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 8 Jun 2019 00:08:10 +0200
+Message-ID: <CACRpkdayQdrtqO3aygY1uDG0LCX_9rVnSnxP5F_C-KMZURTAYA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/22] docs: gpio: driver.rst: fix a bad tag
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 2:41 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+On Tue, Jun 4, 2019 at 4:18 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+
+> With ReST, [foo]_ means a reference to foo, causing this warning:
 >
-> The sigsuspend system call overrides the signal mask just
-> like all of the other users of set_user_sigmask, so convert
-> it to use the same helpers.
+>     Documentation/driver-api/gpio/driver.rst:419: WARNING: Unknown target name: "devm".
+>
+> Fix it by using a literal for the name.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Me likey.
+Looks identical to the v1 I already applied, so keeping
+that one.
 
-Whole series looks good to me, but that's just from looking at the
-patches. Maybe testing shows problems..
-
-              Linus
+Yours,
+Linus Walleij
