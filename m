@@ -2,137 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A58391B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCB1391CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:22:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfFGQNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:13:12 -0400
-Received: from mail-pg1-f169.google.com ([209.85.215.169]:37757 "EHLO
-        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729127AbfFGQNM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:13:12 -0400
-Received: by mail-pg1-f169.google.com with SMTP id 20so1415563pgr.4;
-        Fri, 07 Jun 2019 09:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+v/nyTrfUwKDiO60H6P7yrcb/AvGQ5TkB/DzgjrK9rk=;
-        b=ikYMHwpeMcyQt1k0NxYmY6v+CxikGuE+R1vUmmNbxcRy3tpwp60Z+t9SRyrc1oVY2u
-         rxSp/s9anWeYnx/yIErCPueV3dJWuJobVtQfce9FguRrJpvFCT4Eah90Yh2W4oGQVRgR
-         +07qXwLfYSuod0nvYdcEKD/rKD6VgcDXdKkypIarOLjimDkycc2HrP3JXOCnAZKt9zi4
-         8k8siRg0CQ2d8IQJ2supqLtUyhqXMSWDxF7OdIbEptL2xlsjrVXgLcR4/kEUQ/knTRGn
-         WnF3AM0NdMDkRtcM8m/r6bXXN7vPTCsZZZh7h97Hq9xmjqfTbR7fLDFKYAEzz2I6Q/8j
-         loUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+v/nyTrfUwKDiO60H6P7yrcb/AvGQ5TkB/DzgjrK9rk=;
-        b=QCMJAUU+6fgL3hMMKPkYTCVMK1hi5VYsNXu6xm/HtmlYCXO0DHvGu5GEcGXrqlx0+U
-         aYjtHoztqYHCFR36R/s8TQJIRS8xnwXfHtb+8+uq99EbbmcDeSIGIiICcx8TVrjxroRD
-         kdBm8vwBugNCLvK/rwM/Q6SZXbyPfwMVtOSO+fFBfdvKdhhk9Dl+p3J6NP0bJz3QNmeb
-         Ar8e5tek99WSNXrFTrl8kkYW6WM1Dl11MIFVWu0zXarMf4nx60CRvxN2fu++eNV0MphL
-         TbrHh+JC+RPeLaICX1nXAexMnQyLjCU+FhnxTESm4TUPXWAzz47qmYsRD7dAgGHepKab
-         c9Kw==
-X-Gm-Message-State: APjAAAWU/TIj7eCW41xhm2xbExslwKyi2+7D9WvaBbD+e3wp5dW1JojH
-        l4Z5JnTCtiXHdJasPYXymS8=
-X-Google-Smtp-Source: APXvYqzQJ4jN+znFbh4NisIXmXtjlcm9RNiNM2+fTJLWxplzZ9amcx9SPe20QkrjChZPygPGF60fdw==
-X-Received: by 2002:a63:e603:: with SMTP id g3mr3628545pgh.167.1559923991556;
-        Fri, 07 Jun 2019 09:13:11 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id e5sm7214119pjj.2.2019.06.07.09.13.10
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 09:13:10 -0700 (PDT)
-Subject: Re: inet: frags: Turn fqdir->dead into an int for old Alphas
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Jade Alglave <j.alglave@ucl.ac.uk>
-References: <20190603200301.GM28207@linux.ibm.com>
- <Pine.LNX.4.44L0.1906041026570.1731-100000@iolanthe.rowland.org>
- <CAHk-=wgGnCw==uY8radrB+Tg_CEmzOtwzyjfMkuh7JmqFh+jzQ@mail.gmail.com>
- <20190607140949.tzwyprrhmqdx33iu@gondor.apana.org.au>
- <da5eedfe-92f9-6c50-b9e7-68886047dd25@gmail.com>
- <20190607153226.gzt4yeq5c5i6bpqd@gondor.apana.org.au>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <f8908fc1-102e-c02f-6574-56cf053d791e@gmail.com>
-Date:   Fri, 7 Jun 2019 09:13:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190607153226.gzt4yeq5c5i6bpqd@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1730251AbfFGQWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:22:53 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57740 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728486AbfFGQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 12:22:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 09:22:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,563,1557212400"; 
+   d="scan'208";a="182719233"
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2019 09:22:52 -0700
+Message-ID: <388e702bfa4ed38f460327ae09ebc9b18b582bb5.camel@intel.com>
+Subject: Re: [PATCH v7 05/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Fri, 07 Jun 2019 09:14:50 -0700
+In-Reply-To: <20190607070725.GN3419@hirez.programming.kicks-ass.net>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+         <20190606200646.3951-6-yu-cheng.yu@intel.com>
+         <20190607070725.GN3419@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/7/19 8:32 AM, Herbert Xu wrote:
-> On Fri, Jun 07, 2019 at 08:26:12AM -0700, Eric Dumazet wrote:
->>
->> There is common knowledge among us programmers that bit fields
->> (or bool) sharing a common 'word' need to be protected
->> with a common lock.
->>
->> Converting all bit fields to plain int/long would be quite a waste of memory.
->>
->> In this case, fqdir_exit() is called right before the whole
->> struct fqdir is dismantled, and the only cpu that could possibly
->> change the thing is ourself, and we are going to start an RCU grace period.
->>
->> Note that first cache line in 'struct fqdir' is read-only.
->> Only ->dead field is flipped to one at exit time.
->>
->> Your patch would send a strong signal to programmers to not even try using
->> bit fields.
->>
->> Do we really want that ?
+On Fri, 2019-06-07 at 09:07 +0200, Peter Zijlstra wrote:
+> On Thu, Jun 06, 2019 at 01:06:24PM -0700, Yu-cheng Yu wrote:
+> > Intel Control-flow Enforcement Technology (CET) introduces the
+> > following MSRs.
+> > 
+> >     MSR_IA32_U_CET (user-mode CET settings),
+> >     MSR_IA32_PL3_SSP (user-mode shadow stack),
+> >     MSR_IA32_PL0_SSP (kernel-mode shadow stack),
+> >     MSR_IA32_PL1_SSP (Privilege Level 1 shadow stack),
+> >     MSR_IA32_PL2_SSP (Privilege Level 2 shadow stack).
+> > 
+> > Introduce them into XSAVES system states.
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > ---
+> >  arch/x86/include/asm/fpu/types.h            | 22 +++++++++++++++++++++
+> >  arch/x86/include/asm/fpu/xstate.h           |  4 +++-
+> >  arch/x86/include/uapi/asm/processor-flags.h |  2 ++
+> >  arch/x86/kernel/fpu/xstate.c                | 10 ++++++++++
+> >  4 files changed, 37 insertions(+), 1 deletion(-)
 > 
-> If this were a bitfield then I'd think it would be safer because
-> anybody adding a new bitfield is unlikely to try modifying both
-> fields without locking or atomic ops.
-> 
-> However, because this is a boolean, I can certainly see someone
-> else coming along and adding another bool right next to it and
-> expecting writes them to still be atomic.
-> 
-> As it stands, my patch has zero impact on memory usage because
-> it's simply using existing padding.  Should this become an issue
-> in future, we can always revisit this and use a more appropriate
-> method of addressing it.
-> 
-> But the point is to alert future developers that this field is
-> not an ordinary boolean.
+> And yet, no changes to msr-index.h !?
 
-Okay, but you added a quite redundant comment.
+You are right.  I will move msr-index.h changes to here.
 
-/* We can't use boolean because this needs atomic writes. */
-
-Should we add a similar comment in front of all bit-fields,
-or could we factorize this in a proper Documentation perhaps ?
-
-Can we just add a proper bit-field and not the comment ?
-
-unsigned int dead:1;
-
-This way, next programmer can just apply normal rules to add a new bit.
-
-Thanks !
-
+Yu-cheng
