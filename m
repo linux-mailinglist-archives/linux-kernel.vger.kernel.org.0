@@ -2,273 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4808B3848E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 542AE38497
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfFGGof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 02:44:35 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41645 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfFGGoe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:44:34 -0400
-Received: by mail-yw1-f68.google.com with SMTP id y185so308584ywy.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 23:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iFhT8liOalqkQhykuttRe8yLU3IavzSomEkEekLlsnY=;
-        b=ByrD0tV/Hxjb3oer9FyKqjVTDHRG9yBaOrPEzhNWnerouMDdM+5XcBU+FUa4wpPXMd
-         ZJZBOwwbnYq8UY5H9rlSnbKvq1H4eZu3agdEIveNKdj4PDVl6PhhP/z99YTUECPRwdJJ
-         fwx2IrBE9zoOuhQKp+AwwOvRPD7RoZ3gUl9CpoiDLqGyXJNUeeZ7Hv16qtkPmdTfLcwM
-         XaT9DNGxMTBIHUvasgsaggQTXtkOV4TbEA/lvTjV+nIfRVl9hlivWvBnnLDu3Q70xyFm
-         EI6pYMcYebOkq7sbKe/s2I36fUI2qCWSpmsv3YTjEuOa6aBz6NbiTz/XWugTuyWv0oCL
-         n1BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iFhT8liOalqkQhykuttRe8yLU3IavzSomEkEekLlsnY=;
-        b=VK6lLn2T50/+2mJa8dTVJoBrhoRPLDn/pS19XPKXkQUw+fbLuVbkTnlZStlVI76by6
-         nm0xG4VYcTWMIeifwy4pPWTFEF40O5LoqR18Bn0V+dMleIKo9bOeUBHRbkd1TCLBp5IP
-         IgLseo/mT5GaUlluAPKkt6HF8vKAR9R/ad7djiPk9uaAslI+JkE6yW6g/52Rb9EghYYP
-         X1OooZ0MDMon7SVa4YgtctJ92SUNheTsxvyXfeuci03N6+iZnLTOH2jASmpaKJq2mr5C
-         3q/fqclV1PdofYnsqsw7zacYUmf3/LiigViUrNVU2DDTwXQd8OSgBFfpSWw2JKOfJGyp
-         H2eg==
-X-Gm-Message-State: APjAAAU4ugibc4amIq1OZYHVyribooOdSnles6ni0pOdghnFXioRdhNQ
-        Tu5cMYwfNxm99FFFDntMu+IOGw==
-X-Google-Smtp-Source: APXvYqyfMSvDnA1Zsun0qnTQcBGUtSCXs21mhTzYxINWS3oNSabOJCKdIAjrYQwaKqoemyVuPx3BFw==
-X-Received: by 2002:a81:5747:: with SMTP id l68mr13390457ywb.180.1559889873710;
-        Thu, 06 Jun 2019 23:44:33 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
-        by smtp.gmail.com with ESMTPSA id c140sm329922ywb.45.2019.06.06.23.44.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 23:44:33 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 14:44:25 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        suzuki.poulose@arm.com, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Properly set the value of 'old' and 'head'
- in snapshot mode
-Message-ID: <20190607064425.GF5970@leoy-ThinkPad-X240s>
-References: <20190605161633.12245-1-mathieu.poirier@linaro.org>
- <20190606201056.GJ21245@kernel.org>
+        id S1727406AbfFGGuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:50:06 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58904 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbfFGGuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 02:50:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 23:50:05 -0700
+X-ExtLoop1: 1
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Jun 2019 23:50:03 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar\@gmail.com" <v.anuragkumar@gmail.com>
+Subject: RE: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG entry
+In-Reply-To: <BYAPR02MB559181C009B74446A797838DA7170@BYAPR02MB5591.namprd02.prod.outlook.com>
+References: <1559141985-17104-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <87y32gcvc1.fsf@linux.intel.com> <BYAPR02MB559181C009B74446A797838DA7170@BYAPR02MB5591.namprd02.prod.outlook.com>
+Date:   Fri, 07 Jun 2019 09:49:59 +0300
+Message-ID: <87ftoldh48.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606201056.GJ21245@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 05:10:56PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Jun 05, 2019 at 10:16:33AM -0600, Mathieu Poirier escreveu:
-> > This patch adds the necessay intelligence to properly compute the value
-> > of 'old' and 'head' when operating in snapshot mode.  That way we can get
-> > the latest information in the AUX buffer and be compatible with the
-> > generic AUX ring buffer mechanic.
-> 
-> Leo, have you had the chance to test/review this one? Suzuki?
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Sure.  I applied this patch on the perf/core branch (with latest
-commit 3e4fbf36c1e3 'perf augmented_raw_syscalls: Move reading
-filename to the loop') and passed testing with below steps:
 
-# perf record -e cs_etm/@tmc_etr0/ -S -m,64 --per-thread ./sort &
-[1] 19097
-Bubble sorting array of 30000 elements
+Hi,
 
-# kill -USR2 19097
-# kill -USR2 19097
-# kill -USR2 19097
-[ perf record: Woken up 4 times to write data ]
-[ perf record: Captured and wrote 0.753 MB perf.data ]
+Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
+>>> The dma_map_sg() merges sg1 & sg2 memory regions into sg1-
+>>>dma_address.
+>>> Similarly sg3 & sg4 into sg2->dma_address, sg5 & sg6 into the
+>>> sg3->dma_address and sg6 & sg8 into sg4->dma_address. Here the
+>>memory
+>>> regions are merged but the page_link properties like SG_END are not
+>>> retained into the merged sgs.
+>>
+>>isn't this a bug in the scatterlist mapping code? Why doesn't it keep
+>>SG_END?
+>>
+>
+> Thanks for providing your comment.
+>
+> I don't think it is a bug, instead I feel some enhancement needs to be do=
+ne in
+> dma-mapping code.
+>
+> SG_END represents the last sg entry in the sglist and it is correctly get=
+ting
+> set to the last sg entry.
+>
+> The issue happens only when 2 or more sg entry pages are merged into
+> contiguous dma-able address and sg_is_last() is used to find the last sg =
+entry
+> with valid dma address.
 
-FWIW:
+Right, and that's something that's bound to happen. I'm arguing that, perha=
+ps,
+dma API should move SG_END in case entries are merged.
 
-Tested-by: Leo Yan <leo.yan@linaro.org>
+> I think that along with sg_is_last() a new flag (SG_DMA_END) and function
+> (something like sg_dma_is_last() ) needs to be added into dma-mapping cod=
+e for
+> identifying the last valid sg entry with valid dma address. So that we can
+> make use of that function instead of sg_is_last().
 
-> I also changed the subject to:
-> 
->   [PATCH] perf cs-etm: Properly set the value of 'old' and 'head' in snapshot mode
-> 
-> So that when looking at a 'git log --oneline' one can have the proper
-> context and know that its about cs-etm.
-> 
-> - Arnaldo
->  
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > ---
-> >  tools/perf/arch/arm/util/cs-etm.c | 127 +++++++++++++++++++++++++++++-
-> >  1 file changed, 123 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-> > index 911426721170..0a278bbcaba6 100644
-> > --- a/tools/perf/arch/arm/util/cs-etm.c
-> > +++ b/tools/perf/arch/arm/util/cs-etm.c
-> > @@ -31,6 +31,8 @@ struct cs_etm_recording {
-> >  	struct auxtrace_record	itr;
-> >  	struct perf_pmu		*cs_etm_pmu;
-> >  	struct perf_evlist	*evlist;
-> > +	int			wrapped_cnt;
-> > +	bool			*wrapped;
-> >  	bool			snapshot_mode;
-> >  	size_t			snapshot_size;
-> >  };
-> > @@ -536,16 +538,131 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
-> >  	return 0;
-> >  }
-> >  
-> > -static int cs_etm_find_snapshot(struct auxtrace_record *itr __maybe_unused,
-> > +static int cs_etm_alloc_wrapped_array(struct cs_etm_recording *ptr, int idx)
-> > +{
-> > +	bool *wrapped;
-> > +	int cnt = ptr->wrapped_cnt;
-> > +
-> > +	/* Make @ptr->wrapped as big as @idx */
-> > +	while (cnt <= idx)
-> > +		cnt++;
-> > +
-> > +	/*
-> > +	 * Free'ed in cs_etm_recording_free().  Using realloc() to avoid
-> > +	 * cross compilation problems where the host's system supports
-> > +	 * reallocarray() but not the target.
-> > +	 */
-> > +	wrapped = realloc(ptr->wrapped, cnt * sizeof(bool));
-> > +	if (!wrapped)
-> > +		return -ENOMEM;
-> > +
-> > +	wrapped[cnt - 1] = false;
-> > +	ptr->wrapped_cnt = cnt;
-> > +	ptr->wrapped = wrapped;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static bool cs_etm_buffer_has_wrapped(unsigned char *buffer,
-> > +				      size_t buffer_size, u64 head)
-> > +{
-> > +	u64 i, watermark;
-> > +	u64 *buf = (u64 *)buffer;
-> > +	size_t buf_size = buffer_size;
-> > +
-> > +	/*
-> > +	 * We want to look the very last 512 byte (chosen arbitrarily) in
-> > +	 * the ring buffer.
-> > +	 */
-> > +	watermark = buf_size - 512;
-> > +
-> > +	/*
-> > +	 * @head is continuously increasing - if its value is equal or greater
-> > +	 * than the size of the ring buffer, it has wrapped around.
-> > +	 */
-> > +	if (head >= buffer_size)
-> > +		return true;
-> > +
-> > +	/*
-> > +	 * The value of @head is somewhere within the size of the ring buffer.
-> > +	 * This can be that there hasn't been enough data to fill the ring
-> > +	 * buffer yet or the trace time was so long that @head has numerically
-> > +	 * wrapped around.  To find we need to check if we have data at the very
-> > +	 * end of the ring buffer.  We can reliably do this because mmap'ed
-> > +	 * pages are zeroed out and there is a fresh mapping with every new
-> > +	 * session.
-> > +	 */
-> > +
-> > +	/* @head is less than 512 byte from the end of the ring buffer */
-> > +	if (head > watermark)
-> > +		watermark = head;
-> > +
-> > +	/*
-> > +	 * Speed things up by using 64 bit transactions (see "u64 *buf" above)
-> > +	 */
-> > +	watermark >>= 3;
-> > +	buf_size >>= 3;
-> > +
-> > +	/*
-> > +	 * If we find trace data at the end of the ring buffer, @head has
-> > +	 * been there and has numerically wrapped around at least once.
-> > +	 */
-> > +	for (i = watermark; i < buf_size; i++)
-> > +		if (buf[i])
-> > +			return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +static int cs_etm_find_snapshot(struct auxtrace_record *itr,
-> >  				int idx, struct auxtrace_mmap *mm,
-> > -				unsigned char *data __maybe_unused,
-> > +				unsigned char *data,
-> >  				u64 *head, u64 *old)
-> >  {
-> > +	int err;
-> > +	bool wrapped;
-> > +	struct cs_etm_recording *ptr =
-> > +			container_of(itr, struct cs_etm_recording, itr);
-> > +
-> > +	/*
-> > +	 * Allocate memory to keep track of wrapping if this is the first
-> > +	 * time we deal with this *mm.
-> > +	 */
-> > +	if (idx >= ptr->wrapped_cnt) {
-> > +		err = cs_etm_alloc_wrapped_array(ptr, idx);
-> > +		if (err)
-> > +			return err;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Check to see if *head has wrapped around.  If it hasn't only the
-> > +	 * amount of data between *head and *old is snapshot'ed to avoid
-> > +	 * bloating the perf.data file with zeros.  But as soon as *head has
-> > +	 * wrapped around the entire size of the AUX ring buffer it taken.
-> > +	 */
-> > +	wrapped = ptr->wrapped[idx];
-> > +	if (!wrapped && cs_etm_buffer_has_wrapped(data, mm->len, *head)) {
-> > +		wrapped = true;
-> > +		ptr->wrapped[idx] = true;
-> > +	}
-> > +
-> >  	pr_debug3("%s: mmap index %d old head %zu new head %zu size %zu\n",
-> >  		  __func__, idx, (size_t)*old, (size_t)*head, mm->len);
-> >  
-> > -	*old = *head;
-> > -	*head += mm->len;
-> > +	/* No wrap has occurred, we can just use *head and *old. */
-> > +	if (!wrapped)
-> > +		return 0;
-> > +
-> > +	/*
-> > +	 * *head has wrapped around - adjust *head and *old to pickup the
-> > +	 * entire content of the AUX buffer.
-> > +	 */
-> > +	if (*head >= mm->len) {
-> > +		*old = *head - mm->len;
-> > +	} else {
-> > +		*head += mm->len;
-> > +		*old = *head - mm->len;
-> > +	}
-> >  
-> >  	return 0;
-> >  }
-> > @@ -586,6 +703,8 @@ static void cs_etm_recording_free(struct auxtrace_record *itr)
-> >  {
-> >  	struct cs_etm_recording *ptr =
-> >  			container_of(itr, struct cs_etm_recording, itr);
-> > +
-> > +	zfree(&ptr->wrapped);
-> >  	free(ptr);
-> >  }
-> >  
-> > -- 
-> > 2.17.1
-> 
-> -- 
-> 
-> - Arnaldo
+Sure, propose a patch to DMA API.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlz6CRcACgkQzL64meEa
+mQajdhAAntC8glHbh2DnwAAgQ8p1tZk9gyf6O6NTuCA9lhoRVF7Uw9E9cPlNijio
+V6ah4z+7QY6XL1JiZaFg8no8dAKn0G1DOsCC2p/9kT1dS7a4LqKwe/lct3yLFm3E
+CE9cRyY+TET7yDjLZH00aDTf+kTk0ep2Hm6RlgZ31MmiW/YR39H8ZzyonkHoKtbT
+Eth3C8i4wjIueWf5Lr5JhSzo0rrUUWcWLyjrkbJsUp/S7oI5iPreZ0Sz9gNtRcZu
+2A6di/EircsjDnSIf8il/M4p9fzjt/eoXFbB/to8tA9P5pR4qMjEHlriRHZdrv9D
+SapgloHjUGCCRCAjyL++f0EXDG693ytkU9GUrkXERwjVFws7lL2gnnC5hrcugzRN
+7VTBf6yR9ehOB+1HycZ6kC1eNzZBbYibnNSWzM5SxGIYlTva6yWZzYvJfFp30aVA
+j5r5qSweiYhC/7MKI5TQMDfWo6jBM9WEL/V2w1RqS4HbosGuD/fVIeQZ9ihJItVo
+7UQfmLJQXMfoWD1wkD4tkFOsXCZIZiFHa9CwXTrCCzPAaBhpYhBokRZhV1pa9lfo
+w3vx/R0kHnngsDZUD5RwnI5AXhoLnuGUbF8cpkGOPGAONjTDsPFtXKrlF9+70oCd
+pof7AtSKznbHHDawmd/Kq8mKW4A0ZZGcB83oj0C80ze2LhFRcss=
+=Z89T
+-----END PGP SIGNATURE-----
+--=-=-=--
