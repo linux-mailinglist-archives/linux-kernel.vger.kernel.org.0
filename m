@@ -2,269 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1425C386D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 11:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA687386BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 11:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfFGJN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 05:13:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:36176 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbfFGJN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 05:13:57 -0400
-X-Greylist: delayed 476 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 05:13:56 EDT
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 519CE28;
-        Fri,  7 Jun 2019 02:06:00 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 154723F246;
-        Fri,  7 Jun 2019 02:06:00 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id CA7E168240D; Fri,  7 Jun 2019 10:05:58 +0100 (BST)
-Date:   Fri, 7 Jun 2019 10:05:58 +0100
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH v2 1/2] drm/komeda: Adds SMMU support
-Message-ID: <20190607090558.GA4173@e110455-lin.cambridge.arm.com>
-References: <1559814765-18455-1-git-send-email-lowry.li@arm.com>
- <1559814765-18455-2-git-send-email-lowry.li@arm.com>
+        id S1727415AbfFGJKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 05:10:42 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33609 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfFGJKl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 05:10:41 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n9so1392716wru.0;
+        Fri, 07 Jun 2019 02:10:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=BkHOgQp9ZNT+w4r/aHTtr9WepEQUBdYdl9/a+tV9soA=;
+        b=AlyPNiy/nmOz7yw1lGihpnVVQlGuhUdDTiGQj68Z+FYXMh7V+EybfUX8bjNjlospLn
+         iiY+OqQXAp/H4rCt7oralkYvo2GuwjsgNBk5Cf4TKceWap6ZBCrsmEwLQRSV/K+Y8Xkw
+         k4G6Gx0YRVRXDOBNQnOm0haE9NtF1abDeds0MZyYpJVGjVtpEeDjdTUCgBh6pzZz7vY5
+         l9e0eIJHWJcDuZyauBxcHvhi+5tRrQkt6MUWMruSzq3YUU4MajDndRFNUDCh2YdOQ/Ky
+         BWUuKTVdCEHFhVEEWSb02/9IJgFgNpklsZiL1Qdr5TB/blH1VO3LSC9aBKiiPlg3UAxo
+         HASw==
+X-Gm-Message-State: APjAAAWEsu1n4Y7JUUhrzJK01p3TitlMqUMTftMxrbJnLwk3UQ7UwQJG
+        5L7zZjQBWOICB4ypXDOQfomWWl24
+X-Google-Smtp-Source: APXvYqww0GZgtRbdcN4fLGmRxER87DrsdGTWzb/8L9RINKlwcWi6JWh+Uiq6bfjEfwgfX7zMxIFl0Q==
+X-Received: by 2002:adf:ea8b:: with SMTP id s11mr18664982wrm.100.1559898639593;
+        Fri, 07 Jun 2019 02:10:39 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id 34sm1727277wre.32.2019.06.07.02.10.38
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 02:10:38 -0700 (PDT)
+Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
+To:     Gen Zhang <blackgod016574@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190531011424.GA4374@zhanggen-UX430UQ>
+ <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz>
+ <20190605160043.GA4351@zhanggen-UX430UQ>
+ <20190606201646.B4CC4206BB@mail.kernel.org>
+ <20190607015258.GA2660@zhanggen-UX430UQ>
+From:   Jiri Slaby <jslaby@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e5b4639b-3077-59bb-6383-0c2bccdd9191@suse.cz>
+Date:   Fri, 7 Jun 2019 11:10:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1559814765-18455-2-git-send-email-lowry.li@arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190607015258.GA2660@zhanggen-UX430UQ>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lowry,
+On 07. 06. 19, 3:52, Gen Zhang wrote:
+>>>>> @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct clk_core *core)
+>>>>>                             kfree_const(parents[i].name);
+>>>>>                             kfree_const(parents[i].fw_name);
+>>>>>                     } while (--i >= 0);
+>>>>> +                   kfree_const(parent->name);
+>>>>> +                   kfree_const(parent->fw_name);
+>>>>
+>>>> Both of them were just freed in the loop above, no?
+>>> for (i = 0, parent = parents; i < num_parents; i++, parent++)
+>>> Is 'parent' the same as the one from the loop above?
+>>
+>> Yes. Did it change somehow?
+> parent++?
 
-On Thu, Jun 06, 2019 at 10:53:05AM +0100, Lowry Li (Arm Technology China) wrote:
-> From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-> 
-> Adds iommu_connect and disconnect for SMMU support, and configures
-> TBU translation once SMMU has been attached to the display device.
-> 
-> Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
-> ---
->  .../gpu/drm/arm/display/komeda/d71/d71_component.c |  5 +++
->  drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c   | 49 ++++++++++++++++++++++
->  drivers/gpu/drm/arm/display/komeda/komeda_dev.c    | 18 ++++++++
->  drivers/gpu/drm/arm/display/komeda/komeda_dev.h    |  7 ++++
->  .../drm/arm/display/komeda/komeda_framebuffer.c    |  2 +
->  .../drm/arm/display/komeda/komeda_framebuffer.h    |  2 +
->  6 files changed, 83 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> index 4e26a80..4a48dd6 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> @@ -215,6 +215,8 @@ static void d71_layer_update(struct komeda_component *c,
->  	malidp_write32(reg, LAYER_FMT, kfb->format_caps->hw_id);
->  	malidp_write32(reg, BLK_IN_SIZE, HV_SIZE(st->hsize, st->vsize));
->  
-> +	if (kfb->is_va)
-> +		ctrl |= L_TBU_EN;
->  	malidp_write32_mask(reg, BLK_CONTROL, ctrl_mask, ctrl);
->  }
->  
-> @@ -348,6 +350,9 @@ static void d71_wb_layer_update(struct komeda_component *c,
->  			       fb->pitches[i] & 0xFFFF);
->  	}
->  
-> +	if (kfb->is_va)
-> +		ctrl |= LW_TBU_EN;
-> +
->  	malidp_write32(reg, LAYER_FMT, kfb->format_caps->hw_id);
->  	malidp_write32(reg, BLK_IN_SIZE, HV_SIZE(st->hsize, st->vsize));
->  	malidp_write32(reg, BLK_INPUT_ID0, to_d71_input_id(&state->inputs[0]));
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> index 8e682c7..1b9e734 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> @@ -517,6 +517,53 @@ static void d71_init_fmt_tbl(struct komeda_dev *mdev)
->  	table->n_formats = ARRAY_SIZE(d71_format_caps_table);
->  }
->  
-> +static int d71_connect_iommu(struct komeda_dev *mdev)
-> +{
-> +	struct d71_dev *d71 = mdev->chip_data;
-> +	u32 __iomem *reg = d71->gcu_addr;
-> +	u32 check_bits = (d71->num_pipelines == 2) ?
-> +			 GCU_STATUS_TCS0 | GCU_STATUS_TCS1 : GCU_STATUS_TCS0;
-> +	int i, ret;
-> +
-> +	if (!d71->integrates_tbu)
-> +		return -1;
-> +
-> +	malidp_write32_mask(reg, BLK_CONTROL, 0x7, TBU_CONNECT_MODE);
-> +
-> +	ret = dp_wait_cond(has_bits(check_bits, malidp_read32(reg, BLK_STATUS)),
-> +			100, 1000, 1000);
-> +	if (ret <= 0) {
+parent++ is done after the loop body. Or what do you mean?
 
-You don't want to return -ETIMEDOUT if dp_wait_cond() returns zero. Maybe
-follow the same flow as in d71_disconnect_iommu() ?
+>>> Moreover, should 'parents[i].name' and 'parents[i].fw_name' be freed by
+>>> kfree_const()?
+>>>
+>>
+>> Yes? They're allocated with kstrdup_const() in clk_cpy_name(), or
+>> they're NULL by virtue of the kcalloc and then kfree_const() does
+>> nothing.
+> I re-examined clk_cpy_name(). They are the second parameter of 
+> clk_cpy_name(). The first parameter is allocated, not the second one.
+> So 'parent->name' and 'parent->fw_name' should be freed, not 
+> 'parents[i].name' or 'parents[i].fw_name'. Am I totally misunderstanding
+> this clk_cpy_name()? :-(
 
-> +		DRM_ERROR("connect to TCU timeout!\n");
-> +		malidp_write32_mask(reg, BLK_CONTROL, 0x7, INACTIVE_MODE);
-> +		return -ETIMEDOUT;
-> +	}
-> +
-> +	for (i = 0; i < d71->num_pipelines; i++)
-> +		malidp_write32_mask(d71->pipes[i]->lpu_addr, LPU_TBU_CONTROL,
-> +				    LPU_TBU_CTRL_TLBPEN, LPU_TBU_CTRL_TLBPEN);
-> +	return 0;
-> +}
-> +
-> +static int d71_disconnect_iommu(struct komeda_dev *mdev)
-> +{
-> +	struct d71_dev *d71 = mdev->chip_data;
-> +	u32 __iomem *reg = d71->gcu_addr;
-> +	u32 check_bits = (d71->num_pipelines == 2) ?
-> +			 GCU_STATUS_TCS0 | GCU_STATUS_TCS1 : GCU_STATUS_TCS0;
-> +	int ret;
-> +
-> +	malidp_write32_mask(reg, BLK_CONTROL, 0x7, TBU_DISCONNECT_MODE);
-> +
-> +	ret = dp_wait_cond(((malidp_read32(reg, BLK_STATUS) & check_bits) == 0),
-> +			100, 1000, 1000);
-> +	if (ret < 0) {
-> +		DRM_ERROR("disconnect from TCU timeout!\n");
-> +		malidp_write32_mask(reg, BLK_CONTROL, 0x7, INACTIVE_MODE);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static struct komeda_dev_funcs d71_chip_funcs = {
->  	.init_format_table = d71_init_fmt_tbl,
->  	.enum_resources	= d71_enum_resources,
-> @@ -527,6 +574,8 @@ static void d71_init_fmt_tbl(struct komeda_dev *mdev)
->  	.on_off_vblank	= d71_on_off_vblank,
->  	.change_opmode	= d71_change_opmode,
->  	.flush		= d71_flush,
-> +	.connect_iommu	= d71_connect_iommu,
-> +	.disconnect_iommu = d71_disconnect_iommu,
->  };
->  
->  struct komeda_dev_funcs *
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> index c92e161..e80e673 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> @@ -253,6 +253,19 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
->  	dev->dma_parms = &mdev->dma_parms;
->  	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
->  
-> +	mdev->iommu = iommu_get_domain_for_dev(mdev->dev);
-> +	if (!mdev->iommu)
-> +		DRM_INFO("continue without IOMMU support!\n");
-> +
-> +	if (mdev->iommu && mdev->funcs->connect_iommu) {
-> +		err = mdev->funcs->connect_iommu(mdev);
-> +		if (err) {
-> +			mdev->iommu = NULL;
-> +			DRM_ERROR("connect iommu failed.\n");
+The second parameter (the source) is parent_data[i].*, not parents[i].*
+(the destination). parent->fw_name and parent->name are properly freed
+in the do {} while loop as parents[i].name and parents[i].fw_name, given
+i hasn't changed yet. I am not sure what you mean at all. Are you
+uncertain about the C code flow?
 
-I thought you're going to remove these extra DRM_ERRORs.
-
-Best regards,
-Liviu
-
-> +			goto err_cleanup;
-> +		}
-> +	}
-> +
->  	err = sysfs_create_group(&dev->kobj, &komeda_sysfs_attr_group);
->  	if (err) {
->  		DRM_ERROR("create sysfs group failed.\n");
-> @@ -282,6 +295,11 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
->  	debugfs_remove_recursive(mdev->debugfs_root);
->  #endif
->  
-> +	if (mdev->iommu && mdev->funcs->disconnect_iommu)
-> +		if (mdev->funcs->disconnect_iommu(mdev))
-> +			DRM_ERROR("disconnect iommu failed.\n");
-> +	mdev->iommu = NULL;
-> +
->  	for (i = 0; i < mdev->n_pipelines; i++) {
->  		komeda_pipeline_destroy(mdev, mdev->pipelines[i]);
->  		mdev->pipelines[i] = NULL;
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> index 83ace71..dac1eda 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> @@ -92,6 +92,10 @@ struct komeda_dev_funcs {
->  	int (*enum_resources)(struct komeda_dev *mdev);
->  	/** @cleanup: call to chip to cleanup komeda_dev->chip data */
->  	void (*cleanup)(struct komeda_dev *mdev);
-> +	/** @connect_iommu: Optional, connect to external iommu */
-> +	int (*connect_iommu)(struct komeda_dev *mdev);
-> +	/** @disconnect_iommu: Optional, disconnect to external iommu */
-> +	int (*disconnect_iommu)(struct komeda_dev *mdev);
->  	/**
->  	 * @irq_handler:
->  	 *
-> @@ -184,6 +188,9 @@ struct komeda_dev {
->  	 */
->  	void *chip_data;
->  
-> +	/** @iommu: iommu domain */
-> +	struct iommu_domain *iommu;
-> +
->  	/** @debugfs_root: root directory of komeda debugfs */
->  	struct dentry *debugfs_root;
->  };
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-> index d5822a3..360ab70 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-> @@ -201,6 +201,8 @@ struct drm_framebuffer *
->  		goto err_cleanup;
->  	}
->  
-> +	kfb->is_va = mdev->iommu ? true : false;
-> +
->  	return &kfb->base;
->  
->  err_cleanup:
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
-> index 6cbb2f6..f4046e2 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
-> @@ -21,6 +21,8 @@ struct komeda_fb {
->  	 * extends drm_format_info for komeda specific information
->  	 */
->  	const struct komeda_format_caps *format_caps;
-> +	/** @is_va: if smmu is enabled, it will be true */
-> +	bool is_va;
->  	/** @aligned_w: aligned frame buffer width */
->  	u32 aligned_w;
->  	/** @aligned_h: aligned frame buffer height */
-> -- 
-> 1.9.1
-> 
-
+thanks,
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+js
+suse labs
