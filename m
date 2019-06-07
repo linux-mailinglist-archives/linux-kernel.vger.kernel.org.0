@@ -2,93 +2,269 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A72386AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 11:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1425C386D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 11:14:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfFGJCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 05:02:11 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42110 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfFGJCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 05:02:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x17so1321682wrl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 02:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=D/xgR5j9++o/IJFaras/pmlOomePQdSslom82YUYeMA=;
-        b=LGNaJv5PZkTpfOgsh2GlidgQ+SwvbmP2ki//SLuYiaD8SMqxB+yTnXeFR0P+/Z+err
-         Aj3Ie4TJCW/CDIc/G9b6lEMG4S1yEO9M7y9OxEPT+n+DAAeC3PoZm6nMJk/WSbphkUGE
-         pe88nwmO5d+ZD80k1sbbEJy9ULn/qUQOz6CEo6lpciXWWiN2yzczXUzAon3btnYxhtsm
-         YIJPeGDylXB7SQyg+TZwvLaZvCTLkf/KNFy35TUISW5oIP6TnCrOoU3pNvmOQC09/zRX
-         I2dc8ovK1QBCSbbClg3+bgt4iDAprAXF54kC8uYvJs49pabKoVszun2PCBxFx+/iyLaW
-         H/4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=D/xgR5j9++o/IJFaras/pmlOomePQdSslom82YUYeMA=;
-        b=fuxYs6Oc+uk3Tzjb19UXNg8Y+BysyAcFGha/lVuKi1brV/o8PXDMxkWbGho/5VvxOX
-         mo9/6M1d/MExtW378gocbDcPCaSB9hDJQYN3t3BEHT6ypKDozcC5yz7X+Y5IwUpmYfmG
-         qmyitOrwsWCJbgLxpO4rPDkNwjwoIjIiC+7cTzdBcBAocsAP5tSWcLfnRi7GMTfkzH91
-         G9QKPfKnoPZIOYzPC4rSS0yWtF+IO1WMnOtMmTo657aiR0cddd62IVJehvy41UBsi51C
-         vDqwPcwy/JdTV0i9zyd3S57+QbtCqp+8R4ewnyqcjSeSKrNDKa9T471gOEY8fq0p+aJF
-         CC2g==
-X-Gm-Message-State: APjAAAV+WIzy14rErcKP6tglG5ZF2fiQ7gzW4B9zThF7x+OaoMmMrWYs
-        r2Du2kCh5PREWd0qjJAn/kqobA==
-X-Google-Smtp-Source: APXvYqxWxNSKoYoMGfHNmDh2K2l4SWVxASc8qfOvlvmrxrXJSe6LTdHa1sZFO8sV6S7XdvJQD713NQ==
-X-Received: by 2002:adf:83c5:: with SMTP id 63mr20099906wre.33.1559898129860;
-        Fri, 07 Jun 2019 02:02:09 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id a125sm1487444wmf.42.2019.06.07.02.02.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 02:02:09 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] ARM: davinci: da850-evm: call regulator_has_full_constraints()
-Date:   Fri,  7 Jun 2019 11:02:01 +0200
-Message-Id: <20190607090201.5995-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.21.0
+        id S1727813AbfFGJN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 05:13:58 -0400
+Received: from foss.arm.com ([217.140.110.172]:36176 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbfFGJN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 05:13:57 -0400
+X-Greylist: delayed 476 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 05:13:56 EDT
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 519CE28;
+        Fri,  7 Jun 2019 02:06:00 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 154723F246;
+        Fri,  7 Jun 2019 02:06:00 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id CA7E168240D; Fri,  7 Jun 2019 10:05:58 +0100 (BST)
+Date:   Fri, 7 Jun 2019 10:05:58 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH v2 1/2] drm/komeda: Adds SMMU support
+Message-ID: <20190607090558.GA4173@e110455-lin.cambridge.arm.com>
+References: <1559814765-18455-1-git-send-email-lowry.li@arm.com>
+ <1559814765-18455-2-git-send-email-lowry.li@arm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1559814765-18455-2-git-send-email-lowry.li@arm.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Lowry,
 
-The BB expander at 0x21 i2c bus 1 fails to probe on da850-evm because
-the board doesn't set has_full_constraints to true in the regulator
-API.
+On Thu, Jun 06, 2019 at 10:53:05AM +0100, Lowry Li (Arm Technology China) wrote:
+> From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+> 
+> Adds iommu_connect and disconnect for SMMU support, and configures
+> TBU translation once SMMU has been attached to the display device.
+> 
+> Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> ---
+>  .../gpu/drm/arm/display/komeda/d71/d71_component.c |  5 +++
+>  drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c   | 49 ++++++++++++++++++++++
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.c    | 18 ++++++++
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.h    |  7 ++++
+>  .../drm/arm/display/komeda/komeda_framebuffer.c    |  2 +
+>  .../drm/arm/display/komeda/komeda_framebuffer.h    |  2 +
+>  6 files changed, 83 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> index 4e26a80..4a48dd6 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> @@ -215,6 +215,8 @@ static void d71_layer_update(struct komeda_component *c,
+>  	malidp_write32(reg, LAYER_FMT, kfb->format_caps->hw_id);
+>  	malidp_write32(reg, BLK_IN_SIZE, HV_SIZE(st->hsize, st->vsize));
+>  
+> +	if (kfb->is_va)
+> +		ctrl |= L_TBU_EN;
+>  	malidp_write32_mask(reg, BLK_CONTROL, ctrl_mask, ctrl);
+>  }
+>  
+> @@ -348,6 +350,9 @@ static void d71_wb_layer_update(struct komeda_component *c,
+>  			       fb->pitches[i] & 0xFFFF);
+>  	}
+>  
+> +	if (kfb->is_va)
+> +		ctrl |= LW_TBU_EN;
+> +
+>  	malidp_write32(reg, LAYER_FMT, kfb->format_caps->hw_id);
+>  	malidp_write32(reg, BLK_IN_SIZE, HV_SIZE(st->hsize, st->vsize));
+>  	malidp_write32(reg, BLK_INPUT_ID0, to_d71_input_id(&state->inputs[0]));
+> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+> index 8e682c7..1b9e734 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+> @@ -517,6 +517,53 @@ static void d71_init_fmt_tbl(struct komeda_dev *mdev)
+>  	table->n_formats = ARRAY_SIZE(d71_format_caps_table);
+>  }
+>  
+> +static int d71_connect_iommu(struct komeda_dev *mdev)
+> +{
+> +	struct d71_dev *d71 = mdev->chip_data;
+> +	u32 __iomem *reg = d71->gcu_addr;
+> +	u32 check_bits = (d71->num_pipelines == 2) ?
+> +			 GCU_STATUS_TCS0 | GCU_STATUS_TCS1 : GCU_STATUS_TCS0;
+> +	int i, ret;
+> +
+> +	if (!d71->integrates_tbu)
+> +		return -1;
+> +
+> +	malidp_write32_mask(reg, BLK_CONTROL, 0x7, TBU_CONNECT_MODE);
+> +
+> +	ret = dp_wait_cond(has_bits(check_bits, malidp_read32(reg, BLK_STATUS)),
+> +			100, 1000, 1000);
+> +	if (ret <= 0) {
 
-Call regulator_has_full_constraints() at the end of board registration
-just like we do in da850-lcdk and da830-evm.
+You don't want to return -ETIMEDOUT if dp_wait_cond() returns zero. Maybe
+follow the same flow as in d71_disconnect_iommu() ?
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da850-evm.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +		DRM_ERROR("connect to TCU timeout!\n");
+> +		malidp_write32_mask(reg, BLK_CONTROL, 0x7, INACTIVE_MODE);
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	for (i = 0; i < d71->num_pipelines; i++)
+> +		malidp_write32_mask(d71->pipes[i]->lpu_addr, LPU_TBU_CONTROL,
+> +				    LPU_TBU_CTRL_TLBPEN, LPU_TBU_CTRL_TLBPEN);
+> +	return 0;
+> +}
+> +
+> +static int d71_disconnect_iommu(struct komeda_dev *mdev)
+> +{
+> +	struct d71_dev *d71 = mdev->chip_data;
+> +	u32 __iomem *reg = d71->gcu_addr;
+> +	u32 check_bits = (d71->num_pipelines == 2) ?
+> +			 GCU_STATUS_TCS0 | GCU_STATUS_TCS1 : GCU_STATUS_TCS0;
+> +	int ret;
+> +
+> +	malidp_write32_mask(reg, BLK_CONTROL, 0x7, TBU_DISCONNECT_MODE);
+> +
+> +	ret = dp_wait_cond(((malidp_read32(reg, BLK_STATUS) & check_bits) == 0),
+> +			100, 1000, 1000);
+> +	if (ret < 0) {
+> +		DRM_ERROR("disconnect from TCU timeout!\n");
+> +		malidp_write32_mask(reg, BLK_CONTROL, 0x7, INACTIVE_MODE);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static struct komeda_dev_funcs d71_chip_funcs = {
+>  	.init_format_table = d71_init_fmt_tbl,
+>  	.enum_resources	= d71_enum_resources,
+> @@ -527,6 +574,8 @@ static void d71_init_fmt_tbl(struct komeda_dev *mdev)
+>  	.on_off_vblank	= d71_on_off_vblank,
+>  	.change_opmode	= d71_change_opmode,
+>  	.flush		= d71_flush,
+> +	.connect_iommu	= d71_connect_iommu,
+> +	.disconnect_iommu = d71_disconnect_iommu,
+>  };
+>  
+>  struct komeda_dev_funcs *
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> index c92e161..e80e673 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> @@ -253,6 +253,19 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
+>  	dev->dma_parms = &mdev->dma_parms;
+>  	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+>  
+> +	mdev->iommu = iommu_get_domain_for_dev(mdev->dev);
+> +	if (!mdev->iommu)
+> +		DRM_INFO("continue without IOMMU support!\n");
+> +
+> +	if (mdev->iommu && mdev->funcs->connect_iommu) {
+> +		err = mdev->funcs->connect_iommu(mdev);
+> +		if (err) {
+> +			mdev->iommu = NULL;
+> +			DRM_ERROR("connect iommu failed.\n");
 
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index 4ee65a8a3b80..31ae3be5741d 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -1480,6 +1480,8 @@ static __init void da850_evm_init(void)
- 	if (ret)
- 		pr_warn("%s: dsp/rproc registration failed: %d\n",
- 			__func__, ret);
-+
-+	regulator_has_full_constraints();
- }
- 
- #ifdef CONFIG_SERIAL_8250_CONSOLE
+I thought you're going to remove these extra DRM_ERRORs.
+
+Best regards,
+Liviu
+
+> +			goto err_cleanup;
+> +		}
+> +	}
+> +
+>  	err = sysfs_create_group(&dev->kobj, &komeda_sysfs_attr_group);
+>  	if (err) {
+>  		DRM_ERROR("create sysfs group failed.\n");
+> @@ -282,6 +295,11 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
+>  	debugfs_remove_recursive(mdev->debugfs_root);
+>  #endif
+>  
+> +	if (mdev->iommu && mdev->funcs->disconnect_iommu)
+> +		if (mdev->funcs->disconnect_iommu(mdev))
+> +			DRM_ERROR("disconnect iommu failed.\n");
+> +	mdev->iommu = NULL;
+> +
+>  	for (i = 0; i < mdev->n_pipelines; i++) {
+>  		komeda_pipeline_destroy(mdev, mdev->pipelines[i]);
+>  		mdev->pipelines[i] = NULL;
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> index 83ace71..dac1eda 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> @@ -92,6 +92,10 @@ struct komeda_dev_funcs {
+>  	int (*enum_resources)(struct komeda_dev *mdev);
+>  	/** @cleanup: call to chip to cleanup komeda_dev->chip data */
+>  	void (*cleanup)(struct komeda_dev *mdev);
+> +	/** @connect_iommu: Optional, connect to external iommu */
+> +	int (*connect_iommu)(struct komeda_dev *mdev);
+> +	/** @disconnect_iommu: Optional, disconnect to external iommu */
+> +	int (*disconnect_iommu)(struct komeda_dev *mdev);
+>  	/**
+>  	 * @irq_handler:
+>  	 *
+> @@ -184,6 +188,9 @@ struct komeda_dev {
+>  	 */
+>  	void *chip_data;
+>  
+> +	/** @iommu: iommu domain */
+> +	struct iommu_domain *iommu;
+> +
+>  	/** @debugfs_root: root directory of komeda debugfs */
+>  	struct dentry *debugfs_root;
+>  };
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
+> index d5822a3..360ab70 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
+> @@ -201,6 +201,8 @@ struct drm_framebuffer *
+>  		goto err_cleanup;
+>  	}
+>  
+> +	kfb->is_va = mdev->iommu ? true : false;
+> +
+>  	return &kfb->base;
+>  
+>  err_cleanup:
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
+> index 6cbb2f6..f4046e2 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
+> @@ -21,6 +21,8 @@ struct komeda_fb {
+>  	 * extends drm_format_info for komeda specific information
+>  	 */
+>  	const struct komeda_format_caps *format_caps;
+> +	/** @is_va: if smmu is enabled, it will be true */
+> +	bool is_va;
+>  	/** @aligned_w: aligned frame buffer width */
+>  	u32 aligned_w;
+>  	/** @aligned_h: aligned frame buffer height */
+> -- 
+> 1.9.1
+> 
+
 -- 
-2.21.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
