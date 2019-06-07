@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4B838FD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2A2E39028
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbfFGPp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:45:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57990 "EHLO mail.kernel.org"
+        id S1731986AbfFGPtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:49:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730874AbfFGPpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:45:55 -0400
+        id S1731965AbfFGPtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:49:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 680912147A;
-        Fri,  7 Jun 2019 15:45:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 732FB20657;
+        Fri,  7 Jun 2019 15:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922354;
-        bh=IH42kK0pM6mKM6+D0dw5afG5V8kpzrd86yBmMIwqO40=;
+        s=default; t=1559922570;
+        bh=QsYZ9HZpUUYKJYJT/QDNZdU6WI+ataWXCsOdcchD/+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L8TrSpMyZjj+6NmANMuNH2rbYN7IW74AP9NYvyxY4yTrClAGYXc8xRBtDtk5Dxljy
-         tleMgNJnk2AN3BNQMl6eDmtZoh1HD8uFWk57Ro9aGpkGya9jIOvRkwbfJsvLPSKKA6
-         CV55oOtjwLbymPkfP3sR5YwYpoyi75bC5BDlxV68=
+        b=DzKDjRaC3TFAcXdObj6jSJRfBB6PrlsFhOo4b71nEYRjXV7ycsgumtpkTA0E4skwg
+         O8787JUr0zZet0Bfr+ezMRCm4L0jq0FX/8SBpDxgJV0xg+zmRcc5hwaTiuZVvTIG0h
+         JvAQPGfs8FeOINOQz9Prr9AOYG92NrvpbHlmve+w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Rawat <drawat@vmware.com>
-Subject: [PATCH 4.19 57/73] drm/vmwgfx: Dont send drm sysfs hotplug events on initial master set
+        stable@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 5.1 59/85] ima: fix wrong signed policy requirement when not appraising
 Date:   Fri,  7 Jun 2019 17:39:44 +0200
-Message-Id: <20190607153855.391005820@linuxfoundation.org>
+Message-Id: <20190607153856.007058193@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Petr Vorel <pvorel@suse.cz>
 
-commit 63cb44441826e842b7285575b96db631cc9f2505 upstream.
+commit f40019475bbbe9b455e7fd4385fcf13896c492ca upstream.
 
-This may confuse user-space clients like plymouth that opens a drm
-file descriptor as a result of a hotplug event and then generates a
-new event...
+Kernel booted just with ima_policy=tcb (not with
+ima_policy=appraise_tcb) shouldn't require signed policy.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 5ea1734827bb ("drm/vmwgfx: Send a hotplug event at master_set")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Regression found with LTP test ima_policy.sh.
+
+Fixes: c52657d93b05 ("ima: refactor ima_init_policy()")
+Cc: stable@vger.kernel.org  (linux-5.0)
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_policy.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -1291,7 +1291,13 @@ static int vmw_master_set(struct drm_dev
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -498,10 +498,11 @@ static void add_rules(struct ima_rule_en
+ 
+ 			list_add_tail(&entry->list, &ima_policy_rules);
+ 		}
+-		if (entries[i].action == APPRAISE)
++		if (entries[i].action == APPRAISE) {
+ 			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+-		if (entries[i].func == POLICY_CHECK)
+-			temp_ima_appraise |= IMA_APPRAISE_POLICY;
++			if (entries[i].func == POLICY_CHECK)
++				temp_ima_appraise |= IMA_APPRAISE_POLICY;
++		}
  	}
- 
- 	dev_priv->active_master = vmaster;
--	drm_sysfs_hotplug_event(dev);
-+
-+	/*
-+	 * Inform a new master that the layout may have changed while
-+	 * it was gone.
-+	 */
-+	if (!from_open)
-+		drm_sysfs_hotplug_event(dev);
- 
- 	return 0;
  }
+ 
 
 
