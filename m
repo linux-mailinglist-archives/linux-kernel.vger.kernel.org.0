@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDD039036
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B01390F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:56:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732080AbfFGPt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:49:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36268 "EHLO mail.kernel.org"
+        id S1732036AbfFGP4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:56:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732065AbfFGPt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:49:56 -0400
+        id S1730410AbfFGPor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:44:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B3E020840;
-        Fri,  7 Jun 2019 15:49:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1815D2146E;
+        Fri,  7 Jun 2019 15:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922595;
-        bh=2YaMuI3RJKFG5nQj8FFJEYnNadIMoqYra8uLWOutnmU=;
+        s=default; t=1559922287;
+        bh=l6xlgdWuyu83Qg44TbTOUnGQ4jY817/wDW3olYQfI08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0vmrkIZvBvu591w60QLb9gCWuobyWcgWkR5qrFKlgzeqo+/Gl15Gn43mzey2ol7gw
-         ee+aqE4SNAqWM1FrapzXMdaHx4QDFE2gBUJURKTSvGqg9z+NTzSQigYqm011yRWWCC
-         KEGAveI2XJfwDns4KK4i+co1UrGc/InZcigmj0OU=
+        b=ZzDqkom6cSsMdY+9EbtcmyEu9yr9X6h61pUxqo5luYgBtFRclLU7Ni8aSgb8eO0dZ
+         wZZoE4JihAsKjjWWGUrHJEzLuH0z2F/YCCHaHfhHrR6W1l+/NZmTqL3qSsgDRtkdFt
+         YpcJ0mxYNtJyP8rZqC3iu4jzaP+LcSmv3dd0RfYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 5.1 33/85] s390/crypto: fix possible sleep during spinlock aquired
-Date:   Fri,  7 Jun 2019 17:39:18 +0200
-Message-Id: <20190607153853.342312000@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 32/73] ALSA: hda/realtek - Set default power save node to 0
+Date:   Fri,  7 Jun 2019 17:39:19 +0200
+Message-Id: <20190607153852.665826960@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
+References: <20190607153848.669070800@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harald Freudenberger <freude@linux.ibm.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 1c2c7029c008922d4d48902cc386250502e73d51 upstream.
+commit 317d9313925cd8388304286c0d3c8dda7f060a2d upstream.
 
-This patch fixes a complain about possible sleep during
-spinlock aquired
-"BUG: sleeping function called from invalid context at
-include/crypto/algapi.h:426"
-for the ctr(aes) and ctr(des) s390 specific ciphers.
+I measured power consumption between power_save_node=1 and power_save_node=0.
+It's almost the same.
+Codec will enter to runtime suspend and suspend.
+That pin also will enter to D3. Don't need to enter to D3 by single pin.
+So, Disable power_save_node as default. It will avoid more issues.
+Windows Driver also has not this option at runtime PM.
 
-Instead of using a spinlock this patch introduces a mutex
-which is save to be held in sleeping context. Please note
-a deadlock is not possible as mutex_trylock() is used.
-
-Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
-Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/crypto/aes_s390.c |    8 ++++----
- arch/s390/crypto/des_s390.c |    7 ++++---
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/crypto/aes_s390.c
-+++ b/arch/s390/crypto/aes_s390.c
-@@ -27,14 +27,14 @@
- #include <linux/module.h>
- #include <linux/cpufeature.h>
- #include <linux/init.h>
--#include <linux/spinlock.h>
-+#include <linux/mutex.h>
- #include <linux/fips.h>
- #include <linux/string.h>
- #include <crypto/xts.h>
- #include <asm/cpacf.h>
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7558,7 +7558,7 @@ static int patch_alc269(struct hda_codec
  
- static u8 *ctrblk;
--static DEFINE_SPINLOCK(ctrblk_lock);
-+static DEFINE_MUTEX(ctrblk_lock);
+ 	spec = codec->spec;
+ 	spec->gen.shared_mic_vref_pin = 0x18;
+-	codec->power_save_node = 1;
++	codec->power_save_node = 0;
  
- static cpacf_mask_t km_functions, kmc_functions, kmctr_functions,
- 		    kma_functions;
-@@ -698,7 +698,7 @@ static int ctr_aes_crypt(struct blkciphe
- 	unsigned int n, nbytes;
- 	int ret, locked;
- 
--	locked = spin_trylock(&ctrblk_lock);
-+	locked = mutex_trylock(&ctrblk_lock);
- 
- 	ret = blkcipher_walk_virt_block(desc, walk, AES_BLOCK_SIZE);
- 	while ((nbytes = walk->nbytes) >= AES_BLOCK_SIZE) {
-@@ -716,7 +716,7 @@ static int ctr_aes_crypt(struct blkciphe
- 		ret = blkcipher_walk_done(desc, walk, nbytes - n);
- 	}
- 	if (locked)
--		spin_unlock(&ctrblk_lock);
-+		mutex_unlock(&ctrblk_lock);
- 	/*
- 	 * final block may be < AES_BLOCK_SIZE, copy only nbytes
- 	 */
---- a/arch/s390/crypto/des_s390.c
-+++ b/arch/s390/crypto/des_s390.c
-@@ -14,6 +14,7 @@
- #include <linux/cpufeature.h>
- #include <linux/crypto.h>
- #include <linux/fips.h>
-+#include <linux/mutex.h>
- #include <crypto/algapi.h>
- #include <crypto/des.h>
- #include <asm/cpacf.h>
-@@ -21,7 +22,7 @@
- #define DES3_KEY_SIZE	(3 * DES_KEY_SIZE)
- 
- static u8 *ctrblk;
--static DEFINE_SPINLOCK(ctrblk_lock);
-+static DEFINE_MUTEX(ctrblk_lock);
- 
- static cpacf_mask_t km_functions, kmc_functions, kmctr_functions;
- 
-@@ -387,7 +388,7 @@ static int ctr_desall_crypt(struct blkci
- 	unsigned int n, nbytes;
- 	int ret, locked;
- 
--	locked = spin_trylock(&ctrblk_lock);
-+	locked = mutex_trylock(&ctrblk_lock);
- 
- 	ret = blkcipher_walk_virt_block(desc, walk, DES_BLOCK_SIZE);
- 	while ((nbytes = walk->nbytes) >= DES_BLOCK_SIZE) {
-@@ -404,7 +405,7 @@ static int ctr_desall_crypt(struct blkci
- 		ret = blkcipher_walk_done(desc, walk, nbytes - n);
- 	}
- 	if (locked)
--		spin_unlock(&ctrblk_lock);
-+		mutex_unlock(&ctrblk_lock);
- 	/* final block may be < DES_BLOCK_SIZE, copy only nbytes */
- 	if (nbytes) {
- 		cpacf_kmctr(fc, ctx->key, buf, walk->src.virt.addr,
+ #ifdef CONFIG_PM
+ 	codec->patch_ops.suspend = alc269_suspend;
 
 
