@@ -2,278 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B23138C4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:11:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AB7E38C5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfFGOLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:11:30 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50663 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728714AbfFGOL2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:11:28 -0400
-Received: by mail-wm1-f65.google.com with SMTP id c66so2260585wmf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0ZYfbq8DL3LpXL9yf2jVYpxvz/OJp9KspDnsQwcowYs=;
-        b=LOdgw/W8y3WxoYglidUTbuqXb+c7Kg0L6dphOOd1zAD/Zo9eb/Kx+EmC5BA0btXr35
-         KY/jG6im3orSZ1Eu9EYm0AfrAOy+ELdLcEcGTwInlHyC7qXt4ZOUCImt7qywml8G1Hf5
-         xNdILspR+dBh5MG0QRG4T2PP30vcjs4t1UkD16SydSGo3762LCIA3Bhy7XwmcrJlbVy2
-         bTy1SJuCqyI0qGqWRneTrgBOc0M3yuafy6+4FNVENJrx2DuwnVUc56YvygtDOnRPDLgS
-         sVK+DOVc9akzY/D4lGgPhHDl4q/Mj11eXAEq95dieOZbhmtmHgzCDsVOHPjxaVbwmebt
-         7cYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0ZYfbq8DL3LpXL9yf2jVYpxvz/OJp9KspDnsQwcowYs=;
-        b=gMSXqK5BafIiNR8FJaCt1hRIgiEnj/KHIuIEWOfEA3Hg7VUsedDdlO/DTXrtJNM/Qn
-         BaeoH4XO2Z/qE+d6JxdI7mB5G5nsT1vGLmoUr0M48WGWYOD5BLTmZPkq1Plf4CPNN3tI
-         pNe6ad7phkFimegCoEn4dj04C1WlkPzHvpkoMfuOl1isE+yRN0l32wRMrklCPJ0K5HMF
-         wmChhl53U2+KrWLUiYQlta0fl82R5zM042jNEvbW1pB0Xh+YQy8B9ArQE+NeJCBXdTl3
-         ixTnmziFIv/AHCMBKnd9eWL41kVi/oDFfyikKTlMbA80WMul8jN93Ih+6SNPe/ZWRCgW
-         bYDA==
-X-Gm-Message-State: APjAAAWtF1Ujq1k4PDaq8t8tZi6fzrFZUDjsTqEeZAHJylBf3ijbd4b8
-        FgilzNjwnNO23YgnTWPgfNDvPA==
-X-Google-Smtp-Source: APXvYqxpRh2M95ZDYYx6CmiTLZ6NL1KDuVc03Q5ASLdMt3lb3pJJTgPSSbzPp4iOdpWNTFWA4/9JSA==
-X-Received: by 2002:a1c:67c2:: with SMTP id b185mr3668034wmc.98.1559916686092;
-        Fri, 07 Jun 2019 07:11:26 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x25sm1402445wmc.36.2019.06.07.07.11.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 07:11:25 -0700 (PDT)
-Subject: Re: [PATCH 2/5] drm/bridge: add encoder support to specify bridge
- input format
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     a.hajda@samsung.com, jernej.skrabec@siol.net,
-        maxime.ripard@bootlin.com, jonas@kwiboo.se,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        hverkuil@xs4all.nl, linux-amlogic@lists.infradead.org
-References: <20190520133753.23871-1-narmstrong@baylibre.com>
- <20190520133753.23871-3-narmstrong@baylibre.com>
- <20190607133818.GM7593@pendragon.ideasonboard.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <aacca40a-0e3d-9c44-5441-f16a33d52bb7@baylibre.com>
-Date:   Fri, 7 Jun 2019 16:11:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728667AbfFGOOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:14:16 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:54643 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727915AbfFGOOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:14:15 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id cb936dc6
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 7 Jun 2019 13:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :from:date:message-id:subject:to:cc:content-type; s=mail; bh=OeF
+        uQrPwu5IL9s3FkHC48tIdkYU=; b=23ufbG15/HAhhqr0dMAC739K1BgGl/I8Utg
+        AsVQ+mNyxec8wC3umkFHVSI7ZuASjfEZm3t9+Ddfy/ULakh3bcxhqU8hvXWvAr8e
+        grZtwRSUNZoHixB0LiWjjsWpylQPnTuVOo2kV9DXK+8TYnqBK+u2AMcHbHDXm6GA
+        fyf555l2QowcmHE2KJ1cv1j8uT4wvqEDhRO5cBeIflLLqkyOVX/1kqWwH7yPtegZ
+        gpJqw+ToK1UEufsPWUd6X387qv/BAhCzoJYSI1JfdewHUx8aI0xko9Kb4Z7tQJzT
+        wMOteKpD+zngSlONO0raVlzz37iFA5j2FSvwRg4J1bPhXwAUa/Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f229aa2e (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 7 Jun 2019 13:42:35 +0000 (UTC)
+Received: by mail-ot1-f44.google.com with SMTP id r21so1969409otq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:14:12 -0700 (PDT)
+X-Gm-Message-State: APjAAAU+4q/2W/pPwJDOZo33PtVMXK+c0YzTHYZsSfpcQtC6Gl61jmtG
+        OxrwLsTH3f44aL/VHWs8VfIlIwf98Jor6fuHrQ8=
+X-Google-Smtp-Source: APXvYqxg1/3IwWP3Q+X6sa+o268T3x+BLaVlnwR5sQtXYEWGYFh+6ptuH/NNVB1vpMQyH8Vn635GR+B+GHu7Rr5xZ+k=
+X-Received: by 2002:a9d:67d5:: with SMTP id c21mr1179546otn.243.1559916851654;
+ Fri, 07 Jun 2019 07:14:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190607133818.GM7593@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 7 Jun 2019 16:14:00 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
+Message-ID: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
+Subject: infinite loop in read_hpet from ktime_get_boot_fast_ns
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, clemens@ladisch.de,
+        Sultan Alsawaf <sultan@kerneltoast.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2019 15:38, Laurent Pinchart wrote:
-> Hi Neil,
-> 
-> Thank you for the patch.
-> 
-> On Mon, May 20, 2019 at 03:37:50PM +0200, Neil Armstrong wrote:
->> This patch adds a new format_set() callback to the bridge ops permitting
->> the encoder to specify the new input format and encoding.
->>
->> This allows supporting the very specific HDMI2.0 YUV420 output mode
->> when the bridge cannot convert from RGB or YUV444 to YUV420.
->>
->> In this case, the encode must downsample before the bridge and must
->> specify the bridge the new input bus format differs.
->>
->> This will also help supporting the YUV420 mode where the bridge cannot
->> downsample, and also support 10bit, 12bit and 16bit output modes
->> when the bridge cannot convert between different bit depths.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/gpu/drm/drm_bridge.c | 35 +++++++++++++++++++++++++++++++++++
->>  include/drm/drm_bridge.h     | 19 +++++++++++++++++++
->>  2 files changed, 54 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
->> index 138b2711d389..33be74a977f7 100644
->> --- a/drivers/gpu/drm/drm_bridge.c
->> +++ b/drivers/gpu/drm/drm_bridge.c
->> @@ -307,6 +307,41 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
->>  }
->>  EXPORT_SYMBOL(drm_bridge_mode_set);
->>  
->> +/**
->> + * drm_bridge_format_set - setup with proposed input format and encoding for
->> + *			   all bridges in the encoder chain
->> + * @bridge: bridge control structure
->> + * @input_bus_format: proposed input bus format for the bridge
->> + * @input_encoding: proposed input encoding for this bridge
->> + *
->> + * Calls &drm_bridge_funcs.format_set op for all the bridges in the
->> + * encoder chain, starting from the first bridge to the last.
->> + *
->> + * Note: the bridge passed should be the one closest to the encoder
->> + *
->> + * RETURNS:
->> + * true on success, false if one of the bridge cannot handle the format
-> 
-> I would return an int to propagate the failure reason upstream. It will
-> reach the commit tail handler in any case, so will be dropped there, but
-> could help debugging issues if we print it in the right place.
+Hey Thomas,
 
-Indeed.
+After some discussions here prior about the different clocks
+available, WireGuard uses ktime_get_boot_fast_ns() pretty extensively.
+The requirement is for a quasi-accurate monotonic counter that takes
+into account sleep time, and this seems to fit the bill pretty well.
+Sultan (CC'd) reported to me a non-reproducible bug he encountered in
+4.19.47 (arch's linux-lts package), where the CPU was hung in
+read_hpet.
 
-> 
->> + */
->> +bool drm_bridge_format_set(struct drm_bridge *bridge,
->> +			   const u32 input_bus_format,
->> +			   const u32 input_encoding)
-> 
-> You don't need a const here.
+CPU: 1 PID: 7927 Comm: kworker/1:3 Tainted: G           OE     4.19.47-1-lts #1
+Hardware name: Dell Inc. XPS 15 9570/02MJVY, BIOS 1.10.1 04/26/2019
+Workqueue: wg-crypt-interface wg_packet_tx_worker [wireguard]
+RIP: 0010:read_hpet+0x67/0xc0
+Code: c0 75 11 ba 01 00 00 00 f0 0f b1 15 a3 3d 1a 01 85 c0 74 37 48
+89 cf 57 9d 0f 1f 44 00 00 48 c1 ee 20 eb 04 85 c9 74 12 f3 90 <49> 8b
+08 48 89 ca 48 c1 ea 20 89 d0 39 f2 74 ea c3 48 8b 05 89 56
+RSP: 0018:ffffb8d382533e18 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
+RAX: 0000000018a4c89e RBX: 0000000000000000 RCX: 18a4c89e00000001
+RDX: 0000000018a4c89e RSI: 0000000018a4c89e RDI: ffffffffb8227980
+RBP: 000006c1c3f602a2 R08: ffffffffb8205040 R09: 0000000000000000
+R10: 000001d58fd28efc R11: 0000000000000000 R12: ffffffffb8259a80
+R13: 00000000ffffffff R14: 0000000518a0d8c4 R15: 000000000010fa5a
+FS:  0000000000000000(0000) GS:ffff9b90ac240000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00003663b14d9ce8 CR3: 000000030f20a006 CR4: 00000000003606e0
+Call Trace:
+ ktime_get_mono_fast_ns+0x53/0xa0
+ ktime_get_boot_fast_ns+0x5/0x10
+ wg_packet_tx_worker+0x183/0x220 [wireguard]
+ process_one_work+0x1f4/0x3e0
+ worker_thread+0x2d/0x3e0
+ ? process_one_work+0x3e0/0x3e0
+ kthread+0x112/0x130
+ ? kthread_park+0x80/0x80
+ ret_from_fork+0x35/0x40
+watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [kworker/1:3:7927]
 
-Noted
+It looks like RIP is spinning in this loop in read_hpet:
 
-> 
->> +{
->> +	bool ret = true;
->> +
->> +	if (!bridge)
->> +		return true;
->> +
->> +	if (bridge->funcs->format_set)
->> +		ret = bridge->funcs->format_set(bridge, input_bus_format,
->> +						input_encoding);
->> +	if (!ret)
->> +		return ret;
->> +
->> +	return drm_bridge_format_set(bridge->next, input_bus_format,
->> +				     input_encoding);
-> 
-> I don't think this will scale. It's not that uncommon for bridges to
-> change the format (most likely converting from YUV to RGB or the other
-> way around, or reducing the number of bits per sample) and the encoding.
-> We thus can't propagate it from bridge to bridge and expect that to
-> work.
-> 
-> At the very least, the bridge should report its output bus format and
-> encoding, to be applied to the next bridge, but this won't allow
-> checking if the configuration can be applied ahead of time, resulting in
-> possible failures of a commit tail handler. I wonder if this wouldn't be
-> a good time to introduce bridge states...
+do {
+    cpu_relax();
+    new.lockval = READ_ONCE(hpet.lockval);
+} while ((new.value == old.value) && arch_spin_is_locked(&new.lock));
 
-Ok for chaining the format_set, I thought about it when writing it.
+I imagine this could be a bug in the hpet code, or a failure of the
+hpet hardware. But I thought it'd be most prudent to check, first,
+whether there are actually very particular conditions on when and
+where ktime_get_boot_fast_ns and friends can be called. In other
+words, maybe the bug is actually in my code. I was under the
+impression that invoking it from anywhere was fine, given the
+documentation says "NMI safe", but maybe there are still some
+requirements I should keep in mind?
 
-And what if a added a second call drm_bridge_format_check() to check
-if a future format_set chaining would work ? then we could either do the
-format_set, try another or fallback to a known default format setup.
-
-Would that be sufficient ?
-
-Bridge states would be interesting, but it's really out of the scope of
-our current needs in term of bridge changes.
-
-IMHO we can start with format_check/format_set and switch to bridges states
-when we have a sufficient use case needing a finer handling of states.
-
-Neil
-
-> 
->> +}
->> +EXPORT_SYMBOL(drm_bridge_format_set);
->> +
->>  /**
->>   * drm_bridge_pre_enable - prepares for enabling all
->>   *			   bridges in the encoder chain
->> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
->> index d4428913a4e1..7a79e61b7825 100644
->> --- a/include/drm/drm_bridge.h
->> +++ b/include/drm/drm_bridge.h
->> @@ -198,6 +198,22 @@ struct drm_bridge_funcs {
->>  	void (*mode_set)(struct drm_bridge *bridge,
->>  			 const struct drm_display_mode *mode,
->>  			 const struct drm_display_mode *adjusted_mode);
->> +
->> +	/**
->> +	 * @format_set:
->> +	 *
->> +	 * This callback should configure the bridge for the given input bus
->> +	 * format and encoding. It is called after the @format_set callback
->> +	 * for the preceding element in the display pipeline has been called
->> +	 * already. If the bridge is the first element then this would be
->> +	 * &drm_encoder_helper_funcs.format_set. The display pipe (i.e.
->> +	 * clocks and timing signals) is off when this function is called.
->> +	 *
->> +	 * @returns: true in success, false is a bridge refuses the format
->> +	 */
->> +	bool (*format_set)(struct drm_bridge *bridge,
->> +			   const u32 input_bus_format,
->> +			   const u32 input_encoding);
->>  	/**
->>  	 * @pre_enable:
->>  	 *
->> @@ -311,6 +327,9 @@ void drm_bridge_post_disable(struct drm_bridge *bridge);
->>  void drm_bridge_mode_set(struct drm_bridge *bridge,
->>  			 const struct drm_display_mode *mode,
->>  			 const struct drm_display_mode *adjusted_mode);
->> +bool drm_bridge_format_set(struct drm_bridge *bridge,
->> +			   const u32 input_bus_format,
->> +			   const u32 input_encoding);
->>  void drm_bridge_pre_enable(struct drm_bridge *bridge);
->>  void drm_bridge_enable(struct drm_bridge *bridge);
->>  
-> 
-
+Thanks,
+Jason
