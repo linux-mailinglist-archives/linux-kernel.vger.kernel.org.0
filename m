@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2223338FE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5F93903A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731439AbfFGPqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:46:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58962 "EHLO mail.kernel.org"
+        id S1732108AbfFGPuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731421AbfFGPqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:46:34 -0400
+        id S1731220AbfFGPuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:50:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75670212F5;
-        Fri,  7 Jun 2019 15:46:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 738CF2146E;
+        Fri,  7 Jun 2019 15:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922394;
-        bh=8QlJJdFA43+I5a1OP0oP2z71pKHVQ6ZQmOOq+9J9Ni8=;
+        s=default; t=1559922604;
+        bh=DnNeCLQx4HO+1hlXeb/DClw5HFQxojEBibonIOcjEjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t9y2g8wOKSinzFUm/J0GxiWCchqOqhpYP6yg9GoeGpH7gD1OJzlsZKxdby4qzzQ7n
-         j2Gf2S2fAga3zFI0qhjWRNkiQ6rm/8pVrwQSzXe6JSF65WLDdaw5j+G5ILAcsfM0Af
-         eEEkO/SXIEWrtxl3fjKpv1Q4gFV9eljGf1EPnV50=
+        b=eVGlYuOC572qdy/ZQ33jufeubRMIAO4HYFzy2fZcqqk9lR4k21LwN+bJl06M99QQW
+         6YDo9uED81jb3JU4hzw0mbMBY6j7T1T87w0QnUFsxCusBJMvxvPasQaxwCbrHZwHkO
+         IQ4vNVpV5VVMXKa0q3iyXv6KpToJGSli1gl+x2VI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        James Smart <james.smart@broadcom.com>
-Subject: [PATCH 4.19 70/73] scsi: lpfc: Fix backport of faf5a744f4f8 ("scsi: lpfc: avoid uninitialized variable warning")
-Date:   Fri,  7 Jun 2019 17:39:57 +0200
-Message-Id: <20190607153856.615668534@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
+        Brian Paul <brianp@vmware.com>
+Subject: [PATCH 5.1 73/85] drm/vmwgfx: Fix compat mode shader operation
+Date:   Fri,  7 Jun 2019 17:39:58 +0200
+Message-Id: <20190607153857.196916937@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Prior to commit 4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to
-hardware queue structures") upstream, we allocated a cstat structure in
-lpfc_nvme_create_localport. When commit faf5a744f4f8 ("scsi: lpfc: avoid
-uninitialized variable warning") was backported, it was placed after the
-allocation so we leaked memory whenever this function was called and
-that conditional was true (so whenever CONFIG_NVME_FC is disabled).
+commit e41c20cf50a8a7d0dfa337a7530590aacef4193b upstream.
 
-Move the IS_ENABLED if statement above the allocation since it is not
-needed when the condition is true.
+In compat mode, we allowed host-backed user-space with guest-backed
+kernel / device. In this mode, set shader commands was broken since
+no relocations were emitted. Fix this.
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: James Smart <james.smart@broadcom.com>
+Cc: <stable@vger.kernel.org>
+Fixes: e8c66efbfe3a ("drm/vmwgfx: Make user resource lookups reference-free during validation")
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Brian Paul <brianp@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/lpfc/lpfc_nvme.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/lpfc/lpfc_nvme.c
-+++ b/drivers/scsi/lpfc/lpfc_nvme.c
-@@ -2477,14 +2477,14 @@ lpfc_nvme_create_localport(struct lpfc_v
- 	lpfc_nvme_template.max_sgl_segments = phba->cfg_nvme_seg_cnt + 1;
- 	lpfc_nvme_template.max_hw_queues = phba->cfg_nvme_io_channel;
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2129,6 +2129,11 @@ static int vmw_cmd_set_shader(struct vmw
+ 		return 0;
  
-+	if (!IS_ENABLED(CONFIG_NVME_FC))
-+		return ret;
+ 	if (cmd->body.shid != SVGA3D_INVALID_ID) {
++		/*
++		 * This is the compat shader path - Per device guest-backed
++		 * shaders, but user-space thinks it's per context host-
++		 * backed shaders.
++		 */
+ 		res = vmw_shader_lookup(vmw_context_res_man(ctx),
+ 					cmd->body.shid,
+ 					cmd->body.type);
+@@ -2137,6 +2142,14 @@ static int vmw_cmd_set_shader(struct vmw
+ 			ret = vmw_execbuf_res_noctx_val_add(sw_context, res);
+ 			if (unlikely(ret != 0))
+ 				return ret;
 +
- 	cstat = kmalloc((sizeof(struct lpfc_nvme_ctrl_stat) *
- 			phba->cfg_nvme_io_channel), GFP_KERNEL);
- 	if (!cstat)
- 		return -ENOMEM;
++			ret = vmw_resource_relocation_add
++				(sw_context, res,
++				 vmw_ptr_diff(sw_context->buf_start,
++					      &cmd->body.shid),
++				 vmw_res_rel_normal);
++			if (unlikely(ret != 0))
++				return ret;
+ 		}
+ 	}
  
--	if (!IS_ENABLED(CONFIG_NVME_FC))
--		return ret;
--
- 	/* localport is allocated from the stack, but the registration
- 	 * call allocates heap memory as well as the private area.
- 	 */
 
 
