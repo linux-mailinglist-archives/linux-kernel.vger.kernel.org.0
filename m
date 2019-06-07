@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF6238F95
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA3239128
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbfFGPnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:43:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:43104 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730720AbfFGPnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:43:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0CF280D;
-        Fri,  7 Jun 2019 08:42:59 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 86C973F718;
-        Fri,  7 Jun 2019 08:42:58 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 16:42:56 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Qian Cai <cai@lca.pw>, linux-efi@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: "arm64: Silence gcc warnings about arch ABI drift" breaks clang
-Message-ID: <20190607154256.GG28398@e103592.cambridge.arm.com>
-References: <1559920965.6132.56.camel@lca.pw>
- <20190607152517.GC19862@fuggles.cambridge.arm.com>
- <1559921171.6132.57.camel@lca.pw>
- <20190607154010.GA41392@archlinux-epyc>
+        id S1730894AbfFGP5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:57:44 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:46904 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729961AbfFGPng (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:43:36 -0400
+Received: from mailhost.synopsys.com (unknown [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 0448BC5859;
+        Fri,  7 Jun 2019 15:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559922215; bh=0lEPE/omdBqnj239oGGM+RMVir+ROFSBHtl3mcsX8h4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=By726Rt7GGoItd7VLH3TBczHPVhVpeILAw1YpJ4M3MQvag4phbfn5xr0LFy6t5X2a
+         +QHT35L7b8z+XR/QkNLac6pNfuzVv0z8uWcy23Ymd0TzpFn17a8THB/fh5sC4Pu1qW
+         UAKxZGZjB8ZmnSXXvae7Ug6uw/m79q5H9omwDTpzQXGCyKx/9mzOF080RjfNa6ubqM
+         yGU5y1NV3MGMokfvHraPa7myWHXntpVK1g31huj07OfGhoFrpwCJWTKxW6Adx6Kgzd
+         w+vRWqICzpUcVteMmSrGLt99f2JPmsZ2/GxyiaQfV7mxpSazQa+uAxFc/F0nZkqCJc
+         hy8ps+XwlfyoQ==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.20])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A3946A022E;
+        Fri,  7 Jun 2019 15:43:29 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-mtd@lists.infradead.org, Marek Vasut <marex@denx.de>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] mtd: spi-nor: add support for sst26wf016, sst26wf032 memory
+Date:   Fri,  7 Jun 2019 18:43:08 +0300
+Message-Id: <20190607154308.20899-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607154010.GA41392@archlinux-epyc>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 08:40:10AM -0700, Nathan Chancellor wrote:
-> On Fri, Jun 07, 2019 at 11:26:11AM -0400, Qian Cai wrote:
-> > On Fri, 2019-06-07 at 16:25 +0100, Will Deacon wrote:
-> > > On Fri, Jun 07, 2019 at 11:22:45AM -0400, Qian Cai wrote:
-> > > > The linux-next commit "arm64: Silence gcc warnings about arch ABI drift" [1]
-> > > > breaks clang build where it screams that unknown option "-Wno-psabi" and
-> > > > generates errors below,
-> > > 
-> > > So that can be easily fixed with cc-option...
-> > > 
-> > > > [1] https://lore.kernel.org/linux-arm-kernel/1559817223-32585-1-git-send-ema
-> > > > il-D
-> > > > ave.Martin@arm.com/
-> > > > 
-> > > > ./drivers/firmware/efi/libstub/arm-stub.stub.o: In function
-> > > > `install_memreserve_table':
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:73: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:73: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:93: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:93: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:94: undefined reference to
-> > > > `__efistub___stack_chk_fail
-> > > 
-> > > ... but this looks unrelated. Are you saying you don't see these errors if
-> > > you revert Dave's patch?
-> > 
-> > Yes.
-> 
-> I suspect the reason for this is -Wunknown-warning-option causes
-> cc-option to fail. I see some disabled warnings like
-> -Waddress-of-packed-member and -Wunused-const-variable when -Wno-psabi
-> is unconditionally added.
-> 
-> I'll do some further triage but I think the obvious fix as Will
-> suggested is to use cc-disable-warning. I'll send a patch.
+This commit adds support for the SST sst26wf016 and sst26wf032
+flash memory IC.
 
-Thanks for that.
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Cheers
----Dave
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 73172d7f512b..224275461a2c 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1945,6 +1945,8 @@ static const struct flash_info spi_nor_ids[] = {
+ 	{ "sst25wf040b", INFO(0x621613, 0, 64 * 1024,  8, SECT_4K) },
+ 	{ "sst25wf040",  INFO(0xbf2504, 0, 64 * 1024,  8, SECT_4K | SST_WRITE) },
+ 	{ "sst25wf080",  INFO(0xbf2505, 0, 64 * 1024, 16, SECT_4K | SST_WRITE) },
++	{ "sst26wf016",  INFO(0xbf2651, 0, 64 * 1024, 32, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "sst26wf032",  INFO(0xbf2622, 0, 64 * 1024, 64, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "sst26vf064b", INFO(0xbf2643, 0, 64 * 1024, 128, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 
+ 	/* ST Microelectronics -- newer production may have feature updates */
+-- 
+2.21.0
+
