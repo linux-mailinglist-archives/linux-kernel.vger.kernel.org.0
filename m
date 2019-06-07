@@ -2,116 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1283863A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDBD338645
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:29:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfFGI3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 04:29:37 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47742 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727839AbfFGI3f (ORCPT
+        id S1727848AbfFGI3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 04:29:05 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45054 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727263AbfFGI3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 04:29:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pEikf0lz/+ehFxWTVsFBoEGGzwbfmWwbxDox14l2d24=; b=S/F5cs9mR+CktwIhwbiymklHgM
-        bpALiLdQ6Snh7vv4Xw460zXM6KnF3D9kRw5/BivR7MKsgB/jAc28kA/qMIUIzhjL2PxTw/LFy2Jaj
-        WR+SGfRCWmaAM4S+zgbQTyjmX8eYyIXKmApOLzpG3XxJhLTpteWUKSERMmNNv8MKfLHw7MdQ9IOC1
-        KsSfJyHKSJhdGXbo+Z7U9vtA6X7ExIWk7HYT4izPT2vr09aTNiy+TGTgbQ47yA1TmCjQp62eOfK5r
-        vqpwgZpwifudO5M5Oe3eo5OWDgIBp/pKG3kI0kIUMxTAQPwD0pbY8MnZ7XsCRg/DpD3GQFff5x8FM
-        1I1HJ6Lw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZAF3-0006VS-8o; Fri, 07 Jun 2019 08:28:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B068620973565; Fri,  7 Jun 2019 10:28:51 +0200 (CEST)
-Date:   Fri, 7 Jun 2019 10:28:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH 10/15] static_call: Add basic static call infrastructure
-Message-ID: <20190607082851.GV3419@hirez.programming.kicks-ass.net>
-References: <20190605130753.327195108@infradead.org>
- <20190605131945.125037517@infradead.org>
- <DD54886F-77C6-4230-A711-BF10DD44C52C@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DD54886F-77C6-4230-A711-BF10DD44C52C@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 7 Jun 2019 04:29:05 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b17so1213339wrq.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=nQjqkj1EN8NC8Ay0yEHmwn6X2HJX2TtkXyONunIjoOQ=;
+        b=jz5mKAbUNpc/2XrbWWbZCNJngHPyu1CFGXMDH3jsY6dBNiylltjRxlPmEIjFvwWsHB
+         G1s9vbvPWlTLMh5h0UuE5dNLrvZd8+Wp+SJU3n9JXQdMMbvR7PNj6ikzJHB6SWy9kpgw
+         2Mbhc2hqW2YDw+8oPUxyi4UcJXUWflUNc9hFXsZ94aEJWUlNlJDXYQuOkr5ViQaBGfUO
+         Q/NM4GLddz0ePkHqkojIxiNV4cl1J5V09BxBngzM1H4LgO3x1dYkWq/fnUvODE4L8CQz
+         E2IOMdqvU91OVm2QCcLf6C6cvnHAO30XIzPYH8mVqqnIYhNEs6SVCDupXrCIZMxiYhz6
+         U6gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nQjqkj1EN8NC8Ay0yEHmwn6X2HJX2TtkXyONunIjoOQ=;
+        b=lBFoNxf767PppJIRLACE7SRWiatUL0osfWEZl2VzII4XG6U5Bd+DwscW8Qu1gZo19K
+         1n88iTs69Szf2UbDmJX/u2Ma22ZunMRDRyEqB1+e6sf6o6dxfW9Dz9ZSEwKGZDHTBoMX
+         K1uRQcUt9ybIsXvUFNhg2LL0YoluNPSD5ggluKsUS6xuU0w+dT1mpOoN7qmDpu7JPlDA
+         2z7gbo9CkFi6LDhfoSNXKq0ZUD4zm98Qll09Mq1yiFmH1tv3E04NtKG8QO2VNIfhMDD/
+         cMr6K3uYFMInJY6MA16AQX+iyhsLfsCxfAV9cul6FkfTa3N2AsOav9XiH1IFT7BYoKiE
+         YPmQ==
+X-Gm-Message-State: APjAAAX7mzgb5HhDH956G7vL8Xwa/ORcx9Qhh1alp1zRerzOhWSrEy/S
+        vUuqzMFJeXqP7QrQv9qnAKtruw==
+X-Google-Smtp-Source: APXvYqw3tK85mPCJtNwImGvxXwtTRJVHn4uSWnyncRx2pOscbKR2RIrb27s86mnFP4xtyzHXWFKbKQ==
+X-Received: by 2002:adf:e691:: with SMTP id r17mr15939833wrm.67.1559896143573;
+        Fri, 07 Jun 2019 01:29:03 -0700 (PDT)
+Received: from localhost.localdomain ([2.31.167.229])
+        by smtp.gmail.com with ESMTPSA id a3sm1092946wmb.35.2019.06.07.01.29.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 01:29:02 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, andy.gross@linaro.org,
+        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
+        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v2 1/8] i2c: i2c-qcom-geni: Provide support for ACPI
+Date:   Fri,  7 Jun 2019 09:28:54 +0100
+Message-Id: <20190607082901.6491-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 10:44:23PM +0000, Nadav Amit wrote:
-> > + * Usage example:
-> > + *
-> > + *   # Start with the following functions (with identical prototypes):
-> > + *   int func_a(int arg1, int arg2);
-> > + *   int func_b(int arg1, int arg2);
-> > + *
-> > + *   # Define a 'my_key' reference, associated with func_a() by default
-> > + *   DEFINE_STATIC_CALL(my_key, func_a);
-> > + *
-> > + *   # Call func_a()
-> > + *   static_call(my_key, arg1, arg2);
-> > + *
-> > + *   # Update 'my_key' to point to func_b()
-> > + *   static_call_update(my_key, func_b);
-> > + *
-> > + *   # Call func_b()
-> > + *   static_call(my_key, arg1, arg2);
-> 
-> I think that this calling interface is not very intuitive.
+Add a match table to allow automatic probing of ACPI device
+QCOM0220.  Ignore clock attainment errors.  Set default clock
+frequency value.
 
-Yeah, it is somewhat unfortunate..
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/i2c/busses/i2c-qcom-geni.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-> I understand that
-> the macros/objtool cannot allow the calling interface to be completely
-> transparent (as compiler plugin could). But, can the macros be used to
-> paste the key with the “static_call”? I think that having something like:
-> 
->   static_call__func(arg1, arg2)
-> 
-> Is more readable than
-> 
->   static_call(func, arg1, arg2)
+diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+index db075bc0d952..0fa93b448e8d 100644
+--- a/drivers/i2c/busses/i2c-qcom-geni.c
++++ b/drivers/i2c/busses/i2c-qcom-geni.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ 
++#include <linux/acpi.h>
+ #include <linux/clk.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+@@ -483,6 +484,12 @@ static const struct i2c_algorithm geni_i2c_algo = {
+ 	.functionality	= geni_i2c_func,
+ };
+ 
++static const struct acpi_device_id geni_i2c_acpi_match[] = {
++	{ "QCOM0220"},
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, geni_i2c_acpi_match);
++
+ static int geni_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct geni_i2c_dev *gi2c;
+@@ -502,7 +509,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
+ 		return PTR_ERR(gi2c->se.base);
+ 
+ 	gi2c->se.clk = devm_clk_get(&pdev->dev, "se");
+-	if (IS_ERR(gi2c->se.clk)) {
++	if (IS_ERR(gi2c->se.clk) && !ACPI_HANDLE(&pdev->dev)) {
+ 		ret = PTR_ERR(gi2c->se.clk);
+ 		dev_err(&pdev->dev, "Err getting SE Core clk %d\n", ret);
+ 		return ret;
+@@ -510,12 +517,19 @@ static int geni_i2c_probe(struct platform_device *pdev)
+ 
+ 	ret = device_property_read_u32(&pdev->dev, "clock-frequency",
+ 							&gi2c->clk_freq_out);
+-	if (ret) {
++	if (ret && !ACPI_HANDLE(&pdev->dev)) {
+ 		dev_info(&pdev->dev,
+ 			"Bus frequency not specified, default to 100kHz.\n");
+ 		gi2c->clk_freq_out = KHZ(100);
+ 	}
+ 
++	if (ACPI_HANDLE(&pdev->dev)) {
++		ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(&pdev->dev));
++
++		/* Using default, same as the !ACPI case above */
++		gi2c->clk_freq_out = KHZ(100);
++	}
++
+ 	gi2c->irq = platform_get_irq(pdev, 0);
+ 	if (gi2c->irq < 0) {
+ 		dev_err(&pdev->dev, "IRQ error for i2c-geni\n");
+@@ -660,6 +674,7 @@ static struct platform_driver geni_i2c_driver = {
+ 		.name = "geni_i2c",
+ 		.pm = &geni_i2c_pm_ops,
+ 		.of_match_table = geni_i2c_dt_match,
++		.acpi_match_table = ACPI_PTR(geni_i2c_acpi_match),
+ 	},
+ };
+ 
+-- 
+2.17.1
 
-Doesn't really make it much better for me; I think I'd prefer to switch
-to the GCC plugin scheme over this.  ISTR there being some propotypes
-there, but I couldn't quickly locate them.
-
-> > +}
-> > +
-> > +#define static_call_update(key, func)					\
-> > +({									\
-> > +	BUILD_BUG_ON(!__same_type(func, STATIC_CALL_TRAMP(key)));	\
-> > +	__static_call_update(&key, func);				\
-> > +})
-> 
-> Is this safe against concurrent module removal?
-
-It is for CONFIG_MODULE=n :-)
