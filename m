@@ -2,63 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5C938695
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E59D938698
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfFGI43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 04:56:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36462 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727207AbfFGI42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 04:56:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 69A33ABB1;
-        Fri,  7 Jun 2019 08:56:27 +0000 (UTC)
-Date:   Fri, 7 Jun 2019 10:56:24 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 10/12] mm/devm_memremap_pages: Enable sub-section remap
-Message-ID: <20190607085612.GA5803@linux>
-References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155977193326.2443951.14201009973429527491.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1727610AbfFGI5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 04:57:09 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37427 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfFGI5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 04:57:09 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 22so1102985wmg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6oaxDiNI3V3Y1FcG5gCLYWig+jTKPdpgP/iJOfNbmxQ=;
+        b=UtFYE8HXQeDyMoOUEyIiC8jHexlyvpIeLNTRUprfHZT1sLKojwFJIAAQcXaz3MtAVW
+         Fk8CHPEf0eKC3aTQBxmsvbwWqHwHK+K5ppaxYz53eJb5SGUiiXgcUUj/Z/ePSsvuifhO
+         pDw96ayeUi3yqpur5/U+VIDZGlmLK70TFOTXU+JEbQ3uBvyHbItfjIQagS3TCeh5/Q7J
+         cMYanxgK42yIq9X7rbZvUOGbebPci6MBgt+3PM74c1XLBwAubEQU+iVsaLk2kU3iC51d
+         BXviQ4+Pkn/vC4vRDZ3LO6aQCjXEtEp4Vd/Db7f696mklhwzUVIB2E7VMSnsSiktCgHd
+         /M6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6oaxDiNI3V3Y1FcG5gCLYWig+jTKPdpgP/iJOfNbmxQ=;
+        b=RaSH2A0oxfmaQ7vHGNXczBGKatPrh2z/3lrZPpPo7wHhUeePyHcXXqw82G1t30pheG
+         XeRSgHvv8kNJoHmf9MsidrbVmju2r5TizSz5+k3HElJqGWa9HPTLci1u1n9kx7KdVJId
+         +6Uql+TOumXI7mehTHhKnRmQJYwRK/hJKpAA8xFcoDUsS4qGIeO6LbjmPCECCjHMEvTd
+         9oIIuU1RPgFrUcV9KLJ8XYYWZZL1hn8ui2bpAJovHnb6twAOMaYP5AKxG6D4vxyn3Svq
+         bKtwGZ2W2Tgc9OoBnaVXD/iFO7C3uDbw4QsQyjyh3mTrM1iafWZYznFFPYHKhl0C+WaZ
+         oIVQ==
+X-Gm-Message-State: APjAAAV5pTug59O6lHx9FVET9qSZXm6Ao33K4UYOIF7wrKZVW6y9vaTH
+        /mwM5X3DdRodyXzmpelF0J6EVg==
+X-Google-Smtp-Source: APXvYqwLMDVCNl5uQgvplPXCm62/RRTWw4niXyTJwh05YHHXxpnhloJtxM8sGpE1uyEofQ+ZzKOsGA==
+X-Received: by 2002:a7b:c74a:: with SMTP id w10mr2642243wmk.99.1559897827098;
+        Fri, 07 Jun 2019 01:57:07 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id d10sm2035308wrh.91.2019.06.07.01.57.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 07 Jun 2019 01:57:06 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org, vkoul@kernel.org
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [RFC PATCH 0/6] soundwire: Add support to Qualcomm SoundWire master
+Date:   Fri,  7 Jun 2019 09:56:37 +0100
+Message-Id: <20190607085643.932-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <155977193326.2443951.14201009973429527491.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 02:58:53PM -0700, Dan Williams wrote:
-> Teach devm_memremap_pages() about the new sub-section capabilities of
-> arch_{add,remove}_memory(). Effectively, just replace all usage of
-> align_start, align_end, and align_size with res->start, res->end, and
-> resource_size(res). The existing sanity check will still make sure that
-> the two separate remap attempts do not collide within a sub-section (2MB
-> on x86).
-> 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Toshi Kani <toshi.kani@hpe.com>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Hi All, 
 
-Looks good to me:
+This patchset is very first version of Qualcomm SoundWire Master Controller
+found in most of Qualcomm SoCs and WCD audio codecs.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+This driver along with WCD934x codec and WSA881x Class-D Smart Speaker Amplifier
+drivers is on DragonBoard DB845c based of SDM845 SoC.
+WCD934x and WSA881x patches will be posted soon.
+
+SoundWire controller on SDM845 is integrated in WCD934x audio codec via
+SlimBus interface.
+
+Currently this driver is very minimal and only supports PDM.
+
+Most of the code in this driver is rework of Qualcomm downstream drivers
+used in Andriod. Credits to Banajit Goswami and Patrick Lai's Team.
+
+TODO:
+	Test and add PCM support.
+
+Thanks,
+srini
+
+Srinivas Kandagatla (5):
+  ASoC: core: add support to snd_soc_dai_get_sdw_stream()
+  soundwire: core: define SDW_MAX_PORT
+  soundwire: stream: make stream name a const pointer
+  dt-bindings: soundwire: add bindings for Qcom controller
+  soundwire: qcom: add support for SoundWire controller
+
+Vinod Koul (1):
+  soundwire: Add compute_params callback
+
+ .../bindings/soundwire/qcom,swr.txt           |  62 ++
+ drivers/soundwire/Kconfig                     |   9 +
+ drivers/soundwire/Makefile                    |   4 +
+ drivers/soundwire/qcom.c                      | 983 ++++++++++++++++++
+ drivers/soundwire/stream.c                    |  11 +-
+ include/linux/soundwire/sdw.h                 |   7 +-
+ include/sound/soc-dai.h                       |  10 +
+ 7 files changed, 1083 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soundwire/qcom,swr.txt
+ create mode 100644 drivers/soundwire/qcom.c
 
 -- 
-Oscar Salvador
-SUSE L3
+2.21.0
+
