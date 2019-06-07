@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA4B39168
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96DFF39033
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730896AbfFGP7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:59:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51568 "EHLO mail.kernel.org"
+        id S1732039AbfFGPtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:49:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730334AbfFGPlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:41:35 -0400
+        id S1729986AbfFGPtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:49:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41D46212F5;
-        Fri,  7 Jun 2019 15:41:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AC0D20840;
+        Fri,  7 Jun 2019 15:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922094;
-        bh=xFULexyD9/K5lBAkx3sJQH53ybfnXEHI3FhWIIrHfFE=;
+        s=default; t=1559922587;
+        bh=Dpndc8p/r3PbUm9FkMP47ORcNiP1aD71MDgt/ZF6wjw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qy1zL8lQ9L7y85llGR65LzRwVFv/wL94eHUnOQ4aC9g6Npb7rmmx38jOrf6z2Fx8N
-         oJ4VGT6BNBCzsuxiouV8tANYJPfvsB7jrVGflVuVkZgnys1Dn3EfIXu4WvMZgfu2bT
-         kIqW7buDaZX/IQPTB5gLoJm1qLEx74KhzkmsP6Bg=
+        b=KffXUTvs+oq0u+HZ0DErokF15D+tjat2Ll/wa0oc/YwDtNLL2tB1MhezVnahdvVPW
+         DVsyX7F0eMaOgxveuw2/uBHRyztwY6JeJjHJLPnGiz3EgTnIGgM+Yp4gs4yq7wBAMm
+         dtamIGcj9JCqLZ1Ffi1dpDJWkJEaeWLBkjmXvsj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 33/69] USB: rio500: fix memory leak in close after disconnect
-Date:   Fri,  7 Jun 2019 17:39:14 +0200
-Message-Id: <20190607153852.479966741@linuxfoundation.org>
+        stable@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.1 30/85] iio: adc: modify NPCM ADC read reference voltage
+Date:   Fri,  7 Jun 2019 17:39:15 +0200
+Message-Id: <20190607153852.991032877@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,47 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
 
-commit e0feb73428b69322dd5caae90b0207de369b5575 upstream.
+commit 4e63ed6b90803eeb400c392e9ff493200d926b06 upstream.
 
-If a disconnected device is closed, rio_close() must free
-the buffers.
+Checking if regulator is valid before reading
+NPCM ADC regulator voltage to avoid system crash
+in a case the regulator is not valid.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/rio500.c |   17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/iio/adc/npcm_adc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/misc/rio500.c
-+++ b/drivers/usb/misc/rio500.c
-@@ -99,9 +99,22 @@ static int close_rio(struct inode *inode
- {
- 	struct rio_usb_data *rio = &rio_instance;
- 
--	rio->isopen = 0;
-+	/* against disconnect() */
-+	mutex_lock(&rio500_mutex);
-+	mutex_lock(&(rio->lock));
- 
--	dev_info(&rio->rio_dev->dev, "Rio closed.\n");
-+	rio->isopen = 0;
-+	if (!rio->present) {
-+		/* cleanup has been delayed */
-+		kfree(rio->ibuf);
-+		kfree(rio->obuf);
-+		rio->ibuf = NULL;
-+		rio->obuf = NULL;
-+	} else {
-+		dev_info(&rio->rio_dev->dev, "Rio closed.\n");
-+	}
-+	mutex_unlock(&(rio->lock));
-+	mutex_unlock(&rio500_mutex);
- 	return 0;
- }
- 
+--- a/drivers/iio/adc/npcm_adc.c
++++ b/drivers/iio/adc/npcm_adc.c
+@@ -149,7 +149,7 @@ static int npcm_adc_read_raw(struct iio_
+ 		}
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+-		if (info->vref) {
++		if (!IS_ERR(info->vref)) {
+ 			vref_uv = regulator_get_voltage(info->vref);
+ 			*val = vref_uv / 1000;
+ 		} else {
 
 
