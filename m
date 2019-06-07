@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6404538FA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C5438FA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbfFGPnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:43:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
+        id S1730074AbfFGPnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:43:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730926AbfFGPnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:43:46 -0400
+        id S1730941AbfFGPnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:43:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF0052146E;
-        Fri,  7 Jun 2019 15:43:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8963421479;
+        Fri,  7 Jun 2019 15:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922226;
-        bh=s+XULX9M2ULkq4flk6w+HdW3arulMDehw9kDqnwWEy4=;
+        s=default; t=1559922229;
+        bh=L7lqLV/yQ/xDGAOT9XncFvQsN7bzBT9Sex4dkrS2LsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hWYSEK0zLVW07ND2Lt/q4KZBOSPHHHDz23Pe4WeS6tLLUEMUyCIzdt03h8RBm8biR
-         ysyDTrB5iiz6I+xy1jNzbVpMMkAImmusHHNeDRUKFn1RfAAkZ4Ra0tG8AsST/z7ez2
-         KLyXhQplGaWDtiqQr3RXmwcYzK1PG6QJdgWNU8W8=
+        b=IY7+EX3BpMjB8A+nk+6i5NOz4ReiQ7SsdAEpd5gnWpQIExpCL3TQCevSKfib41JoF
+         JaW9UDzF96NZzRthpx84eSHvul7PvYNnS3xJU1RPiZkjLXPeyhx9Q2JjEMc0PArfoy
+         yqag4NVm8DL4ZqxOYwjSWcgMxDvIYsWWpO3eTLjk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 12/73] USB: rio500: refuse more than one device at a time
-Date:   Fri,  7 Jun 2019 17:38:59 +0200
-Message-Id: <20190607153850.166306051@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.19 13/73] USB: rio500: fix memory leak in close after disconnect
+Date:   Fri,  7 Jun 2019 17:39:00 +0200
+Message-Id: <20190607153850.269155858@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
 References: <20190607153848.669070800@linuxfoundation.org>
@@ -45,81 +44,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oliver Neukum <oneukum@suse.com>
 
-commit 3864d33943b4a76c6e64616280e98d2410b1190f upstream.
+commit e0feb73428b69322dd5caae90b0207de369b5575 upstream.
 
-This driver is using a global variable. It cannot handle more than
-one device at a time. The issue has been existing since the dawn
-of the driver.
+If a disconnected device is closed, rio_close() must free
+the buffers.
 
 Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/rio500.c |   24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ drivers/usb/misc/rio500.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
 --- a/drivers/usb/misc/rio500.c
 +++ b/drivers/usb/misc/rio500.c
-@@ -447,15 +447,23 @@ static int probe_rio(struct usb_interfac
+@@ -86,9 +86,22 @@ static int close_rio(struct inode *inode
  {
- 	struct usb_device *dev = interface_to_usbdev(intf);
  	struct rio_usb_data *rio = &rio_instance;
--	int retval;
-+	int retval = 0;
  
--	dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
+-	rio->isopen = 0;
++	/* against disconnect() */
 +	mutex_lock(&rio500_mutex);
-+	if (rio->present) {
-+		dev_info(&intf->dev, "Second USB Rio at address %d refused\n", dev->devnum);
-+		retval = -EBUSY;
-+		goto bail_out;
++	mutex_lock(&(rio->lock));
+ 
+-	dev_info(&rio->rio_dev->dev, "Rio closed.\n");
++	rio->isopen = 0;
++	if (!rio->present) {
++		/* cleanup has been delayed */
++		kfree(rio->ibuf);
++		kfree(rio->obuf);
++		rio->ibuf = NULL;
++		rio->obuf = NULL;
 +	} else {
-+		dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
++		dev_info(&rio->rio_dev->dev, "Rio closed.\n");
 +	}
- 
- 	retval = usb_register_dev(intf, &usb_rio_class);
- 	if (retval) {
- 		dev_err(&dev->dev,
- 			"Not able to get a minor for this device.\n");
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 
- 	rio->rio_dev = dev;
-@@ -464,7 +472,8 @@ static int probe_rio(struct usb_interfac
- 		dev_err(&dev->dev,
- 			"probe_rio: Not enough memory for the output buffer\n");
- 		usb_deregister_dev(intf, &usb_rio_class);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 	dev_dbg(&intf->dev, "obuf address:%p\n", rio->obuf);
- 
-@@ -473,7 +482,8 @@ static int probe_rio(struct usb_interfac
- 			"probe_rio: Not enough memory for the input buffer\n");
- 		usb_deregister_dev(intf, &usb_rio_class);
- 		kfree(rio->obuf);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 	dev_dbg(&intf->dev, "ibuf address:%p\n", rio->ibuf);
- 
-@@ -481,8 +491,10 @@ static int probe_rio(struct usb_interfac
- 
- 	usb_set_intfdata (intf, rio);
- 	rio->present = 1;
-+bail_out:
++	mutex_unlock(&(rio->lock));
 +	mutex_unlock(&rio500_mutex);
- 
--	return 0;
-+	return retval;
+ 	return 0;
  }
  
- static void disconnect_rio(struct usb_interface *intf)
 
 
