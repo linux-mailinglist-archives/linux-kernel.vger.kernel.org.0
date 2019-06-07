@@ -2,111 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 327B738C63
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29F1838C5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:14:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfFGOQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:16:18 -0400
-Received: from mga17.intel.com ([192.55.52.151]:47640 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728910AbfFGOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:16:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 07:16:14 -0700
-X-ExtLoop1: 1
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orsmga002.jf.intel.com with ESMTP; 07 Jun 2019 07:16:14 -0700
-Date:   Fri, 7 Jun 2019 07:14:16 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [RFC PATCH v4 17/21] x86/tsc: Switch to perf-based hardlockup
- detector if TSC become unstable
-Message-ID: <20190607141416.GA30499@ranerica-svr.sc.intel.com>
-References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1558660583-28561-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <CABPqkBQP=JxpiQE7SVuJO3xPWvsFbAPj916RTYUgaMBDG1OdaQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBQP=JxpiQE7SVuJO3xPWvsFbAPj916RTYUgaMBDG1OdaQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728823AbfFGOOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:14:50 -0400
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:36779 "EHLO
+        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728203AbfFGOOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:14:49 -0400
+Received: by mail-qt1-f171.google.com with SMTP id u12so2416090qth.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+y3LOysYYQjbxrvphbJGTKWQIXJ+UeatMaUjSDdw104=;
+        b=iY/5AEZrOpuQWmCbToJkcfvzmPcrHRik9JsKBkOqc7hQ1YSdcVkhFcZVm/On8VeWSS
+         qXM5gYgX9y/LaF1pvker4O6Cwq31+RXieCN48GHtm2rtS0Z6G/3VoqFGkRar0NzAmJST
+         whDGY0VQPxrSR5UQ87wdV+z2YeacRFmKW4BiTi3OsjWYGk66v5PkR77bX30/81mjaccf
+         p6NOL+OzJM2cyc924SurvYqg9+03TiL0JPuzloK1sbuWt5eea2S9sf4QqEPgkoVQO9RS
+         crruuSRVQ0wODZY910DRJRPLnNsNVfYLsdkUJ24C38lQJRBdoYpQikjxOZzk9SoNlP9G
+         d8hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+y3LOysYYQjbxrvphbJGTKWQIXJ+UeatMaUjSDdw104=;
+        b=F4LvTPHexkTbHSAMG/7hbXjhy7ck2xg9PFlrVeXu8T4RLsVc3QjEmqK1pFn46Rohcu
+         4TilFj29k6sCdQKxjop5tVMAptsBh0W5fpqpUqlm4gBQTttblVeeYKlpr2J/kjv1FFxB
+         ytmjN3Y3njIMqxU7lXxinYAA/C48Tri5F7d6WohBwxGFzSt2cFy0uwoUT1Jw1NqTYSL4
+         tjdfcHiJkC0xp957CcU0wQlyfSbzjoqr95HB1TJv/YApeREKuyyFPvVaCuRXFFrbQiKn
+         8N/mrbXf56/WjS8kgw/SC9YqQQ0E7b6kHRi2IwM+ZXvJ4aAFQuWz9iYZ2R7VcA9jfPk3
+         coHQ==
+X-Gm-Message-State: APjAAAU76ni2Q+XngpXnqS/OxY++uUxFk37PI5PDeDY4WMbvgrwZWTdl
+        beLbtpPvUR2UhLaRbVNNyCg0hjJVhdo=
+X-Google-Smtp-Source: APXvYqxbRmiEZn7NFKxkrNdxSU/i+fA1CEX/O3qd6VQubf1FU5ztDnQtLOQtXiq8eXbP9PD7rPX8nw==
+X-Received: by 2002:a05:6214:41:: with SMTP id c1mr25251328qvr.138.1559916888399;
+        Fri, 07 Jun 2019 07:14:48 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id d16sm1207025qtd.73.2019.06.07.07.14.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 07:14:47 -0700 (PDT)
+Message-ID: <1559916886.6132.52.camel@lca.pw>
+Subject: Re: "locking/lockdep: Consolidate lock usage bit initialization" is
+ buggy
+From:   Qian Cai <cai@lca.pw>
+To:     Yuyang Du <duyuyang@gmail.com>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Fri, 07 Jun 2019 10:14:46 -0400
+In-Reply-To: <CAHttsrYCD1xvL6hf6dXZ_6rB2pEra0HDZ+m5n8EMQr3+5AShnQ@mail.gmail.com>
+References: <1559855690.6132.50.camel@lca.pw>
+         <CAHttsrYCD1xvL6hf6dXZ_6rB2pEra0HDZ+m5n8EMQr3+5AShnQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 05:35:51PM -0700, Stephane Eranian wrote:
-> Hi Ricardo,
-
-Hi Stephane,
-
-> Thanks for your contribution here. It is very important to move the
-> watchdog out of the PMU wherever possible.
-
-Indeed, using the PMU for the hardlockup detector is still the default
-option. This patch series proposes a new kernel command line to switch
-to use the HPET.
-
+On Fri, 2019-06-07 at 11:21 +0800, Yuyang Du wrote:
+> Thanks for the report, but
 > 
-> On Thu, May 23, 2019 at 6:17 PM Ricardo Neri
-> <ricardo.neri-calderon@linux.intel.com> wrote:
-> >
-> > The HPET-based hardlockup detector relies on the TSC to determine if an
-> > observed NMI interrupt was originated by HPET timer. Hence, this detector
-> > can no longer be used with an unstable TSC.
-> >
-> > In such case, permanently stop the HPET-based hardlockup detector and
-> > start the perf-based detector.
-> >
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > ---
-> >  arch/x86/include/asm/hpet.h    | 2 ++
-> >  arch/x86/kernel/tsc.c          | 2 ++
-> >  arch/x86/kernel/watchdog_hld.c | 7 +++++++
-> >  3 files changed, 11 insertions(+)
-> >
-> > diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
-> > index fd99f2390714..a82cbe17479d 100644
-> > --- a/arch/x86/include/asm/hpet.h
-> > +++ b/arch/x86/include/asm/hpet.h
-> > @@ -128,6 +128,7 @@ extern int hardlockup_detector_hpet_init(void);
-> >  extern void hardlockup_detector_hpet_stop(void);
-> >  extern void hardlockup_detector_hpet_enable(unsigned int cpu);
-> >  extern void hardlockup_detector_hpet_disable(unsigned int cpu);
-> > +extern void hardlockup_detector_switch_to_perf(void);
-> >  #else
-> >  static inline struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
-> >  { return NULL; }
-> > @@ -136,6 +137,7 @@ static inline int hardlockup_detector_hpet_init(void)
-> >  static inline void hardlockup_detector_hpet_stop(void) {}
-> >  static inline void hardlockup_detector_hpet_enable(unsigned int cpu) {}
-> >  static inline void hardlockup_detector_hpet_disable(unsigned int cpu) {}
-> > +static void harrdlockup_detector_switch_to_perf(void) {}
-> >  #endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
-> >
-> This does not compile for me when CONFIG_X86_HARDLOCKUP_DETECTOR_HPET
-> is not enabled.
-> because:
->    1- you have a typo on the function name
->     2- you are missing the inline keyword
+> On Fri, 7 Jun 2019 at 05:14, Qian Cai <cai@lca.pw> wrote:
+> > 
+> > The linux-next commit "locking/lockdep: Consolidate lock usage bit
+> > initialization" [1] will always generate a warning below.
+> 
+> I never had such warning.
+> 
+> > Looking through the
+> > commit that when mark_irqflags() returns 1 and check = 1, it will do one
+> > less
+> > mark_lock() call than it used to.
+> 
+> The four cases:
+> 
+> 1. When check == 1 and mark_irqflags() returns 1;
+> 2. When check == 1 and mark_irqflags() returns 0;
+> 3. When check == 0 and mark_irqflags() returns 1;
+> 4. When check == 0 and mark_irqflags() returns 0;
+> 
+> Before and after have exactly the same code to do.
 
-I am sorry. This was an oversight on my side. I have corrected this in
-preparation for a v5.
+Reverted the commit on the top of linux-next fixed the issue.
 
-Thanks and BR,
-Ricardo
+With the commit (triggering the warning
+DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused)),
+
+# cat /proc/lockdep_stats
+lock-classes:                         1110 [max: 8192]
+stack-trace entries:                     0 [max: 524288]
+combined max dependencies:               1
+uncategorized locks:                     0
+unused locks:                         1110
+max locking depth:                      14
+debug_locks:                             0
+
+Without the commit (no warning),
+
+# cat /proc/lockdep_stats
+lock-classes:                         1110 [max: 8192]
+stack-trace entries:                  9932 [max: 524288]
+combined max dependencies:               1
+uncategorized locks:                  1113
+unused locks:                            0
+max locking depth:                      14
+debug_locks:                             1
