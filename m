@@ -2,102 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5B69394B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A835394F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:56:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732065AbfFGSxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:53:17 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.178]:25064 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728736AbfFGSxR (ORCPT
+        id S1729014AbfFGS4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:56:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42298 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732069AbfFGSyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:53:17 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 5EDC8F4F9E
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 13:53:16 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZJzIhtsmEdnCeZJzIhWy95; Fri, 07 Jun 2019 13:53:16 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.134.24] (port=47362 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hZJzH-002Xxo-A5; Fri, 07 Jun 2019 13:53:15 -0500
-Date:   Fri, 7 Jun 2019 13:53:14 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] remoteproc: Use struct_size() helper
-Message-ID: <20190607185314.GA15771@embeddedor>
+        Fri, 7 Jun 2019 14:54:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nUtpajCtj97wPHuOj/zKTNziiUpSH4053jytFacwfJk=; b=qTmeSmP8ZrwkerYDhguEpvn8r
+        09iCwGCNZCkzgj4abN/3J6dyS98uWzYJRNWYrz2gCjjA+jDbU20B/Iqu3hf7jnolgRpmRdJiYZKRt
+        BnFnj3/G5Q5WBB/TFvXq/k6jzdWk5bPa5LDO3QcdAU1PmPucZdgsH3b9lykHBdvOmDMTo0FJ46EHh
+        ++NBxkWwp9QVCyRa9euoTExUA1pVZ3TJAAeT5XfHmNy6URCB6ht68r2MRlHuBcJm3dWMFYExnk28K
+        R9w6+LcrCfpdxqC9jZQnBquqrw00BSy14paWoU1qVW2UuiBzzZyHOzngCAiwFqojjGgbH+RYg7AVj
+        wMEnRagVw==;
+Received: from [179.181.119.115] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hZK0d-0005sd-Jx; Fri, 07 Jun 2019 18:54:39 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hZK0b-0007ET-7C; Fri, 07 Jun 2019 15:54:37 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH v3 01/20] ABI: sysfs-devices-system-cpu: point to the right docs
+Date:   Fri,  7 Jun 2019 15:54:17 -0300
+Message-Id: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.134.24
-X-Source-L: No
-X-Exim-ID: 1hZJzH-002Xxo-A5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.134.24]:47362
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+The cpuidle doc was split on two, one at the admin guide
+and another one at the driver API guide. Instead of pointing
+to a non-existent file, point to both (admin guide being
+the first one).
 
-struct resource_table {
-	...
-        u32 offset[0];
-} __packed;
-
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
-
-So, replace the following form:
-
-table->num * sizeof(table->offset[0]) + sizeof(struct resource_table)
-
-with:
-
-struct_size(table, offset, table->num)
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/remoteproc/remoteproc_elf_loader.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index 215a4400f21e..606aae166eba 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -247,8 +247,7 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
- 		}
+diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+index 1528239f69b2..87478ac6c2af 100644
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -137,7 +137,8 @@ Description:	Discover cpuidle policy and mechanism
+ 		current_governor: (RW) displays current idle policy. Users can
+ 		switch the governor at runtime by writing to this file.
  
- 		/* make sure the offsets array isn't truncated */
--		if (table->num * sizeof(table->offset[0]) +
--				sizeof(struct resource_table) > size) {
-+		if (struct_size(table, offset, table->num) > size) {
- 			dev_err(dev, "resource table incomplete\n");
- 			return NULL;
- 		}
+-		See files in Documentation/cpuidle/ for more information.
++		See Documentation/admin-guide/pm/cpuidle.rst and
++		Documentation/driver-api/pm/cpuidle.rst for more information.
+ 
+ 
+ What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/name
 -- 
 2.21.0
 
