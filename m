@@ -2,83 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0108738B5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 15:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8C638B61
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 15:18:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbfFGNP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 09:15:59 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:59208 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728487AbfFGNP6 (ORCPT
+        id S1728487AbfFGNSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 09:18:03 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:56451 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727467AbfFGNSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 09:15:58 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57D90CD170363;
-        Fri, 7 Jun 2019 13:15:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=AnxeMW2yKku5zXHYhBhTJHK6a2GW6KArjD0e2vKaQ/Q=;
- b=0h625BH/hWSodjzp2HsgRJZ4BXpggoiSMD+eizHjFYSa7DYFPWCwy+5LxYHVneq8E/nA
- NYPgz/YqvzYeO88AnDDiH9NB3qz7GSP7GwxxeIu6l3e4P4aB6F6lkQdFuM4ueW0AnPGp
- dzbxa2JVVooAKSchwTE2yRMkDPvTxSNBZoqSSJH1kDZN7ENPpE+3KjHy4a/4hiCLFtmH
- lp6bqxMb3R9us3XPIFWSmyVj9QUnPsh+8RJ1NBXF+68H3wh9FTLrQkag2h7LykYcxa+b
- tlRvdzdSRys1SIBFE12w0wNFl46A5R38sX8S8dX+0lVIlQLYmuZWxYouK9yTH4/XnFNm yw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2suevdxfef-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Jun 2019 13:15:49 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57DEkjN181041;
-        Fri, 7 Jun 2019 13:15:49 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2swnhd8kjx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Jun 2019 13:15:49 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x57DFmjb031376;
-        Fri, 7 Jun 2019 13:15:48 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 07 Jun 2019 06:15:47 -0700
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jiri Kosina <trivial@kernel.org>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH trivial] scsi: isci: Grammar s/the its/its/
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190607113426.14937-1-geert+renesas@glider.be>
-Date:   Fri, 07 Jun 2019 09:15:45 -0400
-In-Reply-To: <20190607113426.14937-1-geert+renesas@glider.be> (Geert
-        Uytterhoeven's message of "Fri, 7 Jun 2019 13:34:26 +0200")
-Message-ID: <yq14l51leny.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Fri, 7 Jun 2019 09:18:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1559913510; x=1591449510;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mcN9WtvQEWdujXnIA7oYPdYlHv79AOG60zJ58+aPVaw=;
+  b=SyUKUFgIU2Is/+yrEKogBLJmIgZUpPSi0feq0SPTJ83/FGXHqN8v3J/N
+   YQPm1YVwiScLQA9XgzfBGap9cmg5X9nBgUvvJy6V44tSe3euq1joDYU+C
+   O/JOhFY9xRKIC7H5y34o+deBpWzXnN8NYkPiqvaWZRdEOwehvx4KZY7hC
+   E/nUgKVWXWz47zvfUWf5MbhLul63PUe+Bya0xD68a0TCui/JCEf7AEp+T
+   0zqJZUjRt4MIuVL6IJXJqgYUzuloI7oeQl7mfpbDiwbvccU3o882yrnWv
+   JXNka0rUVYSTGT+bactc9sU/sDTxESMXYuPe8q4aCQE0kto1/yOtp70WK
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.63,563,1557158400"; 
+   d="scan'208";a="209674976"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:18:29 +0800
+IronPort-SDR: SBbqHnJA5jmRXmt2EGP55K+bxw8dMC9uCdUJLI4j3vysUOhgbXvgMS/IK7yOzPmBxZAyDY67f5
+ sl7GVsmQIZ8OoXvhfvZ9HMs0TPNPpVogJM/kLy7GKw577ZxD288HlM1Gac8IVzsmUPOjtJyaa3
+ yaGHMt7PHLaDP03vVZijbhznoHxMaH9AU5CpRU7uxDDLqEsVogoWSUdAYswUDCD4RSQiUxWtZd
+ b0FBTpCqu6PXBtlnUxIqMMcmOwAkprin+L8FhmLYT0oXp1/EM/ybJRGgBx/q9oQz6rnr2/MkLi
+ ptOz4neXnvgm7GY5ogaGco/1
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:55:20 -0700
+IronPort-SDR: uCGEZ0Cr8PiYRuFSJSdPJVQ2ygdQWLtl5ZOTaxWaNxZ5uUJ8wPn9mI/bAShPxilfe9967eTrdh
+ Njp/lHbIUK8ZLUe+QpPApZlrUxiltbLJr9XQ9PWMpcdDoopi0m9RPDOS6ik5uU/Qd8SMiLfB/1
+ my/12itXS3Mw7U9MS3ZeOhdKSzW4HFrZXNBKM1jg6e4EqRJoVjpTxe32tyD8lvGQyM9UCniG95
+ /4D6Q9wDaX8Kw9C9LlLdeZOgj+mGoQOZ2IxvXgUHbn3leqrg79tB/1KNp4ozbsAtReuxsgE3hz
+ 2WI=
+Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:18:01 -0700
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH 01/12] btrfs-progs: build: Check zoned block device support
+Date:   Fri,  7 Jun 2019 22:17:40 +0900
+Message-Id: <20190607131751.5359-1-naohiro.aota@wdc.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190607131025.31996-1-naohiro.aota@wdc.com>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=785
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906070093
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=846 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906070093
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the kernel supports zoned block devices, the file
+/usr/include/linux/blkzoned.h will be present. Check this and define
+BTRFS_ZONED if the file is present.
 
-Geert,
+If it present, enables HMZONED feature, if not disable it.
 
-Applied to 5.3/scsi-queue. Thanks.
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+---
+ configure.ac | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
+diff --git a/configure.ac b/configure.ac
+index cf792eb5488b..c637f72a8fe6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -206,6 +206,18 @@ else
+ AC_DEFINE([HAVE_OWN_FIEMAP_EXTENT_SHARED_DEFINE], [0], [We did not define FIEMAP_EXTENT_SHARED])
+ fi
+ 
++AC_CHECK_HEADER(linux/blkzoned.h, [blkzoned_found=yes], [blkzoned_found=no])
++AC_ARG_ENABLE([zoned],
++  AS_HELP_STRING([--disable-zoned], [disable zoned block device support]),
++  [], [enable_zoned=$blkzoned_found]
++)
++
++AS_IF([test "x$enable_zoned" = xyes], [
++	AC_CHECK_HEADER(linux/blkzoned.h, [],
++		[AC_MSG_ERROR([Couldn't find linux/blkzoned.h])])
++	AC_DEFINE([BTRFS_ZONED], [1], [enable zoned block device support])
++])
++
+ dnl Define <NAME>_LIBS= and <NAME>_CFLAGS= by pkg-config
+ dnl
+ dnl The default PKG_CHECK_MODULES() action-if-not-found is end the
+@@ -307,6 +319,7 @@ AC_MSG_RESULT([
+ 	btrfs-restore zstd: ${enable_zstd}
+ 	Python bindings:    ${enable_python}
+ 	Python interpreter: ${PYTHON}
++	zoned device:       ${enable_zoned}
+ 
+ 	Type 'make' to compile.
+ ])
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.21.0
+
