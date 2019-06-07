@@ -2,106 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13ED8397E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC35397C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731321AbfFGVik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:38:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:51093 "EHLO mga18.intel.com"
+        id S1730573AbfFGVaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:30:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729731AbfFGVij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:38:39 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 14:38:39 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2019 14:38:39 -0700
-Date:   Fri, 7 Jun 2019 14:29:24 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     James Morse <james.morse@arm.com>
-Cc:     linux-doc@vger.kernel.org, x86@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Babu Moger <Babu.Moger@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] Documentation: x86: fix some typos
-Message-ID: <20190607212923.GD143433@romley-ivt3.sc.intel.com>
-References: <20190607151409.15476-1-james.morse@arm.com>
- <20190607151409.15476-5-james.morse@arm.com>
+        id S1729726AbfFGVaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:30:52 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ADE2208C3;
+        Fri,  7 Jun 2019 21:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559943051;
+        bh=+8vRQ4YjkZ+4hla3SNxNwixDS9pvt0gb8HQPiBw81iQ=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=TwexyLcl98YMzgTjjU7pisJh4W9X2FacDHP9gsR7Ez+CGGGOuKFKOP0TBveTn3ysZ
+         qfd5B2zVUdST1tnfXKyMXKNQeYehEefWG07caWYXP27aVkgRuZGMVICxggPMMgYuww
+         HJCnIXZIlFzsc/QFUmdb7XrBDQ3fTUBVTWFXTnPc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607151409.15476-5-james.morse@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190508223922.5609-1-bjorn.andersson@linaro.org>
+References: <20190508223922.5609-1-bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v4] clk: gcc-qcs404: Add PCIe resets
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Fri, 07 Jun 2019 14:30:50 -0700
+Message-Id: <20190607213051.8ADE2208C3@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 04:14:09PM +0100, James Morse wrote:
-> These are all obvious typos.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
+Quoting Bjorn Andersson (2019-05-08 15:39:22)
+> Enabling PCIe requires several of the PCIe related resets from GCC, so
+> add them all.
+>=20
+> Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  Documentation/x86/resctrl_ui.rst | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/x86/resctrl_ui.rst b/Documentation/x86/resctrl_ui.rst
-> index 866b66aa289b..5368cedfb530 100644
-> --- a/Documentation/x86/resctrl_ui.rst
-> +++ b/Documentation/x86/resctrl_ui.rst
-> @@ -40,7 +40,7 @@ mount options are:
->  	Enable the MBA Software Controller(mba_sc) to specify MBA
->  	bandwidth in MBps
->  
-> -L2 and L3 CDP are controlled seperately.
-> +L2 and L3 CDP are controlled separately.
->  
->  RDT features are orthogonal. A particular system may support only
->  monitoring, only control, or both monitoring and control.  Cache
-> @@ -118,7 +118,7 @@ related to allocation:
->  			      Corresponding region is pseudo-locked. No
->  			      sharing allowed.
->  
-> -Memory bandwitdh(MB) subdirectory contains the following files
-> +Memory bandwidth(MB) subdirectory contains the following files
->  with respect to allocation:
->  
->  "min_bandwidth":
-> @@ -209,7 +209,7 @@ All groups contain the following files:
->  	CPUs to/from this group. As with the tasks file a hierarchy is
->  	maintained where MON groups may only include CPUs owned by the
->  	parent CTRL_MON group.
-> -	When the resouce group is in pseudo-locked mode this file will
-> +	When the resource group is in pseudo-locked mode this file will
->  	only be readable, reflecting the CPUs associated with the
->  	pseudo-locked region.
->  
-> @@ -380,7 +380,7 @@ where L2 external  is 10GBps (hence aggregate L2 external bandwidth is
->  240GBps) and L3 external bandwidth is 100GBps. Now a workload with '20
->  threads, having 50% bandwidth, each consuming 5GBps' consumes the max L3
->  bandwidth of 100GBps although the percentage value specified is only 50%
-> -<< 100%. Hence increasing the bandwidth percentage will not yeild any
-> +<< 100%. Hence increasing the bandwidth percentage will not yield any
->  more bandwidth. This is because although the L2 external bandwidth still
->  has capacity, the L3 external bandwidth is fully used. Also note that
->  this would be dependent on number of cores the benchmark is run on.
-> @@ -398,7 +398,7 @@ In order to mitigate this and make the interface more user friendly,
->  resctrl added support for specifying the bandwidth in MBps as well.  The
->  kernel underneath would use a software feedback mechanism or a "Software
->  Controller(mba_sc)" which reads the actual bandwidth using MBM counters
-> -and adjust the memowy bandwidth percentages to ensure::
-> +and adjust the memory bandwidth percentages to ensure::
->  
->  	"actual bandwidth < user specified bandwidth".
->  
-> -- 
-> 2.20.1
-> 
 
-Acked-by: Fenghua Yu <fenghua.yu@intel.com>
+Applied to clk-next
 
-Thanks.
-
--Fenghua
