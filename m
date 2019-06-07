@@ -2,356 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A7839379
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2400139381
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbfFGRk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 13:40:56 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34949 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbfFGRk4 (ORCPT
+        id S1731482AbfFGRma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:42:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49430 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728684AbfFGRma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:40:56 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s27so1529762pgl.2;
-        Fri, 07 Jun 2019 10:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0V/DIvCRbzkJddEXcA5wyYmclosO4j53pSlNS1OHge4=;
-        b=P1hdLfqJ9bNPNS2TrvnTMlvTdY0CYkYcvVvjn9EH1gNmpz3Xa/8/ipOBmI/ibQYu8b
-         9aHrN1RX7kcml2htDeoD6zZTagSN0Afy/oMXJ/ozRn7T7sj5FbeIkE9X4SfGJ2fhLhA9
-         OpaQkJ94YOS/lwi6/xlstdO+Y0ibYrIweUuBkVu2zV24Xu+DAQUiV0AVq6fOeSOryWXF
-         sbmSRirkH6Hp0OwyAjUQzp0y3y14sZ8QEWUCLWrlZb+xUyiKXc0FIMpfCl/durvD7I8r
-         5lcR20ZGOk0s3xvrFDG7r1WDysG3k+XdctIa+lqdRrHrRcoeMgx7HRF1+OayrlNeAG8E
-         kgZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0V/DIvCRbzkJddEXcA5wyYmclosO4j53pSlNS1OHge4=;
-        b=jvfvzBNOk9ptGXcJu5L8AonBvQ9klbkoorSwWUkRt5GCmGa0blmt1eR5gWcd1Mn/wg
-         H0EgcBSk7lPilVOSIbvxRS4b0JUEYjH8Gjzzbh83ixXMnhKGpo79fmwoBIDwtFEdSF/X
-         QrAaZ/GQ2tOJN3zsjFdwfBewU9nKwpK8Vcf6ojRjQCFtp5U4r0jM3Z2LNDeF+xi6v5Y7
-         CsRuQBe+3moNdKa4NjsAlZUTRNbqecdWYhwgrsKKbR2uovLGbkT8Nr2wx0t7WFwd/JgF
-         TydyximO/gSzzD2J0f+PjW4gJW8gwOjhVvVRtNetGzQXVnRtwfMZVhEHY8KugdlYs68W
-         FBfg==
-X-Gm-Message-State: APjAAAXI9TWMpDj4hTR2Bp2PQr50x76mIBdukbKhJploubA493xyr9xf
-        N4yemPjQKRWMvqzcgvtS/z0=
-X-Google-Smtp-Source: APXvYqzcYtPwU3T8i78qheKrh7jr7ml3uzLreQGCaARqeK3wSzTdGjgOvhMxncF1eigqwFt1dkOd9A==
-X-Received: by 2002:a17:90a:bb94:: with SMTP id v20mr7143639pjr.88.1559929255290;
-        Fri, 07 Jun 2019 10:40:55 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id ds13sm2436877pjb.5.2019.06.07.10.40.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 10:40:54 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 10:40:53 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH RESEND V4 3/3] watchdog: imx_sc: Add pretimeout support
-Message-ID: <20190607174053.GA15184@roeck-us.net>
-References: <1557655528-12816-1-git-send-email-Anson.Huang@nxp.com>
- <1557655528-12816-3-git-send-email-Anson.Huang@nxp.com>
- <e49148ed-82ba-0878-e5ab-933f78f161d6@roeck-us.net>
- <DB3PR0402MB3916B5E657800C92566047A0F5160@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        Fri, 7 Jun 2019 13:42:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Isgbg3AcMVxijCLxeP5g7ucIZ+WTg+Ln6Nf1BOjCEgY=; b=idQPdHadXoPujArpWO9WKxPZQq
+        EOTPbSwN8kx68ck6JsJKGAOmpF9bGmv3mUwLg2wIMPamC6Sym7+0KRjYtHhmnSWKP9LbxjJRabdGR
+        7LEY46V9vbaE/sEHf0f33ZclYQYVBFYVgzYliD6PJqbd5rs4g4XlOJZiGJtrVWDYVlAlSw6GNJjYo
+        kRxQq5oznlNQPUKEpvG7f4UC4RWlo8DSca3YcjLf5d7S5gNyKZ2y1mESMF4mxvGM+p4KQGCGKi/ns
+        Hr/xNc8JxkJqqlUJ8bNJh8+pqFY/2XHNrUZRtPVl0qwts9/Wmq+qFCYDLr/LpYRWRJgGFNp9zomqP
+        kfV8Cbcg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hZIs1-00047J-Mf; Fri, 07 Jun 2019 17:41:41 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8F11220227117; Fri,  7 Jun 2019 19:41:39 +0200 (CEST)
+Date:   Fri, 7 Jun 2019 19:41:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 11/15] static_call: Add inline static call infrastructure
+Message-ID: <20190607174139.GL3436@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.193241464@infradead.org>
+ <37CFAEC1-6D36-4A6D-8C44-F85FCFA053AA@vmware.com>
+ <20190607083756.GW3419@hirez.programming.kicks-ass.net>
+ <AF3846D0-01F0-4A42-AEB6-09B0902A659C@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB3916B5E657800C92566047A0F5160@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AF3846D0-01F0-4A42-AEB6-09B0902A659C@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 06:24:33AM +0000, Anson Huang wrote:
-> Hi, Guenter
-> 
-> > -----Original Message-----
-> > From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
-> > Sent: Sunday, May 12, 2019 9:28 PM
-> > To: Anson Huang <anson.huang@nxp.com>; robh+dt@kernel.org;
-> > mark.rutland@arm.com; wim@linux-watchdog.org; shawnguo@kernel.org;
-> > s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
-> > Aisheng Dong <aisheng.dong@nxp.com>; ulf.hansson@linaro.org; Daniel
-> > Baluta <daniel.baluta@nxp.com>; Peng Fan <peng.fan@nxp.com>;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > watchdog@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > Cc: dl-linux-imx <linux-imx@nxp.com>
-> > Subject: Re: [PATCH RESEND V4 3/3] watchdog: imx_sc: Add pretimeout
-> > support
-> > 
-> > On 5/12/19 3:10 AM, Anson Huang wrote:
-> > > i.MX system controller watchdog can support pretimeout IRQ via general
-> > > SCU MU IRQ, it depends on IMX_SCU and driver MUST be probed after SCU
-> > > IPC ready, then enable corresponding SCU IRQ group and register SCU
-> > > IRQ notifier, when watchdog pretimeout IRQ fires, SCU MU IRQ will be
-> > > handled and watchdog pretimeout notifier will be called to handle the
-> > > event.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > 
-> > Revviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> > Other patches waiting for DT review. IMX API feedback below.
-> 
-> Shaw just picked up the DT patch. Would you please pick up this driver and dt-binding patch
-> to you git repo?
-> 
-I'll pick up patch 3/3, but I can not pick up patches into arch/arm64/boot/;
-that is the responsibility of arm64 maintainers. I can only do that
-if I get an explicit Ack and permission to do so from an arm64 maintainer,
-and I don't recall getting that.
+On Fri, Jun 07, 2019 at 04:35:42PM +0000, Nadav Amit wrote:
+> > On Jun 7, 2019, at 1:37 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Thu, Jun 06, 2019 at 10:24:17PM +0000, Nadav Amit wrote:
 
-Guenter
+> >>> +		if (ret) {
+> >>> +			WARN(1, "Failed to allocate memory for static calls");
+> >>> +			static_call_del_module(mod);
+> >> 
+> >> If static_call_add_module() succeeded in changing some of the calls, but not
+> >> all, I don’t think that static_call_del_module() will correctly undo
+> >> static_call_add_module(). The code transformations, I think, will remain.
+> > 
+> > Hurm, jump_labels has the same problem.
+> > 
+> > I wonder why kernel/module.c:prepare_coming_module() doesn't propagate
+> > the error from the notifier call. If it were to do that, I think we'll
+> > abort the module load and any modifications get lost anyway.
+> 
+> This might be a security problem, since it can leave indirect branches,
+> which are susceptible to Spectre v2, in the code.
 
-> Thanks,
-> Anson
-> 
-> > 
-> > Side note: This patch depends on 'firmware: imx: enable imx scu general irq
-> > function' which is not yet in mainline.
-> > 
-> > > ---
-> > > No change, just resend patch with correct encoding.
-> > > ---
-> > >   drivers/watchdog/Kconfig      |   1 +
-> > >   drivers/watchdog/imx_sc_wdt.c | 116
-> > +++++++++++++++++++++++++++++++++++-------
-> > >   2 files changed, 98 insertions(+), 19 deletions(-)
-> > >
-> > > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig index
-> > > 7ea6037..e08238c 100644
-> > > --- a/drivers/watchdog/Kconfig
-> > > +++ b/drivers/watchdog/Kconfig
-> > > @@ -716,6 +716,7 @@ config IMX2_WDT
-> > >   config IMX_SC_WDT
-> > >   	tristate "IMX SC Watchdog"
-> > >   	depends on HAVE_ARM_SMCCC
-> > > +	depends on IMX_SCU
-> > >   	select WATCHDOG_CORE
-> > >   	help
-> > >   	  This is the driver for the system controller watchdog diff --git
-> > > a/drivers/watchdog/imx_sc_wdt.c b/drivers/watchdog/imx_sc_wdt.c index
-> > > 49848b6..6ecc03f 100644
-> > > --- a/drivers/watchdog/imx_sc_wdt.c
-> > > +++ b/drivers/watchdog/imx_sc_wdt.c
-> > > @@ -4,6 +4,7 @@
-> > >    */
-> > >
-> > >   #include <linux/arm-smccc.h>
-> > > +#include <linux/firmware/imx/sci.h>
-> > >   #include <linux/io.h>
-> > >   #include <linux/init.h>
-> > >   #include <linux/kernel.h>
-> > > @@ -33,11 +34,19 @@
-> > >
-> > >   #define SC_TIMER_WDOG_ACTION_PARTITION	0
-> > >
-> > > +#define SC_IRQ_WDOG			1
-> > > +#define SC_IRQ_GROUP_WDOG		1
-> > > +
-> > >   static bool nowayout = WATCHDOG_NOWAYOUT;
-> > >   module_param(nowayout, bool, 0000);
-> > >   MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once
-> > started (default="
-> > >   		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> > >
-> > > +struct imx_sc_wdt_device {
-> > > +	struct watchdog_device wdd;
-> > > +	struct notifier_block wdt_notifier;
-> > > +};
-> > > +
-> > >   static int imx_sc_wdt_ping(struct watchdog_device *wdog)
-> > >   {
-> > >   	struct arm_smccc_res res;
-> > > @@ -85,24 +94,66 @@ static int imx_sc_wdt_set_timeout(struct
-> > watchdog_device *wdog,
-> > >   	return res.a0 ? -EACCES : 0;
-> > >   }
-> > >
-> > > +static int imx_sc_wdt_set_pretimeout(struct watchdog_device *wdog,
-> > > +				     unsigned int pretimeout)
-> > > +{
-> > > +	struct arm_smccc_res res;
-> > > +
-> > > +	arm_smccc_smc(IMX_SIP_TIMER,
-> > IMX_SIP_TIMER_SET_PRETIME_WDOG,
-> > > +		      pretimeout * 1000, 0, 0, 0, 0, 0, &res);
-> > > +	if (res.a0)
-> > > +		return -EACCES;
-> > > +
-> > > +	wdog->pretimeout = pretimeout;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int imx_sc_wdt_notify(struct notifier_block *nb,
-> > > +			     unsigned long event, void *group) {
-> > > +	struct imx_sc_wdt_device *imx_sc_wdd =
-> > > +				 container_of(nb,
-> > > +					      struct imx_sc_wdt_device,
-> > > +					      wdt_notifier);
-> > > +
-> > > +	if (event & SC_IRQ_WDOG &&
-> > > +	    *(u8 *)group == SC_IRQ_GROUP_WDOG)
-> > > +		watchdog_notify_pretimeout(&imx_sc_wdd->wdd);
-> > 
-> > This should really not be necessary. Event mask and target group (if needed
-> > with a wildcard for the group) should be parameters of
-> > imx_scu_irq_register_notifier(), and be handled in the imx code.
-> > 
-> > Also, passing 'group' as pointed seems excessive. Might as well pass it
-> > directly.
-> > 
-> > Guenter
-> > 
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static void imx_sc_wdt_action(void *data) {
-> > > +	struct notifier_block *wdt_notifier = data;
-> > > +
-> > > +	imx_scu_irq_unregister_notifier(wdt_notifier);
-> > > +	imx_scu_irq_group_enable(SC_IRQ_GROUP_WDOG,
-> > > +				 SC_IRQ_WDOG,
-> > > +				 false);
-> > > +}
-> > > +
-> > >   static const struct watchdog_ops imx_sc_wdt_ops = {
-> > >   	.owner = THIS_MODULE,
-> > >   	.start = imx_sc_wdt_start,
-> > >   	.stop  = imx_sc_wdt_stop,
-> > >   	.ping  = imx_sc_wdt_ping,
-> > >   	.set_timeout = imx_sc_wdt_set_timeout,
-> > > +	.set_pretimeout = imx_sc_wdt_set_pretimeout,
-> > >   };
-> > >
-> > > -static const struct watchdog_info imx_sc_wdt_info = {
-> > > +static struct watchdog_info imx_sc_wdt_info = {
-> > >   	.identity	= "i.MX SC watchdog timer",
-> > >   	.options	= WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING |
-> > > -			  WDIOF_MAGICCLOSE | WDIOF_PRETIMEOUT,
-> > > +			  WDIOF_MAGICCLOSE,
-> > >   };
-> > >
-> > >   static int imx_sc_wdt_probe(struct platform_device *pdev)
-> > >   {
-> > > +	struct imx_sc_wdt_device *imx_sc_wdd;
-> > > +	struct watchdog_device *wdog;
-> > >   	struct device *dev = &pdev->dev;
-> > > -	struct watchdog_device *imx_sc_wdd;
-> > >   	int ret;
-> > >
-> > >   	imx_sc_wdd = devm_kzalloc(dev, sizeof(*imx_sc_wdd), GFP_KERNEL);
-> > @@
-> > > -111,42 +162,69 @@ static int imx_sc_wdt_probe(struct platform_device
-> > > *pdev)
-> > >
-> > >   	platform_set_drvdata(pdev, imx_sc_wdd);
-> > >
-> > > -	imx_sc_wdd->info = &imx_sc_wdt_info;
-> > > -	imx_sc_wdd->ops = &imx_sc_wdt_ops;
-> > > -	imx_sc_wdd->min_timeout = 1;
-> > > -	imx_sc_wdd->max_timeout = MAX_TIMEOUT;
-> > > -	imx_sc_wdd->parent = dev;
-> > > -	imx_sc_wdd->timeout = DEFAULT_TIMEOUT;
-> > > +	wdog = &imx_sc_wdd->wdd;
-> > > +	wdog->info = &imx_sc_wdt_info;
-> > > +	wdog->ops = &imx_sc_wdt_ops;
-> > > +	wdog->min_timeout = 1;
-> > > +	wdog->max_timeout = MAX_TIMEOUT;
-> > > +	wdog->parent = dev;
-> > > +	wdog->timeout = DEFAULT_TIMEOUT;
-> > >
-> > > -	watchdog_init_timeout(imx_sc_wdd, 0, dev);
-> > > -	watchdog_stop_on_reboot(imx_sc_wdd);
-> > > -	watchdog_stop_on_unregister(imx_sc_wdd);
-> > > +	watchdog_init_timeout(wdog, 0, dev);
-> > > +	watchdog_stop_on_reboot(wdog);
-> > > +	watchdog_stop_on_unregister(wdog);
-> > >
-> > > -	ret = devm_watchdog_register_device(dev, imx_sc_wdd);
-> > > +	ret = devm_watchdog_register_device(dev, wdog);
-> > >   	if (ret) {
-> > >   		dev_err(dev, "Failed to register watchdog device\n");
-> > >   		return ret;
-> > >   	}
-> > >
-> > > +	ret = imx_scu_irq_group_enable(SC_IRQ_GROUP_WDOG,
-> > > +				       SC_IRQ_WDOG,
-> > > +				       true);
-> > > +	if (ret) {
-> > > +		dev_warn(dev, "Enable irq failed, pretimeout NOT
-> > supported\n");
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	imx_sc_wdd->wdt_notifier.notifier_call = imx_sc_wdt_notify;
-> > > +	ret = imx_scu_irq_register_notifier(&imx_sc_wdd->wdt_notifier);
-> > > +	if (ret) {
-> > > +		imx_scu_irq_group_enable(SC_IRQ_GROUP_WDOG,
-> > > +					 SC_IRQ_WDOG,
-> > > +					 false);
-> > > +		dev_warn(dev,
-> > > +			 "Register irq notifier failed, pretimeout NOT
-> > supported\n");
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	ret = devm_add_action_or_reset(dev, imx_sc_wdt_action,
-> > > +				       &imx_sc_wdd->wdt_notifier);
-> > > +	if (!ret)
-> > > +		imx_sc_wdt_info.options |= WDIOF_PRETIMEOUT;
-> > > +	else
-> > > +		dev_warn(dev, "Add action failed, pretimeout NOT
-> > supported\n");
-> > > +
-> > >   	return 0;
-> > >   }
-> > >
-> > >   static int __maybe_unused imx_sc_wdt_suspend(struct device *dev)
-> > >   {
-> > > -	struct watchdog_device *imx_sc_wdd = dev_get_drvdata(dev);
-> > > +	struct imx_sc_wdt_device *imx_sc_wdd = dev_get_drvdata(dev);
-> > >
-> > > -	if (watchdog_active(imx_sc_wdd))
-> > > -		imx_sc_wdt_stop(imx_sc_wdd);
-> > > +	if (watchdog_active(&imx_sc_wdd->wdd))
-> > > +		imx_sc_wdt_stop(&imx_sc_wdd->wdd);
-> > >
-> > >   	return 0;
-> > >   }
-> > >
-> > >   static int __maybe_unused imx_sc_wdt_resume(struct device *dev)
-> > >   {
-> > > -	struct watchdog_device *imx_sc_wdd = dev_get_drvdata(dev);
-> > > +	struct imx_sc_wdt_device *imx_sc_wdd = dev_get_drvdata(dev);
-> > >
-> > > -	if (watchdog_active(imx_sc_wdd))
-> > > -		imx_sc_wdt_start(imx_sc_wdd);
-> > > +	if (watchdog_active(&imx_sc_wdd->wdd))
-> > > +		imx_sc_wdt_start(&imx_sc_wdd->wdd);
-> > >
-> > >   	return 0;
-> > >   }
-> > >
-> 
+It's a correctness problem too; for both jump_label and static_call,
+since if we don't patch the call site, we also don't patch the
+trampoline and who knows what random code it ends up running.
+
+I'll go stare at the module code once my migrane goes again :/
