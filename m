@@ -2,76 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89EF391D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E96C3391E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730509AbfFGQY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:24:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40952 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730066AbfFGQY0 (ORCPT
+        id S1730623AbfFGQYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:24:44 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:59068 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730059AbfFGQYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:24:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p11so2759466wre.7
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 09:24:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5oup8aDf0v+i4nY2iXLwyIEfJBWa+tQFAZ2fj1dhWlA=;
-        b=BLA6htiezCqBVwvZjIMuSJiQMZnOcWxp6kajXcWwJmfz1ybUijAP0rFARQ/KTBittG
-         AF7ijh+sWKKkmKvUKCNXkuqGmuJALV2Rv6k6XocboTy6a7zzCxkMGfde0LSOQB+UzkqO
-         w0Xl2eRBxiqU229X1OJM1Bte82IWYDqyTjCNsdwFG4JdCFTl7HbuUWIe67Qd7txsXhOJ
-         OHrXh0BzU3EBWSMkcimsQPCv6I9NNar5ETp8Nw4r1VcA9PoAX51Qbnfym+lTbpQGAw+n
-         rhQlVkYD6N22wWTIt+varL++QFV8hnQR51utOqcxDNikFHOQPngwgJoPPZ4Ja589aWaf
-         /Q9Q==
-X-Gm-Message-State: APjAAAUNzcFgyhLANt9yVxjddzSLjEjqgP5bzigpx9EHGpk6WnjVo5lo
-        OPzr5t3RxdXT/PF1TAPaNdUFAQ02AXc=
-X-Google-Smtp-Source: APXvYqzLgpRRvfyTFa6/TEI5l10HeRd8tc36q34IPW/9wW2GzAxU5AlO2ZetyEIBACf1Y9qZK8wjWA==
-X-Received: by 2002:adf:aa0a:: with SMTP id p10mr33931090wrd.125.1559924664702;
-        Fri, 07 Jun 2019 09:24:24 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:657f:501:149f:5617? ([2001:b07:6468:f312:657f:501:149f:5617])
-        by smtp.gmail.com with ESMTPSA id w6sm2524953wro.71.2019.06.07.09.24.23
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 09:24:24 -0700 (PDT)
-Subject: Re: [PATCH] KVM: nVMX: Rename prepare_vmcs02_*_full to
- prepare_vmcs02_*_extra
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <1559834652-105872-1-git-send-email-pbonzini@redhat.com>
- <20190606184117.GJ23169@linux.intel.com>
- <8382fd94-aed1-51b4-007e-7579a0f35ece@redhat.com>
- <20190607141847.GA9083@linux.intel.com>
- <5762005d-1504-bb41-9583-ec549e107ce5@redhat.com>
- <20190607160422.GE9083@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <525f4ee1-c111-aaa0-2dcd-6c5ce26e3088@redhat.com>
-Date:   Fri, 7 Jun 2019 18:24:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 7 Jun 2019 12:24:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1559924681; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=mcQ/t/D7ql8zsl47FLhRZOVHwEqpOyHcf2rB4FvEu7U=;
+        b=qNm+4cQaAJhBObHd+lCjEySlXv/b0p4Av4oSvs4sTyq2KxwFNWIKkxFHcLLhAuZG8ov8fo
+        9WdYpspyCYE6EaRuuDvWTL3Co9B+mRtaCyjQGYFvdQAhB9kmaOYpai3bCFiKIgix2PZy5y
+        6BtHGkDPhKx6CDXR6Ez92qFOVzHaAbc=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc:     od@zcrc.me, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] JZ4740 watchdog cleanups
+Date:   Fri,  7 Jun 2019 18:24:25 +0200
+Message-Id: <20190607162429.17915-1-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <20190607160422.GE9083@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/19 18:04, Sean Christopherson wrote:
->> That's what came to mind first, but then "extended" had the same issue
->> as "full" (i.e. encompassing the "basic" set as well) so I decided you
->> knew better!
-> Ah, I was thinking of "basic" and "extended" as separate states, but your
-> interpretation is correct.
-> 
-> I probably have a slight preference for 'uncommon' over 'extra'?  I feel
-> like they have equal odds of being misinterpreted, so pick your poison :-)
+V1 patchset didn't apply anymore on v5.2-rc3 so I rebased on top of it.
+The previous patch 4/4 (which added SPDX license notifier) has been
+dropped since somebody else did the job in -rc3.
+So I added another cleanup as patch 4/4, and I tweaked patch 2/4 to
+adjust to Guenter's feedback on V1.
 
-Among your proposals, in fact, I also thought of "uncommon" and "rare".
- Uncommon is a bit long so I'll go with "rare", knowing that the meat
-reference will give me a chuckle every now and then.
+Cheers
+-Paul
 
-Paolo
+
