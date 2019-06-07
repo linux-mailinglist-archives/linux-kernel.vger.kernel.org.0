@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 897E43912B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B13E33909F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:53:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbfFGPmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:42:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52400 "EHLO mail.kernel.org"
+        id S1732103AbfFGPxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:53:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729577AbfFGPmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:42:03 -0400
+        id S1730581AbfFGPrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:47:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58F5321479;
-        Fri,  7 Jun 2019 15:42:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B196220657;
+        Fri,  7 Jun 2019 15:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922122;
-        bh=INNwVElMXrU1EFqZcOcaC0iqeEpAiqts1z3iYUUbs+Q=;
+        s=default; t=1559922475;
+        bh=obaZKxvXgYEdqf/Y6HZ6mDMmMasYi5YEMaOeTMivmS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aeWZ/XJALopiWCh95a92TwNIyAmBdYKyf3t5M5uVS61x5D497TOgPL9I/7pwllvJ1
-         5HDO8p2V7D+cZt6MKG0kOh/UL37PbQmE2t2cAYiib9f4BbecyemA0er5omWfZxk1l2
-         sQizusqsmNUWtuI+z/uomTiCct0MAlM27WQ8L8K4=
+        b=ZEnYOK5I5X/8XA+6aLWk0YkrZqMl213NoXpRXN74n4a9uGVqlXN3qAKpfnL85veAU
+         V3kop+UsKTO4TWIjsLIQ44XTQSKKQ9iWHhehNGiLOQzchKtkriG/vBr5EtQUpIDCHM
+         is5n6zteVnd1xFesliVmS3ZF+dhSEJ8ERIkkmwvg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 09/69] net/mlx5: Allocate root ns memory using kzalloc to match kfree
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Raul E Rangel <rrangel@chromium.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 5.1 05/85] xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()
 Date:   Fri,  7 Jun 2019 17:38:50 +0200
-Message-Id: <20190607153849.422451977@linuxfoundation.org>
+Message-Id: <20190607153849.732847881@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-[ Upstream commit 25fa506b70cadb580c1e9cbd836d6417276d4bcd ]
+commit f7fac17ca925faa03fc5eb854c081a24075f8bad upstream.
 
-root ns is yet another fs core node which is freed using kfree() by
-tree_put_node().
-Rest of the other fs core objects are also allocated using kmalloc
-variants.
+Xhci_handshake() implements the algorithm already captured by
+readl_poll_timeout_atomic(). Convert the former to use the latter to
+avoid repetition.
 
-However, root ns memory is allocated using kvzalloc().
-Hence allocate root ns memory using kzalloc().
+Turned out this patch also fixes a bug on the AMD Stoneyridge platform
+where usleep(1) sometimes takes over 10ms.
+This means a 5 second timeout can easily take over 15 seconds which will
+trigger the watchdog and reboot the system.
 
-Fixes: 2530236303d9e ("net/mlx5_core: Flow steering tree initialization")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+[Add info about patch fixing a bug to commit message -Mathias]
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Tested-by: Raul E Rangel <rrangel@chromium.org>
+Reviewed-by: Raul E Rangel <rrangel@chromium.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-@@ -1960,7 +1960,7 @@ static struct mlx5_flow_root_namespace *
- 	struct mlx5_flow_namespace *ns;
+---
+ drivers/usb/host/xhci.c |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -9,6 +9,7 @@
+  */
  
- 	/* Create the root namespace */
--	root_ns = kvzalloc(sizeof(*root_ns), GFP_KERNEL);
-+	root_ns = kzalloc(sizeof(*root_ns), GFP_KERNEL);
- 	if (!root_ns)
- 		return NULL;
+ #include <linux/pci.h>
++#include <linux/iopoll.h>
+ #include <linux/irq.h>
+ #include <linux/log2.h>
+ #include <linux/module.h>
+@@ -52,7 +53,6 @@ static bool td_on_ring(struct xhci_td *t
+ 	return false;
+ }
  
+-/* TODO: copied from ehci-hcd.c - can this be refactored? */
+ /*
+  * xhci_handshake - spin reading hc until handshake completes or fails
+  * @ptr: address of hc register to be read
+@@ -69,18 +69,16 @@ static bool td_on_ring(struct xhci_td *t
+ int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
+ {
+ 	u32	result;
++	int	ret;
+ 
+-	do {
+-		result = readl(ptr);
+-		if (result == ~(u32)0)		/* card removed */
+-			return -ENODEV;
+-		result &= mask;
+-		if (result == done)
+-			return 0;
+-		udelay(1);
+-		usec--;
+-	} while (usec > 0);
+-	return -ETIMEDOUT;
++	ret = readl_poll_timeout_atomic(ptr, result,
++					(result & mask) == done ||
++					result == U32_MAX,
++					1, usec);
++	if (result == U32_MAX)		/* card removed */
++		return -ENODEV;
++
++	return ret;
+ }
+ 
+ /*
 
 
