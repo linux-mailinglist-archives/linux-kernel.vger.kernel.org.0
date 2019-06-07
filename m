@@ -2,97 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D954D3850C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60C638513
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbfFGHaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 03:30:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39531 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfFGHaO (ORCPT
+        id S1727792AbfFGHbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:31:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47234 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFGHbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 03:30:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x4so1055560wrt.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 00:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lrr6ioZcekx4kANZ44iPzLZQJWO8X7giUJsRwhjFEb0=;
-        b=l7WHDDr/x6pU8uYm5wJ0Y3fV2Q55Li+9kzbMpZNFSrpIEQLoGXyM/b9hnONT/bYi9P
-         qAxGdnrXTd6FnF1ucQ5wtRB7h3DwuJyP22h8w18Mt5CrPgx6aN/2+qnc15mpd+xvAL8A
-         btd5J7vllSPG8ebzjZBzAFWQvkhxxIxMR4vcgpZ7Vzh4DSCrWQvFvwsrwCDAOaEtXvxS
-         z5FbtRgH+fm++h4OdrqYP4+tEsxGthbOQguem2DmX5g5YkFvRclrEFllTxW4MazRNdob
-         O38cT/HoWGTw2ezDOjCL4zEtJdixjl2NnvFTcADXiwFHgE6Hee3j5+Lk2RCg1n+qe+cj
-         E25Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lrr6ioZcekx4kANZ44iPzLZQJWO8X7giUJsRwhjFEb0=;
-        b=pwNp8FrNyJiHE+s4vdDHVNLh2w2UMuepxMNb9P3/i1wKBnwjWDgOGvB3PEqtrPryxU
-         GQvbQAuVEGAGAKBFJ4w3tExMo/n/PMgqeNEe2xFzrpuFqntU3OqHkUv6TZx37g0x9QCa
-         06OOgvors6myO2b+G5ykAMd/FBUzIbtCR9+7E0wsZy0TJG6pUQTvst/FxBFfsJYzTw8T
-         5DxZOvwwAT5ngMw1DksUlpNWpQdKnVEaGraYvm1HCEpWHe7YTCutEYbRPvFU4U5A0qxO
-         G0hjARB1MiG4aV7l3CZTltfBNDi7zU2ITiCQJQLSQHI39rjzyAgS87wuBE5iH/H7PRPL
-         /S4Q==
-X-Gm-Message-State: APjAAAXh2w91CyTRs6i7QxIcv2fOStOXGYA3DMeRL/Tb22Udt5a7D4ur
-        z9EMNCvbPOyNZL8Pg0U2ip+hGA==
-X-Google-Smtp-Source: APXvYqxgu9KpnCoFF4B/lcXMArKLgM38fRJe5qI9vG94/+fP1scTodXoLuQNEpByJ8nvA5GHPTV6kw==
-X-Received: by 2002:adf:dc0c:: with SMTP id t12mr32465037wri.101.1559892612170;
-        Fri, 07 Jun 2019 00:30:12 -0700 (PDT)
-Received: from [10.97.4.179] (aputeaux-682-1-82-78.w90-86.abo.wanadoo.fr. [90.86.61.78])
-        by smtp.gmail.com with ESMTPSA id q24sm971429wmc.43.2019.06.07.00.30.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 00:30:11 -0700 (PDT)
-Subject: Re: [PATCH 0/2] block, bfq: add weight symlink to the bfq.weight
- cgroup parameter
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name
-References: <20190521080155.36178-1-paolo.valente@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <854dd83a-bd07-c1c3-d005-ef7a62f0fa35@kernel.dk>
-Date:   Fri, 7 Jun 2019 01:30:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 7 Jun 2019 03:31:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Z4s1HU+Ta9EFcVv62Up/dxFFdolam58FxKGBkLAELZE=; b=PrfN5Q8zV0PMbJwOh2nSW0qEu
+        whA3bMeZqjYW6FVebCOMZ+jOWcBf+KwA1YjMeNgOsUt0oXjsFsVtbgVjMkkSB2lXZiVsntQd5nIpO
+        GW/QhqhGfYGi3P0N9Kz2wphjaFQrHbOZos1aDDyNXV9IIbRjza8ZimXKp7rc3KXCR2qUaIUDiJx4D
+        5rSOUPZEafMrNVJUJROE8lISqEQD1e32yciSw6rgIUWvfgxL1u89OkOz+Hdjo60eCuPyV4oJuq5ZI
+        jCvlk67LYXzyPmh1q9o9aYoPPzyR0KFRwE/m9d1Eb5wGETSQGDQ/SGHQzPTldrqSlG+aLohd+cQ4E
+        nfdyfn8hA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hZ9Kx-0002HQ-Ah; Fri, 07 Jun 2019 07:30:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E4942202CD6B2; Fri,  7 Jun 2019 09:30:52 +0200 (CEST)
+Date:   Fri, 7 Jun 2019 09:30:52 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v7 15/27] mm: Handle shadow stack page fault
+Message-ID: <20190607073052.GO3419@hirez.programming.kicks-ass.net>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+ <20190606200646.3951-16-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190521080155.36178-1-paolo.valente@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606200646.3951-16-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/21/19 2:01 AM, Paolo Valente wrote:
-> Many userspace tools and services use the proportional-share policy of
-> the blkio/io cgroups controller. The CFQ I/O scheduler implemented
-> this policy for the legacy block layer. To modify the weight of a
-> group in case CFQ was in charge, the 'weight' parameter of the group
-> must be modified. On the other hand, the BFQ I/O scheduler implements
-> the same policy in blk-mq, but, with BFQ, the parameter to modify has
-> a different name: bfq.weight (forced choice until legacy block was
-> present, because two different policies cannot share a common parameter
-> in cgroups).
-> 
-> Due to CFQ legacy, most if not all userspace configurations still use
-> the parameter 'weight', and for the moment do not seem likely to be
-> changed. But, when CFQ went away with legacy block, such a parameter
-> ceased to exist.
-> 
-> So, a simple workaround has been proposed by Johannes [1] to make all
-> configurations work: add a symlink, named weight, to bfq.weight. This
-> pair of patches adds:
-> 1) the possibility to create a symlink to a cgroup file;
-> 2) the above 'weight' symlink.
+On Thu, Jun 06, 2019 at 01:06:34PM -0700, Yu-cheng Yu wrote:
 
-Applied, thanks.
+> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+> index 75d9d68a6de7..ffcc0be7cadc 100644
+> --- a/include/asm-generic/pgtable.h
+> +++ b/include/asm-generic/pgtable.h
+> @@ -1188,4 +1188,12 @@ static inline bool arch_has_pfn_modify_check(void)
+>  #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
+>  #endif
+>  
+> +#ifndef CONFIG_ARCH_HAS_SHSTK
+> +#define pte_set_vma_features(pte, vma) pte
+> +#define arch_copy_pte_mapping(vma_flags) false
 
--- 
-Jens Axboe
+static inline pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma)
+{
+	return pte;
+}
 
+static inline bool arch_copy_pte_mapping(unsigned long vm_flags)
+{
+	return false;
+}
+
+Please, this way we retain function prototype checking.
+
+> +#else
+> +pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma);
+> +bool arch_copy_pte_mapping(vm_flags_t vm_flags);
+> +#endif
