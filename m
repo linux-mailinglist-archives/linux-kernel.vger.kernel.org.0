@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B377038F9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81EC339045
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730814AbfFGPnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:43:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54280 "EHLO mail.kernel.org"
+        id S1732193AbfFGPuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:50:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730798AbfFGPnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:43:12 -0400
+        id S1732180AbfFGPuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:50:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA4312147A;
-        Fri,  7 Jun 2019 15:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 746CC2146E;
+        Fri,  7 Jun 2019 15:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922192;
-        bh=BDB3ig0QlMOY4R06RNujJ6k6tWZKmQbZv1OOduIroVM=;
+        s=default; t=1559922631;
+        bh=g4i+fi4Vs91vZ8wIpfeHykjEmLh+K4yC8YFE2eDSh0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rCUOXf20M4ge31aZBR+TtQ6rTfGxFsmbZ3nEGqct03UuQIPCfLUtVQKozsOaqHKEI
-         tQ39o7RIzAT8N0CYcEc1tLcrT+jyEOoB69IDjT+cjtgszHpsTu1d6iYcPGIJz/b81e
-         0BRJW5eNDW8NiDqLUNeQ3BglVXgomPAHyCQBcP6M=
+        b=LugEjVEkNLQcF+QMSXFfXAIKSM4+dxMooA67uVSk6wXs73mBo293Gz0YiVz4QFcU5
+         qdElvQUITxvg1KZFq5w08hFtszcnFI1d5nf94LZHKvg8oyeAtskQ+55G4LXMzNmnil
+         JHIWSiCbkmhcxJAlbd30esLPCPdQt8rjIvBh3X4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.14 69/69] media: uvcvideo: Fix uvc_alloc_entity() allocation alignment
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 5.1 65/85] staging: vc04_services: prevent integer overflow in create_pagelist()
 Date:   Fri,  7 Jun 2019 17:39:50 +0200
-Message-Id: <20190607153856.262197244@linuxfoundation.org>
+Message-Id: <20190607153856.517114940@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +42,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nadav Amit <namit@vmware.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 89dd34caf73e28018c58cd193751e41b1f8bdc56 upstream.
+commit ca641bae6da977d638458e78cd1487b6160a2718 upstream.
 
-The use of ALIGN() in uvc_alloc_entity() is incorrect, since the size of
-(entity->pads) is not a power of two. As a stop-gap, until a better
-solution is adapted, use roundup() instead.
+The create_pagelist() "count" parameter comes from the user in
+vchiq_ioctl() and it could overflow.  If you look at how create_page()
+is called in vchiq_prepare_bulk_data(), then the "size" variable is an
+int so it doesn't make sense to allow negatives or larger than INT_MAX.
 
-Found by a static assertion. Compile-tested only.
+I don't know this code terribly well, but I believe that typical values
+of "count" are typically quite low and I don't think this check will
+affect normal valid uses at all.
 
-Fixes: 4ffc2d89f38a ("uvcvideo: Register subdevices for each entity")
+The "pagelist_size" calculation can also overflow on 32 bit systems, but
+not on 64 bit systems.  I have added an integer overflow check for that
+as well.
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>
+The Raspberry PI doesn't offer the same level of memory protection that
+x86 does so these sorts of bugs are probably not super critical to fix.
+
+Fixes: 71bad7f08641 ("staging: add bcm2708 vchiq driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/uvc/uvc_driver.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -903,7 +903,7 @@ static struct uvc_entity *uvc_alloc_enti
- 	unsigned int size;
- 	unsigned int i;
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
+@@ -398,9 +398,18 @@ create_pagelist(char __user *buf, size_t
+ 	int dma_buffers;
+ 	dma_addr_t dma_addr;
  
--	extra_size = ALIGN(extra_size, sizeof(*entity->pads));
-+	extra_size = roundup(extra_size, sizeof(*entity->pads));
- 	num_inputs = (type & UVC_TERM_OUTPUT) ? num_pads : num_pads - 1;
- 	size = sizeof(*entity) + extra_size + sizeof(*entity->pads) * num_pads
- 	     + num_inputs;
++	if (count >= INT_MAX - PAGE_SIZE)
++		return NULL;
++
+ 	offset = ((unsigned int)(unsigned long)buf & (PAGE_SIZE - 1));
+ 	num_pages = DIV_ROUND_UP(count + offset, PAGE_SIZE);
+ 
++	if (num_pages > (SIZE_MAX - sizeof(struct pagelist) -
++			 sizeof(struct vchiq_pagelist_info)) /
++			(sizeof(u32) + sizeof(pages[0]) +
++			 sizeof(struct scatterlist)))
++		return NULL;
++
+ 	pagelist_size = sizeof(struct pagelist) +
+ 			(num_pages * sizeof(u32)) +
+ 			(num_pages * sizeof(pages[0]) +
 
 
