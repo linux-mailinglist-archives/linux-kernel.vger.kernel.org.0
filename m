@@ -2,90 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F3B0396B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA9E4396B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:20:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbfFGUTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 16:19:19 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39569 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729482AbfFGUTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 16:19:18 -0400
-Received: by mail-ot1-f66.google.com with SMTP id r21so3022044otq.6;
-        Fri, 07 Jun 2019 13:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kF0tmcf4FmmtL8K1dOGyBR+41X7w1ud+CqhDS3uJjEo=;
-        b=XZswRsbY0H61PsWRh+9xYhup0l2a15nOcU8S8/sZUSTxGcnuyyX6qJVYIL/sMJnm3W
-         SVhoylqdvu+yEG4eJQRRM+LZgmslGdMKSCAyJK7h4JkRf2xg0vKF2VUDzlN7rWiBUDoL
-         7AclwTIf/NZxwhwLF2mnQiRPv/vpT0OkKr56/QfOqWH5l8GPRRkixsyuODOmM+p4knCJ
-         BPAiceO4343Tv+5XaZHAMGIh0qUQQxSWLyOvWPnQXl2EXLxsbC+7nLjm7Qe/+LSyUZf0
-         bua2HIsRfUcjQlUdjm92uAg9f5ThuZTiPwRGTpSX9yQj3x/Bf1zCIy+NHBcCDMJKT6pi
-         +YlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kF0tmcf4FmmtL8K1dOGyBR+41X7w1ud+CqhDS3uJjEo=;
-        b=fnnmwEfMFbZObh9hyh/JspX4YNm8fe0uGrnKXCtBHrUIhvv9DGDobS/LknVmJsed3G
-         dxqtACIUIrYHzK6ivAE5/7pmeBXUSreBO4skMxHzia3UAjMvLPLTo6F7ztMMTqPYcWpx
-         1cJK3/98hIQ4xbuTh3xr3r0uABmDdxWRfU1cx9zOoL1nLT3Ph/PEQM0HptK5+BcuTnjj
-         QeElLwPh4TAe+mVrMXdz/Y20AC5MxMQ+lBnH07IrH2qrNhN6Q67tc99HspPCtfIej9uW
-         HfQYeNlexA4QeI4PIpmXYONB7n4Pc5o0yBUZ2/YL5ojFKOWIYCkYF/TNhv+p8r7o10cC
-         bQfA==
-X-Gm-Message-State: APjAAAXHkdWh/mDhYXYQ+WTfm2r1UJ1eQpUGMfosME5R4jBh7eqlBIho
-        usrvrFzvwV/xMh2y1LJhmPU=
-X-Google-Smtp-Source: APXvYqyqCjlw8sV6gwVwTFguJP1uZ5wRpA0bKh01kp3hm09dKwVt/FwB2cMARG7+b7oHLELGubb6Yw==
-X-Received: by 2002:a9d:7745:: with SMTP id t5mr20087159otl.343.1559938757980;
-        Fri, 07 Jun 2019 13:19:17 -0700 (PDT)
-Received: from rYz3n ([2600:1700:210:3790::40])
-        by smtp.gmail.com with ESMTPSA id f4sm1248352oih.39.2019.06.07.13.19.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 13:19:17 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 15:19:17 -0500
-From:   Jiunn Chang <c0d1n61at3@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.1 00/85] 5.1.8-stable review
-Message-ID: <20190607201916.soitroxwy7ji523d@rYz3n>
-References: <20190607153849.101321647@linuxfoundation.org>
+        id S1730647AbfFGUUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 16:20:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729482AbfFGUUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 16:20:20 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F4AA208C0;
+        Fri,  7 Jun 2019 20:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559938819;
+        bh=Rxhb7ZkzJ2tRc1b4IRrs2klGtUDxU25r/NeOspkgbtc=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=1v4Re/Tix8dDpb3JI9KvK6DJEkGDz3AqFuwQpZfSjZhg17LTuN7/Igk7kc9Z19CXU
+         I3GtkKobNB8NWA8V76Era1caltPubjms7Ip5c6cAfxWe9zd1Bx+Gf0pPi6dGc0laZk
+         LnfX/xlco1c0tMrNm1HGP2VFQ20TIRU5E23LLmhI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190504001736.8598-1-bjorn.andersson@linaro.org>
+References: <20190504001736.8598-1-bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: WARN when failing to toggle
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Fri, 07 Jun 2019 13:20:18 -0700
+Message-Id: <20190607202019.8F4AA208C0@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 05:38:45PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.8 release.
-> There are 85 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 09 Jun 2019 03:37:09 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.8-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
+Quoting Bjorn Andersson (2019-05-03 17:17:36)
+> Failing to toggle a GDSC as the driver core is attaching the
+> power-domain to a device will cause a silent probe deferral. Provide an
+> explicit warning to the developer, in order to reduce the amount of time
+> it take to debug this.
+>=20
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-Compiled and booted.  No regessions on x86_64.
+Applied to clk-next
 
-THX
