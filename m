@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3289E394F9
+	by mail.lfdr.de (Postfix) with ESMTP id 9C428394FA
 	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbfFGS4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:56:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42266 "EHLO
+        id S1732343AbfFGS4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:56:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42292 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729904AbfFGSyk (ORCPT
+        with ESMTP id S1732066AbfFGSyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Jun 2019 14:54:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=nmmmmE8IK45VX9V9j4/cO2pBiB9thUFj9++29NB31JM=; b=Y06nEFtTO7Y9tpHUkNKkdvuFUl
-        tDxCKPIMotVcDSONsp1f5JxxBGArpwZn1Xine9jlhQUqN2yZs2Llfa4QJtVk3EBgLVKGN+3ZF3phh
-        1xBFNqWhgzVvixgDvY6ZIXPNeJdP82HqL6WP3yJ3+fs4pgNaVD9GEsPqdRcbDlGcR8uo2NletgwWO
-        83iGFHuQEHepH3mHKMer6lleQYtniZSKBY2Wmjvn1vfpqFIu1L2JVA8og/Ayq4vag1LKaakTvSaf0
-        Y3LoObrR51VBYTmlSy6lALLrBVn8zwTV7ad0BvL+IYWOQg4O/AZFgasHzVOOdZhRKsjNHW5L3yPs6
-        nkM2t0qg==;
+        bh=/7dqPwrQ7gR2T9mrau0LVVW5XMBZ6q95lcp2shiZP6k=; b=RA5fNz93EZhfqLReZosTU9lxb4
+        lHhw52TA6t8IJPL/yvJ6gX0tUgpN17RzyyN3UdbVP0bg6gt1qFH72XFFrakvYEpqvlaR8W5Prd0Y7
+        aw3X8pVVDv4gFN1tXG7SVFPbxaU6sUS6EpE8tR0q+ZR3V5ugc21P17Xe5Y0zoHwGDYKiGwwNdXclw
+        RPsvenX0AgTGP79QvJVViyWNAyotfjMQ6Qm7DZG7/7gmhFK+HkUfi2mFlidQQdYH2Y3DJeKQEw1Ib
+        Qqb9R/btgqNvxJC9sepdA5Gn6O1rYo54/Ae3z/x+rlGePYif0PKJzZecFV7PS0qlhL2KRHQFmyNvO
+        +Mr2mFfQ==;
 Received: from [179.181.119.115] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZK0d-0005si-M7; Fri, 07 Jun 2019 18:54:39 +0000
+        id 1hZK0d-0005sl-Mo; Fri, 07 Jun 2019 18:54:39 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hZK0b-0007Ff-Lu; Fri, 07 Jun 2019 15:54:37 -0300
+        id 1hZK0b-0007Fj-Mg; Fri, 07 Jun 2019 15:54:37 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v3 18/20] docs: isdn: remove hisax references from kernel-parameters.txt
-Date:   Fri,  7 Jun 2019 15:54:34 -0300
-Message-Id: <7681f328a4205bf1609521c2bf05a346d85e9566.1559933665.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 19/20] docs: fs: fix broken links to vfs.txt with was renamed to vfs.rst
+Date:   Fri,  7 Jun 2019 15:54:35 -0300
+Message-Id: <12e5f1741401204539320f7686d5a20e7463a0b1.1559933665.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
 References: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
@@ -48,30 +50,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hisax driver got removed on 85993b8c9786 ("isdn: remove hisax driver"),
-but a left-over was kept at kernel-parameters.txt.
+A recent documentation conversion renamed this file but forgot
+to update the links.
 
-Fixes: 85993b8c9786 ("isdn: remove hisax driver")
-
+Fixes: af96c1e304f7 ("docs: filesystems: vfs: Convert vfs.txt to RST")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/filesystems/porting | 10 +++++-----
+ include/linux/dcache.h            |  4 ++--
+ include/linux/fs.h                |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1abd7e145357..9b16b640ce48 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1388,9 +1388,6 @@
- 			Valid parameters: "on", "off"
- 			Default: "on"
+diff --git a/Documentation/filesystems/porting b/Documentation/filesystems/porting
+index 3bd1148d8bb6..2813a19389fe 100644
+--- a/Documentation/filesystems/porting
++++ b/Documentation/filesystems/porting
+@@ -330,14 +330,14 @@ unreferenced dentries, and is now only called when the dentry refcount goes to
+ [mandatory]
  
--	hisax=		[HW,ISDN]
--			See Documentation/isdn/README.HiSax.
--
- 	hlt		[BUGS=ARM,SH]
+ 	.d_compare() calling convention and locking rules are significantly
+-changed. Read updated documentation in Documentation/filesystems/vfs.txt (and
++changed. Read updated documentation in Documentation/filesystems/vfs.rst (and
+ look at examples of other filesystems) for guidance.
  
- 	hpet=		[X86-32,HPET] option to control HPET usage
+ ---
+ [mandatory]
+ 
+ 	.d_hash() calling convention and locking rules are significantly
+-changed. Read updated documentation in Documentation/filesystems/vfs.txt (and
++changed. Read updated documentation in Documentation/filesystems/vfs.rst (and
+ look at examples of other filesystems) for guidance.
+ 
+ ---
+@@ -377,12 +377,12 @@ where possible.
+ the filesystem provides it), which requires dropping out of rcu-walk mode. This
+ may now be called in rcu-walk mode (nd->flags & LOOKUP_RCU). -ECHILD should be
+ returned if the filesystem cannot handle rcu-walk. See
+-Documentation/filesystems/vfs.txt for more details.
++Documentation/filesystems/vfs.rst for more details.
+ 
+ 	permission is an inode permission check that is called on many or all
+ directory inodes on the way down a path walk (to check for exec permission). It
+ must now be rcu-walk aware (mask & MAY_NOT_BLOCK).  See
+-Documentation/filesystems/vfs.txt for more details.
++Documentation/filesystems/vfs.rst for more details.
+  
+ --
+ [mandatory]
+@@ -625,7 +625,7 @@ in your dentry operations instead.
+ --
+ [mandatory]
+ 	->clone_file_range() and ->dedupe_file_range have been replaced with
+-	->remap_file_range().  See Documentation/filesystems/vfs.txt for more
++	->remap_file_range().  See Documentation/filesystems/vfs.rst for more
+ 	information.
+ --
+ [recommended]
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index f14e587c5d5d..5e0eadf7de55 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -153,7 +153,7 @@ struct dentry_operations {
+  * Locking rules for dentry_operations callbacks are to be found in
+  * Documentation/filesystems/Locking. Keep it updated!
+  *
+- * FUrther descriptions are found in Documentation/filesystems/vfs.txt.
++ * FUrther descriptions are found in Documentation/filesystems/vfs.rst.
+  * Keep it updated too!
+  */
+ 
+@@ -568,7 +568,7 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+  * If dentry is on a union/overlay, then return the underlying, real dentry.
+  * Otherwise return the dentry itself.
+  *
+- * See also: Documentation/filesystems/vfs.txt
++ * See also: Documentation/filesystems/vfs.rst
+  */
+ static inline struct dentry *d_real(struct dentry *dentry,
+ 				    const struct inode *inode)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f7fdfe93e25d..c564cf3f48d9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1769,7 +1769,7 @@ struct block_device_operations;
+ /*
+  * These flags control the behavior of the remap_file_range function pointer.
+  * If it is called with len == 0 that means "remap to end of source file".
+- * See Documentation/filesystems/vfs.txt for more details about this call.
++ * See Documentation/filesystems/vfs.rst for more details about this call.
+  *
+  * REMAP_FILE_DEDUP: only remap if contents identical (i.e. deduplicate)
+  * REMAP_FILE_CAN_SHORTEN: caller can handle a shortened request
 -- 
 2.21.0
 
