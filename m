@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0E5A39035
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B7738FBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:46:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbfFGPtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:49:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36086 "EHLO mail.kernel.org"
+        id S1731138AbfFGPop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:44:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732042AbfFGPtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:49:50 -0400
+        id S1731126AbfFGPom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:44:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9BA8214AE;
-        Fri,  7 Jun 2019 15:49:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AE612133D;
+        Fri,  7 Jun 2019 15:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922590;
-        bh=9E2EX28Bw3gXuclGEY/bIpxg/tuh2wZhNIhvZVgFgtU=;
+        s=default; t=1559922282;
+        bh=7+mU74GXrbpCUDKfGhZsLZkVwFWMioX8PzYR9FHW0TE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TBZxD8pPgz+hkvmjx4cxnQ289IHL7OXHvlHwDuSXahHFSs4aWratnNzAFZrskgXQZ
-         gpdK2gW+KZlXrufr9SK8bdJrsQbKhhUKr7BHu61VmWrdWakz+20fqy36asM6nA7nwH
-         cBswTYfky1CcDlPbVBJaA/xJW/Lyb4lNAXtFytrw=
+        b=wTSXpzeGtIgJv2vXRCuyqa2TxaZPp/xDQcEupac/z11tlcBnST+xdAbRHAoIugAJy
+         vHooiQV1TsrntuLS/nqhWqzKWgjr1+WRi1hCG6Rp3dVNGaNQYvPXMwTHPvWN94FfF8
+         NuWWoM+wGg5cIsCIZNKnxZ/4DFlBsWv0wI5LeivU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.1 31/85] iio: adc: ti-ads8688: fix timestamp is not updated in buffer
-Date:   Fri,  7 Jun 2019 17:39:16 +0200
-Message-Id: <20190607153853.114846749@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 30/73] powerpc/perf: Fix MMCRA corruption by bhrb_filter
+Date:   Fri,  7 Jun 2019 17:39:17 +0200
+Message-Id: <20190607153852.422822358@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
+References: <20190607153848.669070800@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Nyekjaer <sean@geanix.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-commit e6d12298310fa1dc11f1d747e05b168016057fdd upstream.
+commit 3202e35ec1c8fc19cea24253ff83edf702a60a02 upstream.
 
-When using the hrtimer iio trigger timestamp isn't updated.
-If we use iio_get_time_ns it is updated correctly.
+Consider a scenario where user creates two events:
 
-Fixes: 2a86487786b5c ("iio: adc: ti-ads8688: add trigger and buffer support")
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+  1st event:
+    attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
+    attr.branch_sample_type = PERF_SAMPLE_BRANCH_ANY;
+    fd = perf_event_open(attr, 0, 1, -1, 0);
+
+  This sets cpuhw->bhrb_filter to 0 and returns valid fd.
+
+  2nd event:
+    attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
+    attr.branch_sample_type = PERF_SAMPLE_BRANCH_CALL;
+    fd = perf_event_open(attr, 0, 1, -1, 0);
+
+  It overrides cpuhw->bhrb_filter to -1 and returns with error.
+
+Now if power_pmu_enable() gets called by any path other than
+power_pmu_add(), ppmu->config_bhrb(-1) will set MMCRA to -1.
+
+Fixes: 3925f46bb590 ("powerpc/perf: Enable branch stack sampling framework")
+Cc: stable@vger.kernel.org # v3.10+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ti-ads8688.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/perf/core-book3s.c |    6 ++++--
+ arch/powerpc/perf/power8-pmu.c  |    3 +++
+ arch/powerpc/perf/power9-pmu.c  |    3 +++
+ 3 files changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/ti-ads8688.c
-+++ b/drivers/iio/adc/ti-ads8688.c
-@@ -397,7 +397,7 @@ static irqreturn_t ads8688_trigger_handl
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1827,6 +1827,7 @@ static int power_pmu_event_init(struct p
+ 	int n;
+ 	int err;
+ 	struct cpu_hw_events *cpuhw;
++	u64 bhrb_filter;
+ 
+ 	if (!ppmu)
+ 		return -ENOENT;
+@@ -1932,13 +1933,14 @@ static int power_pmu_event_init(struct p
+ 	err = power_check_constraints(cpuhw, events, cflags, n + 1);
+ 
+ 	if (has_branch_stack(event)) {
+-		cpuhw->bhrb_filter = ppmu->bhrb_filter_map(
++		bhrb_filter = ppmu->bhrb_filter_map(
+ 					event->attr.branch_sample_type);
+ 
+-		if (cpuhw->bhrb_filter == -1) {
++		if (bhrb_filter == -1) {
+ 			put_cpu_var(cpu_hw_events);
+ 			return -EOPNOTSUPP;
+ 		}
++		cpuhw->bhrb_filter = bhrb_filter;
  	}
  
- 	iio_push_to_buffers_with_timestamp(indio_dev, buffer,
--			pf->timestamp);
-+			iio_get_time_ns(indio_dev));
+ 	put_cpu_var(cpu_hw_events);
+--- a/arch/powerpc/perf/power8-pmu.c
++++ b/arch/powerpc/perf/power8-pmu.c
+@@ -29,6 +29,7 @@ enum {
+ #define	POWER8_MMCRA_IFM1		0x0000000040000000UL
+ #define	POWER8_MMCRA_IFM2		0x0000000080000000UL
+ #define	POWER8_MMCRA_IFM3		0x00000000C0000000UL
++#define	POWER8_MMCRA_BHRB_MASK		0x00000000C0000000UL
  
- 	iio_trigger_notify_done(indio_dev->trig);
+ /*
+  * Raw event encoding for PowerISA v2.07 (Power8):
+@@ -243,6 +244,8 @@ static u64 power8_bhrb_filter_map(u64 br
  
+ static void power8_config_bhrb(u64 pmu_bhrb_filter)
+ {
++	pmu_bhrb_filter &= POWER8_MMCRA_BHRB_MASK;
++
+ 	/* Enable BHRB filter in PMU */
+ 	mtspr(SPRN_MMCRA, (mfspr(SPRN_MMCRA) | pmu_bhrb_filter));
+ }
+--- a/arch/powerpc/perf/power9-pmu.c
++++ b/arch/powerpc/perf/power9-pmu.c
+@@ -100,6 +100,7 @@ enum {
+ #define POWER9_MMCRA_IFM1		0x0000000040000000UL
+ #define POWER9_MMCRA_IFM2		0x0000000080000000UL
+ #define POWER9_MMCRA_IFM3		0x00000000C0000000UL
++#define POWER9_MMCRA_BHRB_MASK		0x00000000C0000000UL
+ 
+ /* Nasty Power9 specific hack */
+ #define PVR_POWER9_CUMULUS		0x00002000
+@@ -308,6 +309,8 @@ static u64 power9_bhrb_filter_map(u64 br
+ 
+ static void power9_config_bhrb(u64 pmu_bhrb_filter)
+ {
++	pmu_bhrb_filter &= POWER9_MMCRA_BHRB_MASK;
++
+ 	/* Enable BHRB filter in PMU */
+ 	mtspr(SPRN_MMCRA, (mfspr(SPRN_MMCRA) | pmu_bhrb_filter));
+ }
 
 
