@@ -2,157 +2,258 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5129384A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5DF384B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfFGG6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 02:58:24 -0400
-Received: from mail-eopbgr740081.outbound.protection.outlook.com ([40.107.74.81]:15280
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726891AbfFGG6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:58:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pKjBHGhH/wJcjTXje/fojuz6JzyLJn0zVl1WKgrfH28=;
- b=wHjUglFNVpFmsKJWNPNifaA5vP6o1Zen/jseIuZ7XctbkvLlgz89/0A70KW5d3E/8lqUe44PTc77Qa9rLuVD7gix2qZOKjNvE9bag2IahPe7CoeNvKct/RP7JU0ySzhQu0WigxA1NZ6Vs3cSQXkHh5etLPCLKjtLxIGHPdhSGI4=
-Received: from MN2PR02MB6400.namprd02.prod.outlook.com (52.132.175.209) by
- MN2PR02MB6333.namprd02.prod.outlook.com (52.132.175.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Fri, 7 Jun 2019 06:58:15 +0000
-Received: from MN2PR02MB6400.namprd02.prod.outlook.com
- ([fe80::6001:ad1f:d548:2b71]) by MN2PR02MB6400.namprd02.prod.outlook.com
- ([fe80::6001:ad1f:d548:2b71%6]) with mapi id 15.20.1965.011; Fri, 7 Jun 2019
- 06:58:14 +0000
-From:   Appana Durga Kedareswara Rao <appanad@xilinx.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        "wg@grandegger.com" <wg@grandegger.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Michal Simek <michals@xilinx.com>
-CC:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+        id S1726881AbfFGHDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:03:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59272 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726107AbfFGHDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 03:03:06 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1DFC6C1EB214;
+        Fri,  7 Jun 2019 07:02:52 +0000 (UTC)
+Received: from [10.36.116.67] (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECBA9783A4;
+        Fri,  7 Jun 2019 07:02:41 +0000 (UTC)
+Subject: Re: [PATCH v8 26/29] vfio-pci: Register an iommu fault handler
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Srinivas Neeli <sneeli@xilinx.com>
-Subject: RE: [PATCH 0/6] net: can: xilinx_can: Bug fixes and Enhancements
-Thread-Topic: [PATCH 0/6] net: can: xilinx_can: Bug fixes and Enhancements
-Thread-Index: AQHU3X5pxtrhGyT8f0y/0R8BjEz816YUgSyAgAEkNOCAM9QFwIBGxw/Q
-Date:   Fri, 7 Jun 2019 06:58:14 +0000
-Message-ID: <MN2PR02MB64007451AEE68134E7B304A1DC100@MN2PR02MB6400.namprd02.prod.outlook.com>
-References: <1552908766-26753-1-git-send-email-appana.durga.rao@xilinx.com>
- <d1cd73cc-e200-7c06-dd6e-3c5e2e35709c@pengutronix.de>
- <DM5PR02MB21875918C65EF8757E34C574DC420@DM5PR02MB2187.namprd02.prod.outlook.com>
- <DM5PR02MB2187137A63481B2BB2E12920DC230@DM5PR02MB2187.namprd02.prod.outlook.com>
-In-Reply-To: <DM5PR02MB2187137A63481B2BB2E12920DC230@DM5PR02MB2187.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=appanad@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ba809c67-1da0-45b5-4162-08d6eb158354
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR02MB6333;
-x-ms-traffictypediagnostic: MN2PR02MB6333:
-x-ms-exchange-purlcount: 2
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <MN2PR02MB6333F21B56A7142C46C027E2DC100@MN2PR02MB6333.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0061C35778
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(346002)(39860400002)(199004)(189003)(13464003)(256004)(66066001)(2906002)(71200400001)(53936002)(107886003)(4326008)(53386004)(74316002)(6116002)(3846002)(76116006)(2501003)(73956011)(71190400001)(66446008)(66946007)(5660300002)(64756008)(76176011)(102836004)(52536014)(8936002)(8676002)(81156014)(81166006)(99286004)(7696005)(66476007)(53546011)(6506007)(6436002)(55016002)(186003)(446003)(229853002)(7736002)(6306002)(305945005)(9686003)(476003)(66556008)(478600001)(26005)(14444005)(316002)(86362001)(14454004)(966005)(68736007)(6246003)(11346002)(6636002)(110136005)(2201001)(25786009)(486006)(54906003)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB6333;H:MN2PR02MB6400.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KjCwsLk52Xuuxjt/qA+rHs7hF4ZGFQCRk/jDgGmV9XDYG/d0HyrtdYPaKOcHwsYsgJqIXkAarERGhbFNNuIliSQeJwTGOkoO4zWjF8D1CoPL/OWZPSOG+Atxv6eXUYA+EFW6ZuK75rP1XMl+VmYl+UxNeZMmm+ugS9LcArYtHesQxDnIurdPBWCodCvyeie4QHPkGmDTEQWL84I8vS+JIvoFKO/iBvQDNVMoeyrwvjkxtf/H605dm8A/8WbtjOUZo7OssNfAMui60UTbu2BBGw06SoYAoefTDLcvsXyxw1gXoWXHAEJ03xZZV4RCb939Yq46vBa6hrXlqSNqmFWORDZ4X7JRklc8xuMbdeNPrFVDyIDGYlXx+4MXPfzlFr7lsfFGGC7BTxWd+t4aeYuLfl09sb3OlGwnFcYi0+4cGZs=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        Vincent Stehle <Vincent.Stehle@arm.com>
+References: <20190526161004.25232-1-eric.auger@redhat.com>
+ <20190526161004.25232-27-eric.auger@redhat.com>
+ <20190603163139.70fe8839@x1.home>
+ <10dd60d9-4af0-c0eb-08c9-a0db7ee1925e@redhat.com>
+ <20190605154553.0d00ad8d@jacob-builder>
+ <2753d192-1c46-d78e-c425-0c828e48cde2@arm.com>
+ <20190606132903.064f7ac4@jacob-builder>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <10905d2d-16a5-7d6f-2db3-9cca10c3bde0@redhat.com>
+Date:   Fri, 7 Jun 2019 09:02:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba809c67-1da0-45b5-4162-08d6eb158354
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2019 06:58:14.7872
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: appanad@xilinx.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6333
+In-Reply-To: <20190606132903.064f7ac4@jacob-builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 07 Jun 2019 07:03:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWFyYywNCg0KRnJpZW5kbHkgcGluZyAhIQ0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
-LS0tDQo+IEZyb206IEFwcGFuYSBEdXJnYSBLZWRhcmVzd2FyYSBSYW8NCj4gU2VudDogVHVlc2Rh
-eSwgQXByaWwgMjMsIDIwMTkgMTI6MDggUE0NCj4gVG86ICdNYXJjIEtsZWluZS1CdWRkZScgPG1r
-bEBwZW5ndXRyb25peC5kZT47ICd3Z0BncmFuZGVnZ2VyLmNvbScNCj4gPHdnQGdyYW5kZWdnZXIu
-Y29tPjsgJ2RhdmVtQGRhdmVtbG9mdC5uZXQnIDxkYXZlbUBkYXZlbWxvZnQubmV0PjsNCj4gTWlj
-aGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+DQo+IENjOiAnbGludXgtY2FuQHZnZXIua2Vy
-bmVsLm9yZycgPGxpbnV4LWNhbkB2Z2VyLmtlcm5lbC5vcmc+Ow0KPiAnbmV0ZGV2QHZnZXIua2Vy
-bmVsLm9yZycgPG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc+OyAnbGludXgtYXJtLQ0KPiBrZXJuZWxA
-bGlzdHMuaW5mcmFkZWFkLm9yZycgPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-Zz47ICdsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZycgPGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggMC82XSBuZXQ6IGNhbjogeGlsaW54
-X2NhbjogQnVnIGZpeGVzIGFuZCBFbmhhbmNlbWVudHMNCj4gDQo+IEhpIE1hcmMsDQo+IA0KPiA+
-IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogQXBwYW5hIER1cmdhIEtlZGFy
-ZXN3YXJhIFJhbw0KPiA+IFNlbnQ6IFRodXJzZGF5LCBNYXJjaCAyMSwgMjAxOSAxMjowNiBQTQ0K
-PiA+IFRvOiAnTWFyYyBLbGVpbmUtQnVkZGUnIDxta2xAcGVuZ3V0cm9uaXguZGU+OyB3Z0BncmFu
-ZGVnZ2VyLmNvbTsNCj4gPiBkYXZlbUBkYXZlbWxvZnQubmV0OyBNaWNoYWwgU2ltZWsgPG1pY2hh
-bHNAeGlsaW54LmNvbT4NCj4gPiBDYzogbGludXgtY2FuQHZnZXIua2VybmVsLm9yZzsgbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiA+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+ID4gU3ViamVjdDogUkU6IFtQQVRD
-SCAwLzZdIG5ldDogY2FuOiB4aWxpbnhfY2FuOiBCdWcgZml4ZXMgYW5kDQo+ID4gRW5oYW5jZW1l
-bnRzDQo+ID4NCj4gPiBIaSBNYXJjLA0KPiA+DQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
-LS0tLQ0KPiA+ID4gRnJvbTogTWFyYyBLbGVpbmUtQnVkZGUgPG1rbEBwZW5ndXRyb25peC5kZT4N
-Cj4gPiA+IFNlbnQ6IFdlZG5lc2RheSwgTWFyY2ggMjAsIDIwMTkgNjozOSBQTQ0KPiA+ID4gVG86
-IEFwcGFuYSBEdXJnYSBLZWRhcmVzd2FyYSBSYW8gPGFwcGFuYWRAeGlsaW54LmNvbT47DQo+ID4g
-PiB3Z0BncmFuZGVnZ2VyLmNvbTsgZGF2ZW1AZGF2ZW1sb2Z0Lm5ldDsgTWljaGFsIFNpbWVrDQo+
-ID4gPiA8bWljaGFsc0B4aWxpbnguY29tPg0KPiA+ID4gQ2M6IGxpbnV4LWNhbkB2Z2VyLmtlcm5l
-bC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4gPiA+IGtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+ID4gPiBT
-dWJqZWN0OiBSZTogW1BBVENIIDAvNl0gbmV0OiBjYW46IHhpbGlueF9jYW46IEJ1ZyBmaXhlcyBh
-bmQNCj4gPiA+IEVuaGFuY2VtZW50cw0KPiA+ID4NCj4gPiA+IE9uIDMvMTgvMTkgMTI6MzIgUE0s
-IEFwcGFuYSBEdXJnYSBLZWRhcmVzd2FyYSByYW8gd3JvdGU6DQo+ID4gPiA+IFRoaXMgcGF0Y2gg
-c2VyaWVzIGRvZXMgdGhlIGJlbG93DQo+ID4gPiA+IC0tPiBBZGRlZCBzdXBwb3J0IGZvciBDQU5G
-RCBGRCBmcmFtZXMgRml4IENoZWNrcGF0Y2ggcmVwb3J0ZWQNCj4gPiA+ID4gLS0+IHdhcm5pbmdz
-IGFuZCBjaGVja3MNCj4gPiA+ID4NCj4gPiA+ID4gQXBwYW5hIER1cmdhIEtlZGFyZXN3YXJhIHJh
-byAoNik6DQo+ID4gPiA+ICAgbmV0OiBjYW46IHhpbGlueF9jYW46IEZpeCBzdHlsZSBpc3N1ZXMN
-Cj4gPiA+ID4gICBuZXQ6IGNhbjogeGlsaW54X2NhbjogRml4IGZsYWdzIGZpZWxkIGluaXRpYWxp
-emF0aW9uIGZvciBheGkgY2FuIGFuZA0KPiA+ID4gPiAgICAgY2FucHMNCj4gPiA+ID4gICBuZXQ6
-IGNhbjogeGlsaW54X2NhbjogQWRkIGNhbnR5cGUgcGFyYW1ldGVyIGluIHhjYW5fZGV2dHlwZV9k
-YXRhDQo+ID4gPiA+ICAgICBzdHJ1Y3QNCj4gPiA+ID4gICBuZXQ6IGNhbjogeGlsaW54X2Nhbjog
-QWRkIHN1cHBvcnQgZm9yIENBTkZEIEZEIGZyYW1lcw0KPiA+ID4gPiAgIG5ldDogY2FuOiB4aWxp
-bnhfY2FuOiBBZGQgU1BEWCBsaWNlbnNlDQo+ID4gPiA+ICAgbmV0OiBjYW46IHhpbGlueF9jYW46
-IEZpeCBrZXJuZWwgZG9jIHdhcm5pbmdzDQo+ID4gPiA+DQo+ID4gPiA+ICBkcml2ZXJzL25ldC9j
-YW4veGlsaW54X2Nhbi5jIHwgMzAzDQo+ID4gPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKy0tLS0tLS0NCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyNTcgaW5zZXJ0aW9u
-cygrKSwgNDYgZGVsZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gQXBwbGllZCB0byBsaW51eC1jYW4t
-bmV4dC90ZXN0aW5nLCBidXQgaW4gb3JkZXIuIEZpcnN0IGZpeGVzIHRoYW4NCj4gPiA+IGVuaGFu
-Y2VtZW50czoNCj4gPg0KPiA+IFRoYW5rcy4uLg0KPiA+IEkgY291bGRuJ3QgZmluZCB0aGUgcGF0
-Y2hlcyBoZXJlDQo+ID4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvbWtsL2xpbnV4LWNhbi0NCj4gPiBuZXh0LmdpdC9sb2cvZHJpdmVycy9uZXQvY2FuL3hp
-bGlueF9jYW4uYz9oPXRlc3RpbmcNCj4gPiBBbSBJIHJlZmVycmluZyB3cm9uZyByZXBvL2JyYW5j
-aD8/DQo+IA0KPiBUaGVyZSBhcmUgYSBjb3VwbGUgb2YgYnVnIGZpeGVzIGF2YWlsYWJsZSBmb3Ig
-dGhpcyBkcml2ZXIgb24gdG9wIG9mIHRoaXMgcGF0Y2gNCj4gc2VyaWVzLg0KPiBQbGVhc2UgbGV0
-IG1lIGtub3cgdGhlIGJyYW5jaCB3aGVyZSB0aGlzIHBhdGNoIHNlcmllcyBnb3QgYXBwbGllZCwg
-d2lsbCBzZW5kDQo+IHRoZSBidWcgZml4ZXMgb24gdG9wIG9mIHRoYXQgYnJhbmNoLg0KPiANCg0K
-UmVnYXJkcywNCktlZGFyLg0KDQo+IFJlZ2FyZHMsDQo+IEtlZGFyLg0KPiA+DQo+ID4gUmVnYXJk
-cywNCj4gPiBLZWRhci4NCj4gPiA+DQo+ID4gPiA+IDI0MTgyNjMwMjg1NCBuZXQ6IGNhbjogeGls
-aW54X2NhbjogRml4IHN0eWxlIGlzc3Vlcw0KPiA+ID4gPiA3MGZiMjZmYWRjMjcgbmV0OiBjYW46
-IHhpbGlueF9jYW46IEZpeCBrZXJuZWwgZG9jIHdhcm5pbmdzDQo+ID4gPiA+IDdiZWI2NDM1MWZm
-MSBuZXQ6IGNhbjogeGlsaW54X2NhbjogQWRkIFNQRFggbGljZW5zZSBkZDk0OTEwYmNlYWUgbmV0
-Og0KPiA+ID4gPiBjYW46IHhpbGlueF9jYW46IEZpeCBmbGFncyBmaWVsZCBpbml0aWFsaXphdGlv
-biBmb3IgYXhpIGNhbiBhbmQNCj4gPiA+ID4gY2FucHMNCj4gPiA+ID4gNmJkMDVjZWNlNTY3IG5l
-dDogY2FuOiB4aWxpbnhfY2FuOiBBZGQgY2FudHlwZSBwYXJhbWV0ZXIgaW4NCj4gPiA+ID4geGNh
-bl9kZXZ0eXBlX2RhdGEgc3RydWN0DQo+ID4gPiA+IDM0ZTI4MDE3MDczNiBuZXQ6IGNhbjogeGls
-aW54X2NhbjogQWRkIHN1cHBvcnQgZm9yIENBTkZEIEZEIGZyYW1lcw0KPiA+ID4NCj4gPiA+IE1h
-cmMNCj4gPiA+DQo+ID4gPiAtLQ0KPiA+ID4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAg
-ICAgIHwgTWFyYyBLbGVpbmUtQnVkZGUgICAgICAgICAgIHwNCj4gPiA+IEluZHVzdHJpYWwgTGlu
-dXggU29sdXRpb25zICAgICAgICB8IFBob25lOiArNDktMjMxLTI4MjYtOTI0ICAgICB8DQo+ID4g
-PiBWZXJ0cmV0dW5nIFdlc3QvRG9ydG11bmQgICAgICAgICAgfCBGYXg6ICAgKzQ5LTUxMjEtMjA2
-OTE3LTU1NTUgfA0KPiA+ID4gQW10c2dlcmljaHQgSGlsZGVzaGVpbSwgSFJBIDI2ODYgIHwgaHR0
-cDovL3d3dy5wZW5ndXRyb25peC5kZSAgIHwNCg0K
+Hi Jean, Jacob,
+
+On 6/6/19 10:29 PM, Jacob Pan wrote:
+> On Thu, 6 Jun 2019 19:54:05 +0100
+> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+> 
+>> On 05/06/2019 23:45, Jacob Pan wrote:
+>>> On Tue, 4 Jun 2019 18:11:08 +0200
+>>> Auger Eric <eric.auger@redhat.com> wrote:
+>>>   
+>>>> Hi Alex,
+>>>>
+>>>> On 6/4/19 12:31 AM, Alex Williamson wrote:  
+>>>>> On Sun, 26 May 2019 18:10:01 +0200
+>>>>> Eric Auger <eric.auger@redhat.com> wrote:
+>>>>>     
+>>>>>> This patch registers a fault handler which records faults in
+>>>>>> a circular buffer and then signals an eventfd. This buffer is
+>>>>>> exposed within the fault region.
+>>>>>>
+>>>>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>>>>>
+>>>>>> ---
+>>>>>>
+>>>>>> v3 -> v4:
+>>>>>> - move iommu_unregister_device_fault_handler to vfio_pci_release
+>>>>>> ---
+>>>>>>  drivers/vfio/pci/vfio_pci.c         | 49
+>>>>>> +++++++++++++++++++++++++++++ drivers/vfio/pci/vfio_pci_private.h
+>>>>>> |  1 + 2 files changed, 50 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/vfio/pci/vfio_pci.c
+>>>>>> b/drivers/vfio/pci/vfio_pci.c index f75f61127277..520999994ba8
+>>>>>> 100644 --- a/drivers/vfio/pci/vfio_pci.c
+>>>>>> +++ b/drivers/vfio/pci/vfio_pci.c
+>>>>>> @@ -30,6 +30,7 @@
+>>>>>>  #include <linux/vfio.h>
+>>>>>>  #include <linux/vgaarb.h>
+>>>>>>  #include <linux/nospec.h>
+>>>>>> +#include <linux/circ_buf.h>
+>>>>>>  
+>>>>>>  #include "vfio_pci_private.h"
+>>>>>>  
+>>>>>> @@ -296,6 +297,46 @@ static const struct vfio_pci_regops
+>>>>>> vfio_pci_fault_prod_regops = { .add_capability =
+>>>>>> vfio_pci_fault_prod_add_capability, };
+>>>>>>  
+>>>>>> +int vfio_pci_iommu_dev_fault_handler(struct iommu_fault_event
+>>>>>> *evt, void *data) +{
+>>>>>> +	struct vfio_pci_device *vdev = (struct vfio_pci_device
+>>>>>> *) data;
+>>>>>> +	struct vfio_region_fault_prod *prod_region =
+>>>>>> +		(struct vfio_region_fault_prod
+>>>>>> *)vdev->fault_pages;
+>>>>>> +	struct vfio_region_fault_cons *cons_region =
+>>>>>> +		(struct vfio_region_fault_cons
+>>>>>> *)(vdev->fault_pages + 2 * PAGE_SIZE);
+>>>>>> +	struct iommu_fault *new =
+>>>>>> +		(struct iommu_fault *)(vdev->fault_pages +
+>>>>>> prod_region->offset +
+>>>>>> +			prod_region->prod *
+>>>>>> prod_region->entry_size);
+>>>>>> +	int prod, cons, size;
+>>>>>> +
+>>>>>> +	mutex_lock(&vdev->fault_queue_lock);
+>>>>>> +
+>>>>>> +	if (!vdev->fault_abi)
+>>>>>> +		goto unlock;
+>>>>>> +
+>>>>>> +	prod = prod_region->prod;
+>>>>>> +	cons = cons_region->cons;
+>>>>>> +	size = prod_region->nb_entries;
+>>>>>> +
+>>>>>> +	if (CIRC_SPACE(prod, cons, size) < 1)
+>>>>>> +		goto unlock;
+>>>>>> +
+>>>>>> +	*new = evt->fault;
+>>>>>> +	prod = (prod + 1) % size;
+>>>>>> +	prod_region->prod = prod;
+>>>>>> +	mutex_unlock(&vdev->fault_queue_lock);
+>>>>>> +
+>>>>>> +	mutex_lock(&vdev->igate);
+>>>>>> +	if (vdev->dma_fault_trigger)
+>>>>>> +		eventfd_signal(vdev->dma_fault_trigger, 1);
+>>>>>> +	mutex_unlock(&vdev->igate);
+>>>>>> +	return 0;
+>>>>>> +
+>>>>>> +unlock:
+>>>>>> +	mutex_unlock(&vdev->fault_queue_lock);
+>>>>>> +	return -EINVAL;
+>>>>>> +}
+>>>>>> +
+>>>>>>  static int vfio_pci_init_fault_region(struct vfio_pci_device
+>>>>>> *vdev) {
+>>>>>>  	struct vfio_region_fault_prod *header;
+>>>>>> @@ -328,6 +369,13 @@ static int vfio_pci_init_fault_region(struct
+>>>>>> vfio_pci_device *vdev) header = (struct vfio_region_fault_prod
+>>>>>> *)vdev->fault_pages; header->version = -1;
+>>>>>>  	header->offset = PAGE_SIZE;
+>>>>>> +
+>>>>>> +	ret =
+>>>>>> iommu_register_device_fault_handler(&vdev->pdev->dev,
+>>>>>> +
+>>>>>> vfio_pci_iommu_dev_fault_handler,
+>>>>>> +					vdev);
+>>>>>> +	if (ret)
+>>>>>> +		goto out;
+>>>>>> +
+>>>>>>  	return 0;
+>>>>>>  out:
+>>>>>>  	kfree(vdev->fault_pages);
+>>>>>> @@ -570,6 +618,7 @@ static void vfio_pci_release(void
+>>>>>> *device_data) if (!(--vdev->refcnt)) {
+>>>>>>  		vfio_spapr_pci_eeh_release(vdev->pdev);
+>>>>>>  		vfio_pci_disable(vdev);
+>>>>>> +
+>>>>>> iommu_unregister_device_fault_handler(&vdev->pdev->dev);    
+>>>>>
+>>>>>
+>>>>> But this can fail if there are pending faults which leaves a
+>>>>> device reference and then the system is broken :(    
+>>>> This series only features unrecoverable errors and for those the
+>>>> unregistration cannot fail. Now unrecoverable errors were added I
+>>>> admit this is confusing. We need to sort this out or clean the
+>>>> dependencies.  
+>>> As Alex pointed out in 4/29, we can make
+>>> iommu_unregister_device_fault_handler() never fail and clean up all
+>>> the pending faults in the host IOMMU belong to that device. But the
+>>> problem is that if a fault, such as PRQ, has already been injected
+>>> into the guest, the page response may come back after handler is
+>>> unregistered and registered again.  
+>>
+>> I'm trying to figure out if that would be harmful in any way. I guess
+>> it can be a bit nasty if we handle the page response right after
+>> having injected a new page request that uses the same PRGI. In any
+>> other case we discard the page response, but here we forward it to
+>> the endpoint and:
+>>
+>> * If the response status is success, endpoint retries the
+>> translation. The guest probably hasn't had time to handle the new
+>> page request and translation will fail, which may lead the endpoint
+>> to give up (two unsuccessful translation requests). Or send a new
+>> request
+>>
+> Good point, there shouldn't be any harm if the page response is a
+> "fake" success. In fact it could happen in the normal operation when
+> PRQs to two devices share the same non-leaf translation structure. The
+> worst case is just a retry. I am not aware of the retry limit, is it in
+> the PCIe spec? I cannot find it.
+> 
+> I think we should just document it, similar to having a spurious
+> interrupt. The PRQ trace event should capture that as well.
+> 
+>> * otherwise the endpoint won't retry the access, and could also
+>> disable PRI if the status is failure.
+>>
+> That would be true regardless this race condition with handler
+> registration. So should be fine.
+> 
+>>> We need a way to reject such page response belong
+>>> to the previous life of the handler. Perhaps a sync call to the
+>>> guest with your fault queue eventfd? I am not sure.  
+>>
+>> We could simply expect the device driver not to send any page response
+>> after unregistering the fault handler. Is there any reason VFIO would
+>> need to unregister and re-register the fault handler on a live guest?
+>>
+> There is no reason for VFIO to unregister and register again, I was
+> just thinking from security perspective. Someone could write a VFIO app
+> do this attack. But I agree the damage is within the device, may get
+> PRI disabled as a result.
+
+At the moment the handler unregistration is done on the vfio-pci release
+function() when the last reference is released so I am not sure this can
+even be achieved.
+> 
+> So it seems we agree on the following:
+> - iommu_unregister_device_fault_handler() will never fail
+> - iommu driver cleans up all pending faults when handler is unregistered
+> - assume device driver or guest not sending more page response _after_
+>   handler is unregistered.
+> - system will tolerate rare spurious response
+> 
+> Sounds right?
+
+sounds good for me
+
+Thanks
+
+Eric
+> 
+>> Thanks,
+>> Jean
+> 
+> [Jacob Pan]
+> 
