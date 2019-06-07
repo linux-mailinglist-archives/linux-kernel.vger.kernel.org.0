@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 997123948D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92C703947B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731982AbfFGSon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:44:43 -0400
-Received: from casper.infradead.org ([85.118.1.10]:55408 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbfFGSon (ORCPT
+        id S1731974AbfFGSjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:39:48 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42740 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729768AbfFGSjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:44:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=okj69MZGvSUR6PKRM1mo76QwPQAo0KpBD3JOl7izOGQ=; b=tkvWPXolFrV5gC6B/5s5iq8MdS
-        71AqKowXyuv3bN8SkI+l2hm+nntwA7kf9Vp1BZbYZ7a0zstKeUuQK4lQC4lL7Hf/lc9Qnhq/nADyG
-        oZpW6Uvw7OAz13o5FduofHVYHVUtVImMNlJ082ilSm5zr5jpHf0z+vlpbgt2oDx/I4RcAQym43m5b
-        /rAepyYSek6lQnoC10I5TM/3wYS5L00RHVmJ+gp+qSRzJhGgsVMWutpTVH0ns9VVtodda92tav6RA
-        eeqwTIvWGagPvmBIBDHO/e0ogkZerSFtXxQWrFNw9IdUifKf6NcumiewyU6UVX+vIx6FuKNMcCpa7
-        qorGd03g==;
-Received: from [179.181.119.115] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZJqw-0006VH-9M; Fri, 07 Jun 2019 18:44:38 +0000
-Date:   Fri, 7 Jun 2019 15:44:30 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 00/22] Some documentation fixes
-Message-ID: <20190607154430.4879976d@coco.lan>
-In-Reply-To: <20190607115521.6bf39030@lwn.net>
-References: <cover.1559656538.git.mchehab+samsung@kernel.org>
-        <20190607115521.6bf39030@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 7 Jun 2019 14:39:48 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y13so2345514lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gBZaGIwgweQnWOXVd6rMqfse78NHRo0T4EcStz9iVIQ=;
+        b=ddD/HTEp9Q9UDuxE2OsndGwM27L5u0P3bcjGx9VditCdq16qF4fOWLiTkia5NCHEC/
+         1v5Ost4CHsFNdQpW1cFlTs06z2zn4hlRi3dOhy0Uu7+Cxf2W9uhXNrH7aiYYWruJqyrO
+         c5ApyyrOQkorfM3Yc7/u5WB/XIvCt0VDQo2wSmDP+4yRe/LxcSYNCqPkQFsIJSNX4La3
+         4W8LU8QK/BQczStVvqxD8XJF5uDRZ1lOn5p6x7JfqdxKrel1Q+hFosS6JIDFT0nZIc/8
+         N7iLBzKoc2lJGV8v/gHsjhktl8xmPYIastjNXFb/fJnBdnTgux/CvqhXOzNg1+7f+TIv
+         14Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gBZaGIwgweQnWOXVd6rMqfse78NHRo0T4EcStz9iVIQ=;
+        b=J8TIIN8WEvlS9x9MHKevKPF3Esl2C7HSdHtWKQ9U4mHXruVPIA3YlfHtwxilLg2fxU
+         2+yU209OWP7CO5vS0EJc5PWjyDKcS6EkwqFILk+wnTgWFQrGy9Y3JAoxjYrglirsX8mj
+         29EismBPqUwFSrMd/hfGM0CGFIIfgnzhoni7FkZBL60VkdBxE2hEQCUwqYAwLtz+qaOG
+         siVS2LX5rJ5zslJ1DvhSHQSPqS7gUM/u6o5or+vId9Q8hW8UH4vlusvbDxNg87S4XVne
+         JMOvOJCDgt/4lMgg+LJw147cJRpM+LjX5+e1fPXq0Vz0GXgr5cJwMycGDloT9vAVp9cv
+         PcKA==
+X-Gm-Message-State: APjAAAUnF/0vP/K+cRcRB/ZkqIm0OhQFxwZtANasvl+/psBnaxPlbOdc
+        5ABB3AFjei3W3g/FOJUpgXDa9oZyw9MR1ehyvLo=
+X-Google-Smtp-Source: APXvYqzpYru1mSiIJAYAAln379ADncNx7MWnLg9IN9S/saFxt4Q/t15ioOsTVLZoxtjNBsXdLo/cW12pg/MP2MV24cM=
+X-Received: by 2002:ac2:5189:: with SMTP id u9mr26487227lfi.189.1559932786305;
+ Fri, 07 Jun 2019 11:39:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1558378918-25279-1-git-send-email-jrdr.linux@gmail.com>
+In-Reply-To: <1558378918-25279-1-git-send-email-jrdr.linux@gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sat, 8 Jun 2019 00:14:50 +0530
+Message-ID: <CAFqt6zYmL2P9w0Z4yfPtB=ftiy-H6-_beYsXJq-nD9T5OAw6Dg@mail.gmail.com>
+Subject: Re: [PATCH] drm/nouveau/svm: Convert to use hmm_range_fault()
+To:     bskeggs@redhat.com, airlied@linux.ie,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        jasojgg@ziepe.ca
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 7 Jun 2019 11:55:21 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Hi Jason,
 
-> On Tue,  4 Jun 2019 11:17:34 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > Fix several warnings and broken links.
-> > 
-> > This series was generated against linux-next, but was rebased to be applied at
-> > docs-next. It should apply cleanly on either tree.
-> > 
-> > There's a git tree with all of them applied on the top of docs/docs-next
-> > at:
-> > 
-> > https://git.linuxtv.org/mchehab/experimental.git/log/?h=fix_doc_links_v2  
-> 
-> So I'll admit I've kind of lost track of which of these are applied, which
-> have comments, etc.  When you feel things have settled, can you get me an
-> updated set and I'll get them applied?
+On Tue, May 21, 2019 at 12:27 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> Convert to use hmm_range_fault().
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-What I usually do here to check what was already applied (besides
-looking e-mails) is to reset my tree against yours, then pull from
-linux-next and pull from my old branch with those patches.
+Would you like to take it through your new hmm tree or do I
+need to resend it ?
 
-Then, I reset again to your tree, in order to make easier for you
-to apply. It should be noticed that, due to this, you might actually
-see a few more warnings on your tree, if a patch on this series
-fix an issue that it is at linux next but didn't arrive your
-tree.
-
-Yet, all patches apply cleanly on your tree.
-
-After doing that, there are 17 patches yet to be applied. Two new
-patches are now needed too, due to vfs.txt -> vfs.rst and
-pci.txt -> pci.rst renames.
-
-The patches against your tree are at:
-
-	https://git.linuxtv.org/mchehab/experimental.git/log/?h=fix_doc_links_v3.3
-
-For convenience, I'm sending them again as a new patch series
-(with the two extra patches fixing the recent issues).
-
-
-Thanks,
-Mauro
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_svm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> index 93ed43c..8d56bd6 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> @@ -649,7 +649,7 @@ struct nouveau_svmm {
+>                 range.values = nouveau_svm_pfn_values;
+>                 range.pfn_shift = NVIF_VMM_PFNMAP_V0_ADDR_SHIFT;
+>  again:
+> -               ret = hmm_vma_fault(&range, true);
+> +               ret = hmm_range_fault(&range, true);
+>                 if (ret == 0) {
+>                         mutex_lock(&svmm->mutex);
+>                         if (!hmm_vma_range_done(&range)) {
+> --
+> 1.9.1
+>
