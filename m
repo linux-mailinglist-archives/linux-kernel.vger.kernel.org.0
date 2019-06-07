@@ -2,89 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B91738D01
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48FB438462
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:36:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbfFGO3h convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 7 Jun 2019 10:29:37 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50189 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729080AbfFGO3f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:29:35 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hZFro-00051M-7T; Fri, 07 Jun 2019 16:29:16 +0200
-Date:   Fri, 7 Jun 2019 16:29:16 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Eric Biggers <ebiggers@kernel.org>, x86-ml <x86@kernel.org>
-Cc:     Borislav Petkov <bp@suse.de>, Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/fpu: Update kernel's FPU state before using for the
- fsave header
-Message-ID: <20190607142915.y52mfmgk5lvhll7n@linutronix.de>
-References: <20190604185358.GA820@sol.localdomain>
- <20190605140405.2nnpqslnjpfe2ig2@linutronix.de>
- <20190605173256.GA86462@gmail.com>
- <20190606173026.ty7c4cvftrvfrwy3@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190606173026.ty7c4cvftrvfrwy3@linutronix.de>
-User-Agent: NeoMutt/20180716
+        id S1727406AbfFGGgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:36:23 -0400
+Received: from mga14.intel.com ([192.55.52.115]:52439 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbfFGGgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 02:36:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 23:36:22 -0700
+X-ExtLoop1: 1
+Received: from pg-eswbuild-angstrom-alpha.altera.com ([10.142.34.148])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Jun 2019 23:36:19 -0700
+From:   "Hean-Loong, Ong" <hean.loong.ong@intel.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, hean.loong.ong@intel.com,
+        chin.liang.see@intel.com
+Subject: [PATCHv15 0/3] Intel FPGA Video and Image Processing Suite
+Date:   Fri,  7 Jun 2019 22:30:19 +0800
+Message-Id: <20190607143022.427-1-hean.loong.ong@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit
+From: Hean-Loong Ong <hean.loong.ong@intel.com>
 
-  39388e80f9b0c ("x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()")
+The FPGA FrameBuffer Soft IP could be seen  as the GPU and the DRM driver
+patch here is allocating memory for information to be streamed from the
+ARM/Linux to the display port.
 
-I removed the statement
-|       if (ia32_fxstate)
-|               copy_fxregs_to_kernel(fpu);
+Basically the driver just wraps the information such as the pixels to be
+drawn by the Sodt IP FrameBuffer 2.
 
-and argued that is was wrongly merged because the content was already
-saved in kernel's state and the content.
-This was wrong: It is required to write it back because it is only saved
-on the user-stack and save_fsave_header() reads it from task's
-FPU-state. I missed that part…
+The piece of hardware in discussion is the SoC FPGA where Linux runs on
+the ARM chip and the FGPA is driven by its NIOS soft core with its own
+proprietary firmware.
 
-Save x87 FPU state unless thread's FPU registers are already up to date.
+For example the application from the ARM Linux would have to write
+information on the /dev/fb0 with the information stored in the
+SDRAM to be fetched by the Framebuffer 2 Soft IP and displayed
+on the Display Port Monitor.
 
-Fixes: 39388e80f9b0c ("x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()")
-Reported-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/kernel/fpu/signal.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Reviewed and ACKed need to merge this into drm-misc
 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 060d6188b4533..0071b794ed193 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -62,6 +62,11 @@ static inline int save_fsave_header(struct task_struct *tsk, void __user *buf)
- 		struct user_i387_ia32_struct env;
- 		struct _fpstate_32 __user *fp = buf;
- 
-+		fpregs_lock();
-+		if (!test_thread_flag(TIF_NEED_FPU_LOAD))
-+			copy_fxregs_to_kernel(&tsk->thread.fpu);
-+		fpregs_unlock();
-+
- 		convert_from_fxsr(&env, tsk);
- 
- 		if (__copy_to_user(buf, &env, sizeof(env)) ||
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+Ong Hean Loong (1):
+  ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
+
+Ong, Hean Loong (2):
+  ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
+  ARM:drm ivip Intel FPGA Video and Image Processing Suite
+
+ .../bindings/display/altr,vip-fb2.txt         |  63 ++++
+ MAINTAINERS                                   |   9 +
+ arch/arm/configs/socfpga_defconfig            |   8 +
+ drivers/gpu/drm/Kconfig                       |   2 +
+ drivers/gpu/drm/Makefile                      |   1 +
+ drivers/gpu/drm/ivip/Kconfig                  |  14 +
+ drivers/gpu/drm/ivip/Makefile                 |   6 +
+ drivers/gpu/drm/ivip/intel_vip_conn.c         |  93 +++++
+ drivers/gpu/drm/ivip/intel_vip_drv.c          | 335 ++++++++++++++++++
+ drivers/gpu/drm/ivip/intel_vip_drv.h          |  73 ++++
+ 10 files changed, 604 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
+ create mode 100644 drivers/gpu/drm/ivip/Kconfig
+ create mode 100644 drivers/gpu/drm/ivip/Makefile
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
+
 -- 
-2.20.1
+2.17.1
 
