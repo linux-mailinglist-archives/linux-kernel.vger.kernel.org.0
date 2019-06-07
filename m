@@ -2,306 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 298F8391D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28A9391D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbfFGQY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:24:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50581 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730446AbfFGQY0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:24:26 -0400
-Received: from [5.158.153.52] (helo=noscherz.tec.linutronix.de.)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1hZHes-0000ei-BJ; Fri, 07 Jun 2019 18:24:02 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [RFC PATCH v2 2/2] printk-rb: add test module
-Date:   Fri,  7 Jun 2019 18:29:49 +0206
-Message-Id: <20190607162349.18199-3-john.ogness@linutronix.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190607162349.18199-1-john.ogness@linutronix.de>
-References: <20190607162349.18199-1-john.ogness@linutronix.de>
+        id S1730287AbfFGQYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:24:05 -0400
+Received: from foss.arm.com ([217.140.110.172]:44006 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730066AbfFGQYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 12:24:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE2F02B;
+        Fri,  7 Jun 2019 09:24:03 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFE553F71A;
+        Fri,  7 Jun 2019 09:24:02 -0700 (PDT)
+Date:   Fri, 7 Jun 2019 17:24:00 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Qian Cai <cai@lca.pw>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: Don't unconditionally add -Wno-psabi to
+ KBUILD_CFLAGS
+Message-ID: <20190607162400.GI28398@e103592.cambridge.arm.com>
+References: <20190607161201.73430-1-natechancellor@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607161201.73430-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This module does some heavy write stress testing on the ringbuffer
-with a reader that is checking for integrity.
+On Fri, Jun 07, 2019 at 09:12:01AM -0700, Nathan Chancellor wrote:
+> This is a GCC only option, which warns about ABI changes within GCC, so
+> unconditionally adding breaks Clang with tons of:
+> 
+> warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
+> 
+> and link time failures:
+> 
+> ld.lld: error: undefined symbol: __efistub___stack_chk_guard
+> >>> referenced by arm-stub.c:73
+> (/home/nathan/cbl/linux/drivers/firmware/efi/libstub/arm-stub.c:73)
+> >>>               arm-stub.stub.o:(__efistub_install_memreserve_table)
+> in archive ./drivers/firmware/efi/libstub/lib.a
+> 
+> I suspect the link time failure comes from some flags not being added
+> via cc-option, which will always fail when an unknown flag is
+> unconditionally added to KBUILD_CFLAGS because -Werror is added after
+> commit c3f0d0bc5b01 ("kbuild, LLVMLinux: Add -Werror to cc-option to
+> support clang").
+> 
+> $ echo "int main() { return 0; }" | clang -Wno-psabi -o /dev/null -x c -
+> warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
+> 1 warning generated.
+> 
+> $ echo $?
+> 0
+> 
+> $ echo "int main() { return 0; }" | clang -Werror -Wno-psabi -o /dev/null -x c -
+> error: unknown warning option '-Wno-psabi' [-Werror,-Wunknown-warning-option]
+> 
+> $ echo $?
+> 1
+> 
+> This side effect is user visible (aside from the inordinate amount of
+> -Wunknown-warning-option and build failure), as some warnings that are
+> normally disabled like -Waddress-of-packed-member or
+> -Wunused-const-variable show up.
+> 
+> Use cc-disable-warning so that it gets disabled for GCC and does nothing
+> for Clang.
+> 
+> Fixes: ebcc5928c5d9 ("arm64: Silence gcc warnings about arch ABI drift")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/511
+> Reported-by: Qian Cai <cai@lca.pw>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- lib/Makefile   |   2 +
- lib/test_prb.c | 237 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 239 insertions(+)
- create mode 100644 lib/test_prb.c
+FWIW,
+Acked-by: Dave Martin <Dave.Martin@arm.com>
 
-diff --git a/lib/Makefile b/lib/Makefile
-index fb7697031a79..9a485274b6ba 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -292,3 +292,5 @@ obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
- obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
- obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
- obj-$(CONFIG_OBJAGG) += objagg.o
-+
-+obj-m += test_prb.o
-diff --git a/lib/test_prb.c b/lib/test_prb.c
-new file mode 100644
-index 000000000000..2c365028f4e4
---- /dev/null
-+++ b/lib/test_prb.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/kthread.h>
-+#include <linux/delay.h>
-+#include <linux/random.h>
-+#include <linux/slab.h>
-+#include <linux/printk_ringbuffer.h>
-+
-+/*
-+ * This is a test module that starts "num_online_cpus() - 1" writer threads
-+ * and 1 reader thread. The writer threads each write strings of varying
-+ * length. They do this as fast as they can.
-+ *
-+ * The reader thread reads as fast as it can and performs sanity checks on
-+ * the data.
-+ *
-+ * Because the threads are running in such tight loops, they will call
-+ * schedule() from time to time so the system stays alive.
-+ *
-+ * If either the writers or the reader encounter an error, the test is
-+ * aborted. Test results are recorded to the ftrace buffers. The test can
-+ * be aborted manually by removing the module. (Ideally the test should
-+ * never abort on its own.)
-+ */
-+
-+struct rbdata {
-+	int len;
-+	char text[0];
-+};
-+
-+static char *test_running;
-+static int halt_test;
-+
-+static void dump_rb(struct printk_ringbuffer *rb)
-+{
-+	DECLARE_PRINTKRB_ENTRY(entry, 140);
-+	DECLARE_PRINTKRB_ITER(iter, rb, &entry);
-+	struct rbdata *dat;
-+	u64 last_seq = 0;
-+	int len;
-+
-+	trace_printk("BEGIN full dump\n");
-+
-+	prb_for_each_entry(&iter, len) {
-+		if (entry.seq - last_seq != 1) {
-+			trace_printk("LOST %llu\n",
-+				     entry.seq - (last_seq + 1));
-+		}
-+		last_seq = entry.seq;
-+
-+		dat = (struct rbdata *)&entry.buffer[0];
-+
-+		trace_printk("seq=%llu len=%d textlen=%d dataval=%s\n",
-+			     entry.seq, len, dat->len, dat->text);
-+	}
-+
-+	trace_printk("END full dump\n");
-+}
-+
-+DECLARE_PRINTKRB(test_rb, 7, 5);
-+
-+static int prbtest_writer(void *data)
-+{
-+	unsigned long num = (unsigned long)data;
-+	struct prb_reserved_entry e;
-+	char id = 'A' + num;
-+	struct rbdata *dat;
-+	int count = 0;
-+	int len;
-+
-+	pr_err("prbtest: start thread %lu (writer)\n", num);
-+
-+	for (;;) {
-+		len = sizeof(struct rbdata) + (prandom_u32() & 0x7f) + 1;
-+
-+		dat = (struct rbdata *)prb_reserve(&e, &test_rb, len);
-+		if (dat) {
-+			len -= sizeof(struct rbdata) + 1;
-+			memset(&dat->text[0], id, len);
-+			dat->text[len] = 0;
-+			dat->len = len;
-+			prb_commit(&e);
-+		} else {
-+			WRITE_ONCE(halt_test, 1);
-+			trace_printk("writer%lu (%c) failed to reserve\n",
-+				     num, id);
-+		}
-+
-+		if ((count++ & 0x3fff) == 0)
-+			schedule();
-+
-+		if (READ_ONCE(halt_test) == 1)
-+			break;
-+	}
-+
-+	pr_err("prbtest: end thread %lu (writer)\n", num);
-+
-+	test_running[num] = 0;
-+
-+	return 0;
-+}
-+
-+static int prbtest_reader(void *data)
-+{
-+	unsigned long num = (unsigned long)data;
-+	DECLARE_PRINTKRB_ENTRY(entry, 140);
-+	DECLARE_PRINTKRB_ITER(iter, &test_rb, &entry);
-+	unsigned long total_lost = 0;
-+	unsigned long max_lost = 0;
-+	struct rbdata *dat;
-+	int did_sched = 1;
-+	u64 last_seq = 0;
-+	int count = 0;
-+	int len;
-+
-+	pr_err("prbtest: start thread %lu (reader)\n", num);
-+
-+	for (;;) {
-+		prb_for_each_entry(&iter, len) {
-+			if (entry.seq - last_seq != 1 && !did_sched) {
-+				total_lost += entry.seq - (last_seq + 1);
-+				if (max_lost < entry.seq - (last_seq + 1))
-+					max_lost = entry.seq - (last_seq + 1);
-+			}
-+			last_seq = entry.seq;
-+			did_sched = 0;
-+
-+			dat = (struct rbdata *)&entry.buffer[0];
-+
-+			len = strlen(dat->text);
-+			if (len != dat->len) {
-+				WRITE_ONCE(halt_test, 1);
-+				trace_printk("reader%lu invalid length\n",
-+					     num);
-+			}
-+			while (len) {
-+				len--;
-+				if (dat->text[len] != dat->text[0]) {
-+					WRITE_ONCE(halt_test, 1);
-+					trace_printk("reader%lu invalid data\n",
-+						     num);
-+				}
-+			}
-+
-+			if ((count++ & 0x3fff) == 0) {
-+				did_sched = 1;
-+				schedule();
-+			}
-+
-+			if (READ_ONCE(halt_test) == 1)
-+				goto out;
-+		}
-+	}
-+out:
-+	pr_err("reader%lu: total_lost=%lu max_lost=%lu seq=%llu\n",
-+	       num, total_lost, max_lost, entry.seq);
-+	pr_err("prbtest: end thread %lu (reader)\n", num);
-+
-+	test_running[num] = 0;
-+
-+	return 0;
-+}
-+
-+static int module_test_running;
-+
-+static int start_test(void *arg)
-+{
-+	struct task_struct *thread;
-+	unsigned long i;
-+	int num_cpus;
-+
-+	num_cpus = num_online_cpus();
-+	test_running = kzalloc(num_cpus, GFP_KERNEL);
-+	if (!test_running)
-+		return -ENOMEM;
-+
-+	module_test_running = 1;
-+
-+	pr_err("prbtest: starting test\n");
-+
-+	for (i = 0; i < num_cpus; i++) {
-+		test_running[i] = 1;
-+		if (i < num_cpus - 1) {
-+			thread = kthread_run(prbtest_writer, (void *)i,
-+					     "prbtest writer");
-+		} else {
-+			thread = kthread_run(prbtest_reader, (void *)i,
-+					     "prbtest reader");
-+		}
-+		if (IS_ERR(thread)) {
-+			pr_err("prbtest: unable to create thread %lu\n", i);
-+			test_running[i] = 0;
-+		}
-+	}
-+
-+	for (;;) {
-+		for (i = 0; i < num_cpus; i++) {
-+			if (test_running[i] == 1)
-+				break;
-+		}
-+		if (i == num_cpus)
-+			break;
-+		msleep(1000);
-+	}
-+
-+	pr_err("prbtest: completed test\n");
-+
-+	dump_rb(&test_rb);
-+
-+	module_test_running = 0;
-+
-+	kfree(test_running);
-+
-+	return 0;
-+}
-+
-+static int prbtest_init(void)
-+{
-+	kthread_run(start_test, NULL, "prbtest");
-+	return 0;
-+}
-+
-+static void prbtest_exit(void)
-+{
-+	WRITE_ONCE(halt_test, 1);
-+
-+	while (module_test_running)
-+		msleep(1000);
-+}
-+
-+module_init(prbtest_init);
-+module_exit(prbtest_exit);
-+
-+MODULE_AUTHOR("John Ogness <john.ogness@linutronix.de>");
-+MODULE_DESCRIPTION("printk ringbuffer test");
-+MODULE_LICENSE("GPL v2");
--- 
-2.11.0
+Cheers
+---Dave
 
+> ---
+>  arch/arm64/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 8fbd583b18e1..e9d2e578cbe6 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -51,7 +51,7 @@ endif
+>  
+>  KBUILD_CFLAGS	+= -mgeneral-regs-only $(lseinstr) $(brokengasinst)
+>  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+> -KBUILD_CFLAGS	+= -Wno-psabi
+> +KBUILD_CFLAGS	+= $(call cc-disable-warning, psabi)
+>  KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
+>  
+>  KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
+> -- 
+> 2.22.0.rc3
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
