@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 324813917E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96DE438FF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbfFGQAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50080 "EHLO mail.kernel.org"
+        id S1730366AbfFGPrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:47:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730062AbfFGPkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:40:42 -0400
+        id S1731153AbfFGPrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:47:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C769A214D8;
-        Fri,  7 Jun 2019 15:40:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B5452146E;
+        Fri,  7 Jun 2019 15:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922042;
-        bh=gKNAFyK22tYRKB11/vHXTkanklIh/BMUv2eXKW5ZH8k=;
+        s=default; t=1559922435;
+        bh=L7lqLV/yQ/xDGAOT9XncFvQsN7bzBT9Sex4dkrS2LsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n1GjCgY+MAJQUEUNsrBDNxPXn4I+3FhoKksahGjpKa2Ua4AIMbJQuXTapf/gzMxom
-         IyEjysBhI7jriehWdznOvonsVy5SEM1BxvyCB8K+64S3WJehWcIQgL3OKjLAy8S5Ca
-         lItpATvDz5IfKMdIN8Y2C7Qd37dv5usPIx1CbHec=
+        b=sWfj84ZoLpbgCXbaHr/Y5vHmgS5rY/q8PmLbiqiHZncW6vPHCoVfvCg/JLYUOBuw8
+         rBAjptIYpzWhIVSFi3g5Q8yyE2Qp1BCg7BTcZVwj3ELcWG/ihhzTSOznFgJZ40wGde
+         p8noz0SNm+jXvXJ9rIpK6WsOBJF/5HpIdu6/wnIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 16/69] net: phy: marvell10g: report if the PHY fails to boot firmware
-Date:   Fri,  7 Jun 2019 17:38:57 +0200
-Message-Id: <20190607153850.300582175@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 5.1 13/85] USB: rio500: fix memory leak in close after disconnect
+Date:   Fri,  7 Jun 2019 17:38:58 +0200
+Message-Id: <20190607153850.794904771@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +42,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 3d3ced2ec5d71b99d72ae6910fbdf890bc2eccf0 ]
+commit e0feb73428b69322dd5caae90b0207de369b5575 upstream.
 
-Some boards do not have the PHY firmware programmed in the 3310's flash,
-which leads to the PHY not working as expected.  Warn the user when the
-PHY fails to boot the firmware and refuse to initialise.
+If a disconnected device is closed, rio_close() must free
+the buffers.
 
-Fixes: 20b2af32ff3f ("net: phy: add Marvell Alaska X 88X3310 10Gigabit PHY support")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/phy/marvell10g.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
---- a/drivers/net/phy/marvell10g.c
-+++ b/drivers/net/phy/marvell10g.c
-@@ -19,6 +19,9 @@
- #include <linux/marvell_phy.h>
- 
- enum {
-+	MV_PMA_BOOT		= 0xc050,
-+	MV_PMA_BOOT_FATAL	= BIT(0),
-+
- 	MV_PCS_BASE_T		= 0x0000,
- 	MV_PCS_BASE_R		= 0x1000,
- 	MV_PCS_1000BASEX	= 0x2000,
-@@ -59,11 +62,22 @@ static int mv3310_modify(struct phy_devi
- static int mv3310_probe(struct phy_device *phydev)
+---
+ drivers/usb/misc/rio500.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+--- a/drivers/usb/misc/rio500.c
++++ b/drivers/usb/misc/rio500.c
+@@ -86,9 +86,22 @@ static int close_rio(struct inode *inode
  {
- 	u32 mmd_mask = MDIO_DEVS_PMAPMD | MDIO_DEVS_AN;
-+	int ret;
+ 	struct rio_usb_data *rio = &rio_instance;
  
- 	if (!phydev->is_c45 ||
- 	    (phydev->c45_ids.devices_in_package & mmd_mask) != mmd_mask)
- 		return -ENODEV;
+-	rio->isopen = 0;
++	/* against disconnect() */
++	mutex_lock(&rio500_mutex);
++	mutex_lock(&(rio->lock));
  
-+	ret = phy_read_mmd(phydev, MDIO_MMD_PMAPMD, MV_PMA_BOOT);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret & MV_PMA_BOOT_FATAL) {
-+		dev_warn(&phydev->mdio.dev,
-+			 "PHY failed to boot firmware, status=%04x\n", ret);
-+		return -ENODEV;
+-	dev_info(&rio->rio_dev->dev, "Rio closed.\n");
++	rio->isopen = 0;
++	if (!rio->present) {
++		/* cleanup has been delayed */
++		kfree(rio->ibuf);
++		kfree(rio->obuf);
++		rio->ibuf = NULL;
++		rio->obuf = NULL;
++	} else {
++		dev_info(&rio->rio_dev->dev, "Rio closed.\n");
 +	}
-+
++	mutex_unlock(&(rio->lock));
++	mutex_unlock(&rio500_mutex);
  	return 0;
  }
  
