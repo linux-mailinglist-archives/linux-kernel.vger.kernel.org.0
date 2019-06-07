@@ -2,192 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C03D387AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 12:07:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71AEC387A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 12:04:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbfFGKHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 06:07:17 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:8546 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725978AbfFGKHR (ORCPT
+        id S1727388AbfFGKEx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 7 Jun 2019 06:04:53 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:49275 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbfFGKEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 06:07:17 -0400
-X-IronPort-AV: E=Sophos;i="5.60,562,1549897200"; 
-   d="scan'208";a="17872329"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Jun 2019 19:07:14 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6582640065C6;
-        Fri,  7 Jun 2019 19:07:14 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     kishon@ti.com
-Cc:     geert+renesas@glider.be, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
-Date:   Fri,  7 Jun 2019 19:02:14 +0900
-Message-Id: <1559901734-23540-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 7 Jun 2019 06:04:52 -0400
+Received: from [192.168.1.162] ([37.4.249.160]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1N2EDg-1gY7FI0Hdu-013bmj; Fri, 07 Jun 2019 12:04:30 +0200
+Subject: Re: [PATCH v2 2/7] clk: bcm283x: add driver interfacing with
+ Raspberry Pi's firmware
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Stefan Wahren <wahrenst@gmx.net>, linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
+        ptesarik@suse.com, sboyd@kernel.org, viresh.kumar@linaro.org,
+        mturquette@baylibre.com, linux-pm@vger.kernel.org,
+        rjw@rjwysocki.net, eric@anholt.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        mbrugger@suse.de, ssuloev@orpaltech.com
+References: <20190606142255.29454-1-nsaenzjulienne@suse.de>
+ <20190606142255.29454-3-nsaenzjulienne@suse.de>
+ <3c4c8b56-eb02-be6f-9b3a-a94a895f10f0@gmx.net>
+ <5dccf2500f023ce2c78d9ff3f41b53e36843298b.camel@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ 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 AQ==
+Message-ID: <9bd36133-baef-10b8-08a4-25f5b7be04f3@i2se.com>
+Date:   Fri, 7 Jun 2019 12:04:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <5dccf2500f023ce2c78d9ff3f41b53e36843298b.camel@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Provags-ID: V03:K1:LqfBV9PvzxA9MnbA+jtacLi6cIOqHaVauPhIDYqDdyUUEZoJWlr
+ YC461MQ/1/I5ZPPtESEfzdpcq9fQ3jT24P9M2hgwAx/XP1oHv6SKPqq2BaTc0p880QHdznf
+ qvlf0oCCucXgMpUyVopiPU5P1qU8R1Sy7ucYlmf1kXtE38uqP2UFF87Wrjzz6sRHHf6G6Rs
+ RPV2NQVJS6xaP1gYpzT5A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rYvChbU0r58=:G2RamDWSXfpLa60dYMxrXm
+ z8d2SFKrLM9xAVOdRy5rMIinyAQkr2Z8E1Dru6NNnVd2AqR719gMQPzckl9mwWM7NVAdQ9m2T
+ 5r08OHAT+LJefFkd4PcMwOSKzGw5Tcs9I35mKKCHWUN6FLPwm67uU1Zze+XAvgsAi6o0Nv4mJ
+ HyuqnpBib3Tmw5w7PwWI67qiOVfnbgCGGr9yvWmc9WgcW9q2LoldZ3ApVDuqgTlNwVKI/QoeL
+ S7EYFXckfnI4WZ+M235/Dq6kc2/OFd76zGkX1wyUTfqbvKrRl/jpEV/Olv949MBEii1HqFfVS
+ DACTYcds0I4hWvrHipBv01kIj87pyE6Lg2k/J7LV9YxOsZ6R/wyKvciAISDgUXWug4fs98+Un
+ F8IJRi2g7hqQ4YKd+Nk49aIfTFgc7SIRo4CeGahx77+/k7CT1kRGgoynCP6Gaid5bwXP18xGD
+ Gy4ape4ihX6J+nHj3/HwAQGVkfvFwa1JgOv6kgziecwL/0b32zBnUBqygVYqgVu5wYO+nizKd
+ cMGH8YgCIW2wpTnULR4Vc5fRxwqK7qzaTpNt9aDLIaAtrhQkXePN4JUTSUnIuAGiW451ZjMpK
+ FG6hT3/qm5i5UPIoX4puxukqIBn9eCkrYpxoGE5N0F7SeuG7k4Vx98z3Ms899YZJzKInWZ5Xa
+ y8mIfPYYvgFPG707UfN1DrUbaq4DIUBzT3zYtQc0qkbnFQiJrDP0Ugalf4TNwRe5I0ieXMhcq
+ dFyu3bI0OT4pPMjRoRckOX8slZzjkybsj4iLgMrXt+V/bCR7Zq4ivo2GdAc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The powered flag should be set for any other phys anyway. Also
-the flag should be locked by the channel. Otherwise, after we have
-revised the device tree for the usb phy, the following warning
-happened during a second system suspend. And if the driver doesn't
-lock the flag, enabling the regulator is possible to be imbalance
-during system resume. So, this patch fixes the issues.
+Am 07.06.19 um 11:42 schrieb Nicolas Saenz Julienne:
+> On Fri, 2019-06-07 at 11:26 +0200, Stefan Wahren wrote:
+>> Hi Nicolas,
+>>
+>> Am 06.06.19 um 16:22 schrieb Nicolas Saenz Julienne:
+>>> Raspberry Pi's firmware offers an interface though which update it's
+>>> clock's frequencies. This is specially useful in order to change the CPU
+>>> clock (pllb_arm) which is 'owned' by the firmware and we're unable to
+>>> scale using the register interface provided by clk-bcm2835.
+>>>
+>>> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>>> Acked-by: Eric Anholt <eric@anholt.net>
+>>>
+>>> ---
+>>>
+>>> Changes since v1:
+>>>   - Use BIT()
+>>>   - Add Kconfig entry, with compile test
+>>>   - remove prepare/unprepare
+>>>   - Fix uninitialized init.name in pllb registration
+>>>   - Add MODULE_ALIAS()
+>>>   - Use determine_rate() instead of round_rate()
+>>>   - Add small introduction explaining need for driver
+>>>
+>>>  drivers/clk/bcm/Kconfig           |   7 +
+>>>  drivers/clk/bcm/Makefile          |   1 +
+>>>  drivers/clk/bcm/clk-raspberrypi.c | 302 ++++++++++++++++++++++++++++++
+>>>  3 files changed, 310 insertions(+)
+>>>  create mode 100644 drivers/clk/bcm/clk-raspberrypi.c
+>>>
+>>> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+>>> index 29ee7b776cd4..a4a2775d65e1 100644
+>>> --- a/drivers/clk/bcm/Kconfig
+>>> +++ b/drivers/clk/bcm/Kconfig
+>>> @@ -64,3 +64,10 @@ config CLK_BCM_SR
+>>>  	default ARCH_BCM_IPROC
+>>>  	help
+>>>  	  Enable common clock framework support for the Broadcom Stingray SoC
+>>> +
+>>> +config CLK_RASPBERRYPI
+>>> +	tristate "Raspberry Pi firmware based clock support"
+>>> +	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST &&
+>>> !RASPBERRYPI_FIRMWARE)
+>>> +	help
+>>> +	  Enable common clock framework support for Raspberry Pi's firmware
+>>> +	  dependent clocks
+>>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+>>> index 002661d39128..eb7159099d82 100644
+>>> --- a/drivers/clk/bcm/Makefile
+>>> +++ b/drivers/clk/bcm/Makefile
+>>> @@ -7,6 +7,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+>>>  obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o
+>>> clk-iproc-asiu.o
+>>>  obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+>>>  obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835-aux.o
+>>> +obj-$(CONFIG_CLK_RASPBERRYPI)	+= clk-raspberrypi.o
+>>>  obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+>>>  obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
+>>>  obj-$(CONFIG_CLK_BCM_HR2)	+= clk-hr2.o
+>> not your fault but you better rebase your next version on linux-next
+>> because Florian's latest patches ("clk: bcm: Make BCM2835 clock drivers
+>> selectable") collide with this patch.
+>>
+>> Checkpatch gives the following output about this patch:
+>>
+>> WARNING: 'harware' may be misspelled - perhaps 'hardware'?
+>>
+>> #58: FILE: drivers/clk/bcm/clk-raspberrypi.c:5:
+>> + * Even though clk-bcm2835 provides an interface to the harware
+>> registers for
+>>
+>> ERROR: code indent should use tabs where possible
+>> #197: FILE: drivers/clk/bcm/clk-raspberrypi.c:144:
+>> +^I^I^I^I           struct clk_rate_request *req)$
+> Noted, thanks.
+>
+> As this seems fairly calm, should I send v3 or wait little more?
+>
+Please wait until i'm finished with testing.
 
-< The warning >
-[   56.026531] unbalanced disables for USB20_VBUS0
-[   56.031108] WARNING: CPU: 3 PID: 513 at drivers/regulator/core.c:2593 _regula
-tor_disable+0xe0/0x1c0
-[   56.040146] Modules linked in: rcar_du_drm rcar_lvds drm_kms_helper drm drm_p
-anel_orientation_quirks vsp1 videobuf2_vmalloc videobuf2_dma_contig videobuf2_me
-mops videobuf2_v4l2 videobuf2_common videodev snd_soc_rcar renesas_usbhs snd_soc
-_audio_graph_card media snd_soc_simple_card_utils crct10dif_ce renesas_usb3 snd_
-soc_ak4613 rcar_fcp pwm_rcar usb_dmac phy_rcar_gen3_usb3 pwm_bl ipv6
-[   56.074047] CPU: 3 PID: 513 Comm: kworker/u16:19 Not tainted 5.2.0-rc3-00001-
-g5f20a19 #6
-[   56.082129] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (
-DT)
-[   56.089524] Workqueue: events_unbound async_run_entry_fn
-[   56.094832] pstate: 40000005 (nZcv daif -PAN -UAO)
-[   56.099617] pc : _regulator_disable+0xe0/0x1c0
-[   56.104054] lr : _regulator_disable+0xe0/0x1c0
-[   56.108489] sp : ffff0000121c3ae0
-[   56.111796] x29: ffff0000121c3ae0 x28: 0000000000000000
-[   56.117102] x27: 0000000000000000 x26: ffff000010fe0e60
-[   56.122407] x25: 0000000000000002 x24: 0000000000000001
-[   56.127712] x23: 0000000000000002 x22: ffff8006f99d4000
-[   56.133017] x21: ffff8006f99cc000 x20: ffff8006f9846800
-[   56.138322] x19: ffff8006f9846800 x18: ffffffffffffffff
-[   56.143626] x17: 0000000000000000 x16: 0000000000000000
-[   56.148931] x15: ffff0000112f96c8 x14: ffff0000921c37f7
-[   56.154235] x13: ffff0000121c3805 x12: ffff000011312000
-[   56.159540] x11: 0000000005f5e0ff x10: ffff0000112f9f20
-[   56.164844] x9 : ffff0000112d3018 x8 : 00000000000001ad
-[   56.170149] x7 : 00000000ffffffcc x6 : ffff8006ff768180
-[   56.175453] x5 : ffff8006ff768180 x4 : 0000000000000000
-[   56.180758] x3 : ffff8006ff76ef10 x2 : ffff8006ff768180
-[   56.186062] x1 : 3d2eccbaead8fb00 x0 : 0000000000000000
-[   56.191367] Call trace:
-[   56.193808]  _regulator_disable+0xe0/0x1c0
-[   56.197899]  regulator_disable+0x40/0x78
-[   56.201820]  rcar_gen3_phy_usb2_power_off+0x3c/0x50
-[   56.206692]  phy_power_off+0x48/0xd8
-[   56.210263]  usb_phy_roothub_power_off+0x30/0x50
-[   56.214873]  usb_phy_roothub_suspend+0x1c/0x50
-[   56.219311]  hcd_bus_suspend+0x13c/0x168
-[   56.223226]  generic_suspend+0x4c/0x58
-[   56.226969]  usb_suspend_both+0x1ac/0x238
-[   56.230972]  usb_suspend+0xcc/0x170
-[   56.234455]  usb_dev_suspend+0x10/0x18
-[   56.238199]  dpm_run_callback.isra.6+0x20/0x68
-[   56.242635]  __device_suspend+0x110/0x308
-[   56.246637]  async_suspend+0x24/0xa8
-[   56.250205]  async_run_entry_fn+0x40/0xf8
-[   56.254210]  process_one_work+0x1e0/0x320
-[   56.258211]  worker_thread+0x40/0x450
-[   56.261867]  kthread+0x124/0x128
-[   56.265094]  ret_from_fork+0x10/0x18
-[   56.268661] ---[ end trace 86d7ec5de5c517af ]---
-[   56.273290] phy phy-ee080200.usb-phy.10: phy poweroff failed --> -5
+If i don't gave you a feedback until Tuesday, send out your next
+version. Okay?
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: 549b6b55b005 ("phy: renesas: rcar-gen3-usb2: enable/disable independent irqs")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Changes from v1:
- - Add mutex lock to avoid enabling the regulator imbalance during resume.
- - I got Geert-san's Tested-by, but I didn't add the tag because
-   v1 still has the imbalance issue above.
- https://patchwork.kernel.org/patch/10976299/
-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 1322185..a9a36ef 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -13,6 +13,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -106,6 +107,7 @@ struct rcar_gen3_chan {
- 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
- 	struct work_struct work;
-+	struct mutex lock;
- 	enum usb_dr_mode dr_mode;
- 	bool extcon_host;
- 	bool is_otg_channel;
-@@ -437,15 +439,16 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 
-+	mutex_lock(&channel->lock);
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
--		return 0;
-+		goto out;
- 
- 	if (channel->vbus) {
- 		ret = regulator_enable(channel->vbus);
- 		if (ret)
--			return ret;
-+			goto out;
- 	}
- 
- 	val = readl(usb2_base + USB2_USBCTR);
-@@ -454,7 +457,10 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	val &= ~USB2_USBCTR_PLL_RST;
- 	writel(val, usb2_base + USB2_USBCTR);
- 
-+out:
-+	/* The powered flag should be set for any other phys anyway */
- 	rphy->powered = true;
-+	mutex_unlock(&channel->lock);
- 
- 	return 0;
- }
-@@ -465,14 +471,18 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	int ret = 0;
- 
-+	mutex_lock(&channel->lock);
- 	rphy->powered = false;
- 
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
--		return 0;
-+		goto out;
- 
- 	if (channel->vbus)
- 		ret = regulator_disable(channel->vbus);
- 
-+out:
-+	mutex_unlock(&channel->lock);
-+
- 	return ret;
- }
- 
-@@ -639,6 +649,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (!phy_usb2_ops)
- 		return -EINVAL;
- 
-+	mutex_init(&channel->lock);
- 	for (i = 0; i < NUM_OF_PHYS; i++) {
- 		channel->rphys[i].phy = devm_phy_create(dev, NULL,
- 							phy_usb2_ops);
--- 
-2.7.4
 
