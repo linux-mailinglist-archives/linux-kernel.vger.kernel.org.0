@@ -2,121 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E1B3896C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 13:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6160D3897A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 13:55:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbfFGLyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 07:54:21 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:64681 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfFGLyU (ORCPT
+        id S1728938AbfFGLz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 07:55:29 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:33431 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbfFGLzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 07:54:20 -0400
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x57Bs4T6021276
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Jun 2019 20:54:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x57Bs4T6021276
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1559908445;
-        bh=yjJIkGv4N/Xf1t1dfhzEbr33tkWF/j1kDW4mhPzpoi8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ljtMKRsjd34H40D8XOCp892dtvuyr0JsD4TFSVL79eBcHny4O0bYUaPs/55qK6Oxs
-         w0EvELYb06nQ4FK80AX9WbnlTTX6oqGMZSfCggWZhgs5u7POvfEhVRATsvD+aj4sAC
-         2Ztb1TBX7+sk4oIQzNDsRJUB2p1p4wcG1W1zR31Wzs9pGyiLwzs5wv5Qtu8Y8HEpIx
-         twpZCw4jaS6OIPWLyWmUp/pfEJp9YKJWrvT6T22IAFxatq9xLCnyS/cA8MWWS+amvg
-         rXaoPSOTXtYFZQWiq8iSnOeWjYaP1fYRynKHL0p+VKqjaKu4MZXcIRnGNZ56PfeQmq
-         14ZTHh4o67sDQ==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id g24so962876vso.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 04:54:05 -0700 (PDT)
-X-Gm-Message-State: APjAAAWXF2bM+izKZ1Df1Ko+xJKFdYTynnsoN2bIdr8hV+UK4nZbOuVo
-        2U63Wjpsb9+4/eW/H7Qbdr04jvGDlWUT9Ga/uFQ=
-X-Google-Smtp-Source: APXvYqx3nRjMerLd604okkquDXA2Hqfe1B88+1xal339VII15Zixeunjgspw3qhHsgZOa/YXUi7NIE8gcphAeFPfoMI=
-X-Received: by 2002:a67:de99:: with SMTP id r25mr27157338vsk.215.1559908443989;
- Fri, 07 Jun 2019 04:54:03 -0700 (PDT)
+        Fri, 7 Jun 2019 07:55:24 -0400
+Received: from 5HSWXM1.fritz.box ([87.191.24.82]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPA (Nemesis) id
+ 1Mw8gc-1gjamE2nbQ-00s3b8; Fri, 07 Jun 2019 13:54:58 +0200
+From:   Rolf Evers-Fischer <embedded24@evers-fischer.de>
+To:     ysato@users.sourceforge.jp, dalias@libc.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rolf Evers-Fischer <embedded24@evers-fischer.de>
+Subject: [PATCH] sh: dma: Add missing IS_ERR test
+Date:   Fri,  7 Jun 2019 13:54:03 +0200
+Message-Id: <20190607115404.4557-1-embedded24@evers-fischer.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190604174412.13324-1-yamada.masahiro@socionext.com> <CAJZ5v0jXKNr3_W9B_raetj42UOdphA3GEE_Qh7nBSwDzwXfA1Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jXKNr3_W9B_raetj42UOdphA3GEE_Qh7nBSwDzwXfA1Q@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 7 Jun 2019 20:53:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASboJSJ969T_WZ041RTr1RvtARAyyxCg46zBu-vL0+jtw@mail.gmail.com>
-Message-ID: <CAK7LNASboJSJ969T_WZ041RTr1RvtARAyyxCg46zBu-vL0+jtw@mail.gmail.com>
-Subject: Re: [PATCH] kobject: return -ENOSPC when add_uevent_var() fails
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:ce3ts2O0iZ57+RglddOjLV+R0qlmX9ewLMWZ1Bbc/nTeQW1plrV
+ jzudvx7RybZoXkQRwCyNmYdGsy2r/B2a8wgZxfHYBzqpJ1xmYaThftmalstTF/zo+HJ2SMI
+ Zkb6vq41xlK+G31qDKw8BNoAjlN3vs/59AZ9xSwzlWtR9rg+hKn5jBB8zY/wGTjhtyETOIE
+ t8SLrx9nAvlbrQdCxe/Ww==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QhXLAK0sRAo=:58gbdxswKj8/4gkyq4fcIW
+ giHTV5cOnZSo72dKaef3QqseMt7AuWOYRiBG50Y6m1OZGoPdGFk8CyzhdPB05s1BuK8qmsF9B
+ P2y2hXJTjH+euX47uSPe2ZN3DKNFMWGYp+SYl9zqLnv+JLXKii5nyDKWbAEab6kOIOftmM28e
+ 4FC7GGPhoYaNdYTfwnv1Lo77sf/PMPsQdyEq5EF4paQ8Zl0TrhhXNMBL7ku8x7IC7VTfieKH3
+ PFMj2jWZY17/H7Zuy8WDdBfFphRucLrpIKasiw3RDpOfhU2QC1VqZswBBsH1Q4Mg2gQ2FTQHs
+ 6Ll2pnUuVBipdjJXXU0qtaUebGrTzO4bg6fQnQtCg8foxL5ei9Z53K3wizu0A4E5Wcs7IbHfp
+ typPctz8LWAmrFy+PP3g0I2oUAPpZ+TCZtUL6sUMCtC12FwbuSoNq2ptD8blR6dD9R4wc4vmM
+ nQgt4QHv6MKeK/SzwmmhUXx8O9iiAoEfbVDnTYhobzyd15QFdPeKl+NGCTwRROkUdZe3ImFTq
+ eapN0Uvc7xP8GHHnF+rODqnei+01vS2seprnftS66Kar6YA87Qev9vZPdzImxiFmGqO1KYZZ/
+ 3S6nkOeZWZ/fOqX8HX68BheHFoJ+VjkTSFMOi+xyIN7Pptl4E2Clko7QZVk4O066EFQq8BMxV
+ vS5qLhnvnuGCBSPQIhng1Or0RsRnsW8rAXtHRhxJX8cvx1+93udRKRDRtJu2M88fT7ARapY8D
+ u561Ivqp1tQo7Y0rT2lm9MczXf26F9aUEJpmkOTrjCkrPzB+aznLMy++SSc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 5:53 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Jun 4, 2019 at 8:00 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > This function never attempts to allocate memory, so returning -ENOMEM
-> > looks weird to me.
->
-> And why is the "looks weird to me" a good enough reason for making
-> changes like this?
+get_dma_channel may return ERR_PTR, so a check is added.
 
+Signed-off-by: Rolf Evers-Fischer <embedded24@evers-fischer.de>
+---
+ arch/sh/drivers/dma/dma-api.c   | 20 +++++++++++++++++++-
+ arch/sh/drivers/dma/dma-sysfs.c |  2 +-
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
-Since the code is read much more than written,
-this change eliminates the question of "why -ENOMEM here?"
+diff --git a/arch/sh/drivers/dma/dma-api.c b/arch/sh/drivers/dma/dma-api.c
+index ab9170494dcc..5d6f1a46cc5e 100644
+--- a/arch/sh/drivers/dma/dma-api.c
++++ b/arch/sh/drivers/dma/dma-api.c
+@@ -94,7 +94,7 @@ int get_dma_residue(unsigned int chan)
+ 	struct dma_info *info = get_dma_info(chan);
+ 	struct dma_channel *channel = get_dma_channel(chan);
+ 
+-	if (info->ops->get_residue)
++	if (!IS_ERR(channel) && (info->ops->get_residue))
+ 		return info->ops->get_residue(channel);
+ 
+ 	return 0;
+@@ -195,6 +195,9 @@ int request_dma(unsigned int chan, const char *dev_id)
+ 	int result;
+ 
+ 	channel = get_dma_channel(chan);
++	if (IS_ERR(channel))
++		return PTR_ERR(channel);
++
+ 	if (atomic_xchg(&channel->busy, 1))
+ 		return -EBUSY;
+ 
+@@ -217,6 +220,9 @@ void free_dma(unsigned int chan)
+ 	struct dma_info *info = get_dma_info(chan);
+ 	struct dma_channel *channel = get_dma_channel(chan);
+ 
++	if (IS_ERR(channel))
++		return;
++
+ 	if (info->ops->free)
+ 		info->ops->free(channel);
+ 
+@@ -229,6 +235,9 @@ void dma_wait_for_completion(unsigned int chan)
+ 	struct dma_info *info = get_dma_info(chan);
+ 	struct dma_channel *channel = get_dma_channel(chan);
+ 
++	if (IS_ERR(channel))
++		return;
++
+ 	if (channel->flags & DMA_TEI_CAPABLE) {
+ 		wait_event(channel->wait_queue,
+ 			   (info->ops->get_residue(channel) == 0));
+@@ -274,6 +283,9 @@ void dma_configure_channel(unsigned int chan, unsigned long flags)
+ 	struct dma_info *info = get_dma_info(chan);
+ 	struct dma_channel *channel = get_dma_channel(chan);
+ 
++	if (IS_ERR(channel))
++		return;
++
+ 	if (info->ops->configure)
+ 		info->ops->configure(channel, flags);
+ }
+@@ -285,6 +297,9 @@ int dma_xfer(unsigned int chan, unsigned long from,
+ 	struct dma_info *info = get_dma_info(chan);
+ 	struct dma_channel *channel = get_dma_channel(chan);
+ 
++	if (IS_ERR(channel))
++		return PTR_ERR(channel);
++
+ 	channel->sar	= from;
+ 	channel->dar	= to;
+ 	channel->count	= size;
+@@ -299,6 +314,9 @@ int dma_extend(unsigned int chan, unsigned long op, void *param)
+ 	struct dma_info *info = get_dma_info(chan);
+ 	struct dma_channel *channel = get_dma_channel(chan);
+ 
++	if (IS_ERR(channel))
++		return PTR_ERR(channel);
++
+ 	if (info->ops->extend)
+ 		return info->ops->extend(channel, op, param);
+ 
+diff --git a/arch/sh/drivers/dma/dma-sysfs.c b/arch/sh/drivers/dma/dma-sysfs.c
+index 8ef318150f84..6ba5b569d446 100644
+--- a/arch/sh/drivers/dma/dma-sysfs.c
++++ b/arch/sh/drivers/dma/dma-sysfs.c
+@@ -30,7 +30,7 @@ static ssize_t dma_show_devices(struct device *dev,
+ 		struct dma_info *info = get_dma_info(i);
+ 		struct dma_channel *channel = get_dma_channel(i);
+ 
+-		if (unlikely(!info) || !channel)
++		if (unlikely(!info) || IS_ERR_OR_NULL(channel))
+ 			continue;
+ 
+ 		len += sprintf(buf + len, "%2d: %14s    %s\n",
+-- 
+2.21.0
 
-
-
-Masahiro Yamada
-
-
-> The existing behavior is known and documented AFAICS and is it really
-> so confusing?
->
-> > The reason of the failure is there is no more space
-> > in the given kobj_uevent_env structure.
-> >
-> > No caller of this function relies on this functing returning a specific
-> > error code, so just change it to return -ENOSPC. The intended change,
-> > if any, is the error number displayed in log messages.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  lib/kobject_uevent.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-> > index 7998affa45d4..5ffd44bf4aad 100644
-> > --- a/lib/kobject_uevent.c
-> > +++ b/lib/kobject_uevent.c
-> > @@ -647,7 +647,7 @@ EXPORT_SYMBOL_GPL(kobject_uevent);
-> >   * @env: environment buffer structure
-> >   * @format: printf format for the key=value pair
-> >   *
-> > - * Returns 0 if environment variable was added successfully or -ENOMEM
-> > + * Returns 0 if environment variable was added successfully or -ENOSPC
-> >   * if no space was available.
-> >   */
-> >  int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
-> > @@ -657,7 +657,7 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
-> >
-> >         if (env->envp_idx >= ARRAY_SIZE(env->envp)) {
-> >                 WARN(1, KERN_ERR "add_uevent_var: too many keys\n");
-> > -               return -ENOMEM;
-> > +               return -ENOSPC;
-> >         }
-> >
-> >         va_start(args, format);
-> > @@ -668,7 +668,7 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
-> >
-> >         if (len >= (sizeof(env->buf) - env->buflen)) {
-> >                 WARN(1, KERN_ERR "add_uevent_var: buffer size too small\n");
-> > -               return -ENOMEM;
-> > +               return -ENOSPC;
-> >         }
-> >
-> >         env->envp[env->envp_idx++] = &env->buf[env->buflen];
-> > --
-> > 2.17.1
