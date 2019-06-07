@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E9739014
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 898F338F9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731835AbfFGPsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:48:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34042 "EHLO mail.kernel.org"
+        id S1730852AbfFGPnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:43:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731819AbfFGPsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:48:37 -0400
+        id S1730837AbfFGPnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:43:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6C562146E;
-        Fri,  7 Jun 2019 15:48:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BE9F21479;
+        Fri,  7 Jun 2019 15:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922517;
-        bh=4L6TzmSsNE9naUgbefoA8+3Nnd416e4rKTS4OqzoHas=;
+        s=default; t=1559922200;
+        bh=zZ1Yq9iUX9tAqCiV5f6O1/J3MMF/LJ3pYsq4wPsGn88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mdx2aWQxkau52uaA4qqSnTUIcriWxE/zIH4J3jyH7Ie1tHypGFaVTET+LfSdPU/ML
-         KUsAAuHn8oMbrXJmyE73pWPVgWQMsxjj2ND7ej3OXaRRdSfgQmsqq90AaSau8vUAC+
-         37t5ZxqhM/CRhuP1Upqgnru0HYdvBxCiAjkZojzU=
+        b=lKf4I96t4+bO1jxXDrOlXqtrtolzyHopbA14B7eTylYZ0yEko3haXu4PMslPGp7KX
+         uUWi3RLTchlHfipY/pDMmmL6TjEMrob6+kzPpkGfSC7lrLD8rD3VeLwSNq7H58/819
+         /FOLvDsolcgTIznnfKy7OnIGPWLvOnpEwexOlvdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Hildenbrand <david@redhat.com>,
         Thomas Huth <thuth@redhat.com>,
         Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 5.1 42/85] KVM: s390: Do not report unusabled IDs via KVM_CAP_MAX_VCPU_ID
+Subject: [PATCH 4.14 46/69] KVM: s390: Do not report unusabled IDs via KVM_CAP_MAX_VCPU_ID
 Date:   Fri,  7 Jun 2019 17:39:27 +0200
-Message-Id: <20190607153854.360369073@linuxfoundation.org>
+Message-Id: <20190607153854.077761066@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -85,7 +85,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/mips/kvm/mips.c
 +++ b/arch/mips/kvm/mips.c
-@@ -1122,6 +1122,9 @@ int kvm_vm_ioctl_check_extension(struct
+@@ -1078,6 +1078,9 @@ int kvm_vm_ioctl_check_extension(struct
  	case KVM_CAP_MAX_VCPUS:
  		r = KVM_MAX_VCPUS;
  		break;
@@ -97,7 +97,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		r = !!raw_cpu_has_fpu;
 --- a/arch/powerpc/kvm/powerpc.c
 +++ b/arch/powerpc/kvm/powerpc.c
-@@ -650,6 +650,9 @@ int kvm_vm_ioctl_check_extension(struct
+@@ -629,6 +629,9 @@ int kvm_vm_ioctl_check_extension(struct
  	case KVM_CAP_MAX_VCPUS:
  		r = KVM_MAX_VCPUS;
  		break;
@@ -109,7 +109,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		r = 1;
 --- a/arch/s390/kvm/kvm-s390.c
 +++ b/arch/s390/kvm/kvm-s390.c
-@@ -507,6 +507,7 @@ int kvm_vm_ioctl_check_extension(struct
+@@ -428,6 +428,7 @@ int kvm_vm_ioctl_check_extension(struct
  		break;
  	case KVM_CAP_NR_VCPUS:
  	case KVM_CAP_MAX_VCPUS:
@@ -119,7 +119,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  			r = KVM_MAX_VCPUS;
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -3090,6 +3090,9 @@ int kvm_vm_ioctl_check_extension(struct
+@@ -2825,6 +2825,9 @@ int kvm_vm_ioctl_check_extension(struct
  	case KVM_CAP_MAX_VCPUS:
  		r = KVM_MAX_VCPUS;
  		break;
@@ -131,7 +131,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		break;
 --- a/virt/kvm/arm/arm.c
 +++ b/virt/kvm/arm/arm.c
-@@ -224,6 +224,9 @@ int kvm_vm_ioctl_check_extension(struct
+@@ -217,6 +217,9 @@ int kvm_vm_ioctl_check_extension(struct
  	case KVM_CAP_MAX_VCPUS:
  		r = KVM_MAX_VCPUS;
  		break;
@@ -143,7 +143,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		break;
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -3062,8 +3062,6 @@ static long kvm_vm_ioctl_check_extension
+@@ -2964,8 +2964,6 @@ static long kvm_vm_ioctl_check_extension
  	case KVM_CAP_MULTI_ADDRESS_SPACE:
  		return KVM_ADDRESS_SPACE_NUM;
  #endif
