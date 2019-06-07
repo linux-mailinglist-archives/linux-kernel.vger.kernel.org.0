@@ -2,277 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57899399C4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 01:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 158BF399D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 02:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730701AbfFGXoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 19:44:08 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40608 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbfFGXoI (ORCPT
+        id S1730935AbfFHABx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 20:01:53 -0400
+Received: from mx.aristanetworks.com ([162.210.129.12]:34130 "EHLO
+        smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730402AbfFHABx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 19:44:08 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id DA1B6283DA3
-Message-ID: <9f252e515c488544a4d7d3eee996f51f356c1766.camel@collabora.com>
-Subject: Re: [PATCH v2] platform/chrome: cros_ec_lpc: Choose Microchip EC at
- runtime
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Enric Balletbo Serra <eballetbo@gmail.com>,
-        Guenter Roeck <groeck@google.com>
-Cc:     Nick Crews <ncrews@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Duncan Laurie <dlaurie@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-Date:   Fri, 07 Jun 2019 20:43:55 -0300
-In-Reply-To: <CAFqH_52RMQLr_JW7Txm_WgLcZJkreQozx20j5TmESUMcGTUgtA@mail.gmail.com>
-References: <20190607102710.23800-1-enric.balletbo@collabora.com>
-         <decdbdf5285d76b4dab5b8f337023631a96ffc15.camel@collabora.com>
-         <CAHX4x84G-f=HabyWCqAGOEBZdBgobW0BTB0iUbZcXYxBh3XcaQ@mail.gmail.com>
-         <CABXOdTdGYmGnrmzRbUPX3cwXg=m=aX3cXXEk=OEphA5_GKKvJQ@mail.gmail.com>
-         <CAFqH_52RMQLr_JW7Txm_WgLcZJkreQozx20j5TmESUMcGTUgtA@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Fri, 7 Jun 2019 20:01:53 -0400
+X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 20:01:52 EDT
+Received: from smtp.aristanetworks.com (localhost [127.0.0.1])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 9613941B0E6;
+        Fri,  7 Jun 2019 16:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1559951703;
+        bh=Dzi853M92v2Ur/j9OKyDN0xQRvNGtOcZnl2jafJyGXg=;
+        h=Date:To:Subject:From;
+        b=nWtDsrfIRM/wiwsrLsub34vRPFtw0gCM7EgmI8sJ3DzNoIPhxPkN9jfxq2nV/kNjI
+         +Q+kmJE+kG5EvzNaEfSusNpkwv+qb0HS1BKJ9iW70tZ/25o3fZG3RVPsbUg2sKHW0Y
+         u40S7yh34zzOMrrO70QFd1NH8k7ac806zA88jf4BCZLW3ep1MqHCGvXOsTuKpl/+ne
+         qsm/ptGOF3INDeQVRePJD+JC9TXHSYX2Vo+Clz6aTFIl+D+CsTBdFEwxPaT79iOa6u
+         +L5gYS6cNHBUvBuEEfbmMeOt6gPzBwvojqIKsaAQVbnEXiZ5uJ2krewlpHjQpoSylv
+         oc1+PU22VZRMg==
+Received: from us180.sjc.aristanetworks.com (us180.sjc.aristanetworks.com [172.25.230.4])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 9484341B0E5;
+        Fri,  7 Jun 2019 16:55:03 -0700 (PDT)
+Received: by us180.sjc.aristanetworks.com (Postfix, from userid 10189)
+        id CFF3F95C0244; Fri,  7 Jun 2019 16:54:37 -0700 (PDT)
+Date:   Fri, 07 Jun 2019 16:54:37 -0700
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        gregkh@linuxfoundation.org, fruggeri@arista.com, namit@vmware.com
+Subject: kprobe: kernel panic in 4.19.47
+User-Agent: Heirloom mailx 12.5 7/5/10
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+Message-Id: <20190607235437.CFF3F95C0244@us180.sjc.aristanetworks.com>
+From:   fruggeri@arista.com (Francesco Ruggeri)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+I see the following kernel panic in 4.19.47 as soon as I hit a kprobe.
+In this case it happened right after
 
-On Fri, 2019-06-07 at 22:51 +0200, Enric Balletbo Serra wrote:
-> Hi,
-> 
-> Missatge de Guenter Roeck <groeck@google.com> del dia dv., 7 de juny
-> 2019 a les 22:11:
-> > On Fri, Jun 7, 2019 at 12:27 PM Nick Crews <ncrews@chromium.org> wrote:
-> > > Hi!
-> > > 
-> > > On Fri, Jun 7, 2019 at 12:03 PM Ezequiel Garcia <ezequiel@collabora.com> wrote:
-> > > > On Fri, 2019-06-07 at 12:27 +0200, Enric Balletbo i Serra wrote:
-> > > > > On many boards, communication between the kernel and the Embedded
-> > > > > Controller happens over an LPC bus. In these cases, the kernel config
-> > > > > CONFIG_CROS_EC_LPC is enabled. Some of these LPC boards contain a
-> > > > > Microchip Embedded Controller (MEC) that is different from the regular
-> > > > > EC. On these devices, the same LPC bus is used, but the protocol is
-> > > > > a little different. In these cases, the CONFIG_CROS_EC_LPC_MEC kernel
-> > > > > config is enabled. Currently, the kernel decides at compile-time whether
-> > > > > or not to use the MEC variant, and, when that kernel option is selected
-> > > > > it breaks the other boards. We would like a kind of runtime detection to
-> > > > > avoid this.
-> > > > > 
-> > > > > This patch adds that detection mechanism by probing the protocol at
-> > > > > runtime, first we assume that a MEC variant is connected, and if the
-> > > > > protocol fails it fallbacks to the regular EC. This adds a bit of
-> > > > > overload because we try to read twice on those LPC boards that doesn't
-> > > > > contain a MEC variant, but is a better solution than having to select the
-> > > > > EC variant at compile-time.
-> > > > > 
-> > > > > While here also fix the alignment in Kconfig file for this config option
-> > > > > replacing the spaces by tabs.
-> > > > > 
-> > > > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > > > ---
-> > > > > Hi,
-> > > > > 
-> > > > > This is the second attempt to solve the issue to be able to select at
-> > > > > runtime the CrOS MEC variant. My first thought was check for a device
-> > > > > ID,
-> > > > > the MEC1322 has a register that contains the device ID, however I am not
-> > > > > sure if we can read that register from the host without modifying the
-> > > > > firmware. Also, I am not sure if the MEC1322 is the only device used
-> > > > > that supports that LPC protocol variant, so I ended with a more easy
-> > > > > solution, check if the protocol fails or not. Some background on this
-> > > > > issue can be found [1] and [2]
-> > > > > 
-> > > > > The patch has been tested on:
-> > > > >  - Acer Chromebook R11 (Cyan - MEC variant)
-> > > > >  - Pixel Chromebook 2015 (Samus - non-MEC variant)
-> > > > >  - Dell Chromebook 11 (Wolf - non-MEC variant)
-> > > > >  - Toshiba Chromebook (Leon - non-MEC variant)
-> > > > > 
-> > > > > Nick, could you test the patch for Wilco?
-> > > > > 
-> > > > > Best regards,
-> > > > >  Enric
-> > > > > 
-> > > > > [1] https://bugs.chromium.org/p/chromium/issues/detail?id=932626
-> > > > > [2] https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/1474254
-> > > > > 
-> > > > > Changes in v2:
-> > > > > - Remove global bool to indicate the kind of variant as suggested by Ezequiel.
-> > > > > - Create an internal operations struct to allow different variants.
-> > > > > 
-> > > > >  drivers/platform/chrome/Kconfig           | 29 +++------
-> > > > >  drivers/platform/chrome/Makefile          |  3 +-
-> > > > >  drivers/platform/chrome/cros_ec_lpc.c     | 76 ++++++++++++++++-------
-> > > > >  drivers/platform/chrome/cros_ec_lpc_reg.c | 39 +++---------
-> > > > >  drivers/platform/chrome/cros_ec_lpc_reg.h | 26 ++++++++
-> > > > >  drivers/platform/chrome/wilco_ec/Kconfig  |  2 +-
-> > > > >  6 files changed, 98 insertions(+), 77 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> > > > > index 2826f7136f65..453e69733842 100644
-> > > > > --- a/drivers/platform/chrome/Kconfig
-> > > > > +++ b/drivers/platform/chrome/Kconfig
-> > > > > @@ -83,28 +83,17 @@ config CROS_EC_SPI
-> > > > >         'pre-amble' bytes before the response actually starts.
-> > > > > 
-> > > > >  config CROS_EC_LPC
-> > > > > -        tristate "ChromeOS Embedded Controller (LPC)"
-> > > > > -        depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
-> > > > > -        help
-> > > > > -          If you say Y here, you get support for talking to the ChromeOS EC
-> > > > > -          over an LPC bus. This uses a simple byte-level protocol with a
-> > > > > -          checksum. This is used for userspace access only. The kernel
-> > > > > -          typically has its own communication methods.
-> > > > > -
-> > > > > -          To compile this driver as a module, choose M here: the
-> > > > > -          module will be called cros_ec_lpc.
-> > > > > -
-> > > > > -config CROS_EC_LPC_MEC
-> > > > > -     bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
-> > > > > -     depends on CROS_EC_LPC
-> > > > > -     default n
-> > > > > +     tristate "ChromeOS Embedded Controller (LPC)"
-> > > > > +     depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
-> > > > >       help
-> > > > > -       If you say Y here, a variant LPC protocol for the Microchip EC
-> > > > > -       will be used. Note that this variant is not backward compatible
-> > > > > -       with non-Microchip ECs.
-> > > > > +       If you say Y here, you get support for talking to the ChromeOS EC
-> > > > > +       over an LPC bus, including the LPC Microchip EC (MEC) variant.
-> > > > > +       This uses a simple byte-level protocol with a checksum. This is
-> > > > > +       used for userspace access only. The kernel typically has its own
-> > > > > +       communication methods.
-> > > > > 
-> > > > > -       If you have a ChromeOS Embedded Controller Microchip EC variant
-> > > > > -       choose Y here.
-> > > > > +       To compile this driver as a module, choose M here: the
-> > > > > +       module will be called cros_ec_lpcs.
-> > > > > 
-> > > > >  config CROS_EC_PROTO
-> > > > >          bool
-> > > > > diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> > > > > index 1b2f1dcfcd5c..d6416411888f 100644
-> > > > > --- a/drivers/platform/chrome/Makefile
-> > > > > +++ b/drivers/platform/chrome/Makefile
-> > > > > @@ -9,8 +9,7 @@ obj-$(CONFIG_CHROMEOS_TBMC)           += chromeos_tbmc.o
-> > > > >  obj-$(CONFIG_CROS_EC_I2C)            += cros_ec_i2c.o
-> > > > >  obj-$(CONFIG_CROS_EC_RPMSG)          += cros_ec_rpmsg.o
-> > > > >  obj-$(CONFIG_CROS_EC_SPI)            += cros_ec_spi.o
-> > > > > -cros_ec_lpcs-objs                    := cros_ec_lpc.o cros_ec_lpc_reg.o
-> > > > > -cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)       += cros_ec_lpc_mec.o
-> > > > > +cros_ec_lpcs-objs                    := cros_ec_lpc.o cros_ec_lpc_reg.o cros_ec_lpc_mec.o
-> > > > >  obj-$(CONFIG_CROS_EC_LPC)            += cros_ec_lpcs.o
-> > > > >  obj-$(CONFIG_CROS_EC_PROTO)          += cros_ec_proto.o cros_ec_trace.o
-> > > > >  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT) += cros_kbd_led_backlight.o
-> > > > > diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-> > > > > index c9c240fbe7c6..91cb4dd34764 100644
-> > > > > --- a/drivers/platform/chrome/cros_ec_lpc.c
-> > > > > +++ b/drivers/platform/chrome/cros_ec_lpc.c
-> > > > > @@ -28,6 +28,22 @@
-> > > > >  #define DRV_NAME "cros_ec_lpcs"
-> > > > >  #define ACPI_DRV_NAME "GOOG0004"
-> > > > > 
-> > > > > +/**
-> > > > > + * struct lpc_ops - LPC driver methods
-> > > > > + *
-> > > > > + * @read: Read bytes from a given LPC-mapped address.
-> > > > > + * @write: Write bytes to a given LPC-mapped address.
-> > > > > + */
-> > > > > +struct lpc_ops {
-> > > > > +     u8      (*read)(unsigned int offset, unsigned int length, u8 *dest);
-> > > > > +     u8      (*write)(unsigned int offset, unsigned int length, u8 *msg);
-> > > > > +};
-> > > > > +
-> > > > > +static struct lpc_ops cros_ec_lpc_ops = {
-> > > > > +     .read   = cros_ec_lpc_mec_read_bytes,
-> > > > > +     .write  = cros_ec_lpc_mec_write_bytes,
-> > > > > +};
-> > > > > +
-> > > > 
-> > > > While this is better than a global boolean, it's still not
-> > > > per-device.
-> > > > 
-> 
-> Indeed
-> 
-> > > > I guess it's not an issue given you typically (always?)
-> > > > have one cros-ec device per platform.
-> > > > 
-> 
-> I don't think is expected, at least now, we don't have a real use case with it.
-> 
-> > > > However, I'm still wondering if it's not better to make it
-> > > > per-device (as the bus is per-device?).
-> > > 
-> > > Enric and I were discussing this. Up to this point, there has only been
-> > > one EC device per platform, and I think this is a reasonable
-> > > expectation to maintain. I'm adding Stefan Reinauer, the Chrome OS
-> > > EC lead, for their thoughts. Stefan, we are discussing whether or not we
-> > > need to support multiple communication protocols at the same time,
-> > > for instance if a device had multiple ECs, each with a different protocol.
-> > > 
-> 
-> My two cents to the discussion and the reason why I did not implement
-> the per-device functionality:
-> - Before this patch, we didn't have support per-device.
-> - Make it per-device is not the purpose of this patch, the purpose is
-> detect at run-time the protocol used.
-> - Add support per-device needs more changes than the expected, which
-> IMO are out of the scope of this patch.
-> - We don't have a real use case and unlikely we will have in the
-> future, so why worry now.
-> 
+# cd /sys/kernel/debug/tracing/
+# echo >trace
+# echo 'p rollback_registered_many' >kprobe_events 
+# echo 1 >events/kprobes/enable 
+# ip netns add dummy
+# ip netns del dummy
 
-I see.
+but I have also seen it with other functions, or when I used kernel modules
+to install kprobes.
+I bisected to 
 
-> > > If we really wanted to support multiple ECs, there would be some other
-> > > work to do besides this one fix, since the memory addresses that
-> > > we write to are hardcoded into the drivers. In order to support
-> > > multiple devices,
-> > > not only would we need to make the xfer algorithms per-device, but would
-> > > also need to make the memory addresses per-device. I would love
-> > > some feedback on this, but my initial thought would be to add a
-> > > "void *xfer_protocol_data" field to struct cros_ec_device, alongside
-> > > the two existing
-> > > int (*cmd_xfer)(struct cros_ec_device *ec, struct cros_ec_command *msg);
-> > > int (*pkt_xfer)(struct cros_ec_device *ec, struct cros_ec_command *msg);
-> > > fields. Then, each different protocol (lpc, i2c, spi, rpmsg, ishtp;
-> > > some of these
-> > > are only in the Chromium tree as of now) would be able to use this
-> > > field as needed,
-> > > for example to store the I2C address or the is_MEC flag for each device.
-> > > 
-> > 
-> > I understand that the current implementation may be insufficient if
-> > there is ever more than one EC in a given system. Maybe I am missing
-> > something, but why even consider it right now, with no such system in
-> > existence ? We would not even know if a more flexible implementation
-> > actually works, since there would be no means to test it.
-> 
-> Agree.
-> 
+8715ce033e [ "x86/modules: Avoid breaking W^X while loading modules" ]
 
-Thanks for the explanations, it's clear now!
-
-The change looks good.
-
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
+in 4.19.47 (upstream commit f2c65fb322 in v5.2-rc1).
 
 Thanks,
-Eze
+Francesco
+
+[  151.067082] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
+[  151.074631] BUG: unable to handle kernel paging request at ffffffffa000f000
+[  151.081661] PGD 200a067 P4D 200a067 PUD 200b063 PMD 1038324067 PTE 800000101cb73161
+[  151.089396] Oops: 0011 [#1] SMP
+[  151.092603] CPU: 12 PID: 1831 Comm: kworker/u64:1 Kdump: loaded Not tainted 4.19.47-12345018.AroraKernel419.fc18.x86_64 #1
+[  151.103696] Hardware name: Supermicro X9DRT/X9DRT, BIOS 3.0 06/28/2013
+[  151.110298] Workqueue: netns cleanup_net
+[  151.114297] RIP: 0010:0xffffffffa000f000
+[  151.118286] Code: Bad RIP value.
+[  151.121562] RSP: 0018:ffffc90007947d60 EFLAGS: 00010206
+[  151.126835] RAX: ffff88901cbf8070 RBX: ffffc90007947d88 RCX: ffff88901cbf8070
+[  151.134033] RDX: ffffc90007947d88 RSI: ffffc90007947d88 RDI: ffffc90007947d88
+[  151.141226] RBP: ffffc90007947d78 R08: 0000000000000001 R09: 0000000000020cc0
+[  151.148429] R10: ffffc900063ebe08 R11: 0000000000026cdc R12: ffffc90007947d88
+[  151.155630] R13: ffffc90007947e38 R14: ffff88901cbc8110 R15: ffffc90007947e10
+[  151.162817] FS:  0000000000000000(0000) GS:ffff88a03f900000(0000) knlGS:0000000000000000
+[  151.170964] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  151.176986] CR2: ffffffffa000efd6 CR3: 0000000002009006 CR4: 00000000000606e0
+[  151.184403] Call Trace:
+[  151.187150]  ? rollback_registered_many+0x5/0x3bc
+[  151.192123]  ? unregister_netdevice_many+0x1a/0x79
+[  151.197177]  default_device_exit_batch+0x137/0x15f
+[  151.202231]  ? __wake_up_sync+0x12/0x12
+[  151.206345]  ops_exit_list+0x29/0x53
+[  151.210181]  cleanup_net+0x189/0x240
+[  151.214030]  process_one_work+0x174/0x280
+[  151.218319]  ? rescuer_thread+0x277/0x277
+[  151.222610]  worker_thread+0x1b5/0x264
+[  151.226639]  ? rescuer_thread+0x277/0x277
+[  151.230922]  kthread+0xf5/0xfa
+[  151.234239]  ? kthread_cancel_delayed_work_sync+0x15/0x15
+[  151.239906]  ret_from_fork+0x1f/0x30
+[  151.243751] Modules linked in: ipt_MASQUERADE nf_conntrack_netlink iptable_filter xt_addrtype xt_conntrack br_netfilter bridge stp llc macvlan sg coretemp x86_pkg_temp_thermal ip6table_filter ip6_tables ghash_clmulni_intel pcbc bonding aesni_intel kvm_intel aes_x86_64 crypto_simd kvm igb cryptd irqbypass glue_helper iTCO_wdt ioatdma iTCO_vendor_support hwmon joydev i2c_i801 i2c_algo_bit ipmi_si i2c_core pcc_cpufreq lpc_ich mfd_core ipmi_msghandler fuse dca pcspkr xt_multiport iptable_nat nf_nat_ipv4 ip_tables nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 x_tables tun loop 8021q raid456 async_raid6_recov async_memcpy libcrc32c async_pq async_xor xor async_tx raid6_pq raid1 raid0 isci libsas ehci_pci crc32c_intel ehci_hcd scsi_transport_sas wmi autofs4
+[  151.312827] CR2: ffffffffa000f000
 
