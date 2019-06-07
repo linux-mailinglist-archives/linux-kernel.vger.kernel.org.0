@@ -2,112 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C78F139855
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29EAA39863
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbfFGWMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:12:44 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38359 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729456AbfFGWMo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:12:44 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f97so1323942plb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:12:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=jmPOqHVXXc8BsUqtRJfurbZZiUJ7eEKFAc+yR316dGU=;
-        b=S+JIfgqMNuHp+z/SW60OUgNuZJFcnFNMreXNImfTh599dkW4Gxekch3udzzJsY4AuO
-         kcfH7Ux36+HWw6iX7cOSu9JyJArZ1e94gMy8BBHCxcgOR7QvVuoea1okqbqbbFUlUJ5Z
-         5mS7SBa+JzBayGekbP73iASRDIJ1U/KEsenA0z61nRH/ZfQe5MRojraxQOYFbxVKIWPp
-         STa4Q6JXaSRSrLno4qeVZeLZjtd+2xKeURWaqZIkD92C+6DpEwRs45UaT+eNFrkqCN/j
-         CQ8fYJ+ti02/il5PxlBILca3QX2WnO6ontkf4sHLAJezFNqa1dpQsSRGPi8HVDc8JNs8
-         v+gQ==
-X-Gm-Message-State: APjAAAXsWXJo3HcVLIUhlWC+RY2J4jmqhhiBECnfPz3pnTlQkVm9GJ1U
-        dEAdPevy7fzTM5Teuhea1wqJLQ==
-X-Google-Smtp-Source: APXvYqz8OpliHXJJwtu5JxWix99Vw57S+eyKvSu4i62/JdX5hwf+WiB2lih0L3JKi8BXO4s9PFJ4CA==
-X-Received: by 2002:a17:902:8f8e:: with SMTP id z14mr16618264plo.1.1559945563443;
-        Fri, 07 Jun 2019 15:12:43 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id y13sm3407673pfb.143.2019.06.07.15.12.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 15:12:42 -0700 (PDT)
-Date:   Fri, 07 Jun 2019 15:12:42 -0700 (PDT)
-X-Google-Original-Date: Fri, 07 Jun 2019 15:12:41 PDT (-0700)
-Subject:     Re: [PATCH] RISC-V: Break load reservations during switch_to
-In-Reply-To: <87ftom4ij2.fsf@igel.home>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>, marco@decred.org,
-        me@carlosedp.com, joel@sing.id.au, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     schwab@linux-m68k.org
-Message-ID: <mhng-a0345343-89b4-43e0-94dd-fb4f2cc851e0@palmer-si-x1e>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1730793AbfFGWQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:16:01 -0400
+Received: from sauhun.de ([88.99.104.3]:46426 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729127AbfFGWQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 18:16:00 -0400
+Received: from localhost (p5486CE26.dip0.t-ipconnect.de [84.134.206.38])
+        by pokefinder.org (Postfix) with ESMTPSA id 95E123E43BA;
+        Sat,  8 Jun 2019 00:15:58 +0200 (CEST)
+Date:   Sat, 8 Jun 2019 00:15:58 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+        Steven Honeyman <stevenhoneyman@gmail.com>,
+        Valdis.Kletnieks@vt.edu,
+        Jochen Eisinger <jochen@penguin-breeder.org>,
+        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>, Mario_Limonciello@dell.com,
+        Alex Hung <alex.hung@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5] i2c: i801: Register optional lis3lv02d I2C device on
+ Dell machines
+Message-ID: <20190607221558.GB869@kunai>
+References: <20190606181845.14091-1-pali.rohar@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
+Content-Disposition: inline
+In-Reply-To: <20190606181845.14091-1-pali.rohar@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 06 Jun 2019 12:32:01 PDT (-0700), schwab@linux-m68k.org wrote:
-> On Jun 06 2019, Christoph Hellwig <hch@infradead.org> wrote:
->
->> On Wed, Jun 05, 2019 at 04:17:35PM -0700, Palmer Dabbelt wrote:
->>>  	REG_S ra,  TASK_THREAD_RA_RA(a3)
->>> +	/*
->>> +	 * The Linux ABI allows programs to depend on load reservations being
->>> +	 * broken on context switches, but the ISA doesn't require that the
->>> +	 * hardware ever breaks a load reservation.  The only way to break a
->>> +	 * load reservation is with a store conditional, so we emit one here.
->>> +	 * Since nothing ever takes a load reservation on TASK_THREAD_RA_RA we
->>> +	 * know this will always fail, but just to be on the safe side this
->>> +	 * writes the same value that was unconditionally written by the
->>> +	 * previous instruction.
->>> +	 */
->>> +#if (TASK_THREAD_RA_RA != 0)
->>
->> I don't think this check works as intended.  TASK_THREAD_RA_RA is a
->> parameterized macro,
->
-> Is it?  Just because it is used before an open paren doesn't mean that
-> the macro takes a parameter.
 
-Yes, you're right -- the parens there aren't a macro parameter, they're the
-assembly syntax for constant-offset loads.  I guess I'd just assumed Christoph
-was referring to some magic in how asm-offsets gets generated, as I've never
-actually looked inside that stuff.  I went ahead and just tested this
+--A6N2fC+uXW/VQSAv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    $ git diff | cat
-    diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
-    index 578bb5efc085..e3f06495dbf8 100644
-    --- a/arch/riscv/kernel/asm-offsets.c
-    +++ b/arch/riscv/kernel/asm-offsets.c
-    @@ -125,6 +125,7 @@ void asm_offsets(void)
-            DEFINE(TASK_THREAD_RA_RA,
-                      offsetof(struct task_struct, thread.ra)
-                    - offsetof(struct task_struct, thread.ra)
-    +               + 1
-            );
-            DEFINE(TASK_THREAD_SP_RA,
-                      offsetof(struct task_struct, thread.sp)
+On Thu, Jun 06, 2019 at 08:18:45PM +0200, Pali Roh=C3=A1r wrote:
+> Dell platform team told us that some (DMI whitelisted) Dell Latitude
+> machines have ST microelectronics accelerometer at I2C address 0x29.
+>=20
+> Presence of that ST microelectronics accelerometer is verified by existen=
+ce
+> of SMO88xx ACPI device which represent that accelerometer. Unfortunately
+> ACPI device does not specify I2C address.
+>=20
+> This patch registers lis3lv02d device for selected Dell Latitude machines
+> at I2C address 0x29 after detection. And for Dell Vostro V131 machine at
+> I2C address 0x1d which was manually detected.
+>=20
+> Finally commit a7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to
+> conflict with PCI BAR") allowed to use i2c-i801 driver on Dell machines so
+> lis3lv02d correctly initialize accelerometer.
+>=20
+> Tested on Dell Latitude E6440.
+>=20
+> Signed-off-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+>=20
 
-and it causes the expected failure
+Applied to for-next, thanks for keeping at it!
 
-     $ make.cross ARCH=riscv -j1
-    make CROSS_COMPILE=/home/palmer/.local/opt/gcc-8.1.0-nolibc/riscv64-linux/bin/riscv64-linux- ARCH=riscv -j1
-      CALL    scripts/checksyscalls.sh
-      CALL    scripts/atomic/check-atomics.sh
-      CHK     include/generated/compile.h
-      AS      arch/riscv/kernel/entry.o
-    arch/riscv/kernel/entry.S:344:3: error: #error "The offset between ra and ra is non-zero"
-     # error "The offset between ra and ra is non-zero"
-       ^~~~~
-    make[1]: *** [scripts/Makefile.build:369: arch/riscv/kernel/entry.o] Error 1
-    make: *** [Makefile:1071: arch/riscv/kernel] Error 2
 
-so I'm going to leave it alone.  I'll submit a v2 with a better error message
-and a cleaner sc.w/sc.d.
+--A6N2fC+uXW/VQSAv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlz64h4ACgkQFA3kzBSg
+KbYD+g//aii1FojuiA4U0z0/JO99KdQT+W2HhcekFjKUQnnnsgLBw18QuP9AuaMC
+NG9HPCOP5o+7Q4kp85NEEKtbtLjNavO7vnfKydPbijv/ekNapQ+ZghA85ZEKmdX2
+b+D1vTQuHCcIueVJhJEnMCfWUo+MOKTyeXQL01piA8r8JvcQcbp3I9JWs4ul/ihN
+ggNnS3uJreXwMyM/Aulbhj3Ql9CVYZuhOswSI1BnMEtPdN9j/Y27yceWUF6lB7jw
+5QgBBmmFTvNTgQ2Rv7gZt+gr7jO+kYSkfMSXf0gMOzSFhjXsbHmSks7hNUuWVmkL
+L6VB9Lg1Iyl0Km1atYD2q7nA/8WCQuE/8AyidUQV+HxvEebypCdlj3y+baT33nbr
+VD16iosdzxGqNZpTalSzG/+QHvfrMQiem1tovZjhj/icW/o5khK53AGiLN1TFZVh
+S/o9R1SqiV5eLrShMZJp9RJSsVvoFOw3HG8mWjTZltYLwwfefmmITGJ8TDsjH3oV
+nyIQv2Ypo/6HCZGQ63x3TbK+OaQpdZJ1z3Rmbts6yKwJpE+nLPu6pZ0afFIYh39k
+ur0RZbSnvjAtHLNgQ1nU/84T+O+Fxn7K1qw/KpLZJaQkQM/qpxTsYPJNwk1F718/
+D30urkkl+PFQq68JZ3MU7wx3UxP+7V6wAd1B48Nvj9vFnPfif8E=
+=Ntf9
+-----END PGP SIGNATURE-----
+
+--A6N2fC+uXW/VQSAv--
