@@ -2,101 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9120B39402
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FC83393FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730896AbfFGSKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:10:22 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37727 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730442AbfFGSKW (ORCPT
+        id S1730585AbfFGSJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:09:48 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44302 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730442AbfFGSJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:10:22 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 19so791411pfa.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:10:21 -0700 (PDT)
+        Fri, 7 Jun 2019 14:09:48 -0400
+Received: by mail-pf1-f195.google.com with SMTP id t16so1608780pfe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:09:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=RdV7PbyVkSYhNsrYGZ8E6Uu22GQTdcJL5heT1Y0FTF4=;
-        b=ouhlv+SddShDf250mCEoGIo+nD3wsUaOV8r6iUvcyecJcT9BKaJsjGfcoib34GTjau
-         JT5IqYoZJKDp2aMvAewcsfHqE4lEpdXwGIHjhGdrKrf0uwHZZKeEEigdG3cDgaaAnFAY
-         Dt4tvCwXwQVTsAAwmNAey4AC4Wkam2ift6+jrAqcVRj3A2yqKNbXd4qU6pJGq+rbtUDf
-         grmNyW+aaCuftmbdxMy23ItA3gtc+ssc26qODc9ED7fBm8jugx5GV203valW3JNmy2Sa
-         1IDqY79wev5+F+rHZhr9eVmJKKN0bc3xldGbeyc6vrZyuzzGdh56q4HtSump1b8J1lNc
-         YJGQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/3m639ul9fLGHczHyKn0H1zZg+5SVSXXo1Nl+CYKby4=;
+        b=PzFmnwe5R9+tXehwIXZM6y8FoShB+B2G5A0MZe7+0cyb/EOpN+t4FPLENdAFQiY4vp
+         snMFvVlNDWgHWDB2eUSQIPp1jPpux+sTG071CiSoW9pKxLK4lCyinxlVC7k40V6c7NyM
+         z5pTl9+LJCEFZIC3Qz7jsfCfXo3GXCw4hr6fH/Of0zai00v9lD1BaHATpmLQ9qqU0zRI
+         HEJWGafkIT/mIu9OHFbD7peMSgFffJJnzRTXUZh94uyM4rRLf4WGCbHpAYNJSgv6Pp+D
+         fd+lIHwpViriTTXjPu1DqDEtndYAxhmI9tO3EsjbdeUbHvIlHX+VrJDGetgrOd1J7w40
+         Dz0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=RdV7PbyVkSYhNsrYGZ8E6Uu22GQTdcJL5heT1Y0FTF4=;
-        b=rd545R3l5f5G0iqdWoBZnLnhDGJxbiN6yjshC0oKFVok/nDEtkDDRwuHdb+ZT2NYcE
-         jBrKLIQsMtV7DteDDtYLJxahbbGfhY1ojXK5/Av8hETNipBXN55jk3pLhc2uNAjK42Z6
-         KhbRcYJKdzG+aFyqLFbIHIHXhMP2+ceGKr/ZuUWYd/iBZ9gOQZUoEUMUrZp1N5xXeSE/
-         uIAY6pf96gmwutWuPqXp8DIuwxSWC2BBbCREPTfDKcKKyFvfmBx+SQIJLhJOo+zE9XCM
-         ZxmrKl4/laNo6UINn7SiOSzGoSUt/lgq0ItqRVRgX/InouMmAilhAtkCCwag2Iok7RJE
-         xuMw==
-X-Gm-Message-State: APjAAAXVSNF9WwZ49sK6AHtFsLPE0e5utzN8GclJK9oEaoopRrJ+Ff0J
-        nQbgd//IIGYxOhVYZAYJ1P2ewg==
-X-Google-Smtp-Source: APXvYqwkUcL6yKwRhj7ZSLiEepZIDDJGiNTbd1sAki2fQ8TvQr1QVnYevXUeeY4S+Y9oFzS8hvri8g==
-X-Received: by 2002:aa7:9f1c:: with SMTP id g28mr37489871pfr.81.1559931021677;
-        Fri, 07 Jun 2019 11:10:21 -0700 (PDT)
-Received: from ?IPv6:2600:1012:b044:6f30:60ea:7662:8055:2cca? ([2600:1012:b044:6f30:60ea:7662:8055:2cca])
-        by smtp.gmail.com with ESMTPSA id j14sm2905412pfe.10.2019.06.07.11.10.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 11:10:20 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate instructions
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16F203)
-In-Reply-To: <20190607173427.GK3436@hirez.programming.kicks-ass.net>
-Date:   Fri, 7 Jun 2019 11:10:19 -0700
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3DA961AB-950B-4886-9656-C0D268D521F1@amacapital.net>
-References: <20190605130753.327195108@infradead.org> <20190605131945.005681046@infradead.org> <20190608004708.7646b287151cf613838ce05f@kernel.org> <20190607173427.GK3436@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/3m639ul9fLGHczHyKn0H1zZg+5SVSXXo1Nl+CYKby4=;
+        b=Y6yUI56y68n1KrftkR56YBn7QHgJVK+raeNfqEzZI8/9S3dUUpovAlU+9Xd/Mbxijb
+         6I2al3fvnvXVPnkzUDzHESPzRz2LVq/w+Ka/f/KMH7eH/D9I9YiFEuCg2OfLnNLOc0Eg
+         ef8PNx+2aw5Xq7dA33TMMU2EbSYYzB2X9q/jbUDUU4wiSaz6wpoONqs3NgEJh+0I/HHd
+         PTqgWMLZpRpmhlIs5BHWhXUe2Ry++F3lb5mp2+7eM8USIS4fvc9OtHHHikqHxxVHHOQd
+         7N48JF4xDXUWN3LbRANQkUCZcddZNumbUiEA0Ce4cZHmsBRCGodZ4kB75tfSY++UZsKz
+         ZEAQ==
+X-Gm-Message-State: APjAAAXgQxucrvEcqgLXTZXYhkUNmUe8nMi3C3KwxrzWWQCGqZdxNWiI
+        9tct/k48pxK5h48jTJ/ZJrLTog==
+X-Google-Smtp-Source: APXvYqzt5gwdXKwtn7ZORpYSN5ZFetcAiXsBwVaXb6cj35kEgitwNjg1kWrl11fOzV9tGYSsCfKnXw==
+X-Received: by 2002:a62:3287:: with SMTP id y129mr4134583pfy.251.1559930986308;
+        Fri, 07 Jun 2019 11:09:46 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l44sm6897224pje.29.2019.06.07.11.09.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 07 Jun 2019 11:09:45 -0700 (PDT)
+Date:   Fri, 7 Jun 2019 11:10:30 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, alokc@codeaurora.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        wsa+renesas@sang-engineering.com,
+        Linus Walleij <linus.walleij@linaro.org>, balbi@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Jeffrey Hugo <jlhugo@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 3/8] pinctrl: msm: Add ability for drivers to supply a
+ reserved GPIO list
+Message-ID: <20190607181030.GX22737@tuxbook-pro>
+References: <20190607082901.6491-1-lee.jones@linaro.org>
+ <20190607082901.6491-3-lee.jones@linaro.org>
+ <CAKv+Gu-1QhX-9aNhFJauc9NVe6ceQQueE8Kd14031XJ-2yaupA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-1QhX-9aNhFJauc9NVe6ceQQueE8Kd14031XJ-2yaupA@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 07 Jun 04:10 PDT 2019, Ard Biesheuvel wrote:
+
+> On Fri, 7 Jun 2019 at 10:29, Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > When booting MSM based platforms with Device Tree or some ACPI
+> > implementations, it is possible to provide a list of reserved pins
+> > via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
+> > However some ACPI tables are not populated with this information,
+> > thus it has to come from a knowledgable device driver instead.
+> >
+> > Here we provide the MSM common driver with additional support to
+> > parse this informtion and correctly populate the widely used
+> > 'valid_mask'.
+> >
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> 
+> I'm not sure if this is the correct approach. Presumably, on ACPI
+> systems, all the pinctl stuff is already set up by the firmware, and
+> so we shouldn't touch *any* pins unless they have been requested
+> explicitly. Is there any way we can support this in the current
+> framework?
+> 
+
+The only reason why we do this (at least the initial reason) is because
+gpiolib will read the current state of all GPIOs during initialization.
+
+But due to the sensitive nature of the application using these pins
+Linux is prohibited from touching the associated GPIO/pinmux/pinconf
+registers - resulting in a security violation if we allow gpiolib to
+touch them.
 
 
-> On Jun 7, 2019, at 10:34 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->=20
-> On Sat, Jun 08, 2019 at 12:47:08AM +0900, Masami Hiramatsu wrote:
->=20
->>> This fits almost all text_poke_bp() users, except
->>> arch_unoptimize_kprobe() which restores random text, and for that site
->>> we have to build an explicit emulate instruction.
->>=20
->> Hm, actually it doesn't restores randome text, since the first byte
->> must always be int3. As the function name means, it just unoptimizes
->> (jump based optprobe -> int3 based kprobe).
->> Anyway, that is not an issue. With this patch, optprobe must still work.
->=20
-> I thought it basically restored 5 bytes of original text (with no
-> guarantee it is a single instruction, or even a complete instruction),
-> with the first byte replaced with INT3.
->=20
+When it comes to pinmux/pinconf those are only poked explicitly and
+those seems to be described in PEP nodes, such as:
 
-I am surely missing some kprobe context, but is it really safe to use this m=
-echanism to replace more than one instruction?=
+	Package (0x02)
+	{
+	    "TLMMGPIO",
+	    Package (0x06)
+	    {
+		0x2C,
+		One,
+		Zero,
+		One,
+		Zero,
+		Zero
+	    }
+	},
+
+So the pinctrl-sdm845/msm drivers gives us GPIOs, but for pinconf and
+pinmux there's a need for something very different from what we're used
+to.
+
+Regards,
+Bjorn
+
+> > ---
+> >  drivers/pinctrl/qcom/pinctrl-msm.c | 18 ++++++++++++++++++
+> >  drivers/pinctrl/qcom/pinctrl-msm.h |  1 +
+> >  2 files changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > index ee8119879c4c..3ac740b36508 100644
+> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > @@ -607,8 +607,23 @@ static int msm_gpio_init_valid_mask(struct gpio_chip *chip)
+> >         int ret;
+> >         unsigned int len, i;
+> >         unsigned int max_gpios = pctrl->soc->ngpios;
+> > +       const int *reserved = pctrl->soc->reserved_gpios;
+> >         u16 *tmp;
+> >
+> > +       /* Driver provided reserved list overrides DT and ACPI */
+> > +       if (reserved) {
+> > +               bitmap_fill(chip->valid_mask, max_gpios);
+> > +               for (i = 0; reserved[i] >= 0; i++) {
+> > +                       if (i >= max_gpios || reserved[i] >= max_gpios) {
+> > +                               dev_err(pctrl->dev, "invalid list of reserved GPIOs\n");
+> > +                               return -EINVAL;
+> > +                       }
+> > +                       clear_bit(reserved[i], chip->valid_mask);
+> > +               }
+> > +
+> > +               return 0;
+> > +       }
+> > +
+> >         /* The number of GPIOs in the ACPI tables */
+> >         len = ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL,
+> >                                                    0);
+> > @@ -964,6 +979,9 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
+> >
+> >  static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
+> >  {
+> > +       if (pctrl->soc->reserved_gpios)
+> > +               return true;
+> > +
+> >         return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
+> >  }
+> >
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+> > index c12048e54a6f..23b93ae92269 100644
+> > --- a/drivers/pinctrl/qcom/pinctrl-msm.h
+> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+> > @@ -121,6 +121,7 @@ struct msm_pinctrl_soc_data {
+> >         bool pull_no_keeper;
+> >         const char *const *tiles;
+> >         unsigned int ntiles;
+> > +       const int *reserved_gpios;
+> >  };
+> >
+> >  extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
+> > --
+> > 2.17.1
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
