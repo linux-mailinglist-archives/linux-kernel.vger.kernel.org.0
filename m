@@ -2,119 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8D7389AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 14:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04EFA389A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 14:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfFGMEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 08:04:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:46453 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727452AbfFGMEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 08:04:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45L1Qt4FFfz9sNd;
-        Fri,  7 Jun 2019 22:04:06 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559909057;
-        bh=SVse233ZP/gfWiwAkphdAiPtrWGA02EH5CK05uTxdco=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=shBn+/bZp4+i7ILKYT0rkicAc6qcmmQP1VlZ3saK03LKB9zc/NDFJ5cjhXqlEHyPz
-         2nllWsT+DJ6D5zDFTOmqEnjXbNpqikUY4YWSMMSeJwu5ucFQSEtL4eZUc6HVdKK4TE
-         qeoWLj3UUE4M9QEUmDXWh2ARrdai0SPhHQww77UvDoWOKjYJt4Bb67lNhTHgNKLPBy
-         6p7Lz1Bv/DqsVATPnHpr/EbevipmxUHrPDNyWaHhD6m4citn/ZVKw/Yu0UerC8T4Bm
-         d5uAfepi6bZG8PmazXKqBSrkpabcAFZqyXErnjGLWQxR8X21ypmE9ZV6+vmRkEQUdV
-         qL0IogG/ZPB0Q==
-Date:   Fri, 7 Jun 2019 22:03:26 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [RFC V3] mm: Generalize and rename notify_page_fault() as
- kprobe_page_fault()
-Message-ID: <20190607220326.1e21fc9c@canb.auug.org.au>
-In-Reply-To: <1559903655-5609-1-git-send-email-anshuman.khandual@arm.com>
-References: <1559903655-5609-1-git-send-email-anshuman.khandual@arm.com>
+        id S1728421AbfFGMDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 08:03:36 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41296 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbfFGMDg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 08:03:36 -0400
+Received: by mail-io1-f68.google.com with SMTP id w25so1188323ioc.8;
+        Fri, 07 Jun 2019 05:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GgXoFELKujxQgUrezAAIwZ5mmg2bA18yn3NhTCK/a9o=;
+        b=Gfv6svS8YD/Un6/WbVbWBDpEhBuWSCmc8gR8TuS1lOM04tWPGjItbH192WVGrXGIq9
+         YWPiPkkWzBOq4lUkQ2w0J01Wvzr1Mrm4Ub83/CchzJX00sNG3iQoYIHAA0F9wtneEd/7
+         +Z7gm9Js9ooU5BP8QB/vzSxhIiX8AwX4L6DBGHKTpAbQL372Brc4GbSOC1eV1qo4SSXH
+         FqI3XyGDzvCR1jWoGBV5F4EqxZQEB9DqReTkw9kLSQ0lc4Eu/TuQ2r4qupk/Vl4NpMEU
+         gMgo2GrA15VsZaVwl16IUfPVLuVw3wg+xuBIckDGZojLxmFi8xrA/tD+PIaCyAMJPIan
+         RE9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GgXoFELKujxQgUrezAAIwZ5mmg2bA18yn3NhTCK/a9o=;
+        b=PDIFk3oZoki/UFVGec+22BUa8DZe4ToM/Na5hP/9NGRZyR85uyPJUT65G8FSseg3WB
+         Lnlo+avgFkxBgFAcEp5xV2EfeuWza0n6gH4s1sL3JnHBdoDKnJc6z4wxJR6hlnwyskLg
+         7keK3aJUQiZCg+wzcHXjCS6XuwXrwBfvCAOrmJ5i7aw0P22y1Bylbcsw375VvPtsx5uO
+         vnspz7uqqGbtFocV/Rr4KbYkt4fjbVh0LXDEuMA2jEeE7HCA5L9ueey3ve/kbZvZUSmz
+         Ob+naolXUxeet4xU3x7zsxxRB8fA1GgaaBLJyI1PiApM7WkPHNpYcoTd86sxuNZTy52B
+         NLbA==
+X-Gm-Message-State: APjAAAXQAi30lnekrsQCfEbDyzYKpo9jKZ/GFLt+YM4PGwlwyjMYdeOX
+        P2f/EHUh5GxllWheXa4l5TO70xeZ
+X-Google-Smtp-Source: APXvYqyhDRAczyuhdmyHfJssHOFcvBSTHT/TX+0ZgWpoDooliH8aAZ7l8qOPeLIGqFS9C9NeV8LH/A==
+X-Received: by 2002:a6b:4f14:: with SMTP id d20mr17443949iob.219.1559909015258;
+        Fri, 07 Jun 2019 05:03:35 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-76-170-54.pppoe.mtu-net.ru. [91.76.170.54])
+        by smtp.googlemail.com with ESMTPSA id i131sm595627iof.34.2019.06.07.05.03.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 05:03:34 -0700 (PDT)
+Subject: Re: [PATCH V1 2/6] i2c: tegra: remove unnecessary variable init
+To:     Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1559908507-31192-1-git-send-email-bbiswas@nvidia.com>
+ <1559908507-31192-2-git-send-email-bbiswas@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9acd02f4-9b37-c31d-b6ae-af8c99bc8d9a@gmail.com>
+Date:   Fri, 7 Jun 2019 15:03:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/f4dkIceQ5ZrfVlbLmfAkblH"; protocol="application/pgp-signature"
+In-Reply-To: <1559908507-31192-2-git-send-email-bbiswas@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/f4dkIceQ5ZrfVlbLmfAkblH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+07.06.2019 14:55, Bitan Biswas пишет:
+> Remove variable initializations in functions that
+> are followed by assignments before use
+> 
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 00692d8..f7116b7 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -689,7 +689,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+>  	u32 val;
+>  	int err;
+>  	u32 clk_divisor, clk_multiplier;
+> -	u32 tsu_thd = 0;
+> +	u32 tsu_thd;
+>  	u8 tlow, thigh;
+>  
+>  	err = pm_runtime_get_sync(i2c_dev->dev);
+> @@ -1218,7 +1218,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+>  {
+>  	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+>  	int i;
+> -	int ret = 0;
+> +	int ret;
+>  
+>  	ret = pm_runtime_get_sync(i2c_dev->dev);
+>  	if (ret < 0) {
+> @@ -1489,7 +1489,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  	void __iomem *base;
+>  	phys_addr_t base_phys;
+>  	int irq;
+> -	int ret = 0;
+> +	int ret;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	base_phys = res->start;
+> 
 
-Hi Anshuman,
+Thanks!
 
-On Fri,  7 Jun 2019 16:04:15 +0530 Anshuman Khandual <anshuman.khandual@arm=
-.com> wrote:
->
-> +static nokprobe_inline bool kprobe_page_fault(struct pt_regs *regs,
-> +					      unsigned int trap)
-> +{
-> +	int ret =3D 0;
-> +
-> +	/*
-> +	 * To be potentially processing a kprobe fault and to be allowed
-> +	 * to call kprobe_running(), we have to be non-preemptible.
-> +	 */
-> +	if (kprobes_built_in() && !preemptible() && !user_mode(regs)) {
-> +		if (kprobe_running() && kprobe_fault_handler(regs, trap))
-> +			ret =3D 1;
-> +	}
-> +	return ret;
-> +}
-
-Since this is now declared as "bool" (thanks for that), you should make
-"ret" be bool and use true and false;
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/f4dkIceQ5ZrfVlbLmfAkblH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz6Uo4ACgkQAVBC80lX
-0GwAlwgAndGNjcRg/+OZtSy1kiUIeIc3sDi7Ok5AjcBz7eTGTC6rACK7/CqF74Ff
-Hw76yMUeoSjtJWLlhqmY0XI4ib30yQJSvSSWJyDvZpmgkDbNO69BK4rT4CO/d2YX
-sCodILuUU462hNmmfr9N6uWJGSeDWdEvbfitkR2PEzQAUSsQacEA8UB+bqf+zQ13
-xwBTJEE0YFg5UCqOcsE3bSTh/e+p7djYHrQIiZX0ntJOra+nJZuz/GfJQUmx4WYn
-AHgcP+Marnv0/MW4JDWYDtetq+Fmr96wk01Ex4gMytm7TcpL0asnQ0IEVwljvVr/
-HFKp+ZJLlwZP8lyt90zY76EEDgViPQ==
-=7Lk0
------END PGP SIGNATURE-----
-
---Sig_/f4dkIceQ5ZrfVlbLmfAkblH--
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
