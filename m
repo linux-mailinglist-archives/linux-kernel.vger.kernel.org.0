@@ -2,111 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB77938EFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B576F38F20
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfFGP0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:26:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52882 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729878AbfFGP0R (ORCPT
+        id S1729579AbfFGPca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:32:30 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39591 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728841AbfFGPca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:26:17 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x57FIt85005515
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Jun 2019 11:26:16 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2syst4td2g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:26:15 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 7 Jun 2019 16:26:11 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Jun 2019 16:26:09 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x57FQ89940304766
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Jun 2019 15:26:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B397A4062;
-        Fri,  7 Jun 2019 15:26:08 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 066E1A405B;
-        Fri,  7 Jun 2019 15:26:07 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.48])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  7 Jun 2019 15:26:06 +0000 (GMT)
-Subject: Re: [PATCH v3 2/2] ima: add enforce-evm and log-evm modes to
- strictly check EVM status
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        dmitry.kasatkin@huawei.com, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Fri, 07 Jun 2019 11:25:56 -0400
-In-Reply-To: <773c3301-7861-f28b-813a-1f2ff657bae8@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
-         <20190606112620.26488-3-roberto.sassu@huawei.com>
-         <1559917462.4278.253.camel@linux.ibm.com>
-         <93459fe8-f9b6-fe45-1ca7-2efb8854dc8b@huawei.com>
-         <1559920112.4278.264.camel@linux.ibm.com>
-         <773c3301-7861-f28b-813a-1f2ff657bae8@huawei.com>
+        Fri, 7 Jun 2019 11:32:30 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i34so2726403qta.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 08:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jPHq4OxP074Oynm5k40N1pEDJSRTgbxUT/ySAPSAN/g=;
+        b=mgDqnIZBA6Gyk3/0NfMutNIfj1G7UuL9197sMB2o2zLU6maboq4TpP6AkBdLmlwPhJ
+         20J0LzfYGqZASKtqrboNa9WLrIpQf/uHbUz0DkQ46tWXymwGRAQ0ZMNOFEC6xc5UVCDC
+         BPK17IQDb02K2wwmyhdXlmsQ4sXpngtWcr8UZwHLFjO/FH0tICMK86B9c3Z48gFCeJTj
+         SOWpKsFFSJnngDw1Je440yV/vA8RwkZHNlhOzcSn7gAA4ZCZjrD1p7whYqppnIMn1bhq
+         ZayNNP6pIqAjwMQxZ8KkV9Kb+1JhyNuKUimtV9S53FBMTg4jF1+nJ8SZYRn1SB/JSwf0
+         A/Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jPHq4OxP074Oynm5k40N1pEDJSRTgbxUT/ySAPSAN/g=;
+        b=gudmzRJCoozYB5Xz4x/Gw8aXsdj88E9EonQw4PnpdznwCPelnhwi9+/4EH2JcyoM8S
+         dO8Lq3ELwXdt7dRbrxd9squv09ZSz6Bl3SDoDO0GeK1h17bC1aG7Kuio4QZG0h+NDm94
+         ueKVHcRvNT7VypCDwm2l2bIhddvcBo/y8NHYWNh41EGFayCNea4YFK/EuSz8D76FA4+K
+         JuJkjzTObu4eY3L6MeixK6e3pG76EL1X0l6JwntKQ1Lltp+LfY9ZljEXv8ezCrb8g3YD
+         /MgvNZB9rhy631HxlGx8OBQoqE/mjJV+E/gEINjvtT5PqgVamIObGB5ZvT1Vhf+8bb9j
+         K7YA==
+X-Gm-Message-State: APjAAAU9AH+YVCIeuRYMw1qhBMzRO1GGpulW/4sgR9x/5AbaJAfrOpAY
+        JaTHlhsmzMVzAY2W7+15dTh2Wg==
+X-Google-Smtp-Source: APXvYqwEftljuOnjBWqRLIWBJyHK8pMOwSajpYXoDYal/be+IwViGPGypV7PqpotWIkVRwrSZXx3fw==
+X-Received: by 2002:ac8:2cba:: with SMTP id 55mr29893254qtw.260.1559921173712;
+        Fri, 07 Jun 2019 08:26:13 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id f34sm1359441qta.19.2019.06.07.08.26.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 08:26:13 -0700 (PDT)
+Message-ID: <1559921171.6132.57.camel@lca.pw>
+Subject: Re: "arm64: Silence gcc warnings about arch ABI drift" breaks clang
+From:   Qian Cai <cai@lca.pw>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Dave Martin <Dave.Martin@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org
+Date:   Fri, 07 Jun 2019 11:26:11 -0400
+In-Reply-To: <20190607152517.GC19862@fuggles.cambridge.arm.com>
+References: <1559920965.6132.56.camel@lca.pw>
+         <20190607152517.GC19862@fuggles.cambridge.arm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19060715-0020-0000-0000-000003481BC5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060715-0021-0000-0000-0000219B3678
-Message-Id: <1559921156.4278.276.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906070107
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-07 at 17:14 +0200, Roberto Sassu wrote:
-> On 6/7/2019 5:08 PM, Mimi Zohar wrote:
-> > On Fri, 2019-06-07 at 16:40 +0200, Roberto Sassu wrote:
-> >>> On Thu, 2019-06-06 at 13:26 +0200, Roberto Sassu wrote:
-> > 
-> >>>> Although this choice appears legitimate, it might not be suitable for
-> >>>> hardened systems, where the administrator expects that access is denied if
-> >>>> there is any error. An attacker could intentionally delete the EVM keys
-> >>>> from the system and set the file digest in security.ima to the actual file
-> >>>> digest so that the final appraisal status is INTEGRITY_PASS.
-> >>>
-> >>> Assuming that the EVM HMAC key is stored in the initramfs, not on some
-> >>> other file system, and the initramfs is signed, INTEGRITY_UNKNOWN
-> >>> would be limited to the rootfs filesystem.
-> >>
-> >> There is another issue. The HMAC key, like the public keys, should be
-> >> loaded when appraisal is disabled. This means that we have to create a
-> >> trusted key at early boot and defer the unsealing.
-> > 
-> > There is no need for IMA to appraise the public key file signature,
-> > since the certificate is signed by a key on the builtin/secondary
-> > trusted keyring.  With CONFIG_IMA_LOAD_X509 enabled, the public key
-> > can be loaded onto the IMA keyring with IMA-appraisal enabled, but
-> > without verifying the file signature.
+On Fri, 2019-06-07 at 16:25 +0100, Will Deacon wrote:
+> On Fri, Jun 07, 2019 at 11:22:45AM -0400, Qian Cai wrote:
+> > The linux-next commit "arm64: Silence gcc warnings about arch ABI drift" [1]
+> > breaks clang build where it screams that unknown option "-Wno-psabi" and
+> > generates errors below,
 > 
-> Yes, but access to the files containing the master key and the EVM key
-> is denied if appraisal is enabled.
+> So that can be easily fixed with cc-option...
+> 
+> > [1] https://lore.kernel.org/linux-arm-kernel/1559817223-32585-1-git-send-ema
+> > il-D
+> > ave.Martin@arm.com/
+> > 
+> > ./drivers/firmware/efi/libstub/arm-stub.stub.o: In function
+> > `install_memreserve_table':
+> > ./linux/drivers/firmware/efi/libstub/arm-stub.c:73: undefined reference to
+> > `__efistub___stack_chk_guard'
+> > ./linux/drivers/firmware/efi/libstub/arm-stub.c:73: undefined reference to
+> > `__efistub___stack_chk_guard'
+> > ./linux/drivers/firmware/efi/libstub/arm-stub.c:93: undefined reference to
+> > `__efistub___stack_chk_guard'
+> > ./linux/drivers/firmware/efi/libstub/arm-stub.c:93: undefined reference to
+> > `__efistub___stack_chk_guard'
+> > ./linux/drivers/firmware/efi/libstub/arm-stub.c:94: undefined reference to
+> > `__efistub___stack_chk_fail
+> 
+> ... but this looks unrelated. Are you saying you don't see these errors if
+> you revert Dave's patch?
 
-This is a key loading ordering issue.  Assuming you load the IMA key
-first, you should be able to verify the master and EVM keys.
-
-Mimi
-
+Yes.
