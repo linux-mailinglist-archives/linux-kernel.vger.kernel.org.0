@@ -2,175 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1197C383DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 07:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2A5E384AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfFGFpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 01:45:52 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41507 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfFGFpw (ORCPT
+        id S1726671AbfFGHB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:01:56 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45988 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfFGHBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 01:45:52 -0400
-Received: by mail-pf1-f196.google.com with SMTP id m30so20131pff.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 22:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dJSp45eadbpPiua3fEEFgrW9+FuYaMbkZIVwyRLMC2U=;
-        b=AfqAPhy++i//S9sHbQqCA3alpjIvPKt/GNYoUyPP3lhvM4MDccOobq71T1dlhrOxWO
-         +r92MQmb3BH7jtbgjiWtmm6ngjfZlfA+2vk3tOfWzgp9lCwl/LZDYYxNy2sLspaxlxYx
-         CdGLnhbKU2nbWJBeE4FBCKO+54QbavF03XYwtLL2tTWOf+x29EtNMsE9m/+RdUQYnQ+W
-         ZRHPHZu5ovzpOVJ0I+ozy14XVK7N3nu6nxnsYVvUswMXfTIgy+Bnmc59YS4UUJzDJKM9
-         SAkTt7NaAwJS1nr9g+0ch3ICArFyxuulK9PeKuN8r25GVCpMrEE/CuPt9eAjeEibic3f
-         QciA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dJSp45eadbpPiua3fEEFgrW9+FuYaMbkZIVwyRLMC2U=;
-        b=fxehBMkUVI9lvekh9gDtC7Lt+MkEVdTNw5mKR5dYkPd0HuNpSPWTqMody1NyyWPw6E
-         5k0MAbhml3F1RQHr3b3pESag0U6kvqOX128W2pWpngWQq8Ygqf01TOYMkGvbmoRWiniq
-         yX0hNSUhluTSf7VjJ6d+Zi1HPUy9nOrc+hLYc4BVPdIrziDucz2GW59sAkU1eQADLFhn
-         vM6BpdSLqXREYpEdiSPblZs8OV0wivAIJQ3OANL7ehYqlqkc1H3++1U4gbjqF89r8LEK
-         bTZKum0OF7rmPigMlcUCdSoO22EyZiAtSGBShB5TLZJ1dBca1qfDC3Qk2bHiarelIcLp
-         C6kw==
-X-Gm-Message-State: APjAAAWryIqYSKU7uICDRMR/RlIgyx312eWcygPKulVOuVBpfYuMKVLN
-        ptcbG0MV902CKYcqw5DzTf4=
-X-Google-Smtp-Source: APXvYqxdPjGW2D0I6fgd/G/4EUdY7BmcTAepA6nBxw6iEXG5ng8ST3WwWPut5/967MzkpstTsnJ+sg==
-X-Received: by 2002:a17:90a:1902:: with SMTP id 2mr3640902pjg.113.1559886351791;
-        Thu, 06 Jun 2019 22:45:51 -0700 (PDT)
-Received: from localhost.localdomain ([110.227.95.145])
-        by smtp.gmail.com with ESMTPSA id s5sm1138147pgj.60.2019.06.06.22.45.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 22:45:51 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     larry.finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        gregkh@linuxfoundation.org, straube.linux@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH] staging: rtl8712: recv_linux.c: Remove leading p from variable names
-Date:   Fri,  7 Jun 2019 11:15:38 +0530
-Message-Id: <20190607054538.20822-1-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 7 Jun 2019 03:01:55 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x575ngl4006282;
+        Fri, 7 Jun 2019 00:49:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559886582;
+        bh=MEagnH+kxa/s49pg8767gTrJDW79F25A6Ljg2yywMAM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=f4Y/Z1dOPufN9GWrG/ITdjZw+4v5bZsUm/7AJAaIo619OzOzhBVvcN2odiJZm8sY/
+         QhrE2jn/CsinbMhp47a42n+xS1VDzkj/LadgxyoESHMLtVVWawgGCc9g1lp1btvZMu
+         AvSg8JmBOvuHak6DBMnRTm/uQHH/BuYO8hnw4dbE=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x575ngto024423
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Jun 2019 00:49:42 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 7 Jun
+ 2019 00:49:42 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 7 Jun 2019 00:49:42 -0500
+Received: from [192.168.2.10] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x575ndR3104523;
+        Fri, 7 Jun 2019 00:49:40 -0500
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+CC:     <dan.j.williams@intel.com>, <tiwai@suse.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <mkumard@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502060446.GI3845@vkoul-mobl.Dlink>
+ <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+ <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+ <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
+ <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <d0db90e3-3d05-dfba-8768-28511d9ee3ac@ti.com>
+Date:   Fri, 7 Jun 2019 08:50:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove leading p from the following pointer variable names:
-- padapter
-- pmlmepriv
-- precv_frame
-- precvpriv
-- pfree_recv_queue
-- pattrib.
-Issue found with Coccinelle
+Jon,
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
----
- drivers/staging/rtl8712/recv_linux.c | 50 ++++++++++++++--------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+On 06/06/2019 15.37, Jon Hunter wrote:
+>> Looking at the drivers/dma/tegra210-adma.c for the
+>> TEGRA*_FIFO_CTRL_DEFAULT definition it is still not clear where the
+>> remote FIFO size would fit.
+>> There are fields for overflow and starvation(?) thresholds and TX/RX
+>> size (assuming word length, 3 == 32bits?).
+> 
+> The TX/RX size are the FIFO size. So 3 equates to a FIFO size of 3 * 64
+> bytes.
+> 
+>> Both threshold is set to one, so I assume currently ADMA is
+>> pushing/pulling data word by word.
+> 
+> That's different. That indicates thresholds when transfers start.
+> 
+>> Not sure what the burst size is used for, my guess would be that it is
+>> used on the memory (DDR) side for optimized, more efficient accesses?
+> 
+> That is the actual burst size.
+> 
+>> My guess is that the threshold values are the counter limits, if the DMA
+>> request counter reaches it then ADMA would do a threshold limit worth of
+>> push/pull to ADMAIF.
+>> Or there is another register where the remote FIFO size can be written
+>> and ADMA is counting back from there until it reaches the threshold (and
+>> pushes/pulling again threshold amount of data) so it keeps the FIFO
+>> filled with at least threshold amount of data?
+>>
+>> I think in both cases the threshold would be the maxburst.
+>>
+>> I suppose you have the patch for adma on how to use the fifo_size
+>> parameter? That would help understand what you are trying to achieve better.
+> 
+> Its quite simple, we would just use the FIFO size to set the fields
+> TEGRAXXX_ADMA_CH_FIFO_CTRL_TXSIZE/RXSIZE in the
+> TEGRAXXX_ADMA_CH_FIFO_CTRL register. That's all.
 
-diff --git a/drivers/staging/rtl8712/recv_linux.c b/drivers/staging/rtl8712/recv_linux.c
-index 4e20cbafa9fb..84c4c8580f9a 100644
---- a/drivers/staging/rtl8712/recv_linux.c
-+++ b/drivers/staging/rtl8712/recv_linux.c
-@@ -72,11 +72,11 @@ int r8712_os_recvbuf_resource_free(struct _adapter *padapter,
- 	return _SUCCESS;
- }
- 
--void r8712_handle_tkip_mic_err(struct _adapter *padapter, u8 bgroup)
-+void r8712_handle_tkip_mic_err(struct _adapter *adapter, u8 bgroup)
- {
- 	union iwreq_data wrqu;
- 	struct iw_michaelmicfailure ev;
--	struct mlme_priv *pmlmepriv  = &padapter->mlmepriv;
-+	struct mlme_priv *mlmepriv  = &adapter->mlmepriv;
- 
- 	memset(&ev, 0x00, sizeof(ev));
- 	if (bgroup)
-@@ -84,54 +84,54 @@ void r8712_handle_tkip_mic_err(struct _adapter *padapter, u8 bgroup)
- 	else
- 		ev.flags |= IW_MICFAILURE_PAIRWISE;
- 	ev.src_addr.sa_family = ARPHRD_ETHER;
--	ether_addr_copy(ev.src_addr.sa_data, &pmlmepriv->assoc_bssid[0]);
-+	ether_addr_copy(ev.src_addr.sa_data, &mlmepriv->assoc_bssid[0]);
- 	memset(&wrqu, 0x00, sizeof(wrqu));
- 	wrqu.data.length = sizeof(ev);
--	wireless_send_event(padapter->pnetdev, IWEVMICHAELMICFAILURE, &wrqu,
-+	wireless_send_event(adapter->pnetdev, IWEVMICHAELMICFAILURE, &wrqu,
- 			    (char *)&ev);
- }
- 
--void r8712_recv_indicatepkt(struct _adapter *padapter,
--			    union recv_frame *precv_frame)
-+void r8712_recv_indicatepkt(struct _adapter *adapter,
-+			    union recv_frame *recvframe)
- {
--	struct recv_priv *precvpriv;
--	struct  __queue	*pfree_recv_queue;
-+	struct recv_priv *recvpriv;
-+	struct  __queue	*free_recv_queue;
- 	_pkt *skb;
--	struct rx_pkt_attrib *pattrib = &precv_frame->u.hdr.attrib;
-+	struct rx_pkt_attrib *attrib = &recvframe->u.hdr.attrib;
- 
--	precvpriv = &padapter->recvpriv;
--	pfree_recv_queue = &precvpriv->free_recv_queue;
--	skb = precv_frame->u.hdr.pkt;
-+	recvpriv = &adapter->recvpriv;
-+	free_recv_queue = &recvpriv->free_recv_queue;
-+	skb = recvframe->u.hdr.pkt;
- 	if (!skb)
- 		goto _recv_indicatepkt_drop;
--	skb->data = precv_frame->u.hdr.rx_data;
--	skb->len = precv_frame->u.hdr.len;
-+	skb->data = recvframe->u.hdr.rx_data;
-+	skb->len = recvframe->u.hdr.len;
- 	skb_set_tail_pointer(skb, skb->len);
--	if ((pattrib->tcpchk_valid == 1) && (pattrib->tcp_chkrpt == 1))
-+	if ((attrib->tcpchk_valid == 1) && (attrib->tcp_chkrpt == 1))
- 		skb->ip_summed = CHECKSUM_UNNECESSARY;
- 	else
- 		skb->ip_summed = CHECKSUM_NONE;
--	skb->dev = padapter->pnetdev;
--	skb->protocol = eth_type_trans(skb, padapter->pnetdev);
-+	skb->dev = adapter->pnetdev;
-+	skb->protocol = eth_type_trans(skb, adapter->pnetdev);
- 	netif_rx(skb);
--	precv_frame->u.hdr.pkt = NULL; /* pointers to NULL before
-+	recvframe->u.hdr.pkt = NULL; /* pointers to NULL before
- 					* r8712_free_recvframe()
- 					*/
--	r8712_free_recvframe(precv_frame, pfree_recv_queue);
-+	r8712_free_recvframe(recvframe, free_recv_queue);
- 	return;
- _recv_indicatepkt_drop:
- 	 /*enqueue back to free_recv_queue*/
--	if (precv_frame)
--		r8712_free_recvframe(precv_frame, pfree_recv_queue);
--	precvpriv->rx_drop++;
-+	if (recvframe)
-+		r8712_free_recvframe(recvframe, free_recv_queue);
-+	recvpriv->rx_drop++;
- }
- 
- static void _r8712_reordering_ctrl_timeout_handler (struct timer_list *t)
- {
--	struct recv_reorder_ctrl *preorder_ctrl =
--			 from_timer(preorder_ctrl, t, reordering_ctrl_timer);
-+	struct recv_reorder_ctrl *reorder_ctrl =
-+			 from_timer(reorder_ctrl, t, reordering_ctrl_timer);
- 
--	r8712_reordering_ctrl_timeout_handler(preorder_ctrl);
-+	r8712_reordering_ctrl_timeout_handler(reorder_ctrl);
- }
- 
- void r8712_init_recv_timer(struct recv_reorder_ctrl *preorder_ctrl)
--- 
-2.19.1
+Hrm, it is still not clear how all of these fits together.
 
+What happens if you configure ADMA side:
+BURST = 10
+TX/RXSIZE = 100 (100 * 64 bytes?) /* FIFO_SIZE? */
+*THRES = 5
+
+And if you change the *THRES to 10?
+And if you change the TX/RXSIZE to 50 (50 * 64 bytes?)
+And if you change the BURST to 5?
+
+In other words what is the relation between all of these?
+
+There must be a rule and constraints around these and if we do really
+need a new parameter for ADMA's FIFO_SIZE I'd like it to be defined in a
+generic way so others could benefit without 'misusing' a fifo_size
+parameter for similar, but not quite fifo_size information.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
