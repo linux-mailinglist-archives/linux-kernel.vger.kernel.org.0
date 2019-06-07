@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E64B38F61
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C7E38F63
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbfFGPlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:41:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50710 "EHLO mail.kernel.org"
+        id S1730243AbfFGPlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:41:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730198AbfFGPlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:41:06 -0400
+        id S1730198AbfFGPlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:41:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBF1E2146F;
-        Fri,  7 Jun 2019 15:41:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3F8721473;
+        Fri,  7 Jun 2019 15:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922066;
-        bh=KNFfvqEjrqV1o0Cnpl7tCj8fpBBoVZfiCSerGYW3EP8=;
+        s=default; t=1559922069;
+        bh=bdchFBGelyjrQhZP75ch+5StzXsh7Me+0soDNYTxoSU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O2t58nrYG286vssbsdYphTLCIkiQbVC67luTG/tK7JLihYcw2O9Pr2aCatgrGfZlL
-         IDuwwftkiiB2r9MiEEZRLgrV23DvGnUmCeDGen8QnQROaiu44/wvoEFAhXwRQKJ3Qe
-         Ay3hdM8vE7EAU8XoQELqbznP6FIJetXQBQqJzlA4=
+        b=Yx0Dhlz7c7W4F6tWOS0rG1PLaMyopBSDLZQPnovUXq0df91fW7Va4YSj4vR9rPezE
+         QVBycLype1WLGPrA4jlOrtfU4ey0/echY/k/UehuhJfB5caoDxUSuIpVOKgXQN3jji
+         UvUOLRKVk3guJ36kVr42yYpZepeuDQf+gIDLTniM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Raul E Rangel <rrangel@chromium.org>,
         Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 24/69] xhci: Use %zu for printing size_t type
-Date:   Fri,  7 Jun 2019 17:39:05 +0200
-Message-Id: <20190607153851.370994242@linuxfoundation.org>
+Subject: [PATCH 4.14 25/69] xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()
+Date:   Fri,  7 Jun 2019 17:39:06 +0200
+Message-Id: <20190607153851.495996005@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
 References: <20190607153848.271562617@linuxfoundation.org>
@@ -44,47 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-commit c1a145a3ed9a40f3b6145feb97789e8eb49c5566 upstream.
+commit f7fac17ca925faa03fc5eb854c081a24075f8bad upstream.
 
-Commit 597c56e372da ("xhci: update bounce buffer with correct sg num")
-caused the following build warnings:
+Xhci_handshake() implements the algorithm already captured by
+readl_poll_timeout_atomic(). Convert the former to use the latter to
+avoid repetition.
 
-drivers/usb/host/xhci-ring.c:676:19: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
+Turned out this patch also fixes a bug on the AMD Stoneyridge platform
+where usleep(1) sometimes takes over 10ms.
+This means a 5 second timeout can easily take over 15 seconds which will
+trigger the watchdog and reboot the system.
 
-Use %zu for printing size_t type in order to fix the warnings.
-
-Fixes: 597c56e372da ("xhci: update bounce buffer with correct sg num")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+[Add info about patch fixing a bug to commit message -Mathias]
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Tested-by: Raul E Rangel <rrangel@chromium.org>
+Reviewed-by: Raul E Rangel <rrangel@chromium.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-ring.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/host/xhci.c |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -684,7 +684,7 @@ static void xhci_unmap_td_bounce_buffer(
- 	len = sg_pcopy_from_buffer(urb->sg, urb->num_sgs, seg->bounce_buf,
- 			     seg->bounce_len, seg->bounce_offs);
- 	if (len != seg->bounce_len)
--		xhci_warn(xhci, "WARN Wrong bounce buffer read length: %ld != %d\n",
-+		xhci_warn(xhci, "WARN Wrong bounce buffer read length: %zu != %d\n",
- 				len, seg->bounce_len);
- 	seg->bounce_len = 0;
- 	seg->bounce_offs = 0;
-@@ -3225,7 +3225,7 @@ static int xhci_align_td(struct xhci_hcd
- 				   seg->bounce_buf, new_buff_len, enqd_len);
- 		if (len != seg->bounce_len)
- 			xhci_warn(xhci,
--				"WARN Wrong bounce buffer write length: %ld != %d\n",
-+				"WARN Wrong bounce buffer write length: %zu != %d\n",
- 				len, seg->bounce_len);
- 		seg->bounce_dma = dma_map_single(dev, seg->bounce_buf,
- 						 max_pkt, DMA_TO_DEVICE);
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include <linux/pci.h>
++#include <linux/iopoll.h>
+ #include <linux/irq.h>
+ #include <linux/log2.h>
+ #include <linux/module.h>
+@@ -62,7 +63,6 @@ static bool td_on_ring(struct xhci_td *t
+ 	return false;
+ }
+ 
+-/* TODO: copied from ehci-hcd.c - can this be refactored? */
+ /*
+  * xhci_handshake - spin reading hc until handshake completes or fails
+  * @ptr: address of hc register to be read
+@@ -79,18 +79,16 @@ static bool td_on_ring(struct xhci_td *t
+ int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
+ {
+ 	u32	result;
++	int	ret;
+ 
+-	do {
+-		result = readl(ptr);
+-		if (result == ~(u32)0)		/* card removed */
+-			return -ENODEV;
+-		result &= mask;
+-		if (result == done)
+-			return 0;
+-		udelay(1);
+-		usec--;
+-	} while (usec > 0);
+-	return -ETIMEDOUT;
++	ret = readl_poll_timeout_atomic(ptr, result,
++					(result & mask) == done ||
++					result == U32_MAX,
++					1, usec);
++	if (result == U32_MAX)		/* card removed */
++		return -ENODEV;
++
++	return ret;
+ }
+ 
+ /*
 
 
