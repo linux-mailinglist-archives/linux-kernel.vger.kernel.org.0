@@ -2,115 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747E43880F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 12:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DDA3882E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 12:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbfFGKjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 06:39:16 -0400
-Received: from mail-lj1-f176.google.com ([209.85.208.176]:39857 "EHLO
-        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726584AbfFGKjQ (ORCPT
+        id S1728253AbfFGKsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 06:48:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45562 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbfFGKsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 06:39:16 -0400
-Received: by mail-lj1-f176.google.com with SMTP id v18so1291672ljh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 03:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ufgg86kQKWKmK+WFixqatapUs0G96Q5E9DutnoyVCl0=;
-        b=a+liCGMou39XsFuyMFoXxs0fhI2TulhehewrXPgrym1Z9ww7d9X8rSp2vWmuiyhexX
-         FvrRPlop0SI5R0rnKZ5HUsyh/mQZzPEkF8gaKI+9C1HXFvV2XipJ1b5nAz+IX9pbcwjX
-         6dNZKupmCz+enYiIx2UjRACnxgsKyzxQVapcapLDWlClKWossntTgsipBA10UAPQqRyb
-         fI5aOEfD+69PdT0dMyaZLWeuhuiilVPIrbPSndHPRnaRC80CDAGGGplZF2L6KjgEnhfz
-         2x2YiPGWSHxYvxeHR28rsuA7L1X9OjdQZxvxkHhw8SUDeiYrDw/1L2sJm48Fpdk8VSMy
-         0Krw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ufgg86kQKWKmK+WFixqatapUs0G96Q5E9DutnoyVCl0=;
-        b=CKEYd1XaplzcLxoZHjT+dR4zc9mtfqVgb2Rgzxf5xW+22oVNbCsoLyhexensqbeZWP
-         xUdgoilgWCy83pogm/SAOR05g9uovkST7zV99w5glhlt/95YC+B4Jc8w5vljnlkbWQzr
-         +2a6j9f4N/UDOJvOzG8JC6LDUPDHSMVVITW/Q4+9Xb0FIjfsMiG1BNHLWaqYoRASNBBW
-         mIdEXi21lsVSPMe1eGjl9bCdukSo1SAnY6u/k0kSXy7sHsQzmTriv+ulij7g9NbP44IE
-         nsoVbWlhdaxwXd8JqvJr5d4Llv2piiS+Gido8HGTP/fitRe4KIBvmgMlvJDSLTg/QLCL
-         FdPQ==
-X-Gm-Message-State: APjAAAUGOmlno6l0KYKLDGLqC1Bcsh7OJUXjO8r8GUgFmIzcdQTURQHA
-        PNwl3QTrWh7s3PzivqdrZgtXbg==
-X-Google-Smtp-Source: APXvYqxyYC6K60y/Nisr80rQsX2lNaVdM5Wfw2ZH50jKBIkUKybN8Iyi7OR05ngCGGROqMVaGOIiOw==
-X-Received: by 2002:a2e:3314:: with SMTP id d20mr14336735ljc.122.1559903953918;
-        Fri, 07 Jun 2019 03:39:13 -0700 (PDT)
-Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id n10sm345448lfe.24.2019.06.07.03.39.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 03:39:13 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC and MEMSTICK fixes for v5.2-rc4
-Date:   Fri,  7 Jun 2019 12:39:11 +0200
-Message-Id: <20190607103911.4623-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Fri, 7 Jun 2019 06:48:11 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hZCNJ-0000V3-NL; Fri, 07 Jun 2019 10:45:54 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: bcm2835: fix memork leak on unfree'd pll struct
+Date:   Fri,  7 Jun 2019 11:45:33 +0100
+Message-Id: <20190607104533.14700-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Colin Ian King <colin.king@canonical.com>
 
-Here's a PR with a couple of MMC and MEMSTICK fixes intended for v5.2-rc4.
-Details about the highlights are as usual found in the signed tag.
+The pll struct is being allocated but not kfree'd on an error return
+path when devm_clk_hw_register fails.  Fix this with a kfree on pll
+if an error occurs.
 
-Please pull this in!
+Addresses-Coverity: ("Resource leak")
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Kind regards
-Ulf Hansson
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 770bb01f523e..90584deaf416 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1310,8 +1310,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+ 	pll->hw.init = &init;
+ 
+ 	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
+-	if (ret)
++	if (ret) {
++		kfree(pll);
+ 		return NULL;
++	}
+ 	return &pll->hw;
+ }
+ 
+-- 
+2.20.1
 
-
-The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
-
-  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.2-rc2
-
-for you to fetch changes up to 7397993145872c74871ab2aa7fa26a427144088a:
-
-  mmc: sdhci_am654: Fix SLOTTYPE write (2019-06-03 15:18:25 +0200)
-
-----------------------------------------------------------------
-MMC host:
- - sdhci: Fix SDIO IRQ thread deadlock
- - sdhci-tegra: Fix a warning message
- - sdhci_am654: Fix SLOTTYPE write
- - meson-gx: Fix IRQ ack
- - tmio: Fix SCC error handling to avoid false positive CRC error
-
-MEMSTICK core:
- - mspro_block: Fix returning a correct error code
-
-----------------------------------------------------------------
-Adrian Hunter (1):
-      mmc: sdhci: Fix SDIO IRQ thread deadlock
-
-Dan Carpenter (2):
-      memstick: mspro_block: Fix an error code in mspro_block_issue_req()
-      mmc: tegra: Fix a warning message
-
-Faiz Abbas (1):
-      mmc: sdhci_am654: Fix SLOTTYPE write
-
-Jerome Brunet (1):
-      mmc: meson-gx: fix irq ack
-
-Takeshi Saito (1):
-      mmc: tmio: fix SCC error handling to avoid false positive CRC error
-
- drivers/memstick/core/mspro_block.c | 13 ++++++-------
- drivers/mmc/host/meson-gx-mmc.c     |  6 +++---
- drivers/mmc/host/sdhci-tegra.c      |  2 +-
- drivers/mmc/host/sdhci.c            | 24 +++++++++++++-----------
- drivers/mmc/host/sdhci_am654.c      |  2 +-
- drivers/mmc/host/tmio_mmc_core.c    |  3 ++-
- 6 files changed, 26 insertions(+), 24 deletions(-)
