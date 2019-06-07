@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE9238F87
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:42:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACFAA39020
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbfFGPmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:42:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53278 "EHLO mail.kernel.org"
+        id S1731917AbfFGPtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:49:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730604AbfFGPmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:42:33 -0400
+        id S1730322AbfFGPtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:49:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89132214C6;
-        Fri,  7 Jun 2019 15:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D93D20840;
+        Fri,  7 Jun 2019 15:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922153;
-        bh=Jf33kmLLFmEOiNWvM0nQgXO0kil+1qKY4cJex/Oqgak=;
+        s=default; t=1559922547;
+        bh=i0rXYPA+kVCel0/TEtRCT7TCNOUBC00D8dg5+vPFZVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pr1dL4kri3GG4GAjxJHXoADY+SYs7TOMT0salUBXqtThkWAXPChF+CE5YzkbvkPQ2
-         clxFc1fHu7Fo+itRE2H0r8Tggity5k7Wh4CBI6XV4fesQxHdQ07P0kY7C2ClGa9cEw
-         bvZ5Z4E7ptrgIFI2bqULRr/Kgc+OQnrWGAjt59+g=
+        b=Yg/GydUXPV57Zl30K3rhHzJBSimE4qeCQOieDE8R8hKXeBND0vrYvl9li8d8sCWsR
+         WpJ3DiscoYmetB3mJKOIaI0N/HIH/Wg0OifJmwGebROiayfGjUl9K/4F81/QxmLFLH
+         OssJJMi16vF8TggUR3nd2/ihEvH82KOjMroOoVQY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Rodin <mrodin@de.adit-jv.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "George G. Davis" <george_davis@mentor.com>
-Subject: [PATCH 4.14 56/69] serial: sh-sci: disable DMA for uart_console
+        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 5.1 52/85] signal/arm64: Use force_sig not force_sig_fault for SIGKILL
 Date:   Fri,  7 Jun 2019 17:39:37 +0200
-Message-Id: <20190607153855.055695580@linuxfoundation.org>
+Message-Id: <20190607153855.329078761@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,46 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: George G. Davis <george_davis@mentor.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 099506cbbc79c0bd52b19cb6b930f256dabc3950 upstream.
+commit d76cac67db40c172791ce07948367b96a758e45b upstream.
 
-As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
-console UART"), UART console lines use low-level PIO only access functions
-which will conflict with use of the line when DMA is enabled, e.g. when
-the console line is also used for systemd messages. So disable DMA
-support for UART console lines.
+I don't think this is userspace visible but SIGKILL does not have
+any si_codes that use the fault member of the siginfo union.  Correct
+this the simple way and call force_sig instead of force_sig_fault when
+the signal is SIGKILL.
 
-Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
-Link: https://patchwork.kernel.org/patch/10929511/
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The two know places where synchronous SIGKILL are generated are
+do_bad_area and fpsimd_save.  The call paths to force_sig_fault are:
+do_bad_area
+  arm64_force_sig_fault
+    force_sig_fault
+force_signal_inject
+  arm64_notify_die
+    arm64_force_sig_fault
+       force_sig_fault
+
+Which means correcting this in arm64_force_sig_fault is enough
+to ensure the arm64 code is not misusing the generic code, which
+could lead to maintenance problems later.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: George G. Davis <george_davis@mentor.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dave Martin <Dave.Martin@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Fixes: af40ff687bc9 ("arm64: signal: Ensure si_code is valid for all fault signals")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/sh-sci.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/kernel/traps.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1479,6 +1479,13 @@ static void sci_request_dma(struct uart_
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -256,7 +256,10 @@ void arm64_force_sig_fault(int signo, in
+ 			   const char *str)
+ {
+ 	arm64_show_signal(signo, str);
+-	force_sig_fault(signo, code, addr, current);
++	if (signo == SIGKILL)
++		force_sig(SIGKILL, current);
++	else
++		force_sig_fault(signo, code, addr, current);
+ }
  
- 	dev_dbg(port->dev, "%s: port %d\n", __func__, port->line);
- 
-+	/*
-+	 * DMA on console may interfere with Kernel log messages which use
-+	 * plain putchar(). So, simply don't use it with a console.
-+	 */
-+	if (uart_console(port))
-+		return;
-+
- 	if (!port->dev->of_node)
- 		return;
- 
+ void arm64_force_sig_mceerr(int code, void __user *addr, short lsb,
 
 
