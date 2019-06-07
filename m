@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F26390EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82DD938FA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731176AbfFGPzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:55:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56950 "EHLO mail.kernel.org"
+        id S1730916AbfFGPnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729992AbfFGPpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:45:10 -0400
+        id S1730064AbfFGPnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:43:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC0D32146E;
-        Fri,  7 Jun 2019 15:45:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6BBC21473;
+        Fri,  7 Jun 2019 15:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922310;
-        bh=TwpQH5IEGVm1BfQanqjx4j2oQNl5Cm9iB/CvJp+FJHQ=;
+        s=default; t=1559922221;
+        bh=ynQAkxST+KdBn8isNpaw+38jRg7gcKpliyVmwBR2Z9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LkNAabbpIJzoAEzxyzsKsOfkq7icBzBLElGAYfmZz4ChDxDbw/AJwpj8/hZ226i78
-         TgK+mMz6L/of1K4dYO1goLbVkkHEh9RT3dwecieZkfcbJYzkqua28fd7HSWQ9RXKlE
-         llsHG+lr8FFVrcxYg0UJ8rVTZBji59/k25646rvs=
+        b=QpXxeYPdgx7EuWl/hZwTS9QZ+z36gsZ7Q+onieLs6pAWqAjVNI9Gjw9kIhA4cfEbR
+         vKZkfdsKRAt5NiW8i/mrAAOf+PFqvIHuyktm/72CmTdp4U0N1BYg3h+RwQG1G8TZNR
+         tffLfIxg8V/1P2QJz65iagldrD08WO6uHW+U6lH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+71f1e64501a309fcc012@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 09/73] USB: Fix slab-out-of-bounds write in usb_get_bos_descriptor
-Date:   Fri,  7 Jun 2019 17:38:56 +0200
-Message-Id: <20190607153849.804860791@linuxfoundation.org>
+        stable@vger.kernel.org, oliver Neukum <oneukum@suse.com>,
+        syzbot+a0cbdbd6d169020c8959@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 10/73] USB: sisusbvga: fix oops in error path of sisusb_probe
+Date:   Fri,  7 Jun 2019 17:38:57 +0200
+Message-Id: <20190607153849.941441210@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
 References: <20190607153848.669070800@linuxfoundation.org>
@@ -43,38 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit a03ff54460817c76105f81f3aa8ef655759ccc9a upstream.
+commit 9a5729f68d3a82786aea110b1bfe610be318f80a upstream.
 
-The syzkaller USB fuzzer found a slab-out-of-bounds write bug in the
-USB core, caused by a failure to check the actual size of a BOS
-descriptor.  This patch adds a check to make sure the descriptor is at
-least as large as it is supposed to be, so that the code doesn't
-inadvertently access memory beyond the end of the allocated region
-when assigning to dev->bos->desc->bNumDeviceCaps later on.
+The pointer used to log a failure of usb_register_dev() must
+be set before the error is logged.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+71f1e64501a309fcc012@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+v2: fix that minor is not available before registration
+
+Signed-off-by: oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+a0cbdbd6d169020c8959@syzkaller.appspotmail.com
+Fixes: 7b5cd5fefbe02 ("USB: SisUSB2VGA: Convert printk to dev_* macros")
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/config.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/misc/sisusbvga/sisusb.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -936,8 +936,8 @@ int usb_get_bos_descriptor(struct usb_de
+--- a/drivers/usb/misc/sisusbvga/sisusb.c
++++ b/drivers/usb/misc/sisusbvga/sisusb.c
+@@ -3029,6 +3029,13 @@ static int sisusb_probe(struct usb_inter
  
- 	/* Get BOS descriptor */
- 	ret = usb_get_descriptor(dev, USB_DT_BOS, 0, bos, USB_DT_BOS_SIZE);
--	if (ret < USB_DT_BOS_SIZE) {
--		dev_err(ddev, "unable to get BOS descriptor\n");
-+	if (ret < USB_DT_BOS_SIZE || bos->bLength < USB_DT_BOS_SIZE) {
-+		dev_err(ddev, "unable to get BOS descriptor or descriptor too short\n");
- 		if (ret >= 0)
- 			ret = -ENOMSG;
- 		kfree(bos);
+ 	mutex_init(&(sisusb->lock));
+ 
++	sisusb->sisusb_dev = dev;
++	sisusb->vrambase   = SISUSB_PCI_MEMBASE;
++	sisusb->mmiobase   = SISUSB_PCI_MMIOBASE;
++	sisusb->mmiosize   = SISUSB_PCI_MMIOSIZE;
++	sisusb->ioportbase = SISUSB_PCI_IOPORTBASE;
++	/* Everything else is zero */
++
+ 	/* Register device */
+ 	retval = usb_register_dev(intf, &usb_sisusb_class);
+ 	if (retval) {
+@@ -3039,13 +3046,7 @@ static int sisusb_probe(struct usb_inter
+ 		goto error_1;
+ 	}
+ 
+-	sisusb->sisusb_dev = dev;
+-	sisusb->minor      = intf->minor;
+-	sisusb->vrambase   = SISUSB_PCI_MEMBASE;
+-	sisusb->mmiobase   = SISUSB_PCI_MMIOBASE;
+-	sisusb->mmiosize   = SISUSB_PCI_MMIOSIZE;
+-	sisusb->ioportbase = SISUSB_PCI_IOPORTBASE;
+-	/* Everything else is zero */
++	sisusb->minor = intf->minor;
+ 
+ 	/* Allocate buffers */
+ 	sisusb->ibufsize = SISUSB_IBUF_SIZE;
 
 
