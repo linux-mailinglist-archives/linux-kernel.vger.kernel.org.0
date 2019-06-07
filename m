@@ -2,112 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C88D3965F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9436039662
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731374AbfFGUDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 16:03:20 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38840 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731356AbfFGUDO (ORCPT
+        id S1731401AbfFGUDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 16:03:38 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45803 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729342AbfFGUDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 16:03:14 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a186so1778906pfa.5;
-        Fri, 07 Jun 2019 13:03:13 -0700 (PDT)
+        Fri, 7 Jun 2019 16:03:38 -0400
+Received: by mail-oi1-f195.google.com with SMTP id m206so2260128oib.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 13:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4w4qky68sS5jtzYYwPL+DoWN4LFY4kdxoZDOz0CE2m0=;
-        b=LgNRd8LSitogz+gT+KWPVWiaFBHa94azY6rqI620v4uzWLQwBq513CRAZa26EkJx0e
-         LSB43j3SVg8h9DLdZUWir8zkzvulNvjhFijFCy7xTwEa42IHqxvrLboEQS+vFT9qXNQu
-         /fmxYdpsuSL0bqWPQar9sU3n9ZuVizlfiO/wvEedrM6442TB/NZ8K0jORP2TT2JTlO2/
-         tdoJ1g45kLfgSMHak/i8YfAEqbTphyyvhNgeGs9hlcINg+caVr4P0FsN7jQDIO8FEeYu
-         qbMUqbFdVJEV/YXTgHkoCLGb/dQvSquaA8c8vC2p0fwGNwflkXhaVRTEeHpQcSXDlIul
-         4CsQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tNWHofgNaqy6pErzI2UDdlfPXYGdisLICCNigvI4kL0=;
+        b=u6rXT3Xk89E7qKZJuqet/kerwsW/8pbifYfbULG0Hl/9cqx/I2ZRAEyvBG62o4extZ
+         wAaIEjw3XjBv16xyVl1le/CrVWXfxtjbO+/oJacrZ7oKh3hvurUvbwDA/9HTSM20GBjn
+         w5BBygSxhP2JKc63CxyI3teYBc84w8qnOmwxMKIgAOtMMiuAcSIq4AtgY5fyAra+CJHI
+         oF4c/P4dsqTzwVfwmGRtz2IoT9hpxJhBJtN/CXH5nQ6lK38J+bgrm3NiRudTmRV4xr8B
+         w9zoN74jsv49+DgrTPWzcfpX7kTtx8FhE+9Qxspy8dgylv58d2b5qynGCr7A6rUP8kjG
+         xw1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4w4qky68sS5jtzYYwPL+DoWN4LFY4kdxoZDOz0CE2m0=;
-        b=lponJH9H3OUnwjTJWNjQFRBdGiUfNnvqG37O4mZce43SlyZxygRCpTZ2C+HFnXJUEI
-         Eq8XJL+FXT/lqkDHVM50zI53fEcqWxdwSjGhIY3H8jFR2QfitA74mRqylWusZziXT+ii
-         0eARCLPQg8XegosqWS1AjvMbiWe38tYeaUGHEDVMxEUBpWX+DANOlnF9vCXEX3xoeBHc
-         X95tTcEzrKdRBA2qircHL8RHIhiWIMeIMrQEqfFHANPfKTE6wpbG2NA/DVJJC8Ml5AaP
-         CXH/80sb0gcJ5kfPh23wIP20B0oxHFdh0+IupnBVTKUkXCj1QfCHuJJ3h2sq1Qc6yQT3
-         eXCQ==
-X-Gm-Message-State: APjAAAWF2kZlzmp44t2X/Lk9XSKSzBAgcM0w1PJzYjwKjM1SVAO3zrVY
-        yNsUq6aug6UtoR2AKWzm/BBGOwcMntA=
-X-Google-Smtp-Source: APXvYqwEKcpXbXXB0prW1dxsN3n80G75LdHkFxnoPW39VjKDXQ8wYzh5UzsyaJuilZbaOSVtjpbPOg==
-X-Received: by 2002:a63:c744:: with SMTP id v4mr4617896pgg.370.1559937792698;
-        Fri, 07 Jun 2019 13:03:12 -0700 (PDT)
-Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id s5sm3289405pgj.60.2019.06.07.13.03.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 13:03:12 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] crypto: caam - always select job ring via RSR on i.MX8MQ
-Date:   Fri,  7 Jun 2019 13:02:25 -0700
-Message-Id: <20190607200225.21419-5-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607200225.21419-1-andrew.smirnov@gmail.com>
-References: <20190607200225.21419-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tNWHofgNaqy6pErzI2UDdlfPXYGdisLICCNigvI4kL0=;
+        b=f9h8q5v0h0hUsGaNFpZKzsTLmS578PnxE8otJ1vmi880D5+EUTNI627/DOqhMkFNtD
+         wvmxtQc7C6XIvCrpZsUl0F7ZrZz9We55pmqyQvlB/cghHm17bs60wdM/q2PIoM7seR9T
+         upKT1C8MuZUZzvhnYsfHIkzjBPJkkwAq6qNFhTqKgmwG43ttU3F1XRemZqybOSJxzNWq
+         9QITdXDeKb83FuYZdwmm4t5Wbo/1nggSrtW43QsXl4/j+ZweGjYcYQmDVSvRzhMpz3Rm
+         pRzMaBSzScBVDVr3IAvo0NEbfmt1SkG4l1fcq0W1U3KmPN4hzL4Od7gv13Nydy6LMXWF
+         TgyA==
+X-Gm-Message-State: APjAAAUl9PnEILvcZFbn+/sJKR/V9KsFwusN2yNmBGbGlu+lBlRcjlDA
+        Q3rjZdwrZUsGHN7gDClbU9iLxZq/RmSmW0ZG9sO3dw==
+X-Google-Smtp-Source: APXvYqzjRw0XmHbFfB6N+LCDL02dSt9gHYEVSEZPCDUNI5M9/YAyKIO6lrQhDDoN+9fLMKTRkM2lsSceY96vks8ggTQ=
+X-Received: by 2002:aca:aa88:: with SMTP id t130mr2819351oie.70.1559937817614;
+ Fri, 07 Jun 2019 13:03:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <155993563277.3036719.17400338098057706494.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155993564854.3036719.3692507629721494555.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <f6c2d673-a202-4ad5-7055-5aaece9356e1@intel.com>
+In-Reply-To: <f6c2d673-a202-4ad5-7055-5aaece9356e1@intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 7 Jun 2019 13:03:26 -0700
+Message-ID: <CAPcyv4iFG3Z9xL9TSmqLVHxLZ6oiz-uWD6iKgJ8LF4f0n=m9=w@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] efi: Enumerate EFI_MEMORY_SP
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        X86 ML <x86@kernel.org>, linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per feedback from NXP tech support the way to use register based
-service interface on i.MX8MQ is to follow the same set of steps
-outlined for the case when virtualization is enabled, regardless if it
-is. Current version of SRM for i.MX8MQ speaks of DECO DID_MS and DECO
-DID_LS registers, but apparently those are not implemented, so the
-case when SCFGR[VIRT_EN]=0 should be handles the same as the case when
-SCFGR[VIRT_EN]=1
+On Fri, Jun 7, 2019 at 12:54 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 6/7/19 12:27 PM, Dan Williams wrote:
+> > @@ -848,15 +848,16 @@ char * __init efi_md_typeattr_format(char *buf, size_t size,
+> >       if (attr & ~(EFI_MEMORY_UC | EFI_MEMORY_WC | EFI_MEMORY_WT |
+> >                    EFI_MEMORY_WB | EFI_MEMORY_UCE | EFI_MEMORY_RO |
+> >                    EFI_MEMORY_WP | EFI_MEMORY_RP | EFI_MEMORY_XP |
+> > -                  EFI_MEMORY_NV |
+> > +                  EFI_MEMORY_NV | EFI_MEMORY_SP |
+> >                    EFI_MEMORY_RUNTIME | EFI_MEMORY_MORE_RELIABLE))
+> >               snprintf(pos, size, "|attr=0x%016llx]",
+> >                        (unsigned long long)attr);
+> >       else
+> >               snprintf(pos, size,
+> > -                      "|%3s|%2s|%2s|%2s|%2s|%2s|%2s|%3s|%2s|%2s|%2s|%2s]",
+> > +                      "|%3s|%2s|%2s|%2s|%2s|%2s|%2s|%2s|%3s|%2s|%2s|%2s|%2s]",
+> >                        attr & EFI_MEMORY_RUNTIME ? "RUN" : "",
+> >                        attr & EFI_MEMORY_MORE_RELIABLE ? "MR" : "",
+> > +                      attr & EFI_MEMORY_SP      ? "SP"  : "",
+> >                        attr & EFI_MEMORY_NV      ? "NV"  : "",
+> >                        attr & EFI_MEMORY_XP      ? "XP"  : "",
+> >                        attr & EFI_MEMORY_RP      ? "RP"  : "",
+>
+> Haha, I went digging in sysfs to find out where this gets dumped out.
+> The joke was on me because it seems to only go to dmesg.
+>
+> Separate from these patches, should we have a runtime file that dumps
+> out the same info?  dmesg isn't always available, and hotplug could
+> change this too, I'd imagine.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Spencer <christopher.spencer@sea.co.uk>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/ctrl.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index 9750fcfd37fc..c50fc059a441 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -107,7 +107,12 @@ static inline int run_descriptor_deco0(struct device *ctrldev, u32 *desc,
- 	int i;
- 
- 
--	if (ctrlpriv->virt_en == 1) {
-+	if (ctrlpriv->virt_en == 1 ||
-+	    /*
-+	     * Apparently on i.MX8MQ it doesn't matter if virt_en == 1
-+	     * and the following steps should be performed regardless
-+	     */
-+	    of_machine_is_compatible("fsl,imx8mq")) {
- 		clrsetbits_32(&ctrl->deco_rsr, 0, DECORSR_JR0);
- 
- 		while (!(rd_reg32(&ctrl->deco_rsr) & DECORSR_VALID) &&
--- 
-2.21.0
-
+Perhaps, but I thought /proc/iomem was that runtime file. Given that
+x86/Linux only seems to care about the the EFI to E820 translation of
+the map and the E820 map is directly reflected in /proc/iomem, do we
+need another file?
