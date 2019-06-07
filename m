@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31598385EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:07:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFA6385F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfFGIHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 04:07:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44904 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbfFGIHT (ORCPT
+        id S1727684AbfFGIHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 04:07:55 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50206 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbfFGIHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 04:07:19 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b17so1147596wrq.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:07:17 -0700 (PDT)
+        Fri, 7 Jun 2019 04:07:54 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c66so1025100wmf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:07:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=TGCe8fx0UlZO6OAeMwkeA0yuINCEOxz47WO8wDGstMo=;
-        b=SfEXJXWvTlz+diRf4Umg411PBKsmUuZl6xYCzsst/EJAqneQX2hbgAgwUxfuS+TEWM
-         GN/0OiTczR1pKMjdoZzQ4ZVuQCCM1JII3Yy7izyOYUr1GBTYve0GtZS9NtsuLa2DNBjY
-         nEALnZBG8rW6QFyPsGn4JhRzV1NXZS1+wDn1Xw0yOuiK3BIqt0sB7rbwMBYXnLwZlpvi
-         eEOIOcN4pEVTVYdFJIF56HRKIYzGu0pBMZoxyiQ9/yqLW139HdOEwH0Yc9OPHAZBioPa
-         wCK8IVLApE09SSETwYvrPvlivgKvKhVu2puB4RDlQzmdzbV/blme6l5Na2R4uDP94y6o
-         xudw==
+        bh=e207kpaiGZQcsYD8Rw0MT/mLe99N0is+Q2WZ2tzdO8Y=;
+        b=XvhNsV2WUvrNYkz4VUTLPQsP5/22Nu1CqNoyH4PauDBNj4OBnwLB92WiXft4n2hOfS
+         FCGQhoM8ATM1dzHW7t2pF1BLt7Px4eFkbAzFQXs3kk7dRphUvX5DODED0PQg/bJoUywX
+         Fvqf6dtCjeJqoaznktxknG8FRVC8BPq+CNQPXcnphQEVTO5LBwlI3xn3IMX2H4ToHSA2
+         2TGApY3hIyIHDRSUWvjgeNca6yGxETeY9SJYFyrbyKWmtn42biSh7yPeC/A4SQPzme9C
+         wCVbdbruo/67vIS+SDbyYPLSCWAcJY/ItpxcUxQFOAQR+5Xlu+6hS7HelVf6cGS0TOmG
+         EqGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=TGCe8fx0UlZO6OAeMwkeA0yuINCEOxz47WO8wDGstMo=;
-        b=KaDaqBGTYwpSahdhLYgF8bWd7O9OVJKopHENdzUpXOJ3JDDeIJtztRHlmVVTAUdZP2
-         HDdvOgi75PSyBdsANkO5grl9PHpv9rES2WdLSXHKe51n1ef7TzLmxIGne9GT9p0nAAmo
-         z9FAcf5DQn7Y93ew4HG7a7l2HVS63/XbnzxTXHi9Aey6LNOlTLFYGv6XWDU+2qNSdR3G
-         4uh/WMCINsYqkp2GxKQPl13z/y/e3Ax16AsnzYMizqxKjmtFHz7oY9lyLxN3ghFzt0YA
-         yHLpkDHZATCc+SklXmTtHcYQjmbW/624z6QNmShfNNIHGZdjxbDuba2Tq1RZuQsMESL7
-         Ts7g==
-X-Gm-Message-State: APjAAAXzAsuDCevZB5IXDs4hA5FTuScOAaDFiDNkGFonlllemHMabO0I
-        0aoBJW1IK0riHehjPJUuZC/krw==
-X-Google-Smtp-Source: APXvYqw8VeI7sYPeDbZt8y66RLpmx0sPvBbqUVE0pzN1pqhW4oGaKmdS2xW2cekmH3Yr1FQaSe74Xg==
-X-Received: by 2002:a5d:4886:: with SMTP id g6mr11412062wrq.108.1559894836951;
-        Fri, 07 Jun 2019 01:07:16 -0700 (PDT)
+        bh=e207kpaiGZQcsYD8Rw0MT/mLe99N0is+Q2WZ2tzdO8Y=;
+        b=VRSyturIl5dNASiBbkig612Akgews4aLeD3K5BIvB8Ax3kzH+eka/NEWfIWO3o0a/9
+         /ykvSFk0zFP39ATTYlOfJ1V6ScoCO3ADEztAR1FlUrnQ3sswBA2zz1VCcSgWW/rYyKQu
+         n0N8bKx2eljOKG9pxVUCaeb4yGDQLuu0hkV99QWRpQ6+kuRtH9cw78sqd2hxJwIUNIKb
+         Zzg4LnCJkSXFpJV54JOIGPrvEnYpQEuhBq0901X/X8gZLPCqWwCD2+qwdQNdeO7uXlbj
+         Y+KsgrCUzxpAAtmfYtZ2tTcKPQVHDcnWII4VGMJ1SOzPjtGvFSbaUc5iLCUnVenK57qr
+         2Hqw==
+X-Gm-Message-State: APjAAAWamZz6sbw05VLct/fqDid77pOJ0Emb+/erxEaJKuqYpYNSquWS
+        ogwMasrbQbgte3UbERDWXUhLrA==
+X-Google-Smtp-Source: APXvYqxeEKmv+oghi+kTvN/aNae/pwOVModQqEnv6UWccVO/rg4/bAlno9HsebuUVm61sD2tGy52EA==
+X-Received: by 2002:a1c:80c1:: with SMTP id b184mr2427660wmd.24.1559894872459;
+        Fri, 07 Jun 2019 01:07:52 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id w6sm1181860wro.71.2019.06.07.01.07.15
+        by smtp.gmail.com with ESMTPSA id j7sm1646959wru.54.2019.06.07.01.07.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 01:07:16 -0700 (PDT)
-Subject: Re: [PATCH 2/2] drm/meson: fix G12A primary plane disabling
+        Fri, 07 Jun 2019 01:07:52 -0700 (PDT)
+Subject: Re: [PATCH 1/2] drm/meson: fix primary plane disabling
 To:     Kevin Hilman <khilman@baylibre.com>,
         dri-devel@lists.freedesktop.org
 Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20190605141253.24165-1-narmstrong@baylibre.com>
- <20190605141253.24165-3-narmstrong@baylibre.com>
- <7h1s06ei58.fsf@baylibre.com>
+ <20190605141253.24165-2-narmstrong@baylibre.com>
+ <7h8sueeici.fsf@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -107,12 +107,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <c66e11b6-bf1b-8b6e-4110-42b20b879d3c@baylibre.com>
-Date:   Fri, 7 Jun 2019 10:07:15 +0200
+Message-ID: <97126af5-56da-885a-5260-83dfaf85f738@baylibre.com>
+Date:   Fri, 7 Jun 2019 10:07:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <7h1s06ei58.fsf@baylibre.com>
+In-Reply-To: <7h8sueeici.fsf@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -121,39 +121,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2019 19:30, Kevin Hilman wrote:
+On 06/06/2019 19:25, Kevin Hilman wrote:
 > Neil Armstrong <narmstrong@baylibre.com> writes:
 > 
->> The G12A Primary plane was disabled by writing in the OSD1 configuration
->> registers, but this caused the plane blender to stall instead of continuing
->> blended only the overlay plane.
-> 
-> grammar nit: "...instead of continuing to blend only the overlay plane."
-
-Fixed while applying on drm-misc-fixes
-
-> 
->> Fix this by disabling the OSD1 plane in the blender registers, and also
->> enabling it back using the same register.
+>> The primary plane disable logic is flawed, when the primary plane is
+>> disabled, it is re-enabled in the vsync irq when another plane is updated.
+>>
+>> Handle the plane disabling correctly by handling the primary plane
+>> enable flag in the primary plane update & disable callbacks.
 >>
 >> Fixes: 490f50c109d1 ("drm/meson: Add G12A support for OSD1 Plane")
 >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > 
 > Reviewed-by: Kevin Hilman <khilman@baylibre.com>
 > 
-> As noted elsewhere, this driver is also full of magic constants used in
-> register writes which makes reviewing this kind of change for
-> correctness that much more difficult, but since that's already been
-> pointed out elsewhere, and it's already on your TODO list, it should not
-> block this important fix.
 
-Yep, it's the top priority now.
+Applying to drm-misc-fixes
 
 Thanks,
 
 Neil
-
-> 
-> Kevin
-> 
-
