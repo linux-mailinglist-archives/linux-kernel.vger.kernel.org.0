@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F1738FC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 366813900C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbfFGPo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:44:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56516 "EHLO mail.kernel.org"
+        id S1731777AbfFGPsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:48:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730474AbfFGPoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:44:54 -0400
+        id S1729749AbfFGPsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:48:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC66A2146E;
-        Fri,  7 Jun 2019 15:44:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9221C21530;
+        Fri,  7 Jun 2019 15:48:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922293;
-        bh=cjaMWXG1wuSzMG16QrIqS8Mcr8Nc8UzIUt0oa+M9Ez0=;
+        s=default; t=1559922503;
+        bh=/i7XBox4D9HMZhtKXxxbrLBPtHMdRFV0IUY8OIHxEPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AO8kxiid2dhP53YOKwnxBQH4YZbD5o55BpwW7szl0MhPM2wF+KfU9QS7vZCj/DRev
-         c5jyzEsxuzb61GzfdLeUcvkGXfcbF28xYRX5cdT/91YwCNJQyogg0uLpdu/V8ES+hP
-         BNcvIgfOSdcUqr9bLp7bQ0VsOfLqBbmlBcbL8x2Y=
+        b=kPBXX0yIW1i3N/2c7E+K5kDSOIIw8xMwIgy8xzU/vXkiZn6Z/PZhH+UGMvvsHDeTn
+         wfUk68sNfD2jYA0FMiWffdRm3DVruPdBwn1dhage6/QiWi8NZX6edR2o9az4cjLYJ9
+         yHPbqVRcfftL+ueJ9RmCayHDYGM5HDCZKRpTyKbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Thomas Huth <thuth@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 4.19 34/73] KVM: s390: Do not report unusabled IDs via KVM_CAP_MAX_VCPU_ID
-Date:   Fri,  7 Jun 2019 17:39:21 +0200
-Message-Id: <20190607153852.901517671@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.1 37/85] powerpc/perf: Fix MMCRA corruption by bhrb_filter
+Date:   Fri,  7 Jun 2019 17:39:22 +0200
+Message-Id: <20190607153853.831878578@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,111 +45,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Huth <thuth@redhat.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-commit a86cb413f4bf273a9d341a3ab2c2ca44e12eb317 upstream.
+commit 3202e35ec1c8fc19cea24253ff83edf702a60a02 upstream.
 
-KVM_CAP_MAX_VCPU_ID is currently always reporting KVM_MAX_VCPU_ID on all
-architectures. However, on s390x, the amount of usable CPUs is determined
-during runtime - it is depending on the features of the machine the code
-is running on. Since we are using the vcpu_id as an index into the SCA
-structures that are defined by the hardware (see e.g. the sca_add_vcpu()
-function), it is not only the amount of CPUs that is limited by the hard-
-ware, but also the range of IDs that we can use.
-Thus KVM_CAP_MAX_VCPU_ID must be determined during runtime on s390x, too.
-So the handling of KVM_CAP_MAX_VCPU_ID has to be moved from the common
-code into the architecture specific code, and on s390x we have to return
-the same value here as for KVM_CAP_MAX_VCPUS.
-This problem has been discovered with the kvm_create_max_vcpus selftest.
-With this change applied, the selftest now passes on s390x, too.
+Consider a scenario where user creates two events:
 
-Reviewed-by: Andrew Jones <drjones@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Thomas Huth <thuth@redhat.com>
-Message-Id: <20190523164309.13345-9-thuth@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+  1st event:
+    attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
+    attr.branch_sample_type = PERF_SAMPLE_BRANCH_ANY;
+    fd = perf_event_open(attr, 0, 1, -1, 0);
+
+  This sets cpuhw->bhrb_filter to 0 and returns valid fd.
+
+  2nd event:
+    attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
+    attr.branch_sample_type = PERF_SAMPLE_BRANCH_CALL;
+    fd = perf_event_open(attr, 0, 1, -1, 0);
+
+  It overrides cpuhw->bhrb_filter to -1 and returns with error.
+
+Now if power_pmu_enable() gets called by any path other than
+power_pmu_add(), ppmu->config_bhrb(-1) will set MMCRA to -1.
+
+Fixes: 3925f46bb590 ("powerpc/perf: Enable branch stack sampling framework")
+Cc: stable@vger.kernel.org # v3.10+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/mips/kvm/mips.c       |    3 +++
- arch/powerpc/kvm/powerpc.c |    3 +++
- arch/s390/kvm/kvm-s390.c   |    1 +
- arch/x86/kvm/x86.c         |    3 +++
- virt/kvm/arm/arm.c         |    3 +++
- virt/kvm/kvm_main.c        |    2 --
- 6 files changed, 13 insertions(+), 2 deletions(-)
+ arch/powerpc/perf/core-book3s.c |    6 ++++--
+ arch/powerpc/perf/power8-pmu.c  |    3 +++
+ arch/powerpc/perf/power9-pmu.c  |    3 +++
+ 3 files changed, 10 insertions(+), 2 deletions(-)
 
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -1099,6 +1099,9 @@ int kvm_vm_ioctl_check_extension(struct
- 	case KVM_CAP_MAX_VCPUS:
- 		r = KVM_MAX_VCPUS;
- 		break;
-+	case KVM_CAP_MAX_VCPU_ID:
-+		r = KVM_MAX_VCPU_ID;
-+		break;
- 	case KVM_CAP_MIPS_FPU:
- 		/* We don't handle systems with inconsistent cpu_has_fpu */
- 		r = !!raw_cpu_has_fpu;
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -632,6 +632,9 @@ int kvm_vm_ioctl_check_extension(struct
- 	case KVM_CAP_MAX_VCPUS:
- 		r = KVM_MAX_VCPUS;
- 		break;
-+	case KVM_CAP_MAX_VCPU_ID:
-+		r = KVM_MAX_VCPU_ID;
-+		break;
- #ifdef CONFIG_PPC_BOOK3S_64
- 	case KVM_CAP_PPC_GET_SMMU_INFO:
- 		r = 1;
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -489,6 +489,7 @@ int kvm_vm_ioctl_check_extension(struct
- 		break;
- 	case KVM_CAP_NR_VCPUS:
- 	case KVM_CAP_MAX_VCPUS:
-+	case KVM_CAP_MAX_VCPU_ID:
- 		r = KVM_S390_BSCA_CPU_SLOTS;
- 		if (!kvm_s390_use_sca_entries())
- 			r = KVM_MAX_VCPUS;
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2987,6 +2987,9 @@ int kvm_vm_ioctl_check_extension(struct
- 	case KVM_CAP_MAX_VCPUS:
- 		r = KVM_MAX_VCPUS;
- 		break;
-+	case KVM_CAP_MAX_VCPU_ID:
-+		r = KVM_MAX_VCPU_ID;
-+		break;
- 	case KVM_CAP_NR_MEMSLOTS:
- 		r = KVM_USER_MEM_SLOTS;
- 		break;
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -223,6 +223,9 @@ int kvm_vm_ioctl_check_extension(struct
- 	case KVM_CAP_MAX_VCPUS:
- 		r = KVM_MAX_VCPUS;
- 		break;
-+	case KVM_CAP_MAX_VCPU_ID:
-+		r = KVM_MAX_VCPU_ID;
-+		break;
- 	case KVM_CAP_NR_MEMSLOTS:
- 		r = KVM_USER_MEM_SLOTS;
- 		break;
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2965,8 +2965,6 @@ static long kvm_vm_ioctl_check_extension
- 	case KVM_CAP_MULTI_ADDRESS_SPACE:
- 		return KVM_ADDRESS_SPACE_NUM;
- #endif
--	case KVM_CAP_MAX_VCPU_ID:
--		return KVM_MAX_VCPU_ID;
- 	default:
- 		break;
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -1846,6 +1846,7 @@ static int power_pmu_event_init(struct p
+ 	int n;
+ 	int err;
+ 	struct cpu_hw_events *cpuhw;
++	u64 bhrb_filter;
+ 
+ 	if (!ppmu)
+ 		return -ENOENT;
+@@ -1951,13 +1952,14 @@ static int power_pmu_event_init(struct p
+ 	err = power_check_constraints(cpuhw, events, cflags, n + 1);
+ 
+ 	if (has_branch_stack(event)) {
+-		cpuhw->bhrb_filter = ppmu->bhrb_filter_map(
++		bhrb_filter = ppmu->bhrb_filter_map(
+ 					event->attr.branch_sample_type);
+ 
+-		if (cpuhw->bhrb_filter == -1) {
++		if (bhrb_filter == -1) {
+ 			put_cpu_var(cpu_hw_events);
+ 			return -EOPNOTSUPP;
+ 		}
++		cpuhw->bhrb_filter = bhrb_filter;
  	}
+ 
+ 	put_cpu_var(cpu_hw_events);
+--- a/arch/powerpc/perf/power8-pmu.c
++++ b/arch/powerpc/perf/power8-pmu.c
+@@ -29,6 +29,7 @@ enum {
+ #define	POWER8_MMCRA_IFM1		0x0000000040000000UL
+ #define	POWER8_MMCRA_IFM2		0x0000000080000000UL
+ #define	POWER8_MMCRA_IFM3		0x00000000C0000000UL
++#define	POWER8_MMCRA_BHRB_MASK		0x00000000C0000000UL
+ 
+ /*
+  * Raw event encoding for PowerISA v2.07 (Power8):
+@@ -243,6 +244,8 @@ static u64 power8_bhrb_filter_map(u64 br
+ 
+ static void power8_config_bhrb(u64 pmu_bhrb_filter)
+ {
++	pmu_bhrb_filter &= POWER8_MMCRA_BHRB_MASK;
++
+ 	/* Enable BHRB filter in PMU */
+ 	mtspr(SPRN_MMCRA, (mfspr(SPRN_MMCRA) | pmu_bhrb_filter));
+ }
+--- a/arch/powerpc/perf/power9-pmu.c
++++ b/arch/powerpc/perf/power9-pmu.c
+@@ -92,6 +92,7 @@ enum {
+ #define POWER9_MMCRA_IFM1		0x0000000040000000UL
+ #define POWER9_MMCRA_IFM2		0x0000000080000000UL
+ #define POWER9_MMCRA_IFM3		0x00000000C0000000UL
++#define POWER9_MMCRA_BHRB_MASK		0x00000000C0000000UL
+ 
+ /* Nasty Power9 specific hack */
+ #define PVR_POWER9_CUMULUS		0x00002000
+@@ -300,6 +301,8 @@ static u64 power9_bhrb_filter_map(u64 br
+ 
+ static void power9_config_bhrb(u64 pmu_bhrb_filter)
+ {
++	pmu_bhrb_filter &= POWER9_MMCRA_BHRB_MASK;
++
+ 	/* Enable BHRB filter in PMU */
+ 	mtspr(SPRN_MMCRA, (mfspr(SPRN_MMCRA) | pmu_bhrb_filter));
+ }
 
 
