@@ -2,293 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD17339375
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B6D3937B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbfFGRks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 13:40:48 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33715 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbfFGRks (ORCPT
+        id S1730513AbfFGRlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:41:12 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50569 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728684AbfFGRlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:40:48 -0400
-Received: by mail-io1-f67.google.com with SMTP id u13so2064239iop.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 10:40:47 -0700 (PDT)
+        Fri, 7 Jun 2019 13:41:11 -0400
+Received: by mail-it1-f195.google.com with SMTP id a186so3966383itg.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 10:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OlxCx0LcVRqEwUVpBa/0X4MAmO56cf6FlxJFEgvmnmc=;
-        b=io4ZHtOx+pe44IJE28hPvzsRLOIt0VwvSmyD7ESSJ9h8O27pk1n+Hu2xfBOvwNgSP0
-         A0qXMDL1mnGbV4WnCyav2N0tLJLbq4v/mT6AQDbTltZ0G9/gl+GSIW8rX8K7AQLt9XQl
-         8vdSg87x62g2hXZTZjVmuhpcIqFjX6Lj1NY+K7gL075+JM7GVBcOPtyAAr7uM/Ydj2/S
-         BGA1YLbBlm+NOEuKupWaszdkWXxBmVFuUc3dbpGyqDCQCdgE2i2Iz3eDG10bb9P1+Rvi
-         twKS0O2ciONkTTOzsCLm6R4b4lAhv1H8P3Qt3IqVArTp7DyyNe36QpP3FOa7rkKzMW/R
-         LHSw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mZTYGju8Lc1Vw+PBsp6ZhKXJXzOEOqXl38jTX2RDW6c=;
+        b=dXoO+OElj6Gj7lrthzGFiOpNWlZZTYx7AcrAJzNvdkaHweAMtfWrnjJdIZgEOSEV6P
+         wWIc4CXwAqYEitGXtCNVqVBu4v0EsF3KJ3UJWrQrh7KdTKh6w+DY+qeHetFA7SbHSXhZ
+         QYUKSPnflShdpZGed0bDiyaBdEL9NPZjPdCz8JCTQzMw1OpfJH3GyBc6iLBpmDieKEgf
+         AJRdI9LGgDEXXZQYqrHmgS2zXD1QNiYmPEcOewshGVmdihS0US2IZ0A3thjqZQcWxMwL
+         quetjcV+cUyeEXr+TFTKVO0aDPvZaO0ny6in/SN2wn+RKYCR5R1WiL2acXx7SDAzO3FF
+         3PrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OlxCx0LcVRqEwUVpBa/0X4MAmO56cf6FlxJFEgvmnmc=;
-        b=nB3xisvIKuMbE6U2OeX5ghbT1flidO17ptWTcazpk1Rh+sR0Bzf5c7g32ldalOZtl5
-         NQfQbc20VnUxhRBlP4AsxnwMj10Br1ZJSckmr+Qnk++y+v7nMPPedS7Yv6hF7bfrUksP
-         OFIgJeAS6TCEjr5hpu4zB1pnr/AnXCtNR7m/tXL1ID9REr6BV461zUfgbiWwLCW4ROXz
-         WWkmJ3ad8vvqgMqNpnNTw0ESmTIT4zUu1ZnxaHeUdPnOMAadHnMiM4q5OZiwvfDBADlH
-         ti76DY7mHkP+iqBcXDSZGRkzrxB11B+sqWF7/dNH9NdtF9nL9hMTW+h8p1AHCJmuWCKy
-         OJXA==
-X-Gm-Message-State: APjAAAXa/+PZCkUq082aq4nzgmrR1Zq0tbYeLzw60yvBf73hBCpXAR0K
-        THDSj+WlM7pPQRvh2bqVfVFHZssqvurcJ5rLgyZ3fg==
-X-Google-Smtp-Source: APXvYqyS/7a9/Dz1ggiv03hBOU54xjqxDo1Iciw3ODbbVW7tjvpMqHtRefyhNI4gWQstaMZPH3Y3mM+VTfb1fXN7wps=
-X-Received: by 2002:a6b:7d49:: with SMTP id d9mr14036127ioq.50.1559929247404;
- Fri, 07 Jun 2019 10:40:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190524173508.29044-1-mathieu.poirier@linaro.org>
- <20190524173508.29044-2-mathieu.poirier@linaro.org> <68c1c548-33cd-31e8-100d-7ffad008c7b2@arm.com>
-In-Reply-To: <68c1c548-33cd-31e8-100d-7ffad008c7b2@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 7 Jun 2019 11:40:36 -0600
-Message-ID: <CANLsYkwrsvSXOpaxL7mFxiJF5A53Xk+3XDK14r_Z=wBLzDZy9A@mail.gmail.com>
-Subject: Re: [PATCH v2 01/17] perf tools: Configure contextID tracing in
- CPU-wide mode
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Coresight ML <coresight@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mZTYGju8Lc1Vw+PBsp6ZhKXJXzOEOqXl38jTX2RDW6c=;
+        b=Xyo7qFYeo4wpWUSL9ztPSYCOe3qjLJoz6ROprg3rjRtiJwjc8eWN9S4T/fEQxmKIWf
+         dU7FvTTrmovaEwcqp02mwwx8IJ/m6AcYZ35TWIUJnNmZ7N1VaGnA406CGxg519kXzVEL
+         84FDP8TiTI83mw7jlAks9XedRhQ0iK7yV3a7AUA8n8BYjLxeE7K8i0VZnAmiWbHEaL5e
+         8OD5+L1NR4cvT9z7lxyw5TjIjFd1EO9RRBPr8eJ/ydKYpkfpULhP8fk8OWwh9b6UO2S6
+         VfEea/zU37Mw65XiTkubUlEhimSeaRymaK2xNSVJrMgdR5rN/jwuP6v78s/dCJCZpmkc
+         k3Kg==
+X-Gm-Message-State: APjAAAVVvgnhoe6PpOOM4Gys41HldqhgVwBYDskkUirt8DQ4pTzeTg/s
+        G4QnfnXuosAeLqlo4I6zBXuLuT/0q2o=
+X-Google-Smtp-Source: APXvYqyBPTdmHAYkX83K+3hbXN6JbcHLil/4cD/BDyW4FofdOVJsH6C3leCRNZzzFF3ODsBXIAm2mQ==
+X-Received: by 2002:a02:69d7:: with SMTP id e206mr37601616jac.21.1559929270547;
+        Fri, 07 Jun 2019 10:41:10 -0700 (PDT)
+Received: from ubu (2600-6c48-437f-c81d-59ab-a761-9e83-29ee.dhcp6.chtrptr.net. [2600:6c48:437f:c81d:59ab:a761:9e83:29ee])
+        by smtp.gmail.com with ESMTPSA id 15sm910997ioe.46.2019.06.07.10.41.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Jun 2019 10:41:09 -0700 (PDT)
+From:   Kimberly Brown <kimbrownkd@gmail.com>
+To:     jaegeuk@kernel.org, yuchao0@huawei.com, gregkh@linuxfoundation.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] f2fs: replace ktype default_attrs with default_groups
+Date:   Fri,  7 Jun 2019 13:40:41 -0400
+Message-Id: <20190607174041.11201-1-kimbrownkd@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Suzuki,
+The kobj_type default_attrs field is being replaced by the
+default_groups field. Replace the default_attrs fields in f2fs_sb_ktype
+and f2fs_feat_ktype with default_groups. Use the ATTRIBUTE_GROUPS macro
+to create f2fs_groups and f2fs_feat_groups.
 
-On Fri, 7 Jun 2019 at 03:21, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> Hi Mathieu,
->
-> On 24/05/2019 18:34, Mathieu Poirier wrote:
-> > When operating in CPU-wide mode being notified of contextID changes is
-> > required so that the decoding mechanic is aware of the process context
-> > switch.
-> >
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->
->
-> > Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->
-> I am sorry but, I don't remember reviewing this patch in the previous
-> postings. But here we go.
+Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
+---
+ fs/f2fs/sysfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-We definitely misunderstood each other - apologies for that.
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 729f46a3c9ee..5c85166677d4 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -501,6 +501,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(current_reserved_blocks),
+ 	NULL,
+ };
++ATTRIBUTE_GROUPS(f2fs);
+ 
+ static struct attribute *f2fs_feat_attrs[] = {
+ #ifdef CONFIG_FS_ENCRYPTION
+@@ -520,6 +521,7 @@ static struct attribute *f2fs_feat_attrs[] = {
+ 	ATTR_LIST(sb_checksum),
+ 	NULL,
+ };
++ATTRIBUTE_GROUPS(f2fs_feat);
+ 
+ static const struct sysfs_ops f2fs_attr_ops = {
+ 	.show	= f2fs_attr_show,
+@@ -527,7 +529,7 @@ static const struct sysfs_ops f2fs_attr_ops = {
+ };
+ 
+ static struct kobj_type f2fs_sb_ktype = {
+-	.default_attrs	= f2fs_attrs,
++	.default_groups = f2fs_groups,
+ 	.sysfs_ops	= &f2fs_attr_ops,
+ 	.release	= f2fs_sb_release,
+ };
+@@ -541,7 +543,7 @@ static struct kset f2fs_kset = {
+ };
+ 
+ static struct kobj_type f2fs_feat_ktype = {
+-	.default_attrs	= f2fs_feat_attrs,
++	.default_groups = f2fs_feat_groups,
+ 	.sysfs_ops	= &f2fs_attr_ops,
+ };
+ 
+-- 
+2.17.1
 
->
-> > ---
-> >   tools/perf/arch/arm/util/cs-etm.c | 126 +++++++++++++++++++++++++-----
-> >   tools/perf/util/cs-etm.h          |  12 +++
-> >   2 files changed, 119 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-> > index 911426721170..3912f0bf04ed 100644
-> > --- a/tools/perf/arch/arm/util/cs-etm.c
-> > +++ b/tools/perf/arch/arm/util/cs-etm.c
-> > @@ -35,8 +35,100 @@ struct cs_etm_recording {
-> >       size_t                  snapshot_size;
-> >   };
-> >
->
->
-> >   static bool cs_etm_is_etmv4(struct auxtrace_record *itr, int cpu);
-> >
-> > +static int cs_etm_set_context_id(struct auxtrace_record *itr,
-> > +                              struct perf_evsel *evsel, int cpu)
-> > +{
-> > +     struct cs_etm_recording *ptr;
-> > +     struct perf_pmu *cs_etm_pmu;
-> > +     char path[PATH_MAX];
-> > +     int err = -EINVAL;
-> > +     u32 val;
-> > +
-> > +     ptr = container_of(itr, struct cs_etm_recording, itr);
-> > +     cs_etm_pmu = ptr->cs_etm_pmu;
-> > +
-> > +     if (!cs_etm_is_etmv4(itr, cpu))
-> > +             goto out;
-> > +
-> > +     /* Get a handle on TRCIRD2 */
-> > +     snprintf(path, PATH_MAX, "cpu%d/%s",
-> > +              cpu, metadata_etmv4_ro[CS_ETMV4_TRCIDR2]);
-> > +     err = perf_pmu__scan_file(cs_etm_pmu, path, "%x", &val);
-> > +
-> > +     /* There was a problem reading the file, bailing out */
-> > +     if (err != 1) {
-> > +             pr_err("%s: can't read file %s\n",
-> > +                    CORESIGHT_ETM_PMU_NAME, path);
-> > +             goto out;
-> > +     }
-> > +
-> > +     /*
-> > +      * TRCIDR2.CIDSIZE, bit [9-5], indicates whether contextID tracing
-> > +      * is supported:
-> > +      *  0b00000 Context ID tracing is not supported.
-> > +      *  0b00100 Maximum of 32-bit Context ID size.
-> > +      *  All other values are reserved.
-> > +      */
-> > +     val = BMVAL(val, 5, 9);
-> > +     if (!val || val != 0x4) {
-> > +             err = -EINVAL;
-> > +             goto out;
-> > +     }
-> > +
-> > +     /* All good, let the kernel know */
-> > +     evsel->attr.config |= (1 << ETM_OPT_CTXTID);
-> > +     err = 0;
-> > +
-> > +out:
-> > +
-> > +     return err;
-> > +}
-> > +
-> > +static int cs_etm_set_option(struct auxtrace_record *itr,
-> > +                          struct perf_evsel *evsel, u32 option)
-> > +{
-> > +     int i, err = -EINVAL;
-> > +     struct cpu_map *event_cpus = evsel->evlist->cpus;
-> > +     struct cpu_map *online_cpus = cpu_map__new(NULL);
-> > +
-> > +     /* Set option of each CPU we have */
-> > +     for (i = 0; i < cpu__max_cpu(); i++) {
-> > +             if (!cpu_map__has(event_cpus, i) ||
-> > +                 !cpu_map__has(online_cpus, i))
-> > +                     continue;
-> > +
-> > +             switch (option) {
-> > +             case ETM_OPT_CTXTID:
-> > +                     err = cs_etm_set_context_id(itr, evsel, i);
-> > +                     if (err)
-> > +                             goto out;
-> > +                     break;
-> > +             default:
-> > +                     goto out;
-> > +             }
-> > +     }
->
-> I am not too familiar with the perf tool code. But, isn't there a way
-> to force the config bit, right from the beginning when the events are
-> created, when we know that we are doing a CPU wide tracing, along with
-> the other config bits ?
->
->
-
-This code is ran just after the event list is created.  In order to
-avoid this step and have the config bits set right from the beginning
-one would have to explicitly specify the options within the '/' '/' of
-the cs_etm event on the command line, which would be cumbersome and
-error prone.  Instead this code guarantees that all options needed for
-a CPU-wide session are set properly.
-
->
-> > +     err = 0;
-> > +out:
-> > +     cpu_map__put(online_cpus);
-> > +     return err;
-> > +}
-> > +
-> >   static int cs_etm_parse_snapshot_options(struct auxtrace_record *itr,
-> >                                        struct record_opts *opts,
-> >                                        const char *str)
-> > @@ -105,8 +197,9 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
-> >                               container_of(itr, struct cs_etm_recording, itr);
-> >       struct perf_pmu *cs_etm_pmu = ptr->cs_etm_pmu;
-> >       struct perf_evsel *evsel, *cs_etm_evsel = NULL;
-> > -     const struct cpu_map *cpus = evlist->cpus;
-> > +     struct cpu_map *cpus = evlist->cpus;
-> >       bool privileged = (geteuid() == 0 || perf_event_paranoid() < 0);
-> > +     int err = 0;
-> >
-> >       ptr->evlist = evlist;
-> >       ptr->snapshot_mode = opts->auxtrace_snapshot_mode;
-> > @@ -241,19 +334,24 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
-> >
-> >       /*
-> >        * In the case of per-cpu mmaps, we need the CPU on the
-> > -      * AUX event.
-> > +      * AUX event.  We also need the contextID in order to be notified
-> > +      * when a context switch happened.
-> >        */
-> > -     if (!cpu_map__empty(cpus))
-> > +     if (!cpu_map__empty(cpus)) {
-> >               perf_evsel__set_sample_bit(cs_etm_evsel, CPU);
-> >
-> > +             err = cs_etm_set_option(itr, cs_etm_evsel, ETM_OPT_CTXTID);
-> > +             if (err)
-> > +                     goto out;
-> > +     }
-> > +
-> >       /* Add dummy event to keep tracking */
-> >       if (opts->full_auxtrace) {
-> >               struct perf_evsel *tracking_evsel;
-> > -             int err;
-> >
-> >               err = parse_events(evlist, "dummy:u", NULL);
-> >               if (err)
-> > -                     return err;
-> > +                     goto out;
-> >
-> >               tracking_evsel = perf_evlist__last(evlist);
-> >               perf_evlist__set_tracking_event(evlist, tracking_evsel);
-> > @@ -266,7 +364,8 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
-> >                       perf_evsel__set_sample_bit(tracking_evsel, TIME);
-> >       }
-> >
-> > -     return 0;
-> > +out:
-> > +     return err;
-> >   }
->
->
-> > diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-> > index 0e97c196147a..826c9eedaf5c 100644
-> > --- a/tools/perf/util/cs-etm.h
-> > +++ b/tools/perf/util/cs-etm.h
-> > @@ -103,6 +103,18 @@ struct intlist *traceid_list;
-> >   #define KiB(x) ((x) * 1024)
-> >   #define MiB(x) ((x) * 1024 * 1024)
-> >
-> > +/*
-> > + * Create a contiguous bitmask starting at bit position @l and ending at
-> > + * position @h. For example
-> > + * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-> > + *
-> > + * Carbon copy of implementation found in $KERNEL/include/linux/bitops.h
-> > + */
-> > +#define GENMASK(h, l) \
-> > +     (((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
-> > +
->
-> minor nit: Could this be placed in a more generic header file for the other
-> parts of the perf tool to consume ?
-
-Back when I wrote this code my thinking was to keep it private since
-nobody else in the perf tools had a need for it.  But I now that
-Arnaldo added the header back in August [1] there is no need for a
-private version.
-
-Arnaldo, do you want a patch on top of the current patchset or a new set?
-
-[1]. ba4aa02b417f0 (Arnaldo Carvalho de Melo 2018-09-25 10:55:59 -0300
-17)  * GENMASK_ULL(39, 21)
-
->
-> > +#define BMVAL(val, lsb, msb) ((val & GENMASK(msb, lsb)) >> lsb)
-> > +
->
->
-> Cheers
-> Suzuki
