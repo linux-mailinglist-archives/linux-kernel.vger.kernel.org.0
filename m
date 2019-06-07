@@ -2,90 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2C639421
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C823942B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731577AbfFGST2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:19:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53227 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729817AbfFGST1 (ORCPT
+        id S1731679AbfFGSVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:21:20 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46773 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731495AbfFGSVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:19:27 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hZJSS-0007zx-Mn; Fri, 07 Jun 2019 18:19:20 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jacob Keller <jacob.e.keller@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] ixgbe: fix potential u32 overflow on shift
-Date:   Fri,  7 Jun 2019 19:19:20 +0100
-Message-Id: <20190607181920.23339-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 7 Jun 2019 14:21:19 -0400
+Received: by mail-lf1-f68.google.com with SMTP id l26so2297438lfh.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:21:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kcUcDDcC5mC90UP39oOfydyRccLWkfoYEANrC6Q5vzo=;
+        b=czjWYP8i4Gm8HmwpyiH5gE8cDBA7hjOb0lcRtT1JBIDLLMpvV4cw/MC7NikjTEy4Kv
+         KyVXN4YeqRq5dv3xKq8WD4GRcG7GSfkoLRYUAOAF5nm5UGwrmKa4Gu0lckv+a5oMtf5c
+         0oWBDpEs80IuQgZum8BwaFRy5g1sNLCbwdax5RVEBik/X1B2S4NJt2oEmsrC6ropHGR0
+         ulJjbsmKXCVeYLZETpvWOyYngFDtd5RgBEqTOaWZekcyJEjPnkQ6Wa3dl5UMwQ8CmDPC
+         xhxzQ5CHazOo6fosIUEZLXmjWzEHDbiS2HbSCDAVT+eWcz777lpA5eOqlHM4/Tp2y4kt
+         a1SA==
+X-Gm-Message-State: APjAAAW9/3XQE5TJ4NCJfi3Ng+Znr8R7WtzN0NUWtx88YP1kz1wpF3aE
+        J/fymVpYPQTaJUGoCkHuy29ugdnokK94V8/JbMck+Q==
+X-Google-Smtp-Source: APXvYqxS5uzW3XR5kdyFjRpxOZreggJNwlHKkhL6Tmcr675Z5ilYvHwgYSkiUD3WZM5T1zybdCcFiR7fD7A9J2bVdkU=
+X-Received: by 2002:a19:22d8:: with SMTP id i207mr25716706lfi.97.1559931677223;
+ Fri, 07 Jun 2019 11:21:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20190607003646.10411-1-mcroce@redhat.com> <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
+In-Reply-To: <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Fri, 7 Jun 2019 20:20:40 +0200
+Message-ID: <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
+Subject: Re: [PATCH linux-next v2] mpls: don't build sysctl related code when
+ sysctl is disabled
+To:     David Ahern <dsahern@gmail.com>
+Cc:     netdev <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Jun 7, 2019 at 7:14 PM David Ahern <dsahern@gmail.com> wrote:
+>
+> On 6/6/19 6:36 PM, Matteo Croce wrote:
+> > Some sysctl related code and data structures is never referenced
+> > when CONFIG_SYSCTL is not set.
+> > While this is usually harmless, it produces a build failure since sysctl
+> > shared variables exists, due to missing sysctl_vals symbol:
+> >
+> >     ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+> >     af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+> >     ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+> >     ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+> >     ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
+> >
+> > Fix this by moving all sysctl related code under #ifdef CONFIG_SYSCTL
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> > ---
+> >
+> > v1 -> v2: fix a crash on netns destroy
+> >
+> >  net/mpls/af_mpls.c | 393 ++++++++++++++++++++++++---------------------
+> >  1 file changed, 207 insertions(+), 186 deletions(-)
+> >
+>
+> As I recall you need to set platform_labels for the mpls code to even
+> work, so building mpls_router without sysctl is pointless.
 
-The u32 variable rem is being shifted using u32 arithmetic however
-it is being passed to div_u64 that expects the expression to be a u64.
-The 32 bit shift may potentially overflow, so cast rem to a u64 before
-shifting to avoid this.  Also remove comment about overflow.
+This would explain why so much code went under the #ifdef.
+Should we select or depend on sysctl maybe?
 
-Addresses-Coverity: ("Unintentional integer overflow")
-Fixes: cd4583206990 ("ixgbe: implement support for SDP/PPS output on X550 hardware")
-Fixes: 68d9676fc04e ("ixgbe: fix PTP SDP pin setup on X540 hardware")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: update comment
-
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
-index 2c4d327fcc2e..0be13a90ff79 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
-@@ -205,11 +205,8 @@ static void ixgbe_ptp_setup_sdp_X540(struct ixgbe_adapter *adapter)
- 	 */
- 	rem = (NS_PER_SEC - rem);
- 
--	/* Adjust the clock edge to align with the next full second. This
--	 * assumes that the cycle counter shift is small enough to avoid
--	 * overflowing when shifting the remainder.
--	 */
--	clock_edge += div_u64((rem << cc->shift), cc->mult);
-+	/* Adjust the clock edge to align with the next full second. */
-+	clock_edge += div_u64(((u64)rem << cc->shift), cc->mult);
- 	trgttiml = (u32)clock_edge;
- 	trgttimh = (u32)(clock_edge >> 32);
- 
-@@ -291,11 +288,8 @@ static void ixgbe_ptp_setup_sdp_X550(struct ixgbe_adapter *adapter)
- 	 */
- 	rem = (NS_PER_SEC - rem);
- 
--	/* Adjust the clock edge to align with the next full second. This
--	 * assumes that the cycle counter shift is small enough to avoid
--	 * overflowing when shifting the remainder.
--	 */
--	clock_edge += div_u64((rem << cc->shift), cc->mult);
-+	/* Adjust the clock edge to align with the next full second. */
-+	clock_edge += div_u64(((u64)rem << cc->shift), cc->mult);
- 
- 	/* X550 hardware stores the time in 32bits of 'billions of cycles' and
- 	 * 32bits of 'cycles'. There's no guarantee that cycles represents
+Regards,
 -- 
-2.20.1
-
+Matteo Croce
+per aspera ad upstream
