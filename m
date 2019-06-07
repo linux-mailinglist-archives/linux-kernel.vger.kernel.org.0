@@ -2,56 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3B69384C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B803384D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfFGHOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 03:14:23 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39983 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbfFGHOX (ORCPT
+        id S1727468AbfFGHSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:18:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42202 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfFGHSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 03:14:23 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d30so672795pgm.7
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 00:14:23 -0700 (PDT)
+        Fri, 7 Jun 2019 03:18:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e6so675487pgd.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 00:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=m1N60dkKX4zwd7lwIj/FjrRHBW5PAI5y0X7+s8TbdoI=;
-        b=erQ6VR95p78CQOVGqGCFCLXBWO5wbWGX4sCqVNRoM9fhbiWAoKbLe8i2uqDyp6Wf5W
-         Cn9JQlvqdVQGESR2dFUTCkvazUXSRC8F8RQVbgOsngjoqLIlTV0tlSf52HEVDLnoSwuD
-         xhbO+Pbi7tTDjAbQxmIKfZWjZs5LfJ3AGsTNY+pDc1uBZyk0dJ8utPT5K9MkEo47+7G/
-         iyTNNRmqAr77Q7FmHuNL8B7fujS7j9qCCU9JRwUMKzmNYaZAVxAkwOlQIaU72v5sz7oe
-         nDd4T5Cp8E3XcHUiXEINRvULt7ytQCaSLpKusIKy6in52G9YYYZCNgreoyR6bwIdhqtN
-         fznQ==
+        bh=N3m8s+2059Fu//diNFBATOjWg3fyZfQ3e6DmQTqD6d8=;
+        b=iOMVbhtnqeRZvvXsdXNBoe43Jqxfa+bhlO3TY5YwqJsr/f0immkDnHSix0UdxqBtga
+         4olOcewyVGr5YbODNCk/k1NHp4833YxSm6kYX2e8+yc3v/nOBj7XeVNLvdPBbdbx+vs4
+         o7zG6ZlOzAlmPLX6qXi0PXe5mEHsyFZExAk3tbbZFpNe2767b2zJBYRJDvmSSD2oSZlP
+         J+RIXGK1pO+srwmT40YPbCNxLPWFGZ4elNfTtmVzrWZhSGRgEnIoQvVVHBsye90IPMlD
+         hj9A7yboMiuINF58nDdt/GIA+rr9wbvqxnGSqi0taB0xicmA3H0B991w4JfEiNQw39w/
+         x4Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=m1N60dkKX4zwd7lwIj/FjrRHBW5PAI5y0X7+s8TbdoI=;
-        b=m9kVUz1hW9h4KukT2MHHdRq41uf4pQ3Zk5qziVP3O1d4zmmQXC7VGZlntILoxxVwkL
-         6aZJNcX9nKMydsj4lJvJMmOGnwuSf2AtUTXtOgPF6PNp8c6sH4CMvekywU3YgBrNsL2H
-         wBy4KIgDIGUtfFkHFiU9bOICCjCqTJlgUDrJVaGo0/h+mzap8kwy4I1KRHdK0tk6A8jR
-         TYzG2rta+VDgap15Zgr9RMwCpYCBlsekkWgo3OJKe8QAuxFd1j3zHMMujbag2R8m4MeM
-         v78VQycM+1ItOtLsXhZTK28WTD4HNwKOraaygjqSffA+9F4G0LLpjnonJvotlm/FXON5
-         juPw==
-X-Gm-Message-State: APjAAAUFdb4+eiUl5iMMfvx6gQUlDl3ou5YtEdwaj0LX82xp2wlPRbZK
-        R+LmNCD35QxImm06wK/Zrk0=
-X-Google-Smtp-Source: APXvYqwEvmeB0sHfmYATkVtSMaWZwV8PvRKnzPbbwuWLbHlEJVfOBQ1Os7I7FDb6SJbdb4R06W9faw==
-X-Received: by 2002:a63:4006:: with SMTP id n6mr1550975pga.424.1559891662985;
-        Fri, 07 Jun 2019 00:14:22 -0700 (PDT)
+        bh=N3m8s+2059Fu//diNFBATOjWg3fyZfQ3e6DmQTqD6d8=;
+        b=tu83s9PpTy8ocHQseILrTDqCBsCYb/oWwbhLcbCcW4NyQsjXVtif43yzxOPs9YvXqJ
+         FZjvH5bG4IgaA/3PutdCS6cY0JxdNXp5dr+lZbRA2w9WODEsR/gx1xb1XvTMUyyVq5UL
+         0BtS/IYxx6yG2/d4VnCD+EHXMWMB66Hwk/Q3Bw7GOfcU2OvqQTmANd3xyROLE4p6Yjx2
+         gSLfwRrFavgqTNRvo/vvU66OIoxGfuXiRG+kYjSWiihJK5earAbYvMFZQeIwCtNpq6Mt
+         RJ3w1m4Yr5WkMnm12AFukT+iCny8VDLh6k0XA6LGYEX4OBhGe7tIqdgL26hGgRQF1hsh
+         mTrA==
+X-Gm-Message-State: APjAAAWXi6187Ya6o+n9nwW5FYgikSLK5l9HCQyzlHdl8TOFL1KEZLBv
+        IJkXe/Nc9cgAmFr1juEStjo=
+X-Google-Smtp-Source: APXvYqxpj7tRa6U0t++O/ryXNuCaMRHWHGvYKe55FI9ONfUDOjSC8O0y20Xo/7Mqp8fMYwICAjyQVw==
+X-Received: by 2002:a63:5d45:: with SMTP id o5mr1564440pgm.40.1559891896267;
+        Fri, 07 Jun 2019 00:18:16 -0700 (PDT)
 Received: from localhost.localdomain ([110.227.95.145])
-        by smtp.gmail.com with ESMTPSA id f11sm4295647pjg.1.2019.06.07.00.14.20
+        by smtp.gmail.com with ESMTPSA id e26sm1222390pfn.94.2019.06.07.00.18.11
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 00:14:22 -0700 (PDT)
+        Fri, 07 Jun 2019 00:18:15 -0700 (PDT)
 From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
 To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, colin.king@canonical.com,
+        hdegoede@redhat.com, straube.linux@gmail.com, julia.lawall@lip6.fr,
+        hardiksingh.k@gmail.com, pakki001@umn.edu,
+        hariprasad.kelam@gmail.com, arnd@arndb.de
 Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: hal: rtl8723b_cmd.c: Remove variables
-Date:   Fri,  7 Jun 2019 12:44:05 +0530
-Message-Id: <20190607071405.28310-1-nishkadg.linux@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: core: Remove variable priority
+Date:   Fri,  7 Jun 2019 12:48:01 +0530
+Message-Id: <20190607071801.28420-1-nishkadg.linux@gmail.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,38 +63,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove variables that are declared and initialised but never used.
+Remove local variable change_priority, as it takes the value of the
+argument priority; as both of these variables are of type u8, priority
+can be modified without changing the value of its copy at the call site.
 Issue found with Coccinelle.
 
 Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
-index fe3891106a6d..e001d302b34c 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
-@@ -674,10 +674,6 @@ static void ConstructProbeReq(struct adapter *padapter, u8 *pframe, u32 *pLength
- 	u32 pktlen;
- 	unsigned char *mac;
- 	unsigned char bssrate[NumRates];
--	struct xmit_priv *pxmitpriv = &(padapter->xmitpriv);
--	struct mlme_priv *pmlmepriv = &(padapter->mlmepriv);
--	struct mlme_ext_priv *pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
- 	int bssrate_len = 0;
- 	u8 bc_addr[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index 53146ec62ae9..b5dcb78fb4f4 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -625,13 +625,11 @@ static s32 update_attrib_sec_info(struct adapter *padapter, struct pkt_attrib *p
  
-@@ -1288,8 +1284,6 @@ static void rtl8723b_set_FwAOACGlobalInfo_Cmd(struct adapter *padapter,  u8 grou
- static void rtl8723b_set_FwScanOffloadInfo_cmd(struct adapter *padapter, PRSVDPAGE_LOC rsvdpageloc, u8 enable)
+ u8 qos_acm(u8 acm_mask, u8 priority)
  {
- 	u8 u1H2CScanOffloadInfoParm[H2C_SCAN_OFFLOAD_CTRL_LEN] = {0};
--	u8 res = 0, count = 0;
--	struct pwrctrl_priv *pwrpriv = adapter_to_pwrctl(padapter);
+-	u8 change_priority = priority;
+-
+ 	switch (priority) {
+ 	case 0:
+ 	case 3:
+ 		if (acm_mask & BIT(1))
+-			change_priority = 1;
++			priority = 1;
+ 		break;
+ 	case 1:
+ 	case 2:
+@@ -639,19 +637,19 @@ u8 qos_acm(u8 acm_mask, u8 priority)
+ 	case 4:
+ 	case 5:
+ 		if (acm_mask & BIT(2))
+-			change_priority = 0;
++			priority = 0;
+ 		break;
+ 	case 6:
+ 	case 7:
+ 		if (acm_mask & BIT(3))
+-			change_priority = 5;
++			priority = 5;
+ 		break;
+ 	default:
+ 		DBG_871X("qos_acm(): invalid pattrib->priority: %d!!!\n", priority);
+ 		break;
+ 	}
  
- 	DBG_871X("%s: loc_probe_packet:%d, loc_scan_info: %d loc_ssid_info:%d\n",
- 		__func__, rsvdpageloc->LocProbePacket, rsvdpageloc->LocScanInfo, rsvdpageloc->LocSSIDInfo);
+-	return change_priority;
++	return priority;
+ }
+ 
+ static void set_qos(struct pkt_file *ppktfile, struct pkt_attrib *pattrib)
 -- 
 2.19.1
 
