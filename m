@@ -2,55 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 200B2396BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E852E396C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730849AbfFGUV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 16:21:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729482AbfFGUV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 16:21:26 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F636208C0;
-        Fri,  7 Jun 2019 20:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559938886;
-        bh=EBCQYgzNEKimkxETwU8oqVDKo2dwf09ur7oFXlMXMQI=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=lYh7XNuD17N7d33DleObIW39T2y/0f+vCXSlGZPpygQLI6xhHf4jA5jWcB1WsVijL
-         HgaFYgE6E0C9AdwHMsrvwpz6siKU0jw+WS7eHfQ+gkmbiPJtrg/YPRncGIugycWXtK
-         O2X2iLeYxg9QQqx3dAHaqQrTbYBk4Xqrw2loOUvU=
-Content-Type: text/plain; charset="utf-8"
+        id S1730561AbfFGUYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 16:24:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57631 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729268AbfFGUYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 16:24:30 -0400
+Received: from [IPv6:2601:646:8600:3281:84b2:b0c:3049:ccfe] ([IPv6:2601:646:8600:3281:84b2:b0c:3049:ccfe])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x57KMeeV2644168
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 7 Jun 2019 13:22:47 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x57KMeeV2644168
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1559938972;
+        bh=ne0jc3kRZK29kv4U15wWU4x86yG5oGXYcHvoXYZq1Qs=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=iVHpk3hZET4fJNgfFIVgmGMF1UWexTvYsBix/DgxyFnREUMGcT2oXQjKaNIkTNT13
+         De/ERe0Uzu/XEwyteklpHdL+pxJKozBJawSBkStPLkMwyHZMs3kKz+iBidgDUGN489
+         9OQ1wSxnF7BktoeZ9jRa/DorFQGF5zvShAF8xJugKw9v9ENAKmEUUAGIqpPkFzRkvH
+         +f0V8ICD1J1O11HJzVMgK/rB5tJBlrEwdCmElVarxTpIMllo+4lJyC86+YUFcTbvB+
+         g/AMo8H1SS2T9+7XZKRYrUPMWlOZucbXao4YEyuW4fJizIFXdgDH23z9qNupDAdU6s
+         S0dUFxTop/aYw==
+Date:   Fri, 07 Jun 2019 13:22:31 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <3DA961AB-950B-4886-9656-C0D268D521F1@amacapital.net>
+References: <20190605130753.327195108@infradead.org> <20190605131945.005681046@infradead.org> <20190608004708.7646b287151cf613838ce05f@kernel.org> <20190607173427.GK3436@hirez.programming.kicks-ass.net> <3DA961AB-950B-4886-9656-C0D268D521F1@amacapital.net>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190606015937.2337-1-jeffrey.l.hugo@gmail.com>
-References: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com> <20190606015937.2337-1-jeffrey.l.hugo@gmail.com>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Document gpucc for msm8998
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate instructions
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
         linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-User-Agent: alot/0.8.1
-Date:   Fri, 07 Jun 2019 13:21:25 -0700
-Message-Id: <20190607202126.2F636208C0@mail.kernel.org>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+From:   hpa@zytor.com
+Message-ID: <E4AE85BE-FB3B-45BE-8E1E-DD27E2520A4C@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-06-05 18:59:37)
-> The GPU for msm8998 has its own clock controller.  Document it.
->=20
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
+On June 7, 2019 11:10:19 AM PDT, Andy Lutomirski <luto@amacapital=2Enet> wr=
+ote:
+>
+>
+>> On Jun 7, 2019, at 10:34 AM, Peter Zijlstra <peterz@infradead=2Eorg>
+>wrote:
+>>=20
+>> On Sat, Jun 08, 2019 at 12:47:08AM +0900, Masami Hiramatsu wrote:
+>>=20
+>>>> This fits almost all text_poke_bp() users, except
+>>>> arch_unoptimize_kprobe() which restores random text, and for that
+>site
+>>>> we have to build an explicit emulate instruction=2E
+>>>=20
+>>> Hm, actually it doesn't restores randome text, since the first byte
+>>> must always be int3=2E As the function name means, it just unoptimizes
+>>> (jump based optprobe -> int3 based kprobe)=2E
+>>> Anyway, that is not an issue=2E With this patch, optprobe must still
+>work=2E
+>>=20
+>> I thought it basically restored 5 bytes of original text (with no
+>> guarantee it is a single instruction, or even a complete
+>instruction),
+>> with the first byte replaced with INT3=2E
+>>=20
+>
+>I am surely missing some kprobe context, but is it really safe to use
+>this mechanism to replace more than one instruction?
 
-Applied to clk-next
+I don't see how it could be, except *perhaps* inside an NMI have, because =
+you could have a preempted or interrupted now having an in-memory IP pointi=
+ng inside the middle of the region you are intending to patch=2E
 
+
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
