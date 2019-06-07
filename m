@@ -2,50 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF45390C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89FE63904F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731427AbfFGPqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
+        id S1731748AbfFGPvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:51:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731417AbfFGPqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:46:31 -0400
+        id S1732259AbfFGPvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:51:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3589C214D8;
-        Fri,  7 Jun 2019 15:46:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DA252146E;
+        Fri,  7 Jun 2019 15:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922390;
-        bh=jvTtpQzbG1cEkU2B5JHc/GMR/EeiGG8BhcO0B2EMUYk=;
+        s=default; t=1559922659;
+        bh=uCnlImr1sCXDHtdWF4PMIdW6NHznW4leojAu0sMNET4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yxMBQTHt23EGSUv07w7Co1XOTr25WXvCJaq2htMeqNKzNLdIgjc65cAVryTL+hCZw
-         78kFvQZE0GEmM8Hv+3G/+ZpdbORjDXuQjhq3BX4ZpBJ0noc/ztLGRSCYKMVLl55GzX
-         bRhl1KbEj+bH4/KdB/+SwYsOCNJ5TLiFG9dKsQBQ=
+        b=lN1KI7cwD2QO/RNqtCF/s6UjKvS+C3Gkpmesc1fho92u9wVhOpGlJfmANiKStzAt0
+         /wVfCyxrU4dLhGZG2Bs8wDCHHPnNzonAvCu0ZO7daYJVEt6P/3dDA2r3pT2LoCvVAm
+         IOZRkWPXFWBPNl41S4WCvD3+MpZHEcmucM5JM/qA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        deneen.t.dock@intel.com, kernel-hardening@lists.openwall.com,
-        kristen@linux.intel.com, linux_dti@icloud.com, will.deacon@arm.com,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 69/73] x86/kprobes: Set instruction page as executable
-Date:   Fri,  7 Jun 2019 17:39:56 +0200
-Message-Id: <20190607153856.531407540@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
+        Deepak Rawat <drawat@vmware.com>
+Subject: [PATCH 5.1 72/85] drm/vmwgfx: Fix user space handle equal to zero
+Date:   Fri,  7 Jun 2019 17:39:57 +0200
+Message-Id: <20190607153857.107552334@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,83 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7298e24f904224fa79eb8fd7e0fbd78950ccf2db ]
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Set the page as executable after allocation.  This patch is a
-preparatory patch for a following patch that makes module allocated
-pages non-executable.
+commit 8407f8a1d940fe28c4243ad4f0cb6a44dcee88f6 upstream.
 
-While at it, do some small cleanup of what appears to be unnecessary
-masking.
+User-space handles equal to zero are interpreted as uninitialized or
+illegal by some drm systems (most notably kms). This means that a
+dumb buffer or surface with a zero user-space handle can never be
+used as a kms frame-buffer.
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <akpm@linux-foundation.org>
-Cc: <ard.biesheuvel@linaro.org>
-Cc: <deneen.t.dock@intel.com>
-Cc: <kernel-hardening@lists.openwall.com>
-Cc: <kristen@linux.intel.com>
-Cc: <linux_dti@icloud.com>
-Cc: <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190426001143.4983-11-namit@vmware.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: c7eae62666ad ("drm/vmwgfx: Make the object handles idr-generated")
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/vmwgfx/ttm_object.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 544bc2dfe408..e83a057564d1 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
- 	void *page;
- 
- 	page = module_alloc(PAGE_SIZE);
--	if (page)
--		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-+	if (!page)
-+		return NULL;
-+
-+	/*
-+	 * First make the page read-only, and only then make it executable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_ro((unsigned long)page, 1);
-+
-+	/*
-+	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-+	 * that the page was not maliciously altered and it is still zeroed.
-+	 */
-+	set_memory_x((unsigned long)page, 1);
- 
- 	return page;
- }
-@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
- {
--	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
--	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-+	/*
-+	 * First make the page non-executable, and only then make it writable to
-+	 * prevent it from being W+X in between.
-+	 */
-+	set_memory_nx((unsigned long)page, 1);
-+	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
- }
- 
--- 
-2.20.1
-
+--- a/drivers/gpu/drm/vmwgfx/ttm_object.c
++++ b/drivers/gpu/drm/vmwgfx/ttm_object.c
+@@ -174,7 +174,7 @@ int ttm_base_object_init(struct ttm_obje
+ 	kref_init(&base->refcount);
+ 	idr_preload(GFP_KERNEL);
+ 	spin_lock(&tdev->object_lock);
+-	ret = idr_alloc(&tdev->idr, base, 0, 0, GFP_NOWAIT);
++	ret = idr_alloc(&tdev->idr, base, 1, 0, GFP_NOWAIT);
+ 	spin_unlock(&tdev->object_lock);
+ 	idr_preload_end();
+ 	if (ret < 0)
 
 
