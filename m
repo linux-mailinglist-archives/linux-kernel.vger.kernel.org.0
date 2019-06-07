@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B5C738FA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4C5539087
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730895AbfFGPnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:43:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54746 "EHLO mail.kernel.org"
+        id S1731460AbfFGPs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:48:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729340AbfFGPne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:43:34 -0400
+        id S1731854AbfFGPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:48:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 030A82146E;
-        Fri,  7 Jun 2019 15:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9088020840;
+        Fri,  7 Jun 2019 15:48:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922213;
-        bh=KXUuBq761VVoyU0P9MyOjBasbseGMGEND5kYgIYDOnI=;
+        s=default; t=1559922531;
+        bh=qsBYCJp0T9BTNFdojWwxp9gA8fp2Y3KEZMWRQhokJBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZonemRupZJWYJhGam3SWroH5VccqOMv3rKXmpqq1pJ92uiZhf3wLcs9WITrUN/BV
-         ee0BXDpxaxa44AsEnV0NXFb+rwsnIpNj8amLp74FwGIB+3l/e+pBgAWsDk1h5zFYsO
-         gCgcLAnWnu0Nq8F5zKMRiRY5RdzIbuDmzlyR8sl4=
+        b=twolFrTcwe3XRwuvPYoWqy39Am+u1ABg6xmrS+RHaz6zgO/hnNyDPDd2+giSa9Eoz
+         dOW1yS2oRmonHk/VSvs3CbpddaSWg/7tTni3WZ27l5cY92NsFfxKb0jg3Hn0ourgng
+         fdYDrsPd/bTkhALkpJu+S/gXR/k1E6SKFoOlyvN4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 50/69] memcg: make it work on sparse non-0-node systems
+        stable@vger.kernel.org,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH 5.1 46/85] tty: serial: msm_serial: Fix XON/XOFF
 Date:   Fri,  7 Jun 2019 17:39:31 +0200
-Message-Id: <20190607153854.483053122@linuxfoundation.org>
+Message-Id: <20190607153854.732886196@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,97 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 
-commit 3e8589963773a5c23e2f1fe4bcad0e9a90b7f471 upstream.
+commit 61c0e37950b88bad590056286c1d766b1f167f4e upstream.
 
-We have a single node system with node 0 disabled:
-  Scanning NUMA topology in Northbridge 24
-  Number of physical nodes 2
-  Skipping disabled node 0
-  Node 1 MemBase 0000000000000000 Limit 00000000fbff0000
-  NODE_DATA(1) allocated [mem 0xfbfda000-0xfbfeffff]
+When the tty layer requests the uart to throttle, the current code
+executing in msm_serial will trigger "Bad mode in Error Handler" and
+generate an invalid stack frame in pstore before rebooting (that is if
+pstore is indeed configured: otherwise the user shall just notice a
+reboot with no further information dumped to the console).
 
-This causes crashes in memcg when system boots:
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-  #PF error: [normal kernel read fault]
-...
-  RIP: 0010:list_lru_add+0x94/0x170
-...
-  Call Trace:
-   d_lru_add+0x44/0x50
-   dput.part.34+0xfc/0x110
-   __fput+0x108/0x230
-   task_work_run+0x9f/0xc0
-   exit_to_usermode_loop+0xf5/0x100
+This patch replaces the PIO byte accessor with the word accessor
+already used in PIO mode.
 
-It is reproducible as far as 4.12.  I did not try older kernels.  You have
-to have a new enough systemd, e.g.  241 (the reason is unknown -- was not
-investigated).  Cannot be reproduced with systemd 234.
-
-The system crashes because the size of lru array is never updated in
-memcg_update_all_list_lrus and the reads are past the zero-sized array,
-causing dereferences of random memory.
-
-The root cause are list_lru_memcg_aware checks in the list_lru code.  The
-test in list_lru_memcg_aware is broken: it assumes node 0 is always
-present, but it is not true on some systems as can be seen above.
-
-So fix this by avoiding checks on node 0.  Remember the memcg-awareness by
-a bool flag in struct list_lru.
-
-Link: http://lkml.kernel.org/r/20190522091940.3615-1-jslaby@suse.cz
-Fixes: 60d3fd32a7a9 ("list_lru: introduce per-memcg lists")
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Suggested-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 68252424a7c7 ("tty: serial: msm: Support big-endian CPUs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/list_lru.h |    1 +
- mm/list_lru.c            |    8 +++-----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/tty/serial/msm_serial.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/linux/list_lru.h
-+++ b/include/linux/list_lru.h
-@@ -52,6 +52,7 @@ struct list_lru {
- 	struct list_lru_node	*node;
- #if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
- 	struct list_head	list;
-+	bool			memcg_aware;
- #endif
- };
+--- a/drivers/tty/serial/msm_serial.c
++++ b/drivers/tty/serial/msm_serial.c
+@@ -860,6 +860,7 @@ static void msm_handle_tx(struct uart_po
+ 	struct circ_buf *xmit = &msm_port->uart.state->xmit;
+ 	struct msm_dma *dma = &msm_port->tx_dma;
+ 	unsigned int pio_count, dma_count, dma_min;
++	char buf[4] = { 0 };
+ 	void __iomem *tf;
+ 	int err = 0;
  
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -42,11 +42,7 @@ static void list_lru_unregister(struct l
- #if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
- static inline bool list_lru_memcg_aware(struct list_lru *lru)
- {
--	/*
--	 * This needs node 0 to be always present, even
--	 * in the systems supporting sparse numa ids.
--	 */
--	return !!lru->node[0].memcg_lrus;
-+	return lru->memcg_aware;
- }
+@@ -869,10 +870,12 @@ static void msm_handle_tx(struct uart_po
+ 		else
+ 			tf = port->membase + UART_TF;
  
- static inline struct list_lru_one *
-@@ -389,6 +385,8 @@ static int memcg_init_list_lru(struct li
- {
- 	int i;
- 
-+	lru->memcg_aware = memcg_aware;
++		buf[0] = port->x_char;
 +
- 	if (!memcg_aware)
- 		return 0;
+ 		if (msm_port->is_uartdm)
+ 			msm_reset_dm_count(port, 1);
  
+-		iowrite8_rep(tf, &port->x_char, 1);
++		iowrite32_rep(tf, buf, 1);
+ 		port->icount.tx++;
+ 		port->x_char = 0;
+ 		return;
 
 
