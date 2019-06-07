@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B0D39115
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF3738F6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732081AbfFGP4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:56:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55902 "EHLO mail.kernel.org"
+        id S1730337AbfFGPlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:41:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731074AbfFGPoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:44:25 -0400
+        id S1730317AbfFGPla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:41:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5A49212F5;
-        Fri,  7 Jun 2019 15:44:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E0C7212F5;
+        Fri,  7 Jun 2019 15:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922265;
-        bh=6VkPEARVCZ06+Ygd8cQ/SxPRE/BuGmGgIbuGgVSEmAo=;
+        s=default; t=1559922089;
+        bh=1JsI5gQ3IcheMaeIGHRetkAhp1pxnQk4mSBRrkEzFhk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1MwDXrJZf0OjAeiwP0TEHevu5goLz6KG0N9SmzbUvGzIMjqXs95Hzdtxe4ORmVOwq
-         jr1NwER+8Iy+MZXN34Y0KLJQQIC6nb1rH/sQAZtvWXsPvC8FqgYNbzGaj3gErPRwZ+
-         qCHwohH07yGRcdcIkdJepRA6MxiEuMhM/MUoRIPY=
+        b=CxrFS6HNKCfTfbLbvRdsPs2MuInwyxFmsZ0oSJPT9QF+x6Th43lLXao6Hfjrck/80
+         0SFKIiyiktmGwNBW4VxXiLUnEiSG9a3kTpavvN2v6sicEVUjcDVlzTuZ9fhSq5Co8r
+         FnyobQTxtL8SuBOeM4LSmNDxgddYGe9EVB+sr5tM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ruslan Babayev <ruslan@babayev.com>,
-        xe-linux-external@cisco.com, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 25/73] iio: dac: ds4422/ds4424 fix chip verification
-Date:   Fri,  7 Jun 2019 17:39:12 +0200
-Message-Id: <20190607153851.825402618@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 32/69] USB: rio500: refuse more than one device at a time
+Date:   Fri,  7 Jun 2019 17:39:13 +0200
+Message-Id: <20190607153852.347815659@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ruslan Babayev <ruslan@babayev.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 60f2208699ec08ff9fdf1f97639a661a92a18f1c upstream.
+commit 3864d33943b4a76c6e64616280e98d2410b1190f upstream.
 
-The ds4424_get_value function takes channel number as it's 3rd
-argument and translates it internally into I2C address using
-DS4424_DAC_ADDR macro. The caller ds4424_verify_chip was passing an
-already translated I2C address as its last argument.
+This driver is using a global variable. It cannot handle more than
+one device at a time. The issue has been existing since the dawn
+of the driver.
 
-Signed-off-by: Ruslan Babayev <ruslan@babayev.com>
-Cc: xe-linux-external@cisco.com
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/dac/ds4424.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/rio500.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
---- a/drivers/iio/dac/ds4424.c
-+++ b/drivers/iio/dac/ds4424.c
-@@ -166,7 +166,7 @@ static int ds4424_verify_chip(struct iio
+--- a/drivers/usb/misc/rio500.c
++++ b/drivers/usb/misc/rio500.c
+@@ -460,15 +460,23 @@ static int probe_rio(struct usb_interfac
  {
- 	int ret, val;
+ 	struct usb_device *dev = interface_to_usbdev(intf);
+ 	struct rio_usb_data *rio = &rio_instance;
+-	int retval;
++	int retval = 0;
  
--	ret = ds4424_get_value(indio_dev, &val, DS4424_DAC_ADDR(0));
-+	ret = ds4424_get_value(indio_dev, &val, 0);
- 	if (ret < 0)
- 		dev_err(&indio_dev->dev,
- 				"%s failed. ret: %d\n", __func__, ret);
+-	dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
++	mutex_lock(&rio500_mutex);
++	if (rio->present) {
++		dev_info(&intf->dev, "Second USB Rio at address %d refused\n", dev->devnum);
++		retval = -EBUSY;
++		goto bail_out;
++	} else {
++		dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
++	}
+ 
+ 	retval = usb_register_dev(intf, &usb_rio_class);
+ 	if (retval) {
+ 		dev_err(&dev->dev,
+ 			"Not able to get a minor for this device.\n");
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto bail_out;
+ 	}
+ 
+ 	rio->rio_dev = dev;
+@@ -477,7 +485,8 @@ static int probe_rio(struct usb_interfac
+ 		dev_err(&dev->dev,
+ 			"probe_rio: Not enough memory for the output buffer\n");
+ 		usb_deregister_dev(intf, &usb_rio_class);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto bail_out;
+ 	}
+ 	dev_dbg(&intf->dev, "obuf address:%p\n", rio->obuf);
+ 
+@@ -486,7 +495,8 @@ static int probe_rio(struct usb_interfac
+ 			"probe_rio: Not enough memory for the input buffer\n");
+ 		usb_deregister_dev(intf, &usb_rio_class);
+ 		kfree(rio->obuf);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto bail_out;
+ 	}
+ 	dev_dbg(&intf->dev, "ibuf address:%p\n", rio->ibuf);
+ 
+@@ -494,8 +504,10 @@ static int probe_rio(struct usb_interfac
+ 
+ 	usb_set_intfdata (intf, rio);
+ 	rio->present = 1;
++bail_out:
++	mutex_unlock(&rio500_mutex);
+ 
+-	return 0;
++	return retval;
+ }
+ 
+ static void disconnect_rio(struct usb_interface *intf)
 
 
