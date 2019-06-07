@@ -2,97 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49F738EB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 531EA38EC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbfFGPOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:14:38 -0400
-Received: from foss.arm.com ([217.140.110.172]:42450 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbfFGPOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:14:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F439367;
-        Fri,  7 Jun 2019 08:14:33 -0700 (PDT)
-Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D5323F718;
-        Fri,  7 Jun 2019 08:14:32 -0700 (PDT)
-From:   James Morse <james.morse@arm.com>
-To:     linux-doc@vger.kernel.org, x86@kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Babu Moger <Babu.Moger@amd.com>, linux-kernel@vger.kernel.org,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH 4/4] Documentation: x86: fix some typos
-Date:   Fri,  7 Jun 2019 16:14:09 +0100
-Message-Id: <20190607151409.15476-5-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190607151409.15476-1-james.morse@arm.com>
-References: <20190607151409.15476-1-james.morse@arm.com>
+        id S1729408AbfFGPRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:17:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39659 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbfFGPRL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:17:11 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x4so2549518wrt.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 08:17:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sX/pioxuVMxljt5xFEWz/xGKhecKIEm1tNEtt9DHln0=;
+        b=aNa3lDNG5HNcY7rSr84L6AOAnY6+8zlPqcZpyht0C9fBh6kUaGPcG2dvlUeaFW8+bW
+         95IdrrPJsSYzKg+6mGabxlxAb1NF4e2mkFosyf3KfzFCx5wLbq7jld5T2pN3KxgrTfag
+         DLOHERQQof/RPSiIjDTr42fhfgPuMTltphWabrq4cYI/sBvMJA37k0ZTObosghYakBKi
+         k6q0KABxVD78WK9X+yM1PUrldUVxEihrMThw3JRTVUvErHjd4OhKff7s0Rh//lZcM2+I
+         y1yc4z2t5TFMLDCC9PKo2bP5X1Ni0fcjoc856EOc3gfXaQcNJVz70lzrCorQbwqpTv9l
+         YuVg==
+X-Gm-Message-State: APjAAAUUqCV5F7wzVv4EGITloHr6ilIcC4TmlHZy/VB8r5hen+HtItb9
+        X2oyPFIal686L8AqEG9YnFK0bQ==
+X-Google-Smtp-Source: APXvYqzAXTGUk9Z0sa4D/SLHGUJd6uodo7ETHrJjF2Inh/QnYCsHcWJybb0atPguJ+rdSbEb6HG83Q==
+X-Received: by 2002:a5d:4ac1:: with SMTP id y1mr5512703wrs.210.1559920630411;
+        Fri, 07 Jun 2019 08:17:10 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:657f:501:149f:5617? ([2001:b07:6468:f312:657f:501:149f:5617])
+        by smtp.gmail.com with ESMTPSA id o185sm984015wmo.45.2019.06.07.08.17.09
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 08:17:09 -0700 (PDT)
+Subject: Re: [PATCH] KVM: nVMX: Rename prepare_vmcs02_*_full to
+ prepare_vmcs02_*_extra
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1559834652-105872-1-git-send-email-pbonzini@redhat.com>
+ <20190606184117.GJ23169@linux.intel.com>
+ <8382fd94-aed1-51b4-007e-7579a0f35ece@redhat.com>
+ <20190607141847.GA9083@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5762005d-1504-bb41-9583-ec549e107ce5@redhat.com>
+Date:   Fri, 7 Jun 2019 17:17:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190607141847.GA9083@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are all obvious typos.
+On 07/06/19 16:18, Sean Christopherson wrote:
+> On Fri, Jun 07, 2019 at 02:19:20PM +0200, Paolo Bonzini wrote:
+>> On 06/06/19 20:41, Sean Christopherson wrote:
+>>>> +static void prepare_vmcs02_early_extra(struct vcpu_vmx *vmx,
+>>> Or maybe 'uncommon', 'rare' or 'ext'?  I don't I particularly love any of
+>>> the names, but they're all better than 'full'.
+>>
+>> I thought 'ext' was short for 'extra'? :)
+> 
+> Ha, I (obviously) didn't make that connection.  ext == extended in my mind.
 
-Signed-off-by: James Morse <james.morse@arm.com>
----
- Documentation/x86/resctrl_ui.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+That's what came to mind first, but then "extended" had the same issue
+as "full" (i.e. encompassing the "basic" set as well) so I decided you
+knew better!
 
-diff --git a/Documentation/x86/resctrl_ui.rst b/Documentation/x86/resctrl_ui.rst
-index 866b66aa289b..5368cedfb530 100644
---- a/Documentation/x86/resctrl_ui.rst
-+++ b/Documentation/x86/resctrl_ui.rst
-@@ -40,7 +40,7 @@ mount options are:
- 	Enable the MBA Software Controller(mba_sc) to specify MBA
- 	bandwidth in MBps
- 
--L2 and L3 CDP are controlled seperately.
-+L2 and L3 CDP are controlled separately.
- 
- RDT features are orthogonal. A particular system may support only
- monitoring, only control, or both monitoring and control.  Cache
-@@ -118,7 +118,7 @@ related to allocation:
- 			      Corresponding region is pseudo-locked. No
- 			      sharing allowed.
- 
--Memory bandwitdh(MB) subdirectory contains the following files
-+Memory bandwidth(MB) subdirectory contains the following files
- with respect to allocation:
- 
- "min_bandwidth":
-@@ -209,7 +209,7 @@ All groups contain the following files:
- 	CPUs to/from this group. As with the tasks file a hierarchy is
- 	maintained where MON groups may only include CPUs owned by the
- 	parent CTRL_MON group.
--	When the resouce group is in pseudo-locked mode this file will
-+	When the resource group is in pseudo-locked mode this file will
- 	only be readable, reflecting the CPUs associated with the
- 	pseudo-locked region.
- 
-@@ -380,7 +380,7 @@ where L2 external  is 10GBps (hence aggregate L2 external bandwidth is
- 240GBps) and L3 external bandwidth is 100GBps. Now a workload with '20
- threads, having 50% bandwidth, each consuming 5GBps' consumes the max L3
- bandwidth of 100GBps although the percentage value specified is only 50%
--<< 100%. Hence increasing the bandwidth percentage will not yeild any
-+<< 100%. Hence increasing the bandwidth percentage will not yield any
- more bandwidth. This is because although the L2 external bandwidth still
- has capacity, the L3 external bandwidth is fully used. Also note that
- this would be dependent on number of cores the benchmark is run on.
-@@ -398,7 +398,7 @@ In order to mitigate this and make the interface more user friendly,
- resctrl added support for specifying the bandwidth in MBps as well.  The
- kernel underneath would use a software feedback mechanism or a "Software
- Controller(mba_sc)" which reads the actual bandwidth using MBM counters
--and adjust the memowy bandwidth percentages to ensure::
-+and adjust the memory bandwidth percentages to ensure::
- 
- 	"actual bandwidth < user specified bandwidth".
- 
--- 
-2.20.1
-
+Paolo
