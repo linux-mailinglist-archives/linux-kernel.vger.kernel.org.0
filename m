@@ -2,108 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B20D3974A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0899F39754
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731183AbfFGVEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:04:36 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37777 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731132AbfFGVEf (ORCPT
+        id S1731187AbfFGVF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:05:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43480 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730342AbfFGVF7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:04:35 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 131so2913072ljf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 14:04:34 -0700 (PDT)
+        Fri, 7 Jun 2019 17:05:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f25so1760566pgv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 14:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vkU0CLA4zd7U+4w/MeYB7MsnfkDi0Po4BQ8jWMFBUjo=;
-        b=Bl3VdEFDNRcw68lQN2+iAhPiWw5DQMPXg2SfOdO0jMkLGnBZ+uzq2sVjmQ4vaHAbG4
-         yNaYAP/1r/yIlm+Vay8Wsve+dfOIcTk28G0cVRmtAwbrROgC3Dyj8uSlyUDJNpKeM1wL
-         EBMTqw5WMOWJKdh3wSd10dvEDiZK+z1gGAbKjQrBjE6N7MCrUY9X5KM/bZYvdjcRZ424
-         gdJXbrG19WOm+xi1E8pcpR2k4g5NwCTXuPQO1pXeFt8zefmVKfKGIXKgKIHsdyV+XrUH
-         AIsp1mw/e21lcxOHA2q/t59+syFLF30vm0Vl1BbVgLnQG/sILfmw0yuI/keT7LFF3F9f
-         Ghqg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N/JCuNUNHpvYXS5HzA6CyKCsgw+Y9FIdtQCe1irA9XM=;
+        b=fukRxLFxtd7ntyRussvwUhf3/zME/vEBn6WGUhgH1C6xOnnk0xy7yOcRq4qemQ/RTZ
+         PrX8Ex6DvqdTxy457AK7HsZtrQQqB9xNE6LljfHQ9P0unErJGi2JsAgc42A54+WTAWfv
+         4RYexHsqYcIebiGu00X5NriGKSpzU3V8os//8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vkU0CLA4zd7U+4w/MeYB7MsnfkDi0Po4BQ8jWMFBUjo=;
-        b=VbXRg63EtvvrysNZ8a8y70bCE40ViGzKSoGq+Mwu2GaZpWXK1cvvCvB2CwBKaNzDcF
-         H373OBu4HgaWPq0vKg2L7kwWdnZ4h4a1OLUZ0qAko9pUFbKaOwQIf4odkEPbOuGRo0It
-         GO07w8euYCRviNzBbcDLStqj1DvaYZNaeN0LtWd88lBPbNi/wl/GkvZ3YtqaHYxF8h8j
-         ZVzZAnm/6yMgxTGw3eaK6CqT1qzvAHDLrY+mQ+RZvUwpEfJ1nbVO5gCDfBGfJtCmgcXG
-         HC8Ybly/8nldmAtdnlZGA7nNy4xxYDZW60umIo6n+hAD6QdudEGnpdy1Chm2UdCOdjoB
-         qHMA==
-X-Gm-Message-State: APjAAAU/y8npl3objfBEU7HsdgAB0ZiVQpC3cEtFNAdkdxF0GCog8Sft
-        d33w39t3GtshHaRBa2X3R7IONWQQSkf6+JtP4kG/Zg==
-X-Google-Smtp-Source: APXvYqyCQqq/sYVcHyrozCmhdkems9DE56UaaALAZIcDJuvLRmL+KVL12nZblAfJci6jVwnq/iR/eVswn8WPsSelqws=
-X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr19782540lje.46.1559941473627;
- Fri, 07 Jun 2019 14:04:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N/JCuNUNHpvYXS5HzA6CyKCsgw+Y9FIdtQCe1irA9XM=;
+        b=cdW5aYYMU8Y0E5CObaCL7XR33UyXxhMBsWKc0e3OFNB3/q+n4XvvyC2JNykWLpbcP4
+         HUYi+CP76sgUdTmgHcbj/jjnEi3M/uYYjEEKdIjwZZ/93etJxASEyYYCvJl34vwpdy0v
+         oEIfnGGZFpwnIjNKuI5vMP/Xin6DH5O3w14Y47Sw+Gj0eGk4KSgOVwR6bchWgMeWdGDt
+         XWA/5fIa6rDM952Mho/p8po756+F1Q117chN2wbzhNMwWDl8zdqpmDlbzzD4T2Ak5vpU
+         Lnu+4N1ymH4sIGzAze9fTUkcF6qok8Mh+zP1Z0R8sjg1asIpcy+onue0jl8lqTXZRe2A
+         L45Q==
+X-Gm-Message-State: APjAAAWsT1a9u4JLQ8782f+M5tpoG+fOayUKhZqAvxIJ9ZN7ET/SZgkf
+        5rSckD60iShDOQI+DgNxS+NrxA==
+X-Google-Smtp-Source: APXvYqxjHp5dkMvJDKi1lSt+UmE9FfTR90t9yYb9tPqSBVjLl7gU0dBNruK1PMygm1fD6LLqIOfdrg==
+X-Received: by 2002:a65:490f:: with SMTP id p15mr4761307pgs.275.1559941558355;
+        Fri, 07 Jun 2019 14:05:58 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id n2sm5583391pgp.27.2019.06.07.14.05.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 07 Jun 2019 14:05:57 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Rajat Jain <rajatja@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        linux-kernel@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>
+Subject: [PATCH] platform/chrome: Expose resume result via sysfs
+Date:   Fri,  7 Jun 2019 14:05:28 -0700
+Message-Id: <20190607210528.248042-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190530030546.9224-1-Anson.Huang@nxp.com>
-In-Reply-To: <20190530030546.9224-1-Anson.Huang@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 7 Jun 2019 23:04:25 +0200
-Message-ID: <CACRpkdY-35o378Ka+4bgeSPjmq6P8DM872sgTxq2X3dDP9XZHQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: imx: Add pinctrl binding doc for i.MX8MN
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 5:04 AM <Anson.Huang@nxp.com> wrote:
+For ECs that support it, the EC returns the number of slp_s0
+transitions and whether or not there was a timeout in the resume
+response. Expose the last resume result to usermode via sysfs so
+that usermode can detect and report S0ix timeouts.
 
-> From: Anson Huang <Anson.Huang@nxp.com>
->
-> Add binding doc for i.MX8MN pinctrl driver.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
 
-Looks mostly OK to me, but I'd like the maintainers to review,
-so Dong et al please look at this!
+Enric, I'm not sure if this conflicts with your giant refactoring.
+I can rebase this on your series, but patchwork doesn't have patch
+2 of your series, so you'd have to point me to a tree.
 
-> +Required properties:
-> +- compatible: "fsl,imx8mn-iomuxc"
+---
+ drivers/mfd/cros_ec.c                   |  6 +++++-
+ drivers/platform/chrome/cros_ec_sysfs.c | 17 +++++++++++++++++
+ include/linux/mfd/cros_ec.h             |  1 +
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
-So should this not be "nxp,imx8mn-iomuxc"
-or "nxp,freescale-imx8mn-iomuxc" or something these
-days? The vendor name is nxp is it not.
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index bd2bcdd4718b..64a2d3adc729 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -110,12 +110,16 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+ 
+ 	/* For now, report failure to transition to S0ix with a warning. */
+ 	if (ret >= 0 && ec_dev->host_sleep_v1 &&
+-	    (sleep_event == HOST_SLEEP_EVENT_S0IX_RESUME))
++	    (sleep_event == HOST_SLEEP_EVENT_S0IX_RESUME)) {
++		ec_dev->last_resume_result =
++			buf.u.resp1.resume_response.sleep_transitions;
++
+ 		WARN_ONCE(buf.u.resp1.resume_response.sleep_transitions &
+ 			  EC_HOST_RESUME_SLEEP_TIMEOUT,
+ 			  "EC detected sleep transition timeout. Total slp_s0 transitions: %d",
+ 			  buf.u.resp1.resume_response.sleep_transitions &
+ 			  EC_HOST_RESUME_SLEEP_TRANSITIONS_MASK);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index 3edb237bf8ed..2deca98c7a7a 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
+@@ -308,18 +308,35 @@ static ssize_t kb_wake_angle_store(struct device *dev,
+ 	return count;
+ }
+ 
++/* Last resume result */
++static ssize_t last_resume_result_show(struct device *dev,
++				       struct device_attribute *attr, char *buf)
++{
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
++	int ret;
++
++	ret = scnprintf(buf,
++			PAGE_SIZE,
++			"0x%x\n",
++			ec->ec_dev->last_resume_result);
++
++	return ret;
++}
++
+ /* Module initialization */
+ 
+ static DEVICE_ATTR_RW(reboot);
+ static DEVICE_ATTR_RO(version);
+ static DEVICE_ATTR_RO(flashinfo);
+ static DEVICE_ATTR_RW(kb_wake_angle);
++static DEVICE_ATTR_RO(last_resume_result);
+ 
+ static struct attribute *__ec_attrs[] = {
+ 	&dev_attr_kb_wake_angle.attr,
+ 	&dev_attr_reboot.attr,
+ 	&dev_attr_version.attr,
+ 	&dev_attr_flashinfo.attr,
++	&dev_attr_last_resume_result.attr,
+ 	NULL,
+ };
+ 
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index cfa78bb4990f..d50ade418a83 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -163,6 +163,7 @@ struct cros_ec_device {
+ 	struct ec_response_get_next_event_v1 event_data;
+ 	int event_size;
+ 	u32 host_event_wake_mask;
++	u32 last_resume_result;
+ };
+ 
+ /**
+-- 
+2.20.1
 
-I was complaining to the DT maintainers at one point that
-these companies seem to buy each other left and right
-so this vendor nomenclature is dubious, but I guess at least
-it should reflect the vendor that produced the chip or something.
-
-If everyone is happy with "fsl,*" I will not complain though.
-(i.e. if the maintainers ACK it.)
-
-Yours,
-Linus Walleij
