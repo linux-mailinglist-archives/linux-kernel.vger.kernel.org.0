@@ -2,79 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25297395BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0197839581
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbfFGTbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 15:31:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5427 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729268AbfFGTbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 15:31:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 12:31:49 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga005.jf.intel.com with ESMTP; 07 Jun 2019 12:31:48 -0700
-Message-ID: <997ef050c13e3654dee6a862d810cffcafce249b.camel@intel.com>
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
- function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Fri, 07 Jun 2019 12:23:46 -0700
-In-Reply-To: <c5c21778-f10f-cef8-c937-1e8ad1e2a7cf@intel.com>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
-         <20190606200926.4029-4-yu-cheng.yu@intel.com>
-         <c5c21778-f10f-cef8-c937-1e8ad1e2a7cf@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1730179AbfFGTYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 15:24:21 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:19694 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729677AbfFGTYV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 15:24:21 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cfab9e20000>; Fri, 07 Jun 2019 12:24:18 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 07 Jun 2019 12:24:19 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 07 Jun 2019 12:24:19 -0700
+Received: from [10.19.65.14] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 7 Jun
+ 2019 19:24:15 +0000
+Subject: Re: [PATCH V1 6/6] i2c: tegra: remove BUG, BUG_ON
+From:   Bitan Biswas <bbiswas@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>
+CC:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1559908507-31192-1-git-send-email-bbiswas@nvidia.com>
+ <1559908507-31192-6-git-send-email-bbiswas@nvidia.com>
+ <4aec6d7a-0dea-18c9-efde-96cc1a54b945@gmail.com>
+ <2281ef29-6e69-78e7-4d07-77f33c2f2d5a@gmail.com>
+ <9adcde41-2450-27dc-36a0-b3b99022b43d@gmail.com>
+ <75a7f16f-5d54-797d-fb72-445411f20424@nvidia.com>
+Message-ID: <40f730a0-d602-fe94-8e20-3e209b1c9eda@nvidia.com>
+Date:   Fri, 7 Jun 2019 12:24:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <75a7f16f-5d54-797d-fb72-445411f20424@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559935459; bh=9OnVoLPL1VBq2UFdZ/s4ALKZS6g3/wKx5xfzx/l4mFM=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=hn6T90IpmnSpFrZQQfGkkiKA79Q5l5Uh5U8Yju0ZeX+FSV7RdktNOXfT9HJUgZWpc
+         9bT65++1K9scOSID0hXUitITYkrpjCfgFb/D3u3yQvUPQyAkIEqkhE5tDwa9uhQxan
+         2qsi0cKY9xAl1MMGyHuKNI+VDIf9OFaOnL1XvuuOR4TahcIt/b80lG7DmGmsmSQfhF
+         X9RrjVlebPFIB+mNVHcKUKJaqV+kzwe6Y6Ga5tGTQWZhb7b8fqTiqWyEvFJ7EgYJdU
+         pVxSKjQfKpuOHWX5TYaEV9RHM00+zZRvuHuwDzfBm1UMWwMJq1261zG4BfwJHsKkQi
+         irbmEiGDQ01gQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-07 at 12:03 -0700, Dave Hansen wrote:
-> On 6/6/19 1:09 PM, Yu-cheng Yu wrote:
-> > +	modify_fpu_regs_begin();
-> > +	rdmsrl(MSR_IA32_U_CET, r);
-> > +	r |= (MSR_IA32_CET_LEG_IW_EN | bitmap);
-> > +	wrmsrl(MSR_IA32_U_CET, r);
-> > +	modify_fpu_regs_end();
-> 
-> Isn't there a bunch of other stuff in this MSR?  It seems like the
-> bitmap value would allow overwriting lots of bits in the MSR that have
-> nothing to do with the bitmap... in a prctl() that's supposed to only be
-> dealing with the bitmap.
 
-Yes, the bitmap address should have been masked, although it is checked for page
-alignment (which has the same effect).  I will fix it.
 
-Yu-cheng
+On 6/7/19 11:55 AM, Bitan Biswas wrote:
+>=20
+>=20
+> On 6/7/19 5:18 AM, Dmitry Osipenko wrote:
+>> 07.06.2019 15:12, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> 07.06.2019 15:08, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> 07.06.2019 14:55, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+>>>>> as needed. Replace BUG() with error handling code.
+>>>>> Define I2C_ERR_UNEXPECTED_STATUS for error handling.
+>>>>>
+>>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>>>> ---
+>>>>> =C2=A0 drivers/i2c/busses/i2c-tegra.c | 15 ++++++++-------
+>>>>> =C2=A0 1 file changed, 8 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c=20
+>>>>> b/drivers/i2c/busses/i2c-tegra.c
+>>>>> index 4dfb4c1..c407bd7 100644
+>>>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>>>> @@ -73,6 +73,7 @@
+>>>>> =C2=A0 #define I2C_ERR_NO_ACK=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(0)
+>>>>> =C2=A0 #define I2C_ERR_ARBITRATION_LOST=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 BIT(1)
+>>>>> =C2=A0 #define I2C_ERR_UNKNOWN_INTERRUPT=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 BIT(2)
+>>>>> +#define I2C_ERR_UNEXPECTED_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 BIT(3)
+>>>>> =C2=A0 #define PACKET_HEADER0_HEADER_SIZE_SHIFT=C2=A0=C2=A0=C2=A0 28
+>>>>> =C2=A0 #define PACKET_HEADER0_PACKET_ID_SHIFT=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 16
+>>>>> @@ -515,7 +516,6 @@ static int tegra_i2c_empty_rx_fifo(struct=20
+>>>>> tegra_i2c_dev *i2c_dev)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * prevent overwriting past the e=
+nd of buf
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rx_fifo_avail > 0 && buf_remaining=
+ > 0) {
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(buf_remaining > 3)=
+;
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D i2c_re=
+adl(i2c_dev, I2C_RX_FIFO);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D cpu_to=
+_le32(val);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 memcpy(buf, &v=
+al, buf_remaining);
+>>>>> @@ -523,7 +523,6 @@ static int tegra_i2c_empty_rx_fifo(struct=20
+>>>>> tegra_i2c_dev *i2c_dev)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rx_fifo_avail-=
+-;
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>> -=C2=A0=C2=A0=C2=A0 BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c_dev->msg_buf_remaining =3D buf_rem=
+aining;
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i2c_dev->msg_buf =3D buf;
+>>>>> @@ -581,7 +580,6 @@ static int tegra_i2c_fill_tx_fifo(struct=20
+>>>>> tegra_i2c_dev *i2c_dev)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * boundary and fault.
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (tx_fifo_avail > 0 && buf_remaining=
+ > 0) {
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(buf_remaining > 3)=
+;
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 memcpy(&val, b=
+uf, buf_remaining);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D le32_t=
+o_cpu(val);
+>>>>> @@ -847,10 +845,13 @@ static irqreturn_t tegra_i2c_isr(int irq,=20
+>>>>> void *dev_id)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!i2c_dev->is_curr_dma_xfer) {
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (i2c_dev->m=
+sg_read && (status &=20
+>>>>> I2C_INT_RX_FIFO_DATA_REQ)) {
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i=
+f (i2c_dev->msg_buf_remaining)
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i=
+f (i2c_dev->msg_buf_remaining) {
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_i2c_empty_rx_fifo(i2c_dev);
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 e=
+lse
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 BUG();
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }=
+ else {
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(i2c_dev->dev, "unexpected rx data=20
+>>>>> request\n");
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 i2c_dev->msg_err |=3D I2C_ERR_UNEXPECTED_STATUS;
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto err;
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!i2c_dev->=
+msg_read && (status &=20
+>>>>> I2C_INT_TX_FIFO_DATA_REQ)) {
+>>>>> @@ -876,7 +877,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void=20
+>>>>> *dev_id)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (status & I2C_INT_PACKET_XFER_COMPL=
+ETE) {
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (i2c_dev->i=
+s_curr_dma_xfer)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 i2c_dev->msg_buf_remaining =3D 0;
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(i2c_dev->msg_buf_r=
+emaining);
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON_ONCE(i2c_dev->msg=
+_buf_remaining);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 complete(&i2c_=
+dev->msg_complete);
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto done;
+>>>>>
+>>>>
+>>>> Very nice, thank you very much! BTW, I think it may worth to add=20
+>>>> another
+>>>> patch that will reset hardware state in a case of the warning since we
+>>>> know that something gone wrong.
+>>>>
+>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>
+>>>
+>>> Something like that:
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 complete(&i2c_dev->msg_complete);
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err;
+>>>
+>>
+>> Ah, that's inside the ISR, so maybe will make sense to just not complete
+>> the transfer and let it timeout:
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0if (!WARN_ON_ONCE(i2c_dev->msg_buf_remaining))
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 complete(&i2c_dev->msg_comple=
+te);
+> OK. I shall send the updated patch.
+I see that there is already err label in the ISR that could be jumped=20
+into. Hence, planning to share updated patch with the error handling.
+
+-regards,
+  Bitan
+
