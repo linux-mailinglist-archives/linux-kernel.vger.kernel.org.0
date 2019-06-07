@@ -2,76 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784C0397D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA30397AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbfFGVdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:33:37 -0400
-Received: from mga18.intel.com ([134.134.136.126]:50823 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730145AbfFGVdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:33:36 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 14:33:35 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2019 14:33:35 -0700
-Date:   Fri, 7 Jun 2019 14:24:20 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     James Morse <james.morse@arm.com>
-Cc:     linux-doc@vger.kernel.org, x86@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Babu Moger <Babu.Moger@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] Documentation: x86: Contiguous cbm isn't all X86
-Message-ID: <20190607212419.GA143433@romley-ivt3.sc.intel.com>
-References: <20190607151409.15476-1-james.morse@arm.com>
- <20190607151409.15476-2-james.morse@arm.com>
+        id S1731215AbfFGVZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:25:04 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39683 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730879AbfFGVZD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:25:03 -0400
+Received: by mail-lf1-f65.google.com with SMTP id p24so2647752lfo.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 14:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YCm3/YwKMUF6FdFBGHC7NRTgkT4OMAQDT8JecbvvVXo=;
+        b=g1OO4FLA+rK0euMn+VgdMjnBSHUvpSNqFBdJXgKHlqfHesk0k0iaSNeq1VMJaE0fnr
+         h1JwvMnV22wmdD/82WtjF97eJ0afYwMbJHKw7ZkUT7ZFsMOcuxVCoHWJzciWGpM9oYei
+         vkLkA0SaMFGg+sTrjSnaHpgkw42guNABqG1I0kbQnQ6q2XxGThY5XS9SPfHraD1VhPQe
+         7oGzqLD4dgJO0wKlvbi01jYdW08GbdCarTSvLTUdRMa6FmDhX57zztxl3waXM6mOyv2Q
+         Yb0g9UrALq8UZ7PBT7+5GgQT1NoYZdEAt1nTpQ9WMmTZggUplzmclf9VjNBirNjCovBs
+         T6+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YCm3/YwKMUF6FdFBGHC7NRTgkT4OMAQDT8JecbvvVXo=;
+        b=Vha515gWxVhaIFj7iDtkmfgAVRaCE95bK1GLdQROAl0mJIoyn3V6+CVZQzgQPXEiY+
+         iVepOgn3p6eV7uEb6BYAUvwJi8BfrtSJ51xLI5GmuxFFSFDxxBHp3rj831lWDYlt9TtR
+         vAC6suxCtP/GWpzIC+QsRnHglQutMUfE/Gjgf+IHrOVelxd4j0PeCi/OyBn+Itb8c33Y
+         +zIJUVQLLul6tdXR2NZX/A6rqKQO9qUHYH1YicQeAdEY1lZNkx6aaKPe5AYZOeDaPgIE
+         Y7+wY9zCPrvLYN+gIP/VKn9pWa13ruT1YJufG8sg3AZnM5MO9nPktytZ184glGxH+jkn
+         nmSw==
+X-Gm-Message-State: APjAAAVHiKSXw/+8zLSyclwhYcjmTozocuGRH5RPNR2dbEhyM0Fj2t1V
+        GICb8ziM0hGVrgU26mMywDpfTfVC6QcIC/j9uccJyQ==
+X-Google-Smtp-Source: APXvYqyABmDBpMpVxXXRLI5+U6x+87PXwfgchaFTVYHiXyoukIge/Y1aSh9l8ZhZjaeyd5gEC5aOu2AVaEJgFdVoo6E=
+X-Received: by 2002:a19:6a01:: with SMTP id u1mr26224594lfu.141.1559942701429;
+ Fri, 07 Jun 2019 14:25:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607151409.15476-2-james.morse@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <CGME20190530183941epcas5p4688d5fa80df649e4184a296ea78e6256@epcas5p4.samsung.com>
+ <20190530183932.4132-1-linus.walleij@linaro.org> <28b92b86-19ac-0bf3-57d8-c7ab4557a45b@samsung.com>
+In-Reply-To: <28b92b86-19ac-0bf3-57d8-c7ab4557a45b@samsung.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Jun 2019 23:24:54 +0200
+Message-ID: <CACRpkdaCaZyzfr9=QRz6uRZpK6mw_zDeVmBwgH7=FPbNGKB9tQ@mail.gmail.com>
+Subject: Re: [PATCH] extcon: gpio: Request reasonable interrupts
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 04:14:06PM +0100, James Morse wrote:
-> Since commit 4d05bf71f157 ("x86/resctrl: Introduce AMD QOS feature")
-> resctrl has supported non-contiguous cache bit masks. The interface
-> for this is currently try-it-and-see.
-> 
-> Update the documentation to say Intel CPUs have this requirement,
-> instead of X86.
-> 
-> Cc: Babu Moger <Babu.Moger@amd.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->  Documentation/x86/resctrl_ui.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/x86/resctrl_ui.rst b/Documentation/x86/resctrl_ui.rst
-> index 225cfd4daaee..066f94e53418 100644
-> --- a/Documentation/x86/resctrl_ui.rst
-> +++ b/Documentation/x86/resctrl_ui.rst
-> @@ -342,7 +342,7 @@ For cache resources we describe the portion of the cache that is available
->  for allocation using a bitmask. The maximum value of the mask is defined
->  by each cpu model (and may be different for different cache levels). It
->  is found using CPUID, but is also provided in the "info" directory of
-> -the resctrl file system in "info/{resource}/cbm_mask". X86 hardware
-> +the resctrl file system in "info/{resource}/cbm_mask". Intel hardware
->  requires that these masks have all the '1' bits in a contiguous block. So
->  0x3, 0x6 and 0xC are legal 4-bit masks with two bits set, but 0x5, 0x9
->  and 0xA are not.  On a system with a 20-bit mask each bit represents 5%
-> -- 
-> 2.20.1
+On Tue, Jun 4, 2019 at 3:30 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> On 19. 5. 31. =EC=98=A4=EC=A0=84 3:39, Linus Walleij wrote:
+
+> > +     /*
+> > +      * It is unlikely that this is an acknowledged interrupt that goe=
+s
+> > +      * away after handling, what we are looking for are falling edges
+> > +      * if the signal is active low, and rising edges if the signal is
+> > +      * active high.
+> > +      */
+> > +     if (gpiod_is_active_low(data->gpiod))
+> > +             irq_flags =3D IRQF_TRIGGER_FALLING;
 >
- 
-Acked-by: Fenghua Yu <fenghua.yu@intel.com>
+> If gpiod_is_active_low(data->gpiod) is true, irq_flags might be
+> IRQF_TRIGGER_LOW instead of IRQF_TRIGGER_FALLING. How can we sure
+> that irq_flags is always IRQF_TRIGGER_FALLING?
 
-Thanks.
+OK correct me if I'm wrong, but this is an external connector and
+the GPIO goes low/high when the connector is physically inserted.
+If it was level trigged, it would lock up the CPU with interrupts until
+it was unplugged again, since there is no way to acknowledge a
+level IRQ.
 
--Fenghua Yu
+I think level IRQ on GPIOs are only used for logic peripherals
+such as ethernet controllers etc where you can talk to the peripheral
+and get it to deassert the line and thus acknowledge the IRQ.
+
+So the way I see it only edge triggering makes sense for extcon.
+
+Correct me if I'm wrong.
+
+Yours,
+Linus Walleij
