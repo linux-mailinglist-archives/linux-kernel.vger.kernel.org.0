@@ -2,93 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 314CA39798
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784C0397D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731268AbfFGVTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:19:09 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35121 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730879AbfFGVTJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:19:09 -0400
-Received: by mail-lj1-f195.google.com with SMTP id h11so2946349ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 14:19:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/uwQvvBLZhDAl9yhIggJq/EJTAtf+ICqBP+94QmKvpM=;
-        b=N/c1f5tuWKYL8TC+mpD5tnEP7gezj/Sv0CKNXvK+vVV9p3HMyq0wWcteem8zBam5DR
-         2XbGICxpKnalTKAESEL7c+epE+t4pCo88A27u4LOFET0um8g3iWYnRb4Z/5L8rkIylPi
-         2jcYbG4YVFXcQkQ4q3ja1Cq9gYsYE5YNTR38P0gQDlZ16R2rHS0QdwGkOhpUJwIsJ5Am
-         tWG0ZA9d55ys6+uAgGiJT/e0pgaq+cFehEqRSjDogyfw7AiX+d1jGhDPOni65wlYf/es
-         rB3OsOg+4YpCsJSh06Xw88BD/TiZfHR4V2FBbVKphXXzjJXKekeEuRCKgDzPi/TxNalg
-         cOVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/uwQvvBLZhDAl9yhIggJq/EJTAtf+ICqBP+94QmKvpM=;
-        b=rsVZA+RvQcLbLf20SjWhGqsP7u/ofZlFU2BqiS/AJUu9Y038KyTq9sxqr4aWh1/ZHX
-         s2Kll7Ey2OpcG9HulDOC+M6BwZ8nBuKZwjSmgqSIEKOLH1ik5BHsEx9uhTfJAsiNMCuf
-         5i2o7obW8hr9O1cB2Ft4S5vBvZBSoVSZWZmaH1XZGPgnikXjP4JcGn1OVMwSoPr2Ntcx
-         J3pHwhGEx0jFJQAfy6P4lWNbtsigZsfihQRE3FSbx5OQQmdhTHUnbZcaoUzuTLgZ+0Lb
-         UZy/voiHd1DRq/gfceMDOUq4+m0iohTV4WTWMQOnmU+kjn4kbNWx/pK6wGLuH/ZAUDSm
-         eCsA==
-X-Gm-Message-State: APjAAAXqzWgmWkp5QemCH5W7xTeUE0Cpotgxy7VJhNbeuOGj77ZwxA0F
-        CBkmld8Wet5RlAca5B5S5PCyDEc11hNDAfLzinEA+A==
-X-Google-Smtp-Source: APXvYqxoSrFtpdn+Y/8JUdQf+IzKlqg5LfxsLNBpOURN47jOXNKje3csy/VgjGKZFSN/pgipJ/qQdxmih3J6j1aUAJs=
-X-Received: by 2002:a2e:9753:: with SMTP id f19mr5296121ljj.113.1559942347590;
- Fri, 07 Jun 2019 14:19:07 -0700 (PDT)
+        id S1730931AbfFGVdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:33:37 -0400
+Received: from mga18.intel.com ([134.134.136.126]:50823 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730145AbfFGVdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:33:36 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 14:33:35 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2019 14:33:35 -0700
+Date:   Fri, 7 Jun 2019 14:24:20 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-doc@vger.kernel.org, x86@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Babu Moger <Babu.Moger@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] Documentation: x86: Contiguous cbm isn't all X86
+Message-ID: <20190607212419.GA143433@romley-ivt3.sc.intel.com>
+References: <20190607151409.15476-1-james.morse@arm.com>
+ <20190607151409.15476-2-james.morse@arm.com>
 MIME-Version: 1.0
-References: <20190603073421.10314-1-manivannan.sadhasivam@linaro.org> <20190603073421.10314-2-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20190603073421.10314-2-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 7 Jun 2019 23:18:59 +0200
-Message-ID: <CACRpkdY9j+4PGGyMC-bCKuhP3Cg6xj4mFBt1VuSOi_14JcphPw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: Add drive strength support for BM1880 SoC
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        alec.lin@bitmain.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607151409.15476-2-james.morse@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 9:35 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-
-> Add drive strength support for Bitmain BM1880 SoC.
+On Fri, Jun 07, 2019 at 04:14:06PM +0100, James Morse wrote:
+> Since commit 4d05bf71f157 ("x86/resctrl: Introduce AMD QOS feature")
+> resctrl has supported non-contiguous cache bit masks. The interface
+> for this is currently try-it-and-see.
+> 
+> Update the documentation to say Intel CPUs have this requirement,
+> instead of X86.
+> 
+> Cc: Babu Moger <Babu.Moger@amd.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  Documentation/x86/resctrl_ui.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/x86/resctrl_ui.rst b/Documentation/x86/resctrl_ui.rst
+> index 225cfd4daaee..066f94e53418 100644
+> --- a/Documentation/x86/resctrl_ui.rst
+> +++ b/Documentation/x86/resctrl_ui.rst
+> @@ -342,7 +342,7 @@ For cache resources we describe the portion of the cache that is available
+>  for allocation using a bitmask. The maximum value of the mask is defined
+>  by each cpu model (and may be different for different cache levels). It
+>  is found using CPUID, but is also provided in the "info" directory of
+> -the resctrl file system in "info/{resource}/cbm_mask". X86 hardware
+> +the resctrl file system in "info/{resource}/cbm_mask". Intel hardware
+>  requires that these masks have all the '1' bits in a contiguous block. So
+>  0x3, 0x6 and 0xC are legal 4-bit masks with two bits set, but 0x5, 0x9
+>  and 0xA are not.  On a system with a 20-bit mask each bit represents 5%
+> -- 
+> 2.20.1
 >
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+ 
+Acked-by: Fenghua Yu <fenghua.yu@intel.com>
 
-Patch applied, no point in holding this back about nitpicking.
+Thanks.
 
-Follow up if you want to change the below:
-
-> +static int bm1880_pinconf_drv_set(unsigned int mA, u32 width,
-> +                                 u32 *regval, u32 bit_offset)
-> +{
-> +       u32 _regval;
-> +
-> +       _regval = *regval;
-
-(... lots of fun with _reqval ...)
-
-> +       *regval = _regval;
-> +
-> +       return 0;
-
-I would avoid using any _names and __names because of ambiguity
-(no clear semantic meaning) I would just call the variable in the
-function *regp and the _regval just "reg" but it's just me.
-
-Yours,
-Linus Walleij
+-Fenghua Yu
