@@ -2,138 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D39539627
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAEDE39644
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:57:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730883AbfFGTta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 15:49:30 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38415 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729715AbfFGTt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 15:49:29 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n11so1570744qtl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 12:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XetnfZzEQtXF/XrKdqkwd5MCUzqaJ2o3w0f1N7FnhFE=;
-        b=j2e0W6BqNUid0rxnebMn5Hr9iaql3SX07RO42txy8qnnOmU48epJYX6py40IzhOez/
-         blXsIBDZxLY0D8q50NwIq/J158qWmlEYwsG0gxeCdXSeG8VUt9YoWN4NJ0/6m+rZkyqD
-         aWRAU0OOGVjXAu6/tLfBaZ8xeavToQuBrkIz6N7U+UdLuwQcgEj6xu78gpMtdc3eJ4yd
-         MhXaXacpd20zhbYkWxWxjUN6aozCXeZL9GK5jeJ8z7fM5w15T4SwdGS5Woz9JFctg8Po
-         ZKumNaQYeqVorzVTjbJOnZRtvr1t3HlmX1263UKBqO+4g2kENFQmkbyiHk4YhVMGdNmq
-         PcIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XetnfZzEQtXF/XrKdqkwd5MCUzqaJ2o3w0f1N7FnhFE=;
-        b=au3Y59jA4VkUos4dmywNhFwMe7jbu6cM8A/UbDd7PZI3VrOPnr5TjXEyalHV2oB8E1
-         XkjTKezxKNE5ZW9ncx8l4hBIXLkru0d1aZ2Rmh1mp3F/RuIeWudhLC6+Tvm/77cqjQYU
-         00OH+W4l/WDsMxl40jQQKY4z0NnwW7+OqCJgy3dhm2Ciy9RZEZVMk/72gPn8J4HZ4dea
-         dVyQwslPY+6xU6AAoZpHVJCSDW206Qf6SDOAeGtj7LrMpoaDN/JuX1s023nrarDKeXtQ
-         SAAwBh4nnaES9KKYehtIbRSKqenQVYK8Pdt+Q6Uig0dfrU3iHxh/+CtqXPvlFpHvk0Bg
-         b6gA==
-X-Gm-Message-State: APjAAAWlHHpPfScKoqm6M7gozAmFKdN7WJmVDdh1vfufYoImLw36PLE/
-        DnWZhh1PVbXUF2NcUwnDDss=
-X-Google-Smtp-Source: APXvYqxSGsrQ17qLjpihKknfwIl2QkjKjO5Wq2z2Cyt7df3oxdd5iUulP5xcz4UPbigHFwFBpgt6tA==
-X-Received: by 2002:ac8:2c6a:: with SMTP id e39mr48964705qta.179.1559936968380;
-        Fri, 07 Jun 2019 12:49:28 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (187-26-97-17.3g.claro.net.br. [187.26.97.17])
-        by smtp.gmail.com with ESMTPSA id p13sm1435620qkj.4.2019.06.07.12.49.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 12:49:27 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id ABA9041149; Fri,  7 Jun 2019 16:49:23 -0300 (-03)
-Date:   Fri, 7 Jun 2019 16:49:23 -0300
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/19] perf intel-pt: Add support for efficient time
- interval filtering
-Message-ID: <20190607194923.GP21245@kernel.org>
-References: <20190604130017.31207-1-adrian.hunter@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604130017.31207-1-adrian.hunter@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1731287AbfFGT5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 15:57:32 -0400
+Received: from mga14.intel.com ([192.55.52.115]:3736 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729241AbfFGT5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 15:57:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 12:57:31 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2019 12:57:29 -0700
+Message-ID: <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
+Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
+ function
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Fri, 07 Jun 2019 12:49:28 -0700
+In-Reply-To: <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
+References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
+         <20190606200926.4029-4-yu-cheng.yu@intel.com>
+         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
+         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
+         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
+         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
+         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jun 04, 2019 at 03:59:58PM +0300, Adrian Hunter escreveu:
-> Hi
+On Fri, 2019-06-07 at 11:29 -0700, Andy Lutomirski wrote:
+> > On Jun 7, 2019, at 10:59 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+> > 
+> > > On 6/7/19 10:43 AM, Peter Zijlstra wrote:
+> > > I've no idea what the kernel should do; since you failed to answer the
+> > > question what happens when you point this to garbage.
+> > > 
+> > > Does it then fault or what?
+> > 
+> > Yeah, I think you'll fault with a rather mysterious CR2 value since
+> > you'll go look at the instruction that faulted and not see any
+> > references to the CR2 value.
+> > 
+> > I think this new MSR probably needs to get included in oops output when
+> > CET is enabled.
 > 
-> Here are some patches to add support for efficient time interval filtering.
-> First there are 3 patches to add perf time interval to the itrace options
-> structure.  Then changes to Intel PT to support "fast forwarding" to a
-> particular timestamp.  The filtering is added in patch "perf intel-pt: Add
-> support for efficient time interval filtering".  After that there are
-> patches to time-utils, leading up to adding a new test and adding support
-> multiple explicit time intervals.
+> This shouldn’t be able to OOPS because it only happens at CPL 3, right?  We
+> should put it into core dumps, though.
 > 
-> The Intel PT changes make time filtering much faster because decoding is
-> limited to the minimal time ranges needed to support the time intervals.
-
-Thanks, applied!
-
-Will now go with the other patches in this batch to the container tests,
-hopefully should hit Ingo's mail box soon :-)
-
-- Arnaldo
-
-- Arnaldo
- 
+> > 
+> > Why don't we require that a VMA be in place for the entire bitmap?
+> > Don't we need a "get" prctl function too in case something like a JIT is
+> > running and needs to find the location of this bitmap to set bits itself?
+> > 
+> > Or, do we just go whole-hog and have the kernel manage the bitmap
+> > itself. Our interface here could be:
+> > 
+> >    prctl(PR_MARK_CODE_AS_LEGACY, start, size);
+> > 
+> > and then have the kernel allocate and set the bitmap for those code
+> > locations.
 > 
-> Adrian Hunter (19):
->       perf auxtrace: Add perf time interval to itrace_synth_ops
->       perf script: Set perf time interval in itrace_synth_ops
->       perf report: Set perf time interval in itrace_synth_ops
->       perf intel-pt: Add lookahead callback
->       perf intel-pt: Factor out intel_pt_8b_tsc()
->       perf intel-pt: Factor out intel_pt_reposition()
->       perf intel-pt: Add reposition parameter to intel_pt_get_data()
->       perf intel-pt: Add intel_pt_fast_forward()
->       perf intel-pt: Factor out intel_pt_get_buffer()
->       perf intel-pt: Add support for lookahead
->       perf intel-pt: Add support for efficient time interval filtering
->       perf time-utils: Treat time ranges consistently
->       perf time-utils: Factor out set_percent_time()
->       perf time-utils: Prevent percentage time range overlap
->       perf time-utils: Fix --time documentation
->       perf time-utils: Simplify perf_time__parse_for_ranges() error paths slightly
->       perf time-utils: Make perf_time__parse_for_ranges() more logical
->       perf tests: Add a test for time-utils
->       perf time-utils: Add support for multiple explicit time intervals
+> Given that the format depends on the VA size, this might be a good idea.  I
+> bet we can reuse the special mapping infrastructure for this — the VMA could
+> be a MAP_PRIVATE special mapping named [cet_legacy_bitmap] or similar, and we
+> can even make special rules to core dump it intelligently if needed.  And we
+> can make mremap() on it work correctly if anyone (CRIU?) cares.
 > 
->  tools/perf/Documentation/perf-diff.txt             |  14 +-
->  tools/perf/Documentation/perf-report.txt           |   9 +-
->  tools/perf/Documentation/perf-script.txt           |   9 +-
->  tools/perf/builtin-report.c                        |   8 +-
->  tools/perf/builtin-script.c                        |   8 +-
->  tools/perf/tests/Build                             |   1 +
->  tools/perf/tests/builtin-test.c                    |   4 +
->  tools/perf/tests/tests.h                           |   1 +
->  tools/perf/tests/time-utils-test.c                 | 251 ++++++++++++++++
->  tools/perf/util/auxtrace.h                         |  34 +++
->  .../perf/util/intel-pt-decoder/intel-pt-decoder.c  | 188 ++++++++++--
->  .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |   5 +
->  tools/perf/util/intel-pt.c                         | 325 +++++++++++++++++++--
->  tools/perf/util/time-utils.c                       | 132 ++++++---
->  14 files changed, 894 insertions(+), 95 deletions(-)
->  create mode 100644 tools/perf/tests/time-utils-test.c
+> Hmm.  Can we be creative and skip populating it with zeros?  The CPU should
+> only ever touch a page if we miss an ENDBR on it, so, in normal operation, we
+> don’t need anything to be there.  We could try to prevent anyone from
+> *reading* it outside of ENDBR tracking if we want to avoid people accidentally
+> wasting lots of memory by forcing it to be fully populated when the read it.
 > 
+> The one downside is this forces it to be per-mm, but that seems like a
+> generally reasonable model anyway.
 > 
-> Regards
-> Adrian
+> This also gives us an excellent opportunity to make it read-only as seen from
+> userspace to prevent exploits from just poking it full of ones before
+> redirecting execution.
 
--- 
+GLIBC sets bits only for legacy code, and then makes the bitmap read-only.  That
+avoids most issues:
 
-- Arnaldo
+  To populate bitmap pages, mprotect() is required.
+  Reading zero bitmap pages would not waste more physical memory, right?
+
+Yu-cheng
+
