@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B7738FBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1C223906C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731138AbfFGPop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:44:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56266 "EHLO mail.kernel.org"
+        id S1732068AbfFGPt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:49:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731126AbfFGPom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:44:42 -0400
+        id S1731626AbfFGPtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:49:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AE612133D;
-        Fri,  7 Jun 2019 15:44:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EAC120840;
+        Fri,  7 Jun 2019 15:49:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922282;
-        bh=7+mU74GXrbpCUDKfGhZsLZkVwFWMioX8PzYR9FHW0TE=;
+        s=default; t=1559922592;
+        bh=je00nHXy2hhHJLoChkbtjJCQOLib/hdvZbih/h8p3Aw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wTSXpzeGtIgJv2vXRCuyqa2TxaZPp/xDQcEupac/z11tlcBnST+xdAbRHAoIugAJy
-         vHooiQV1TsrntuLS/nqhWqzKWgjr1+WRi1hCG6Rp3dVNGaNQYvPXMwTHPvWN94FfF8
-         NuWWoM+wGg5cIsCIZNKnxZ/4DFlBsWv0wI5LeivU=
+        b=xnk/M67UsZdFwJPGjYml4Di37Ogg/+PwkTDDPvDLpZFygIzuWLeAFa+IR4UC7qk4p
+         WRGfyO0BJRZExGvRk3n92fGu+zGer4ErbhZy8h3GRS/d6N/6OVsy0/gQJqQReUGIUu
+         SqjM1F0zabi75OqtVXNzuPdEoUSEQsxrHFDUrW7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 30/73] powerpc/perf: Fix MMCRA corruption by bhrb_filter
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Patrick Steuer <steuer@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH 5.1 32/85] s390/crypto: fix gcm-aes-s390 selftest failures
 Date:   Fri,  7 Jun 2019 17:39:17 +0200
-Message-Id: <20190607153852.422822358@linuxfoundation.org>
+Message-Id: <20190607153853.224903648@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,106 +45,258 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+From: Harald Freudenberger <freude@linux.ibm.com>
 
-commit 3202e35ec1c8fc19cea24253ff83edf702a60a02 upstream.
+commit bef9f0ba300a55d79a69aa172156072182176515 upstream.
 
-Consider a scenario where user creates two events:
+The current kernel uses improved crypto selftests. These
+tests showed that the current implementation of gcm-aes-s390
+is not able to deal with chunks of output buffers which are
+not a multiple of 16 bytes. This patch introduces a rework
+of the gcm aes s390 scatter walk handling which now is able
+to handle any input and output scatter list chunk sizes
+correctly.
 
-  1st event:
-    attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
-    attr.branch_sample_type = PERF_SAMPLE_BRANCH_ANY;
-    fd = perf_event_open(attr, 0, 1, -1, 0);
+Code has been verified by the crypto selftests, the tcrypt
+kernel module and additional tests ran via the af_alg interface.
 
-  This sets cpuhw->bhrb_filter to 0 and returns valid fd.
-
-  2nd event:
-    attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
-    attr.branch_sample_type = PERF_SAMPLE_BRANCH_CALL;
-    fd = perf_event_open(attr, 0, 1, -1, 0);
-
-  It overrides cpuhw->bhrb_filter to -1 and returns with error.
-
-Now if power_pmu_enable() gets called by any path other than
-power_pmu_add(), ppmu->config_bhrb(-1) will set MMCRA to -1.
-
-Fixes: 3925f46bb590 ("powerpc/perf: Enable branch stack sampling framework")
-Cc: stable@vger.kernel.org # v3.10+
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: <stable@vger.kernel.org>
+Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
+Reviewed-by: Patrick Steuer <steuer@linux.ibm.com>
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/perf/core-book3s.c |    6 ++++--
- arch/powerpc/perf/power8-pmu.c  |    3 +++
- arch/powerpc/perf/power9-pmu.c  |    3 +++
- 3 files changed, 10 insertions(+), 2 deletions(-)
+ arch/s390/crypto/aes_s390.c |  148 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 107 insertions(+), 41 deletions(-)
 
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -1827,6 +1827,7 @@ static int power_pmu_event_init(struct p
+--- a/arch/s390/crypto/aes_s390.c
++++ b/arch/s390/crypto/aes_s390.c
+@@ -826,19 +826,45 @@ static int gcm_aes_setauthsize(struct cr
+ 	return 0;
+ }
+ 
+-static void gcm_sg_walk_start(struct gcm_sg_walk *gw, struct scatterlist *sg,
+-			      unsigned int len)
++static void gcm_walk_start(struct gcm_sg_walk *gw, struct scatterlist *sg,
++			   unsigned int len)
+ {
+ 	memset(gw, 0, sizeof(*gw));
+ 	gw->walk_bytes_remain = len;
+ 	scatterwalk_start(&gw->walk, sg);
+ }
+ 
+-static int gcm_sg_walk_go(struct gcm_sg_walk *gw, unsigned int minbytesneeded)
++static inline unsigned int _gcm_sg_clamp_and_map(struct gcm_sg_walk *gw)
++{
++	struct scatterlist *nextsg;
++
++	gw->walk_bytes = scatterwalk_clamp(&gw->walk, gw->walk_bytes_remain);
++	while (!gw->walk_bytes) {
++		nextsg = sg_next(gw->walk.sg);
++		if (!nextsg)
++			return 0;
++		scatterwalk_start(&gw->walk, nextsg);
++		gw->walk_bytes = scatterwalk_clamp(&gw->walk,
++						   gw->walk_bytes_remain);
++	}
++	gw->walk_ptr = scatterwalk_map(&gw->walk);
++	return gw->walk_bytes;
++}
++
++static inline void _gcm_sg_unmap_and_advance(struct gcm_sg_walk *gw,
++					     unsigned int nbytes)
++{
++	gw->walk_bytes_remain -= nbytes;
++	scatterwalk_unmap(&gw->walk);
++	scatterwalk_advance(&gw->walk, nbytes);
++	scatterwalk_done(&gw->walk, 0, gw->walk_bytes_remain);
++	gw->walk_ptr = NULL;
++}
++
++static int gcm_in_walk_go(struct gcm_sg_walk *gw, unsigned int minbytesneeded)
+ {
  	int n;
- 	int err;
- 	struct cpu_hw_events *cpuhw;
-+	u64 bhrb_filter;
  
- 	if (!ppmu)
- 		return -ENOENT;
-@@ -1932,13 +1933,14 @@ static int power_pmu_event_init(struct p
- 	err = power_check_constraints(cpuhw, events, cflags, n + 1);
- 
- 	if (has_branch_stack(event)) {
--		cpuhw->bhrb_filter = ppmu->bhrb_filter_map(
-+		bhrb_filter = ppmu->bhrb_filter_map(
- 					event->attr.branch_sample_type);
- 
--		if (cpuhw->bhrb_filter == -1) {
-+		if (bhrb_filter == -1) {
- 			put_cpu_var(cpu_hw_events);
- 			return -EOPNOTSUPP;
- 		}
-+		cpuhw->bhrb_filter = bhrb_filter;
+-	/* minbytesneeded <= AES_BLOCK_SIZE */
+ 	if (gw->buf_bytes && gw->buf_bytes >= minbytesneeded) {
+ 		gw->ptr = gw->buf;
+ 		gw->nbytes = gw->buf_bytes;
+@@ -851,13 +877,11 @@ static int gcm_sg_walk_go(struct gcm_sg_
+ 		goto out;
  	}
  
- 	put_cpu_var(cpu_hw_events);
---- a/arch/powerpc/perf/power8-pmu.c
-+++ b/arch/powerpc/perf/power8-pmu.c
-@@ -29,6 +29,7 @@ enum {
- #define	POWER8_MMCRA_IFM1		0x0000000040000000UL
- #define	POWER8_MMCRA_IFM2		0x0000000080000000UL
- #define	POWER8_MMCRA_IFM3		0x00000000C0000000UL
-+#define	POWER8_MMCRA_BHRB_MASK		0x00000000C0000000UL
+-	gw->walk_bytes = scatterwalk_clamp(&gw->walk, gw->walk_bytes_remain);
+-	if (!gw->walk_bytes) {
+-		scatterwalk_start(&gw->walk, sg_next(gw->walk.sg));
+-		gw->walk_bytes = scatterwalk_clamp(&gw->walk,
+-						   gw->walk_bytes_remain);
++	if (!_gcm_sg_clamp_and_map(gw)) {
++		gw->ptr = NULL;
++		gw->nbytes = 0;
++		goto out;
+ 	}
+-	gw->walk_ptr = scatterwalk_map(&gw->walk);
  
- /*
-  * Raw event encoding for PowerISA v2.07 (Power8):
-@@ -243,6 +244,8 @@ static u64 power8_bhrb_filter_map(u64 br
+ 	if (!gw->buf_bytes && gw->walk_bytes >= minbytesneeded) {
+ 		gw->ptr = gw->walk_ptr;
+@@ -869,51 +893,90 @@ static int gcm_sg_walk_go(struct gcm_sg_
+ 		n = min(gw->walk_bytes, AES_BLOCK_SIZE - gw->buf_bytes);
+ 		memcpy(gw->buf + gw->buf_bytes, gw->walk_ptr, n);
+ 		gw->buf_bytes += n;
+-		gw->walk_bytes_remain -= n;
+-		scatterwalk_unmap(&gw->walk);
+-		scatterwalk_advance(&gw->walk, n);
+-		scatterwalk_done(&gw->walk, 0, gw->walk_bytes_remain);
+-
++		_gcm_sg_unmap_and_advance(gw, n);
+ 		if (gw->buf_bytes >= minbytesneeded) {
+ 			gw->ptr = gw->buf;
+ 			gw->nbytes = gw->buf_bytes;
+ 			goto out;
+ 		}
+-
+-		gw->walk_bytes = scatterwalk_clamp(&gw->walk,
+-						   gw->walk_bytes_remain);
+-		if (!gw->walk_bytes) {
+-			scatterwalk_start(&gw->walk, sg_next(gw->walk.sg));
+-			gw->walk_bytes = scatterwalk_clamp(&gw->walk,
+-							gw->walk_bytes_remain);
++		if (!_gcm_sg_clamp_and_map(gw)) {
++			gw->ptr = NULL;
++			gw->nbytes = 0;
++			goto out;
+ 		}
+-		gw->walk_ptr = scatterwalk_map(&gw->walk);
+ 	}
  
- static void power8_config_bhrb(u64 pmu_bhrb_filter)
- {
-+	pmu_bhrb_filter &= POWER8_MMCRA_BHRB_MASK;
-+
- 	/* Enable BHRB filter in PMU */
- 	mtspr(SPRN_MMCRA, (mfspr(SPRN_MMCRA) | pmu_bhrb_filter));
+ out:
+ 	return gw->nbytes;
  }
---- a/arch/powerpc/perf/power9-pmu.c
-+++ b/arch/powerpc/perf/power9-pmu.c
-@@ -100,6 +100,7 @@ enum {
- #define POWER9_MMCRA_IFM1		0x0000000040000000UL
- #define POWER9_MMCRA_IFM2		0x0000000080000000UL
- #define POWER9_MMCRA_IFM3		0x00000000C0000000UL
-+#define POWER9_MMCRA_BHRB_MASK		0x00000000C0000000UL
  
- /* Nasty Power9 specific hack */
- #define PVR_POWER9_CUMULUS		0x00002000
-@@ -308,6 +309,8 @@ static u64 power9_bhrb_filter_map(u64 br
- 
- static void power9_config_bhrb(u64 pmu_bhrb_filter)
+-static void gcm_sg_walk_done(struct gcm_sg_walk *gw, unsigned int bytesdone)
++static int gcm_out_walk_go(struct gcm_sg_walk *gw, unsigned int minbytesneeded)
  {
-+	pmu_bhrb_filter &= POWER9_MMCRA_BHRB_MASK;
+-	int n;
++	if (gw->walk_bytes_remain == 0) {
++		gw->ptr = NULL;
++		gw->nbytes = 0;
++		goto out;
++	}
 +
- 	/* Enable BHRB filter in PMU */
- 	mtspr(SPRN_MMCRA, (mfspr(SPRN_MMCRA) | pmu_bhrb_filter));
++	if (!_gcm_sg_clamp_and_map(gw)) {
++		gw->ptr = NULL;
++		gw->nbytes = 0;
++		goto out;
++	}
+ 
++	if (gw->walk_bytes >= minbytesneeded) {
++		gw->ptr = gw->walk_ptr;
++		gw->nbytes = gw->walk_bytes;
++		goto out;
++	}
++
++	scatterwalk_unmap(&gw->walk);
++	gw->walk_ptr = NULL;
++
++	gw->ptr = gw->buf;
++	gw->nbytes = sizeof(gw->buf);
++
++out:
++	return gw->nbytes;
++}
++
++static int gcm_in_walk_done(struct gcm_sg_walk *gw, unsigned int bytesdone)
++{
+ 	if (gw->ptr == NULL)
+-		return;
++		return 0;
+ 
+ 	if (gw->ptr == gw->buf) {
+-		n = gw->buf_bytes - bytesdone;
++		int n = gw->buf_bytes - bytesdone;
+ 		if (n > 0) {
+ 			memmove(gw->buf, gw->buf + bytesdone, n);
+-			gw->buf_bytes -= n;
++			gw->buf_bytes = n;
+ 		} else
+ 			gw->buf_bytes = 0;
+-	} else {
+-		gw->walk_bytes_remain -= bytesdone;
+-		scatterwalk_unmap(&gw->walk);
+-		scatterwalk_advance(&gw->walk, bytesdone);
+-		scatterwalk_done(&gw->walk, 0, gw->walk_bytes_remain);
+-	}
++	} else
++		_gcm_sg_unmap_and_advance(gw, bytesdone);
++
++	return bytesdone;
++}
++
++static int gcm_out_walk_done(struct gcm_sg_walk *gw, unsigned int bytesdone)
++{
++	int i, n;
++
++	if (gw->ptr == NULL)
++		return 0;
++
++	if (gw->ptr == gw->buf) {
++		for (i = 0; i < bytesdone; i += n) {
++			if (!_gcm_sg_clamp_and_map(gw))
++				return i;
++			n = min(gw->walk_bytes, bytesdone - i);
++			memcpy(gw->walk_ptr, gw->buf + i, n);
++			_gcm_sg_unmap_and_advance(gw, n);
++		}
++	} else
++		_gcm_sg_unmap_and_advance(gw, bytesdone);
++
++	return bytesdone;
  }
+ 
+ static int gcm_aes_crypt(struct aead_request *req, unsigned int flags)
+@@ -926,7 +989,7 @@ static int gcm_aes_crypt(struct aead_req
+ 	unsigned int pclen = req->cryptlen;
+ 	int ret = 0;
+ 
+-	unsigned int len, in_bytes, out_bytes,
++	unsigned int n, len, in_bytes, out_bytes,
+ 		     min_bytes, bytes, aad_bytes, pc_bytes;
+ 	struct gcm_sg_walk gw_in, gw_out;
+ 	u8 tag[GHASH_DIGEST_SIZE];
+@@ -963,14 +1026,14 @@ static int gcm_aes_crypt(struct aead_req
+ 	*(u32 *)(param.j0 + ivsize) = 1;
+ 	memcpy(param.k, ctx->key, ctx->key_len);
+ 
+-	gcm_sg_walk_start(&gw_in, req->src, len);
+-	gcm_sg_walk_start(&gw_out, req->dst, len);
++	gcm_walk_start(&gw_in, req->src, len);
++	gcm_walk_start(&gw_out, req->dst, len);
+ 
+ 	do {
+ 		min_bytes = min_t(unsigned int,
+ 				  aadlen > 0 ? aadlen : pclen, AES_BLOCK_SIZE);
+-		in_bytes = gcm_sg_walk_go(&gw_in, min_bytes);
+-		out_bytes = gcm_sg_walk_go(&gw_out, min_bytes);
++		in_bytes = gcm_in_walk_go(&gw_in, min_bytes);
++		out_bytes = gcm_out_walk_go(&gw_out, min_bytes);
+ 		bytes = min(in_bytes, out_bytes);
+ 
+ 		if (aadlen + pclen <= bytes) {
+@@ -997,8 +1060,11 @@ static int gcm_aes_crypt(struct aead_req
+ 			  gw_in.ptr + aad_bytes, pc_bytes,
+ 			  gw_in.ptr, aad_bytes);
+ 
+-		gcm_sg_walk_done(&gw_in, aad_bytes + pc_bytes);
+-		gcm_sg_walk_done(&gw_out, aad_bytes + pc_bytes);
++		n = aad_bytes + pc_bytes;
++		if (gcm_in_walk_done(&gw_in, n) != n)
++			return -ENOMEM;
++		if (gcm_out_walk_done(&gw_out, n) != n)
++			return -ENOMEM;
+ 		aadlen -= aad_bytes;
+ 		pclen -= pc_bytes;
+ 	} while (aadlen + pclen > 0);
 
 
