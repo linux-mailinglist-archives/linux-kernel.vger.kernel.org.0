@@ -2,131 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7226E3867D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2007138681
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:49:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfFGIp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 04:45:58 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55301 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbfFGIp6 (ORCPT
+        id S1727553AbfFGItd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 04:49:33 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38238 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfFGItd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 04:45:58 -0400
-Received: by mail-it1-f194.google.com with SMTP id i21so1548428ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:45:58 -0700 (PDT)
+        Fri, 7 Jun 2019 04:49:33 -0400
+Received: by mail-it1-f193.google.com with SMTP id h9so1556606itk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:49:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qxzzEblUMEA5qQdRiWIndWcO3q1z3D8GVOYc/iBF8T0=;
-        b=vtFW7dQkZ6w7ZKz2yBwH0nSO+7wnvEyhA4Zvn7m4ERt5orAakOZxJQbbAFC/6bqIFS
-         uCDWauPC0ld6wHGkBUqdwmgETG9jIkEIbMroRaI72GvlDslq/xqon9ikBm7s083yHQra
-         IhykEpUQTCYGci0d4VzKHelk7NysiKzea2wIstcbnvrIlfF8XFgzRrqfyZDaMILKkdKQ
-         WjV96dvEF4Azc46bdZhwb/N/XJXSaEEOyJZp7YYicqih0NjVW9rshSgXlGsFiWbwuHqw
-         a+7iET5Nl0R6tdI2itZ8hWXlsazF/vbxkHbhqqqj4aaojx2cg1dBZsTMaY491yeleVQO
-         +ctA==
+         :cc:content-transfer-encoding;
+        bh=adnKoWQTMzO2+3oj6bzIQQSJxMqy6PQK9AaINLk4VKk=;
+        b=fYRHGnDBC83ZNMfN01VXg8LH+MDfZ2+Mrl7HGcO/O0vYbnZ6xMKpuM3zSUENZko1o3
+         2j8a16D64nA8xzTKEwIBH/5oo0qfrFzjWrnMIGJZu8P0N3Rnqg3Hfjwdus2b8hdwaXKW
+         CQa8oRnRTooeVogOV9B6hmD1BL9+bUMH/rksuw9AoLdZgllJXQDP/I4WjKS3FBBPFy9B
+         8mzVB1VgTRZXF6SiF61kXAdkjnFD8Ejy4XeWG5f9Yq+s9gmeoDHfJ2SOUvxhB6e25YE4
+         9jXKe3Cbo5CBp6bJLSPMS9cKfzvwlnIbmrva6BrwqX+NqGZg0RCCUKxlbvUCaeJDi6+9
+         XcPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qxzzEblUMEA5qQdRiWIndWcO3q1z3D8GVOYc/iBF8T0=;
-        b=k0J4YtUeklSxnHU6nADGIsi4mwCvR7XvTNx1TZO28yZiO75dB4Oyy0ew/l6b42rIOc
-         Kty1d0KSaQSs6+ByTkv0XmGNhCVPSBHc4rthBhb+1P0giRZ9OUjhWwu7+6GL7c0MsKCS
-         N6jtrBOYUKjRC6btn+YoHDgBLJJ//XrABX74calLrwi50IuTnmqjPR/ecRt3eZnk6rAT
-         jqqXG9VotJOaLjfJXSL15bJHwaXSgRW3rShVGk9gCGWyhAxywhrgc/7x6DKAY8mNbosL
-         XDTlhLPS7uk+J8ZUbr6asM/Wq0T/6lJmQIcsDybnvfiBYrsnV6TAjLb4vZ3/TZjOUaHu
-         XnUg==
-X-Gm-Message-State: APjAAAUR97Q9cqlUXwEMJkZRHBUkmB0DENGes6jptPwsd22uljl+yMxY
-        15nOs+V0IJ+ev6iuB0TssRqqYXu8JO7xh5iLfDPaYA==
-X-Google-Smtp-Source: APXvYqyyIc3w38KtpRgwzInkX7C52C7qLNIhYaBz1KW51AZa/S8BPxu0J0HyjhtYLoeXbrcad31ZTGsAa4j675kCnjk=
-X-Received: by 2002:a02:22c6:: with SMTP id o189mr21527930jao.35.1559897157328;
- Fri, 07 Jun 2019 01:45:57 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=adnKoWQTMzO2+3oj6bzIQQSJxMqy6PQK9AaINLk4VKk=;
+        b=Ury2NRjv56K2rUonWLslJb7L71TrQsrwTSQULwoFOj0vYz3/+KgjQUIb1tueS1Zu2N
+         bZLSOcbNDN3pWqhEgt3ySyg5H7QID0x0g7G1/bRVgv5btA/8E5llfjUah6edVO0fdw3R
+         BRvCQp301bAkgGTwhXY3gcTLv9+zGoiCbF2aQwOfMc2/SMeU16kf4gMI9kzxZ8Ngj3d7
+         2sgB68KQBk1tCUh4B/wZzXYN8bNA3eh21Tlak2q6dJV6Kv4KFOdgbDw5sD70nI1al1Ju
+         gkneJOwdew22UYqowVBEVUYbUeE+Rjf1ITUbZYoMEM4M86MQwi5Oere1ZSHQhD/ROEZx
+         iXWA==
+X-Gm-Message-State: APjAAAVhY2nGEcAa1Lm3jGvHyheP3qDy4y5hCzIRZMdG6rIXoBPoX/ll
+        fd4r6ttvEVMA+5BDBxSmFn2Ox53Jgu2UmI3DuRmjBWu0SIA19g==
+X-Google-Smtp-Source: APXvYqyO8g27gbZ/n5zmlwXplxQ6DyFH8ip6uXzyHI+o1yCx3Wapw0TWmXNpP3u8qN2VsWZcoB8baklytZ7g7GG1fLM=
+X-Received: by 2002:a02:b01c:: with SMTP id p28mr34991386jah.130.1559897372103;
+ Fri, 07 Jun 2019 01:49:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <000000000000f19676058ab7adc4@google.com>
-In-Reply-To: <000000000000f19676058ab7adc4@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 7 Jun 2019 10:45:45 +0200
-Message-ID: <CACT4Y+ZZy5nqduErU8hjKrwThHiybGpwd3QzOviAWftZFZ4d2A@mail.gmail.com>
-Subject: Re: linux-next boot error: WARNING: workqueue cpumask: online
- intersect > possible intersect
-To:     syzbot <syzbot+4d497898effeb1936245@syzkaller.appspotmail.com>,
-        Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, mwb@linux.vnet.ibm.com
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <20190605130753.327195108@infradead.org> <20190605131945.125037517@infradead.org>
+ <DD54886F-77C6-4230-A711-BF10DD44C52C@vmware.com> <20190607082851.GV3419@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190607082851.GV3419@hirez.programming.kicks-ass.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 7 Jun 2019 10:49:18 +0200
+Message-ID: <CAKv+Gu-rsZ2UsyEHbsZcSv9VVnFBqG70q+vk6thgMGFBi+vLSA@mail.gmail.com>
+Subject: Re: [PATCH 10/15] static_call: Add basic static call infrastructure
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Nadav Amit <namit@vmware.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 10:33 AM syzbot
-<syzbot+4d497898effeb1936245@syzkaller.appspotmail.com> wrote:
+On Fri, 7 Jun 2019 at 10:29, Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> Hello,
+> On Thu, Jun 06, 2019 at 10:44:23PM +0000, Nadav Amit wrote:
+> > > + * Usage example:
+> > > + *
+> > > + *   # Start with the following functions (with identical prototypes=
+):
+> > > + *   int func_a(int arg1, int arg2);
+> > > + *   int func_b(int arg1, int arg2);
+> > > + *
+> > > + *   # Define a 'my_key' reference, associated with func_a() by defa=
+ult
+> > > + *   DEFINE_STATIC_CALL(my_key, func_a);
+> > > + *
+> > > + *   # Call func_a()
+> > > + *   static_call(my_key, arg1, arg2);
+> > > + *
+> > > + *   # Update 'my_key' to point to func_b()
+> > > + *   static_call_update(my_key, func_b);
+> > > + *
+> > > + *   # Call func_b()
+> > > + *   static_call(my_key, arg1, arg2);
+> >
+> > I think that this calling interface is not very intuitive.
 >
-> syzbot found the following crash on:
+> Yeah, it is somewhat unfortunate..
 >
-> HEAD commit:    ae3cad8f Add linux-next specific files for 20190603
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164f802ea00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7ccec0766d83706f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4d497898effeb1936245
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+4d497898effeb1936245@syzkaller.appspotmail.com
->
-> smpboot: CPU0: Intel(R) Xeon(R) CPU @ 2.30GHz (family: 0x6, model: 0x3f,
-> stepping: 0x0)
-> Performance Events: unsupported p6 CPU model 63 no PMU driver, software
-> events only.
-> rcu: Hierarchical SRCU implementation.
-> NMI watchdog: Perf NMI watchdog permanently disabled
-> smp: Bringing up secondary CPUs ...
-> x86: Booting SMP configuration:
-> .... node  #0, CPUs:      #1
-> MDS CPU bug present and SMT on, data leak possible. See
-> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for
-> more details.
-> smp: Brought up 2 nodes, 2 CPUs
-> smpboot: Max logical packages: 1
-> smpboot: Total of 2 processors activated (9200.00 BogoMIPS)
-> devtmpfs: initialized
-> clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns:
-> 19112604462750000 ns
-> futex hash table entries: 512 (order: 4, 65536 bytes)
-> xor: automatically using best checksumming function   avx
-> PM: RTC time: 07:02:18, date: 2019-06-03
-> NET: Registered protocol family 16
-> audit: initializing netlink subsys (disabled)
-> cpuidle: using governor menu
-> ACPI: bus type PCI registered
-> dca service started, version 1.12.1
-> PCI: Using configuration type 1 for base access
-> WARNING: workqueue cpumask: online intersect > possible intersect
 
-+workqueue maintainers and Michael who added this WARNING
-
-The WARNING was added in 2017, so I guess it's a change somewhere else
-that triggered it.
-The WARNING message does not seem to give enough info about the caller
-(should it be changed to WARN_ONCE to print a stack?). How can be root
-cause this and unbreak linux-next?
+Another thing I brought up at the time is that it would be useful to
+have the ability to 'reset' a static call to its default target. E.g.,
+for crypto modules that implement an accelerated version of a library
+interface, removing the module should revert those call sites back to
+the original target, without putting a disproportionate burden on the
+module itself to implement the logic to support this.
 
 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > I understand that
+> > the macros/objtool cannot allow the calling interface to be completely
+> > transparent (as compiler plugin could). But, can the macros be used to
+> > paste the key with the =E2=80=9Cstatic_call=E2=80=9D? I think that havi=
+ng something like:
+> >
+> >   static_call__func(arg1, arg2)
+> >
+> > Is more readable than
+> >
+> >   static_call(func, arg1, arg2)
 >
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Doesn't really make it much better for me; I think I'd prefer to switch
+> to the GCC plugin scheme over this.  ISTR there being some propotypes
+> there, but I couldn't quickly locate them.
 >
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000f19676058ab7adc4%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+
+I implemented the GCC plugin here
+
+https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=3Dsta=
+tic-calls
+
+but IIRC, all it does is annotate call sites exactly how objtool does it.
+
+> > > +}
+> > > +
+> > > +#define static_call_update(key, func)                               =
+       \
+> > > +({                                                                 \
+> > > +   BUILD_BUG_ON(!__same_type(func, STATIC_CALL_TRAMP(key)));       \
+> > > +   __static_call_update(&key, func);                               \
+> > > +})
+> >
+> > Is this safe against concurrent module removal?
+>
+> It is for CONFIG_MODULE=3Dn :-)
