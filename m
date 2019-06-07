@@ -2,107 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2846D395E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEB0E39568
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730697AbfFGTkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 15:40:31 -0400
-Received: from gateway36.websitewelcome.com ([50.116.125.2]:34265 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729353AbfFGTkb (ORCPT
+        id S1729989AbfFGTSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 15:18:11 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42047 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729935AbfFGTSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 15:40:31 -0400
-X-Greylist: delayed 1361 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 15:40:30 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 87DDD400CA603
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 13:38:49 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZKN3huKlLdnCeZKN3hXPwv; Fri, 07 Jun 2019 14:17:49 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.134.24] (port=48016 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hZKN1-002mT3-Kl; Fri, 07 Jun 2019 14:17:48 -0500
-Date:   Fri, 7 Jun 2019 14:17:45 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Igor Mitsyanko <imitsyanko@quantenna.com>,
-        Avinash Patil <avinashp@quantenna.com>,
-        Sergey Matyukevich <smatyukevich@quantenna.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] qtnfmac: Use struct_size() in kzalloc()
-Message-ID: <20190607191745.GA19120@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.134.24
-X-Source-L: No
-X-Exim-ID: 1hZKN1-002mT3-Kl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.134.24]:48016
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 7 Jun 2019 15:18:11 -0400
+Received: by mail-qt1-f193.google.com with SMTP id s15so3553948qtk.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 12:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=dBja0SaABhJ+vkH9oPP7a19xf2P1INI9IB5AOePiwvA=;
+        b=HGyoiJk46WZXALckZqXAv4TDiqPCegoidYZZjWY7PoqQNvjs9DPkpooeU4PvBTNaOi
+         PazRcvhLTQMU/UnjtO6jXv8SlzxazE+VJkcJ4Q5xItcQihAuw0SP3qnyz5a0wiiHiSue
+         qXlsA72lxUpE2qtlBg4nakCyxoFedqJA8BnAJXNqWsU/WRiAVNg/1RvHe7/OPP9pFe/5
+         7qU1PnoLmALXiQFoguW3R51sdTFFD1ps9euwnhwMujleUNf4YSOcijqw62yMcSFJitgR
+         jCTmb2A/q4dZAgp0XV1Dxafj5THK9WvZ72TXfqHVAnx1AZJa0HfbDpZr9RkG36Pvq4dK
+         Ycdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dBja0SaABhJ+vkH9oPP7a19xf2P1INI9IB5AOePiwvA=;
+        b=qxt23nRuoNFZTeh5BlPPRMnIQcHVyPT5SXeCoSF9r9kCOGALmOZjitl97ia7eeu4ic
+         k/1wyDKk7nxEvzx7AgC+ymbqV4JR6DYc9QqKc8tzIhHbaoYWORS7/y8/oRzbWk2WjXUf
+         AjUkzs6QyckMe529sTNovGo/jFSksCHJDSNRqqyqmxvoy+yaVHpTs9heCWy22PhlwUfk
+         t+u3tl6pvFP1iL7JYWvL/pbuik90dot+6vL7ltVRHX6Yjx6D4bQwpjsBVdH78Sq89m1A
+         1/8Wq/oTXoZ4kQcTtWtliFTRPUX0QsQEUGxtIkPM95X47I0WyR6IRtEK+bgSta26vxts
+         RS1A==
+X-Gm-Message-State: APjAAAVxwR+re1WlV1WcnuflABgq5NzDjx2TuLLFFiHdzikOxw5Co/po
+        Sr4ItUhqrEdg4qRJmMafOCe4OkDBX8o=
+X-Google-Smtp-Source: APXvYqxcKoB0QsUOsyool9cAmaWLxyFtfiCIl+a5IdSf0kYmEwuYWP82X6YRRmeVT8wz3gTTAO00GA==
+X-Received: by 2002:a0c:96b9:: with SMTP id a54mr26876867qvd.135.1559935090299;
+        Fri, 07 Jun 2019 12:18:10 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id h128sm1638507qkc.27.2019.06.07.12.18.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 12:18:09 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     ard.biesheuvel@linaro.org, dvhart@infradead.org,
+        andy@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [RESEND PATCH] x86/efi: fix a -Wtype-limits compilation warning
+Date:   Fri,  7 Jun 2019 15:17:47 -0400
+Message-Id: <1559935067-4076-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Compiling a kernel with W=1 generates this warning,
 
-struct ieee80211_regdomain {
-	...
-        struct ieee80211_reg_rule reg_rules[];
-};
+arch/x86/platform/efi/quirks.c:731:16: warning: comparison of unsigned
+expression >= 0 is always true [-Wtype-limits]
 
-instance = kzalloc(sizeof(*mac->rd) +
-                          sizeof(struct ieee80211_reg_rule) *
-                          count, GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, reg_rules, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- drivers/net/wireless/quantenna/qtnfmac/commands.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/platform/efi/quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-index 459f6b81d2eb..dc0c7244b60e 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
-+++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-@@ -1011,9 +1011,8 @@ qtnf_parse_variable_mac_info(struct qtnf_wmac *mac,
- 	if (WARN_ON(resp->n_reg_rules > NL80211_MAX_SUPP_REG_RULES))
- 		return -E2BIG;
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 632b83885867..3b9fd679cea9 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -728,7 +728,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
+ 	 * Address range 0x0000 - 0x0fff is always mapped in the efi_pgd, so
+ 	 * page faulting on these addresses isn't expected.
+ 	 */
+-	if (phys_addr >= 0x0000 && phys_addr <= 0x0fff)
++	if (phys_addr <= 0x0fff)
+ 		return;
  
--	mac->rd = kzalloc(sizeof(*mac->rd) +
--			  sizeof(struct ieee80211_reg_rule) *
--			  resp->n_reg_rules, GFP_KERNEL);
-+	mac->rd = kzalloc(struct_size(mac->rd, reg_rules, resp->n_reg_rules),
-+			  GFP_KERNEL);
- 	if (!mac->rd)
- 		return -ENOMEM;
- 
+ 	/*
 -- 
-2.21.0
+1.8.3.1
 
