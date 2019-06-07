@@ -2,141 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C6A38DAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F263138DB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729367AbfFGOrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:47:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728198AbfFGOrS (ORCPT
+        id S1729512AbfFGOrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:47:43 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:36285 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729374AbfFGOrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:47:18 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x57El2ld087474
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Jun 2019 10:47:17 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2syqwsxq41-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 10:47:16 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
-        Fri, 7 Jun 2019 15:47:15 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Jun 2019 15:47:11 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x57El9GY21627024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Jun 2019 14:47:09 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47EB611C05C;
-        Fri,  7 Jun 2019 14:47:09 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CFB311C054;
-        Fri,  7 Jun 2019 14:47:06 +0000 (GMT)
-Received: from ram.ibm.com (unknown [9.85.131.246])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  7 Jun 2019 14:47:06 +0000 (GMT)
-Date:   Fri, 7 Jun 2019 07:47:03 -0700
-From:   Ram Pai <linuxram@us.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Ryan Grimm <grimm@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [RFC PATCH 1/1] powerpc/pseries/svm: Unshare all pages before
- kexecing a new kernel
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <20190521044912.1375-1-bauerman@linux.ibm.com>
- <20190521044912.1375-13-bauerman@linux.ibm.com>
+        Fri, 7 Jun 2019 10:47:41 -0400
+Received: by mail-wr1-f49.google.com with SMTP id n4so2469088wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9nsYofuMppnRqgCVGCzspZVxlbsz2i2O0oowpiPhknA=;
+        b=VESsgNY2BTLGAyx5Z9sLoiBllQ5A227565yEWm/niFWezYzsGjx0pAUVikjIctPDs3
+         SRqUAkaM3McZicYSYQ+Klm+EO7Pn0AphEHFsx0AkBp95bMUYQCtsja8Jv5kHoQQ5hxPa
+         g7y6XJBZ5Gd7wE9W3Y0n5W2TaE5j4zctKr+VGEkx2GwaXY6DjldCWUL5O3jXIJZSLE3t
+         OFhWuKfRIoB4m83VpaVfk3U05gzQ/rRVZgk/GujbQSEuClfiXNZlWgiLL759C3goWVIN
+         oydwAq8oaWTQlPmb/jx8X0RVZn+FWbILTVw5zg+iZssRSVLPauFbyXGtxBELAhy2kEgI
+         IUHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9nsYofuMppnRqgCVGCzspZVxlbsz2i2O0oowpiPhknA=;
+        b=fCTbgLHvHNpNxc0Dv9cTkB4VXBC1dkjwFWXyuhwLn4xMXi2oPhBopxzmJhqJbjzJtG
+         r8SpYfEv2bvr0vieI4uWVpsA7AE+3/EfXZRj3cLwXqSCR5bCsWVvUotI0aQ5dv1Ptfhs
+         E2HiY+6jgCzTb1o9PCLVbkarG+dp2EJMkkn5ZCj/JwEDCPZJN28OTBBj50rgjEXgLNfM
+         DRsCCHXDvE7KSvD4ndzaGDjP8N4H1Sn+OVgDZk57u46aVkT1TS3tuYIW8Rqg7S+TXgzq
+         VRxwZbE1KXLKuevzLrI03i/zjubYRifk6+ZwhnLYGS0rohQJFTedLCYyLJRT6Slhctvc
+         CdSg==
+X-Gm-Message-State: APjAAAVxa30U6WwemeoKuRoU78qeXtsp9u022o73dFrpPdQo2mrimC3n
+        5KIKlhgRV+GbQGSXaU/ACBEIdg==
+X-Google-Smtp-Source: APXvYqwTyBPojSgywsCHuUgsnr7aG7OXbTgjaTxNtEuvLKYqrVAsh21/mqKVoLEOHuxUCGZQwtNW/Q==
+X-Received: by 2002:a05:6000:1c6:: with SMTP id t6mr3086900wrx.236.1559918859367;
+        Fri, 07 Jun 2019 07:47:39 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id q20sm5184516wra.36.2019.06.07.07.47.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 07 Jun 2019 07:47:38 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v2 0/3] arm64: dts: meson-g12a: mmc updates
+Date:   Fri,  7 Jun 2019 16:47:32 +0200
+Message-Id: <20190607144735.3829-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521044912.1375-13-bauerman@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19060714-0028-0000-0000-0000037848C8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060714-0029-0000-0000-000024382D1F
-Message-Id: <20190607144703.GB8604@ram.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906070104
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-powerpc/pseries/svm: Unshare all pages before kexecing a new kernel.
-    
-A new kernel deserves a clean slate. Any pages shared with the
-hypervisor is unshared before invoking the new kernel. However there are
-exceptions.  If the new kernel is invoked to dump the current kernel, or
-if there is a explicit request to preserve the state of the current
-kernel, unsharing of pages is skipped.
- 
-NOTE: Reserve atleast 256M for crashkernel.  Otherwise SWIOTLB
-allocation fails and crash kernel fails to boot.
- 
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+This patchset :
+- adds the SDIO controller node using the dram-access-quirk
+- adds SDCard, eMMC & SDIO support to X96
+- Add SDIO support to SEI510
 
-diff --git a/arch/powerpc/include/asm/ultravisor-api.h b/arch/powerpc/include/asm/ultravisor-api.h
-index 8a6c5b4d..c8dd470 100644
---- a/arch/powerpc/include/asm/ultravisor-api.h
-+++ b/arch/powerpc/include/asm/ultravisor-api.h
-@@ -31,5 +31,6 @@
- #define UV_UNSHARE_PAGE			0xF134
- #define UV_PAGE_INVAL			0xF138
- #define UV_SVM_TERMINATE		0xF13C
-+#define UV_UNSHARE_ALL_PAGES		0xF140
- 
- #endif /* _ASM_POWERPC_ULTRAVISOR_API_H */
-diff --git a/arch/powerpc/include/asm/ultravisor.h b/arch/powerpc/include/asm/ultravisor.h
-index bf5ac05..73c44ff 100644
---- a/arch/powerpc/include/asm/ultravisor.h
-+++ b/arch/powerpc/include/asm/ultravisor.h
-@@ -120,6 +120,12 @@ static inline int uv_unshare_page(u64 pfn, u64 npages)
- 	return ucall(UV_UNSHARE_PAGE, retbuf, pfn, npages);
- }
- 
-+static inline int uv_unshare_all_pages(void)
-+{
-+	unsigned long retbuf[UCALL_BUFSIZE];
-+
-+	return ucall(UV_UNSHARE_ALL_PAGES, retbuf);
-+}
- #endif /* !__ASSEMBLY__ */
- 
- #endif	/* _ASM_POWERPC_ULTRAVISOR_H */
-diff --git a/arch/powerpc/kernel/machine_kexec_64.c b/arch/powerpc/kernel/machine_kexec_64.c
-index 75692c3..a93e3ab 100644
---- a/arch/powerpc/kernel/machine_kexec_64.c
-+++ b/arch/powerpc/kernel/machine_kexec_64.c
-@@ -329,6 +329,13 @@ void default_machine_kexec(struct kimage *image)
- #ifdef CONFIG_PPC_PSERIES
- 	kexec_paca.lppaca_ptr = NULL;
- #endif
-+
-+	if (is_svm_platform() && !(image->preserve_context ||
-+				   image->type == KEXEC_TYPE_CRASH)) {
-+		uv_unshare_all_pages();
-+		printk("kexec: Unshared all shared pages.\n");
-+	}
-+
- 	paca_ptrs[kexec_paca.paca_index] = &kexec_paca;
- 
- 	setup_paca(&kexec_paca);
+Changes since v1:
+- removed already applied SDIO patch
+- added missing clock input from pwm
+- added reviewed-by tags
+
+Guillaume La Roque (1):
+  arm64: dts: meson-g12a-x96-max: add support for sdcard and emmc
+
+Neil Armstrong (2):
+  arm64: dts: meson-g12a-x96-max: Enable Wifi SDIO Module
+  arm64: dts: meson-g12a-sei510: Enable Wifi SDIO module
+
+ .../boot/dts/amlogic/meson-g12a-sei510.dts    | 50 +++++++++++
+ .../boot/dts/amlogic/meson-g12a-x96-max.dts   | 90 +++++++++++++++++++
+ 2 files changed, 140 insertions(+)
+
+-- 
+2.21.0
 
