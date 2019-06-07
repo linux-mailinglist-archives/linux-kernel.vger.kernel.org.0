@@ -2,94 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 828173867F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484C438678
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 10:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbfFGIs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 04:48:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:35822 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbfFGIsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 04:48:55 -0400
-X-Greylist: delayed 484 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 04:48:55 EDT
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3228D344;
-        Fri,  7 Jun 2019 01:40:51 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A3CB3F246;
-        Fri,  7 Jun 2019 01:40:50 -0700 (PDT)
-Subject: Re: [PATCH] Documentation: coresight: Update the generic device names
-To:     leo.yan@linaro.org
-Cc:     mathieu.poirier@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        corbet@lwn.net
-References: <1559229077-26436-1-git-send-email-suzuki.poulose@arm.com>
- <20190603190133.GA20462@xps15> <99055755-6525-694e-a15d-5de7318a80da@arm.com>
- <20190607022136.GE5970@leoy-ThinkPad-X240s>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <78c98c28-4f3f-825b-18e1-c71fb63a80eb@arm.com>
-Date:   Fri, 7 Jun 2019 09:40:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727494AbfFGIl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 04:41:28 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36974 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbfFGIl2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 04:41:28 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r10so1140968otd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 01:41:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uhRDnyMcoVrM+CY+5h3V1Bjl6TjB4Im0OP5MymJVl50=;
+        b=Fo9P7aL37E6v5EqdxXFJCYBazZb+ixL3KHX89nSoRCTmi98LoQan8nm30sIS9QtxBp
+         DLQ4PgEdiyq9uHDnvspqaDhiPxiLLwM31bKr/5UGhkCwyC6jFfbt5y6MRmKYl3WGzcJQ
+         kRvNQAKrG/sLeFDFMGtQWhfWwbkbAOd4wpa0oiDwVcBL8HwtU5bH5JIo/dt2SE62wQhl
+         qkc9OEaj4ffx9F7E47CpbmX6CDHH1vQ07yfSdwvmdoYYhI4IddEgfWvXNhRQg4+9htxx
+         xTdXXadsAn0cE7AcM+6t2puZUKEgbLFMnhgai1tq+yo2v7M9SqdrGrVZe0wOOYvmhulX
+         mtYw==
+X-Gm-Message-State: APjAAAVqx5qAbhGzNzVwB46GXC/TzthXvT9kfF4kUbjK5EyPTpj2t2Nx
+        WRhAnhfCDhpW/SEtc7RIzaF3p/08AfTbjRIbk4bHrg==
+X-Google-Smtp-Source: APXvYqyoX9qXSFNPUKcdHor6FViid7pqKSfIHRCEiLoUUUULC30ITm19dvd+a4TZbZbKNzpafhkZJtRsq8aszvlkpjo=
+X-Received: by 2002:a9d:73cd:: with SMTP id m13mr8285912otk.43.1559896887528;
+ Fri, 07 Jun 2019 01:41:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190607022136.GE5970@leoy-ThinkPad-X240s>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190606085524.GA21119@zhanggen-UX430UQ>
+In-Reply-To: <20190606085524.GA21119@zhanggen-UX430UQ>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 7 Jun 2019 10:41:17 +0200
+Message-ID: <CAFqZXNvM94T2reUsn6Mwuz6GNGNCR=wUNBE8w4tcjNuhJ6rCeQ@mail.gmail.com>
+Subject: Re: [PATCH v4] selinux: lsm: fix a missing-check bug in
+ selinux_sb_eat_lsm_o pts()
+To:     Gen Zhang <blackgod016574@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
+On Thu, Jun 6, 2019 at 10:55 AM Gen Zhang <blackgod016574@gmail.com> wrote:
+> In selinux_sb_eat_lsm_opts(), 'arg' is allocated by kmemdup_nul(). It
+> returns NULL when fails. So 'arg' should be checked. And 'mnt_opts'
+> should be freed when error.
+>
+> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> Fixes: 99dbbb593fe6 ("selinux: rewrite selinux_sb_eat_lsm_opts()")
 
->>>>    A Coresight PMU works the same way as any other PMU, i.e the name of the PMU is
->>>>    listed along with configuration options within forward slashes '/'.  Since a
->>>>    Coresight system will typically have more than one sink, the name of the sink to
->>>> -work with needs to be specified as an event option.  Names for sink to choose
->>>> -from are listed in sysFS under ($SYSFS)/bus/coresight/devices:
->>>> +work with needs to be specified as an event option.
->>>> +On newer kernels the available sinks are listed in sysFS under:
->>>> +($SYSFS)/bus/event_source/devices/cs_etm/sinks/
->>>> -	root@linaro-nano:~# ls /sys/bus/coresight/devices/
->>>> -		20010000.etf   20040000.funnel  20100000.stm  22040000.etm
->>>> -		22140000.etm  230c0000.funnel  23240000.etm 20030000.tpiu
->>>> -		20070000.etr     20120000.replicator  220c0000.funnel
->>>> -		23040000.etm  23140000.etm     23340000.etm
->>>> +	root@localhost:/sys/bus/event_source/devices/cs_etm/sinks# ls
->>>> +	tmc_etf0  tmc_etr0  tpiu0
->>>> -	root@linaro-nano:~# perf record -e cs_etm/@20070000.etr/u --per-thread program
->>>> +On older kernels, this may need to be found from the list of coresight devices,
->>>> +available under ($SYSFS)/bus/coresight/devices/:
->>>> +
->>>> +	root@localhost:/sys/bus/coresight/devices# ls
->>>> +	etm0  etm1  etm2  etm3  etm4  etm5  funnel0  funnel1  funnel2  replicator0  stm0 tmc_etf0  tmc_etr0  tpiu0
->>>> +
->>>> +	root@linaro-nano:~# perf record -e cs_etm/@tmc_etr0/u --per-thread program
->>>
->>> On the "older" kernels you are referring to one would find the original naming
->>> convention.  Everything else looks good to me.
->>
->> True, but do we care what we see there ? All we care about is the location,
->> where to find them. I could fix it, if you think thats needed.
-> 
-> IIUC, either the old kernel or newer kernel, both we can find the event
-> from ($SYSFS)/bus/event_source/devices/cs_etm/sinks/; the only
-> difference between them is the naming convention.
+My comments about the subject and an empty line before label apply
+here as well, but Paul can fix both easily when applying, so:
 
-The cs_etm/sinks was only added with the CPU-wide trace support. So, if someone
-refers to this document alone and then tries to do something on on older kernel,
-which is quite possible for a production device running a stable kernel, {s,}he
-might be surprised.
+Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-> 
-> So the doc can use the same location to find event for both new and
-> old kernel, and explain the naming convention difference?
+> ---
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 3ec702c..13479cd 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2616,10 +2616,11 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+>         char *from = options;
+>         char *to = options;
+>         bool first = true;
+> +       int rc;
+>
+>         while (1) {
+>                 int len = opt_len(from);
+> -               int token, rc;
+> +               int token;
+>                 char *arg = NULL;
+>
+>                 token = match_opt_prefix(from, len, &arg);
+> @@ -2635,15 +2636,15 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+>                                                 *q++ = c;
+>                                 }
+>                                 arg = kmemdup_nul(arg, q - arg, GFP_KERNEL);
+> +                               if (!arg) {
+> +                                       rc = -ENOMEM;
+> +                                       goto free_opt;
+> +                               }
+>                         }
+>                         rc = selinux_add_opt(token, arg, mnt_opts);
+>                         if (unlikely(rc)) {
+>                                 kfree(arg);
+> -                               if (*mnt_opts) {
+> -                                       selinux_free_mnt_opts(*mnt_opts);
+> -                                       *mnt_opts = NULL;
+> -                               }
+> -                               return rc;
+> +                               goto free_opt;
+>                         }
+>                 } else {
+>                         if (!first) {   // copy with preceding comma
+> @@ -2661,6 +2662,12 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+>         }
+>         *to = '\0';
+>         return 0;
+> +free_opt:
+> +       if (*mnt_opts) {
+> +               selinux_free_mnt_opts(*mnt_opts);
+> +               *mnt_opts = NULL;
+> +       }
+> +       return rc;
+>  }
+>
+>  static int selinux_sb_remount(struct super_block *sb, void *mnt_opts)
 
-My question is really, does the naming convention matter ? What you see
-under the directory is the name. But yes, I am open to add a section to
-explain the fact that we changed the naming scheme, if everyone agrees
-to it.
-
-Cheers
-Suzuki
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
