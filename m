@@ -2,231 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90EA638CB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338B238CC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729569AbfFGOS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:18:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbfFGOSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:18:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7574B307D98A;
-        Fri,  7 Jun 2019 14:18:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA4947FEB2;
-        Fri,  7 Jun 2019 14:18:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/13] fsinfo: Export superblock notification counter [ver
- #4]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 07 Jun 2019 15:18:49 +0100
-Message-ID: <155991712904.15579.2181300108455141366.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
-References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1729107AbfFGOTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:19:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33674 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbfFGOTS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:19:18 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57E9ZJ7002817;
+        Fri, 7 Jun 2019 14:19:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=fAnhQLoQ1de79AGPdIHISYKoMOoXNvOdtrq91rhemx4=;
+ b=5nzzAE25TXPIKKDm9sI8c/7FCG7SMnEKczYNNEelROsZ9IekWDlbqePm+aK9pfPVyRpE
+ RUAnrbhTHv9021DbZqzZoUEzL56UxZQYVy6RXjdNqT+CHjICcvgcfBNo3aK86mOrD6cN
+ vMsyo1YOMfMVWGl7gJ7djVGiqFWl66VeihV6+H3gUyFf5Oe3eMvb+UksUT/4mPIFJj3I
+ lDbDd8mxL5iU3+oZ9PxJ0WfbnmkM0HVQKpUHjpkFoNR5mpM33j5LmQD6MVOP+i+nn4V0
+ 3+TIyRRXyDUh/ClyLg+kF2zxzR8cZ1WzKAerPvusK2dm+jf/UMc5BuF2YnAZlmNkgaH3 3Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2sugstxhva-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Jun 2019 14:19:08 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57EIoxM150349;
+        Fri, 7 Jun 2019 14:19:07 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2swnhd9kmc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Jun 2019 14:19:07 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x57EJ7EZ030067;
+        Fri, 7 Jun 2019 14:19:07 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Jun 2019 07:19:06 -0700
+Date:   Fri, 7 Jun 2019 17:18:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, straube.linux@gmail.com,
+        larry.finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        colin.king@canonical.com, valdis.kletnieks@vt.edu,
+        tiny.windzz@gmail.com
+Subject: Re: [PATCH 2/2] staging: rtl8712: r8712_createbss_cmd(): Change
+Message-ID: <20190607141855.GQ31203@kadam>
+References: <20190607140658.11932-1-nishkadg.linux@gmail.com>
+ <20190607140658.11932-2-nishkadg.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 07 Jun 2019 14:18:53 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607140658.11932-2-nishkadg.linux@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=636
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906070101
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=686 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906070100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide an fsinfo attribute to export the superblock notification counter
-so that it can be polled in the case of a notification buffer overrun.
-This is accessed with:
+Fix the subject.
 
-	struct fsinfo_params params = {
-		.request = FSINFO_ATTR_SB_NOTIFICATIONS,
-	};
+On Fri, Jun 07, 2019 at 07:36:58PM +0530, Nishka Dasgupta wrote:
+> Change return values of r8712_createbss_cmd from _SUCCESS and _FAIL to 0
+> and -ENOMEM respectively.
+> Change return type of the function from unsigned to int to reflect this.
+> Change call site to check for 0 instead of _SUCCESS.
+> (Instead of !=0, simply passing the function output to the conditional
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> will do.)
+  ^^^^^^^^^
 
-and returns a structure that looks like:
+Remove this line.
 
-	struct fsinfo_sb_notifications {
-		__u64	watch_id;
-		__u32	notify_counter;
-		__u32	__reserved[1];
-	};
+Otherwise it looks ok.  Please resend.
 
-Where watch_id is a number uniquely identifying the superblock in
-notification records and notify_counter is incremented for each
-superblock notification posted.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/fsinfo.c                      |   12 ++++++++++++
- fs/super.c                       |    1 +
- include/linux/fs.h               |    1 +
- include/uapi/linux/fsinfo.h      |   10 ++++++++++
- include/uapi/linux/watch_queue.h |    2 +-
- samples/vfs/test-fsinfo.c        |   13 +++++++++++++
- 6 files changed, 38 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-index 3ec64d3cba08..1456e26d2f7c 100644
---- a/fs/fsinfo.c
-+++ b/fs/fsinfo.c
-@@ -284,6 +284,16 @@ static int fsinfo_generic_param_enum(struct file_system_type *f,
- 	return sizeof(*p);
- }
- 
-+static int fsinfo_generic_sb_notifications(struct path *path,
-+					   struct fsinfo_sb_notifications *p)
-+{
-+	struct super_block *sb = path->dentry->d_sb;
-+
-+	p->watch_id		= sb->s_unique_id;
-+	p->notify_counter	= atomic_read(&sb->s_notify_counter);
-+	return sizeof(*p);
-+}
-+
- static void fsinfo_insert_sb_flag_parameters(struct path *path,
- 					     struct fsinfo_kparams *params)
- {
-@@ -331,6 +341,7 @@ int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
- 	case _genp(MOUNT_DEVNAME,	mount_devname);
- 	case _genp(MOUNT_CHILDREN,	mount_children);
- 	case _genp(MOUNT_SUBMOUNT,	mount_submount);
-+	case _gen(SB_NOTIFICATIONS,	sb_notifications);
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-@@ -606,6 +617,7 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRING_N		(SERVER_NAME,		server_name),
- 	FSINFO_STRUCT_NM	(SERVER_ADDRESS,	server_address),
- 	FSINFO_STRING		(CELL_NAME,		cell_name),
-+	FSINFO_STRUCT		(SB_NOTIFICATIONS,	sb_notifications),
- };
- 
- /**
-diff --git a/fs/super.c b/fs/super.c
-index 5bfe409a4fbe..b9bd4a849b69 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1823,6 +1823,7 @@ EXPORT_SYMBOL(thaw_super);
-  */
- void post_sb_notification(struct super_block *s, struct superblock_notification *n)
- {
-+	atomic_inc(&s->s_notify_counter);
- 	post_watch_notification(s->s_watchers, &n->watch, current_cred(),
- 				s->s_unique_id);
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 02ba4bfb9cc3..06e272a25ed7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1536,6 +1536,7 @@ struct super_block {
- #ifdef CONFIG_SB_NOTIFICATIONS
- 	struct watch_list	*s_watchers;
- #endif
-+	atomic_t		s_notify_counter;
- } __randomize_layout;
- 
- /* Helper functions so that in most cases filesystems will
-diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-index bb38f9c41772..31e9354170c5 100644
---- a/include/uapi/linux/fsinfo.h
-+++ b/include/uapi/linux/fsinfo.h
-@@ -39,6 +39,7 @@ enum fsinfo_attribute {
- 	FSINFO_ATTR_SERVER_NAME		= 21,	/* Name of the Nth server (string) */
- 	FSINFO_ATTR_SERVER_ADDRESS	= 22,	/* Mth address of the Nth server */
- 	FSINFO_ATTR_CELL_NAME		= 23,	/* Cell name (string) */
-+	FSINFO_ATTR_SB_NOTIFICATIONS	= 24,	/* sb_notify() information */
- 	FSINFO_ATTR__NR
- };
- 
-@@ -308,4 +309,13 @@ struct fsinfo_server_address {
- 	struct __kernel_sockaddr_storage address;
- };
- 
-+/*
-+ * Information struct for fsinfo(FSINFO_ATTR_SB_NOTIFICATIONS).
-+ */
-+struct fsinfo_sb_notifications {
-+	__u64		watch_id;	/* Watch ID for superblock. */
-+	__u32		notify_counter;	/* Number of notifications. */
-+	__u32		__reserved[1];
-+};
-+
- #endif /* _UAPI_LINUX_FSINFO_H */
-diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index 66b0da7cf888..aeffcfd7a742 100644
---- a/include/uapi/linux/watch_queue.h
-+++ b/include/uapi/linux/watch_queue.h
-@@ -146,7 +146,7 @@ enum superblock_notification_type {
-  */
- struct superblock_notification {
- 	struct watch_notification watch; /* WATCH_TYPE_SB_NOTIFY */
--	__u64	sb_id;			/* 64-bit superblock ID [fsinfo_ids::f_sb_id] */
-+	__u64	sb_id;		/* 64-bit superblock ID [fsinfo_sb_notifications::watch_id] */
- };
- 
- struct superblock_error_notification {
-diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-index af29da74559e..0f8f9ded0925 100644
---- a/samples/vfs/test-fsinfo.c
-+++ b/samples/vfs/test-fsinfo.c
-@@ -90,6 +90,7 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRING_N		(SERVER_NAME,		server_name),
- 	FSINFO_STRUCT_NM	(SERVER_ADDRESS,	server_address),
- 	FSINFO_STRING		(CELL_NAME,		cell_name),
-+	FSINFO_STRUCT		(SB_NOTIFICATIONS,	sb_notifications),
- };
- 
- #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
-@@ -118,6 +119,7 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
- 	FSINFO_NAME		(SERVER_NAME,		server_name),
- 	FSINFO_NAME		(SERVER_ADDRESS,	server_address),
- 	FSINFO_NAME		(CELL_NAME,		cell_name),
-+	FSINFO_NAME		(SB_NOTIFICATIONS,	sb_notifications),
- };
- 
- union reply {
-@@ -133,6 +135,7 @@ union reply {
- 	struct fsinfo_mount_info mount_info;
- 	struct fsinfo_mount_child mount_children[1];
- 	struct fsinfo_server_address srv_addr;
-+	struct fsinfo_sb_notifications sb_notifications;
- };
- 
- static void dump_hex(unsigned int *data, int from, int to)
-@@ -377,6 +380,15 @@ static void dump_attr_MOUNT_CHILDREN(union reply *r, int size)
- 		printf("\t[%u] %8x %8x\n", i++, f->mnt_id, f->notify_counter);
- }
- 
-+static void dump_attr_SB_NOTIFICATIONS(union reply *r, int size)
-+{
-+	struct fsinfo_sb_notifications *f = &r->sb_notifications;
-+
-+	printf("\n");
-+	printf("\twatch_id: %llx\n", (unsigned long long)f->watch_id);
-+	printf("\tnotifs  : %llx\n", (unsigned long long)f->notify_counter);
-+}
-+
- /*
-  *
-  */
-@@ -395,6 +407,7 @@ static const dumper_t fsinfo_attr_dumper[FSINFO_ATTR__NR] = {
- 	FSINFO_DUMPER(MOUNT_INFO),
- 	FSINFO_DUMPER(MOUNT_CHILDREN),
- 	FSINFO_DUMPER(SERVER_ADDRESS),
-+	FSINFO_DUMPER(SB_NOTIFICATIONS),
- };
- 
- static void dump_fsinfo(enum fsinfo_attribute attr,
+regards,
+dan carpenter
 
