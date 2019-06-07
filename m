@@ -2,110 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5291383F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B489A38405
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfFGGAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 02:00:42 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37830 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfFGGAm (ORCPT
+        id S1726960AbfFGGB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:01:29 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:2240 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbfFGGB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:00:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id bh12so398939plb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 23:00:42 -0700 (PDT)
+        Fri, 7 Jun 2019 02:01:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1559887286; x=1591423286;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=F55XFh+0L2QVaK0P9ne3JsQL6JQK5dEWWxxIHPMXMP4=;
+  b=ahW76oCHAow6B+epQ/M6a/tECEX1uu9Jr/I4wJWk+vSPSfBEED1daJA/
+   Weosjvdhfp2Y8AEclPnqgVHXUmbvDuM9cq2I2EI9CoKLZpp5HRJSUigbv
+   ymbl0sgEpwXcdjDxoGdx3fTyTKTbgnj7peNuBC2/MNP395tKMhvsXJKRp
+   0r1ZJ63zvL1zwApvCC2mKfKfQ+eSeNVGopdb/CQ4qwGGGj9uJXNuYHatM
+   GIVdpqG1t8owv7YSKiaAU7nysxOul7ln18fC74Pa0F7AjXEeQvEI40s/H
+   Pk2CkqoGCoZgWo19ISNcHrGSueGQKLPbo7T2haPCJA9Q2IfPWwZfIJAbE
+   A==;
+X-IronPort-AV: E=Sophos;i="5.63,562,1557158400"; 
+   d="scan'208";a="216314725"
+Received: from mail-by2nam05lp2058.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([104.47.50.58])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 14:01:25 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sNeYqqj7A5jsZjI23KJv1FicJVOUSHOJooPoBup8FeM=;
-        b=I+DO+bXX3/U0c5/tJe9YZdOfd9awmUKsKrvLQ6RM5e7ZPbpVdNQ6p467NhbVoMoarQ
-         ZTrXnuYi/GBo+EETAJBGN7Pbc4eyxedjJgINnFW2Ljv5sN9z7vOHs6OG+Gfjx+nUFata
-         r/SNJ3fb38yconRfVgfs5zO505iUUyDV4G/jHwXknqC1Y7Z1U8rC0v+rvDJyZqa/2SDY
-         dFJFBnKgq948wzi26ZcXJ+LY/RNrc3C7DV8bcYap3C5SQTdSlGOwcqCDiElfo5zU+Fni
-         UXim+fepv1U8X+0j4guVpm6nZtJBCDBnu6scNE5hLkz6jskKt97gH5ftrO8QkfNEvFqD
-         KgJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sNeYqqj7A5jsZjI23KJv1FicJVOUSHOJooPoBup8FeM=;
-        b=oNGblWHca8vvKu1Oj5vtvXlYmt8Ce9JhRnAwann3SXaGW0K1Iw9VGpUOL/i7e8434j
-         l3OkfUwIYmpsa8vqIWLNUTR5rVchD8ilR4gXFniMhPR7zjHJcl2Cn6pfG7NMctundWWl
-         5CAViRsL5AYDIihSfVKjTbBiyZ2fUlR+qdclcBqMQCpPo+D+/XnCcu3ywNrF2cL01eha
-         1UtoBoplFGm76QfbuVUMSWlOYVOQ/SGSCLQJEK1I5xf067Sl35fgL419DvHaY2kH9enj
-         hS8vueMMHb3weinJylQzCPq9vPx30EdZDJ7jNvs59rUKP/tbZ3Kp6TbLhAYtR3bj2ID2
-         5Q0g==
-X-Gm-Message-State: APjAAAVU0cMxWWvIOyyG4AdlNhaWox6V02xrnBTY4funCZUKsaIlQUSA
-        q0h2ExTiUji+lpQHTB08iGK4tA==
-X-Google-Smtp-Source: APXvYqxOAWcArkn2cVZZlioTLt/qQbVmliWaDP7qBUla76loZRkDUMwoTY7MzTYQenlQtRiEFq12yQ==
-X-Received: by 2002:a17:902:6a4:: with SMTP id 33mr53039518plh.338.1559887241528;
-        Thu, 06 Jun 2019 23:00:41 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id s42sm1593160pjc.5.2019.06.06.23.00.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 23:00:40 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 11:30:37 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Drop 'const' from argument of vq_present()
-Message-ID: <20190607060037.eaof3hllyombxlhc@vireshk-i7>
-References: <699121e5c938c6f4b7b14a7e2648fa15af590a4a.1559623368.git.viresh.kumar@linaro.org>
- <20190604095915.GW28398@e103592.cambridge.arm.com>
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F55XFh+0L2QVaK0P9ne3JsQL6JQK5dEWWxxIHPMXMP4=;
+ b=CjfhZxKUB9rKNudLXoG0I6GK8jEr7avvMs3fqu3Q+dWSxoe/sxKsBzwVR5sAY7weNDyNzpJLfdNEfJ6rTR7FyYjVfU/zCXbrV4jwqaZMewrtQMvBlS1d51ebCjqpYtJVZxnzjXkvCjO54t3f92X25BJWbRCctgxhuyOJNxXY1TA=
+Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
+ MN2PR04MB5920.namprd04.prod.outlook.com (20.179.21.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.14; Fri, 7 Jun 2019 06:01:24 +0000
+Received: from MN2PR04MB6061.namprd04.prod.outlook.com
+ ([fe80::98ab:5e60:9c5c:4e0e]) by MN2PR04MB6061.namprd04.prod.outlook.com
+ ([fe80::98ab:5e60:9c5c:4e0e%7]) with mapi id 15.20.1943.026; Fri, 7 Jun 2019
+ 06:01:24 +0000
+From:   Anup Patel <Anup.Patel@wdc.com>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+CC:     Atish Patra <Atish.Patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anup Patel <Anup.Patel@wdc.com>
+Subject: [PATCH v5 0/2] Two-stagged initial page table setup
+Thread-Topic: [PATCH v5 0/2] Two-stagged initial page table setup
+Thread-Index: AQHVHPZv/4z6R2LBokaKhvaK1uY0gg==
+Date:   Fri, 7 Jun 2019 06:01:24 +0000
+Message-ID: <20190607060049.29257-1-anup.patel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR07CA0099.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::40) To MN2PR04MB6061.namprd04.prod.outlook.com
+ (2603:10b6:208:d8::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Anup.Patel@wdc.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [129.253.179.161]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 782186a4-33f9-4b70-4c3b-08d6eb0d921c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR04MB5920;
+x-ms-traffictypediagnostic: MN2PR04MB5920:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MN2PR04MB59209CF918D57FE29A73DD868D100@MN2PR04MB5920.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0061C35778
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(39860400002)(396003)(136003)(189003)(199004)(68736007)(256004)(6512007)(54906003)(2906002)(386003)(81156014)(71200400001)(52116002)(81166006)(110136005)(72206003)(476003)(26005)(2616005)(53936002)(8936002)(8676002)(99286004)(7736002)(4326008)(2171002)(305945005)(6506007)(102836004)(50226002)(71190400001)(14454004)(186003)(25786009)(478600001)(486006)(6436002)(86362001)(6116002)(3846002)(6486002)(66476007)(64756008)(66446008)(66556008)(66946007)(73956011)(1076003)(316002)(66066001)(44832011)(5660300002)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5920;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: jUdzOvHf8gZUpu8RjyiXIcYmYgvaPthoMvtLEs/QmSo/pQOjDXQ5CBfxW0SH7ImEWyP9I+rL3O1kLsGhYMEHyHJw/NPlIT7BaavD7E1RAvfytY7n3/b/uFELKFIsSaphLfMslaidu4r31tA4PuF+ZcCII006jF2ytVHb9QOnW8WRE7c93TxUyx0AmkOr+w0C3FHzb92kni0/lPr4I425HAfZLqN+nuVWCGh2UTJdpdVt8tJy5bLLcb5pTpJ1rLfjppZIrhtFVq7smTq2FZDqrYiUI6ozc02jvL8EfcQPeqq3uNB3v0BfvNzXibXfgvWkkixRVG1eeC96HvZxurRT9opm+l8bT8mdeHNR2ZcRgW/zU/hXlfqZGDoAqBO3fr0g7CtlQjFsGB8p7wXm+ZBtihFNWuOIzy5qSd7voMdZsCs=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604095915.GW28398@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20180716-391-311a52
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 782186a4-33f9-4b70-4c3b-08d6eb0d921c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2019 06:01:24.2851
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Anup.Patel@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5920
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-06-19, 10:59, Dave Martin wrote:
-> On Tue, Jun 04, 2019 at 10:13:19AM +0530, Viresh Kumar wrote:
-> > We currently get following compilation warning:
-> > 
-> > arch/arm64/kvm/guest.c: In function 'set_sve_vls':
-> > arch/arm64/kvm/guest.c:262:18: warning: passing argument 1 of 'vq_present' from incompatible pointer type
-> > arch/arm64/kvm/guest.c:212:13: note: expected 'const u64 (* const)[8]' but argument is of type 'u64 (*)[8]'
-> > 
-> > The argument can't be const, as it is copied at runtime using
-> > copy_from_user(). Drop const from the prototype of vq_present().
-> > 
-> > Fixes: 9033bba4b535 ("KVM: arm64/sve: Add pseudo-register for the guest's vector lengths")
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  arch/arm64/kvm/guest.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> > index 3ae2f82fca46..78f5a4f45e0a 100644
-> > --- a/arch/arm64/kvm/guest.c
-> > +++ b/arch/arm64/kvm/guest.c
-> > @@ -209,7 +209,7 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
-> >  #define vq_mask(vq) ((u64)1 << ((vq) - SVE_VQ_MIN) % 64)
-> >  
-> >  static bool vq_present(
-> > -	const u64 (*const vqs)[KVM_ARM64_SVE_VLS_WORDS],
-> > +	u64 (*const vqs)[KVM_ARM64_SVE_VLS_WORDS],
-> >  	unsigned int vq)
-> >  {
-> >  	return (*vqs)[vq_word(vq)] & vq_mask(vq);
-> 
-> Ack, but maybe this should just be converted to a macro?
-
-I will send a patch with that if that's what you want.
-
-Thanks.
-
--- 
-viresh
+VGhpcyBwYXRjaHNldCBpbXBsZW1lbnRzIHR3by1zdGFnZ2VkIGluaXRpYWwgcGFnZSB0YWJsZSBz
+ZXR1cCB1c2luZyBmaXhtYXANCnRvIGF2b2lkIG1hcHBpbmcgbm9uLWV4aXN0ZW50IFJBTSBhbmQg
+YWxzbyByZWR1Y2UgaGlnaF9tZW1vcnkgY29uc3VtZWQgYnkNCmluaXRpYWwgcGFnZSB0YWJsZXMu
+DQoNClRoZSBwYXRjaHNldCBpcyBiYXNlZCBvbiBMaW51eC01LjItcmMzIGFuZCB0ZXN0ZWQgb24g
+U2lGaXZlIFVubGVhc2hlZCBib2FyZA0KYW5kIFFFTVUgdmlydCBtYWNoaW5lLg0KDQpUaGVzZSBw
+YXRjaGVzIGNhbiBiZSBmb3VuZCBpbiByaXNjdl9zZXR1cF92bV92NSBicmFuY2ggb2YNCmh0dHBz
+Ly9naXRodWIuY29tL2F2cGF0ZWwvbGludXguZ2l0DQoNCkNoYW5nZXMgc2luY2UgdjQ6DQotIEFk
+ZGVkIGR0Yl9lYXJseV92YSB3aGljaCBwb2ludHMgdG8gRFRCIGZvciBlYXJseSBwYXJzaW5nDQoN
+CkNoYW5nZXMgc2luY2UgdjM6DQotIENoYW5nZWQgcGF0Y2ggc2VyaWVzIHN1YmplY3QuDQotIERy
+b3BwZWQgUEFUQ0gxIGJlY2F1c2UgaXQncyBhbHJlYWR5IG1lcmdlZA0KLSBEcm9wcGVkIFBBVENI
+MyBiZWNhdXNlIHRyYW1wb2xpbmUgcGFnZSB0YWJsZSBoYW5kbGVzIGEgY29ybmVyIGNhc2UNCiAg
+Zm9yIDMyYml0IHN5c3RlbXMgd2hlcmUgbG9hZCBhZGRyZXNzIHJhbmdlIG92ZXJsYXBzIGtlcm5l
+bCB2aXJ0dWFsDQogIGFkZHJlc3MgcmFuZ2UNCi0gUmV2YW1wZWQgUEFUQ0ggZm9yIDRLIGFsaWdu
+ZWQgYm9vdGluZyBpbnRvIHR3by1zdGFnZ2VkIGluaXRpYWwgcGFnZQ0KICB0YWJsZSBzZXR1cA0K
+DQpDaGFuZ2VzIHNpbmNlIHYyOg0KLSBEcm9wcGVkIFBBVENIMiBiZWNhdXNlIHdlIGhhdmUgc2Vw
+YXJhdGUgZml4IGZvciBMaW51eC01LjEtcmNYDQotIE1vdmVkIFBBVENINSB0byBQQVRDSDINCi0g
+TW92ZWQgUEFUQ0g0IHRvIFBBVENIMw0KLSBUaGUgIkJvb3Rpbmcga2VybmVsIGZyb20gYW55IDRL
+QiBhbGlnbmVkIGFkZHJlc3MiIGlzIG5vdyBQQVRDSDQNCg0KQ2hhbmdlcyBzaW5jZSB2MToNCi0g
+QWRkIGtjb25maWcgb3B0aW9uIEJPT1RfUEFHRV9BTElHTkVEIHRvIGVuYWJsZSA0S0IgYWxpZ25l
+ZCBib290aW5nDQotIEltcHJvdmVkIGluaXRpYWwgcGFnZSB0YWJsZSBzZXR1cCBjb2RlIHRvIHNl
+bGVjdCBiZXN0L2JpZ2dlc3QNCiAgcG9zc2libGUgbWFwcGluZyBzaXplIGJhc2VkIG9uIGxvYWQg
+YWRkcmVzcyBhbGlnbm1lbnQNCi0gQWRkZWQgUEFUQ0g0IHRvIHJlbW92ZSByZWR1bmRhbnQgdHJh
+bXBvbGluZSBwYWdlIHRhYmxlDQotIEFkZGVkIFBBVENINSB0byBmaXggbWVtb3J5IHJlc2VydmF0
+aW9uIGluIHNldHVwX2Jvb3RtZW0oKQ0KDQpBbnVwIFBhdGVsICgyKToNCiAgUklTQy1WOiBGaXgg
+bWVtb3J5IHJlc2VydmF0aW9uIGluIHNldHVwX2Jvb3RtZW0oKQ0KICBSSVNDLVY6IFNldHVwIGlu
+aXRpYWwgcGFnZSB0YWJsZXMgaW4gdHdvIHN0YWdlcw0KDQogYXJjaC9yaXNjdi9pbmNsdWRlL2Fz
+bS9maXhtYXAuaCAgICAgfCAgIDUgKw0KIGFyY2gvcmlzY3YvaW5jbHVkZS9hc20vcGd0YWJsZS02
+NC5oIHwgICA1ICsNCiBhcmNoL3Jpc2N2L2luY2x1ZGUvYXNtL3BndGFibGUuaCAgICB8ICAgOCAr
+DQogYXJjaC9yaXNjdi9rZXJuZWwvaGVhZC5TICAgICAgICAgICAgfCAgMTcgKy0NCiBhcmNoL3Jp
+c2N2L2tlcm5lbC9zZXR1cC5jICAgICAgICAgICB8ICAgNiArLQ0KIGFyY2gvcmlzY3YvbW0vaW5p
+dC5jICAgICAgICAgICAgICAgIHwgMzMxICsrKysrKysrKysrKysrKysrKysrKystLS0tLS0NCiA2
+IGZpbGVzIGNoYW5nZWQsIDI5MiBpbnNlcnRpb25zKCspLCA4MCBkZWxldGlvbnMoLSkNCg0KLS0N
+CjIuMTcuMQ0K
