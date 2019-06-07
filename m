@@ -2,82 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A6F39725
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 22:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21DE63972D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfFGU7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 16:59:11 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37417 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730315AbfFGU7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 16:59:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 131so2902385ljf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 13:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tEZvWJsFue7fCIY7RY9rcYSd3HaVbUE9nAN1OkAVWME=;
-        b=zKZercwpsPXX2K9QFr6z2ZW0wE6hyQk4g2lpewtU9wiouEVRmpfzXJ2VygkU4n8H8m
-         8c2xBCQWDSy8rslj7GVT82J32G1k5dUcZSQK2StFiSRstoq08PXTblGP+tmvyrO61A+b
-         cUzpdTPsLrJAHqZWd9LirbPd3tNmwJh2c114GMeFGiCu6OtXeVfiaRHVKhr8sT78fYz+
-         +y6Z2yxXoy/wbOz6++aYBeQN5aX6qabuor2J8GbgWvnRrA1Mh+zwhfAnqWcti2HlOolw
-         MLOw7T6JSlZRCbJxHvpQnTmpwYKOZvuyJMa49Yu26JrfN22afylMLUQ6pAjek5Lq52u4
-         YmjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tEZvWJsFue7fCIY7RY9rcYSd3HaVbUE9nAN1OkAVWME=;
-        b=ALXVT7EafaWL5Ph72IOB9cXji5zxEbEh6na+KKNf19SJwBUmynnoCaGxj+nSZjn0LZ
-         4mVpfLWy9FRuv7R91QT5JwyfXs6wus1vVUdE+iTAiEnbseS+SoyuEyIjkKgccdmFZ9ml
-         E5NLZCICEgH0Glm8WCyvvxxLaFsPizcaOvv3jAxXoqH+j12p1jYeOyZ55RyyS1FFP6Wb
-         pYntZoYOmZobqUg88BkPRhx4jFZWkmQZbF7u8B7wijSpiedQc4skYomGmERFF8LrhA+c
-         STOqSRwuuEVpZuGBzmB1XV49YDFtvNGfSE4jLyM89ZkxcgBILriJNtonE74mNuviPHNd
-         RoZA==
-X-Gm-Message-State: APjAAAWb64uO1P0xtsCFK3Hq0ZJ4CXgeB+LjMooODXt1uOvZAa+P/A2D
-        pxXpxGE/kXyMMZibye05604ak2CF3ryGjU5UQw70og==
-X-Google-Smtp-Source: APXvYqybb7KzOkDvVRauSyZjrruBmBWId2yXwpYH1HIMQi6UsJ2mD7CwnPWMbaLG8x56HQlC6vvpZipHjgVXHICJWec=
-X-Received: by 2002:a2e:9753:: with SMTP id f19mr5258986ljj.113.1559941148941;
- Fri, 07 Jun 2019 13:59:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190530031357.17484-1-Anson.Huang@nxp.com>
-In-Reply-To: <20190530031357.17484-1-Anson.Huang@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 7 Jun 2019 22:59:01 +0200
-Message-ID: <CACRpkdYmX3GRmXCuPe-zoQE6PEYr_TQruj_ymR3G_jBjtjrwpw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: imx: Correct pinfunc head file path for i.MX8MM
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730766AbfFGVAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:00:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730647AbfFGVAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:00:12 -0400
+Subject: Re: [GIT PULL] Power management fixes for v5.2-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559941211;
+        bh=MmzMvR5g/IwrMNES/JCm0OVQNxH5nDQYz/rzpl94pNc=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=atWdKSjqvGKxsj1gRF/+L8exOpa900Ss4PBKBBBE5kOkm+SPj5LZeIYax4NqTf5+A
+         tACRBG5sP0YoE/ja05fheGbbeZrRpXholtzbh1K7ikHR/oUDNP+6HW8yOAFdXgAaKq
+         9TPJmeGpxgxSSZP9WCviHbdWvxcoOQ7NAhMa5tZE=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0gsNdzUMQuWmaTi8fFub0=AL3-7iPq93AVMyFB1yzkmcA@mail.gmail.com>
+References: <CAJZ5v0gsNdzUMQuWmaTi8fFub0=AL3-7iPq93AVMyFB1yzkmcA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0gsNdzUMQuWmaTi8fFub0=AL3-7iPq93AVMyFB1yzkmcA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.2-rc4
+X-PR-Tracked-Commit-Id: a964d23c94e8177c501fc9a37dcf1f0dd2750527
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a373ec23ab527c3202eb05e4f9d0eba2d83a7b27
+Message-Id: <155994121166.4194.14197677759941713332.pr-tracker-bot@kernel.org>
+Date:   Fri, 07 Jun 2019 21:00:11 +0000
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 5:12 AM <Anson.Huang@nxp.com> wrote:
+The pull request you sent on Fri, 7 Jun 2019 11:15:49 +0200:
 
-> From: Anson Huang <Anson.Huang@nxp.com>
->
-> The i.MX8MM pinfunc head file is located in DT folder, correct it.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.2-rc4
 
-Patch applied.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a373ec23ab527c3202eb05e4f9d0eba2d83a7b27
 
-Yours,
-Linus Walleij
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
