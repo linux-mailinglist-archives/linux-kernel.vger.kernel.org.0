@@ -2,104 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59FDA3882C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 12:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9421F38837
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 12:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfFGKrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 06:47:03 -0400
-Received: from mail-eopbgr60049.outbound.protection.outlook.com ([40.107.6.49]:31989
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726584AbfFGKrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 06:47:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+vwSFftsmnqIyChyg7ecvR/7CX3UXEeeSf5QwBkSCJg=;
- b=xlwqQael+zlaM1aysWjIY33KMUcg9MPfdVbiTtZrugIpUu9cBxL3JrzRybnkgLvmYg8CSKeZtriROKY1ZZxT9odPAb6v7pBx/4XrwbqDqGTH5LH3ks3xr5Lqv2nPU2ExKCJMYP8tkYZn9PLViuVQtr4GQiAU3x4kv9chNy4w3Ks=
-Received: from AM0PR08MB4226.eurprd08.prod.outlook.com (20.179.36.17) by
- AM0PR08MB3748.eurprd08.prod.outlook.com (20.178.21.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Fri, 7 Jun 2019 10:46:46 +0000
-Received: from AM0PR08MB4226.eurprd08.prod.outlook.com
- ([fe80::bc0c:5148:629e:1a31]) by AM0PR08MB4226.eurprd08.prod.outlook.com
- ([fe80::bc0c:5148:629e:1a31%6]) with mapi id 15.20.1965.011; Fri, 7 Jun 2019
- 10:46:46 +0000
-From:   Ayan Halder <Ayan.Halder@arm.com>
-To:     Ayan Halder <Ayan.Halder@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     nd <nd@arm.com>
-Subject: [PATCH] drm/komeda: Avoid using DRIVER_IRQ_SHARED
-Thread-Topic: [PATCH] drm/komeda: Avoid using DRIVER_IRQ_SHARED
-Thread-Index: AQHVHR5MdDQKN6RFT0aBT7A4OfORUg==
-Date:   Fri, 7 Jun 2019 10:46:45 +0000
-Message-ID: <20190607104629.28791-1-ayan.halder@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P123CA0013.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:a6::25) To AM0PR08MB4226.eurprd08.prod.outlook.com
- (2603:10a6:208:147::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ayan.Halder@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.21.0
-x-originating-ip: [217.140.106.52]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 48e9b71b-2e03-41ca-ab9c-08d6eb356ee4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR08MB3748;
-x-ms-traffictypediagnostic: AM0PR08MB3748:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB37487644A2280DAA8DD6DD91E4100@AM0PR08MB3748.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:115;
-x-forefront-prvs: 0061C35778
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(346002)(376002)(39850400004)(199004)(189003)(81156014)(81166006)(8676002)(6512007)(4326008)(53936002)(36756003)(25786009)(8936002)(5660300002)(72206003)(6436002)(14454004)(102836004)(186003)(6486002)(26005)(2201001)(256004)(86362001)(5024004)(305945005)(7736002)(6506007)(14444005)(66066001)(386003)(66556008)(64756008)(66946007)(73956011)(66476007)(66446008)(68736007)(2906002)(44832011)(6116002)(2501003)(3846002)(316002)(486006)(110136005)(478600001)(2616005)(1076003)(476003)(71200400001)(71190400001)(50226002)(52116002)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3748;H:AM0PR08MB4226.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UeVtXO5LsWjONiGucui/Lrkn/ByL12sHOWmfCNvG7UUVk2lSzJ+fb5PFExC4S+O8XQhh9akjjKnR/uc4S0fPItcyvPoEZ1wr0e3Sc7TJq2K9ttOV+oFALXJrSFt1uFE5E2sUDVi+FfNu9c4NYaKjeVcwkue6TqoR9U3Rw+tlwSwHCdunlmX8IlYnBkJKCifNabxvWOQ+sz0ZDEBk5h27EUf8PQ9hVXJzvTFaaRGrUYImeqvu/noEYxL5MHRkapcgpMrXeYKkUB6B0l75T6kFOGu79MAIWKY9avzBuUcJWKrg3Czu5BvajIW72luUyE/EnOG6JLFXn6CJA5F7bDvnpnJONDv5XP0QJ+biP7fXrR7gMwO6fJM3GLAKkGBPll/xDiCIaR4kFPkUVJueDQkL6HF5ZjfWCA5bPHGt4fhyk1E=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48e9b71b-2e03-41ca-ab9c-08d6eb356ee4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2019 10:46:45.9380
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ayan.Halder@arm.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3748
+        id S1728266AbfFGKtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 06:49:39 -0400
+Received: from mx1.tq-group.com ([62.157.118.193]:17387 "EHLO mx1.tq-group.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726584AbfFGKti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 06:49:38 -0400
+X-IronPort-AV: E=Sophos;i="5.60,562,1549926000"; 
+   d="scan'208";a="7741348"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 07 Jun 2019 12:49:37 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Fri, 07 Jun 2019 12:49:37 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Fri, 07 Jun 2019 12:49:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1559904577; x=1591440577;
+  h=from:to:cc:subject:date:message-id;
+  bh=jg3ogeYyjZ13Io4RHa3NmQVEVmQp6Dm5x4LA/opROkA=;
+  b=ljwxq5PuG5u/2sZxxyIqATOHpl4awhzoMvnGGlAyT61kYH/nTULUnqVf
+   vII+tiA6avsw3eXg0ufD19C/NQPhMb+aPZ39o8DvfiqepkwlzTwC1kscT
+   3a/IygbrP0atz0RtWOuwYzZB00CqpS8wqTKOdjzF3ojW6+BVmg1+8JGxr
+   e4dGFU2LRPpX4vkiMTbo9Bc9l61tZoleGdkvW+oZB94feWkZtr7h+S8aj
+   tpYaUoAnVTYepFzJHGJHqg1L04dtGdsRfd8ixIjyWPkQmp/Km5aH/0FsS
+   Saek5ARbYH3J8RSwQqpHsQhEgaiFNQ2tzaoSohz+TCDO+Q2HlWwouZxbp
+   g==;
+X-IronPort-AV: E=Sophos;i="5.60,562,1549926000"; 
+   d="scan'208";a="7741347"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 07 Jun 2019 12:49:37 +0200
+Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 3BE62280074;
+        Fri,  7 Jun 2019 12:49:44 +0200 (CEST)
+From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To:     Russell King <linux@armlinux.org.uk>, Jessica Yu <jeyu@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH modules v2 0/2] Fix handling of exit unwinding sections (on ARM)
+Date:   Fri,  7 Jun 2019 12:49:10 +0200
+Message-Id: <20190607104912.6252-1-matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V2l0aCByZWZlcmVuY2UgdG8gbWFpbmxpbmUgY29tbWl0ICgxZmY0OTQ4MTNiYWZhMTI3ZWNiYTEx
-NjAyNjJiYTM5YjJmZGRlN2JhKSwNCkRSSVZFUl9JUlFfU0hBUkVEIGlzIHRvIGJlIHVzZWQgb25s
-eSBieSBsZWdhY3kgZHJpdmVycy4gRnVydGhlciwNCmRybV9pcnFfaW5zdGFsbCgpIGlnbm9yZXMg
-dGhpcyBmbGFnIGFsdG9nZXRoZXIuDQpPbmUgbmVlZHMgdG8gdXNlIGRldm1fcmVxdWVzdF9pcnEo
-KSBpbnN0ZWFkLCB3aXRoIElSUUZfU0hBUkVEIHRvIGNyZWF0ZSBhIHNoYXJlZA0KaW50ZXJydXB0
-IGhhbmRsZXIuDQoNClNpZ25lZC1vZmYtYnk6IEF5YW4gS3VtYXIgaGFsZGVyIDxheWFuLmhhbGRl
-ckBhcm0uY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21l
-ZGFfa21zLmMgfCA0ICsrKy0NCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAxIGRl
-bGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29t
-ZWRhL2tvbWVkYV9rbXMuYyBiL2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29t
-ZWRhX2ttcy5jDQppbmRleCA4NmY2NTQyYWZiNDAuLjdiNWNkZTE0ZTNiYSAxMDA2NDQNCi0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2ttcy5jDQorKysgYi9k
-cml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9rbXMuYw0KQEAgLTE5NCw3
-ICsxOTQsOSBAQCBzdHJ1Y3Qga29tZWRhX2ttc19kZXYgKmtvbWVkYV9rbXNfYXR0YWNoKHN0cnVj
-dCBrb21lZGFfZGV2ICptZGV2KQ0KIA0KIAlkcm1fbW9kZV9jb25maWdfcmVzZXQoZHJtKTsNCiAN
-Ci0JZXJyID0gZHJtX2lycV9pbnN0YWxsKGRybSwgbWRldi0+aXJxKTsNCisJZXJyID0gZGV2bV9y
-ZXF1ZXN0X2lycShkcm0tPmRldiwgbWRldi0+aXJxLA0KKwkJCSAgICAgICBrb21lZGFfa21zX2Ry
-aXZlci5pcnFfaGFuZGxlciwgSVJRRl9TSEFSRUQsDQorCQkJICAgICAgIGRybS0+ZHJpdmVyLT5u
-YW1lLCBkcm0pOw0KIAlpZiAoZXJyKQ0KIAkJZ290byBjbGVhbnVwX21vZGVfY29uZmlnOw0KIA0K
-LS0gDQoyLjIxLjANCg0K
+For some time (050d18d1c651 "ARM: 8650/1: module: handle negative
+R_ARM_PREL31 addends correctly", v4.11+), building a kernel without
+CONFIG_MODULE_UNLOAD would lead to module loads failing on ARM systems with
+certain memory layouts, with messages like:
+
+  imx_sdma: section 16 reloc 0 sym '': relocation 42 out of range
+  (0x7f015260 -> 0xc0f5a5e8)
+
+(0x7f015260 is in the module load area, 0xc0f5a5e8 a regular vmalloc
+address; relocation 42 is R_ARM_PREL31)
+
+This is caused by relocatiosn in the .ARM.extab.exit.text and
+.ARM.exidx.exit.text sections referencing the .exit.text section. As the
+module loader will omit loading .exit.text without CONFIG_MODULE_UNLOAD,
+there will be relocations from loaded to unloaded sections; the resulting
+huge offsets trigger the sanity checks added in 050d18d1c651.
+
+IA64 might be affected by a similar issue - sections with names like
+.IA_64.unwind.exit.text and .IA_64.unwind_info.exit.text appear in the ld
+script - but I don't know much about that arch.
+
+Also, I'm not sure if this is stable-worthy - just enabling
+CONFIG_MODULE_UNLOAD should be a viable workaround on affected kernels.
+
+v2: Use __weak function as suggested by Jessica
+
+
+Matthias Schiffer (2):
+  module: allow arch overrides for .exit section names
+  ARM: module: recognize unwind exit sections
+
+ arch/arm/kernel/module.c     | 7 +++++++
+ include/linux/moduleloader.h | 5 +++++
+ kernel/module.c              | 7 ++++++-
+ 3 files changed, 18 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
+
