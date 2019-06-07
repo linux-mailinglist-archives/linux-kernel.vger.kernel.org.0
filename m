@@ -2,145 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 336DD39752
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2011139756
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbfFGVFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:05:47 -0400
-Received: from mga01.intel.com ([192.55.52.88]:12484 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730342AbfFGVFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:05:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 14:05:45 -0700
-X-ExtLoop1: 1
-Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga006.jf.intel.com with ESMTP; 07 Jun 2019 14:05:44 -0700
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
- function
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
- <20190606200926.4029-4-yu-cheng.yu@intel.com>
- <20190607080832.GT3419@hirez.programming.kicks-ass.net>
- <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
- <20190607174336.GM3436@hirez.programming.kicks-ass.net>
- <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
- <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
- <352e6172-938d-f8e4-c195-9fd1b881bdee@intel.com>
- <D10B5B59-1BE7-44DC-8E91-C8E4292DC6FB@amacapital.net>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <74620397-a839-cb8c-8c8b-fe72b921803c@intel.com>
-Date:   Fri, 7 Jun 2019 14:05:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731178AbfFGVGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:06:37 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46272 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730392AbfFGVGg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:06:36 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m15so2882136ljg.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 14:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ngGsJ3sa6qftNEqIKxcUHf+2Y/2GL6FaDVqLdkUZI+U=;
+        b=NOfBgz52VTuWpjz7V14ZcBELLxddIR64OTKQA2xzLIUhsP5/le33K3ipkbvzpS+NkU
+         TWmkiy05Zzo+Sq8ohP322QzhhjfpVeWa3bmyyK/KZJLgA3RCPiaJ0nbUV6gxuUPQRsiR
+         hJHfhpW/t6Z28Jy4XvFxx+geHjK/yYy5OuNGkeigArmPSC0v/6zCUFzp8bwFS1Iw/5bp
+         +ekz1pj2MJaEvb2F+QqbdjFM3A6f0v3/J42m1DO7RMB9LDgmXsQxC/FZuZitbQv1Aow5
+         +4H0ysai+Q1d9tSXFbGxA+jZGnU7StunRABpEMHuadstqz4nLOPTxZhqWZ+6jBCFPgMf
+         fufA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ngGsJ3sa6qftNEqIKxcUHf+2Y/2GL6FaDVqLdkUZI+U=;
+        b=MagiKt/V6Cu25HRCYjmnjb2VgC1svnE7sadTQ3pzOIWKDl83f1EfP/0TvTLm86BD2x
+         Bk8RjkhhzE4FtiAkd+uAnLj0rZ28f4owZNhx7FcNg5pnM+nmrs5rYhJDWitRrRrWXubD
+         91k50HcSERjNBrms+MOycAdVMj6sng+8xksZ2E7XVd/KL7oLSnonBHEzE0NKL7pDngaC
+         6Kpcdpqdj3wxwsBNUxUNMQ92pXGyciV5oIHZTArfjE2bqmcjrLW+bsWmT2jiFRpzz2RN
+         VAJHxu+QPPVXt92G8hqe1P8Zp1YvXT9gMiEoHxzumr1RWE1GX3uGoYQVz/AsH8mLDlq/
+         2ZfA==
+X-Gm-Message-State: APjAAAUg21u2cbIfOcYRBhnv2p2khvjMN8z0A/9mIKr1FdB/yXYa2orp
+        XRtPSeNRQ6v/1IE+Gi3CSUbDMTV3nfHFEsmxOz55xA==
+X-Google-Smtp-Source: APXvYqwzWHOHL3qBWLcwt+um28DnahteXeh1UMVYjgkOQaL8ZQiEb0mBtE051TG+KFU+85SgayUB0dlFm2sVY1/RIA0=
+X-Received: by 2002:a2e:9753:: with SMTP id f19mr5273384ljj.113.1559941594784;
+ Fri, 07 Jun 2019 14:06:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <D10B5B59-1BE7-44DC-8E91-C8E4292DC6FB@amacapital.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1559097838-26070-1-git-send-email-92siuyang@gmail.com>
+In-Reply-To: <1559097838-26070-1-git-send-email-92siuyang@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Jun 2019 23:06:27 +0200
+Message-ID: <CACRpkdYYYxCti4zRzF1bG+cb+NAONVjg1ynOww5DpG7dzi1B6w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ns2: Fix potential NULL dereference
+To:     Young Xiao <92siuyang@gmail.com>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/7/19 1:40 PM, Andy Lutomirski wrote:
->>> Hmm.  Can we be creative and skip populating it with zeros?  The
->>> CPU
->> should only ever touch a page if we miss an ENDBR on it, so, in
->> normal operation, we don’t need anything to be there.  We could try
->> to prevent anyone from *reading* it outside of ENDBR tracking if we
->> want to avoid people accidentally wasting lots of memory by forcing
->> it to be fully populated when the read it.
->> 
->> Won't reads on a big, contiguous private mapping get the huge zero
->> page anyway?
-> 
-> The zero pages may be free, but the page tables could be decently
-large.  Does the core mm code use huge, immense, etc huge zero pages?
-Or can it synthesize them by reusing page table pages that map zeros?
+On Wed, May 29, 2019 at 4:42 AM Young Xiao <92siuyang@gmail.com> wrote:
 
-IIRC, we only ever fill single PMDs, even though we could gang a pmd
-page up and do it for 1GB areas too.
+> platform_get_resource() may fail and return NULL, so we should
+> better check it's return value to avoid a NULL pointer dereference
+> a bit later in the code.
+>
+> Signed-off-by: Young Xiao <92siuyang@gmail.com>
 
-I guess the page table consumption could really suck if we had code all
-over the 57-bit address space and that code moved around and the process
-ran for a long long time.  Pathologically, we need a ulong/pmd_t for
-each 2MB of address space which is 8*2^56-30=512GB per process.  Yikes.
- Right now, we'd at least detect the memory consumption and OOM-kill the
-process(es) eventually.  But, that's not really _this_ patch's problem.
- It's a general problem, and doesn't even require the zero page to be
-mapped all over.
+Patch applied with Ray's ACK.
 
-Longer-term, I'd much rather see us add some page table reclaim
-mechanism that new how to go after things like excessive page tables  in
-MAP_NORESERVE areas.
+Yours,
+Linus Walleij
