@@ -2,68 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F595391E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3F8391FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbfFGQYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:24:54 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:59224 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730650AbfFGQYq (ORCPT
+        id S1730345AbfFGQ1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:27:25 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33689 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729986AbfFGQ1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:24:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1559924685; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JisP2PtItx8pScbwBo53KANuJqUu1hKZqyOryWZyMGA=;
-        b=VQlDpqQ9K3jv3YA1LaD1EgI19I3iajVPaHNAGQR2MWm1bgaxoLREmzMXmkT+MgQXgdcEUs
-        uoHk7Qcowa50LLtTUAJHiEoYU/+IR7zV+idqx92M3HCnlkTUURMLMJnRSFmRwFfwSIEHeY
-        QN2/c38n7QmYW5Wm5KNVsz9+rxgT7Q0=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     od@zcrc.me, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 4/4] watchdog: jz4740: Make probe function __init_or_module
-Date:   Fri,  7 Jun 2019 18:24:29 +0200
-Message-Id: <20190607162429.17915-5-paul@crapouillou.net>
-In-Reply-To: <20190607162429.17915-1-paul@crapouillou.net>
-References: <20190607162429.17915-1-paul@crapouillou.net>
+        Fri, 7 Jun 2019 12:27:24 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x15so1500988pfq.0;
+        Fri, 07 Jun 2019 09:27:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XeJqlljc/DcLq2LdbRfl+U/1KHhpI1pBfv141U86JNE=;
+        b=Qhq/mLyLAI7Qa/kMeTNNjcQ72HN58L7rQT+3pEMsGf8qr7lbiVkMDxcOlOwsStT3xO
+         64KGhtkoeSzULWWdF3jK5PyizRW2chVl8nJMYGm7F/oYJbjzgHsXKTDFGkOwZFmXJnv/
+         rID8nW7NexiZ2capUgEyOgcykdsnBJY4ykx02XWkFVvugaXQ+dUmOW/fY1PJy/kmeBmi
+         XzJSPiqrtWI0sZ7s0SnKnRSnM60t0FLRlEXFY1c6ElvEsX5M0R/+zTqGzUAVx/4Rx7Pp
+         7jiseyNbGSG+kGmfB+5aKDn5/ZdRcQCzIdrrJHKP0TCgWqU/fT7KkoGSXi73bmx8SIli
+         VuNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XeJqlljc/DcLq2LdbRfl+U/1KHhpI1pBfv141U86JNE=;
+        b=MClbN61NC5PkfOtmi/+mKYj2RUtHqfo5MSIjCjEZfXU1arlj4SZQN5J82PtUqD5AR0
+         UwceuNDkZRgvva+vaAkMNgmrLzZjGlR0sYCMYYZV7ha1SVNTbPHJhSlxngWY7TsWISXr
+         Sp/sqVf1jnNmA4uQKK2pZ86MBV1r02915mfHqLlLfxAsilZz8gqusFH9KWyvQDHteKS3
+         1DQHVmgdafbug8wb4rUD8PpqOGlFDmgB7554L7mNbpBBuJixY4jruJW/0fFUd4ZbxzI1
+         DMfcCSj/9NiqqCOAQnAHmEDJsbwg05ZW3idXsqLEQSqkMRp+5YTu93JIglacDGGFtLgI
+         u7tA==
+X-Gm-Message-State: APjAAAUDr3A8RRjUo7gWYsi7YEOqQ800B9WoSyF+Ayrw3A77mIgP+xHb
+        0+bgeHzOvyiAzwyZSpr5Tqk=
+X-Google-Smtp-Source: APXvYqxdYUr51nh4UeWcmVb6oKc95oIfUDQiXlMIvmhxL2RNewwBvTldXS38KcN5oRHmID4SatYnKA==
+X-Received: by 2002:a63:fb01:: with SMTP id o1mr3659036pgh.410.1559924844088;
+        Fri, 07 Jun 2019 09:27:24 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e26sm2796782pfn.94.2019.06.07.09.27.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 09:27:23 -0700 (PDT)
+Date:   Fri, 7 Jun 2019 09:27:22 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/69] 4.14.124-stable review
+Message-ID: <20190607162722.GA21998@roeck-us.net>
+References: <20190607153848.271562617@linuxfoundation.org>
+ <20190607161102.GA19615@roeck-us.net>
+ <20190607161627.GA9920@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607161627.GA9920@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows the probe function to be dropped after the kernel finished
-its initialization, in the case where the driver was not compiled as a
-module.
+On Fri, Jun 07, 2019 at 06:16:27PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Jun 07, 2019 at 09:11:02AM -0700, Guenter Roeck wrote:
+> > On Fri, Jun 07, 2019 at 05:38:41PM +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 4.14.124 release.
+> > > There are 69 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Sun 09 Jun 2019 03:37:08 PM UTC.
+> > > Anything received after that time might be too late.
+> > >
+> > 
+> > fs/btrfs/inode.c: In function 'btrfs_add_link':
+> > fs/btrfs/inode.c:6590:27: error: invalid initializer
+> >    struct timespec64 now = current_time(&parent_inode->vfs_inode);
+> >                            ^~~~~~~~~~~~
+> > fs/btrfs/inode.c:6592:35: error: incompatible types when assigning to type 'struct timespec' from type 'struct timespec64'
+> >    parent_inode->vfs_inode.i_mtime = now;
+> >                                    ^
+> > fs/btrfs/inode.c:6593:35: error: incompatible types when assigning to type 'struct timespec' from type 'struct timespec64'
+> >    parent_inode->vfs_inode.i_ctime = now;
+> >                                    ^
+> 
+> What arch?  This builds for me here.  odd...
+> 
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+arm, i386, m68k, mips, parisc, xtensa, ppc, sh4
 
-Notes:
-    v2: New patch
+It was originally seen with v4.14.123-69-gcc46c1204f89 last night,
+but I confirmed that v4.14.123-70-g94c5316fb246 is still affected.
 
- drivers/watchdog/jz4740_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 7519d80c5d05..2061788c1939 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -157,7 +157,7 @@ static const struct of_device_id jz4740_wdt_of_matches[] = {
- MODULE_DEVICE_TABLE(of, jz4740_wdt_of_matches);
- #endif
- 
--static int jz4740_wdt_probe(struct platform_device *pdev)
-+static int __init_or_module jz4740_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct jz4740_wdt_drvdata *drvdata;
--- 
-2.21.0.593.g511ec345e18
-
+Guenter
