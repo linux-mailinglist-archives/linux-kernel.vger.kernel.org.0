@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C9E38FDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1FB38F98
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbfFGPqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:46:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58262 "EHLO mail.kernel.org"
+        id S1729638AbfFGPnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:43:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730496AbfFGPqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:46:06 -0400
+        id S1730769AbfFGPnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:43:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F06B9212F5;
-        Fri,  7 Jun 2019 15:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42DD82133D;
+        Fri,  7 Jun 2019 15:43:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922366;
-        bh=FW5w7A6SuCFU64s92XNLYs79VvKZL7XkFiSjqhtCBGw=;
+        s=default; t=1559922186;
+        bh=bUkpDoWOEbrLwB7zrUSqeSUqVZH9xXs2KqtxME+PaVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y6gFuFo50wwbWu/b6PiDoTDri6oMyTKfRMUBzHBKNujYijolyAMw9l+3t2IMUytEd
-         ASziqBDQwH021aaD8c2m7M3eIiUHv8s6BAh69h4F4S4aFJj8NhrlNQo9PCYEUTfctU
-         S2G8ZsjrCaaM1GLBtVMx/Wd5BF7RA8jUHWI87F64=
+        b=C9VqTehgwpJ4P97JRv3z18r1Il1vJWCa5KuKXYbtp0UBfKRGN4v25oIsuGcYaPbc4
+         QLdBqXFgtfGvQprOIJ0/kBdtwNM+2cXWkEo4ZLZNA3xP4YI6EHBrYgriMpOnRs63an
+         sDKLInFylc27Dal0Lt/YVgcEoPGbPMc9yfjx9DMQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Packard <keithp@keithp.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 4.19 61/73] drm/lease: Make sure implicit planes are leased
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.14 67/69] Revert "binder: fix handling of misaligned binder object"
 Date:   Fri,  7 Jun 2019 17:39:48 +0200
-Message-Id: <20190607153855.793407973@linuxfoundation.org>
+Message-Id: <20190607153856.089839424@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Todd Kjos <tkjos@android.com>
 
-commit 204f640da6914844b3270b41b29c84f6e3b74083 upstream.
+This reverts commit 33c6b9ca70a8b066a613e2a3d0331ae8f82aa31a.
 
-If userspace doesn't enable universal planes, then we automatically
-add the primary and cursor planes. But for universal userspace there's
-no such check (and maybe we only want to give the lessee one plane,
-maybe not even the primary one), hence we need to check for the
-implied plane.
+The commit message is for a different patch. Reverting and then adding
+the same patch back with the correct commit message.
 
-v2: don't forget setcrtc ioctl.
-
-v3: Still allow disabling of the crtc in SETCRTC.
-
-Cc: stable@vger.kernel.org
-Cc: Keith Packard <keithp@keithp.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190228144910.26488-6-daniel.vetter@ffwll.ch
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: stable <stable@vger.kernel.org> # 4.14
+Signed-off-by: Todd Kjos <tkjos@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/drm_crtc.c  |    4 ++++
- drivers/gpu/drm/drm_plane.c |    8 ++++++++
- 2 files changed, 12 insertions(+)
+ drivers/android/binder_alloc.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -595,6 +595,10 @@ int drm_mode_setcrtc(struct drm_device *
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -945,13 +945,14 @@ enum lru_status binder_alloc_free_page(s
  
- 	plane = crtc->primary;
+ 	index = page - alloc->pages;
+ 	page_addr = (uintptr_t)alloc->buffer + index * PAGE_SIZE;
+-
+-	mm = alloc->vma_vm_mm;
+-	if (!mmget_not_zero(mm))
+-		goto err_mmget;
+-	if (!down_write_trylock(&mm->mmap_sem))
+-		goto err_down_write_mmap_sem_failed;
+ 	vma = binder_alloc_get_vma(alloc);
++	if (vma) {
++		if (!mmget_not_zero(alloc->vma_vm_mm))
++			goto err_mmget;
++		mm = alloc->vma_vm_mm;
++		if (!down_write_trylock(&mm->mmap_sem))
++			goto err_down_write_mmap_sem_failed;
++	}
  
-+	/* allow disabling with the primary plane leased */
-+	if (crtc_req->mode_valid && !drm_lease_held(file_priv, plane->base.id))
-+		return -EACCES;
+ 	list_lru_isolate(lru, item);
+ 	spin_unlock(lock);
+@@ -964,9 +965,10 @@ enum lru_status binder_alloc_free_page(s
+ 			       PAGE_SIZE);
+ 
+ 		trace_binder_unmap_user_end(alloc, index);
 +
- 	mutex_lock(&crtc->dev->mode_config.mutex);
- 	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
- retry:
---- a/drivers/gpu/drm/drm_plane.c
-+++ b/drivers/gpu/drm/drm_plane.c
-@@ -940,6 +940,11 @@ retry:
- 		if (ret)
- 			goto out;
- 
-+		if (!drm_lease_held(file_priv, crtc->cursor->base.id)) {
-+			ret = -EACCES;
-+			goto out;
-+		}
-+
- 		ret = drm_mode_cursor_universal(crtc, req, file_priv, &ctx);
- 		goto out;
++		up_write(&mm->mmap_sem);
++		mmput(mm);
  	}
-@@ -1042,6 +1047,9 @@ int drm_mode_page_flip_ioctl(struct drm_
+-	up_write(&mm->mmap_sem);
+-	mmput(mm);
  
- 	plane = crtc->primary;
+ 	trace_binder_unmap_kernel_start(alloc, index);
  
-+	if (!drm_lease_held(file_priv, plane->base.id))
-+		return -EACCES;
-+
- 	if (crtc->funcs->page_flip_target) {
- 		u32 current_vblank;
- 		int r;
 
 
