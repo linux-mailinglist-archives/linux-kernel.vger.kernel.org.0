@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D0239022
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86FC38F8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731927AbfFGPtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:49:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35098 "EHLO mail.kernel.org"
+        id S1730650AbfFGPmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:42:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731919AbfFGPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:49:17 -0400
+        id S1730619AbfFGPml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:42:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44F9221473;
-        Fri,  7 Jun 2019 15:49:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3C072146E;
+        Fri,  7 Jun 2019 15:42:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922556;
-        bh=2nSs+r0mkSEPa95yznIxQ/o92NaL/HmVqSOrpeVP8Es=;
+        s=default; t=1559922161;
+        bh=XPEOkHCh4obrQalMRa36nSieAg7AtoM3I/8pbi0P6rw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eM1UZgx36oE5sz1FdkqpYRks8kDd9UjwqTeqPRozT/JntqtNKc4ZmveDVqo9+CKZK
-         /qlVTElOjEGoRfnzZcByzmZqzcoaTSRUGHBhG/Ay4hZUy52JY21q1Xi7LDjMPteNhn
-         VWsElZSQGlTTpyVwdbz30xWozljdV7ddybcq1QWM=
+        b=mh8PPYO2xDzTvBRrnUY4ldZhtae8a5d6mTXZ8dJMj+Q8pvsnk19Soi7SUrdKGE8HN
+         lxFxhe2tz5LF7vinJhgtMduoKNkboa3qvH2X4DXPSpQbnXWod9m9EHyxkNCTrsd7lx
+         1+LXBkhnRQA+QCgEEF0Pq/iai6mEaGRQtFtYepvk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 5.1 54/85] arm64: Fix the arm64_personality() syscall wrapper redirection
-Date:   Fri,  7 Jun 2019 17:39:39 +0200
-Message-Id: <20190607153855.515650835@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 59/69] CIFS: cifs_read_allocate_pages: dont iterate through whole page array on ENOMEM
+Date:   Fri,  7 Jun 2019 17:39:40 +0200
+Message-Id: <20190607153855.358636577@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Roberto Bergantinos Corpas <rbergant@redhat.com>
 
-commit 00377277166bac6939d8f72b429301369acaf2d8 upstream.
+commit 31fad7d41e73731f05b8053d17078638cf850fa6 upstream.
 
-Following commit 4378a7d4be30 ("arm64: implement syscall wrappers"), the
-syscall function names gained the '__arm64_' prefix. Ensure that we
-have the correct #define for redirecting a default syscall through a
-wrapper.
+ In cifs_read_allocate_pages, in case of ENOMEM, we go through
+whole rdata->pages array but we have failed the allocation before
+nr_pages, therefore we may end up calling put_page with NULL
+pointer, causing oops
 
-Fixes: 4378a7d4be30 ("arm64: implement syscall wrappers")
-Cc: <stable@vger.kernel.org> # 4.19.x-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/sys.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/file.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/sys.c
-+++ b/arch/arm64/kernel/sys.c
-@@ -50,7 +50,7 @@ SYSCALL_DEFINE1(arm64_personality, unsig
- /*
-  * Wrappers to pass the pt_regs argument.
-  */
--#define sys_personality		sys_arm64_personality
-+#define __arm64_sys_personality		__arm64_sys_arm64_personality
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -2984,7 +2984,9 @@ cifs_read_allocate_pages(struct cifs_rea
+ 	}
  
- asmlinkage long sys_ni_syscall(const struct pt_regs *);
- #define __arm64_sys_ni_syscall	sys_ni_syscall
+ 	if (rc) {
+-		for (i = 0; i < nr_pages; i++) {
++		unsigned int nr_page_failed = i;
++
++		for (i = 0; i < nr_page_failed; i++) {
+ 			put_page(rdata->pages[i]);
+ 			rdata->pages[i] = NULL;
+ 		}
 
 
