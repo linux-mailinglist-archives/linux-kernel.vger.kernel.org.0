@@ -2,184 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BEE393EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129BE39401
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730205AbfFGSGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:06:32 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43086 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729817AbfFGSGb (ORCPT
+        id S1730730AbfFGSKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:10:00 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41243 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730442AbfFGSJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:06:31 -0400
-Received: by mail-io1-f66.google.com with SMTP id k20so2087305ios.10
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:06:30 -0700 (PDT)
+        Fri, 7 Jun 2019 14:09:59 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s21so2532994lji.8
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xLehMSYkK3XfUc0NYuOTQwZFYDyQEwqS9DQD1R1eHAk=;
-        b=Htkn/o8Z18DC5jDpDQXQDKkSRSOkZr8DK1ynqG68Nsu83En9ojGIOff8TmkqZBRGpK
-         CQjm63dpKUi/As2mwytCiEIv2F3dYXc/C26x5ekX0J67olxPg0C/uU6Azrdhx5oMfivO
-         ANn2R3YckbO8MIPG6fFFFz7JF7EApgtYNH71E=
+        bh=MZt9HN8cGMdF69JUby4Fl+9oCqt6sT/iSareBA7Fniw=;
+        b=Qdo4w0jxKAKwm+D28iUQP+s4tbiCdRXmdUo7XLy5SPAitpxpXbfKyJwkFvnAZgHz9z
+         UiISb0kNKNiHNbthtPbmwpMALewaezDpxqw9axhE6qeWe7nwhKpYio286AAO9aMTmJly
+         4P0lgor1jtxZNE2o3QJeCD+ZVInUJJhoUSMUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xLehMSYkK3XfUc0NYuOTQwZFYDyQEwqS9DQD1R1eHAk=;
-        b=ElGI6ftOPpPNY1oBFyTjJexU0k9Q3CRt+TkOsjsExt55p96PK05xxVRwTxQWpM2R2/
-         a1PMsa9WyJDm3f4RzSuwEH5G2xsgwIzdmSFgtlJGtaH8BNvmTMpCP3uYu1ZQCscWFhL7
-         Z7+Xob1/AYOPpbx5jDctaiSbF7n7MRlE5v7lWTMWDXCPUqpXvOvm+a35nH6Ldhb1JAJu
-         Oi3ksyOsHffkEy8lWPYMp8XjX0ve1i6P+PeRGfHvgI+Mp9sRY+ldwGXRabrBF69QGLZO
-         LNkObnsCe3XfWo+s+WOJZmTEVOotKvYPPA5BfJpEkppmYVGDM1jDHcXHWdF/ukeKx1j5
-         ETaA==
-X-Gm-Message-State: APjAAAWbqaIK5oPivb6Nn5YsiVgKrHx/IfUuP0ejUuDqgp5PAdvtAa/n
-        T7l1kDYSzfI65B85c0vH4L2DlbM5278=
-X-Google-Smtp-Source: APXvYqz9m4qJziuwBUKKjV7KIgRHxWuIUJrXCR9RxbmfVuEV+H0RMSrRdd0h0r0LvijUhDK87XKW9A==
-X-Received: by 2002:a5e:8412:: with SMTP id h18mr18038356ioj.268.1559930790403;
-        Fri, 07 Jun 2019 11:06:30 -0700 (PDT)
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com. [209.85.166.51])
-        by smtp.gmail.com with ESMTPSA id 17sm1358771itk.35.2019.06.07.11.06.28
+        bh=MZt9HN8cGMdF69JUby4Fl+9oCqt6sT/iSareBA7Fniw=;
+        b=FzxmoOSw0YU4krDdywP5Y/xaIwcU0WcsJLZrqEWTZgTkzb8gFOkCZI3nix3+0fWcj2
+         oz8DRyKkzm81xbqEqvuY9nvLkiNqOn5M/q0puBKbVel22VBg+juIDthf6y2yvMXd6LIm
+         vbkQLg8pC/YffeI9tpsOZfypWrLyM/T6aOzKu8NK04ZeDr8/6T3PZnLAs4FrJowP+WR2
+         muYqBL9E2TYxVcoFf4sx+y3XpObLbcHUFb0TBZ11in8hfzruryNA6DiBCnjWPoMQ6jJX
+         UMKrPiEWxSfQrQHxPGt3WHS/1zieprgydYJ8RcfR4jOWnQgvqFLxgxZD8HLE5s1hKRGc
+         ZKzQ==
+X-Gm-Message-State: APjAAAXXxR4DDjOMdt0ZU1swYzQeM3xlK2W8/PffypNsxyLdxMcQjF+Q
+        CKNw/VukDIoZmDxR+Vct9q+ZVJiTx98=
+X-Google-Smtp-Source: APXvYqzrBhydtnRtlYmRxe8SwmS4ZUnxWX61awS3UFXnJj57vrKclmMpbecRhQu6VEeplnE60AR+3Q==
+X-Received: by 2002:a2e:9106:: with SMTP id m6mr14422866ljg.164.1559930996900;
+        Fri, 07 Jun 2019 11:09:56 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id n10sm522233lfk.39.2019.06.07.11.09.55
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 11:06:29 -0700 (PDT)
-Received: by mail-io1-f51.google.com with SMTP id e3so2087135ioc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:06:28 -0700 (PDT)
-X-Received: by 2002:a5e:db0a:: with SMTP id q10mr872549iop.168.1559930787784;
- Fri, 07 Jun 2019 11:06:27 -0700 (PDT)
+        Fri, 07 Jun 2019 11:09:56 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id y13so2288274lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:09:55 -0700 (PDT)
+X-Received: by 2002:a19:2d41:: with SMTP id t1mr27337806lft.79.1559930995535;
+ Fri, 07 Jun 2019 11:09:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190603183740.239031-1-dianders@chromium.org>
- <20190603183740.239031-4-dianders@chromium.org> <42fc30b1-adab-7fa8-104c-cbb7855f2032@intel.com>
- <CAD=FV=UPfCOr-syAbVZ-FjHQy7bgQf5BS5pdV-Bwd3hquRqEGg@mail.gmail.com>
- <16b305a7110.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <ff0e7b7a-6a58-8bec-b182-944a8b64236d@intel.com> <16b3223dea0.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <16b3223dea0.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 7 Jun 2019 11:06:16 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XVmCYWe9rtTFakq8yu67R-97EPyAHWck+o3dRXzHCchQ@mail.gmail.com>
-Message-ID: <CAD=FV=XVmCYWe9rtTFakq8yu67R-97EPyAHWck+o3dRXzHCchQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] brcmfmac: sdio: Disable auto-tuning around
- commands expected to fail
-To:     Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Double Lo <double.lo@cypress.com>,
-        Brian Norris <briannorris@chromium.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Naveen Gupta <naveen.gupta@cypress.com>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        netdev <netdev@vger.kernel.org>,
-        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Franky Lin <franky.lin@broadcom.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>
+References: <20190607103122.GA22167@redhat.com> <20190607103154.GA22159@redhat.com>
+ <CAHk-=wjzU4MmVomodhTVSWnKUxKOBpvhdXgf1_riBtSwZuwMSg@mail.gmail.com>
+ <CAHk-=wif34nPB2uzU2YBXXYe5cFZhoLmU_zOtExd74X1WcYXJg@mail.gmail.com> <87imthclyt.fsf@xmission.com>
+In-Reply-To: <87imthclyt.fsf@xmission.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 7 Jun 2019 11:09:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgDgKA52SpzrW_dy76Jx6qxE393xzhiyQQ+rtic399PYw@mail.gmail.com>
+Message-ID: <CAHk-=wgDgKA52SpzrW_dy76Jx6qxE393xzhiyQQ+rtic399PYw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] aio: simplify the usage of restore_saved_sigmask_unless()
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Laight <David.Laight@aculab.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Eric Wong <e@80x24.org>, linux-aio@kvack.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Jun 7, 2019 at 6:32 AM Arend Van Spriel
-<arend.vanspriel@broadcom.com> wrote:
+On Fri, Jun 7, 2019 at 11:03 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> On June 7, 2019 2:40:04 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+> Unless I am misreading things io_pgetevents isn't restartable
+> either and ERESTARTNOHAND is a bug in that case.
 >
-> > On 7/06/19 8:12 AM, Arend Van Spriel wrote:
-> >> On June 6, 2019 11:37:22 PM Doug Anderson <dianders@chromium.org> wrote:
-> >>>
-> >>> In the case of dw_mmc, which I'm most familiar with, we don't have any
-> >>> sort of automated or timed-based retuning.  ...so we'll only re-tune
-> >>> when we see the CRC error.  If I'm understanding things correctly then
-> >>> that for dw_mmc my solution and yours behave the same.  That means the
-> >>> difference is how we deal with other retuning requests, either ones
-> >>> that come about because of an interrupt that the host controller
-> >>> provided or because of a timer.  Did I get that right?
-> >>
-> >> Right.
-> >>
-> >>> ...and I guess the reason we have to deal specially with these cases
-> >>> is because any time that SDIO card is "sleeping" we don't want to
-> >>> retune because it won't work.  Right?  NOTE: the solution that would
-> >>> come to my mind first to solve this would be to hold the retuning for
-> >>> the whole time that the card was sleeping and then release it once the
-> >>> card was awake again.  ...but I guess we don't truly need to do that
-> >>> because tuning only happens as a side effect of sending a command to
-> >>> the card and the only command we send to the card is the "wake up"
-> >>> command.  That's why your solution to hold tuning while sending the
-> >>> "wake up" command works, right?
-> >>
-> >> Yup.
-> >>
-> >>> ---
-> >>>
-> >>> OK, so assuming all the above is correct, I feel like we're actually
-> >>> solving two problems and in fact I believe we actually need both our
-> >>> approaches to solve everything correctly.  With just your patch in
-> >>> place there's a problem because we will clobber any external retuning
-> >>> requests that happened while we were waking up the card.  AKA, imagine
-> >>> this:
-> >>>
-> >>> A) brcmf_sdio_kso_control(on=True) gets called; need_retune starts as 0
-> >>>
-> >>> B) We call sdio_retune_hold_now()
-> >>>
-> >>> C) A retuning timer goes off or the SD Host controller tells us to retune
-> >>>
-> >>> D) We get to the end of brcmf_sdio_kso_control() and clear the "retune
-> >>> needed" since need_retune was 0 at the start.
-> >>>
-> >>> ...so we dropped the retuning request from C), right?
-> >>>
-> >>>
-> >>> What we truly need is:
-> >>>
-> >>> 1. CRC errors shouldn't trigger a retuning request when we're in
-> >>> brcmf_sdio_kso_control()
-> >>>
-> >>> 2. A separate patch that holds any retuning requests while the SDIO
-> >>> card is off.  This patch _shouldn't_ do any clearing of retuning
-> >>> requests, just defer them.
-> >>>
-> >>>
-> >>> Does that make sense to you?  If so, I can try to code it up...
-> >>
-> >> FWIW it does make sense to me. However, I am still not sure if our sdio
-> >> hardware supports retuning. Have to track down an asic designer who can tell
-> >> or dive into vhdl myself.
-> >
-> > The card supports re-tuning if is handles CMD19, which it does.  It is not
-> > the card that does any tuning, only the host.  The card just helps by
-> > providing a known data pattern in response to CMD19.  It can be that a card
-> > provides good enough signals that the host should not need to re-tune.  I
-> > don't know if that can be affected by the board design though.
->
-> Right. I know it supports initial tuning, but I'm not sure about subsequent
-> retuning initiated by the host controller.
+> Is the bug going the other way?
 
-My evidence says that it supports subsequent tuning.  In fact, without
-this series my logs would be filled with:
+Yeah, I think you're right, and that should be EINTR too.
 
-  dwmmc_rockchip ff0d0000.dwmmc: Successfully tuned phase to XYZ
+Or at least be conditional on whether it had a timeout or not. A NULL
+timeout obviously _is_ restartable. But I don't think it's worth being
+clever here.
 
-...where the phase varied by a few degrees each time.  AKA: it was
-retuning over and over again and getting sane results which implies
-that the tuning was working just fine.
-
-The whole point of this series is not that the retuning was actually
-broken or anything it was just pointless and blocking the bus while it
-happened.  On rk3288 dw_mmc ports we also currently do pretty
-extensive tuning, trying _lots_ of phases.  Thus the re-tuning was
-blocking the bus for a significant amount of time.
-
--Doug
+                Linus
