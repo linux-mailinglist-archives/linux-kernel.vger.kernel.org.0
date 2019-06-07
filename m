@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43EB038FDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A4E39039
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbfFGPqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:46:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58322 "EHLO mail.kernel.org"
+        id S1731539AbfFGPuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:50:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730632AbfFGPqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:46:10 -0400
+        id S1731220AbfFGPuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:50:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CE92212F5;
-        Fri,  7 Jun 2019 15:46:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEA3820840;
+        Fri,  7 Jun 2019 15:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922369;
-        bh=GnmitQ/FmhUl1iQbeJpEQmDM6jx8+AikL4E/B9gvUfw=;
+        s=default; t=1559922601;
+        bh=uFB6JgiF588xHj90IodenLeJ8LV6T1SfOBcDmZFDST4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qjm40VFZmaaZzjIQJcCdq6udW1VbiOrM/zD6xxFEN9bvF8xvnVZwM8b8egN/nX0Pc
-         pv47YppUeDnRseXsoP5IlK7HBnvtzAJtkiB1APAcCyMLwpB1NoP1qhEwpMp/xT7pmK
-         +Q0d8CQXfM03VbeUOI5IXAZitWnIhMhRIXP94wf0=
+        b=rogIY3N3KjbRbR1UqRnhERzd2BBErjPzdVk1p1HnWq1x91iuJ3okE+Z6OzTWkr0G9
+         xyGoToj0H3U335OPrQG51QMYSNglnZ1bpO/Ztqh3woJUCUgyYiGxIHXSdjlFxrffWQ
+         ty2bn2DeEAqv8XsJtV+UxVtajqw7oGPx9yei+jNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Sebor <msebor@gcc.gnu.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 4.19 62/73] Compiler Attributes: add support for __copy (gcc >= 9)
+        stable@vger.kernel.org, Michael Rodin <mrodin@de.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "George G. Davis" <george_davis@mentor.com>
+Subject: [PATCH 5.1 64/85] serial: sh-sci: disable DMA for uart_console
 Date:   Fri,  7 Jun 2019 17:39:49 +0200
-Message-Id: <20190607153855.885568110@linuxfoundation.org>
+Message-Id: <20190607153856.427807497@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: George G. Davis <george_davis@mentor.com>
 
-commit c0d9782f5b6d7157635ae2fd782a4b27d55a6013 upstream.
+commit 099506cbbc79c0bd52b19cb6b930f256dabc3950 upstream.
 
->From the GCC manual:
+As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
+console UART"), UART console lines use low-level PIO only access functions
+which will conflict with use of the line when DMA is enabled, e.g. when
+the console line is also used for systemd messages. So disable DMA
+support for UART console lines.
 
-  copy
-  copy(function)
-
-    The copy attribute applies the set of attributes with which function
-    has been declared to the declaration of the function to which
-    the attribute is applied. The attribute is designed for libraries
-    that define aliases or function resolvers that are expected
-    to specify the same set of attributes as their targets. The copy
-    attribute can be used with functions, variables, or types. However,
-    the kind of symbol to which the attribute is applied (either
-    function or variable) must match the kind of symbol to which
-    the argument refers. The copy attribute copies only syntactic and
-    semantic attributes but not attributes that affect a symbol’s
-    linkage or visibility such as alias, visibility, or weak.
-    The deprecated attribute is also not copied.
-
-  https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
-
-The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-(enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target, e.g.:
-
-    void __cold f(void) {}
-    void __alias("f") g(void);
-
-diagnoses:
-
-    warning: 'g' specifies less restrictive attribute than
-    its target 'f': 'cold' [-Wmissing-attributes]
-
-Using __copy(f) we can copy the __cold attribute from f to g:
-
-    void __cold f(void) {}
-    void __copy(f) __alias("f") g(void);
-
-This attribute is most useful to deal with situations where an alias
-is declared but we don't know the exact attributes the target has.
-
-For instance, in the kernel, the widely used module_init/exit macros
-define the init/cleanup_module aliases, but those cannot be marked
-always as __init/__exit since some modules do not have their
-functions marked as such.
-
-Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
+Link: https://patchwork.kernel.org/patch/10929511/
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler-gcc.h   |    4 ++++
- include/linux/compiler_types.h |    4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/tty/serial/sh-sci.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -201,6 +201,10 @@
- #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
- #endif
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1557,6 +1557,13 @@ static void sci_request_dma(struct uart_
  
-+#if GCC_VERSION >= 90100
-+#define __copy(symbol)                 __attribute__((__copy__(symbol)))
-+#endif
-+
- #if !defined(__noclone)
- #define __noclone	/* not needed */
- #endif
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -180,6 +180,10 @@ struct ftrace_likely_data {
- #define __diag_GCC(version, severity, string)
- #endif
+ 	dev_dbg(port->dev, "%s: port %d\n", __func__, port->line);
  
-+#ifndef __copy
-+# define __copy(symbol)
-+#endif
++	/*
++	 * DMA on console may interfere with Kernel log messages which use
++	 * plain putchar(). So, simply don't use it with a console.
++	 */
++	if (uart_console(port))
++		return;
 +
- #define __diag_push()	__diag(push)
- #define __diag_pop()	__diag(pop)
+ 	if (!port->dev->of_node)
+ 		return;
  
 
 
