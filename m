@@ -2,181 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1EF938A84
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 14:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 781B038A91
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 14:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbfFGMm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 08:42:56 -0400
-Received: from olimex.com ([184.105.72.32]:45386 "EHLO olimex.com"
+        id S1728566AbfFGMru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 08:47:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:39526 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbfFGMmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 08:42:52 -0400
-Received: from localhost.localdomain ([94.155.250.134])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Jun 2019 05:42:51 -0700
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Heiko Stuebner <heiko@sntech.de>, Lee Jones <lee.jones@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v3 2/2] mfd: rk808: Prepare rk805 for poweroff
-Date:   Fri,  7 Jun 2019 15:42:26 +0300
-Message-Id: <20190607124226.17694-3-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190607124226.17694-1-stefan@olimex.com>
-References: <20190607124226.17694-1-stefan@olimex.com>
+        id S1727102AbfFGMru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 08:47:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 226E53EF;
+        Fri,  7 Jun 2019 05:47:49 -0700 (PDT)
+Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E0D640151;
+        Fri,  7 Jun 2019 05:47:47 -0700 (PDT)
+Subject: Re: [PATCH v8 25/29] vfio-pci: Add a new VFIO_REGION_TYPE_NESTED
+ region type
+To:     Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        Vincent Stehle <Vincent.Stehle@arm.com>
+References: <20190526161004.25232-1-eric.auger@redhat.com>
+ <20190526161004.25232-26-eric.auger@redhat.com>
+ <20190603163159.31e7ae23@x1.home>
+ <9c1ea2db-5ba0-3cf5-3b38-2c4a125460e6@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <6a640710-bb9d-8923-cfef-e57786ed699f@arm.com>
+Date:   Fri, 7 Jun 2019 13:47:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <9c1ea2db-5ba0-3cf5-3b38-2c4a125460e6@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK805 has SLEEP signal, which can put the device into SLEEP or OFF
-mode. The default is SLEEP mode.
+On 07/06/2019 09:28, Auger Eric wrote:
+>>> +static const struct vfio_pci_fault_abi fault_abi_versions[] = {
+>>> +	[0] = {
+>>> +		.entry_size = sizeof(struct iommu_fault),
+>>> +	},
+>>> +};
+>>> +
+>>> +#define NR_FAULT_ABIS ARRAY_SIZE(fault_abi_versions)
+>>
+>> This looks like it's leading to some dangerous complicated code to
+>> support multiple user selected ABIs.  How many ABIs do we plan to
+>> support?  The region capability also exposes a type, sub-type, and
+>> version.  How much of this could be exposed that way?  ie. if we need
+>> to support multiple versions, expose multiple regions.
+> 
+> This is something that was discussed earlier and suggested by
+> Jean-Philippe that we may need to support several versions of the ABI
+> (typicallu when adding PRI support).
+> Exposing multiple region is an interesting idea and I will explore that
+> direction.
 
-However, when the kernel performs power-off (actually the ATF) the
-device will not go fully off and this will result in higher power
-consumption and inability to wake the device with RTC alarm.
+At the moment the ABI support errors and PRI. We're considering setting
+the fault report structure to 64 or 128 bytes (see "[PATCH v2 2/4]
+iommu: Introduce device fault data"). 64-byte allows for 2 additional
+fields before we have to introduce a new ABI version, while 128 byte
+should last us a while.
 
-The solution is to enable pm_power_off_prepare function, which will
-configure SLEEP pin for OFF function.
+But that's for adding new fields to existing fault types. It's probably
+a good idea to have different region types in VFIO for different fault
+types, since userspace isn't necessarily prepared to deal with them. For
+example right now userspace doesn't have a method to complete
+recoverable faults, so we can't add them to the queue.
 
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
----
-Change for v3:
- - Remove useless warning messages
- - Change poweroff error messages
- - Add explanation comments
-Changes for v2:
- - Move pm_pwroff_prep_fn to header
- - Check pm_power_off_prepare before make it NULL
-
- drivers/mfd/rk808.c       | 50 +++++++++++++++++++++++++++------------
- include/linux/mfd/rk808.h |  1 +
- 2 files changed, 36 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-index 46d26e141cc4..416575343b4d 100644
---- a/drivers/mfd/rk808.c
-+++ b/drivers/mfd/rk808.c
-@@ -374,17 +374,29 @@ static void rk805_device_shutdown(void)
- 	int ret;
- 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
- 
--	if (!rk808) {
--		dev_warn(&rk808_i2c_client->dev,
--			 "have no rk805, so do nothing here\n");
-+	if (!rk808)
- 		return;
--	}
- 
- 	ret = regmap_update_bits(rk808->regmap,
- 				 RK805_DEV_CTRL_REG,
- 				 DEV_OFF, DEV_OFF);
- 	if (ret)
--		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-+		dev_err(&rk808_i2c_client->dev, "Failed to shutdown device!\n");
-+}
-+
-+static void rk805_device_shutdown_prepare(void)
-+{
-+	int ret;
-+	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
-+
-+	if (!rk808)
-+		return;
-+
-+	ret = regmap_update_bits(rk808->regmap,
-+				 RK805_GPIO_IO_POL_REG,
-+				 SLP_SD_MSK, SHUTDOWN_FUN);
-+	if (ret)
-+		dev_err(&rk808_i2c_client->dev, "Failed to shutdown device!\n");
- }
- 
- static void rk808_device_shutdown(void)
-@@ -392,17 +404,14 @@ static void rk808_device_shutdown(void)
- 	int ret;
- 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
- 
--	if (!rk808) {
--		dev_warn(&rk808_i2c_client->dev,
--			 "have no rk808, so do nothing here\n");
-+	if (!rk808)
- 		return;
--	}
- 
- 	ret = regmap_update_bits(rk808->regmap,
- 				 RK808_DEVCTRL_REG,
- 				 DEV_OFF_RST, DEV_OFF_RST);
- 	if (ret)
--		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-+		dev_err(&rk808_i2c_client->dev, "Failed to shutdown device!\n");
- }
- 
- static void rk818_device_shutdown(void)
-@@ -410,17 +419,14 @@ static void rk818_device_shutdown(void)
- 	int ret;
- 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
- 
--	if (!rk808) {
--		dev_warn(&rk808_i2c_client->dev,
--			 "have no rk818, so do nothing here\n");
-+	if (!rk808)
- 		return;
--	}
- 
- 	ret = regmap_update_bits(rk808->regmap,
- 				 RK818_DEVCTRL_REG,
- 				 DEV_OFF, DEV_OFF);
- 	if (ret)
--		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-+		dev_err(&rk808_i2c_client->dev, "Failed to shutdown device!\n");
- }
- 
- static const struct of_device_id rk808_of_match[] = {
-@@ -475,6 +481,7 @@ static int rk808_probe(struct i2c_client *client,
- 		cells = rk805s;
- 		nr_cells = ARRAY_SIZE(rk805s);
- 		rk808->pm_pwroff_fn = rk805_device_shutdown;
-+		rk808->pm_pwroff_prep_fn = rk805_device_shutdown_prepare;
- 		break;
- 	case RK808_ID:
- 		rk808->regmap_cfg = &rk808_regmap_config;
-@@ -550,6 +557,12 @@ static int rk808_probe(struct i2c_client *client,
- 		pm_power_off = rk808->pm_pwroff_fn;
- 	}
- 
-+	if (pm_off && !pm_power_off_prepare) {
-+		if (!rk808_i2c_client)
-+			rk808_i2c_client = client;
-+		pm_power_off_prepare = rk808->pm_pwroff_prep_fn;
-+	}
-+
- 	return 0;
- 
- err_irq:
-@@ -570,6 +583,13 @@ static int rk808_remove(struct i2c_client *client)
- 	if (rk808->pm_pwroff_fn && pm_power_off == rk808->pm_pwroff_fn)
- 		pm_power_off = NULL;
- 
-+	/**
-+	 * As above, check if the pointer is set by us before overwrite.
-+	 */
-+	if (rk808->pm_pwroff_prep_fn &&
-+	    pm_power_off_prepare == rk808->pm_pwroff_prep_fn)
-+		pm_power_off_prepare = NULL;
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index 8b5d68a7bb9c..ec928173e507 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -454,5 +454,6 @@ struct rk808 {
- 	const struct regmap_config	*regmap_cfg;
- 	const struct regmap_irq_chip	*regmap_irq_chip;
- 	void				(*pm_pwroff_fn)(void);
-+	void				(*pm_pwroff_prep_fn)(void);
- };
- #endif /* __LINUX_REGULATOR_RK808_H */
--- 
-2.17.1
+Thanks,
+Jean
