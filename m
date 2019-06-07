@@ -2,131 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6547382A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 04:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF6B438432
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfFGCVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 22:21:45 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:43932 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfFGCVp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 22:21:45 -0400
-Received: by mail-yb1-f193.google.com with SMTP id n145so230390ybg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 19:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ypCRpLGfpU1UTauZw8qNAOgzbjXvHTif8VBKbvg8Yv0=;
-        b=sbZ4UhtQKg5EgRtrg7vRjKJMr8vXoJDJ2sy0wlwAvzzyODxcsgFiYX+gdXWWxxMmc2
-         t+dbJScuXiVZQoszVJ4kfPowotE8aLagjUWGrTfUytsiU/fKwNxGIpx/heREknnLhU8G
-         bA6s09NdVszAHpONG5qJHWmBAF/l7+nVKgQiskJgH1g1cEaRq5k/3jjkLCak0ttca1gF
-         M9LJjLvkeheLN0Imi7fmeNspKiJhpOl1dL6MQrwhEjzynL+ETosKxZfTQbKZcfy4/kC6
-         9xnl9C5s8K7ckGISDEJ5xcw+YqRoFw0Dy9VUaoV+zJnC6pWCLCOd0JDFOB9UjbRBKN8n
-         fa/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ypCRpLGfpU1UTauZw8qNAOgzbjXvHTif8VBKbvg8Yv0=;
-        b=lY+maruaq+30H4KJhPKrwKwf2V2hH462m7UdMFEoiiCDZ3CNukjsabldUKDb/bxRCg
-         aec56q2PJtHRUzZH1uyZem2+H4ZQFjpaWvJzG+qlStR0r52U3j0nU7Pn8XpatLfaNn89
-         HGwReKK/AnD+Xe5bsZE925A6WVtBfagaPgL/XIb3XThxk8W7/j0pYofVnW84kI15Ppp6
-         mwV47Y6zYkQIi7Ry1oasMX5hoNQrnPNoS0nhdfPeucwuEJjckmgaGlEzSa4YuFU1Poim
-         RmL6E1DU9CXd+8UI3b1kzALjm+dj0Dk+M/nkFsO13rlikNDmeVl0KJ88T4rTGlooAUXx
-         PeaA==
-X-Gm-Message-State: APjAAAXkYQOCDbIQImf5sMjMOtFNdbay84uzlexh30OM9lqnCyWzDVhB
-        IZfpjYfHea+UtBwyJTg81nwJ0g==
-X-Google-Smtp-Source: APXvYqx8iXRsTTJwXfeqfERnwv6goa9I+YMKIbTRglHzyqAa1kuPeFPIxG0H3RXeycT45RqygpWihw==
-X-Received: by 2002:a25:97c6:: with SMTP id j6mr24142048ybo.513.1559874104275;
-        Thu, 06 Jun 2019 19:21:44 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
-        by smtp.gmail.com with ESMTPSA id j14sm215444ywi.7.2019.06.06.19.21.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 19:21:43 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 10:21:36 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     mathieu.poirier@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        corbet@lwn.net
-Subject: Re: [PATCH] Documentation: coresight: Update the generic device names
-Message-ID: <20190607022136.GE5970@leoy-ThinkPad-X240s>
-References: <1559229077-26436-1-git-send-email-suzuki.poulose@arm.com>
- <20190603190133.GA20462@xps15>
- <99055755-6525-694e-a15d-5de7318a80da@arm.com>
+        id S1727081AbfFGGNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:13:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:33868 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726336AbfFGGNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 02:13:54 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 02:13:54 EDT
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8DA941B5;
+        Thu,  6 Jun 2019 23:06:44 -0700 (PDT)
+Received: from [10.162.42.131] (p8cg001049571a15.blr.arm.com [10.162.42.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 520C14029C;
+        Thu,  6 Jun 2019 19:28:26 -0700 (PDT)
+Subject: Re: [PATCH V5 1/3] mm/hotplug: Reorder arch_remove_memory() call in
+ __remove_memory()
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, mhocko@suse.com,
+        ira.weiny@intel.com, david@redhat.com, cai@lca.pw,
+        logang@deltatee.com, james.morse@arm.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com,
+        mgorman@techsingularity.net, osalvador@suse.de,
+        ard.biesheuvel@arm.com
+References: <1559121387-674-1-git-send-email-anshuman.khandual@arm.com>
+ <1559121387-674-2-git-send-email-anshuman.khandual@arm.com>
+ <20190530103709.GB56046@lakrids.cambridge.arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <7d0538bb-aeef-f5f5-3371-db7b58dcb083@arm.com>
+Date:   Fri, 7 Jun 2019 07:58:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99055755-6525-694e-a15d-5de7318a80da@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190530103709.GB56046@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
 
-On Thu, Jun 06, 2019 at 05:21:19PM +0100, Suzuki K Poulose wrote:
-> Hi Mathieu,
+
+On 05/30/2019 04:07 PM, Mark Rutland wrote:
+> On Wed, May 29, 2019 at 02:46:25PM +0530, Anshuman Khandual wrote:
+>> Memory hot remove uses get_nid_for_pfn() while tearing down linked sysfs
+>> entries between memory block and node. It first checks pfn validity with
+>> pfn_valid_within() before fetching nid. With CONFIG_HOLES_IN_ZONE config
+>> (arm64 has this enabled) pfn_valid_within() calls pfn_valid().
+>>
+>> pfn_valid() is an arch implementation on arm64 (CONFIG_HAVE_ARCH_PFN_VALID)
+>> which scans all mapped memblock regions with memblock_is_map_memory(). This
+>> creates a problem in memory hot remove path which has already removed given
+>> memory range from memory block with memblock_[remove|free] before arriving
+>> at unregister_mem_sect_under_nodes(). Hence get_nid_for_pfn() returns -1
+>> skipping subsequent sysfs_remove_link() calls leaving node <-> memory block
+>> sysfs entries as is. Subsequent memory add operation hits BUG_ON() because
+>> of existing sysfs entries.
+>>
+>> [   62.007176] NUMA: Unknown node for memory at 0x680000000, assuming node 0
+>> [   62.052517] ------------[ cut here ]------------
+>> [   62.053211] kernel BUG at mm/memory_hotplug.c:1143!
+>> [   62.053868] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+>> [   62.054589] Modules linked in:
+>> [   62.054999] CPU: 19 PID: 3275 Comm: bash Not tainted 5.1.0-rc2-00004-g28cea40b2683 #41
+>> [   62.056274] Hardware name: linux,dummy-virt (DT)
+>> [   62.057166] pstate: 40400005 (nZcv daif +PAN -UAO)
+>> [   62.058083] pc : add_memory_resource+0x1cc/0x1d8
+>> [   62.058961] lr : add_memory_resource+0x10c/0x1d8
+>> [   62.059842] sp : ffff0000168b3ce0
+>> [   62.060477] x29: ffff0000168b3ce0 x28: ffff8005db546c00
+>> [   62.061501] x27: 0000000000000000 x26: 0000000000000000
+>> [   62.062509] x25: ffff0000111ef000 x24: ffff0000111ef5d0
+>> [   62.063520] x23: 0000000000000000 x22: 00000006bfffffff
+>> [   62.064540] x21: 00000000ffffffef x20: 00000000006c0000
+>> [   62.065558] x19: 0000000000680000 x18: 0000000000000024
+>> [   62.066566] x17: 0000000000000000 x16: 0000000000000000
+>> [   62.067579] x15: ffffffffffffffff x14: ffff8005e412e890
+>> [   62.068588] x13: ffff8005d6b105d8 x12: 0000000000000000
+>> [   62.069610] x11: ffff8005d6b10490 x10: 0000000000000040
+>> [   62.070615] x9 : ffff8005e412e898 x8 : ffff8005e412e890
+>> [   62.071631] x7 : ffff8005d6b105d8 x6 : ffff8005db546c00
+>> [   62.072640] x5 : 0000000000000001 x4 : 0000000000000002
+>> [   62.073654] x3 : ffff8005d7049480 x2 : 0000000000000002
+>> [   62.074666] x1 : 0000000000000003 x0 : 00000000ffffffef
+>> [   62.075685] Process bash (pid: 3275, stack limit = 0x00000000d754280f)
+>> [   62.076930] Call trace:
+>> [   62.077411]  add_memory_resource+0x1cc/0x1d8
+>> [   62.078227]  __add_memory+0x70/0xa8
+>> [   62.078901]  probe_store+0xa4/0xc8
+>> [   62.079561]  dev_attr_store+0x18/0x28
+>> [   62.080270]  sysfs_kf_write+0x40/0x58
+>> [   62.080992]  kernfs_fop_write+0xcc/0x1d8
+>> [   62.081744]  __vfs_write+0x18/0x40
+>> [   62.082400]  vfs_write+0xa4/0x1b0
+>> [   62.083037]  ksys_write+0x5c/0xc0
+>> [   62.083681]  __arm64_sys_write+0x18/0x20
+>> [   62.084432]  el0_svc_handler+0x88/0x100
+>> [   62.085177]  el0_svc+0x8/0xc
+>>
+>> Re-ordering arch_remove_memory() with memblock_[free|remove] solves the
+>> problem on arm64 as pfn_valid() behaves correctly and returns positive
+>> as memblock for the address range still exists. arch_remove_memory()
+>> removes applicable memory sections from zone with __remove_pages() and
+>> tears down kernel linear mapping. Removing memblock regions afterwards
+>> is safe because there is no other memblock (bootmem) allocator user that
+>> late. So nobody is going to allocate from the removed range just to blow
+>> up later. Also nobody should be using the bootmem allocated range else
+>> we wouldn't allow to remove it. So reordering is indeed safe.
+>>
+>> Acked-by: Michal Hocko <mhocko@suse.com>
+>> Reviewed-by: David Hildenbrand <david@redhat.com>
+>> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > 
-> On 03/06/2019 20:01, Mathieu Poirier wrote:
-> > Hi Suzuki,
-> > 
-> > On Thu, May 30, 2019 at 04:11:17PM +0100, Suzuki K Poulose wrote:
-> > > Update the documentation to reflect the new naming scheme with
-> > > latest changes.
-> > > 
-> > > Reported-by: Leo Yan <leo.yan@linaro.org>
-> > > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > ---
-> > >   Documentation/trace/coresight.txt | 34 +++++++++++++++++++---------------
-> > >   1 file changed, 19 insertions(+), 15 deletions(-)
-> > > 
-> > > diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-> > > index efbc832..7b427cf 100644
-> > > --- a/Documentation/trace/coresight.txt
-> > > +++ b/Documentation/trace/coresight.txt
-> > > @@ -326,16 +326,20 @@ amount of processor cores), the "cs_etm" PMU will be listed only once.
-> > >   A Coresight PMU works the same way as any other PMU, i.e the name of the PMU is
-> > >   listed along with configuration options within forward slashes '/'.  Since a
-> > >   Coresight system will typically have more than one sink, the name of the sink to
-> > > -work with needs to be specified as an event option.  Names for sink to choose
-> > > -from are listed in sysFS under ($SYSFS)/bus/coresight/devices:
-> > > +work with needs to be specified as an event option.
-> > > +On newer kernels the available sinks are listed in sysFS under:
-> > > +($SYSFS)/bus/event_source/devices/cs_etm/sinks/
-> > > -	root@linaro-nano:~# ls /sys/bus/coresight/devices/
-> > > -		20010000.etf   20040000.funnel  20100000.stm  22040000.etm
-> > > -		22140000.etm  230c0000.funnel  23240000.etm 20030000.tpiu
-> > > -		20070000.etr     20120000.replicator  220c0000.funnel
-> > > -		23040000.etm  23140000.etm     23340000.etm
-> > > +	root@localhost:/sys/bus/event_source/devices/cs_etm/sinks# ls
-> > > +	tmc_etf0  tmc_etr0  tpiu0
-> > > -	root@linaro-nano:~# perf record -e cs_etm/@20070000.etr/u --per-thread program
-> > > +On older kernels, this may need to be found from the list of coresight devices,
-> > > +available under ($SYSFS)/bus/coresight/devices/:
-> > > +
-> > > +	root@localhost:/sys/bus/coresight/devices# ls
-> > > +	etm0  etm1  etm2  etm3  etm4  etm5  funnel0  funnel1  funnel2  replicator0  stm0 tmc_etf0  tmc_etr0  tpiu0
-> > > +
-> > > +	root@linaro-nano:~# perf record -e cs_etm/@tmc_etr0/u --per-thread program
-> > 
-> > On the "older" kernels you are referring to one would find the original naming
-> > convention.  Everything else looks good to me.
-> 
-> True, but do we care what we see there ? All we care about is the location,
-> where to find them. I could fix it, if you think thats needed.
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-IIUC, either the old kernel or newer kernel, both we can find the event
-from ($SYSFS)/bus/event_source/devices/cs_etm/sinks/; the only
-difference between them is the naming convention.
+Hello Andrew,
 
-So the doc can use the same location to find event for both new and
-old kernel, and explain the naming convention difference?
+Will it be possible for this particular patch of the series to be merged alone.
+I am still reworking arm64 hot-remove parts as per the suggestions from Mark.
+Just wondering if this patch which has been reviewed and acked for a while now
+can be out of our way.
 
-Thanks,
-Leo Yan
+Also because this has some conflict with David's series which can be sorted out
+earlier before arm64 hot-remove V6 series comes in.
+
+From my previous response on this series last week, the following can resolve
+the conflict with David's [v3, 09/11] patch.
+
+C) Rebase (https://patchwork.kernel.org/patch/10962589/) [v3, 09/11]
+
+	- hot-remove series moves arch_remove_memory() before memblock_[free|remove]()
+	- So remove_memory_block_devices() should be moved before arch_remove_memory()
+	  in it's new position   
+
+It will be great if this patch can be merged alone.
+
+- Anshuman
