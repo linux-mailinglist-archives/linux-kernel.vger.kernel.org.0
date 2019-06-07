@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4F63908E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D4B38F78
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:42:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731758AbfFGPsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:48:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
+        id S1730457AbfFGPmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:42:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730874AbfFGPsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:48:18 -0400
+        id S1729349AbfFGPlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:41:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19A8F2146E;
-        Fri,  7 Jun 2019 15:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AFF121473;
+        Fri,  7 Jun 2019 15:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922497;
-        bh=yTcDsAiMF7ISkOya5vLBEMGl3D758NDZBEpHsSeaorM=;
+        s=default; t=1559922115;
+        bh=7Dwi07MGBO9U6N2e0LqhLrsjBz2fdKOnllJzj59RAsw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqKzxOSOg3J06S1PIHvEv0BQ25e8CPnixHWQpC8XIUi+rWIYNFIrudfmuXEoJnQhz
-         57k+nvKjFutfL0ykiEGgOOqAupY5RRTIHaOq1dl+nQhAPfonA9dvTKrkVtF8EMS98v
-         Mj9EkdZhJ98btiuWcGUMKyi5SpHUmzQ7am3k6t0g=
+        b=SlW8rUwcP9GlBDyW8kAxZ52cG4bCN/XNI7XgwkcwidXV9riPJKtrm6FgFOVmuOZ2m
+         PmA6P1QUJnNJNDopzWzBFR5Swfinn8/3dl+xLhZA3bHwPjRsaERvYKe0AeIvROeYCN
+         +wDsk6ETRnWDAEh/DJFPQ3wpIubrSMQG9ij80yM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
-Subject: [PATCH 5.1 35/85] KVM: PPC: Book3S HV: Fix lockdep warning when entering guest on POWER9
-Date:   Fri,  7 Jun 2019 17:39:20 +0200
-Message-Id: <20190607153853.578915837@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 40/69] Btrfs: fix race updating log root item during fsync
+Date:   Fri,  7 Jun 2019 17:39:21 +0200
+Message-Id: <20190607153853.310094093@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,113 +43,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 1b28d5531e446a87bbefa5ced191c4cbd316576c upstream.
+commit 06989c799f04810f6876900d4760c0edda369cf7 upstream.
 
-Commit 3309bec85e60 ("KVM: PPC: Book3S HV: Fix lockdep warning when
-entering the guest") moved calls to trace_hardirqs_{on,off} in the
-entry path used for HPT guests.  Similar code exists in the new
-streamlined entry path used for radix guests on POWER9.  This makes
-the same change there, so as to avoid lockdep warnings such as this:
+When syncing the log, the final phase of a fsync operation, we need to
+either create a log root's item or update the existing item in the log
+tree of log roots, and that depends on the current value of the log
+root's log_transid - if it's 1 we need to create the log root item,
+otherwise it must exist already and we update it. Since there is no
+synchronization between updating the log_transid and checking it for
+deciding whether the log root's item needs to be created or updated, we
+end up with a tiny race window that results in attempts to update the
+item to fail because the item was not yet created:
 
-[  228.686461] DEBUG_LOCKS_WARN_ON(current->hardirqs_enabled)
-[  228.686480] WARNING: CPU: 116 PID: 3803 at ../kernel/locking/lockdep.c:4219 check_flags.part.23+0x21c/0x270
-[  228.686544] Modules linked in: vhost_net vhost xt_CHECKSUM iptable_mangle xt_MASQUERADE iptable_nat nf_nat
-+xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ipt_REJECT nf_reject_ipv4 tun bridge stp llc ebtable_filter
-+ebtables ip6table_filter ip6_tables iptable_filter fuse kvm_hv kvm at24 ipmi_powernv regmap_i2c ipmi_devintf
-+uio_pdrv_genirq ofpart ipmi_msghandler uio powernv_flash mtd ibmpowernv opal_prd ip_tables ext4 mbcache jbd2 btrfs
-+zstd_decompress zstd_compress raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx libcrc32c xor
-+raid6_pq raid1 raid0 ses sd_mod enclosure scsi_transport_sas ast i2c_opal i2c_algo_bit drm_kms_helper syscopyarea
-+sysfillrect sysimgblt fb_sys_fops ttm drm i40e e1000e cxl aacraid tg3 drm_panel_orientation_quirks i2c_core
-[  228.686859] CPU: 116 PID: 3803 Comm: qemu-system-ppc Kdump: loaded Not tainted 5.2.0-rc1-xive+ #42
-[  228.686911] NIP:  c0000000001b394c LR: c0000000001b3948 CTR: c000000000bfad20
-[  228.686963] REGS: c000200cdb50f570 TRAP: 0700   Not tainted  (5.2.0-rc1-xive+)
-[  228.687001] MSR:  9000000002823033 <SF,HV,VEC,VSX,FP,ME,IR,DR,RI,LE>  CR: 48222222  XER: 20040000
-[  228.687060] CFAR: c000000000116db0 IRQMASK: 1
-[  228.687060] GPR00: c0000000001b3948 c000200cdb50f800 c0000000015e7600 000000000000002e
-[  228.687060] GPR04: 0000000000000001 c0000000001c71a0 000000006e655f73 72727563284e4f5f
-[  228.687060] GPR08: 0000200e60680000 0000000000000000 c000200cdb486180 0000000000000000
-[  228.687060] GPR12: 0000000000002000 c000200fff61a680 0000000000000000 00007fffb75c0000
-[  228.687060] GPR16: 0000000000000000 0000000000000000 c0000000017d6900 c000000001124900
-[  228.687060] GPR20: 0000000000000074 c008000006916f68 0000000000000074 0000000000000074
-[  228.687060] GPR24: ffffffffffffffff ffffffffffffffff 0000000000000003 c000200d4b600000
-[  228.687060] GPR28: c000000001627e58 c000000001489908 c000000001627e58 c000000002304de0
-[  228.687377] NIP [c0000000001b394c] check_flags.part.23+0x21c/0x270
-[  228.687415] LR [c0000000001b3948] check_flags.part.23+0x218/0x270
-[  228.687466] Call Trace:
-[  228.687488] [c000200cdb50f800] [c0000000001b3948] check_flags.part.23+0x218/0x270 (unreliable)
-[  228.687542] [c000200cdb50f870] [c0000000001b6548] lock_is_held_type+0x188/0x1c0
-[  228.687595] [c000200cdb50f8d0] [c0000000001d939c] rcu_read_lock_sched_held+0xdc/0x100
-[  228.687646] [c000200cdb50f900] [c0000000001dd704] rcu_note_context_switch+0x304/0x340
-[  228.687701] [c000200cdb50f940] [c0080000068fcc58] kvmhv_run_single_vcpu+0xdb0/0x1120 [kvm_hv]
-[  228.687756] [c000200cdb50fa20] [c0080000068fd5b0] kvmppc_vcpu_run_hv+0x5e8/0xe40 [kvm_hv]
-[  228.687816] [c000200cdb50faf0] [c0080000071797dc] kvmppc_vcpu_run+0x34/0x48 [kvm]
-[  228.687863] [c000200cdb50fb10] [c0080000071755dc] kvm_arch_vcpu_ioctl_run+0x244/0x420 [kvm]
-[  228.687916] [c000200cdb50fba0] [c008000007165ccc] kvm_vcpu_ioctl+0x424/0x838 [kvm]
-[  228.687957] [c000200cdb50fd10] [c000000000433a24] do_vfs_ioctl+0xd4/0xcd0
-[  228.687995] [c000200cdb50fdb0] [c000000000434724] ksys_ioctl+0x104/0x120
-[  228.688033] [c000200cdb50fe00] [c000000000434768] sys_ioctl+0x28/0x80
-[  228.688072] [c000200cdb50fe20] [c00000000000b888] system_call+0x5c/0x70
-[  228.688109] Instruction dump:
-[  228.688142] 4bf6342d 60000000 0fe00000 e8010080 7c0803a6 4bfffe60 3c82ff87 3c62ff87
-[  228.688196] 388472d0 3863d738 4bf63405 60000000 <0fe00000> 4bffff4c 3c82ff87 3c62ff87
-[  228.688251] irq event stamp: 205
-[  228.688287] hardirqs last  enabled at (205): [<c0080000068fc1b4>] kvmhv_run_single_vcpu+0x30c/0x1120 [kvm_hv]
-[  228.688344] hardirqs last disabled at (204): [<c0080000068fbff0>] kvmhv_run_single_vcpu+0x148/0x1120 [kvm_hv]
-[  228.688412] softirqs last  enabled at (180): [<c000000000c0b2ac>] __do_softirq+0x4ac/0x5d4
-[  228.688464] softirqs last disabled at (169): [<c000000000122aa8>] irq_exit+0x1f8/0x210
-[  228.688513] ---[ end trace eb16f6260022a812 ]---
-[  228.688548] possible reason: unannotated irqs-off.
-[  228.688571] irq event stamp: 205
-[  228.688607] hardirqs last  enabled at (205): [<c0080000068fc1b4>] kvmhv_run_single_vcpu+0x30c/0x1120 [kvm_hv]
-[  228.688664] hardirqs last disabled at (204): [<c0080000068fbff0>] kvmhv_run_single_vcpu+0x148/0x1120 [kvm_hv]
-[  228.688719] softirqs last  enabled at (180): [<c000000000c0b2ac>] __do_softirq+0x4ac/0x5d4
-[  228.688758] softirqs last disabled at (169): [<c000000000122aa8>] irq_exit+0x1f8/0x210
+              CPU 1                                    CPU 2
 
-Cc: stable@vger.kernel.org # v4.20+
-Fixes: 95a6432ce903 ("KVM: PPC: Book3S HV: Streamlined guest entry/exit path on P9 for radix guests")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Tested-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+  btrfs_sync_log()
+
+    lock root->log_mutex
+
+    set log root's log_transid to 1
+
+    unlock root->log_mutex
+
+                                               btrfs_sync_log()
+
+                                                 lock root->log_mutex
+
+                                                 sets log root's
+                                                 log_transid to 2
+
+                                                 unlock root->log_mutex
+
+    update_log_root()
+
+      sees log root's log_transid
+      with a value of 2
+
+        calls btrfs_update_root(),
+        which fails with -EUCLEAN
+        and causes transaction abort
+
+Until recently the race lead to a BUG_ON at btrfs_update_root(), but after
+the recent commit 7ac1e464c4d47 ("btrfs: Don't panic when we can't find a
+root key") we just abort the current transaction.
+
+A sample trace of the BUG_ON() on a SLE12 kernel:
+
+  ------------[ cut here ]------------
+  kernel BUG at ../fs/btrfs/root-tree.c:157!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  SMP NR_CPUS=2048 NUMA pSeries
+  (...)
+  Supported: Yes, External
+  CPU: 78 PID: 76303 Comm: rtas_errd Tainted: G                 X 4.4.156-94.57-default #1
+  task: c00000ffa906d010 ti: c00000ff42b08000 task.ti: c00000ff42b08000
+  NIP: d000000036ae5cdc LR: d000000036ae5cd8 CTR: 0000000000000000
+  REGS: c00000ff42b0b860 TRAP: 0700   Tainted: G                 X  (4.4.156-94.57-default)
+  MSR: 8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 22444484  XER: 20000000
+  CFAR: d000000036aba66c SOFTE: 1
+  GPR00: d000000036ae5cd8 c00000ff42b0bae0 d000000036bda220 0000000000000054
+  GPR04: 0000000000000001 0000000000000000 c00007ffff8d37c8 0000000000000000
+  GPR08: c000000000e19c00 0000000000000000 0000000000000000 3736343438312079
+  GPR12: 3930373337303434 c000000007a3a800 00000000007fffff 0000000000000023
+  GPR16: c00000ffa9d26028 c00000ffa9d261f8 0000000000000010 c00000ffa9d2ab28
+  GPR20: c00000ff42b0bc48 0000000000000001 c00000ff9f0d9888 0000000000000001
+  GPR24: c00000ffa9d26000 c00000ffa9d261e8 c00000ffa9d2a800 c00000ff9f0d9888
+  GPR28: c00000ffa9d26028 c00000ffa9d2aa98 0000000000000001 c00000ffa98f5b20
+  NIP [d000000036ae5cdc] btrfs_update_root+0x25c/0x4e0 [btrfs]
+  LR [d000000036ae5cd8] btrfs_update_root+0x258/0x4e0 [btrfs]
+  Call Trace:
+  [c00000ff42b0bae0] [d000000036ae5cd8] btrfs_update_root+0x258/0x4e0 [btrfs] (unreliable)
+  [c00000ff42b0bba0] [d000000036b53610] btrfs_sync_log+0x2d0/0xc60 [btrfs]
+  [c00000ff42b0bce0] [d000000036b1785c] btrfs_sync_file+0x44c/0x4e0 [btrfs]
+  [c00000ff42b0bd80] [c00000000032e300] vfs_fsync_range+0x70/0x120
+  [c00000ff42b0bdd0] [c00000000032e44c] do_fsync+0x5c/0xb0
+  [c00000ff42b0be10] [c00000000032e8dc] SyS_fdatasync+0x2c/0x40
+  [c00000ff42b0be30] [c000000000009488] system_call+0x3c/0x100
+  Instruction dump:
+  7f43d378 4bffebb9 60000000 88d90008 3d220000 e8b90000 3b390009 e87a01f0
+  e8898e08 e8f90000 4bfd48e5 60000000 <0fe00000> e95b0060 39200004 394a0ea0
+  ---[ end trace 8f2dc8f919cabab8 ]---
+
+So fix this by doing the check of log_transid and updating or creating the
+log root's item while holding the root's log_mutex.
+
+Fixes: 7237f1833601d ("Btrfs: fix tree logs parallel sync")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_hv.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-log.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -4048,16 +4048,20 @@ int kvmhv_run_single_vcpu(struct kvm_run
- 	if (cpu_has_feature(CPU_FTR_HVMODE))
- 		kvmppc_radix_check_need_tlb_flush(kvm, pcpu, nested);
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2907,6 +2907,12 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 	log->log_transid = root->log_transid;
+ 	root->log_start_pid = 0;
+ 	/*
++	 * Update or create log root item under the root's log_mutex to prevent
++	 * races with concurrent log syncs that can lead to failure to update
++	 * log root item because it was not created yet.
++	 */
++	ret = update_log_root(trans, log);
++	/*
+ 	 * IO has been started, blocks of the log tree have WRITTEN flag set
+ 	 * in their headers. new modifications of the log will be written to
+ 	 * new positions. so it's safe to allow log writers to go in.
+@@ -2925,8 +2931,6 @@ int btrfs_sync_log(struct btrfs_trans_ha
  
--	trace_hardirqs_on();
- 	guest_enter_irqoff();
+ 	mutex_unlock(&log_root_tree->log_mutex);
  
- 	srcu_idx = srcu_read_lock(&kvm->srcu);
- 
- 	this_cpu_disable_ftrace();
- 
-+	/* Tell lockdep that we're about to enable interrupts */
-+	trace_hardirqs_on();
-+
- 	trap = kvmhv_p9_guest_entry(vcpu, time_limit, lpcr);
- 	vcpu->arch.trap = trap;
- 
-+	trace_hardirqs_off();
-+
- 	this_cpu_enable_ftrace();
- 
- 	srcu_read_unlock(&kvm->srcu, srcu_idx);
-@@ -4067,7 +4071,6 @@ int kvmhv_run_single_vcpu(struct kvm_run
- 		isync();
- 	}
- 
--	trace_hardirqs_off();
- 	set_irq_happened(trap);
- 
- 	kvmppc_set_host_core(pcpu);
+-	ret = update_log_root(trans, log);
+-
+ 	mutex_lock(&log_root_tree->log_mutex);
+ 	if (atomic_dec_and_test(&log_root_tree->log_writers)) {
+ 		/*
 
 
