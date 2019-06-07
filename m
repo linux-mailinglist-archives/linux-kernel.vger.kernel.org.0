@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A35390F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2685538F6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbfFGP4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:56:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
+        id S1730375AbfFGPlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:41:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731102AbfFGPoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:44:34 -0400
+        id S1730344AbfFGPlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:41:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00C45212F5;
-        Fri,  7 Jun 2019 15:44:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AF99212F5;
+        Fri,  7 Jun 2019 15:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922273;
-        bh=2YaMuI3RJKFG5nQj8FFJEYnNadIMoqYra8uLWOutnmU=;
+        s=default; t=1559922100;
+        bh=QwMPYowNbNSmctDkS8RVw0Gpc7vhQN6OyjlLIbb6GPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fkdlIbswzYIWB6lbwgpBzfsmdXxzeoG4XX7HQLdHy+5tRFU99k9BAcrLlvdRj74CW
-         vywwhUcnSkBC7EgpiL+laJEuQD9lKtTywN3+bKpddlejx40duWc+zI5mtdKyVVdUO8
-         4+phs4gKdHch2w88C/xAW8lqFtCFAkpEmIgW23/o=
+        b=ETIfCHoYH9ciJmaFDoST882Vp1ssRs19OVzvihu45+lJ2fpdtiDfTl5sEAQOCAYii
+         KUh5PZrhNJkzrZwIGUL/peQr6TdClIjDXIe4mnVKIGYZ577cf0D5GcCzktne3Qf0aR
+         h6Z5pYicSXJozB8Kf6xPi9NcTdpmuWpMYVMaKG2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 4.19 28/73] s390/crypto: fix possible sleep during spinlock aquired
-Date:   Fri,  7 Jun 2019 17:39:15 +0200
-Message-Id: <20190607153852.183416788@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH 4.14 35/69] media: usb: siano: Fix false-positive "uninitialized variable" warning
+Date:   Fri,  7 Jun 2019 17:39:16 +0200
+Message-Id: <20190607153852.701490291@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harald Freudenberger <freude@linux.ibm.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 1c2c7029c008922d4d48902cc386250502e73d51 upstream.
+commit 45457c01171fd1488a7000d1751c06ed8560ee38 upstream.
 
-This patch fixes a complain about possible sleep during
-spinlock aquired
-"BUG: sleeping function called from invalid context at
-include/crypto/algapi.h:426"
-for the ctr(aes) and ctr(des) s390 specific ciphers.
+GCC complains about an apparently uninitialized variable recently
+added to smsusb_init_device().  It's a false positive, but to silence
+the warning this patch adds a trivial initialization.
 
-Instead of using a spinlock this patch introduces a mutex
-which is save to be held in sleeping context. Please note
-a deadlock is not possible as mutex_trylock() is used.
-
-Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
-Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-by: kbuild test robot <lkp@intel.com>
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/crypto/aes_s390.c |    8 ++++----
- arch/s390/crypto/des_s390.c |    7 ++++---
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ drivers/media/usb/siano/smsusb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/crypto/aes_s390.c
-+++ b/arch/s390/crypto/aes_s390.c
-@@ -27,14 +27,14 @@
- #include <linux/module.h>
- #include <linux/cpufeature.h>
- #include <linux/init.h>
--#include <linux/spinlock.h>
-+#include <linux/mutex.h>
- #include <linux/fips.h>
- #include <linux/string.h>
- #include <crypto/xts.h>
- #include <asm/cpacf.h>
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -402,7 +402,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsusb_device_t *dev;
+ 	void *mdev;
+ 	int i, rc;
+-	int in_maxp;
++	int in_maxp = 0;
  
- static u8 *ctrblk;
--static DEFINE_SPINLOCK(ctrblk_lock);
-+static DEFINE_MUTEX(ctrblk_lock);
- 
- static cpacf_mask_t km_functions, kmc_functions, kmctr_functions,
- 		    kma_functions;
-@@ -698,7 +698,7 @@ static int ctr_aes_crypt(struct blkciphe
- 	unsigned int n, nbytes;
- 	int ret, locked;
- 
--	locked = spin_trylock(&ctrblk_lock);
-+	locked = mutex_trylock(&ctrblk_lock);
- 
- 	ret = blkcipher_walk_virt_block(desc, walk, AES_BLOCK_SIZE);
- 	while ((nbytes = walk->nbytes) >= AES_BLOCK_SIZE) {
-@@ -716,7 +716,7 @@ static int ctr_aes_crypt(struct blkciphe
- 		ret = blkcipher_walk_done(desc, walk, nbytes - n);
- 	}
- 	if (locked)
--		spin_unlock(&ctrblk_lock);
-+		mutex_unlock(&ctrblk_lock);
- 	/*
- 	 * final block may be < AES_BLOCK_SIZE, copy only nbytes
- 	 */
---- a/arch/s390/crypto/des_s390.c
-+++ b/arch/s390/crypto/des_s390.c
-@@ -14,6 +14,7 @@
- #include <linux/cpufeature.h>
- #include <linux/crypto.h>
- #include <linux/fips.h>
-+#include <linux/mutex.h>
- #include <crypto/algapi.h>
- #include <crypto/des.h>
- #include <asm/cpacf.h>
-@@ -21,7 +22,7 @@
- #define DES3_KEY_SIZE	(3 * DES_KEY_SIZE)
- 
- static u8 *ctrblk;
--static DEFINE_SPINLOCK(ctrblk_lock);
-+static DEFINE_MUTEX(ctrblk_lock);
- 
- static cpacf_mask_t km_functions, kmc_functions, kmctr_functions;
- 
-@@ -387,7 +388,7 @@ static int ctr_desall_crypt(struct blkci
- 	unsigned int n, nbytes;
- 	int ret, locked;
- 
--	locked = spin_trylock(&ctrblk_lock);
-+	locked = mutex_trylock(&ctrblk_lock);
- 
- 	ret = blkcipher_walk_virt_block(desc, walk, DES_BLOCK_SIZE);
- 	while ((nbytes = walk->nbytes) >= DES_BLOCK_SIZE) {
-@@ -404,7 +405,7 @@ static int ctr_desall_crypt(struct blkci
- 		ret = blkcipher_walk_done(desc, walk, nbytes - n);
- 	}
- 	if (locked)
--		spin_unlock(&ctrblk_lock);
-+		mutex_unlock(&ctrblk_lock);
- 	/* final block may be < DES_BLOCK_SIZE, copy only nbytes */
- 	if (nbytes) {
- 		cpacf_kmctr(fc, ctx->key, buf, walk->src.virt.addr,
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
 
 
