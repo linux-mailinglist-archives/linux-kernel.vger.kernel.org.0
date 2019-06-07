@@ -2,134 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A4938CFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 376E438D05
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:29:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbfFGO3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:29:05 -0400
-Received: from mail.us.es ([193.147.175.20]:47050 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728311AbfFGO3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:29:05 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id D884CBAE9F
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 16:29:01 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id CA0F7DA70B
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 16:29:01 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id B9E54DA707; Fri,  7 Jun 2019 16:29:01 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 433E5DA701;
-        Fri,  7 Jun 2019 16:28:59 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Fri, 07 Jun 2019 16:28:59 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 0386D4265A2F;
-        Fri,  7 Jun 2019 16:28:58 +0200 (CEST)
-Date:   Fri, 7 Jun 2019 16:28:58 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, tyhicks@canonical.com,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, roopa@cumulusnetworks.com,
-        nikolay@cumulusnetworks.com, linux-kernel@vger.kernel.org,
-        richardrose@google.com, vapier@chromium.org, bhthompson@google.com,
-        smbarber@chromium.org, joelhockey@chromium.org,
-        ueberall@themenzentrisch.de
-Subject: Re: [PATCH RESEND net-next 1/2] br_netfilter: add struct netns_brnf
-Message-ID: <20190607142858.vgkljqohn34rxhe2@salvia>
-References: <20190606114142.15972-1-christian@brauner.io>
- <20190606114142.15972-2-christian@brauner.io>
- <20190606081440.61ea1c62@hermes.lan>
- <20190606151937.mdpalfk7urvv74ub@brauner.io>
- <20190606163035.x7rvqdwubxiai5t6@salvia>
- <20190607132516.q3zwmzrynvqo7mzn@brauner.io>
+        id S1729421AbfFGO3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:29:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49832 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729065AbfFGO3s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:29:48 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x57EP8mt088860
+        for <linux-kernel@vger.kernel.org>; Fri, 7 Jun 2019 10:29:47 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sypsu8rjb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 10:29:46 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Fri, 7 Jun 2019 15:29:10 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Jun 2019 15:29:07 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x57ET4Yw55378118
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Jun 2019 14:29:05 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE414AE055;
+        Fri,  7 Jun 2019 14:29:04 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5F137AE051;
+        Fri,  7 Jun 2019 14:29:04 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.224.168])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Jun 2019 14:29:04 +0000 (GMT)
+Date:   Fri, 7 Jun 2019 16:29:03 +0200
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com,
+        alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: Re: [PATCH v9 3/4] s390: ap: implement PAPQ AQIC interception in
+ kernel
+In-Reply-To: <2ffee52b-5e7f-f52a-069f-0a43d6418341@linux.ibm.com>
+References: <1558452877-27822-1-git-send-email-pmorel@linux.ibm.com>
+        <1558452877-27822-4-git-send-email-pmorel@linux.ibm.com>
+        <2ffee52b-5e7f-f52a-069f-0a43d6418341@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607132516.q3zwmzrynvqo7mzn@brauner.io>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19060714-0020-0000-0000-00000348174A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060714-0021-0000-0000-0000219B31B6
+Message-Id: <20190607162903.22fd959f.pasic@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906070102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 03:25:16PM +0200, Christian Brauner wrote:
-> On Thu, Jun 06, 2019 at 06:30:35PM +0200, Pablo Neira Ayuso wrote:
-> > On Thu, Jun 06, 2019 at 05:19:39PM +0200, Christian Brauner wrote:
-> > > On Thu, Jun 06, 2019 at 08:14:40AM -0700, Stephen Hemminger wrote:
-> > > > On Thu,  6 Jun 2019 13:41:41 +0200
-> > > > Christian Brauner <christian@brauner.io> wrote:
-> > > > 
-> > > > > +struct netns_brnf {
-> > > > > +#ifdef CONFIG_SYSCTL
-> > > > > +	struct ctl_table_header *ctl_hdr;
-> > > > > +#endif
-> > > > > +
-> > > > > +	/* default value is 1 */
-> > > > > +	int call_iptables;
-> > > > > +	int call_ip6tables;
-> > > > > +	int call_arptables;
-> > > > > +
-> > > > > +	/* default value is 0 */
-> > > > > +	int filter_vlan_tagged;
-> > > > > +	int filter_pppoe_tagged;
-> > > > > +	int pass_vlan_indev;
-> > > > > +};
-> > > > 
-> > > > Do you really need to waste four bytes for each
-> > > > flag value. If you use a u8 that would work just as well.
-> > > 
-> > > I think we had discussed something like this but the problem why we
-> > > can't do this stems from how the sysctl-table stuff is implemented.
-> > > I distinctly remember that it couldn't be done with a flag due to that.
-> > 
-> > Could you define a pernet_operations object? I mean, define the id and size
-> > fields, then pass it to register_pernet_subsys() for registration.
-> > Similar to what we do in net/ipv4/netfilter/ipt_CLUSTER.c, see
-> > clusterip_net_ops and clusterip_pernet() for instance.
+On Tue, 4 Jun 2019 15:38:51 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+
+> On 5/21/19 11:34 AM, Pierre Morel wrote:
+> > We register a AP PQAP instruction hook during the open
+> > of the mediated device. And unregister it on release.
+
+[..]
+
+> > +/**
+> > + * vfio_ap_wait_for_irqclear
+> > + * @apqn: The AP Queue number
+> > + *
+> > + * Checks the IRQ bit for the status of this APQN using ap_tapq.
+> > + * Returns if the ap_tapq function succedded and the bit is clear.
 > 
-> Hm, I don't think that would work. The sysctls for br_netfilter are
-> located in /proc/sys/net/bridge under /proc/sys/net which is tightly
-> integrated with the sysctls infrastructure for all of net/ and all the
-> folder underneath it including "core", "ipv4" and "ipv6".
-> I don't think creating and managing files manually in /proc/sys/net is
-> going to fly. It also doesn't seem very wise from a consistency and
-> complexity pov. I'm also not sure if this would work at all wrt to file
-> creation and reference counting if there are two different ways of
-> managing them in the same subfolder...
-> (clusterip creates files manually underneath /proc/net which probably is
-> the reason why it gets away with it.)
+> s/succedded/succeeded/
+> 
 
-br_netfilter is now a module, and br_netfilter_hooks.c is part of it
-IIRC, this file registers these sysctl entries from the module __init
-path.
+I'm gonna fix this up when picking.
 
-It would be a matter of adding a new .init callback to the existing
-brnf_net_ops object in br_netfilter_hooks.c. Then, call
-register_net_sysctl() from this .init callback to register the sysctl
-entries per netns.
+> > + * Returns if ap_tapq function failed with invalid, deconfigured or
+> > + * checkstopped AP.
+> > + * Otherwise retries up to 5 times after waiting 20ms.
+> > + *
+> > + */
+> > +static void vfio_ap_wait_for_irqclear(int apqn)
+> > +{
+> > +	struct ap_queue_status status;
+> > +	int retry = 5;
+> > +
+> > +	do {
+> > +		status = ap_tapq(apqn, NULL);
+> > +		switch (status.response_code) {
+> > +		case AP_RESPONSE_NORMAL:
+> > +		case AP_RESPONSE_RESET_IN_PROGRESS:
+> > +			if (!status.irq_enabled)
+> > +				return;
+> > +			/* Fall through */
+> > +		case AP_RESPONSE_BUSY:
+> > +			msleep(20);
+> > +			break;
+> > +		case AP_RESPONSE_Q_NOT_AVAIL:
+> > +		case AP_RESPONSE_DECONFIGURED:
+> > +		case AP_RESPONSE_CHECKSTOPPED:
+> > +		default:
+> > +			WARN_ONCE(1, "%s: tapq rc %02x: %04x\n", __func__,
+> > +				  status.response_code, apqn);
+> > +			return;
+> 
+> Why not just break out of the loop and just use the WARN_ONCE
+> outside of the loop?
+> 
 
-There is already a brnf_net area that you can reuse for this purpose,
-to place these pernetns flags...
+AFAIU the idea was to differentiate between got a strange response_code
+and ran out of retires.
 
-struct brnf_net {
-        bool enabled;
-};
+Actually I suspect that we are fine in case of AP_RESPONSE_Q_NOT_AVAIL,
+ AP_RESPONSE_DECONFIGURED and AP_RESPONSE_CHECKSTOPPED in a sense that
+what should be the post-condition of this function is guaranteed to be
+reached. What do you think?
 
-which is going to be glad to have more fields (under the #ifdef
-CONFIG_SYSCTL) there.
+While I think that we can do better here, I see this as something that
+should be done on top.
+
+> > +		}
+> > +	} while (--retry);
+> > +
+> > +	WARN_ONCE(1, "%s: tapq rc %02x: %04x could not clear IR bit\n",
+> > +		  __func__, status.response_code, apqn);
+> > +}
+> > +
+> > +/**
+> > + * vfio_ap_free_aqic_resources
+> > + * @q: The vfio_ap_queue
+> > + *
+> > + * Unregisters the ISC in the GIB when the saved ISC not invalid.
+> > + * Unpin the guest's page holding the NIB when it exist.
+> > + * Reset the saved_pfn and saved_isc to invalid values.
+> > + * Clear the pointer to the matrix mediated device.
+> > + *
+> > + */
+
+[..]
+
+> > +struct ap_queue_status vfio_ap_irq_disable(struct vfio_ap_queue *q)
+> > +{
+> > +	struct ap_qirq_ctrl aqic_gisa = {};
+> > +	struct ap_queue_status status;
+> > +	int retries = 5;
+> > +
+> > +	do {
+> > +		status = ap_aqic(q->apqn, aqic_gisa, NULL);
+> > +		switch (status.response_code) {
+> > +		case AP_RESPONSE_OTHERWISE_CHANGED:
+> > +		case AP_RESPONSE_NORMAL:
+> > +			vfio_ap_wait_for_irqclear(q->apqn);
+> > +			goto end_free;
+> > +		case AP_RESPONSE_RESET_IN_PROGRESS:
+> > +		case AP_RESPONSE_BUSY:
+> > +			msleep(20);
+> > +			break;
+> > +		case AP_RESPONSE_Q_NOT_AVAIL:
+> > +		case AP_RESPONSE_DECONFIGURED:
+> > +		case AP_RESPONSE_CHECKSTOPPED:
+> > +		case AP_RESPONSE_INVALID_ADDRESS:
+> > +		default:
+> > +			/* All cases in default means AP not operational */
+> > +			WARN_ONCE(1, "%s: ap_aqic status %d\n", __func__,
+> > +				  status.response_code);
+> > +			goto end_free;
+> 
+> Why not just break out of the loop instead of repeating the WARN_ONCE
+> message?
+> 
+
+I suppose the reason is same as above. I'm not entirely happy with this
+code myself. E.g. why do we do retries here -- shouldn't we just fail the
+aqic by the guest?
+
+[..]
+
+> > +static int handle_pqap(struct kvm_vcpu *vcpu)
+> > +{
+> > +	uint64_t status;
+> > +	uint16_t apqn;
+> > +	struct vfio_ap_queue *q;
+> > +	struct ap_queue_status qstatus = {
+> > +			       .response_code = AP_RESPONSE_Q_NOT_AVAIL, };
+> > +	struct ap_matrix_mdev *matrix_mdev;
+> > +
+> > +	/* If we do not use the AIV facility just go to userland */
+> > +	if (!(vcpu->arch.sie_block->eca & ECA_AIV))
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	apqn = vcpu->run->s.regs.gprs[0] & 0xffff;
+> > +	mutex_lock(&matrix_dev->lock);
+> > +
+> > +	if (!vcpu->kvm->arch.crypto.pqap_hook)
+> 
+> Wasn't this already checked in patch 2 prior to calling this
+> function? In fact, doesn't the hook point to this function?
+> 
+
+Let us benevolently call this defensive programming. We are actually
+in that callback AFAICT, so it sure was set a moment ago, and I guess
+the client code still holds the kvm.lock so it is guaranteed to stay
+so unless somebody is playing foul.
+
+We can address this with a patch on top.
+
+Regards,
+Halil
+
