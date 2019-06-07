@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3D238F74
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C6833912F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730431AbfFGPl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:41:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:42968 "EHLO foss.arm.com"
+        id S1730529AbfFGPmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:42:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:43020 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730403AbfFGPlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:41:51 -0400
+        id S1730460AbfFGPmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:42:16 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D456C337;
-        Fri,  7 Jun 2019 08:41:50 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98B363F718;
-        Fri,  7 Jun 2019 08:41:49 -0700 (PDT)
-Date:   Fri, 7 Jun 2019 16:41:47 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Qian Cai <cai@lca.pw>, Dave Martin <Dave.Martin@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: "arm64: Silence gcc warnings about arch ABI drift" breaks clang
-Message-ID: <20190607154147.GD19862@fuggles.cambridge.arm.com>
-References: <1559920965.6132.56.camel@lca.pw>
- <20190607152517.GC19862@fuggles.cambridge.arm.com>
- <1559921171.6132.57.camel@lca.pw>
- <20190607154010.GA41392@archlinux-epyc>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 813E6337;
+        Fri,  7 Jun 2019 08:42:15 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B64CD3F718;
+        Fri,  7 Jun 2019 08:42:12 -0700 (PDT)
+Date:   Fri, 7 Jun 2019 16:42:10 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Souvik Chakravarty <souvik.chakravarty@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/18] ARM/ARM64: Support hierarchical CPU arrangement
+ for PSCI
+Message-ID: <20190607154210.GJ15577@e107155-lin>
+References: <20190513192300.653-1-ulf.hansson@linaro.org>
+ <CAJZ5v0gbK3AFCVC1b9LyXeMOM8fKR1=ECXZwaeSYRSqcK0UgYA@mail.gmail.com>
+ <CAPDyKFpU3u248Gi+FnrVdY-EWXJQuu14uNV9d3Xs0W-K-EMEhg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190607154010.GA41392@archlinux-epyc>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <CAPDyKFpU3u248Gi+FnrVdY-EWXJQuu14uNV9d3Xs0W-K-EMEhg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 08:40:10AM -0700, Nathan Chancellor wrote:
-> On Fri, Jun 07, 2019 at 11:26:11AM -0400, Qian Cai wrote:
-> > On Fri, 2019-06-07 at 16:25 +0100, Will Deacon wrote:
-> > > On Fri, Jun 07, 2019 at 11:22:45AM -0400, Qian Cai wrote:
-> > > > The linux-next commit "arm64: Silence gcc warnings about arch ABI drift" [1]
-> > > > breaks clang build where it screams that unknown option "-Wno-psabi" and
-> > > > generates errors below,
-> > > 
-> > > So that can be easily fixed with cc-option...
-> > > 
-> > > > [1] https://lore.kernel.org/linux-arm-kernel/1559817223-32585-1-git-send-ema
-> > > > il-D
-> > > > ave.Martin@arm.com/
-> > > > 
-> > > > ./drivers/firmware/efi/libstub/arm-stub.stub.o: In function
-> > > > `install_memreserve_table':
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:73: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:73: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:93: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:93: undefined reference to
-> > > > `__efistub___stack_chk_guard'
-> > > > ./linux/drivers/firmware/efi/libstub/arm-stub.c:94: undefined reference to
-> > > > `__efistub___stack_chk_fail
-> > > 
-> > > ... but this looks unrelated. Are you saying you don't see these errors if
-> > > you revert Dave's patch?
-> > 
-> > Yes.
-> 
-> I suspect the reason for this is -Wunknown-warning-option causes
-> cc-option to fail. I see some disabled warnings like
-> -Waddress-of-packed-member and -Wunused-const-variable when -Wno-psabi
-> is unconditionally added.
-> 
-> I'll do some further triage but I think the obvious fix as Will
-> suggested is to use cc-disable-warning. I'll send a patch.
+On Tue, May 14, 2019 at 10:58:04AM +0200, Ulf Hansson wrote:
+> On Tue, 14 May 2019 at 10:08, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Mon, May 13, 2019 at 9:23 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > This series enables support for hierarchical CPU arrangement, managed by PSCI
+> > > for ARM/ARM64. It's based on using the generic PM domain (genpd), which
+> > > recently was extended to manage devices belonging to CPUs.
+> >
+> > ACK for the patches touching cpuidle in this series (from the
+> > framework perspective), but I'm assuming it to be taken care of by
+> > ARM/ARM64 maintainers.
+>
+> Thanks for the ack! Yes, this is for PSCI/ARM maintainers.
+>
+> BTW, apologize for sending this in the merge window, but wanted to
+> take the opportunity for people to have a look before OSPM Pisa next
+> week.
+>
 
-Cheers, Nathan. I've already sent the pull for -rc4, but I can send your
-fix for -rc5 next week.
+I will start looking at this series. But I would request PSCI/other
+maintainers to wait until we see some comparison data before we merge.
+If they are fine to merge w/o that, I am fine. As of now we have just
+1-2 platforms to test(that too not so simple to get started) and the
+long term support for them are questionable. Also with SDM845 supporting
+PC, we have excellent opportunity to compare and conclude the results
+found.
 
-Will
+--
+Regards,
+Sudeep
