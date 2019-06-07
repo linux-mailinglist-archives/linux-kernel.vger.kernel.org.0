@@ -2,85 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D57F39845
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 139D93982A
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731562AbfFGWKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:10:16 -0400
-Received: from mga06.intel.com ([134.134.136.31]:58794 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731525AbfFGWKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:10:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 15:10:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,564,1557212400"; 
-   d="scan'208";a="182814114"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2019 15:10:03 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "H Peter Anvin" <hpa@zytor.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v4 5/5] x86/umwait: Document umwait control sysfs interfaces
-Date:   Fri,  7 Jun 2019 15:00:37 -0700
-Message-Id: <1559944837-149589-6-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
-References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
+        id S1728749AbfFGWE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:04:26 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40217 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfFGWE0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 18:04:26 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a9so2699606lff.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iSGQwLEBuCK9zP7NpUSQEjWlt9syiyScK1Qv82y9zDY=;
+        b=Rqrv2fw0OYkyZCGgpZZfV8pHIKnnDqeqwB/GSfmW0R1GWq17BPPCFxCOmyyKhSmTAC
+         iJ+sTJVzs1dN0I5UydjVGQ/TqRBiXREqAbxKmvClzTTM48MzK67ENGlUmnLCepOJMIOw
+         Z7nx0Vp+Bh+nyEcsbhQrrLRhtFtXmrRcFUrF0qok9m27CoHzyIS5dsfr8ZcX1kL5yBkG
+         7aqg+uWDat7P7iT6MkrjKUrlMppj8gQPtNFAaujnmx3ebL2sKEbPHsIT+TPGjMXGefUi
+         BWB2G69ZLk6Qc+TeqJcVwk54B4r6gqFueiRlVhZwcClRpV5B7PZa4B4PmArip/cFaRUz
+         LquQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iSGQwLEBuCK9zP7NpUSQEjWlt9syiyScK1Qv82y9zDY=;
+        b=QQSqIphg+JzyTGTpA0EVKL8UIWlGn+qxYFDXQ8YeCPX2uTfJFWz+81BR2qNh9sJpsb
+         UjOC8vM2VnBMxfxiSl65W0DVqn8e8gZBUMk+FaytYCLG7B8q3LwZM1kFj0HtHw28YZwG
+         Q7b4ZBQlIlIpJI0EVNX8cEgxmlu1XEvEKg6ODdO7zT9DZc2BdcCjEWJVFLMzht86agm5
+         VS5PysG9h0T6X1CUfiVYgf83OCt2gkxUFHtcI6nDO5uaG3ssFgYWzgDkFYVyOWBDQDbW
+         AVhvrjADr7OhkFl7hieQKXDLXZxO6EPBxX/UZqD4oxVxxKLlcxj4qcH0IGqsvPmmX1zw
+         p57g==
+X-Gm-Message-State: APjAAAV+pKbFt2ga+QCSbJBrSA34s6uqZkBL9i/ZSgnn77EsO7WjWFGr
+        1Etie9Cb5eOHN5H+73xr/tlypaecK870iZkfr01yEg==
+X-Google-Smtp-Source: APXvYqwVpDLv8iqMxP0olSZYnqLx5zmax/077YaDYBmmnV4PB62sxN/GRgbQx9K+fhcwLTxaiRy5bNBfMaxV6Y9CtKo=
+X-Received: by 2002:ac2:598d:: with SMTP id w13mr26914521lfn.165.1559945064357;
+ Fri, 07 Jun 2019 15:04:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <9bb9ca6102e795dc2495d92b7b661779509adebc.1559651758.git.hns@goldelico.com>
+In-Reply-To: <9bb9ca6102e795dc2495d92b7b661779509adebc.1559651758.git.hns@goldelico.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 8 Jun 2019 00:04:15 +0200
+Message-ID: <CACRpkda6Hk1hE322KGC==0OFr5YZ+Qsvh6Dird_xjS5xop4bEw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: hack to fix 24 bit gpio expanders
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since two new sysfs interface files are created for umwait control, add
-an ABI document entry for the files:
-	/sys/devices/system/cpu/umwait_control/enable_c02
-	/sys/devices/system/cpu/umwait_control/max_time
+On Tue, Jun 4, 2019 at 2:36 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
----
- .../ABI/testing/sysfs-devices-system-cpu      | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> 24 bit expanders use REG_ADDR_AI in combination with register addressing. This
+> conflicts with regmap which takes this bit as part of the register number,
+> i.e. a second cache entry is defined for accessed with REG_ADDR_AI being
+> set although on the chip it is the same register as with REG_ADDR_AI being
+> cleared.
+>
+> The problem was introduced by
+>
+>         commit b32cecb46bdc ("gpio: pca953x: Extract the register address mangling to single function")
+>
+> but only became visible by
+>
+>         commit 8b9f9d4dc511 ("regmap: verify if register is writeable before writing operations")
+>
+> because before, the regmap size was effectively ignored and
+> pca953x_writeable_register() did know to ignore REG_ADDR_AI. Still, there
+> were two separate cache entries created.
+>
+> Since the use of REG_ADDR_AI seems to be static we can work around this
+> issue by simply increasing the size of the regmap to cover the "virtual"
+> registers with REG_ADDR_AI being set. This only means that half of the
+> regmap buffer will be unused.
+>
+> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 1528239f69b2..d22cdadd3161 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -538,3 +538,24 @@ Description:	Intel Energy and Performance Bias Hint (EPB)
- 
- 		This attribute is present for all online CPUs supporting the
- 		Intel EPB feature.
-+
-+What:		/sys/devices/system/cpu/umwait_control
-+		/sys/devices/system/cpu/umwait_control/enable_c02
-+		/sys/devices/system/cpu/umwait_control/max_time
-+Date:		May 2019
-+Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-+Description:	Umwait control
-+
-+		enable_c02: Read/write interface to control umwait C0.2 state
-+			Read returns C0.2 state status:
-+				0: C0.2 is disabled
-+				1: C0.2 is enabled
-+
-+			Write 'Yy1' or [oO][nN] for on to enable C0.2 state.
-+			Write 'Nn0' or [oO][fF] for off to disable C0.2 state.
-+
-+		max_time: Read/write interface to control umwait maximum time
-+			  in TSC-quanta that the CPU can reside in either C0.1
-+			  or C0.2 state. The time is an unsigned 32-bit number.
-+			  Note that a value of zero means there is no limit.
-+			  Low order two bits must be zero.
--- 
-2.19.1
+Patch queued for fixes, let's think about better solutions going
+forward.
 
+Yours,
+Linus Walleij
