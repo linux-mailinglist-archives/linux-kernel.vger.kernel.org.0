@@ -2,130 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E5838D20
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A6438D40
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbfFGOft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:35:49 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50148 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729586AbfFGOfj (ORCPT
+        id S1729706AbfFGOgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:36:24 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39885 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729442AbfFGOfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:35:39 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190607143537euoutp015c1ea2ee9b7a5b48e2c6e6bcbbd65a6b~l8UgYerua0177101771euoutp01O
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 14:35:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190607143537euoutp015c1ea2ee9b7a5b48e2c6e6bcbbd65a6b~l8UgYerua0177101771euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1559918137;
-        bh=Rv+G7xRM5W0qIJMO/1XEZpXdtXED3pTULKiTBpTxK9M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kzfzx5/Kc6y0H0tBLJjCHxQ15qIYWq17ynlS5qUG4j7jTPFTtoI4U6H0sXIkKcKp8
-         gGAf2SQ84tkg27Kes/Kp6YOmONbEBphzN/vFTS0ix5zm8L8kPayXi/r6oKsoim1/Gv
-         qpdVi3WsMnM9lSNjjebE+bE0Q2ZE9u7zFiba2b6E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190607143537eucas1p1d4078ed500ef168bce00f1b7bf4f12c4~l8UfulZtU1838418384eucas1p1H;
-        Fri,  7 Jun 2019 14:35:37 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 14.B3.04298.8367AFC5; Fri,  7
-        Jun 2019 15:35:36 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190607143536eucas1p2192a9061b835502ada88262ef427ce8a~l8Ue33_As2698526985eucas1p2q;
-        Fri,  7 Jun 2019 14:35:36 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190607143536eusmtrp16f054f06c43cb13eaba0140ebba26a00~l8UeoNpxL1284512845eusmtrp1j;
-        Fri,  7 Jun 2019 14:35:36 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-99-5cfa76382cb8
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A0.D0.04140.7367AFC5; Fri,  7
-        Jun 2019 15:35:35 +0100 (BST)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190607143535eusmtip18e3f7879766c3a862c64d0d0f3ba6c69~l8UdsELSJ2929529295eusmtip1E;
-        Fri,  7 Jun 2019 14:35:34 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        cw00.choi@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
-        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
-        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v9 13/13] ARM: exynos_defconfig: enable DMC driver
-Date:   Fri,  7 Jun 2019 16:35:07 +0200
-Message-Id: <20190607143507.30286-14-l.luba@partner.samsung.com>
+        Fri, 7 Jun 2019 10:35:33 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i34so2489141qta.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=GbgsWWJsYfuFE0Ayk1WcQ4Df2lBstgQ/CvJS7+ETd2s=;
+        b=QGUXZscHEoL0COiYgKJzGauvXiRnD/yzWrfJsYJcTclbPX9TCvCrdfjxhLSv6VqVOy
+         Ds63L+KT50jtxVnmqpdXm+k0hnKJi5RXnLS0g7q5/aYYikllYLDJlOL5jJq9fIyS2KXT
+         N4kSzGLH1BqH5+sIoQRhIEIplVz6xOOFXH3kUevzoxUvalU97d0JQV8t5yyidDelIDry
+         k8NouTI/Vwk3wkIkBwrPlJNHi55Eas42L1+bSUxShFHT/PfTIYvWn+XASslmcOf+opCq
+         Xe44NUEbE+9/+hU7i7HYNQl4s6GIv+QUbmYg2o2r2mDo0R1jnV48MtbC/0gPLmPAyG0T
+         qL2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GbgsWWJsYfuFE0Ayk1WcQ4Df2lBstgQ/CvJS7+ETd2s=;
+        b=ufUzVXrGDI9MLDdJrBykeVkOF/WDYyjP/k0S3D+Ebyb2DBePD3RrdzyKD+Ratab3Ua
+         hzvYVEKQkXsj1mPDzzz/VJXbswL3d7PqG0tdWHzJAxPo9CxwbaWGRGIC3eWnsX4RkcxP
+         HnVUDHqhjz41MHlvjcEf2BFnFfH0W1ERo8Gjdhf+ZSidm6KD0o2htx7LgRcayhg8eQ5b
+         0V9kjSHCDNlyOAIft8cIj1SxNWmVUzIzbnI9hgyRWxG5LI5NQnxDeomdyzeRxAnWqgC6
+         u/tbU6x4KTsNRG3iprOAE2UvtlzZCR2ov/pJ0LssEKWaNmGlwKvARtiutGTwPykcj+ld
+         nIEA==
+X-Gm-Message-State: APjAAAVjFHistKe6rAba3rdojyr06y1GMm569zRs1AqosI/uAZKmQC34
+        veNgXO41c5Z5DFtnJeQRipEOaQ==
+X-Google-Smtp-Source: APXvYqylHXL8PP8WU7yZy4f3dkfIgSoGD/enIs4QVNUfQMUWy/e2kCWQ7kzXKicoMTtJqeMAeDYHQA==
+X-Received: by 2002:ac8:2ca5:: with SMTP id 34mr47371137qtw.246.1559918132104;
+        Fri, 07 Jun 2019 07:35:32 -0700 (PDT)
+Received: from localhost.localdomain (li1322-146.members.linode.com. [45.79.223.146])
+        by smtp.gmail.com with ESMTPSA id c5sm1243963qkb.41.2019.06.07.07.35.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 07:35:31 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andi Kleen <ak@linux.intel.com>, Mark Drayton <mbd@fb.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH] perf config: Update default value for llvm.clang-bpf-cmd-template
+Date:   Fri,  7 Jun 2019 22:35:08 +0800
+Message-Id: <20190607143508.18141-1-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190607143507.30286-1-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSWUxTQRSGnd4VtORaUSZupE1I1ChIADO4r+FGXyA+GBGjBa+lgYL2Ql3w
-        oUoUi1SMLKJAQNGgBYPWWsEQwEpEQCmLkU0UxASRRRAwolhse6u+/fOf7585Z2ZoTNJLLKaV
-        cQmcOk4eKyPdcfOL6aY1SPMzYu2YMQg9zCkjUPvkAIEKapsIVDLeD1ByURmJMhryRejVJRVK
-        7x/CkNX6gEKvzw1TqEu7FI2nvSdQ29M8Ek3oawHKsVaJ0P3aHgq1NOxC3Wfvkuj5cAqBbG8f
-        4qj6zW7U/csDfX/5EWz1Yr9PXcXZrx3nKTZX24KzFTd6KNZo0JFsdX4pxeqTR0n22WiliL1s
-        MgD2UWMSO2FcHjo33H3jES5WqeHUfpsPu0ebGyrJY2PEyanrnbgWZBOpwI2GTCDUp7TiqcCd
-        ljB3AcxKbiaFxSSA41mzrsoEgI+sXfYI7Yz0W6WOtIQpBtB8J/hf4N4bM+VgSMYXlhuOOxhP
-        JgfA3M97HQzGPMHgSPc74CgsYLbD4pIBzKFxxgemzOY4fTGzFX6ZnQZCe96w5EGNk3Gz+7nm
-        cmd3kNHTsL7S5JphJ9S3WClBL4Bf6kwuvRQ2ZqThguahVn/TtekZ2J+e72I2wOd1Lc7BMGYl
-        LHvqJ9jbYLL2l2teD9gxMt9hY3Z51XwNE2wxvHhBItAroCmtWSToRbC4NJsSEBZm2qKE28kA
-        cKjwgugK8L7x/6xCAAzAi0vkVQqO94/jTvjychWfGKfwjYpXGYH93zXa6r6Vg6nWSAtgaCCb
-        J2ap6QgJIdfwp1QWAGlM5inWNP+IkIiPyE+d5tTxh9SJsRxvAUtoXOYlTprTe0DCKOQJXAzH
-        HePUf6si2m2xFsRL9/3+FD6k3DI5GHZ+jWSMMLJhSXJ/qf05TOqM0JlNP3XS+ABYpAs8G9ge
-        Yjxom11ZnW6wcKtDIrsvznyQBvWheTsq9t/X+NRk7jnZUdN3VBcckP+4oLOqfszjtmqZUawc
-        XHhrS3Pewc21w7q2tqnsmHVmTpGnezyzPtNm6JThfLTcfxWm5uV/AFZEY71zAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsVy+t/xu7rmZb9iDJZMs7LYOGM9q8X1L89Z
-        LeYfOcdqsfrjY0aL5sXr2Swmn5rLZHGmO9ei//FrZovz5zewW5xtesNucatBxuJjzz1Wi8u7
-        5rBZfO49wmgx4/w+Jou1R+6yW1w85Wpxu3EFm8XhN+2sFv+ubWSx2H/Fy+L2bz6LbyceMTqI
-        e3z7OonF4/2NVnaP2Q0XWTx2zrrL7rFpVSebx/65a9g9epvfsXkcfLeHyaNvyypGj82nqz0+
-        b5IL4I7SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQ
-        y9h2ag9bwQfWiq8zb7I0ME5j7WLk4JAQMJF4fF6xi5GLQ0hgKaPE6lP7gOKcQHExiUn7trND
-        2MISf651sUEUfWKU6Gz6xgjSzCagJ7FjVSFIXERgDqPEz65tjCAOs8BZZondK94wgXQLCzhJ
-        LF/9nBnEZhFQlWj/P4MRxOYVcJB49f8nI8QGeYnVGw6A1XACxWdv28EGskBIwF5i1XOHCYx8
-        CxgZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgTG4LZjP7fsYOx6F3yIUYCDUYmHdwbTzxgh
-        1sSy4srcQ4wSHMxKIrxlF37ECPGmJFZWpRblxxeV5qQWH2I0BbppIrOUaHI+MD3klcQbmhqa
-        W1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+LglGpgNBCfsqLHa/+vThku58qpubs/
-        zpKO/eu7cVXVsspHm1bOKlWb/WJ51VndmBlV8nyG/mFrfwVtCU2SO255XvWt+AzVC69PtGbz
-        Bljd2fp+bdvWT6UmLjUb/iUl/rkx7cqZ+nulJUqXapLVgvy+lCk7CrQ3aHv+5zaa6qW8a7vD
-        anGRp4XrVxtFKLEUZyQaajEXFScCAHlofL3XAgAA
-X-CMS-MailID: 20190607143536eucas1p2192a9061b835502ada88262ef427ce8a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190607143536eucas1p2192a9061b835502ada88262ef427ce8a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190607143536eucas1p2192a9061b835502ada88262ef427ce8a
-References: <20190607143507.30286-1-l.luba@partner.samsung.com>
-        <CGME20190607143536eucas1p2192a9061b835502ada88262ef427ce8a@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable driver for Exynos5422 Dynamic Memory Controller supporting
-dynamic frequency and voltage scaling in Exynos5422 SoCs.
+The clang bpf cmdline template has defined default value in the file
+tools/perf/util/llvm-utils.c, which has been changed for several times.
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+This patch updates the documentation to reflect the latest default value
+for the configuration llvm.clang-bpf-cmd-template.
+
+Fixes: d35b168c3dcd ("perf bpf: Give precedence to bpf header dir")
+Fixes: cb76371441d0 ("perf llvm: Allow passing options to llc in addition to clang")
+Fixes: 1b16fffa389d ("perf llvm-utils: Add bpf include path to clang command line")
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/Documentation/perf-config.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c95c54284da2..0cd16c924941 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -290,6 +290,7 @@ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
- CONFIG_DEVFREQ_GOV_POWERSAVE=y
- CONFIG_DEVFREQ_GOV_USERSPACE=y
- CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
-+CONFIG_ARM_EXYNOS5422_DMC=y
- CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
- CONFIG_EXYNOS_IOMMU=y
- CONFIG_EXTCON=y
+diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
+index 462b3cde0675..e4aa268d2e38 100644
+--- a/tools/perf/Documentation/perf-config.txt
++++ b/tools/perf/Documentation/perf-config.txt
+@@ -564,9 +564,12 @@ llvm.*::
+ 	llvm.clang-bpf-cmd-template::
+ 		Cmdline template. Below lines show its default value. Environment
+ 		variable is used to pass options.
+-		"$CLANG_EXEC -D__KERNEL__ $CLANG_OPTIONS $KERNEL_INC_OPTIONS \
+-		-Wno-unused-value -Wno-pointer-sign -working-directory \
+-		$WORKING_DIR  -c $CLANG_SOURCE -target bpf -O2 -o -"
++		"$CLANG_EXEC -D__KERNEL__ -D__NR_CPUS__=$NR_CPUS "\
++		"-DLINUX_VERSION_CODE=$LINUX_VERSION_CODE "	\
++		"$CLANG_OPTIONS $PERF_BPF_INC_OPTIONS $KERNEL_INC_OPTIONS " \
++		"-Wno-unused-value -Wno-pointer-sign "		\
++		"-working-directory $WORKING_DIR "		\
++		"-c \"$CLANG_SOURCE\" -target bpf $CLANG_EMIT_LLVM -O2 -o - $LLVM_OPTIONS_PIPE"
+ 
+ 	llvm.clang-opt::
+ 		Options passed to clang.
 -- 
 2.17.1
 
