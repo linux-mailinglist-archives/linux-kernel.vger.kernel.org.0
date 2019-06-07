@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C813907B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8606638FD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731940AbfFGPtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:49:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35178 "EHLO mail.kernel.org"
+        id S1731289AbfFGPpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:45:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731919AbfFGPtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:49:19 -0400
+        id S1731260AbfFGPpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:45:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF8F214C6;
-        Fri,  7 Jun 2019 15:49:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F7B321479;
+        Fri,  7 Jun 2019 15:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922559;
-        bh=y1bzMfbqPphPMtnUPCsYu7EnJPvPqvUKBEnwiVmJSs0=;
+        s=default; t=1559922340;
+        bh=36eC9LzTEo0QMP/ymP9uy/gU8UGDQFvYsE4YirRunko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GCfFWAOzVm5F5dBuflX1QK+o0T48hzHS5grzTSmfFDFrSlBDfMYbuioDO/WhpCAJK
-         r+lEpLTXvQbY2VCH34imxnkKkcFY1GHjjN2r7+L2wZOLQehg27cB7CpqwuqvIuJ3tU
-         uIS7luxljI1WjwCTtwUPHeWDMDeDswct3pLKR4r4=
+        b=ayQQS9kUOgDFnkstba+DxBsdU9tE6G694MmaYduIShIzMxGdWSArp8uudxCSJ269u
+         S0ykwXgDSHL/RvJXOXjJ/m0pqIXo5P5kpoH7JeVS1O+o1eK75mUy254D0gBjKJ/DQh
+         Df6O2pBzbmDciexnyW18M1a+mmlF3BKPU1t960Xs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 5.1 55/85] docs: Fix conf.py for Sphinx 2.0
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 53/73] CIFS: cifs_read_allocate_pages: dont iterate through whole page array on ENOMEM
 Date:   Fri,  7 Jun 2019 17:39:40 +0200
-Message-Id: <20190607153855.621855313@linuxfoundation.org>
+Message-Id: <20190607153854.978314671@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
+References: <20190607153848.669070800@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Corbet <corbet@lwn.net>
+From: Roberto Bergantinos Corpas <rbergant@redhat.com>
 
-commit 3bc8088464712fdcb078eefb68837ccfcc413c88 upstream.
+commit 31fad7d41e73731f05b8053d17078638cf850fa6 upstream.
 
-Our version check in Documentation/conf.py never envisioned a world where
-Sphinx moved beyond 1.x.  Now that the unthinkable has happened, fix our
-version check to handle higher version numbers correctly.
+ In cifs_read_allocate_pages, in case of ENOMEM, we go through
+whole rdata->pages array but we have failed the allocation before
+nr_pages, therefore we may end up calling put_page with NULL
+pointer, causing oops
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/conf.py |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/file.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -37,7 +37,7 @@ needs_sphinx = '1.3'
- extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig']
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -2988,7 +2988,9 @@ cifs_read_allocate_pages(struct cifs_rea
+ 	}
  
- # The name of the math extension changed on Sphinx 1.4
--if major == 1 and minor > 3:
-+if (major == 1 and minor > 3) or (major > 1):
-     extensions.append("sphinx.ext.imgmath")
- else:
-     extensions.append("sphinx.ext.pngmath")
+ 	if (rc) {
+-		for (i = 0; i < nr_pages; i++) {
++		unsigned int nr_page_failed = i;
++
++		for (i = 0; i < nr_page_failed; i++) {
+ 			put_page(rdata->pages[i]);
+ 			rdata->pages[i] = NULL;
+ 		}
 
 
