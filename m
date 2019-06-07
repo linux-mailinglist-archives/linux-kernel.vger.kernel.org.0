@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C1D390AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77D0F38F5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:40:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbfFGPr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60194 "EHLO mail.kernel.org"
+        id S1730169AbfFGPkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:40:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731575AbfFGPrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:47:21 -0400
+        id S1730135AbfFGPky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:40:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 087B22146E;
-        Fri,  7 Jun 2019 15:47:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AA182133D;
+        Fri,  7 Jun 2019 15:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922441;
-        bh=jWpAM+1IHNw1ZIFPmuHvsRzXzUAGvtgTz4pwgMu3jbw=;
+        s=default; t=1559922052;
+        bh=5NxK3QZ4xXv0053/H9qoIGNYWfFSdPg+TupU4k+I13s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mz9rT/cGEmKlSBLtK5ZbmrHPLE628GboEHc9yOS/mRvfrSVxQuvcz3fuO5x97XbLw
-         sjFJgQdxMw3/wRmHiuBJD4GS0lYYHmbVdfSO1DCk5dXkdC3gnjdtOqq2CDFM+ck5/h
-         KXjUBzQWkD8RC++ufIDQn+URmczyeIIJHHSsW1OE=
+        b=EUqBSv+/ro2oenqXmWnE3iALsxmBZyzQ7xhyocVtP5024dlWyj9Nb4o4bIjU9E/kt
+         oHXrRN1DIhWKQvQ5sI85oT1pWWkeJOmouAJd+O0S2VrpKQoIlJoScueZ9543Pr8CTH
+         KrPubBaqtE7UcuYFAw5PynZ46K+oWUylOJmnOGRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH 5.1 15/85] media: usb: siano: Fix false-positive "uninitialized variable" warning
-Date:   Fri,  7 Jun 2019 17:39:00 +0200
-Message-Id: <20190607153851.036679027@linuxfoundation.org>
+        stable@vger.kernel.org, Junwei Hu <hujunwei4@huawei.com>,
+        Wang Wang <wangwang2@huawei.com>,
+        syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com,
+        Kang Zhou <zhoukang7@huawei.com>,
+        Suanming Mou <mousuanming@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 20/69] tipc: fix modprobe tipc failed after switch order of device registration
+Date:   Fri,  7 Jun 2019 17:39:01 +0200
+Message-Id: <20190607153850.851689067@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +47,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Junwei Hu <hujunwei4@huawei.com>
 
-commit 45457c01171fd1488a7000d1751c06ed8560ee38 upstream.
+commit 526f5b851a96566803ee4bee60d0a34df56c77f8 upstream.
 
-GCC complains about an apparently uninitialized variable recently
-added to smsusb_init_device().  It's a false positive, but to silence
-the warning this patch adds a trivial initialization.
+Error message printed:
+modprobe: ERROR: could not insert 'tipc': Address family not
+supported by protocol.
+when modprobe tipc after the following patch: switch order of
+device registration, commit 7e27e8d6130c
+("tipc: switch order of device registration to fix a crash")
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: kbuild test robot <lkp@intel.com>
-CC: <stable@vger.kernel.org>
+Because sock_create_kern(net, AF_TIPC, ...) called by
+tipc_topsrv_create_listener() in the initialization process
+of tipc_init_net(), so tipc_socket_init() must be execute before that.
+Meanwhile, tipc_net_id need to be initialized when sock_create()
+called, and tipc_socket_init() is no need to be called for each namespace.
+
+I add a variable tipc_topsrv_net_ops, and split the
+register_pernet_subsys() of tipc into two parts, and split
+tipc_socket_init() with initialization of pernet params.
+
+By the way, I fixed resources rollback error when tipc_bcast_init()
+failed in tipc_init_net().
+
+Fixes: 7e27e8d6130c ("tipc: switch order of device registration to fix a crash")
+Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
+Reported-by: Wang Wang <wangwang2@huawei.com>
+Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
+Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
+Reviewed-by: Suanming Mou <mousuanming@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/siano/smsusb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/core.c   |   18 ++++++++++++------
+ net/tipc/subscr.c |   14 ++++++++++++--
+ net/tipc/subscr.h |    5 +++--
+ 3 files changed, 27 insertions(+), 10 deletions(-)
 
---- a/drivers/media/usb/siano/smsusb.c
-+++ b/drivers/media/usb/siano/smsusb.c
-@@ -400,7 +400,7 @@ static int smsusb_init_device(struct usb
- 	struct smsusb_device_t *dev;
- 	void *mdev;
- 	int i, rc;
--	int in_maxp;
-+	int in_maxp = 0;
+--- a/net/tipc/core.c
++++ b/net/tipc/core.c
+@@ -71,9 +71,6 @@ static int __net_init tipc_init_net(stru
+ 		goto out_nametbl;
  
- 	/* create device object */
- 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+ 	INIT_LIST_HEAD(&tn->dist_queue);
+-	err = tipc_topsrv_start(net);
+-	if (err)
+-		goto out_subscr;
+ 
+ 	err = tipc_bcast_init(net);
+ 	if (err)
+@@ -82,8 +79,6 @@ static int __net_init tipc_init_net(stru
+ 	return 0;
+ 
+ out_bclink:
+-	tipc_bcast_stop(net);
+-out_subscr:
+ 	tipc_nametbl_stop(net);
+ out_nametbl:
+ 	tipc_sk_rht_destroy(net);
+@@ -93,7 +88,6 @@ out_sk_rht:
+ 
+ static void __net_exit tipc_exit_net(struct net *net)
+ {
+-	tipc_topsrv_stop(net);
+ 	tipc_net_stop(net);
+ 	tipc_bcast_stop(net);
+ 	tipc_nametbl_stop(net);
+@@ -107,6 +101,11 @@ static struct pernet_operations tipc_net
+ 	.size = sizeof(struct tipc_net),
+ };
+ 
++static struct pernet_operations tipc_topsrv_net_ops = {
++	.init = tipc_topsrv_init_net,
++	.exit = tipc_topsrv_exit_net,
++};
++
+ static int __init tipc_init(void)
+ {
+ 	int err;
+@@ -137,6 +136,10 @@ static int __init tipc_init(void)
+ 	if (err)
+ 		goto out_socket;
+ 
++	err = register_pernet_subsys(&tipc_topsrv_net_ops);
++	if (err)
++		goto out_pernet_topsrv;
++
+ 	err = tipc_bearer_setup();
+ 	if (err)
+ 		goto out_bearer;
+@@ -144,6 +147,8 @@ static int __init tipc_init(void)
+ 	pr_info("Started in single node mode\n");
+ 	return 0;
+ out_bearer:
++	unregister_pernet_subsys(&tipc_topsrv_net_ops);
++out_pernet_topsrv:
+ 	tipc_socket_stop();
+ out_socket:
+ 	unregister_pernet_subsys(&tipc_net_ops);
+@@ -161,6 +166,7 @@ out_netlink:
+ static void __exit tipc_exit(void)
+ {
+ 	tipc_bearer_cleanup();
++	unregister_pernet_subsys(&tipc_topsrv_net_ops);
+ 	tipc_socket_stop();
+ 	unregister_pernet_subsys(&tipc_net_ops);
+ 	tipc_netlink_stop();
+--- a/net/tipc/subscr.c
++++ b/net/tipc/subscr.c
+@@ -344,7 +344,7 @@ static void *tipc_subscrb_connect_cb(int
+ 	return (void *)tipc_subscrb_create(conid);
+ }
+ 
+-int tipc_topsrv_start(struct net *net)
++static int tipc_topsrv_start(struct net *net)
+ {
+ 	struct tipc_net *tn = net_generic(net, tipc_net_id);
+ 	const char name[] = "topology_server";
+@@ -382,7 +382,7 @@ int tipc_topsrv_start(struct net *net)
+ 	return tipc_server_start(topsrv);
+ }
+ 
+-void tipc_topsrv_stop(struct net *net)
++static void tipc_topsrv_stop(struct net *net)
+ {
+ 	struct tipc_net *tn = net_generic(net, tipc_net_id);
+ 	struct tipc_server *topsrv = tn->topsrv;
+@@ -391,3 +391,13 @@ void tipc_topsrv_stop(struct net *net)
+ 	kfree(topsrv->saddr);
+ 	kfree(topsrv);
+ }
++
++int __net_init tipc_topsrv_init_net(struct net *net)
++{
++	return tipc_topsrv_start(net);
++}
++
++void __net_exit tipc_topsrv_exit_net(struct net *net)
++{
++	tipc_topsrv_stop(net);
++}
+--- a/net/tipc/subscr.h
++++ b/net/tipc/subscr.h
+@@ -75,8 +75,9 @@ void tipc_subscrp_report_overlap(struct
+ void tipc_subscrp_convert_seq(struct tipc_name_seq *in, int swap,
+ 			      struct tipc_name_seq *out);
+ u32 tipc_subscrp_convert_seq_type(u32 type, int swap);
+-int tipc_topsrv_start(struct net *net);
+-void tipc_topsrv_stop(struct net *net);
++
++int __net_init tipc_topsrv_init_net(struct net *net);
++void __net_exit tipc_topsrv_exit_net(struct net *net);
+ 
+ void tipc_subscrp_put(struct tipc_subscription *subscription);
+ void tipc_subscrp_get(struct tipc_subscription *subscription);
 
 
