@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B14390D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D509A3913B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:59:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731310AbfFGPpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:45:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57882 "EHLO mail.kernel.org"
+        id S1730698AbfFGPmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:42:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730862AbfFGPpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:45:50 -0400
+        id S1730663AbfFGPmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:42:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B76932147A;
-        Fri,  7 Jun 2019 15:45:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 588D421479;
+        Fri,  7 Jun 2019 15:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922349;
+        s=default; t=1559922169;
         bh=PRLpC5nwM9nO3KrtQa6s3Sz5d8KnuDm79+AssLvw99g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2j88oaUW/AyxPlSlCj9QhVAnT7V66zyq4CKzCb55ipiQUW1F9I9FIfLBS7nADECPA
-         S9k0KIfahb5RnWxzGmW7jT9s5CXF/YSRwd+Y/+wMogIQXBYIbV14EFpWd47UGWsJyB
-         b1kQ3TIRLPUs+x5TT4c90jGs9gkwVbgelkqRRv58=
+        b=FxWBuEyfXh7/laGS5A7dG/BvraPK81MMIOOMgh3/fb3Bmn4jZ3rA7yzEl5nuxlYzB
+         zGfeRgwvoDqXguOQqICu67YecVbf1oEVc4iyyZ+HDSQUi3k0hKpzoNidf0M+xY1OFV
+         q2Y/acLQGgNKDcAlskDGp7YKPQBZvHYKQbvFbEZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 4.19 55/73] gcc-plugins: Fix build failures under Darwin host
+Subject: [PATCH 4.14 61/69] gcc-plugins: Fix build failures under Darwin host
 Date:   Fri,  7 Jun 2019 17:39:42 +0200
-Message-Id: <20190607153855.192539950@linuxfoundation.org>
+Message-Id: <20190607153855.545998344@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
