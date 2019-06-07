@@ -2,73 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC6CF385C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBA333859F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfFGHyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 03:54:13 -0400
-Received: from mail.velocard.eu ([80.211.74.207]:60782 "EHLO mail.velocard.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbfFGHyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 03:54:12 -0400
-X-Greylist: delayed 495 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 03:54:11 EDT
-Received: by mail.velocard.eu (Postfix, from userid 1001)
-        id 72F198765F; Fri,  7 Jun 2019 09:45:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=velocard.eu; s=mail;
-        t=1559893555; bh=28mexHLKqDk2ixxtw16xz45K8l/dWN7qZL8I5V4XNxg=;
-        h=Date:From:To:Subject:From;
-        b=KeIeozMvSeJH+xfq4OyQK2T+GlDMi5kjRNCNirnAE0sUUjpZj8RR3MYuU4Wyqi7r3
-         bZuuYcSpUei+Ka0fuEdt7HyfyrMhHKh04tT82b9T+fkWsKdjXLpsN5q2H9C3j18nNv
-         GjBnYdyou0fTbf2rMcLJYq7fxaB2A/zYkGHG0N9c=
-Received: by mail.velocard.eu for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 07:45:51 GMT
-Message-ID: <20190607084500-0.1.j.1bgz.0.ubh8f70xkm@velocard.eu>
-Date:   Fri,  7 Jun 2019 07:45:51 GMT
-From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= 
-        <kapolcs.matyas@velocard.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?B=C3=A9ren_fel=C3=BCli_juttat=C3=A1sok?=
-X-Mailer: mail.velocard.eu
+        id S1727844AbfFGHr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:47:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54470 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFGHr0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 03:47:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pk7+TGVjtRz6ayURhW13Uv/LT+UErfa7VAtt4gHuM/4=; b=vCOYZfHIc2QIziL0JfGkxJaye
+        3oyYvYZZY9uswI49S/Md42reZoVcucBwoIpBbpwfmHykVF4iYUKs582hHrkdYALvJ95vfU2hqE53e
+        lKssLDvhkYK+0EOhuEkc8gWlvF53pDCi5Eficx9GCTdMrOCmZG7xLjPhXOLuCtswvupFweGf/Kk2C
+        b7vhADU5DCwIXZ2VG15bfFu+DhSUxXi9SPdcFU8mhbQsytzy/OJjV3MVzSwzddnNO+Me4Yhwzy3Wq
+        GGakVd16gLKf/z129n4Bha66KFCnBCn/GYbM8MdPd8NhxjW2De6Ot+fQe9/kpt/U7MePndcm6cnhX
+        3AoNPthrw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hZ9af-0002pj-Ag; Fri, 07 Jun 2019 07:47:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A5C27202CD6B2; Fri,  7 Jun 2019 09:47:07 +0200 (CEST)
+Date:   Fri, 7 Jun 2019 09:47:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v7 18/27] mm: Introduce do_mmap_locked()
+Message-ID: <20190607074707.GD3463@hirez.programming.kicks-ass.net>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+ <20190606200646.3951-19-yu-cheng.yu@intel.com>
+ <20190607074322.GP3419@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607074322.GP3419@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kedves H=C3=B6lgyem/Uram!
+On Fri, Jun 07, 2019 at 09:43:22AM +0200, Peter Zijlstra wrote:
+> On Thu, Jun 06, 2019 at 01:06:37PM -0700, Yu-cheng Yu wrote:
+> > There are a few places that need do_mmap() with mm->mmap_sem held.
+> > Create an in-line function for that.
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > ---
+> >  include/linux/mm.h | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 398f1e1c35e5..7cf014604848 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -2411,6 +2411,24 @@ static inline void mm_populate(unsigned long addr, unsigned long len)
+> >  static inline void mm_populate(unsigned long addr, unsigned long len) {}
+> >  #endif
+> >  
+> > +static inline unsigned long do_mmap_locked(unsigned long addr,
+> > +	unsigned long len, unsigned long prot, unsigned long flags,
+> > +	vm_flags_t vm_flags)
+> > +{
+> > +	struct mm_struct *mm = current->mm;
+> > +	unsigned long populate;
+> > +
+> > +	down_write(&mm->mmap_sem);
+> > +	addr = do_mmap(NULL, addr, len, prot, flags, vm_flags, 0,
+> > +		       &populate, NULL);
+> 
+> Funny thing how do_mmap() takes a file pointer as first argument and
+> this thing explicitly NULLs that. That more or less invalidates the name
+> do_mmap_locked().
+> 
+> > +	up_write(&mm->mmap_sem);
+> > +
+> > +	if (populate)
+> > +		mm_populate(addr, populate);
+> > +
+> > +	return addr;
+> > +}
 
-2019 janu=C3=A1rj=C3=A1t=C3=B3l szinte minden b=C3=A9ren k=C3=ADv=C3=BCli=
- juttat=C3=A1s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9telt k=C3=
-=A9pez ez al=C3=B3l a SZ=C3=89P k=C3=A1rtya). A v=C3=A1ltoz=C3=A1sok elle=
-n=C3=A9re a v=C3=A1llalatok t=C3=B6bb mint 55%-a meg k=C3=ADv=C3=A1nja ta=
-rtani a dolgoz=C3=B3i juttat=C3=A1sok nett=C3=B3 =C3=B6sszeg=C3=A9t, mag=C3=
-=A1ra v=C3=A1llalva ezzel a megemelkedett ad=C3=B3terheket.=20
+You also don't retain that last @uf argument.
 
-Juttat=C3=A1si k=C3=A1rty=C3=A1ink seg=C3=ADts=C3=A9g=C3=A9vel 2019-ben a=
- munk=C3=A1ltat=C3=B3k lefedhetik szinte az =C3=B6sszes jelenleg haszn=C3=
-=A1lt b=C3=A9ren k=C3=ADv=C3=BCli juttat=C3=A1st, mik=C3=B6zben munkav=C3=
-=A1llal=C3=B3ik =C3=A9lvezhetik az ak=C3=A1r korl=C3=A1tlan felhaszn=C3=A1=
-l=C3=A1s lehet=C5=91s=C3=A9g=C3=A9t.  A SZ=C3=89P k=C3=A1rty=C3=A1t=C3=B3=
-l elt=C3=A9r=C5=91en a mi k=C3=A1rty=C3=A1inkkal olyan mindennapos k=C3=B6=
-lts=C3=A9gek fedezhet=C5=91ek mint p=C3=A9ld=C3=A1ul =C3=A9lelmiszer v=C3=
-=A1s=C3=A1rl=C3=A1s, eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s, ruh=C3=
-=A1zat, elektronika, =C3=BCzemanyagk=C3=B6lts=C3=A9g, k=C3=B6zm=C5=B1d=C3=
-=ADj, s=C5=91t, ak=C3=A1r m=C3=A9g k=C3=A9szp=C3=A9nzfelv=C3=A9telre is a=
-lkalmasak.=20
-
-Ez az egyetlen olyan juttat=C3=A1si k=C3=A1rtya a magyar piacon, melyet m=
-inden hazai POS termin=C3=A1l elfogad, ezzel biztos=C3=ADtva a k=C3=A1rty=
-a sz=C3=A9les k=C3=B6r=C5=B1 felhaszn=C3=A1lhat=C3=B3s=C3=A1g=C3=A1t.=20
-
-Sz=C3=ADvesen bemutatom =C3=96nnek, milyen tov=C3=A1bbi el=C5=91ny=C3=B6k=
-kel j=C3=A1r k=C3=A1rty=C3=A1ink dolgoz=C3=B3i juttat=C3=A1sk=C3=A9nt t=C3=
-=B6rt=C3=A9n=C5=91 alkalmaz=C3=A1sa, =C3=A9s r=C3=A9szletes t=C3=A1j=C3=A9=
-koztat=C3=A1st adok a k=C3=A1rty=C3=A1k felhaszn=C3=A1l=C3=A1si lehet=C5=91=
-s=C3=A9geir=C5=91l =E2=80=93 k=C3=A9rem jelezze ez ir=C3=A1nti ig=C3=A9ny=
-=C3=A9t.=20
-
-
-Kapolcs M=C3=A1ty=C3=A1s
-Hungary Team Leader =20
-
+I'm thikning you're better off adding a helper to the cet.c file; call
+it cet_mmap() or whatever.
