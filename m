@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A79238F8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A4539023
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbfFGPmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:42:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
+        id S1731951AbfFGPtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:49:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730648AbfFGPmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:42:45 -0400
+        id S1731937AbfFGPtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:49:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA83C214AF;
-        Fri,  7 Jun 2019 15:42:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6557214C6;
+        Fri,  7 Jun 2019 15:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922164;
-        bh=e2KFDJLz9Lsataaan3BzvauG6mpgnuRbx5NYfA9C6yU=;
+        s=default; t=1559922562;
+        bh=W6EXKwO2WLwrLah4By7DIUZSSEhhHmOZCXmMzKqlDxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9Bf0kvCZnJe9P+77jhg1+y6O6VcUhjH5Dg9gILyHxj+uuiyVrMaxddTPUn5Lw06v
-         KTsr/DmxLfwAfStkHH0Iape8+rSDdDjJ81Zr007TadHDQVGH6MMnBZ+uBXR6ZIrbqH
-         V0ssVhH/EK2YmkCx70rxeyXlgdxFTCVqXc8uaB+w=
+        b=ftwywd6o58e5lUzPgj9PtmnbSAEuCuYQXEcdkGhZksoSv2HKGdeDZYt3aYRmT7Xco
+         UHDq8NJixtv7S+YvzunvyXXH1XNrUAR2xoGEhNT4gbdoaCZQ3+H0c7AtDGh/q79UVR
+         wkkSFXIh7WmnuhMM57uDhmWiUQiyUdNEG4KhVjmk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        XueWei Zhang <xueweiz@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 60/69] Revert "lockd: Show pid of lockd for remote locks"
+        stable@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 5.1 56/85] doc: Cope with the deprecation of AutoReporter
 Date:   Fri,  7 Jun 2019 17:39:41 +0200
-Message-Id: <20190607153855.452656175@linuxfoundation.org>
+Message-Id: <20190607153855.717899507@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +42,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Jonathan Corbet <corbet@lwn.net>
 
-commit 141731d15d6eb2fd9aaefbf9b935ce86ae243074 upstream.
+commit 2404dad1f67f8917e30fc22a85e0dbcc85b99955 upstream.
 
-This reverts most of commit b8eee0e90f97 ("lockd: Show pid of lockd for
-remote locks"), which caused remote locks to not be differentiated between
-remote processes for NLM.
+AutoReporter is going away; recent versions of sphinx emit a warning like:
 
-We retain the fixup for setting the client's fl_pid to a negative value.
+  Documentation/sphinx/kerneldoc.py:125:
+      RemovedInSphinx20Warning: AutodocReporter is now deprecated.
+      Use sphinx.util.docutils.switch_source_input() instead.
 
-Fixes: b8eee0e90f97 ("lockd: Show pid of lockd for remote locks")
+Make the switch.  But switch_source_input() only showed up in 1.7, so we
+have to do ugly version checks to keep things working in older versions.
+
 Cc: stable@vger.kernel.org
-
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Reviewed-by: XueWei Zhang <xueweiz@google.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/lockd/xdr.c  |    4 ++--
- fs/lockd/xdr4.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ Documentation/sphinx/kerneldoc.py |   34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
---- a/fs/lockd/xdr.c
-+++ b/fs/lockd/xdr.c
-@@ -127,7 +127,7 @@ nlm_decode_lock(__be32 *p, struct nlm_lo
+--- a/Documentation/sphinx/kerneldoc.py
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -37,7 +37,17 @@ import glob
+ from docutils import nodes, statemachine
+ from docutils.statemachine import ViewList
+ from docutils.parsers.rst import directives, Directive
+-from sphinx.ext.autodoc import AutodocReporter
++
++#
++# AutodocReporter is only good up to Sphinx 1.7
++#
++import sphinx
++
++Use_SSI = sphinx.__version__[:3] >= '1.7'
++if Use_SSI:
++    from sphinx.util.docutils import switch_source_input
++else:
++    from sphinx.ext.autodoc import AutodocReporter
  
- 	locks_init_lock(fl);
- 	fl->fl_owner = current->files;
--	fl->fl_pid   = current->tgid;
-+	fl->fl_pid   = (pid_t)lock->svid;
- 	fl->fl_flags = FL_POSIX;
- 	fl->fl_type  = F_RDLCK;		/* as good as anything else */
- 	start = ntohl(*p++);
-@@ -269,7 +269,7 @@ nlmsvc_decode_shareargs(struct svc_rqst
- 	memset(lock, 0, sizeof(*lock));
- 	locks_init_lock(&lock->fl);
- 	lock->svid = ~(u32) 0;
--	lock->fl.fl_pid = current->tgid;
-+	lock->fl.fl_pid = (pid_t)lock->svid;
+ __version__  = '1.0'
  
- 	if (!(p = nlm_decode_cookie(p, &argp->cookie))
- 	 || !(p = xdr_decode_string_inplace(p, &lock->caller,
---- a/fs/lockd/xdr4.c
-+++ b/fs/lockd/xdr4.c
-@@ -119,7 +119,7 @@ nlm4_decode_lock(__be32 *p, struct nlm_l
+@@ -121,13 +131,7 @@ class KernelDocDirective(Directive):
+                     lineoffset += 1
  
- 	locks_init_lock(fl);
- 	fl->fl_owner = current->files;
--	fl->fl_pid   = current->tgid;
-+	fl->fl_pid   = (pid_t)lock->svid;
- 	fl->fl_flags = FL_POSIX;
- 	fl->fl_type  = F_RDLCK;		/* as good as anything else */
- 	p = xdr_decode_hyper(p, &start);
-@@ -266,7 +266,7 @@ nlm4svc_decode_shareargs(struct svc_rqst
- 	memset(lock, 0, sizeof(*lock));
- 	locks_init_lock(&lock->fl);
- 	lock->svid = ~(u32) 0;
--	lock->fl.fl_pid = current->tgid;
-+	lock->fl.fl_pid = (pid_t)lock->svid;
+             node = nodes.section()
+-            buf = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
+-            self.state.memo.reporter = AutodocReporter(result, self.state.memo.reporter)
+-            self.state.memo.title_styles, self.state.memo.section_level = [], 0
+-            try:
+-                self.state.nested_parse(result, 0, node, match_titles=1)
+-            finally:
+-                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
++            self.do_parse(result, node)
  
- 	if (!(p = nlm4_decode_cookie(p, &argp->cookie))
- 	 || !(p = xdr_decode_string_inplace(p, &lock->caller,
+             return node.children
+ 
+@@ -136,6 +140,20 @@ class KernelDocDirective(Directive):
+                          (" ".join(cmd), str(e)))
+             return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
+ 
++    def do_parse(self, result, node):
++        if Use_SSI:
++            with switch_source_input(self.state, result):
++                self.state.nested_parse(result, 0, node, match_titles=1)
++        else:
++            save = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
++            self.state.memo.reporter = AutodocReporter(result, self.state.memo.reporter)
++            self.state.memo.title_styles, self.state.memo.section_level = [], 0
++            try:
++                self.state.nested_parse(result, 0, node, match_titles=1)
++            finally:
++                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = save
++
++
+ def setup(app):
+     app.add_config_value('kerneldoc_bin', None, 'env')
+     app.add_config_value('kerneldoc_srctree', None, 'env')
 
 
