@@ -2,118 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9DB38E91
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66AA38EA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbfFGPKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:10:19 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41384 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729850AbfFGPKQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:10:16 -0400
-Received: by mail-qt1-f194.google.com with SMTP id s57so2627752qte.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 08:10:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mtF5cAWsrYgtNZcy7Xm0z7hOgyvsIAMepLY84jhBIIY=;
-        b=WYsyLuJwZJIQkQf8wUWCq+MKSRiYgAlB3cZg5uiR6sfXzmT5qRPbG9DhevssrlPWqT
-         btVD4AS17pELyqwsgZDkQw2P7FuITtTVQMrN8ttsGMNW1xgfpIRPBVOa0vjh1b2Q1GR1
-         KuOwYeQwWnuz6D+1FRguaiqcVs7bzdSKLArmkC9S3JiLqJpGoQtRUAt5WZRIgTPnLny4
-         IKSY1gSwXGY6RvgI08IKQsXM6qG3PGhAf3b+OAJpaapDK96fRJ2kOM5Yvdls9VHMdofH
-         LPFgCkV+imozC4VVLOAwHIKBZyqQ6Svl+UIUCGPXrQKi5OfcTa6MmnRnnxQ4x38JcA+k
-         g4gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mtF5cAWsrYgtNZcy7Xm0z7hOgyvsIAMepLY84jhBIIY=;
-        b=AGiyyNgjyrJpKaLnFTJNsSGNOctbb6KFER5TpVIWJ3l8EK41t3fDPebPdH0AGTw0as
-         WUkaYkQ3Z5HB8k4bTg8ov8my7RhgMvCe58nlUE4un42DBc1qKSRzRh1/lwQudTW9/EOK
-         qULYdhdEy8m0sLftoNYFP/cIXW9cooegYADTBsOdSwLDgq6R1jZUB4mKhhYAsZ1xV0KO
-         kadQicqRMfyYyA5liuxly5m0TsAtt6v5LRrtJFHTLoLbTM/2znnAZxmczGggaLGImn8P
-         FFSlMcG4jbfnkL0sLPdwQluqZ/36tVAGd2YOGoRGGWLIqcFSkTkxiCLd+geM8b2OoSm9
-         O0pA==
-X-Gm-Message-State: APjAAAXsda7r3b+obhWWwIDPt2xKHKOWMXP0J7Rnz4A234c+tExj1ABy
-        O2Dyuypu1MDSPniKjwLTdb3JmQ==
-X-Google-Smtp-Source: APXvYqz98pAEW8JOYRDiw9EYF+WsmnpCH5t6BgflMJ4duW3xWG4TSqN3U+4KRrwB7XAG90R+0pkeHA==
-X-Received: by 2002:ac8:4619:: with SMTP id p25mr14877922qtn.73.1559920216042;
-        Fri, 07 Jun 2019 08:10:16 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id a11sm1103592qkn.26.2019.06.07.08.10.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2019 08:10:15 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hZGVT-0006TX-4L; Fri, 07 Jun 2019 12:10:15 -0300
-Date:   Fri, 7 Jun 2019 12:10:15 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190607151015.GJ14802@ziepe.ca>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
- <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz>
- <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+        id S1729884AbfFGPLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:11:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:42296 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729173AbfFGPLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:11:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84117C0A;
+        Fri,  7 Jun 2019 08:11:46 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F8053F718;
+        Fri,  7 Jun 2019 08:11:44 -0700 (PDT)
+Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
+To:     "Shenhar, Talel" <talel@amazon.com>
+Cc:     "Hawa, Hanna" <hhhawa@amazon.com>, Borislav Petkov <bp@alien8.de>,
+        "Herrenschmidt, Benjamin" <benh@amazon.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chocron, Jonathan" <jonnyc@amazon.com>,
+        "Krupnik, Ronen" <ronenk@amazon.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "Hanoch, Uri" <hanochu@amazon.com>
+References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
+ <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
+ <DB09EE2A-7397-4063-B925-66658D0105A5@alien8.de>
+ <bfbc12fb68eea9d8d4cc257c213393fd4e92c33a.camel@amazon.com>
+ <20190531051400.GA2275@cz.tnic>
+ <ce01a2bc-7973-5978-b033-a6bdc61b9d4b@amazon.com>
+ <32431fa2-2285-6c41-ce32-09630205bb54@arm.com>
+ <71da083e-1a74-cf86-455d-260a34ee01fd@amazon.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <25efb27c-b725-137d-5735-b3ab88323846@arm.com>
+Date:   Fri, 7 Jun 2019 16:11:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <71da083e-1a74-cf86-455d-260a34ee01fd@amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 07:52:13AM -0700, Ira Weiny wrote:
-> On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
-> > 
-> > > Because the pins would be invisible to sysadmin from that point on. 
-> > 
-> > It is not invisible, it just shows up in a rdma specific kernel
-> > interface. You have to use rdma netlink to see the kernel object
-> > holding this pin.
-> > 
-> > If this visibility is the main sticking point I suggest just enhancing
-> > the existing MR reporting to include the file info for current GUP
-> > pins and teaching lsof to collect information from there as well so it
-> > is easy to use.
-> > 
-> > If the ownership of the lease transfers to the MR, and we report that
-> > ownership to userspace in a way lsof can find, then I think all the
-> > concerns that have been raised are met, right?
+Hi guys,
+
+On 06/06/2019 12:37, Shenhar, Talel wrote:
+>>> Disagree. The various drivers don't depend on each other.
+>>> I think we should keep the drivers separated as they are distinct and independent IP
+>>> blocks.
+>> But they don't exist in isolation, they both depend on the integration-choices/firmware
+>> that makes up your platform.
+>>
+>> Other platforms may have exactly the same IP blocks, configured differently, or with
+>> different features enabled in firmware. This means we can't just probe the driver based on
+>> the presence of the IP block, we need to know the integration choices and firmware
+>> settings match what the driver requires.
+>>
+>> (Case in point, that A57 ECC support is optional, another A57 may not have it)
+>>
+>> Descriptions of what firmware did don't really belong in the DT. Its not a hardware
+>> property.
+>>
+>> This is why its better to probe this stuff based on the machine-compatible/platform-name,
+>> not the presence of the IP block in the DT.
+>>
+>>
+>> Will either of your separate drivers ever run alone? If they're probed from the same
+>> machine-compatible this won't happen.
+>>
+>>
+>> How does your memory controller report errors? Does it send back some data with an invalid
+>> checksum, or a specific poison/invalid flag? Will the cache report this as a cache error
+>> too, if its an extra signal, does the cache know what it is?
+>>
+>> All these are integration choices between the two IP blocks, done as separate drivers we
+>> don't have anywhere to store that information. Even if you don't care about this, making
+>> them separate drivers should only be done to make them usable on other platforms, where
+>> these choices may have been different.
+
+> From our perspective, l1/l2 has nothing to do with the ddr memory controller.
+
+I understand you're coming from the position that these things have counters, you want
+something to read and export them.
+
+I'm coming at this from somewhere else. This stuff has to be considered all the way
+through the system. Just because each component supports error detection, doesn't mean you
+aren't going to get silent corruption. Likewise if another platform picks up two piecemeal
+edac drivers for hardware it happens to have in common with yours, it doesn't mean we're
+counting all the errors. This stuff has to be viewed for the whole platform.
+
+
+> Its right that they both use same edac subsystem but they are using totally different APIs
+> of it.
 > 
-> I was contemplating some new lsof feature yesterday.  But what I don't think we
-> want is sysadmins to have multiple tools for multiple subsystems.  Or even have
-> to teach lsof something new for every potential new subsystem user of GUP pins.
+> We also even want to have separate control for enabling/disabling l1/l2 edac vs memory
+> controller edac.
 
-Well.. it is a bit tricky, but you'd have to arrange for the lease
-object to have a list of 'struct files' that are holding the
-lease open. 
+Curious, what for? Surely you either care about counting errors, or you don't.
 
-The first would be the file that did the fcntl, the next would be all
-the files that did longterm GUP - which means longterm GUP has to have
-a chardev file/etc as well (seems OK)
 
-Then lsof could query the list of lease objects for each file it
-encounters and print them out too.
+> Even from technical point-of-view L1/L2 UE collection method is totally different from
+> collecting memory-controller UE. (CPU exception vs actual interrupts).
+> 
+> So there is less reason why to combine them vs giving each one its own file, e.g.
+> al_mc_edac, al_l1_l2_edac (I even don't see why Hanna combined l1 and l2...)
 
-Jason
+> As we don't have any technical relation between the two we would rather avoid this
+> combination.
+> 
+> Also, Lets assume we have different setups with different memory controllers, having a dt
+> binding to control the difference is super easy and flexible.
+
+If the hardware is different you should describe this in the DT. I'm not suggesting you
+don't describe it.
+
+The discussion here is whether we should probe the driver based on a dummy-node
+compatible, (which this 'edac_l1_l2' is) or based on the machine compatible.
+
+At the extreme end: you should paint the CPU and cache nodes with a compatible describing
+your integration. (I've mangled Juno's DT here:)
+| A57_0: cpu@0 {
+| 	compatible = "amazon-al,cortex-a57", "arm,cortex-a57";
+| 	reg = <0x0 0x0>;
+| 	device_type = "cpu";
+| 	next-level-cache = <&A57_L2>;
+| };
+|
+[...]
+|
+| A57_L2: l2-cache0 {
+| 	compatible = "amazon-al,cache", "cache";
+|	cpu_map = <A57_0, A57_1>
+| };
+
+
+This is the most accurate way to describe what you have here. The driver can use this to
+know that this integration of CPU and Cache support the edac registers. (This doesn't tell
+us anything about whether firmware enabled this stuff, or made/left it all secure-only)
+
+But this doesn't give you a device you can bind a driver to, to kick this stuff off.
+This (I assume) is why you added a dummy 'edac_l1_l2' node, that just probes the driver.
+The hardware is to do with the CPU and caches, 'edac_l1'_l2' doesn't correspond to any
+distinct part of the soc.
+
+The request is to use the machine compatible, not a dummy node. This wraps up the firmware
+properties too, and any other platform property we don't know about today.
+
+Once you have this, you don't really need the cpu/cache integration annotations, and your
+future memory-controller support can be picked up as part of the platform driver.
+If you have otherwise identical platforms with different memory controllers, OF gives you
+the API to match the node in the DT.
+
+
+> Would having a dedicated folder for amazon ease the move to separate files?
+
+I don't think anyone cares about the number of files. Code duplication and extra
+boiler-plate, maybe.
+
+
+Thanks,
+
+James
