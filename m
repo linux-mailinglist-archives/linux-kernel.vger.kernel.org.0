@@ -2,95 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73FD5383F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9EAC383FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfFGGAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 02:00:01 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37295 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfFGGAB (ORCPT
+        id S1726875AbfFGGAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:00:50 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40110 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfFGGAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:00:01 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y57so996711qtk.4;
-        Thu, 06 Jun 2019 23:00:00 -0700 (PDT)
+        Fri, 7 Jun 2019 02:00:49 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a15so982171qtn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 23:00:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6RGX8KhKka8Pl3+vesfNXkUWjRHHCXob324mKOkGT88=;
-        b=bUZCsqP/Sagr0KrlVefrP0TctKD/wlxJRaimMtzcra7i7QXt4srnpJoAQR/xeT1Zw+
-         LtQXFxhCKA6IDuVG8n6XK+XsF9NbR+NSVR26URuDLVYzhWWB1ewqxPSuVQr31xnB1rUI
-         /YP+Abij3eTBFdvliLfQMtfSyimhJE4++fUxGonWODAPE5QSzfGs01uieCU89UUxyrGk
-         XdShapx4V/x6tExDCaK77VF2CfRRuCDJ+uku4IziMMjs5N61uel4XrzAO4kDxl3es+IY
-         wsjzFjvfzIQhLGjFxQJeFdJdBXt+eJwB6/kgsrMz5xyVHz3F6vZJVAEdD+4wvOHO611t
-         RUzw==
+        h=from:to:cc:subject:date:message-id;
+        bh=dWh46ehTtF7XrRzrQS4UMj2mqF99ZWlKh15WhZd7opk=;
+        b=VbtRyWfh0kvCsghw4vQkoSYYEJBJkt40e8F3tOl//OUPrA30px/R4n4WjhT78ROsUA
+         RfCJm1xFS7KHaK1mntORy62MwR9gLl8grdBsBe5RP8LuwhaG+HIZn2khfCURtIO7AZxx
+         cCs5A53qGsXNDKFkG3YP/o8ywR7izGCE+VyssZEct9M+fZT1mUlT4kQkiioRVFvt7uQv
+         fUoNYVJPIClMm9wdHC4KYfsNYkVHqRKQyguBFf80v8ppKP1kUYsC8bT0o62Yzz91avTm
+         wvluBd/3/FkBJ1D+ZpnQmXK/MLJ4DdSLBCrLaXjSIBQU5MLCMoOHMvZV6tK2bNZtdvPp
+         tSig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6RGX8KhKka8Pl3+vesfNXkUWjRHHCXob324mKOkGT88=;
-        b=HlsPyeUQHcSGSC7Mei9HRvRIpXJuKUEP+hQ6KSFVoJ02JLzuC0y0m/B1gLLQMpdr2T
-         QRZh5VKIMX4JCVoibXhs7kE7RfdSGelirOhvfVa09h9lsL9OCvsfVdCyLv1EOTvXOsX4
-         QAbWNL6nbIZzGCUe7DIclSGJwUUCQxloOEM3FC+oEgkjjrMuaXQu54gnlGw/N7d2Rl0F
-         DSLB7hatkys4ZEA/Xgo9XY6NctazQNe7QM8jOnV9HmeiHgc5u8H9RTOEGOd3Rx/vJX7h
-         /3ix70YTWpgkt1AwtWUQ5KJ+OFPshGaynaG/UzawFQrTHOPZFc1NjMEEACMGDabPI8et
-         RxHg==
-X-Gm-Message-State: APjAAAU2ow8tQy+ge+4jKmHFDLMbqEaCelLAwzEjjgRls8ctb+n0/Kui
-        +XcLNtoao0evotk5O9I3IAdyPUepSgw=
-X-Google-Smtp-Source: APXvYqy8QDCpgyjSYGbTWJE4qnK8J6n3snKXl+ZrIb/6YBsg25FMqGwRbBXgM7nSbyXjj0bb/WiANA==
-X-Received: by 2002:ac8:38c5:: with SMTP id g5mr45162827qtc.299.1559887199834;
-        Thu, 06 Jun 2019 22:59:59 -0700 (PDT)
-Received: from localhost.localdomain (pool-108-45-70-22.washdc.fios.verizon.net. [108.45.70.22])
-        by smtp.gmail.com with ESMTPSA id u26sm775134qtc.33.2019.06.06.22.59.59
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dWh46ehTtF7XrRzrQS4UMj2mqF99ZWlKh15WhZd7opk=;
+        b=NOfvcHzZgI8Rcg7SESvvuqwnfva3kk5lFBtyJo7n+zUewYZKGi8IeAmlPSk2SbFy6k
+         fl4XwsRfOVb6cXE2+csCY+Dh3Kx9r5Jl2QXsorGaT9gv8NqA3ie5mZdDUulWdLFoaw4k
+         RmaX3wfRxIQBxO80ix0EiSQnVPXa++5NxtIWUAcrpY3p30q7MH3IQ3IKCxbpbszEnb81
+         RIWvXc4OsBusaldX0QfxvpW6EJL+f/IXKuzk2MPwmS01JyZcBzAF99UPI2RKBNU5hGRT
+         Ct+1sZLBotq5ZydLpkTn/UWKkvPULUoIIXdxdVtJ5423I0KFmCGs7QAaJEcw4kH1EFOQ
+         7LEw==
+X-Gm-Message-State: APjAAAWbcE3fUuhXzKt82Vl/VijWfBft0D02Dlxjr1N0XiLUvWXiIZSy
+        mHso1UOsLVf9lAJzVajeiHc=
+X-Google-Smtp-Source: APXvYqzzmpJUF9IoRPMUxjasE/Eq5+9Yg1niCvXE8klMRI1pm12EcDjmShlXCjNiKSzkC3RmZoPNvA==
+X-Received: by 2002:aed:3ed5:: with SMTP id o21mr42958105qtf.369.1559887248462;
+        Thu, 06 Jun 2019 23:00:48 -0700 (PDT)
+Received: from ROOT.localdomain (modemcable124.134-176-173.mc.videotron.ca. [173.176.134.124])
+        by smtp.gmail.com with ESMTPSA id 39sm633787qtx.71.2019.06.06.23.00.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 22:59:59 -0700 (PDT)
-From:   Alex <awaitingvictory@gmail.com>
-To:     paulmck@linux.vnet.ibm.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        trivial@kernel.org, Alex <awaitingvictory@gmail.com>,
-        Aaron A Montoya <aaron.a.montoya@gmail.com>
-Subject: [PATCH] linux: README: reduced README size by 1 byte by removing unnecessary space character
-Date:   Fri,  7 Jun 2019 01:59:18 -0400
-Message-Id: <20190607055917.17040-1-awaitingvictory@gmail.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 06 Jun 2019 23:00:48 -0700 (PDT)
+From:   Maxime Desroches <desroches.maxime@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Maxime Desroches <desroches.maxime@gmail.com>
+Subject: [PATCH] Staging: vc04_services : vchiq_core: Fix a brace issue
+Date:   Fri,  7 Jun 2019 01:59:45 -0400
+Message-Id: <20190607055945.21769-1-desroches.maxime@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron A Montoya <aaron.a.montoya@gmail.com>
+Remove braces in a single line if statement in the vchiq_core.c file
 
-On line 9 of the README there is an unnecessary extra space character, 
-after the period, that adds 1 byte of size to the file. By removing the 
-unnecessary space, Linux downloads will be 1 byte smaller and therefor be 
-faster to download and take up less space on a user's system, all while 
-correcting a sentence structure issue. This change is one of the few 
-optimizations with practically no downsides, besides taking time out 
-of the hardworking Linux maintainers day to implement the change.
-Remove extra space after the period on line 9 of the README.
-Commit 0619770a02a30834 ("Removed unnecessary space character from README")
-
-Signed-off-by: Aaron A Montoya <aaron.a.montoya@gmail.com>
+Signed-off-by: Maxime Desroches <desroches.maxime@gmail.com>
 ---
- README | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/README b/README
-index 669ac7c32292..0b05d700637f 100644
---- a/README
-+++ b/README
-@@ -6,7 +6,7 @@ be rendered in a number of formats, like HTML and PDF. Please read
- Documentation/admin-guide/README.rst first.
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 44f0eb64952a..0dca6e834ffa 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -3100,9 +3100,8 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 			       QMFLAGS_IS_BLOCKING |
+ 			       QMFLAGS_NO_MUTEX_LOCK |
+ 			       QMFLAGS_NO_MUTEX_UNLOCK);
+-	if (status != VCHIQ_SUCCESS) {
++	if (status != VCHIQ_SUCCESS)
+ 		goto unlock_both_error_exit;
+-	}
  
- In order to build the documentation, use ``make htmldocs`` or
--``make pdfdocs``.  The formatted documentation can also be read online at:
-+``make pdfdocs``. The formatted documentation can also be read online at:
- 
-     https://www.kernel.org/doc/html/latest/
+ 	queue->local_insert++;
  
 -- 
-2.21.0.windows.1
+2.17.1
 
