@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC55F39731
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42D5F3972E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730950AbfFGVAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:00:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
+        id S1730835AbfFGVAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 17:00:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730647AbfFGVAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:00:13 -0400
-Subject: Re: [PULL 0/1] xtensa fix for v5.2-rc4
+        id S1730740AbfFGVAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 17:00:12 -0400
+Subject: Re: [GIT PULL] Kbuild fixes for v5.2-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559941213;
-        bh=qsQw7q51mWSuGhsUf6Fcc+0ldCdSkFkOJn/SDaThJs4=;
+        s=default; t=1559941212;
+        bh=qUiTD/dsBmED2JaZcS8ytEiu7iFpnKUam9jTCI7bGzs=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=j77cHE1FkmGwJiMkdNlM9gX8J186SwveeD6eHtaat/2moDnhlcF41WV8+Hqzpjfri
-         NsHzRN/tRxywB44jUZ9jC3r0AEE4L+EPiAvnkUc5JCICksRABQ576jTcerNBgcCocO
-         rAxv18dFTSTMU99FxQGU1g1adXIY+Wqp5JEYyO+Y=
+        b=uLrHICDXLhehQqdkCax6ULkTpvEd06MOlnJmrI1fAfxaKpToUPIDmduUACL7NpF2/
+         EsVCRP3u8zGYLZBuIrQiq46e77MUTIm9mvOpgdL0lPf0OwlrU5byaBUHwSZcowlRYq
+         ciRKoXpY7J1kfXZOwnz0UaUwKBoaOg5qV+0abcwE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190607190131.4252-1-jcmvbkbc@gmail.com>
-References: <20190607190131.4252-1-jcmvbkbc@gmail.com>
+In-Reply-To: <CAK7LNAQZ2FAZcc367eCPqhwYRVvP+65hDa5hx6qfTwh2qVGL=w@mail.gmail.com>
+References: <CAK7LNAQZ2FAZcc367eCPqhwYRVvP+65hDa5hx6qfTwh2qVGL=w@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190607190131.4252-1-jcmvbkbc@gmail.com>
-X-PR-Tracked-Remote: git://github.com/jcmvbkbc/linux-xtensa.git
- tags/xtensa-20190607
-X-PR-Tracked-Commit-Id: adefd051a6707a6ca0ebad278d3c1c05c960fc3b
+X-PR-Tracked-Message-Id: <CAK7LNAQZ2FAZcc367eCPqhwYRVvP+65hDa5hx6qfTwh2qVGL=w@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+ tags/kbuild-fixes-v5.2-2
+X-PR-Tracked-Commit-Id: 913ab9780fc021298949cc5514d6255a008e69f9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d18c7e9d6e4e0ba358459e812bf115b4ccef54ce
-Message-Id: <155994121299.4194.8888627260516861331.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 33de0d1c68a5127e923363349c349d90c7da06a1
+Message-Id: <155994121244.4194.14272650752821099142.pr-tracker-bot@kernel.org>
 Date:   Fri, 07 Jun 2019 21:00:12 +0000
-To:     Max Filippov <jcmvbkbc@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        masahiroy@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri,  7 Jun 2019 12:01:31 -0700:
+The pull request you sent on Sat, 8 Jun 2019 00:52:56 +0900:
 
-> git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20190607
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v5.2-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d18c7e9d6e4e0ba358459e812bf115b4ccef54ce
+https://git.kernel.org/torvalds/c/33de0d1c68a5127e923363349c349d90c7da06a1
 
 Thank you!
 
