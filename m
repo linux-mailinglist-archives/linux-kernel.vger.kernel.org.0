@@ -2,107 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DDF539446
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 073B33943A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731837AbfFGSZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:25:38 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46891 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731818AbfFGSZe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:25:34 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 81so1629107pfy.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dxBPpI3MVYsAOxpF8JiGIoXl4M0t+BGFY9DsJwBkErU=;
-        b=Kg+RmyEZNMx30Kvg+YHlUO2MVSec/5luO1b0NM7cCj2Dl2SWeLDw8XeQqmeit9/582
-         GbFInsFxisllWwsM2qZ/BwgVFVeHyGvqaQwhoc4t82+XLMvi0npmjLX+7Vwzav8hQI8k
-         96GjP48TC+5BWoHfsdtV6srD1+njcaNx6+rVmLaj59EFryRtM8yYNhLJgm3hP+A+ICJG
-         tY9Q8Epn40gpi1rF0aXXABPb/uptN12TQ6MINhHWiOpmVJpaIpby8hPqMlojbulQW11X
-         gnjQtPZAnejkBDRiRQ5eSjC1l6BU3vKee1zUFTrN3Hp86J+gupcSY0pj/HOJWAhYbFVR
-         kILw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dxBPpI3MVYsAOxpF8JiGIoXl4M0t+BGFY9DsJwBkErU=;
-        b=E8YpF5L2/BuN2ieVsrMMokWfADlwy78AETSninKOx2rtWdKKJ31qa/Z7QBKJcel86l
-         H6Gf07ZP3un+WNkN7udFpD3u1lDcj8/TxTX4AjR47KbYx6WPRcYSNkovMredn4UE2SHj
-         ziyiThw3q95+u3B/2E7j26h40MhFVBS4yB7no8054QWGW/GbFYzN39d3r+hE6bWSV8zy
-         2jO57Jq0qcEXJOXgL/+4VhPSVkyATIxbnc//bmfU1V0UThCjvWbgQZSrndml7KAkSpOL
-         7PmL9SMbwtvDRzHRShllWJ9xkj9uYTAvcMa0I/iOjpil+eYIHC36Y2DAYTLtL3zvkZzp
-         E1IQ==
-X-Gm-Message-State: APjAAAWnWdXVL0hjTCSKC9SfNbz7qo7aJVWMW2cMTGwv5Hpg6Da5SAkR
-        xLY52S1m0OYcgygkW3MhJAo=
-X-Google-Smtp-Source: APXvYqwjy68R2apR0dXEdMRF+izBl8FP1xMw8f+LXYbvK3UnQ2ZsKiFCaxnpSZjRv/c5GcdnGGeZWg==
-X-Received: by 2002:a63:374d:: with SMTP id g13mr4343521pgn.413.1559931933695;
-        Fri, 07 Jun 2019 11:25:33 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id w187sm4076997pfb.4.2019.06.07.11.25.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2019 11:25:33 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     tytso@mit.edu, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 5/5] random: remove some dead code of poolinfo
-Date:   Fri,  7 Jun 2019 14:25:17 -0400
-Message-Id: <20190607182517.28266-5-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190607182517.28266-1-tiny.windzz@gmail.com>
-References: <20190607182517.28266-1-tiny.windzz@gmail.com>
+        id S1731674AbfFGSYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:24:23 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54926 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729677AbfFGSYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 14:24:22 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 11:24:21 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Jun 2019 11:24:21 -0700
+Date:   Fri, 7 Jun 2019 11:25:35 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607110426.GB12765@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since it is not being used, so delete it.
+On Fri, Jun 07, 2019 at 01:04:26PM +0200, Jan Kara wrote:
+> On Thu 06-06-19 15:03:30, Ira Weiny wrote:
+> > On Thu, Jun 06, 2019 at 12:42:03PM +0200, Jan Kara wrote:
+> > > On Wed 05-06-19 18:45:33, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > 
+> > > So I'd like to actually mandate that you *must* hold the file lease until
+> > > you unpin all pages in the given range (not just that you have an option to
+> > > hold a lease). And I believe the kernel should actually enforce this. That
+> > > way we maintain a sane state that if someone uses a physical location of
+> > > logical file offset on disk, he has a layout lease. Also once this is done,
+> > > sysadmin has a reasonably easy way to discover run-away RDMA application
+> > > and kill it if he wishes so.
+> > 
+> > Fair enough.
+> > 
+> > I was kind of heading that direction but had not thought this far forward.  I
+> > was exploring how to have a lease remain on the file even after a "lease
+> > break".  But that is incompatible with the current semantics of a "layout"
+> > lease (as currently defined in the kernel).  [In the end I wanted to get an RFC
+> > out to see what people think of this idea so I did not look at keeping the
+> > lease.]
+> > 
+> > Also hitch is that currently a lease is forcefully broken after
+> > <sysfs>/lease-break-time.  To do what you suggest I think we would need a new
+> > lease type with the semantics you describe.
+> 
+> I'd do what Dave suggested - add flag to mark lease as unbreakable by
+> truncate and teach file locking core to handle that. There actually is
+> support for locks that are not broken after given timeout so there
+> shouldn't be too many changes need.
+>  
+> > Previously I had thought this would be a good idea (for other reasons).  But
+> > what does everyone think about using a "longterm lease" similar to [1] which
+> > has the semantics you proppose?  In [1] I was not sure "longterm" was a good
+> > name but with your proposal I think it makes more sense.
+> 
+> As I wrote elsewhere in this thread I think FL_LAYOUT name still makes
+> sense and I'd add there FL_UNBREAKABLE to mark unusal behavior with
+> truncate.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/char/random.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
+Ok I want to make sure I understand what you and Dave are suggesting.
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 885707ac8e3b..d83401e35f71 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -441,33 +441,6 @@ static const struct poolinfo {
- 	/* was: x^32 + x^26 + x^20 + x^14 + x^7 + x + 1 */
- 	/* x^32 + x^26 + x^19 + x^14 + x^7 + x + 1 */
- 	{ S(32),	26,	19,	14,	7,	1 },
--#if 0
--	/* x^2048 + x^1638 + x^1231 + x^819 + x^411 + x + 1  -- 115 */
--	{ S(2048),	1638,	1231,	819,	411,	1 },
--
--	/* x^1024 + x^817 + x^615 + x^412 + x^204 + x + 1 -- 290 */
--	{ S(1024),	817,	615,	412,	204,	1 },
--
--	/* x^1024 + x^819 + x^616 + x^410 + x^207 + x^2 + 1 -- 115 */
--	{ S(1024),	819,	616,	410,	207,	2 },
--
--	/* x^512 + x^411 + x^308 + x^208 + x^104 + x + 1 -- 225 */
--	{ S(512),	411,	308,	208,	104,	1 },
--
--	/* x^512 + x^409 + x^307 + x^206 + x^102 + x^2 + 1 -- 95 */
--	{ S(512),	409,	307,	206,	102,	2 },
--	/* x^512 + x^409 + x^309 + x^205 + x^103 + x^2 + 1 -- 95 */
--	{ S(512),	409,	309,	205,	103,	2 },
--
--	/* x^256 + x^205 + x^155 + x^101 + x^52 + x + 1 -- 125 */
--	{ S(256),	205,	155,	101,	52,	1 },
--
--	/* x^128 + x^103 + x^78 + x^51 + x^27 + x^2 + 1 -- 70 */
--	{ S(128),	103,	78,	51,	27,	2 },
--
--	/* x^64 + x^52 + x^39 + x^26 + x^14 + x + 1 -- 15 */
--	{ S(64),	52,	39,	26,	14,	1 },
--#endif
- };
- 
- /*
--- 
-2.17.0
+Are you suggesting that we have something like this from user space?
+
+	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
+
+> 
+> > > - probably I'd just transition all gup_longterm()
+> > > users to a saner API similar to the one we have in mm/frame_vector.c where
+> > > we don't hand out page pointers but an encapsulating structure that does
+> > > all the necessary tracking.
+> > 
+> > I'll take a look at that code.  But that seems like a pretty big change.
+> 
+> I was looking into that yesterday before proposing this and there aren't
+> than many gup_longterm() users and most of them anyway just stick pages
+> array into their tracking structure and then release them once done. So it
+> shouldn't be that complex to convert to a new convention (and you have to
+> touch all gup_longterm() users anyway to teach them track leases etc.).
+
+I think in the direction we are heading this becomes more attractive for sure.
+For me though it will take some time.
+
+Should we convert the frame_vector over to this new mechanism?  (Or more
+accurately perhaps, add to frame_vector and use it?)  It seems bad to have "yet
+another object" returned from the pin pages interface...
+
+And I think this is related to what Christoph Hellwig is doing with bio_vec and
+dma.  Really we want drivers out of the page processing business.
+
+So for now I'm going to move forward with the idea of handing "some object" to
+the GUP callers and figure out the lsof stuff, and let bigger questions like
+this play out a bit more before I try and work with that code.  Fair?
+
+> 
+> > > Removing a lease would need to block until all
+> > > pins are released - this is probably the most hairy part since we need to
+> > > handle a case if application just closes the file descriptor which would
+> > > release the lease but OTOH we need to make sure task exit does not deadlock.
+> > > Maybe we could block only on explicit lease unlock and just drop the layout
+> > > lease on file close and if there are still pinned pages, send SIGKILL to an
+> > > application as a reminder it did something stupid...
+> > 
+> > As presented at LSFmm I'm not opposed to killing a process which does not
+> > "follow the rules".  But I'm concerned about how to handle this across a fork.
+> > 
+> > Limiting the open()/LEASE/GUP/close()/SIGKILL to a specific pid "leak"'s pins
+> > to a child through the RDMA context.  This was the major issue Jason had with
+> > the SIGBUS proposal.
+> > 
+> > Always sending a SIGKILL would prevent an RDMA process from doing something
+> > like system("ls") (would kill the child unnecessarily).  Are we ok with that?
+> 
+> I answered this in another email but system("ls") won't kill anybody.
+> fork(2) just creates new file descriptor for the same file and possibly
+> then closes it but since there is still another file descriptor for the
+> same struct file, the "close" code won't trigger.
+
+Agreed.  I was wrong.  Sorry.
+
+But if we can keep track of who has the pins in lsof can we agree no process
+needs to be SIGKILL'ed?  Admins can do this on their own "killing" if they
+really need to stop the use of these files, right?
+
+Ira
 
