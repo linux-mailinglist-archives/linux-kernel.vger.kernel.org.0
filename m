@@ -2,80 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6E23930B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DEA13930E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731299AbfFGRY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 13:24:29 -0400
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:45219 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729551AbfFGRY3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:24:29 -0400
-Received: by mail-lj1-f179.google.com with SMTP id m23so2395890lje.12
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 10:24:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rvs3ujD57naAfmKfNsIZ+NFc+doeqL+Vny0LiZy24zg=;
-        b=HJLBkowV2olHeKEHPjimbZ4AIcfMLKHtIu0nL7BRIAel63MHnYXUHTX65sX00ikeCq
-         Z6tHEUAlBObR3xwKed/8hqLdaXGObdkgGprO0NTrgJNl/pEIAUUDV8D/9pv0vUOJlBP8
-         Frj3ERAz0q4FVPxu1SYZ53YyTGDvL3jzpjJLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rvs3ujD57naAfmKfNsIZ+NFc+doeqL+Vny0LiZy24zg=;
-        b=SVajuBpqL5IxEPNxz9MMCqwOHpXO3rfLNMjyI7CeFW7xH+rBXzcILQMmPdQ3FM+0VO
-         p1GWB87pqa5ug9zPHZvLcQRYMC6E/W9E7qEYvLnctrreVC/pSpUF5I+cvdLN3xNxjWaq
-         Fkf3FNrcm0qzitP5Y5P2cRbGnCFybw2Yx3V1WfmmMLYnpaEhh8i2ZsX3VtWQwX+/tTzo
-         ZaPVdFTpEQ0PmQEbBS3MGbq6Hd7Tkr6BI650tABcxncKt93e9K4pQ41HmKxW9+o+D6dm
-         1cF1wgTx21W1Kb/cv5CzqYqi1VsW4tJxRu4AxW24nuJqTyoQVA96ABtgOCx7ws0bRsYV
-         pnFA==
-X-Gm-Message-State: APjAAAWCZLICsYZazWj9hgCAHLpH8kNwUHZjUBpJrhXIS62eFGjvIqx+
-        MQp+7ISYdb+kF1WxAVYEz1Z0vJT2e5Q=
-X-Google-Smtp-Source: APXvYqzMhnOrv+eojlggJ1ttmUIxwyqbZksooiYwWPB8PZW34jfVi8vMhPESY7jnZ//kW0y8qCpe4g==
-X-Received: by 2002:a2e:9ed9:: with SMTP id h25mr18647730ljk.13.1559928267122;
-        Fri, 07 Jun 2019 10:24:27 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id l25sm500982lfk.57.2019.06.07.10.24.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 10:24:26 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id 136so2197658lfa.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 10:24:26 -0700 (PDT)
-X-Received: by 2002:ac2:4565:: with SMTP id k5mr23902691lfm.170.1559928265813;
- Fri, 07 Jun 2019 10:24:25 -0700 (PDT)
+        id S1731320AbfFGRYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:24:35 -0400
+Received: from ms.lwn.net ([45.79.88.28]:57778 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729551AbfFGRYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:24:34 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id EFAC07DA;
+        Fri,  7 Jun 2019 17:24:33 +0000 (UTC)
+Date:   Fri, 7 Jun 2019 11:24:33 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jiri Kosina <trivial@kernel.org>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH trivial] Documentation: net: dsa: Grammar s/the its/its/
+Message-ID: <20190607112433.182eb3ff@lwn.net>
+In-Reply-To: <20190607110842.12876-1-geert+renesas@glider.be>
+References: <20190607110842.12876-1-geert+renesas@glider.be>
+Organization: LWN.net
 MIME-Version: 1.0
-References: <CAPM=9tx_2-ANvU3CsasrHkaJsyRV+NxP1AoM0ZSu8teht3FuEg@mail.gmail.com>
- <CAHk-=wgOGPPO6owAcRiBd0KJpmjH-C83-=_N6QeQzyiCW4kb0w@mail.gmail.com>
-In-Reply-To: <CAHk-=wgOGPPO6owAcRiBd0KJpmjH-C83-=_N6QeQzyiCW4kb0w@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 7 Jun 2019 10:24:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wipemA-iriz99pRYvoGszNjQn9cUHwzvV55HOrx-KEmWw@mail.gmail.com>
-Message-ID: <CAHk-=wipemA-iriz99pRYvoGszNjQn9cUHwzvV55HOrx-KEmWw@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for v5.2-rc4 (v2)
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 10:20 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> The second one has the subject, and mentions nouveau, but doesn't
-> actually have the tag name or the expected diffstat and shortlog.
+On Fri,  7 Jun 2019 13:08:42 +0200
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-Hmm. I'm guessing you meant for me to pull the
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/networking/dsa/dsa.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/networking/dsa/dsa.rst b/Documentation/networking/dsa/dsa.rst
+> index ca87068b9ab904a9..563d56c6a25c924e 100644
+> --- a/Documentation/networking/dsa/dsa.rst
+> +++ b/Documentation/networking/dsa/dsa.rst
+> @@ -531,7 +531,7 @@ Bridge VLAN filtering
+>    a software implementation.
+>  
+>  .. note:: VLAN ID 0 corresponds to the port private database, which, in the context
+> -        of DSA, would be the its port-based VLAN, used by the associated bridge device.
+> +        of DSA, would be its port-based VLAN, used by the associated bridge device.
+>  
+>  - ``port_fdb_del``: bridge layer function invoked when the bridge wants to remove a
+>    Forwarding Database entry, the switch hardware should be programmed to delete
+> @@ -554,7 +554,7 @@ Bridge VLAN filtering
+>    associated with this VLAN ID.
+>  
+>  .. note:: VLAN ID 0 corresponds to the port private database, which, in the context
+> -        of DSA, would be the its port-based VLAN, used by the associated bridge device.
+> +        of DSA, would be its port-based VLAN, used by the associated bridge device.
 
-  'tags/drm-fixes-2019-06-07-1'
+Applied, thanks.
 
-thing, which looks likely, but I'd like to have confirmation.
-
-                 Linus
+jon
