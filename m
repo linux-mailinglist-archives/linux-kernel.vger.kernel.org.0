@@ -2,211 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E69383853C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6CF385C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 09:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfFGHoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 03:44:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38764 "EHLO mx1.redhat.com"
+        id S1727121AbfFGHyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 03:54:13 -0400
+Received: from mail.velocard.eu ([80.211.74.207]:60782 "EHLO mail.velocard.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfFGHoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 03:44:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7480C3082A9B;
-        Fri,  7 Jun 2019 07:43:48 +0000 (UTC)
-Received: from [10.36.117.220] (ovpn-117-220.ams2.redhat.com [10.36.117.220])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 78A997D64B;
-        Fri,  7 Jun 2019 07:43:38 +0000 (UTC)
-Subject: Re: [PATCH V5 1/3] mm/hotplug: Reorder arch_remove_memory() call in
- __remove_memory()
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, mhocko@suse.com, ira.weiny@intel.com,
-        cai@lca.pw, logang@deltatee.com, james.morse@arm.com,
-        cpandya@codeaurora.org, arunks@codeaurora.org,
-        dan.j.williams@intel.com, mgorman@techsingularity.net,
-        osalvador@suse.de, ard.biesheuvel@arm.com
-References: <1559121387-674-1-git-send-email-anshuman.khandual@arm.com>
- <1559121387-674-2-git-send-email-anshuman.khandual@arm.com>
- <20190530103709.GB56046@lakrids.cambridge.arm.com>
- <7d0538bb-aeef-f5f5-3371-db7b58dcb083@arm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <36e0126f-e2d1-239c-71f3-91125a49e019@redhat.com>
-Date:   Fri, 7 Jun 2019 09:43:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726607AbfFGHyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 03:54:12 -0400
+X-Greylist: delayed 495 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 03:54:11 EDT
+Received: by mail.velocard.eu (Postfix, from userid 1001)
+        id 72F198765F; Fri,  7 Jun 2019 09:45:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=velocard.eu; s=mail;
+        t=1559893555; bh=28mexHLKqDk2ixxtw16xz45K8l/dWN7qZL8I5V4XNxg=;
+        h=Date:From:To:Subject:From;
+        b=KeIeozMvSeJH+xfq4OyQK2T+GlDMi5kjRNCNirnAE0sUUjpZj8RR3MYuU4Wyqi7r3
+         bZuuYcSpUei+Ka0fuEdt7HyfyrMhHKh04tT82b9T+fkWsKdjXLpsN5q2H9C3j18nNv
+         GjBnYdyou0fTbf2rMcLJYq7fxaB2A/zYkGHG0N9c=
+Received: by mail.velocard.eu for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 07:45:51 GMT
+Message-ID: <20190607084500-0.1.j.1bgz.0.ubh8f70xkm@velocard.eu>
+Date:   Fri,  7 Jun 2019 07:45:51 GMT
+From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= 
+        <kapolcs.matyas@velocard.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?B=C3=A9ren_fel=C3=BCli_juttat=C3=A1sok?=
+X-Mailer: mail.velocard.eu
 MIME-Version: 1.0
-In-Reply-To: <7d0538bb-aeef-f5f5-3371-db7b58dcb083@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 07 Jun 2019 07:44:05 +0000 (UTC)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.06.19 04:28, Anshuman Khandual wrote:
-> 
-> 
-> On 05/30/2019 04:07 PM, Mark Rutland wrote:
->> On Wed, May 29, 2019 at 02:46:25PM +0530, Anshuman Khandual wrote:
->>> Memory hot remove uses get_nid_for_pfn() while tearing down linked sysfs
->>> entries between memory block and node. It first checks pfn validity with
->>> pfn_valid_within() before fetching nid. With CONFIG_HOLES_IN_ZONE config
->>> (arm64 has this enabled) pfn_valid_within() calls pfn_valid().
->>>
->>> pfn_valid() is an arch implementation on arm64 (CONFIG_HAVE_ARCH_PFN_VALID)
->>> which scans all mapped memblock regions with memblock_is_map_memory(). This
->>> creates a problem in memory hot remove path which has already removed given
->>> memory range from memory block with memblock_[remove|free] before arriving
->>> at unregister_mem_sect_under_nodes(). Hence get_nid_for_pfn() returns -1
->>> skipping subsequent sysfs_remove_link() calls leaving node <-> memory block
->>> sysfs entries as is. Subsequent memory add operation hits BUG_ON() because
->>> of existing sysfs entries.
->>>
->>> [   62.007176] NUMA: Unknown node for memory at 0x680000000, assuming node 0
->>> [   62.052517] ------------[ cut here ]------------
->>> [   62.053211] kernel BUG at mm/memory_hotplug.c:1143!
->>> [   62.053868] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->>> [   62.054589] Modules linked in:
->>> [   62.054999] CPU: 19 PID: 3275 Comm: bash Not tainted 5.1.0-rc2-00004-g28cea40b2683 #41
->>> [   62.056274] Hardware name: linux,dummy-virt (DT)
->>> [   62.057166] pstate: 40400005 (nZcv daif +PAN -UAO)
->>> [   62.058083] pc : add_memory_resource+0x1cc/0x1d8
->>> [   62.058961] lr : add_memory_resource+0x10c/0x1d8
->>> [   62.059842] sp : ffff0000168b3ce0
->>> [   62.060477] x29: ffff0000168b3ce0 x28: ffff8005db546c00
->>> [   62.061501] x27: 0000000000000000 x26: 0000000000000000
->>> [   62.062509] x25: ffff0000111ef000 x24: ffff0000111ef5d0
->>> [   62.063520] x23: 0000000000000000 x22: 00000006bfffffff
->>> [   62.064540] x21: 00000000ffffffef x20: 00000000006c0000
->>> [   62.065558] x19: 0000000000680000 x18: 0000000000000024
->>> [   62.066566] x17: 0000000000000000 x16: 0000000000000000
->>> [   62.067579] x15: ffffffffffffffff x14: ffff8005e412e890
->>> [   62.068588] x13: ffff8005d6b105d8 x12: 0000000000000000
->>> [   62.069610] x11: ffff8005d6b10490 x10: 0000000000000040
->>> [   62.070615] x9 : ffff8005e412e898 x8 : ffff8005e412e890
->>> [   62.071631] x7 : ffff8005d6b105d8 x6 : ffff8005db546c00
->>> [   62.072640] x5 : 0000000000000001 x4 : 0000000000000002
->>> [   62.073654] x3 : ffff8005d7049480 x2 : 0000000000000002
->>> [   62.074666] x1 : 0000000000000003 x0 : 00000000ffffffef
->>> [   62.075685] Process bash (pid: 3275, stack limit = 0x00000000d754280f)
->>> [   62.076930] Call trace:
->>> [   62.077411]  add_memory_resource+0x1cc/0x1d8
->>> [   62.078227]  __add_memory+0x70/0xa8
->>> [   62.078901]  probe_store+0xa4/0xc8
->>> [   62.079561]  dev_attr_store+0x18/0x28
->>> [   62.080270]  sysfs_kf_write+0x40/0x58
->>> [   62.080992]  kernfs_fop_write+0xcc/0x1d8
->>> [   62.081744]  __vfs_write+0x18/0x40
->>> [   62.082400]  vfs_write+0xa4/0x1b0
->>> [   62.083037]  ksys_write+0x5c/0xc0
->>> [   62.083681]  __arm64_sys_write+0x18/0x20
->>> [   62.084432]  el0_svc_handler+0x88/0x100
->>> [   62.085177]  el0_svc+0x8/0xc
->>>
->>> Re-ordering arch_remove_memory() with memblock_[free|remove] solves the
->>> problem on arm64 as pfn_valid() behaves correctly and returns positive
->>> as memblock for the address range still exists. arch_remove_memory()
->>> removes applicable memory sections from zone with __remove_pages() and
->>> tears down kernel linear mapping. Removing memblock regions afterwards
->>> is safe because there is no other memblock (bootmem) allocator user that
->>> late. So nobody is going to allocate from the removed range just to blow
->>> up later. Also nobody should be using the bootmem allocated range else
->>> we wouldn't allow to remove it. So reordering is indeed safe.
->>>
->>> Acked-by: Michal Hocko <mhocko@suse.com>
->>> Reviewed-by: David Hildenbrand <david@redhat.com>
->>> Reviewed-by: Oscar Salvador <osalvador@suse.de>
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>
->> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Hello Andrew,
-> 
-> Will it be possible for this particular patch of the series to be merged alone.
-> I am still reworking arm64 hot-remove parts as per the suggestions from Mark.
-> Just wondering if this patch which has been reviewed and acked for a while now
-> can be out of our way.
+Kedves H=C3=B6lgyem/Uram!
 
-I suggest that you just resend a rebased version (linux-next). That
-makes it much easier for Andrew to pick up (and for others to review).
+2019 janu=C3=A1rj=C3=A1t=C3=B3l szinte minden b=C3=A9ren k=C3=ADv=C3=BCli=
+ juttat=C3=A1s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9telt k=C3=
+=A9pez ez al=C3=B3l a SZ=C3=89P k=C3=A1rtya). A v=C3=A1ltoz=C3=A1sok elle=
+n=C3=A9re a v=C3=A1llalatok t=C3=B6bb mint 55%-a meg k=C3=ADv=C3=A1nja ta=
+rtani a dolgoz=C3=B3i juttat=C3=A1sok nett=C3=B3 =C3=B6sszeg=C3=A9t, mag=C3=
+=A1ra v=C3=A1llalva ezzel a megemelkedett ad=C3=B3terheket.=20
 
-Cheers!
+Juttat=C3=A1si k=C3=A1rty=C3=A1ink seg=C3=ADts=C3=A9g=C3=A9vel 2019-ben a=
+ munk=C3=A1ltat=C3=B3k lefedhetik szinte az =C3=B6sszes jelenleg haszn=C3=
+=A1lt b=C3=A9ren k=C3=ADv=C3=BCli juttat=C3=A1st, mik=C3=B6zben munkav=C3=
+=A1llal=C3=B3ik =C3=A9lvezhetik az ak=C3=A1r korl=C3=A1tlan felhaszn=C3=A1=
+l=C3=A1s lehet=C5=91s=C3=A9g=C3=A9t.  A SZ=C3=89P k=C3=A1rty=C3=A1t=C3=B3=
+l elt=C3=A9r=C5=91en a mi k=C3=A1rty=C3=A1inkkal olyan mindennapos k=C3=B6=
+lts=C3=A9gek fedezhet=C5=91ek mint p=C3=A9ld=C3=A1ul =C3=A9lelmiszer v=C3=
+=A1s=C3=A1rl=C3=A1s, eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s, ruh=C3=
+=A1zat, elektronika, =C3=BCzemanyagk=C3=B6lts=C3=A9g, k=C3=B6zm=C5=B1d=C3=
+=ADj, s=C5=91t, ak=C3=A1r m=C3=A9g k=C3=A9szp=C3=A9nzfelv=C3=A9telre is a=
+lkalmasak.=20
 
-> 
-> Also because this has some conflict with David's series which can be sorted out
-> earlier before arm64 hot-remove V6 series comes in.
-> 
-> From my previous response on this series last week, the following can resolve
-> the conflict with David's [v3, 09/11] patch.
-> 
-> C) Rebase (https://patchwork.kernel.org/patch/10962589/) [v3, 09/11]
-> 
-> 	- hot-remove series moves arch_remove_memory() before memblock_[free|remove]()
-> 	- So remove_memory_block_devices() should be moved before arch_remove_memory()
-> 	  in it's new position   
-> 
-> It will be great if this patch can be merged alone.
-> 
-> - Anshuman
-> 
+Ez az egyetlen olyan juttat=C3=A1si k=C3=A1rtya a magyar piacon, melyet m=
+inden hazai POS termin=C3=A1l elfogad, ezzel biztos=C3=ADtva a k=C3=A1rty=
+a sz=C3=A9les k=C3=B6r=C5=B1 felhaszn=C3=A1lhat=C3=B3s=C3=A1g=C3=A1t.=20
+
+Sz=C3=ADvesen bemutatom =C3=96nnek, milyen tov=C3=A1bbi el=C5=91ny=C3=B6k=
+kel j=C3=A1r k=C3=A1rty=C3=A1ink dolgoz=C3=B3i juttat=C3=A1sk=C3=A9nt t=C3=
+=B6rt=C3=A9n=C5=91 alkalmaz=C3=A1sa, =C3=A9s r=C3=A9szletes t=C3=A1j=C3=A9=
+koztat=C3=A1st adok a k=C3=A1rty=C3=A1k felhaszn=C3=A1l=C3=A1si lehet=C5=91=
+s=C3=A9geir=C5=91l =E2=80=93 k=C3=A9rem jelezze ez ir=C3=A1nti ig=C3=A9ny=
+=C3=A9t.=20
 
 
--- 
+Kapolcs M=C3=A1ty=C3=A1s
+Hungary Team Leader =20
 
-Thanks,
-
-David / dhildenb
