@@ -2,51 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ECB139351
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2889439356
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730183AbfFGReP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 13:34:15 -0400
-Received: from ms.lwn.net ([45.79.88.28]:57840 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728998AbfFGReP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:34:15 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 827F57DA;
-        Fri,  7 Jun 2019 17:34:14 +0000 (UTC)
-Date:   Fri, 7 Jun 2019 11:34:13 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] docs: Kbuild/Makefile: allow check for missing docs at
- build time
-Message-ID: <20190607113413.5d9a3755@lwn.net>
-In-Reply-To: <8ac254a7cf0569f1eeced9c9263cd7b0bfe4ed78.1559651025.git.mchehab+samsung@kernel.org>
-References: <8ac254a7cf0569f1eeced9c9263cd7b0bfe4ed78.1559651025.git.mchehab+samsung@kernel.org>
-Organization: LWN.net
+        id S1731505AbfFGRfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:35:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44222 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728998AbfFGRfB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:35:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7hQvF6Fl7wpi3fnwIv4elLx91/akNUjrVJD1LDKmF/8=; b=ERwvyf3Udn6E8Z2GOp2+PnKoy
+        Vnzh1w7c5nQZq/9/VzaOjNlvKl9gbANHf2+NC+ksT1sBpcNdV2BbJeJzyidxnzDeLxmyuMTQlS5lX
+        4yshsXB60NrOtsphQoXheivkvdwM5Tx96KKxgArkAAA1wxaSRSzdF5BnI1/3eCxvuF1jSiAJf38YC
+        J8zbxMwX/+ZB0tefxEpGUQFEtSH9MAdEg3Ycs0mxPFVfGUFLUyG4Qg/hpdorURjdxjskGz98F00Dq
+        cdUP+eyaQyRyjb+gMvkGSKm7vr/K995wSvX/b00W8esPuz2RIbprWsxuq0ko47bu+mj24Ik0JkzOM
+        muzKZC5FA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hZIl3-0002bu-JV; Fri, 07 Jun 2019 17:34:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5357120227117; Fri,  7 Jun 2019 19:34:27 +0200 (CEST)
+Date:   Fri, 7 Jun 2019 19:34:27 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
+ instructions
+Message-ID: <20190607173427.GK3436@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.005681046@infradead.org>
+ <20190608004708.7646b287151cf613838ce05f@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190608004708.7646b287151cf613838ce05f@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  4 Jun 2019 09:26:27 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+On Sat, Jun 08, 2019 at 12:47:08AM +0900, Masami Hiramatsu wrote:
 
-> While this doesn't make sense for production Kernels, in order to
-> avoid regressions when documents are touched, let's add a
-> check target at the make file.
+> > This fits almost all text_poke_bp() users, except
+> > arch_unoptimize_kprobe() which restores random text, and for that site
+> > we have to build an explicit emulate instruction.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Hm, actually it doesn't restores randome text, since the first byte
+> must always be int3. As the function name means, it just unoptimizes
+> (jump based optprobe -> int3 based kprobe).
+> Anyway, that is not an issue. With this patch, optprobe must still work.
 
-Applied, thanks.
+I thought it basically restored 5 bytes of original text (with no
+guarantee it is a single instruction, or even a complete instruction),
+with the first byte replaced with INT3.
 
-jon
+> > @@ -943,8 +949,21 @@ int poke_int3_handler(struct pt_regs *re
+> >  	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
+> >  		return 0;
+> >  
+> > -	/* set up the specified breakpoint handler */
+> > -	regs->ip = (unsigned long) bp_int3_handler;
+> > +	opcode = *(struct opcode *)bp_int3_opcode;
+> > +
+> > +	switch (opcode.insn) {
+> > +	case 0xE8: /* CALL */
+> > +		int3_emulate_call(regs, ip + opcode.rel);
+> > +		break;
+> > +
+> > +	case 0xE9: /* JMP */
+> > +		int3_emulate_jmp(regs, ip + opcode.rel);
+> > +		break;
+> > +
+> > +	default: /* assume NOP */
+> 
+> Shouldn't we check whether it is actually NOP here?
+
+I was/am lazy and didn't want to deal with:
+
+arch/x86/include/asm/nops.h:#define GENERIC_NOP5_ATOMIC NOP_DS_PREFIX,GENERIC_NOP4
+arch/x86/include/asm/nops.h:#define K8_NOP5_ATOMIC 0x66,K8_NOP4
+arch/x86/include/asm/nops.h:#define K7_NOP5_ATOMIC NOP_DS_PREFIX,K7_NOP4
+arch/x86/include/asm/nops.h:#define P6_NOP5_ATOMIC P6_NOP5
+
+But maybe we should check for all the various NOP5 variants and BUG() on
+anything unexpected.
+
+> > +		int3_emulate_jmp(regs, ip);
+> > +		break;
+> > +	}
+> 
+> BTW, if we fix the length of patching always 5 bytes and allow user
+> to apply it only from/to jump/call/nop, we may be better to remove
+> "len" and rename it, something like "text_poke_branch" etc.
+
+I considered it; but was thinking we could still allow patching other
+instructions, we'd just have to extend the emulation in
+poke_int3_handler().
+
+Then again, if/when we want to do that, we can also restore the @len
+argument again.
