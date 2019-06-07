@@ -2,54 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A27E238392
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 06:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71BDD3838C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 06:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfFGErS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 00:47:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46788 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbfFGEqp (ORCPT
+        id S1726795AbfFGEqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 00:46:55 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41865 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfFGEqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 00:46:45 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 81so440698pfy.13
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 21:46:45 -0700 (PDT)
+        Fri, 7 Jun 2019 00:46:47 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q17so451973pfq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 21:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q0v+BcQmulHNucpxyA52yB5gSwLum7NLCDQmJ1Ymhrs=;
-        b=LTS9Fg434BEKRayzjptrBJ29XhWEJGNMFsVAg3qpTKOB5bGAqjMjz7t/7CvdCFb+Mi
-         uS8wTDThTjnehndfcu/GX8U7JWEoa16OmKqPtHJFvevcQAbDJTu2+n1PbVB55z48LNsP
-         enwQ6MpJs7JgrRRPohn1lMpTR0BNRZj3BV7GhpFe0mR/QEDR5EZrNLdzBe+7PVBv0pys
-         Kih2pu+r5vVOfG6Dln7BqXqXDrAbmBiavviREDBwiIkVrIdFIwzNa3Wp2Jfsn4QWlbX9
-         UvD81VKrFp/qQkNSeJzFIaAnLZSmsYgmiC94ewD4+tw5VG+FlTbXeacp65A5lqf279HR
-         1XSA==
+        bh=ATu26WvvNPiJ9Ah/tmZWwxGXI/i8AcwKGoFEMQ2U0A4=;
+        b=Qit71R6hsjTt2C4V/Wmws+Xb8tajqL1zmFx25XZOZkLaLnybvYDuq2g3DOfwRErqu4
+         YUfs6BWhrZeulSYQPt0iTiYCnSiWyT0Q548h4FFds+OlzCOyu7ZaoK9GkfsLjKNomynO
+         LIEGZ+rvvioEEtU2eqbUpTe8Ki6OMkD8VbIElvbUU6Lml4Xy9HW99/TL18ROZhaPf6Wm
+         YownnNe5HLc+1BzuUy28y1uoOTzBUk+jxHZODcxx8fv/Iwv913Zp+PY9/v2QlHDHQoiE
+         T5OwKc4trf32G6q3HsjgHFEeU6JEPWTLgVokIIm8xpEEbbacOTc3lEy+GhJ+6wEVLWr+
+         ZcWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q0v+BcQmulHNucpxyA52yB5gSwLum7NLCDQmJ1Ymhrs=;
-        b=l3UD30Mpsz9ILT5WNpElNbwSOqK7fKFUejqy/sU499XxS7SLADM7dAMRf+RCq8pbUp
-         MjQP59JH43eKfhKbkIPkpAvVotBv9KWouCccC7cv/rCHTj52Jyz/Y2LS1hqDl9Wb8J3M
-         RJGAeBGnuSYI9Ij/wVA71qyCGBHAWpPUxdMmXcw5u/8O4hNmqfNS9knT+IGLpP0qqAji
-         NJMOP/avhOYn11X2CCXCnnlI1aER6TbxCa6y2IlWyScpbnmbhby/BQN4ckHJIAkNCRNA
-         0Vb0W3FOpwiClh2D4wNwejnOF9yELItRP+msGjp6rlb7X0P4rosysxjuptgrLPgl1DDY
-         luwQ==
-X-Gm-Message-State: APjAAAVsJQoBdwdVbzkuP2ECE6VIcSbIkSxCsl99lKYgViZvEMBVMdp2
-        ElC23c/MjwPdsqhEXzpucCM=
-X-Google-Smtp-Source: APXvYqzxyVVp8a9lLqSU21sCFMJSkbdNaHS0sfCrksAYL3DjVX9PjRMND4e8PDoWnzViGDq3c/MTgw==
-X-Received: by 2002:a63:5009:: with SMTP id e9mr1102316pgb.396.1559882804937;
-        Thu, 06 Jun 2019 21:46:44 -0700 (PDT)
+        bh=ATu26WvvNPiJ9Ah/tmZWwxGXI/i8AcwKGoFEMQ2U0A4=;
+        b=UYKSnR7bf21TIIZDnE8FoTIySUIN0FFd6eVumMAJGM7NkKTgAEEbc4xsCyLOQSL9Vr
+         fRHfafwFgypXeLJDYEYBenqni5igxNTPZbYcYYbZbtqgnNrcf4O9MIJu0R1OWpSlaEL9
+         OSC5hJb7oQzD2aXsBAUEAemgdForMOJFbh6aP3UDN07pvif2QJp3B/OmPIEUvxasuJAv
+         WWkoqPTHNJ1hEVAkVwKndw7Ma1BZ4mIhsdUE6zS9wnwlGnjJMRdcOzoKibpdyk5pizsQ
+         efzNTr+J6xH/HUgr3yfk0iR78Ji9qNLlLt873qT+7fAuPGmPm5vgaXu2WcQaQqUYf1qW
+         Qurw==
+X-Gm-Message-State: APjAAAW1fXt+dhSfPFl241QvLFmZbEUVOux4E/bHbKaFpMinrm1RVYPa
+        gSfnJRWKuSChm3KgYAYKgX8=
+X-Google-Smtp-Source: APXvYqya01PmMslldpFFJmX9gxMsFDFW7DAkTuaAUIFFvO4jrqj3mnDiJc+NAIWK6NlFp8zLLAPNlQ==
+X-Received: by 2002:a17:90a:ba81:: with SMTP id t1mr3370811pjr.139.1559882806633;
+        Thu, 06 Jun 2019 21:46:46 -0700 (PDT)
 Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id o13sm919516pfh.23.2019.06.06.21.46.43
+        by smtp.gmail.com with ESMTPSA id o13sm919516pfh.23.2019.06.06.21.46.45
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 21:46:44 -0700 (PDT)
+        Thu, 06 Jun 2019 21:46:45 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -59,9 +57,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Chris Healy <cphealy@gmail.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 12/15] drm/bridge: tc358767: Introduce tc_pllupdate_pllen()
-Date:   Thu,  6 Jun 2019 21:45:47 -0700
-Message-Id: <20190607044550.13361-13-andrew.smirnov@gmail.com>
+Subject: [PATCH v4 13/15] drm/bridge: tc358767: Simplify tc_aux_wait_busy()
+Date:   Thu,  6 Jun 2019 21:45:48 -0700
+Message-Id: <20190607044550.13361-14-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607044550.13361-1-andrew.smirnov@gmail.com>
 References: <20190607044550.13361-1-andrew.smirnov@gmail.com>
@@ -72,15 +70,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tc_wait_pll_lock() is always called as a follow-up for updating
-PLLUPDATE and PLLEN bit of a given PLL control register. To simplify
-things, merge the two operation into a single helper function
-tc_pllupdate_pllen() and convert the rest of the code to use it. No
-functional change intended.
+We never pass anything but 100 as timeout_ms to tc_aux_wait_busy(), so
+we may as well hardcode that value and simplify function's signature.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Archit Taneja <architt@codeaurora.org>
 Cc: Andrzej Hajda <a.hajda@samsung.com>
 Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
@@ -92,84 +85,44 @@ Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/gpu/drm/bridge/tc358767.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index ac55b59249e3..c994c72eb330 100644
+index c994c72eb330..e747f10021e3 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -443,10 +443,18 @@ static u32 tc_srcctrl(struct tc_data *tc)
- 	return reg;
+@@ -294,10 +294,9 @@ static inline int tc_poll_timeout(struct tc_data *tc, unsigned int addr,
+ 					sleep_us, timeout_us);
  }
  
--static void tc_wait_pll_lock(struct tc_data *tc)
-+static int tc_pllupdate_pllen(struct tc_data *tc, unsigned int pllctrl)
+-static int tc_aux_wait_busy(struct tc_data *tc, unsigned int timeout_ms)
++static int tc_aux_wait_busy(struct tc_data *tc)
  {
-+	int ret;
-+
-+	ret = regmap_write(tc->regmap, pllctrl, PLLUPDATE | PLLEN);
-+	if (ret)
-+		return ret;
-+
- 	/* Wait for PLL to lock: up to 2.09 ms, depending on refclk */
- 	usleep_range(3000, 6000);
-+
-+	return 0;
+-	return tc_poll_timeout(tc, DP0_AUXSTATUS, AUX_BUSY, 0,
+-			       1000, 1000 * timeout_ms);
++	return tc_poll_timeout(tc, DP0_AUXSTATUS, AUX_BUSY, 0, 1000, 100000);
  }
  
- static int tc_pxl_pll_en(struct tc_data *tc, u32 refclk, u32 pixelclock)
-@@ -546,13 +554,7 @@ static int tc_pxl_pll_en(struct tc_data *tc, u32 refclk, u32 pixelclock)
- 		return ret;
+ static int tc_aux_write_data(struct tc_data *tc, const void *data,
+@@ -350,7 +349,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
+ 	u32 auxstatus;
+ 	int ret;
  
- 	/* Force PLL parameter update and disable bypass */
--	ret = regmap_write(tc->regmap, PXL_PLLCTRL, PLLUPDATE | PLLEN);
--	if (ret)
--		return ret;
--
--	tc_wait_pll_lock(tc);
--
--	return 0;
-+	return tc_pllupdate_pllen(tc, PXL_PLLCTRL);
- }
- 
- static int tc_pxl_pll_dis(struct tc_data *tc)
-@@ -626,15 +628,13 @@ static int tc_aux_link_setup(struct tc_data *tc)
- 	 * Initially PLLs are in bypass. Force PLL parameter update,
- 	 * disable PLL bypass, enable PLL
- 	 */
--	ret = regmap_write(tc->regmap, DP0_PLLCTRL, PLLUPDATE | PLLEN);
-+	ret = tc_pllupdate_pllen(tc, DP0_PLLCTRL);
- 	if (ret)
- 		goto err;
--	tc_wait_pll_lock(tc);
- 
--	ret = regmap_write(tc->regmap, DP1_PLLCTRL, PLLUPDATE | PLLEN);
-+	ret = tc_pllupdate_pllen(tc, DP1_PLLCTRL);
- 	if (ret)
- 		goto err;
--	tc_wait_pll_lock(tc);
- 
- 	ret = tc_poll_timeout(tc, DP_PHY_CTRL, PHY_RDY, PHY_RDY, 1, 1000);
- 	if (ret == -ETIMEDOUT) {
-@@ -914,15 +914,13 @@ static int tc_main_link_enable(struct tc_data *tc)
- 		return ret;
- 
- 	/* PLL setup */
--	ret = regmap_write(tc->regmap, DP0_PLLCTRL, PLLUPDATE | PLLEN);
-+	ret = tc_pllupdate_pllen(tc, DP0_PLLCTRL);
+-	ret = tc_aux_wait_busy(tc, 100);
++	ret = tc_aux_wait_busy(tc);
  	if (ret)
  		return ret;
--	tc_wait_pll_lock(tc);
  
--	ret = regmap_write(tc->regmap, DP1_PLLCTRL, PLLUPDATE | PLLEN);
-+	ret = tc_pllupdate_pllen(tc, DP1_PLLCTRL);
+@@ -377,7 +376,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
  	if (ret)
  		return ret;
--	tc_wait_pll_lock(tc);
  
- 	/* Reset/Enable Main Links */
- 	dp_phy_ctrl |= DP_PHY_RST | PHY_M1_RST | PHY_M0_RST;
+-	ret = tc_aux_wait_busy(tc, 100);
++	ret = tc_aux_wait_busy(tc);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.21.0
 
