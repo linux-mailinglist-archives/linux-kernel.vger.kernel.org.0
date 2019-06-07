@@ -2,193 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 690EA39427
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D03E039434
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 20:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731586AbfFGSUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 14:20:54 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42483 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbfFGSUy (ORCPT
+        id S1731699AbfFGSXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 14:23:13 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38917 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730183AbfFGSXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:20:54 -0400
-Received: by mail-qt1-f193.google.com with SMTP id s15so3351083qtk.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:20:53 -0700 (PDT)
+        Fri, 7 Jun 2019 14:23:13 -0400
+Received: by mail-it1-f195.google.com with SMTP id j204so4191394ite.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 11:23:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H7b0K6AHn3lhpoTm1wMSXCMZuAzx8sTZocmvHqLXA2w=;
-        b=alYl8sr8SbMctVNVQo3Va9KlGyawdQnhGteScnFY3nMLYOZvLhK1SvtT82TiGi8KTC
-         kNzd4D6oFgxpMGUTjWL5kxMUwKxK/5RRlKt5PdfcFSqvyjGuXDJY7kwQOmyz4s6M5WmS
-         dIY1W5U/X2yAkdm1iGVneGELzzEdbbEB3iSbly5uhtogv7aox27/iBZ/EpIEXnvf06uc
-         ffE41G0KJLFdmZOsc5f3NWVvnvrH5sDAvohiS8LsnMD36YpYVjF/CFoNx9y8nICw4mBt
-         Gl+5MWZQNsUfy/c17n9rmMpetw3bUhZkgWNj68PcW7NJ2y87AthglmdZFTRt34iS+aMM
-         WymA==
+        h=from:to:cc:subject:date:message-id;
+        bh=GvSp4gzCgfrFcDrCwilhUDsCbSpdZAD9u0QzYjvDaf0=;
+        b=PC+YMhuNaUWAWX/Lb0gLc/h+nxONJn2eHx5nbhURAcSpznHVvBeFqIXMfnhC1abY8A
+         qZFVchyCFcRgRrxaNFVSL3yEE6P3zQOzLX/Q7XOspBhW4rlIiSNHcxw2oEp5ow4AJf70
+         Wmhwyawxz6Yomksl10z9bCZn3o0SKde3GlZPVVO9rJQwWpttLFwExpM2j4T1MJ5KZtfU
+         F32W3ZllSKXC5YJ+x3xp4eWCY86Kh0xK/SKp+aEp941V26weYBRni6CmgtX8lPPveuwq
+         DfvQNv4RbGb6b+TUB/Ba2AQt01HqIcVUN0JMLz53VREhNvCTawEcfP3d13fEwamIFAtC
+         63OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H7b0K6AHn3lhpoTm1wMSXCMZuAzx8sTZocmvHqLXA2w=;
-        b=fLuA1MjQIXRRMA8qfegUSDKmBqLhGWIZ9s2nyAmv3R/5KwZsyMTmaAxBm7jHsTBuqF
-         dbhfuC9Y6Z30iK/aUjfg3njeSIEhZUsu5iBXJ1CFN2lt4sgBCYLQiAaEO2RouLbL7c6V
-         +gC5EpDWhsLBfCI1DmCS2piBdYXUnYQi37JDmbLNF+434pE4GCJkJEMogcAG9BjMpt2r
-         el4FzeTn7MA7Icb0ekc6jRErDsze1pJ/P003Pbk6JijhwJO7Gc2gYjds8Ny3Cxfsc+FF
-         /n5udf2PBi3R5LmYV7Y6r3ovW3WWunXuo4oHxulSaW9EiU4mvtuUI7hp+FElbWsgWBIK
-         MClg==
-X-Gm-Message-State: APjAAAXMyv/6xUGDe4fmp/T55EOAskLs/POMxH4Nrgvp6hq20k0zQkyN
-        PHHcKUDvk/BgwbsHq+0earM=
-X-Google-Smtp-Source: APXvYqxiQHx/woe8CEJLBaqaKb+PG+tdst3UEIZS36F0s1sf9se+z0/fwTThfPxqlISW5b4GktQGuw==
-X-Received: by 2002:aed:218b:: with SMTP id l11mr27818875qtc.66.1559931652639;
-        Fri, 07 Jun 2019 11:20:52 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (187-26-97-17.3g.claro.net.br. [187.26.97.17])
-        by smtp.gmail.com with ESMTPSA id x15sm1404897qtf.15.2019.06.07.11.20.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 11:20:51 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id CEE8441149; Fri,  7 Jun 2019 15:20:47 -0300 (-03)
-Date:   Fri, 7 Jun 2019 15:20:47 -0300
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     mathieu.poirier@linaro.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, leo.yan@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        coresight@lists.linaro.org
-Subject: Re: [PATCH v2 01/17] perf tools: Configure contextID tracing in
- CPU-wide mode
-Message-ID: <20190607182047.GK21245@kernel.org>
-References: <20190524173508.29044-1-mathieu.poirier@linaro.org>
- <20190524173508.29044-2-mathieu.poirier@linaro.org>
- <68c1c548-33cd-31e8-100d-7ffad008c7b2@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68c1c548-33cd-31e8-100d-7ffad008c7b2@arm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GvSp4gzCgfrFcDrCwilhUDsCbSpdZAD9u0QzYjvDaf0=;
+        b=qWV7bPD7Ief8AgJpNMKzR0eyvWb42Vq0eezpNiFlCqc9SLxojn4CKuhgCamTK2Oes3
+         Pid4A/3VP2tfS8QCfez3roAc9fFihUoDOTzig9pIxUbzvPWLf1CEfZXEE1sT0ak3c2ek
+         BaLomUgjBYoTQ/Q8mkN579iaruycmrtI2wDhfEmZiA0KxlhGE8yOSCioIfLrcEpY4drg
+         QM1B19v3QVDl+gfWkWPhFoLsmDjCml94eoGzoLCSNDEdp4gvR+9NPFLktuWKl/jGYwVI
+         X7ShLtyrVqVPxfY6mtvrN6vSwhdUKUYYgNYHH0BO5KBuuy6kiC534+4SKkpjCki+5POm
+         n0sA==
+X-Gm-Message-State: APjAAAUbOgyRHcnkjLKpmThakxMO/8J30ss4aToEh4qe6grtTY8KABNb
+        ZCRr1MTvaZKgmgRn6C2i0tIMCkgnxU8=
+X-Google-Smtp-Source: APXvYqzA4g8acCxIswuZ9Kdgg+3nVinuOJqNEcoCUuLrDB31N619AeKy0ZE0kjyTNwf1GzC2Gy+EUA==
+X-Received: by 2002:a02:9143:: with SMTP id b3mr12666954jag.12.1559931792333;
+        Fri, 07 Jun 2019 11:23:12 -0700 (PDT)
+Received: from ubu (2600-6c48-437f-c81d-59ab-a761-9e83-29ee.dhcp6.chtrptr.net. [2600:6c48:437f:c81d:59ab:a761:9e83:29ee])
+        by smtp.gmail.com with ESMTPSA id d129sm1364143ita.36.2019.06.07.11.23.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Jun 2019 11:23:11 -0700 (PDT)
+From:   Kimberly Brown <kimbrownkd@gmail.com>
+To:     rpeterso@redhat.com, agruenba@redhat.com,
+        gregkh@linuxfoundation.org
+Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] gfs2: replace ktype default_attrs with default_groups
+Date:   Fri,  7 Jun 2019 14:23:00 -0400
+Message-Id: <20190607182300.32457-1-kimbrownkd@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jun 07, 2019 at 10:21:36AM +0100, Suzuki K Poulose escreveu:
-> Hi Mathieu,
-> 
-> On 24/05/2019 18:34, Mathieu Poirier wrote:
-> > When operating in CPU-wide mode being notified of contextID changes is
-> > required so that the decoding mechanic is aware of the process context
-> > switch.
-> > 
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> 
-> > Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> I am sorry but, I don't remember reviewing this patch in the previous
-> postings. But here we go.
+The kobj_type default_attrs field is being replaced by the
+default_groups field. Replace the default_attrs field in gfs2_ktype
+with default_groups. Use the ATTRIBUTE_GROUPS macro to create
+gfs2_groups.
 
-Can I keep it as is? I addressed one of your concerns below, please
-check.
+Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
+---
+ fs/gfs2/sys.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-- Arnaldo
+diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
+index 348903010911..c784034d22a8 100644
+--- a/fs/gfs2/sys.c
++++ b/fs/gfs2/sys.c
+@@ -299,6 +299,7 @@ static struct attribute *gfs2_attrs[] = {
+ 	&gfs2_attr_demote_rq.attr,
+ 	NULL,
+ };
++ATTRIBUTE_GROUPS(gfs2);
  
-> > +++ b/tools/perf/util/cs-etm.h
-> > @@ -103,6 +103,18 @@ struct intlist *traceid_list;
-> >   #define KiB(x) ((x) * 1024)
-> >   #define MiB(x) ((x) * 1024 * 1024)
-> > +/*
-> > + * Create a contiguous bitmask starting at bit position @l and ending at
-> > + * position @h. For example
-> > + * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-> > + *
-> > + * Carbon copy of implementation found in $KERNEL/include/linux/bitops.h
-> > + */
-> > +#define GENMASK(h, l) \
-> > +	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
-> > +
-> 
-> minor nit: Could this be placed in a more generic header file for the other
-> parts of the perf tool to consume ?
-> 
-
-Yeah, since we have:
-
-Good catch, we have it already:
-
-[acme@quaco perf]$ tail tools/include/linux/bits.h
- * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
- */
-#define GENMASK(h, l) \
-	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
-
-#define GENMASK_ULL(h, l) \
-	(((~0ULL) - (1ULL << (l)) + 1) & \
-	 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
-
-#endif	/* __LINUX_BITS_H */
-[acme@quaco perf]$
-[acme@quaco perf]$
-
-So I'm adding this to the pile with a Suggested-by: Suzuki, ok?
-
-commit 3217a621248824fbff8563d8447fdafe69c5316d
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Fri Jun 7 15:14:27 2019 -0300
-
-    perf cs-etm: Remove duplicate GENMASK() define, use linux/bits.h instead
-    
-    Suzuki noticed that this should be more useful in a generic header, and
-    after looking I noticed we have it already in our copy of
-    include/linux/bits.h in tools/include, so just use it, test built on
-    x86-64 and ubuntu 19.04 with:
-    
-      perfbuilder@46646c9e848e:/$ aarch64-linux-gnu-gcc --version |& head -1
-      aarch64-linux-gnu-gcc (Ubuntu/Linaro 8.3.0-6ubuntu1) 8.3.0
-      perfbuilder@46646c9e848e:/$
-    
-    Suggested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-    Link: https://lkml.kernel.org/r/68c1c548-33cd-31e8-100d-7ffad008c7b2@arm.com
-    Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    Cc: Jiri Olsa <jolsa@redhat.com>
-    Cc: Leo Yan <leo.yan@linaro.org>
-    Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: coresight@lists.linaro.org
-    Cc: linux-arm-kernel@lists.infradead.org,
-    Link: https://lkml.kernel.org/n/tip-69pd3mqvxdlh2shddsc7yhyv@git.kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-index 33b57e748c3d..bc848fd095f4 100644
---- a/tools/perf/util/cs-etm.h
-+++ b/tools/perf/util/cs-etm.h
-@@ -9,6 +9,7 @@
+ static void gfs2_sbd_release(struct kobject *kobj)
+ {
+@@ -309,7 +310,7 @@ static void gfs2_sbd_release(struct kobject *kobj)
  
- #include "util/event.h"
- #include "util/session.h"
-+#include <linux/bits.h>
+ static struct kobj_type gfs2_ktype = {
+ 	.release = gfs2_sbd_release,
+-	.default_attrs = gfs2_attrs,
++	.default_groups = gfs2_groups,
+ 	.sysfs_ops     = &gfs2_attr_ops,
+ };
  
- /* Versionning header in case things need tro change in the future.  That way
-  * decoding of old snapshot is still possible.
-@@ -161,16 +162,6 @@ struct cs_etm_packet_queue {
- 
- #define CS_ETM_INVAL_ADDR 0xdeadbeefdeadbeefUL
- 
--/*
-- * Create a contiguous bitmask starting at bit position @l and ending at
-- * position @h. For example
-- * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-- *
-- * Carbon copy of implementation found in $KERNEL/include/linux/bitops.h
-- */
--#define GENMASK(h, l) \
--	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
--
- #define BMVAL(val, lsb, msb)	((val & GENMASK(msb, lsb)) >> lsb)
- 
- #define CS_ETM_HEADER_SIZE (CS_HEADER_VERSION_0_MAX * sizeof(u64))
+-- 
+2.17.1
+
