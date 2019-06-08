@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CD933A226
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 23:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6203A269
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfFHV1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 17:27:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbfFHV1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 17:27:12 -0400
-Received: from oasis.local.home (unknown [12.156.218.74])
+        id S1727932AbfFHWwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 18:52:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38564 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727791AbfFHWwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 18:52:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2640BAFA5
+        for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2019 22:52:47 +0000 (UTC)
+Received: from mx1.suse.de (mx2.suse.de [195.135.220.15])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC1EB208E3;
-        Sat,  8 Jun 2019 21:27:10 +0000 (UTC)
-Date:   Sat, 8 Jun 2019 17:27:08 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v2 2/2] KVM: LAPIC: remove the trailing newline used in
- the fmt parameter of TP_printk
-Message-ID: <20190608172708.172594be@oasis.local.home>
-In-Reply-To: <53e1591ef288135f1dd803c15e971c96d06f54ba.camel@perches.com>
-References: <1559284814-20378-1-git-send-email-wanpengli@tencent.com>
-        <1559284814-20378-2-git-send-email-wanpengli@tencent.com>
-        <53e1591ef288135f1dd803c15e971c96d06f54ba.camel@perches.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by relay2.suse.de (Postfix) with ESMTPS id 9B7972C16B
+        for <bp@suse.de>; Sat,  8 Jun 2019 21:27:38 +0000 (UTC)
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.suse.de (Postfix) with ESMTPS id 65E9BAD93
+        for <bp@suse.de>; Sat,  8 Jun 2019 21:27:38 +0000 (UTC)
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58LRVXO3145700
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 8 Jun 2019 14:27:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58LRVXO3145700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560029252;
+        bh=NFzuBwTDRGe4YyWmom5QRb9DTpqofUFsUJTSlurXxKY=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=FFR9dnjPXFOUzy4WBQslH43uC+gIlQRYzylZL/8/Qx+5AiQ74KbTyd4/WivT+ghf5
+         Q4VVrA0dvQi7T6tLQyYiW3leyuHnmspU1beshplWqK2yImaZyzGrZbjaVHpoz8VuSh
+         rzVYukzhxc/OImi/WEjRNYj3fL6H8rjt10o1+wEpUXBxMUVOjkU3UrpebvxDywMzIA
+         +0gIsTNHPd7/94EtJLzqbtuVnxLkrstNfG4/OBVg7t2p+SrdVOWr2C689BckjdA1od
+         2FHLwUgUjke8Eg0/fWEj+4rjQtBgVQQ1eRwlYYu5hKbzfhe3nfVKael8hPtTxI/LXn
+         Tlazqu/fCnDxw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58LRVbI3145697;
+        Sat, 8 Jun 2019 14:27:31 -0700
+Date:   Sat, 8 Jun 2019 14:27:31 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-d0e375e8f26edd2e577e3afa9d952f91037cbd87@git.kernel.org>
+Cc:     bp@suse.de, mingo@kernel.org, tony.luck@intel.com, hpa@zytor.com,
+        tglx@linutronix.de, linux-edac@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, tony.luck@intel.com,
+          tglx@linutronix.de, hpa@zytor.com, linux-edac@vger.kernel.org,
+          bp@suse.de, mingo@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/core] RAS/CEC: Fix potential memory leak
+Git-Commit-ID: d0e375e8f26edd2e577e3afa9d952f91037cbd87
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 May 2019 11:57:04 -0700
-Joe Perches <joe@perches.com> wrote:
+Commit-ID:  d0e375e8f26edd2e577e3afa9d952f91037cbd87
+Gitweb:     https://git.kernel.org/tip/d0e375e8f26edd2e577e3afa9d952f91037cbd87
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Sat, 20 Apr 2019 21:39:24 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 8 Jun 2019 17:35:04 +0200
 
-> On Fri, 2019-05-31 at 14:40 +0800, Wanpeng Li wrote:
-> > The trailing newlines will lead to extra newlines in the trace file  
-> []
-> > diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h  
-> []
-> > @@ -1365,7 +1365,7 @@ TRACE_EVENT(kvm_hv_timer_state,
-> >  			__entry->vcpu_id = vcpu_id;
-> >  			__entry->hv_timer_in_use = hv_timer_in_use;
-> >  			),
-> > -		TP_printk("vcpu_id %x hv_timer %x\n",
-> > +		TP_printk("vcpu_id %x hv_timer %x",
-> >  			__entry->vcpu_id,
-> >  			__entry->hv_timer_in_use)
-> >  );  
-> 
-> Not about the kvm subsystem, but generically there are
-> many of these that could be removed.
-> 
-> $ git grep -w TP_printk | grep '\\n' | wc -l
-> 45
-> 
-> Also, aren't all TP_printk formats supposed to be single line?
+RAS/CEC: Fix potential memory leak
 
-Yeah they should be, otherwise it makes the trace look funny. We do
-have some legitimate ones (stack traces for example), but really,
-unless there's a good reason, it shouldn't have them.
+Free the array page if a failure is encountered while creating the
+debugfs nodes.
 
-> 
-> If not, these are odd as well.
-> 
-> $ git grep -w TP_printk | grep '\\n[^"]'
-> include/trace/events/9p.h:	    TP_printk("clnt %lu %s(tag = %d)\n%.3x: %16ph\n%.3x: %16ph\n",
-> net/tipc/trace.h:	TP_printk("%s\n%s", __get_str(header), __get_str(buf))
-> net/tipc/trace.h:	TP_printk("%s\n%s", __get_str(header), __get_str(buf))
-> net/tipc/trace.h:	TP_printk("<%u> %s\n%s%s", __entry->portid, __get_str(header),
-> net/tipc/trace.h:	TP_printk("<%s> %s\n%s", __entry->name, __get_str(header),
-> net/tipc/trace.h:	TP_printk("<%x> %s\n%s", __entry->addr, __get_str(header),
-> 
-> Perhaps the documentation files around these formats
-> 	Documentation/trace/events.rst
-> 	Documentation/trace/tracepoints.rst
-> could be improved as well.
-> 
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+---
+ drivers/ras/cec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Sure, like most documentation ;-)
-
--- Steve
+diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+index 31868bd99e8d..f57e869dfea2 100644
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -504,8 +504,10 @@ void __init cec_init(void)
+ 		return;
+ 	}
+ 
+-	if (create_debugfs_nodes())
++	if (create_debugfs_nodes()) {
++		free_page((unsigned long)ce_arr.array);
+ 		return;
++	}
+ 
+ 	INIT_DELAYED_WORK(&cec_work, cec_work_fn);
+ 	schedule_delayed_work(&cec_work, CEC_DECAY_DEFAULT_INTERVAL);
