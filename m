@@ -2,118 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7858239BFA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 11:06:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D13239C06
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 11:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfFHJGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 05:06:05 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:46438 "EHLO mail.skyhub.de"
+        id S1726744AbfFHJMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 05:12:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbfFHJGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 05:06:04 -0400
-Received: from zn.tnic (p200300EC2F288A00DCF654BEDE068B01.dip0.t-ipconnect.de [IPv6:2003:ec:2f28:8a00:dcf6:54be:de06:8b01])
+        id S1726478AbfFHJMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 05:12:33 -0400
+Received: from localhost (unknown [106.200.229.24])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 095CF1EC0235;
-        Sat,  8 Jun 2019 11:06:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1559984763;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=znhinQl17PEsTheLSRwexWszGv20Z4hEeaGt0gI6Nko=;
-        b=rDiolTE6ydti3CyGiAtroz5OJOVaWOubsBimpUVEegmDId1qWwoJ7x+iP551w4VLHzKBTd
-        dg2oefQPYs6UbnPnx7TV/Vc0PwiHgZtr+eKPnxLqA+dswznVYCOu6beQjP7s07I3zHcVn6
-        GSxxdYgVnWYG5OXTBzYlMbIff5gVbak=
-Date:   Sat, 8 Jun 2019 11:05:56 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     James Morse <james.morse@arm.com>,
-        "Hawa, Hanna" <hhhawa@amazon.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Shenhar, Talel" <talel@amazon.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chocron, Jonathan" <jonnyc@amazon.com>,
-        "Krupnik, Ronen" <ronenk@amazon.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "Hanoch, Uri" <hanochu@amazon.com>
-Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
-Message-ID: <20190608090556.GA32464@zn.tnic>
-References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
- <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
- <DB09EE2A-7397-4063-B925-66658D0105A5@alien8.de>
- <bfbc12fb68eea9d8d4cc257c213393fd4e92c33a.camel@amazon.com>
- <20190531051400.GA2275@cz.tnic>
- <ce01a2bc-7973-5978-b033-a6bdc61b9d4b@amazon.com>
- <32431fa2-2285-6c41-ce32-09630205bb54@arm.com>
- <9a2aaf4a9545ed30568a0613e64bc3f57f047799.camel@kernel.crashing.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id DA954206E0;
+        Sat,  8 Jun 2019 09:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559985152;
+        bh=+dfOuCygM4XWeeIt+7I1WNiQHNRsX6McvspPEEKD0tQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=gTK1m1t1hpgJfSOsHJhw9jxnTsQ6inJpQIWW5Ku+Mb6K6H6pIAG2H0W+aLdYnxdcp
+         qhxpQPnbUoLm+oNPy1RwFDUwbuky2fqmnoW2gDftPfYtKxfu4nDGi7/P14wrehzva3
+         Pk5mfG/So68FyZfFj1KN6NB1NgYoyGioIQNRMCLA=
+Date:   Sat, 8 Jun 2019 14:39:08 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dma <dmaengine@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine fixes for v5.2-rc4
+Message-ID: <20190608090908.GE9160@vkoul-mobl.Dlink>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
 Content-Disposition: inline
-In-Reply-To: <9a2aaf4a9545ed30568a0613e64bc3f57f047799.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 10:16:11AM +1000, Benjamin Herrenschmidt wrote:
-> Those IP blocks don't need any SW coordination at runtime. The drivers
-> don't share data nor communicate with each other. There is absolultely
-> no reason to go down that path.
 
-Let me set one thing straight: the EDAC "subsystem" if you will - or
-that pile of code which does error counting and reporting - has its
-limitations in supporting one EDAC driver per platform. And whenever we
-have two drivers loadable on a platform, we have to do dirty hacks like
+--v9Ux+11Zm5mwPlX6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  301375e76432 ("EDAC: Add owner check to the x86 platform drivers")
+Hi Linus,
 
-What that means is, that if you need to call EDAC logging routines or
-whatnot from two different drivers, there's no locking, no nothing. So
-it might work or it might set your cat on fire.
+Please pull to receive dmaengine fixes. These fixes are on drivers.
 
-IOW, having multiple separate "drivers" or representations of RAS
-functionality using EDAC facilities is something that hasn't been
-done. Well, almost. highbank_mc_edac.c and highbank_l2_edac.c is one
-example but they make sure they don't step on each other's toes by using
-different EDAC pieces - a device vs a memory controller abstraction.
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-And now the moment all of a sudden you decide you want for those
-separate "drivers" to synchronize on something, you need to do something
-hacky like the amd_register_ecc_decoder() thing, for example, because we
-need to call into the EDAC memory controller driver to decode a DRAM ECC
-error properly, while the rest of the error types get decoded somewhere
-else...
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-Then there comes the issue with code reuse - wouldn't it be great if a
-memory controller driver can be shared between platform drivers instead of
-copying it in both?
+are available in the Git repository at:
 
-We already do that - see fsl_ddr_edac.c which gets shared between PPC
-*and* ARM. drivers/edac/skx_common.c is another example for Intel chips.
+  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.2-=
+rc4
 
-Now, if you have a platform with 10 IP blocks which each have RAS
-functionality, are you saying you'll do 10 different pieces called
+for you to fetch changes up to 9bb9fe0cfbe0aa72fed906ade0590e1702815e5d:
 
-<platform_name>_<ip_block#>_edac.c
+  dmaengine: sprd: Add interrupt support for 2-stage transfer (2019-05-21 1=
+9:23:54 +0530)
 
-?
+----------------------------------------------------------------
+dmaengine fixes for v5.2-rc4
 
-And if <next_platform> has an old IP block with the old RAS
-functionality, you load <platform_name>_<ip_block>_edac.c on the new
-platform too?
+The fixes for this round are in drivers:
+ - jz4780 transfer fix for acking descriptors early
+ - fsl-qdma: clean registers on error
+ - dw-axi-dmac: null pointer dereference fix
+ - mediatek-cqdma: fix sleeping in atomic context
+ - tegra210-adma: fix bunch os issues like crashing in driver
+   probe, channel FIFO configuration etc.
+ - sprd: Fixes for possible crash on descriptor status, block
+   length overflow. For 2-stage transfer fix incorrect start,
+   configuration and interrupt handling.
 
--- 
-Regards/Gruss,
-    Boris.
+----------------------------------------------------------------
+Baolin Wang (3):
+      dmaengine: sprd: Fix the possible crash when getting descriptor status
+      dmaengine: sprd: Add validation of current descriptor in irq handler
+      dmaengine: sprd: Add interrupt support for 2-stage transfer
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Colin Ian King (1):
+      dmaengine: dw-axi-dmac: fix null dereference when pointer first is nu=
+ll
+
+Dan Carpenter (1):
+      dmaengine: mediatek-cqdma: sleeping in atomic context
+
+Eric Long (3):
+      dmaengine: sprd: Fix the incorrect start for 2-stage destination chan=
+nels
+      dmaengine: sprd: Fix block length overflow
+      dmaengine: sprd: Fix the right place to configure 2-stage transfer
+
+Jon Hunter (3):
+      dmaengine: tegra210-adma: Fix crash during probe
+      dmaengine: tegra210-adma: Fix channel FIFO configuration
+      dmaengine: tegra210-adma: Fix spelling
+
+Paul Cercueil (1):
+      dmaengine: jz4780: Fix transfers being ACKed too soon
+
+Peng Ma (1):
+      dmaengine: fsl-qdma: Add improvement
+
+ drivers/dma/dma-jz4780.c                       | 32 ++++++++++-----
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c |  3 +-
+ drivers/dma/fsl-qdma.c                         |  4 +-
+ drivers/dma/mediatek/mtk-cqdma.c               |  4 +-
+ drivers/dma/sprd-dma.c                         | 49 +++++++++++++++++-----
+ drivers/dma/tegra210-adma.c                    | 57 ++++++++++++++++------=
+----
+ 6 files changed, 100 insertions(+), 49 deletions(-)
+
+Thanks
+--=20
+~Vinod
+
+--v9Ux+11Zm5mwPlX6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJc+3s0AAoJEHwUBw8lI4NHSiAQAIV8eF0ELY3XJTbXfd4vttgU
+QzWJRogJgIN82F29IvWz2EjfrI9t6rHo9Jq7qiSlLUDFfNrFw3XXIS5bcswgIFX2
+MuOatTXtYl8eROLlg8SD1DL+uRJWzAtuRIFezESSclmnryViDgazQUQr559G8XqQ
+zzcyjs5vbnpE5+zpltUK856bcRg72oj6fb7nZyZYXa1FlzzJDOagjwsZsGJVWwfU
+o6mnlM224t8gZnvhx5Ih7seBDi6Q9DMCKrbr6xs6Jxe+/coIXdDuDC/KZkoUrqYf
+OvV+GPiZ4D+k/hhYveYwW/e5DfFmNCWUy3PIGojk4urGHt1ShmFzelepkKvbgs1A
+2yrEMwj3xKtB5y3Ic5ykXXfGsIoPActfswOyYcFrTWsClFSVkd8dd+M9Vp5SOnQI
+Mc6KXy3RByKL8XifXHusOQeA3qSsODhwcChuP9ZRjyaK5zs5cU/7ExrwftRvZRZU
+azpsZ+Or+Obc64l2sokPFs0fJpb5XvmJ/Ea7thmR/TWqwkRV1JFaUR6fh27c3cEW
+tvkG8RQ+XXPmeZHHRYHLfZnU5wlFHEuDu8raeXLCf9+n/MAbt5SW5+mQEQB3waUi
+A3ZT9hxtPFjzonXfLeoTsNgTYUgTjXeF4pakltJQcvNzhAhoUwOc9MJ2cyEmkq9j
+6NsT1Wnm9phCfte/tDWo
+=6WFh
+-----END PGP SIGNATURE-----
+
+--v9Ux+11Zm5mwPlX6--
