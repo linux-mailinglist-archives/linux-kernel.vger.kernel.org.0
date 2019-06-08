@@ -2,127 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 943F03A25D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF1D3A262
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbfFHWX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 18:23:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43831 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbfFHWXZ (ORCPT
+        id S1727718AbfFHWbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 18:31:11 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37016 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbfFHWbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 18:23:25 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hZjk9-0008IF-KM; Sat, 08 Jun 2019 22:23:21 +0000
-Subject: Re: [PATCH][next] clk: bcm2835: fix memork leak on unfree'd pll
- struct
-To:     Stephen Boyd <sboyd@kernel.org>, Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190607104533.14700-1-colin.king@canonical.com>
- <20190607190331.8B06020868@mail.kernel.org>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <af63f727-d579-ba2d-4fa5-142ad476e293@canonical.com>
-Date:   Sat, 8 Jun 2019 23:23:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Sat, 8 Jun 2019 18:31:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id d15so3510079qkl.4
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 15:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=HFzioUfN0sNsbOFH8vmNiYgtAvsGpi/wEGGSXBoobKo=;
+        b=OqTHCBXRrhmKrOY6qn6JuHeZX1nYAOOj894sEoxNkRb6KvwWQO+x52QMZFsYJxDOk3
+         N/lLgtWKY7wUNhHudHwG0CYzHDKEG+XoZOI8EcpNliqQ+vGeqJssccERA0iy9GJxmzZw
+         dG6qxpkLuvG0ZgFzodxgE86pNbktaJBUfCInTbcXhnqzzvj1FAzwZv0VujsMvgq0nRlV
+         FgrwfMO/jPR5nMZurUqapPfrlEE6lqsjCBQ1kI7wUD5qOr4ARHDKG9GK4mpY/sVriqAo
+         OBWVQnYESKks+QNRS0u0pmxu1LM7TeJloNLl62mrP6r8FgPfnxea46hnRZYE+8r00F7E
+         eqzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=HFzioUfN0sNsbOFH8vmNiYgtAvsGpi/wEGGSXBoobKo=;
+        b=GwJzpjjuleNow48e+32TIczKzebsD1yYsgT9JjkCIobM2N4hPhUpOufX4vj3t7xhn9
+         nlo+1n3DCa3II+GgUZG8BYOV9Y8pkDbQIa/M9x8P2bQf+iNlXpEnBiNEeq0r6RvJ++0W
+         f89cmDiyBp0w6/UN4q32TtYApzSeDC4G0wNgQlZuFq3K3gs86/KaL3+cddy432R+Gsrj
+         AyZHpspPZk5w2ZiMCsDTx3U493gN3/5fdjhmNaeL0PjQjTam8TPpsioO7nDDkkaEIjAZ
+         FFt4nKwUoPszB9Wfu7XtHsFtpaMPaf7y4ca/fETXq0IbznKm2UlKf2xumOix7TG7e3Bm
+         NP1g==
+X-Gm-Message-State: APjAAAWTv/VYKm87E5fOIAsCNiT82L9DIrF0UqWeQpCL9LaHVPevp8C2
+        f2WwJJtbJzkpPFRh1bmAgDbPG+lXSIZgKzNTB2U=
+X-Google-Smtp-Source: APXvYqxde12C9Nw5j5JZrYGzH89xOjQZHTkabNIE4WBLEXjAsK08GV3vQWIfpN5qQ4/rPsLN4GCCuFa/fRNH6TIw1Nc=
+X-Received: by 2002:a05:620a:13d1:: with SMTP id g17mr50490188qkl.121.1560033070412;
+ Sat, 08 Jun 2019 15:31:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190607190331.8B06020868@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: mrsahila46@yandex.com
+Received: by 2002:ac8:822:0:0:0:0:0 with HTTP; Sat, 8 Jun 2019 15:31:09 -0700 (PDT)
+From:   Mr Sahila Wanal <mrsahila46@gmail.com>
+Date:   Sat, 8 Jun 2019 15:31:09 -0700
+X-Google-Sender-Auth: U951rCBoypyvjNiiofPWEki7DOk
+Message-ID: <CAHSvDmZrVBRruXz1uC7_yJ6gvwBj7bVs=6AR_1t+-3aqZDp84w@mail.gmail.com>
+Subject: PLEASE RESPOND VERY URGENTLY
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2019 20:03, Stephen Boyd wrote:
-> Quoting Colin King (2019-06-07 03:45:33)
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The pll struct is being allocated but not kfree'd on an error return
->> path when devm_clk_hw_register fails.  Fix this with a kfree on pll
->> if an error occurs.
->>
->> Addresses-Coverity: ("Resource leak")
->> Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
-> 
-> I suspect this problem was there before this commit, but OK.
-> 
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/clk/bcm/clk-bcm2835.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
->> index 770bb01f523e..90584deaf416 100644
->> --- a/drivers/clk/bcm/clk-bcm2835.c
->> +++ b/drivers/clk/bcm/clk-bcm2835.c
->> @@ -1310,8 +1310,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
->>         pll->hw.init = &init;
->>  
->>         ret = devm_clk_hw_register(cprman->dev, &pll->hw);
->> -       if (ret)
->> +       if (ret) {
->> +               kfree(pll);
->>                 return NULL;
->> +       }
->>         return &pll->hw;
->>  }
-> 
-> Aren't there more leaks in this driver? 
-> 
-I'll have a look next week.
+FROM MR SAHILA WANAL
+AUDIT& ACCOUNT MANAGER
+BANK OF AFRICA (B.O.A)
+OUAGADOUGOU BURKINA FASO
+WEST AFRICA.
+
+Dear friend,
+
+With due respect, i have decided to contact you on a business
+transaction that will be beneficial to both of us. At the bank last
+account and auditing evaluation, my staffs came across an old account
+which was being maintained by a foreign client who we learn was among
+the deceased passengers of motor accident on november.2003, the
+deceased was unable to run this account since his death. The account
+has remained dormant without the knowledge of his family since it was
+put in a safe deposit account in the bank for future investment by the
+client.
+
+Since his demise, even the members of his family haven't applied for
+claims over this fund and it has been in the safe deposit account
+until i discovered that it cannot be claimed since our client is a
+foreign national and we are sure that he has no next of kin here to
+file claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to be done;
+i decided to seek ways through which to transfer this money out of the
+bank and out of the country too.
+
+The total amount in the account is (18.6 million) with my positions as
+staffs of the bank, i am handicapped because i cannot operate foreign
+accounts and cannot lay benefice claim over this money. The client was
+a foreign national and you will only be asked to act as his next of
+kin and i will supply you with all the necessary information and bank
+data to assist you in being able to transfer this money to any bank of
+your choice where this money could be transferred into. The total sum
+will be shared as follows: 50% for me, 50% for you, and expenses
+incidental occur during the transfer will be incur by both of us. The
+transfer is risk free on both sides hence you are going to follow my
+instruction till the fund transfer to your account. Since i work in
+this bank that is why you should be confident in the success of this
+transaction because you will be updated with information as at when
+desired.
+
+I will like you to keep this transaction as top secret and
+confidential as i am hoping to retire with my share of this money at
+the end of transaction which will be when this money is safety in your
+Account, i will then come over to your country for sharing according
+to the previously agreed percentages. You might even have to advise me
+on possibilities of investment in your country or elsewhere of our
+choice. May god help you to help me to a restive retirement?
+
+Please for further information and inquires feel free to contact me
+back through this my private e-mails as follows
+(mrsahila46@yandex.com) immediately for more explanation and better
+understanding i want you to assure me your capability of handling this
+project with trust by providing me your following information details
+such as:
+
+(1) Your full name..............
+(2) Your age:................
+(3) Sex:.....................
+(4) Your telephone number:.................
+(5) Your occupation:.....................
+(6) Your country:.....................
+
+Yours sincerely,
+Mr Sahila Wanal
++226 689 650 34
