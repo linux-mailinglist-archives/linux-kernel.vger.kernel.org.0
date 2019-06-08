@@ -2,288 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFB839B19
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 06:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E27639B28
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 06:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbfFHEoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 00:44:17 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:43535 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731028AbfFHEoP (ORCPT
+        id S1726047AbfFHEuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 00:50:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53320 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfFHEuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 00:44:15 -0400
-Received: by mail-pf1-f202.google.com with SMTP id j7so2874864pfn.10
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 21:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=X/0NqtCGqUmOq4nLYX8jL0qKKJXqxo5c/Ras/XYEZ30=;
-        b=sGxRHU9J6/WBdSx6fV4lvlmqJRkCIBhCKnkxlP2A6WFEW+TPmoxuIwxU/QxhjV/fg7
-         /FoAmfZkNcSjdPpmL5ehNppf/RPEpMu0zP+H3qTyZTFQLtYGYa8y9/Ylk1PwUiPttEco
-         lwGacdhFHJIokJjrbPKkwNQJjMWfzhYycY8tHrP85QZrBvaiHmFyrLLJd7TvDUI3JXd1
-         ho5vXJdBfwyx9tMUZix67KP4mtoXuru6aeevvUzt5m7m5/GVT0sxGkzfu5NLHE1/J9e+
-         FG6nbS1fhDfHQpgtpwYdj/fRGdojh9ogJBjijzfbAxOa5i6kF0OKgg9sJdm+F9Qm+oLk
-         stOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=X/0NqtCGqUmOq4nLYX8jL0qKKJXqxo5c/Ras/XYEZ30=;
-        b=UeM9DDEU9GtVdGWtWbufFvbBnooUW3+dJ8BX7639TxKWesRRiv4ulmPVmiclsleYr8
-         U1RvLL/y/iamndZ8E7Kw51GD8wwZG4zARfwI8TB+bu/FaNYAA8679apv9CP2VAdPAv9h
-         En7zfZVdJxHFUXMTqOQ1kYmpZkWQ2uyeEesAsX3Av93Z1Ve2SZjCOvl1Pb6VBzMEnM4J
-         xqqZ6ak3v2n3VZacqivlZe6OiO2o21noRFJI3+b2x9noFQRsw231beOzpOqnSqgv9NX/
-         43KyWKRTqq57yZwFXKvaI/UDOV89KFy+hK73TZl1kMmR6I7yyyBpi2f+6k7SoC9br7pk
-         1TqQ==
-X-Gm-Message-State: APjAAAXu45rAsTs5nGYAHiokzmQzdhB17UwxGsAgXOHq0vRYM2eb8S5G
-        +dTjIrQQJbIxOEBeY1a33Oz5Q65DQHJP7HA=
-X-Google-Smtp-Source: APXvYqw+aLvw6BhTGdaOngx8+WAxudDKeQuk6uRkUc6lti20wsGbVu9yrVV0Sa5OuwKBTg9T03aHut5pp6KUHxY=
-X-Received: by 2002:a65:6104:: with SMTP id z4mr5999890pgu.319.1559969054138;
- Fri, 07 Jun 2019 21:44:14 -0700 (PDT)
-Date:   Fri,  7 Jun 2019 21:43:39 -0700
-In-Reply-To: <20190608044339.115026-1-saravanak@google.com>
-Message-Id: <20190608044339.115026-10-saravanak@google.com>
-Mime-Version: 1.0
-References: <20190608044339.115026-1-saravanak@google.com>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-Subject: [PATCH v1 9/9] interconnect: Add devfreq support
-From:   Saravana Kannan <saravanak@google.com>
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Sat, 8 Jun 2019 00:50:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gwZHN6g8rrJZZNXc5XgsWcgNpvLcubn0e/88oGuv6nA=; b=Q0wF09O3nya3WaZACBVPt/lVP
+        UxWlscZ4Ii2/bdHaA47KI7ySk2JnjiSpsFyrdjtW57qnC7JiYFXDt/0TN4bx04QSZphix1/xhgZPD
+        Bnmqo+95y/pkeohfeD/h/QD8SXP9mODnBy8wMSvUAQ7AMCP6TvMfNNyjbPLNqMgCrKBrjWjFZGCQE
+        Geql4V7BmpM566hjQcUr2essMDn1Q6thYrsEwhkKtFRCTHOmVogJvb7orUP0+vTiiaTOdy8jXIvV4
+        aKXPA03ijb9l4XW8LiogXE6vnA8Uo9mcuIWKML52Z6h0Qz/dm5RJBqe5QTx00IidFPn+ZVDyJUq6L
+        tuSAozzXg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hZTIq-0003jj-6K; Sat, 08 Jun 2019 04:50:04 +0000
+Subject: Re: [PATCHv16 3/3] ARM:drm ivip Intel FPGA Video and Image Processing
+ Suite
+To:     "Hean-Loong, Ong" <hean.loong.ong@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        sibis@codeaurora.org, kernel-team@android.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, chin.liang.see@intel.com,
+        Ong@vger.kernel.org
+References: <20190607143022.427-1-hean.loong.ong@intel.com>
+ <20190607143022.427-4-hean.loong.ong@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <bc42cad0-8c03-4e22-4475-c25f2e824944@infradead.org>
+Date:   Fri, 7 Jun 2019 21:50:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190607143022.427-4-hean.loong.ong@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a icc_create_devfreq() and icc_remove_devfreq() to create and remove
-devfreq devices for interconnect paths. A driver can create/remove devfreq
-devices for the interconnects needed for its device by calling these APIs.
-This would allow various devfreq governors to work with interconnect paths
-and the device driver itself doesn't have to actively manage the bandwidth
-votes for the interconnects.
+On 6/7/19 7:30 AM, Hean-Loong, Ong wrote:
+> diff --git a/drivers/gpu/drm/ivip/Kconfig b/drivers/gpu/drm/ivip/Kconfig
+> new file mode 100644
+> index 000000000000..1b2af85fe757
+> --- /dev/null
+> +++ b/drivers/gpu/drm/ivip/Kconfig
+> @@ -0,0 +1,14 @@
+> +config DRM_IVIP
+> +        tristate "Intel FGPA Video and Image Processing"
+> +        depends on DRM && OF
+> +        select DRM_GEM_CMA_HELPER
+> +        select DRM_KMS_HELPER
+> +        select DRM_KMS_FB_HELPER
+> +        select DRM_KMS_CMA_HELPER
+> +        help
+> +		Choose this option if you have an Intel FPGA Arria 10 system
+> +		and above with an Intel Display Port IP. This does not support
+> +		legacy Intel FPGA Cyclone V display port. Currently only single
+> +		frame buffer is supported. Note that ACPI and X_86 architecture
+> +		is not supported for Arria10. If M is selected the module will be
+> +		called ivip.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/interconnect/Makefile      |   2 +-
- drivers/interconnect/icc-devfreq.c | 145 +++++++++++++++++++++++++++++
- include/linux/interconnect.h       |  11 +++
- 3 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 drivers/interconnect/icc-devfreq.c
+According to Documentation/process/coding-style.rst, Kconfig help text should be
+indented with 1 tab + 2 spaces, not 2 tabs.
 
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-index 28f2ab0824d5..ddfb65b7fa55 100644
---- a/drivers/interconnect/Makefile
-+++ b/drivers/interconnect/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--icc-core-objs				:= core.o
-+icc-core-objs				:= core.o icc-devfreq.o
- 
- obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
- obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
-diff --git a/drivers/interconnect/icc-devfreq.c b/drivers/interconnect/icc-devfreq.c
-new file mode 100644
-index 000000000000..f88b267d281e
---- /dev/null
-+++ b/drivers/interconnect/icc-devfreq.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * A devfreq device driver for interconnect paths
-+ *
-+ * Copyright (C) 2019 Google, Inc
-+ */
-+
-+#include <linux/devfreq.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/interconnect.h>
-+#include <linux/limits.h>
-+
-+struct icc_devfreq {
-+	struct device icc_dev;
-+	struct icc_path *path;
-+	struct devfreq_dev_profile dp;
-+	struct devfreq *df;
-+	unsigned long peak_bw;
-+	unsigned long avg_bw;
-+};
-+
-+static int icc_target(struct device *dev, unsigned long *freq,
-+				u32 flags)
-+{
-+	struct icc_devfreq *d = dev_get_drvdata(dev);
-+	struct dev_pm_opp *opp;
-+	unsigned long peak_bw, avg_bw;
-+
-+	opp = devfreq_recommended_opp(dev, &peak_bw, flags);
-+	if (IS_ERR(opp)) {
-+		dev_err(dev, "Failed to find opp for %lu KHz\n", *freq);
-+		return PTR_ERR(opp);
-+	}
-+	peak_bw = dev_pm_opp_get_bw(opp, &avg_bw);
-+	dev_pm_opp_put(opp);
-+
-+	if (!icc_set_bw(d->path, avg_bw, peak_bw)) {
-+		*freq = peak_bw;
-+		d->peak_bw = peak_bw;
-+		d->avg_bw = avg_bw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int icc_get_dev_status(struct device *dev,
-+					struct devfreq_dev_status *stat)
-+{
-+	struct icc_devfreq *d = dev_get_drvdata(dev);
-+
-+	stat->current_frequency = d->peak_bw;
-+	return 0;
-+}
-+
-+#define icc_dev_to_data(DEV)	container_of((DEV), struct icc_devfreq, icc_dev)
-+static void icc_dev_release(struct device *dev)
-+{
-+	struct icc_devfreq *d = icc_dev_to_data(dev);
-+
-+	kfree(d);
-+}
-+
-+struct icc_devfreq *icc_create_devfreq(struct device *dev, char *name)
-+{
-+	struct icc_devfreq *d;
-+	struct icc_path *path;
-+	struct opp_table *opp_table;
-+	struct dev_pm_opp *opp;
-+	unsigned long peak_bw = U32_MAX, avg_bw = U32_MAX;
-+	int err;
-+
-+	if (!name)
-+		return ERR_PTR(-EINVAL);
-+
-+	path = of_icc_get(dev, name);
-+	if (IS_ERR(path))
-+		return (void *) path;
-+
-+	opp_table = icc_get_opp_table(path);
-+	if (!opp_table) {
-+		err = -EINVAL;
-+		goto out_path;
-+	}
-+
-+	d = kzalloc(sizeof(*d), GFP_KERNEL);
-+	if (!d) {
-+		err = -ENOMEM;
-+		goto out_path;
-+	}
-+	d->path = path;
-+
-+	d->icc_dev.parent = dev;
-+	d->icc_dev.release = icc_dev_release;
-+	dev_set_name(&d->icc_dev, "%s-icc-%s", dev_name(dev), name);
-+	err = device_register(&d->icc_dev);
-+	if (err) {
-+		put_device(&d->icc_dev);
-+		goto out_path;
-+	}
-+
-+	dev_pm_opp_add_opp_table(&d->icc_dev, opp_table);
-+	opp = dev_pm_opp_find_peak_bw_floor(dev, &peak_bw);
-+	peak_bw = dev_pm_opp_get_bw(opp, &avg_bw);
-+	dev_pm_opp_put(opp);
-+
-+	if (!icc_set_bw(d->path, avg_bw, peak_bw)) {
-+		d->peak_bw = peak_bw;
-+		d->avg_bw = avg_bw;
-+	}
-+
-+	d->dp.initial_freq = peak_bw;
-+	d->dp.polling_ms = 0;
-+	d->dp.target = icc_target;
-+	d->dp.get_dev_status = icc_get_dev_status;
-+	d->df = devm_devfreq_add_device(&d->icc_dev,
-+					&d->dp,
-+					"performance",
-+					NULL);
-+	if (IS_ERR(d->df)) {
-+		err = PTR_ERR(d->df);
-+		goto out_dev;
-+	}
-+
-+	return d;
-+out_dev:
-+	put_device(&d->icc_dev);
-+out_path:
-+	icc_put(path);
-+	return ERR_PTR(err);
-+}
-+EXPORT_SYMBOL_GPL(icc_create_devfreq);
-+
-+void icc_remove_devfreq(struct icc_devfreq *d)
-+{
-+	icc_put(d->path);
-+	put_device(&d->icc_dev);
-+}
-+EXPORT_SYMBOL_GPL(icc_remove_devfreq);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("interconnect devfreq device driver");
-+MODULE_AUTHOR("Saravana Kannan <saravanak@google.com>");
-diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-index 0c0bc55f0e89..cb166cbcdf88 100644
---- a/include/linux/interconnect.h
-+++ b/include/linux/interconnect.h
-@@ -23,6 +23,7 @@
- 
- struct icc_path;
- struct device;
-+struct icc_devfreq;
- 
- #if IS_ENABLED(CONFIG_INTERCONNECT)
- 
-@@ -32,6 +33,8 @@ struct icc_path *of_icc_get(struct device *dev, const char *name);
- struct opp_table *icc_get_opp_table(struct icc_path *path);
- void icc_put(struct icc_path *path);
- int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
-+struct icc_devfreq *icc_create_devfreq(struct device *dev, char *name);
-+void icc_remove_devfreq(struct icc_devfreq *d);
- 
- #else
- 
-@@ -61,6 +64,14 @@ static inline int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
- 	return 0;
- }
- 
-+static inline struct icc_devfreq *icc_create_devfreq(struct device *dev,
-+						     char *name)
-+{
-+	return NULL;
-+}
-+
-+void icc_remove_devfreq(struct icc_devfreq *d) {}
-+
- #endif /* CONFIG_INTERCONNECT */
- 
- #endif /* __LINUX_INTERCONNECT_H */
 -- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
-
+~Randy
