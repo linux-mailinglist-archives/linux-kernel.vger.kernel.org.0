@@ -2,120 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B69F39CAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 12:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A84FC39CBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 12:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfFHK5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 06:57:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45100 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfFHK5x (ORCPT
+        id S1727559AbfFHK6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 06:58:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38335 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbfFHK6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 06:57:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s11so2586784pfm.12
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 03:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W01kyQuiomJSdOGk6Hwr4295vjRVUbIxGvLBRS4IPUU=;
-        b=fLQfxhr6ZDyMxy7sBwhxaLfkBFWwuJFzicVGWGgbZPADWWnoF4yxXWlyw8Y4Wjpse8
-         iLfjwm//bDtn2HNYvs+ZfWEbPrLl9kA2PSopz1p/KGR0C8CbCcbeMkCCVdW9XfjraRuw
-         XQr1SSJMFoLrID9ypRKzrm1mrJinDXEfsiOV7RTz7O8cAbtT4k+54S0mJHJ5yW8VDWd4
-         bowjtrxea88cw3UESEjUBVJWCyPgAw6Jd5mPUVe9x/inhlABU533Xn9RXjlfOFBnWBEk
-         XChuksrq1tcZt6Qyj4Up3u7hbc/rlQqWVsTLgF2uNq/XDjp/QDdjz3baBJot/RMuPfAK
-         TNVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W01kyQuiomJSdOGk6Hwr4295vjRVUbIxGvLBRS4IPUU=;
-        b=qRZXvn7pB0cz/CyDSZNB8kL7W+1h9Tafd8rtVREZHcXP4Yn6iXIIvKCEXgZjDJjDHv
-         qMnhhDgPo6hkQ5qLvovcDtXvTm4mkhF27Mm8nU2YEJ45KV8GWiYTcr1sICISqavl+UVj
-         zsOTimCHFSfjjyJCYKbojIKt0u2XAUkYgCefbdck7nSua5JbBmgWfU6/wy/DVJfUpF4v
-         /24d8uf1t7WNjOv7lxZohTzx4hx6aQi6MEuMdzUSYMIclRUOnwqFo52+AkHWwqZsl0zK
-         1TZWjk64b9LIeaNMdKH9sERbYBMQiOZrb7oJFhjyDRQCGH45EMLZr4W2mTtZIuI1+gWJ
-         H7CA==
-X-Gm-Message-State: APjAAAVia+bjBDfst6XjXOg9SN3dOS4SnrpYXRWFiMjVO4QjnfbT9yNJ
-        61Rk3ZCwO4C58uIzI3loiKje5VaX
-X-Google-Smtp-Source: APXvYqw8C65KQE8brTmH3P1EzYun77Ph9FHC6UcrYzXiIhgstIvZ6dGvKEJUkzquq6zJbSmc9CvasA==
-X-Received: by 2002:a62:648d:: with SMTP id y135mr54910129pfb.98.1559991472045;
-        Sat, 08 Jun 2019 03:57:52 -0700 (PDT)
-Received: from localhost.localdomain ([117.192.25.72])
-        by smtp.googlemail.com with ESMTPSA id s24sm5021384pfh.133.2019.06.08.03.57.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 08 Jun 2019 03:57:51 -0700 (PDT)
-From:   Deepak Mishra <linux.dkm@gmail.com>
-To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        linux.dkm@gmail.com, straube.linux@gmail.com
-Subject: [PATCH v4 6/6] staging: rtl8712: Renamed CamelCase lockRxFF0Filter to lock_rx_ff0_filter
-Date:   Sat,  8 Jun 2019 16:27:01 +0530
-Message-Id: <2122d23efa51d35a0f4e4682061170751e0bb10d.1559990697.git.linux.dkm@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1559990697.git.linux.dkm@gmail.com>
-References: <cover.1559990697.git.linux.dkm@gmail.com>
+        Sat, 8 Jun 2019 06:58:08 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hZZ2v-0000Uh-4k; Sat, 08 Jun 2019 10:58:01 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to rtstatus
+Date:   Sat,  8 Jun 2019 11:58:00 +0100
+Message-Id: <20190608105800.26571-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch renames CamelCase variable lockRxFF0Filter to
-lock_rx_ff0_filter in drv_types.h, usb_intf.c and xmit_linux.c
+From: Colin Ian King <colin.king@canonical.com>
 
-This was reported by checkpatch.pl
+Variable rtstatus is being initialized with a value that is never read
+as rtstatus is being re-assigned a little later on. The assignment is
+redundant and hence can be removed.
 
-Signed-off-by: Deepak Mishra <linux.dkm@gmail.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8712/drv_types.h  | 2 +-
- drivers/staging/rtl8712/usb_intf.c   | 2 +-
- drivers/staging/rtl8712/xmit_linux.c | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8712/drv_types.h b/drivers/staging/rtl8712/drv_types.h
-index 7838c945d622..0c4325073c63 100644
---- a/drivers/staging/rtl8712/drv_types.h
-+++ b/drivers/staging/rtl8712/drv_types.h
-@@ -160,7 +160,7 @@ struct _adapter {
- 	int pid; /*process id from UI*/
- 	struct work_struct wk_filter_rx_ff0;
- 	u8 blnEnableRxFF0Filter;
--	spinlock_t lockRxFF0Filter;
-+	spinlock_t lock_rx_ff0_filter;
- 	const struct firmware *fw;
- 	struct usb_interface *pusb_intf;
- 	struct mutex mutex_start;
-diff --git a/drivers/staging/rtl8712/usb_intf.c b/drivers/staging/rtl8712/usb_intf.c
-index 200a271c28e1..d0daae0b8299 100644
---- a/drivers/staging/rtl8712/usb_intf.c
-+++ b/drivers/staging/rtl8712/usb_intf.c
-@@ -571,7 +571,7 @@ static int r871xu_drv_init(struct usb_interface *pusb_intf,
- 	/* step 6. Load the firmware asynchronously */
- 	if (rtl871x_load_fw(padapter))
- 		goto error;
--	spin_lock_init(&padapter->lockRxFF0Filter);
-+	spin_lock_init(&padapter->lock_rx_ff0_filter);
- 	mutex_init(&padapter->mutex_start);
- 	return 0;
- error:
-diff --git a/drivers/staging/rtl8712/xmit_linux.c b/drivers/staging/rtl8712/xmit_linux.c
-index e65a51c7f372..71100613aeb3 100644
---- a/drivers/staging/rtl8712/xmit_linux.c
-+++ b/drivers/staging/rtl8712/xmit_linux.c
-@@ -102,9 +102,9 @@ void r8712_SetFilter(struct work_struct *work)
- 	newvalue = oldvalue & 0xfe;
- 	r8712_write8(padapter, 0x117, newvalue);
- 
--	spin_lock_irqsave(&padapter->lockRxFF0Filter, irqL);
-+	spin_lock_irqsave(&padapter->lock_rx_ff0_filter, irqL);
- 	padapter->blnEnableRxFF0Filter = 1;
--	spin_unlock_irqrestore(&padapter->lockRxFF0Filter, irqL);
-+	spin_unlock_irqrestore(&padapter->lock_rx_ff0_filter, irqL);
- 	do {
- 		msleep(100);
- 	} while (padapter->blnEnableRxFF0Filter == 1);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
+index 454bab38b165..f92e95f5494f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
+@@ -1039,7 +1039,7 @@ int rtl88ee_hw_init(struct ieee80211_hw *hw)
+ 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
+ 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
+ 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
+-	bool rtstatus = true;
++	bool rtstatus;
+ 	int err = 0;
+ 	u8 tmp_u1b, u1byte;
+ 	unsigned long flags;
 -- 
-2.19.1
+2.20.1
 
