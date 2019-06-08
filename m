@@ -2,95 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 922B139DA3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9604C39EFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbfFHLmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 07:42:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbfFHLm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:42:29 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C57042166E;
-        Sat,  8 Jun 2019 11:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559994148;
-        bh=EkM2IxcFl4jf8hTxdFG9OcyBo5zAazPHULjwbj7FpBc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yeEWeJSa2frBPsxTHomabRblxBpzKtEfX/jMPgm/yZfvuqniI2lSKgQK976dhTAs4
-         fHAxdkkQuPbFY8HNQ1EczhN0FjTy5KlDKoHm1/44LOACOi79JP/X+9QT9gnOYfeJcz
-         DNdqCVyVxN81iJnEBbBNbb4GeXzb0Npia01UmO4E=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 70/70] ocfs2: fix error path kobject memory leak
-Date:   Sat,  8 Jun 2019 07:39:49 -0400
-Message-Id: <20190608113950.8033-70-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190608113950.8033-1-sashal@kernel.org>
-References: <20190608113950.8033-1-sashal@kernel.org>
+        id S1729294AbfFHLxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 07:53:15 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37818 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727928AbfFHLkx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 07:40:53 -0400
+Received: from pendragon.ideasonboard.com (unknown [IPv6:2a02:a03f:44f0:8500:ca05:8177:199c:fed4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F32632DF;
+        Sat,  8 Jun 2019 13:40:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1559994051;
+        bh=2pD/DWAV/LFT+GMwf8BuOm6cuztabrBNEg4O9KboG8E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZQCx1eiCDJiWj9weXrSR2mt+eVr3vMSmKr2JRXMhLvVr438Kc+9jHmqwr3hqpPEzh
+         jyFH/ONeVdRwsAoxiudegAlKmQqfgG4kZCPympvF3msG9Cs4AnrhrJ5GR1XmJDOs7B
+         2F+v2IOoHqOBsFh4io/wy3pBapDdqhdLu33dh1RE=
+Date:   Sat, 8 Jun 2019 14:40:36 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/34] gpu: drm: bridge: sii9234: simplify getting the
+ adapter of a client
+Message-ID: <20190608114036.GA4786@pendragon.ideasonboard.com>
+References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
+ <20190608105619.593-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190608105619.593-3-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tobin C. Harding" <tobin@kernel.org>
+Hi Wolfram,
 
-[ Upstream commit b9fba67b3806e21b98bd5a98dc3921a8e9b42d61 ]
+Thank you for the patch.
 
-If a call to kobject_init_and_add() fails we should call kobject_put()
-otherwise we leak memory.
+On Sat, Jun 08, 2019 at 12:55:41PM +0200, Wolfram Sang wrote:
+> We have a dedicated pointer for that, so use it. Much easier to read and
+> less computation involved.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add call to kobject_put() in the error path of call to
-kobject_init_and_add().  Please note, this has the side effect that the
-release method is called if kobject_init_and_add() fails.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Link: http://lkml.kernel.org/r/20190513033458.2824-1-tobin@kernel.org
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ocfs2/filecheck.c | 1 +
- 1 file changed, 1 insertion(+)
+> ---
+> 
+> Please apply to your subsystem tree.
+> 
+>  drivers/gpu/drm/bridge/sii9234.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
+> index b36bbafb0e43..25d4ad8c7ad6 100644
+> --- a/drivers/gpu/drm/bridge/sii9234.c
+> +++ b/drivers/gpu/drm/bridge/sii9234.c
+> @@ -815,7 +815,7 @@ static irqreturn_t sii9234_irq_thread(int irq, void *data)
+>  static int sii9234_init_resources(struct sii9234 *ctx,
+>  				  struct i2c_client *client)
+>  {
+> -	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+> +	struct i2c_adapter *adapter = client->adapter;
+>  	int ret;
+>  
+>  	if (!ctx->dev->of_node) {
+> @@ -897,7 +897,7 @@ static const struct drm_bridge_funcs sii9234_bridge_funcs = {
+>  static int sii9234_probe(struct i2c_client *client,
+>  			 const struct i2c_device_id *id)
+>  {
+> -	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+> +	struct i2c_adapter *adapter = client->adapter;
+>  	struct sii9234 *ctx;
+>  	struct device *dev = &client->dev;
+>  	int ret;
 
-diff --git a/fs/ocfs2/filecheck.c b/fs/ocfs2/filecheck.c
-index f65f2b2f594d..1906cc962c4d 100644
---- a/fs/ocfs2/filecheck.c
-+++ b/fs/ocfs2/filecheck.c
-@@ -193,6 +193,7 @@ int ocfs2_filecheck_create_sysfs(struct ocfs2_super *osb)
- 	ret = kobject_init_and_add(&entry->fs_kobj, &ocfs2_ktype_filecheck,
- 					NULL, "filecheck");
- 	if (ret) {
-+		kobject_put(&entry->fs_kobj);
- 		kfree(fcheck);
- 		return ret;
- 	}
 -- 
-2.20.1
+Regards,
 
+Laurent Pinchart
