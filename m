@@ -2,207 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9913A073
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 17:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05CD63A07E
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 17:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbfFHP3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 11:29:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54009 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbfFHP3H (ORCPT
+        id S1727180AbfFHPhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 11:37:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33100 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727015AbfFHPhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 11:29:07 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58FSwk73028663
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 8 Jun 2019 08:28:59 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58FSwk73028663
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560007739;
-        bh=KYTIx/H4anELnJtDKLUtS+cMS/Od2jw4KvGLBvOTeQQ=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=uKc9n070Tgq82O+VM23JqPtqQfES4zShajTiZ4oZHs2Uyt4zM5O7OGrn4ueELQ2GO
-         VwegGXk332QbwDHCbMcARp6bKZ2M9KNrpjh/wWuiLh5qVZhnvF334T6RzlLOWavPfq
-         cgcuXHmUBlZsQsJo5C+WsGUKGob131EPzQaMrfgKsLljkT8UdQycLrkjr1G7guRwES
-         HheOsEDlcSlH6ZirnK6xZRxssNDMIos9TiI73dNQZv1Ez+fxjTSSAht+MEAOz7ncHm
-         LGwBXmMGy0Gzz/05k3wwhdf5O/ULavtgf1Y9BDb7niRIPBSmbDRLoiqaVV5dP5sQgH
-         S54dIthih5EGw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58FSwai3028660;
-        Sat, 8 Jun 2019 08:28:58 -0700
-Date:   Sat, 8 Jun 2019 08:28:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Cong Wang <tipbot@zytor.com>
-Message-ID: <tip-0ade0b6240c4853cf9725924c46c10f4251639d7@git.kernel.org>
-Cc:     xiyou.wangcong@gmail.com, linux-edac@vger.kernel.org, bp@suse.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tony.luck@intel.com, hpa@zytor.com, stable@vger.kernel.org,
-        tglx@linutronix.de
-Reply-To: mingo@kernel.org, tony.luck@intel.com,
-          linux-kernel@vger.kernel.org, bp@suse.de,
-          linux-edac@vger.kernel.org, xiyou.wangcong@gmail.com,
-          tglx@linutronix.de, stable@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <20190416213351.28999-2-xiyou.wangcong@gmail.com>
-References: <20190416213351.28999-2-xiyou.wangcong@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/urgent] RAS/CEC: Convert the timer callback to a workqueue
-Git-Commit-ID: 0ade0b6240c4853cf9725924c46c10f4251639d7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 8 Jun 2019 11:37:50 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x58FavHA093232
+        for <linux-kernel@vger.kernel.org>; Sat, 8 Jun 2019 11:37:50 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t093p2s86-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 11:37:49 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 8 Jun 2019 16:37:48 +0100
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 8 Jun 2019 16:37:42 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x58FbfJT24904052
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 8 Jun 2019 15:37:41 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB464B2064;
+        Sat,  8 Jun 2019 15:37:41 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A7084B205F;
+        Sat,  8 Jun 2019 15:37:41 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.36])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat,  8 Jun 2019 15:37:41 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 5A13C16C3421; Sat,  8 Jun 2019 08:37:43 -0700 (PDT)
+Date:   Sat, 8 Jun 2019 08:37:43 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-arch@vger.kernel.org, esc.storagedev@microsemi.com,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v3 20/20] docs: pci: fix broken links due to conversion
+ from pci.txt to pci.rst
+Reply-To: paulmck@linux.ibm.com
+References: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
+ <780cb6c2dfe860873394675df6580765ea5a2680.1559933665.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <780cb6c2dfe860873394675df6580765ea5a2680.1559933665.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19060815-2213-0000-0000-0000039BF67E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011234; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01215056; UDB=6.00638755; IPR=6.00996147;
+ MB=3.00027235; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-08 15:37:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060815-2214-0000-0000-00005EC5EE96
+Message-Id: <20190608153743.GG28207@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=869 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906080117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0ade0b6240c4853cf9725924c46c10f4251639d7
-Gitweb:     https://git.kernel.org/tip/0ade0b6240c4853cf9725924c46c10f4251639d7
-Author:     Cong Wang <xiyou.wangcong@gmail.com>
-AuthorDate: Tue, 16 Apr 2019 14:33:51 -0700
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Fri, 7 Jun 2019 23:21:39 +0200
+On Fri, Jun 07, 2019 at 03:54:36PM -0300, Mauro Carvalho Chehab wrote:
+> Some documentation files were still pointing to the old place.
+> 
+> Fixes: 229b4e0728e0 ("Documentation: PCI: convert pci.txt to reST")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-RAS/CEC: Convert the timer callback to a workqueue
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
 
-cec_timer_fn() is a timer callback which reads ce_arr.array[] and
-updates its decay values. However, it runs in interrupt context and the
-mutex protection the CEC uses for that array, is inadequate. Convert the
-used timer to a workqueue to keep the tasks the CEC performs preemptible
-and thus low-prio.
+> ---
+>  Documentation/memory-barriers.txt                    | 2 +-
+>  Documentation/translations/ko_KR/memory-barriers.txt | 2 +-
+>  drivers/scsi/hpsa.c                                  | 4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+> index f70ebcdfe592..f4170aae1d75 100644
+> --- a/Documentation/memory-barriers.txt
+> +++ b/Documentation/memory-barriers.txt
+> @@ -548,7 +548,7 @@ There are certain things that the Linux kernel memory barriers do not guarantee:
+>  
+>  	[*] For information on bus mastering DMA and coherency please read:
+>  
+> -	    Documentation/PCI/pci.txt
+> +	    Documentation/PCI/pci.rst
+>  	    Documentation/DMA-API-HOWTO.txt
+>  	    Documentation/DMA-API.txt
+>  
+> diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+> index db0b9d8619f1..07725b1df002 100644
+> --- a/Documentation/translations/ko_KR/memory-barriers.txt
+> +++ b/Documentation/translations/ko_KR/memory-barriers.txt
+> @@ -569,7 +569,7 @@ ACQUIRE 는 해당 오퍼레이션의 로드 부분에만 적용되고 RELEASE 
+>  
+>  	[*] 버스 마스터링 DMA 와 일관성에 대해서는 다음을 참고하시기 바랍니다:
+>  
+> -	    Documentation/PCI/pci.txt
+> +	    Documentation/PCI/pci.rst
+>  	    Documentation/DMA-API-HOWTO.txt
+>  	    Documentation/DMA-API.txt
+>  
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index 1bef1da273c2..53df6f7dd3f9 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -7760,7 +7760,7 @@ static void hpsa_free_pci_init(struct ctlr_info *h)
+>  	hpsa_disable_interrupt_mode(h);		/* pci_init 2 */
+>  	/*
+>  	 * call pci_disable_device before pci_release_regions per
+> -	 * Documentation/PCI/pci.txt
+> +	 * Documentation/PCI/pci.rst
+>  	 */
+>  	pci_disable_device(h->pdev);		/* pci_init 1 */
+>  	pci_release_regions(h->pdev);		/* pci_init 2 */
+> @@ -7843,7 +7843,7 @@ static int hpsa_pci_init(struct ctlr_info *h)
+>  clean1:
+>  	/*
+>  	 * call pci_disable_device before pci_release_regions per
+> -	 * Documentation/PCI/pci.txt
+> +	 * Documentation/PCI/pci.rst
+>  	 */
+>  	pci_disable_device(h->pdev);
+>  	pci_release_regions(h->pdev);
+> -- 
+> 2.21.0
+> 
 
- [ bp: Rewrite commit message.
-   s/timer/decay/gi to make it agnostic as to what facility is used. ]
-
-Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190416213351.28999-2-xiyou.wangcong@gmail.com
----
- drivers/ras/cec.c | 46 ++++++++++++++++++++++------------------------
- 1 file changed, 22 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index dbfe3e61d2c2..673f8a128397 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -2,6 +2,7 @@
- #include <linux/mm.h>
- #include <linux/gfp.h>
- #include <linux/kernel.h>
-+#include <linux/workqueue.h>
- 
- #include <asm/mce.h>
- 
-@@ -123,16 +124,12 @@ static u64 dfs_pfn;
- /* Amount of errors after which we offline */
- static unsigned int count_threshold = COUNT_MASK;
- 
--/*
-- * The timer "decays" element count each timer_interval which is 24hrs by
-- * default.
-- */
--
--#define CEC_TIMER_DEFAULT_INTERVAL	24 * 60 * 60	/* 24 hrs */
--#define CEC_TIMER_MIN_INTERVAL		 1 * 60 * 60	/* 1h */
--#define CEC_TIMER_MAX_INTERVAL	   30 *	24 * 60 * 60	/* one month */
--static struct timer_list cec_timer;
--static u64 timer_interval = CEC_TIMER_DEFAULT_INTERVAL;
-+/* Each element "decays" each decay_interval which is 24hrs by default. */
-+#define CEC_DECAY_DEFAULT_INTERVAL	24 * 60 * 60	/* 24 hrs */
-+#define CEC_DECAY_MIN_INTERVAL		 1 * 60 * 60	/* 1h */
-+#define CEC_DECAY_MAX_INTERVAL	   30 *	24 * 60 * 60	/* one month */
-+static struct delayed_work cec_work;
-+static u64 decay_interval = CEC_DECAY_DEFAULT_INTERVAL;
- 
- /*
-  * Decrement decay value. We're using DECAY_BITS bits to denote decay of an
-@@ -160,20 +157,21 @@ static void do_spring_cleaning(struct ce_array *ca)
- /*
-  * @interval in seconds
-  */
--static void cec_mod_timer(struct timer_list *t, unsigned long interval)
-+static void cec_mod_work(unsigned long interval)
- {
- 	unsigned long iv;
- 
--	iv = interval * HZ + jiffies;
--
--	mod_timer(t, round_jiffies(iv));
-+	iv = interval * HZ;
-+	mod_delayed_work(system_wq, &cec_work, round_jiffies(iv));
- }
- 
--static void cec_timer_fn(struct timer_list *unused)
-+static void cec_work_fn(struct work_struct *work)
- {
-+	mutex_lock(&ce_mutex);
- 	do_spring_cleaning(&ce_arr);
-+	mutex_unlock(&ce_mutex);
- 
--	cec_mod_timer(&cec_timer, timer_interval);
-+	cec_mod_work(decay_interval);
- }
- 
- /*
-@@ -380,15 +378,15 @@ static int decay_interval_set(void *data, u64 val)
- {
- 	*(u64 *)data = val;
- 
--	if (val < CEC_TIMER_MIN_INTERVAL)
-+	if (val < CEC_DECAY_MIN_INTERVAL)
- 		return -EINVAL;
- 
--	if (val > CEC_TIMER_MAX_INTERVAL)
-+	if (val > CEC_DECAY_MAX_INTERVAL)
- 		return -EINVAL;
- 
--	timer_interval = val;
-+	decay_interval = val;
- 
--	cec_mod_timer(&cec_timer, timer_interval);
-+	cec_mod_work(decay_interval);
- 	return 0;
- }
- DEFINE_DEBUGFS_ATTRIBUTE(decay_interval_ops, u64_get, decay_interval_set, "%lld\n");
-@@ -432,7 +430,7 @@ static int array_dump(struct seq_file *m, void *v)
- 
- 	seq_printf(m, "Flags: 0x%x\n", ca->flags);
- 
--	seq_printf(m, "Timer interval: %lld seconds\n", timer_interval);
-+	seq_printf(m, "Decay interval: %lld seconds\n", decay_interval);
- 	seq_printf(m, "Decays: %lld\n", ca->decays_done);
- 
- 	seq_printf(m, "Action threshold: %d\n", count_threshold);
-@@ -478,7 +476,7 @@ static int __init create_debugfs_nodes(void)
- 	}
- 
- 	decay = debugfs_create_file("decay_interval", S_IRUSR | S_IWUSR, d,
--				    &timer_interval, &decay_interval_ops);
-+				    &decay_interval, &decay_interval_ops);
- 	if (!decay) {
- 		pr_warn("Error creating decay_interval debugfs node!\n");
- 		goto err;
-@@ -514,8 +512,8 @@ void __init cec_init(void)
- 	if (create_debugfs_nodes())
- 		return;
- 
--	timer_setup(&cec_timer, cec_timer_fn, 0);
--	cec_mod_timer(&cec_timer, CEC_TIMER_DEFAULT_INTERVAL);
-+	INIT_DELAYED_WORK(&cec_work, cec_work_fn);
-+	schedule_delayed_work(&cec_work, CEC_DECAY_DEFAULT_INTERVAL);
- 
- 	pr_info("Correctable Errors collector initialized.\n");
- }
