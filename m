@@ -2,86 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4A23A14A
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 20:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2516F3A157
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 21:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfFHSud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 14:50:33 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39933 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbfFHSuc (ORCPT
+        id S1727370AbfFHTEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 15:04:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42267 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbfFHTET (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 14:50:32 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 196so2861394pgc.6;
-        Sat, 08 Jun 2019 11:50:32 -0700 (PDT)
+        Sat, 8 Jun 2019 15:04:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x17so5269341wrl.9;
+        Sat, 08 Jun 2019 12:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TrV/2uYCZ6ydfGT3DdFOmkj/97VfePPMT+jceKHRLyw=;
-        b=kWBwFAP/k0IEMdE/kF+HYpQ2o971frVA/2l8IpSqzB/pSrlDUcf71qFFj6/YJhLFfn
-         Yzkh5zBhpFB25AGrrnsNx/Va92ZZKDOEl4DRZ2jQQfEFqcAIdxBXke+x+hbV+jwOhALT
-         tdnPEC5/NyX5L7+sKtg27h8DgXH2OtTxK6ixg8E/xXoaxJf8jP7Lbu0D1baOxD3+Eogd
-         bJFoQc9KQusPEmrRhtTJGY0QChDVTNudbSC6HWwn7NMLRGnDCip/ffzXAgqjIn6Auyz/
-         PbjjgFDU8RN8Wl04FRNQGdzOuz1ok/zPJ/lyzEKFgxk6kQ9tsoy+5cpMgMl4G3y7vQW5
-         vNfQ==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9jXFcak2cBpexQk8XYN9VwrCjw1WZmHd35NHcnWvlUM=;
+        b=eIjUllelamnWeZcriXf4pecRr643goyySvVh2oJM0Dhb5G7lrmEbCequZfHbZbaCmN
+         g/qHrO6fzfqlK0ycFPOnUio+yrz8dc0qLpiCnfuXN7M6474V4gNYjCk3aJ+QH4uU++P5
+         FrZ92j96kXDKox9o6FBdjE3XYWlEJB/hELgeaW+vykoT3GVOA7Od8zmFN1LBaUoVyBuW
+         8+mBMqYndQxBlqJfVE8dgEcuXDIeqqMRcmPZc7WnYlQo/ch83e8I7DUQPQyigBLHu/WU
+         9Y2cAe1hPF3l0f5elho+4et2FsznVRtBCpcnT9Y9b/OLWllASSjSaJA7lwm7tQB7KyIq
+         VnAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=TrV/2uYCZ6ydfGT3DdFOmkj/97VfePPMT+jceKHRLyw=;
-        b=jBM+phaFcp9TlY8zyV0bDrqYltn+WEwC0Bry96EZp3au86YdWjS2eFlqiB5nU6Pw8A
-         KZJZK2Pe41StDT+IE6TPkSoMZlovQwUuyxzhTYikP1JZiJ1Ocx3h06RgsHec0Fx/iTap
-         VVqBaXBQ+zTmp5fKphm5K6XOUO2IsEU+G6nl4I1T824GomrGb6rmyvnkmBNwejUtm4hx
-         dw/TamGQoDjUyiekJd2O1dsUCnBL2aXkEYLd2ABtjITOKVBt+RNa/957S1XIQSaYbDL2
-         Ht9iDqHzoveqXEwb6Pb1pLFerYgfsMwDvdbJjNAxBkDAqwe/dJx6yHBBVu8d3UnPA3t/
-         auRQ==
-X-Gm-Message-State: APjAAAX/alyzJFHXF5zUtWtXQgfuM7fEEcbzVjCPmk0IBd3QaYTK9/HV
-        uaRI9rj1f6qagIvUYBuFfqb+jvZi
-X-Google-Smtp-Source: APXvYqylXy38/B08zzc44IS/3AsYuvndcnt8xxWjv4/UbLLckg5WEmbPPMbqe8EN0vpmTayAyVVkFg==
-X-Received: by 2002:a65:62c7:: with SMTP id m7mr8565363pgv.223.1560019831695;
-        Sat, 08 Jun 2019 11:50:31 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c6sm11211606pfm.163.2019.06.08.11.50.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Jun 2019 11:50:31 -0700 (PDT)
-Subject: Re: [PATCH 5.1 00/85] 5.1.8-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20190607153849.101321647@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <1e5e5424-c888-bb1a-8e70-cc23847ed87b@roeck-us.net>
-Date:   Sat, 8 Jun 2019 11:50:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        bh=9jXFcak2cBpexQk8XYN9VwrCjw1WZmHd35NHcnWvlUM=;
+        b=fS5Zp5vZxqCVMq+5bs8jY6YZFQYjNk3V4ByzUQozpWdv1NbcjTWUzmzg2+9KTO4vLF
+         BJs5C/AOcYThZ79Fsqb28HmTz0dlnoDSUUBFnlUDXKKf30Gqtc0fzVcRS5AUInH6JugO
+         5ZTTjPLGGBux5m/HBUXTKxZW1pgaJVbmnzjfFNSDqt31c6gdCQIPIyNpGMvW6lmQ5DoY
+         NRMk2hyouRAZyNjK6OIBWGD5vM0453J/6LozAFKi9NXQeiAMNQWTfkdJLbd7gAegy05L
+         WfJLHU0M3ene4aEipr3HAJOPx4vMXTdU6EhT9lTtceOgHhghK04UppN6I60yDu/dOb5K
+         WPRg==
+X-Gm-Message-State: APjAAAWRbtNLYJl+5LiNWHJ8z9eSVv52IYqtqnyENGTTwIi4enahexgg
+        FmnVvXLDhNFCYePUAqDGgOYNxRUL
+X-Google-Smtp-Source: APXvYqwG28JNmUgm1CsQro+958rHZ/hNNfAHUq1Xkkz1MmrE6sJADMNYtPLldhD5c8SSB7LZxxUWJA==
+X-Received: by 2002:a5d:43d0:: with SMTP id v16mr36679469wrr.252.1560020657104;
+        Sat, 08 Jun 2019 12:04:17 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300F133DDA400D12EFF43FED1E981.dip0.t-ipconnect.de. [2003:f1:33dd:a400:d12e:ff43:fed1:e981])
+        by smtp.googlemail.com with ESMTPSA id t6sm5655062wmb.29.2019.06.08.12.04.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 08 Jun 2019 12:04:16 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 0/3] meson-gpio-irqc: Add support for the Meson-G12A SoC
+Date:   Sat,  8 Jun 2019 21:04:08 +0200
+Message-Id: <20190608190411.14018-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/7/19 8:38 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.8 release.
-> There are 85 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 09 Jun 2019 03:37:09 PM UTC.
-> Anything received after that time might be too late.
-> 
+This series adds GPIO interrupt controller support for Meson-G12A SoCs.
+Although the total number of pins is the same as the Meson-AXG SoC, the
+GPIO banks and IRQ numbers are different. Add a new compatible string
+to avoid confusion when using it.
 
-Build results:
-	total: 159 pass: 159 fail: 0
-Qemu test results:
-	total: 351 pass: 351 fail: 0
+I am re-sending this update because v2 looked good in my opinion (Xingyu
+Chen did good work here) but it never made it into mainline.
 
-Guenter
+
+Changes since v1 at [1]:
+- share the device data with Meson-AXG
+
+Changes since v2 at [2]:
+- dropped "Change-Id" from patch #2
+- added .dts patch #3 - this should go through Kevin's linux-amlogic
+  tree. if required I can re-send it in a separate series
+
+
+[1] https://lore.kernel.org/lkml/20181203061324.36248-1-xingyu.chen@amlogic.com
+[2] https://lore.kernel.org/patchwork/cover/1021232/
+
+
+Martin Blumenstingl (1):
+  arm64: dts: meson: g12a: add the GPIO interrupt controller
+
+Xingyu Chen (2):
+  dt-bindings: interrupt-controller: New binding for Meson-G12A SoC
+  irqchip/meson-gpio: Add support for Meson-G12A SoC
+
+ .../interrupt-controller/amlogic,meson-gpio-intc.txt     | 1 +
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi              | 9 +++++++++
+ drivers/irqchip/irq-meson-gpio.c                         | 1 +
+ 3 files changed, 11 insertions(+)
+
+-- 
+2.21.0
+
