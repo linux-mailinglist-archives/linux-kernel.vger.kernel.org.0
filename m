@@ -2,143 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D13239C06
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 11:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCAA39BFE
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 11:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfFHJMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 05:12:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37662 "EHLO mail.kernel.org"
+        id S1726626AbfFHJKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 05:10:33 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47078 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbfFHJMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 05:12:33 -0400
-Received: from localhost (unknown [106.200.229.24])
+        id S1726478AbfFHJKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 05:10:32 -0400
+Received: from zn.tnic (p200300EC2F288A00DCF654BEDE068B01.dip0.t-ipconnect.de [IPv6:2003:ec:2f28:8a00:dcf6:54be:de06:8b01])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA954206E0;
-        Sat,  8 Jun 2019 09:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559985152;
-        bh=+dfOuCygM4XWeeIt+7I1WNiQHNRsX6McvspPEEKD0tQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=gTK1m1t1hpgJfSOsHJhw9jxnTsQ6inJpQIWW5Ku+Mb6K6H6pIAG2H0W+aLdYnxdcp
-         qhxpQPnbUoLm+oNPy1RwFDUwbuky2fqmnoW2gDftPfYtKxfu4nDGi7/P14wrehzva3
-         Pk5mfG/So68FyZfFj1KN6NB1NgYoyGioIQNRMCLA=
-Date:   Sat, 8 Jun 2019 14:39:08 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmaengine fixes for v5.2-rc4
-Message-ID: <20190608090908.GE9160@vkoul-mobl.Dlink>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8D7BF1EC0235;
+        Sat,  8 Jun 2019 11:10:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1559985031;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=agc6qWSU+tH8yyKDxQhV32Xjr+GidM+gMCD2W3Xjjy8=;
+        b=URdomBe1ERBxGlufupOX27J5DZgEIDbAr5wx8/GGH5LLLEeYN0IUm/2o+y/aoQahA3dTGu
+        LL1uAfkVOn2reWaQBnK5dSv7jmz4oo6GkwDbWygu4IFFJCbydP7VCN6LXFLkSJT9caO7yh
+        lJgNkzoukgNEvmehXJRPQsCqHxaAGw0=
+Date:   Sat, 8 Jun 2019 11:10:30 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     lijiang <lijiang@redhat.com>, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, x86@kernel.org,
+        hpa@zytor.com, dyoung@redhat.com, Thomas.Lendacky@amd.com
+Subject: Re: [PATCH 0/3 v11] add reserved e820 ranges to the kdump kernel
+ e820 table
+Message-ID: <20190608091030.GB32464@zn.tnic>
+References: <20190423013007.17838-1-lijiang@redhat.com>
+ <12847a03-3226-0b29-97b5-04d404410147@redhat.com>
+ <20190607174211.GN20269@zn.tnic>
+ <20190608035451.GB26148@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190608035451.GB26148@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jun 08, 2019 at 11:54:51AM +0800, Baoquan He wrote:
+> Is it a UEFI box?
 
---v9Ux+11Zm5mwPlX6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes.
 
-Hi Linus,
+> If it's uefi machine, it should relate to below issue. Because kexec
+> always fails to randomly choose a new position for kernel.
 
-Please pull to receive dmaengine fixes. These fixes are on drivers.
+The kernel succeeds in selecting a position for the kernel - the kexec
+kernel doesn't load when a panic happens. Rather, the box panics and
+nothing more.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> The current kexec code fills boot_params->efi_info->efi_loader_signature,
+> but doesn't contruct efi_memmap table. The kexec/kdump kernel will always
+> fail to find available slot for KASLR in process_efi_entries.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Kernel has
 
-are available in the Git repository at:
+# CONFIG_RANDOMIZE_BASE is not set
 
-  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.2-=
-rc4
+so no KASLR.
 
-for you to fetch changes up to 9bb9fe0cfbe0aa72fed906ade0590e1702815e5d:
+-- 
+Regards/Gruss,
+    Boris.
 
-  dmaengine: sprd: Add interrupt support for 2-stage transfer (2019-05-21 1=
-9:23:54 +0530)
-
-----------------------------------------------------------------
-dmaengine fixes for v5.2-rc4
-
-The fixes for this round are in drivers:
- - jz4780 transfer fix for acking descriptors early
- - fsl-qdma: clean registers on error
- - dw-axi-dmac: null pointer dereference fix
- - mediatek-cqdma: fix sleeping in atomic context
- - tegra210-adma: fix bunch os issues like crashing in driver
-   probe, channel FIFO configuration etc.
- - sprd: Fixes for possible crash on descriptor status, block
-   length overflow. For 2-stage transfer fix incorrect start,
-   configuration and interrupt handling.
-
-----------------------------------------------------------------
-Baolin Wang (3):
-      dmaengine: sprd: Fix the possible crash when getting descriptor status
-      dmaengine: sprd: Add validation of current descriptor in irq handler
-      dmaengine: sprd: Add interrupt support for 2-stage transfer
-
-Colin Ian King (1):
-      dmaengine: dw-axi-dmac: fix null dereference when pointer first is nu=
-ll
-
-Dan Carpenter (1):
-      dmaengine: mediatek-cqdma: sleeping in atomic context
-
-Eric Long (3):
-      dmaengine: sprd: Fix the incorrect start for 2-stage destination chan=
-nels
-      dmaengine: sprd: Fix block length overflow
-      dmaengine: sprd: Fix the right place to configure 2-stage transfer
-
-Jon Hunter (3):
-      dmaengine: tegra210-adma: Fix crash during probe
-      dmaengine: tegra210-adma: Fix channel FIFO configuration
-      dmaengine: tegra210-adma: Fix spelling
-
-Paul Cercueil (1):
-      dmaengine: jz4780: Fix transfers being ACKed too soon
-
-Peng Ma (1):
-      dmaengine: fsl-qdma: Add improvement
-
- drivers/dma/dma-jz4780.c                       | 32 ++++++++++-----
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c |  3 +-
- drivers/dma/fsl-qdma.c                         |  4 +-
- drivers/dma/mediatek/mtk-cqdma.c               |  4 +-
- drivers/dma/sprd-dma.c                         | 49 +++++++++++++++++-----
- drivers/dma/tegra210-adma.c                    | 57 ++++++++++++++++------=
-----
- 6 files changed, 100 insertions(+), 49 deletions(-)
-
-Thanks
---=20
-~Vinod
-
---v9Ux+11Zm5mwPlX6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJc+3s0AAoJEHwUBw8lI4NHSiAQAIV8eF0ELY3XJTbXfd4vttgU
-QzWJRogJgIN82F29IvWz2EjfrI9t6rHo9Jq7qiSlLUDFfNrFw3XXIS5bcswgIFX2
-MuOatTXtYl8eROLlg8SD1DL+uRJWzAtuRIFezESSclmnryViDgazQUQr559G8XqQ
-zzcyjs5vbnpE5+zpltUK856bcRg72oj6fb7nZyZYXa1FlzzJDOagjwsZsGJVWwfU
-o6mnlM224t8gZnvhx5Ih7seBDi6Q9DMCKrbr6xs6Jxe+/coIXdDuDC/KZkoUrqYf
-OvV+GPiZ4D+k/hhYveYwW/e5DfFmNCWUy3PIGojk4urGHt1ShmFzelepkKvbgs1A
-2yrEMwj3xKtB5y3Ic5ykXXfGsIoPActfswOyYcFrTWsClFSVkd8dd+M9Vp5SOnQI
-Mc6KXy3RByKL8XifXHusOQeA3qSsODhwcChuP9ZRjyaK5zs5cU/7ExrwftRvZRZU
-azpsZ+Or+Obc64l2sokPFs0fJpb5XvmJ/Ea7thmR/TWqwkRV1JFaUR6fh27c3cEW
-tvkG8RQ+XXPmeZHHRYHLfZnU5wlFHEuDu8raeXLCf9+n/MAbt5SW5+mQEQB3waUi
-A3ZT9hxtPFjzonXfLeoTsNgTYUgTjXeF4pakltJQcvNzhAhoUwOc9MJ2cyEmkq9j
-6NsT1Wnm9phCfte/tDWo
-=6WFh
------END PGP SIGNATURE-----
-
---v9Ux+11Zm5mwPlX6--
+Good mailing practices for 400: avoid top-posting and trim the reply.
