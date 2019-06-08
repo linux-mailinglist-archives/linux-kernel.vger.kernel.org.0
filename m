@@ -2,126 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC7D39D95
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4542639DB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfFHLlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 07:41:53 -0400
-Received: from mga04.intel.com ([192.55.52.120]:34753 "EHLO mga04.intel.com"
+        id S1728610AbfFHLmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 07:42:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727438AbfFHLlv (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:41:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2019 04:41:50 -0700
-X-ExtLoop1: 1
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.214.84]) ([10.254.214.84])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Jun 2019 04:41:48 -0700
-Subject: Re: [PATCH v2 4/7] perf diff: Use hists to manage basic blocks per
- symbol
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1559572577-25436-1-git-send-email-yao.jin@linux.intel.com>
- <1559572577-25436-5-git-send-email-yao.jin@linux.intel.com>
- <20190605114417.GB5868@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <4bbc5085-c8b0-5e36-419c-6ee754186027@linux.intel.com>
-Date:   Sat, 8 Jun 2019 19:41:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728544AbfFHLmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 07:42:46 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C008721670;
+        Sat,  8 Jun 2019 11:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559994164;
+        bh=X836q6GtqZFiQBKWjA3+/n6fBmXPiITAFVPbjGmCeqI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oGi1k917yDXz1PVsrObTaLdBlxG0F1xYY8drbgYnygEH5Q6hAINn+S3nKYBioK7NC
+         drhp6PM62USoJnn+wJCc+LFCJx3YXpxG3V0lJ4Lu5vERKdlwhwSyIkA/7f/A5+6hBS
+         yhAXN4c7WMibpZOCbOGYywNwwa28x1oQEGw9dCDE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms@verge.net.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: [PATCH AUTOSEL 4.19 06/49] ipvs: Fix use-after-free in ip_vs_in
+Date:   Sat,  8 Jun 2019 07:41:47 -0400
+Message-Id: <20190608114232.8731-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190608114232.8731-1-sashal@kernel.org>
+References: <20190608114232.8731-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190605114417.GB5868@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: YueHaibing <yuehaibing@huawei.com>
 
+[ Upstream commit 719c7d563c17b150877cee03a4b812a424989dfa ]
 
-On 6/5/2019 7:44 PM, Jiri Olsa wrote:
-> On Mon, Jun 03, 2019 at 10:36:14PM +0800, Jin Yao wrote:
-> 
-> SNIP
-> 
->> diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
->> index 43623fa..d1641da 100644
->> --- a/tools/perf/util/sort.h
->> +++ b/tools/perf/util/sort.h
->> @@ -79,6 +79,9 @@ struct hist_entry_diff {
->>   
->>   		/* HISTC_WEIGHTED_DIFF */
->>   		s64	wdiff;
->> +
->> +		/* PERF_HPP_DIFF__CYCLES */
->> +		s64	cycles;
->>   	};
->>   };
->>   
->> @@ -143,6 +146,9 @@ struct hist_entry {
->>   	struct branch_info	*branch_info;
->>   	long			time;
->>   	struct hists		*hists;
->> +	void			*block_hists;
->> +	int			block_idx;
->> +	int			block_num;
->>   	struct mem_info		*mem_info;
->>   	struct block_info	*block_info;
-> 
-> could you please not add the new block* stuff in here,
-> and instead use the "c2c model" and use yourr own struct
-> on top of hist_entry? we are trying to librarize this
-> stuff and keep only necessary things in here..
-> 
-> you're already using hist_entry_ops, so should be easy
-> 
-> something like:
-> 
-> 	struct block_hist_entry {
-> 		void			*block_hists;
-> 		int			block_idx;
-> 		int			block_num;
-> 		struct block_info	*block_info;
-> 
-> 		struct hist_entry	he;
-> 	};
-> 
-> 
-> 
-> jirka
-> 
+BUG: KASAN: use-after-free in ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
+Read of size 4 at addr ffff8881e9b26e2c by task sshd/5603
 
-Hi Jiri,
+CPU: 0 PID: 5603 Comm: sshd Not tainted 4.19.39+ #30
+Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+Call Trace:
+ dump_stack+0x71/0xab
+ print_address_description+0x6a/0x270
+ kasan_report+0x179/0x2c0
+ ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
+ ip_vs_in+0xd8/0x170 [ip_vs]
+ nf_hook_slow+0x5f/0xe0
+ __ip_local_out+0x1d5/0x250
+ ip_local_out+0x19/0x60
+ __tcp_transmit_skb+0xba1/0x14f0
+ tcp_write_xmit+0x41f/0x1ed0
+ ? _copy_from_iter_full+0xca/0x340
+ __tcp_push_pending_frames+0x52/0x140
+ tcp_sendmsg_locked+0x787/0x1600
+ ? tcp_sendpage+0x60/0x60
+ ? inet_sk_set_state+0xb0/0xb0
+ tcp_sendmsg+0x27/0x40
+ sock_sendmsg+0x6d/0x80
+ sock_write_iter+0x121/0x1c0
+ ? sock_sendmsg+0x80/0x80
+ __vfs_write+0x23e/0x370
+ vfs_write+0xe7/0x230
+ ksys_write+0xa1/0x120
+ ? __ia32_sys_read+0x50/0x50
+ ? __audit_syscall_exit+0x3ce/0x450
+ do_syscall_64+0x73/0x200
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7ff6f6147c60
+Code: 73 01 c3 48 8b 0d 28 12 2d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 5d 73 2d 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83
+RSP: 002b:00007ffd772ead18 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000034 RCX: 00007ff6f6147c60
+RDX: 0000000000000034 RSI: 000055df30a31270 RDI: 0000000000000003
+RBP: 000055df30a31270 R08: 0000000000000000 R09: 0000000000000000
+R10: 00007ffd772ead70 R11: 0000000000000246 R12: 00007ffd772ead74
+R13: 00007ffd772eae20 R14: 00007ffd772eae24 R15: 000055df2f12ddc0
 
-After more considerations, maybe I can't move these stuffs from 
-hist_entry to block_hist_entry.
+Allocated by task 6052:
+ kasan_kmalloc+0xa0/0xd0
+ __kmalloc+0x10a/0x220
+ ops_init+0x97/0x190
+ register_pernet_operations+0x1ac/0x360
+ register_pernet_subsys+0x24/0x40
+ 0xffffffffc0ea016d
+ do_one_initcall+0x8b/0x253
+ do_init_module+0xe3/0x335
+ load_module+0x2fc0/0x3890
+ __do_sys_finit_module+0x192/0x1c0
+ do_syscall_64+0x73/0x200
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Actually we use 2 kinds of hist_entry in this patch series. On kind of 
-hist_entry is for symbol/function. The other kind of hist_entry is for 
-basic block.
+Freed by task 6067:
+ __kasan_slab_free+0x130/0x180
+ kfree+0x90/0x1a0
+ ops_free_list.part.7+0xa6/0xc0
+ unregister_pernet_operations+0x18b/0x1f0
+ unregister_pernet_subsys+0x1d/0x30
+ ip_vs_cleanup+0x1d/0xd2f [ip_vs]
+ __x64_sys_delete_module+0x20c/0x300
+ do_syscall_64+0x73/0x200
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-@@ -143,6 +146,9 @@ struct hist_entry {
-   	struct branch_info	*branch_info;
-   	long			time;
-   	struct hists		*hists;
-+	void			*block_hists;
-+	int			block_idx;
-+	int			block_num;
-   	struct mem_info		*mem_info;
-   	struct block_info	*block_info;
+The buggy address belongs to the object at ffff8881e9b26600 which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 2092 bytes inside of 4096-byte region [ffff8881e9b26600, ffff8881e9b27600)
+The buggy address belongs to the page:
+page:ffffea0007a6c800 count:1 mapcount:0 mapping:ffff888107c0e600 index:0x0 compound_mapcount: 0
+flags: 0x17ffffc0008100(slab|head)
+raw: 0017ffffc0008100 dead000000000100 dead000000000200 ffff888107c0e600
+raw: 0000000000000000 0000000080070007 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-The above hist_entry is actually for symbol/function. This patch series 
-collects all basic blocks in a symbol/function, so it needs a hists in 
-struct hist_entry (block_hists) to point to the hists of basic blocks.
+while unregistering ipvs module, ops_free_list calls
+__ip_vs_cleanup, then nf_unregister_net_hooks be called to
+do remove nf hook entries. It need a RCU period to finish,
+however net->ipvs is set to NULL immediately, which will
+trigger NULL pointer dereference when a packet is hooked
+and handled by ip_vs_in where net->ipvs is dereferenced.
 
-Correct me if I'm wrong.
+Another scene is ops_free_list call ops_free to free the
+net_generic directly while __ip_vs_cleanup finished, then
+calling ip_vs_in will triggers use-after-free.
 
-Thanks
-Jin Yao
+This patch moves nf_unregister_net_hooks from __ip_vs_cleanup()
+to __ip_vs_dev_cleanup(),  where rcu_barrier() is called by
+unregister_pernet_device -> unregister_pernet_operations,
+that will do the needed grace period.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: efe41606184e ("ipvs: convert to use pernet nf_hook api")
+Suggested-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/netfilter/ipvs/ip_vs_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+index a42c1bc7c698..62c0e80dcd71 100644
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -2280,7 +2280,6 @@ static void __net_exit __ip_vs_cleanup(struct net *net)
+ {
+ 	struct netns_ipvs *ipvs = net_ipvs(net);
+ 
+-	nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
+ 	ip_vs_service_net_cleanup(ipvs);	/* ip_vs_flush() with locks */
+ 	ip_vs_conn_net_cleanup(ipvs);
+ 	ip_vs_app_net_cleanup(ipvs);
+@@ -2295,6 +2294,7 @@ static void __net_exit __ip_vs_dev_cleanup(struct net *net)
+ {
+ 	struct netns_ipvs *ipvs = net_ipvs(net);
+ 	EnterFunction(2);
++	nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
+ 	ipvs->enable = 0;	/* Disable packet reception */
+ 	smp_wmb();
+ 	ip_vs_sync_net_cleanup(ipvs);
+-- 
+2.20.1
 
