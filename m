@@ -2,83 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D186839DF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C613439DE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbfFHLnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 07:43:19 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37848 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728670AbfFHLnP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:43:15 -0400
-Received: from pendragon.ideasonboard.com (unknown [IPv6:2a02:a03f:44f0:8500:ca05:8177:199c:fed4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BA9335D;
-        Sat,  8 Jun 2019 13:43:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1559994193;
-        bh=fx0n19qeDMTimK0VJDa0BLED3Bsk5ypjzYYcWtyI8qM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZDPaD+uGBOpeDGvPUnyFI/5vah3s3AzGNxyTy1RxJCRRphTDxgBJJM1VZqVDcP1cl
-         EZGYUzEMYUy/3PWydkLoruilef7KKBLifnP6pwg364yGk+Z7xxJJYiwa4KTR+KEyLn
-         4r+q6zI8+SEipYfGasvIMBKiQ3P4khCzwqZaDIDA=
-Date:   Sat, 8 Jun 2019 14:42:59 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/34] media: i2c: mt9p031: simplify getting the adapter
- of a client
-Message-ID: <20190608114259.GB4786@pendragon.ideasonboard.com>
-References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
- <20190608105619.593-10-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190608105619.593-10-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728591AbfFHLpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 07:45:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45662 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728145AbfFHLn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 07:43:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2D19BAD81;
+        Sat,  8 Jun 2019 11:43:28 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com
+Subject: [GIT PULL] xen: fix for 5.2-rc4
+Date:   Sat,  8 Jun 2019 13:43:26 +0200
+Message-Id: <20190608114326.4804-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Linus,
 
-Thank you for the patch.
+Please git pull the following tag:
 
-On Sat, Jun 08, 2019 at 12:55:48PM +0200, Wolfram Sang wrote:
-> We have a dedicated pointer for that, so use it. Much easier to read and
-> less computation involved.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-5.2b-rc4-tag
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+xen: fix for 5.2-rc4
 
-and taken in my tree.
+It contains just one fix for the Xen block frontend driver avoiding
+allocations with order > 0.
 
-> ---
-> 
-> Please apply to your subsystem tree.
-> 
->  drivers/media/i2c/mt9p031.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index 715be3632b01..5d824dd33edd 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -1034,7 +1034,7 @@ static int mt9p031_probe(struct i2c_client *client,
->  			 const struct i2c_device_id *did)
->  {
->  	struct mt9p031_platform_data *pdata = mt9p031_get_pdata(client);
-> -	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
-> +	struct i2c_adapter *adapter = client->adapter;
->  	struct mt9p031 *mt9p031;
->  	unsigned int i;
->  	int ret;
+Thanks.
 
--- 
-Regards,
+Juergen
 
-Laurent Pinchart
+ drivers/block/xen-blkfront.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+Roger Pau Monne (1):
+      xen-blkfront: switch kcalloc to kvcalloc for large array allocation
