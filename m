@@ -2,116 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A2E3A268
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CD933A226
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 23:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfFHWwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 18:52:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38558 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727786AbfFHWws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 18:52:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 64BBFAF96
-        for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2019 22:52:46 +0000 (UTC)
-Received: from mx1.suse.de (mx2.suse.de [195.135.220.15])
+        id S1727684AbfFHV1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 17:27:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727456AbfFHV1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 17:27:12 -0400
+Received: from oasis.local.home (unknown [12.156.218.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 3B2392C16B
-        for <bp@suse.de>; Sat,  8 Jun 2019 21:26:56 +0000 (UTC)
-Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.suse.de (Postfix) with ESMTPS id D69A2AD93
-        for <bp@suse.de>; Sat,  8 Jun 2019 21:26:54 +0000 (UTC)
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58LQlos3145401
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 8 Jun 2019 14:26:48 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58LQlos3145401
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560029208;
-        bh=Li539FWuRHtIQmBZ9m/rWGKt7iOjh+Jy+OQa3lbrGD4=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=mcrnjnZ4y0/KQJaYiNIRspZkTwQqedt+VlLnSi4WIoKwtXVoGxRUttEdJTnCErbGj
-         Te/NSeujMAb6R4HRKXb+hzN9O+joRiJEutZXiuvUX4NGfdFdB5LBQD6FA6AfPFgc0k
-         4gcKaeXh9KdwTgfbisedBZccpQiVvWpviMtb0y2bA8vGxbxRQHRLkEVvD4YKTZwQos
-         g/IM0PPinCCtIaXNkxt3sFZT9r+iSvsmSip3UxriedYtMiH9PWfRUcte8P5XpYHHaK
-         Ew3sSM2VoMAQDz1hiEwLqb2m6uLbR/k9/RvuMDYxcv3J/V+36HRjLP5fo8Dwcbowe2
-         u1prrlsQRlF/g==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58LQlDd3145398;
-        Sat, 8 Jun 2019 14:26:47 -0700
-Date:   Sat, 8 Jun 2019 14:26:47 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-5cc6b16ea1313d05956b55e83a1f753c604282a8@git.kernel.org>
-Cc:     tony.luck@intel.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-edac@vger.kernel.org, bp@suse.de, hpa@zytor.com
-Reply-To: bp@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, tony.luck@intel.com, tglx@linutronix.de,
-          linux-edac@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] RAS/CEC: Do not set decay value on error
-Git-Commit-ID: 5cc6b16ea1313d05956b55e83a1f753c604282a8
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        by mail.kernel.org (Postfix) with ESMTPSA id AC1EB208E3;
+        Sat,  8 Jun 2019 21:27:10 +0000 (UTC)
+Date:   Sat, 8 Jun 2019 17:27:08 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 2/2] KVM: LAPIC: remove the trailing newline used in
+ the fmt parameter of TP_printk
+Message-ID: <20190608172708.172594be@oasis.local.home>
+In-Reply-To: <53e1591ef288135f1dd803c15e971c96d06f54ba.camel@perches.com>
+References: <1559284814-20378-1-git-send-email-wanpengli@tencent.com>
+        <1559284814-20378-2-git-send-email-wanpengli@tencent.com>
+        <53e1591ef288135f1dd803c15e971c96d06f54ba.camel@perches.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5cc6b16ea1313d05956b55e83a1f753c604282a8
-Gitweb:     https://git.kernel.org/tip/5cc6b16ea1313d05956b55e83a1f753c604282a8
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Sat, 20 Apr 2019 21:33:08 +0200
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 8 Jun 2019 17:34:36 +0200
+On Fri, 31 May 2019 11:57:04 -0700
+Joe Perches <joe@perches.com> wrote:
 
-RAS/CEC: Do not set decay value on error
+> On Fri, 2019-05-31 at 14:40 +0800, Wanpeng Li wrote:
+> > The trailing newlines will lead to extra newlines in the trace file  
+> []
+> > diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h  
+> []
+> > @@ -1365,7 +1365,7 @@ TRACE_EVENT(kvm_hv_timer_state,
+> >  			__entry->vcpu_id = vcpu_id;
+> >  			__entry->hv_timer_in_use = hv_timer_in_use;
+> >  			),
+> > -		TP_printk("vcpu_id %x hv_timer %x\n",
+> > +		TP_printk("vcpu_id %x hv_timer %x",
+> >  			__entry->vcpu_id,
+> >  			__entry->hv_timer_in_use)
+> >  );  
+> 
+> Not about the kvm subsystem, but generically there are
+> many of these that could be removed.
+> 
+> $ git grep -w TP_printk | grep '\\n' | wc -l
+> 45
+> 
+> Also, aren't all TP_printk formats supposed to be single line?
 
-When the value requested doesn't match the allowed (min,max) range,
-the @data buffer should not be modified with the invalid value because
-reading "decay_interval" shows it otherwise as if the previous write
-succeeded.
+Yeah they should be, otherwise it makes the trace look funny. We do
+have some legitimate ones (stack traces for example), but really,
+unless there's a good reason, it shouldn't have them.
 
-Move the data write after the check.
+> 
+> If not, these are odd as well.
+> 
+> $ git grep -w TP_printk | grep '\\n[^"]'
+> include/trace/events/9p.h:	    TP_printk("clnt %lu %s(tag = %d)\n%.3x: %16ph\n%.3x: %16ph\n",
+> net/tipc/trace.h:	TP_printk("%s\n%s", __get_str(header), __get_str(buf))
+> net/tipc/trace.h:	TP_printk("%s\n%s", __get_str(header), __get_str(buf))
+> net/tipc/trace.h:	TP_printk("<%u> %s\n%s%s", __entry->portid, __get_str(header),
+> net/tipc/trace.h:	TP_printk("<%s> %s\n%s", __entry->name, __get_str(header),
+> net/tipc/trace.h:	TP_printk("<%x> %s\n%s", __entry->addr, __get_str(header),
+> 
+> Perhaps the documentation files around these formats
+> 	Documentation/trace/events.rst
+> 	Documentation/trace/tracepoints.rst
+> could be improved as well.
+> 
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
----
- drivers/ras/cec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Sure, like most documentation ;-)
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index 73a975c26f9f..31868bd99e8d 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -371,17 +371,17 @@ DEFINE_DEBUGFS_ATTRIBUTE(pfn_ops, u64_get, pfn_set, "0x%llx\n");
- 
- static int decay_interval_set(void *data, u64 val)
- {
--	*(u64 *)data = val;
--
- 	if (val < CEC_DECAY_MIN_INTERVAL)
- 		return -EINVAL;
- 
- 	if (val > CEC_DECAY_MAX_INTERVAL)
- 		return -EINVAL;
- 
-+	*(u64 *)data   = val;
- 	decay_interval = val;
- 
- 	cec_mod_work(decay_interval);
-+
- 	return 0;
- }
- DEFINE_DEBUGFS_ATTRIBUTE(decay_interval_ops, u64_get, decay_interval_set, "%lld\n");
+-- Steve
