@@ -2,140 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A096839A16
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 04:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B130039A19
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 04:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbfFHCLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 22:11:09 -0400
-Received: from mail-it1-f173.google.com ([209.85.166.173]:55556 "EHLO
-        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729127AbfFHCLI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 22:11:08 -0400
-Received: by mail-it1-f173.google.com with SMTP id i21so5517924ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 19:11:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language;
-        bh=SvnI0124RQyG3mZdpITe2RKpNEsDCUsmCfQu//JUzcY=;
-        b=X09+drmRRIGFjuEz2GoZ5RiiSac8xIMyegzJZbLbA4yEx6SaI+WwsWCNvrkboqmVO5
-         /3OKP6FqiuR27MeClWl3Hnlp9d8sGh+bYsQvvFD8ZWBAGrq/SIq74L4BZc5rVua/GBE2
-         X2wo7BqzVQtAuLSgvtG91e0xPHf+yZs/xHARM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language;
-        bh=SvnI0124RQyG3mZdpITe2RKpNEsDCUsmCfQu//JUzcY=;
-        b=PR/e0n9sASE//SLjfkWGq4wrq5Ikr2+jXyyxEYl/fuSgXZl03RQJ5whnfGlHnTDOI/
-         YFRcWTNgCJBHbGis6VK18Pn0ibNafdWdxhdH1epfGj2ssN/cnhlbZhGhj6gQNAdUe1Ky
-         5hFyVusNcaB12yXRGqDlOecL3zJUQU7efgkU21YoANyJS8ZqZqWD/GB3cG3Oy8AW7bwO
-         kdLXG3xCr5r6BO6HygJvLCS26DcO9f23oZm87hQkkKpSuqc674NDc+DaMuhBshUZQi5x
-         N8Ma4NtSobNXbf3KCDvC2OMpkQX1zgA9p3wYa+SWqSWbZn4Ss+dN7bCEztb1dNBf9xbZ
-         3Kwg==
-X-Gm-Message-State: APjAAAXFayVQSK1BmYYpCZkhrO2VDdw6cPtglpU/0mfS9FiAZXoS99EK
-        ENqw/RYNF4lfJ3xwaXgbM1gj5g==
-X-Google-Smtp-Source: APXvYqyvNxcDeEsIA5sWyry2m2CfkiS2/C5q6ZoBbN4kth6uYuymFdU5J9mFZl1P9fa7C82Zrr2Cww==
-X-Received: by 2002:a24:d147:: with SMTP id w68mr6591208itg.176.1559959867659;
-        Fri, 07 Jun 2019 19:11:07 -0700 (PDT)
-Received: from [10.11.17.215] ([97.107.68.205])
-        by smtp.gmail.com with ESMTPSA id z202sm1979011itb.2.2019.06.07.19.11.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 19:11:06 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     skhan@linuxfoundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] Kselftest second fixes update for Linux 5.2-rc4
-Message-ID: <f97f7947-db3b-07dd-157d-78ab9840a4dc@linuxfoundation.org>
-Date:   Fri, 7 Jun 2019 20:11:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1730086AbfFHCOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 22:14:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34216 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728860AbfFHCOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 22:14:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5D9730842A8;
+        Sat,  8 Jun 2019 02:14:07 +0000 (UTC)
+Received: from localhost (ovpn-12-31.pek2.redhat.com [10.72.12.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0F9236085B;
+        Sat,  8 Jun 2019 02:14:06 +0000 (UTC)
+Date:   Sat, 8 Jun 2019 10:14:04 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     tglx@linutronix.de, stable@vger.kernel.org, mingo@kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        keescook@chromium.org, bp@suse.de, luto@kernel.org, hpa@zytor.com,
+        kirill@linux.intel.com, dave.hansen@linux.intel.com
+Cc:     linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/urgent] x86/mm/KASLR: Compute the size of the vmemmap
+ section properly
+Message-ID: <20190608021404.GA26148@MiWiFi-R3L-srv>
+References: <20190523025744.3756-1-bhe@redhat.com>
+ <tip-00e5a2bbcc31d5fea853f8daeba0f06c1c88c3ff@git.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------C8926D04930EEB99C63E8D8F"
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tip-00e5a2bbcc31d5fea853f8daeba0f06c1c88c3ff@git.kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sat, 08 Jun 2019 02:14:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------C8926D04930EEB99C63E8D8F
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On 06/07/19 at 02:16pm, tip-bot for Baoquan He wrote:
+> Commit-ID:  00e5a2bbcc31d5fea853f8daeba0f06c1c88c3ff
+> Gitweb:     https://git.kernel.org/tip/00e5a2bbcc31d5fea853f8daeba0f06c1c88c3ff
+> Author:     Baoquan He <bhe@redhat.com>
+> AuthorDate: Thu, 23 May 2019 10:57:44 +0800
+> Committer:  Borislav Petkov <bp@suse.de>
+> CommitDate: Fri, 7 Jun 2019 23:12:13 +0200
+> 
+> x86/mm/KASLR: Compute the size of the vmemmap section properly
+> 
+> The size of the vmemmap section is hardcoded to 1 TB to support the
+> maximum amount of system RAM in 4-level paging mode - 64 TB.
+> 
+> However, 1 TB is not enough for vmemmap in 5-level paging mode. Assuming
+> the size of struct page is 64 Bytes, to support 4 PB system RAM in 5-level,
+> 64 TB of vmemmap area is needed:
+> 
+>   4 * 1000^5 PB / 4096 bytes page size * 64 bytes per page struct / 1000^4 TB = 62.5 TB.
 
-Hi Linus,
+Thanks for picking this, Boris.
 
-Please pull the following second Kselftest fixes update for
-Linux 5.2 rc4.
+Here, 4PB = 4*2^50 = 4*1024^5, the vmemmap should be 64 TB, am I right?
 
-This Kselftest second fixes update for Linux 5.2-rc4 consists of a
-single fix for vm test build failure regression when it is built by
-itself.
-
-I found this while I was sanity checking the first fixes update for
-Linux 5.2. Would like to get this into rc4.
-
-diff is attached.
-
-thanks,
--- Shuah
-
-
-----------------------------------------------------------------
-The following changes since commit bc2cce3f2ebcae02aa4bb29e3436bf75ee674c32:
-
-   selftests: vm: install test_vmalloc.sh for run_vmtests (2019-05-30 
-08:32:57 -0600)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
-tags/linux-kselftest-5.2-rc4-2
-
-for you to fetch changes up to e2e88325f4bcaea51f454723971f7b5ee0e1aa80:
-
-   selftests: vm: Fix test build failure when built by itself 
-(2019-06-05 16:05:40 -0600)
-
-----------------------------------------------------------------
-linux-kselftest-5.2-rc4-2
-
-This Kselftest second fixes update for Linux 5.2-rc4 consists of a single
-fix for vm test build failure regression when it is built by itself.
-
-----------------------------------------------------------------
-Shuah Khan (1):
-       selftests: vm: Fix test build failure when built by itself
-
-  tools/testing/selftests/vm/Makefile | 4 ----
-  1 file changed, 4 deletions(-)
-----------------------------------------------------------------
-
---------------C8926D04930EEB99C63E8D8F
-Content-Type: text/x-patch;
- name="linux-kselftest-5.2-rc4-2.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="linux-kselftest-5.2-rc4-2.diff"
-
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index 05306c58ff9f..9534dc2bc929 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -1,10 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for vm selftests
- 
--ifndef OUTPUT
--  OUTPUT := $(shell pwd)
--endif
--
- CFLAGS = -Wall -I ../../../../usr/include $(EXTRA_CFLAGS)
- LDLIBS = -lrt
- TEST_GEN_FILES = compaction_test
-
---------------C8926D04930EEB99C63E8D8F--
+> 
+> This hardcoding may cause vmemmap to corrupt the following
+> cpu_entry_area section, if KASLR puts vmemmap very close to it and the
+> actual vmemmap size is bigger than 1 TB.
