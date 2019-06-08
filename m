@@ -2,80 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4C139DB3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC7D39D95
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbfFHLm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 07:42:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60020 "EHLO mail.kernel.org"
+        id S1727501AbfFHLlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 07:41:53 -0400
+Received: from mga04.intel.com ([192.55.52.120]:34753 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbfFHLmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:42:44 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900CF21530;
-        Sat,  8 Jun 2019 11:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559994163;
-        bh=FDBsYQdJb38TfUeN+jtGYnt5nQrbtFe0wqYBGWDoFaA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJIOto3GfpyE4mqbxsDfXMzmJJfGn1SyBw2k8NGQNe0wvTtani2K4SmgmKbXw+sgO
-         nF0Gi0VKQKTqpw0l/kjVgNqpzZBua4eIdRBtJ+d0vCrbU834p/0f2DCI3+sk9eoV6P
-         gOBQDlUwiuOigvghuHU0Mxq5Su/Yk0pZOL/pXq+M=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jagdish Motwani <jagdish.motwani@sophos.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 05/49] netfilter: nf_queue: fix reinject verdict handling
-Date:   Sat,  8 Jun 2019 07:41:46 -0400
-Message-Id: <20190608114232.8731-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190608114232.8731-1-sashal@kernel.org>
-References: <20190608114232.8731-1-sashal@kernel.org>
+        id S1727438AbfFHLlv (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 07:41:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2019 04:41:50 -0700
+X-ExtLoop1: 1
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.214.84]) ([10.254.214.84])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Jun 2019 04:41:48 -0700
+Subject: Re: [PATCH v2 4/7] perf diff: Use hists to manage basic blocks per
+ symbol
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <1559572577-25436-1-git-send-email-yao.jin@linux.intel.com>
+ <1559572577-25436-5-git-send-email-yao.jin@linux.intel.com>
+ <20190605114417.GB5868@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <4bbc5085-c8b0-5e36-419c-6ee754186027@linux.intel.com>
+Date:   Sat, 8 Jun 2019 19:41:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190605114417.GB5868@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jagdish Motwani <jagdish.motwani@sophos.com>
 
-[ Upstream commit 946c0d8e6ed43dae6527e878d0077c1e11015db0 ]
 
-This patch fixes netfilter hook traversal when there are more than 1 hooks
-returning NF_QUEUE verdict. When the first queue reinjects the packet,
-'nf_reinject' starts traversing hooks with a proper hook_index. However,
-if it again receives a NF_QUEUE verdict (by some other netfilter hook), it
-queues the packet with a wrong hook_index. So, when the second queue
-reinjects the packet, it re-executes hooks in between.
+On 6/5/2019 7:44 PM, Jiri Olsa wrote:
+> On Mon, Jun 03, 2019 at 10:36:14PM +0800, Jin Yao wrote:
+> 
+> SNIP
+> 
+>> diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+>> index 43623fa..d1641da 100644
+>> --- a/tools/perf/util/sort.h
+>> +++ b/tools/perf/util/sort.h
+>> @@ -79,6 +79,9 @@ struct hist_entry_diff {
+>>   
+>>   		/* HISTC_WEIGHTED_DIFF */
+>>   		s64	wdiff;
+>> +
+>> +		/* PERF_HPP_DIFF__CYCLES */
+>> +		s64	cycles;
+>>   	};
+>>   };
+>>   
+>> @@ -143,6 +146,9 @@ struct hist_entry {
+>>   	struct branch_info	*branch_info;
+>>   	long			time;
+>>   	struct hists		*hists;
+>> +	void			*block_hists;
+>> +	int			block_idx;
+>> +	int			block_num;
+>>   	struct mem_info		*mem_info;
+>>   	struct block_info	*block_info;
+> 
+> could you please not add the new block* stuff in here,
+> and instead use the "c2c model" and use yourr own struct
+> on top of hist_entry? we are trying to librarize this
+> stuff and keep only necessary things in here..
+> 
+> you're already using hist_entry_ops, so should be easy
+> 
+> something like:
+> 
+> 	struct block_hist_entry {
+> 		void			*block_hists;
+> 		int			block_idx;
+> 		int			block_num;
+> 		struct block_info	*block_info;
+> 
+> 		struct hist_entry	he;
+> 	};
+> 
+> 
+> 
+> jirka
+> 
 
-Fixes: 960632ece694 ("netfilter: convert hook list to an array")
-Signed-off-by: Jagdish Motwani <jagdish.motwani@sophos.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netfilter/nf_queue.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi Jiri,
 
-diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
-index d67a96a25a68..7569ba00e732 100644
---- a/net/netfilter/nf_queue.c
-+++ b/net/netfilter/nf_queue.c
-@@ -238,6 +238,7 @@ static unsigned int nf_iterate(struct sk_buff *skb,
- repeat:
- 		verdict = nf_hook_entry_hookfn(hook, skb, state);
- 		if (verdict != NF_ACCEPT) {
-+			*index = i;
- 			if (verdict != NF_REPEAT)
- 				return verdict;
- 			goto repeat;
--- 
-2.20.1
+After more considerations, maybe I can't move these stuffs from 
+hist_entry to block_hist_entry.
+
+Actually we use 2 kinds of hist_entry in this patch series. On kind of 
+hist_entry is for symbol/function. The other kind of hist_entry is for 
+basic block.
+
+@@ -143,6 +146,9 @@ struct hist_entry {
+   	struct branch_info	*branch_info;
+   	long			time;
+   	struct hists		*hists;
++	void			*block_hists;
++	int			block_idx;
++	int			block_num;
+   	struct mem_info		*mem_info;
+   	struct block_info	*block_info;
+
+The above hist_entry is actually for symbol/function. This patch series 
+collects all basic blocks in a symbol/function, so it needs a hists in 
+struct hist_entry (block_hists) to point to the hists of basic blocks.
+
+Correct me if I'm wrong.
+
+Thanks
+Jin Yao
 
