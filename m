@@ -2,97 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 464B63A1E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 22:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E453A1E6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 22:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfFHUQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 16:16:09 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46915 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbfFHUQJ (ORCPT
+        id S1727590AbfFHUTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 16:19:13 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33647 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbfFHUTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 16:16:09 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v9so1202955pgr.13;
-        Sat, 08 Jun 2019 13:16:09 -0700 (PDT)
+        Sat, 8 Jun 2019 16:19:12 -0400
+Received: by mail-it1-f193.google.com with SMTP id v193so7242543itc.0
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 13:19:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
+        h=mime-version:sender:from:date:message-id:subject:to
          :content-transfer-encoding;
-        bh=YLlwXriYXWRDWa6HLbM2ROrlGesibqzQ/9uF5Z67oTI=;
-        b=uOug2p1q8b8ToqRGjDQGLomtv0cac2TObRAWxk6HBJ+4oJVfEu1muX75mCezZMdLXg
-         Vle/ZUpPXzGHtdlKSXX3k3RgnQJUjFFCjfoJ33uCDI2XQDgePNy/jarK019y4htN7HkT
-         vzvi/FFaDranTeHdGdmfnmTP52qzwjR/uzfmLOR5l1cvBnSNUphByrCzNIo+WHLXhdVa
-         OnVxEkhlfTpYHHSw0EbVr6L86UobqFpQELoCsKmhAFqXDz0AWIgFzWPOlGcER60CxYTo
-         i9m43LDICNLo3k/ejj04x+xV4RHeTUE4Va53kFNzP2ElRQijJYJVnK6Y/K+bil2eZWIa
-         xAkg==
+        bh=Oibz9MnDmwNMmGUKMKiPf6+1t2ZWez65UHGa4Eunn0E=;
+        b=bNe0kgIRbmZfooq/JigqzAXl39KKFNd4zTEtJzEJFOFaxfrvihmLG1JthBvvi8bmMb
+         YE/ZfJ95cKLxSI79FH2BJ1nbMSPMbVDbiZ3esxC3Cmi5eXS0WKcQQSozdNb962q2hpv5
+         CDRaRhwMS6XHog7JhutF2eAtWwZpH3phEDwznlAupNVifv1bfiVLc37aPMjnHYTILqph
+         rn8hJJaOTTCxiBLin4Q693Pi65Xr9Kd5fKRaEHCXJWsJKpHbNfn3QXxY+27UfUMq8LWt
+         o8qBbthHcIYTEu6FJVfA2lsW4z3h6EBAscQO9BNbzdS+TwJSUjEg51VOhQVPn0IEIi4Y
+         oIJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YLlwXriYXWRDWa6HLbM2ROrlGesibqzQ/9uF5Z67oTI=;
-        b=cdyIHN25CCAYrTLfQx+tU54bZ3dePi0+vqgLMZgO4luZMf3ysrzIztgjifzks1LH31
-         emQ3aipa4W37Fm0HIDNimZrvz31M1jdfNGJPiep/sEgk4dnP5UleJ2TBkVHyQOZNoa3K
-         xOXV44Cj76bdrghd7zOgoCa0OpdcUpJkJDGIPVSg0VEcWdouZtOq6lutXhDe9VEg2MTe
-         2qpq8HlwlXZxfScksCUKWoqeRaBDIERZvpLGjpp69cz6A0Mbf7V9DPV536XoJ23gyV1W
-         rgOdcQKsJ2e61+L2Se81VXMhtZotwljHCK+mpoa6G+EUGRO1vTosoorSqA7IvudbyxkS
-         AmOw==
-X-Gm-Message-State: APjAAAW67AtiO9yCVdyMT+l8NpEm1A30dyFRwvqzJb74n/7m/BTlRAly
-        5TUgnf/cYpKmFGeYVA7GgWtK/worLoU=
-X-Google-Smtp-Source: APXvYqzfUZt9gGBQUWLKaBWxLP7Ho4KXquSPkx5l20Qr1x1iBYrQbXydAmPIedpOOZ7aGu8+x45yaQ==
-X-Received: by 2002:a17:90a:c303:: with SMTP id g3mr13064434pjt.58.1560024968206;
-        Sat, 08 Jun 2019 13:16:08 -0700 (PDT)
-Received: from localhost.localdomain ([123.213.206.190])
-        by smtp.gmail.com with ESMTPSA id s64sm5196863pfb.160.2019.06.08.13.16.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Jun 2019 13:16:07 -0700 (PDT)
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Minwoo Im <minwoo.im.dev@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [RESEND PATCH] block: move tag field position in struct request
-Date:   Sun,  9 Jun 2019 05:15:51 +0900
-Message-Id: <20190608201551.4531-1-minwoo.im.dev@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:content-transfer-encoding;
+        bh=Oibz9MnDmwNMmGUKMKiPf6+1t2ZWez65UHGa4Eunn0E=;
+        b=jduycwFWQRxF3Pi7GB6j5bnLB23Hm1Xu+xU8G5MUOw+gFojqlJXIi8swjIbdq5FuD6
+         V2cl0LFyXE8El5qKHHToDx+GN77/0g2l70go6a/vdDPUVYZlPRE8VerjXxINQdx8TZQT
+         LHC6MDsQVzxLngqxaYMn/ZbIA66PqIBd2QggErgi03I+1Dt9TnaGcby4FAw7JKAVAyvj
+         vQ7p4zYLbLhZMgZXBodzmKUqEgnZw7sB1CS4eQAyXe2BH7BPQOt0eD5DoSM/maUNyv2S
+         WbX4VbKcl5DmVW/RzrehSfS+UAKtnpFG990LzoakVjfiIvDb3i8N7BZ43sVh+emSxpny
+         grdg==
+X-Gm-Message-State: APjAAAUMOlbXizPZIeZL/OfRfCtllDGnGpEkVfdHUKaThDC7mQI31Afj
+        0gPBuqTEAH3I8te05w4P/2XcfUgtGAXr0qCMcO4=
+X-Google-Smtp-Source: APXvYqy3ctbmTwSIU2s3QLDVhwTo0ZhaNurwuOVwknJZrCW03OtJH6BebLGghrfFwyD6PDjfIzMtFN4MNr9/WOg2Ac8=
+X-Received: by 2002:a24:3a42:: with SMTP id m63mr9450639itm.29.1560025151667;
+ Sat, 08 Jun 2019 13:19:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:410f:0:0:0:0:0 with HTTP; Sat, 8 Jun 2019 13:19:11 -0700 (PDT)
+From:   Ayesha Al-Gaddafi <aishagaddafimd@gmail.com>
+Date:   Sat, 8 Jun 2019 20:19:11 +0000
+X-Google-Sender-Auth: xLfim6oFDS6scCbvxXaBoD3b0jA
+Message-ID: <CAFyj9jxf=-R1-wCXY97xvOYhPCAyZke5JcLUcaNCx=hVjTgr_Q@mail.gmail.com>
+Subject: From Mrs. Ayesha Al-Qaddafi,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__data_len and __sector are internal fields which should not be accessed
-directly in driver-level like the comment above it. But, tag field can
-be accessed by driver level directly so that we need to make the comment
-right by moving it to some other place.
+Peace be upon you Dear Friend,
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/blkdev.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ It=E2=80=99s my pleasure to contact you through this media as i am in need=
+ of
+your urgent assistance. My names are Mrs. Ayesha Al-Qaddafi a single
+Mother and a Widow with three Children. I am the only biological
+Daughter of late Libyan President (Late Colonel Muammar Al-Qaddafi).
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 592669bcc536..90e6914bea0c 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -137,11 +137,11 @@ struct request {
- 	unsigned int cmd_flags;		/* op and common flags */
- 	req_flags_t rq_flags;
- 
-+	int tag;
- 	int internal_tag;
- 
- 	/* the following two fields are internal, NEVER access directly */
- 	unsigned int __data_len;	/* total data len */
--	int tag;
- 	sector_t __sector;		/* sector cursor */
- 
- 	struct bio *bio;
--- 
-2.21.0
+I have an investment funds worth Twenty Eight Million Four Hundred
+Thousand United State Dollars ($28.400.000.00) and i need an
+investment Manager/Partner and because of the asylum status i will
+authorize you the ownership of the funds, however, I am interested in
+you for the investment project assistance in your country, may be from
+there, we can build a business relationship in the nearest future.
 
+I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits. If you are
+willing to handle this project kindly reply urgent if only you are
+interested in this transaction to enable me provide you more
+information about the investment funds. Your Urgent Reply Will Be
+Appreciated.
+
+Kind Regards.
+Mrs. Ayesha Al-Qaddafi.
