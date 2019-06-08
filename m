@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B013A26F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB6A3A26D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbfFHWxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 18:53:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38570 "EHLO mx1.suse.de"
+        id S1728046AbfFHWxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 18:53:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38576 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727486AbfFHWwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 18:52:49 -0400
+        id S1727893AbfFHWwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 18:52:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DD34FAF90
-        for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2019 22:52:47 +0000 (UTC)
-Received: from mx1.suse.de (mx1.suse.de [195.135.220.2])
+        by mx1.suse.de (Postfix) with ESMTP id 9AEB7AF96
+        for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2019 22:52:48 +0000 (UTC)
+Received: from mx1.suse.de (mx2.suse.de [195.135.220.15])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 29CBD2C16B
-        for <bp@suse.de>; Sat,  8 Jun 2019 21:28:23 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 59F502C16E
+        for <bp@suse.de>; Sat,  8 Jun 2019 21:29:06 +0000 (UTC)
 Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.suse.de (Postfix) with ESMTPS id C5A3AAD00
-        for <bp@suse.de>; Sat,  8 Jun 2019 21:28:22 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTPS id F1E00AD93
+        for <bp@suse.de>; Sat,  8 Jun 2019 21:29:05 +0000 (UTC)
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58LSFng3145764
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58LSw1n3145795
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 8 Jun 2019 14:28:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58LSFng3145764
+        Sat, 8 Jun 2019 14:28:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58LSw1n3145795
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560029296;
-        bh=/wqbX3ovIyCjqGMK/GOr5YTjEumFjkx8ZVuSVwR4PiA=;
+        s=2019051801; t=1560029339;
+        bh=7rC3Q2ayfAyGL6lzPOoEQQ1AorBSQ9l3HZ0ycTpNTKI=;
         h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=IH7Mzf4M/OuANv3NZUzK7vQGnTWyhSsrHpKxLKYsuDb/s8P6FxzOg1OrRtjablLvu
-         kmHY7s11M2J+fV5AM9s9DRlD7vLpjc8ntAlKXwj/oGKdcfGmzznKnJ5w+M5MicHafz
-         rwDYOxmsWRb2EC7WGM+t4EENCXFEwzyftJ14+Lfmy8cSWJRvNgmJakaorvaevy6hJf
-         CYpMu2CjZF9Lz0mGZ2dpL+w8Q6fU3xv64xoPOjIULtFcQzbjVYOxFsUvQL5bQncRhc
-         pL85BrF49+fMu+YI7CwM/8Q/RmchxyALXqIIv1pwVv6vXILpBU01EVCB7Etrj04zL5
-         GhPk95mcR7aWw==
+        b=l0mkrlzEK5BuDrCgS5eUl8O4AiWHf8JCnZHeF1mQ+OjLpbOAmKDbivNeewCxy8Z+g
+         LO7KApOdOngl2IE9+l6xZI6vKS9mvibuntF4yu6yG6gzYj0a2Lc5WzPFC3TDxsvPFF
+         n/pdkZVM2plUthWZGpzBnHKQjDJiICBYU+pPInqpN1IxdNtlRGHtXrqY5CLd2fORIC
+         njr4apV5Ud04XFXNdUGsJ2bEaEwEI137uniMIuUekqsL8UCyi0FcRlC20E8Y/bgm+g
+         ZxNHYdnHdJJjLwrgAbkZw7LiaYl3FjpgivybMdckAIJAu3y68/g4R08AKzxGBlVjW6
+         NnHe0Jz56q5xw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58LSE223145761;
-        Sat, 8 Jun 2019 14:28:14 -0700
-Date:   Sat, 8 Jun 2019 14:28:14 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58LSwsK3145792;
+        Sat, 8 Jun 2019 14:28:58 -0700
+Date:   Sat, 8 Jun 2019 14:28:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-9632a3299bb1897f01c6a485ff035b20e61d7ae1@git.kernel.org>
-Cc:     hpa@zytor.com, bp@suse.de, mingo@kernel.org,
-        linux-edac@vger.kernel.org, tony.luck@intel.com, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          tony.luck@intel.com, linux-edac@vger.kernel.org, hpa@zytor.com,
-          mingo@kernel.org, bp@suse.de
+Message-ID: <tip-b8b5ca6600dec2a4f1e50ca9d3cf9e1d032870cd@git.kernel.org>
+Cc:     tony.luck@intel.com, linux-edac@vger.kernel.org, bp@suse.de,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: linux-edac@vger.kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, bp@suse.de, tony.luck@intel.com,
+          mingo@kernel.org, tglx@linutronix.de
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] RAS/CEC: Sanity-check array on every insertion
-Git-Commit-ID: 9632a3299bb1897f01c6a485ff035b20e61d7ae1
+Subject: [tip:ras/core] RAS/CEC: Rename count_threshold to action_threshold
+Git-Commit-ID: b8b5ca6600dec2a4f1e50ca9d3cf9e1d032870cd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,94 +68,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9632a3299bb1897f01c6a485ff035b20e61d7ae1
-Gitweb:     https://git.kernel.org/tip/9632a3299bb1897f01c6a485ff035b20e61d7ae1
+Commit-ID:  b8b5ca6600dec2a4f1e50ca9d3cf9e1d032870cd
+Gitweb:     https://git.kernel.org/tip/b8b5ca6600dec2a4f1e50ca9d3cf9e1d032870cd
 Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Sun, 21 Apr 2019 21:41:45 +0200
+AuthorDate: Sat, 20 Apr 2019 21:30:11 +0200
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 8 Jun 2019 17:35:34 +0200
+CommitDate: Sat, 8 Jun 2019 17:38:17 +0200
 
-RAS/CEC: Sanity-check array on every insertion
+RAS/CEC: Rename count_threshold to action_threshold
 
-Check the elements order in the array after every insertion.
+... which is the better, more-fitting name anyway.
 
+Tony:
+ - make action_threshold u64 due to debugfs accessors expecting u64.
+ - rename the remaining: s/count_threshold/action_threshold/g
+
+Co-developed-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>
 Cc: linux-edac <linux-edac@vger.kernel.org>
 ---
- drivers/ras/cec.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+ drivers/ras/cec.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index f57e869dfea2..da5797c38051 100644
+index da5797c38051..364f7e1a6bad 100644
 --- a/drivers/ras/cec.c
 +++ b/drivers/ras/cec.c
-@@ -276,11 +276,39 @@ static u64 __maybe_unused del_lru_elem(void)
- 	return pfn;
+@@ -37,9 +37,9 @@
+  * thus emulate an an LRU-like behavior when deleting elements to free up space
+  * in the page.
+  *
+- * When an element reaches it's max count of count_threshold, we try to poison
+- * it by assuming that errors triggered count_threshold times in a single page
+- * are excessive and that page shouldn't be used anymore. count_threshold is
++ * When an element reaches it's max count of action_threshold, we try to poison
++ * it by assuming that errors triggered action_threshold times in a single page
++ * are excessive and that page shouldn't be used anymore. action_threshold is
+  * initialized to COUNT_MASK which is the maximum.
+  *
+  * That error event entry causes cec_add_elem() to return !0 value and thus
+@@ -122,7 +122,7 @@ static DEFINE_MUTEX(ce_mutex);
+ static u64 dfs_pfn;
+ 
+ /* Amount of errors after which we offline */
+-static unsigned int count_threshold = COUNT_MASK;
++static u64 action_threshold = COUNT_MASK;
+ 
+ /* Each element "decays" each decay_interval which is 24hrs by default. */
+ #define CEC_DECAY_DEFAULT_INTERVAL	24 * 60 * 60	/* 24 hrs */
+@@ -345,7 +345,7 @@ int cec_add_elem(u64 pfn)
+ 
+ 	/* Check action threshold and soft-offline, if reached. */
+ 	count = COUNT(ca->array[to]);
+-	if (count >= count_threshold) {
++	if (count >= action_threshold) {
+ 		u64 pfn = ca->array[to] >> PAGE_SHIFT;
+ 
+ 		if (!pfn_valid(pfn)) {
+@@ -416,18 +416,18 @@ static int decay_interval_set(void *data, u64 val)
  }
+ DEFINE_DEBUGFS_ATTRIBUTE(decay_interval_ops, u64_get, decay_interval_set, "%lld\n");
  
-+static bool sanity_check(struct ce_array *ca)
-+{
-+	bool ret = false;
-+	u64 prev = 0;
-+	int i;
-+
-+	for (i = 0; i < ca->n; i++) {
-+		u64 this = PFN(ca->array[i]);
-+
-+		if (WARN(prev > this, "prev: 0x%016llx <-> this: 0x%016llx\n", prev, this))
-+			ret = true;
-+
-+		prev = this;
-+	}
-+
-+	if (!ret)
-+		return ret;
-+
-+	pr_info("Sanity check dump:\n{ n: %d\n", ca->n);
-+	for (i = 0; i < ca->n; i++) {
-+		u64 this = PFN(ca->array[i]);
-+
-+		pr_info(" %03d: [%016llx|%03llx]\n", i, this, FULL_COUNT(ca->array[i]));
-+	}
-+	pr_info("}\n");
-+
-+	return ret;
-+}
- 
- int cec_add_elem(u64 pfn)
+-static int count_threshold_set(void *data, u64 val)
++static int action_threshold_set(void *data, u64 val)
  {
- 	struct ce_array *ca = &ce_arr;
--	unsigned int to;
-+	unsigned int to = 0;
- 	int count, ret = 0;
+ 	*(u64 *)data = val;
  
- 	/*
-@@ -345,6 +373,8 @@ int cec_add_elem(u64 pfn)
- 	if (ca->decay_count >= CLEAN_ELEMS)
- 		do_spring_cleaning(ca);
+ 	if (val > COUNT_MASK)
+ 		val = COUNT_MASK;
  
-+	WARN_ON_ONCE(sanity_check(ca));
-+
- unlock:
- 	mutex_unlock(&ce_mutex);
+-	count_threshold = val;
++	action_threshold = val;
  
-@@ -402,7 +432,6 @@ DEFINE_DEBUGFS_ATTRIBUTE(count_threshold_ops, u64_get, count_threshold_set, "%ll
+ 	return 0;
+ }
+-DEFINE_DEBUGFS_ATTRIBUTE(count_threshold_ops, u64_get, count_threshold_set, "%lld\n");
++DEFINE_DEBUGFS_ATTRIBUTE(action_threshold_ops, u64_get, action_threshold_set, "%lld\n");
+ 
  static int array_dump(struct seq_file *m, void *v)
  {
- 	struct ce_array *ca = &ce_arr;
--	u64 prev = 0;
- 	int i;
+@@ -453,7 +453,7 @@ static int array_dump(struct seq_file *m, void *v)
+ 	seq_printf(m, "Decay interval: %lld seconds\n", decay_interval);
+ 	seq_printf(m, "Decays: %lld\n", ca->decays_done);
  
- 	mutex_lock(&ce_mutex);
-@@ -412,10 +441,6 @@ static int array_dump(struct seq_file *m, void *v)
- 		u64 this = PFN(ca->array[i]);
+-	seq_printf(m, "Action threshold: %d\n", count_threshold);
++	seq_printf(m, "Action threshold: %lld\n", action_threshold);
  
- 		seq_printf(m, " %03d: [%016llx|%03llx]\n", i, this, FULL_COUNT(ca->array[i]));
--
--		WARN_ON(prev > this);
--
--		prev = this;
+ 	mutex_unlock(&ce_mutex);
+ 
+@@ -502,10 +502,10 @@ static int __init create_debugfs_nodes(void)
+ 		goto err;
  	}
  
- 	seq_printf(m, "}\n");
+-	count = debugfs_create_file("count_threshold", S_IRUSR | S_IWUSR, d,
+-				    &count_threshold, &count_threshold_ops);
++	count = debugfs_create_file("action_threshold", S_IRUSR | S_IWUSR, d,
++				    &action_threshold, &action_threshold_ops);
+ 	if (!count) {
+-		pr_warn("Error creating count_threshold debugfs node!\n");
++		pr_warn("Error creating action_threshold debugfs node!\n");
+ 		goto err;
+ 	}
+ 
