@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD3C39CA5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 12:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 678A539CA6
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 12:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfFHK5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 06:57:32 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45007 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727312AbfFHK5a (ORCPT
+        id S1727401AbfFHK5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 06:57:37 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46165 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbfFHK5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 06:57:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c5so1788150pll.11
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 03:57:30 -0700 (PDT)
+        Sat, 8 Jun 2019 06:57:36 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v9so781160pgr.13
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 03:57:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+foEg/5Kn7Wc3DhqfBX28a12tMvcUqqoAxp0c5JhJxM=;
-        b=augbJoLg1soVTWHOaAlQyHTFXTeqcnEZy7ou9u6HMLF0zY6/ei4AKyl42af2jtN/WX
-         vJzck9A/LnybA7Ov6fchFlG5K8qefmTsb/+tADy7DHQwoavUM1BGgc1S1qI0NWwGv17L
-         O53ly4azLDT7Zssz69HJ8G4a3y9l+F7dR+s8oP0wiVRZAcs5dCvCjHVCaEzsWzKjLre4
-         DsXzcaSiUeL4889AFgtpr87PajVKF9bOlUlS0zrxnexqmTmRi/k9Vh9/dCi/nVFBpeuU
-         6ke/0H0m9NgkLD6KVGNzROuSiBAg/l1+4b12OUrnTeQaXhXhXk/BznyZa2iSXqnlCmNw
-         ZUew==
+        bh=/jhlTAOCr2cATKgTKP2X5yBcXY2hwT21U0WFbUJTCmU=;
+        b=TOvsvnbYAFQAgOey2Md3zoScWrppLuDa08Ss1wPG37UZ0cwGDs1tAi8pHkCCkQfZxd
+         58c2RqqnwMNwMF/1/8Iq9XCANLe0WP9JUf/6hlqEWN9N7FZCtjUr2mB2TG4Y35QPJmeM
+         BkERSw4iExV4icHb5U7kXsPUZkl3F1NiFnSb+v6DPPNCnbaHJNfO1uSnyi83lvkBoZMg
+         GRM0YxzCZocfVx5o0LsbQnDeOsSeYVaMBtZKmBjbcnYfYCl9efaIJ/Vev7YGSEOOkn0X
+         r1BkdTA+3Iv9yJImracc7AOyM/99nb8ozFrSHgrong7SySSXifV6G1dZywkHvpzldAoy
+         yYmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+foEg/5Kn7Wc3DhqfBX28a12tMvcUqqoAxp0c5JhJxM=;
-        b=lODIahjRYn4WEjxTrYNfRQBeSMqQsZ3P3LxmmTnSNGvNYev3zDQs4xERpG6q/0H5Jd
-         8Q/geQ9BphiOIlywSAS+geqEMR8BA6iFDcRoZ0gAxlYBV+MFrFSKCSm2nIfG0PIcs2Q6
-         pzUeRXIK3rZQQUGzfQehqW1bE09ZxTnSWUgnEJVUd9T6ty0SYl86t28/yxLXIlZhUsRy
-         92fJwsqLZCGT4S++qOQJ22KJHst5OQmEq8FVWD0RbFl57kHU0GVJq9S+2x/hN/xLkXQR
-         a0e9D9/oMj0x3rQq3lww8dPeLGzg3XCF5+6R+u4oSErKxYl0vri+CIZ2V0zQZ1WkXFyz
-         QzDw==
-X-Gm-Message-State: APjAAAUVGoumYK9WjEqWuC8kAK5rIBr4rijLXfWn6iFCzMBZa+gvl+Wp
-        8t76JR3/XOXldx6lxYRe/g3UpmwI
-X-Google-Smtp-Source: APXvYqzUdym4tz29yE1UgX3MmuIBK+vpu7rFiU5Eisp5PS4nr8P1IB9znQQ+5/lWvreMDC5zralLEQ==
-X-Received: by 2002:a17:902:67:: with SMTP id 94mr61541293pla.64.1559991449917;
-        Sat, 08 Jun 2019 03:57:29 -0700 (PDT)
+        bh=/jhlTAOCr2cATKgTKP2X5yBcXY2hwT21U0WFbUJTCmU=;
+        b=pjfZQGNdifyhmj0Icwec7JuZ5A9gXnz8WvMtJAoztLUB4b9DTtMyXo80eiJpAY/3kO
+         e4JKasGl8ZUaRCL8efIlfQTUYwXggg+W0h7hNXs8LFIFkBB3jPjcoG/9RzLlBsG4Ovbt
+         8CaLnWmPTIip9ieXmsnM9BktcVnSOciQ+QKYa0yQGKhUy+PLu0IUEMn24y/shQkBUVRL
+         r5uvO+z1U0gsGGGDYq8Q/LioMfHirA48FTYynjice2EqmNoz1Ig4SFY/dINOhoojcuWF
+         yQZm7RFZrZRYWqaO+5+lm6HdfBrMh/wkbNxbobuhp5kPO73MwT393cvjb/kYJdmixtqd
+         kSwQ==
+X-Gm-Message-State: APjAAAVBkMn/kINqaOjz3XjJdPpM8AUzHB/FWCQmbfM6tvPyZKLhulr1
+        B6roD7pU5rdZOsxBssjYsm80lL9Z
+X-Google-Smtp-Source: APXvYqxnSy75vaTrAEtVkMxy3DnthsvUhUY1+RPgyOwH03Ar5AtQLbivtS2Dxz6Z9Fegpw5JIOo75Q==
+X-Received: by 2002:a62:2983:: with SMTP id p125mr22924451pfp.154.1559991455923;
+        Sat, 08 Jun 2019 03:57:35 -0700 (PDT)
 Received: from localhost.localdomain ([117.192.25.72])
-        by smtp.googlemail.com with ESMTPSA id s24sm5021384pfh.133.2019.06.08.03.57.25
+        by smtp.googlemail.com with ESMTPSA id s24sm5021384pfh.133.2019.06.08.03.57.30
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 08 Jun 2019 03:57:29 -0700 (PDT)
+        Sat, 08 Jun 2019 03:57:35 -0700 (PDT)
 From:   Deepak Mishra <linux.dkm@gmail.com>
 To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
         linux.dkm@gmail.com, straube.linux@gmail.com
-Subject: [PATCH v4 2/6] staging: rtl8712: Removed redundant code from function oid_rt_pro_write_register_hdl
-Date:   Sat,  8 Jun 2019 16:26:57 +0530
-Message-Id: <55a2a17ea5f1bc4be7c16e6996ad890aef8f519a.1559990697.git.linux.dkm@gmail.com>
+Subject: [PATCH v4 3/6] staging: rtl8712: Fixed CamelCase cmdThread rename to cmd_thread
+Date:   Sat,  8 Jun 2019 16:26:58 +0530
+Message-Id: <cf8b19d6dc86962021d9f7f397729cb6ac6c64f4.1559990697.git.linux.dkm@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1559990697.git.linux.dkm@gmail.com>
 References: <cover.1559990697.git.linux.dkm@gmail.com>
@@ -62,46 +62,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function oid_rt_pro_write_register_hdl, Adapter->ImrContent is
-assigned with RegRWStruct->value but Adapter->ImrContent is never used
-anywhere else. So those lines has no impact and are removed removed.
+This patch renames CamelCase cmdThread to cmd_thread in struct _adapter in
+drv_types.h and in os_intfs.c
 
-As that was the only place where ImrContent was used, so the member
-variable is removed from the structure _adapter
+This was reported by checkpatch.pl
 
 Signed-off-by: Deepak Mishra <linux.dkm@gmail.com>
 ---
- drivers/staging/rtl8712/drv_types.h        | 1 -
- drivers/staging/rtl8712/rtl871x_mp_ioctl.c | 5 -----
- 2 files changed, 6 deletions(-)
+ drivers/staging/rtl8712/drv_types.h | 2 +-
+ drivers/staging/rtl8712/os_intfs.c  | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/rtl8712/drv_types.h b/drivers/staging/rtl8712/drv_types.h
-index d4262a68dd4d..9fbd19f03ca9 100644
+index 9fbd19f03ca9..0c722e9c2410 100644
 --- a/drivers/staging/rtl8712/drv_types.h
 +++ b/drivers/staging/rtl8712/drv_types.h
-@@ -149,7 +149,6 @@ struct _adapter {
- 	bool	surprise_removed;
- 	bool	suspended;
+@@ -151,7 +151,7 @@ struct _adapter {
  	u32	IsrContent;
--	u32	ImrContent;
  	u8	eeprom_address_size;
  	u8	hw_init_completed;
- 	struct task_struct *cmdThread;
-diff --git a/drivers/staging/rtl8712/rtl871x_mp_ioctl.c b/drivers/staging/rtl8712/rtl871x_mp_ioctl.c
-index 588346da1412..add6c18195d6 100644
---- a/drivers/staging/rtl8712/rtl871x_mp_ioctl.c
-+++ b/drivers/staging/rtl8712/rtl871x_mp_ioctl.c
-@@ -661,11 +661,6 @@ uint oid_rt_pro_write_register_hdl(struct oid_par_priv *poid_par_priv)
- 			status = RNDIS_STATUS_NOT_ACCEPTED;
- 			break;
- 		}
--
--		if ((status == RNDIS_STATUS_SUCCESS) &&
--		    (RegRWStruct->offset == HIMR) &&
--		    (RegRWStruct->width == 4))
--			Adapter->ImrContent = RegRWStruct->value;
- 	}
- 	return status;
+-	struct task_struct *cmdThread;
++	struct task_struct *cmd_thread;
+ 	pid_t evtThread;
+ 	struct task_struct *xmitThread;
+ 	pid_t recvThread;
+diff --git a/drivers/staging/rtl8712/os_intfs.c b/drivers/staging/rtl8712/os_intfs.c
+index c962696c9822..1653b36c4bfd 100644
+--- a/drivers/staging/rtl8712/os_intfs.c
++++ b/drivers/staging/rtl8712/os_intfs.c
+@@ -221,9 +221,9 @@ struct net_device *r8712_init_netdev(void)
+ 
+ static u32 start_drv_threads(struct _adapter *padapter)
+ {
+-	padapter->cmdThread = kthread_run(r8712_cmd_thread, padapter, "%s",
++	padapter->cmd_thread = kthread_run(r8712_cmd_thread, padapter, "%s",
+ 					  padapter->pnetdev->name);
+-	if (IS_ERR(padapter->cmdThread))
++	if (IS_ERR(padapter->cmd_thread))
+ 		return _FAIL;
+ 	return _SUCCESS;
+ }
+@@ -235,7 +235,7 @@ void r8712_stop_drv_threads(struct _adapter *padapter)
+ 
+ 	/*Below is to terminate r8712_cmd_thread & event_thread...*/
+ 	complete(&padapter->cmdpriv.cmd_queue_comp);
+-	if (padapter->cmdThread)
++	if (padapter->cmd_thread)
+ 		wait_for_completion_interruptible(completion);
+ 	padapter->cmdpriv.cmd_seq = 1;
  }
 -- 
 2.19.1
