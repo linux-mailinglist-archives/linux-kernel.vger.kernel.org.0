@@ -2,73 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF4D3A21E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 23:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D52E33A267
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfFHVRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 17:17:01 -0400
-Received: from mail-it1-f199.google.com ([209.85.166.199]:39263 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbfFHVRB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 17:17:01 -0400
-Received: by mail-it1-f199.google.com with SMTP id a62so5117705itd.4
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 14:17:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=pUXnTCGmDRM9Fiu3UMhwQKrlTPjkftTdr4gBjp4i6Ps=;
-        b=Wgx++xE510y5+sbgSHQ7AkMu7ZYQYRxH9k7kJ7v4lPQPV9lObgH3A6/DZEUUYt6GU3
-         9bXi2cSqf3ehpBfFeJpZeLs4KkzxakJAJ9hEPeLR6tRXAcWefsZyLOY2pQNMoZNeDzNR
-         YDjaSnrNQV/YBpuiKFpmMVDVsw/MVD+J+mb1i5iTctUK6nQdQgDZ+URO5N4e/vV6fXHn
-         KBMLn27EP9gx93/Gq13uQJEE5bc4EO/Az6mQS7U4yrCsCEvgQMMC6tKLeKQjxs4i4F7Q
-         kSAEYVxYdgYLmHW9bh/fY8OnDcYPSrp1pm4ezDbWXoIdeojAOMRh3d8tLx0p1CKo6meQ
-         9hMw==
-X-Gm-Message-State: APjAAAWHUiqXeX82pHAp+cP0KhzAxQENFb4+/gMxZm/rM7q+awEw3qfd
-        olvpmSdKwJ2wx2/f7OWK0QuEzpLEHLa8zk3XPHZvTH6hk51D
-X-Google-Smtp-Source: APXvYqyc2nXveQl5DBuQDOiIyH/k1sTlPNyXQsmCmi+humPK9XlBkbhTw6PRCCBbfDhnuV5GcSPLM1WROKpXmdcxP8xM3qragnxh
+        id S1727853AbfFHWws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 18:52:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38552 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727486AbfFHWwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 18:52:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BEAECAF90
+        for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2019 22:52:45 +0000 (UTC)
+Received: from mx1.suse.de (mx2.suse.de [195.135.220.15])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 228A42C16B
+        for <bp@suse.de>; Sat,  8 Jun 2019 21:25:37 +0000 (UTC)
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.suse.de (Postfix) with ESMTPS id 7F8E2AD8B
+        for <bp@suse.de>; Sat,  8 Jun 2019 21:25:36 +0000 (UTC)
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58LPMCZ3145335
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 8 Jun 2019 14:25:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58LPMCZ3145335
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560029123;
+        bh=MMmHenzU+5IrNoyGGBxCHHd2b5T4fMqT4M2UFQgsUWE=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=R9ysOLn1veKpgtbyY89MViR+qwzM6YXuQQFBlRlZotJ5BZhSJjyT11x9iwFSwyJhB
+         NUjV5lVBzmqEFudN+Hu+Owag9/5YSf8rtBOtEg8RX2hqZwL5rVe6diZS8FqiMkTQTl
+         PXOhGcAH8hrBIjrl14Fnq2o8Tnzpp9Yyh+49Gbc0/m7y4dPBr6RjZVHjIwiCTkbxeS
+         Xl+JzSrxa5VdeHSXMM4tbg6Rm4dgVrOrgL7P+eVCC5o0XWZ9Ex3zgAxOyn5LrtyQMk
+         kZimnqpsRaMYsFlzz5fe2P8/qBtMnISBYFikJO8v3O7ZvH5XzeES6WHaS8U1N92Yy6
+         SqCxbXUtJIkUQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58LPM3D3145332;
+        Sat, 8 Jun 2019 14:25:22 -0700
+Date:   Sat, 8 Jun 2019 14:25:22 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-6d8e294bf5f0e85c34e8b14b064e2965f53f38b0@git.kernel.org>
+Cc:     tony.luck@intel.com, hpa@zytor.com, bp@suse.de, tglx@linutronix.de,
+        mingo@kernel.org, linux-edac@vger.kernel.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, bp@suse.de,
+          tglx@linutronix.de, tony.luck@intel.com, mingo@kernel.org,
+          linux-edac@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/core] RAS/CEC: Fix pfn insertion
+Git-Commit-ID: 6d8e294bf5f0e85c34e8b14b064e2965f53f38b0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Received: by 2002:a24:2b8f:: with SMTP id h137mr8306276ita.162.1560028620312;
- Sat, 08 Jun 2019 14:17:00 -0700 (PDT)
-Date:   Sat, 08 Jun 2019 14:17:00 -0700
-In-Reply-To: <000000000000a802e6058ad4bc53@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c0d84e058ad677aa@google.com>
-Subject: Re: general protection fault in mm_update_next_owner
-From:   syzbot <syzbot+f625baafb9a1c4bfc3f6@syzkaller.appspotmail.com>
-To:     aarcange@redhat.com, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, ast@kernel.org,
-        avagin@gmail.com, daniel@iogearbox.net, dbueso@suse.de,
-        ebiederm@xmission.com, john.fastabend@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        oleg@redhat.com, prsood@codeaurora.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Commit-ID:  6d8e294bf5f0e85c34e8b14b064e2965f53f38b0
+Gitweb:     https://git.kernel.org/tip/6d8e294bf5f0e85c34e8b14b064e2965f53f38b0
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Sat, 20 Apr 2019 12:53:05 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 8 Jun 2019 17:32:00 +0200
 
-commit e9db4ef6bf4ca9894bb324c76e01b8f1a16b2650
-Author: John Fastabend <john.fastabend@gmail.com>
-Date:   Sat Jun 30 13:17:47 2018 +0000
+RAS/CEC: Fix pfn insertion
 
-     bpf: sockhash fix omitted bucket lock in sock_close
+When inserting random PFNs for debugging the CEC through
+(debugfs)/ras/cec/pfn, depending on the return value of pfn_set(),
+multiple values get inserted per a single write.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e978e1a00000
-start commit:   38e406f6 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-git tree:       net
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=17e978e1a00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e978e1a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=60564cb52ab29d5b
-dashboard link: https://syzkaller.appspot.com/bug?extid=f625baafb9a1c4bfc3f6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1193d81ea00000
+That is because simple_attr_write() interprets a retval of 0 as
+success and claims the whole input. However, pfn_set() returns the
+cec_add_elem() value, which, if > 0 and smaller than the whole input
+length, makes glibc continue issuing the write syscall until there's
+input left:
 
-Reported-by: syzbot+f625baafb9a1c4bfc3f6@syzkaller.appspotmail.com
-Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
+  pfn_set
+  simple_attr_write
+  debugfs_attr_write
+  full_proxy_write
+  vfs_write
+  ksys_write
+  do_syscall_64
+  entry_SYSCALL_64_after_hwframe
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+leading to those repeated calls.
+
+Return 0 to fix that.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+---
+ drivers/ras/cec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+index 673f8a128397..f5795adc5a6e 100644
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -369,7 +369,9 @@ static int pfn_set(void *data, u64 val)
+ {
+ 	*(u64 *)data = val;
+ 
+-	return cec_add_elem(val);
++	cec_add_elem(val);
++
++	return 0;
+ }
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(pfn_ops, u64_get, pfn_set, "0x%llx\n");
