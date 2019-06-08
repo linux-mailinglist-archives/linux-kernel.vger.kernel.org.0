@@ -2,173 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623283A16D
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 21:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C9C83A178
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 21:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfFHTNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 15:13:07 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:42842 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbfFHTNH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 15:13:07 -0400
-Received: by mail-io1-f72.google.com with SMTP id f22so4373926ioj.9
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 12:13:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/CiUQxhmX/wrK/zGQ3q1oXcnS8swEmLJnbMQU92h+Ss=;
-        b=eCrMFQNgta43fI5WRrSIfoUj75CVZXuuoTeOVidNUqAurhd5Bpjmj0xaXgywyBTlGm
-         CUHQKBc2zVkasb/1TNimsDTipNndxsRcXkKl056I3vnVzM7WaTr4IkXAcUi9HpZYZlJ/
-         To+3nt4itosbY3J1K4E4Xj26t0/5mq4SAqbQTro+dKiKz5A0bVSmNdjT8pUBZHkqF47A
-         OaG8eD/5pt1mDIgGACxhkReqod1PMGji3sUufacOOX/ZCyNrpWa3Urf4CDjO4pCQD9Mx
-         oa762vUh/XaO1TWGDoRlHRithonZVvSTqR/5lLMJZ0iPFw6d+ChSWml6uDHWeYjlF9tP
-         GEZA==
-X-Gm-Message-State: APjAAAWt7/zrcyr1dDZZEiDTynF5kW4cj2iU3pe96q5vjrPpj9LU0xfd
-        VD2UlftzapkgvICESX57bOQ983wlRgbwFiP4LwKN1+DJe6cC
-X-Google-Smtp-Source: APXvYqyqTZMuLhnsb2l6Rm+NJ0m2Qh9j/TIK4FNt1CYvVuNZonQYR1LuUV8blWqV4teukuA54DZba62RIMTsYYp0dk5LyQHV6xG/
+        id S1727432AbfFHTWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 15:22:15 -0400
+Received: from mga01.intel.com ([192.55.52.88]:48556 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727215AbfFHTWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 15:22:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2019 12:22:14 -0700
+X-ExtLoop1: 1
+Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.251.93.16]) ([10.251.93.16])
+  by orsmga006.jf.intel.com with ESMTP; 08 Jun 2019 12:22:10 -0700
+Subject: Re: [RFC PATCH 1/6] ASoC: core: add support to
+ snd_soc_dai_get_sdw_stream()
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, vkoul@kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20190607085643.932-1-srinivas.kandagatla@linaro.org>
+ <20190607085643.932-2-srinivas.kandagatla@linaro.org>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <13bfb632-f743-c416-2224-c7acb5b28604@intel.com>
+Date:   Sat, 8 Jun 2019 21:22:08 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-Received: by 2002:a24:cd82:: with SMTP id l124mr8833864itg.169.1560021186123;
- Sat, 08 Jun 2019 12:13:06 -0700 (PDT)
-Date:   Sat, 08 Jun 2019 12:13:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a420af058ad4bca2@google.com>
-Subject: memory leak in create_ctx
-From:   syzbot <syzbot+06537213db7ba2745c4a@syzkaller.appspotmail.com>
-To:     aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
-        davejwatson@fb.com, davem@davemloft.net, john.fastabend@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190607085643.932-2-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2019-06-07 10:56, Srinivas Kandagatla wrote:
+> On platforms which have smart speaker amplifiers connected via
+> soundwire and modeled as aux devices in ASoC, in such usecases machine
+> driver should be able to get sdw master stream from dai so that it can
+> use the runtime stream to setup slave streams.
+> 
+> soundwire already as a set function, get function would provide more
+> flexibility to above configurations.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   include/sound/soc-dai.h | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
+> index f5d70041108f..9f90b936fd9a 100644
+> --- a/include/sound/soc-dai.h
+> +++ b/include/sound/soc-dai.h
+> @@ -177,6 +177,7 @@ struct snd_soc_dai_ops {
+>   
+>   	int (*set_sdw_stream)(struct snd_soc_dai *dai,
+>   			void *stream, int direction);
+> +	void *(*get_sdw_stream)(struct snd_soc_dai *dai, int direction);
+>   	/*
+>   	 * DAI digital mute - optional.
+>   	 * Called by soc-core to minimise any pops.
+> @@ -385,4 +386,13 @@ static inline int snd_soc_dai_set_sdw_stream(struct snd_soc_dai *dai,
+>   		return -ENOTSUPP;
+>   }
+>   
+> +static inline void *snd_soc_dai_get_sdw_stream(struct snd_soc_dai *dai, int direction)
 
-syzbot found the following crash on:
+Exceeds character limit?
 
-HEAD commit:    79c3ba32 Merge tag 'drm-fixes-2019-06-07-1' of git://anong..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=170e0bfea00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d5c73825cbdc7326
-dashboard link: https://syzkaller.appspot.com/bug?extid=06537213db7ba2745c4a
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10aa806aa00000
+> +{
+> +	if (dai->driver->ops->get_sdw_stream)
+> +		return dai->driver->ops->get_sdw_stream(dai, direction);
+> +	else
+> +		return NULL;
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+06537213db7ba2745c4a@syzkaller.appspotmail.com
+set_ equivalent returns -ENOTSUPP instead.
+ERR_PTR seems to make more sense here.
 
-IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
-2019/06/08 14:55:51 executed programs: 15
-2019/06/08 14:55:56 executed programs: 31
-2019/06/08 14:56:02 executed programs: 51
-BUG: memory leak
-unreferenced object 0xffff888117ceae00 (size 512):
-   comm "syz-executor.3", pid 7233, jiffies 4294949016 (age 13.640s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000e6550967>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
-     [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
-     [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
-     [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
-     [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
-     [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
-     [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
-     [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
-     [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60  
-net/ipv4/tcp.c:2784
-     [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
-     [<00000000c840962c>] sock_common_setsockopt+0x38/0x50  
-net/core/sock.c:3124
-     [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
-     [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
-     [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
-     [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
-     [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> +
 
-BUG: memory leak
-unreferenced object 0xffff88810965dc00 (size 512):
-   comm "syz-executor.2", pid 7235, jiffies 4294949016 (age 13.640s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000e6550967>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
-     [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
-     [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
-     [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
-     [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
-     [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
-     [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
-     [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
-     [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60  
-net/ipv4/tcp.c:2784
-     [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
-     [<00000000c840962c>] sock_common_setsockopt+0x38/0x50  
-net/core/sock.c:3124
-     [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
-     [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
-     [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
-     [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
-     [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Unnecessary newline.
 
-BUG: memory leak
-unreferenced object 0xffff8881207d7600 (size 512):
-   comm "syz-executor.5", pid 7244, jiffies 4294949019 (age 13.610s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000e6550967>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
-     [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
-     [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
-     [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
-     [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
-     [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
-     [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
-     [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
-     [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60  
-net/ipv4/tcp.c:2784
-     [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
-     [<00000000c840962c>] sock_common_setsockopt+0x38/0x50  
-net/core/sock.c:3124
-     [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
-     [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
-     [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
-     [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
-     [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> +}
+> +
+>   #endif
+> 
