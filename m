@@ -2,129 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F243A060
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 17:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7A03A079
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 17:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbfFHPYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 11:24:34 -0400
-Received: from mout.web.de ([212.227.17.11]:57465 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727015AbfFHPYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 11:24:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1560007456;
-        bh=uuPJ0ujuQTjvJZkom8g+7THyutf2GoG7/RLzUnqlV+k=;
-        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
-        b=Zf3VIHa02a+HfnwUmlGFhRdejpKwDTHmGOWSzL9DdhjK6oowmUlMxk7Zll/VOAvjp
-         rov4n/a3HIXg/CxThj/ujVBQxeS05Xf089HSx0OrqZ4Q+l7fPdfs0LXXxXI8bWyNLL
-         drObWXv9OBkSrrTXVqMyV9Z9K2r03kM3xfWwhgAw=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.4] ([2.243.189.212]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MXYS2-1h5KmH3KY2-00WVab; Sat, 08
- Jun 2019 17:24:15 +0200
-To:     Himanshu Jha <himanshujha199640@gmail.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Cc:     cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-References: <20190406061112.31620-1-himanshujha199640@gmail.com>
-Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
-Date:   Sat, 8 Jun 2019 17:24:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727272AbfFHPcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 11:32:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59268 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727220AbfFHPct (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 11:32:49 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x58FQkgC016440;
+        Sat, 8 Jun 2019 11:32:32 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t090rap3p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 08 Jun 2019 11:32:32 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x58FSses019803;
+        Sat, 8 Jun 2019 11:32:31 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t090rap3f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 08 Jun 2019 11:32:31 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x58DVEBe013007;
+        Sat, 8 Jun 2019 13:39:47 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01dal.us.ibm.com with ESMTP id 2t04n5kgsm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 08 Jun 2019 13:39:47 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x58FWTG542598856
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 8 Jun 2019 15:32:29 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC68BB2065;
+        Sat,  8 Jun 2019 15:32:29 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F6A7B205F;
+        Sat,  8 Jun 2019 15:32:29 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.36])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat,  8 Jun 2019 15:32:29 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8DB3916C3421; Sat,  8 Jun 2019 08:27:07 -0700 (PDT)
+Date:   Sat, 8 Jun 2019 08:27:07 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Jade Alglave <j.alglave@ucl.ac.uk>
+Subject: Re: inet: frags: Turn fqdir->dead into an int for old Alphas
+Message-ID: <20190608152707.GF28207@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190603200301.GM28207@linux.ibm.com>
+ <Pine.LNX.4.44L0.1906041026570.1731-100000@iolanthe.rowland.org>
+ <CAHk-=wgGnCw==uY8radrB+Tg_CEmzOtwzyjfMkuh7JmqFh+jzQ@mail.gmail.com>
+ <20190607140949.tzwyprrhmqdx33iu@gondor.apana.org.au>
+ <da5eedfe-92f9-6c50-b9e7-68886047dd25@gmail.com>
+ <CAHk-=wgtY1hNQX9TM=4ono-UJ-hsoFA0OT36ixFWBG2eeO011w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190406061112.31620-1-himanshujha199640@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:R+dZh0ZrYW7IwTsGMXlNogSTN4+5a6bIPidak4Zptr3tIKn9zod
- 5lEuxtyaNQNbBhftm/hoZKPhRVyPKHCF49mCo82X3f4GJBQg9UtDKdfy85KESml9ikzkQNs
- Iq1cbpkOsZUbvSl6T+ilpzpEmVTeB0cCBkrJB5sVC48JncNqIF+OKOxMyhcmFhJGPAFgpR9
- bjiRFxYmYLwclIhOrBIJQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2SfiyUGPfAY=:YHnIuWI9eVhjI9kkhfvHxb
- 52oVaeM8fPNZ+TKLLumFKa48f/YAa+lop9ffpLU6PEfMAyzeKd08QeIrK48v4TBw+aSFM8dPF
- 9LedwEvoxy7+B8c+YRt/FnnPwKzGABsHQ3OLR+HakhFOwrgrjY9iA9qvDA8LiT77+Pa9W1iss
- s37ENLTDSWgDutuxtvBV4F/z6M3SwzzHsTwvrDDLZc1c8gcB2TVWW/vK1kICNmBiB5yFBnpUX
- 3ggvl4GaTDaFv2D5wlcmJTrOGMoblk1XZC1e71BFHx02y5p4mEIr0DXgxbbrK8MdLBmr+6TG4
- bOVIi3UQNofXCaEWQXySsNOPaidvC5G5bG0k88dzmU3swPv56MDzSCgJ5Cr+sKBTQLC2yMOHo
- thfbX4ZJ3rEgBZm9v48u+MCqDZAYdEEJFb5lI9vWx90g8xPrUmAKWjIbdbmJbUvTvIZ+l7z/V
- INlu+G6IkdbVAeotTSiUhtCiZado/PYGpByWuLFMJ2JhyG4a+ljlC3yC8Vb8QiVmCOxOAkVsE
- s1hJsv0+mAGMrHeUTNzLEadXgQlKwslASQ4YYEDv67kvUGab5RDekohgtNGSsRy1eC0TcfzaX
- jgi+9XCrqGcNkYwaFd2VI5+8MIAodyPPOwLc1EQPvCC7N7j6v+OnpIePbwCJYdhWqIrE++f52
- UtJ4uJl1zBG3FpvHzmC+SH0queSde9b1kLidAR3+Wcw9vJmclbP1WahgR2JcQbYVW3R5YCFrk
- N0WSbhuBJb55afbz9i121iGcfk6NowrH+p4hF8RF8k9N7ORYevGPnC4pRWbnIXYxXV+RMal+5
- eQOO6/EPajyeCkRrC886Uv1kShNTkuqAwqa+KiZaX8/5FKpt5/CBufxU6AxD5Rny9z9aw4NzL
- nGt2SyBZjPyXY3rlxjHk6YudPSJY8b/l2wiAZNJUupLgLpFrDBuPsawvv+RbKah6TSe6nBsYW
- b8xTVSsg6zaTiaYUG9NhRF72OvxVww/4pjdhhEHOROeOoqCvWGiei
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgtY1hNQX9TM=4ono-UJ-hsoFA0OT36ixFWBG2eeO011w@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906080116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +- e1 = devm_ioremap_resource(arg4, id);
-> ++ e1 = devm_platform_ioremap_resource(arg1, arg3);
+On Fri, Jun 07, 2019 at 09:19:42AM -0700, Linus Torvalds wrote:
+> On Fri, Jun 7, 2019 at 8:26 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >
+> > There is common knowledge among us programmers that bit fields
+> > (or bool) sharing a common 'word' need to be protected
+> > with a common lock.
+> >
+> > Converting all bit fields to plain int/long would be quite a waste of memory.
+> 
+> Yeah, and we really don't care about alpha. So 'char' should be safe.
+> 
+> No compiler actually turns a 'bool' in a struct into a bitfield,
+> afaik, because you're still supposed to be able to take the address of
+> a boolean.
+> 
+> But on the whole, I do not believe that we should ever use 'bool' in
+> structures anyway, because it's such a badly defined type. I think
+> it's 'char' in practice on just about all architectures, but there
+> really were traditional use cases where 'bool' was int.
+> 
+> But:
+> 
+>  - we shouldn't turn them into 'int' anyway - alpha is dead, and no
+> sane architecture will make the same mistake anyway. People learnt.
+> 
+>  - we might want to make sure 'bool' really is 'char' in practice, to
+> double-check that fthe compiler doesn't do anything stupid.
+> 
+>  - bitfields obviously do need locks. 'char' does not.
+> 
+> If there's somebody who really notices the alpha issue in PRACTICE, we
+> can then bother to fix it. But there is approximately one user, and
+> it's not a heavy-duty one.
 
-Can the following specification variant matter for the shown SmPL
-change approach?
+C11 and later compilers are supposed to use read-modify-write atomic
+operations in this sort of situation anyway because they are not supposed
+to introduce data races.  So if this problem comes up, the fix should
+be in GCC rather than the Linux kernel, right?
 
-+ e1 =
-+-     devm_ioremap_resource(arg4, id
-++     devm_platform_ioremap_resource(arg1, arg3
-+                           );
-
-
-Regards,
-Markus
+								Thanx, Paul
