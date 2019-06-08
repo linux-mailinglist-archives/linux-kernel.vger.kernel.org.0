@@ -2,64 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84FC39CBD
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 12:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EDE239D10
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 13:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfFHK6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 06:58:18 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38335 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbfFHK6I (ORCPT
+        id S1726915AbfFHLJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 07:09:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726789AbfFHLJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 06:58:08 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hZZ2v-0000Uh-4k; Sat, 08 Jun 2019 10:58:01 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to rtstatus
-Date:   Sat,  8 Jun 2019 11:58:00 +0100
-Message-Id: <20190608105800.26571-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Sat, 8 Jun 2019 07:09:01 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x58B6hgv144796
+        for <linux-kernel@vger.kernel.org>; Sat, 8 Jun 2019 07:08:59 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t075xqch7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 07:08:59 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Sat, 8 Jun 2019 12:08:58 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 8 Jun 2019 12:08:54 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x58B8s8A37879978
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 8 Jun 2019 11:08:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4BDD42041;
+        Sat,  8 Jun 2019 11:08:53 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96A574203F;
+        Sat,  8 Jun 2019 11:08:53 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat,  8 Jun 2019 11:08:53 +0000 (GMT)
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH/RFC 0/3] improve wait logic of stop_machine
+Date:   Sat,  8 Jun 2019 13:08:50 +0200
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19060811-0020-0000-0000-000003484E25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060811-0021-0000-0000-0000219B6AD6
+Message-Id: <20190608110853.35961-1-heiko.carstens@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-08_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=780 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906080086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The stop_machine loop to advance the state machine and to wait for all
+affected CPUs to check-in calls cpu_relax_yield in a tight loop until
+the last missing CPUs acknowledged the state transition.
 
-Variable rtstatus is being initialized with a value that is never read
-as rtstatus is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.
+On a virtual system where not all logical CPUs are backed by real CPUs
+all the time it can take a while for all CPUs to check-in. With the
+current definition of cpu_relax_yield on s390 a diagnose 0x44 is done
+which tells the hypervisor to schedule *some* other CPU. That can be
+any CPU and not necessarily one of the CPUs that need to run in order
+to advance the state machine. This can lead to a pretty bad diagnose
+0x44 storm until the last missing CPU finally checked-in.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Replace the undirected cpu_relax_yield based on diagnose 0x44 with an
+architecture specific directed yield. Each CPU in the wait loop will
+pick up the next CPU in the cpumask of stop_machine. The diagnose 0x9c
+is used to tell the hypervisor to run this next CPU instead of the
+current one. If there is only a limited number of real CPUs backing
+the virtual CPUs we end up with the real CPUs passed around in a
+round-robin fashion.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
-index 454bab38b165..f92e95f5494f 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/hw.c
-@@ -1039,7 +1039,7 @@ int rtl88ee_hw_init(struct ieee80211_hw *hw)
- 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
- 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
- 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
--	bool rtstatus = true;
-+	bool rtstatus;
- 	int err = 0;
- 	u8 tmp_u1b, u1byte;
- 	unsigned long flags;
+Patches 1 and 3 are just possible cleanups; the interesting part is
+patch 2.
+
+Heiko Carstens (2):
+  processor: remove spin_cpu_yield
+  processor: get rid of cpu_relax_yield
+
+Martin Schwidefsky (1):
+  s390: improve wait logic of stop_machine
+
+ arch/powerpc/include/asm/processor.h |  2 --
+ arch/s390/include/asm/processor.h    |  7 +------
+ arch/s390/kernel/processor.c         | 21 +++++++++++++++------
+ arch/s390/kernel/smp.c               |  2 +-
+ include/linux/processor.h            |  9 ---------
+ include/linux/sched.h                |  4 ----
+ include/linux/stop_machine.h         |  1 +
+ kernel/stop_machine.c                | 19 ++++++++++++++-----
+ 8 files changed, 32 insertions(+), 33 deletions(-)
+
 -- 
-2.20.1
+2.17.1
 
