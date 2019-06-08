@@ -2,93 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF373A26E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 00:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 681083A22D
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 23:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbfFHWxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 18:53:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38576 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727791AbfFHWwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 18:52:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D753AAF90
-        for <linux-kernel@vger.kernel.org>; Sat,  8 Jun 2019 22:52:50 +0000 (UTC)
-Received: from mx1.suse.de (mx1.suse.de [195.135.220.2])
+        id S1727657AbfFHVbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 17:31:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727456AbfFHVbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 17:31:16 -0400
+Received: from oasis.local.home (unknown [12.156.218.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 928012C171
-        for <bp@suse.de>; Sat,  8 Jun 2019 21:31:13 +0000 (UTC)
-Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.suse.de (Postfix) with ESMTPS id 5CA80AD00
-        for <bp@suse.de>; Sat,  8 Jun 2019 21:31:12 +0000 (UTC)
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x58LV4gN3146124
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 8 Jun 2019 14:31:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x58LV4gN3146124
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560029465;
-        bh=RRlzNxhAlOWt95dvAlPKt2Yp3/d2vmjzwWesJbbJewY=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=SbDPpzsFEp/GzdvGGpZBG5blwkTpiEBoWfZBeR+HsYjRXV2POnyz0SxmV0GmlpU3h
-         7CrlZuvPkVrUSyKhHr2sdGrfX3/D/QlEi68/XzUXTjeK1k1GKKuv3H269lVkEXxS1f
-         2JluglKwnbnuYfhhvXCJUjIwC0XfbTgWPw0Sazidug+sA+3V2MbAttBe61yBXds5ci
-         C2MGPhUgbM9JKbmTA3v1ueckXuQJ+OTPs1z1jUhUjQkUOwIAwExQh0pMYO4YbSPq2Z
-         KXR0MvlqqMrRjq2r2a6GiapGrfc7D/zlD+L7Ya1+0e7SoLdF2dUzS7wxK0ayo+oTfY
-         m/Q0c/kbB8hkA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x58LV4NA3146121;
-        Sat, 8 Jun 2019 14:31:04 -0700
-Date:   Sat, 8 Jun 2019 14:31:04 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-09afc797f3629f722df6a90ca6eb944013133c7a@git.kernel.org>
-Cc:     bp@suse.de, hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          mingo@kernel.org, hpa@zytor.com, bp@suse.de
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] RAS/CEC: Add copyright
-Git-Commit-ID: 09afc797f3629f722df6a90ca6eb944013133c7a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D22A208E3;
+        Sat,  8 Jun 2019 21:31:15 +0000 (UTC)
+Date:   Sat, 8 Jun 2019 17:31:13 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andreas Ziegler <andreas.ziegler@fau.de>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH AUTOSEL 5.1 058/186] tracing: probeevent: Fix to make
+ the type of $comm string
+Message-ID: <20190608173113.5fc866bf@oasis.local.home>
+In-Reply-To: <20190601131653.24205-58-sashal@kernel.org>
+References: <20190601131653.24205-1-sashal@kernel.org>
+        <20190601131653.24205-58-sashal@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  09afc797f3629f722df6a90ca6eb944013133c7a
-Gitweb:     https://git.kernel.org/tip/09afc797f3629f722df6a90ca6eb944013133c7a
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Sat, 20 Apr 2019 22:06:43 +0200
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 8 Jun 2019 17:40:28 +0200
+On Sat,  1 Jun 2019 09:14:34 -0400
+Sasha Levin <sashal@kernel.org> wrote:
 
-RAS/CEC: Add copyright
+> From: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> [ Upstream commit 3dd1f7f24f8ceec00bbbc364c2ac3c893f0fdc4c ]
+> 
+> Fix to make the type of $comm "string".  If we set the other type to $comm
+> argument, it shows meaningless value or wrong data. Currently probe events
+> allow us to set string array type (e.g. ":string[2]"), or other digit types
+> like x8 on $comm. But since clearly $comm is just a string data, it should
+> not be fetched by other types including array.
+> 
+> Link: http://lkml.kernel.org/r/155723736241.9149.14582064184468574539.stgit@devnote2
+> 
+> Cc: Andreas Ziegler <andreas.ziegler@fau.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 533059281ee5 ("tracing: probeevent: Introduce new argument fetching code")
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- drivers/ras/cec.c | 3 +++
- 1 file changed, 3 insertions(+)
+I thought the "AUTOSEL" patches are to find patches that are not marked
+for stable and pull them in. It would be good to differentiate those in
+the subject. As I'm more inclined to audit automatically pulled in ones,
+because those are more likely to be incorrectly backported.
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index 0907dc6f4afe..5d545806d930 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -1,4 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017-2019 Borislav Petkov, SUSE Labs.
-+ */
- #include <linux/mm.h>
- #include <linux/gfp.h>
- #include <linux/kernel.h>
+-- Steve
+
+
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  kernel/trace/trace_probe.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> index 8f8411e7835fd..e41d389b7f491 100644
+> --- a/kernel/trace/trace_probe.c
+> +++ b/kernel/trace/trace_probe.c
+> @@ -420,13 +420,14 @@ static int traceprobe_parse_probe_arg_body(char *arg, ssize_t *size,
+>  				return -E2BIG;
+>  		}
+>  	}
+> -	/*
+> -	 * The default type of $comm should be "string", and it can't be
+> -	 * dereferenced.
+> -	 */
+> -	if (!t && strcmp(arg, "$comm") == 0)
+> +
+> +	/* Since $comm can not be dereferred, we can find $comm by strcmp */
+> +	if (strcmp(arg, "$comm") == 0) {
+> +		/* The type of $comm must be "string", and not an array. */
+> +		if (parg->count || (t && strcmp(t, "string")))
+> +			return -EINVAL;
+>  		parg->type = find_fetch_type("string");
+> -	else
+> +	} else
+>  		parg->type = find_fetch_type(t);
+>  	if (!parg->type) {
+>  		pr_info("Unsupported type: %s\n", t);
+
