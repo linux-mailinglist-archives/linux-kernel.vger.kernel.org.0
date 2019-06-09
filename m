@@ -2,50 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 154A83A7D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754CC3A93A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:08:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732504AbfFIQx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:53:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55250 "EHLO mail.kernel.org"
+        id S2388705AbfFIREu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:04:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732496AbfFIQxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:53:52 -0400
+        id S2388289AbfFIREs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61AAC204EC;
-        Sun,  9 Jun 2019 16:53:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C45A6204EC;
+        Sun,  9 Jun 2019 17:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099230;
-        bh=jn5STUV+VcC4A12rzncY3TQ86QUZFyuFr8waJzuPqhY=;
+        s=default; t=1560099887;
+        bh=MErpZRocSh2ipP8uyRp8yZBNS4sbDd6GHH8QtIKzUhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rNxuJoHv6T/M4dfVv6m74Um4s+Bx0mmWZJx3YZz4ILkINWJuDoveX3lljK2bng10b
-         66Z4OkEGCvcuADD9SXq8gzcHnadfaT7/1KCdRQ0M86+eXS+8G+T3GD7vr1z2GpQzxu
-         Pwlp1MdILAj81BdJTrc0q/VFqRe4ql5mISYJ1AFI=
+        b=Z6lWDQUWoSSxSLvhUiNhAY08KAjmgZLu3goM4XWXZFQezC/U6AhVrmkGvRyNUl+28
+         zp3mYlvzN+8qtvfAsEBRbDLsjnW0qoaMgPs9QMVhhnDg6uTyFxo0TjYTLYolXYV2zi
+         EZmGz8pc3j0bZFz5gSZ1DDL/0aP1vwUmd3gdZ/wk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hillf Danton <hillf.zj@alibaba-inc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 55/83] mm, gup: remove broken VM_BUG_ON_PAGE compound check for hugepages
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 203/241] media: smsusb: better handle optional alignment
 Date:   Sun,  9 Jun 2019 18:42:25 +0200
-Message-Id: <20190609164132.620872548@linuxfoundation.org>
+Message-Id: <20190609164154.243240840@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,70 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit a3e328556d41bb61c55f9dfcc62d6a826ea97b85 upstream.
+commit a47686636d84eaec5c9c6e84bd5f96bed34d526d upstream.
 
-When operating on hugepages with DEBUG_VM enabled, the GUP code checks
-the compound head for each tail page prior to calling
-page_cache_add_speculative.  This is broken, because on the fast-GUP
-path (where we don't hold any page table locks) we can be racing with a
-concurrent invocation of split_huge_page_to_list.
+Most Siano devices require an alignment for the response.
 
-split_huge_page_to_list deals with this race by using page_ref_freeze to
-freeze the page and force concurrent GUPs to fail whilst the component
-pages are modified.  This modification includes clearing the
-compound_head field for the tail pages, so checking this prior to a
-successful call to page_cache_add_speculative can lead to false
-positives: In fact, page_cache_add_speculative *already* has this check
-once the page refcount has been successfully updated, so we can simply
-remove the broken calls to VM_BUG_ON_PAGE.
+Changeset f3be52b0056a ("media: usb: siano: Fix general protection fault in smsusb")
+changed the logic with gets such aligment, but it now produces a
+sparce warning:
 
-Link: http://lkml.kernel.org/r/20170522133604.11392-2-punit.agrawal@arm.com
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Acked-by: Steve Capper <steve.capper@arm.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Hillf Danton <hillf.zj@alibaba-inc.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+drivers/media/usb/siano/smsusb.c: In function 'smsusb_init_device':
+drivers/media/usb/siano/smsusb.c:447:37: warning: 'in_maxp' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  447 |   dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
+      |                             ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The sparse message itself is bogus, but a broken (or fake) USB
+eeprom could produce a negative value for response_alignment.
+
+So, change the code in order to check if the result is not
+negative.
+
+Fixes: 31e0456de5be ("media: usb: siano: Fix general protection fault in smsusb")
+CC: <stable@vger.kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- mm/gup.c |    3 ---
- 1 file changed, 3 deletions(-)
 
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1316,7 +1316,6 @@ static int gup_huge_pmd(pmd_t orig, pmd_
- 	head = pmd_page(orig);
- 	page = head + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
- 	do {
--		VM_BUG_ON_PAGE(compound_head(page) != head, page);
- 		pages[*nr] = page;
- 		(*nr)++;
- 		page++;
-@@ -1351,7 +1350,6 @@ static int gup_huge_pud(pud_t orig, pud_
- 	head = pud_page(orig);
- 	page = head + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
- 	do {
--		VM_BUG_ON_PAGE(compound_head(page) != head, page);
- 		pages[*nr] = page;
- 		(*nr)++;
- 		page++;
-@@ -1387,7 +1385,6 @@ static int gup_huge_pgd(pgd_t orig, pgd_
- 	head = pgd_page(orig);
- 	page = head + ((addr & ~PGDIR_MASK) >> PAGE_SHIFT);
- 	do {
--		VM_BUG_ON_PAGE(compound_head(page) != head, page);
- 		pages[*nr] = page;
- 		(*nr)++;
- 		page++;
+---
+ drivers/media/usb/siano/smsusb.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -391,7 +391,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsusb_device_t *dev;
+ 	void *mdev;
+ 	int i, rc;
+-	int in_maxp = 0;
++	int align = 0;
+ 
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+@@ -409,14 +409,14 @@ static int smsusb_init_device(struct usb
+ 
+ 		if (desc->bEndpointAddress & USB_DIR_IN) {
+ 			dev->in_ep = desc->bEndpointAddress;
+-			in_maxp = usb_endpoint_maxp(desc);
++			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
+ 		} else {
+ 			dev->out_ep = desc->bEndpointAddress;
+ 		}
+ 	}
+ 
+ 	pr_debug("in_ep = %02x, out_ep = %02x\n", dev->in_ep, dev->out_ep);
+-	if (!dev->in_ep || !dev->out_ep) {	/* Missing endpoints? */
++	if (!dev->in_ep || !dev->out_ep || align < 0) {  /* Missing endpoints? */
+ 		smsusb_term_device(intf);
+ 		return -ENODEV;
+ 	}
+@@ -435,7 +435,7 @@ static int smsusb_init_device(struct usb
+ 		/* fall-thru */
+ 	default:
+ 		dev->buffer_size = USB2_BUFFER_SIZE;
+-		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
++		dev->response_alignment = align;
+ 
+ 		params.flags |= SMS_DEVICE_FAMILY2;
+ 		break;
 
 
