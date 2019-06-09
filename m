@@ -2,60 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB163A332
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F453A31C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfFIC2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 22:28:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55722 "EHLO
+        id S1728389AbfFIC2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 22:28:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55864 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728075AbfFIC1f (ORCPT
+        with ESMTP id S1728227AbfFIC1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 22:27:35 -0400
+        Sat, 8 Jun 2019 22:27:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=472E4wCJY+O4Vs53iYNzHqMA7FuJoJEnkCrk8HYRLYs=; b=Uth4EJsMnM8japMQ5O8sU1dV/o
-        VZfuJWr3RwdEZBXbWAzfBmhy1Rgsjj0JUoeHxSGRpfvhCFsMeeysIG4hn2SUzI8bzuVX8l9L91VG/
-        /n9/Ry8ImnbTrgEDgVyFZfKgwiXveIPfcmAe9Bk6vqYozJjJ/Qb7A5gHxg/3r4+M8mPICO7SMjISQ
-        GEeZQzIEo8xYZ63rqdobKpy1AHs4VqtCtCo9w27zJaYssPLmiclD7pDRyyqS9306Av1sMW/avzNAE
-        1mKqzU7aOiERs1oZKfx51w3q/q/mYoEmCScCG70IUTMKW4DoF5XQLrA2Ql0po9jCHrMQZ1WS8iFIZ
-        nzAyHCCA==;
+        bh=8kkD0kO+XGmH62A2dzVckH2ze5y15gfnkuf3jdaJ8zI=; b=TvT9DmXpZTeaNupGV6PAMZuc8q
+        dsCtfxGM2QjGehVd8azlXEtSKlBsrJRjuZow1KszTQeIta+2Q3iA0I8CNlkKoqpKY38t9Yf6fUa80
+        GPCP7gmszD2VBm4QGZOndM00n32jpoejDnTgIL9CpJ1VkteUJ0omcNl6jbV6b+XZooNwfmxoI2uaI
+        FLmSUwDfL900jKbjWYbCpyfvbPIdaaCjomXgEj800oagB8ZpVLmMl4jBFt4fDD5k1N1z21jI4iwJJ
+        peHAk1rj2d9daZ1bI/aLXTdR9fgt74E1xA8NJ5ZAY/MvHD43V3us0Kly5M0VD8uOjji6hJs8Ux9MR
+        WHhJ6HEw==;
 Received: from 179.176.115.133.dynamic.adsl.gvt.net.br ([179.176.115.133] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZnYS-0001n7-JJ; Sun, 09 Jun 2019 02:27:33 +0000
+        id 1hZnYS-0001nA-Lv; Sun, 09 Jun 2019 02:27:33 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hZnYL-0000KL-Jx; Sat, 08 Jun 2019 23:27:25 -0300
+        id 1hZnYL-0000KR-Ky; Sat, 08 Jun 2019 23:27:25 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Subject: [PATCH v3 28/33] docs: target: convert docs to ReST and rename to *.rst
-Date:   Sat,  8 Jun 2019 23:27:18 -0300
-Message-Id: <61d4104016deec401bff29561efb749cb64bb82d.1560045490.git.mchehab+samsung@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Antti Palosaari <crope@iki.fi>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Subject: [PATCH v3 29/33] docs: timers: convert docs to ReST and rename to *.rst
+Date:   Sat,  8 Jun 2019 23:27:19 -0300
+Message-Id: <26e58d3894b9c78f4474302b5b03ea0b4d51d59d.1560045490.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560045490.git.mchehab+samsung@kernel.org>
 References: <cover.1560045490.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the TCM docs to ReST format and add them to the
-bookset.
-
-This has a mix of userspace-faced and Kernelspace faced
-docs. Still, it sounds a better candidate to be added at
-the kernel API set of docs.
+The conversion here is really trivial: just a bunch of title
+markups and very few puntual changes is enough to make it to
+be parsed by Sphinx and generate a nice html.
 
 The conversion is actually:
   - add blank lines and identation in order to identify paragraphs;
@@ -69,35 +74,144 @@ the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/target/index.rst                |  19 ++
- Documentation/target/scripts.rst              |  11 +
- ...cm_mod_builder.txt => tcm_mod_builder.rst} | 200 ++++++-------
- .../{tcmu-design.txt => tcmu-design.rst}      | 268 ++++++++++--------
- scripts/documentation-file-ref-check          |   2 +-
- 5 files changed, 279 insertions(+), 221 deletions(-)
- create mode 100644 Documentation/target/index.rst
- create mode 100644 Documentation/target/scripts.rst
- rename Documentation/target/{tcm_mod_builder.txt => tcm_mod_builder.rst} (22%)
- rename Documentation/target/{tcmu-design.txt => tcmu-design.rst} (69%)
+ .../timers/{highres.txt => highres.rst}       | 13 +++---
+ Documentation/timers/{hpet.txt => hpet.rst}   |  4 +-
+ .../timers/{hrtimers.txt => hrtimers.rst}     |  6 +--
+ Documentation/timers/index.rst                | 22 ++++++++++
+ Documentation/timers/{NO_HZ.txt => no_hz.rst} | 40 +++++++++++--------
+ .../{timekeeping.txt => timekeeping.rst}      |  3 +-
+ .../{timers-howto.txt => timers-howto.rst}    | 15 +++++--
+ MAINTAINERS                                   |  2 +-
+ drivers/media/usb/dvb-usb-v2/anysee.c         |  2 +-
+ drivers/regulator/core.c                      |  2 +-
+ include/linux/iopoll.h                        |  4 +-
+ include/linux/regmap.h                        |  4 +-
+ scripts/checkpatch.pl                         |  8 ++--
+ sound/soc/sof/ops.h                           |  2 +-
+ 14 files changed, 84 insertions(+), 43 deletions(-)
+ rename Documentation/timers/{highres.txt => highres.rst} (98%)
+ rename Documentation/timers/{hpet.txt => hpet.rst} (91%)
+ rename Documentation/timers/{hrtimers.txt => hrtimers.rst} (98%)
+ create mode 100644 Documentation/timers/index.rst
+ rename Documentation/timers/{NO_HZ.txt => no_hz.rst} (93%)
+ rename Documentation/timers/{timekeeping.txt => timekeeping.rst} (98%)
+ rename Documentation/timers/{timers-howto.txt => timers-howto.rst} (93%)
 
-diff --git a/Documentation/target/index.rst b/Documentation/target/index.rst
+diff --git a/Documentation/timers/highres.txt b/Documentation/timers/highres.rst
+similarity index 98%
+rename from Documentation/timers/highres.txt
+rename to Documentation/timers/highres.rst
+index 8f9741592123..bde5eb7e5c9e 100644
+--- a/Documentation/timers/highres.txt
++++ b/Documentation/timers/highres.rst
+@@ -1,5 +1,6 @@
++=====================================================
+ High resolution timers and dynamic ticks design notes
+------------------------------------------------------
++=====================================================
+ 
+ Further information can be found in the paper of the OLS 2006 talk "hrtimers
+ and beyond". The paper is part of the OLS 2006 Proceedings Volume 1, which can
+@@ -30,11 +31,12 @@ hrtimer base infrastructure
+ ---------------------------
+ 
+ The hrtimer base infrastructure was merged into the 2.6.16 kernel. Details of
+-the base implementation are covered in Documentation/timers/hrtimers.txt. See
++the base implementation are covered in Documentation/timers/hrtimers.rst. See
+ also figure #2 (OLS slides p. 15)
+ 
+ The main differences to the timer wheel, which holds the armed timer_list type
+ timers are:
++
+        - time ordered enqueueing into a rb-tree
+        - independent of ticks (the processing is based on nanoseconds)
+ 
+@@ -55,7 +57,8 @@ merged into the 2.6.18 kernel.
+ 
+ Further information about the Generic Time Of Day framework is available in the
+ OLS 2005 Proceedings Volume 1:
+-http://www.linuxsymposium.org/2005/linuxsymposium_procv1.pdf
++
++	http://www.linuxsymposium.org/2005/linuxsymposium_procv1.pdf
+ 
+ The paper "We Are Not Getting Any Younger: A New Approach to Time and
+ Timers" was written by J. Stultz, D.V. Hart, & N. Aravamudan.
+@@ -100,6 +103,7 @@ accounting, profiling, and high resolution timers.
+ 
+ The management layer assigns one or more of the following functions to a clock
+ event device:
++
+       - system global periodic tick (jiffies update)
+       - cpu local update_process_times
+       - cpu local profiling
+@@ -244,6 +248,3 @@ extended to x86_64 and ARM already. Initial (work in progress) support is also
+ available for MIPS and PowerPC.
+ 
+ 	  Thomas, Ingo
+-
+-
+-
+diff --git a/Documentation/timers/hpet.txt b/Documentation/timers/hpet.rst
+similarity index 91%
+rename from Documentation/timers/hpet.txt
+rename to Documentation/timers/hpet.rst
+index 895345ec513b..c9d05d3caaca 100644
+--- a/Documentation/timers/hpet.txt
++++ b/Documentation/timers/hpet.rst
+@@ -1,4 +1,6 @@
+-		High Precision Event Timer Driver for Linux
++===========================================
++High Precision Event Timer Driver for Linux
++===========================================
+ 
+ The High Precision Event Timer (HPET) hardware follows a specification
+ by Intel and Microsoft, revision 1.
+diff --git a/Documentation/timers/hrtimers.txt b/Documentation/timers/hrtimers.rst
+similarity index 98%
+rename from Documentation/timers/hrtimers.txt
+rename to Documentation/timers/hrtimers.rst
+index 588d85724f10..c1c20a693e8f 100644
+--- a/Documentation/timers/hrtimers.txt
++++ b/Documentation/timers/hrtimers.rst
+@@ -1,6 +1,6 @@
+-
++======================================================
+ hrtimers - subsystem for high-resolution kernel timers
+-----------------------------------------------------
++======================================================
+ 
+ This patch introduces a new subsystem for high-resolution kernel timers.
+ 
+@@ -146,7 +146,7 @@ the clock_getres() interface. This will return whatever real resolution
+ a given clock has - be it low-res, high-res, or artificially-low-res.
+ 
+ hrtimers - testing and verification
+-----------------------------------
++-----------------------------------
+ 
+ We used the high-resolution clock subsystem ontop of hrtimers to verify
+ the hrtimer implementation details in praxis, and we also ran the posix
+diff --git a/Documentation/timers/index.rst b/Documentation/timers/index.rst
 new file mode 100644
-index 000000000000..b68f48982392
+index 000000000000..91f6f8263c48
 --- /dev/null
-+++ b/Documentation/target/index.rst
-@@ -0,0 +1,19 @@
++++ b/Documentation/timers/index.rst
+@@ -0,0 +1,22 @@
 +:orphan:
 +
-+==================
-+TCM Virtual Device
-+==================
++======
++timers
++======
 +
 +.. toctree::
 +    :maxdepth: 1
 +
-+    tcmu-design
-+    tcm_mod_builder
-+    scripts
++    highres
++    hpet
++    hrtimers
++    no_hz
++    timekeeping
++    timers-howto
 +
 +.. only::  subproject and html
 +
@@ -105,702 +219,353 @@ index 000000000000..b68f48982392
 +   =======
 +
 +   * :ref:`genindex`
-diff --git a/Documentation/target/scripts.rst b/Documentation/target/scripts.rst
-new file mode 100644
-index 000000000000..172d42b522e4
---- /dev/null
-+++ b/Documentation/target/scripts.rst
-@@ -0,0 +1,11 @@
-+TCM mod builder script
-+----------------------
-+
-+.. literalinclude:: tcm_mod_builder.py
-+    :language: perl
-+
-+Target export device script
-+---------------------------
-+
-+.. literalinclude:: target-export-device
-+    :language: shell
-diff --git a/Documentation/target/tcm_mod_builder.txt b/Documentation/target/tcm_mod_builder.rst
-similarity index 22%
-rename from Documentation/target/tcm_mod_builder.txt
-rename to Documentation/target/tcm_mod_builder.rst
-index ae22f7005540..9bfc9822e2bd 100644
---- a/Documentation/target/tcm_mod_builder.txt
-+++ b/Documentation/target/tcm_mod_builder.rst
-@@ -1,145 +1,149 @@
-->>>>>>>>>> The TCM v4 fabric module script generator <<<<<<<<<<
+diff --git a/Documentation/timers/NO_HZ.txt b/Documentation/timers/no_hz.rst
+similarity index 93%
+rename from Documentation/timers/NO_HZ.txt
+rename to Documentation/timers/no_hz.rst
+index 9591092da5e0..065db217cb04 100644
+--- a/Documentation/timers/NO_HZ.txt
++++ b/Documentation/timers/no_hz.rst
+@@ -1,4 +1,6 @@
+-		NO_HZ: Reducing Scheduling-Clock Ticks
++﻿======================================
++NO_HZ: Reducing Scheduling-Clock Ticks
++======================================
+ 
+ 
+ This document describes Kconfig options and boot parameters that can
+@@ -28,7 +30,8 @@ by a third section on RCU-specific considerations, a fourth section
+ discussing testing, and a fifth and final section listing known issues.
+ 
+ 
+-NEVER OMIT SCHEDULING-CLOCK TICKS
++Never Omit Scheduling-Clock Ticks
++=================================
+ 
+ Very old versions of Linux from the 1990s and the very early 2000s
+ are incapable of omitting scheduling-clock ticks.  It turns out that
+@@ -59,7 +62,8 @@ degrade your applications performance.  If this describes your workload,
+ you should read the following two sections.
+ 
+ 
+-OMIT SCHEDULING-CLOCK TICKS FOR IDLE CPUs
++Omit Scheduling-Clock Ticks For Idle CPUs
 +=========================================
-+The TCM v4 fabric module script generator
-+=========================================
  
- Greetings all,
+ If a CPU is idle, there is little point in sending it a scheduling-clock
+ interrupt.  After all, the primary purpose of a scheduling-clock interrupt
+@@ -97,7 +101,8 @@ By default, CONFIG_NO_HZ_IDLE=y kernels boot with "nohz=on", enabling
+ dyntick-idle mode.
  
- This document is intended to be a mini-HOWTO for using the tcm_mod_builder.py
- script to generate a brand new functional TCM v4 fabric .ko module of your very own,
- that once built can be immediately be loaded to start access the new TCM/ConfigFS
--fabric skeleton, by simply using:
-+fabric skeleton, by simply using::
  
- 	modprobe $TCM_NEW_MOD
- 	mkdir -p /sys/kernel/config/target/$TCM_NEW_MOD
+-OMIT SCHEDULING-CLOCK TICKS FOR CPUs WITH ONLY ONE RUNNABLE TASK
++Omit Scheduling-Clock Ticks For CPUs With Only One Runnable Task
++================================================================
  
- This script will create a new drivers/target/$TCM_NEW_MOD/, and will do the following
+ If a CPU has only one runnable task, there is little point in sending it
+ a scheduling-clock interrupt because there is no other task to switch to.
+@@ -174,7 +179,8 @@ However, the drawbacks listed above mean that adaptive ticks should not
+ (yet) be enabled by default.
  
--	*) Generate new API callers for drivers/target/target_core_fabric_configs.c logic
-+	1) Generate new API callers for drivers/target/target_core_fabric_configs.c logic
- 	   ->make_tpg(), ->drop_tpg(), ->make_wwn(), ->drop_wwn().  These are created
- 	   into $TCM_NEW_MOD/$TCM_NEW_MOD_configfs.c
--	*) Generate basic infrastructure for loading/unloading LKMs and TCM/ConfigFS fabric module
-+	2) Generate basic infrastructure for loading/unloading LKMs and TCM/ConfigFS fabric module
- 	   using a skeleton struct target_core_fabric_ops API template.
--	*) Based on user defined T10 Proto_Ident for the new fabric module being built,
-+	3) Based on user defined T10 Proto_Ident for the new fabric module being built,
- 	   the TransportID / Initiator and Target WWPN related handlers for
- 	   SPC-3 persistent reservation are automatically generated in $TCM_NEW_MOD/$TCM_NEW_MOD_fabric.c
- 	   using drivers/target/target_core_fabric_lib.c logic.
--	*) NOP API calls for all other Data I/O path and fabric dependent attribute logic
-+	4) NOP API calls for all other Data I/O path and fabric dependent attribute logic
- 	   in $TCM_NEW_MOD/$TCM_NEW_MOD_fabric.c
  
- tcm_mod_builder.py depends upon the mandatory '-p $PROTO_IDENT' and '-m
--$FABRIC_MOD_name' parameters, and actually running the script looks like:
-+$FABRIC_MOD_name' parameters, and actually running the script looks like::
+-RCU IMPLICATIONS
++RCU Implications
++================
  
--target:/mnt/sdb/lio-core-2.6.git/Documentation/target# python tcm_mod_builder.py -p iSCSI -m tcm_nab5000
--tcm_dir: /mnt/sdb/lio-core-2.6.git/Documentation/target/../../
--Set fabric_mod_name: tcm_nab5000
--Set fabric_mod_dir:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000
--Using proto_ident: iSCSI
--Creating fabric_mod_dir:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000
--Writing file:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_base.h
--Using tcm_mod_scan_fabric_ops:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../include/target/target_core_fabric_ops.h
--Writing file:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_fabric.c
--Writing file:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_fabric.h
--Writing file:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_configfs.c
--Writing file:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/Kbuild
--Writing file:
--/mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/Kconfig
--Would you like to add tcm_nab5000to drivers/target/Kbuild..? [yes,no]: yes
--Would you like to add tcm_nab5000to drivers/target/Kconfig..? [yes,no]: yes
-+  target:/mnt/sdb/lio-core-2.6.git/Documentation/target# python tcm_mod_builder.py -p iSCSI -m tcm_nab5000
-+  tcm_dir: /mnt/sdb/lio-core-2.6.git/Documentation/target/../../
-+  Set fabric_mod_name: tcm_nab5000
-+  Set fabric_mod_dir:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000
-+  Using proto_ident: iSCSI
-+  Creating fabric_mod_dir:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000
-+  Writing file:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_base.h
-+  Using tcm_mod_scan_fabric_ops:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../include/target/target_core_fabric_ops.h
-+  Writing file:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_fabric.c
-+  Writing file:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_fabric.h
-+  Writing file:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/tcm_nab5000_configfs.c
-+  Writing file:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/Kbuild
-+  Writing file:
-+  /mnt/sdb/lio-core-2.6.git/Documentation/target/../../drivers/target/tcm_nab5000/Kconfig
-+  Would you like to add tcm_nab5000to drivers/target/Kbuild..? [yes,no]: yes
-+  Would you like to add tcm_nab5000to drivers/target/Kconfig..? [yes,no]: yes
+ There are situations in which idle CPUs cannot be permitted to
+ enter either dyntick-idle mode or adaptive-tick mode, the most
+@@ -199,7 +205,8 @@ scheduler will decide where to run them, which might or might not be
+ where you want them to run.
  
- At the end of tcm_mod_builder.py. the script will ask to add the following
--line to drivers/target/Kbuild:
-+line to drivers/target/Kbuild::
  
- 	obj-$(CONFIG_TCM_NAB5000)       += tcm_nab5000/
+-TESTING
++Testing
++=======
  
--and the same for drivers/target/Kconfig:
-+and the same for drivers/target/Kconfig::
+ So you enable all the OS-jitter features described in this document,
+ but do not see any change in your workload's behavior.  Is this because
+@@ -222,9 +229,10 @@ We do not currently have a good way to remove OS jitter from single-CPU
+ systems.
  
- 	source "drivers/target/tcm_nab5000/Kconfig"
  
--*) Run 'make menuconfig' and select the new CONFIG_TCM_NAB5000 item:
-+#) Run 'make menuconfig' and select the new CONFIG_TCM_NAB5000 item::
- 
- 	<M>   TCM_NAB5000 fabric module
- 
--*) Build using 'make modules', once completed you will have:
-+#) Build using 'make modules', once completed you will have::
- 
--target:/mnt/sdb/lio-core-2.6.git# ls -la drivers/target/tcm_nab5000/
--total 1348
--drwxr-xr-x 2 root root   4096 2010-10-05 03:23 .
--drwxr-xr-x 9 root root   4096 2010-10-05 03:22 ..
---rw-r--r-- 1 root root    282 2010-10-05 03:22 Kbuild
---rw-r--r-- 1 root root    171 2010-10-05 03:22 Kconfig
---rw-r--r-- 1 root root     49 2010-10-05 03:23 modules.order
---rw-r--r-- 1 root root    738 2010-10-05 03:22 tcm_nab5000_base.h
---rw-r--r-- 1 root root   9096 2010-10-05 03:22 tcm_nab5000_configfs.c
---rw-r--r-- 1 root root 191200 2010-10-05 03:23 tcm_nab5000_configfs.o
---rw-r--r-- 1 root root  40504 2010-10-05 03:23 .tcm_nab5000_configfs.o.cmd
---rw-r--r-- 1 root root   5414 2010-10-05 03:22 tcm_nab5000_fabric.c
---rw-r--r-- 1 root root   2016 2010-10-05 03:22 tcm_nab5000_fabric.h
---rw-r--r-- 1 root root 190932 2010-10-05 03:23 tcm_nab5000_fabric.o
---rw-r--r-- 1 root root  40713 2010-10-05 03:23 .tcm_nab5000_fabric.o.cmd
---rw-r--r-- 1 root root 401861 2010-10-05 03:23 tcm_nab5000.ko
---rw-r--r-- 1 root root    265 2010-10-05 03:23 .tcm_nab5000.ko.cmd
---rw-r--r-- 1 root root    459 2010-10-05 03:23 tcm_nab5000.mod.c
---rw-r--r-- 1 root root  23896 2010-10-05 03:23 tcm_nab5000.mod.o
---rw-r--r-- 1 root root  22655 2010-10-05 03:23 .tcm_nab5000.mod.o.cmd
---rw-r--r-- 1 root root 379022 2010-10-05 03:23 tcm_nab5000.o
---rw-r--r-- 1 root root    211 2010-10-05 03:23 .tcm_nab5000.o.cmd
-+    target:/mnt/sdb/lio-core-2.6.git# ls -la drivers/target/tcm_nab5000/
-+    total 1348
-+    drwxr-xr-x 2 root root   4096 2010-10-05 03:23 .
-+    drwxr-xr-x 9 root root   4096 2010-10-05 03:22 ..
-+    -rw-r--r-- 1 root root    282 2010-10-05 03:22 Kbuild
-+    -rw-r--r-- 1 root root    171 2010-10-05 03:22 Kconfig
-+    -rw-r--r-- 1 root root     49 2010-10-05 03:23 modules.order
-+    -rw-r--r-- 1 root root    738 2010-10-05 03:22 tcm_nab5000_base.h
-+    -rw-r--r-- 1 root root   9096 2010-10-05 03:22 tcm_nab5000_configfs.c
-+    -rw-r--r-- 1 root root 191200 2010-10-05 03:23 tcm_nab5000_configfs.o
-+    -rw-r--r-- 1 root root  40504 2010-10-05 03:23 .tcm_nab5000_configfs.o.cmd
-+    -rw-r--r-- 1 root root   5414 2010-10-05 03:22 tcm_nab5000_fabric.c
-+    -rw-r--r-- 1 root root   2016 2010-10-05 03:22 tcm_nab5000_fabric.h
-+    -rw-r--r-- 1 root root 190932 2010-10-05 03:23 tcm_nab5000_fabric.o
-+    -rw-r--r-- 1 root root  40713 2010-10-05 03:23 .tcm_nab5000_fabric.o.cmd
-+    -rw-r--r-- 1 root root 401861 2010-10-05 03:23 tcm_nab5000.ko
-+    -rw-r--r-- 1 root root    265 2010-10-05 03:23 .tcm_nab5000.ko.cmd
-+    -rw-r--r-- 1 root root    459 2010-10-05 03:23 tcm_nab5000.mod.c
-+    -rw-r--r-- 1 root root  23896 2010-10-05 03:23 tcm_nab5000.mod.o
-+    -rw-r--r-- 1 root root  22655 2010-10-05 03:23 .tcm_nab5000.mod.o.cmd
-+    -rw-r--r-- 1 root root 379022 2010-10-05 03:23 tcm_nab5000.o
-+    -rw-r--r-- 1 root root    211 2010-10-05 03:23 .tcm_nab5000.o.cmd
- 
--*) Load the new module, create a lun_0 configfs group, and add new TCM Core
--   IBLOCK backstore symlink to port:
-+#) Load the new module, create a lun_0 configfs group, and add new TCM Core
-+   IBLOCK backstore symlink to port::
- 
--target:/mnt/sdb/lio-core-2.6.git# insmod drivers/target/tcm_nab5000.ko
--target:/mnt/sdb/lio-core-2.6.git# mkdir -p /sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0
--target:/mnt/sdb/lio-core-2.6.git# cd /sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0/
--target:/sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0# ln -s /sys/kernel/config/target/core/iblock_0/lvm_test0 nab5000_port
-+    target:/mnt/sdb/lio-core-2.6.git# insmod drivers/target/tcm_nab5000.ko
-+    target:/mnt/sdb/lio-core-2.6.git# mkdir -p /sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0
-+    target:/mnt/sdb/lio-core-2.6.git# cd /sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0/
-+    target:/sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0# ln -s /sys/kernel/config/target/core/iblock_0/lvm_test0 nab5000_port
- 
--target:/sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0# cd -
--target:/mnt/sdb/lio-core-2.6.git# tree /sys/kernel/config/target/nab5000/
--/sys/kernel/config/target/nab5000/
--|-- discovery_auth
--|-- iqn.foo
--|   `-- tpgt_1
--|       |-- acls
--|       |-- attrib
--|       |-- lun
--|       |   `-- lun_0
--|       |       |-- alua_tg_pt_gp
--|       |       |-- alua_tg_pt_offline
--|       |       |-- alua_tg_pt_status
--|       |       |-- alua_tg_pt_write_md
--|	|	`-- nab5000_port -> ../../../../../../target/core/iblock_0/lvm_test0
--|       |-- np
--|       `-- param
--`-- version
-+    target:/sys/kernel/config/target/nab5000/iqn.foo/tpgt_1/lun/lun_0# cd -
-+    target:/mnt/sdb/lio-core-2.6.git# tree /sys/kernel/config/target/nab5000/
-+    /sys/kernel/config/target/nab5000/
-+    |-- discovery_auth
-+    |-- iqn.foo
-+    |   `-- tpgt_1
-+    |       |-- acls
-+    |       |-- attrib
-+    |       |-- lun
-+    |       |   `-- lun_0
-+    |       |       |-- alua_tg_pt_gp
-+    |       |       |-- alua_tg_pt_offline
-+    |       |       |-- alua_tg_pt_status
-+    |       |       |-- alua_tg_pt_write_md
-+    |	|	`-- nab5000_port -> ../../../../../../target/core/iblock_0/lvm_test0
-+    |       |-- np
-+    |       `-- param
-+    `-- version
- 
--target:/mnt/sdb/lio-core-2.6.git# lsmod
--Module                  Size  Used by
--tcm_nab5000             3935  4
--iscsi_target_mod      193211  0
--target_core_stgt        8090  0
--target_core_pscsi      11122  1
--target_core_file        9172  2
--target_core_iblock      9280  1
--target_core_mod       228575  31
--tcm_nab5000,iscsi_target_mod,target_core_stgt,target_core_pscsi,target_core_file,target_core_iblock
--libfc                  73681  0
--scsi_debug             56265  0
--scsi_tgt                8666  1 target_core_stgt
--configfs               20644  2 target_core_mod
-+    target:/mnt/sdb/lio-core-2.6.git# lsmod
-+    Module                  Size  Used by
-+    tcm_nab5000             3935  4
-+    iscsi_target_mod      193211  0
-+    target_core_stgt        8090  0
-+    target_core_pscsi      11122  1
-+    target_core_file        9172  2
-+    target_core_iblock      9280  1
-+    target_core_mod       228575  31
-+    tcm_nab5000,iscsi_target_mod,target_core_stgt,target_core_pscsi,target_core_file,target_core_iblock
-+    libfc                  73681  0
-+    scsi_debug             56265  0
-+    scsi_tgt                8666  1 target_core_stgt
-+    configfs               20644  2 target_core_mod
- 
- ----------------------------------------------------------------------
- 
--Future TODO items:
-+Future TODO items
-+=================
- 
--	*) Add more T10 proto_idents
--	*) Make tcm_mod_dump_fabric_ops() smarter and generate function pointer
-+	1) Add more T10 proto_idents
-+	2) Make tcm_mod_dump_fabric_ops() smarter and generate function pointer
- 	   defs directly from include/target/target_core_fabric_ops.h:struct target_core_fabric_ops
- 	   structure members.
- 
- October 5th, 2010
-+
- Nicholas A. Bellinger <nab@linux-iscsi.org>
-diff --git a/Documentation/target/tcmu-design.txt b/Documentation/target/tcmu-design.rst
-similarity index 69%
-rename from Documentation/target/tcmu-design.txt
-rename to Documentation/target/tcmu-design.rst
-index 4cebc1ebf99a..a7b426707bf6 100644
---- a/Documentation/target/tcmu-design.txt
-+++ b/Documentation/target/tcmu-design.rst
-@@ -1,25 +1,30 @@
--Contents:
-+====================
-+TCM Userspace Design
-+====================
-+
-+
-+.. Contents:
- 
--1) TCM Userspace Design
--  a) Background
--  b) Benefits
--  c) Design constraints
--  d) Implementation overview
--     i. Mailbox
--     ii. Command ring
--     iii. Data Area
--  e) Device discovery
--  f) Device events
--  g) Other contingencies
--2) Writing a user pass-through handler
--  a) Discovering and configuring TCMU uio devices
--  b) Waiting for events on the device(s)
--  c) Managing the command ring
--3) A final note
-+   1) TCM Userspace Design
-+     a) Background
-+     b) Benefits
-+     c) Design constraints
-+     d) Implementation overview
-+        i. Mailbox
-+        ii. Command ring
-+        iii. Data Area
-+     e) Device discovery
-+     f) Device events
-+     g) Other contingencies
-+   2) Writing a user pass-through handler
-+     a) Discovering and configuring TCMU uio devices
-+     b) Waiting for events on the device(s)
-+     c) Managing the command ring
-+   3) A final note
- 
- 
- TCM Userspace Design
----------------------
-+====================
- 
- TCM is another name for LIO, an in-kernel iSCSI target (server).
- Existing TCM targets run in the kernel.  TCMU (TCM in Userspace)
-@@ -32,7 +37,8 @@ modules for file, block device, RAM or using another SCSI device as
- storage.  These are called "backstores" or "storage engines".  These
- built-in modules are implemented entirely as kernel code.
- 
--Background:
-+Background
-+----------
- 
- In addition to modularizing the transport protocol used for carrying
- SCSI commands ("fabrics"), the Linux kernel target, LIO, also modularizes
-@@ -60,7 +66,8 @@ kernel, another approach is to create a userspace pass-through
- backstore for LIO, "TCMU".
- 
- 
--Benefits:
-+Benefits
-+--------
- 
- In addition to allowing relatively easy support for RBD and GLFS, TCMU
- will also allow easier development of new backstores. TCMU combines
-@@ -72,21 +79,25 @@ The disadvantage is there are more distinct components to configure, and
- potentially to malfunction. This is unavoidable, but hopefully not
- fatal if we're careful to keep things as simple as possible.
- 
--Design constraints:
-+Design constraints
-+------------------
- 
- - Good performance: high throughput, low latency
- - Cleanly handle if userspace:
-+
-    1) never attaches
-    2) hangs
-    3) dies
-    4) misbehaves
-+
- - Allow future flexibility in user & kernel implementations
- - Be reasonably memory-efficient
- - Simple to configure & run
- - Simple to write a userspace backend
- 
- 
--Implementation overview:
-+Implementation overview
-+-----------------------
- 
- The core of the TCMU interface is a memory region that is shared
- between kernel and userspace. Within this region is: a control area
-@@ -108,7 +119,8 @@ the region mapped at a different virtual address.
- 
- See target_core_user.h for the struct definitions.
- 
--The Mailbox:
-+The Mailbox
-+-----------
- 
- The mailbox is always at the start of the shared memory region, and
- contains a version, details about the starting offset and size of the
-@@ -117,19 +129,27 @@ userspace (respectively) to put commands on the ring, and indicate
- when the commands are completed.
- 
- version - 1 (userspace should abort if otherwise)
-+
- flags:
--- TCMU_MAILBOX_FLAG_CAP_OOOC: indicates out-of-order completion is
--  supported.  See "The Command Ring" for details.
--cmdr_off - The offset of the start of the command ring from the start
--of the memory region, to account for the mailbox size.
--cmdr_size - The size of the command ring. This does *not* need to be a
--power of two.
--cmd_head - Modified by the kernel to indicate when a command has been
--placed on the ring.
--cmd_tail - Modified by userspace to indicate when it has completed
--processing of a command.
-+    - TCMU_MAILBOX_FLAG_CAP_OOOC:
-+	indicates out-of-order completion is supported.
-+	See "The Command Ring" for details.
- 
--The Command Ring:
-+cmdr_off
-+	The offset of the start of the command ring from the start
-+	of the memory region, to account for the mailbox size.
-+cmdr_size
-+	The size of the command ring. This does *not* need to be a
-+	power of two.
-+cmd_head
-+	Modified by the kernel to indicate when a command has been
-+	placed on the ring.
-+cmd_tail
-+	Modified by userspace to indicate when it has completed
-+	processing of a command.
-+
-+The Command Ring
-+----------------
- 
- Commands are placed on the ring by the kernel incrementing
- mailbox.cmd_head by the size of the command, modulo cmdr_size, and
-@@ -180,29 +200,31 @@ opcode it does not handle, it must set UNKNOWN_OP bit (bit 0) in
- hdr.uflags, update cmd_tail, and proceed with processing additional
- commands, if any.
- 
--The Data Area:
-+The Data Area
-+-------------
- 
- This is shared-memory space after the command ring. The organization
- of this area is not defined in the TCMU interface, and userspace
- should access only the parts referenced by pending iovs.
- 
- 
--Device Discovery:
-+Device Discovery
-+----------------
- 
- Other devices may be using UIO besides TCMU. Unrelated user processes
- may also be handling different sets of TCMU devices. TCMU userspace
- processes must find their devices by scanning sysfs
- class/uio/uio*/name. For TCMU devices, these names will be of the
--format:
-+format::
- 
--tcm-user/<hba_num>/<device_name>/<subtype>/<path>
-+	tcm-user/<hba_num>/<device_name>/<subtype>/<path>
- 
- where "tcm-user" is common for all TCMU-backed UIO devices. <hba_num>
- and <device_name> allow userspace to find the device's path in the
- kernel target's configfs tree. Assuming the usual mount point, it is
--found at:
-+found at::
- 
--/sys/kernel/config/target/core/user_<hba_num>/<device_name>
-+	/sys/kernel/config/target/core/user_<hba_num>/<device_name>
- 
- This location contains attributes such as "hw_block_size", that
- userspace needs to know for correct operation.
-@@ -214,15 +236,16 @@ configure the device, if needed. The name cannot contain ':', due to
- LIO limitations.
- 
- For all devices so discovered, the user handler opens /dev/uioX and
--calls mmap():
-+calls mmap()::
- 
--mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0)
-+	mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0)
- 
- where size must be equal to the value read from
- /sys/class/uio/uioX/maps/map0/size.
- 
- 
--Device Events:
-+Device Events
-+-------------
- 
- If a new device is added or removed, a notification will be broadcast
- over netlink, using a generic netlink family name of "TCM-USER" and a
-@@ -233,7 +256,8 @@ the LIO device, so that after determining the device is supported
- (based on subtype) it can take the appropriate action.
- 
- 
--Other contingencies:
-+Other contingencies
-+-------------------
- 
- Userspace handler process never attaches:
- 
-@@ -258,7 +282,7 @@ Userspace handler process is malicious:
- 
- 
- Writing a user pass-through handler (with example code)
---------------------------------------------------------
-+=======================================================
- 
- A user process handing a TCMU device must support the following:
- 
-@@ -277,103 +301,103 @@ TCMU is designed so that multiple unrelated processes can manage TCMU
- devices separately. All handlers should make sure to only open their
- devices, based opon a known subtype string.
- 
--a) Discovering and configuring TCMU UIO devices:
-+a) Discovering and configuring TCMU UIO devices::
- 
--(error checking omitted for brevity)
-+      /* error checking omitted for brevity */
- 
--int fd, dev_fd;
--char buf[256];
--unsigned long long map_len;
--void *map;
-+      int fd, dev_fd;
-+      char buf[256];
-+      unsigned long long map_len;
-+      void *map;
- 
--fd = open("/sys/class/uio/uio0/name", O_RDONLY);
--ret = read(fd, buf, sizeof(buf));
--close(fd);
--buf[ret-1] = '\0'; /* null-terminate and chop off the \n */
-+      fd = open("/sys/class/uio/uio0/name", O_RDONLY);
-+      ret = read(fd, buf, sizeof(buf));
-+      close(fd);
-+      buf[ret-1] = '\0'; /* null-terminate and chop off the \n */
- 
--/* we only want uio devices whose name is a format we expect */
--if (strncmp(buf, "tcm-user", 8))
-+      /* we only want uio devices whose name is a format we expect */
-+      if (strncmp(buf, "tcm-user", 8))
- 	exit(-1);
- 
--/* Further checking for subtype also needed here */
-+      /* Further checking for subtype also needed here */
- 
--fd = open(/sys/class/uio/%s/maps/map0/size, O_RDONLY);
--ret = read(fd, buf, sizeof(buf));
--close(fd);
--str_buf[ret-1] = '\0'; /* null-terminate and chop off the \n */
-+      fd = open(/sys/class/uio/%s/maps/map0/size, O_RDONLY);
-+      ret = read(fd, buf, sizeof(buf));
-+      close(fd);
-+      str_buf[ret-1] = '\0'; /* null-terminate and chop off the \n */
- 
--map_len = strtoull(buf, NULL, 0);
-+      map_len = strtoull(buf, NULL, 0);
- 
--dev_fd = open("/dev/uio0", O_RDWR);
--map = mmap(NULL, map_len, PROT_READ|PROT_WRITE, MAP_SHARED, dev_fd, 0);
-+      dev_fd = open("/dev/uio0", O_RDWR);
-+      map = mmap(NULL, map_len, PROT_READ|PROT_WRITE, MAP_SHARED, dev_fd, 0);
- 
- 
--b) Waiting for events on the device(s)
-+      b) Waiting for events on the device(s)
- 
--while (1) {
--  char buf[4];
-+      while (1) {
-+        char buf[4];
- 
--  int ret = read(dev_fd, buf, 4); /* will block */
-+        int ret = read(dev_fd, buf, 4); /* will block */
- 
--  handle_device_events(dev_fd, map);
--}
--
--
--c) Managing the command ring
--
--#include <linux/target_core_user.h>
--
--int handle_device_events(int fd, void *map)
--{
--  struct tcmu_mailbox *mb = map;
--  struct tcmu_cmd_entry *ent = (void *) mb + mb->cmdr_off + mb->cmd_tail;
--  int did_some_work = 0;
--
--  /* Process events from cmd ring until we catch up with cmd_head */
--  while (ent != (void *)mb + mb->cmdr_off + mb->cmd_head) {
--
--    if (tcmu_hdr_get_op(ent->hdr.len_op) == TCMU_OP_CMD) {
--      uint8_t *cdb = (void *)mb + ent->req.cdb_off;
--      bool success = true;
-+        handle_device_events(dev_fd, map);
-+      }
- 
--      /* Handle command here. */
--      printf("SCSI opcode: 0x%x\n", cdb[0]);
- 
--      /* Set response fields */
--      if (success)
--        ent->rsp.scsi_status = SCSI_NO_SENSE;
--      else {
--        /* Also fill in rsp->sense_buffer here */
--        ent->rsp.scsi_status = SCSI_CHECK_CONDITION;
-+c) Managing the command ring::
-+
-+      #include <linux/target_core_user.h>
-+
-+      int handle_device_events(int fd, void *map)
-+      {
-+        struct tcmu_mailbox *mb = map;
-+        struct tcmu_cmd_entry *ent = (void *) mb + mb->cmdr_off + mb->cmd_tail;
-+        int did_some_work = 0;
-+
-+        /* Process events from cmd ring until we catch up with cmd_head */
-+        while (ent != (void *)mb + mb->cmdr_off + mb->cmd_head) {
-+
-+          if (tcmu_hdr_get_op(ent->hdr.len_op) == TCMU_OP_CMD) {
-+            uint8_t *cdb = (void *)mb + ent->req.cdb_off;
-+            bool success = true;
-+
-+            /* Handle command here. */
-+            printf("SCSI opcode: 0x%x\n", cdb[0]);
-+
-+            /* Set response fields */
-+            if (success)
-+              ent->rsp.scsi_status = SCSI_NO_SENSE;
-+            else {
-+              /* Also fill in rsp->sense_buffer here */
-+              ent->rsp.scsi_status = SCSI_CHECK_CONDITION;
-+            }
-+          }
-+          else if (tcmu_hdr_get_op(ent->hdr.len_op) != TCMU_OP_PAD) {
-+            /* Tell the kernel we didn't handle unknown opcodes */
-+            ent->hdr.uflags |= TCMU_UFLAG_UNKNOWN_OP;
-+          }
-+          else {
-+            /* Do nothing for PAD entries except update cmd_tail */
-+          }
-+
-+          /* update cmd_tail */
-+          mb->cmd_tail = (mb->cmd_tail + tcmu_hdr_get_len(&ent->hdr)) % mb->cmdr_size;
-+          ent = (void *) mb + mb->cmdr_off + mb->cmd_tail;
-+          did_some_work = 1;
-+        }
-+
-+        /* Notify the kernel that work has been finished */
-+        if (did_some_work) {
-+          uint32_t buf = 0;
-+
-+          write(fd, &buf, 4);
-+        }
-+
-+        return 0;
-       }
--    }
--    else if (tcmu_hdr_get_op(ent->hdr.len_op) != TCMU_OP_PAD) {
--      /* Tell the kernel we didn't handle unknown opcodes */
--      ent->hdr.uflags |= TCMU_UFLAG_UNKNOWN_OP;
--    }
--    else {
--      /* Do nothing for PAD entries except update cmd_tail */
--    }
--
--    /* update cmd_tail */
--    mb->cmd_tail = (mb->cmd_tail + tcmu_hdr_get_len(&ent->hdr)) % mb->cmdr_size;
--    ent = (void *) mb + mb->cmdr_off + mb->cmd_tail;
--    did_some_work = 1;
--  }
--
--  /* Notify the kernel that work has been finished */
--  if (did_some_work) {
--    uint32_t buf = 0;
--
--    write(fd, &buf, 4);
--  }
--
--  return 0;
--}
- 
- 
- A final note
--------------
+-KNOWN ISSUES
++Known Issues
 +============
  
- Please be careful to return codes as defined by the SCSI
- specifications. These are different than some values defined in the
-diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
-index 440227bb55a9..a4139a576726 100755
---- a/scripts/documentation-file-ref-check
-+++ b/scripts/documentation-file-ref-check
-@@ -124,7 +124,7 @@ while (<IN>) {
- 		# Remove sched-pelt false-positive
- 		next if ($fulref =~ m,^Documentation/scheduler/sched-pelt$,);
+-o	Dyntick-idle slows transitions to and from idle slightly.
++*	Dyntick-idle slows transitions to and from idle slightly.
+ 	In practice, this has not been a problem except for the most
+ 	aggressive real-time workloads, which have the option of disabling
+ 	dyntick-idle mode, an option that most of them take.  However,
+@@ -248,13 +256,13 @@ o	Dyntick-idle slows transitions to and from idle slightly.
+ 		this parameter effectively disables Turbo Mode on Intel
+ 		CPUs, which can significantly reduce maximum performance.
  
--		# Discard some build examples from Documentation/target/tcm_mod_builder.txt
-+		# Discard some build examples from Documentation/target/tcm_mod_builder.rst
- 		next if ($fulref =~ m,mnt/sdb/lio-core-2.6.git/Documentation/target,);
+-o	Adaptive-ticks slows user/kernel transitions slightly.
++*	Adaptive-ticks slows user/kernel transitions slightly.
+ 	This is not expected to be a problem for computationally intensive
+ 	workloads, which have few such transitions.  Careful benchmarking
+ 	will be required to determine whether or not other workloads
+ 	are significantly affected by this effect.
  
- 		# Check if exists, evaluating wildcards
+-o	Adaptive-ticks does not do anything unless there is only one
++*	Adaptive-ticks does not do anything unless there is only one
+ 	runnable task for a given CPU, even though there are a number
+ 	of other situations where the scheduling-clock tick is not
+ 	needed.  To give but one example, consider a CPU that has one
+@@ -275,7 +283,7 @@ o	Adaptive-ticks does not do anything unless there is only one
+ 
+ 	Better handling of these sorts of situations is future work.
+ 
+-o	A reboot is required to reconfigure both adaptive idle and RCU
++*	A reboot is required to reconfigure both adaptive idle and RCU
+ 	callback offloading.  Runtime reconfiguration could be provided
+ 	if needed, however, due to the complexity of reconfiguring RCU at
+ 	runtime, there would need to be an earthshakingly good reason.
+@@ -283,12 +291,12 @@ o	A reboot is required to reconfigure both adaptive idle and RCU
+ 	simply offloading RCU callbacks from all CPUs and pinning them
+ 	where you want them whenever you want them pinned.
+ 
+-o	Additional configuration is required to deal with other sources
++*	Additional configuration is required to deal with other sources
+ 	of OS jitter, including interrupts and system-utility tasks
+ 	and processes.  This configuration normally involves binding
+ 	interrupts and tasks to particular CPUs.
+ 
+-o	Some sources of OS jitter can currently be eliminated only by
++*	Some sources of OS jitter can currently be eliminated only by
+ 	constraining the workload.  For example, the only way to eliminate
+ 	OS jitter due to global TLB shootdowns is to avoid the unmapping
+ 	operations (such as kernel module unload operations) that
+@@ -299,17 +307,17 @@ o	Some sources of OS jitter can currently be eliminated only by
+ 	helpful, especially when combined with the mlock() and mlockall()
+ 	system calls.
+ 
+-o	Unless all CPUs are idle, at least one CPU must keep the
++*	Unless all CPUs are idle, at least one CPU must keep the
+ 	scheduling-clock interrupt going in order to support accurate
+ 	timekeeping.
+ 
+-o	If there might potentially be some adaptive-ticks CPUs, there
++*	If there might potentially be some adaptive-ticks CPUs, there
+ 	will be at least one CPU keeping the scheduling-clock interrupt
+ 	going, even if all CPUs are otherwise idle.
+ 
+ 	Better handling of this situation is ongoing work.
+ 
+-o	Some process-handling operations still require the occasional
++*	Some process-handling operations still require the occasional
+ 	scheduling-clock tick.	These operations include calculating CPU
+ 	load, maintaining sched average, computing CFS entity vruntime,
+ 	computing avenrun, and carrying out load balancing.  They are
+diff --git a/Documentation/timers/timekeeping.txt b/Documentation/timers/timekeeping.rst
+similarity index 98%
+rename from Documentation/timers/timekeeping.txt
+rename to Documentation/timers/timekeeping.rst
+index 2d1732b0a868..f83e98852e2c 100644
+--- a/Documentation/timers/timekeeping.txt
++++ b/Documentation/timers/timekeeping.rst
+@@ -1,5 +1,6 @@
++===========================================================
+ Clock sources, Clock events, sched_clock() and delay timers
+------------------------------------------------------------
++===========================================================
+ 
+ This document tries to briefly explain some basic kernel timekeeping
+ abstractions. It partly pertains to the drivers usually found in
+diff --git a/Documentation/timers/timers-howto.txt b/Documentation/timers/timers-howto.rst
+similarity index 93%
+rename from Documentation/timers/timers-howto.txt
+rename to Documentation/timers/timers-howto.rst
+index 038f8c77a076..7e3167bec2b1 100644
+--- a/Documentation/timers/timers-howto.txt
++++ b/Documentation/timers/timers-howto.rst
+@@ -1,5 +1,6 @@
++===================================================================
+ delays - Information on the various kernel delay / sleep mechanisms
+--------------------------------------------------------------------
++===================================================================
+ 
+ This document seeks to answer the common question: "What is the
+ RightWay (TM) to insert a delay?"
+@@ -17,7 +18,7 @@ code in an atomic context?"  This should be followed closely by "Does
+ it really need to delay in atomic context?" If so...
+ 
+ ATOMIC CONTEXT:
+-	You must use the *delay family of functions. These
++	You must use the `*delay` family of functions. These
+ 	functions use the jiffie estimation of clock speed
+ 	and will busy wait for enough loop cycles to achieve
+ 	the desired delay:
+@@ -35,21 +36,26 @@ ATOMIC CONTEXT:
+ 	be refactored to allow for the use of msleep.
+ 
+ NON-ATOMIC CONTEXT:
+-	You should use the *sleep[_range] family of functions.
++	You should use the `*sleep[_range]` family of functions.
+ 	There are a few more options here, while any of them may
+ 	work correctly, using the "right" sleep function will
+ 	help the scheduler, power management, and just make your
+ 	driver better :)
+ 
+ 	-- Backed by busy-wait loop:
++
+ 		udelay(unsigned long usecs)
++
+ 	-- Backed by hrtimers:
++
+ 		usleep_range(unsigned long min, unsigned long max)
++
+ 	-- Backed by jiffies / legacy_timers
++
+ 		msleep(unsigned long msecs)
+ 		msleep_interruptible(unsigned long msecs)
+ 
+-	Unlike the *delay family, the underlying mechanism
++	Unlike the `*delay` family, the underlying mechanism
+ 	driving each of these calls varies, thus there are
+ 	quirks you should be aware of.
+ 
+@@ -70,6 +76,7 @@ NON-ATOMIC CONTEXT:
+ 		- Why not msleep for (1ms - 20ms)?
+ 			Explained originally here:
+ 				http://lkml.org/lkml/2007/8/3/250
++
+ 			msleep(1~20) may not do what the caller intends, and
+ 			will often sleep longer (~20 ms actual sleep for any
+ 			value given in the 1~20ms range). In many cases this
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dce53f6414b6..08efe50266b5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7210,7 +7210,7 @@ F:	drivers/net/ethernet/hp/hp100.*
+ HPET:	High Precision Event Timers driver
+ M:	Clemens Ladisch <clemens@ladisch.de>
+ S:	Maintained
+-F:	Documentation/timers/hpet.txt
++F:	Documentation/timers/hpet.rst
+ F:	drivers/char/hpet.c
+ F:	include/linux/hpet.h
+ F:	include/uapi/linux/hpet.h
+diff --git a/drivers/media/usb/dvb-usb-v2/anysee.c b/drivers/media/usb/dvb-usb-v2/anysee.c
+index 48fb0d41e03b..fb6d99dea31a 100644
+--- a/drivers/media/usb/dvb-usb-v2/anysee.c
++++ b/drivers/media/usb/dvb-usb-v2/anysee.c
+@@ -56,7 +56,7 @@ static int anysee_ctrl_msg(struct dvb_usb_device *d,
+ 	/* TODO FIXME: dvb_usb_generic_rw() fails rarely with error code -32
+ 	 * (EPIPE, Broken pipe). Function supports currently msleep() as a
+ 	 * parameter but I would not like to use it, since according to
+-	 * Documentation/timers/timers-howto.txt it should not be used such
++	 * Documentation/timers/timers-howto.rst it should not be used such
+ 	 * short, under < 20ms, sleeps. Repeating failed message would be
+ 	 * better choice as not to add unwanted delays...
+ 	 * Fixing that correctly is one of those or both;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 85f61e5dc312..aff1f2cefe4b 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2304,7 +2304,7 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+  *
+  * Delay for the requested amount of time as per the guidelines in:
+  *
+- *     Documentation/timers/timers-howto.txt
++ *     Documentation/timers/timers-howto.rst
+  *
+  * The assumption here is that regulators will never be enabled in
+  * atomic context and therefore sleeping functions can be used.
+diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
+index b1d861caca16..320bbc9761c8 100644
+--- a/include/linux/iopoll.h
++++ b/include/linux/iopoll.h
+@@ -30,7 +30,7 @@
+  * @cond: Break condition (usually involving @val)
+  * @sleep_us: Maximum time to sleep between reads in us (0
+  *            tight-loops).  Should be less than ~20ms since usleep_range
+- *            is used (see Documentation/timers/timers-howto.txt).
++ *            is used (see Documentation/timers/timers-howto.rst).
+  * @timeout_us: Timeout in us, 0 means never timeout
+  *
+  * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
+@@ -69,7 +69,7 @@
+  * @cond: Break condition (usually involving @val)
+  * @delay_us: Time to udelay between reads in us (0 tight-loops).  Should
+  *            be less than ~10us since udelay is used (see
+- *            Documentation/timers/timers-howto.txt).
++ *            Documentation/timers/timers-howto.rst).
+  * @timeout_us: Timeout in us, 0 means never timeout
+  *
+  * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index daeec7dbd65c..ed5e9d0a1285 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -112,7 +112,7 @@ struct reg_sequence {
+  * @cond: Break condition (usually involving @val)
+  * @sleep_us: Maximum time to sleep between reads in us (0
+  *            tight-loops).  Should be less than ~20ms since usleep_range
+- *            is used (see Documentation/timers/timers-howto.txt).
++ *            is used (see Documentation/timers/timers-howto.rst).
+  * @timeout_us: Timeout in us, 0 means never timeout
+  *
+  * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_read
+@@ -154,7 +154,7 @@ struct reg_sequence {
+  * @cond: Break condition (usually involving @val)
+  * @sleep_us: Maximum time to sleep between reads in us (0
+  *            tight-loops).  Should be less than ~20ms since usleep_range
+- *            is used (see Documentation/timers/timers-howto.txt).
++ *            is used (see Documentation/timers/timers-howto.rst).
+  * @timeout_us: Timeout in us, 0 means never timeout
+  *
+  * Returns 0 on success and -ETIMEDOUT upon a timeout or the regmap_field_read
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index c1be9f6958b7..6cb99ec62000 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5714,7 +5714,7 @@ sub process {
+ 			# ignore udelay's < 10, however
+ 			if (! ($delay < 10) ) {
+ 				CHK("USLEEP_RANGE",
+-				    "usleep_range is preferred over udelay; see Documentation/timers/timers-howto.txt\n" . $herecurr);
++				    "usleep_range is preferred over udelay; see Documentation/timers/timers-howto.rst\n" . $herecurr);
+ 			}
+ 			if ($delay > 2000) {
+ 				WARN("LONG_UDELAY",
+@@ -5726,7 +5726,7 @@ sub process {
+ 		if ($line =~ /\bmsleep\s*\((\d+)\);/) {
+ 			if ($1 < 20) {
+ 				WARN("MSLEEP",
+-				     "msleep < 20ms can sleep for up to 20ms; see Documentation/timers/timers-howto.txt\n" . $herecurr);
++				     "msleep < 20ms can sleep for up to 20ms; see Documentation/timers/timers-howto.rst\n" . $herecurr);
+ 			}
+ 		}
+ 
+@@ -6117,11 +6117,11 @@ sub process {
+ 			my $max = $7;
+ 			if ($min eq $max) {
+ 				WARN("USLEEP_RANGE",
+-				     "usleep_range should not use min == max args; see Documentation/timers/timers-howto.txt\n" . "$here\n$stat\n");
++				     "usleep_range should not use min == max args; see Documentation/timers/timers-howto.rst\n" . "$here\n$stat\n");
+ 			} elsif ($min =~ /^\d+$/ && $max =~ /^\d+$/ &&
+ 				 $min > $max) {
+ 				WARN("USLEEP_RANGE",
+-				     "usleep_range args reversed, use min then max; see Documentation/timers/timers-howto.txt\n" . "$here\n$stat\n");
++				     "usleep_range args reversed, use min then max; see Documentation/timers/timers-howto.rst\n" . "$here\n$stat\n");
+ 			}
+ 		}
+ 
+diff --git a/sound/soc/sof/ops.h b/sound/soc/sof/ops.h
+index 80fc3b374c2b..8058a6c73082 100644
+--- a/sound/soc/sof/ops.h
++++ b/sound/soc/sof/ops.h
+@@ -349,7 +349,7 @@ static inline const struct snd_sof_dsp_ops
+  * @cond: Break condition (usually involving @val)
+  * @sleep_us: Maximum time to sleep between reads in us (0
+  *            tight-loops).  Should be less than ~20ms since usleep_range
+- *            is used (see Documentation/timers/timers-howto.txt).
++ *            is used (see Documentation/timers/timers-howto.rst).
+  * @timeout_us: Timeout in us, 0 means never timeout
+  *
+  * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
 -- 
 2.21.0
 
