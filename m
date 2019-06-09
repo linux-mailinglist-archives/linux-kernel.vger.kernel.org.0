@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E0E3A6FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7492A3A8AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbfFIQpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42646 "EHLO mail.kernel.org"
+        id S2388331AbfFIRCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:02:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729590AbfFIQpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:06 -0400
+        id S2388302AbfFIRCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:02:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 773432145D;
-        Sun,  9 Jun 2019 16:45:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81FCE206DF;
+        Sun,  9 Jun 2019 17:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098705;
-        bh=JdUzlv4TObo/slAwFsxFXuX8Bv/1SQfiN8q6c86HR1k=;
+        s=default; t=1560099772;
+        bh=zXy8nO5A7IVBg+N3rB34CovA3fHyL9pOXlgnFXZtya0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mWoeE5xyyjWtNdHc4QfwsXkZaHiXc0anaJWXqLEwKuJ5rNJKc3DNP3AXy6pz90vXZ
-         evtIAiXdfxX1EOhWytKcEKdhW6ndO372DGsBfDfsD8e2eVATu0ynRh91YJY2ly+a07
-         U78yIgIIcyYcxkFd8v0bGC9rplGZWExiwX6DItl8=
+        b=gdRJm20UBxeN3WLL8WcCdQPjjEu1Ad3wZHO52PKvAu5OQCzAYmPGQbV6BfHGC4uWK
+         AwG4vWzBHtVK+wNf4psC8CuHJaHs7XwJywTjlY2sn4zjVPTkHwFt+/8NtfrGNIt318
+         r+gvfoLvdX7uZZyYWiCU+Yi/7/O5xRV91OLx3brA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yihao Wu <wuyihao@linux.alibaba.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.1 30/70] NFSv4.1: Fix bug only first CB_NOTIFY_LOCK is handled
-Date:   Sun,  9 Jun 2019 18:41:41 +0200
-Message-Id: <20190609164129.571095091@linuxfoundation.org>
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 160/241] chardev: add additional check for minor range overlap
+Date:   Sun,  9 Jun 2019 18:41:42 +0200
+Message-Id: <20190609164152.386477349@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yihao Wu <wuyihao@linux.alibaba.com>
+[ Upstream commit de36e16d1557a0b6eb328bc3516359a12ba5c25c ]
 
-commit ba851a39c9703f09684a541885ed176f8fb7c868 upstream.
+Current overlap checking cannot correctly handle
+a case which is baseminor < existing baseminor &&
+baseminor + minorct > existing baseminor + minorct.
 
-When a waiter is waked by CB_NOTIFY_LOCK, it will retry
-nfs4_proc_setlk(). The waiter may fail to nfs4_proc_setlk() and sleep
-again. However, the waiter is already removed from clp->cl_lock_waitq
-when handling CB_NOTIFY_LOCK in nfs4_wake_lock_waiter(). So any
-subsequent CB_NOTIFY_LOCK won't wake this waiter anymore. We should
-put the waiter back to clp->cl_lock_waitq before retrying.
-
-Cc: stable@vger.kernel.org #4.9+
-Signed-off-by: Yihao Wu <wuyihao@linux.alibaba.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4proc.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/char_dev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -6922,20 +6922,22 @@ nfs4_retry_setlk(struct nfs4_state *stat
- 	init_wait(&wait);
- 	wait.private = &waiter;
- 	wait.func = nfs4_wake_lock_waiter;
--	add_wait_queue(q, &wait);
- 
- 	while(!signalled()) {
-+		add_wait_queue(q, &wait);
- 		status = nfs4_proc_setlk(state, cmd, request);
--		if ((status != -EAGAIN) || IS_SETLK(cmd))
-+		if ((status != -EAGAIN) || IS_SETLK(cmd)) {
-+			finish_wait(q, &wait);
- 			break;
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index 24b142569ca9b..d0655ca894816 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -130,6 +130,12 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
+ 			ret = -EBUSY;
+ 			goto out;
+ 		}
++
++		if (new_min < old_min && new_max > old_max) {
++			ret = -EBUSY;
++			goto out;
 +		}
- 
- 		status = -ERESTARTSYS;
- 		freezer_do_not_count();
- 		wait_woken(&wait, TASK_INTERRUPTIBLE, NFS4_LOCK_MAXTIMEOUT);
- 		freezer_count();
-+		finish_wait(q, &wait);
++
  	}
  
--	finish_wait(q, &wait);
- 	return status;
- }
- #else /* !CONFIG_NFS_V4_1 */
+ 	cd->next = *cp;
+-- 
+2.20.1
+
 
 
