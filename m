@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2263A88B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D86EA3AAD1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388105AbfFIRBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:01:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38986 "EHLO mail.kernel.org"
+        id S1731099AbfFIRV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:21:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388099AbfFIRBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:01:36 -0400
+        id S1729621AbfFIQpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:45:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECFBE206DF;
-        Sun,  9 Jun 2019 17:01:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A2CE20840;
+        Sun,  9 Jun 2019 16:45:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099696;
-        bh=PH8GAvkw+iJdAsXGp8BOIiBkfy7m1it3hmLcSuLdv/Y=;
+        s=default; t=1560098703;
+        bh=Bzxt5NMfeLaE9vx9o2lwazsyI1QEqtzUSCM57Sf5CY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rgza+wsEmxbG4myMWz21aWWEAY+axMvl79P7FUm54pOKJfTMJ4ajpjXu7feZBsus3
-         egyCMIs2Lrf6G79Z3+0P/g9blKcjCnopdQx5Ei8BXuaHOzqLl6PzKfbn3F7y2xnifx
-         owy7PTncp+8cUcq8XNLnxLLohmASuXKZJVBJCeBg=
+        b=HJ7P6EQfE8ykmE2hhwxft1CJrWRk8xNVhtQU6DzNhlYeMVWRbM8KYdaa9bHljcHaP
+         e7Yth5ti0W/0ZXDD/NY8YFpbtvJ1X1OST677KatCbO2SvyFXkyVuxbLrc1JnM7HM3l
+         ovXeHW4A1YIfHOjgirVtBsvCRW9vlnHgQtQ2uzFY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 131/241] RDMA/cxgb4: Fix null pointer dereference on alloc_skb failure
-Date:   Sun,  9 Jun 2019 18:41:13 +0200
-Message-Id: <20190609164151.577557026@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 03/70] ipv4: not do cache for local delivery if bc_forwarding is enabled
+Date:   Sun,  9 Jun 2019 18:41:14 +0200
+Message-Id: <20190609164127.734831392@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a6d2a5a92e67d151c98886babdc86d530d27111c ]
+From: Xin Long <lucien.xin@gmail.com>
 
-Currently if alloc_skb fails to allocate the skb a null skb is passed to
-t4_set_arp_err_handler and this ends up dereferencing the null skb.  Avoid
-the NULL pointer dereference by checking for a NULL skb and returning
-early.
+[ Upstream commit 0a90478b93a46bdcd56ba33c37566a993e455d54 ]
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+With the topo:
+
+    h1 ---| rp1            |
+          |     route  rp3 |--- h3 (192.168.200.1)
+    h2 ---| rp2            |
+
+If rp1 bc_forwarding is set while rp2 bc_forwarding is not, after
+doing "ping 192.168.200.255" on h1, then ping 192.168.200.255 on
+h2, and the packets can still be forwared.
+
+This issue was caused by the input route cache. It should only do
+the cache for either bc forwarding or local delivery. Otherwise,
+local delivery can use the route cache for bc forwarding of other
+interfaces.
+
+This patch is to fix it by not doing cache for local delivery if
+all.bc_forwarding is enabled.
+
+Note that we don't fix it by checking route cache local flag after
+rt_cache_valid() in "local_input:" and "ip_mkroute_input", as the
+common route code shouldn't be touched for bc_forwarding.
+
+Fixes: 5cbf777cfdf6 ("route: add support for directed broadcast forwarding")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/cxgb4/cm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/route.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index c9cffced00ca1..54fd4d81a3f1f 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -360,6 +360,8 @@ static struct sk_buff *get_skb(struct sk_buff *skb, int len, gfp_t gfp)
- 		skb_reset_transport_header(skb);
- 	} else {
- 		skb = alloc_skb(len, gfp);
-+		if (!skb)
-+			return NULL;
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -1954,7 +1954,7 @@ static int ip_route_input_slow(struct sk
+ 	u32		itag = 0;
+ 	struct rtable	*rth;
+ 	struct flowi4	fl4;
+-	bool do_cache;
++	bool do_cache = true;
+ 
+ 	/* IP on this device is disabled. */
+ 
+@@ -2031,6 +2031,9 @@ static int ip_route_input_slow(struct sk
+ 	if (res->type == RTN_BROADCAST) {
+ 		if (IN_DEV_BFORWARD(in_dev))
+ 			goto make_route;
++		/* not do cache if bc_forwarding is enabled */
++		if (IPV4_DEVCONF_ALL(net, BC_FORWARDING))
++			do_cache = false;
+ 		goto brd_input;
  	}
- 	t4_set_arp_err_handler(skb, NULL, NULL);
- 	return skb;
--- 
-2.20.1
-
+ 
+@@ -2068,16 +2071,13 @@ brd_input:
+ 	RT_CACHE_STAT_INC(in_brd);
+ 
+ local_input:
+-	do_cache = false;
+-	if (res->fi) {
+-		if (!itag) {
+-			rth = rcu_dereference(FIB_RES_NH(*res).nh_rth_input);
+-			if (rt_cache_valid(rth)) {
+-				skb_dst_set_noref(skb, &rth->dst);
+-				err = 0;
+-				goto out;
+-			}
+-			do_cache = true;
++	do_cache &= res->fi && !itag;
++	if (do_cache) {
++		rth = rcu_dereference(FIB_RES_NH(*res).nh_rth_input);
++		if (rt_cache_valid(rth)) {
++			skb_dst_set_noref(skb, &rth->dst);
++			err = 0;
++			goto out;
+ 		}
+ 	}
+ 
 
 
