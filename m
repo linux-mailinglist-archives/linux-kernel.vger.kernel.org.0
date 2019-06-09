@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4EA3A7E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4BC43A8FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732734AbfFIQy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:54:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56872 "EHLO mail.kernel.org"
+        id S2388348AbfFIRGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:06:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732720AbfFIQy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:54:56 -0400
+        id S2388588AbfFIRGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:06:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D093E206BB;
-        Sun,  9 Jun 2019 16:54:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5029D204EC;
+        Sun,  9 Jun 2019 17:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099295;
-        bh=4FML/o2EtP3soLK1Ab0p0Ho+ha22Df+p/94QuNrxILI=;
+        s=default; t=1560099980;
+        bh=dbiKq53ZEdnYqOxVXfRDsv9rp54xWHJH215bvi/pXPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d2Ru52nmAMsl1IkCn/PxR2PjogHA6KjZZL+JaTc9vCaQQTzGTv5FjtGFIXBLflRBc
-         JWYQFlstMTk5KWRtY2NOsc3XQIxvz2opzXWy9qWimrkJfJYoRFoeLxvfrXPX3qjy7W
-         iKyJZWQPsVmskw4UdYGUnInHzihAl/+SGQXDXcQo=
+        b=2N98+dLwzRCBDXIJWKoacstGDJTFIl/aHx5vXYvL4OE3+50BEVh1eXdXrgqXDyK1g
+         YhdGaxWgL7z66UsZK3KM1DEIiKP5sMyWwT2YezbcBgqdM/NqWneCZ8GNdwYm7hm8x0
+         M1ctXJz0ImVnKev/eW/ki2zCWOjvwMboXZDrhl7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Dufresne <dufresnep@gmail.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.9 79/83] drm/radeon: prefer lower reference dividers
-Date:   Sun,  9 Jun 2019 18:42:49 +0200
-Message-Id: <20190609164134.682755401@linuxfoundation.org>
+        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 228/241] media: uvcvideo: Fix uvc_alloc_entity() allocation alignment
+Date:   Sun,  9 Jun 2019 18:42:50 +0200
+Message-Id: <20190609164155.298801610@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian König <christian.koenig@amd.com>
+From: Nadav Amit <namit@vmware.com>
 
-commit 2e26ccb119bde03584be53406bbd22e711b0d6e6 upstream.
+commit 89dd34caf73e28018c58cd193751e41b1f8bdc56 upstream.
 
-Instead of the closest reference divider prefer the lowest,
-this fixes flickering issues on HP Compaq nx9420.
+The use of ALIGN() in uvc_alloc_entity() is incorrect, since the size of
+(entity->pads) is not a power of two. As a stop-gap, until a better
+solution is adapted, use roundup() instead.
 
-Bugs: https://bugs.freedesktop.org/show_bug.cgi?id=108514
-Suggested-by: Paul Dufresne <dufresnep@gmail.com>
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Found by a static assertion. Compile-tested only.
+
+Fixes: 4ffc2d89f38a ("uvcvideo: Register subdevices for each entity")
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/radeon/radeon_display.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -935,12 +935,12 @@ static void avivo_get_fb_ref_div(unsigne
- 	ref_div_max = max(min(100 / post_div, ref_div_max), 1u);
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -868,7 +868,7 @@ static struct uvc_entity *uvc_alloc_enti
+ 	unsigned int size;
+ 	unsigned int i;
  
- 	/* get matching reference and feedback divider */
--	*ref_div = min(max(DIV_ROUND_CLOSEST(den, post_div), 1u), ref_div_max);
-+	*ref_div = min(max(den/post_div, 1u), ref_div_max);
- 	*fb_div = DIV_ROUND_CLOSEST(nom * *ref_div * post_div, den);
- 
- 	/* limit fb divider to its maximum */
- 	if (*fb_div > fb_div_max) {
--		*ref_div = DIV_ROUND_CLOSEST(*ref_div * fb_div_max, *fb_div);
-+		*ref_div = (*ref_div * fb_div_max)/(*fb_div);
- 		*fb_div = fb_div_max;
- 	}
- }
+-	extra_size = ALIGN(extra_size, sizeof(*entity->pads));
++	extra_size = roundup(extra_size, sizeof(*entity->pads));
+ 	num_inputs = (type & UVC_TERM_OUTPUT) ? num_pads : num_pads - 1;
+ 	size = sizeof(*entity) + extra_size + sizeof(*entity->pads) * num_pads
+ 	     + num_inputs;
 
 
