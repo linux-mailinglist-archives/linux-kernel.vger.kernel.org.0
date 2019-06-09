@@ -2,141 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8685F3A64F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCCB33A623
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbfFIN5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 09:57:10 -0400
-Received: from mail177-30.suw61.mandrillapp.com ([198.2.177.30]:27120 "EHLO
-        mail177-30.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728628AbfFIN5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 09:57:09 -0400
-X-Greylist: delayed 930 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 09:57:09 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:In-Reply-To:References:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=/BfBSryqLYb5jb5bpRRHljjnFOtlnTlngD5C6CvtqbY=;
- b=bPguykPTpt9zh7jLZjdl/cSvKQyYJb/vcqXCCgfyFyGPP3IhpZFY8TJpiD5Ua7gVgYr5HNNF/CUO
-   vOW/OrfIPhmn4k8dtzzficOI4YE/FQoiwwFqFY4O/MwibZUaxPV3I7kDxK1DvmZC7dfc7UY8w/Sn
-   +hLs7DuRiXebquUIUBY=
-Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-30.suw61.mandrillapp.com id hvk83a22rtk9 for <linux-kernel@vger.kernel.org>; Sun, 9 Jun 2019 13:40:57 +0000 (envelope-from <bounce-md_31050260.5cfd0c69.v1-513acbfe26c3476baec3703aaea6aada@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560087657; h=From : 
- Subject : To : Cc : Message-Id : In-Reply-To : References : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=/BfBSryqLYb5jb5bpRRHljjnFOtlnTlngD5C6CvtqbY=; 
- b=BBavgvLgPGN97XNOL3OpFZ5SriQpIrFqq8JJQlNm35DFZ6FnuuKLuqXWEX1d+1CaTY5ra1
- 8gUHuwBw3csIXxsalk0e0d6fX6veUV0oEEfgadI9+KwBiP6ZJCJddkdnJsnyKO7TXxl0Vbg8
- sKTUrIqHiSowDAeZJYX5+qsJImx0w=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: [PATCH 4.4 2/2] fuse: Add FOPEN_STREAM to use stream_open()
-Received: from [87.98.221.171] by mandrillapp.com id 513acbfe26c3476baec3703aaea6aada; Sun, 09 Jun 2019 13:40:57 +0000
-X-Mailer: git-send-email 2.20.1
-To:     <stable@vger.kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kirill Smelkov <kirr@nexedi.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Message-Id: <20190609132443.9420-3-kirr@nexedi.com>
-In-Reply-To: <20190609132443.9420-1-kirr@nexedi.com>
-References: <20190609132443.9420-1-kirr@nexedi.com>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.513acbfe26c3476baec3703aaea6aada
-X-Mandrill-User: md_31050260
-Date:   Sun, 09 Jun 2019 13:40:57 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        id S1728746AbfFINlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 09:41:17 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32100 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727123AbfFINlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 09:41:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2019 06:41:16 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga003.jf.intel.com with ESMTP; 09 Jun 2019 06:41:15 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 00/22]  Shared virtual address IOMMU and VT-d support
+Date:   Sun,  9 Jun 2019 06:44:00 -0700
+Message-Id: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit bbd84f33652f852ce5992d65db4d020aba21f882 upstream.
+Shared virtual address (SVA), a.k.a, Shared virtual memory (SVM) on Intel
+platforms allow address space sharing between device DMA and applications.
+SVA can reduce programming complexity and enhance security.
+This series is intended to enable SVA virtualization, i.e. shared guest
+application address space and physical device DMA address. Only IOMMU portion
+of the changes are included in this series. Additional support is needed in
+VFIO and QEMU (will be submitted separately) to complete this functionality.
 
-Starting from commit 9c225f2655e3 ("vfs: atomic f_pos accesses as per
-POSIX") files opened even via nonseekable_open gate read and write via lock
-and do not allow them to be run simultaneously. This can create read vs
-write deadlock if a filesystem is trying to implement a socket-like file
-which is intended to be simultaneously used for both read and write from
-filesystem client.  See commit 10dce8af3422 ("fs: stream_open - opener for
-stream-like files so that read and write can run simultaneously without
-deadlock") for details and e.g. commit 581d21a2d02a ("xenbus: fix deadlock
-on writes to /proc/xen/xenbus") for a similar deadlock example on
-/proc/xen/xenbus.
+To make incremental changes and reduce the size of each patchset. This series
+does not inlcude support for page request services.
 
-To avoid such deadlock it was tempting to adjust fuse_finish_open to use
-stream_open instead of nonseekable_open on just FOPEN_NONSEEKABLE flags,
-but grepping through Debian codesearch shows users of FOPEN_NONSEEKABLE,
-and in particular GVFS which actually uses offset in its read and write
-handlers
+In VT-d implementation, PASID table is per device and maintained in the host.
+Guest PASID table is shadowed in VMM where virtual IOMMU is emulated.
 
-	https://codesearch.debian.net/search?q=-%3Enonseekable+%3D
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1080
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1247-1346
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1399-1481
+    .-------------.  .---------------------------.
+    |   vIOMMU    |  | Guest process CR3, FL only|
+    |             |  '---------------------------'
+    .----------------/
+    | PASID Entry |--- PASID cache flush -
+    '-------------'                       |
+    |             |                       V
+    |             |                CR3 in GPA
+    '-------------'
+Guest
+------| Shadow |--------------------------|--------
+      v        v                          v
+Host
+    .-------------.  .----------------------.
+    |   pIOMMU    |  | Bind FL for GVA-GPA  |
+    |             |  '----------------------'
+    .----------------/  |
+    | PASID Entry |     V (Nested xlate)
+    '----------------\.------------------------------.
+    |             |   |SL for GPA-HPA, default domain|
+    |             |   '------------------------------'
+    '-------------'
+Where:
+ - FL = First level/stage one page tables
+ - SL = Second level/stage two page tables
 
-so if we would do such a change it will break a real user.
 
-Add another flag (FOPEN_STREAM) for filesystem servers to indicate that the
-opened handler is having stream-like semantics; does not use file position
-and thus the kernel is free to issue simultaneous read and write request on
-opened file handle.
+This work is based on collaboration with other developers on the IOMMU
+mailing list. Notably,
 
-This patch together with stream_open() should be added to stable kernels
-starting from v3.14+. This will allow to patch OSSPD and other FUSE
-filesystems that provide stream-like files to return FOPEN_STREAM |
-FOPEN_NONSEEKABLE in open handler and this way avoid the deadlock on all
-kernel versions. This should work because fuse_finish_open ignores unknown
-open flags returned from a filesystem and so passing FOPEN_STREAM to a
-kernel that is not aware of this flag cannot hurt. In turn the kernel that
-is not aware of FOPEN_STREAM will be < v3.14 where just FOPEN_NONSEEKABLE
-is sufficient to implement streams without read vs write deadlock.
+[1] [PATCH v6 00/22] SMMUv3 Nested Stage Setup by Eric Auger
+https://lkml.org/lkml/2019/3/17/124
 
-Cc: stable@vger.kernel.org # v3.14+
-Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/file.c            | 4 +++-
- include/uapi/linux/fuse.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+[2] [RFC PATCH 2/6] drivers core: Add I/O ASID allocator by Jean-Philippe
+Brucker
+https://www.spinics.net/lists/iommu/msg30639.html
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index d40c2451487c..cf50020f9f27 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -178,7 +178,9 @@ void fuse_finish_open(struct inode *inode, struct file *file)
- 		file->f_op = &fuse_direct_io_file_operations;
- 	if (!(ff->open_flags & FOPEN_KEEP_CACHE))
- 		invalidate_inode_pages2(inode->i_mapping);
--	if (ff->open_flags & FOPEN_NONSEEKABLE)
-+	if (ff->open_flags & FOPEN_STREAM)
-+		stream_open(inode, file);
-+	else if (ff->open_flags & FOPEN_NONSEEKABLE)
- 		nonseekable_open(inode, file);
- 	if (fc->atomic_o_trunc && (file->f_flags & O_TRUNC)) {
- 		struct fuse_inode *fi = get_fuse_inode(inode);
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index c9aca042e61d..d3a5cf3b5446 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -205,10 +205,12 @@ struct fuse_file_lock {
-  * FOPEN_DIRECT_IO: bypass page cache for this open file
-  * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
-  * FOPEN_NONSEEKABLE: the file is not seekable
-+ * FOPEN_STREAM: the file is stream-like (no file position at all)
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
- #define FOPEN_NONSEEKABLE	(1 << 2)
-+#define FOPEN_STREAM		(1 << 4)
- 
- /**
-  * INIT request/reply flags
+[3] [RFC PATCH 0/5] iommu: APIs for paravirtual PASID allocation by Lu Baolu
+https://lkml.org/lkml/2018/11/12/1921
+
+[4] [PATCH v5 00/23] IOMMU and VT-d driver support for Shared Virtual
+    Address (SVA)
+    https://lwn.net/Articles/754331/
+
+There are roughly three parts:
+1. Generic PASID allocator [1] with extension to support custom allocator
+2. IOMMU cache invalidation passdown from guest to host
+3. Guest PASID bind for nested translation
+
+All generic IOMMU APIs are reused from [1], which has a v7 just published with
+no real impact to the patches used here. It is worth noting that unlike sMMU
+nested stage setup, where PASID table is owned by the guest, VT-d PASID table is
+owned by the host, individual PASIDs are bound instead of the PASID table.
+
+This series is based on the new VT-d 3.0 Specification
+(https://software.intel.com/sites/default/files/managed/c5/15/vt-directed-io-spec.pdf).
+This is different than the older series in [4] which was based on the older
+specification that does not have scalable mode.
+
+
+ChangeLog:
+	- V4
+	  - Redesigned IOASID allocator such that it can support custom
+	  allocators with shared helper functions. Use separate XArray
+	  to store IOASIDs per allocator. Took advice from Eric Auger to
+	  have default allocator use the generic allocator structure.
+	  Combined into one patch in that the default allocator is just
+	  "another" allocator now. Can be built as a module in case of
+	  driver use without IOMMU.
+	  - Extended bind guest PASID data to support SMMU and non-identity
+	  guest to host PASID mapping https://lkml.org/lkml/2019/5/21/802
+	  - Rebased on Jean's sva/api common tree, new patches starts with
+	   [PATCH v4 10/22]
+
+	- V3
+	  - Addressed thorough review comments from Eric Auger (Thank you!)
+	  - Moved IOASID allocator from driver core to IOMMU code per
+	    suggestion by Christoph Hellwig
+	    (https://lkml.org/lkml/2019/4/26/462)
+	  - Rebased on top of Jean's SVA API branch and Eric's v7[1]
+	    (git://linux-arm.org/linux-jpb.git sva/api)
+	  - All IOMMU APIs are unmodified (except the new bind guest PASID
+	    call in patch 9/16)
+
+	- V2
+	  - Rebased on Joerg's IOMMU x86/vt-d branch v5.1-rc4
+	  - Integrated with Eric Auger's new v7 series for common APIs
+	  (https://github.com/eauger/linux/tree/v5.1-rc3-2stage-v7)
+	  - Addressed review comments from Andy Shevchenko and Alex Williamson on
+	    IOASID custom allocator.
+	  - Support multiple custom IOASID allocators (vIOMMUs) and dynamic
+	    registration.
+
+
+Jacob Pan (17):
+  driver core: Add per device iommu param
+  iommu: Introduce device fault data
+  iommu: Introduce device fault report API
+  iommu: Add a timeout parameter for PRQ response
+  iommu: Use device fault trace event
+  iommu: Introduce attach/detach_pasid_table API
+  iommu: Fix compile error without IOMMU_API
+  iommu: Introduce guest PASID bind function
+  iommu/vt-d: Add custom allocator for IOASID
+  iommu/vt-d: Replace Intel specific PASID allocator with IOASID
+  iommu/vt-d: Move domain helper to header
+  iommu/vt-d: Avoid duplicated code for PASID setup
+  iommu/vt-d: Add nested translation helper function
+  iommu/vt-d: Clean up for SVM device list
+  iommu/vt-d: Add bind guest PASID support
+  iommu/vt-d: Support flushing more translation cache types
+  iommu/vt-d: Add svm/sva invalidate function
+
+Jean-Philippe Brucker (3):
+  iommu: Add recoverable fault reporting
+  trace/iommu: Add sva trace events
+  iommu: Add I/O ASID allocator
+
+Liu Yi L (1):
+  iommu: Introduce cache_invalidate API
+
+Lu Baolu (1):
+  iommu/vt-d: Enlightened PASID allocation
+
+ Documentation/admin-guide/kernel-parameters.txt |   8 +
+ drivers/iommu/Kconfig                           |   9 +
+ drivers/iommu/Makefile                          |   1 +
+ drivers/iommu/dmar.c                            |  50 +++
+ drivers/iommu/intel-iommu.c                     | 251 +++++++++++++-
+ drivers/iommu/intel-pasid.c                     | 223 ++++++++++---
+ drivers/iommu/intel-pasid.h                     |  24 +-
+ drivers/iommu/intel-svm.c                       | 301 ++++++++++++++---
+ drivers/iommu/ioasid.c                          | 427 ++++++++++++++++++++++++
+ drivers/iommu/iommu.c                           | 282 +++++++++++++++-
+ include/linux/device.h                          |   3 +
+ include/linux/intel-iommu.h                     |  44 ++-
+ include/linux/intel-svm.h                       |  17 +
+ include/linux/ioasid.h                          |  74 ++++
+ include/linux/iommu.h                           | 178 +++++++++-
+ include/trace/events/iommu.h                    |  87 +++++
+ include/uapi/linux/iommu.h                      | 338 +++++++++++++++++++
+ 17 files changed, 2190 insertions(+), 127 deletions(-)
+ create mode 100644 drivers/iommu/ioasid.c
+ create mode 100644 include/linux/ioasid.h
+ create mode 100644 include/uapi/linux/iommu.h
+
 -- 
-2.20.1
+2.7.4
+
