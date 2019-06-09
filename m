@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C5D3A6FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44A43A73A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbfFIQpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42856 "EHLO mail.kernel.org"
+        id S1730884AbfFIQre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:47:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729717AbfFIQpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:14 -0400
+        id S1729954AbfFIQrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1DCE2145D;
-        Sun,  9 Jun 2019 16:45:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE17720833;
+        Sun,  9 Jun 2019 16:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098714;
-        bh=F8mVEECUDWVAl2J0GvhC9Qkc1zHUdiM9elyggL2b6Jk=;
+        s=default; t=1560098843;
+        bh=ItzDGbHblQGivKofGXtluzvl1JPij++RgJ9aLrrIhVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pdfoaqZPby3ngSIcgq5Uo5TCSijmO+iw2t17WwVQXaE/TdqesCQ+FI5tX8wDusUjc
-         FZD2D1De8Lgv8h7eSFP1fWL4zQTqouHeycbgz6T0OTrFLMFEpi7KSckDi626cghoMY
-         u6E9ujzYHlwVmbZjGa2MIuCfBBjO07AL+wMo2abA=
+        b=eVIOddl/okLsWgEZZkq1kbPBFqwPUt8hDoNtjOIyta14L/XvIyBHRV4rdqPtKzIWr
+         h4++krGlNTiDEGoYWfaUJhr8xyZzvEGeHsiejDrHhG8m2BT/U98hgYrC9t1Q+RlYWq
+         dVWfrRj8BinVf+2bO/Jj1Rxben1WADXnHwwGuJLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 5.1 33/70] pstore: Set tfm to NULL on free_buf_for_compression
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 03/51] ipv4: not do cache for local delivery if bc_forwarding is enabled
 Date:   Sun,  9 Jun 2019 18:41:44 +0200
-Message-Id: <20190609164129.877736227@linuxfoundation.org>
+Message-Id: <20190609164127.337162226@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pi-Hsun Shih <pihsun@chromium.org>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit a9fb94a99bb515d8720ba8440ce3aba84aec80f8 upstream.
+[ Upstream commit 0a90478b93a46bdcd56ba33c37566a993e455d54 ]
 
-Set tfm to NULL on free_buf_for_compression() after crypto_free_comp().
+With the topo:
 
-This avoid a use-after-free when allocate_buf_for_compression()
-and free_buf_for_compression() are called twice. Although
-free_buf_for_compression() freed the tfm, allocate_buf_for_compression()
-won't reinitialize the tfm since the tfm pointer is not NULL.
+    h1 ---| rp1            |
+          |     route  rp3 |--- h3 (192.168.200.1)
+    h2 ---| rp2            |
 
-Fixes: 95047b0519c1 ("pstore: Refactor compression initialization")
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+If rp1 bc_forwarding is set while rp2 bc_forwarding is not, after
+doing "ping 192.168.200.255" on h1, then ping 192.168.200.255 on
+h2, and the packets can still be forwared.
+
+This issue was caused by the input route cache. It should only do
+the cache for either bc forwarding or local delivery. Otherwise,
+local delivery can use the route cache for bc forwarding of other
+interfaces.
+
+This patch is to fix it by not doing cache for local delivery if
+all.bc_forwarding is enabled.
+
+Note that we don't fix it by checking route cache local flag after
+rt_cache_valid() in "local_input:" and "ip_mkroute_input", as the
+common route code shouldn't be touched for bc_forwarding.
+
+Fixes: 5cbf777cfdf6 ("route: add support for directed broadcast forwarding")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/pstore/platform.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv4/route.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -347,8 +347,10 @@ static void allocate_buf_for_compression
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -1960,7 +1960,7 @@ static int ip_route_input_slow(struct sk
+ 	u32		itag = 0;
+ 	struct rtable	*rth;
+ 	struct flowi4	fl4;
+-	bool do_cache;
++	bool do_cache = true;
  
- static void free_buf_for_compression(void)
- {
--	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm)
-+	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm) {
- 		crypto_free_comp(tfm);
-+		tfm = NULL;
-+	}
- 	kfree(big_oops_buf);
- 	big_oops_buf = NULL;
- 	big_oops_buf_sz = 0;
+ 	/* IP on this device is disabled. */
+ 
+@@ -2037,6 +2037,9 @@ static int ip_route_input_slow(struct sk
+ 	if (res->type == RTN_BROADCAST) {
+ 		if (IN_DEV_BFORWARD(in_dev))
+ 			goto make_route;
++		/* not do cache if bc_forwarding is enabled */
++		if (IPV4_DEVCONF_ALL(net, BC_FORWARDING))
++			do_cache = false;
+ 		goto brd_input;
+ 	}
+ 
+@@ -2074,16 +2077,13 @@ brd_input:
+ 	RT_CACHE_STAT_INC(in_brd);
+ 
+ local_input:
+-	do_cache = false;
+-	if (res->fi) {
+-		if (!itag) {
+-			rth = rcu_dereference(FIB_RES_NH(*res).nh_rth_input);
+-			if (rt_cache_valid(rth)) {
+-				skb_dst_set_noref(skb, &rth->dst);
+-				err = 0;
+-				goto out;
+-			}
+-			do_cache = true;
++	do_cache &= res->fi && !itag;
++	if (do_cache) {
++		rth = rcu_dereference(FIB_RES_NH(*res).nh_rth_input);
++		if (rt_cache_valid(rth)) {
++			skb_dst_set_noref(skb, &rth->dst);
++			err = 0;
++			goto out;
+ 		}
+ 	}
+ 
 
 
