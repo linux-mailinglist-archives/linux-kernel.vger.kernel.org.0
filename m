@@ -2,56 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BADAB3A684
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 16:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 816B63A685
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 16:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbfFIOtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 10:49:35 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55305 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfFIOte (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 10:49:34 -0400
-X-Originating-IP: 81.18.188.213
-Received: from localhost (unknown [81.18.188.213])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 65EFA2000D;
-        Sun,  9 Jun 2019 14:49:32 +0000 (UTC)
-Date:   Sun, 9 Jun 2019 16:49:31 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 30/34] rtc: rx8025: simplify getting the adapter of a
- client
-Message-ID: <20190609144931.GF25472@piout.net>
-References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
- <20190608105619.593-31-wsa+renesas@sang-engineering.com>
+        id S1729030AbfFIOuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 10:50:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727041AbfFIOuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 10:50:04 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B017820684;
+        Sun,  9 Jun 2019 14:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560091804;
+        bh=hGl7xz2P5Qx18s3E5Uq3MjSkKhmAwEH4t3jJGsTUYmw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UeH7+uF++dgCQwnfpCs6jfddzA8IG/dUU1Va9U+G0E+IS1aLaqShE9wRxpZPc2tmw
+         SHbzds0P7ql8331Wcu9OaSgosMn8vJu0VvGyO/UTYtqcg+99zV7r9AcisBv/9/dzVY
+         XSF9/OSOdaGHSsMV1R3cOsxD7lX4lgHqtMtWRg94=
+Date:   Sun, 9 Jun 2019 16:50:01 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     Nadav Amit <namit@vmware.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Caspar Zhang <caspar@linux.alibaba.com>,
+        jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [bug report][stable] kernel tried to execute NX-protected page -
+ exploit attempt? (uid: 0)
+Message-ID: <20190609145001.GA26365@kroah.com>
+References: <5817eaac-29cc-6331-af3b-b9d85a7c1cd7@linux.alibaba.com>
+ <bde5bf17-35d2-45d8-1d1d-59d0f027b9c0@linux.alibaba.com>
+ <D0F0870A-B396-4390-B5F1-164B68E13C73@vmware.com>
+ <c2411bbb-d0e7-59b2-3418-63650b354544@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190608105619.593-31-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <c2411bbb-d0e7-59b2-3418-63650b354544@linux.alibaba.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/2019 12:56:09+0200, Wolfram Sang wrote:
-> We have a dedicated pointer for that, so use it. Much easier to read and
-> less computation involved.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Please apply to your subsystem tree.
-> 
->  drivers/rtc/rtc-rx8025.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Applied, thanks.
+On Sun, Jun 09, 2019 at 09:10:45PM +0800, Joseph Qi wrote:
+> Hi Nadav,
+> Thanks for the comments.
+> I'll test the 3 patches in the mentioned thread.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This should all be fixed in the latest release that happened today.  If
+not, please let us know.
+
+thanks,
+
+greg k-h
