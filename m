@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 174CE3A70B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9E23A755
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbfFIQpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43524 "EHLO mail.kernel.org"
+        id S1731292AbfFIQsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730033AbfFIQpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:39 -0400
+        id S1731232AbfFIQsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AE0920833;
-        Sun,  9 Jun 2019 16:45:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61063206C3;
+        Sun,  9 Jun 2019 16:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098739;
-        bh=qu3AXhIjStH1+re7tKqaUvy781oKsZ24j3DKALUl09Q=;
+        s=default; t=1560098922;
+        bh=bvmGVxDktvuZtgkDpHt1Zo5XSOeIlP4VhxJB8X4IWPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gUQKr7UyaweXsUPpQKmV7+LO9ySn7zvqjn7ZUxGMGhKlHMBN8HOrRdmNqbHUteCZ6
-         bH878uUO7nMo0H1O6ZeacsFmKHn7rNQXu/lVU9J2Ajz+Fvjrv5f4E9Gm8cdpoAJSIz
-         EnzBi22KrVjO4pobOIUN9b/c6tSb5aAiMbtYDrJQ=
+        b=pmU2stW+baaMDV9p9nw+vjaexsxeaKyDrpGxYr0V2RFvPU+84IGTeYgaa5WxuuY8Q
+         qCOXwqpLdXuoUWRePuqpc9fYy92tyedy7dILriPVnIiQyemFjTLyg5Io75WjgpW1yS
+         noEvM7j2r7mMhqMGgz8hDc5zGUMU66ZVSKzy3pkc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.1 36/70] memstick: mspro_block: Fix an error code in mspro_block_issue_req()
+        stable@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 06/51] net: ethernet: ti: cpsw_ethtool: fix ethtool ring param set
 Date:   Sun,  9 Jun 2019 18:41:47 +0200
-Message-Id: <20190609164130.189649566@linuxfoundation.org>
+Message-Id: <20190609164127.486751888@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,88 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-commit 61009f82a93f7c0b33cd9b3b263a6ab48f8b49d4 upstream.
+[ Upstream commit 09faf5a7d7c0bcb07faba072f611937af9dd5788 ]
 
-We accidentally changed the error code from -EAGAIN to 1 when we did the
-blk-mq conversion.
+Fix ability to set RX descriptor number, the reason - initially
+"tx_max_pending" was set incorrectly, but the issue appears after
+adding sanity check, so fix is for "sanity" patch.
 
-Maybe a contributing factor to this mistake is that it wasn't obvious
-that the "while (chunk) {" condition is always true.  I have cleaned
-that up as well.
-
-Fixes: d0be12274dad ("mspro_block: convert to blk-mq")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 37e2d99b59c476 ("ethtool: Ensure new ring parameters are within bounds during SRINGPARAM")
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/memstick/core/mspro_block.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/ti/cpsw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -694,13 +694,13 @@ static void h_mspro_block_setup_cmd(stru
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -2978,7 +2978,7 @@ static void cpsw_get_ringparam(struct ne
+ 	struct cpsw_common *cpsw = priv->cpsw;
  
- /*** Data transfer ***/
- 
--static int mspro_block_issue_req(struct memstick_dev *card, bool chunk)
-+static int mspro_block_issue_req(struct memstick_dev *card)
- {
- 	struct mspro_block_data *msb = memstick_get_drvdata(card);
- 	u64 t_off;
- 	unsigned int count;
- 
--	while (chunk) {
-+	while (true) {
- 		msb->current_page = 0;
- 		msb->current_seg = 0;
- 		msb->seg_count = blk_rq_map_sg(msb->block_req->q,
-@@ -709,6 +709,7 @@ static int mspro_block_issue_req(struct
- 
- 		if (!msb->seg_count) {
- 			unsigned int bytes = blk_rq_cur_bytes(msb->block_req);
-+			bool chunk;
- 
- 			chunk = blk_update_request(msb->block_req,
- 							BLK_STS_RESOURCE,
-@@ -718,7 +719,7 @@ static int mspro_block_issue_req(struct
- 			__blk_mq_end_request(msb->block_req,
- 						BLK_STS_RESOURCE);
- 			msb->block_req = NULL;
--			break;
-+			return -EAGAIN;
- 		}
- 
- 		t_off = blk_rq_pos(msb->block_req);
-@@ -735,8 +736,6 @@ static int mspro_block_issue_req(struct
- 		memstick_new_req(card->host);
- 		return 0;
- 	}
--
--	return 1;
- }
- 
- static int mspro_block_complete_req(struct memstick_dev *card, int error)
-@@ -779,7 +778,7 @@ static int mspro_block_complete_req(stru
- 		chunk = blk_update_request(msb->block_req,
- 				errno_to_blk_status(error), t_len);
- 		if (chunk) {
--			error = mspro_block_issue_req(card, chunk);
-+			error = mspro_block_issue_req(card);
- 			if (!error)
- 				goto out;
- 		} else {
-@@ -849,7 +848,7 @@ static blk_status_t mspro_queue_rq(struc
- 	msb->block_req = bd->rq;
- 	blk_mq_start_request(bd->rq);
- 
--	if (mspro_block_issue_req(card, true))
-+	if (mspro_block_issue_req(card))
- 		msb->block_req = NULL;
- 
- 	spin_unlock_irq(&msb->q_lock);
+ 	/* not supported */
+-	ering->tx_max_pending = 0;
++	ering->tx_max_pending = descs_pool_size - CPSW_MAX_QUEUES;
+ 	ering->tx_pending = cpdma_get_num_tx_descs(cpsw->dma);
+ 	ering->rx_max_pending = descs_pool_size - CPSW_MAX_QUEUES;
+ 	ering->rx_pending = cpdma_get_num_rx_descs(cpsw->dma);
 
 
