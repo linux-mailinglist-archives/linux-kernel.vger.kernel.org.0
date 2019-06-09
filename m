@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD6F3A8C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80E773A6E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388556AbfFIREH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:04:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
+        id S1729199AbfFIQoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:44:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388543AbfFIREC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:02 -0400
+        id S1729150AbfFIQoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:44:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C69C9204EC;
-        Sun,  9 Jun 2019 17:04:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B7F0214AF;
+        Sun,  9 Jun 2019 16:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099842;
-        bh=/RQoB0Mb3evmr+5bBnjH8AXnfnI9O9MRVe/mPA/pi6k=;
+        s=default; t=1560098653;
+        bh=oVLx/3P0SQT4K2fcmXDjvfMU5pTVZquaIm/duWh0Iz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTcNycwceKIiRfWqanY1gyFfuzyQj1/6XCz3toym5hhnuEZO64WuoA3YVl504qIVW
-         L6zdWvIRzNreGAbdi7bmKlGtpfXZlmmzqN4M03I4AuaGQKMQUZenvOOSyYLB/nt5xo
-         d8fjWgEUe9yBIcqwcp21/uV6X03FEPObZ8pTIVSs=
+        b=eWqs+JdXtns7FYZQAI/JJKNE5e9AuZEsX8FpImVgyB+Dhd5VoN1JmLRPftllIaqCS
+         rcQJJTQO7lVV/1XimLjAOmY+BoV5OUQJFNmXrPAbh1917qa+G8w62s1aDMuyfqdrXh
+         esg02+/BwyDiUw57gEMWclv1ewwlHLynWrfnIyiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 141/241] PM / core: Propagate dev->power.wakeup_path when no callbacks
-Date:   Sun,  9 Jun 2019 18:41:23 +0200
-Message-Id: <20190609164151.857030674@linuxfoundation.org>
+        stable@vger.kernel.org, Olivier Matz <olivier.matz@6wind.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 13/70] ipv6: use READ_ONCE() for inet->hdrincl as in ipv4
+Date:   Sun,  9 Jun 2019 18:41:24 +0200
+Message-Id: <20190609164128.237669035@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dc351d4c5f4fe4d0f274d6d660227be0c3a03317 ]
+From: Olivier Matz <olivier.matz@6wind.com>
 
-The dev->power.direct_complete flag may become set in device_prepare() in
-case the device don't have any PM callbacks (dev->power.no_pm_callbacks is
-set). This leads to a broken behaviour, when there is child having wakeup
-enabled and relies on its parent to be used in the wakeup path.
+[ Upstream commit 59e3e4b52663a9d97efbce7307f62e4bc5c9ce91 ]
 
-More precisely, when the direct complete path becomes selected for the
-child in __device_suspend(), the propagation of the dev->power.wakeup_path
-becomes skipped as well.
+As it was done in commit 8f659a03a0ba ("net: ipv4: fix for a race
+condition in raw_sendmsg") and commit 20b50d79974e ("net: ipv4: emulate
+READ_ONCE() on ->hdrincl bit-field in raw_sendmsg()") for ipv4, copy the
+value of inet->hdrincl in a local variable, to avoid introducing a race
+condition in the next commit.
 
-Let's address this problem, by checking if the device is a part the wakeup
-path or has wakeup enabled, then prevent the direct complete path from
-being used.
-
-Reported-by: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[ rjw: Comment cleanup ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Olivier Matz <olivier.matz@6wind.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/power/main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/ipv6/raw.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 05409141ec077..8efdb823826c8 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1378,6 +1378,10 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
- 	if (dev->power.syscore)
- 		goto Complete;
+--- a/net/ipv6/raw.c
++++ b/net/ipv6/raw.c
+@@ -783,6 +783,7 @@ static int rawv6_sendmsg(struct sock *sk
+ 	struct flowi6 fl6;
+ 	struct ipcm6_cookie ipc6;
+ 	int addr_len = msg->msg_namelen;
++	int hdrincl;
+ 	u16 proto;
+ 	int err;
  
-+	/* Avoid direct_complete to let wakeup_path propagate. */
-+	if (device_may_wakeup(dev) || dev->power.wakeup_path)
-+		dev->power.direct_complete = false;
+@@ -796,6 +797,13 @@ static int rawv6_sendmsg(struct sock *sk
+ 	if (msg->msg_flags & MSG_OOB)
+ 		return -EOPNOTSUPP;
+ 
++	/* hdrincl should be READ_ONCE(inet->hdrincl)
++	 * but READ_ONCE() doesn't work with bit fields.
++	 * Doing this indirectly yields the same result.
++	 */
++	hdrincl = inet->hdrincl;
++	hdrincl = READ_ONCE(hdrincl);
 +
- 	if (dev->power.direct_complete) {
- 		if (pm_runtime_status_suspended(dev)) {
- 			pm_runtime_disable(dev);
--- 
-2.20.1
-
+ 	/*
+ 	 *	Get and verify the address.
+ 	 */
+@@ -908,7 +916,7 @@ static int rawv6_sendmsg(struct sock *sk
+ 		fl6.flowi6_oif = np->ucast_oif;
+ 	security_sk_classify_flow(sk, flowi6_to_flowi(&fl6));
+ 
+-	if (inet->hdrincl)
++	if (hdrincl)
+ 		fl6.flowi6_flags |= FLOWI_FLAG_KNOWN_NH;
+ 
+ 	if (ipc6.tclass < 0)
+@@ -931,7 +939,7 @@ static int rawv6_sendmsg(struct sock *sk
+ 		goto do_confirm;
+ 
+ back_from_confirm:
+-	if (inet->hdrincl)
++	if (hdrincl)
+ 		err = rawv6_send_hdrinc(sk, msg, len, &fl6, &dst,
+ 					msg->msg_flags, &ipc6.sockc);
+ 	else {
 
 
