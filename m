@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B68E53A4A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C0F3A4A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfFIKI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 06:08:59 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:46672 "EHLO
+        id S1728234AbfFIKJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 06:09:03 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:46698 "EHLO
         forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728111AbfFIKI6 (ORCPT
+        by vger.kernel.org with ESMTP id S1728149AbfFIKJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 06:08:58 -0400
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 461142E0AC3;
-        Sun,  9 Jun 2019 13:08:55 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id ZSzqn1Ame6-8so4F2el;
-        Sun, 09 Jun 2019 13:08:55 +0300
+        Sun, 9 Jun 2019 06:09:00 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 265F52E097B;
+        Sun,  9 Jun 2019 13:08:57 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id pNBtwZTYyg-8udqp0pt;
+        Sun, 09 Jun 2019 13:08:57 +0300
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1560074935; bh=Osy1W1UXrB10pyCypodBWxUh9CNrVdsLdAgKLqVDe8Q=;
+        t=1560074937; bh=3rk+4uRwl46CAyP7ka3QhboNqPwEZHBXTQqkcXWKDZU=;
         h=In-Reply-To:Message-ID:References:Date:To:From:Subject:Cc;
-        b=pqKvjzXtUBzAVSiDKLbZCOSS0t9ehWEZtZgDrRcDhRw3G6lZWgub6Zjydb5S4yDbp
-         Y87xvNUR9I4izI0As/UKXeINdYRzMYShRSbiWoSq5onG4qSdj8aplmkyAH+PrEzyrS
-         Bldyua8BJ063+uyN4eyxD7D8yN7XWfiVpmf6hmEg=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+        b=HEBN1BfECtA+NWOl1NyhYjybz8lV9L5DriON81fOTee7qLzo9B1x324RjmVk79R1d
+         EPwmvCOgjHYCRKWT83RsO0l/Q9io6+Tangbs3bDwNXlFGnRXGUalmBWJ7ENrOSa5Rs
+         E5y5f08BToJC0UDl/kAKm5SjyMhHRX/j+Ms+1QrE=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
 Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d25:9e27:4f75:a150])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id eNXLUmhNGx-8sga6Q9F;
-        Sun, 09 Jun 2019 13:08:54 +0300
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id Qx30l6oFjQ-8uYGIqxH;
+        Sun, 09 Jun 2019 13:08:56 +0300
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (Client certificate not present)
-Subject: [PATCH v2 2/6] proc: use down_read_killable mmap_sem for
- /proc/pid/smaps_rollup
+Subject: [PATCH v2 3/6] proc: use down_read_killable mmap_sem for
+ /proc/pid/pagemap
 From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org
@@ -42,8 +42,8 @@ Cc:     Oleg Nesterov <oleg@redhat.com>,
         Kirill Tkhai <ktkhai@virtuozzo.com>,
         Michal =?utf-8?q?Koutn=C3=BD?= <mkoutny@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>, Roman Gushchin <guro@fb.com>
-Date:   Sun, 09 Jun 2019 13:08:54 +0300
-Message-ID: <156007493429.3335.14666825072272692455.stgit@buzz>
+Date:   Sun, 09 Jun 2019 13:08:56 +0300
+Message-ID: <156007493638.3335.4872164955523928492.stgit@buzz>
 In-Reply-To: <156007465229.3335.10259979070641486905.stgit@buzz>
 References: <156007465229.3335.10259979070641486905.stgit@buzz>
 User-Agent: StGit/0.17.1-dirty
@@ -64,34 +64,22 @@ Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
 Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Acked-by: Michal Hocko <mhocko@suse.com>
 ---
- fs/proc/task_mmu.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/proc/task_mmu.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 2bf210229daf..781879a91e3b 100644
+index 781879a91e3b..78bed6adc62d 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -832,7 +832,10 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
- 
- 	memset(&mss, 0, sizeof(mss));
- 
--	down_read(&mm->mmap_sem);
-+	ret = down_read_killable(&mm->mmap_sem);
-+	if (ret)
-+		goto out_put_mm;
-+
- 	hold_task_mempolicy(priv);
- 
- 	for (vma = priv->mm->mmap; vma; vma = vma->vm_next) {
-@@ -849,8 +852,9 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
- 
- 	release_task_mempolicy(priv);
- 	up_read(&mm->mmap_sem);
--	mmput(mm);
- 
-+out_put_mm:
-+	mmput(mm);
- out_put_task:
- 	put_task_struct(priv->task);
- 	priv->task = NULL;
+@@ -1547,7 +1547,9 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
+ 		/* overflow ? */
+ 		if (end < start_vaddr || end > end_vaddr)
+ 			end = end_vaddr;
+-		down_read(&mm->mmap_sem);
++		ret = down_read_killable(&mm->mmap_sem);
++		if (ret)
++			goto out_free;
+ 		ret = walk_page_range(start_vaddr, end, &pagemap_walk);
+ 		up_read(&mm->mmap_sem);
+ 		start_vaddr = end;
 
