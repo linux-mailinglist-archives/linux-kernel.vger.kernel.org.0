@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A0AE3A8AB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5105E3A7A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388340AbfFIRC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:02:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41100 "EHLO mail.kernel.org"
+        id S1731595AbfFIQvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:51:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388328AbfFIRC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:02:56 -0400
+        id S1732041AbfFIQvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:51:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13BFA212F5;
-        Sun,  9 Jun 2019 17:02:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B41C205ED;
+        Sun,  9 Jun 2019 16:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099774;
-        bh=t/NdbxeV71+mFzOAr7RDuesFYIu+muv8mr/fCfGlYGE=;
+        s=default; t=1560099108;
+        bh=SvWGAvkxgjmODqnVbmP7KfjW3rewC18TXRFmwzS63VY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HU1vIL0eoO8OgE1798ol56set5Rr3Z1/4JTfEk0E6Jv5Ty0wJjkDOwlB2LVIwVqyq
-         fJzRCrIlwyveY+lhHw0LpdqvSDQDqI5IjuuoOgo6kTGHVvsOdof+Abg4XGpIxOHUPr
-         GLgGeeAtfRsNcHZzLHf3BcUjuqzEJohJLKk6AO3s=
+        b=XMI8z6A13Vw6aSvMFGm3YV64oufF3IABUQE3ZNY3ic1+IDSl32kahXLoHchyPmU3J
+         i1VgxEhxCsbDBc2+LZz1RPZ/2BHq+zZxtQezVpqu72KlpdbLcOZnOYQSUql23jEo8s
+         0BQgaPa+s8SZYno7120vBDnw5ls6f35FKbvI9uIY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Terry Junge <terry.junge@poly.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 161/241] HID: core: move Usage Page concatenation to Main item
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 13/83] net: mvpp2: fix bad MVPP2_TXQ_SCHED_TOKEN_CNTR_REG queue value
 Date:   Sun,  9 Jun 2019 18:41:43 +0200
-Message-Id: <20190609164152.418849487@linuxfoundation.org>
+Message-Id: <20190609164128.650983310@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,148 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 58e75155009cc800005629955d3482f36a1e0eec ]
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-As seen on some USB wireless keyboards manufactured by Primax, the HID
-parser was using some assumptions that are not always true. In this case
-it's s the fact that, inside the scope of a main item, an Usage Page
-will always precede an Usage.
+[ Upstream commit 21808437214637952b61beaba6034d97880fbeb3 ]
 
-The spec is not pretty clear as 6.2.2.7 states "Any usage that follows
-is interpreted as a Usage ID and concatenated with the Usage Page".
-While 6.2.2.8 states "When the parser encounters a main item it
-concatenates the last declared Usage Page with a Usage to form a
-complete usage value." Being somewhat contradictory it was decided to
-match Window's implementation, which follows 6.2.2.8.
+MVPP2_TXQ_SCHED_TOKEN_CNTR_REG() expects the logical queue id but
+the current code is passing the global tx queue offset, so it ends
+up writing to unknown registers (between 0x8280 and 0x82fc, which
+seemed to be unused by the hardware). This fixes the issue by using
+the logical queue id instead.
 
-In summary, the patch moves the Usage Page concatenation from the local
-item parsing function to the main item parsing function.
-
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Terry Junge <terry.junge@poly.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hid-core.c | 36 ++++++++++++++++++++++++------------
- include/linux/hid.h    |  1 +
- 2 files changed, 25 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 4564ecf711815..9b2b41d683dea 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -200,13 +200,14 @@ static unsigned hid_lookup_collection(struct hid_parser *parser, unsigned type)
-  * Add a usage to the temporary parser table.
-  */
- 
--static int hid_add_usage(struct hid_parser *parser, unsigned usage)
-+static int hid_add_usage(struct hid_parser *parser, unsigned usage, u8 size)
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -3938,7 +3938,7 @@ static inline void mvpp2_gmac_max_rx_siz
+ /* Set defaults to the MVPP2 port */
+ static void mvpp2_defaults_set(struct mvpp2_port *port)
  {
- 	if (parser->local.usage_index >= HID_MAX_USAGES) {
- 		hid_err(parser->device, "usage index exceeded\n");
- 		return -1;
- 	}
- 	parser->local.usage[parser->local.usage_index] = usage;
-+	parser->local.usage_size[parser->local.usage_index] = size;
- 	parser->local.collection_index[parser->local.usage_index] =
- 		parser->collection_stack_ptr ?
- 		parser->collection_stack[parser->collection_stack_ptr - 1] : 0;
-@@ -463,10 +464,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
- 			return 0;
- 		}
+-	int tx_port_num, val, queue, ptxq, lrxq;
++	int tx_port_num, val, queue, lrxq;
  
--		if (item->size <= 2)
--			data = (parser->global.usage_page << 16) + data;
--
--		return hid_add_usage(parser, data);
-+		return hid_add_usage(parser, data, item->size);
+ 	/* Configure port to loopback if needed */
+ 	if (port->flags & MVPP2_F_LOOPBACK)
+@@ -3958,11 +3958,9 @@ static void mvpp2_defaults_set(struct mv
+ 	mvpp2_write(port->priv, MVPP2_TXP_SCHED_CMD_1_REG, 0);
  
- 	case HID_LOCAL_ITEM_TAG_USAGE_MINIMUM:
+ 	/* Close bandwidth for all queues */
+-	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++) {
+-		ptxq = mvpp2_txq_phys(port->id, queue);
++	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++)
+ 		mvpp2_write(port->priv,
+-			    MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(ptxq), 0);
+-	}
++			    MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(queue), 0);
  
-@@ -475,9 +473,6 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
- 			return 0;
- 		}
+ 	/* Set refill period to 1 usec, refill tokens
+ 	 * and bucket size to maximum
+@@ -4709,7 +4707,7 @@ static void mvpp2_txq_deinit(struct mvpp
+ 	txq->descs_phys        = 0;
  
--		if (item->size <= 2)
--			data = (parser->global.usage_page << 16) + data;
--
- 		parser->local.usage_minimum = data;
- 		return 0;
+ 	/* Set minimum bandwidth for disabled TXQs */
+-	mvpp2_write(port->priv, MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(txq->id), 0);
++	mvpp2_write(port->priv, MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(txq->log_id), 0);
  
-@@ -488,9 +483,6 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
- 			return 0;
- 		}
- 
--		if (item->size <= 2)
--			data = (parser->global.usage_page << 16) + data;
--
- 		count = data - parser->local.usage_minimum;
- 		if (count + parser->local.usage_index >= HID_MAX_USAGES) {
- 			/*
-@@ -510,7 +502,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
- 		}
- 
- 		for (n = parser->local.usage_minimum; n <= data; n++)
--			if (hid_add_usage(parser, n)) {
-+			if (hid_add_usage(parser, n, item->size)) {
- 				dbg_hid("hid_add_usage failed\n");
- 				return -1;
- 			}
-@@ -524,6 +516,22 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
- 	return 0;
- }
- 
-+/*
-+ * Concatenate Usage Pages into Usages where relevant:
-+ * As per specification, 6.2.2.8: "When the parser encounters a main item it
-+ * concatenates the last declared Usage Page with a Usage to form a complete
-+ * usage value."
-+ */
-+
-+static void hid_concatenate_usage_page(struct hid_parser *parser)
-+{
-+	int i;
-+
-+	for (i = 0; i < parser->local.usage_index; i++)
-+		if (parser->local.usage_size[i] <= 2)
-+			parser->local.usage[i] += parser->global.usage_page << 16;
-+}
-+
- /*
-  * Process a main item.
-  */
-@@ -533,6 +541,8 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
- 	__u32 data;
- 	int ret;
- 
-+	hid_concatenate_usage_page(parser);
-+
- 	data = item_udata(item);
- 
- 	switch (item->tag) {
-@@ -746,6 +756,8 @@ static int hid_scan_main(struct hid_parser *parser, struct hid_item *item)
- 	__u32 data;
- 	int i;
- 
-+	hid_concatenate_usage_page(parser);
-+
- 	data = item_udata(item);
- 
- 	switch (item->tag) {
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index fd86687f81196..5f31318851366 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -372,6 +372,7 @@ struct hid_global {
- 
- struct hid_local {
- 	unsigned usage[HID_MAX_USAGES]; /* usage array */
-+	u8 usage_size[HID_MAX_USAGES]; /* usage size array */
- 	unsigned collection_index[HID_MAX_USAGES]; /* collection index array */
- 	unsigned usage_index;
- 	unsigned usage_minimum;
--- 
-2.20.1
-
+ 	/* Set Tx descriptors queue starting address and size */
+ 	mvpp2_write(port->priv, MVPP2_TXQ_NUM_REG, txq->id);
 
 
