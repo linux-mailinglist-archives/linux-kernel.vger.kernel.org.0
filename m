@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A498F3A77D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0BF3A71A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731661AbfFIQuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:50:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49904 "EHLO mail.kernel.org"
+        id S1729438AbfFIQqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731623AbfFIQuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:50:08 -0400
+        id S1730378AbfFIQqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CBCD205ED;
-        Sun,  9 Jun 2019 16:50:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BDBE2081C;
+        Sun,  9 Jun 2019 16:46:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099007;
-        bh=k8CGv8f5XE7Kbg6pDU4ISW3mz33GDZH/BES2sdt2JlM=;
+        s=default; t=1560098779;
+        bh=fIxqYThSnapEoKSJ2Ap6NB2shYUwrrsqk9BnSRTnqb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FQxFxDgY5PMbulX+XgpW4mWNuDn/wpc9fUGxb6zXEDMqXq1aTEXi8FG3rtsWgnaPs
-         pYVqr/PpQsl41ejvDAo6UQhJm8UzoU00BFplCgje2wcghUufmZLpKs+PhofdHgw/iW
-         Id+N4gosh742+Owv92TSgSqjwH9CHDM7WwKFqxGY=
+        b=AxK99zTGyQXxiUca3b6219HjIyaN1gi8ATBLdRxYExKOxYBAQnoz/MtKMZH1uVv3E
+         DEqyk2kRwwghK39kL7afNFZQWoP5ImkKfn/JtbfLmGP/zv6Pe5bsw+15ClZ9EyoZn4
+         3qj7ekQiliVKvm1X+ABaMYsK8WQLH2XpYUL+5G5I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 03/35] neighbor: Call __ipv4_neigh_lookup_noref in neigh_xmit
+        stable@vger.kernel.org, Paul Dufresne <dufresnep@gmail.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.1 58/70] drm/radeon: prefer lower reference dividers
 Date:   Sun,  9 Jun 2019 18:42:09 +0200
-Message-Id: <20190609164125.756810906@linuxfoundation.org>
+Message-Id: <20190609164132.337762193@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-References: <20190609164125.377368385@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Ahern <dsahern@gmail.com>
+From: Christian König <christian.koenig@amd.com>
 
-[ Upstream commit 4b2a2bfeb3f056461a90bd621e8bd7d03fa47f60 ]
+commit 2e26ccb119bde03584be53406bbd22e711b0d6e6 upstream.
 
-Commit cd9ff4de0107 changed the key for IFF_POINTOPOINT devices to
-INADDR_ANY but neigh_xmit which is used for MPLS encapsulations was not
-updated to use the altered key. The result is that every packet Tx does
-a lookup on the gateway address which does not find an entry, a new one
-is created only to find the existing one in the table right before the
-insert since arp_constructor was updated to reset the primary key. This
-is seen in the allocs and destroys counters:
-    ip -s -4 ntable show | head -10 | grep alloc
+Instead of the closest reference divider prefer the lowest,
+this fixes flickering issues on HP Compaq nx9420.
 
-which increase for each packet showing the unnecessary overhread.
-
-Fix by having neigh_xmit use __ipv4_neigh_lookup_noref for NEIGH_ARP_TABLE.
-
-Fixes: cd9ff4de0107 ("ipv4: Make neigh lookup keys for loopback/point-to-point devices be INADDR_ANY")
-Reported-by: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Tested-by: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Bugs: https://bugs.freedesktop.org/show_bug.cgi?id=108514
+Suggested-by: Paul Dufresne <dufresnep@gmail.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/neighbour.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -30,6 +30,7 @@
- #include <linux/times.h>
- #include <net/net_namespace.h>
- #include <net/neighbour.h>
-+#include <net/arp.h>
- #include <net/dst.h>
- #include <net/sock.h>
- #include <net/netevent.h>
-@@ -2528,7 +2529,13 @@ int neigh_xmit(int index, struct net_dev
- 		if (!tbl)
- 			goto out;
- 		rcu_read_lock_bh();
--		neigh = __neigh_lookup_noref(tbl, addr, dev);
-+		if (index == NEIGH_ARP_TABLE) {
-+			u32 key = *((u32 *)addr);
-+
-+			neigh = __ipv4_neigh_lookup_noref(dev, key);
-+		} else {
-+			neigh = __neigh_lookup_noref(tbl, addr, dev);
-+		}
- 		if (!neigh)
- 			neigh = __neigh_create(tbl, addr, dev, false);
- 		err = PTR_ERR(neigh);
+---
+ drivers/gpu/drm/radeon/radeon_display.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -922,12 +922,12 @@ static void avivo_get_fb_ref_div(unsigne
+ 	ref_div_max = max(min(100 / post_div, ref_div_max), 1u);
+ 
+ 	/* get matching reference and feedback divider */
+-	*ref_div = min(max(DIV_ROUND_CLOSEST(den, post_div), 1u), ref_div_max);
++	*ref_div = min(max(den/post_div, 1u), ref_div_max);
+ 	*fb_div = DIV_ROUND_CLOSEST(nom * *ref_div * post_div, den);
+ 
+ 	/* limit fb divider to its maximum */
+ 	if (*fb_div > fb_div_max) {
+-		*ref_div = DIV_ROUND_CLOSEST(*ref_div * fb_div_max, *fb_div);
++		*ref_div = (*ref_div * fb_div_max)/(*fb_div);
+ 		*fb_div = fb_div_max;
+ 	}
+ }
 
 
