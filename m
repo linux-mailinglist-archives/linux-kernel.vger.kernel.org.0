@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D1823A7DB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87FAC3A75E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbfFIQyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:54:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        id S1731334AbfFIQs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732141AbfFIQyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:54:16 -0400
+        id S1730621AbfFIQs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFC42204EC;
-        Sun,  9 Jun 2019 16:54:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1E60206DF;
+        Sun,  9 Jun 2019 16:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099256;
-        bh=Prh6NfLryFAVFKbWVMDS/CHgoSpQk1KuHybp3IJMt6o=;
+        s=default; t=1560098937;
+        bh=Bnd+mMgOBX1KeCWE8jI4UST0VG/GhJDpOYXXzZEG3TI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AUhJQfjTzkw8BgrhQyACBkaBS8x/g86dnr038jsD+Oz8JvGAP5kft8LAtfpankgGI
-         N9pd1XwiHIhC/3qI9mhcySI6oEo7THTw599J490GzLDrfgDeJvXmmxpCE/Ns0VvqIO
-         WbFMMRlLNczncMLL4XNU5UpDYC6OlOpbhXPm05rA=
+        b=OBuHRB+82Jd3GFLpE3prrEyIPy54r0FLbR++heGQTrdN3gQs18m+L/0OdZRMrGF5r
+         SQ8n7/GAksNtc00mPOLNhPJLW8WE4+ioVZ7K6Vw0Q3pFnbgE7HXu8YkxRL74qjKhXW
+         az8mLDiGM2cBPLA/pPCOMKjznrdk5bRh6FQ4nIeU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.9 21/83] xhci: Use %zu for printing size_t type
-Date:   Sun,  9 Jun 2019 18:41:51 +0200
-Message-Id: <20190609164129.318546479@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 11/51] net/tls: replace the sleeping lock around RX resync with a bit lock
+Date:   Sun,  9 Jun 2019 18:41:52 +0200
+Message-Id: <20190609164127.781645551@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-commit c1a145a3ed9a40f3b6145feb97789e8eb49c5566 upstream.
+[ Upstream commit e52972c11d6b1262964db96d65934196db621685 ]
 
-Commit 597c56e372da ("xhci: update bounce buffer with correct sg num")
-caused the following build warnings:
+Commit 38030d7cb779 ("net/tls: avoid NULL-deref on resync during device removal")
+tried to fix a potential NULL-dereference by taking the
+context rwsem.  Unfortunately the RX resync may get called
+from soft IRQ, so we can't use the rwsem to protect from
+the device disappearing.  Because we are guaranteed there
+can be only one resync at a time (it's called from strparser)
+use a bit to indicate resync is busy and make device
+removal wait for the bit to get cleared.
 
-drivers/usb/host/xhci-ring.c:676:19: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
+Note that there is a leftover "flags" field in struct
+tls_context already.
 
-Use %zu for printing size_t type in order to fix the warnings.
-
-Fixes: 597c56e372da ("xhci: update bounce buffer with correct sg num")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Fixes: 4799ac81e52a ("tls: Add rx inline crypto offload")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/host/xhci-ring.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/net/tls.h    |    4 ++++
+ net/tls/tls_device.c |   27 +++++++++++++++++++++------
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -695,7 +695,7 @@ void xhci_unmap_td_bounce_buffer(struct
- 	len = sg_pcopy_from_buffer(urb->sg, urb->num_sgs, seg->bounce_buf,
- 			     seg->bounce_len, seg->bounce_offs);
- 	if (len != seg->bounce_len)
--		xhci_warn(xhci, "WARN Wrong bounce buffer read length: %ld != %d\n",
-+		xhci_warn(xhci, "WARN Wrong bounce buffer read length: %zu != %d\n",
- 				len, seg->bounce_len);
- 	seg->bounce_len = 0;
- 	seg->bounce_offs = 0;
-@@ -3202,7 +3202,7 @@ static int xhci_align_td(struct xhci_hcd
- 				   seg->bounce_buf, new_buff_len, enqd_len);
- 		if (len != seg->bounce_len)
- 			xhci_warn(xhci,
--				"WARN Wrong bounce buffer write length: %ld != %d\n",
-+				"WARN Wrong bounce buffer write length: %zu != %d\n",
- 				len, seg->bounce_len);
- 		seg->bounce_dma = dma_map_single(dev, seg->bounce_buf,
- 						 max_pkt, DMA_TO_DEVICE);
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -161,6 +161,10 @@ enum {
+ 	TLS_PENDING_CLOSED_RECORD
+ };
+ 
++enum tls_context_flags {
++	TLS_RX_SYNC_RUNNING = 0,
++};
++
+ struct cipher_context {
+ 	u16 prepend_size;
+ 	u16 tag_size;
+--- a/net/tls/tls_device.c
++++ b/net/tls/tls_device.c
+@@ -545,10 +545,22 @@ static int tls_device_push_pending_recor
+ 	return tls_push_data(sk, &msg_iter, 0, flags, TLS_RECORD_TYPE_DATA);
+ }
+ 
++static void tls_device_resync_rx(struct tls_context *tls_ctx,
++				 struct sock *sk, u32 seq, u64 rcd_sn)
++{
++	struct net_device *netdev;
++
++	if (WARN_ON(test_and_set_bit(TLS_RX_SYNC_RUNNING, &tls_ctx->flags)))
++		return;
++	netdev = READ_ONCE(tls_ctx->netdev);
++	if (netdev)
++		netdev->tlsdev_ops->tls_dev_resync_rx(netdev, sk, seq, rcd_sn);
++	clear_bit_unlock(TLS_RX_SYNC_RUNNING, &tls_ctx->flags);
++}
++
+ void handle_device_resync(struct sock *sk, u32 seq, u64 rcd_sn)
+ {
+ 	struct tls_context *tls_ctx = tls_get_ctx(sk);
+-	struct net_device *netdev = tls_ctx->netdev;
+ 	struct tls_offload_context_rx *rx_ctx;
+ 	u32 is_req_pending;
+ 	s64 resync_req;
+@@ -563,10 +575,10 @@ void handle_device_resync(struct sock *s
+ 	is_req_pending = resync_req;
+ 
+ 	if (unlikely(is_req_pending) && req_seq == seq &&
+-	    atomic64_try_cmpxchg(&rx_ctx->resync_req, &resync_req, 0))
+-		netdev->tlsdev_ops->tls_dev_resync_rx(netdev, sk,
+-						      seq + TLS_HEADER_SIZE - 1,
+-						      rcd_sn);
++	    atomic64_try_cmpxchg(&rx_ctx->resync_req, &resync_req, 0)) {
++		seq += TLS_HEADER_SIZE - 1;
++		tls_device_resync_rx(tls_ctx, sk, seq, rcd_sn);
++	}
+ }
+ 
+ static int tls_device_reencrypt(struct sock *sk, struct sk_buff *skb)
+@@ -954,7 +966,10 @@ static int tls_device_down(struct net_de
+ 		if (ctx->rx_conf == TLS_HW)
+ 			netdev->tlsdev_ops->tls_dev_del(netdev, ctx,
+ 							TLS_OFFLOAD_CTX_DIR_RX);
+-		ctx->netdev = NULL;
++		WRITE_ONCE(ctx->netdev, NULL);
++		smp_mb__before_atomic(); /* pairs with test_and_set_bit() */
++		while (test_bit(TLS_RX_SYNC_RUNNING, &ctx->flags))
++			usleep_range(10, 200);
+ 		dev_put(netdev);
+ 		list_del_init(&ctx->list);
+ 
 
 
