@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF263A729
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 308883A77A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730665AbfFIQqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:46:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45264 "EHLO mail.kernel.org"
+        id S1731632AbfFIQuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:50:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729372AbfFIQqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:46:50 -0400
+        id S1731593AbfFIQt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB9FD2081C;
-        Sun,  9 Jun 2019 16:46:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C726E2070B;
+        Sun,  9 Jun 2019 16:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098810;
-        bh=LAkGr4EgD4E2m/XRLemu6Xn8VLu+aT9IPjGDC9kYBMA=;
+        s=default; t=1560098999;
+        bh=dM1jV9RXHFxkmlsmc7CL6SGnB+Hs2a6Uc6Z8zwyXHnQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=18tXHqAN5d0iGbnbsc1SHJZJBzZ6Bqg6PG+VWN9qA501cqUtG/5+0MmRgvG/j1qx7
-         zl6WvGPs1dhmy5BdbYIWpIkFYzbMwBaHoFkIQBmTAulXCrq8lpbHEq5aL7TFjlFV1d
-         BNVhFckm2SyhFibbB6JuwExL5FNK6DOWM5pyWaLU=
+        b=Tw4gMOqWnE7EQoRbfHrJfCDW8XijW1rwuNRt16PNLYK06jo3KjAKdFsyaYNW4oD5G
+         6+EM8xdIL2wsRorpJC4rGkNeAtzuOsUjfWce+HnHcMhkqCopqeWe7NORHy+MdrT6OI
+         cbqyLF1SUpaUWYTw/vap9TfxprWpLQJ5Dc6VjmZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Tina Zhang <tina.zhang@intel.com>
-Subject: [PATCH 5.1 68/70] drm/i915/gvt: Initialize intel_gvt_gtt_entry in stack
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 13/35] rcu: locking and unlocking need to always be at least barriers
 Date:   Sun,  9 Jun 2019 18:42:19 +0200
-Message-Id: <20190609164133.097697965@linuxfoundation.org>
+Message-Id: <20190609164126.264742013@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tina Zhang <tina.zhang@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 387a4c2b55291b37e245c840813bd8a8bd06ed49 upstream.
+commit 66be4e66a7f422128748e3c3ef6ee72b20a6197b upstream.
 
-Stack struct intel_gvt_gtt_entry value needs to be initialized before
-being used, as the fields may contain garbage values.
+Herbert Xu pointed out that commit bb73c52bad36 ("rcu: Don't disable
+preemption for Tiny and Tree RCU readers") was incorrect in making the
+preempt_disable/enable() be conditional on CONFIG_PREEMPT_COUNT.
 
-W/o this patch, set_ggtt_entry prints:
--------------------------------------
-274.046840: set_ggtt_entry: vgpu1:set ggtt entry 0x9bed8000ffffe900
-274.046846: set_ggtt_entry: vgpu1:set ggtt entry 0xe55df001
-274.046852: set_ggtt_entry: vgpu1:set ggtt entry 0x9bed8000ffffe900
+If CONFIG_PREEMPT_COUNT isn't enabled, the preemption enable/disable is
+a no-op, but still is a compiler barrier.
 
-0x9bed8000 is the stack grabage.
+And RCU locking still _needs_ that compiler barrier.
 
-W/ this patch, set_ggtt_entry prints:
-------------------------------------
-274.046840: set_ggtt_entry: vgpu1:set ggtt entry 0xffffe900
-274.046846: set_ggtt_entry: vgpu1:set ggtt entry 0xe55df001
-274.046852: set_ggtt_entry: vgpu1:set ggtt entry 0xffffe900
+It is simply fundamentally not true that RCU locking would be a complete
+no-op: we still need to guarantee (for example) that things that can
+trap and cause preemption cannot migrate into the RCU locked region.
 
-v2:
-- Initialize during declaration. (Zhenyu)
+The way we do that is by making it a barrier.
 
-Fixes: 7598e8700e9a ("drm/i915/gvt: Missed to cancel dma map for ggtt entries")
-Cc: stable@vger.kernel.org # v4.20+
-Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Tina Zhang <tina.zhang@intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+See for example commit 386afc91144b ("spinlocks and preemption points
+need to be at least compiler barriers") from back in 2013 that had
+similar issues with spinlocks that become no-ops on UP: they must still
+constrain the compiler from moving other operations into the critical
+region.
+
+Now, it is true that a lot of RCU operations already use READ_ONCE() and
+WRITE_ONCE() (which in practice likely would never be re-ordered wrt
+anything remotely interesting), but it is also true that that is not
+globally the case, and that it's not even necessarily always possible
+(ie bitfields etc).
+
+Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree RCU readers")
+Cc: stable@kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gvt/gtt.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/linux/rcupdate.h |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/i915/gvt/gtt.c
-+++ b/drivers/gpu/drm/i915/gvt/gtt.c
-@@ -2178,7 +2178,8 @@ static int emulate_ggtt_mmio_write(struc
- 	struct intel_gvt_gtt_pte_ops *ops = gvt->gtt.pte_ops;
- 	unsigned long g_gtt_index = off >> info->gtt_entry_size_shift;
- 	unsigned long gma, gfn;
--	struct intel_gvt_gtt_entry e, m;
-+	struct intel_gvt_gtt_entry e = {.val64 = 0, .type = GTT_TYPE_GGTT_PTE};
-+	struct intel_gvt_gtt_entry m = {.val64 = 0, .type = GTT_TYPE_GGTT_PTE};
- 	dma_addr_t dma_addr;
- 	int ret;
- 	struct intel_gvt_partial_pte *partial_pte, *pos, *n;
-@@ -2245,7 +2246,8 @@ static int emulate_ggtt_mmio_write(struc
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -79,14 +79,12 @@ void synchronize_rcu(void);
  
- 	if (!partial_update && (ops->test_present(&e))) {
- 		gfn = ops->get_pfn(&e);
--		m = e;
-+		m.val64 = e.val64;
-+		m.type = e.type;
+ static inline void __rcu_read_lock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_disable();
++	preempt_disable();
+ }
  
- 		/* one PTE update may be issued in multiple writes and the
- 		 * first write may not construct a valid gfn
+ static inline void __rcu_read_unlock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_enable();
++	preempt_enable();
+ }
+ 
+ static inline void synchronize_rcu(void)
 
 
