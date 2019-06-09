@@ -2,90 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A38593A36B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E473A373
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 05:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfFICuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 22:50:46 -0400
-Received: from mga11.intel.com ([192.55.52.93]:7114 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbfFICuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 22:50:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2019 19:50:46 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 08 Jun 2019 19:50:43 -0700
-Cc:     baolu.lu@linux.intel.com, James Sewart <jamessewart@arista.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        iommu@lists.linux-foundation.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Subject: Re: "iommu/vt-d: Delegate DMA domain to generic iommu" series breaks
- megaraid_sas
-To:     Qian Cai <cai@lca.pw>
-References: <1559941717.6132.63.camel@lca.pw>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <1e4f0642-e4e1-7602-3f50-37edc84ced50@linux.intel.com>
-Date:   Sun, 9 Jun 2019 10:43:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727836AbfFIDH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 23:07:58 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43268 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbfFIDH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 23:07:57 -0400
+Received: by mail-pl1-f194.google.com with SMTP id cl9so2279676plb.10;
+        Sat, 08 Jun 2019 20:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=9itGLtdOmBJM/1ryZSxTG0b15PTePJMrWSbb4zQK9g0=;
+        b=QD+i09DKNxSMKJPjE1LYcW5lxW3wv1QXKW9pysyjlVemnMuZQBJIgRTybCYhwtlUhO
+         XftQHGF+Ket4n68pLOGo7DeL0fVazfzV62O+GSa5GhemdsXQeW/xRY+SYNAuiaOQB9TF
+         W1a9GGNcZDpcsiDpoVhMprv3cO9fPh1ovwrs3WK0lP8IqwP3JVmCESOzXDPrRWG+PE2A
+         HmX6YvSqDW7H2FjE31URUDX1OCszGx68ycFi8WIqqW9T2JcKa+YRVkQ+aNZisEuFIC2Z
+         SPh1NbO57o2ueDBuqKVjgE5zs9VInZ0t/CY6U9ArKEP0t+x/p2qY15k2r/3u6L9c2enQ
+         IDnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=9itGLtdOmBJM/1ryZSxTG0b15PTePJMrWSbb4zQK9g0=;
+        b=ZWNxNKnJvKlckHxuz6d4Egcjpm+I9Yvz/RLhdIVgyrTisWOqOwnOu5y6OrnK8bdC8I
+         3kaJrEB7pJ0vmiczMkfbIEswC3c/6iGgxQZf8QH3c8TBv/iC08IrGsFR1iYgvNXp4Hcn
+         dHd0Tz5fIfC+Iq14NMP64pN1xI0bj2ACvt0OSGXhgUp+6abeu693qITR1pCcSc/UydvZ
+         2yzfDSsJboUc6WvVn1jM4+YHiKgkRnFcNfXqnuq2o+2moMNkbviSvsusYmIyYCGtrHM9
+         8UkfWFGCsem2g6leG2poofMBpcXlJJsCnhc8RcQu5U+K56hKnwJh+en3+oyByTGkyQrg
+         aDyA==
+X-Gm-Message-State: APjAAAXC3/2ffzeHLbMnvy1Px2TvT4U8ixDfWovuw1K5tgkio1DQ6+Up
+        pKYimkHo2kSy5APw1l3ZXx/T9/+q
+X-Google-Smtp-Source: APXvYqyIWMT75YQVshaRDgY/L673h2d967CpqFM0Cc1x7TmTf/fagw1CLfC9lh1r8DisZDajDPRjPQ==
+X-Received: by 2002:a17:902:d701:: with SMTP id w1mr57917621ply.12.1560049677010;
+        Sat, 08 Jun 2019 20:07:57 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.89.153])
+        by smtp.gmail.com with ESMTPSA id x127sm6358865pfb.107.2019.06.08.20.07.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 08 Jun 2019 20:07:56 -0700 (PDT)
+Date:   Sun, 9 Jun 2019 08:37:52 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Thomas Winischhofer <thomas@winischhofer.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [Patch v3] USB: sisusbvga: Remove unneeded variable
+Message-ID: <20190609030751.GA5482@hari-Inspiron-1545>
 MIME-Version: 1.0
-In-Reply-To: <1559941717.6132.63.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
+Remove unneeded variable ret in function sisusb_set_default_mode.
 
-I just posted some fix patches. I cc'ed them in your email inbox as
-well. Can you please check whether they happen to fix your issue?
-If not, do you mind posting more debug messages?
+Change return type of sisusb_set_default_mode from int to void
+as it never fails.
 
-Best regards,
-Baolu
+Issue identified by coccicheck
 
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+-----
+changes in v2: Change return type of sisusb_set_default_mode from int to
+void as it never fails
 
-On 6/8/19 5:08 AM, Qian Cai wrote:
-> The linux-next series "iommu/vt-d: Delegate DMA domain to generic iommu" [1]
-> causes a system with the rootfs on megaraid_sas card unable to boot.
-> 
-> Reverted the whole series on the top of linux-next (next-20190607) fixed the
-> issue.
-> 
-> The information regards this storage card is,
-> 
-> [  116.466810][  T324] megaraid_sas 0000:06:00.0: FW provided supportMaxExtLDs:
-> 0	max_lds: 32
-> [  116.476052][  T324] megaraid_sas 0000:06:00.0: controller type	:
-> iMR(0MB)
-> [  116.483646][  T324] megaraid_sas 0000:06:00.0: Online Controller Reset(OCR)	
-> : Enabled
-> [  116.492403][  T324] megaraid_sas 0000:06:00.0: Secure JBOD support	:
-> Yes
-> [  116.499887][  T324] megaraid_sas 0000:06:00.0: NVMe passthru support	:
-> No
-> [  116.507480][  T324] megaraid_sas 0000:06:00.0: FW provided
-> [  116.612523][  T324] megaraid_sas 0000:06:00.0: NVME page size	: (0)
-> [  116.629991][  T324] megaraid_sas 0000:06:00.0: INIT adapter done
-> [  116.714789][  T324] megaraid_sas 0000:06:00.0: pci id		:
-> (0x1000)/(0x0017)/(0x1d49)/(0x0500)
-> [  116.724228][  T324] megaraid_sas 0000:06:00.0: unevenspan support	: no
-> [  116.731518][  T324] megaraid_sas 0000:06:00.0: firmware crash dump	:
-> no
-> [  116.738981][  T324] megaraid_sas 0000:06:00.0: jbod sync map		:
-> yes
-> [  116.787433][  T324] scsi host0: Avago SAS based MegaRAID driver
-> [  117.081088][  T324] scsi 0:0:0:0: Direct-
-> Access     LENOVO   ST900MM0168      L587 PQ: 0 ANSI: 6
-> 
-> [1] https://lore.kernel.org/patchwork/cover/1078960/
-> 
+changes in v3: Update changelog
+----
+---
+ drivers/usb/misc/sisusbvga/sisusb.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/misc/sisusbvga/sisusb.c b/drivers/usb/misc/sisusbvga/sisusb.c
+index ea06f1f..2ab9600 100644
+--- a/drivers/usb/misc/sisusbvga/sisusb.c
++++ b/drivers/usb/misc/sisusbvga/sisusb.c
+@@ -1747,10 +1747,10 @@ static int sisusb_setup_screen(struct sisusb_usb_data *sisusb,
+ 	return ret;
+ }
+ 
+-static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
++static void sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
+ 		int touchengines)
+ {
+-	int ret = 0, i, j, modex, bpp, du;
++	int i, j, modex, bpp, du;
+ 	u8 sr31, cr63, tmp8;
+ 	static const char attrdata[] = {
+ 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+@@ -1873,8 +1873,6 @@ static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
+ 	}
+ 
+ 	SETIREG(SISCR, 0x34, 0x44);	/* we just set std mode #44 */
+-
+-	return ret;
+ }
+ 
+ static int sisusb_init_gfxcore(struct sisusb_usb_data *sisusb)
+@@ -2019,7 +2017,7 @@ static int sisusb_init_gfxcore(struct sisusb_usb_data *sisusb)
+ 
+ 		ret |= SETIREG(SISCR, 0x83, 0x00);
+ 
+-		ret |= sisusb_set_default_mode(sisusb, 0);
++		sisusb_set_default_mode(sisusb, 0);
+ 
+ 		ret |= SETIREGAND(SISSR, 0x21, 0xdf);
+ 		ret |= SETIREGOR(SISSR, 0x01, 0x20);
+@@ -2246,7 +2244,7 @@ static int sisusb_init_gfxdevice(struct sisusb_usb_data *sisusb, int initscreen)
+ 		if (sisusb_init_gfxcore(sisusb) == 0) {
+ 			sisusb->gfxinit = 1;
+ 			sisusb_get_ramconfig(sisusb);
+-			ret |= sisusb_set_default_mode(sisusb, 1);
++			sisusb_set_default_mode(sisusb, 1);
+ 			ret |= sisusb_setup_screen(sisusb, 1, initscreen);
+ 		}
+ 	}
+-- 
+2.7.4
+
