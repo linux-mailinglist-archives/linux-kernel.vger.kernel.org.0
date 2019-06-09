@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62C53A761
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B79983AA76
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfFIQtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:49:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48350 "EHLO mail.kernel.org"
+        id S1732510AbfFIRSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:18:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731380AbfFIQtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:49:03 -0400
+        id S1730688AbfFIQt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 499A2206DF;
-        Sun,  9 Jun 2019 16:49:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B64912070B;
+        Sun,  9 Jun 2019 16:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098942;
-        bh=lVvONsK8aHnJphzCHw+ySLVGodwHhULxSw4z2hudIUY=;
+        s=default; t=1560098996;
+        bh=42DJW4Kw49EhY4VALJHfBdke1/pS2UWL8RMU1bZKiS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxQ1xocwLoLbO2JD+fNnTTpBy86/R8yXOW3eHlCk+Un8P9FNK+3qQBEF3MtbTLtj5
-         InUwKWqdF/Uw2NxBt2Pig/+SxP0V1YdTPUx8J4H/yO6pajyaf1Djhg//Hh/U4vRwen
-         dQ7B5XBDambc4IZZgArgDGjjHxlE22BRHYm+xi18=
+        b=rcC4o9v6XQrgs5jQpl0u9oQgrYzHYMy6lfxZ1xMXgEcHcePmB/sbcVI+r95LjV2z2
+         X7e4Y7OasVHXuG4pdCBexTbnPhx8KPsD6CzZHMX+lbJf3bJEWYyWfw0Mmkakjvm/MJ
+         db8lS0ijWZkuR95UB6TIgPyN48vkBHYHRP9I/SiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Subject: [PATCH 4.19 37/51] drm/gma500/cdv: Check vbt config bits when detecting lvds panels
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Yaro Slav <yaro330@gmail.com>,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <zenczykowski@gmail.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 12/35] Revert "fib_rules: return 0 directly if an exactly same rule exists when NLM_F_EXCL not supplied"
 Date:   Sun,  9 Jun 2019 18:42:18 +0200
-Message-Id: <20190609164129.590532035@linuxfoundation.org>
+Message-Id: <20190609164126.207758005@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +47,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit 7c420636860a719049fae9403e2c87804f53bdde upstream.
+[ Upstream commit 4970b42d5c362bf873982db7d93245c5281e58f4 ]
 
-Some machines have an lvds child device in vbt even though a panel is
-not attached. To make detection more reliable we now also check the lvds
-config bits available in the vbt.
+This reverts commit e9919a24d3022f72bcadc407e73a6ef17093a849.
 
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1665766
-Cc: stable@vger.kernel.org
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190416114607.1072-1-patrik.r.jakobsson@gmail.com
+Nathan reported the new behaviour breaks Android, as Android just add
+new rules and delete old ones.
+
+If we return 0 without adding dup rules, Android will remove the new
+added rules and causing system to soft-reboot.
+
+Fixes: e9919a24d302 ("fib_rules: return 0 directly if an exactly same rule exists when NLM_F_EXCL not supplied")
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Reported-by: Yaro Slav <yaro330@gmail.com>
+Reported-by: Maciej Żenczykowski <zenczykowski@gmail.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/gma500/cdv_intel_lvds.c |    3 +++
- drivers/gpu/drm/gma500/intel_bios.c     |    3 +++
- drivers/gpu/drm/gma500/psb_drv.h        |    1 +
- 3 files changed, 7 insertions(+)
+ net/core/fib_rules.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/gma500/cdv_intel_lvds.c
-+++ b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
-@@ -594,6 +594,9 @@ void cdv_intel_lvds_init(struct drm_devi
- 	int pipe;
- 	u8 pin;
+--- a/net/core/fib_rules.c
++++ b/net/core/fib_rules.c
+@@ -563,9 +563,9 @@ int fib_nl_newrule(struct sk_buff *skb,
+ 		rule->uid_range = fib_kuid_range_unset;
+ 	}
  
-+	if (!dev_priv->lvds_enabled_in_vbt)
-+		return;
-+
- 	pin = GMBUS_PORT_PANEL;
- 	if (!lvds_is_present_in_vbt(dev, &pin)) {
- 		DRM_DEBUG_KMS("LVDS is not present in VBT\n");
---- a/drivers/gpu/drm/gma500/intel_bios.c
-+++ b/drivers/gpu/drm/gma500/intel_bios.c
-@@ -436,6 +436,9 @@ parse_driver_features(struct drm_psb_pri
- 	if (driver->lvds_config == BDB_DRIVER_FEATURE_EDP)
- 		dev_priv->edp.support = 1;
+-	if (rule_exists(ops, frh, tb, rule)) {
+-		if (nlh->nlmsg_flags & NLM_F_EXCL)
+-			err = -EEXIST;
++	if ((nlh->nlmsg_flags & NLM_F_EXCL) &&
++	    rule_exists(ops, frh, tb, rule)) {
++		err = -EEXIST;
+ 		goto errout_free;
+ 	}
  
-+	dev_priv->lvds_enabled_in_vbt = driver->lvds_config != 0;
-+	DRM_DEBUG_KMS("LVDS VBT config bits: 0x%x\n", driver->lvds_config);
-+
- 	/* This bit means to use 96Mhz for DPLL_A or not */
- 	if (driver->primary_lfp_id)
- 		dev_priv->dplla_96mhz = true;
---- a/drivers/gpu/drm/gma500/psb_drv.h
-+++ b/drivers/gpu/drm/gma500/psb_drv.h
-@@ -538,6 +538,7 @@ struct drm_psb_private {
- 	int lvds_ssc_freq;
- 	bool is_lvds_on;
- 	bool is_mipi_on;
-+	bool lvds_enabled_in_vbt;
- 	u32 mipi_ctrl_display;
- 
- 	unsigned int core_freq;
 
 
