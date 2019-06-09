@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80E773A6E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 917883A958
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbfFIQoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:44:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41276 "EHLO mail.kernel.org"
+        id S2388902AbfFIRJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:09:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729150AbfFIQoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:44:14 -0400
+        id S2388549AbfFIREF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B7F0214AF;
-        Sun,  9 Jun 2019 16:44:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9C14206C3;
+        Sun,  9 Jun 2019 17:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098653;
-        bh=oVLx/3P0SQT4K2fcmXDjvfMU5pTVZquaIm/duWh0Iz0=;
+        s=default; t=1560099845;
+        bh=dtCy8NxLywADGR3g1b1WIkbIHMEPVPieh+HB0Gs1iyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eWqs+JdXtns7FYZQAI/JJKNE5e9AuZEsX8FpImVgyB+Dhd5VoN1JmLRPftllIaqCS
-         rcQJJTQO7lVV/1XimLjAOmY+BoV5OUQJFNmXrPAbh1917qa+G8w62s1aDMuyfqdrXh
-         esg02+/BwyDiUw57gEMWclv1ewwlHLynWrfnIyiA=
+        b=ujUO1S49uyOhw49FcuIM11aU7ZDgKS57zUlaQl3YSDBPuAvDyS1Kwx3xiR4eBHQqJ
+         65RV4PN/86/CRNsOY/3OWLthGyMiUDqy3+JBOGoHx9jPubqft49jeRUvH1GyzZopVA
+         weIc/xuSTHFqzLrgqShh1ItPzuSThZs22W0+fTK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olivier Matz <olivier.matz@6wind.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 13/70] ipv6: use READ_ONCE() for inet->hdrincl as in ipv4
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 142/241] extcon: arizona: Disable mic detect if running when driver is removed
 Date:   Sun,  9 Jun 2019 18:41:24 +0200
-Message-Id: <20190609164128.237669035@linuxfoundation.org>
+Message-Id: <20190609164151.883673434@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,64 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olivier Matz <olivier.matz@6wind.com>
+[ Upstream commit 00053de52231117ddc154042549f2256183ffb86 ]
 
-[ Upstream commit 59e3e4b52663a9d97efbce7307f62e4bc5c9ce91 ]
+Microphone detection provides the button detection features on the
+Arizona CODECs as such it will be running if the jack is currently
+inserted. If the driver is unbound whilst the jack is still inserted
+this will cause warnings from the regulator framework as the MICVDD
+regulator is put but was never disabled.
 
-As it was done in commit 8f659a03a0ba ("net: ipv4: fix for a race
-condition in raw_sendmsg") and commit 20b50d79974e ("net: ipv4: emulate
-READ_ONCE() on ->hdrincl bit-field in raw_sendmsg()") for ipv4, copy the
-value of inet->hdrincl in a local variable, to avoid introducing a race
-condition in the next commit.
+Correct this by disabling microphone detection on driver removal and if
+the microphone detection was running disable the regulator and put the
+runtime reference that was currently held.
 
-Signed-off-by: Olivier Matz <olivier.matz@6wind.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/raw.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/extcon/extcon-arizona.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/net/ipv6/raw.c
-+++ b/net/ipv6/raw.c
-@@ -783,6 +783,7 @@ static int rawv6_sendmsg(struct sock *sk
- 	struct flowi6 fl6;
- 	struct ipcm6_cookie ipc6;
- 	int addr_len = msg->msg_namelen;
-+	int hdrincl;
- 	u16 proto;
- 	int err;
- 
-@@ -796,6 +797,13 @@ static int rawv6_sendmsg(struct sock *sk
- 	if (msg->msg_flags & MSG_OOB)
- 		return -EOPNOTSUPP;
- 
-+	/* hdrincl should be READ_ONCE(inet->hdrincl)
-+	 * but READ_ONCE() doesn't work with bit fields.
-+	 * Doing this indirectly yields the same result.
-+	 */
-+	hdrincl = inet->hdrincl;
-+	hdrincl = READ_ONCE(hdrincl);
+diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+index e4890dd4fefd6..38fb212e58ee8 100644
+--- a/drivers/extcon/extcon-arizona.c
++++ b/drivers/extcon/extcon-arizona.c
+@@ -1616,6 +1616,16 @@ static int arizona_extcon_remove(struct platform_device *pdev)
+ 	struct arizona_extcon_info *info = platform_get_drvdata(pdev);
+ 	struct arizona *arizona = info->arizona;
+ 	int jack_irq_rise, jack_irq_fall;
++	bool change;
 +
- 	/*
- 	 *	Get and verify the address.
- 	 */
-@@ -908,7 +916,7 @@ static int rawv6_sendmsg(struct sock *sk
- 		fl6.flowi6_oif = np->ucast_oif;
- 	security_sk_classify_flow(sk, flowi6_to_flowi(&fl6));
++	regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
++				 ARIZONA_MICD_ENA, 0,
++				 &change);
++
++	if (change) {
++		regulator_disable(info->micvdd);
++		pm_runtime_put(info->dev);
++	}
  
--	if (inet->hdrincl)
-+	if (hdrincl)
- 		fl6.flowi6_flags |= FLOWI_FLAG_KNOWN_NH;
+ 	gpiod_put(info->micd_pol_gpio);
  
- 	if (ipc6.tclass < 0)
-@@ -931,7 +939,7 @@ static int rawv6_sendmsg(struct sock *sk
- 		goto do_confirm;
- 
- back_from_confirm:
--	if (inet->hdrincl)
-+	if (hdrincl)
- 		err = rawv6_send_hdrinc(sk, msg, len, &fl6, &dst,
- 					msg->msg_flags, &ipc6.sockc);
- 	else {
+-- 
+2.20.1
+
 
 
