@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF4E3A96D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A48D3A757
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389037AbfFIRKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:10:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41372 "EHLO mail.kernel.org"
+        id S1731306AbfFIQst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388353AbfFIRDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:06 -0400
+        id S1731294AbfFIQsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47F822084A;
-        Sun,  9 Jun 2019 17:03:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 623A9205ED;
+        Sun,  9 Jun 2019 16:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099785;
-        bh=EgEBR+LW7aPityi0nSX6jest/8qVjEOqYTWihBjxUd0=;
+        s=default; t=1560098925;
+        bh=pzVPEGB29rxDVyY7UFKBEsxqkSSuIe3pdooEKe9VtJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tn2+/SeroSMLjocoLTSOkPsVShq1wPfZdolesAS3Vgg7vKCfKX3MyvRgjuAMaXqbZ
-         pnHZqhTnbyYfOkayBxm/ob/s2RATsOqsNSSpG3yjwzveAoDc1H+SQs/7gSyiW61MOR
-         OJZM/cQhOANKo0Z8EzpjzUwBVyE/ZFv6nSEh5S0I=
+        b=XEtD40CH7vNbRNNlGUfsdc0R3BvZZS+tvUjevgYFCNxV1krK4bZVMdKcc3ambyAug
+         tAHd0qLmsKybFaWHMVOKRnbmgv4SXv9FtZ8qNaUGz4859A/pQ0wIKmOgGwF05bxKVd
+         /EyEdOLniAdmMI1LvSP7/N6POx7XFY04ZxxXKd9s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 165/241] spi: tegra114: reset controller on probe
-Date:   Sun,  9 Jun 2019 18:41:47 +0200
-Message-Id: <20190609164152.537157471@linuxfoundation.org>
+        stable@vger.kernel.org, Erez Alfasi <ereza@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 07/51] net/mlx4_en: ethtool, Remove unsupported SFP EEPROM high pages query
+Date:   Sun,  9 Jun 2019 18:41:48 +0200
+Message-Id: <20190609164127.544618985@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,106 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 019194933339b3e9b486639c8cb3692020844d65 ]
+From: Erez Alfasi <ereza@mellanox.com>
 
-Fixes: SPI driver can be built as module so perform SPI controller reset
-on probe to make sure it is in valid state before initiating transfer.
+[ Upstream commit 135dd9594f127c8a82d141c3c8430e9e2143216a ]
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Querying EEPROM high pages data for SFP module is currently
+not supported by our driver but is still tried, resulting in
+invalid FW queries.
+
+Set the EEPROM ethtool data length to 256 for SFP module to
+limit the reading for page 0 only and prevent invalid FW queries.
+
+Fixes: 7202da8b7f71 ("ethtool, net/mlx4_en: Cable info, get_module_info/eeprom ethtool support")
+Signed-off-by: Erez Alfasi <ereza@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-tegra114.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |    4 +++-
+ drivers/net/ethernet/mellanox/mlx4/port.c       |    5 -----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 73779cecc3bbc..705f515863d4f 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1067,27 +1067,19 @@ static int tegra_spi_probe(struct platform_device *pdev)
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@ -2010,6 +2010,8 @@ static int mlx4_en_set_tunable(struct ne
+ 	return ret;
+ }
  
- 	spi_irq = platform_get_irq(pdev, 0);
- 	tspi->irq = spi_irq;
--	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
--			tegra_spi_isr_thread, IRQF_ONESHOT,
--			dev_name(&pdev->dev), tspi);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
--					tspi->irq);
--		goto exit_free_master;
++#define MLX4_EEPROM_PAGE_LEN 256
++
+ static int mlx4_en_get_module_info(struct net_device *dev,
+ 				   struct ethtool_modinfo *modinfo)
+ {
+@@ -2044,7 +2046,7 @@ static int mlx4_en_get_module_info(struc
+ 		break;
+ 	case MLX4_MODULE_ID_SFP:
+ 		modinfo->type = ETH_MODULE_SFF_8472;
+-		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
++		modinfo->eeprom_len = MLX4_EEPROM_PAGE_LEN;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+--- a/drivers/net/ethernet/mellanox/mlx4/port.c
++++ b/drivers/net/ethernet/mellanox/mlx4/port.c
+@@ -2077,11 +2077,6 @@ int mlx4_get_module_info(struct mlx4_dev
+ 		size -= offset + size - I2C_PAGE_SIZE;
+ 
+ 	i2c_addr = I2C_ADDR_LOW;
+-	if (offset >= I2C_PAGE_SIZE) {
+-		/* Reset offset to high page */
+-		i2c_addr = I2C_ADDR_HIGH;
+-		offset -= I2C_PAGE_SIZE;
 -	}
  
- 	tspi->clk = devm_clk_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->clk)) {
- 		dev_err(&pdev->dev, "can not get clock\n");
- 		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->rst = devm_reset_control_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->rst)) {
- 		dev_err(&pdev->dev, "can not get reset\n");
- 		ret = PTR_ERR(tspi->rst);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->max_buf_size = SPI_FIFO_DEPTH << 2;
-@@ -1095,7 +1087,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	ret = tegra_spi_init_dma_param(tspi, true);
- 	if (ret < 0)
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	ret = tegra_spi_init_dma_param(tspi, false);
- 	if (ret < 0)
- 		goto exit_rx_dma_free;
-@@ -1117,18 +1109,32 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
- 		goto exit_pm_disable;
- 	}
-+
-+	reset_control_assert(tspi->rst);
-+	udelay(2);
-+	reset_control_deassert(tspi->rst);
- 	tspi->def_command1_reg  = SPI_M_S;
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	pm_runtime_put(&pdev->dev);
-+	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
-+				   tegra_spi_isr_thread, IRQF_ONESHOT,
-+				   dev_name(&pdev->dev), tspi);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
-+			tspi->irq);
-+		goto exit_pm_disable;
-+	}
- 
- 	master->dev.of_node = pdev->dev.of_node;
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
--		goto exit_pm_disable;
-+		goto exit_free_irq;
- 	}
- 	return ret;
- 
-+exit_free_irq:
-+	free_irq(spi_irq, tspi);
- exit_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
-@@ -1136,8 +1142,6 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	tegra_spi_deinit_dma_param(tspi, false);
- exit_rx_dma_free:
- 	tegra_spi_deinit_dma_param(tspi, true);
--exit_free_irq:
--	free_irq(spi_irq, tspi);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
--- 
-2.20.1
-
+ 	cable_info = (struct mlx4_cable_info *)inmad->data;
+ 	cable_info->dev_mem_address = cpu_to_be16(offset);
 
 
