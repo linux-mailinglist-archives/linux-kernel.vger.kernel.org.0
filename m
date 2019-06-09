@@ -2,127 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7071E3A4E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CACA73A4F3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:00:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbfFIK4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 06:56:23 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:58439 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbfFIK4X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 06:56:23 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 4FB662002C;
-        Sun,  9 Jun 2019 12:56:18 +0200 (CEST)
-Date:   Sun, 9 Jun 2019 12:56:17 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>, stonea168@163.com,
-        dri-devel@lists.freedesktop.org,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        cawa.cheng@mediatek.com,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        linux-arm-kernel@lists.infradead.org,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [1/2] dt-bindings: display: panel: add AUO kd101n80-45na panel
- bindings
-Message-ID: <20190609105617.GC28935@ravnborg.org>
-References: <20190608112342.64416-1-jitao.shi@mediatek.com>
+        id S1728294AbfFILAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 07:00:50 -0400
+Received: from mout.gmx.net ([212.227.17.21]:45883 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728029AbfFILAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 07:00:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1560078046;
+        bh=5KM3c4fDB8CweaH+p6a3cb0q/2aj01VmFRK+2KetZQc=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=UuoEUzsuD1fpPsz1WkYRUYlyiuLDXOQ8jzT8EuRU68BJR+cRoKzO8eY2UTaSWZgUP
+         44BPKBcyqTDFy9MpENxWQKCzcs7H34EKLOlvK77kCnxp8s74JWL8fh82yp2nBzRRQF
+         0AERvdYgmnad6XuIdyi0KTt6UDhTDewKCYkRH+H0=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([109.190.112.71]) by mail.gmx.com
+ (mrgmx101 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0M5Z5A-1gcLkz3uXI-00xXI6; Sun, 09 Jun 2019 13:00:46 +0200
+From:   =?UTF-8?q?Harold=20Andr=C3=A9?= <harold.andre@gmx.fr>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Harold=20Andr=C3=A9?= <harold.andre@gmx.fr>
+Subject: [PATCH] Staging: ralink-gdma: fixed a brace coding style issue
+Date:   Sun,  9 Jun 2019 12:58:46 +0200
+Message-Id: <20190609105846.27225-1-harold.andre@gmx.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190608112342.64416-1-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
-        a=mpaa-ttXAAAA:8 a=e5mUnYsNAAAA:8 a=GOHkJZeNjhEJBjOU3QsA:9
-        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=6heAxKwa5pAsJatQ0mat:22
-        a=Vxmtnl_E_bksehYqCbjh:22
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ulm5W9TTIpjxLNJFVhxZb0dxFMToHBP20liPUIJ/8FS2W+be7HY
+ pEtq4jcLckGkMvGYNfhqgHd6OdeWrgN805NtYEpvSHI2da6aAnUW+1T8ZkrTDhm6Mkk4Tkb
+ RG6IP/RgpH6VjQnF72prxz85ee0r61Sy8KtDSSJ6n4GU1J0Iriy2MMYvtEzzYy1WhU8bHg3
+ BMGFYVGAfXORHV8WZx2tA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9uDJ8t9ggtM=:GFqTezi8/xt8nRMScxrIYF
+ ynrOMdmjPbzIlcvJcf3unsPmIXEd8r5V3PniJDHPx4F+NsG2oyTIQAey7VY6blHS5dXhNMWIa
+ 3r4vv1Q9cBzPTLkPtrmHgS4+gnZLe+Pa9xho927jNHVk4zKYOEfY9XZef7WVuLjZCesx0SuCO
+ cKBvIRz5NDY5PF3PwbuhvAXO88Me0SUS+9SvjS6VYR80/R4ADzfkxS4sTWxRhNu2YPqoXFxfH
+ CC1CUqJwbGRj8FZI5gL9gje4LxUHYL5poVhB78jsyuMBMrkfok3zW9BwQya9xe2ueg5DmM+d+
+ lE4PkXT0R7yzPJjjoSGMpvuJg0gl+lJzpMRbagKovBDWLSa5ucOrOYJzTLcZy4wAmT9btbJvE
+ KYknzq7E5jb8wbPWwjWCa1J1RbGP/Hg/u2D916D5kpfaJxOQGF01UxTkzUEJ60ALQP9i+6QZC
+ OhyGUUojwVUFQasO3HacslBO+plz1XtZOWodkdtpwyNxA3UmaDEkB9x/65Q1oWozjZt1viWAT
+ dq2ACJ7mE/+S17N9LRNA5dwipf7wV9OmbqeC4+5LugOrU4QMjC1g4Zhk48oIW903f0/ovfJFa
+ TIQ6S6GtlZo4BwHMG3LBDdddfg0X6axqqMxOgE7ePFBO0HXrLGY7P915VYhSkNOKpzAUJ0GkU
+ TeoJ4aasYIDK5CwJCz6cu7G/UFQUzv6LQqyxLbwpFajY28Mj9ty83Lbm4mXerHm5smMsle+lz
+ 9M0I3/DpNlgiffMu83c4Wr7o2P+DaWT4k0BXzr2T2woD/bjG+yapI49eG2qWaSkW7LCF/iEX/
+ /NzsGuTlyZWWv4G6ZGQi3JIIcta82eQy/0Fd7ja/bxsLrxKTcU7gKeNDWvjnWxrkMbZtOIU4U
+ 2VTfV8HFaQAFiKROv09BVNU3rvextjv8zQpnaB7e4tbSH6dWSscB4BayN7G4X/+CM3cjBVFpy
+ b8nOps5U7k3/AO9DYKxHFSZdcarkHQC6xSV5f+ZXO1mU8ipOyzMekNc63IqSLF0onI9GZDH/R
+ Vg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jitao.
+Fixed a coding style issue.
 
-Binding doc for this panel looks good.
+Signed-off-by: Harold Andr=C3=A9 <harold.andre@gmx.fr>
+=2D--
+ drivers/staging/ralink-gdma/ralink-gdma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-With added description for avdd + avee it is:
+diff --git a/drivers/staging/ralink-gdma/ralink-gdma.c b/drivers/staging/r=
+alink-gdma/ralink-gdma.c
+index de3e357b2640..5854551d0a52 100644
+=2D-- a/drivers/staging/ralink-gdma/ralink-gdma.c
++++ b/drivers/staging/ralink-gdma/ralink-gdma.c
+@@ -814,9 +814,8 @@ static int gdma_dma_probe(struct platform_device *pdev=
+)
+ 	dma_dev =3D devm_kzalloc(&pdev->dev,
+ 			       struct_size(dma_dev, chan, data->chancnt),
+ 			       GFP_KERNEL);
+-	if (!dma_dev) {
++	if (!dma_dev)
+ 		return -EINVAL;
+-	}
+ 	dma_dev->data =3D data;
 
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+ 	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+=2D-
+2.20.1
 
-On Sat, Jun 08, 2019 at 07:23:41PM +0800, Jitao Shi wrote:
-> Add documentation for auo kd101n80-45na panel.
-> 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  .../display/panel/auo,kd101n80-45na.txt       | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt b/Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt
-> new file mode 100644
-> index 000000000000..7715cf703431
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt
-> @@ -0,0 +1,34 @@
-> +AUO Corporation 10.1" WUXGA TFT LCD panel
-> +
-> +Required properties:
-> +- compatible: should be "auo,kd101n80-45na"
-> +- reg: the virtual channel number of a DSI peripheral
-> +- enable-gpios: a GPIO spec for the enable pin
-> +- pp1800-supply: core voltage supply
-> +- avdd-supply: 
-> +- avee-supply: 
-Descriptions are missing for the 2 x supply.
-
-> +- backlight: phandle of the backlight device attached to the panel
-> +
-> +The device node can contain one 'port' child node with one child
-> +'endpoint' node, according to the bindings defined in
-> +media/video-interfaces.txt. This node should describe panel's video bus.
-> +
-> +Example:
-> +&dsi {
-> +	...
-> +	panel@0 {
-> +		compatible = "auo,kd101n80-45na";
-> +		reg = <0>;
-> +		enable-gpios = <&pio 45 0>;
-> +		avdd-supply = <&ppvarn_lcd>;
-> +		avee-supply = <&ppvarp_lcd>;
-> +		pp1800-supply = <&pp1800_lcd>;
-> +		backlight = <&backlight_lcd0>;
-> +		status = "okay";
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&dsi_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> -- 
-> 2.21.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
