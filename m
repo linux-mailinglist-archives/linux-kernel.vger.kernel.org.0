@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E39C3A8AE
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B4B3A7A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387959AbfFIRDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41314 "EHLO mail.kernel.org"
+        id S1732087AbfFIQwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732837AbfFIRDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:03 -0400
+        id S1731594AbfFIQv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:51:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A836220843;
-        Sun,  9 Jun 2019 17:03:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1EF22070B;
+        Sun,  9 Jun 2019 16:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099783;
-        bh=v8jViTz1Qm/qg5OtQF+8F/At7QLvjzJgBcP9xOl6joc=;
+        s=default; t=1560099117;
+        bh=o0F+UEmMzpFIUL4hfhU/dW7tl6mKsAmLq9rLyqohHfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jche9IaP6For1VhF8Wgz3KT/TDyCPUqymMMMQC9177ffj3tM1lCl1KULJUay2CECC
-         aBRRQaGi36uW5hhqnhOoGgPPpq6/4R6Xj6QohCrvDGB3Ab3DEj61ntuNn5ejGJCdbm
-         szsb5p4vD60sMBaAUQXlGFojl/Y4pOgU4TXpMxAo=
+        b=SLD1h2mhpLqQeWcr/AT+WI6KTTsX4N3nGMnBFopcpNEynIeR2jB8yob2fsqy3GANx
+         wGdnJMMirKXQmMtXWiJWOxLYj3YhMjM126EskzgZwrugQ0EeqVGu26Mld7Yru3rOjA
+         Nlqey78n7TjrRxZ8r17NgKFJs5TJzsoHI7Ux6mM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 164/241] cxgb3/l2t: Fix undefined behaviour
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 16/83] Revert "tipc: fix modprobe tipc failed after switch order of device registration"
 Date:   Sun,  9 Jun 2019 18:41:46 +0200
-Message-Id: <20190609164152.508267997@linuxfoundation.org>
+Message-Id: <20190609164128.910441198@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +42,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 76497732932f15e7323dc805e8ea8dc11bb587cf ]
+From: David S. Miller <davem@davemloft.net>
 
-The use of zero-sized array causes undefined behaviour when it is not
-the last member in a structure. As it happens to be in this case.
+commit 5593530e56943182ebb6d81eca8a3be6db6dbba4 upstream.
 
-Also, the current code makes use of a language extension to the C90
-standard, but the preferred mechanism to declare variable-length
-types such as this one is a flexible array member, introduced in
-C99:
+This reverts commit 532b0f7ece4cb2ffd24dc723ddf55242d1188e5e.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+More revisions coming up.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last. Which is beneficial
-to cultivate a high-quality code.
-
-Fixes: e48f129c2f20 ("[SCSI] cxgb3i: convert cdev->l2opt to use rcu to prevent NULL dereference")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/chelsio/cxgb3/l2t.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/core.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/l2t.h b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-index 8cffcdfd56782..38b5858c335a9 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-+++ b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-@@ -75,8 +75,8 @@ struct l2t_data {
- 	struct l2t_entry *rover;	/* starting point for next allocation */
- 	atomic_t nfree;		/* number of free entries */
- 	rwlock_t lock;
--	struct l2t_entry l2tab[0];
- 	struct rcu_head rcu_head;	/* to handle rcu cleanup */
-+	struct l2t_entry l2tab[];
- };
+--- a/net/tipc/core.c
++++ b/net/tipc/core.c
+@@ -62,10 +62,6 @@ static int __net_init tipc_init_net(stru
+ 	INIT_LIST_HEAD(&tn->node_list);
+ 	spin_lock_init(&tn->node_list_lock);
  
- typedef void (*arp_failure_handler_func)(struct t3cdev * dev,
--- 
-2.20.1
-
+-	err = tipc_socket_init();
+-	if (err)
+-		goto out_socket;
+-
+ 	err = tipc_sk_rht_init(net);
+ 	if (err)
+ 		goto out_sk_rht;
+@@ -92,8 +88,6 @@ out_subscr:
+ out_nametbl:
+ 	tipc_sk_rht_destroy(net);
+ out_sk_rht:
+-	tipc_socket_stop();
+-out_socket:
+ 	return err;
+ }
+ 
+@@ -104,7 +98,6 @@ static void __net_exit tipc_exit_net(str
+ 	tipc_bcast_stop(net);
+ 	tipc_nametbl_stop(net);
+ 	tipc_sk_rht_destroy(net);
+-	tipc_socket_stop();
+ }
+ 
+ static struct pernet_operations tipc_net_ops = {
+@@ -140,6 +133,10 @@ static int __init tipc_init(void)
+ 	if (err)
+ 		goto out_pernet;
+ 
++	err = tipc_socket_init();
++	if (err)
++		goto out_socket;
++
+ 	err = tipc_bearer_setup();
+ 	if (err)
+ 		goto out_bearer;
+@@ -147,6 +144,8 @@ static int __init tipc_init(void)
+ 	pr_info("Started in single node mode\n");
+ 	return 0;
+ out_bearer:
++	tipc_socket_stop();
++out_socket:
+ 	unregister_pernet_subsys(&tipc_net_ops);
+ out_pernet:
+ 	tipc_unregister_sysctl();
+@@ -162,6 +161,7 @@ out_netlink:
+ static void __exit tipc_exit(void)
+ {
+ 	tipc_bearer_cleanup();
++	tipc_socket_stop();
+ 	unregister_pernet_subsys(&tipc_net_ops);
+ 	tipc_netlink_stop();
+ 	tipc_netlink_compat_stop();
 
 
