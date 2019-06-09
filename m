@@ -2,83 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279B83A528
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C117C3A538
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfFILje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 07:39:34 -0400
-Received: from mailout1.hostsharing.net ([83.223.95.204]:49679 "EHLO
-        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbfFILje (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 07:39:34 -0400
-X-Greylist: delayed 567 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 07:39:33 EDT
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by mailout1.hostsharing.net (Postfix) with ESMTPS id 1A331101817B7;
-        Sun,  9 Jun 2019 13:30:05 +0200 (CEST)
-Received: from localhost (unknown [89.246.108.87])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        id S1728457AbfFILv6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 9 Jun 2019 07:51:58 -0400
+Received: from smtp1.fsid.cvut.cz ([147.32.160.38]:51461 "EHLO ns.fsid.cvut.cz"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728161AbfFILv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 07:51:57 -0400
+X-Greylist: delayed 653 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 07:51:56 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by ns.fsid.cvut.cz (Postfix) with ESMTP id A4B8E1C797D;
+        Sun,  9 Jun 2019 13:38:47 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at ns.fsid.cvut.cz
+X-Spam-Flag: NO
+X-Spam-Score: -0.803
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.803 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, FREEMAIL_FORGED_REPLYTO=2.095,
+        HK_NAME_MR_MRS=0.001, URIBL_BLOCKED=0.001]
+        autolearn=no autolearn_force=no
+Received: from ns.fsid.cvut.cz ([127.0.0.1])
+        by localhost (ns.fsid.cvut.cz [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 50LayrgUtfxi; Sun,  9 Jun 2019 13:38:45 +0200 (CEST)
+Received: from [192.168.1.44] (unknown [88.233.187.201])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by h08.hostsharing.net (Postfix) with ESMTPSA id B7CC860DAED6;
-        Sun,  9 Jun 2019 13:30:04 +0200 (CEST)
-X-Mailbox-Line: From 0113014581dbe2d1f938813f1783905bd81b79db Mon Sep 17 00:00:00 2001
-Message-Id: <0113014581dbe2d1f938813f1783905bd81b79db.1560079442.git.lukas@wunner.de>
-From:   Lukas Wunner <lukas@wunner.de>
-Date:   Sun, 9 Jun 2019 13:29:33 +0200
-Subject: [PATCH] PCI/PME: Fix race on PME polling
-To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>
+        by ns.fsid.cvut.cz (Postfix) with ESMTPSA id 55B131C6DA3;
+        Sun,  9 Jun 2019 13:36:46 +0200 (CEST)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Donation for you
+To:     Recipients <info@mccme.ru>
+From:   "Mr. Harold Diamond" <info@mccme.ru>
+Date:   Sun, 09 Jun 2019 04:36:41 -0700
+Reply-To: harolddiamondgives@gmail.com
+X-Antivirus: Avast (VPS 190608-0, 06/07/2019), Outbound message
+X-Antivirus-Status: Clean
+Message-Id: <20190609113646.55B131C6DA3@ns.fsid.cvut.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit df17e62e5bff ("PCI: Add support for polling PME state on
-suspended legacy PCI devices"), the work item pci_pme_list_scan() polls
-the PME status flag of devices and wakes them up if the bit is set.
+Hello,
 
-The function performs a check whether a device's upstream bridge is in
-D0 for otherwise the device is inaccessible, rendering PME polling
-impossible.  However the check is racy because it is performed before
-polling the device.  If the upstream bridge runtime suspends to D3hot
-after pci_pme_list_scan() checks its power state and before it invokes
-pci_pme_wakeup(), the latter will read the PMCSR as "all ones" and
-mistake it for a set PME status flag.  I am seeing this race play out as
-a Thunderbolt controller going to D3cold and occasionally immediately
-going to D0 again because PM polling was performed at just the wrong
-time.
+Donation for you, reply back for more information on how to get it.
 
-Avoid by checking for an "all ones" PMCSR in pci_check_pme_status().
+Signed,
+Harold Diamond.
 
-Fixes: 58ff463396ad ("PCI PM: Add function for checking PME status of devices")
-Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v2.6.34+
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/pci/pci.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 8abc843b1615..eed5db9f152f 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1989,6 +1989,8 @@ bool pci_check_pme_status(struct pci_dev *dev)
- 	pci_read_config_word(dev, pmcsr_pos, &pmcsr);
- 	if (!(pmcsr & PCI_PM_CTRL_PME_STATUS))
- 		return false;
-+	if (pmcsr == 0xffff)
-+		return false;
- 
- 	/* Clear PME status. */
- 	pmcsr |= PCI_PM_CTRL_PME_STATUS;
--- 
-2.20.1
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
 
