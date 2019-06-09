@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784D03AA95
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4DAB3AAC0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbfFIQsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47118 "EHLO mail.kernel.org"
+        id S1730396AbfFIQqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731111AbfFIQsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:09 -0400
+        id S1730337AbfFIQqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58384206C3;
-        Sun,  9 Jun 2019 16:48:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 730C32081C;
+        Sun,  9 Jun 2019 16:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098888;
-        bh=/L4nN1cLrpDNu4y8INv/OnSstEZDePv2AWT52q3KjHk=;
+        s=default; t=1560098774;
+        bh=xZk6V8W47holid3x8sEAl6DZJWT45f42r7gly3AseKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2fJb7EW3rTakIyG7yaexmlxUShLMs8iIG0RaAUtYIOAh5NPNZWQce9zTE8/3C9HJ1
-         wMrIBx+JjVh9HX2E7xzX6dvF9PTsZCcp9h60RzNCBCMpCiBVuk4h+YDXEm79msUfo3
-         +zxt0XAwbbiFIWtS0JwBsUHCxvakZTCbbfuWThRk=
+        b=GQ18AyBjCnfSORN4gXbYQ8iRohdH0bv+pvNM7o/1asCIyMPNCW0xCFLZDtLkWgfpl
+         Q9xUVTJeG3EVrDW1JKBvttIqS4/EG0xqdFDExH9hrYDc1vX4hYFEuhLiIGv8ieMEFI
+         OJgpqdaahKBsFbgCxZ/bmFU8jrjSxMwUtxkJbgpE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 25/51] pstore: Set tfm to NULL on free_buf_for_compression
-Date:   Sun,  9 Jun 2019 18:42:06 +0200
-Message-Id: <20190609164128.597833273@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.1 56/70] drm: Fix timestamp docs for variable refresh properties.
+Date:   Sun,  9 Jun 2019 18:42:07 +0200
+Message-Id: <20190609164132.173948370@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pi-Hsun Shih <pihsun@chromium.org>
+From: Mario Kleiner <mario.kleiner.de@gmail.com>
 
-commit a9fb94a99bb515d8720ba8440ce3aba84aec80f8 upstream.
+commit 0cbd0adc4429930567083d18cc8c0fbc5f635d96 upstream.
 
-Set tfm to NULL on free_buf_for_compression() after crypto_free_comp().
+As discussed with Nicholas and Daniel Vetter (patchwork
+link to discussion below), the VRR timestamping behaviour
+produced utterly useless and bogus vblank/pageflip
+timestamps. We have found a way to fix this and provide
+sane behaviour.
 
-This avoid a use-after-free when allocate_buf_for_compression()
-and free_buf_for_compression() are called twice. Although
-free_buf_for_compression() freed the tfm, allocate_buf_for_compression()
-won't reinitialize the tfm since the tfm pointer is not NULL.
+As of Linux 5.2, the amdgpu driver will be able to
+provide exactly the same vblank / pageflip timestamp
+semantic in variable refresh rate mode as in standard
+fixed refresh rate mode. This is achieved by deferring
+core vblank handling (drm_crtc_handle_vblank()) until
+the end of front porch, and also defer the sending of
+pageflip completion events until end of front porch,
+when we can safely compute correct pageflip/vblank
+timestamps.
 
-Fixes: 95047b0519c1 ("pstore: Refactor compression initialization")
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+The same approach will be possible for other VRR
+capable kms drivers, so we can actually have sane
+and useful timestamps in VRR mode.
+
+This patch removes the section of the docs that
+describes the broken timestamp behaviour present
+in Linux 5.0/5.1.
+
+Fixes: ab7a664f7a2d ("drm: Document variable refresh properties")
+Link: https://patchwork.freedesktop.org/patch/285333/
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Signed-off-by: Mario Kleiner <mario.kleiner.de@gmail.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190418060157.18968-1-mario.kleiner.de@gmail.com
 Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pstore/platform.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_connector.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -324,8 +324,10 @@ static void allocate_buf_for_compression
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -1385,12 +1385,6 @@ EXPORT_SYMBOL(drm_mode_create_scaling_mo
+  *
+  *	The driver may place further restrictions within these minimum
+  *	and maximum bounds.
+- *
+- *	The semantics for the vertical blank timestamp differ when
+- *	variable refresh rate is active. The vertical blank timestamp
+- *	is defined to be an estimate using the current mode's fixed
+- *	refresh rate timings. The semantics for the page-flip event
+- *	timestamp remain the same.
+  */
  
- static void free_buf_for_compression(void)
- {
--	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm)
-+	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm) {
- 		crypto_free_comp(tfm);
-+		tfm = NULL;
-+	}
- 	kfree(big_oops_buf);
- 	big_oops_buf = NULL;
- 	big_oops_buf_sz = 0;
+ /**
 
 
