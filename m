@@ -2,110 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 344173AAF5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 20:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E20343AB1A
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 20:14:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbfFISGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 14:06:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38531 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729869AbfFISGo (ORCPT
+        id S1730264AbfFISOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 14:14:43 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34240 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729668AbfFISOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 14:06:44 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d18so6885730wrs.5;
-        Sun, 09 Jun 2019 11:06:43 -0700 (PDT)
+        Sun, 9 Jun 2019 14:14:42 -0400
+Received: by mail-it1-f196.google.com with SMTP id c3so5517633itc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 11:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=o6l+94PYyR5Sk//+/Av+qY/UlCTL0ZemTkfdZsKsuI8=;
-        b=SdWX2T5SmsidfZY0juvRr2RV/3P4zrsZFer61k+iFahxhK3NUrLNV7vJqaiiediw4R
-         rcD5gjK4F36aGP9zl93OjqUlTqKa+yOuFb1zRg53a0+wk8GFvnBaH8M8tYUWFnkcMhES
-         z6g3IjTPw7r0iQvIRiH4U10mEqwsFgh48Epr6t8L1JT2H0LP+CQmVdEwJdC9x/2+GFfe
-         ovcWvCt7k9lSwAFW8Ms2DOuzngbf6sdjnjZzkBh4CFHgf+kYTWgHWQ8Lg8qcWOqPJ8R/
-         CDsDEoFU29qpw66hFva8GSiCmvLelz82KUglM9YxxtwJTYRITd8hm+1Gx2C1LtklqYtl
-         dWIA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QrmQgtot4PqjL1wSqJXodQ8ktBGYcHqGra4eQTyGZms=;
+        b=nh5GGNE9CurE7rgpy3Nl9hGwop7f2Ae1DmdxJrS+vTvyLlLzxwV2vu6FpBrshO1AlQ
+         B8MMMyYnTK+zdb+YytKX/FNRPgp3GkqrDj7KY0j2ifpJMeK+sxJ+UvLofcKMCysWrKh5
+         gERxQUjZgW/Yngk7i1UPiREMntaTUT97hBCmn+I1riD1yXsXcr63TGtPpTXpCxdxzA23
+         bilS+RoyIWu0YpdLiUqxqDtTLmkYH77PKVuUigpWP4WImdhXxbK9boLNkGrJA45FL9dS
+         SbuR+N+vHZFQHASBN6Kl6ZSQYqfFx8sxsdMIIHtoYwrN7EhMdb9/2W8hEZN6kmh91C4w
+         zyeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=o6l+94PYyR5Sk//+/Av+qY/UlCTL0ZemTkfdZsKsuI8=;
-        b=Oqo+yiyiaJuMcTrU6yY8aRC2r+10l3A50pKylkmDTeqG7paKFRVaXEsNlkONuY0a13
-         Ih3O0XakNB3c5/1Ynf/2OOklvFRIH5gR4Q3/P4zGzCqnTrqakxOLRAPgK17L9xhOAm+X
-         GDQHe2gnaFTKBGa4gTXElU/h92WAbQHerQ1h/Uh4bZp7DAq3N8i6JZFg763XKqJ79WOm
-         7MAdoXgNA4cILjbdeL3x7jMwadFdg74xex9yXWnfAO4Gj4Kpesguy+G6lKzRrTpOoWyK
-         yn6ZmwM9TxnftgyY9TYj2hPhvSmZo+pUxEINh0uRZX2w0IAAY1Xlqb6STPFwD+McolFF
-         7QSw==
-X-Gm-Message-State: APjAAAUxWEg0y7ThASdF5JogpkrV27LJ1NsFuzvfFnXyIA9s31LeAx2r
-        jh4ZhLMlyOm01M7DJ14DEAzeiqd+
-X-Google-Smtp-Source: APXvYqwvHItbEUzIdxb67KT8Bn7m2rjiaeTPe7nvO5ksWV2HWlyxwGJBfFo9q42FP5gCm25H0bJ3Yg==
-X-Received: by 2002:adf:fd8d:: with SMTP id d13mr7811983wrr.8.1560103602460;
-        Sun, 09 Jun 2019 11:06:42 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133DDA400B42D8EB9D711C35E.dip0.t-ipconnect.de. [2003:f1:33dd:a400:b42d:8eb9:d711:c35e])
-        by smtp.googlemail.com with ESMTPSA id h14sm2007731wrs.66.2019.06.09.11.06.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 09 Jun 2019 11:06:41 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com, joabreu@synopsys.com
-Cc:     devicetree@vger.kernel.org, davem@davemloft.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com, narmstrong@baylibre.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [RFC next v1 5/5] arm64: dts: meson: g12a: x96-max: fix the Ethernet PHY reset line
-Date:   Sun,  9 Jun 2019 20:06:21 +0200
-Message-Id: <20190609180621.7607-6-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609180621.7607-1-martin.blumenstingl@googlemail.com>
-References: <20190609180621.7607-1-martin.blumenstingl@googlemail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QrmQgtot4PqjL1wSqJXodQ8ktBGYcHqGra4eQTyGZms=;
+        b=B0IomTZfpP/EjRL1DyOSN86o08onworwm8QBtYWEn2j4BgG1OHOW1BgwJdZVTR+5KN
+         /vzKWNk3epqGocO+UZj39J5cKST/jbq0I6RnzE4yx8qK1V9nuMkD3W9ULieSbCT5F4jp
+         LbTfJKdO2wxroYxVJfB4RiGVVFAApYlr5IgHqncpJNjOOkgJmVVNpkSQk/CBTudj+tlX
+         QxgYl6HJL9CuEyfEf9yVzIQKpj5mZMUHKnsx9xYDYZiLbCPlTzF9T+hxVH71zAJLWSf5
+         CgoGA+EVD9SflZa0Zw4RxBKIlLLbis0BGIgNxEjoc3CZVN0BE++J9o3Kf9k11073mzcG
+         B3Pg==
+X-Gm-Message-State: APjAAAVNGFT4IImlPvMxEYHSdHmy+FAa4iaAaKwTk5+vMth3ozH/wNqF
+        3bVFFDvLP/GSj8dkF16slnK5emRiPPhBmn4VxE6AyQ==
+X-Google-Smtp-Source: APXvYqyFGP0qOizcA9JeXKig2+nJD1y8SyNKskyZ+G1ya+nOEgNb+KQ+pVayfS4flXjeA98DrQnt9ingi8qkn41chyg=
+X-Received: by 2002:a02:ce37:: with SMTP id v23mr42380530jar.2.1560104081538;
+ Sun, 09 Jun 2019 11:14:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190608114232.8731-1-sashal@kernel.org> <20190608114232.8731-17-sashal@kernel.org>
+In-Reply-To: <20190608114232.8731-17-sashal@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sun, 9 Jun 2019 20:14:29 +0200
+Message-ID: <CAKv+Gu9ZJ42=NJWDX4+DgkMWaSEakNw-yYiUtsUE48D-V6=7-w@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.19 17/49] efi/x86/Add missing error handling to
+ old_memmap 1:1 mapping code
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Gen Zhang <blackgod016574@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Bradford <robert.bradford@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PHY reset line and interrupt line are swapped on the X96 Max
-compared to the Odroid-N2 schematics. This means:
-- GPIOZ_14 is the interrupt line (on the Odroid-N2 it's the reset line)
-- GPIOZ_15 is the reset line (on the Odroid-N2 it's the interrupt line)
+On Sat, 8 Jun 2019 at 13:43, Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Gen Zhang <blackgod016574@gmail.com>
+>
+> [ Upstream commit 4e78921ba4dd0aca1cc89168f45039add4183f8e ]
+>
+> The old_memmap flow in efi_call_phys_prolog() performs numerous memory
+> allocations, and either does not check for failure at all, or it does
+> but fails to propagate it back to the caller, which may end up calling
+> into the firmware with an incomplete 1:1 mapping.
+>
+> So let's fix this by returning NULL from efi_call_phys_prolog() on
+> memory allocation failures only, and by handling this condition in the
+> caller. Also, clean up any half baked sets of page tables that we may
+> have created before returning with a NULL return value.
+>
+> Note that any failure at this level will trigger a panic() two levels
+> up, so none of this makes a huge difference, but it is a nice cleanup
+> nonetheless.
+>
+> [ardb: update commit log, add efi_call_phys_epilog() call on error path]
+>
+> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rob Bradford <robert.bradford@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-efi@vger.kernel.org
+> Link: http://lkml.kernel.org/r/20190525112559.7917-2-ard.biesheuvel@linaro.org
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Also the GPIOZ_14 and GPIOZ_15 pins are special. The datasheet describes
-that they are "3.3V input tolerant open drain (OD) output pins". This
-means the GPIO controller can drive the output LOW to reset the PHY. To
-release the reset it can only switch the pin to input mode. The output
-cannot be driven HIGH for these pins.
-This requires configuring the reset line as GPIO_OPEN_SOURCE because
-otherwise the PHY will be stuck in "reset" state (because driving the
-pin HIGH seeems to result in the same signal as driving it LOW).
+This was already discussed in the thread that proposed this patch for
+stable: please don't queue this right now, the patches are more likely
+to harm than hurt, and they certainly don't fix a security
+vulnerability, as has been claimed.
 
-Switch to GPIOZ_15 for the reset GPIO with the correct flags and drop
-the "snps,reset-active-low" property as this is now encoded in the
-GPIO_OPEN_SOURCE flag.
 
-Fixes: 51d116557b2044 ("arm64: dts: meson-g12a-x96-max: Add Gigabit Ethernet Support")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-index 98bc56e650a0..c93b639679c0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-@@ -186,9 +186,8 @@
- 	phy-mode = "rgmii";
- 	phy-handle = <&external_phy>;
- 	amlogic,tx-delay-ns = <2>;
--	snps,reset-gpio = <&gpio GPIOZ_14 0>;
-+	snps,reset-gpio = <&gpio GPIOZ_15 GPIO_OPEN_SOURCE>;
- 	snps,reset-delays-us = <0 10000 1000000>;
--	snps,reset-active-low;
- };
- 
- &pwm_ef {
--- 
-2.21.0
-
+> ---
+>  arch/x86/platform/efi/efi.c    | 2 ++
+>  arch/x86/platform/efi/efi_64.c | 9 ++++++---
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+> index 9061babfbc83..353019d4e6c9 100644
+> --- a/arch/x86/platform/efi/efi.c
+> +++ b/arch/x86/platform/efi/efi.c
+> @@ -86,6 +86,8 @@ static efi_status_t __init phys_efi_set_virtual_address_map(
+>         pgd_t *save_pgd;
+>
+>         save_pgd = efi_call_phys_prolog();
+> +       if (!save_pgd)
+> +               return EFI_ABORTED;
+>
+>         /* Disable interrupts around EFI calls: */
+>         local_irq_save(flags);
+> diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+> index ee5d08f25ce4..dfc809b31c7c 100644
+> --- a/arch/x86/platform/efi/efi_64.c
+> +++ b/arch/x86/platform/efi/efi_64.c
+> @@ -84,13 +84,15 @@ pgd_t * __init efi_call_phys_prolog(void)
+>
+>         if (!efi_enabled(EFI_OLD_MEMMAP)) {
+>                 efi_switch_mm(&efi_mm);
+> -               return NULL;
+> +               return efi_mm.pgd;
+>         }
+>
+>         early_code_mapping_set_exec(1);
+>
+>         n_pgds = DIV_ROUND_UP((max_pfn << PAGE_SHIFT), PGDIR_SIZE);
+>         save_pgd = kmalloc_array(n_pgds, sizeof(*save_pgd), GFP_KERNEL);
+> +       if (!save_pgd)
+> +               return NULL;
+>
+>         /*
+>          * Build 1:1 identity mapping for efi=old_map usage. Note that
+> @@ -138,10 +140,11 @@ pgd_t * __init efi_call_phys_prolog(void)
+>                 pgd_offset_k(pgd * PGDIR_SIZE)->pgd &= ~_PAGE_NX;
+>         }
+>
+> -out:
+>         __flush_tlb_all();
+> -
+>         return save_pgd;
+> +out:
+> +       efi_call_phys_epilog(save_pgd);
+> +       return NULL;
+>  }
+>
+>  void __init efi_call_phys_epilog(pgd_t *save_pgd)
+> --
+> 2.20.1
+>
