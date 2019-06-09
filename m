@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A743A710
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A2E3A73F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbfFIQpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
+        id S1731014AbfFIQrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:47:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730099AbfFIQpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:50 -0400
+        id S1730968AbfFIQrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CB0E2084A;
-        Sun,  9 Jun 2019 16:45:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B25EC206C3;
+        Sun,  9 Jun 2019 16:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098749;
-        bh=ywlPNhe9q6s7xmSEoV4kIeU8IFY4qdBlUrpk7UcgrWw=;
+        s=default; t=1560098867;
+        bh=fwsJwNFaon2R+lR5nFdFKSyG4R4Y2sVc0fxcUZG60+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=icyR9eC/vzE9xTDMPcHQOB93M89DzMSjml7+AaxRwILFlCMAPPGpqRRpi4j/+CFYh
-         gtMsCjPJpovC5GOK5uDIo227lW3QOmHBUc94IKBNn5LxhnN213J+LPjXD+D/tMmtUL
-         t5Wn+xu0TlYHiNovWCNEcuoEudT20g6WnuQIV98U=
+        b=Uu9K6O7KArsoWMx/COkDeWFOEGmOfZma4SMP50njvvzSCZs98pSBJbF2KZgw+CJWw
+         amOjrvrlLFlU7wvbHX9Y6XRfrz+vniH88xC5VlG8XCk7DY8oM4paqPTRy871tFmfjp
+         Tcmdq0lzmGxQSTaVaW/qq5KUzKZq6XbhtN/kWYOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5.1 48/70] test_firmware: Use correct snprintf() limit
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 18/51] rcu: locking and unlocking need to always be at least barriers
 Date:   Sun,  9 Jun 2019 18:41:59 +0200
-Message-Id: <20190609164131.447092337@linuxfoundation.org>
+Message-Id: <20190609164128.133131668@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,68 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit bd17cc5a20ae9aaa3ed775f360b75ff93cd66a1d upstream.
+commit 66be4e66a7f422128748e3c3ef6ee72b20a6197b upstream.
 
-The limit here is supposed to be how much of the page is left, but it's
-just using PAGE_SIZE as the limit.
+Herbert Xu pointed out that commit bb73c52bad36 ("rcu: Don't disable
+preemption for Tiny and Tree RCU readers") was incorrect in making the
+preempt_disable/enable() be conditional on CONFIG_PREEMPT_COUNT.
 
-The other thing to remember is that snprintf() returns the number of
-bytes which would have been copied if we had had enough room.  So that
-means that if we run out of space then this code would end up passing a
-negative value as the limit and the kernel would print an error message.
-I have change the code to use scnprintf() which returns the number of
-bytes that were successfully printed (not counting the NUL terminator).
+If CONFIG_PREEMPT_COUNT isn't enabled, the preemption enable/disable is
+a no-op, but still is a compiler barrier.
 
-Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
+And RCU locking still _needs_ that compiler barrier.
+
+It is simply fundamentally not true that RCU locking would be a complete
+no-op: we still need to guarantee (for example) that things that can
+trap and cause preemption cannot migrate into the RCU locked region.
+
+The way we do that is by making it a barrier.
+
+See for example commit 386afc91144b ("spinlocks and preemption points
+need to be at least compiler barriers") from back in 2013 that had
+similar issues with spinlocks that become no-ops on UP: they must still
+constrain the compiler from moving other operations into the critical
+region.
+
+Now, it is true that a lot of RCU operations already use READ_ONCE() and
+WRITE_ONCE() (which in practice likely would never be re-ordered wrt
+anything remotely interesting), but it is also true that that is not
+globally the case, and that it's not even necessarily always possible
+(ie bitfields etc).
+
+Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree RCU readers")
+Cc: stable@kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/test_firmware.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ include/linux/rcupdate.h |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -223,30 +223,30 @@ static ssize_t config_show(struct device
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -78,14 +78,12 @@ void synchronize_rcu(void);
  
- 	mutex_lock(&test_fw_mutex);
+ static inline void __rcu_read_lock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_disable();
++	preempt_disable();
+ }
  
--	len += snprintf(buf, PAGE_SIZE,
-+	len += scnprintf(buf, PAGE_SIZE - len,
- 			"Custom trigger configuration for: %s\n",
- 			dev_name(dev));
+ static inline void __rcu_read_unlock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_enable();
++	preempt_enable();
+ }
  
- 	if (test_fw_config->name)
--		len += snprintf(buf+len, PAGE_SIZE,
-+		len += scnprintf(buf+len, PAGE_SIZE - len,
- 				"name:\t%s\n",
- 				test_fw_config->name);
- 	else
--		len += snprintf(buf+len, PAGE_SIZE,
-+		len += scnprintf(buf+len, PAGE_SIZE - len,
- 				"name:\tEMTPY\n");
- 
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"num_requests:\t%u\n", test_fw_config->num_requests);
- 
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"send_uevent:\t\t%s\n",
- 			test_fw_config->send_uevent ?
- 			"FW_ACTION_HOTPLUG" :
- 			"FW_ACTION_NOHOTPLUG");
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"sync_direct:\t\t%s\n",
- 			test_fw_config->sync_direct ? "true" : "false");
--	len += snprintf(buf+len, PAGE_SIZE,
-+	len += scnprintf(buf+len, PAGE_SIZE - len,
- 			"read_fw_idx:\t%u\n", test_fw_config->read_fw_idx);
- 
- 	mutex_unlock(&test_fw_mutex);
+ static inline void synchronize_rcu(void)
 
 
