@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5113A7C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59133AAB3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732345AbfFIQxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:53:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54154 "EHLO mail.kernel.org"
+        id S1730442AbfFIQq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732333AbfFIQxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:53:03 -0400
+        id S1730408AbfFIQqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58DC8204EC;
-        Sun,  9 Jun 2019 16:53:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960672081C;
+        Sun,  9 Jun 2019 16:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099182;
-        bh=op1gChslQGxNPa936LUqZEqpWuej5GsHZdQxDraDVkw=;
+        s=default; t=1560098782;
+        bh=DOB7Gu/i1IrhgR/2HX0dobI4dpLhFxiR70LS3rymbao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zWfWQ4eMhjWLSEWUtqE13N30Z8F8+oZ8Z/ZCTEK0xkyDthClvEofe+dHyPGtnNPdn
-         PMOeVr6q/xZyq1n6rTksjBcM48wipe6prYfano6O4A4kVSN0lDcGxPr0XC+kyX+yma
-         nuGHR4UD5kfRXqeJNNa4V1+LGtuHwaHWoUUQKYLw=
+        b=kw/DqYX4Ch9BORFYAb2/c5K1nmyFxnE+Q2hlNFJaJeTusKzHj668vBtU5rNjY/cnD
+         99nxBVPRuJ8iO6lgRhVk1aSeLPc2vycK3ALVr9zwbmcHyDogSOVwQ1Up0fjig9bHiw
+         CtOhziFkSQx8Y0M3NJz1jlL3CXACMNNSdf6Tq1Ls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH 4.9 40/83] tty: serial: msm_serial: Fix XON/XOFF
+        stable@vger.kernel.org, Aaron Liu <aaron.liu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.1 59/70] drm/amdgpu: remove ATPX_DGPU_REQ_POWER_FOR_DISPLAYS check when hotplug-in
 Date:   Sun,  9 Jun 2019 18:42:10 +0200
-Message-Id: <20190609164131.277962861@linuxfoundation.org>
+Message-Id: <20190609164132.419056084@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+From: Aaron Liu <aaron.liu@amd.com>
 
-commit 61c0e37950b88bad590056286c1d766b1f167f4e upstream.
+commit bdb1ccb080dafc1b4224873a5b759ff85a7d1c10 upstream.
 
-When the tty layer requests the uart to throttle, the current code
-executing in msm_serial will trigger "Bad mode in Error Handler" and
-generate an invalid stack frame in pstore before rebooting (that is if
-pstore is indeed configured: otherwise the user shall just notice a
-reboot with no further information dumped to the console).
+In amdgpu_atif_handler, when hotplug event received, remove
+ATPX_DGPU_REQ_POWER_FOR_DISPLAYS check. This bit's check will cause missing
+system resume.
 
-This patch replaces the PIO byte accessor with the word accessor
-already used in PIO mode.
-
-Fixes: 68252424a7c7 ("tty: serial: msm: Support big-endian CPUs")
+Signed-off-by: Aaron Liu <aaron.liu@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/msm_serial.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -868,6 +868,7 @@ static void msm_handle_tx(struct uart_po
- 	struct circ_buf *xmit = &msm_port->uart.state->xmit;
- 	struct msm_dma *dma = &msm_port->tx_dma;
- 	unsigned int pio_count, dma_count, dma_min;
-+	char buf[4] = { 0 };
- 	void __iomem *tf;
- 	int err = 0;
- 
-@@ -877,10 +878,12 @@ static void msm_handle_tx(struct uart_po
- 		else
- 			tf = port->membase + UART_TF;
- 
-+		buf[0] = port->x_char;
-+
- 		if (msm_port->is_uartdm)
- 			msm_reset_dm_count(port, 1);
- 
--		iowrite8_rep(tf, &port->x_char, 1);
-+		iowrite32_rep(tf, buf, 1);
- 		port->icount.tx++;
- 		port->x_char = 0;
- 		return;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -464,8 +464,7 @@ static int amdgpu_atif_handler(struct am
+ 			}
+ 		}
+ 		if (req.pending & ATIF_DGPU_DISPLAY_EVENT) {
+-			if ((adev->flags & AMD_IS_PX) &&
+-			    amdgpu_atpx_dgpu_req_power_for_displays()) {
++			if (adev->flags & AMD_IS_PX) {
+ 				pm_runtime_get_sync(adev->ddev->dev);
+ 				/* Just fire off a uevent and let userspace tell us what to do */
+ 				drm_helper_hpd_irq_event(adev->ddev);
 
 
