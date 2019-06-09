@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF62A3A73C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 548BF3A8B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbfFIQrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46276 "EHLO mail.kernel.org"
+        id S2388430AbfFIRDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:03:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730881AbfFIQrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:47:35 -0400
+        id S2388418AbfFIRD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:03:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A3D42145D;
-        Sun,  9 Jun 2019 16:47:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73E3B20833;
+        Sun,  9 Jun 2019 17:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098854;
-        bh=9lxHmmF1tLB8UR7q4NKCCLTiVUByphdknOQMJDU8YxQ=;
+        s=default; t=1560099807;
+        bh=6c0JvXqW24/fFraJcbdkf9/+JGz+n4y9+ZrlOB6V2lE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b6tlbs39f/BDkiB9NPD4Z5GRO5wK59337+l9ZW+m//5TuSKghPbbyTcWrtsapM2PO
-         25oqDIFI7jZU5yP8AX5KiWBSfz/FzOOpwEhKfcYFIcNCDWBKegL7G0QIdMaKe8k2/Z
-         9ldmNiBpGdgOCFAucSMzgFXxIvgtKBMvjtvUM1PA=
+        b=qXOFsDb7Dxhle7a1+KB0bhYZGdttMhdKXEv8M5vZQUKEPjo3VZh0k+kt7PuuMvxEz
+         QccrBHDCE81NHX8bvF39K0u4qsif+vHj249KRI2HFfgbOo8hkq8/TCAG75VpvkDIqJ
+         hqz/X6TLRDux+mTmQm4UbaIJw9DvOILuUdcYlJA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matteo Croce <mcroce@redhat.com>
-Subject: [PATCH 4.19 13/51] pktgen: do not sleep with the thread lock held.
+        stable@vger.kernel.org,
+        James Hutchinson <jahutchinson99@googlemail.com>,
+        Antti Palosaari <crope@iki.fi>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 172/241] media: m88ds3103: serialize reset messages in m88ds3103_set_frontend
 Date:   Sun,  9 Jun 2019 18:41:54 +0200
-Message-Id: <20190609164127.874060734@linuxfoundation.org>
+Message-Id: <20190609164152.757399090@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +46,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Abeni <pabeni@redhat.com>
+[ Upstream commit 981fbe3da20a6f35f17977453bce7dfc1664d74f ]
 
-[ Upstream commit 720f1de4021f09898b8c8443f3b3e995991b6e3a ]
+Ref: https://bugzilla.kernel.org/show_bug.cgi?id=199323
 
-Currently, the process issuing a "start" command on the pktgen procfs
-interface, acquires the pktgen thread lock and never release it, until
-all pktgen threads are completed. The above can blocks indefinitely any
-other pktgen command and any (even unrelated) netdevice removal - as
-the pktgen netdev notifier acquires the same lock.
+Users are experiencing problems with the DVBSky S960/S960C USB devices
+since the following commit:
 
-The issue is demonstrated by the following script, reported by Matteo:
+9d659ae: ("locking/mutex: Add lock handoff to avoid starvation")
 
-ip -b - <<'EOF'
-	link add type dummy
-	link add type veth
-	link set dummy0 up
-EOF
-modprobe pktgen
-echo reset >/proc/net/pktgen/pgctrl
-{
-	echo rem_device_all
-	echo add_device dummy0
-} >/proc/net/pktgen/kpktgend_0
-echo count 0 >/proc/net/pktgen/dummy0
-echo start >/proc/net/pktgen/pgctrl &
-sleep 1
-rmmod veth
+The device malfunctions after running for an indeterminable period of
+time, and the problem can only be cleared by rebooting the machine.
 
-Fix the above releasing the thread lock around the sleep call.
+It is possible to encourage the problem to surface by blocking the
+signal to the LNB.
 
-Additionally we must prevent racing with forcefull rmmod - as the
-thread lock no more protects from them. Instead, acquire a self-reference
-before waiting for any thread. As a side effect, running
+Further debugging revealed the cause of the problem.
 
-rmmod pktgen
+In the following capture:
+- thread #1325 is running m88ds3103_set_frontend
+- thread #42 is running ts2020_stat_work
 
-while some thread is running now fails with "module in use" error,
-before this patch such command hanged indefinitely.
+a> [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 07 80
+   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 08
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 68 3f
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 08 ff
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 3d
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
+b> [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 07 00
+   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 21
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
+   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 66
+   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
+   [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
+   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
+   [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 60 02 10 0b
+   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
 
-Note: the issue predates the commit reported in the fixes tag, but
-this fix can't be applied before the mentioned commit.
+Two i2c messages are sent to perform a reset in m88ds3103_set_frontend:
 
-v1 -> v2:
- - no need to check for thread existence after flipping the lock,
-   pktgen threads are freed only at net exit time
- -
+  a. 0x07, 0x80
+  b. 0x07, 0x00
 
-Fixes: 6146e6a43b35 ("[PKTGEN]: Removes thread_{un,}lock() macros.")
-Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+However, as shown in the capture, the regmap mutex is being handed over
+to another thread (ts2020_stat_work) in between these two messages.
+
+>From here, the device responds to every i2c message with an 07 message,
+and will only return to normal operation following a power cycle.
+
+Use regmap_multi_reg_write to group the two reset messages, ensuring
+both are processed before the regmap mutex is unlocked.
+
+Signed-off-by: James Hutchinson <jahutchinson99@googlemail.com>
+Reviewed-by: Antti Palosaari <crope@iki.fi>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/pktgen.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/media/dvb-frontends/m88ds3103.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -3065,7 +3065,13 @@ static int pktgen_wait_thread_run(struct
- {
- 	while (thread_is_running(t)) {
+diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
+index d14d075ab1d63..9f0956e739a45 100644
+--- a/drivers/media/dvb-frontends/m88ds3103.c
++++ b/drivers/media/dvb-frontends/m88ds3103.c
+@@ -309,6 +309,9 @@ static int m88ds3103_set_frontend(struct dvb_frontend *fe)
+ 	u16 u16tmp, divide_ratio = 0;
+ 	u32 tuner_frequency, target_mclk;
+ 	s32 s32tmp;
++	static const struct reg_sequence reset_buf[] = {
++		{0x07, 0x80}, {0x07, 0x00}
++	};
  
-+		/* note: 't' will still be around even after the unlock/lock
-+		 * cycle because pktgen_thread threads are only cleared at
-+		 * net exit
-+		 */
-+		mutex_unlock(&pktgen_thread_lock);
- 		msleep_interruptible(100);
-+		mutex_lock(&pktgen_thread_lock);
+ 	dev_dbg(&client->dev,
+ 		"delivery_system=%d modulation=%d frequency=%u symbol_rate=%d inversion=%d pilot=%d rolloff=%d\n",
+@@ -321,11 +324,7 @@ static int m88ds3103_set_frontend(struct dvb_frontend *fe)
+ 	}
  
- 		if (signal_pending(current))
- 			goto signal;
-@@ -3080,6 +3086,10 @@ static int pktgen_wait_all_threads_run(s
- 	struct pktgen_thread *t;
- 	int sig = 1;
+ 	/* reset */
+-	ret = regmap_write(dev->regmap, 0x07, 0x80);
+-	if (ret)
+-		goto err;
+-
+-	ret = regmap_write(dev->regmap, 0x07, 0x00);
++	ret = regmap_multi_reg_write(dev->regmap, reset_buf, 2);
+ 	if (ret)
+ 		goto err;
  
-+	/* prevent from racing with rmmod */
-+	if (!try_module_get(THIS_MODULE))
-+		return sig;
-+
- 	mutex_lock(&pktgen_thread_lock);
- 
- 	list_for_each_entry(t, &pn->pktgen_threads, th_list) {
-@@ -3093,6 +3103,7 @@ static int pktgen_wait_all_threads_run(s
- 			t->control |= (T_STOP);
- 
- 	mutex_unlock(&pktgen_thread_lock);
-+	module_put(THIS_MODULE);
- 	return sig;
- }
- 
+-- 
+2.20.1
+
 
 
