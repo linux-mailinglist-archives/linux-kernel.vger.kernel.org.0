@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F133A763
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D8B43A7DC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbfFIQtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:49:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48492 "EHLO mail.kernel.org"
+        id S1732584AbfFIQyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:54:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729661AbfFIQtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:49:08 -0400
+        id S1732574AbfFIQyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:54:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 004002070B;
-        Sun,  9 Jun 2019 16:49:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA545204EC;
+        Sun,  9 Jun 2019 16:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098948;
-        bh=3snimYtLiW81QvdIBMukURLkhku++669pMJK/Z942Rw=;
+        s=default; t=1560099259;
+        bh=XXAVISAqyT7WLSXlmPvehZaHAV45vUBD1NaiHN9s+Ko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lv5lgMaGMA2j0v1iovgeEDCh5oRmF5isNngFZKzin0BlxI8519IbXtLFJ8sIXXhZg
-         9A7+WrVkdQzPORFMgk7YBBkNjdKsWppPeTbViE+A1ymiFmDw/I/CsxnIkEH26sAg9w
-         t1W54AC9J6JJuvPGlhW9N/NMii/U4QeFUsYEMXfs=
+        b=EryxZZcVAd/wsGZEtoNk1RQh8GDTxNq3xEVe2np6wTiwm2fPWBF6Ci6+d3Rx4IxIt
+         P7AlnvY9QmrO9K3lWTCba3j/Q6HynMPn/6kVc2UGdQMue85hyTDOjvYg75iLQgMMh/
+         hPJKnc1cXQBN6UGmU8IlPrbVMfeBR/vJzNANMpUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Zanoni <paulo.r.zanoni@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.19 47/51] drm/i915/fbc: disable framebuffer compression on GeminiLake
-Date:   Sun,  9 Jun 2019 18:42:28 +0200
-Message-Id: <20190609164130.583496940@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alec Ari <neotheuser@gmail.com>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 59/83] Revert "x86/build: Move _etext to actual end of .text"
+Date:   Sun,  9 Jun 2019 18:42:29 +0200
+Message-Id: <20190609164132.916806087@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,49 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 396dd8143bdd94bd1c358a228a631c8c895a1126 upstream.
+This reverts commit 392bef709659abea614abfe53cf228e7a59876a4.
 
-On many (all?) the Gemini Lake systems we work with, there is frequent
-momentary graphical corruption at the top of the screen, and it seems
-that disabling framebuffer compression can avoid this.
+It seems to cause lots of problems when using the gold linker, and no
+one really needs this at the moment, so just revert it from the stable
+trees.
 
-The ticket was reported 6 months ago and has already affected a
-multitude of users, without any real progress being made. So, lets
-disable framebuffer compression on GeminiLake until a solution is found.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108085
-Fixes: fd7d6c5c8f3e ("drm/i915: enable FBC on gen9+ too")
-Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.11+
-Reviewed-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190423092810.28359-1-jian-hong@endlessm.com
-(cherry picked from commit 1d25724b41fad7eeb2c3058a5c8190d6ece73e08)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Reported-by: Kees Cook <keescook@chromium.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Alec Ari <neotheuser@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_fbc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/vmlinux.lds.S |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_fbc.c
-+++ b/drivers/gpu/drm/i915/intel_fbc.c
-@@ -1267,6 +1267,10 @@ static int intel_sanitize_fbc_option(str
- 	if (!HAS_FBC(dev_priv))
- 		return 0;
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -111,10 +111,10 @@ SECTIONS
+ 		*(.text.__x86.indirect_thunk)
+ 		__indirect_thunk_end = .;
+ #endif
+-	} :text = 0x9090
  
-+	/* https://bugs.freedesktop.org/show_bug.cgi?id=108085 */
-+	if (IS_GEMINILAKE(dev_priv))
-+		return 0;
-+
- 	if (IS_BROADWELL(dev_priv) || INTEL_GEN(dev_priv) >= 9)
- 		return 1;
+-	/* End of text section */
+-	_etext = .;
++		/* End of text section */
++		_etext = .;
++	} :text = 0x9090
+ 
+ 	NOTES :text :note
  
 
 
