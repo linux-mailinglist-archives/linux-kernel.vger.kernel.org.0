@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754CC3A93A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9943A772
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388705AbfFIREu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:04:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
+        id S1731559AbfFIQtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388289AbfFIREs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:48 -0400
+        id S1729533AbfFIQtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C45A6204EC;
-        Sun,  9 Jun 2019 17:04:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8CBA207E0;
+        Sun,  9 Jun 2019 16:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099887;
-        bh=MErpZRocSh2ipP8uyRp8yZBNS4sbDd6GHH8QtIKzUhY=;
+        s=default; t=1560098982;
+        bh=K//TcAw+Y0Cgdhgw467+MLrfiQNDboVwqHwDPfPLT8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z6lWDQUWoSSxSLvhUiNhAY08KAjmgZLu3goM4XWXZFQezC/U6AhVrmkGvRyNUl+28
-         zp3mYlvzN+8qtvfAsEBRbDLsjnW0qoaMgPs9QMVhhnDg6uTyFxo0TjYTLYolXYV2zi
-         EZmGz8pc3j0bZFz5gSZ1DDL/0aP1vwUmd3gdZ/wk=
+        b=0cVCSRUdB0QJ9+7tKwa7f8+/OAETTvgieEdVcrRCXO4CmolQH9RguvADWs+3jS3cP
+         n+EaKaEjQcmv0dSxO5fPf0GTQkhSKZwX2mUcQ51olVpLj5iH9AKC7++HHq/Ct+NClZ
+         QsghT5lFaDvIKRdoP5hXvbRCK+HV6Rd9NloZ3lfE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 203/241] media: smsusb: better handle optional alignment
-Date:   Sun,  9 Jun 2019 18:42:25 +0200
-Message-Id: <20190609164154.243240840@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Subject: [PATCH 4.19 45/51] drm/i915: Fix I915_EXEC_RING_MASK
+Date:   Sun,  9 Jun 2019 18:42:26 +0200
+Message-Id: <20190609164130.400825244@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,72 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit a47686636d84eaec5c9c6e84bd5f96bed34d526d upstream.
+commit d90c06d57027203f73021bb7ddb30b800d65c636 upstream.
 
-Most Siano devices require an alignment for the response.
+This was supposed to be a mask of all known rings, but it is being used
+by execbuffer to filter out invalid rings, and so is instead mapping high
+unused values onto valid rings. Instead of a mask of all known rings,
+we need it to be the mask of all possible rings.
 
-Changeset f3be52b0056a ("media: usb: siano: Fix general protection fault in smsusb")
-changed the logic with gets such aligment, but it now produces a
-sparce warning:
-
-drivers/media/usb/siano/smsusb.c: In function 'smsusb_init_device':
-drivers/media/usb/siano/smsusb.c:447:37: warning: 'in_maxp' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  447 |   dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
-      |                             ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The sparse message itself is bogus, but a broken (or fake) USB
-eeprom could produce a negative value for response_alignment.
-
-So, change the code in order to check if the result is not
-negative.
-
-Fixes: 31e0456de5be ("media: usb: siano: Fix general protection fault in smsusb")
-CC: <stable@vger.kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 549f7365820a ("drm/i915: Enable SandyBridge blitter ring")
+Fixes: de1add360522 ("drm/i915: Decouple execbuf uAPI from internal implementation")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: <stable@vger.kernel.org> # v4.6+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190301140404.26690-21-chris@chris-wilson.co.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/siano/smsusb.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/uapi/drm/i915_drm.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/siano/smsusb.c
-+++ b/drivers/media/usb/siano/smsusb.c
-@@ -391,7 +391,7 @@ static int smsusb_init_device(struct usb
- 	struct smsusb_device_t *dev;
- 	void *mdev;
- 	int i, rc;
--	int in_maxp = 0;
-+	int align = 0;
- 
- 	/* create device object */
- 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
-@@ -409,14 +409,14 @@ static int smsusb_init_device(struct usb
- 
- 		if (desc->bEndpointAddress & USB_DIR_IN) {
- 			dev->in_ep = desc->bEndpointAddress;
--			in_maxp = usb_endpoint_maxp(desc);
-+			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
- 		} else {
- 			dev->out_ep = desc->bEndpointAddress;
- 		}
- 	}
- 
- 	pr_debug("in_ep = %02x, out_ep = %02x\n", dev->in_ep, dev->out_ep);
--	if (!dev->in_ep || !dev->out_ep) {	/* Missing endpoints? */
-+	if (!dev->in_ep || !dev->out_ep || align < 0) {  /* Missing endpoints? */
- 		smsusb_term_device(intf);
- 		return -ENODEV;
- 	}
-@@ -435,7 +435,7 @@ static int smsusb_init_device(struct usb
- 		/* fall-thru */
- 	default:
- 		dev->buffer_size = USB2_BUFFER_SIZE;
--		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
-+		dev->response_alignment = align;
- 
- 		params.flags |= SMS_DEVICE_FAMILY2;
- 		break;
+--- a/include/uapi/drm/i915_drm.h
++++ b/include/uapi/drm/i915_drm.h
+@@ -942,7 +942,7 @@ struct drm_i915_gem_execbuffer2 {
+ 	 * struct drm_i915_gem_exec_fence *fences.
+ 	 */
+ 	__u64 cliprects_ptr;
+-#define I915_EXEC_RING_MASK              (7<<0)
++#define I915_EXEC_RING_MASK              (0x3f)
+ #define I915_EXEC_DEFAULT                (0<<0)
+ #define I915_EXEC_RENDER                 (1<<0)
+ #define I915_EXEC_BSD                    (2<<0)
 
 
