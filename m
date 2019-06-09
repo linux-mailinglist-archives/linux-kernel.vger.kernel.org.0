@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B94C03A72E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04F83A8B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730763AbfFIQrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:47:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45602 "EHLO mail.kernel.org"
+        id S2388420AbfFIRD1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:03:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730735AbfFIQrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:47:05 -0400
+        id S2387792AbfFIRDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:03:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1C22208E3;
-        Sun,  9 Jun 2019 16:47:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ADD7204EC;
+        Sun,  9 Jun 2019 17:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098824;
-        bh=djcMLwIfe/22lcru6QrlwMZ98x837/yYlP/0xOJ48ow=;
+        s=default; t=1560099802;
+        bh=p0eGVAx9DEf+yAbE4wGVkaYf4pxiEFbzlWxBWGIOJm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LgaWbpPpe34bq96A61o1XHKMe08SuGd/BwMp5FrZ1K+ckBRRX4Mno5/dweNjhOJqs
-         aEm6BSet/dLC5j1eBdubwTYHzmyFbA4T4SPyH0HbVsGqC7rP3uAEy/PjjqgzoJWMsg
-         jeU+Allul09M3l8b99S+GxBP1lPwhlXBnFaYOMIk=
+        b=0the2MwAiQ1HMszK+E2vSNyABB/Y3K0/K6RRJNtXQVoaMKr/SatP6QUIPPk0NB4qs
+         limJejdiSa+kPEgt0DqN4AiCf+omiyXUNolXa+2vOP6fqbQsPIF8gwgcZI7hgr6WAV
+         JQ5kZ3XtlhJYSHB7kGucpbTECwwoSa3jFgRevOe4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Hancock <hancock@sedsystems.ca>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 5.1 41/70] i2c: xiic: Add max_read_len quirk
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 170/241] usb: core: Add PM runtime calls to usb_hcd_platform_shutdown
 Date:   Sun,  9 Jun 2019 18:41:52 +0200
-Message-Id: <20190609164130.702915045@linuxfoundation.org>
+Message-Id: <20190609164152.691212874@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Hancock <hancock@sedsystems.ca>
+[ Upstream commit 8ead7e817224d7832fe51a19783cb8fcadc79467 ]
 
-commit 49b809586730a77b57ce620b2f9689de765d790b upstream.
+If ohci-platform is runtime suspended, we can currently get an "imprecise
+external abort" on reboot with ohci-platform loaded when PM runtime
+is implemented for the SoC.
 
-This driver does not support reading more than 255 bytes at once because
-the register for storing the number of bytes to read is only 8 bits. Add
-a max_read_len quirk to enforce this.
+Let's fix this by adding PM runtime support to usb_hcd_platform_shutdown.
 
-This was found when using this driver with the SFP driver, which was
-previously reading all 256 bytes in the SFP EEPROM in one transaction.
-This caused a bunch of hard-to-debug errors in the xiic driver since the
-driver/logic was treating the number of bytes to read as zero.
-Rejecting transactions that aren't supported at least allows the problem
-to be diagnosed more easily.
-
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Reviewed-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-xiic.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/core/hcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/i2c/busses/i2c-xiic.c
-+++ b/drivers/i2c/busses/i2c-xiic.c
-@@ -718,11 +718,16 @@ static const struct i2c_algorithm xiic_a
- 	.functionality = xiic_func,
- };
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 9c4f9b6e57e29..99c146f4b6b51 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -3007,6 +3007,9 @@ usb_hcd_platform_shutdown(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
  
-+static const struct i2c_adapter_quirks xiic_quirks = {
-+	.max_read_len = 255,
-+};
++	/* No need for pm_runtime_put(), we're shutting down */
++	pm_runtime_get_sync(&dev->dev);
 +
- static const struct i2c_adapter xiic_adapter = {
- 	.owner = THIS_MODULE,
- 	.name = DRIVER_NAME,
- 	.class = I2C_CLASS_DEPRECATED,
- 	.algo = &xiic_algorithm,
-+	.quirks = &xiic_quirks,
- };
- 
- 
+ 	if (hcd->driver->shutdown)
+ 		hcd->driver->shutdown(hcd);
+ }
+-- 
+2.20.1
+
 
 
