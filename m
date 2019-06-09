@@ -2,86 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F364E3A2A7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 02:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 318E13A2B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 03:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbfFIAYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 20:24:51 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38074 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbfFIAYu (ORCPT
+        id S1727991AbfFIB0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 21:26:45 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59968 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727703AbfFIB0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 20:24:50 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b11so4203945lfa.5
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Jun 2019 17:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C+3zcOSI20hWPObsiSF7B1jjBYG49CwgDqF3xGgzIQU=;
-        b=M6/au7uo2exz13yab4j92HGMBe2Sel1so7WZYgdfPjfFUlmg4AnsR0s6jvN45DNX58
-         xcHY7SoYl0FpT4CkUJ27HpOCH/RJzHMTqJkbyoIVIoibBFPDgsDW5NYnVpcDaY61EdQl
-         w3KiH/q4apRfu6r9lvRrR8mMgs51CqSIDZUQA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C+3zcOSI20hWPObsiSF7B1jjBYG49CwgDqF3xGgzIQU=;
-        b=jYqrYTNN1yVtIEZhTYkB9HdjFatIv0nDFNdZp+z8F8SjrIDNkE6vISWJsjKG5sfjpZ
-         2uAOjC7iMbaStuwPIPYWYHya79iBHFVQ3mv3KsKD9N3Ob4VjGUxXzHOYpurixmQjKRY+
-         3JfPvR1eG5+hGARhF6Nj7Dgx7KucmtfUX657hGHxzOUGTRGit7lWYV2stZ5GnB+Hc3pN
-         NGRIKaFHy6TS4kzHbN66rIwCvkdqCpSlrrMu0TL2oa7R/2wA8F5J5xm7HYOBjI7WTbSc
-         g+EGHXNA+DBA9mAP/z0D6A5YA9w7wo5rpMXBt2jVXDBS8JAwCcLoburGBbV9yWDmnlIQ
-         3Gnw==
-X-Gm-Message-State: APjAAAWXolRx9zrdEEW0TgZFpqVVxGh4EIkkWxvlk/sxXcv7eFE7CFwG
-        J63WQPgdD/QW5FuEN3wIQLFHjYcTTOZO+/YWkz2eZw==
-X-Google-Smtp-Source: APXvYqxU+OT1uWDz7nkETUEqMZYXLiVx/x180wwDd6Ktooa9SgHChUhVWFH1dwj7zzwpu547W9epz4o3kPlTY8SMaog=
-X-Received: by 2002:a19:4017:: with SMTP id n23mr33198876lfa.112.1560039888556;
- Sat, 08 Jun 2019 17:24:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAEXW_YTzUsT8xCD=vkSR=mT+L7ot7tCESTWYVqNt_3SQeVDUEA@mail.gmail.com>
- <20190531135051.GL28207@linux.ibm.com> <CAEXW_YReo2juN8A3CF+CKv8PcN_cH23gYWkLfkOJQqignyx85g@mail.gmail.com>
-In-Reply-To: <CAEXW_YReo2juN8A3CF+CKv8PcN_cH23gYWkLfkOJQqignyx85g@mail.gmail.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Sat, 8 Jun 2019 20:24:36 -0400
-Message-ID: <CAEXW_YT93U4OAVUggkR7E3KV2m7pdVwG-r+x6zjtrGzortvc4w@mail.gmail.com>
-Subject: Re: Question about cacheline bounching with percpu-rwsem and rcu-sync
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, rcu <rcu@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 8 Jun 2019 21:26:44 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id D3B5327AF4; Sat,  8 Jun 2019 21:26:42 -0400 (EDT)
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     "Michael Schmitz" <schmitzmic@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Message-Id: <4f1de194d0d8fdca36f0f7e90ced7bc5fe1f78f6.1560043151.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1560043151.git.fthain@telegraphics.com.au>
+References: <cover.1560043151.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH v2 4/7] scsi: mac_scsi: Increase PIO/PDMA transfer length
+ threshold
+Date:   Sun, 09 Jun 2019 11:19:11 +1000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 10:43 AM Joel Fernandes <joel@joelfernandes.org> wrote:
-[snip]
-> >
-> > Either way, it would be good for you to just try it.  Create a kernel
-> > module or similar than hammers on percpu_down_read() and percpu_up_read(),
-> > and empirically check the scalability on a largish system.  Then compare
-> > this to down_read() and up_read()
->
-> Will do! thanks.
+Some targets introduce delays when handshaking the response to certain
+commands. For example, a disk may send a 96-byte response to an INQUIRY
+command (or a 24-byte response to a MODE SENSE command) too slowly.
 
-I created a test for this and the results are quite amazing just
-stressed read lock/unlock for rwsem vs percpu-rwsem.
-The test is conducted on a dual socket Intel x86_64 machine with 14
-cores each socket.
+Apparently the first 12 or 14 bytes are handshaked okay but then the
+system bus error timeout is reached while transferring the next word.
 
-Test runs 10,000,000 loops of rwsem vs percpu-rwsem:
-https://github.com/joelagnel/linux-kernel/commit/8fe968116bd887592301179a53b7b3200db84424
+Since the scsi bus phase hasn't changed, the driver then sets the target
+borken flag to prevent further PDMA transfers. The driver also logs the
+warning, "switching to slow handshake".
 
-Graphs/Results here:
-https://docs.google.com/spreadsheets/d/1cbVLNK8tzTZNTr-EDGDC0T0cnFCdFK3wg2Foj5-Ll9s/edit?usp=sharing
+Raise the PDMA threshold to 512 bytes so that PIO transfers will be used
+for these commands. This default is sufficiently low that PDMA will still
+be used for READ and WRITE commands.
 
-The completion time of the test goes up somewhat exponentially with
-the number of threads, for the rwsem case, where as for percpu-rwsem
-it is the same. I could add this data to some of the documentation as
-well.
+The existing threshold (16 bytes) was chosen more or less at random.
+However, best performance requires the threshold to be as low as possible.
+Those systems that don't need the PIO workaround at all may benefit from
+mac_scsi.setup_use_pdma=1
 
-Thanks!
+Cc: Michael Schmitz <schmitzmic@gmail.com>
+Cc: stable@vger.kernel.org # v4.14+
+Fixes: 3a0f64bfa907 ("mac_scsi: Fix pseudo DMA implementation")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/scsi/mac_scsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- - Joel
+diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
+index 8b4b5b1a13d7..ba1afcaadae8 100644
+--- a/drivers/scsi/mac_scsi.c
++++ b/drivers/scsi/mac_scsi.c
+@@ -52,7 +52,7 @@ static int setup_cmd_per_lun = -1;
+ module_param(setup_cmd_per_lun, int, 0);
+ static int setup_sg_tablesize = -1;
+ module_param(setup_sg_tablesize, int, 0);
+-static int setup_use_pdma = -1;
++static int setup_use_pdma = 512;
+ module_param(setup_use_pdma, int, 0);
+ static int setup_hostid = -1;
+ module_param(setup_hostid, int, 0);
+@@ -305,7 +305,7 @@ static int macscsi_dma_xfer_len(struct NCR5380_hostdata *hostdata,
+                                 struct scsi_cmnd *cmd)
+ {
+ 	if (hostdata->flags & FLAG_NO_PSEUDO_DMA ||
+-	    cmd->SCp.this_residual < 16)
++	    cmd->SCp.this_residual < setup_use_pdma)
+ 		return 0;
+ 
+ 	return cmd->SCp.this_residual;
+-- 
+2.21.0
+
