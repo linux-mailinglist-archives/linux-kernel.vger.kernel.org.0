@@ -2,60 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C117C3A538
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 974F93A52C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfFILv6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 9 Jun 2019 07:51:58 -0400
-Received: from smtp1.fsid.cvut.cz ([147.32.160.38]:51461 "EHLO ns.fsid.cvut.cz"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728161AbfFILv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 07:51:57 -0400
-X-Greylist: delayed 653 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 07:51:56 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by ns.fsid.cvut.cz (Postfix) with ESMTP id A4B8E1C797D;
-        Sun,  9 Jun 2019 13:38:47 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at ns.fsid.cvut.cz
-X-Spam-Flag: NO
-X-Spam-Score: -0.803
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.803 tagged_above=-999 required=6.31
-        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, FREEMAIL_FORGED_REPLYTO=2.095,
-        HK_NAME_MR_MRS=0.001, URIBL_BLOCKED=0.001]
-        autolearn=no autolearn_force=no
-Received: from ns.fsid.cvut.cz ([127.0.0.1])
-        by localhost (ns.fsid.cvut.cz [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 50LayrgUtfxi; Sun,  9 Jun 2019 13:38:45 +0200 (CEST)
-Received: from [192.168.1.44] (unknown [88.233.187.201])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by ns.fsid.cvut.cz (Postfix) with ESMTPSA id 55B131C6DA3;
-        Sun,  9 Jun 2019 13:36:46 +0200 (CEST)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1728317AbfFILpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 07:45:05 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:10492 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727362AbfFILpF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 07:45:05 -0400
+Date:   Sun, 09 Jun 2019 11:45:01 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1560080703;
+        bh=HL7LoVvwB0aVczjHrWD4QNIe5nbU0sOulYb252FZMaQ=;
+        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
+        b=HMh18gl1/JscquEnaQTr8HZXuQyJp7YrF7pb7NJTOE9YSg3ylRdWxL4A/UVGdKc/l
+         ZB6kpNsnWr1MYRLoYsPOMK0QqXuXuRNCb0pYNTsakn0f/2hjOMEeguxzQ+ATEV7ycL
+         pKZKi5Rg3iNCPmLtzTZNUU6XyhvpxK9oT/ABBNyg=
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Subject: Re: Oex
+Message-ID: <tZ0ZmCNF-Ywz2hr3YpDnjKDPBSm-MJ1JnNG6bUhHjErPFtkFMbNHlAGE5ghATMgzIGI67qWDFwgP49bUa-8bUYyt8iHJyRK7BQtmG6Z0Mfw=@protonmail.com>
+Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Donation for you
-To:     Recipients <info@mccme.ru>
-From:   "Mr. Harold Diamond" <info@mccme.ru>
-Date:   Sun, 09 Jun 2019 04:36:41 -0700
-Reply-To: harolddiamondgives@gmail.com
-X-Antivirus: Avast (VPS 190608-0, 06/07/2019), Outbound message
-X-Antivirus-Status: Clean
-Message-Id: <20190609113646.55B131C6DA3@ns.fsid.cvut.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+And the more enligthened of you may be interested in my project about reali=
+zing the z=C3=A9n-concept I use.
 
-Donation for you, reply back for more information on how to get it.
-
-Signed,
-Harold Diamond.
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+https://www.youtube.com/channel/UCXt31evVH11u8IzD4e3923Q
 
