@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5275B3A8DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:05:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DD93A7A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbfFIRFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
+        id S1731977AbfFIQvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:51:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387698AbfFIRFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:05:02 -0400
+        id S1731955AbfFIQvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:51:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39510204EC;
-        Sun,  9 Jun 2019 17:05:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 545842070B;
+        Sun,  9 Jun 2019 16:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099901;
-        bh=0CDsZGJsbvenEgYhZqeAPddmeN3X4HrfnFrWCK1XvY4=;
+        s=default; t=1560099091;
+        bh=XbF+Fbw0YUo7hx0ywMUR4QLETQp349Wrkcg+6+6D23A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gj/ygOtb7m9KpzhETuPUSnLI7ZJjBZdiXl5HQEtnX+MTZbmt7iwAMiB9BIls9QU3/
-         QoEl9AKv84MdB+FWbg1w4DYMR0DemLKS7JikEEtvSKDAHG0R4vC9746cMiliIcGa9z
-         ceK/XPSx4xRyUiRubjjzjKfot8WvNUNCZNim6u8E=
+        b=TLgotTfFn1r9O9a71eImyg1Cxw79OAIdCAh524AfqUz2jyvNXVfFwP1XE3F7pjfX/
+         hvs/ke/2VgnVMu+Iis4ZNhhgePNtDvc5OjPOHJfnm2yddeV6mneKruIzy2DFUANyNt
+         TCj8TJRpNwHca/tgIRTi6RquNNtUfQwsJsGbdBnw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 207/241] ALSA: hda/realtek - Set default power save node to 0
-Date:   Sun,  9 Jun 2019 18:42:29 +0200
-Message-Id: <20190609164154.623282378@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.14 24/35] genwqe: Prevent an integer overflow in the ioctl
+Date:   Sun,  9 Jun 2019 18:42:30 +0200
+Message-Id: <20190609164126.953325734@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 317d9313925cd8388304286c0d3c8dda7f060a2d upstream.
+commit 110080cea0d0e4dfdb0b536e7f8a5633ead6a781 upstream.
 
-I measured power consumption between power_save_node=1 and power_save_node=0.
-It's almost the same.
-Codec will enter to runtime suspend and suspend.
-That pin also will enter to D3. Don't need to enter to D3 by single pin.
-So, Disable power_save_node as default. It will avoid more issues.
-Windows Driver also has not this option at runtime PM.
+There are a couple potential integer overflows here.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+
+The first thing is that the "m->size + (...)" addition could overflow,
+and the second is that round_up() overflows to zero if the result is
+within PAGE_SIZE of the type max.
+
+In this code, the "m->size" variable is an u64 but we're saving the
+result in "map_size" which is an unsigned long and genwqe_user_vmap()
+takes an unsigned long as well.  So I have used ULONG_MAX as the upper
+bound.  From a practical perspective unsigned long is fine/better than
+trying to change all the types to u64.
+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/genwqe/card_dev.c   |    2 ++
+ drivers/misc/genwqe/card_utils.c |    4 ++++
+ 2 files changed, 6 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6236,7 +6236,7 @@ static int patch_alc269(struct hda_codec
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -782,6 +782,8 @@ static int genwqe_pin_mem(struct genwqe_
  
- 	spec = codec->spec;
- 	spec->gen.shared_mic_vref_pin = 0x18;
--	codec->power_save_node = 1;
-+	codec->power_save_node = 0;
+ 	if ((m->addr == 0x0) || (m->size == 0))
+ 		return -EINVAL;
++	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
++		return -EINVAL;
  
- #ifdef CONFIG_PM
- 	codec->patch_ops.suspend = alc269_suspend;
+ 	map_addr = (m->addr & PAGE_MASK);
+ 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -582,6 +582,10 @@ int genwqe_user_vmap(struct genwqe_dev *
+ 	/* determine space needed for page_list. */
+ 	data = (unsigned long)uaddr;
+ 	offs = offset_in_page(data);
++	if (size > ULONG_MAX - PAGE_SIZE - offs) {
++		m->size = 0;	/* mark unused and not added */
++		return -EINVAL;
++	}
+ 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
+ 
+ 	m->page_list = kcalloc(m->nr_pages,
 
 
