@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD783A76A
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E59D53AA57
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:18:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbfFIQta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:49:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48980 "EHLO mail.kernel.org"
+        id S1731987AbfFIQvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731458AbfFIQt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:49:29 -0400
+        id S1731967AbfFIQvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:51:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 899DD20840;
-        Sun,  9 Jun 2019 16:49:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5254120840;
+        Sun,  9 Jun 2019 16:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098968;
-        bh=1c+o3/7V0O751Ht5MWn9iPWJGyCBzUlkNbK9RaDe2H8=;
+        s=default; t=1560099094;
+        bh=GLP0+RZM/cxX0XznA1xTTCFuzjQJbaxieRi83J0s7pk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DdE3Qtd4EdvzdDZmPhm5oCWqAHBX/uR5dAjtlonLzimXM/4Z1mhUUm8EJ9d2vYbjD
-         B2Dd3wE9kSukvjXEb7EnQrzzZpjPuYqMZ/hoGarb8CQnLD6g9c83iwjwy1t54MJVTN
-         y3Iit+vftbhM0OVRuh81uKUcHvq6ClNu8gFYSbcM=
+        b=gf1l9MH6D4HOItikrQV9jRMuRDQRGTlPzkZ5pFiyJi68IqMfO8eZp8ZPghsiXe9WH
+         fkBIGeyt/PhvAJjjG/r9lUWdc5JVZkLTOMPVJmf74l64RJVG/vdkinWga0wheznNAj
+         kYHKlbKQRvMPFtZtRCVgvSu66Gtg0zDrQyxTJ0Ck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.19 40/51] drm/nouveau: add kconfig option to turn off nouveau legacy contexts. (v3)
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 15/35] fuse: fallocate: fix return with locked inode
 Date:   Sun,  9 Jun 2019 18:42:21 +0200
-Message-Id: <20190609164129.889291936@linuxfoundation.org>
+Message-Id: <20190609164126.383573160@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,112 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Airlie <airlied@redhat.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit b30a43ac7132cdda833ac4b13dd1ebd35ace14b7 upstream.
+commit 35d6fcbb7c3e296a52136347346a698a35af3fda upstream.
 
-There was a nouveau DDX that relied on legacy context ioctls to work,
-but we fixed it years ago, give distros that have a modern DDX the
-option to break the uAPI and close the mess of holes that legacy
-context support is.
+Do the proper cleanup in case the size check fails.
 
-Full context of the story:
+Tested with xfstests:generic/228
 
-commit 0e975980d435d58df2d430d688b8c18778b42218
-Author: Peter Antoine <peter.antoine@intel.com>
-Date:   Tue Jun 23 08:18:49 2015 +0100
-
-    drm: Turn off Legacy Context Functions
-
-    The context functions are not used by the i915 driver and should not
-    be used by modeset drivers. These driver functions contain several bugs
-    and security holes. This change makes these functions optional can be
-    turned on by a setting, they are turned off by default for modeset
-    driver with the exception of the nouvea driver that may require them with
-    an old version of libdrm.
-
-    The previous attempt was
-
-    commit 7c510133d93dd6f15ca040733ba7b2891ed61fd1
-    Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-    Date:   Thu Aug 8 15:41:21 2013 +0200
-
-        drm: mark context support as a legacy subsystem
-
-    but this had to be reverted
-
-    commit c21eb21cb50d58e7cbdcb8b9e7ff68b85cfa5095
-    Author: Dave Airlie <airlied@redhat.com>
-    Date:   Fri Sep 20 08:32:59 2013 +1000
-
-        Revert "drm: mark context support as a legacy subsystem"
-
-    v2: remove returns from void function, and formatting (Daniel Vetter)
-
-    v3:
-    - s/Nova/nouveau/ in the commit message, and add references to the
-      previous attempts
-    - drop the part touching the drm hw lock, that should be a separate
-      patch.
-
-    Signed-off-by: Peter Antoine <peter.antoine@intel.com> (v2)
-    Cc: Peter Antoine <peter.antoine@intel.com> (v2)
-    Reviewed-by: Peter Antoine <peter.antoine@intel.com>
-    Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-v2: move DRM_VM dependency into legacy config.
-v3: fix missing dep (kbuild robot)
-
-Cc: stable@vger.kernel.org
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 0cbade024ba5 ("fuse: honor RLIMIT_FSIZE in fuse_file_fallocate")
+Cc: Liu Bo <bo.liu@linux.alibaba.com>
+Cc: <stable@vger.kernel.org> # v3.5
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/Kconfig       |   13 ++++++++++++-
- drivers/gpu/drm/nouveau/nouveau_drm.c |    7 +++++--
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ fs/fuse/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/Kconfig
-+++ b/drivers/gpu/drm/nouveau/Kconfig
-@@ -16,10 +16,21 @@ config DRM_NOUVEAU
- 	select INPUT if ACPI && X86
- 	select THERMAL if ACPI && X86
- 	select ACPI_VIDEO if ACPI && X86
--	select DRM_VM
- 	help
- 	  Choose this option for open-source NVIDIA support.
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2978,7 +2978,7 @@ static long fuse_file_fallocate(struct f
+ 	    offset + length > i_size_read(inode)) {
+ 		err = inode_newsize_ok(inode, offset + length);
+ 		if (err)
+-			return err;
++			goto out;
+ 	}
  
-+config NOUVEAU_LEGACY_CTX_SUPPORT
-+	bool "Nouveau legacy context support"
-+	depends on DRM_NOUVEAU
-+	select DRM_VM
-+	default y
-+	help
-+	  There was a version of the nouveau DDX that relied on legacy
-+	  ctx ioctls not erroring out. But that was back in time a long
-+	  ways, so offer a way to disable it now. For uapi compat with
-+	  old nouveau ddx this should be on by default, but modern distros
-+	  should consider turning it off.
-+
- config NOUVEAU_PLATFORM_DRIVER
- 	bool "Nouveau (NVIDIA) SoC GPUs"
- 	depends on DRM_NOUVEAU && ARCH_TEGRA
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1015,8 +1015,11 @@ nouveau_driver_fops = {
- static struct drm_driver
- driver_stub = {
- 	.driver_features =
--		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER |
--		DRIVER_KMS_LEGACY_CONTEXT,
-+		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER
-+#if defined(CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT)
-+		| DRIVER_KMS_LEGACY_CONTEXT
-+#endif
-+		,
- 
- 	.load = nouveau_drm_load,
- 	.unload = nouveau_drm_unload,
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE))
 
 
