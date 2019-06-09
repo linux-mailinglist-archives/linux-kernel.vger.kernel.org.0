@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D07423A8D7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0BB3A76E
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388093AbfFIREw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:04:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43632 "EHLO mail.kernel.org"
+        id S1731540AbfFIQtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388670AbfFIREp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:45 -0400
+        id S1731519AbfFIQth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39A64206C3;
-        Sun,  9 Jun 2019 17:04:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4847F20833;
+        Sun,  9 Jun 2019 16:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099884;
-        bh=A7eutUFKo6yo83oVU/tFlirD2+eZz5kRU4Rm7mtouf4=;
+        s=default; t=1560098976;
+        bh=N0Kw7vsq9JuxlQeOCDHpr+EA5dFjOJ5sWSKiUb2/ml4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KAF7DL4PC08FzmUyTURjFlfAeBIA74REuUZdI9QYSUt+a0oqM12x7hjsK1zycMRK5
-         D+ZyFv/vA9OH8xXjSN4sCOdSqMu4DAeO0Y47TU9bdwPHTgLNW/xU7k5W3i5Fe1J+Wz
-         wEScUxDNskapcU5ohIc0uNovpM0NVnQz2+ZqvMT8=
+        b=FibDr2eIhYKR15LIX5y185G8PcC0UajvzHcOIZ6/bRfQyVIhmQjmfu4HPCvh3Kqah
+         zTpmrrJSSGqjUXSWpnGFMzCf0uLFpx7WSb8TrUO/7I2my4PBBj6S++fYzCaQQyswGI
+         moOse/MG5jt/F/9JC8akwwcBJtQCLmFBl55tLgbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH 4.4 202/241] media: usb: siano: Fix false-positive "uninitialized variable" warning
+        stable@vger.kernel.org, Paul Dufresne <dufresnep@gmail.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 43/51] drm/radeon: prefer lower reference dividers
 Date:   Sun,  9 Jun 2019 18:42:24 +0200
-Message-Id: <20190609164154.178300270@linuxfoundation.org>
+Message-Id: <20190609164130.191475090@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Christian König <christian.koenig@amd.com>
 
-commit 45457c01171fd1488a7000d1751c06ed8560ee38 upstream.
+commit 2e26ccb119bde03584be53406bbd22e711b0d6e6 upstream.
 
-GCC complains about an apparently uninitialized variable recently
-added to smsusb_init_device().  It's a false positive, but to silence
-the warning this patch adds a trivial initialization.
+Instead of the closest reference divider prefer the lowest,
+this fixes flickering issues on HP Compaq nx9420.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: kbuild test robot <lkp@intel.com>
-CC: <stable@vger.kernel.org>
+Bugs: https://bugs.freedesktop.org/show_bug.cgi?id=108514
+Suggested-by: Paul Dufresne <dufresnep@gmail.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/siano/smsusb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_display.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/siano/smsusb.c
-+++ b/drivers/media/usb/siano/smsusb.c
-@@ -391,7 +391,7 @@ static int smsusb_init_device(struct usb
- 	struct smsusb_device_t *dev;
- 	void *mdev;
- 	int i, rc;
--	int in_maxp;
-+	int in_maxp = 0;
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -921,12 +921,12 @@ static void avivo_get_fb_ref_div(unsigne
+ 	ref_div_max = max(min(100 / post_div, ref_div_max), 1u);
  
- 	/* create device object */
- 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+ 	/* get matching reference and feedback divider */
+-	*ref_div = min(max(DIV_ROUND_CLOSEST(den, post_div), 1u), ref_div_max);
++	*ref_div = min(max(den/post_div, 1u), ref_div_max);
+ 	*fb_div = DIV_ROUND_CLOSEST(nom * *ref_div * post_div, den);
+ 
+ 	/* limit fb divider to its maximum */
+ 	if (*fb_div > fb_div_max) {
+-		*ref_div = DIV_ROUND_CLOSEST(*ref_div * fb_div_max, *fb_div);
++		*ref_div = (*ref_div * fb_div_max)/(*fb_div);
+ 		*fb_div = fb_div_max;
+ 	}
+ }
 
 
