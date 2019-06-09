@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53583A8D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACEFB3A76C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388665AbfFIREj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43458 "EHLO mail.kernel.org"
+        id S1731513AbfFIQte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388631AbfFIREg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:36 -0400
+        id S1731458AbfFIQtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84A93207E0;
-        Sun,  9 Jun 2019 17:04:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A4CA2081C;
+        Sun,  9 Jun 2019 16:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099876;
-        bh=wM8+B39AJFJBYFNNMwIZM79LNZKa3Xj6rCHc923s3GE=;
+        s=default; t=1560098971;
+        bh=2fcdwPav0b+daDdMQZAj1lg9khaMKU8brF9jrKOJOdc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nc/gk+fBC4hFqSyGP4PzH2kKh3ITMNGYJMMXLF2fyZHNCuMu5oPDED696w6b/b97W
-         Z+5IzJr5Mcc77FXWqowqL+IWGK98ZLhfkPptHP2AoAXG1gEclcbqHS3YWQLNSEp5Gt
-         mL7U8GAOgWkUmMRlZ6dH/uUj7aSmDiIw0662xpt8=
+        b=qXmco7zxPjvkNIAV3FpFsjM4PTal0SQ48Qe2WPus5pBBgSx1DMBSqWZFjBlj+atcQ
+         8rVwpi4eWo6aqUPQb94fMNt4GnKQXgXEwg7hwWWQDqfGRHkoV87OV79tUaEeKJl/yM
+         Ue6Z1Zxcyf/PnN1lZzWpwYAb1t1cHBqCHcl988yM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 199/241] USB: rio500: refuse more than one device at a time
-Date:   Sun,  9 Jun 2019 18:42:21 +0200
-Message-Id: <20190609164153.742125073@linuxfoundation.org>
+        stable@vger.kernel.org, Ryan Pavlik <ryan.pavlik@collabora.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 4.19 41/51] drm: add non-desktop quirks to Sensics and OSVR headsets.
+Date:   Sun,  9 Jun 2019 18:42:22 +0200
+Message-Id: <20190609164129.993540122@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,83 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Ryan Pavlik <ryan.pavlik@collabora.com>
 
-commit 3864d33943b4a76c6e64616280e98d2410b1190f upstream.
+commit 29054230f3e11ea818eccfa7bb4e4b3e89544164 upstream.
 
-This driver is using a global variable. It cannot handle more than
-one device at a time. The issue has been existing since the dawn
-of the driver.
+Add two EDID vendor/product pairs used across a variety of
+Sensics products, as well as the OSVR HDK and HDK 2.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Ryan Pavlik <ryan.pavlik@collabora.com>
+Signed-off-by: Daniel Stone <daniels@collabora.com>
+Reviewed-by: Daniel Stone <daniels@collabora.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181203164644.13974-1-ryan.pavlik@collabora.com
+Cc: <stable@vger.kernel.org> # v4.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/rio500.c |   24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_edid.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/misc/rio500.c
-+++ b/drivers/usb/misc/rio500.c
-@@ -464,15 +464,23 @@ static int probe_rio(struct usb_interfac
- {
- 	struct usb_device *dev = interface_to_usbdev(intf);
- 	struct rio_usb_data *rio = &rio_instance;
--	int retval;
-+	int retval = 0;
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -212,6 +212,12 @@ static const struct edid_quirk {
  
--	dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
-+	mutex_lock(&rio500_mutex);
-+	if (rio->present) {
-+		dev_info(&intf->dev, "Second USB Rio at address %d refused\n", dev->devnum);
-+		retval = -EBUSY;
-+		goto bail_out;
-+	} else {
-+		dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
-+	}
+ 	/* Sony PlayStation VR Headset */
+ 	{ "SNY", 0x0704, EDID_QUIRK_NON_DESKTOP },
++
++	/* Sensics VR Headsets */
++	{ "SEN", 0x1019, EDID_QUIRK_NON_DESKTOP },
++
++	/* OSVR HDK and HDK2 VR Headsets */
++	{ "SVR", 0x1019, EDID_QUIRK_NON_DESKTOP },
+ };
  
- 	retval = usb_register_dev(intf, &usb_rio_class);
- 	if (retval) {
- 		dev_err(&dev->dev,
- 			"Not able to get a minor for this device.\n");
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 
- 	rio->rio_dev = dev;
-@@ -481,7 +489,8 @@ static int probe_rio(struct usb_interfac
- 		dev_err(&dev->dev,
- 			"probe_rio: Not enough memory for the output buffer\n");
- 		usb_deregister_dev(intf, &usb_rio_class);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 	dev_dbg(&intf->dev, "obuf address:%p\n", rio->obuf);
- 
-@@ -490,7 +499,8 @@ static int probe_rio(struct usb_interfac
- 			"probe_rio: Not enough memory for the input buffer\n");
- 		usb_deregister_dev(intf, &usb_rio_class);
- 		kfree(rio->obuf);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 	dev_dbg(&intf->dev, "ibuf address:%p\n", rio->ibuf);
- 
-@@ -498,8 +508,10 @@ static int probe_rio(struct usb_interfac
- 
- 	usb_set_intfdata (intf, rio);
- 	rio->present = 1;
-+bail_out:
-+	mutex_unlock(&rio500_mutex);
- 
--	return 0;
-+	return retval;
- }
- 
- static void disconnect_rio(struct usb_interface *intf)
+ /*
 
 
