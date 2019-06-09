@@ -2,92 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B693A959
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7508F3AAE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbfFIRJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:09:36 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42273 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388549AbfFIRJd (ORCPT
+        id S1729254AbfFIRZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:25:33 -0400
+Received: from mail177-30.suw61.mandrillapp.com ([198.2.177.30]:55644 "EHLO
+        mail177-30.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728970AbfFIRZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:09:33 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t28so5793875lje.9
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 10:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LznUc87kOzY43gG7GqM3uuB+dRBgbcnhswA/OnlhqSI=;
-        b=iRanUUu1JtHll99gtTKBlOGAMCDt8WvFcIqAZrrJoVIxcg56HvmrRG2hEUVZqosEjY
-         Oo/YhOn8KaZV9XTNdFolb091lW/+VrIJnibQnj14x2yT0UPHDUY9fUAS8dH0V29tW1xf
-         4O7Dxvd4my18SNZvsB/sjKMXcE6cuvl8yNyVGZ7mtOyIm49EjP9YQDirCIdYKf0Np0Pg
-         MAaGRfC/jvONh+OhXxtd+P8/856HGdn3/Rdjn3LcGBLXLtwRnF2kScbn9d0+BeW8603f
-         tWAzG7rkKyEwSwXhJTmaL6qfX27aB65/m9HS9p6eTNEmC4sY6bDEK9zVR+klP5E/Vaq4
-         jPfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LznUc87kOzY43gG7GqM3uuB+dRBgbcnhswA/OnlhqSI=;
-        b=ExMdGjnloVakWolK4B0Redvj2UBzWlm13KuBOBJ0IXoUkt4CBt16rb5C5ViFWreq+d
-         58MFgTIwA7GigLUhd4fbyZGXOugOvCMHSJqiFdz1nrkxm0BjOe+KcIoYt69XHIcmqEmw
-         uhwFZnpImi6ushc+ZuilRnGaYWHwkg8Lgc6UoO23LwPQeOKnSXTnLf40U9Fdzs+goFPQ
-         O8OT5g09OJJ260yBlYN4ekCjPlqEiwrpyyd0OweUp/R26ZaCbYPV7EzMI3njp4wePFd8
-         8txhumayw8ehpidcqT1aqncT0WUpwswzgkEM2x9D+3TYlwa5hsxFD+T8lFBuBR6H41qs
-         Lc4Q==
-X-Gm-Message-State: APjAAAWkoVljjDQObND9+uEbekeapPSJFea7WLSv6JjsPxJM4P3DTx8d
-        zGYdWaVhTHkYnD8IRHojQ+U=
-X-Google-Smtp-Source: APXvYqxBPS20PyWYhWunBvHAxE3Ys+hxIXMtjHYOBfOTkjSdU2FCtQMlvCeRqA75p0u3fD1jWFjOTA==
-X-Received: by 2002:a2e:8195:: with SMTP id e21mr12057526ljg.62.1560100171209;
-        Sun, 09 Jun 2019 10:09:31 -0700 (PDT)
-Received: from esperanza ([176.120.239.149])
-        by smtp.gmail.com with ESMTPSA id u18sm396497ljj.32.2019.06.09.10.09.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Jun 2019 10:09:30 -0700 (PDT)
-Date:   Sun, 9 Jun 2019 20:09:28 +0300
-From:   Vladimir Davydov <vdavydov.dev@gmail.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v6 09/10] mm: stop setting page->mem_cgroup pointer for
- slab pages
-Message-ID: <20190609170928.wetyjpueslcj3qft@esperanza>
-References: <20190605024454.1393507-1-guro@fb.com>
- <20190605024454.1393507-10-guro@fb.com>
+        Sun, 9 Jun 2019 13:25:33 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 13:25:31 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=03p0EHZFqTozGokUZcGA+xQpyWGasJEVs73vt6q7z5Q=;
+ b=cX5b7KdohDalO3HKYP2QPt4oEJS86bRMGBFUMQYOgjM7SwjvvLU9UGOaZENd4IOc+jFDQcrtl7HL
+   9YtTXV+H7zoiPMpTDG6SSW9xJgjsPpqttLE8BzFJ7vZY8gT5v1CmCj5bfDIjldcQQWLKncXB4BAw
+   udUEI3AnT/qMDWsLDmQ=
+Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-30.suw61.mandrillapp.com id hvl0go22rtk1 for <linux-kernel@vger.kernel.org>; Sun, 9 Jun 2019 17:10:28 +0000 (envelope-from <bounce-md_31050260.5cfd3d84.v1-df138bef05124a3cb53ab538cffbb548@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560100228; h=From : 
+ Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=03p0EHZFqTozGokUZcGA+xQpyWGasJEVs73vt6q7z5Q=; 
+ b=GNp2YFGKIFHN28miMnLIeeGP1iQeSgvBV3e6DAB2/P7s90biBRW5cinrLnrS7ob2M4cOvU
+ 0RqNOWt3zZpep1nviFJjTBpAXwcW4Wv1A1TBKU5Vja/NUH/G3HyiD7HE2AIqUNw6/9f3UTR0
+ YuUFQRIyefZQfn1n8cBpiGnNee/BQ=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: Re: [PATCH 4.14 0/2] Fix FUSE read/write deadlock on stream-like files
+Received: from [87.98.221.171] by mandrillapp.com id df138bef05124a3cb53ab538cffbb548; Sun, 09 Jun 2019 17:10:28 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     <stable@vger.kernel.org>, Sasha Levin <sashal@kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Message-Id: <20190609171020.GA27685@deco.navytux.spb.ru>
+References: <20190609123831.11489-1-kirr@nexedi.com> <20190609163826.GB26671@kroah.com>
+In-Reply-To: <20190609163826.GB26671@kroah.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.df138bef05124a3cb53ab538cffbb548
+X-Mandrill-User: md_31050260
+Date:   Sun, 09 Jun 2019 17:10:28 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605024454.1393507-10-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 07:44:53PM -0700, Roman Gushchin wrote:
-> Every slab page charged to a non-root memory cgroup has a pointer
-> to the memory cgroup and holds a reference to it, which protects
-> a non-empty memory cgroup from being released. At the same time
-> the page has a pointer to the corresponding kmem_cache, and also
-> hold a reference to the kmem_cache. And kmem_cache by itself
-> holds a reference to the cgroup.
+On Sun, Jun 09, 2019 at 06:38:26PM +0200, Greg KH wrote:
+> On Sun, Jun 09, 2019 at 12:39:08PM +0000, Kirill Smelkov wrote:
+> > Hello stable team,
+> > 
+> > Please consider applying the following 2 patches to Linux-4.14 stable
+> > tree. The patches fix regression introduced in 3.14 where both read and
+> > write started to run under lock taken, which resulted in FUSE (and many
+> > other drivers) deadlocks for cases where stream-like files are used with
+> > read and write being run simultaneously.
+> > 
+> > Please see complete problem description in upstream commit 10dce8af3422
+> > ("fs: stream_open - opener for stream-like files so that read and write
+> > can run simultaneously without deadlock").
+> > 
+> > The actual FUSE fix (upstream commit bbd84f33652f "fuse: Add
+> > FOPEN_STREAM to use stream_open()") was merged into 5.2 with `Cc:
+> > stable@vger.kernel.org # v3.14+` mark and is already included into 5.1,
+> > 5.0 and 4.19 stable trees. However for some reason it is not (yet ?)
+> > included into 4.14, 4.9, 4.4, 3.18 and 3.16 trees.
+> > 
+> > The patches fix a real problem into which my FUSE filesystem ran, and
+> > which also likely affects OSSPD (full details are in the patches
+> > description). Please consider including the fixes into 4.14 (as well as
+> > into earlier stable trees - I will send corresponding series separately -
+> > - one per tree).
 > 
-> So there is clearly some redundancy, which allows to stop setting
-> the page->mem_cgroup pointer and rely on getting memcg pointer
-> indirectly via kmem_cache. Further it will allow to change this
-> pointer easier, without a need to go over all charged pages.
+> Many thanks for these.  I've queued up all but the 3.16 patches (those
+> are for Ben).
 > 
-> So let's stop setting page->mem_cgroup pointer for slab pages,
-> and stop using the css refcounter directly for protecting
-> the memory cgroup from going away. Instead rely on kmem_cache
-> as an intermediate object.
-> 
-> Make sure that vmstats and shrinker lists are working as previously,
-> as well as /proc/kpagecgroup interface.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
+> I hadn't done the backport yet, as I didn't know how "severe" this was,
+> and didn't have the time to do it.  Thanks for making it easy :)
 
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+Greg, you are welcome and thanks a lot for feedback and for queueing the
+patches. Ben, looking forward to 3.16 update to care about Jessie.
+
+Thanks again,
+Kirill
