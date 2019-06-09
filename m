@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E11583A7F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0E23A7A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732827AbfFIQzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:55:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57838 "EHLO mail.kernel.org"
+        id S1731957AbfFIQvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:51:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732405AbfFIQzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:55:41 -0400
+        id S1731931AbfFIQv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:51:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0DEE205ED;
-        Sun,  9 Jun 2019 16:55:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAFBF205ED;
+        Sun,  9 Jun 2019 16:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099340;
-        bh=TUjWsTfMduK7v9gPMGJ65AtAY2GrkaAhifPh/vuGr6g=;
+        s=default; t=1560099086;
+        bh=RraCkwXdzglEq/7vdS33A/72ye87OZQO/agCNTF+Lok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zYcesKZ6mgxXVaqektyRTHMvQvuXVzqM5n8Ty2KPo4qnthnWRxpY28JHw9zJQkNHD
-         kiu3k3rYprg3t0v88dCmgTLYF7cSbB6RxIJtvFt1/j4w264uajDRH5ev9EhBpPhz1O
-         A31a0zeO4ZD7l6S23R1XU9j/e0dxvxkKp/uS00Fc=
+        b=Ng24ya3nB0GOPTEqXQNwO8AwRFCw4cHmS6QEN9NpTS9STE//xfMa0ldoSiL7M+QAJ
+         7+CvPVetCiYR8tDnoQk3VB6YDcvgsaNDxWZ3fXrFHwxdZxgq0DOQozzCJqEFPCLPIv
+         HGOuTvLppaluQ60sIvjmbXGCQMU0EiAgHqJQ8pI8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 58/83] mm: make page ref count overflow check tighter and more explicit
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
+        Kevin Hilman <khilman@baylibre.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.14 22/35] MIPS: pistachio: Build uImage.gz by default
 Date:   Sun,  9 Jun 2019 18:42:28 +0200
-Message-Id: <20190609164132.850661394@linuxfoundation.org>
+Message-Id: <20190609164126.812231250@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Paul Burton <paul.burton@mips.com>
 
-commit f958d7b528b1b40c44cfda5eabe2d82760d868c3 upstream.
+commit e4f2d1af7163becb181419af9dece9206001e0a6 upstream.
 
-We have a VM_BUG_ON() to check that the page reference count doesn't
-underflow (or get close to overflow) by checking the sign of the count.
+The pistachio platform uses the U-Boot bootloader & generally boots a
+kernel in the uImage format. As such it's useful to build one when
+building the kernel, but to do so currently requires the user to
+manually specify a uImage target on the make command line.
 
-That's all fine, but we actually want to allow people to use a "get page
-ref unless it's already very high" helper function, and we want that one
-to use the sign of the page ref (without triggering this VM_BUG_ON).
+Make uImage.gz the pistachio platform's default build target, so that
+the default is to build a kernel image that we can actually boot on a
+board such as the MIPS Creator Ci40.
 
-Change the VM_BUG_ON to only check for small underflows (or _very_ close
-to overflowing), and ignore overflows which have strayed into negative
-territory.
+Marked for stable backport as far as v4.1 where pistachio support was
+introduced. This is primarily useful for CI systems such as kernelci.org
+which will benefit from us building a suitable image which can then be
+booted as part of automated testing, extending our test coverage to the
+affected stable branches.
 
-Acked-by: Matthew Wilcox <willy@infradead.org>
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+URL: https://groups.io/g/kernelci/message/388
+Cc: stable@vger.kernel.org # v4.1+
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/mm.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -763,6 +763,10 @@ static inline bool is_zone_device_page(c
- }
- #endif
- 
-+/* 127: arbitrary random number, small enough to assemble well */
-+#define page_ref_zero_or_close_to_overflow(page) \
-+	((unsigned int) page_ref_count(page) + 127u <= 127u)
-+
- static inline void get_page(struct page *page)
- {
- 	page = compound_head(page);
-@@ -770,7 +774,7 @@ static inline void get_page(struct page
- 	 * Getting a normal page or the head of a compound page
- 	 * requires to already have an elevated page->_refcount.
- 	 */
--	VM_BUG_ON_PAGE(page_ref_count(page) <= 0, page);
-+	VM_BUG_ON_PAGE(page_ref_zero_or_close_to_overflow(page), page);
- 	page_ref_inc(page);
- 
- 	if (unlikely(is_zone_device_page(page)))
+---
+ arch/mips/pistachio/Platform |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/mips/pistachio/Platform
++++ b/arch/mips/pistachio/Platform
+@@ -6,3 +6,4 @@ cflags-$(CONFIG_MACH_PISTACHIO)		+=				\
+ 		-I$(srctree)/arch/mips/include/asm/mach-pistachio
+ load-$(CONFIG_MACH_PISTACHIO)		+= 0xffffffff80400000
+ zload-$(CONFIG_MACH_PISTACHIO)		+= 0xffffffff81000000
++all-$(CONFIG_MACH_PISTACHIO)		:= uImage.gz
 
 
