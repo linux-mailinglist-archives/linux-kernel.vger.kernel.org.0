@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B323A626
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5AD3A60D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfFINlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 09:41:36 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32100 "EHLO mga11.intel.com"
+        id S1729033AbfFINlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 09:41:23 -0400
+Received: from mga12.intel.com ([192.55.52.136]:31607 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbfFINlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728952AbfFINlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 9 Jun 2019 09:41:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2019 06:41:18 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2019 06:41:18 -0700
 X-ExtLoop1: 1
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga003.jf.intel.com with ESMTP; 09 Jun 2019 06:41:18 -0700
@@ -33,9 +33,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         "Lu Baolu" <baolu.lu@linux.intel.com>,
         Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v4 15/22] iommu/vt-d: Replace Intel specific PASID allocator with IOASID
-Date:   Sun,  9 Jun 2019 06:44:15 -0700
-Message-Id: <1560087862-57608-16-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 16/22] iommu/vt-d: Move domain helper to header
+Date:   Sun,  9 Jun 2019 06:44:16 -0700
+Message-Id: <1560087862-57608-17-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -44,205 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of generic IOASID code to manage PASID allocation,
-free, and lookup. Replace Intel specific code.
+Move domainer helper to header to be used by SVA code.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/intel-iommu.c | 11 +++++------
- drivers/iommu/intel-pasid.c | 36 ------------------------------------
- drivers/iommu/intel-svm.c   | 37 +++++++++++++++++++++----------------
- 3 files changed, 26 insertions(+), 58 deletions(-)
+ drivers/iommu/intel-iommu.c | 6 ------
+ include/linux/intel-iommu.h | 6 ++++++
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 5b84994..39b63fe 100644
+index 39b63fe..7cfa0eb 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -5167,7 +5167,7 @@ static void auxiliary_unlink_device(struct dmar_domain *domain,
- 	domain->auxd_refcnt--;
- 
- 	if (!domain->auxd_refcnt && domain->default_pasid > 0)
--		intel_pasid_free_id(domain->default_pasid);
-+		ioasid_free(domain->default_pasid);
+@@ -427,12 +427,6 @@ static void init_translation_status(struct intel_iommu *iommu)
+ 		iommu->flags |= VTD_FLAG_TRANS_PRE_ENABLED;
  }
  
- static int aux_domain_add_dev(struct dmar_domain *domain,
-@@ -5185,10 +5185,9 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
- 	if (domain->default_pasid <= 0) {
- 		int pasid;
- 
--		pasid = intel_pasid_alloc_id(domain, PASID_MIN,
--					     pci_max_pasids(to_pci_dev(dev)),
--					     GFP_KERNEL);
--		if (pasid <= 0) {
-+		pasid = ioasid_alloc(NULL, PASID_MIN, pci_max_pasids(to_pci_dev(dev)) - 1,
-+				domain);
-+		if (pasid == INVALID_IOASID) {
- 			pr_err("Can't allocate default pasid\n");
- 			return -ENODEV;
- 		}
-@@ -5224,7 +5223,7 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
- 	spin_unlock(&iommu->lock);
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
- 	if (!domain->auxd_refcnt && domain->default_pasid > 0)
--		intel_pasid_free_id(domain->default_pasid);
-+		ioasid_free(domain->default_pasid);
- 
- 	return ret;
- }
-diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-index 69fddd3..1e25539 100644
---- a/drivers/iommu/intel-pasid.c
-+++ b/drivers/iommu/intel-pasid.c
-@@ -26,42 +26,6 @@
-  */
- static DEFINE_SPINLOCK(pasid_lock);
- u32 intel_pasid_max_id = PASID_MAX;
--static DEFINE_IDR(pasid_idr);
--
--int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp)
+-/* Convert generic 'struct iommu_domain to private struct dmar_domain */
+-static struct dmar_domain *to_dmar_domain(struct iommu_domain *dom)
 -{
--	int ret, min, max;
--
--	min = max_t(int, start, PASID_MIN);
--	max = min_t(int, end, intel_pasid_max_id);
--
--	WARN_ON(in_interrupt());
--	idr_preload(gfp);
--	spin_lock(&pasid_lock);
--	ret = idr_alloc(&pasid_idr, ptr, min, max, GFP_ATOMIC);
--	spin_unlock(&pasid_lock);
--	idr_preload_end();
--
--	return ret;
+-	return container_of(dom, struct dmar_domain, domain);
 -}
 -
--void intel_pasid_free_id(int pasid)
--{
--	spin_lock(&pasid_lock);
--	idr_remove(&pasid_idr, pasid);
--	spin_unlock(&pasid_lock);
--}
--
--void *intel_pasid_lookup_id(int pasid)
--{
--	void *p;
--
--	spin_lock(&pasid_lock);
--	p = idr_find(&pasid_idr, pasid);
--	spin_unlock(&pasid_lock);
--
--	return p;
--}
- 
- int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
+ static int __init intel_iommu_setup(char *str)
  {
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 8f87304..9cbcc1f 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -25,6 +25,7 @@
- #include <linux/dmar.h>
- #include <linux/interrupt.h>
- #include <linux/mm_types.h>
-+#include <linux/ioasid.h>
- #include <asm/page.h>
+ 	if (!str)
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index 8605c74..b75f17d 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -597,6 +597,12 @@ static inline void __iommu_flush_cache(
+ 		clflush_cache_range(addr, size);
+ }
  
- #include "intel-pasid.h"
-@@ -332,16 +333,15 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		if (pasid_max > intel_pasid_max_id)
- 			pasid_max = intel_pasid_max_id;
- 
--		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
--		ret = intel_pasid_alloc_id(svm,
--					   !!cap_caching_mode(iommu->cap),
--					   pasid_max - 1, GFP_KERNEL);
--		if (ret < 0) {
-+		/* Do not use PASID 0, reserved for RID to PASID */
-+		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
-+					pasid_max - 1, svm);
-+		if (svm->pasid == INVALID_IOASID) {
- 			kfree(svm);
- 			kfree(sdev);
-+			ret = ENOSPC;
- 			goto out;
- 		}
--		svm->pasid = ret;
- 		svm->notifier.ops = &intel_mmuops;
- 		svm->mm = mm;
- 		svm->flags = flags;
-@@ -351,7 +351,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		if (mm) {
- 			ret = mmu_notifier_register(&svm->notifier, mm);
- 			if (ret) {
--				intel_pasid_free_id(svm->pasid);
-+				ioasid_free(svm->pasid);
- 				kfree(svm);
- 				kfree(sdev);
- 				goto out;
-@@ -367,7 +367,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		if (ret) {
- 			if (mm)
- 				mmu_notifier_unregister(&svm->notifier, mm);
--			intel_pasid_free_id(svm->pasid);
-+			ioasid_free(svm->pasid);
- 			kfree(svm);
- 			kfree(sdev);
- 			goto out;
-@@ -400,7 +400,12 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 	if (!iommu)
- 		goto out;
- 
--	svm = intel_pasid_lookup_id(pasid);
-+	svm = ioasid_find(NULL, pasid, NULL);
-+	if (IS_ERR(svm)) {
-+		ret = PTR_ERR(svm);
-+		goto out;
-+	}
++/* Convert generic 'struct iommu_domain to private struct dmar_domain */
++static inline struct dmar_domain *to_dmar_domain(struct iommu_domain *dom)
++{
++	return container_of(dom, struct dmar_domain, domain);
++}
 +
- 	if (!svm)
- 		goto out;
- 
-@@ -422,7 +427,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 				kfree_rcu(sdev, rcu);
- 
- 				if (list_empty(&svm->devs)) {
--					intel_pasid_free_id(svm->pasid);
-+					ioasid_free(svm->pasid);
- 					if (svm->mm)
- 						mmu_notifier_unregister(&svm->notifier, svm->mm);
- 
-@@ -457,10 +462,11 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
- 	if (!iommu)
- 		goto out;
- 
--	svm = intel_pasid_lookup_id(pasid);
--	if (!svm)
-+	svm = ioasid_find(NULL, pasid, NULL);
-+	if (IS_ERR(svm)) {
-+		ret = PTR_ERR(svm);
- 		goto out;
--
-+	}
- 	/* init_mm is used in this case */
- 	if (!svm->mm)
- 		ret = 1;
-@@ -567,13 +573,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 
- 		if (!svm || svm->pasid != req->pasid) {
- 			rcu_read_lock();
--			svm = intel_pasid_lookup_id(req->pasid);
-+			svm = ioasid_find(NULL, req->pasid, NULL);
- 			/* It *can't* go away, because the driver is not permitted
- 			 * to unbind the mm while any page faults are outstanding.
- 			 * So we only need RCU to protect the internal idr code. */
- 			rcu_read_unlock();
--
--			if (!svm) {
-+			if (IS_ERR(svm) || !svm) {
- 				pr_err("%s: Page request for invalid PASID %d: %08llx %08llx\n",
- 				       iommu->name, req->pasid, ((unsigned long long *)req)[0],
- 				       ((unsigned long long *)req)[1]);
+ /*
+  * 0: readable
+  * 1: writable
 -- 
 2.7.4
 
