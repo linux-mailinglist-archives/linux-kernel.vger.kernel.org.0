@@ -2,94 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 684393AC26
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 23:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9A103A686
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 16:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbfFIV60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 17:58:26 -0400
-Received: from mtax.cdmx.gob.mx ([187.141.35.197]:12518 "EHLO mtax.cdmx.gob.mx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbfFIV60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 17:58:26 -0400
-X-NAI-Header: Modified by McAfee Email Gateway (4500)
+        id S1728849AbfFIOxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 10:53:39 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40431 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727500AbfFIOxj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 10:53:39 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so9114477eds.7
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 07:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
-        t=1560117236; h=DKIM-Filter:X-Virus-Scanned:
-         Content-Type:MIME-Version:Content-Transfer-Encoding:
-         Content-Description:Subject:To:From:Date:Reply-To:
-         Message-Id:X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
-         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
-         X-SAAS-TrackingID:X-NAI-Spam-Flag:X-NAI-Spam-Threshold:
-         X-NAI-Spam-Score:X-NAI-Spam-Rules:X-NAI-Spam-Version;
-        bh=U0Muiz5ECa3gaTzMJe13Eshf2iywdDpIp+lqwE
-        FBq5U=; b=ROno9U4nIC4G+e9dn1GwsR0ZtuqLlGibtUxrA28D
-        RkwsXQwrWZS++ksf2/mxfvc8MRuGV3251kCfWGQplzhW2fhIbC
-        zGLyKjVdJjvvsIT07BUh0iBn8IT3VT7SqnaYh9oa3Dctb99tyu
-        F0679x4I2NQ81vdpLi97YV5dgaT2wk0=
-Received: from cdmx.gob.mx (unknown [10.250.108.150]) by mtax.cdmx.gob.mx with smtp
-        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-GCM-SHA384)
-         id 06a7_b8bf_a7490048_6d3c_47ec_ad8a_23613b33381a;
-        Sun, 09 Jun 2019 16:53:55 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by cdmx.gob.mx (Postfix) with ESMTP id 2DC512E8616;
-        Sun,  9 Jun 2019 14:17:02 -0500 (CDT)
-Received: from cdmx.gob.mx ([127.0.0.1])
-        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wai8wptn79JV; Sun,  9 Jun 2019 14:17:02 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-        by cdmx.gob.mx (Postfix) with ESMTP id 42E581E32CE;
-        Sun,  9 Jun 2019 11:08:56 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.9.2 cdmx.gob.mx 42E581E32CE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cdmx.gob.mx;
-        s=72359050-3965-11E6-920A-0192F7A2F08E; t=1560096536;
-        bh=U0Muiz5ECa3gaTzMJe13Eshf2iywdDpIp+lqwEFBq5U=;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
-         From:Date:Reply-To:Message-Id;
-        b=NWniCQteXX2de2CZG6jaby0xOgWahRLSFd/+ttRtnp/Xs0Rf2AYVmE2WyF3PdcYlc
-         sv7oXEb4IDjN33o8oH9DFEROG4pkRztkW+/IC8xbaqktD72yWFC8VomMB3ZVAgi/yW
-         soXYz+ZvfFEYv+QybT0TUio90FdSVfrIjwO6FiZY=
-X-Virus-Scanned: amavisd-new at cdmx.gob.mx
-Received: from cdmx.gob.mx ([127.0.0.1])
-        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id eX0pxY32qPrQ; Sun,  9 Jun 2019 11:08:56 -0500 (CDT)
-Received: from [51.38.116.193] (ip193.ip-51-38-116.eu [51.38.116.193])
-        by cdmx.gob.mx (Postfix) with ESMTPSA id 682B11FCDEC;
-        Sun,  9 Jun 2019 09:52:47 -0500 (CDT)
-Content-Type: text/plain; charset="utf-8"
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1qNdnBxzQ1sxPLfepsayWvIRtgHis1fEHl61OHimm90=;
+        b=TW4V5sXzdBVgH5DT3NU7dehMs7b9QS54DmeQvAWdt7RcWFRca8ZYHjqYYm8Z4gxzrT
+         qkMe7MjtwR5yj158Llt6gg9NPtkyL5EXV3lFx0thDKbEdEZjjYf4/iuI5KKImi9iuBfJ
+         qaBANa+HUY8ZtO4fhNyPGW9atPAR9xPuklJOMTim1DYPWYhzmqubIGQOIymVFKu0RXyG
+         rxV6uc/0v73XKetD8Ca6M7FFRRhpYahmSym6XD5JJJoKSo+z7dP8OUadbag28tEQeLGM
+         GCXWmAEiBBaUU7PaED6QGBk69ILS3dI5UYzuro79KWFCpmm2VqCFsIke2Z/fBMtq79Fz
+         Ljlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1qNdnBxzQ1sxPLfepsayWvIRtgHis1fEHl61OHimm90=;
+        b=QC9aXBvX9iI5MmXra/VNDxM52DnmTRGNuEquKVzm2QC6kE98ORMxz8tydvsYzowdIL
+         lQ08smxQHVTVQSsxUfV+GvK1cZ7vmREmiHvaZhu1/NDFikDTBgATHkH5y573ZE3HBwYe
+         7k1s/rCLOc0ontBjfvW9xetvqIWZmp+VrVlIpYXZ8WsdOBEheYzs46NvbsFhCkwLXjkI
+         0OwD8umuZ3vBApxaJcldmKf41rN3naA+JD1m2IfQQWSDB+t/cPNWX6dA8KWOHQdgJhz4
+         +jXxPutmQDSSJrpbYSW3npaP2kJ6W2p2I8UnC2EyRK+kNUm52/AbhfGLPkmrBxTRBCkC
+         t5Og==
+X-Gm-Message-State: APjAAAXfGHBVZl8zHyaETMqc4rZYQPaSFAVD8PKlHbEW6KbpNtNOlFU2
+        y8HbPjlUoAxKega6YsgfT9A=
+X-Google-Smtp-Source: APXvYqx5Bvmblo5CLoyi+ttNFMxoRY0Kzk8ncfNmEkFAOwQxlxqMMwxKuHs3lo+Eaxy342sAj5E03g==
+X-Received: by 2002:a17:906:ca9:: with SMTP id k9mr49364733ejh.4.1560092017397;
+        Sun, 09 Jun 2019 07:53:37 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id t54sm2193349edd.17.2019.06.09.07.53.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Jun 2019 07:53:36 -0700 (PDT)
+Date:   Sun, 9 Jun 2019 14:53:35 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     ChenGang <cg.chen@huawei.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        osalvador@suse.de, pavel.tatashin@microsoft.com,
+        mgorman@techsingularity.net, rppt@linux.ibm.com,
+        richard.weiyang@gmail.com, alexander.h.duyck@linux.intel.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: align up min_free_kbytes to multipy of 4
+Message-ID: <20190609145335.yzx4irt4mczmlvno@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <1560071428-24267-1-git-send-email-cg.chen@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?b?4oKsIDIuMDAwLjAwMCwwMCBFdXJv?=
-To:     Recipients <cilpinez@cdmx.gob.mx>
-From:   cilpinez@cdmx.gob.mx
-Date:   Sun, 09 Jun 2019 07:52:49 -0700
-Reply-To: johnwalterlove2010@gmail.com
-Message-Id: <20190609145248.682B11FCDEC@cdmx.gob.mx>
-X-AnalysisOut: [v=2.2 cv=Fp91xyjq c=1 sm=1 tr=0 p=d_9A9YPZgCEA:10 p=UhPmRW]
-X-AnalysisOut: [QW4yN_uUvCwugA:9 p=Ner0o0mvyuUA:10 p=CwrrfTYHidcoWUP_FusY:]
-X-AnalysisOut: [22 p=Z3hVr4-9LPz_iBwj1Snb:22 a=T6zFoIZ12MK39YzkfxrL7A==:11]
-X-AnalysisOut: [7 a=o6exIZH9ckoXPxROjXgmHg==:17 a=IkcTkHD0fZMA:10 a=x7bEGL]
-X-AnalysisOut: [p0ZPQA:10 a=dq6fvYVFJ5YA:10 a=pGLkceISAAAA:8 a=QEXdDO2ut3Y]
-X-AnalysisOut: [A:10 a=uXetiwfYVjQA:10]
-X-SAAS-TrackingID: 1108dfc5.0.365862668.00-2381.625491339.s12p02m014.mxlogic.net
-X-NAI-Spam-Flag: NO
-X-NAI-Spam-Threshold: 3
-X-NAI-Spam-Score: -5000
-X-NAI-Spam-Rules: 1 Rules triggered
-        WHITELISTED=-5000
-X-NAI-Spam-Version: 2.3.0.9418 : core <6564> : inlines <7098> : streams
- <1824022> : uri <2854373>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560071428-24267-1-git-send-email-cg.chen@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ich bin Herr Richard Wahl der Mega-Gewinner von $ 533M In Mega Millions Jac=
-kpot spende ich an 5 zuf=C3=A4llige Personen, wenn Sie diese E-Mail erhalte=
-n, dann wurde Ihre E-Mail nach einem Spinball ausgew=C3=A4hlt. Ich habe den=
- gr=C3=B6=C3=9Ften Teil meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=
-=A4tigkeitsorganisationen und Organisationen verteilt. Ich habe mich freiwi=
-llig dazu entschieden, Ihnen den Betrag von =E2=82=AC 2.000.000,00 zu spend=
-en eine der ausgew=C3=A4hlten 5, um meine Gewinne zu =C3=BCberpr=C3=BCfen. =
-Das ist dein Spendencode: [DF00430342018] Antworten Sie mit dem Spendencode=
- auf diese E-Mail: richardpovertyorg@gmail.com
+On Sun, Jun 09, 2019 at 05:10:28PM +0800, ChenGang wrote:
+>Usually the value of min_free_kbytes is multiply of 4,
+>and in this case ,the right shift is ok.
+>But if it's not, the right-shifting operation will lose the low 2 bits,
+
+But PAGE_SHIFT is not always 12.
+
+>and this cause kernel don't reserve enough memory.
+>So it's necessary to align the value of min_free_kbytes to multiply of 4.
+>For example, if min_free_kbytes is 64, then should keep 16 pages,
+>but if min_free_kbytes is 65 or 66, then should keep 17 pages.
+>
+>Signed-off-by: ChenGang <cg.chen@huawei.com>
+>---
+> mm/page_alloc.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>
+>diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>index d66bc8a..1baeeba 100644
+>--- a/mm/page_alloc.c
+>+++ b/mm/page_alloc.c
+>@@ -7611,7 +7611,8 @@ static void setup_per_zone_lowmem_reserve(void)
+> 
+> static void __setup_per_zone_wmarks(void)
+> {
+>-	unsigned long pages_min = min_free_kbytes >> (PAGE_SHIFT - 10);
+>+	unsigned long pages_min =
+>+		(PAGE_ALIGN(min_free_kbytes * 1024) / 1024) >> (PAGE_SHIFT - 10);
+
+In my mind, pages_min is an estimated value. Do we need to be so precise?
+
+> 	unsigned long lowmem_pages = 0;
+> 	struct zone *zone;
+> 	unsigned long flags;
+>-- 
+>1.8.5.6
+
+-- 
+Wei Yang
+Help you, Help me
