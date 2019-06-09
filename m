@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F883A943
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A80E3A74B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388954AbfFIRIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:08:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44578 "EHLO mail.kernel.org"
+        id S1731174AbfFIQsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388792AbfFIRFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:05:21 -0400
+        id S1729993AbfFIQsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9805620840;
-        Sun,  9 Jun 2019 17:05:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C48B206C3;
+        Sun,  9 Jun 2019 16:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099921;
-        bh=kL1q/lU+/bRizIv45MNQUtcNYGhXhofDOHIwussB6Dg=;
+        s=default; t=1560098897;
+        bh=amCwFukYt+wCJnKzRUtrQcRmot1yUpQwO4Sfvi8kpG8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vJjwmkd4NBNZQDkMa/HLaiEWtfR53ByeeG8DPdjI2PS4fr4cGJP8rdohBQTp03iNy
-         Rq8x5RuypDnbl9t2HzuKF6lub8XPJid8m6NylAaOEPcwpGqzCjfm9EfZXOkXKPpCaX
-         74Vgrh4lNK1dDCHsHvV7GLMxUobPUpbskstsnYK0=
+        b=fs/AG12WgIkUYrIsRcHVCcz93YMeUDFkHI7kG9zo234vRsFotsXqPPsJ//06Qe2Ma
+         PEpSc0Y4jNdl/IrD5TzHLHek5V2OpE9CPtHJJe3CNWUIXZzBdfGASPNCFy3vKxU4Nz
+         eaPsWWYtq/eeErLxSfDHiME6nRa6Yo2x755qq/W4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 187/241] net: mvpp2: fix bad MVPP2_TXQ_SCHED_TOKEN_CNTR_REG queue value
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 28/51] x86/insn-eval: Fix use-after-free access to LDT entry
 Date:   Sun,  9 Jun 2019 18:42:09 +0200
-Message-Id: <20190609164153.295518859@linuxfoundation.org>
+Message-Id: <20190609164128.847321652@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +43,175 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 21808437214637952b61beaba6034d97880fbeb3 ]
+commit de9f869616dd95e95c00bdd6b0fcd3421e8a4323 upstream.
 
-MVPP2_TXQ_SCHED_TOKEN_CNTR_REG() expects the logical queue id but
-the current code is passing the global tx queue offset, so it ends
-up writing to unknown registers (between 0x8280 and 0x82fc, which
-seemed to be unused by the hardware). This fixes the issue by using
-the logical queue id instead.
+get_desc() computes a pointer into the LDT while holding a lock that
+protects the LDT from being freed, but then drops the lock and returns the
+(now potentially dangling) pointer to its caller.
 
-Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix it by giving the caller a copy of the LDT entry instead.
+
+Fixes: 670f928ba09b ("x86/insn-eval: Add utility function to get segment descriptor")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/marvell/mvpp2.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -3940,7 +3940,7 @@ static inline void mvpp2_gmac_max_rx_siz
- /* Set defaults to the MVPP2 port */
- static void mvpp2_defaults_set(struct mvpp2_port *port)
+---
+ arch/x86/lib/insn-eval.c |   47 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
+
+--- a/arch/x86/lib/insn-eval.c
++++ b/arch/x86/lib/insn-eval.c
+@@ -555,7 +555,8 @@ static int get_reg_offset_16(struct insn
+ }
+ 
+ /**
+- * get_desc() - Obtain pointer to a segment descriptor
++ * get_desc() - Obtain contents of a segment descriptor
++ * @out:	Segment descriptor contents on success
+  * @sel:	Segment selector
+  *
+  * Given a segment selector, obtain a pointer to the segment descriptor.
+@@ -563,18 +564,18 @@ static int get_reg_offset_16(struct insn
+  *
+  * Returns:
+  *
+- * Pointer to segment descriptor on success.
++ * True on success, false on failure.
+  *
+  * NULL on error.
+  */
+-static struct desc_struct *get_desc(unsigned short sel)
++static bool get_desc(struct desc_struct *out, unsigned short sel)
  {
--	int tx_port_num, val, queue, ptxq, lrxq;
-+	int tx_port_num, val, queue, lrxq;
+ 	struct desc_ptr gdt_desc = {0, 0};
+ 	unsigned long desc_base;
  
- 	/* Configure port to loopback if needed */
- 	if (port->flags & MVPP2_F_LOOPBACK)
-@@ -3960,11 +3960,9 @@ static void mvpp2_defaults_set(struct mv
- 	mvpp2_write(port->priv, MVPP2_TXP_SCHED_CMD_1_REG, 0);
+ #ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	if ((sel & SEGMENT_TI_MASK) == SEGMENT_LDT) {
+-		struct desc_struct *desc = NULL;
++		bool success = false;
+ 		struct ldt_struct *ldt;
  
- 	/* Close bandwidth for all queues */
--	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++) {
--		ptxq = mvpp2_txq_phys(port->id, queue);
-+	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++)
- 		mvpp2_write(port->priv,
--			    MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(ptxq), 0);
--	}
-+			    MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(queue), 0);
+ 		/* Bits [15:3] contain the index of the desired entry. */
+@@ -582,12 +583,14 @@ static struct desc_struct *get_desc(unsi
  
- 	/* Set refill period to 1 usec, refill tokens
- 	 * and bucket size to maximum
-@@ -4722,7 +4720,7 @@ static void mvpp2_txq_deinit(struct mvpp
- 	txq->descs_phys        = 0;
+ 		mutex_lock(&current->active_mm->context.lock);
+ 		ldt = current->active_mm->context.ldt;
+-		if (ldt && sel < ldt->nr_entries)
+-			desc = &ldt->entries[sel];
++		if (ldt && sel < ldt->nr_entries) {
++			*out = ldt->entries[sel];
++			success = true;
++		}
  
- 	/* Set minimum bandwidth for disabled TXQs */
--	mvpp2_write(port->priv, MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(txq->id), 0);
-+	mvpp2_write(port->priv, MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(txq->log_id), 0);
+ 		mutex_unlock(&current->active_mm->context.lock);
  
- 	/* Set Tx descriptors queue starting address and size */
- 	mvpp2_write(port->priv, MVPP2_TXQ_NUM_REG, txq->id);
+-		return desc;
++		return success;
+ 	}
+ #endif
+ 	native_store_gdt(&gdt_desc);
+@@ -602,9 +605,10 @@ static struct desc_struct *get_desc(unsi
+ 	desc_base = sel & ~(SEGMENT_RPL_MASK | SEGMENT_TI_MASK);
+ 
+ 	if (desc_base > gdt_desc.size)
+-		return NULL;
++		return false;
+ 
+-	return (struct desc_struct *)(gdt_desc.address + desc_base);
++	*out = *(struct desc_struct *)(gdt_desc.address + desc_base);
++	return true;
+ }
+ 
+ /**
+@@ -626,7 +630,7 @@ static struct desc_struct *get_desc(unsi
+  */
+ unsigned long insn_get_seg_base(struct pt_regs *regs, int seg_reg_idx)
+ {
+-	struct desc_struct *desc;
++	struct desc_struct desc;
+ 	short sel;
+ 
+ 	sel = get_segment_selector(regs, seg_reg_idx);
+@@ -664,11 +668,10 @@ unsigned long insn_get_seg_base(struct p
+ 	if (!sel)
+ 		return -1L;
+ 
+-	desc = get_desc(sel);
+-	if (!desc)
++	if (!get_desc(&desc, sel))
+ 		return -1L;
+ 
+-	return get_desc_base(desc);
++	return get_desc_base(&desc);
+ }
+ 
+ /**
+@@ -690,7 +693,7 @@ unsigned long insn_get_seg_base(struct p
+  */
+ static unsigned long get_seg_limit(struct pt_regs *regs, int seg_reg_idx)
+ {
+-	struct desc_struct *desc;
++	struct desc_struct desc;
+ 	unsigned long limit;
+ 	short sel;
+ 
+@@ -704,8 +707,7 @@ static unsigned long get_seg_limit(struc
+ 	if (!sel)
+ 		return 0;
+ 
+-	desc = get_desc(sel);
+-	if (!desc)
++	if (!get_desc(&desc, sel))
+ 		return 0;
+ 
+ 	/*
+@@ -714,8 +716,8 @@ static unsigned long get_seg_limit(struc
+ 	 * not tested when checking the segment limits. In practice,
+ 	 * this means that the segment ends in (limit << 12) + 0xfff.
+ 	 */
+-	limit = get_desc_limit(desc);
+-	if (desc->g)
++	limit = get_desc_limit(&desc);
++	if (desc.g)
+ 		limit = (limit << 12) + 0xfff;
+ 
+ 	return limit;
+@@ -739,7 +741,7 @@ static unsigned long get_seg_limit(struc
+  */
+ int insn_get_code_seg_params(struct pt_regs *regs)
+ {
+-	struct desc_struct *desc;
++	struct desc_struct desc;
+ 	short sel;
+ 
+ 	if (v8086_mode(regs))
+@@ -750,8 +752,7 @@ int insn_get_code_seg_params(struct pt_r
+ 	if (sel < 0)
+ 		return sel;
+ 
+-	desc = get_desc(sel);
+-	if (!desc)
++	if (!get_desc(&desc, sel))
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -759,10 +760,10 @@ int insn_get_code_seg_params(struct pt_r
+ 	 * determines whether a segment contains data or code. If this is a data
+ 	 * segment, return error.
+ 	 */
+-	if (!(desc->type & BIT(3)))
++	if (!(desc.type & BIT(3)))
+ 		return -EINVAL;
+ 
+-	switch ((desc->l << 1) | desc->d) {
++	switch ((desc.l << 1) | desc.d) {
+ 	case 0: /*
+ 		 * Legacy mode. CS.L=0, CS.D=0. Address and operand size are
+ 		 * both 16-bit.
 
 
