@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2172F3A7D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8B33A72B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732442AbfFIQxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:53:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54888 "EHLO mail.kernel.org"
+        id S1730695AbfFIQq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732421AbfFIQxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:53:34 -0400
+        id S1730652AbfFIQqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B58C2084A;
-        Sun,  9 Jun 2019 16:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0E882081C;
+        Sun,  9 Jun 2019 16:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099214;
-        bh=A8xkqdpR4tPykWeXqBfTyv/djCndgNj/nZYpSbk3Edw=;
+        s=default; t=1560098813;
+        bh=w3fLyttRot9PQvpvJqENFjdubh78MZQDTHQmwl0Id0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wjc8OHZIhyjUDg3tUy6WoN0k9xWOflo9MfadsfXkaFkqY0llcncEtd8EWJsblNqKi
-         Zc0jaCdVGeQJSCIZodbVexZpd1YC4mxJZc/HYOFe9L4hwW4SphXsA6WmI2OEU2i50o
-         1sDNbfW6PMjaJkZA1BmU4wpXNFerkAil08SbQnDY=
+        b=RyOLAU0UtPB/3llJ0GqnZTDpDQI2X/N3UgcNXpQkMoRTheftOTBn0nKHS+OAM2+By
+         SlfXU3Y7mDCmsmEUhHZr8xnVBJI6GwUi3qmlvv8hejmNrOll5mZuzLl5xV+A4rZK0w
+         SQvjcWfot51Sb209tx/qsBWKhDxRW5IckpdixSIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 50/83] brcmfmac: assure SSID length from firmware is limited
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Helen Koike <helen.koike@collabora.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Subject: [PATCH 5.1 69/70] drm/amd: fix fb references in async update
 Date:   Sun,  9 Jun 2019 18:42:20 +0200
-Message-Id: <20190609164132.220496606@linuxfoundation.org>
+Message-Id: <20190609164133.176089569@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,35 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
+From: Helen Koike <helen.koike@collabora.com>
 
-commit 1b5e2423164b3670e8bc9174e4762d297990deff upstream.
+commit 332af874db929f92931727bfe191b2c666438c81 upstream.
 
-The SSID length as received from firmware should not exceed
-IEEE80211_MAX_SSID_LEN as that would result in heap overflow.
+Async update callbacks are expected to set the old_fb in the new_state
+so prepare/cleanup framebuffers are balanced.
 
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 4.9: adjust context]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Calling drm_atomic_set_fb_for_plane() (which gets a reference of the new
+fb and put the old fb) is not required, as it's taken care by
+drm_mode_cursor_universal() when calling drm_atomic_helper_update_plane().
+
+Cc: <stable@vger.kernel.org> # v4.20+
+Fixes: 674e78acae0d ("drm/amd/display: Add fast path for cursor plane updates")
+Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190603165610.24614-3-helen.koike@collabora.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -3579,6 +3579,8 @@ brcmf_wowl_nd_results(struct brcmf_if *i
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3789,8 +3789,7 @@ static void dm_plane_atomic_async_update
+ 	struct drm_plane_state *old_state =
+ 		drm_atomic_get_old_plane_state(new_state->state, plane);
  
- 	data += sizeof(struct brcmf_pno_scanresults_le);
- 	netinfo = (struct brcmf_pno_net_info_le *)data;
-+	if (netinfo->SSID_len > IEEE80211_MAX_SSID_LEN)
-+		netinfo->SSID_len = IEEE80211_MAX_SSID_LEN;
- 	memcpy(cfg->wowl.nd->ssid.ssid, netinfo->SSID, netinfo->SSID_len);
- 	cfg->wowl.nd->ssid.ssid_len = netinfo->SSID_len;
- 	cfg->wowl.nd->n_channels = 1;
+-	if (plane->state->fb != new_state->fb)
+-		drm_atomic_set_fb_for_plane(plane->state, new_state->fb);
++	swap(plane->state->fb, new_state->fb);
+ 
+ 	plane->state->src_x = new_state->src_x;
+ 	plane->state->src_y = new_state->src_y;
 
 
