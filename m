@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBC93A8AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B83F23AA5F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387714AbfFIRDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41254 "EHLO mail.kernel.org"
+        id S1732075AbfFIQv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:51:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388328AbfFIRDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:00 -0400
+        id S1732059AbfFIQvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:51:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E9AD206DF;
-        Sun,  9 Jun 2019 17:02:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B651205ED;
+        Sun,  9 Jun 2019 16:51:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099780;
-        bh=7HI6N91vbKXJrX1wN4OS7tsYTq/hOQxF0ZkTbp8oJ14=;
+        s=default; t=1560099114;
+        bh=K3HweLCpeokOm366BXIvoHi/dJtHz0DI3sdBKIKEuDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x161tVJRBTfpEDOCDUs0HOmh43kCEmmqCBqpt/i/RIt19IQYo816+460CO/p4uNUa
-         HMypRMkQDH1f5raiDqgpbj5ghV0OfWCSXw5dEevbP97DxJzZtrfvKaC56ZtGmDHYmb
-         eSFTHpnRdBX2CmEjUXD0ei06D6Yy2nKf2OSJZflk=
+        b=kAz6yprGT6JRtrnM7bkoJgJzAAoFrIahNcsu9hl//GEzYx9ndAXSDeDhytk4Oo8mF
+         TmnhiWQdyCJotBuJJOerXuqNvlMgGCzCbG8rHbvd7Pghv9x852sRPTNC5W1nhqN+WB
+         3DAvqKEcjCzCMIiR0BJGu27VFUMEOw8uNXx9XOjM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 163/241] ASoC: fsl_utils: fix a leaked reference by adding missing of_node_put
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 15/83] xen/pciback: Dont disable PCI_COMMAND on PCI device reset.
 Date:   Sun,  9 Jun 2019 18:41:45 +0200
-Message-Id: <20190609164152.477243008@linuxfoundation.org>
+Message-Id: <20190609164128.850524258@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,47 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c705247136a523488eac806bd357c3e5d79a7acd ]
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+commit 7681f31ec9cdacab4fd10570be924f2cef6669ba upstream.
 
-Detected by coccinelle with the following warnings:
-./sound/soc/fsl/fsl_utils.c:74:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 38, but without a corresponding     object release within this function.
+There is no need for this at all. Worst it means that if
+the guest tries to write to BARs it could lead (on certain
+platforms) to PCI SERR errors.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Please note that with af6fc858a35b90e89ea7a7ee58e66628c55c776b
+"xen-pciback: limit guest control of command register"
+a guest is still allowed to enable those control bits (safely), but
+is not allowed to disable them and that therefore a well behaved
+frontend which enables things before using them will still
+function correctly.
+
+This is done via an write to the configuration register 0x4 which
+triggers on the backend side:
+command_write
+  \- pci_enable_device
+     \- pci_enable_device_flags
+        \- do_pci_enable_device
+           \- pcibios_enable_device
+              \-pci_enable_resourcess
+                [which enables the PCI_COMMAND_MEMORY|PCI_COMMAND_IO]
+
+However guests (and drivers) which don't do this could cause
+problems, including the security issues which XSA-120 sought
+to address.
+
+Reported-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- sound/soc/fsl/fsl_utils.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/xen-pciback/pciback_ops.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_utils.c b/sound/soc/fsl/fsl_utils.c
-index b9e42b503a377..4f8bdb7650e84 100644
---- a/sound/soc/fsl/fsl_utils.c
-+++ b/sound/soc/fsl/fsl_utils.c
-@@ -75,6 +75,7 @@ int fsl_asoc_get_dma_channel(struct device_node *ssi_np,
- 	iprop = of_get_property(dma_np, "cell-index", NULL);
- 	if (!iprop) {
- 		of_node_put(dma_np);
-+		of_node_put(dma_channel_np);
- 		return -EINVAL;
- 	}
- 	*dma_id = be32_to_cpup(iprop);
--- 
-2.20.1
-
+--- a/drivers/xen/xen-pciback/pciback_ops.c
++++ b/drivers/xen/xen-pciback/pciback_ops.c
+@@ -126,8 +126,6 @@ void xen_pcibk_reset_device(struct pci_d
+ 		if (pci_is_enabled(dev))
+ 			pci_disable_device(dev);
+ 
+-		pci_write_config_word(dev, PCI_COMMAND, 0);
+-
+ 		dev->is_busmaster = 0;
+ 	} else {
+ 		pci_read_config_word(dev, PCI_COMMAND, &cmd);
 
 
