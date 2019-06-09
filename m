@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1405B3A754
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB1A3A776
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731276AbfFIQsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47846 "EHLO mail.kernel.org"
+        id S1731606AbfFIQtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731232AbfFIQsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:40 -0400
+        id S1731593AbfFIQtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5799206C3;
-        Sun,  9 Jun 2019 16:48:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E07A206C3;
+        Sun,  9 Jun 2019 16:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098920;
-        bh=c/h5LsyEMrg8LMhNb60YT3K6SWopq5tpLSzjqwcrkdQ=;
+        s=default; t=1560098990;
+        bh=cgsLR0MP9TO4l+0FwmXy4OKV3YkT2NYbYQJA/LEHspU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hS/7FOggIOFtGyGR8TCCaaHqdWStk9gk41Bzj27i1W7dOA94lLUUCJXyGPYv7lxoR
-         9zHWR7Zy5WLbIe/pvMeFAUS9OgMVhZvg0cjih35UJfahKdDF64naqGohaFSlsfpiWM
-         kdyP1oiTBbUzfehUBW0qolgD0Qn4SbEbXhOt/LEE=
+        b=vzW2SMmNknF8fp8W4m1pAIx6DfR6q6+4hwf8WZycLAclg52Ro2YuEKgRYlVg8O2k2
+         42pMkhK3ZGGTqFKIKrJulZcAGZwlz4ZNIYElD+i3g+yt6XvPAg7tQcDsoASnFnwKbQ
+         r9fT8k7aebcda/LcWSCYUEytgWl3BC6RCfcJAKHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.19 35/51] genwqe: Prevent an integer overflow in the ioctl
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 10/35] ipv6: fix the check before getting the cookie in rt6_get_cookie
 Date:   Sun,  9 Jun 2019 18:42:16 +0200
-Message-Id: <20190609164129.413681866@linuxfoundation.org>
+Message-Id: <20190609164126.099374565@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 110080cea0d0e4dfdb0b536e7f8a5633ead6a781 upstream.
+[ Upstream commit b7999b07726c16974ba9ca3bb9fe98ecbec5f81c ]
 
-There are a couple potential integer overflows here.
+In Jianlin's testing, netperf was broken with 'Connection reset by peer',
+as the cookie check failed in rt6_check() and ip6_dst_check() always
+returned NULL.
 
-	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+It's caused by Commit 93531c674315 ("net/ipv6: separate handling of FIB
+entries from dst based routes"), where the cookie can be got only when
+'c1'(see below) for setting dst_cookie whereas rt6_check() is called
+when !'c1' for checking dst_cookie, as we can see in ip6_dst_check().
 
-The first thing is that the "m->size + (...)" addition could overflow,
-and the second is that round_up() overflows to zero if the result is
-within PAGE_SIZE of the type max.
+Since in ip6_dst_check() both rt6_dst_from_check() (c1) and rt6_check()
+(!c1) will check the 'from' cookie, this patch is to remove the c1 check
+in rt6_get_cookie(), so that the dst_cookie can always be set properly.
 
-In this code, the "m->size" variable is an u64 but we're saving the
-result in "map_size" which is an unsigned long and genwqe_user_vmap()
-takes an unsigned long as well.  So I have used ULONG_MAX as the upper
-bound.  From a practical perspective unsigned long is fine/better than
-trying to change all the types to u64.
+c1:
+  (rt->rt6i_flags & RTF_PCPU || unlikely(!list_empty(&rt->rt6i_uncached)))
 
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 93531c674315 ("net/ipv6: separate handling of FIB entries from dst based routes")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/misc/genwqe/card_dev.c   |    2 ++
- drivers/misc/genwqe/card_utils.c |    4 ++++
- 2 files changed, 6 insertions(+)
+ include/net/ip6_fib.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -780,6 +780,8 @@ static int genwqe_pin_mem(struct genwqe_
+--- a/include/net/ip6_fib.h
++++ b/include/net/ip6_fib.h
+@@ -199,8 +199,7 @@ static inline u32 rt6_get_cookie(const s
+ {
+ 	u32 cookie = 0;
  
- 	if ((m->addr == 0x0) || (m->size == 0))
- 		return -EINVAL;
-+	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
-+		return -EINVAL;
+-	if (rt->rt6i_flags & RTF_PCPU ||
+-	    (unlikely(!list_empty(&rt->rt6i_uncached)) && rt->dst.from))
++	if (rt->dst.from)
+ 		rt = (struct rt6_info *)(rt->dst.from);
  
- 	map_addr = (m->addr & PAGE_MASK);
- 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -587,6 +587,10 @@ int genwqe_user_vmap(struct genwqe_dev *
- 	/* determine space needed for page_list. */
- 	data = (unsigned long)uaddr;
- 	offs = offset_in_page(data);
-+	if (size > ULONG_MAX - PAGE_SIZE - offs) {
-+		m->size = 0;	/* mark unused and not added */
-+		return -EINVAL;
-+	}
- 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
- 
- 	m->page_list = kcalloc(m->nr_pages,
+ 	rt6_get_cookie_safe(rt, &cookie);
 
 
