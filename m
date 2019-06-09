@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 905833AAC2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A04843A8BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730863AbfFIRV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:21:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43842 "EHLO mail.kernel.org"
+        id S2388498AbfFIRDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:03:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730126AbfFIQpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:53 -0400
+        id S2388485AbfFIRDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:03:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A81B20833;
-        Sun,  9 Jun 2019 16:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C43E8206C3;
+        Sun,  9 Jun 2019 17:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098752;
-        bh=2hmnF4XbiYzaLjNdH4KcV6WLN+C49zVKNABkve9f/FQ=;
+        s=default; t=1560099826;
+        bh=9LJBPhhgCXn4j8CTWEVyTQ6fo+0Of7f5Yrs6ApXe3N8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w5Gz4pWRM3DVCfHJuw56GPkRk99/kRBuSgdiRCFMd/IFX3835aWyRWD6oM1cJAYw9
-         y9dkAXCJL2+c+LOkBMgBYacFOZUqNBCzxv6je0C5VpmAvs8hI9SJNpJ6zLsi+Gfsok
-         +jVgFOMcMgN1cS6MuNpTfqcBO+a8/uwSeXdFGPpQ=
+        b=gYksygU4cIaPOPZy+JFlFw/ciy6iVfsA2rFsbZ8GQKNa3qSSDCgyNKoJZ/3fzNSpx
+         n6GxerVskqBKXDbxGdX5JlmKXiNN/Q/Jmipzetr0oora4BPIVLXCKKPr+o8gJKLF3T
+         seXxkeCj2cOoCQ+QPoy0HQdkY4Z3530/8rF2tMBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helen Koike <helen.koike@collabora.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Subject: [PATCH 5.1 49/70] drm/rockchip: fix fb references in async update
+        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 178/241] spi: Fix zero length xfer bug
 Date:   Sun,  9 Jun 2019 18:42:00 +0200
-Message-Id: <20190609164131.535974639@linuxfoundation.org>
+Message-Id: <20190609164152.975610585@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,117 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helen Koike <helen.koike@collabora.com>
+[ Upstream commit 5442dcaa0d90fc376bdfc179a018931a8f43dea4 ]
 
-commit d985a3533274ef7dd1ccb25cb05a72259b25268f upstream.
+This fixes a bug for messages containing both zero length and
+unidirectional xfers.
 
-In the case of async update, modifications are done in place, i.e. in the
-current plane state, so the new_state is prepared and the new_state is
-cleaned up (instead of the old_state, unlike what happens in a
-normal sync update).
-To cleanup the old_fb properly, it needs to be placed in the new_state
-in the end of async_update, so cleanup call will unreference the old_fb
-correctly.
+The function spi_map_msg will allocate dummy tx and/or rx buffers
+for use with unidirectional transfers when the hardware can only do
+a bidirectional transfer.  That dummy buffer will be used in place
+of a NULL buffer even when the xfer length is 0.
 
-Also, the previous code had a:
+Then in the function __spi_map_msg, if he hardware can dma,
+the zero length xfer will have spi_map_buf called on the dummy
+buffer.
 
-	plane_state = plane->funcs->atomic_duplicate_state(plane);
-	...
-	swap(plane_state, plane->state);
+Eventually, __sg_alloc_table is called and returns -EINVAL
+because nents == 0.
 
-	if (plane->state->fb && plane->state->fb != new_state->fb) {
-	...
-	}
+This fix prevents the error by not using the dummy buffer when
+the xfer length is zero.
 
-Which was wrong, as the fb were just assigned to be equal, so this if
-statement nevers evaluates to true.
-
-Another details is that the function drm_crtc_vblank_get() can only be
-called when vop->is_enabled is true, otherwise it has no effect and
-trows a WARN_ON().
-
-Calling drm_atomic_set_fb_for_plane() (which get a referent of the new
-fb and pus the old fb) is not required, as it is taken care by
-drm_mode_cursor_universal() when calling
-drm_atomic_helper_update_plane().
-
-Fixes: 15609559a834 ("drm/rockchip: update cursors asynchronously through atomic.")
-Cc: <stable@vger.kernel.org> # v4.20+
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190603165610.24614-2-helen.koike@collabora.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c |   49 ++++++++++++++--------------
- 1 file changed, 25 insertions(+), 24 deletions(-)
+ drivers/spi/spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -924,29 +924,17 @@ static void vop_plane_atomic_async_updat
- 					  struct drm_plane_state *new_state)
- {
- 	struct vop *vop = to_vop(plane->state->crtc);
--	struct drm_plane_state *plane_state;
-+	struct drm_framebuffer *old_fb = plane->state->fb;
- 
--	plane_state = plane->funcs->atomic_duplicate_state(plane);
--	plane_state->crtc_x = new_state->crtc_x;
--	plane_state->crtc_y = new_state->crtc_y;
--	plane_state->crtc_h = new_state->crtc_h;
--	plane_state->crtc_w = new_state->crtc_w;
--	plane_state->src_x = new_state->src_x;
--	plane_state->src_y = new_state->src_y;
--	plane_state->src_h = new_state->src_h;
--	plane_state->src_w = new_state->src_w;
--
--	if (plane_state->fb != new_state->fb)
--		drm_atomic_set_fb_for_plane(plane_state, new_state->fb);
--
--	swap(plane_state, plane->state);
--
--	if (plane->state->fb && plane->state->fb != new_state->fb) {
--		drm_framebuffer_get(plane->state->fb);
--		WARN_ON(drm_crtc_vblank_get(plane->state->crtc) != 0);
--		drm_flip_work_queue(&vop->fb_unref_work, plane->state->fb);
--		set_bit(VOP_PENDING_FB_UNREF, &vop->pending);
--	}
-+	plane->state->crtc_x = new_state->crtc_x;
-+	plane->state->crtc_y = new_state->crtc_y;
-+	plane->state->crtc_h = new_state->crtc_h;
-+	plane->state->crtc_w = new_state->crtc_w;
-+	plane->state->src_x = new_state->src_x;
-+	plane->state->src_y = new_state->src_y;
-+	plane->state->src_h = new_state->src_h;
-+	plane->state->src_w = new_state->src_w;
-+	swap(plane->state->fb, new_state->fb);
- 
- 	if (vop->is_enabled) {
- 		rockchip_drm_psr_inhibit_get_state(new_state->state);
-@@ -955,9 +943,22 @@ static void vop_plane_atomic_async_updat
- 		vop_cfg_done(vop);
- 		spin_unlock(&vop->reg_lock);
- 		rockchip_drm_psr_inhibit_put_state(new_state->state);
--	}
- 
--	plane->funcs->atomic_destroy_state(plane, plane_state);
-+		/*
-+		 * A scanout can still be occurring, so we can't drop the
-+		 * reference to the old framebuffer. To solve this we get a
-+		 * reference to old_fb and set a worker to release it later.
-+		 * FIXME: if we perform 500 async_update calls before the
-+		 * vblank, then we can have 500 different framebuffers waiting
-+		 * to be released.
-+		 */
-+		if (old_fb && plane->state->fb != old_fb) {
-+			drm_framebuffer_get(old_fb);
-+			WARN_ON(drm_crtc_vblank_get(plane->state->crtc) != 0);
-+			drm_flip_work_queue(&vop->fb_unref_work, old_fb);
-+			set_bit(VOP_PENDING_FB_UNREF, &vop->pending);
-+		}
-+	}
- }
- 
- static const struct drm_plane_helper_funcs plane_helper_funcs = {
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 04fd651f9e3e3..c132c676df3a6 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -903,6 +903,8 @@ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
+ 		if (max_tx || max_rx) {
+ 			list_for_each_entry(xfer, &msg->transfers,
+ 					    transfer_list) {
++				if (!xfer->len)
++					continue;
+ 				if (!xfer->tx_buf)
+ 					xfer->tx_buf = master->dummy_tx;
+ 				if (!xfer->rx_buf)
+-- 
+2.20.1
+
 
 
