@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A2E3A73F
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 230513A7DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731014AbfFIQrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:47:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46588 "EHLO mail.kernel.org"
+        id S1731827AbfFIQyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:54:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730968AbfFIQrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:47:47 -0400
+        id S1732529AbfFIQyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:54:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B25EC206C3;
-        Sun,  9 Jun 2019 16:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004CD205ED;
+        Sun,  9 Jun 2019 16:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098867;
-        bh=fwsJwNFaon2R+lR5nFdFKSyG4R4Y2sVc0fxcUZG60+4=;
+        s=default; t=1560099250;
+        bh=wM8+B39AJFJBYFNNMwIZM79LNZKa3Xj6rCHc923s3GE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uu9K6O7KArsoWMx/COkDeWFOEGmOfZma4SMP50njvvzSCZs98pSBJbF2KZgw+CJWw
-         amOjrvrlLFlU7wvbHX9Y6XRfrz+vniH88xC5VlG8XCk7DY8oM4paqPTRy871tFmfjp
-         Tcmdq0lzmGxQSTaVaW/qq5KUzKZq6XbhtN/kWYOE=
+        b=rUUTt4GD5Vn8LGdsFl06GQgZUHqNajPoC6lh3PexGGFK6IvjUwfwwRdCs8bIkzkW3
+         KfPx4oKaMBh4DvIWUZgjc8kkt1zRTF/tK4LbNnCn+1IK+4TVx7/upKlI5Z1CVI13CT
+         5bbyGxfHDomCdjwk418e9+yU3d9mp72FntmZoXDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        stable@kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 18/51] rcu: locking and unlocking need to always be at least barriers
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 29/83] USB: rio500: refuse more than one device at a time
 Date:   Sun,  9 Jun 2019 18:41:59 +0200
-Message-Id: <20190609164128.133131668@linuxfoundation.org>
+Message-Id: <20190609164130.117291274@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +43,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 66be4e66a7f422128748e3c3ef6ee72b20a6197b upstream.
+commit 3864d33943b4a76c6e64616280e98d2410b1190f upstream.
 
-Herbert Xu pointed out that commit bb73c52bad36 ("rcu: Don't disable
-preemption for Tiny and Tree RCU readers") was incorrect in making the
-preempt_disable/enable() be conditional on CONFIG_PREEMPT_COUNT.
+This driver is using a global variable. It cannot handle more than
+one device at a time. The issue has been existing since the dawn
+of the driver.
 
-If CONFIG_PREEMPT_COUNT isn't enabled, the preemption enable/disable is
-a no-op, but still is a compiler barrier.
-
-And RCU locking still _needs_ that compiler barrier.
-
-It is simply fundamentally not true that RCU locking would be a complete
-no-op: we still need to guarantee (for example) that things that can
-trap and cause preemption cannot migrate into the RCU locked region.
-
-The way we do that is by making it a barrier.
-
-See for example commit 386afc91144b ("spinlocks and preemption points
-need to be at least compiler barriers") from back in 2013 that had
-similar issues with spinlocks that become no-ops on UP: they must still
-constrain the compiler from moving other operations into the critical
-region.
-
-Now, it is true that a lot of RCU operations already use READ_ONCE() and
-WRITE_ONCE() (which in practice likely would never be re-ordered wrt
-anything remotely interesting), but it is also true that that is not
-globally the case, and that it's not even necessarily always possible
-(ie bitfields etc).
-
-Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
-Fixes: bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree RCU readers")
-Cc: stable@kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/rcupdate.h |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/misc/rio500.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -78,14 +78,12 @@ void synchronize_rcu(void);
- 
- static inline void __rcu_read_lock(void)
+--- a/drivers/usb/misc/rio500.c
++++ b/drivers/usb/misc/rio500.c
+@@ -464,15 +464,23 @@ static int probe_rio(struct usb_interfac
  {
--	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
--		preempt_disable();
-+	preempt_disable();
+ 	struct usb_device *dev = interface_to_usbdev(intf);
+ 	struct rio_usb_data *rio = &rio_instance;
+-	int retval;
++	int retval = 0;
+ 
+-	dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
++	mutex_lock(&rio500_mutex);
++	if (rio->present) {
++		dev_info(&intf->dev, "Second USB Rio at address %d refused\n", dev->devnum);
++		retval = -EBUSY;
++		goto bail_out;
++	} else {
++		dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
++	}
+ 
+ 	retval = usb_register_dev(intf, &usb_rio_class);
+ 	if (retval) {
+ 		dev_err(&dev->dev,
+ 			"Not able to get a minor for this device.\n");
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto bail_out;
+ 	}
+ 
+ 	rio->rio_dev = dev;
+@@ -481,7 +489,8 @@ static int probe_rio(struct usb_interfac
+ 		dev_err(&dev->dev,
+ 			"probe_rio: Not enough memory for the output buffer\n");
+ 		usb_deregister_dev(intf, &usb_rio_class);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto bail_out;
+ 	}
+ 	dev_dbg(&intf->dev, "obuf address:%p\n", rio->obuf);
+ 
+@@ -490,7 +499,8 @@ static int probe_rio(struct usb_interfac
+ 			"probe_rio: Not enough memory for the input buffer\n");
+ 		usb_deregister_dev(intf, &usb_rio_class);
+ 		kfree(rio->obuf);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto bail_out;
+ 	}
+ 	dev_dbg(&intf->dev, "ibuf address:%p\n", rio->ibuf);
+ 
+@@ -498,8 +508,10 @@ static int probe_rio(struct usb_interfac
+ 
+ 	usb_set_intfdata (intf, rio);
+ 	rio->present = 1;
++bail_out:
++	mutex_unlock(&rio500_mutex);
+ 
+-	return 0;
++	return retval;
  }
  
- static inline void __rcu_read_unlock(void)
- {
--	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
--		preempt_enable();
-+	preempt_enable();
- }
- 
- static inline void synchronize_rcu(void)
+ static void disconnect_rio(struct usb_interface *intf)
 
 
