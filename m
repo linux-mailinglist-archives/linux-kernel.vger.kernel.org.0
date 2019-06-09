@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C1E3AA35
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1ED3AA90
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:19:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387430AbfFIRQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:16:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54336 "EHLO mail.kernel.org"
+        id S1732148AbfFIRTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:19:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732361AbfFIQxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:53:12 -0400
+        id S1729778AbfFIQs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0698204EC;
-        Sun,  9 Jun 2019 16:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72AD8206C3;
+        Sun,  9 Jun 2019 16:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099191;
-        bh=mbF+KuK+ApjVYtSxZYdGvM0Yw3p8xtLnmmhXydfoIWM=;
+        s=default; t=1560098905;
+        bh=vaYwb1577dLTm2yh/ziP4tzrtY8aiMNv6GGrTDhWrVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KqnzJp6XK4qz9gn7YlRpq79ngN5jDEYEnXznj/D2evcC/hL8SNN+O2q+senddS9p9
-         E3Vz4kTO89pYssNZZjAeDuZDtoVzEbkSIrqrHUqaOoLjoTbIlUJS27W9+YVolJfkHD
-         Ty8MW2cvloe6dQ8GmZc/JUvLtxZ4YkV8Dfubxxoc=
+        b=2ieNprXqVxYDDCeykioF/m3dx/v7dthPblPzDvyglSTiKGCpP7QzUO6Xs/d2Sp06P
+         SrNSXBd4BbYh+bYa6L4E2Qf9+2WShxiX8xNBHmi+4yKZo+StCIzz3uYLmi9NYqBIqX
+         ZzYMLOWaXtFC91bb2dqP+wyGTAZ9lQcDxmKN2OTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 42/83] memcg: make it work on sparse non-0-node systems
+        stable@vger.kernel.org, Ian Jackson <ian.jackson@citrix.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.19 31/51] xen-blkfront: switch kcalloc to kvcalloc for large array allocation
 Date:   Sun,  9 Jun 2019 18:42:12 +0200
-Message-Id: <20190609164131.478973899@linuxfoundation.org>
+Message-Id: <20190609164129.060139900@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,97 +46,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Roger Pau Monne <roger.pau@citrix.com>
 
-commit 3e8589963773a5c23e2f1fe4bcad0e9a90b7f471 upstream.
+commit 1d5c76e66433382a1e170d1d5845bb0fed7467aa upstream.
 
-We have a single node system with node 0 disabled:
-  Scanning NUMA topology in Northbridge 24
-  Number of physical nodes 2
-  Skipping disabled node 0
-  Node 1 MemBase 0000000000000000 Limit 00000000fbff0000
-  NODE_DATA(1) allocated [mem 0xfbfda000-0xfbfeffff]
+There's no reason to request physically contiguous memory for those
+allocations.
 
-This causes crashes in memcg when system boots:
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-  #PF error: [normal kernel read fault]
-...
-  RIP: 0010:list_lru_add+0x94/0x170
-...
-  Call Trace:
-   d_lru_add+0x44/0x50
-   dput.part.34+0xfc/0x110
-   __fput+0x108/0x230
-   task_work_run+0x9f/0xc0
-   exit_to_usermode_loop+0xf5/0x100
+[boris: added CC to stable]
 
-It is reproducible as far as 4.12.  I did not try older kernels.  You have
-to have a new enough systemd, e.g.  241 (the reason is unknown -- was not
-investigated).  Cannot be reproduced with systemd 234.
-
-The system crashes because the size of lru array is never updated in
-memcg_update_all_list_lrus and the reads are past the zero-sized array,
-causing dereferences of random memory.
-
-The root cause are list_lru_memcg_aware checks in the list_lru code.  The
-test in list_lru_memcg_aware is broken: it assumes node 0 is always
-present, but it is not true on some systems as can be seen above.
-
-So fix this by avoiding checks on node 0.  Remember the memcg-awareness by
-a bool flag in struct list_lru.
-
-Link: http://lkml.kernel.org/r/20190522091940.3615-1-jslaby@suse.cz
-Fixes: 60d3fd32a7a9 ("list_lru: introduce per-memcg lists")
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Suggested-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Reported-by: Ian Jackson <ian.jackson@citrix.com>
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/list_lru.h |    1 +
- mm/list_lru.c            |    8 +++-----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/block/xen-blkfront.c |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
---- a/include/linux/list_lru.h
-+++ b/include/linux/list_lru.h
-@@ -51,6 +51,7 @@ struct list_lru {
- 	struct list_lru_node	*node;
- #if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
- 	struct list_head	list;
-+	bool			memcg_aware;
- #endif
- };
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -1310,11 +1310,11 @@ static void blkif_free_ring(struct blkfr
+ 		}
  
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -42,11 +42,7 @@ static void list_lru_unregister(struct l
- #if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
- static inline bool list_lru_memcg_aware(struct list_lru *lru)
- {
--	/*
--	 * This needs node 0 to be always present, even
--	 * in the systems supporting sparse numa ids.
--	 */
--	return !!lru->node[0].memcg_lrus;
-+	return lru->memcg_aware;
+ free_shadow:
+-		kfree(rinfo->shadow[i].grants_used);
++		kvfree(rinfo->shadow[i].grants_used);
+ 		rinfo->shadow[i].grants_used = NULL;
+-		kfree(rinfo->shadow[i].indirect_grants);
++		kvfree(rinfo->shadow[i].indirect_grants);
+ 		rinfo->shadow[i].indirect_grants = NULL;
+-		kfree(rinfo->shadow[i].sg);
++		kvfree(rinfo->shadow[i].sg);
+ 		rinfo->shadow[i].sg = NULL;
+ 	}
+ 
+@@ -1353,7 +1353,7 @@ static void blkif_free(struct blkfront_i
+ 	for (i = 0; i < info->nr_rings; i++)
+ 		blkif_free_ring(&info->rinfo[i]);
+ 
+-	kfree(info->rinfo);
++	kvfree(info->rinfo);
+ 	info->rinfo = NULL;
+ 	info->nr_rings = 0;
  }
+@@ -1914,9 +1914,9 @@ static int negotiate_mq(struct blkfront_
+ 	if (!info->nr_rings)
+ 		info->nr_rings = 1;
  
- static inline struct list_lru_one *
-@@ -389,6 +385,8 @@ static int memcg_init_list_lru(struct li
- {
- 	int i;
+-	info->rinfo = kcalloc(info->nr_rings,
+-			      sizeof(struct blkfront_ring_info),
+-			      GFP_KERNEL);
++	info->rinfo = kvcalloc(info->nr_rings,
++			       sizeof(struct blkfront_ring_info),
++			       GFP_KERNEL);
+ 	if (!info->rinfo) {
+ 		xenbus_dev_fatal(info->xbdev, -ENOMEM, "allocating ring_info structure");
+ 		info->nr_rings = 0;
+@@ -2232,17 +2232,17 @@ static int blkfront_setup_indirect(struc
  
-+	lru->memcg_aware = memcg_aware;
-+
- 	if (!memcg_aware)
- 		return 0;
+ 	for (i = 0; i < BLK_RING_SIZE(info); i++) {
+ 		rinfo->shadow[i].grants_used =
+-			kcalloc(grants,
+-				sizeof(rinfo->shadow[i].grants_used[0]),
+-				GFP_NOIO);
+-		rinfo->shadow[i].sg = kcalloc(psegs,
+-					      sizeof(rinfo->shadow[i].sg[0]),
+-					      GFP_NOIO);
++			kvcalloc(grants,
++				 sizeof(rinfo->shadow[i].grants_used[0]),
++				 GFP_NOIO);
++		rinfo->shadow[i].sg = kvcalloc(psegs,
++					       sizeof(rinfo->shadow[i].sg[0]),
++					       GFP_NOIO);
+ 		if (info->max_indirect_segments)
+ 			rinfo->shadow[i].indirect_grants =
+-				kcalloc(INDIRECT_GREFS(grants),
+-					sizeof(rinfo->shadow[i].indirect_grants[0]),
+-					GFP_NOIO);
++				kvcalloc(INDIRECT_GREFS(grants),
++					 sizeof(rinfo->shadow[i].indirect_grants[0]),
++					 GFP_NOIO);
+ 		if ((rinfo->shadow[i].grants_used == NULL) ||
+ 			(rinfo->shadow[i].sg == NULL) ||
+ 		     (info->max_indirect_segments &&
+@@ -2256,11 +2256,11 @@ static int blkfront_setup_indirect(struc
  
+ out_of_memory:
+ 	for (i = 0; i < BLK_RING_SIZE(info); i++) {
+-		kfree(rinfo->shadow[i].grants_used);
++		kvfree(rinfo->shadow[i].grants_used);
+ 		rinfo->shadow[i].grants_used = NULL;
+-		kfree(rinfo->shadow[i].sg);
++		kvfree(rinfo->shadow[i].sg);
+ 		rinfo->shadow[i].sg = NULL;
+-		kfree(rinfo->shadow[i].indirect_grants);
++		kvfree(rinfo->shadow[i].indirect_grants);
+ 		rinfo->shadow[i].indirect_grants = NULL;
+ 	}
+ 	if (!list_empty(&rinfo->indirect_pages)) {
 
 
