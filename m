@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3773AAC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE95B3AAA5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:20:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbfFIQpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
+        id S1732094AbfFIRUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:20:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730033AbfFIQps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:48 -0400
+        id S1730139AbfFIQrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFE7C20833;
-        Sun,  9 Jun 2019 16:45:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DAD7205ED;
+        Sun,  9 Jun 2019 16:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098747;
-        bh=3QIcKu0AVrUSUlmPC59YAtlLMAzQkttuqt2FFBAOSwc=;
+        s=default; t=1560098864;
+        bh=3dLa8NimBsKucGoDE8GB6eGxCqZMLfx7ATcmD0+iWdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zEBEtNTn1N6NIvsz9kBY84ySVtzWqMRe3vTPwDoJD+Fu18SH32hyza7KGI/fMmprx
-         7HvgKJVDFDNsHMn5dbYjRRK/0tScv2YeBDOz/a3H1neeS6IIYjgJADDhawp3cTh5gR
-         2GgW6HNTs80ui+g5YnVoWBRR5XdR78hfBODXDkks=
+        b=dOmZgAON47Z7H5WW3AUUFt2VzostV4vwT8HiJnwEOjVhZGmylkCUi6rI19z47ots+
+         ycOmE3kDQ5qLAiEg29VepsRg5xR+mUDEnm2yJ5MveU5dQ9WbXJZy37Un4mMjZ+WdFw
+         ooDb9QMf3sJcAHa9D44cBGyw4gQ6ekn36iOk3RwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5.1 47/70] genwqe: Prevent an integer overflow in the ioctl
+        stable@vger.kernel.org, Emil Lenngren <emil.lenngren@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Christian Lamparter <chunkeey@gmail.com>
+Subject: [PATCH 4.19 17/51] mtd: spinand: macronix: Fix ECC Status Read
 Date:   Sun,  9 Jun 2019 18:41:58 +0200
-Message-Id: <20190609164131.329221760@linuxfoundation.org>
+Message-Id: <20190609164128.063229742@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Emil Lenngren <emil.lenngren@gmail.com>
 
-commit 110080cea0d0e4dfdb0b536e7f8a5633ead6a781 upstream.
+commit f4cb4d7b46f6409382fd981eec9556e1f3c1dc5d upstream.
 
-There are a couple potential integer overflows here.
+The datasheet specifies the upper four bits are reserved.
+Testing on real hardware shows that these bits can indeed be nonzero.
 
-	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
-
-The first thing is that the "m->size + (...)" addition could overflow,
-and the second is that round_up() overflows to zero if the result is
-within PAGE_SIZE of the type max.
-
-In this code, the "m->size" variable is an u64 but we're saving the
-result in "map_size" which is an unsigned long and genwqe_user_vmap()
-takes an unsigned long as well.  So I have used ULONG_MAX as the upper
-bound.  From a practical perspective unsigned long is fine/better than
-trying to change all the types to u64.
-
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Emil Lenngren <emil.lenngren@gmail.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Christian Lamparter <chunkeey@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/genwqe/card_dev.c   |    2 ++
- drivers/misc/genwqe/card_utils.c |    4 ++++
- 2 files changed, 6 insertions(+)
+ drivers/mtd/nand/spi/macronix.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -780,6 +780,8 @@ static int genwqe_pin_mem(struct genwqe_
+--- a/drivers/mtd/nand/spi/macronix.c
++++ b/drivers/mtd/nand/spi/macronix.c
+@@ -10,6 +10,7 @@
+ #include <linux/mtd/spinand.h>
  
- 	if ((m->addr == 0x0) || (m->size == 0))
- 		return -EINVAL;
-+	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
-+		return -EINVAL;
+ #define SPINAND_MFR_MACRONIX		0xC2
++#define MACRONIX_ECCSR_MASK		0x0F
  
- 	map_addr = (m->addr & PAGE_MASK);
- 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -586,6 +586,10 @@ int genwqe_user_vmap(struct genwqe_dev *
- 	/* determine space needed for page_list. */
- 	data = (unsigned long)uaddr;
- 	offs = offset_in_page(data);
-+	if (size > ULONG_MAX - PAGE_SIZE - offs) {
-+		m->size = 0;	/* mark unused and not added */
-+		return -EINVAL;
-+	}
- 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
+ static SPINAND_OP_VARIANTS(read_cache_variants,
+ 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
+@@ -55,7 +56,12 @@ static int mx35lf1ge4ab_get_eccsr(struct
+ 					  SPI_MEM_OP_DUMMY(1, 1),
+ 					  SPI_MEM_OP_DATA_IN(1, eccsr, 1));
  
- 	m->page_list = kcalloc(m->nr_pages,
+-	return spi_mem_exec_op(spinand->spimem, &op);
++	int ret = spi_mem_exec_op(spinand->spimem, &op);
++	if (ret)
++		return ret;
++
++	*eccsr &= MACRONIX_ECCSR_MASK;
++	return 0;
+ }
+ 
+ static int mx35lf1ge4ab_ecc_get_status(struct spinand_device *spinand,
 
 
