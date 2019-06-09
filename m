@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40D13A8DB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E63723A945
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388747AbfFIRFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43962 "EHLO mail.kernel.org"
+        id S2388963AbfFIRIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:08:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387899AbfFIRE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:57 -0400
+        id S2388113AbfFIRE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DA52204EC;
-        Sun,  9 Jun 2019 17:04:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A598206DF;
+        Sun,  9 Jun 2019 17:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099896;
-        bh=0vDeY41+O595UL1/ZQDEp9fOXTUTD2vKZz7tWD/OJt4=;
+        s=default; t=1560099898;
+        bh=CkffsS+huaV4RQeN14UG7VgyjdnmKVytsU4D2+QETGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TRXQX7ognbp+LbK8aoLkbbH+8ye3HnlDjVJcIZmOhaEhWgRqknkpScs+KqmKJnGFd
-         KbWu8M5CiqA5cKzHfJ8dAQ598nuyCED21esjrKyFS3AAwy4So3SZ2KyJvkOvAA4RG6
-         1BHi5fd6sTLuLmEuym2GRkzpzyUp0k4/8lZlwQ+Q=
+        b=aTydgQ33UgsEsBGEOmjkqfQ6AtXepyMXgjIHLpoC8KcIx31J26oLJApElbVlexPEB
+         Xl41sWrHiK0XaV6PgCdJZtQVjKbTOXjZfEk53MGWMJ9vGrsxR8aNkLWm/k+405dD5g
+         HL8oTx/ORNPgOeoNNLAMCeQpVLA3t//kg2gHWx8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 205/241] scsi: zfcp: fix to prevent port_remove with pure auto scan LUNs (only sdevs)
-Date:   Sun,  9 Jun 2019 18:42:27 +0200
-Message-Id: <20190609164154.543955884@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 206/241] Btrfs: fix race updating log root item during fsync
+Date:   Sun,  9 Jun 2019 18:42:28 +0200
+Message-Id: <20190609164154.583999275@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
 References: <20190609164147.729157653@linuxfoundation.org>
@@ -44,186 +43,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit ef4021fe5fd77ced0323cede27979d80a56211ca upstream.
+commit 06989c799f04810f6876900d4760c0edda369cf7 upstream.
 
-When the user tries to remove a zfcp port via sysfs, we only rejected it if
-there are zfcp unit children under the port. With purely automatically
-scanned LUNs there are no zfcp units but only SCSI devices. In such cases,
-the port_remove erroneously continued. We close the port and this
-implicitly closes all LUNs under the port. The SCSI devices survive with
-their private zfcp_scsi_dev still holding a reference to the "removed"
-zfcp_port (still allocated but invisible in sysfs) [zfcp_get_port_by_wwpn
-in zfcp_scsi_slave_alloc]. This is not a problem as long as the fc_rport
-stays blocked. Once (auto) port scan brings back the removed port, we
-unblock its fc_rport again by design.  However, there is no mechanism that
-would recover (open) the LUNs under the port (no "ersfs_3" without
-zfcp_unit [zfcp_erp_strategy_followup_success]).  Any pending or new I/O to
-such LUN leads to repeated:
+When syncing the log, the final phase of a fsync operation, we need to
+either create a log root's item or update the existing item in the log
+tree of log roots, and that depends on the current value of the log
+root's log_transid - if it's 1 we need to create the log root item,
+otherwise it must exist already and we update it. Since there is no
+synchronization between updating the log_transid and checking it for
+deciding whether the log root's item needs to be created or updated, we
+end up with a tiny race window that results in attempts to update the
+item to fail because the item was not yet created:
 
-  Done: NEEDS_RETRY Result: hostbyte=DID_IMM_RETRY driverbyte=DRIVER_OK
+              CPU 1                                    CPU 2
 
-See also v4.10 commit 6f2ce1c6af37 ("scsi: zfcp: fix rport unblock race
-with LUN recovery"). Even a manual LUN recovery
-(echo 0 > /sys/bus/scsi/devices/H:C:T:L/zfcp_failed)
-does not help, as the LUN links to the old "removed" port which remains
-to lack ZFCP_STATUS_COMMON_RUNNING [zfcp_erp_required_act].
-The only workaround is to first ensure that the fc_rport is blocked
-(e.g. port_remove again in case it was re-discovered by (auto) port scan),
-then delete the SCSI devices, and finally re-discover by (auto) port scan.
-The port scan includes an fc_rport unblock, which in turn triggers
-a new scan on the scsi target to freshly get new pure auto scan LUNs.
+  btrfs_sync_log()
 
-Fix this by rejecting port_remove also if there are SCSI devices
-(even without any zfcp_unit) under this port. Re-use mechanics from v3.7
-commit d99b601b6338 ("[SCSI] zfcp: restore refcount check on port_remove").
-However, we have to give up zfcp_sysfs_port_units_mutex earlier in unit_add
-to prevent a deadlock with scsi_host scan taking shost->scan_mutex first
-and then zfcp_sysfs_port_units_mutex now in our zfcp_scsi_slave_alloc().
+    lock root->log_mutex
 
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: b62a8d9b45b9 ("[SCSI] zfcp: Use SCSI device data zfcp scsi dev instead of zfcp unit")
-Fixes: f8210e34887e ("[SCSI] zfcp: Allow midlayer to scan for LUNs when running in NPIV mode")
-Cc: <stable@vger.kernel.org> #2.6.37+
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+    set log root's log_transid to 1
+
+    unlock root->log_mutex
+
+                                               btrfs_sync_log()
+
+                                                 lock root->log_mutex
+
+                                                 sets log root's
+                                                 log_transid to 2
+
+                                                 unlock root->log_mutex
+
+    update_log_root()
+
+      sees log root's log_transid
+      with a value of 2
+
+        calls btrfs_update_root(),
+        which fails with -EUCLEAN
+        and causes transaction abort
+
+Until recently the race lead to a BUG_ON at btrfs_update_root(), but after
+the recent commit 7ac1e464c4d47 ("btrfs: Don't panic when we can't find a
+root key") we just abort the current transaction.
+
+A sample trace of the BUG_ON() on a SLE12 kernel:
+
+  ------------[ cut here ]------------
+  kernel BUG at ../fs/btrfs/root-tree.c:157!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  SMP NR_CPUS=2048 NUMA pSeries
+  (...)
+  Supported: Yes, External
+  CPU: 78 PID: 76303 Comm: rtas_errd Tainted: G                 X 4.4.156-94.57-default #1
+  task: c00000ffa906d010 ti: c00000ff42b08000 task.ti: c00000ff42b08000
+  NIP: d000000036ae5cdc LR: d000000036ae5cd8 CTR: 0000000000000000
+  REGS: c00000ff42b0b860 TRAP: 0700   Tainted: G                 X  (4.4.156-94.57-default)
+  MSR: 8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 22444484  XER: 20000000
+  CFAR: d000000036aba66c SOFTE: 1
+  GPR00: d000000036ae5cd8 c00000ff42b0bae0 d000000036bda220 0000000000000054
+  GPR04: 0000000000000001 0000000000000000 c00007ffff8d37c8 0000000000000000
+  GPR08: c000000000e19c00 0000000000000000 0000000000000000 3736343438312079
+  GPR12: 3930373337303434 c000000007a3a800 00000000007fffff 0000000000000023
+  GPR16: c00000ffa9d26028 c00000ffa9d261f8 0000000000000010 c00000ffa9d2ab28
+  GPR20: c00000ff42b0bc48 0000000000000001 c00000ff9f0d9888 0000000000000001
+  GPR24: c00000ffa9d26000 c00000ffa9d261e8 c00000ffa9d2a800 c00000ff9f0d9888
+  GPR28: c00000ffa9d26028 c00000ffa9d2aa98 0000000000000001 c00000ffa98f5b20
+  NIP [d000000036ae5cdc] btrfs_update_root+0x25c/0x4e0 [btrfs]
+  LR [d000000036ae5cd8] btrfs_update_root+0x258/0x4e0 [btrfs]
+  Call Trace:
+  [c00000ff42b0bae0] [d000000036ae5cd8] btrfs_update_root+0x258/0x4e0 [btrfs] (unreliable)
+  [c00000ff42b0bba0] [d000000036b53610] btrfs_sync_log+0x2d0/0xc60 [btrfs]
+  [c00000ff42b0bce0] [d000000036b1785c] btrfs_sync_file+0x44c/0x4e0 [btrfs]
+  [c00000ff42b0bd80] [c00000000032e300] vfs_fsync_range+0x70/0x120
+  [c00000ff42b0bdd0] [c00000000032e44c] do_fsync+0x5c/0xb0
+  [c00000ff42b0be10] [c00000000032e8dc] SyS_fdatasync+0x2c/0x40
+  [c00000ff42b0be30] [c000000000009488] system_call+0x3c/0x100
+  Instruction dump:
+  7f43d378 4bffebb9 60000000 88d90008 3d220000 e8b90000 3b390009 e87a01f0
+  e8898e08 e8f90000 4bfd48e5 60000000 <0fe00000> e95b0060 39200004 394a0ea0
+  ---[ end trace 8f2dc8f919cabab8 ]---
+
+So fix this by doing the check of log_transid and updating or creating the
+log root's item while holding the root's log_mutex.
+
+Fixes: 7237f1833601d ("Btrfs: fix tree logs parallel sync")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_ext.h   |    1 
- drivers/s390/scsi/zfcp_scsi.c  |    9 ++++++
- drivers/s390/scsi/zfcp_sysfs.c |   54 ++++++++++++++++++++++++++++++++++++-----
- drivers/s390/scsi/zfcp_unit.c  |    8 +++++-
- 4 files changed, 65 insertions(+), 7 deletions(-)
+ fs/btrfs/tree-log.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_ext.h
-+++ b/drivers/s390/scsi/zfcp_ext.h
-@@ -161,6 +161,7 @@ extern const struct attribute_group *zfc
- extern struct mutex zfcp_sysfs_port_units_mutex;
- extern struct device_attribute *zfcp_sysfs_sdev_attrs[];
- extern struct device_attribute *zfcp_sysfs_shost_attrs[];
-+bool zfcp_sysfs_port_is_removing(const struct zfcp_port *const port);
- 
- /* zfcp_unit.c */
- extern int zfcp_unit_add(struct zfcp_port *, u64);
---- a/drivers/s390/scsi/zfcp_scsi.c
-+++ b/drivers/s390/scsi/zfcp_scsi.c
-@@ -124,6 +124,15 @@ static int zfcp_scsi_slave_alloc(struct
- 
- 	zfcp_sdev->erp_action.port = port;
- 
-+	mutex_lock(&zfcp_sysfs_port_units_mutex);
-+	if (zfcp_sysfs_port_is_removing(port)) {
-+		/* port is already gone */
-+		mutex_unlock(&zfcp_sysfs_port_units_mutex);
-+		put_device(&port->dev); /* undo zfcp_get_port_by_wwpn() */
-+		return -ENXIO;
-+	}
-+	mutex_unlock(&zfcp_sysfs_port_units_mutex);
-+
- 	unit = zfcp_unit_find(port, zfcp_scsi_dev_lun(sdev));
- 	if (unit)
- 		put_device(&unit->dev);
---- a/drivers/s390/scsi/zfcp_sysfs.c
-+++ b/drivers/s390/scsi/zfcp_sysfs.c
-@@ -237,6 +237,53 @@ static ZFCP_DEV_ATTR(adapter, port_resca
- 
- DEFINE_MUTEX(zfcp_sysfs_port_units_mutex);
- 
-+static void zfcp_sysfs_port_set_removing(struct zfcp_port *const port)
-+{
-+	lockdep_assert_held(&zfcp_sysfs_port_units_mutex);
-+	atomic_set(&port->units, -1);
-+}
-+
-+bool zfcp_sysfs_port_is_removing(const struct zfcp_port *const port)
-+{
-+	lockdep_assert_held(&zfcp_sysfs_port_units_mutex);
-+	return atomic_read(&port->units) == -1;
-+}
-+
-+static bool zfcp_sysfs_port_in_use(struct zfcp_port *const port)
-+{
-+	struct zfcp_adapter *const adapter = port->adapter;
-+	unsigned long flags;
-+	struct scsi_device *sdev;
-+	bool in_use = true;
-+
-+	mutex_lock(&zfcp_sysfs_port_units_mutex);
-+	if (atomic_read(&port->units) > 0)
-+		goto unlock_port_units_mutex; /* zfcp_unit(s) under port */
-+
-+	spin_lock_irqsave(adapter->scsi_host->host_lock, flags);
-+	__shost_for_each_device(sdev, adapter->scsi_host) {
-+		const struct zfcp_scsi_dev *zsdev = sdev_to_zfcp(sdev);
-+
-+		if (sdev->sdev_state == SDEV_DEL ||
-+		    sdev->sdev_state == SDEV_CANCEL)
-+			continue;
-+		if (zsdev->port != port)
-+			continue;
-+		/* alive scsi_device under port of interest */
-+		goto unlock_host_lock;
-+	}
-+
-+	/* port is about to be removed, so no more unit_add or slave_alloc */
-+	zfcp_sysfs_port_set_removing(port);
-+	in_use = false;
-+
-+unlock_host_lock:
-+	spin_unlock_irqrestore(adapter->scsi_host->host_lock, flags);
-+unlock_port_units_mutex:
-+	mutex_unlock(&zfcp_sysfs_port_units_mutex);
-+	return in_use;
-+}
-+
- static ssize_t zfcp_sysfs_port_remove_store(struct device *dev,
- 					    struct device_attribute *attr,
- 					    const char *buf, size_t count)
-@@ -259,16 +306,11 @@ static ssize_t zfcp_sysfs_port_remove_st
- 	else
- 		retval = 0;
- 
--	mutex_lock(&zfcp_sysfs_port_units_mutex);
--	if (atomic_read(&port->units) > 0) {
-+	if (zfcp_sysfs_port_in_use(port)) {
- 		retval = -EBUSY;
--		mutex_unlock(&zfcp_sysfs_port_units_mutex);
- 		put_device(&port->dev); /* undo zfcp_get_port_by_wwpn() */
- 		goto out;
- 	}
--	/* port is about to be removed, so no more unit_add */
--	atomic_set(&port->units, -1);
--	mutex_unlock(&zfcp_sysfs_port_units_mutex);
- 
- 	write_lock_irq(&adapter->port_list_lock);
- 	list_del(&port->list);
---- a/drivers/s390/scsi/zfcp_unit.c
-+++ b/drivers/s390/scsi/zfcp_unit.c
-@@ -122,7 +122,7 @@ int zfcp_unit_add(struct zfcp_port *port
- 	int retval = 0;
- 
- 	mutex_lock(&zfcp_sysfs_port_units_mutex);
--	if (atomic_read(&port->units) == -1) {
-+	if (zfcp_sysfs_port_is_removing(port)) {
- 		/* port is already gone */
- 		retval = -ENODEV;
- 		goto out;
-@@ -166,8 +166,14 @@ int zfcp_unit_add(struct zfcp_port *port
- 	write_lock_irq(&port->unit_list_lock);
- 	list_add_tail(&unit->list, &port->unit_list);
- 	write_unlock_irq(&port->unit_list_lock);
-+	/*
-+	 * lock order: shost->scan_mutex before zfcp_sysfs_port_units_mutex
-+	 * due to      zfcp_unit_scsi_scan() => zfcp_scsi_slave_alloc()
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2809,6 +2809,12 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 	log->log_transid = root->log_transid;
+ 	root->log_start_pid = 0;
+ 	/*
++	 * Update or create log root item under the root's log_mutex to prevent
++	 * races with concurrent log syncs that can lead to failure to update
++	 * log root item because it was not created yet.
 +	 */
-+	mutex_unlock(&zfcp_sysfs_port_units_mutex);
++	ret = update_log_root(trans, log);
++	/*
+ 	 * IO has been started, blocks of the log tree have WRITTEN flag set
+ 	 * in their headers. new modifications of the log will be written to
+ 	 * new positions. so it's safe to allow log writers to go in.
+@@ -2827,8 +2833,6 @@ int btrfs_sync_log(struct btrfs_trans_ha
  
- 	zfcp_unit_scsi_scan(unit);
-+	return retval;
+ 	mutex_unlock(&log_root_tree->log_mutex);
  
- out:
- 	mutex_unlock(&zfcp_sysfs_port_units_mutex);
+-	ret = update_log_root(trans, log);
+-
+ 	mutex_lock(&log_root_tree->log_mutex);
+ 	if (atomic_dec_and_test(&log_root_tree->log_writers)) {
+ 		/*
 
 
