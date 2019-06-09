@@ -2,102 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 633333A5DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B3033A630
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:43:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfFINKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 09:10:50 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:46032 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728516AbfFINKu (ORCPT
+        id S1729221AbfFINl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 09:41:57 -0400
+Received: from mail177-30.suw61.mandrillapp.com ([198.2.177.30]:45435 "EHLO
+        mail177-30.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729117AbfFINll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 09:10:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TTm7q0i_1560085846;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TTm7q0i_1560085846)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 09 Jun 2019 21:10:46 +0800
-Subject: Re: [bug report][stable] kernel tried to execute NX-protected page -
- exploit attempt? (uid: 0)
-To:     Nadav Amit <namit@vmware.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Caspar Zhang <caspar@linux.alibaba.com>,
-        jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Sasha Levin <sashal@kernel.org>
-References: <5817eaac-29cc-6331-af3b-b9d85a7c1cd7@linux.alibaba.com>
- <bde5bf17-35d2-45d8-1d1d-59d0f027b9c0@linux.alibaba.com>
- <D0F0870A-B396-4390-B5F1-164B68E13C73@vmware.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <c2411bbb-d0e7-59b2-3418-63650b354544@linux.alibaba.com>
-Date:   Sun, 9 Jun 2019 21:10:45 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        Sun, 9 Jun 2019 09:41:41 -0400
+X-Greylist: delayed 1805 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 09:41:41 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=twWGZqUu+cmhyITWS4AXJAv0lQzHiFdmzeNRXeiHF7Y=;
+ b=mNxlOB4TgnzZBN3F0FaRthiimwZpd1qzLaBM2YKyRucxZ7IE3f8gwIdT1sAI+q0BM9Pi7TUDii4o
+   /o8bGoOor2r8xzz7pTH6XwJgZ7bDiKiNXaJaG0wGhrVbfF0TtXlEU5RCV4WH1zw2UDSzZsqmR2bv
+   POtzjx8s/NTA/nwumsg=
+Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-30.suw61.mandrillapp.com id hvk69a22rtkd for <linux-kernel@vger.kernel.org>; Sun, 9 Jun 2019 13:11:36 +0000 (envelope-from <bounce-md_31050260.5cfd0588.v1-2d7764899b7f40499310cc08b9cb4d68@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560085896; h=From : 
+ Subject : To : Cc : Message-Id : Date : MIME-Version : Content-Type : 
+ Content-Transfer-Encoding : From : Subject : Date : X-Mandrill-User : 
+ List-Unsubscribe; bh=twWGZqUu+cmhyITWS4AXJAv0lQzHiFdmzeNRXeiHF7Y=; 
+ b=gW+uGKepewx5kS93ecLgWQ+65hKFI0JDEYZdZU4ijZP0qxuwdadKCytGK6VkAXbirfyyqf
+ DysNTbBMP+1Pt0hf3tZ1keK++piVn7C58hi/mU5mUAetDBzdXblcnZU9m3igGWOI8kCQRd77
+ oZuc8/JaYjoRVIqaeud1EGyKmMMgk=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PATCH 4.9 0/2] Fix FUSE read/write deadlock on stream-like files
+Received: from [87.98.221.171] by mandrillapp.com id 2d7764899b7f40499310cc08b9cb4d68; Sun, 09 Jun 2019 13:11:36 +0000
+X-Mailer: git-send-email 2.20.1
+To:     <stable@vger.kernel.org>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kirill Smelkov <kirr@nexedi.com>
+Message-Id: <20190609131113.2347-1-kirr@nexedi.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.2d7764899b7f40499310cc08b9cb4d68
+X-Mandrill-User: md_31050260
+Date:   Sun, 09 Jun 2019 13:11:36 +0000
 MIME-Version: 1.0
-In-Reply-To: <D0F0870A-B396-4390-B5F1-164B68E13C73@vmware.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nadav,
-Thanks for the comments.
-I'll test the 3 patches in the mentioned thread.
+Hello stable team,
 
-Thanks,
-Joseph
+Please consider applying the following 2 patches to Linux-4.9 stable
+tree. The patches fix regression introduced in 3.14 where both read and
+write started to run under lock taken, which resulted in FUSE (and many
+other drivers) deadlocks for cases where stream-like files are used with
+read and write being run simultaneously.
 
-On 19/6/8 00:38, Nadav Amit wrote:
->> On Jun 7, 2019, at 3:24 AM, Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
->>
->> Hi all,
->> Any idea on this regression? 
-> 
-> Sorry for the late response (I assumed, for some reason, that you also follow 
-> the second thread about this issue).
-> 
-> Anyhow, it should be fixed by backporting some patches which were mistakenly
-> missed.
-> 
-> See https://lore.kernel.org/stable/20190606131558.GJ29739@sasha-vm/
-> 
-> Regards,
-> Nadav
-> 
-> 
->> Thanks,
->> Joseph
->>
->> On 19/6/5 18:23, Joseph Qi wrote:
->>> Hi,
->>>
->>> I have encountered a kernel BUG when running ltp ftrace-stress-test
->>> on 4.19.48.
->>>
->>> [  209.704855] LTP: starting ftrace-stress-test (ftrace_stress_test.sh 90)
->>> [  209.739412] Scheduler tracepoints stat_sleep, stat_iowait, stat_blocked and stat_runtime require the kernel parameter schedstats=enable or kernel.sched_schedstats=1
->>> [  212.054506] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
->>> [  212.055595] BUG: unable to handle kernel paging request at ffffffffc0349000
->>> [  212.056589] PGD d00c067 P4D d00c067 PUD d00e067 PMD 23673e067 PTE 800000023457f061
->>> [  212.057759] Oops: 0011 [#1] SMP PTI
->>> [  212.058303] CPU: 0 PID: 0 Comm: swapper/0 Kdump: loaded Not tainted 4.19.48 #112
->>>
->>> After some investigation I have found that it is introduced by commit
->>> 8715ce033eb3 ("x86/modules: Avoid breaking W^X while loading modules"),
->>> and then revert this commit the issue is gone.
->>>
->>> I have also tested the same case on 5.2-rc3 as well as right at
->>> upstream commit f2c65fb3221a ("x86/modules: Avoid breaking W^X while
->>> loading modules"), which has been merged in 5.2-rc1, it doesn't
->>> happen.
->>>
->>> So I don't know why only stable has this issue while upstream doesn't.
->>>
->>> Thanks,
->>> Joseph
-> 
+Please see complete problem description in upstream commit 10dce8af3422
+("fs: stream_open - opener for stream-like files so that read and write
+can run simultaneously without deadlock").
+
+The actual FUSE fix (upstream commit bbd84f33652f "fuse: Add
+FOPEN_STREAM to use stream_open()") was merged into 5.2 with `Cc:
+stable@vger.kernel.org # v3.14+` mark and is already included into 5.1,
+5.0 and 4.19 stable trees. However for some reason it is not (yet ?)
+included into 4.14, 4.9, 4.4, 3.18 and 3.16 trees.
+
+The patches fix a real problem into which my FUSE filesystem ran, and
+which also likely affects OSSPD (full details are in the patches
+description). Please consider including the fixes into 4.9 (as well as
+into other stable trees - I'm sending corresponding series separately -
+- one per tree).
+
+Thanks beforehand,
+Kirill
+
+P.S. the patches have been already a bit discussed in stable context some
+time ago:
+
+https://lore.kernel.org/linux-fsdevel/CAHk-=wgh234SyBG810=vB360PCzVkAhQRqGg8aFdATZd+daCFw@mail.gmail.com/
+https://lore.kernel.org/linux-fsdevel/20190424183012.GB3798@deco.navytux.spb.ru/
+https://lore.kernel.org/linux-fsdevel/20190424191652.GE3798@deco.navytux.spb.ru/
+...
+
+Kirill Smelkov (2):
+  fs: stream_open - opener for stream-like files so that read and write can run simultaneously without deadlock
+  fuse: Add FOPEN_STREAM to use stream_open()
+
+ drivers/xen/xenbus/xenbus_dev_frontend.c |   2 +-
+ fs/fuse/file.c                           |   4 +-
+ fs/open.c                                |  18 ++
+ fs/read_write.c                          |   5 +-
+ include/linux/fs.h                       |   4 +
+ include/uapi/linux/fuse.h                |   2 +
+ scripts/coccinelle/api/stream_open.cocci | 363 +++++++++++++++++++++++
+ 7 files changed, 394 insertions(+), 4 deletions(-)
+ create mode 100644 scripts/coccinelle/api/stream_open.cocci
+
+-- 
+2.20.1
