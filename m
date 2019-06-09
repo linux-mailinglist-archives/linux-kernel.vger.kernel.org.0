@@ -2,92 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3833A472
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 11:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B39873A47C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 11:27:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbfFIJTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 05:19:43 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46659 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbfFIJTm (ORCPT
+        id S1728068AbfFIJ1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 05:27:40 -0400
+Received: from smtpcmd0756.aruba.it ([62.149.156.56]:34771 "EHLO
+        smtpcmd0756.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727982AbfFIJ1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 05:19:42 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z15so1892132lfh.13;
-        Sun, 09 Jun 2019 02:19:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tm1kUkU8K0xP+6qbFcyeQd6hDSnbqz5Xinvig3WgCVk=;
-        b=tgmF/+F8MayA//Guy9XStbdA6BocwtPRn5ozoX8XchLUePohMIpuYrxOUaxST54EQl
-         6nqCBmmXX0iUzBFsf0j/NPwOEgo42RcY8cOPuwfXzWsbV3xXxgyOPQNiJYrdk+/ZlFBl
-         OLi3ImGC7QD5B0xANqAX606a1VNMeqTok4ENK9Sj17HgZibK/wvr/oIuMd3/sQWF5FgS
-         dSEUskRgqXbFboQ9fC9a9z+cMX7PlCsaSQNzM5FnivT9hmaz9gXTTvzwSGyOBgbvw07M
-         OsVzZpJcJr7+1knhoK0c/xuG26CavyeqcdIHy+YNCK4qkac9HolfFUdVIz3hNyNfM54C
-         WXdg==
-X-Gm-Message-State: APjAAAU77NaJf99SeYyMoD7EKt3zF55NQyYZzCee0kYyVQ+xIkHz/KSa
-        F6mMFGkCxZvx19chKsVFFc/YUX8rNGQfI7ATU4k=
-X-Google-Smtp-Source: APXvYqxnnYV8kl5R90oD40qadn5h+TZeP7RkBZTi+rdt/dFdy/gyUH8r8MQ2aYrIT1EQJA6MQAqc14471W+iVtoVwcY=
-X-Received: by 2002:ac2:546a:: with SMTP id e10mr31848175lfn.75.1560071980695;
- Sun, 09 Jun 2019 02:19:40 -0700 (PDT)
+        Sun, 9 Jun 2019 05:27:40 -0400
+Received: from [192.168.1.40] ([93.146.66.165])
+        by smtpcmd07.ad.aruba.it with bizsmtp
+        id NZLW2000a3Zw7e501ZLWhl; Sun, 09 Jun 2019 11:20:31 +0200
+Subject: Re: [PATCH v3 22/33] docs: pps.txt: convert to ReST and rename to
+ pps.rst
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+References: <cover.1560045490.git.mchehab+samsung@kernel.org>
+ <cb9274c1d5e94a74c5922c04d99b90554f2d804b.1560045490.git.mchehab+samsung@kernel.org>
+From:   Rodolfo Giometti <giometti@enneenne.com>
+Message-ID: <8079a463-1d39-e5c5-1c51-51bf37269f61@enneenne.com>
+Date:   Sun, 9 Jun 2019 11:20:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
- <4948a096397bb86cebf489b8ac4f623797257fe7.1559933665.git.mchehab+samsung@kernel.org>
-In-Reply-To: <4948a096397bb86cebf489b8ac4f623797257fe7.1559933665.git.mchehab+samsung@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 9 Jun 2019 11:19:28 +0200
-Message-ID: <CAMuHMdVnBP-CJ5S0+D_H4RedkHV5m8m8wGXy-PRzaFk0JWdW8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 15/20] docs: move protection-keys.rst to the core-api book
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shuah Khan <shuah@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cb9274c1d5e94a74c5922c04d99b90554f2d804b.1560045490.git.mchehab+samsung@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aruba.it; s=a1;
+        t=1560072031; bh=paXthY9PTzj607n6DkR2m8vML/ZyJnsHXYh6cM4sxeo=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=HzDjhuQmewrFZf4LRDYi96rkWLpznV0QNZKYFvC94rGXNOQ1tydAjkFvPswZmUpR6
+         JaSr26DgHWY2iKVGGeLYNwHyeVeklEge15AqUX+4RpAaTEFM2FlJKOS3k/2Q9awu9/
+         Cl7gTEf4rArzG59UuzVSjE0kX1YEBC47TupUJFj82TK4b9FwPYFpsuxunZslK9kPCs
+         0ISjyHQ2L+CP4OhhQ7X3YtGwg+RtezWDCrrh8Vy3H6hdNiRNpopWDyr0IMIWMbaNaX
+         mWkso3QwjmEP7pYhaFMydAGWhQbUjuCnXJZ3g8m4qaA3BX28VIIIgEDkGUJtD+wOLy
+         WaPeAVxrYSZAQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
+On 09/06/2019 04:27, Mauro Carvalho Chehab wrote:
+> This file is already in a good shape: just its title and
+> adding some literal block markups is needed for it to be
+> part of the document.
+> 
+> While it has a small chapter with sysfs stuff, most of
+> the document is focused on driver development.
+> 
+> As it describes a kernel API, move it to the driver-api
+> directory.
+> 
+> In order to avoid conflicts, let's add an :orphan: tag
+> to it, to be removed when added to the driver-api book.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-On Fri, Jun 7, 2019 at 9:38 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
-> This document is used by multiple architectures:
-
-Indeed it is...
-
->
->         $ echo $(git grep -l  pkey_mprotect arch|cut -d'/' -f 2|sort|uniq)
->         alpha arm arm64 ia64 m68k microblaze mips parisc powerpc s390 sh sparc x86 xtensa
-
-... but not because we now have a unified space for new syscall numbers ;-)
-
-$ git grep -w ARCH_HAS_PKEYS -- "*Kconf*"
-arch/powerpc/Kconfig:   select ARCH_HAS_PKEYS
-arch/x86/Kconfig:       select ARCH_HAS_PKEYS
-mm/Kconfig:config ARCH_HAS_PKEYS
-
-I.e. limited to x86 and powerpc.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Acked-by: Rodolfo Giometti <giometti@enneenne.com>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming                     skype:  rodolfo.giometti
