@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 574DF3A6F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B103A7B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:53:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729470AbfFIQor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:44:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42024 "EHLO mail.kernel.org"
+        id S1732179AbfFIQwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:52:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729451AbfFIQop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:44:45 -0400
+        id S1732154AbfFIQwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:52:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46CDE20840;
-        Sun,  9 Jun 2019 16:44:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96AF3206BB;
+        Sun,  9 Jun 2019 16:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098683;
-        bh=Ogzjc3C2xWfFhaXTGfD5u07gvhsn1/HdRtF5KCmyYXU=;
+        s=default; t=1560099136;
+        bh=uA1XUY8Y9JhDRjVcaTRxjH3VmToFHsV8hi0Ve44fnq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i34JSH9IULshw/jPOoWPYaJyNLYJIam5IevcOJNqkmu6faQtZhnyjJgk2SujuaqvA
-         XWVFSq/gNUzcgLkqdEtLArb1OGMWRRgNjZCWylkoNmYwuwwWQ6s2zTg3ioFIV/cYyf
-         C/cb7rMtl2otBDEL3yF/Q/gDiybZS2fjHfgxcjYA=
+        b=jqGvNbrzxUip7dqQ0xT8vr7RuO5igPsQbDRb6InlQYMuZeSmiiW7BwtPRl/Ja1j1R
+         Z6/+NO6qnEmeOZBQ4fywRIXyy5GMUClz9jA6B4m8AKOcBvMVSnj263lypzaWBC/frW
+         gW7xcMWiFwhw8hpLfMjhfFmAa9BX3yduWPTcx0Ag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>
-Subject: [PATCH 5.1 23/70] habanalabs: fix debugfs code
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 04/83] net-gro: fix use-after-free read in napi_gro_frags()
 Date:   Sun,  9 Jun 2019 18:41:34 +0200
-Message-Id: <20190609164128.965284718@linuxfoundation.org>
+Message-Id: <20190609164128.066835650@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,160 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 8438846cce61e284a22316c13aa4b63772963070 upstream.
+[ Upstream commit a4270d6795b0580287453ea55974d948393e66ef ]
 
-This fixes multiple things in the habanalabs debugfs code, in particular:
+If a network driver provides to napi_gro_frags() an
+skb with a page fragment of exactly 14 bytes, the call
+to gro_pull_from_frag0() will 'consume' the fragment
+by calling skb_frag_unref(skb, 0), and the page might
+be freed and reused.
 
- - mmu_write() was unnecessarily verbose, copying around between multiple
-   buffers
- - mmu_write() could write a user-specified, unbounded amount of userspace
-   memory into a kernel buffer (out-of-bounds write)
- - multiple debugfs read handlers ignored the user-supplied count,
-   potentially corrupting out-of-bounds userspace data
- - hl_device_read() was unnecessarily verbose
- - hl_device_write() could read uninitialized stack memory
- - multiple debugfs read handlers copied terminating null characters to
-   userspace
+Reading eth->h_proto at the end of napi_frags_skb() might
+read mangled data, or crash under specific debugging features.
 
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
-Cc: stable@vger.kernel.org
+BUG: KASAN: use-after-free in napi_frags_skb net/core/dev.c:5833 [inline]
+BUG: KASAN: use-after-free in napi_gro_frags+0xc6f/0xd10 net/core/dev.c:5841
+Read of size 2 at addr ffff88809366840c by task syz-executor599/8957
+
+CPU: 1 PID: 8957 Comm: syz-executor599 Not tainted 5.2.0-rc1+ #32
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
+ __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+ kasan_report+0x12/0x20 mm/kasan/common.c:614
+ __asan_report_load_n_noabort+0xf/0x20 mm/kasan/generic_report.c:142
+ napi_frags_skb net/core/dev.c:5833 [inline]
+ napi_gro_frags+0xc6f/0xd10 net/core/dev.c:5841
+ tun_get_user+0x2f3c/0x3ff0 drivers/net/tun.c:1991
+ tun_chr_write_iter+0xbd/0x156 drivers/net/tun.c:2037
+ call_write_iter include/linux/fs.h:1872 [inline]
+ do_iter_readv_writev+0x5f8/0x8f0 fs/read_write.c:693
+ do_iter_write fs/read_write.c:970 [inline]
+ do_iter_write+0x184/0x610 fs/read_write.c:951
+ vfs_writev+0x1b3/0x2f0 fs/read_write.c:1015
+ do_writev+0x15b/0x330 fs/read_write.c:1058
+
+Fixes: a50e233c50db ("net-gro: restore frag0 optimization")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/misc/habanalabs/debugfs.c |   60 +++++++++++---------------------------
- 1 file changed, 18 insertions(+), 42 deletions(-)
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/habanalabs/debugfs.c
-+++ b/drivers/misc/habanalabs/debugfs.c
-@@ -459,41 +459,31 @@ static ssize_t mmu_write(struct file *fi
- 	struct hl_debugfs_entry *entry = s->private;
- 	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
- 	struct hl_device *hdev = dev_entry->hdev;
--	char kbuf[MMU_KBUF_SIZE], asid_kbuf[MMU_ASID_BUF_SIZE],
--		addr_kbuf[MMU_ADDR_BUF_SIZE];
-+	char kbuf[MMU_KBUF_SIZE];
- 	char *c;
- 	ssize_t rc;
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -4828,7 +4828,6 @@ static struct sk_buff *napi_frags_skb(st
+ 	skb_reset_mac_header(skb);
+ 	skb_gro_reset_offset(skb);
  
- 	if (!hdev->mmu_enable)
- 		return count;
- 
--	memset(kbuf, 0, sizeof(kbuf));
--	memset(asid_kbuf, 0, sizeof(asid_kbuf));
--	memset(addr_kbuf, 0, sizeof(addr_kbuf));
--
-+	if (count > sizeof(kbuf) - 1)
-+		goto err;
- 	if (copy_from_user(kbuf, buf, count))
- 		goto err;
--
--	kbuf[MMU_KBUF_SIZE - 1] = 0;
-+	kbuf[count] = 0;
- 
- 	c = strchr(kbuf, ' ');
- 	if (!c)
- 		goto err;
-+	*c = '\0';
- 
--	memcpy(asid_kbuf, kbuf, c - kbuf);
--
--	rc = kstrtouint(asid_kbuf, 10, &dev_entry->mmu_asid);
-+	rc = kstrtouint(kbuf, 10, &dev_entry->mmu_asid);
- 	if (rc)
- 		goto err;
- 
--	c = strstr(kbuf, " 0x");
--	if (!c)
-+	if (strncmp(c+1, "0x", 2))
- 		goto err;
--
--	c += 3;
--	memcpy(addr_kbuf, c, (kbuf + count) - c);
--
--	rc = kstrtoull(addr_kbuf, 16, &dev_entry->mmu_addr);
-+	rc = kstrtoull(c+3, 16, &dev_entry->mmu_addr);
- 	if (rc)
- 		goto err;
- 
-@@ -525,10 +515,8 @@ static ssize_t hl_data_read32(struct fil
- 	}
- 
- 	sprintf(tmp_buf, "0x%08x\n", val);
--	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
--			strlen(tmp_buf) + 1);
--
--	return rc;
-+	return simple_read_from_buffer(buf, count, ppos, tmp_buf,
-+			strlen(tmp_buf));
- }
- 
- static ssize_t hl_data_write32(struct file *f, const char __user *buf,
-@@ -559,7 +547,6 @@ static ssize_t hl_get_power_state(struct
- 	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
- 	struct hl_device *hdev = entry->hdev;
- 	char tmp_buf[200];
--	ssize_t rc;
- 	int i;
- 
- 	if (*ppos)
-@@ -574,10 +561,8 @@ static ssize_t hl_get_power_state(struct
- 
- 	sprintf(tmp_buf,
- 		"current power state: %d\n1 - D0\n2 - D3hot\n3 - Unknown\n", i);
--	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
--			strlen(tmp_buf) + 1);
--
--	return rc;
-+	return simple_read_from_buffer(buf, count, ppos, tmp_buf,
-+			strlen(tmp_buf));
- }
- 
- static ssize_t hl_set_power_state(struct file *f, const char __user *buf,
-@@ -630,8 +615,8 @@ static ssize_t hl_i2c_data_read(struct f
- 	}
- 
- 	sprintf(tmp_buf, "0x%02x\n", val);
--	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
--			strlen(tmp_buf) + 1);
-+	rc = simple_read_from_buffer(buf, count, ppos, tmp_buf,
-+			strlen(tmp_buf));
- 
- 	return rc;
- }
-@@ -720,18 +705,9 @@ static ssize_t hl_led2_write(struct file
- static ssize_t hl_device_read(struct file *f, char __user *buf,
- 					size_t count, loff_t *ppos)
- {
--	char tmp_buf[200];
--	ssize_t rc;
--
--	if (*ppos)
--		return 0;
--
--	sprintf(tmp_buf,
--		"Valid values: disable, enable, suspend, resume, cpu_timeout\n");
--	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
--			strlen(tmp_buf) + 1);
--
--	return rc;
-+	static const char *help =
-+		"Valid values: disable, enable, suspend, resume, cpu_timeout\n";
-+	return simple_read_from_buffer(buf, count, ppos, help, strlen(help));
- }
- 
- static ssize_t hl_device_write(struct file *f, const char __user *buf,
-@@ -739,7 +715,7 @@ static ssize_t hl_device_write(struct fi
- {
- 	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
- 	struct hl_device *hdev = entry->hdev;
--	char data[30];
-+	char data[30] = {0};
- 
- 	/* don't allow partial writes */
- 	if (*ppos != 0)
+-	eth = skb_gro_header_fast(skb, 0);
+ 	if (unlikely(skb_gro_header_hard(skb, hlen))) {
+ 		eth = skb_gro_header_slow(skb, hlen, 0);
+ 		if (unlikely(!eth)) {
+@@ -4838,6 +4837,7 @@ static struct sk_buff *napi_frags_skb(st
+ 			return NULL;
+ 		}
+ 	} else {
++		eth = (const struct ethhdr *)skb->data;
+ 		gro_pull_from_frag0(skb, hlen);
+ 		NAPI_GRO_CB(skb)->frag0 += hlen;
+ 		NAPI_GRO_CB(skb)->frag0_len -= hlen;
 
 
