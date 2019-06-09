@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F161B3A705
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E36593A8CA
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729886AbfFIQpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43192 "EHLO mail.kernel.org"
+        id S2388601AbfFIREU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:04:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729831AbfFIQpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:25 -0400
+        id S2388589AbfFIREQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46FA2081C;
-        Sun,  9 Jun 2019 16:45:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B997207E0;
+        Sun,  9 Jun 2019 17:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098725;
-        bh=anG7b5l8TUD3kc7RKq39S5Thv10tZu2qz38hQsN+Xyg=;
+        s=default; t=1560099856;
+        bh=DjLObwZZ+RDNqaf2WeRU/ZKKUnJDXzMdktihC5/aKoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q4+URRzdRt/NTI1+au331yjx72PgeAAjQvoGX8sdMj9bKq41JUbhz/JtVk4QuWL86
-         W49q2IEUG9Q7AliNqpcswfqlQHVu0OQONLCobTpfHGWrWWA1skTv/hoJ9zcq/foGRx
-         0kVB4ntHHvPLq/az/5NCY/DsVZw8osM0XoMh1lmA=
+        b=h37r+TkiYMawl6PKjiupByiCjiiQ6np3ekzckYYj+jm6N1qMRJnojULiA5PjDCaJw
+         OaalKus6N41t0iv7+UV3pbRyT38FrUx/qETw0OKoNQpRSfoUoVqooEIOCzwrbR3Q12
+         aCJ10y6YQeg9rPGVZKMFiXKVbpb9Nr02+SskL9Jc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 06/70] net: mvpp2: Use strscpy to handle stat strings
-Date:   Sun,  9 Jun 2019 18:41:17 +0200
-Message-Id: <20190609164127.850991830@linuxfoundation.org>
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 136/241] hwmon: (f71805f) Use request_muxed_region for Super-IO accesses
+Date:   Sun,  9 Jun 2019 18:41:18 +0200
+Message-Id: <20190609164151.719533312@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +45,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+[ Upstream commit 73e6ff71a7ea924fb7121d576a2d41e3be3fc6b5 ]
 
-[ Upstream commit d37acd5aa99c57505b64913e0e2624ec3daed8c5 ]
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-Use a safe strscpy call to copy the ethtool stat strings into the
-relevant buffers, instead of a memcpy that will be accessing
-out-of-bound data.
+Unable to handle kernel paging request at virtual address ffffffbffee0002e
+pgd = ffffffc1d68d4000
+[ffffffbffee0002e] *pgd=0000000000000000, *pud=0000000000000000
+Internal error: Oops: 94000046 [#1] PREEMPT SMP
+Modules linked in: f71805f(+) hwmon
+CPU: 3 PID: 1659 Comm: insmod Not tainted 4.5.0+ #88
+Hardware name: linux,dummy-virt (DT)
+task: ffffffc1f6665400 ti: ffffffc1d6418000 task.ti: ffffffc1d6418000
+PC is at f71805f_find+0x6c/0x358 [f71805f]
 
-Fixes: 118d6298f6f0 ("net: mvpp2: add ethtool GOP statistics")
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
+
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple
+drivers is synchronized.
+
+Fixes: e53004e20a58e ("hwmon: New f71805f driver")
+Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reported-by: John Garry <john.garry@huawei.com>
+Cc: John Garry <john.garry@huawei.com>
+Acked-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwmon/f71805f.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -1304,8 +1304,8 @@ static void mvpp2_ethtool_get_strings(st
- 		int i;
- 
- 		for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_regs); i++)
--			memcpy(data + i * ETH_GSTRING_LEN,
--			       &mvpp2_ethtool_regs[i].string, ETH_GSTRING_LEN);
-+			strscpy(data + i * ETH_GSTRING_LEN,
-+			        mvpp2_ethtool_regs[i].string, ETH_GSTRING_LEN);
- 	}
+diff --git a/drivers/hwmon/f71805f.c b/drivers/hwmon/f71805f.c
+index facd05cda26da..e8c0898864277 100644
+--- a/drivers/hwmon/f71805f.c
++++ b/drivers/hwmon/f71805f.c
+@@ -96,17 +96,23 @@ superio_select(int base, int ld)
+ 	outb(ld, base + 1);
  }
  
+-static inline void
++static inline int
+ superio_enter(int base)
+ {
++	if (!request_muxed_region(base, 2, DRVNAME))
++		return -EBUSY;
++
+ 	outb(0x87, base);
+ 	outb(0x87, base);
++
++	return 0;
+ }
+ 
+ static inline void
+ superio_exit(int base)
+ {
+ 	outb(0xaa, base);
++	release_region(base, 2);
+ }
+ 
+ /*
+@@ -1561,7 +1567,7 @@ static int __init f71805f_device_add(unsigned short address,
+ static int __init f71805f_find(int sioaddr, unsigned short *address,
+ 			       struct f71805f_sio_data *sio_data)
+ {
+-	int err = -ENODEV;
++	int err;
+ 	u16 devid;
+ 
+ 	static const char * const names[] = {
+@@ -1569,8 +1575,11 @@ static int __init f71805f_find(int sioaddr, unsigned short *address,
+ 		"F71872F/FG or F71806F/FG",
+ 	};
+ 
+-	superio_enter(sioaddr);
++	err = superio_enter(sioaddr);
++	if (err)
++		return err;
+ 
++	err = -ENODEV;
+ 	devid = superio_inw(sioaddr, SIO_REG_MANID);
+ 	if (devid != SIO_FINTEK_ID)
+ 		goto exit;
+-- 
+2.20.1
+
 
 
