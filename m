@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8F13A89E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:02:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E122F3A6F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387826AbfFIRC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:02:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40290 "EHLO mail.kernel.org"
+        id S1729448AbfFIQon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:44:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730057AbfFIRCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:02:24 -0400
+        id S1729417AbfFIQol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:44:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5294C206C3;
-        Sun,  9 Jun 2019 17:02:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 470752083D;
+        Sun,  9 Jun 2019 16:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099743;
-        bh=5P1Tj/4D3AY3VTfLA9mofZvhkqLHBaa5LatwP7tZJVk=;
+        s=default; t=1560098680;
+        bh=3TiSJFTSAhpeNS6uAwC6G4/rKBhf+NTBYTJ6rAonacA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YxgO0rEN8uoWKINothJBurZjLa9CgCBfgZgLZvwX0/V6PO5BOgkpy9cxlx2ZVddBr
-         X8ponlCdORFsgn/+J77uukcyRpIUeAkASg60wM1vT8jIRMlVNKD7A+o62jU2XZt9Y1
-         Gg5IlhdvE9BbvO6NxN7InDacC/vLFRgHbWCeNqnY=
+        b=hMjhKRUxCLFq1AX7wJZKhFQOaWfJHiwG4k9goTKw8ieDmu/Zhq5usRhXorNqDH9AP
+         Cfqq6jWwi6rxdurKv1pd88DHfbsLl8m7BFCjlHBc/+MO292pNoLpMsHxQ0fsPoAbnf
+         lwfPCYMZxJb6cydyIblc7DhRAxxHvzAD3V5Z5daY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 151/241] rtlwifi: fix a potential NULL pointer dereference
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.1 22/70] rcu: locking and unlocking need to always be at least barriers
 Date:   Sun,  9 Jun 2019 18:41:33 +0200
-Message-Id: <20190609164152.133278833@linuxfoundation.org>
+Message-Id: <20190609164128.884420002@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 765976285a8c8db3f0eb7f033829a899d0c2786e ]
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-In case alloc_workqueue fails, the fix reports the error and
-returns to avoid NULL pointer dereference.
+commit 66be4e66a7f422128748e3c3ef6ee72b20a6197b upstream.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Herbert Xu pointed out that commit bb73c52bad36 ("rcu: Don't disable
+preemption for Tiny and Tree RCU readers") was incorrect in making the
+preempt_disable/enable() be conditional on CONFIG_PREEMPT_COUNT.
+
+If CONFIG_PREEMPT_COUNT isn't enabled, the preemption enable/disable is
+a no-op, but still is a compiler barrier.
+
+And RCU locking still _needs_ that compiler barrier.
+
+It is simply fundamentally not true that RCU locking would be a complete
+no-op: we still need to guarantee (for example) that things that can
+trap and cause preemption cannot migrate into the RCU locked region.
+
+The way we do that is by making it a barrier.
+
+See for example commit 386afc91144b ("spinlocks and preemption points
+need to be at least compiler barriers") from back in 2013 that had
+similar issues with spinlocks that become no-ops on UP: they must still
+constrain the compiler from moving other operations into the critical
+region.
+
+Now, it is true that a lot of RCU operations already use READ_ONCE() and
+WRITE_ONCE() (which in practice likely would never be re-ordered wrt
+anything remotely interesting), but it is also true that that is not
+globally the case, and that it's not even necessarily always possible
+(ie bitfields etc).
+
+Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree RCU readers")
+Cc: stable@kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/realtek/rtlwifi/base.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/rcupdate.h |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
-index aab752328c269..5013d8c1d4a60 100644
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -466,6 +466,11 @@ static void _rtl_init_deferred_work(struct ieee80211_hw *hw)
- 	/* <2> work queue */
- 	rtlpriv->works.hw = hw;
- 	rtlpriv->works.rtl_wq = alloc_workqueue("%s", 0, 0, rtlpriv->cfg->name);
-+	if (unlikely(!rtlpriv->works.rtl_wq)) {
-+		pr_err("Failed to allocate work queue\n");
-+		return;
-+	}
-+
- 	INIT_DELAYED_WORK(&rtlpriv->works.watchdog_wq,
- 			  (void *)rtl_watchdog_wq_callback);
- 	INIT_DELAYED_WORK(&rtlpriv->works.ips_nic_off_wq,
--- 
-2.20.1
-
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -56,14 +56,12 @@ void __rcu_read_unlock(void);
+ 
+ static inline void __rcu_read_lock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_disable();
++	preempt_disable();
+ }
+ 
+ static inline void __rcu_read_unlock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_enable();
++	preempt_enable();
+ }
+ 
+ static inline int rcu_preempt_depth(void)
 
 
