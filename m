@@ -2,137 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5764A3A28D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 02:05:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FA33A2A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 02:15:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbfFIAEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 20:04:40 -0400
-Received: from mail-eopbgr780079.outbound.protection.outlook.com ([40.107.78.79]:1660
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727990AbfFIAEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 20:04:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H9W8ol28YE2CqSuPc/m8fmI/Wka8vmjamOSybBa3E8U=;
- b=34DmBMOKF50h211aHrJBG/3WniN+NlweJmH4YNkTpMbkD5hWhgbx0Xmweg9Pk3nNDKEoLs4nUDfiEVAHdD/GNn/5R0BSZtMJznN5201xIRaexKqixo2grY/OH3qQ9pDq4OFx0nby6WXAiZJ+ayPjb9cm9dP1P3+uKJLRCShz9W4=
-Received: from CY4PR02CA0038.namprd02.prod.outlook.com (2603:10b6:903:117::24)
- by CH2PR02MB6231.namprd02.prod.outlook.com (2603:10b6:610:d::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.15; Sun, 9 Jun
- 2019 00:04:31 +0000
-Received: from SN1NAM02FT053.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::203) by CY4PR02CA0038.outlook.office365.com
- (2603:10b6:903:117::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1965.14 via Frontend
- Transport; Sun, 9 Jun 2019 00:04:31 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.80.198)
- smtp.mailfrom=xilinx.com; arndb.de; dkim=none (message not signed)
- header.d=none;arndb.de; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.80.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.80.198; helo=xir-pvapexch02.xlnx.xilinx.com;
-Received: from xir-pvapexch02.xlnx.xilinx.com (149.199.80.198) by
- SN1NAM02FT053.mail.protection.outlook.com (10.152.72.102) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.1965.12 via Frontend Transport; Sun, 9 Jun 2019 00:04:31 +0000
-Received: from xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) by
- xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1531.3; Sun, 9 Jun 2019 01:04:24 +0100
-Received: from smtp.xilinx.com (172.21.105.198) by
- xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Sun, 9 Jun 2019 01:04:24 +0100
-Envelope-to: arnd@arndb.de,
- gregkh@linuxfoundation.org,
- michal.simek@xilinx.com,
- linux-arm-kernel@lists.infradead.org,
- robh+dt@kernel.org,
- mark.rutland@arm.com,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- dragan.cvetic@xilinx.com,
- derek.kiernan@xilinx.com
-Received: from [149.199.110.15] (port=48046 helo=xirdraganc40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <dragan.cvetic@xilinx.com>)
-        id 1hZlJw-0001PN-E6; Sun, 09 Jun 2019 01:04:24 +0100
-From:   Dragan Cvetic <dragan.cvetic@xilinx.com>
-To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-        <michal.simek@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Dragan Cvetic <dragan.cvetic@xilinx.com>,
-        Derek Kiernan <derek.kiernan@xilinx.com>
-Subject: [PATCH V5 11/11] MAINTAINERS: add maintainer for SD-FEC
-Date:   Sun, 9 Jun 2019 01:04:16 +0100
-Message-ID: <1560038656-380620-12-git-send-email-dragan.cvetic@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560038656-380620-1-git-send-email-dragan.cvetic@xilinx.com>
-References: <1560038656-380620-1-git-send-email-dragan.cvetic@xilinx.com>
+        id S1727620AbfFIAPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 20:15:54 -0400
+Received: from pb-smtp21.pobox.com ([173.228.157.53]:56699 "EHLO
+        pb-smtp21.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbfFIAPy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Jun 2019 20:15:54 -0400
+Received: from pb-smtp21.pobox.com (unknown [127.0.0.1])
+        by pb-smtp21.pobox.com (Postfix) with ESMTP id C465E5C8FF;
+        Sat,  8 Jun 2019 20:15:51 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:in-reply-to:message-id:references:mime-version
+        :content-type; s=sasl; bh=bd142Ou0olyyhQXEUfvxQXeeF6g=; b=GMgccx
+        4I3F1VrOghv9H9D8lzc7LPCuoOIlryTo43cDuCOF75GDERlIYxcCjOSVgX6jW7kR
+        VLax+TR9NXYFT6h31uvWE67QokTo61PZk1dXv4+fK2BRUeqselThdd7DD862u3gw
+        GqK5bL4vPfN+XieQXqbNBHSwF92Kd06ukhzX8=
+Received: from pb-smtp21.sea.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp21.pobox.com (Postfix) with ESMTP id BC7B75C8FE;
+        Sat,  8 Jun 2019 20:15:51 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=7zuctmsW7EpJgtHD/eoEiJtcUTAjwVvVHUiIgul0tD4=; b=RlScfWzD+tc27aWDfIK8TapB268mkVWGGbDFrLwh7bAoCp1ams0kA9NUySVkqcA6dDcAt4/qDT27e/wSEILo5Cg9bYPAxx+GPgmcxZNNYfa5Sv39NIVkEucPZ1rOZK98IYpgdMOg1qod7mtG0AwjPDL6JDxQpFVUS0lIMymivkM=
+Received: from yoda.home (unknown [70.82.130.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp21.pobox.com (Postfix) with ESMTPSA id AEE805C8FD;
+        Sat,  8 Jun 2019 20:15:48 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTPSA id E472F2DA03AA;
+        Sat,  8 Jun 2019 20:15:46 -0400 (EDT)
+Date:   Sat, 8 Jun 2019 20:15:46 -0400 (EDT)
+From:   Nicolas Pitre <nico@fluxnic.net>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     Gen Zhang <blackgod016574@gmail.com>, jslaby@suse.com,
+        kilobyte@angband.pl, textshell@uchuujin.de, mpatocka@redhat.com,
+        daniel.vetter@ffwll.ch, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] vt: Fix a missing-check bug in con_init()
+In-Reply-To: <20190608162219.GB11699@kroah.com>
+Message-ID: <nycvar.YSQ.7.76.1906082010430.1558@knanqh.ubzr>
+References: <20190528004529.GA12388@zhanggen-UX430UQ> <20190608160138.GA3840@zhanggen-UX430UQ> <20190608162219.GB11699@kroah.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.80.198;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(39850400004)(376002)(136003)(2980300002)(199004)(189003)(60926002)(48376002)(426003)(8936002)(106002)(7636002)(28376004)(478600001)(71366001)(246002)(8676002)(70206006)(76130400001)(356004)(6666004)(70586007)(9786002)(2906002)(36906005)(305945005)(50226002)(4326008)(36756003)(336012)(47776003)(476003)(186003)(76176011)(4744005)(316002)(486006)(44832011)(16586007)(110136005)(54906003)(7696005)(26826003)(2201001)(26005)(956004)(51416003)(5660300002)(107886003)(2616005)(446003)(11346002)(50466002)(126002)(102446001);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6231;H:xir-pvapexch02.xlnx.xilinx.com;FPR:;SPF:Pass;LANG:en;PTR:unknown-80-198.xilinx.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 35c629dc-8a8c-474f-53f6-08d6ec6e0c3b
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:CH2PR02MB6231;
-X-MS-TrafficTypeDiagnostic: CH2PR02MB6231:
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CH2PR02MB62311AB688A8DE0B44BC51DACB120@CH2PR02MB6231.namprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
-X-Forefront-PRVS: 006339698F
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: RUXMhg+a6vWNoI8O/xqYxOYZzcXNqNpddQ0K4nsnwqLbHUyJApMmHBVXoM3ZFEzbcmHIMvjmNNciYHhhX0PkWYoEQw0dBz4gZQxUs66fF+f4xLQySIns1BBpe5Tz2fn0KyyC4zSZVzPLKbcnKLQ/QNxm0f5ACrj8Uu6SGCnpLJTEi2YxY9EnmgsD/u6290hieEvG8JgJgqEufjjBbfJlYGTDcMkkMZbD1vJHrtQ7J6PQSS+oKjUfvP4s9kM2aGIpuXNYgKVPIqw4W5/ypdwtbLrMOzShkFVe+SyD3rgfDTZZ4CQGZQ7JWhpVi95PE+y6TLyOFYo7YXNlcwH0Iw6oEJgkNnk7ghrY0nap7RMQNX6KIUfwKbmNt5HoeLt/TghAhv1KmPLzQ4znXxcFQXhE9qnH1L7W8UkjSZvc1gXTztQ=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2019 00:04:31.1580
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35c629dc-8a8c-474f-53f6-08d6ec6e0c3b
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6231
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID: BBAC4D20-8A4B-11E9-AE4A-8D86F504CC47-78420484!pb-smtp21.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-support
+On Sat, 8 Jun 2019, Greg KH wrote:
 
-Add maintainer entry for Xilinx SD-FEC driver support.
+> On Sun, Jun 09, 2019 at 12:01:38AM +0800, Gen Zhang wrote:
+> > On Tue, May 28, 2019 at 08:45:29AM +0800, Gen Zhang wrote:
+> > > In function con_init(), the pointer variable vc_cons[currcons].d, vc and
+> > > vc->vc_screenbuf is allocated by kzalloc(). And they are used in the 
+> > > following codes. However, kzalloc() returns NULL when fails, and null 
+> > > pointer dereference may happen. And it will cause the kernel to crash. 
+> > > Therefore, we should check the return value and handle the error.
+> > > 
+> > > Further, since the allcoation is in a loop, we should free all the 
+> > > allocated memory in a loop.
+> > > 
+> > > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> > > Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
+> > > ---
+> > > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> > > index fdd12f8..d50f68f 100644
+> > > --- a/drivers/tty/vt/vt.c
+> > > +++ b/drivers/tty/vt/vt.c
+> > > @@ -3350,10 +3350,14 @@ static int __init con_init(void)
+> > >  
+> > >  	for (currcons = 0; currcons < MIN_NR_CONSOLES; currcons++) {
+> > >  		vc_cons[currcons].d = vc = kzalloc(sizeof(struct vc_data), GFP_NOWAIT);
+> > > +		if (!vc)
+> > > +			goto fail1;
+> > >  		INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
+> > >  		tty_port_init(&vc->port);
+> > >  		visual_init(vc, currcons, 1);
+> > >  		vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_NOWAIT);
+> > > +		if (!vc->vc_screenbuf)
+> > > +			goto fail2;
+> > >  		vc_init(vc, vc->vc_rows, vc->vc_cols,
+> > >  			currcons || !vc->vc_sw->con_save_screen);
+> > >  	}
+> > > @@ -3375,6 +3379,16 @@ static int __init con_init(void)
+> > >  	register_console(&vt_console_driver);
+> > >  #endif
+> > >  	return 0;
+> > > +fail1:
+> > > +	while (currcons > 0) {
+> > > +		currcons--;
+> > > +		kfree(vc_cons[currcons].d->vc_screenbuf);
+> > > +fail2:
+> > > +		kfree(vc_cons[currcons].d);
+> > > +		vc_cons[currcons].d = NULL;
+> > > +	}
+> 
+> Wait, will that even work?  You can jump into the middle of a while
+> loop?
 
-Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
-Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Absolutely.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bfe48cb..2b754a8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17345,6 +17345,17 @@ S:	Supported
- F:	Documentation/filesystems/xfs.txt
- F:	fs/xfs/
- 
-+XILINX SD-FEC IP CORES
-+M:	Derek Kiernan <derek.kiernan@xilinx.com>
-+M:	Dragan Cvetic <dragan.cvetic@xilinx.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/misc/xlnx,sd-fec.txt
-+F:	Documentation/misc-devices/xilinx_sdfec.rst
-+F:	drivers/misc/xilinx_sdfec.c
-+F:	drivers/misc/Kconfig
-+F:	drivers/misc/Makefile
-+F:	include/uapi/misc/xilinx_sdfec.h
-+
- XILINX AXI ETHERNET DRIVER
- M:	Anirudha Sarangi <anirudh@xilinx.com>
- M:	John Linn <John.Linn@xilinx.com>
--- 
-2.7.4
+> Ugh, that's beyond ugly.
 
+That was me who suggested to do it like that. To me, this is nicer than 
+the proposed alternatives. For an error path that is rather unlikely to 
+happen, I think this is a very concise and eleguant way to do it.
+
+> And please provide "real" names for the
+> labels, "fail1" and "fail2" do not tell anything here.
+
+That I agree with.
+
+
+Nicolas
