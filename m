@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BDF3A972
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 313873A6E1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388284AbfFIRCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:02:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40652 "EHLO mail.kernel.org"
+        id S1729093AbfFIQoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:44:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387669AbfFIRCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:02:38 -0400
+        id S1728858AbfFIQoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:44:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C028206DF;
-        Sun,  9 Jun 2019 17:02:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6223320833;
+        Sun,  9 Jun 2019 16:44:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099758;
-        bh=I/9DT0jMwSJ4P0cBxwApaDdYapQ/q+TUlGmEcnouttQ=;
+        s=default; t=1560098645;
+        bh=6LL9S0Uxsj0fj25dKAsoqKo7KsJPE5e1KeQC7KL+JZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d5Vn6N80rdkBkUClmtdTLgFcA+bzbRdEza95qvQRoRVrG9hTrLdfNWHc4LcDuzY7Y
-         Dc2qYbc4GiVC+KF4rM+6Zetfrup05H2NUKDZYeTh7RLL80RlJTTIatjhOKOoYFbaFA
-         d36hofYrf2AJRcw9AoDZShnwZlt+req3wiRmtHNY=
+        b=KG0qeemyzbQz6DoBUdI66HO3HFDMO3TAI6CEfP8TPOt9WM9Orq/OaH1HDuitJjYhj
+         Xtp7SpMBszZEOXfLz9wv7E+FCnzqACMBXJKxEiFHMu1R76T0eujbROebJJh5WGkPQA
+         WCQtTj6OAZdzhdNvv3FloGek0PtTGicA4cEYvEHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 138/241] mmc_spi: add a status check for spi_sync_locked
-Date:   Sun,  9 Jun 2019 18:41:20 +0200
-Message-Id: <20190609164151.772632630@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matteo Croce <mcroce@redhat.com>
+Subject: [PATCH 5.1 10/70] pktgen: do not sleep with the thread lock held.
+Date:   Sun,  9 Jun 2019 18:41:21 +0200
+Message-Id: <20190609164128.063017165@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 611025983b7976df0183390a63a2166411d177f1 ]
+From: Paolo Abeni <pabeni@redhat.com>
 
-In case spi_sync_locked fails, the fix reports the error and
-returns the error code upstream.
+[ Upstream commit 720f1de4021f09898b8c8443f3b3e995991b6e3a ]
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Currently, the process issuing a "start" command on the pktgen procfs
+interface, acquires the pktgen thread lock and never release it, until
+all pktgen threads are completed. The above can blocks indefinitely any
+other pktgen command and any (even unrelated) netdevice removal - as
+the pktgen netdev notifier acquires the same lock.
+
+The issue is demonstrated by the following script, reported by Matteo:
+
+ip -b - <<'EOF'
+	link add type dummy
+	link add type veth
+	link set dummy0 up
+EOF
+modprobe pktgen
+echo reset >/proc/net/pktgen/pgctrl
+{
+	echo rem_device_all
+	echo add_device dummy0
+} >/proc/net/pktgen/kpktgend_0
+echo count 0 >/proc/net/pktgen/dummy0
+echo start >/proc/net/pktgen/pgctrl &
+sleep 1
+rmmod veth
+
+Fix the above releasing the thread lock around the sleep call.
+
+Additionally we must prevent racing with forcefull rmmod - as the
+thread lock no more protects from them. Instead, acquire a self-reference
+before waiting for any thread. As a side effect, running
+
+rmmod pktgen
+
+while some thread is running now fails with "module in use" error,
+before this patch such command hanged indefinitely.
+
+Note: the issue predates the commit reported in the fixes tag, but
+this fix can't be applied before the mentioned commit.
+
+v1 -> v2:
+ - no need to check for thread existence after flipping the lock,
+   pktgen threads are freed only at net exit time
+ -
+
+Fixes: 6146e6a43b35 ("[PKTGEN]: Removes thread_{un,}lock() macros.")
+Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/mmc_spi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/pktgen.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
-index e03ec74f3fb08..40a369c7005a8 100644
---- a/drivers/mmc/host/mmc_spi.c
-+++ b/drivers/mmc/host/mmc_spi.c
-@@ -819,6 +819,10 @@ mmc_spi_readblock(struct mmc_spi_host *host, struct spi_transfer *t,
- 	}
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -3066,7 +3066,13 @@ static int pktgen_wait_thread_run(struct
+ {
+ 	while (thread_is_running(t)) {
  
- 	status = spi_sync_locked(spi, &host->m);
-+	if (status < 0) {
-+		dev_dbg(&spi->dev, "read error %d\n", status);
-+		return status;
-+	}
++		/* note: 't' will still be around even after the unlock/lock
++		 * cycle because pktgen_thread threads are only cleared at
++		 * net exit
++		 */
++		mutex_unlock(&pktgen_thread_lock);
+ 		msleep_interruptible(100);
++		mutex_lock(&pktgen_thread_lock);
  
- 	if (host->dma_dev) {
- 		dma_sync_single_for_cpu(host->dma_dev,
--- 
-2.20.1
-
+ 		if (signal_pending(current))
+ 			goto signal;
+@@ -3081,6 +3087,10 @@ static int pktgen_wait_all_threads_run(s
+ 	struct pktgen_thread *t;
+ 	int sig = 1;
+ 
++	/* prevent from racing with rmmod */
++	if (!try_module_get(THIS_MODULE))
++		return sig;
++
+ 	mutex_lock(&pktgen_thread_lock);
+ 
+ 	list_for_each_entry(t, &pn->pktgen_threads, th_list) {
+@@ -3094,6 +3104,7 @@ static int pktgen_wait_all_threads_run(s
+ 			t->control |= (T_STOP);
+ 
+ 	mutex_unlock(&pktgen_thread_lock);
++	module_put(THIS_MODULE);
+ 	return sig;
+ }
+ 
 
 
