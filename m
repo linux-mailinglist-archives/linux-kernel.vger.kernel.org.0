@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1303A778
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCA4F3A773
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730577AbfFIQt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:49:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49590 "EHLO mail.kernel.org"
+        id S1731578AbfFIQtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731593AbfFIQty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:49:54 -0400
+        id S1731562AbfFIQtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED45205ED;
-        Sun,  9 Jun 2019 16:49:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 833922070B;
+        Sun,  9 Jun 2019 16:49:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098993;
-        bh=F+TYIcTfTft0dTVhJH50C6ngOyIF8PgxqwBW+hKQiak=;
+        s=default; t=1560098985;
+        bh=ywlPNhe9q6s7xmSEoV4kIeU8IFY4qdBlUrpk7UcgrWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uNU9eY49CzvXFfdGRe06O7oRTR40igNjPolTlv4c2u6RxEz9Lfxh9pLhkltkvbX0C
-         Dhurm77nhSjuoJNxR1aiqZPeV4onklsBkXWH5Bso/KcV3Fbcd4IrmAHOAz32reY7Jb
-         yXSrGUmG+HFWVKxRhldumBB9fhxFatZrBwWWCd9w=
+        b=Oo3gHVpeN9E58Ffe4iH8ueGzAoMlFDV4HgQ1ng7+7wxKuFMVfp3GKk3Utv8DrJsro
+         TLcZ6NuIvbjmtTgZrfHLruhy8H7C6+gRnP61sTZW6w7vSRob2OcPu+w5njpc0/9Bed
+         HI0Mo2OAdMVYoK3Grc1/PJAZEDplZbrzdBdZ14QM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 11/35] Revert "fib_rules: fix error in backport of e9919a24d302 ("fib_rules: return 0...")"
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.19 36/51] test_firmware: Use correct snprintf() limit
 Date:   Sun,  9 Jun 2019 18:42:17 +0200
-Message-Id: <20190609164126.153138797@linuxfoundation.org>
+Message-Id: <20190609164129.496329390@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-References: <20190609164125.377368385@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,25 +42,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-This reverts commit 691306ebd18f945e44b4552a4bfcca3475e5d957 as the
-patch that this "fixes" is about to be reverted...
+commit bd17cc5a20ae9aaa3ed775f360b75ff93cd66a1d upstream.
 
+The limit here is supposed to be how much of the page is left, but it's
+just using PAGE_SIZE as the limit.
+
+The other thing to remember is that snprintf() returns the number of
+bytes which would have been copied if we had had enough room.  So that
+means that if we run out of space then this code would end up passing a
+negative value as the limit and the kernel would print an error message.
+I have change the code to use scnprintf() which returns the number of
+bytes that were successfully printed (not counting the NUL terminator).
+
+Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/fib_rules.c |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/net/core/fib_rules.c
-+++ b/net/core/fib_rules.c
-@@ -564,7 +564,6 @@ int fib_nl_newrule(struct sk_buff *skb,
- 	}
+---
+ lib/test_firmware.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -223,30 +223,30 @@ static ssize_t config_show(struct device
  
- 	if (rule_exists(ops, frh, tb, rule)) {
--		err = 0;
- 		if (nlh->nlmsg_flags & NLM_F_EXCL)
- 			err = -EEXIST;
- 		goto errout_free;
+ 	mutex_lock(&test_fw_mutex);
+ 
+-	len += snprintf(buf, PAGE_SIZE,
++	len += scnprintf(buf, PAGE_SIZE - len,
+ 			"Custom trigger configuration for: %s\n",
+ 			dev_name(dev));
+ 
+ 	if (test_fw_config->name)
+-		len += snprintf(buf+len, PAGE_SIZE,
++		len += scnprintf(buf+len, PAGE_SIZE - len,
+ 				"name:\t%s\n",
+ 				test_fw_config->name);
+ 	else
+-		len += snprintf(buf+len, PAGE_SIZE,
++		len += scnprintf(buf+len, PAGE_SIZE - len,
+ 				"name:\tEMTPY\n");
+ 
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"num_requests:\t%u\n", test_fw_config->num_requests);
+ 
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"send_uevent:\t\t%s\n",
+ 			test_fw_config->send_uevent ?
+ 			"FW_ACTION_HOTPLUG" :
+ 			"FW_ACTION_NOHOTPLUG");
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"sync_direct:\t\t%s\n",
+ 			test_fw_config->sync_direct ? "true" : "false");
+-	len += snprintf(buf+len, PAGE_SIZE,
++	len += scnprintf(buf+len, PAGE_SIZE - len,
+ 			"read_fw_idx:\t%u\n", test_fw_config->read_fw_idx);
+ 
+ 	mutex_unlock(&test_fw_mutex);
 
 
