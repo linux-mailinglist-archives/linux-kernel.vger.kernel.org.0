@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7937F3A8A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB593A7B6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387419AbfFIRCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:02:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40726 "EHLO mail.kernel.org"
+        id S1732227AbfFIQw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:52:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388280AbfFIRCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:02:41 -0400
+        id S1731394AbfFIQw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:52:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B57A206C3;
-        Sun,  9 Jun 2019 17:02:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07B62205ED;
+        Sun,  9 Jun 2019 16:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099760;
-        bh=Ysv8MVANL+aQS4kM+idzj4ZuPxGYH7yNlLHqDFbdGQE=;
+        s=default; t=1560099146;
+        bh=0CV3ykOXup43iLMZFuI/xSseBucsOMh+EuMa+csKPtA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nVydQy5qwohcGLSA/Ib7HOFX9r3Ffpx8R3CsYaQjSyPuALERtvmMCBp8x5ZuDhn8b
-         nAMsokeZWX1ihG+teYDsrydl+6Fx6OJAD0YCdsxrW6WP1Pj9gawnrwnSDraQcbF5Lg
-         Eit2e8lpi+Yq31BTuGdCrmQ3Yt7P7HF7e/BQuA2o=
+        b=a24cj2KtUqX77zB/LpBQWrIZCHTDsiNnhzE9nnZIKeud3kC14EMhiRT+jJ6sNnVTr
+         xPnZ6HfvDVTZTSYAHEZ4MEGoukdH2IQlJ+kiQl4VaKCTMebSIfm9BuTRn63Tc8R1oG
+         tRO37ExoneLrEpdt6p6LCgC+Cl8oKDj/FMN/oWSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 156/241] scsi: ufs: Fix regulator load and icc-level configuration
+        stable@vger.kernel.org, Rakesh Hemnani <rhemnani@fb.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 08/83] bnxt_en: Fix aggregation buffer leak under OOM condition.
 Date:   Sun,  9 Jun 2019 18:41:38 +0200
-Message-Id: <20190609164152.271776031@linuxfoundation.org>
+Message-Id: <20190609164128.290853125@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,76 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0487fff76632ec023d394a05b82e87a971db8c03 ]
+From: Michael Chan <michael.chan@broadcom.com>
 
-Currently if a regulator has "<name>-fixed-regulator" property in device
-tree, it will skip current limit initialization.  This lead to a zero
-"max_uA" value in struct ufs_vreg.
+[ Upstream commit 296d5b54163964b7ae536b8b57dfbd21d4e868e1 ]
 
-However, "regulator_set_load" operation shall be required on regulators
-which have valid current limits, otherwise a zero "max_uA" set by
-"regulator_set_load" may cause unexpected behavior when this regulator is
-enabled or set as high power mode.
+For every RX packet, the driver replenishes all buffers used for that
+packet and puts them back into the RX ring and RX aggregation ring.
+In one code path where the RX packet has one RX buffer and one or more
+aggregation buffers, we missed recycling the aggregation buffer(s) if
+we are unable to allocate a new SKB buffer.  This leads to the
+aggregation ring slowly running out of buffers over time.  Fix it
+by properly recycling the aggregation buffers.
 
-Similarly, in device's icc_level configuration flow, the target icc_level
-shall be updated if regulator also has valid current limit, otherwise a
-wrong icc_level will be calculated by zero "max_uA" and thus causes
-unexpected results after it is written to device.
-
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Reported-by: Rakesh Hemnani <rhemnani@fb.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ufs/ufshcd.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c94d465de941e..ed76381fce4cc 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4144,19 +4144,19 @@ static u32 ufshcd_find_max_sup_active_icc_level(struct ufs_hba *hba,
- 		goto out;
- 	}
- 
--	if (hba->vreg_info.vcc)
-+	if (hba->vreg_info.vcc && hba->vreg_info.vcc->max_uA)
- 		icc_level = ufshcd_get_max_icc_level(
- 				hba->vreg_info.vcc->max_uA,
- 				POWER_DESC_MAX_ACTV_ICC_LVLS - 1,
- 				&desc_buf[PWR_DESC_ACTIVE_LVLS_VCC_0]);
- 
--	if (hba->vreg_info.vccq)
-+	if (hba->vreg_info.vccq && hba->vreg_info.vccq->max_uA)
- 		icc_level = ufshcd_get_max_icc_level(
- 				hba->vreg_info.vccq->max_uA,
- 				icc_level,
- 				&desc_buf[PWR_DESC_ACTIVE_LVLS_VCCQ_0]);
- 
--	if (hba->vreg_info.vccq2)
-+	if (hba->vreg_info.vccq2 && hba->vreg_info.vccq2->max_uA)
- 		icc_level = ufshcd_get_max_icc_level(
- 				hba->vreg_info.vccq2->max_uA,
- 				icc_level,
-@@ -4390,6 +4390,15 @@ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
- 	if (!vreg)
- 		return 0;
- 
-+	/*
-+	 * "set_load" operation shall be required on those regulators
-+	 * which specifically configured current limitation. Otherwise
-+	 * zero max_uA may cause unexpected behavior when regulator is
-+	 * enabled or set as high power mode.
-+	 */
-+	if (!vreg->max_uA)
-+		return 0;
-+
- 	ret = regulator_set_load(vreg->reg, ua);
- 	if (ret < 0) {
- 		dev_err(dev, "%s: %s set load (ua=%d) failed, err=%d\n",
--- 
-2.20.1
-
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1425,6 +1425,8 @@ static int bnxt_rx_pkt(struct bnxt *bp,
+ 		skb = bnxt_copy_skb(bnapi, data, len, dma_addr);
+ 		bnxt_reuse_rx_data(rxr, cons, data);
+ 		if (!skb) {
++			if (agg_bufs)
++				bnxt_reuse_rx_agg_bufs(bnapi, cp_cons, agg_bufs);
+ 			rc = -ENOMEM;
+ 			goto next_rx;
+ 		}
 
 
