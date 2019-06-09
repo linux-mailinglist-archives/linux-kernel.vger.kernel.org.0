@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBE713A6FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C5D3A6FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfFIQpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42780 "EHLO mail.kernel.org"
+        id S1729754AbfFIQpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729667AbfFIQpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:12 -0400
+        id S1729717AbfFIQpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:45:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 297A92084A;
-        Sun,  9 Jun 2019 16:45:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1DCE2145D;
+        Sun,  9 Jun 2019 16:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098711;
-        bh=PNNRAQtybQcafoxDwBfgfl8iuKndtpVW8pix/Q4wujM=;
+        s=default; t=1560098714;
+        bh=F8mVEECUDWVAl2J0GvhC9Qkc1zHUdiM9elyggL2b6Jk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xbDTNCmQoHSuP6TPDpRdi3blryQqG6TgF/tUvOnn8jCqA4828IwvWGnO2xOgfk89j
-         O1C0acxpAN6vpjNOZ2PUQatROozvVnDPkVVllCycqovdamMiXwIIyq4unIvgBaWT5H
-         zo2JqrLf4Hu6BfDoVNhPoDO4B4fv9KeojcBx6VJk=
+        b=pdfoaqZPby3ngSIcgq5Uo5TCSijmO+iw2t17WwVQXaE/TdqesCQ+FI5tX8wDusUjc
+         FZD2D1De8Lgv8h7eSFP1fWL4zQTqouHeycbgz6T0OTrFLMFEpi7KSckDi626cghoMY
+         u6E9ujzYHlwVmbZjGa2MIuCfBBjO07AL+wMo2abA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.1 32/70] fuse: fix copy_file_range() in the writeback case
-Date:   Sun,  9 Jun 2019 18:41:43 +0200
-Message-Id: <20190609164129.780863006@linuxfoundation.org>
+        stable@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 5.1 33/70] pstore: Set tfm to NULL on free_buf_for_compression
+Date:   Sun,  9 Jun 2019 18:41:44 +0200
+Message-Id: <20190609164129.877736227@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
 References: <20190609164127.541128197@linuxfoundation.org>
@@ -42,56 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Pi-Hsun Shih <pihsun@chromium.org>
 
-commit a2bc92362941006830afa3dfad6caec1f99acbf5 upstream.
+commit a9fb94a99bb515d8720ba8440ce3aba84aec80f8 upstream.
 
-Prior to sending COPY_FILE_RANGE to userspace filesystem, we must flush all
-dirty pages in both the source and destination files.
+Set tfm to NULL on free_buf_for_compression() after crypto_free_comp().
 
-This patch adds the missing flush of the source file.
+This avoid a use-after-free when allocate_buf_for_compression()
+and free_buf_for_compression() are called twice. Although
+free_buf_for_compression() freed the tfm, allocate_buf_for_compression()
+won't reinitialize the tfm since the tfm pointer is not NULL.
 
-Tested on libfuse-3.5.0 with:
-
-  libfuse/example/passthrough_ll /mnt/fuse/ -o writeback
-  libfuse/test/test_syscalls /mnt/fuse/tmp/test
-
-Fixes: 88bc7d5097a1 ("fuse: add support for copy_file_range()")
-Cc: <stable@vger.kernel.org> # v4.20
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 95047b0519c1 ("pstore: Refactor compression initialization")
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/file.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/pstore/platform.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3098,6 +3098,7 @@ static ssize_t fuse_copy_file_range(stru
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -347,8 +347,10 @@ static void allocate_buf_for_compression
+ 
+ static void free_buf_for_compression(void)
  {
- 	struct fuse_file *ff_in = file_in->private_data;
- 	struct fuse_file *ff_out = file_out->private_data;
-+	struct inode *inode_in = file_inode(file_in);
- 	struct inode *inode_out = file_inode(file_out);
- 	struct fuse_inode *fi_out = get_fuse_inode(inode_out);
- 	struct fuse_conn *fc = ff_in->fc;
-@@ -3121,6 +3122,17 @@ static ssize_t fuse_copy_file_range(stru
- 	if (fc->no_copy_file_range)
- 		return -EOPNOTSUPP;
- 
-+	if (fc->writeback_cache) {
-+		inode_lock(inode_in);
-+		err = filemap_write_and_wait_range(inode_in->i_mapping,
-+						   pos_in, pos_in + len);
-+		if (!err)
-+			fuse_sync_writes(inode_in);
-+		inode_unlock(inode_in);
-+		if (err)
-+			return err;
+-	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm)
++	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm) {
+ 		crypto_free_comp(tfm);
++		tfm = NULL;
 +	}
-+
- 	inode_lock(inode_out);
- 
- 	if (fc->writeback_cache) {
+ 	kfree(big_oops_buf);
+ 	big_oops_buf = NULL;
+ 	big_oops_buf_sz = 0;
 
 
