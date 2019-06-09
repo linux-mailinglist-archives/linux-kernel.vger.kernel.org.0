@@ -2,141 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3576F3A5E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 819773A583
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 14:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbfFINYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 09:24:20 -0400
-Received: from mail180-16.suw31.mandrillapp.com ([198.2.180.16]:24813 "EHLO
-        mail180-16.suw31.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728468AbfFINYT (ORCPT
+        id S1728489AbfFIMs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 08:48:58 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36789 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728319AbfFIMs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 09:24:19 -0400
-X-Greylist: delayed 1807 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 09:24:17 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:In-Reply-To:References:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=XP9pFjzBhbe06xRPfSZ9T8pBAIGEY0aGVAx16XPCO+0=;
- b=VyEjVA4pZJWzndmR0MMtGce3nPK4Hj4Qjy1Ez2jxCZ+h+pxN4pVABSLPlSnbha7OIMo9DdCvpe5G
-   s3sUEufqhVlr80bVmdzzhg2f09hj38mDpV+et373MfbNmJXEB4iI1oA3CxIhdyAfCBEzO9Uw720P
-   3XmEiu7Xs/hUvYjDfKc=
-Received: from pmta03.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail180-16.suw31.mandrillapp.com id hvk48422sc02 for <linux-kernel@vger.kernel.org>; Sun, 9 Jun 2019 12:39:30 +0000 (envelope-from <bounce-md_31050260.5cfcfe02.v1-041b67f8f3d34c1ab2542274e23daaa1@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560083970; h=From : 
- Subject : To : Cc : Message-Id : In-Reply-To : References : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=XP9pFjzBhbe06xRPfSZ9T8pBAIGEY0aGVAx16XPCO+0=; 
- b=FmZ9MfObltRv7oSOlwxQqlAt2rgDJApAuphE0BTjnJ6R/fLN3dvhoD0qlxW5Wx/9rNR7Ct
- TTIN9CVF22pPslZSjRHpKRt4MaY/++q7IPlGwZTDyN51LLOQ7O0qGSCFGwgRYOZ8/0XgIiMt
- RIwNgrxeqwkfXXz0DGzaGPouoinL8=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: [PATCH 4.14 2/2] fuse: Add FOPEN_STREAM to use stream_open()
-Received: from [87.98.221.171] by mandrillapp.com id 041b67f8f3d34c1ab2542274e23daaa1; Sun, 09 Jun 2019 12:39:30 +0000
-X-Mailer: git-send-email 2.20.1
-To:     <stable@vger.kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kirill Smelkov <kirr@nexedi.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Message-Id: <20190609123831.11489-3-kirr@nexedi.com>
-In-Reply-To: <20190609123831.11489-1-kirr@nexedi.com>
-References: <20190609123831.11489-1-kirr@nexedi.com>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.041b67f8f3d34c1ab2542274e23daaa1
-X-Mandrill-User: md_31050260
-Date:   Sun, 09 Jun 2019 12:39:30 +0000
+        Sun, 9 Jun 2019 08:48:57 -0400
+Received: by mail-pg1-f194.google.com with SMTP id a3so3578094pgb.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 05:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=GWbqPRicVJeNZyyJn+9jqmHZeCWZTUn9+XwG0T4VgwA=;
+        b=nBEFrbsYSyLw9JK8mSoYmUtoaLLg1kZvEZE8OZu+2t8xdYiz012j+tncUdTqyRMmL2
+         Vla33Vvj9KNr+gCHDZhoVmMbYj3UjaESqHRorsGzAu7UE9sqS3tAptabgrm/97O4GF1B
+         wTsxVsf20HOkQuAjjrMIfzdeKIw9FtDeEkfAyPBflHZZZwVyY3mb2hINUfsORmMmLtOV
+         4kTjz0P9PCRgbIUaEekduvvYk7/ksvT0PiuV0VnZtikLauCUVx5Oma+KhcW2hra/eo2/
+         Eup1QNLhH8VU8lIYU8lbW9Zf5OXSdXKUdCIfeIM0bb8LQSiuzTNTn2Vw4Faw3XR9CVfd
+         8/4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=GWbqPRicVJeNZyyJn+9jqmHZeCWZTUn9+XwG0T4VgwA=;
+        b=nv/mK+cIz3SbYtNrc0y3RlYm/A2+iL/SM2lI3akOnbWUGASyDkW2mpl+RqIlvotG1s
+         WCxBwrK3XJzD6TT/QppOwqfQAPX5b58w+hLo2yQx0nC4KigHEei2SiCjtCUi2y7IyDhV
+         oqAgsbtWE759cjOGVLpKPAJgUr+WgyhZJoCPzqsB7GU3+m9F/tZXrt/Ag238EmXqdi+S
+         OzR6mSGAhtTdFdf5IvgepJamjGpKFnyZH0LMT98rVM0MVColHYn3VrxBqCQMbDrh1oFx
+         QNivYsN77jRwGlM4HqZSTqAm9ANSHDSCOf7fiAe8NOou9m+0bo3Hv/eKU4GPBeYmVjn4
+         kVMw==
+X-Gm-Message-State: APjAAAWk2pasHFbECNtwJiRRYPqZms7OGAMcItYW5f0kmvIgmoY9vUT+
+        joEv/4ExxYALSsCudhUSIuA=
+X-Google-Smtp-Source: APXvYqyQjOzCBZe5RP7vIT0dEkdZZLVUMTUUpxhL+l2jR++vMB14wViUmx7itvaIeQx7782IRbxMbw==
+X-Received: by 2002:a63:f957:: with SMTP id q23mr11574838pgk.326.1560084537116;
+        Sun, 09 Jun 2019 05:48:57 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.89.153])
+        by smtp.gmail.com with ESMTPSA id u7sm6991216pgl.64.2019.06.09.05.48.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Jun 2019 05:48:56 -0700 (PDT)
+Date:   Sun, 9 Jun 2019 18:18:51 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] staging: rtl8723bs: fix warning comparison to NULL
+Message-ID: <20190609124851.GA4043@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit bbd84f33652f852ce5992d65db4d020aba21f882 upstream.
+This patch fixes below issue reported by checkpatch
 
-Starting from commit 9c225f2655e3 ("vfs: atomic f_pos accesses as per
-POSIX") files opened even via nonseekable_open gate read and write via lock
-and do not allow them to be run simultaneously. This can create read vs
-write deadlock if a filesystem is trying to implement a socket-like file
-which is intended to be simultaneously used for both read and write from
-filesystem client.  See commit 10dce8af3422 ("fs: stream_open - opener for
-stream-like files so that read and write can run simultaneously without
-deadlock") for details and e.g. commit 581d21a2d02a ("xenbus: fix deadlock
-on writes to /proc/xen/xenbus") for a similar deadlock example on
-/proc/xen/xenbus.
+CHECK: Comparison to NULL could be written "!pxmitbuf->pallocated_buf"
++               if (pxmitbuf->pallocated_buf == NULL)
 
-To avoid such deadlock it was tempting to adjust fuse_finish_open to use
-stream_open instead of nonseekable_open on just FOPEN_NONSEEKABLE flags,
-but grepping through Debian codesearch shows users of FOPEN_NONSEEKABLE,
-and in particular GVFS which actually uses offset in its read and write
-handlers
-
-	https://codesearch.debian.net/search?q=-%3Enonseekable+%3D
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1080
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1247-1346
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1399-1481
-
-so if we would do such a change it will break a real user.
-
-Add another flag (FOPEN_STREAM) for filesystem servers to indicate that the
-opened handler is having stream-like semantics; does not use file position
-and thus the kernel is free to issue simultaneous read and write request on
-opened file handle.
-
-This patch together with stream_open() should be added to stable kernels
-starting from v3.14+. This will allow to patch OSSPD and other FUSE
-filesystems that provide stream-like files to return FOPEN_STREAM |
-FOPEN_NONSEEKABLE in open handler and this way avoid the deadlock on all
-kernel versions. This should work because fuse_finish_open ignores unknown
-open flags returned from a filesystem and so passing FOPEN_STREAM to a
-kernel that is not aware of this flag cannot hurt. In turn the kernel that
-is not aware of FOPEN_STREAM will be < v3.14 where just FOPEN_NONSEEKABLE
-is sufficient to implement streams without read vs write deadlock.
-
-Cc: stable@vger.kernel.org # v3.14+
-Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
- fs/fuse/file.c            | 4 +++-
- include/uapi/linux/fuse.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/os_dep/xmit_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 7882fc34113c..94088b804f1f 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -178,7 +178,9 @@ void fuse_finish_open(struct inode *inode, struct file *file)
- 		file->f_op = &fuse_direct_io_file_operations;
- 	if (!(ff->open_flags & FOPEN_KEEP_CACHE))
- 		invalidate_inode_pages2(inode->i_mapping);
--	if (ff->open_flags & FOPEN_NONSEEKABLE)
-+	if (ff->open_flags & FOPEN_STREAM)
-+		stream_open(inode, file);
-+	else if (ff->open_flags & FOPEN_NONSEEKABLE)
- 		nonseekable_open(inode, file);
- 	if (fc->atomic_o_trunc && (file->f_flags & O_TRUNC)) {
- 		struct fuse_inode *fi = get_fuse_inode(inode);
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 4b5001c57f46..daac48210b2c 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -216,10 +216,12 @@ struct fuse_file_lock {
-  * FOPEN_DIRECT_IO: bypass page cache for this open file
-  * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
-  * FOPEN_NONSEEKABLE: the file is not seekable
-+ * FOPEN_STREAM: the file is stream-like (no file position at all)
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
- #define FOPEN_NONSEEKABLE	(1 << 2)
-+#define FOPEN_STREAM		(1 << 4)
+diff --git a/drivers/staging/rtl8723bs/os_dep/xmit_linux.c b/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
+index 4e4e565..c125ac2 100644
+--- a/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
+@@ -50,7 +50,7 @@ int rtw_os_xmit_resource_alloc(struct adapter *padapter, struct xmit_buf *pxmitb
+ {
+ 	if (alloc_sz > 0) {
+ 		pxmitbuf->pallocated_buf = rtw_zmalloc(alloc_sz);
+-		if (pxmitbuf->pallocated_buf == NULL)
++		if (!pxmitbuf->pallocated_buf)
+ 			return _FAIL;
  
- /**
-  * INIT request/reply flags
+ 		pxmitbuf->pbuf = (u8 *)N_BYTE_ALIGMENT((SIZE_PTR)(pxmitbuf->pallocated_buf), XMITBUF_ALIGN_SZ);
 -- 
-2.20.1
+2.7.4
+
