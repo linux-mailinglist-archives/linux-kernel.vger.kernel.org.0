@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773713A785
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:51:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 790013A928
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731184AbfFIQu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:50:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50280 "EHLO mail.kernel.org"
+        id S2387957AbfFIRHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:07:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731715AbfFIQuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:50:25 -0400
+        id S2388334AbfFIRGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:06:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 230A7207E0;
-        Sun,  9 Jun 2019 16:50:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87A8E204EC;
+        Sun,  9 Jun 2019 17:06:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099024;
-        bh=uB5oQ6bH3HcUn2NASKWxGUvIkIh26igzAHWj7XzqOvY=;
+        s=default; t=1560099975;
+        bh=FSdDXtAt2YCTS9LI82RcWlAFOXJfxm6EJFm4whgyrHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rkb/WEraPyN1u0k1jUcPrs8ZcsusQ+XsaALgVHwd5Q8hjIsuVESBOevt3vOiSqPTF
-         XPT90uDaHRLLFZo8QAgBB1RNzS3xtTcmkhanVGD6Myt5neSVJ7qVttrpW+V75yMipf
-         r2TtnqFREn+aqjOMOH0idI/q5g4Ejqd2PS3SWKKU=
+        b=Drllv/cRrdSjSAQM6CDacEo+ISgQpo3ZQ1nKa+4W+4Qt2ZM2q3cnI6RcbhJe3+vk2
+         lp6BV82tGPvFc9EUfnZGe0fi35kskWE3FVqNPnPbDiq+7UvvN+b2+VUDsNGjEZbjBn
+         hlkXr3+oB6xg4lCtRs0pthAj2lpIV75Wb1LJO+s4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 09/35] net: sfp: read eeprom in maximum 16 byte increments
+        stable@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 4.4 193/241] include/linux/bitops.h: sanitize rotate primitives
 Date:   Sun,  9 Jun 2019 18:42:15 +0200
-Message-Id: <20190609164126.046628834@linuxfoundation.org>
+Message-Id: <20190609164153.521596689@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-References: <20190609164125.377368385@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,75 +52,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-[ Upstream commit 28e74a7cfd6403f0d1c0f8b10b45d6fae37b227e ]
+commit ef4d6f6b275c498f8e5626c99dbeefdc5027f843 upstream.
 
-Some SFP modules do not like reads longer than 16 bytes, so read the
-EEPROM in chunks of 16 bytes at a time.  This behaviour is not specified
-in the SFP MSAs, which specifies:
+The ror32 implementation (word >> shift) | (word << (32 - shift) has
+undefined behaviour if shift is outside the [1, 31] range.  Similarly
+for the 64 bit variants.  Most callers pass a compile-time constant
+(naturally in that range), but there's an UBSAN report that these may
+actually be called with a shift count of 0.
 
- "The serial interface uses the 2-wire serial CMOS E2PROM protocol
-  defined for the ATMEL AT24C01A/02/04 family of components."
+Instead of special-casing that, we can make them DTRT for all values of
+shift while also avoiding UB.  For some reason, this was already partly
+done for rol32 (which was well-defined for [0, 31]).  gcc 8 recognizes
+these patterns as rotates, so for example
 
-and
+  __u32 rol32(__u32 word, unsigned int shift)
+  {
+	return (word << (shift & 31)) | (word >> ((-shift) & 31));
+  }
 
- "As long as the SFP+ receives an acknowledge, it shall serially clock
-  out sequential data words. The sequence is terminated when the host
-  responds with a NACK and a STOP instead of an acknowledge."
+compiles to
 
-We must avoid breaking a read across a 16-bit quantity in the diagnostic
-page, thankfully all 16-bit quantities in that page are naturally
-aligned.
+0000000000000020 <rol32>:
+  20:   89 f8                   mov    %edi,%eax
+  22:   89 f1                   mov    %esi,%ecx
+  24:   d3 c0                   rol    %cl,%eax
+  26:   c3                      retq
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Older compilers unfortunately do not do as well, but this only affects
+the small minority of users that don't pass constants.
+
+Due to integer promotions, ro[lr]8 were already well-defined for shifts
+in [0, 8], and ro[lr]16 were mostly well-defined for shifts in [0, 16]
+(only mostly - u16 gets promoted to _signed_ int, so if bit 15 is set,
+word << 16 is undefined).  For consistency, update those as well.
+
+Link: http://lkml.kernel.org/r/20190410211906.2190-1-linux@rasmusvillemoes.dk
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reported-by: Ido Schimmel <idosch@mellanox.com>
+Tested-by: Ido Schimmel <idosch@mellanox.com>
+Reviewed-by: Will Deacon <will.deacon@arm.com>
+Cc: Vadim Pasternak <vadimp@mellanox.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/phy/sfp.c |   24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
 
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -168,6 +168,7 @@ static int sfp__i2c_read(struct i2c_adap
- 	void *buf, size_t len)
+---
+ include/linux/bitops.h |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -68,7 +68,7 @@ static __always_inline unsigned long hwe
+  */
+ static inline __u64 rol64(__u64 word, unsigned int shift)
  {
- 	struct i2c_msg msgs[2];
-+	size_t this_len;
- 	int ret;
- 
- 	msgs[0].addr = bus_addr;
-@@ -179,11 +180,26 @@ static int sfp__i2c_read(struct i2c_adap
- 	msgs[1].len = len;
- 	msgs[1].buf = buf;
- 
--	ret = i2c_transfer(i2c, msgs, ARRAY_SIZE(msgs));
--	if (ret < 0)
--		return ret;
-+	while (len) {
-+		this_len = len;
-+		if (this_len > 16)
-+			this_len = 16;
- 
--	return ret == ARRAY_SIZE(msgs) ? len : 0;
-+		msgs[1].len = this_len;
-+
-+		ret = i2c_transfer(i2c, msgs, ARRAY_SIZE(msgs));
-+		if (ret < 0)
-+			return ret;
-+
-+		if (ret != ARRAY_SIZE(msgs))
-+			break;
-+
-+		msgs[1].buf += this_len;
-+		dev_addr += this_len;
-+		len -= this_len;
-+	}
-+
-+	return msgs[1].buf - (u8 *)buf;
+-	return (word << shift) | (word >> (64 - shift));
++	return (word << (shift & 63)) | (word >> ((-shift) & 63));
  }
  
- static int sfp_i2c_read(struct sfp *sfp, bool a2, u8 addr, void *buf,
+ /**
+@@ -78,7 +78,7 @@ static inline __u64 rol64(__u64 word, un
+  */
+ static inline __u64 ror64(__u64 word, unsigned int shift)
+ {
+-	return (word >> shift) | (word << (64 - shift));
++	return (word >> (shift & 63)) | (word << ((-shift) & 63));
+ }
+ 
+ /**
+@@ -88,7 +88,7 @@ static inline __u64 ror64(__u64 word, un
+  */
+ static inline __u32 rol32(__u32 word, unsigned int shift)
+ {
+-	return (word << shift) | (word >> ((-shift) & 31));
++	return (word << (shift & 31)) | (word >> ((-shift) & 31));
+ }
+ 
+ /**
+@@ -98,7 +98,7 @@ static inline __u32 rol32(__u32 word, un
+  */
+ static inline __u32 ror32(__u32 word, unsigned int shift)
+ {
+-	return (word >> shift) | (word << (32 - shift));
++	return (word >> (shift & 31)) | (word << ((-shift) & 31));
+ }
+ 
+ /**
+@@ -108,7 +108,7 @@ static inline __u32 ror32(__u32 word, un
+  */
+ static inline __u16 rol16(__u16 word, unsigned int shift)
+ {
+-	return (word << shift) | (word >> (16 - shift));
++	return (word << (shift & 15)) | (word >> ((-shift) & 15));
+ }
+ 
+ /**
+@@ -118,7 +118,7 @@ static inline __u16 rol16(__u16 word, un
+  */
+ static inline __u16 ror16(__u16 word, unsigned int shift)
+ {
+-	return (word >> shift) | (word << (16 - shift));
++	return (word >> (shift & 15)) | (word << ((-shift) & 15));
+ }
+ 
+ /**
+@@ -128,7 +128,7 @@ static inline __u16 ror16(__u16 word, un
+  */
+ static inline __u8 rol8(__u8 word, unsigned int shift)
+ {
+-	return (word << shift) | (word >> (8 - shift));
++	return (word << (shift & 7)) | (word >> ((-shift) & 7));
+ }
+ 
+ /**
+@@ -138,7 +138,7 @@ static inline __u8 rol8(__u8 word, unsig
+  */
+ static inline __u8 ror8(__u8 word, unsigned int shift)
+ {
+-	return (word >> shift) | (word << (8 - shift));
++	return (word >> (shift & 7)) | (word << ((-shift) & 7));
+ }
+ 
+ /**
 
 
