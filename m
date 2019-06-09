@@ -2,105 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FDA3A64D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C81E43A605
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfFIN5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 09:57:07 -0400
-Received: from mail177-30.suw61.mandrillapp.com ([198.2.177.30]:27120 "EHLO
-        mail177-30.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728591AbfFIN5G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 09:57:06 -0400
-X-Greylist: delayed 926 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 09:57:05 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=112cZkYq00mkGEI9ggEVbOXM3lgRmy7KLKo6Z1zIIFQ=;
- b=ghR5pkUVZuGqxdGw6DdFAu+ImtQBLHG4LQC87MD6Q7gjvKPajZ5MgzWfz6AmuLXGwENq3O2t3sPr
-   vpnQkXSjRHy4CohkZhYNsQr6/c8u0DHavOo91t15aJR+Ol8iEQD3wjcFjuUZr5gU3xUjW157APk6
-   r0SQp4s/HmK6Q4jbXfg=
-Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-30.suw61.mandrillapp.com id hvk83222rtk1 for <linux-kernel@vger.kernel.org>; Sun, 9 Jun 2019 13:39:13 +0000 (envelope-from <bounce-md_31050260.5cfd0c01.v1-e6fe1265ba994e6b9bd9cc3b57857b70@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560087553; h=From : 
- Subject : To : Cc : Message-Id : Date : MIME-Version : Content-Type : 
- Content-Transfer-Encoding : From : Subject : Date : X-Mandrill-User : 
- List-Unsubscribe; bh=112cZkYq00mkGEI9ggEVbOXM3lgRmy7KLKo6Z1zIIFQ=; 
- b=oY/TV0DrNxI4oQSDSwiDVwSMkVIDze/WWZI+VKyPCNSklBzEci1p6UdB8OT2Ok6RttQuJP
- HwWir4eT3PqagEFts+Cwb6X2yTgxDEvJjaPIabBXg8TedESVFoXxqhmfEs/3uyPfBLhUTsPa
- UYWGswpHmMzJC+DnXiF5u18Ilvne4=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: [PATCH 4.4 0/2] Fix FUSE read/write deadlock on stream-like files
-Received: from [87.98.221.171] by mandrillapp.com id e6fe1265ba994e6b9bd9cc3b57857b70; Sun, 09 Jun 2019 13:39:13 +0000
-X-Mailer: git-send-email 2.20.1
-To:     <stable@vger.kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kirill Smelkov <kirr@nexedi.com>
-Message-Id: <20190609132443.9420-1-kirr@nexedi.com>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.e6fe1265ba994e6b9bd9cc3b57857b70
-X-Mandrill-User: md_31050260
-Date:   Sun, 09 Jun 2019 13:39:13 +0000
+        id S1728686AbfFINkH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 9 Jun 2019 09:40:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:6947 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727587AbfFINkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 09:40:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2019 06:40:05 -0700
+X-ExtLoop1: 1
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga003.jf.intel.com with ESMTP; 09 Jun 2019 06:40:05 -0700
+Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 9 Jun 2019 06:40:04 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 9 Jun 2019 06:40:04 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.137]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.120]) with mapi id 14.03.0415.000;
+ Sun, 9 Jun 2019 21:40:02 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+CC:     "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: RE: [RFC v3 0/3] vfio_pci: wrap pci device as a mediated device
+Thread-Topic: [RFC v3 0/3] vfio_pci: wrap pci device as a mediated device
+Thread-Index: AQHU+pmUgYQWOZcgyUar+GqJiI6/NqZ4kV4g///DEoCAGzk18A==
+Date:   Sun, 9 Jun 2019 13:40:02 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C257439EDF463@SHSMSX104.ccr.corp.intel.com>
+References: <1556021680-2911-1-git-send-email-yi.l.liu@intel.com>
+        <A2975661238FB949B60364EF0F2C257439EB884E@SHSMSX104.ccr.corp.intel.com>
+ <20190523070311.4f95ca5c@x1.home>
+In-Reply-To: <20190523070311.4f95ca5c@x1.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYmM4NWY1NmEtYTk3ZS00MTA0LWIyZDAtNTZlOTgwNTQ1ZDNlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZWxyRmRYd1pubmZWNm5xbUZPQXZLd25GQXV4XC9tMzZwVHhaUDRsYUlqaHhtbFdFRVd2ZEsrMEV5UDU0SG1ZcGIifQ==
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello stable team,
+> From Alex Williamson
+> Sent: Thursday, May 23, 2019 9:03 PM
+> To: Liu, Yi L <yi.l.liu@intel.com>
+> Cc: kwankhede@nvidia.com; Tian, Kevin <kevin.tian@intel.com>;
+> baolu.lu@linux.intel.com; Sun, Yi Y <yi.y.sun@intel.com>; joro@8bytes.org; jean-
+> philippe.brucker@arm.com; peterx@redhat.com; linux-kernel@vger.kernel.org;
+> kvm@vger.kernel.org; yamada.masahiro@socionext.com; iommu@lists.linux-
+> foundation.org
+> Subject: Re: [RFC v3 0/3] vfio_pci: wrap pci device as a mediated device
+> 
+> On Thu, 23 May 2019 08:44:57 +0000
+> "Liu, Yi L" <yi.l.liu@intel.com> wrote:
+> 
+> > Hi Alex,
+> >
+> > Sorry to disturb you. Do you want to review on this version or review a rebased
+> version? :-) If rebase version is better, I can try to do it asap.
+> 
+> Hi Yi,
+> 
+> Perhaps you missed my comments on 1/3:
+> 
+> https://www.spinics.net/lists/kvm/msg187282.html
+> 
+> In summary, it looks pretty good, but consider a file name more consistent with the
+> existing files and prune out the code changes from the code moves so they can be
+> reviewed more easily.  Thanks,
 
-Please consider applying the following 2 patches to Linux-4.4 stable
-tree. The patches fix regression introduced in 3.14 where both read and
-write started to run under lock taken, which resulted in FUSE (and many
-other drivers) deadlocks for cases where stream-like files are used with
-read and write being run simultaneously.
+Thanks for the remind, Alex. So sorry I made changes in a "disordered".
+I've made the changes accordingly. Pls refer to my latest post just now :-)
 
-Please see complete problem description in upstream commit 10dce8af3422
-("fs: stream_open - opener for stream-like files so that read and write
-can run simultaneously without deadlock").
-
-The actual FUSE fix (upstream commit bbd84f33652f "fuse: Add
-FOPEN_STREAM to use stream_open()") was merged into 5.2 with `Cc:
-stable@vger.kernel.org # v3.14+` mark and is already included into 5.1,
-5.0 and 4.19 stable trees. However for some reason it is not (yet ?)
-included into 4.14, 4.9, 4.4, 3.18 and 3.16 trees.
-
-The patches fix a real problem into which my FUSE filesystem ran, and
-which also likely affects OSSPD (full details are in the patches
-description). Please consider including the fixes into 4.4 (as well as
-into other stable trees - I'm sending corresponding series separately -
-- one per tree).
-
-Thanks beforehand,
-Kirill
-
-P.S. the patches have been already a bit discussed in stable context some
-time ago:
-
-https://lore.kernel.org/linux-fsdevel/CAHk-=wgh234SyBG810=vB360PCzVkAhQRqGg8aFdATZd+daCFw@mail.gmail.com/
-https://lore.kernel.org/linux-fsdevel/20190424183012.GB3798@deco.navytux.spb.ru/
-https://lore.kernel.org/linux-fsdevel/20190424191652.GE3798@deco.navytux.spb.ru/
-...
-
-Kirill Smelkov (2):
-  fs: stream_open - opener for stream-like files so that read and write can run simultaneously without deadlock
-  fuse: Add FOPEN_STREAM to use stream_open()
-
- drivers/xen/xenbus/xenbus_dev_frontend.c |   2 +-
- fs/fuse/file.c                           |   4 +-
- fs/open.c                                |  18 ++
- fs/read_write.c                          |   5 +-
- include/linux/fs.h                       |   4 +
- include/uapi/linux/fuse.h                |   2 +
- scripts/coccinelle/api/stream_open.cocci | 363 +++++++++++++++++++++++
- 7 files changed, 394 insertions(+), 4 deletions(-)
- create mode 100644 scripts/coccinelle/api/stream_open.cocci
-
--- 
-2.20.1
+Regards,
+Yi Liu
