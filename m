@@ -2,44 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 974F93A52C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD49D3A52D
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 13:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbfFILpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 07:45:05 -0400
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:10492 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbfFILpF (ORCPT
+        id S1728365AbfFILq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 07:46:58 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39137 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728161AbfFILq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 07:45:05 -0400
-Date:   Sun, 09 Jun 2019 11:45:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1560080703;
-        bh=HL7LoVvwB0aVczjHrWD4QNIe5nbU0sOulYb252FZMaQ=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=HMh18gl1/JscquEnaQTr8HZXuQyJp7YrF7pb7NJTOE9YSg3ylRdWxL4A/UVGdKc/l
-         ZB6kpNsnWr1MYRLoYsPOMK0QqXuXuRNCb0pYNTsakn0f/2hjOMEeguxzQ+ATEV7ycL
-         pKZKi5Rg3iNCPmLtzTZNUU6XyhvpxK9oT/ABBNyg=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: Oex
-Message-ID: <tZ0ZmCNF-Ywz2hr3YpDnjKDPBSm-MJ1JnNG6bUhHjErPFtkFMbNHlAGE5ghATMgzIGI67qWDFwgP49bUa-8bUYyt8iHJyRK7BQtmG6Z0Mfw=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Sun, 9 Jun 2019 07:46:57 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g9so2534787plm.6
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 04:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=zqEGlLMYn1Hf3PgR0bIsFQyRjDRf8RHqmbEQvYhF2so=;
+        b=YlMJNDkjn9YWn2aopExFEm5W2Cx/O/pxE52GRc4nysb04HypPpPMP0hOJSaa1s8uHC
+         F2x6RN582ZXawe87QM33O2fq5rpmDAvlV1tKRG0kcrmXsoRMS5jndRSZ1aQtxnDp9ISd
+         1ouFEZfA6YcpDZ46ZeF+4HMPEy9juB0ml55nHyEBLhH4d94OTbN3y8LuMFLmpBKPGyA/
+         /ZYGfz+fm5dbayVPzDr26eyTBnBFNUipLDS4j1QPjPfshgJmRgXxmRydcqPlPcJcZ9BM
+         iqAgnU7mGEc+6XuQqfWOWTXg06Y1zgI9S/3pYFLGX8qkVJyCClb8CQdemx71HkqKC0Kb
+         56oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=zqEGlLMYn1Hf3PgR0bIsFQyRjDRf8RHqmbEQvYhF2so=;
+        b=nnLSjvC9GLmHl6AFPyNrHgZkX+3D4RsotV4tuQMkoTSKG/qHYICkq6AEkaPI6EX1LU
+         ejNBmqisbj4filiqWQafUTnvsYDmNgCw0WQ30AIfJX9nF2t1S5ZnClirvIoy0ngMlFnk
+         gecHxqDrWRTyqx5Xd914jY0ja0woM0eLvaJFhF2oxhB8OVwUPk26hJJoe2qp5GCc39/6
+         bw21peO7mndT3f/tJ3SDACdevM2AgcB8zUF0DT2LZli7rb9CIYKf0esqJo/LtqouhwbJ
+         +fHaI1FCxZITzLdxk7y9xG3CKVTQ7+Ina9XPfrIrZZguWt+R5Jhp9UKYNO769yFDEMFH
+         YX8g==
+X-Gm-Message-State: APjAAAX7O1SMwIlgVAQa2gxoTRI5v8TAFarfXOD4Emy8rFruJnPNzk04
+        TdMN/Lxjx3MVD9GHz//n/PQ=
+X-Google-Smtp-Source: APXvYqwx1gMjrkgfvioi5xxBVaRSb3AqtsQkm5hHELkRV5zlsBPRhn0U+J1OuybEPlWg4lcfk9Xzdw==
+X-Received: by 2002:a17:902:7d86:: with SMTP id a6mr40969598plm.199.1560080817014;
+        Sun, 09 Jun 2019 04:46:57 -0700 (PDT)
+Received: from [192.168.1.7] ([117.192.26.87])
+        by smtp.gmail.com with ESMTPSA id v1sm6177825pjo.28.2019.06.09.04.46.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Jun 2019 04:46:56 -0700 (PDT)
+Subject: Re: [PATCH v4 0/6] staging: rtl8712: cleanup struct _adapter
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net,
+        florian.c.schilhabel@googlemail.com, straube.linux@gmail.com
+References: <cover.1559990697.git.linux.dkm@gmail.com>
+ <20190609111010.GA28875@kroah.com>
+From:   Deepak Kumar Mishra <linux.dkm@gmail.com>
+Message-ID: <933b8890-986c-8bdb-93ef-90edf248fb43@gmail.com>
+Date:   Sun, 9 Jun 2019 17:16:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+In-Reply-To: <20190609111010.GA28875@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And the more enligthened of you may be interested in my project about reali=
-zing the z=C3=A9n-concept I use.
+Hi Greg,
 
-https://www.youtube.com/channel/UCXt31evVH11u8IzD4e3923Q
+On 09/06/19 4:40 PM, Greg KH wrote:
+> On Sat, Jun 08, 2019 at 04:26:55PM +0530, Deepak Mishra wrote:
+>> In process of cleaning up rtl8712 struct _adapter in drv_types.h I have
+>> tried to remove some unused variables and redundant lines of code
+>> associated with those variables. I have also fixed some CamelCase
+>> reported by checkpatch.pl
+>>
+>> Deepak Mishra (6):
+>>    staging: rtl8712: Fixed CamelCase for EepromAddressSize
+>>    staging: rtl8712: Removed redundant code from function
+>>      oid_rt_pro_write_register_hdl
+>>    staging: rtl8712: Fixed CamelCase cmdThread rename to cmd_thread
+>>    staging: rtl8712: removed unused variables from struct _adapter
+>>    staging: rtl8712: Renamed CamelCase wkFilterRxFF0 to wk_filter_rx_ff0
+>>    staging: rtl8712: Renamed CamelCase lockRxFF0Filter to
+>>      lock_rx_ff0_filter
+> If this is a "v4" series, I do not see a list of what has changed from
+> the previous versions at all here :(
+>
+> Please list it somewhere, usually in the individual patches below the
+> --- line, or you can put it here in the 00/XX email as well.
+>
+> v5 please?
+In my previous versions I mainly tried to correct the patch submission 
+based on your suggestion for example
+1.keeping every individual task separate.
+2. Not only just fix CamelCase but if those variables are unused remove 
+those.
+3. If any variable is assigned but never used then remove those.
 
+So should I put these review comments in my 0/6 file and send you the v5 
+of the patch set,
+
+or remove version number and send a new patch set again as if it is a 
+fresh patch set ?
+
+Please suggest.
+
+Best regards
+Deepak Mishra
+
+> thanks,
+>
+> greg k-h
