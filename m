@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA323A79E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D243A764
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731939AbfFIQv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:51:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
+        id S1731422AbfFIQtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728512AbfFIQvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:51:24 -0400
+        id S1731390AbfFIQtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 170D42070B;
-        Sun,  9 Jun 2019 16:51:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3C802070B;
+        Sun,  9 Jun 2019 16:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099083;
-        bh=TJCm5AsGVKgzsrO8Flov/50oIA64VW2TAdaGPxGaYm0=;
+        s=default; t=1560098945;
+        bh=QCqvO5K1yok0S3RV5/Q5vyE2p0EZLifLOGIWOa9loGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GOMz/sFk3z1bS9koZ9U2xuxboNBDvCdj5WxvkpEKvAfBHLXwKGUOmfxx3J64fU41Y
-         Kz4KoRS4xfX9XUrGInOfo1iGaI4dL3h3X+wZp1myOblpQ+F0GpuBWS+i3tWAK4PvaO
-         eaH6VS07PScMTz0Uf61gFFrnKw+eDTgmwXe02K1o=
+        b=XiJZOAJ8nbtNg80/ggmxBS0XlEPes4uDbxfzGKhTQnFvW2ZECw9p0x1GKj9k6y+6e
+         BRm2+SPKXHKtswP+Tw+PjDwkc1JxaTNWRZGOiYxZ286KnADk2byxGBDANnfOWZOdd4
+         Ez7WGIGzxGkM63tYUf6/Ul9uv6LaAGBqROkYz1sI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Julien Cristau <jcristau@debian.org>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        YunQiang Su <ysu@wavecomp.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.14 21/35] MIPS: Bounds check virt_addr_valid
+        stable@vger.kernel.org, Amber Lin <Amber.Lin@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 46/51] drm/amdgpu/soc15: skip reset on init
 Date:   Sun,  9 Jun 2019 18:42:27 +0200
-Message-Id: <20190609164126.752755650@linuxfoundation.org>
+Message-Id: <20190609164130.489004849@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-References: <20190609164125.377368385@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 074a1e1167afd82c26f6d03a9a8b997d564bb241 upstream.
+commit 5887a59961e2295c5b02f39dbc0ecf9212709b7b upstream.
 
-The virt_addr_valid() function is meant to return true iff
-virt_to_page() will return a valid struct page reference. This is true
-iff the address provided is found within the unmapped address range
-between PAGE_OFFSET & MAP_BASE, but we don't currently check for that
-condition. Instead we simply mask the address to obtain what will be a
-physical address if the virtual address is indeed in the desired range,
-shift it to form a PFN & then call pfn_valid(). This can incorrectly
-return true if called with a virtual address which, after masking,
-happens to form a physical address corresponding to a valid PFN.
+Not necessary on soc15 and breaks driver reload on server cards.
 
-For example we may vmalloc an address in the kernel mapped region
-starting a MAP_BASE & obtain the virtual address:
-
-  addr = 0xc000000000002000
-
-When masked by virt_to_phys(), which uses __pa() & in turn CPHYSADDR(),
-we obtain the following (bogus) physical address:
-
-  addr = 0x2000
-
-In a common system with PHYS_OFFSET=0 this will correspond to a valid
-struct page which should really be accessed by virtual address
-PAGE_OFFSET+0x2000, causing virt_addr_valid() to incorrectly return 1
-indicating that the original address corresponds to a struct page.
-
-This is equivalent to the ARM64 change made in commit ca219452c6b8
-("arm64: Correctly bounds check virt_addr_valid").
-
-This fixes fallout when hardened usercopy is enabled caused by the
-related commit 517e1fbeb65f ("mm/usercopy: Drop extra
-is_vmalloc_or_module() check") which removed a check for the vmalloc
-range that was present from the introduction of the hardened usercopy
-feature.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Julien Cristau <jcristau@debian.org>
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Tested-by: YunQiang Su <ysu@wavecomp.com>
-URL: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=929366
-Cc: stable@vger.kernel.org # v4.12+
-Cc: linux-mips@vger.kernel.org
-Cc: Yunqiang Su <ysu@wavecomp.com>
+Acked-by: Amber Lin <Amber.Lin@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/mm/mmap.c |    5 +++++
+ drivers/gpu/drm/amd/amdgpu/soc15.c |    5 +++++
  1 file changed, 5 insertions(+)
 
---- a/arch/mips/mm/mmap.c
-+++ b/arch/mips/mm/mmap.c
-@@ -203,6 +203,11 @@ unsigned long arch_randomize_brk(struct
+--- a/drivers/gpu/drm/amd/amdgpu/soc15.c
++++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
+@@ -495,6 +495,11 @@ int soc15_set_ip_blocks(struct amdgpu_de
+ 		return -EINVAL;
+ 	}
  
- int __virt_addr_valid(const volatile void *kaddr)
- {
-+	unsigned long vaddr = (unsigned long)vaddr;
++	/* Just return false for soc15 GPUs.  Reset does not seem to
++	 * be necessary.
++	 */
++	return false;
 +
-+	if ((vaddr < PAGE_OFFSET) || (vaddr >= MAP_BASE))
-+		return 0;
-+
- 	return pfn_valid(PFN_DOWN(virt_to_phys(kaddr)));
- }
- EXPORT_SYMBOL_GPL(__virt_addr_valid);
+ 	if (adev->flags & AMD_IS_APU)
+ 		adev->nbio_funcs = &nbio_v7_0_funcs;
+ 	else if (adev->asic_type == CHIP_VEGA20)
 
 
