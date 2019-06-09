@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA9993A70D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 551413A965
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbfFIQpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43606 "EHLO mail.kernel.org"
+        id S2388454AbfFIRDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:03:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730033AbfFIQpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:43 -0400
+        id S2388064AbfFIRDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:03:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C1702083D;
-        Sun,  9 Jun 2019 16:45:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48177204EC;
+        Sun,  9 Jun 2019 17:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098742;
-        bh=TJCm5AsGVKgzsrO8Flov/50oIA64VW2TAdaGPxGaYm0=;
+        s=default; t=1560099815;
+        bh=TZN9iRhipWXcbbEe+RiuGRmbFeYdckX4c8MXkXvOds0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2qylCrXwmupjvbIXv2h7FRWKdojG2pxBXbplrrY59vl5EJ9xaR2Mr7ZCTTbGyW4XK
-         akd6CQGsduTJWmOZEi5we47qxOtuBU8GR93eU+nyImCu3sttwRsHeR2HM/XebWfeQ7
-         ytphZodQ11JKYoiG3C44sypeCY3dKLNmlQrJVgpo=
+        b=WxA0SuoCse7zlRdIU+zRBmi4J1JjLDVkQK8GA1FE4Z/yNQxHtoVw2QxtIk/sfAOT1
+         NojfT0PQdXUQLuGYU0HqLCVW+0WkC3UGGezjBEkttwAZIfQE/NAuCv8+j1E8I57qqV
+         /Ik9FFIUvUtw2t9MBvyC3EPXgtT+NS46lH45O2kY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Julien Cristau <jcristau@debian.org>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        YunQiang Su <ysu@wavecomp.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 5.1 45/70] MIPS: Bounds check virt_addr_valid
-Date:   Sun,  9 Jun 2019 18:41:56 +0200
-Message-Id: <20190609164131.137151634@linuxfoundation.org>
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 175/241] scsi: lpfc: Fix SLI3 commands being issued on SLI4 devices
+Date:   Sun,  9 Jun 2019 18:41:57 +0200
+Message-Id: <20190609164152.865584477@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,71 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+[ Upstream commit c95a3b4b0fb8d351e2329a96f87c4fc96a149505 ]
 
-commit 074a1e1167afd82c26f6d03a9a8b997d564bb241 upstream.
+During debug, it was seen that the driver is issuing commands specific to
+SLI3 on SLI4 devices. Although the adapter correctly rejected the command,
+this should not be done.
 
-The virt_addr_valid() function is meant to return true iff
-virt_to_page() will return a valid struct page reference. This is true
-iff the address provided is found within the unmapped address range
-between PAGE_OFFSET & MAP_BASE, but we don't currently check for that
-condition. Instead we simply mask the address to obtain what will be a
-physical address if the virtual address is indeed in the desired range,
-shift it to form a PFN & then call pfn_valid(). This can incorrectly
-return true if called with a virtual address which, after masking,
-happens to form a physical address corresponding to a valid PFN.
+Revise the code to stop sending these commands on a SLI4 adapter.
 
-For example we may vmalloc an address in the kernel mapped region
-starting a MAP_BASE & obtain the virtual address:
-
-  addr = 0xc000000000002000
-
-When masked by virt_to_phys(), which uses __pa() & in turn CPHYSADDR(),
-we obtain the following (bogus) physical address:
-
-  addr = 0x2000
-
-In a common system with PHYS_OFFSET=0 this will correspond to a valid
-struct page which should really be accessed by virtual address
-PAGE_OFFSET+0x2000, causing virt_addr_valid() to incorrectly return 1
-indicating that the original address corresponds to a struct page.
-
-This is equivalent to the ARM64 change made in commit ca219452c6b8
-("arm64: Correctly bounds check virt_addr_valid").
-
-This fixes fallout when hardened usercopy is enabled caused by the
-related commit 517e1fbeb65f ("mm/usercopy: Drop extra
-is_vmalloc_or_module() check") which removed a check for the vmalloc
-range that was present from the introduction of the hardened usercopy
-feature.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Julien Cristau <jcristau@debian.org>
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Tested-by: YunQiang Su <ysu@wavecomp.com>
-URL: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=929366
-Cc: stable@vger.kernel.org # v4.12+
-Cc: linux-mips@vger.kernel.org
-Cc: Yunqiang Su <ysu@wavecomp.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/mm/mmap.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/arch/mips/mm/mmap.c
-+++ b/arch/mips/mm/mmap.c
-@@ -203,6 +203,11 @@ unsigned long arch_randomize_brk(struct
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index 4131addfb8729..a67950908db17 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -902,7 +902,11 @@ lpfc_linkdown(struct lpfc_hba *phba)
+ 			lpfc_linkdown_port(vports[i]);
+ 		}
+ 	lpfc_destroy_vport_work_array(phba, vports);
+-	/* Clean up any firmware default rpi's */
++
++	/* Clean up any SLI3 firmware default rpi's */
++	if (phba->sli_rev > LPFC_SLI_REV3)
++		goto skip_unreg_did;
++
+ 	mb = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (mb) {
+ 		lpfc_unreg_did(phba, 0xffff, LPFC_UNREG_ALL_DFLT_RPIS, mb);
+@@ -914,6 +918,7 @@ lpfc_linkdown(struct lpfc_hba *phba)
+ 		}
+ 	}
  
- int __virt_addr_valid(const volatile void *kaddr)
- {
-+	unsigned long vaddr = (unsigned long)vaddr;
++ skip_unreg_did:
+ 	/* Setup myDID for link up if we are in pt2pt mode */
+ 	if (phba->pport->fc_flag & FC_PT2PT) {
+ 		phba->pport->fc_myDID = 0;
+@@ -4647,6 +4652,10 @@ lpfc_unreg_default_rpis(struct lpfc_vport *vport)
+ 	LPFC_MBOXQ_t     *mbox;
+ 	int rc;
+ 
++	/* Unreg DID is an SLI3 operation. */
++	if (phba->sli_rev > LPFC_SLI_REV3)
++		return;
 +
-+	if ((vaddr < PAGE_OFFSET) || (vaddr >= MAP_BASE))
-+		return 0;
-+
- 	return pfn_valid(PFN_DOWN(virt_to_phys(kaddr)));
- }
- EXPORT_SYMBOL_GPL(__virt_addr_valid);
+ 	mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (mbox) {
+ 		lpfc_unreg_did(phba, vport->vpi, LPFC_UNREG_ALL_DFLT_RPIS,
+-- 
+2.20.1
+
 
 
