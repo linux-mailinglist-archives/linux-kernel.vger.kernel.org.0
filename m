@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9393AAB2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F093A963
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:10:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbfFIRUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45448 "EHLO mail.kernel.org"
+        id S2388411AbfFIRDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:03:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729678AbfFIQq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:46:59 -0400
+        id S2388367AbfFIRDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:03:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F5C720833;
-        Sun,  9 Jun 2019 16:46:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A3FC20840;
+        Sun,  9 Jun 2019 17:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098818;
-        bh=+DdyUJJARkx/BvERWHEtustyPlb2PjQGw2nsot5s5Uc=;
+        s=default; t=1560099797;
+        bh=v5+OdRiroJNePL+EMSWqYBpZD6+2xfylolszboFxqXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FZQAB4lOvZRExp0DvX0PvrpxfvwKwYMQL6ezzrWIHRcVcQ7xBsCb2yd/q+RhTErxa
-         gBou9PDTIQIg7cMWArRzpBKbYsCdcAsbc07BRvbQCT5Rv7ypm3GI+IeCI4KjvaGHzs
-         0xfZVsOs2thr87Bd2rVtQZW8n3r6sOxo5ROKNFHI=
+        b=bB5q47QC3PnO/54wxQQdkZQyDJchgT6J7Q1fJvo3gB8LnrcGyDsO08nyaUVR7F+2H
+         Hsy1/Fo9050iENQ1Hk/P4+sZ6D/PAQB7ra3HhB7XwP/xmL53C8pePXNv+y4ravdRi/
+         uAe/eLjCC0vWDHuXYA4bLfrdqg4xTXAJjGEWMGwM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Pavel Machek <pavel@ucw.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.1 39/70] x86/power: Fix nosmt vs hibernation triple fault during resume
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 168/241] tty: ipwireless: fix missing checks for ioremap
 Date:   Sun,  9 Jun 2019 18:41:50 +0200
-Message-Id: <20190609164130.488111346@linuxfoundation.org>
+Message-Id: <20190609164152.626825312@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,187 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+[ Upstream commit 1bbb1c318cd8a3a39e8c3e2e83d5e90542d6c3e3 ]
 
-commit ec527c318036a65a083ef68d8ba95789d2212246 upstream.
+ipw->attr_memory and ipw->common_memory are assigned with the
+return value of ioremap. ioremap may fail, but no checks
+are enforced. The fix inserts the checks to avoid potential
+NULL pointer dereferences.
 
-As explained in
-
-	0cc3cd21657b ("cpu/hotplug: Boot HT siblings at least once")
-
-we always, no matter what, have to bring up x86 HT siblings during boot at
-least once in order to avoid first MCE bringing the system to its knees.
-
-That means that whenever 'nosmt' is supplied on the kernel command-line,
-all the HT siblings are as a result sitting in mwait or cpudile after
-going through the online-offline cycle at least once.
-
-This causes a serious issue though when a kernel, which saw 'nosmt' on its
-commandline, is going to perform resume from hibernation: if the resume
-from the hibernated image is successful, cr3 is flipped in order to point
-to the address space of the kernel that is being resumed, which in turn
-means that all the HT siblings are all of a sudden mwaiting on address
-which is no longer valid.
-
-That results in triple fault shortly after cr3 is switched, and machine
-reboots.
-
-Fix this by always waking up all the SMT siblings before initiating the
-'restore from hibernation' process; this guarantees that all the HT
-siblings will be properly carried over to the resumed kernel waiting in
-resume_play_dead(), and acted upon accordingly afterwards, based on the
-target kernel configuration.
-
-Symmetricaly, the resumed kernel has to push the SMT siblings to mwait
-again in case it has SMT disabled; this means it has to online all
-the siblings when resuming (so that they come out of hlt) and offline
-them again to let them reach mwait.
-
-Cc: 4.19+ <stable@vger.kernel.org> # v4.19+
-Debugged-by: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 0cc3cd21657b ("cpu/hotplug: Boot HT siblings at least once")
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/power/cpu.c       |   10 ++++++++++
- arch/x86/power/hibernate.c |   33 +++++++++++++++++++++++++++++++++
- include/linux/cpu.h        |    4 ++++
- kernel/cpu.c               |    4 ++--
- kernel/power/hibernate.c   |    9 +++++++++
- 5 files changed, 58 insertions(+), 2 deletions(-)
+ drivers/tty/ipwireless/main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/x86/power/cpu.c
-+++ b/arch/x86/power/cpu.c
-@@ -299,7 +299,17 @@ int hibernate_resume_nonboot_cpu_disable
- 	 * address in its instruction pointer may not be possible to resolve
- 	 * any more at that point (the page tables used by it previously may
- 	 * have been overwritten by hibernate image data).
-+	 *
-+	 * First, make sure that we wake up all the potentially disabled SMT
-+	 * threads which have been initially brought up and then put into
-+	 * mwait/cpuidle sleep.
-+	 * Those will be put to proper (not interfering with hibernation
-+	 * resume) sleep afterwards, and the resumed kernel will decide itself
-+	 * what to do with them.
- 	 */
-+	ret = cpuhp_smt_enable();
-+	if (ret)
-+		return ret;
- 	smp_ops.play_dead = resume_play_dead;
- 	ret = disable_nonboot_cpus();
- 	smp_ops.play_dead = play_dead;
---- a/arch/x86/power/hibernate.c
-+++ b/arch/x86/power/hibernate.c
-@@ -11,6 +11,7 @@
- #include <linux/suspend.h>
- #include <linux/scatterlist.h>
- #include <linux/kdebug.h>
-+#include <linux/cpu.h>
+diff --git a/drivers/tty/ipwireless/main.c b/drivers/tty/ipwireless/main.c
+index 655c7948261c7..2fa4f91234693 100644
+--- a/drivers/tty/ipwireless/main.c
++++ b/drivers/tty/ipwireless/main.c
+@@ -113,6 +113,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
  
- #include <crypto/hash.h>
- 
-@@ -246,3 +247,35 @@ out:
- 	__flush_tlb_all();
- 	return 0;
- }
-+
-+int arch_resume_nosmt(void)
-+{
-+	int ret = 0;
-+	/*
-+	 * We reached this while coming out of hibernation. This means
-+	 * that SMT siblings are sleeping in hlt, as mwait is not safe
-+	 * against control transition during resume (see comment in
-+	 * hibernate_resume_nonboot_cpu_disable()).
-+	 *
-+	 * If the resumed kernel has SMT disabled, we have to take all the
-+	 * SMT siblings out of hlt, and offline them again so that they
-+	 * end up in mwait proper.
-+	 *
-+	 * Called with hotplug disabled.
-+	 */
-+	cpu_hotplug_enable();
-+	if (cpu_smt_control == CPU_SMT_DISABLED ||
-+			cpu_smt_control == CPU_SMT_FORCE_DISABLED) {
-+		enum cpuhp_smt_control old = cpu_smt_control;
-+
-+		ret = cpuhp_smt_enable();
-+		if (ret)
-+			goto out;
-+		ret = cpuhp_smt_disable(old);
-+		if (ret)
-+			goto out;
+ 	ipw->common_memory = ioremap(p_dev->resource[2]->start,
+ 				resource_size(p_dev->resource[2]));
++	if (!ipw->common_memory) {
++		ret = -ENOMEM;
++		goto exit1;
 +	}
-+out:
-+	cpu_hotplug_disable();
-+	return ret;
-+}
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -183,10 +183,14 @@ enum cpuhp_smt_control {
- extern enum cpuhp_smt_control cpu_smt_control;
- extern void cpu_smt_disable(bool force);
- extern void cpu_smt_check_topology(void);
-+extern int cpuhp_smt_enable(void);
-+extern int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
- static inline void cpu_smt_disable(bool force) { }
- static inline void cpu_smt_check_topology(void) { }
-+static inline int cpuhp_smt_enable(void) { return 0; }
-+static inline int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval) { return 0; }
- #endif
+ 	if (!request_mem_region(p_dev->resource[2]->start,
+ 				resource_size(p_dev->resource[2]),
+ 				IPWIRELESS_PCCARD_NAME)) {
+@@ -133,6 +137,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
  
- /*
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2064,7 +2064,7 @@ static void cpuhp_online_cpu_device(unsi
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
--static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
-+int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
- 
-@@ -2096,7 +2096,7 @@ static int cpuhp_smt_disable(enum cpuhp_
- 	return ret;
- }
- 
--static int cpuhp_smt_enable(void)
-+int cpuhp_smt_enable(void)
- {
- 	int cpu, ret = 0;
- 
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -258,6 +258,11 @@ void swsusp_show_speed(ktime_t start, kt
- 		(kps % 1000) / 10);
- }
- 
-+__weak int arch_resume_nosmt(void)
-+{
-+	return 0;
-+}
-+
- /**
-  * create_image - Create a hibernation image.
-  * @platform_mode: Whether or not to use the platform driver.
-@@ -325,6 +330,10 @@ static int create_image(int platform_mod
-  Enable_cpus:
- 	enable_nonboot_cpus();
- 
-+	/* Allow architectures to do nosmt-specific post-resume dances */
-+	if (!in_suspend)
-+		error = arch_resume_nosmt();
-+
-  Platform_finish:
- 	platform_finish(platform_mode);
- 
+ 	ipw->attr_memory = ioremap(p_dev->resource[3]->start,
+ 				resource_size(p_dev->resource[3]));
++	if (!ipw->attr_memory) {
++		ret = -ENOMEM;
++		goto exit3;
++	}
+ 	if (!request_mem_region(p_dev->resource[3]->start,
+ 				resource_size(p_dev->resource[3]),
+ 				IPWIRELESS_PCCARD_NAME)) {
+-- 
+2.20.1
+
 
 
