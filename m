@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4FB3A8B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB2A3A7D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388442AbfFIRDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41902 "EHLO mail.kernel.org"
+        id S1732525AbfFIQyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:54:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388429AbfFIRDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:31 -0400
+        id S1732513AbfFIQx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:53:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D79A204EC;
-        Sun,  9 Jun 2019 17:03:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A065206C3;
+        Sun,  9 Jun 2019 16:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099810;
-        bh=+kIEXJMeTP1KdmW/tnGqQswG8llJuLBkzgOSww3SMcs=;
+        s=default; t=1560099239;
+        bh=YLT6PZzhz5CbO5aRKc8oe50qorQ6mekAjquFK2H4gNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kCXrPfawbIxKx7U8aGzUcJbU28eRugLfh6RiilpkcrsLLPGSzXlUzx9NDnFHzfC28
-         /lv5BxRE7zSkI67mbMwzonB3H9LV3e1wCMIawxE9JLn0GcFhqbKiTJ7x5lZdQVlRvn
-         f29OJK1NlTdP9UMtY9PmW/D3NiS3tLNHGgbSI+0s=
+        b=YypB5Bmj0m6nglgMSOFdu8BWl0o2z2IZo2OyUJqiIXAdnuWyH3xa8hYvIazMTH940
+         fU8VcPojO+h/wBp4CDSZpc+OPgQsHWXHe9RXZ/b/TAUfGYlR87fL7i381D0yrVZ+WA
+         DsF1B5S1LtqNO4fZ6WmxCVuTVrj3dDKYtmYwkq4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 173/241] media: go7007: avoid clang frame overflow warning with KASAN
+        stable@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH 4.9 25/83] usbip: usbip_host: fix stub_dev lock context imbalance regression
 Date:   Sun,  9 Jun 2019 18:41:55 +0200
-Message-Id: <20190609164152.790981313@linuxfoundation.org>
+Message-Id: <20190609164129.699822253@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +42,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ed713a4a1367aca5c0f2f329579465db00c17995 ]
+From: Shuah Khan <skhan@linuxfoundation.org>
 
-clang-8 warns about one function here when KASAN is enabled, even
-without the 'asan-stack' option:
+commit 3ea3091f1bd8586125848c62be295910e9802af0 upstream.
 
-drivers/media/usb/go7007/go7007-fw.c:1551:5: warning: stack frame size of 2656 bytes in function
+Fix the following sparse context imbalance regression introduced in
+a patch that fixed sleeping function called from invalid context bug.
 
-I have reported this issue in the llvm bugzilla, but to make
-it work with the clang-8 release, a small annotation is still
-needed.
+kbuild test robot reported on:
 
-Link: https://bugs.llvm.org/show_bug.cgi?id=38809
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git  usb-linus
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-[hverkuil-cisco@xs4all.nl: fix checkpatch warning]
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Regressions in current branch:
+
+drivers/usb/usbip/stub_dev.c:399:9: sparse: sparse: context imbalance in 'stub_probe' - different lock contexts for basic block
+drivers/usb/usbip/stub_dev.c:418:13: sparse: sparse: context imbalance in 'stub_disconnect' - different lock contexts for basic block
+drivers/usb/usbip/stub_dev.c:464:1-10: second lock on line 476
+
+Error ids grouped by kconfigs:
+
+recent_errors
+├── i386-allmodconfig
+│   └── drivers-usb-usbip-stub_dev.c:second-lock-on-line
+├── x86_64-allmodconfig
+│   ├── drivers-usb-usbip-stub_dev.c:sparse:sparse:context-imbalance-in-stub_disconnect-different-lock-contexts-for-basic-block
+│   └── drivers-usb-usbip-stub_dev.c:sparse:sparse:context-imbalance-in-stub_probe-different-lock-contexts-for-basic-block
+└── x86_64-allyesconfig
+    └── drivers-usb-usbip-stub_dev.c:second-lock-on-line
+
+This is a real problem in an error leg where spin_lock() is called on an
+already held lock.
+
+Fix the imbalance in stub_probe() and stub_disconnect().
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Fixes: 0c9e8b3cad65 ("usbip: usbip_host: fix BUG: sleeping function called from invalid context")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/usb/go7007/go7007-fw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/usbip/stub_dev.c |   36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/media/usb/go7007/go7007-fw.c b/drivers/media/usb/go7007/go7007-fw.c
-index 60bf5f0644d11..a5efcd4f7b4f5 100644
---- a/drivers/media/usb/go7007/go7007-fw.c
-+++ b/drivers/media/usb/go7007/go7007-fw.c
-@@ -1499,8 +1499,8 @@ static int modet_to_package(struct go7007 *go, __le16 *code, int space)
- 	return cnt;
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -340,14 +340,17 @@ static int stub_probe(struct usb_device
+ 		 * See driver_probe_device() in driver/base/dd.c
+ 		 */
+ 		rc = -ENODEV;
+-		goto sdev_free;
++		if (!busid_priv)
++			goto sdev_free;
++
++		goto call_put_busid_priv;
+ 	}
+ 
+ 	if (udev->descriptor.bDeviceClass == USB_CLASS_HUB) {
+ 		dev_dbg(&udev->dev, "%s is a usb hub device... skip!\n",
+ 			 udev_busid);
+ 		rc = -ENODEV;
+-		goto sdev_free;
++		goto call_put_busid_priv;
+ 	}
+ 
+ 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
+@@ -356,7 +359,7 @@ static int stub_probe(struct usb_device
+ 			udev_busid);
+ 
+ 		rc = -ENODEV;
+-		goto sdev_free;
++		goto call_put_busid_priv;
+ 	}
+ 
+ 
+@@ -375,6 +378,9 @@ static int stub_probe(struct usb_device
+ 	save_status = busid_priv->status;
+ 	busid_priv->status = STUB_BUSID_ALLOC;
+ 
++	/* release the busid_lock */
++	put_busid_priv(busid_priv);
++
+ 	/*
+ 	 * Claim this hub port.
+ 	 * It doesn't matter what value we pass as owner
+@@ -387,9 +393,6 @@ static int stub_probe(struct usb_device
+ 		goto err_port;
+ 	}
+ 
+-	/* release the busid_lock */
+-	put_busid_priv(busid_priv);
+-
+ 	rc = stub_add_files(&udev->dev);
+ 	if (rc) {
+ 		dev_err(&udev->dev, "stub_add_files for %s\n", udev_busid);
+@@ -409,11 +412,17 @@ err_port:
+ 	spin_lock(&busid_priv->busid_lock);
+ 	busid_priv->sdev = NULL;
+ 	busid_priv->status = save_status;
+-sdev_free:
+-	stub_device_free(sdev);
++	spin_unlock(&busid_priv->busid_lock);
++	/* lock is released - go to free */
++	goto sdev_free;
++
++call_put_busid_priv:
+ 	/* release the busid_lock */
+ 	put_busid_priv(busid_priv);
+ 
++sdev_free:
++	stub_device_free(sdev);
++
+ 	return rc;
  }
  
--static int do_special(struct go7007 *go, u16 type, __le16 *code, int space,
--			int *framelen)
-+static noinline_for_stack int do_special(struct go7007 *go, u16 type,
-+					 __le16 *code, int space, int *framelen)
- {
- 	switch (type) {
- 	case SPECIAL_FRM_HEAD:
--- 
-2.20.1
-
+@@ -449,7 +458,9 @@ static void stub_disconnect(struct usb_d
+ 	/* get stub_device */
+ 	if (!sdev) {
+ 		dev_err(&udev->dev, "could not get device");
+-		goto call_put_busid_priv;
++		/* release busid_lock */
++		put_busid_priv(busid_priv);
++		return;
+ 	}
+ 
+ 	dev_set_drvdata(&udev->dev, NULL);
+@@ -479,7 +490,7 @@ static void stub_disconnect(struct usb_d
+ 	if (!busid_priv->shutdown_busid)
+ 		busid_priv->shutdown_busid = 1;
+ 	/* release busid_lock */
+-	put_busid_priv(busid_priv);
++	spin_unlock(&busid_priv->busid_lock);
+ 
+ 	/* shutdown the current connection */
+ 	shutdown_busid(busid_priv);
+@@ -494,10 +505,9 @@ static void stub_disconnect(struct usb_d
+ 
+ 	if (busid_priv->status == STUB_BUSID_ALLOC)
+ 		busid_priv->status = STUB_BUSID_ADDED;
+-
+-call_put_busid_priv:
+ 	/* release busid_lock */
+-	put_busid_priv(busid_priv);
++	spin_unlock(&busid_priv->busid_lock);
++	return;
+ }
+ 
+ #ifdef CONFIG_PM
 
 
