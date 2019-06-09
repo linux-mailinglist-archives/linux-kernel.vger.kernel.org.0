@@ -2,105 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB4E3A4A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9363A4B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbfFIKJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 06:09:10 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:55298 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728231AbfFIKJF (ORCPT
+        id S1728095AbfFIKb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 06:31:57 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42531 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727853AbfFIKb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 06:09:05 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id B8BB62E128E;
-        Sun,  9 Jun 2019 13:09:02 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id GPVqI98PV5-92dCP51C;
-        Sun, 09 Jun 2019 13:09:02 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1560074942; bh=JjGSbXYSmI2Txw4mQvoTR75+oGXHH64lCXqV4geoUls=;
-        h=In-Reply-To:Message-ID:References:Date:To:From:Subject:Cc;
-        b=z05nsIep3y7fvuABy75loevMGYRGUtTHeQP1HW8df8+IXOW2u4oPs4rqs77tk3V1T
-         ySkTzZ5JZMrZYc4IRni1naQVfoWdJ/CQ7/qbULv2tO3ILPiMJ0Mts/9/h9VdWHIUQC
-         yK30fHdHJgvsU48poLX+VtrcTBd9hqYMjvZRVDaM=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d25:9e27:4f75:a150])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id RlV9qeaXk1-92gun05E;
-        Sun, 09 Jun 2019 13:09:02 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH v2 6/6] mm: use down_read_killable for locking mmap_sem in
- access_remote_vm
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Michal =?utf-8?q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Roman Gushchin <guro@fb.com>
-Date:   Sun, 09 Jun 2019 13:09:02 +0300
-Message-ID: <156007494202.3335.16782303099589302087.stgit@buzz>
-In-Reply-To: <156007465229.3335.10259979070641486905.stgit@buzz>
-References: <156007465229.3335.10259979070641486905.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Sun, 9 Jun 2019 06:31:56 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s184so4332119oie.9
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 03:31:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ZkkxLVFqBb5ZJfTrcOXhAcnZb8vZWVx+pEvzJtn3ySM=;
+        b=uu9zdQG6cUmbRPqDcDdb/b152s9o4EOp4oSed5wWIVVLpX015qCj8ODB54JnKUJ4YK
+         NfzVgteQ6oBG9xrSdJl+CJm8hCnigcg7fuzMg8/5dmzUg5ANsxCfbzXQxdq/OBHE+HFi
+         ID0UzJlfBGW8+Fd5hhp/lLM/+aLNUcVln8ya+oyM8AjOiZObepo2+2ObAhMNoPxbXkKT
+         n5MkJ0nISDiYsr8SZplXB9yA/kyUo6FVH3parP7H412V+OtpOQSpk9KFRhNlCa/rTpAJ
+         ubi2j9mzY/NNb/ZjEyouAgW1O5cy5odPC6gTY38jNJO4GhxyEpCm6J91U+FKH0N8rPPb
+         dFXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ZkkxLVFqBb5ZJfTrcOXhAcnZb8vZWVx+pEvzJtn3ySM=;
+        b=m8QA07j0M8jUTcIipwIBpxOaNYERD/IbWn+HuC9uHlNeWtIxE5WN+WRJtL5jg8C/AJ
+         dZX+bsXbypCO6gXCx7ZjBThxoUeuPs+TlYDwO074Z/6RM8T7oPsF3JopWkBFZS8Fnfkk
+         NpmjqQHArKVIGOteAQi/aX+8uVQ1cu/SB89nXfV56UFaSIWBnMcqX+MPtBjIWV5LGiYx
+         Z6gxCl2G2bHMLF/0S8JQQNjX4bXbZJvHnrhl+ukCwuNtffLDBGOc7YEPXz8DYJKoEhgp
+         uvppwpCIP/+lMYMihuyQgQAT7oUvUijvej8uqJMvC4mBr8vkS9xsrOemaIGLuHw7obcF
+         jHoA==
+X-Gm-Message-State: APjAAAV1nfcpWBuMjxwSXUjveUowTzX4ecGZq1hop2fuCncS71tM1Jca
+        /GU5jqKF9olmDd3BIa7abJ/LQGI55HFYg//1k0A=
+X-Google-Smtp-Source: APXvYqzGhnTMaBIkLqqvzvo9YGWGW2fPXkvK97wfRV6x1A+MfbaOX888OTE9G1muPteARByh+2UlPhNxQOaSs0vDLoA=
+X-Received: by 2002:aca:330b:: with SMTP id z11mr8693663oiz.148.1560076315922;
+ Sun, 09 Jun 2019 03:31:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a4a:e7cf:0:0:0:0:0 with HTTP; Sun, 9 Jun 2019 03:31:55 -0700 (PDT)
+Reply-To: dawudusman1@yahoo.com
+From:   Dawuda Usman <georg.koffi11@gmail.com>
+Date:   Sun, 9 Jun 2019 03:31:55 -0700
+Message-ID: <CADvaHQbjidvAOjV65yOo4WSB9p1aC4-HBNSUH8gJ+5kdbHpDNg@mail.gmail.com>
+Subject: Greetings Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is used by ptrace and proc files like /proc/pid/cmdline and
-/proc/pid/environ.
+Dear Friend,
 
-Access_remote_vm never returns error codes, all errors are ignored and
-only size of successfully read data is returned. So, if current task was
-killed we'll simply return 0 (bytes read).
+Greetings to you friend,  I am  Mr. Dawuda Usman working with a
+Commercial bank here in Lome Togo in the department of Audit and
+accounting manager ,
 
-Mmap_sem could be locked for a long time or forever if something wrong.
-Killable lock allows to cleanup stuck tasks and simplifies investigation.
+There is this fund that was kept in my custody years ago,please I need
+your assistance for the transferring of this fund to your bank account
+for both of us benefit for life time investment and the amount is
+(US$4.5M DOLLARS).
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reviewed-by: Michal Koutný <mkoutny@suse.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
----
- mm/memory.c |    4 +++-
- mm/nommu.c  |    3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+I have every inquiry details to make the bank believe you and release
+the fund in within 5 banking working days with your full co-operation
+with me after success.
 
-diff --git a/mm/memory.c b/mm/memory.c
-index ddf20bd0c317..9a4401d21e94 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4349,7 +4349,9 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 	void *old_buf = buf;
- 	int write = gup_flags & FOLL_WRITE;
- 
--	down_read(&mm->mmap_sem);
-+	if (down_read_killable(&mm->mmap_sem))
-+		return 0;
-+
- 	/* ignore errors, just check how much was successfully transferred */
- 	while (len) {
- 		int bytes, ret, offset;
-diff --git a/mm/nommu.c b/mm/nommu.c
-index d8c02fbe03b5..b2823519f8cd 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1792,7 +1792,8 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 	struct vm_area_struct *vma;
- 	int write = gup_flags & FOLL_WRITE;
- 
--	down_read(&mm->mmap_sem);
-+	if (down_read_killable(&mm->mmap_sem))
-+		return 0;
- 
- 	/* the access must start within one of the target process's mappings */
- 	vma = find_vma(mm, addr);
+Note/ 50% for you why 50% for me after success of the transfer to your
+bank account.
 
+Below information is what I need from you so we can be reaching each other .
+
+1)Private telephone number...
+2)Age...
+3)Nationality...
+4)Occupation ...
+5)Full name ...
+
+Thanks.
+
+Mr. Dawuda Usman
