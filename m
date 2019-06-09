@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AD73A937
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4028E3A78F
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:51:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388816AbfFIRFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44498 "EHLO mail.kernel.org"
+        id S1731202AbfFIQuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:50:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388788AbfFIRFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:05:18 -0400
+        id S1731792AbfFIQut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:50:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0374220833;
-        Sun,  9 Jun 2019 17:05:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B0F6205ED;
+        Sun,  9 Jun 2019 16:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099918;
-        bh=j/4mj41txbokL6sWtov/J2R9lrvZFfKMACDs23RHENM=;
+        s=default; t=1560099048;
+        bh=B2SiIh6nqU8JhbnZqr5zqXd+B9YpyaDEGxBG0NX2oos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MpZn3YoqjytMmjN3m8OQEPZhZk7zIXWZtwkXFi15kWjQD7AQaRIm1er3JQzqCg7wB
-         zkhKzQL0ubgua82/klhfXa97bscpxswoYggs9JnYElUSqM1OfFrOURNBYBwwNRpWqI
-         0saOc5ba/UrcLAVDBK/o/UyO1RzPsZ5IFa9VINd0=
+        b=hp8zclJaXmtZ0EEMH+PZe4SdId+YHbl8oLSFDC/UOb5xIvAqyfNSL/e8PZUEUQKys
+         STpg70e9D7MC5xowe0ZiAQO0ZCBc6I2iLd7felseIbA7lQSaHTc7CrvIkY2npRcU4z
+         LEBJ5TVe34v7l6JGsNAP7nfBQVyfEKCGK25eV6cE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roberto Bergantinos Corpas <rbergant@redhat.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 213/241] CIFS: cifs_read_allocate_pages: dont iterate through whole page array on ENOMEM
+        stable@vger.kernel.org, Paul Dufresne <dufresnep@gmail.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 29/35] drm/radeon: prefer lower reference dividers
 Date:   Sun,  9 Jun 2019 18:42:35 +0200
-Message-Id: <20190609164154.817633029@linuxfoundation.org>
+Message-Id: <20190609164127.196085204@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roberto Bergantinos Corpas <rbergant@redhat.com>
+From: Christian König <christian.koenig@amd.com>
 
-commit 31fad7d41e73731f05b8053d17078638cf850fa6 upstream.
+commit 2e26ccb119bde03584be53406bbd22e711b0d6e6 upstream.
 
- In cifs_read_allocate_pages, in case of ENOMEM, we go through
-whole rdata->pages array but we have failed the allocation before
-nr_pages, therefore we may end up calling put_page with NULL
-pointer, causing oops
+Instead of the closest reference divider prefer the lowest,
+this fixes flickering issues on HP Compaq nx9420.
 
-Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
-Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Bugs: https://bugs.freedesktop.org/show_bug.cgi?id=108514
+Suggested-by: Paul Dufresne <dufresnep@gmail.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/file.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_display.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -2829,7 +2829,9 @@ cifs_read_allocate_pages(struct cifs_rea
- 	}
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -923,12 +923,12 @@ static void avivo_get_fb_ref_div(unsigne
+ 	ref_div_max = max(min(100 / post_div, ref_div_max), 1u);
  
- 	if (rc) {
--		for (i = 0; i < nr_pages; i++) {
-+		unsigned int nr_page_failed = i;
-+
-+		for (i = 0; i < nr_page_failed; i++) {
- 			put_page(rdata->pages[i]);
- 			rdata->pages[i] = NULL;
- 		}
+ 	/* get matching reference and feedback divider */
+-	*ref_div = min(max(DIV_ROUND_CLOSEST(den, post_div), 1u), ref_div_max);
++	*ref_div = min(max(den/post_div, 1u), ref_div_max);
+ 	*fb_div = DIV_ROUND_CLOSEST(nom * *ref_div * post_div, den);
+ 
+ 	/* limit fb divider to its maximum */
+ 	if (*fb_div > fb_div_max) {
+-		*ref_div = DIV_ROUND_CLOSEST(*ref_div * fb_div_max, *fb_div);
++		*ref_div = (*ref_div * fb_div_max)/(*fb_div);
+ 		*fb_div = fb_div_max;
+ 	}
+ }
 
 
