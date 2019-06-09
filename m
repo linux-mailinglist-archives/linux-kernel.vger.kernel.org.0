@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7ACC3A8CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4304B3A774
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388608AbfFIREY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43050 "EHLO mail.kernel.org"
+        id S1731587AbfFIQtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388596AbfFIRET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:19 -0400
+        id S1731028AbfFIQts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95D2120843;
-        Sun,  9 Jun 2019 17:04:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C9722081C;
+        Sun,  9 Jun 2019 16:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099859;
-        bh=WO/xY2whLhZsYeG3CtK+RlKKS6z8EIAXONDnC5MVslk=;
+        s=default; t=1560098988;
+        bh=mJGX79p76rVdVlJMSD5PUw98T0fLpIIBGD5Wr7UkL2s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A+pFHbsdbJigAcskh5XrS+LK8e1182OnXIhhg2W88T4GlGP9TGn2n3F/WDEfuYMfs
-         Mfqr4RctYIbRbPPi+IuNB4RqLdLvMzfwpk80jH0/qN0s6nmEnFi1AsLna/MvxTWCD1
-         +p4n7gPzVjCNuDKUtvw/8FbZ8nqS461rMZZSBGm0=
+        b=1Jn4R42QoORjvPxqpVZdk2fMd1D80btBvKhq7PldCdfHZqwTAmtKoOdJoMZsXh9K2
+         l0gd64rH89s9t0qAZQGhArWDyUPc/tFyIL0WIN+SvC07/pgMKkxeaqLUEPJfan9ncI
+         /YuVs7NbSTYMW+qg49NeGDC2uIPF9aoqt6/Sz2v4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        stable@vger.kernel.org, Vivien Didelot <vivien.didelot@gmail.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 185/241] tipc: Avoid copying bytes beyond the supplied data
+Subject: [PATCH 4.14 01/35] ethtool: fix potential userspace buffer overflow
 Date:   Sun,  9 Jun 2019 18:42:07 +0200
-Message-Id: <20190609164153.224739978@linuxfoundation.org>
+Message-Id: <20190609164125.657132872@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,67 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+From: Vivien Didelot <vivien.didelot@gmail.com>
 
-TLV_SET is called with a data pointer and a len parameter that tells us
-how many bytes are pointed to by data. When invoking memcpy() we need
-to careful to only copy len bytes.
+[ Upstream commit 0ee4e76937d69128a6a66861ba393ebdc2ffc8a2 ]
 
-Previously we would copy TLV_LENGTH(len) bytes which would copy an extra
-4 bytes past the end of the data pointer which newer GCC versions
-complain about.
+ethtool_get_regs() allocates a buffer of size ops->get_regs_len(),
+and pass it to the kernel driver via ops->get_regs() for filling.
 
- In file included from test.c:17:
- In function 'TLV_SET',
-     inlined from 'test' at test.c:186:5:
- /usr/include/linux/tipc_config.h:317:3:
- warning: 'memcpy' forming offset [33, 36] is out of the bounds [0, 32]
- of object 'bearer_name' with type 'char[32]' [-Warray-bounds]
-     memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- test.c: In function 'test':
- test.c::161:10: note:
- 'bearer_name' declared here
-     char bearer_name[TIPC_MAX_BEARER_NAME];
-          ^~~~~~~~~~~
+There is no restriction about what the kernel drivers can or cannot do
+with the open ethtool_regs structure. They usually set regs->version
+and ignore regs->len or set it to the same size as ops->get_regs_len().
 
-We still want to ensure any padding bytes at the end are initialised, do
-this with a explicit memset() rather than copy bytes past the end of
-data. Apply the same logic to TCM_SET.
+But if userspace allocates a smaller buffer for the registers dump,
+we would cause a userspace buffer overflow in the final copy_to_user()
+call, which uses the regs.len value potentially reset by the driver.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To fix this, make this case obvious and store regs.len before calling
+ops->get_regs(), to only copy as much data as requested by userspace,
+up to the value returned by ops->get_regs_len().
+
+While at it, remove the redundant check for non-null regbuf.
+
+Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/tipc_config.h |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ net/core/ethtool.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/uapi/linux/tipc_config.h
-+++ b/include/uapi/linux/tipc_config.h
-@@ -301,8 +301,10 @@ static inline int TLV_SET(void *tlv, __u
- 	tlv_ptr = (struct tlv_desc *)tlv;
- 	tlv_ptr->tlv_type = htons(type);
- 	tlv_ptr->tlv_len  = htons(tlv_len);
--	if (len && data)
--		memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
-+	if (len && data) {
-+		memcpy(TLV_DATA(tlv_ptr), data, len);
-+		memset(TLV_DATA(tlv_ptr) + len, 0, TLV_SPACE(len) - tlv_len);
-+	}
- 	return TLV_SPACE(len);
- }
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -1402,13 +1402,16 @@ static int ethtool_get_regs(struct net_d
+ 			return -ENOMEM;
+ 	}
  
-@@ -399,8 +401,10 @@ static inline int TCM_SET(void *msg, __u
- 	tcm_hdr->tcm_len   = htonl(msg_len);
- 	tcm_hdr->tcm_type  = htons(cmd);
- 	tcm_hdr->tcm_flags = htons(flags);
--	if (data_len && data)
-+	if (data_len && data) {
- 		memcpy(TCM_DATA(msg), data, data_len);
-+		memset(TCM_DATA(msg) + data_len, 0, TCM_SPACE(data_len) - msg_len);
-+	}
- 	return TCM_SPACE(data_len);
- }
++	if (regs.len < reglen)
++		reglen = regs.len;
++
+ 	ops->get_regs(dev, &regs, regbuf);
+ 
+ 	ret = -EFAULT;
+ 	if (copy_to_user(useraddr, &regs, sizeof(regs)))
+ 		goto out;
+ 	useraddr += offsetof(struct ethtool_regs, data);
+-	if (regbuf && copy_to_user(useraddr, regbuf, regs.len))
++	if (copy_to_user(useraddr, regbuf, reglen))
+ 		goto out;
+ 	ret = 0;
  
 
 
