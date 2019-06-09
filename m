@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1323D3A766
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B593A912
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731438AbfFIQtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:49:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48632 "EHLO mail.kernel.org"
+        id S2389139AbfFIRHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:07:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731390AbfFIQtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:49:15 -0400
+        id S1729199AbfFIRHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:07:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99346206DF;
-        Sun,  9 Jun 2019 16:49:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B740206C3;
+        Sun,  9 Jun 2019 17:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098954;
-        bh=gcCgrMDtogtv9S02H5nZ1BGnkLNi/H29ZWVzYhJvc4U=;
+        s=default; t=1560100025;
+        bh=dbiKq53ZEdnYqOxVXfRDsv9rp54xWHJH215bvi/pXPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tu+33DG9jMIcuBceM49/1tysMdDK4Dl+6O3xBlY2KPOtl1hrp6bZSR8TLTP8S/ypJ
-         Cihxv1eclND3UPOqrIQtrP7glQSkSRVnqvVxvT/o06R5K3bH4ORyhWl9WeGMGXEjtf
-         /FSyuZt0zv07mc0tYXqEIhSPIkDZtu8SQ5GYTsF8=
+        b=wdtfLzkrzi82LyaasF9B/U0eOR9lBW1N0w+2TOI1dSJGUg2m51a/9rWwxavyvxUzc
+         +8mVlrVvh4M4JJD8b/Mi73IbedWJwlpFZRmReYeNXMVTuYzu1Awg8pEfbDhXxFz8qk
+         O3Low7DRvTbPuBIQQKkzgZRgDIthaahdjEX6UuRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Helen Koike <helen.koike@collabora.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Subject: [PATCH 4.19 49/51] drm: dont block fb changes for async plane updates
-Date:   Sun,  9 Jun 2019 18:42:30 +0200
-Message-Id: <20190609164130.817119906@linuxfoundation.org>
+        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.9 61/83] media: uvcvideo: Fix uvc_alloc_entity() allocation alignment
+Date:   Sun,  9 Jun 2019 18:42:31 +0200
+Message-Id: <20190609164133.056739483@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,132 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helen Koike <helen.koike@collabora.com>
+From: Nadav Amit <namit@vmware.com>
 
-commit 89a4aac0ab0e6f5eea10d7bf4869dd15c3de2cd4 upstream.
+commit 89dd34caf73e28018c58cd193751e41b1f8bdc56 upstream.
 
-In the case of a normal sync update, the preparation of framebuffers (be
-it calling drm_atomic_helper_prepare_planes() or doing setups with
-drm_framebuffer_get()) are performed in the new_state and the respective
-cleanups are performed in the old_state.
+The use of ALIGN() in uvc_alloc_entity() is incorrect, since the size of
+(entity->pads) is not a power of two. As a stop-gap, until a better
+solution is adapted, use roundup() instead.
 
-In the case of async updates, the preparation is also done in the
-new_state but the cleanups are done in the new_state (because updates
-are performed in place, i.e. in the current state).
+Found by a static assertion. Compile-tested only.
 
-The current code blocks async udpates when the fb is changed, turning
-async updates into sync updates, slowing down cursor updates and
-introducing regressions in igt tests with errors of type:
+Fixes: 4ffc2d89f38a ("uvcvideo: Register subdevices for each entity")
 
-"CRITICAL: completed 97 cursor updated in a period of 30 flips, we
-expect to complete approximately 15360 updates, with the threshold set
-at 7680"
-
-Fb changes in async updates were prevented to avoid the following scenario:
-
-- Async update, oldfb = NULL, newfb = fb1, prepare fb1, cleanup fb1
-- Async update, oldfb = fb1, newfb = fb2, prepare fb2, cleanup fb2
-- Non-async commit, oldfb = fb2, newfb = fb1, prepare fb1, cleanup fb2 (wrong)
-Where we have a single call to prepare fb2 but double cleanup call to fb2.
-
-To solve the above problems, instead of blocking async fb changes, we
-place the old framebuffer in the new_state object, so when the code
-performs cleanups in the new_state it will cleanup the old_fb and we
-will have the following scenario instead:
-
-- Async update, oldfb = NULL, newfb = fb1, prepare fb1, no cleanup
-- Async update, oldfb = fb1, newfb = fb2, prepare fb2, cleanup fb1
-- Non-async commit, oldfb = fb2, newfb = fb1, prepare fb1, cleanup fb2
-
-Where calls to prepare/cleanup are balanced.
-
-Cc: <stable@vger.kernel.org> # v4.14+
-Fixes: 25dc194b34dd ("drm: Block fb changes for async plane updates")
-Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190603165610.24614-6-helen.koike@collabora.com
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_atomic_helper.c      |   22 ++++++++++++----------
- include/drm/drm_modeset_helper_vtables.h |    8 ++++++++
- 2 files changed, 20 insertions(+), 10 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1573,15 +1573,6 @@ int drm_atomic_helper_async_check(struct
- 	if (old_plane_state->fb != new_plane_state->fb)
- 		return -EINVAL;
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -868,7 +868,7 @@ static struct uvc_entity *uvc_alloc_enti
+ 	unsigned int size;
+ 	unsigned int i;
  
--	/*
--	 * FIXME: Since prepare_fb and cleanup_fb are always called on
--	 * the new_plane_state for async updates we need to block framebuffer
--	 * changes. This prevents use of a fb that's been cleaned up and
--	 * double cleanups from occuring.
--	 */
--	if (old_plane_state->fb != new_plane_state->fb)
--		return -EINVAL;
--
- 	funcs = plane->helper_private;
- 	if (!funcs->atomic_async_update)
- 		return -EINVAL;
-@@ -1612,6 +1603,8 @@ EXPORT_SYMBOL(drm_atomic_helper_async_ch
-  * drm_atomic_async_check() succeeds. Async commits are not supposed to swap
-  * the states like normal sync commits, but just do in-place changes on the
-  * current state.
-+ *
-+ * TODO: Implement full swap instead of doing in-place changes.
-  */
- void drm_atomic_helper_async_commit(struct drm_device *dev,
- 				    struct drm_atomic_state *state)
-@@ -1622,6 +1615,9 @@ void drm_atomic_helper_async_commit(stru
- 	int i;
- 
- 	for_each_new_plane_in_state(state, plane, plane_state, i) {
-+		struct drm_framebuffer *new_fb = plane_state->fb;
-+		struct drm_framebuffer *old_fb = plane->state->fb;
-+
- 		funcs = plane->helper_private;
- 		funcs->atomic_async_update(plane, plane_state);
- 
-@@ -1630,11 +1626,17 @@ void drm_atomic_helper_async_commit(stru
- 		 * plane->state in-place, make sure at least common
- 		 * properties have been properly updated.
- 		 */
--		WARN_ON_ONCE(plane->state->fb != plane_state->fb);
-+		WARN_ON_ONCE(plane->state->fb != new_fb);
- 		WARN_ON_ONCE(plane->state->crtc_x != plane_state->crtc_x);
- 		WARN_ON_ONCE(plane->state->crtc_y != plane_state->crtc_y);
- 		WARN_ON_ONCE(plane->state->src_x != plane_state->src_x);
- 		WARN_ON_ONCE(plane->state->src_y != plane_state->src_y);
-+
-+		/*
-+		 * Make sure the FBs have been swapped so that cleanups in the
-+		 * new_state performs a cleanup in the old FB.
-+		 */
-+		WARN_ON_ONCE(plane_state->fb != old_fb);
- 	}
- }
- EXPORT_SYMBOL(drm_atomic_helper_async_commit);
---- a/include/drm/drm_modeset_helper_vtables.h
-+++ b/include/drm/drm_modeset_helper_vtables.h
-@@ -1174,6 +1174,14 @@ struct drm_plane_helper_funcs {
- 	 * current one with the new plane configurations in the new
- 	 * plane_state.
- 	 *
-+	 * Drivers should also swap the framebuffers between current plane
-+	 * state (&drm_plane.state) and new_state.
-+	 * This is required since cleanup for async commits is performed on
-+	 * the new state, rather than old state like for traditional commits.
-+	 * Since we want to give up the reference on the current (old) fb
-+	 * instead of our brand new one, swap them in the driver during the
-+	 * async commit.
-+	 *
- 	 * FIXME:
- 	 *  - It only works for single plane updates
- 	 *  - Async Pageflips are not supported yet
+-	extra_size = ALIGN(extra_size, sizeof(*entity->pads));
++	extra_size = roundup(extra_size, sizeof(*entity->pads));
+ 	num_inputs = (type & UVC_TERM_OUTPUT) ? num_pads : num_pads - 1;
+ 	size = sizeof(*entity) + extra_size + sizeof(*entity->pads) * num_pads
+ 	     + num_inputs;
 
 
