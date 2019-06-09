@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B3C3A741
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 774BC3AA21
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfFIQr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:47:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46632 "EHLO mail.kernel.org"
+        id S1732569AbfFIQyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:54:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730996AbfFIQru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:47:50 -0400
+        id S1732163AbfFIQyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:54:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65F24205ED;
-        Sun,  9 Jun 2019 16:47:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17683206BB;
+        Sun,  9 Jun 2019 16:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098869;
-        bh=g+hd2iLdmdvsV99V+ur7k869hgf102FOOHf4hvs7/pY=;
+        s=default; t=1560099253;
+        bh=89GpvrFgzcN4Wj9MAnyH0h18e4NiL3Ko+h4Lw6xvsNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oVvcCxuzsteB+bPXH4YeVFokZKxcyghpSwBVfxyWtgzvV8xa5fHF0RyxZ5SLAxEd5
-         AWwdGzFU44KF6dmYfkN2avmAmmBC6ifxc0mDALATeThZUPXqPr434FmH9PJBjFEbag
-         K13x9y8B+zI04bPDHPDsmtbCD7m55lkNPUzv/TT8=
+        b=xxbFPUFMBCKh5FZZnXV5xW1aXhOp+lIcGSU/LRhbLqoyUxdkvUvpHrHtTSJo2vm8+
+         MKpXdB15fimpEMnLncXy+iOtnJPq4DVgi9nnW+8ViJa5ceFyusfkGATrj8MAR2paOk
+         fpGm48XMqDkeLv3lIU04dkPuVKqnSV6LeQxPV0Ew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John David Anglin <dave.anglin@bell.net>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.19 19/51] parisc: Use implicit space register selection for loading the coherence index of I/O pdirs
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 30/83] USB: rio500: fix memory leak in close after disconnect
 Date:   Sun,  9 Jun 2019 18:42:00 +0200
-Message-Id: <20190609164128.193493141@linuxfoundation.org>
+Message-Id: <20190609164130.215498292@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +42,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John David Anglin <dave.anglin@bell.net>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 63923d2c3800919774f5c651d503d1dd2adaddd5 upstream.
+commit e0feb73428b69322dd5caae90b0207de369b5575 upstream.
 
-We only support I/O to kernel space. Using %sr1 to load the coherence
-index may be racy unless interrupts are disabled. This patch changes the
-code used to load the coherence index to use implicit space register
-selection. This saves one instruction and eliminates the race.
+If a disconnected device is closed, rio_close() must free
+the buffers.
 
-Tested on rp3440, c8000 and c3750.
-
-Signed-off-by: John David Anglin <dave.anglin@bell.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/parisc/ccio-dma.c  |    4 +---
- drivers/parisc/sba_iommu.c |    3 +--
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/usb/misc/rio500.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/parisc/ccio-dma.c
-+++ b/drivers/parisc/ccio-dma.c
-@@ -565,8 +565,6 @@ ccio_io_pdir_entry(u64 *pdir_ptr, space_
- 	/* We currently only support kernel addresses */
- 	BUG_ON(sid != KERNEL_SPACE);
+--- a/drivers/usb/misc/rio500.c
++++ b/drivers/usb/misc/rio500.c
+@@ -103,9 +103,22 @@ static int close_rio(struct inode *inode
+ {
+ 	struct rio_usb_data *rio = &rio_instance;
  
--	mtsp(sid,1);
--
- 	/*
- 	** WORD 1 - low order word
- 	** "hints" parm includes the VALID bit!
-@@ -597,7 +595,7 @@ ccio_io_pdir_entry(u64 *pdir_ptr, space_
- 	** Grab virtual index [0:11]
- 	** Deposit virt_idx bits into I/O PDIR word
- 	*/
--	asm volatile ("lci %%r0(%%sr1, %1), %0" : "=r" (ci) : "r" (vba));
-+	asm volatile ("lci %%r0(%1), %0" : "=r" (ci) : "r" (vba));
- 	asm volatile ("extru %1,19,12,%0" : "+r" (ci) : "r" (ci));
- 	asm volatile ("depw  %1,15,12,%0" : "+r" (pa) : "r" (ci));
+-	rio->isopen = 0;
++	/* against disconnect() */
++	mutex_lock(&rio500_mutex);
++	mutex_lock(&(rio->lock));
  
---- a/drivers/parisc/sba_iommu.c
-+++ b/drivers/parisc/sba_iommu.c
-@@ -575,8 +575,7 @@ sba_io_pdir_entry(u64 *pdir_ptr, space_t
- 	pa = virt_to_phys(vba);
- 	pa &= IOVP_MASK;
+-	dev_info(&rio->rio_dev->dev, "Rio closed.\n");
++	rio->isopen = 0;
++	if (!rio->present) {
++		/* cleanup has been delayed */
++		kfree(rio->ibuf);
++		kfree(rio->obuf);
++		rio->ibuf = NULL;
++		rio->obuf = NULL;
++	} else {
++		dev_info(&rio->rio_dev->dev, "Rio closed.\n");
++	}
++	mutex_unlock(&(rio->lock));
++	mutex_unlock(&rio500_mutex);
+ 	return 0;
+ }
  
--	mtsp(sid,1);
--	asm("lci 0(%%sr1, %1), %0" : "=r" (ci) : "r" (vba));
-+	asm("lci 0(%1), %0" : "=r" (ci) : "r" (vba));
- 	pa |= (ci >> PAGE_SHIFT) & 0xff;  /* move CI (8 bits) into lowest byte */
- 
- 	pa |= SBA_PDIR_VALID_BIT;	/* set "valid" bit */
 
 
