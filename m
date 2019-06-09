@@ -2,74 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D653B3AAED
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F273AAF0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbfFIRmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:42:52 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35158 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728678AbfFIRmv (ORCPT
+        id S1729347AbfFIRxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:53:02 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:45235 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728678AbfFIRxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:42:51 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 6D2F38023A; Sun,  9 Jun 2019 19:42:39 +0200 (CEST)
-Date:   Sun, 9 Jun 2019 19:42:16 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Joe Perches <joe@perches.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
-Message-ID: <20190609174216.GA13697@xo-6d-61-c0.localdomain>
-References: <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
- <20190604134213.GA26263@kroah.com>
- <CAK7LNARyqW3q6_46e-aYjmF8c0jUNDLdyB28zNaBEXqTV+5QSA@mail.gmail.com>
- <CAK8P3a0bz8XYJOsmND2=CT_oTDmGMJGaRo9+QMroEhpekSMEaQ@mail.gmail.com>
- <CAK7LNARU+uT0aUBh5niwEafL8+Ok7=sOZYukptpDH1w7Cii3hQ@mail.gmail.com>
- <20190605051040.GA22760@kroah.com>
- <b70cf8c1f901ea09abbdb22dd28244b18fd1a39d.camel@perches.com>
- <20190605071413.779bd821@coco.lan>
- <a798561d24c486d31063a7994d8630c859df00e9.camel@perches.com>
- <CAK7LNARsSFT1ncyRgWi_tga_7KC6ZwZOETXQ2GrO9PfeJgLxyQ@mail.gmail.com>
+        Sun, 9 Jun 2019 13:53:02 -0400
+Received: by mail-qk1-f193.google.com with SMTP id s22so4299030qkj.12
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 10:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=cytGUrhNvROirGoJAAEh/zFfKR8E01lK0L7XpbZ5Sok/zQgjUC80s4ogfWiA8Mum36
+         dN9lHAcpIA2y8VwenRzqe+wxxkNbNDGjSM0sYJe6cQCnVDsZWgFhdChQZrqZ2yIJxjEs
+         bMGE609pps9a4aSKoqeFZIfIw8JwI9U2GNWDf9NRj5hcAY82KSuiimgGbVkBMWqQ0mXb
+         4VzwD6VpdFAGrXQZfF+RWcxjKqSaufh6pVPgM4BJe0dpEcHNDBbpBRCOIFEJvJoY25+A
+         12+v2pLpuGTfyrUpEy7KT33NBK+lnL0fVnUZqkPl7ZJN4FoDyIXjc/J40SM7i2+1aPeb
+         0bBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=WaJ1ix1lk45kE7k0+7V9SYtExqXaiRfzZTSjPrys17jpFBTPgli8V/ma0DiaJPX5mH
+         58TO5nvjKg9HIgdgm/f8KoIRX3FE5nJATEsrZhrwZoF1W1QEumagobR2c59gpDjvrQIl
+         6sYK9x/RbmmKF2YBhxtYXr2zimkIK1aX/j6aM4QZKDAs2NbfHlLIIjIzp4cLqFAPyJG6
+         VxKWXU9vkS1Sv62GkvHY2FGyYx3cLGAmiPkTgUDddT4FjA8CJvjdAW21SEzVV6U05UWk
+         6G0wck9VLRPT4FuWyP/YXgA2GhAGbhiKRH0FH0P0riWJyGKqRrlnmlCAng+sios+6BJ1
+         HCtQ==
+X-Gm-Message-State: APjAAAU+yHnImHSJ3wGpmyPUwreL3G0dNI4xc7ujiRhTeI2FAdFRTmuz
+        be3+uUsk1U/fXQsuvZ2Rq0/VSKmx7m4iTey6r1s=
+X-Google-Smtp-Source: APXvYqxXlOwgo6lXZg4Pj+nstpewQp9U6Z3zakTh7e6IUDEqaBnA6vRbkxB08c5n1EsvAXYutWWTih3bEhG6wHmNLEA=
+X-Received: by 2002:a37:4d14:: with SMTP id a20mr44043562qkb.87.1560102781537;
+ Sun, 09 Jun 2019 10:53:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARsSFT1ncyRgWi_tga_7KC6ZwZOETXQ2GrO9PfeJgLxyQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a0c:b017:0:0:0:0:0 with HTTP; Sun, 9 Jun 2019 10:53:00 -0700 (PDT)
+Reply-To: jessicababy1044@aol.com
+From:   Jessica <lovekebbe@gmail.com>
+Date:   Sun, 9 Jun 2019 17:53:00 +0000
+Message-ID: <CAPjK4RtOaSu6p0znY=ztrqFtp4hu9Y1s8f=5W6pL38-QEQn7TA@mail.gmail.com>
+Subject: hi
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
 
-> On Thu, Jun 6, 2019 at 2:06 AM Joe Perches <joe@perches.com> wrote:
-> > Perhaps a checkpatch change too:
-> >
-> > The first block updates unsigned only bitfields
-> > The second tests uapi definitions and suggests "__<kernel_types"
-> 
-> Good.
-> 
-> In addition,
-> 
-> "warn if __u8, __u16, __u32, __u64 are used outside of uapi/"
-> 
-> Lots of kernel-space headers use __u{8,16,32,64} instead of u{8,16,32,64}
-> just because developers often miss to understand when to use
-> the underscore-prefixed types.
-
-I have seen it even in the .c files in kernel.... 
-
-And you want same handling for __s64 (etc) variants.
-
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
