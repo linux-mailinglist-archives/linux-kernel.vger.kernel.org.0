@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 398A33A749
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7ACC3A8CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731143AbfFIQsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47200 "EHLO mail.kernel.org"
+        id S2388608AbfFIREY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:04:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731122AbfFIQsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:12 -0400
+        id S2388596AbfFIRET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8305D206C3;
-        Sun,  9 Jun 2019 16:48:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95D2120843;
+        Sun,  9 Jun 2019 17:04:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098892;
-        bh=QjKTBDFXtqzZ+YF044l7hB5jMgsETESIngSJvWGBCc4=;
+        s=default; t=1560099859;
+        bh=WO/xY2whLhZsYeG3CtK+RlKKS6z8EIAXONDnC5MVslk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RqRV/sE5SUfkWpmRm4J4q3P8Cd62igic20XsJW1/h0pZpbtvJZ1dtcOiCqHCKnC5B
-         A8bDVTxNErXeB/WZ6Zl5I0XMJo8Wlwkx2O4QkMff8f93YsaUu1GemZnWAfiKUIyjkU
-         JEN+cS7avcpgZaRbjWssPx0oGwQ6Akr4icD0J8X4=
+        b=A+pFHbsdbJigAcskh5XrS+LK8e1182OnXIhhg2W88T4GlGP9TGn2n3F/WDEfuYMfs
+         Mfqr4RctYIbRbPPi+IuNB4RqLdLvMzfwpk80jH0/qN0s6nmEnFi1AsLna/MvxTWCD1
+         +p4n7gPzVjCNuDKUtvw/8FbZ8nqS461rMZZSBGm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Yaro Slav <yaro330@gmail.com>
-Subject: [PATCH 4.19 26/51] pstore/ram: Run without kernel crash dump region
+        stable@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 185/241] tipc: Avoid copying bytes beyond the supplied data
 Date:   Sun,  9 Jun 2019 18:42:07 +0200
-Message-Id: <20190609164128.663731310@linuxfoundation.org>
+Message-Id: <20190609164153.224739978@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,106 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-commit 8880fa32c557600f5f624084152668ed3c2ea51e upstream.
+TLV_SET is called with a data pointer and a len parameter that tells us
+how many bytes are pointed to by data. When invoking memcpy() we need
+to careful to only copy len bytes.
 
-The ram pstore backend has always had the crash dumper frontend enabled
-unconditionally. However, it was possible to effectively disable it
-by setting a record_size=0. All the machinery would run (storing dumps
-to the temporary crash buffer), but 0 bytes would ultimately get stored
-due to there being no przs allocated for dumps. Commit 89d328f637b9
-("pstore/ram: Correctly calculate usable PRZ bytes"), however, assumed
-that there would always be at least one allocated dprz for calculating
-the size of the temporary crash buffer. This was, of course, not the
-case when record_size=0, and would lead to a NULL deref trying to find
-the dprz buffer size:
+Previously we would copy TLV_LENGTH(len) bytes which would copy an extra
+4 bytes past the end of the data pointer which newer GCC versions
+complain about.
 
-BUG: unable to handle kernel NULL pointer dereference at (null)
-...
-IP: ramoops_probe+0x285/0x37e (fs/pstore/ram.c:808)
+ In file included from test.c:17:
+ In function 'TLV_SET',
+     inlined from 'test' at test.c:186:5:
+ /usr/include/linux/tipc_config.h:317:3:
+ warning: 'memcpy' forming offset [33, 36] is out of the bounds [0, 32]
+ of object 'bearer_name' with type 'char[32]' [-Warray-bounds]
+     memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ test.c: In function 'test':
+ test.c::161:10: note:
+ 'bearer_name' declared here
+     char bearer_name[TIPC_MAX_BEARER_NAME];
+          ^~~~~~~~~~~
 
-        cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
+We still want to ensure any padding bytes at the end are initialised, do
+this with a explicit memset() rather than copy bytes past the end of
+data. Apply the same logic to TCM_SET.
 
-Instead, we need to only enable the frontends based on the success of the
-prz initialization and only take the needed actions when those zones are
-available. (This also fixes a possible error in detecting if the ftrace
-frontend should be enabled.)
-
-Reported-and-tested-by: Yaro Slav <yaro330@gmail.com>
-Fixes: 89d328f637b9 ("pstore/ram: Correctly calculate usable PRZ bytes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/pstore/platform.c |    3 ++-
- fs/pstore/ram.c      |   36 +++++++++++++++++++++++-------------
- 2 files changed, 25 insertions(+), 14 deletions(-)
+ include/uapi/linux/tipc_config.h |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -583,7 +583,8 @@ int pstore_register(struct pstore_info *
- 		return -EINVAL;
- 	}
- 
--	allocate_buf_for_compression();
-+	if (psi->flags & PSTORE_FLAGS_DMESG)
-+		allocate_buf_for_compression();
- 
- 	if (pstore_is_mounted())
- 		pstore_get_records(0);
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -803,26 +803,36 @@ static int ramoops_probe(struct platform
- 
- 	cxt->pstore.data = cxt;
- 	/*
--	 * Since bufsize is only used for dmesg crash dumps, it
--	 * must match the size of the dprz record (after PRZ header
--	 * and ECC bytes have been accounted for).
-+	 * Prepare frontend flags based on which areas are initialized.
-+	 * For ramoops_init_przs() cases, the "max count" variable tells
-+	 * if there are regions present. For ramoops_init_prz() cases,
-+	 * the single region size is how to check.
- 	 */
--	cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
--	cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
--	if (!cxt->pstore.buf) {
--		pr_err("cannot allocate pstore crash dump buffer\n");
--		err = -ENOMEM;
--		goto fail_clear;
--	}
--
--	cxt->pstore.flags = PSTORE_FLAGS_DMESG;
-+	cxt->pstore.flags = 0;
-+	if (cxt->max_dump_cnt)
-+		cxt->pstore.flags |= PSTORE_FLAGS_DMESG;
- 	if (cxt->console_size)
- 		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
--	if (cxt->ftrace_size)
-+	if (cxt->max_ftrace_cnt)
- 		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
- 	if (cxt->pmsg_size)
- 		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
- 
-+	/*
-+	 * Since bufsize is only used for dmesg crash dumps, it
-+	 * must match the size of the dprz record (after PRZ header
-+	 * and ECC bytes have been accounted for).
-+	 */
-+	if (cxt->pstore.flags & PSTORE_FLAGS_DMESG) {
-+		cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
-+		cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
-+		if (!cxt->pstore.buf) {
-+			pr_err("cannot allocate pstore crash dump buffer\n");
-+			err = -ENOMEM;
-+			goto fail_clear;
-+		}
+--- a/include/uapi/linux/tipc_config.h
++++ b/include/uapi/linux/tipc_config.h
+@@ -301,8 +301,10 @@ static inline int TLV_SET(void *tlv, __u
+ 	tlv_ptr = (struct tlv_desc *)tlv;
+ 	tlv_ptr->tlv_type = htons(type);
+ 	tlv_ptr->tlv_len  = htons(tlv_len);
+-	if (len && data)
+-		memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
++	if (len && data) {
++		memcpy(TLV_DATA(tlv_ptr), data, len);
++		memset(TLV_DATA(tlv_ptr) + len, 0, TLV_SPACE(len) - tlv_len);
 +	}
-+
- 	err = pstore_register(&cxt->pstore);
- 	if (err) {
- 		pr_err("registering with pstore failed\n");
+ 	return TLV_SPACE(len);
+ }
+ 
+@@ -399,8 +401,10 @@ static inline int TCM_SET(void *msg, __u
+ 	tcm_hdr->tcm_len   = htonl(msg_len);
+ 	tcm_hdr->tcm_type  = htons(cmd);
+ 	tcm_hdr->tcm_flags = htons(flags);
+-	if (data_len && data)
++	if (data_len && data) {
+ 		memcpy(TCM_DATA(msg), data, data_len);
++		memset(TCM_DATA(msg) + data_len, 0, TCM_SPACE(data_len) - msg_len);
++	}
+ 	return TCM_SPACE(data_len);
+ }
+ 
 
 
