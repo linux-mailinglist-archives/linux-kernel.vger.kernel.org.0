@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35F843A8BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B3C3A741
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388478AbfFIRDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
+        id S1731042AbfFIQr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:47:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388473AbfFIRDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:44 -0400
+        id S1730996AbfFIQru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34697204EC;
-        Sun,  9 Jun 2019 17:03:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65F24205ED;
+        Sun,  9 Jun 2019 16:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099823;
-        bh=odSzfNYLgGwh+HeY6bVD3ucvuPMWfg1Li9wkAhYdllY=;
+        s=default; t=1560098869;
+        bh=g+hd2iLdmdvsV99V+ur7k869hgf102FOOHf4hvs7/pY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LJHwlz8uPjGXEqhoVWDS3/uC3zrRTEgAJYtMP0k50oOJt0LXxEhLlbwcYVqKASVjB
-         UTvKDwp8KcCS16YVjMhdPad28BU9nUbRR2PJx0TT+lro+rlE33/UgGBZnX8OHgzl51
-         q8JH+Bb6fmKZ6d/LYhnMUh4dl2MNd0BCczr3bFZc=
+        b=oVvcCxuzsteB+bPXH4YeVFokZKxcyghpSwBVfxyWtgzvV8xa5fHF0RyxZ5SLAxEd5
+         AWwdGzFU44KF6dmYfkN2avmAmmBC6ifxc0mDALATeThZUPXqPr434FmH9PJBjFEbag
+         K13x9y8B+zI04bPDHPDsmtbCD7m55lkNPUzv/TT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 177/241] spi: rspi: Fix sequencer reset during initialization
-Date:   Sun,  9 Jun 2019 18:41:59 +0200
-Message-Id: <20190609164152.940621719@linuxfoundation.org>
+        stable@vger.kernel.org, John David Anglin <dave.anglin@bell.net>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.19 19/51] parisc: Use implicit space register selection for loading the coherence index of I/O pdirs
+Date:   Sun,  9 Jun 2019 18:42:00 +0200
+Message-Id: <20190609164128.193493141@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 26843bb128590edd7eba1ad7ce22e4b9f1066ce3 ]
+From: John David Anglin <dave.anglin@bell.net>
 
-While the sequencer is reset after each SPI message since commit
-880c6d114fd79a69 ("spi: rspi: Add support for Quad and Dual SPI
-Transfers on QSPI"), it was never reset for the first message, thus
-relying on reset state or bootloader settings.
+commit 63923d2c3800919774f5c651d503d1dd2adaddd5 upstream.
 
-Fix this by initializing it explicitly during configuration.
+We only support I/O to kernel space. Using %sr1 to load the coherence
+index may be racy unless interrupts are disabled. This patch changes the
+code used to load the coherence index to use implicit space register
+selection. This saves one instruction and eliminates the race.
 
-Fixes: 0b2182ddac4b8837 ("spi: add support for Renesas RSPI")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Tested on rp3440, c8000 and c3750.
+
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/spi/spi-rspi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/parisc/ccio-dma.c  |    4 +---
+ drivers/parisc/sba_iommu.c |    3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 9882d93e7566d..0556259377f77 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -279,7 +279,8 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets parity, interrupt mask */
- 	rspi_write8(rspi, 0x00, RSPI_SPCR2);
+--- a/drivers/parisc/ccio-dma.c
++++ b/drivers/parisc/ccio-dma.c
+@@ -565,8 +565,6 @@ ccio_io_pdir_entry(u64 *pdir_ptr, space_
+ 	/* We currently only support kernel addresses */
+ 	BUG_ON(sid != KERNEL_SPACE);
  
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
+-	mtsp(sid,1);
+-
+ 	/*
+ 	** WORD 1 - low order word
+ 	** "hints" parm includes the VALID bit!
+@@ -597,7 +595,7 @@ ccio_io_pdir_entry(u64 *pdir_ptr, space_
+ 	** Grab virtual index [0:11]
+ 	** Deposit virt_idx bits into I/O PDIR word
+ 	*/
+-	asm volatile ("lci %%r0(%%sr1, %1), %0" : "=r" (ci) : "r" (vba));
++	asm volatile ("lci %%r0(%1), %0" : "=r" (ci) : "r" (vba));
+ 	asm volatile ("extru %1,19,12,%0" : "+r" (ci) : "r" (ci));
+ 	asm volatile ("depw  %1,15,12,%0" : "+r" (pa) : "r" (ci));
  
-@@ -313,7 +314,8 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
- 	rspi_write8(rspi, 0x00, RSPI_SSLND);
- 	rspi_write8(rspi, 0x00, RSPI_SPND);
+--- a/drivers/parisc/sba_iommu.c
++++ b/drivers/parisc/sba_iommu.c
+@@ -575,8 +575,7 @@ sba_io_pdir_entry(u64 *pdir_ptr, space_t
+ 	pa = virt_to_phys(vba);
+ 	pa &= IOVP_MASK;
  
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
+-	mtsp(sid,1);
+-	asm("lci 0(%%sr1, %1), %0" : "=r" (ci) : "r" (vba));
++	asm("lci 0(%1), %0" : "=r" (ci) : "r" (vba));
+ 	pa |= (ci >> PAGE_SHIFT) & 0xff;  /* move CI (8 bits) into lowest byte */
  
-@@ -364,7 +366,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets buffer to allow normal operation */
- 	rspi_write8(rspi, 0x00, QSPI_SPBFCR);
- 
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
- 	/* Enables SPI function in master mode */
--- 
-2.20.1
-
+ 	pa |= SBA_PDIR_VALID_BIT;	/* set "valid" bit */
 
 
