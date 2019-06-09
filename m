@@ -2,48 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5263A787
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7143A7C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:53:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731739AbfFIQue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:50:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50358 "EHLO mail.kernel.org"
+        id S1732317AbfFIQw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:52:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731723AbfFIQu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:50:28 -0400
+        id S1732307AbfFIQww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:52:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04F5F205ED;
-        Sun,  9 Jun 2019 16:50:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ED03204EC;
+        Sun,  9 Jun 2019 16:52:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099027;
-        bh=ED1oQD/YlJcQm1XzYl9Yofbq5IoCITmJ0vngBJjFEXg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FbDUKGEG6YS/WhXlM5D780kCjX4Sszo5id4HR9PuBw+OcNzYpHrimy3VFCoLThn1C
-         2iHwqBEuuNOlEWlqgwuuGSMRFRclne9EaEVvQVlAR9n3jd0iBeLiOzZAT+ySamfxqT
-         bliBrlXhV4zCOfWHNVbDEQXfEaV7OqrvS6whHccs=
+        s=default; t=1560099171;
+        bh=OHHm9GeSaOWvfFfk/45zkfdJDn5yDX+GGUJh3I7YCuw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SizOcAVRruZ/ilBz6JonY4oA01o4eA6HQEnqlPHPQNplZppYSXWN7Jnvk4f13hV0Z
+         HtHP7C/Hagbs7vKRoL9/PJDq75PIK+LxHJ0VB0O4SFbych7Op3tcSXMlgbFzEGSxDA
+         sLSyjMHdOjwdZdKWeSK0GUdUA6hHb3QM7/1k9iHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/35] 4.14.125-stable review
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 36/83] Btrfs: fix race updating log root item during fsync
 Date:   Sun,  9 Jun 2019 18:42:06 +0200
-Message-Id: <20190609164125.377368385@linuxfoundation.org>
+Message-Id: <20190609164130.842954351@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.125-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.125-rc1
-X-KernelTest-Deadline: 2019-06-11T16:41+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,193 +43,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.125 release.
-There are 35 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+From: Filipe Manana <fdmanana@suse.com>
 
-Responses should be made by Tue 11 Jun 2019 04:40:01 PM UTC.
-Anything received after that time might be too late.
+commit 06989c799f04810f6876900d4760c0edda369cf7 upstream.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.125-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+When syncing the log, the final phase of a fsync operation, we need to
+either create a log root's item or update the existing item in the log
+tree of log roots, and that depends on the current value of the log
+root's log_transid - if it's 1 we need to create the log root item,
+otherwise it must exist already and we update it. Since there is no
+synchronization between updating the log_transid and checking it for
+deciding whether the log root's item needs to be created or updated, we
+end up with a tiny race window that results in attempts to update the
+item to fail because the item was not yet created:
 
-thanks,
+              CPU 1                                    CPU 2
 
-greg k-h
+  btrfs_sync_log()
 
--------------
-Pseudo-Shortlog of commits:
+    lock root->log_mutex
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.125-rc1
+    set log root's log_transid to 1
 
-Kirill Smelkov <kirr@nexedi.com>
-    fuse: Add FOPEN_STREAM to use stream_open()
+    unlock root->log_mutex
 
-Kirill Smelkov <kirr@nexedi.com>
-    fs: stream_open - opener for stream-like files so that read and write can run simultaneously without deadlock
+                                               btrfs_sync_log()
 
-Kristian Evensen <kristian.evensen@gmail.com>
-    qmi_wwan: Add quirk for Quectel dynamic config
+                                                 lock root->log_mutex
 
-Jiri Slaby <jslaby@suse.cz>
-    TTY: serial_core, add ->install
+                                                 sets log root's
+                                                 log_transid to 2
 
-Daniel Drake <drake@endlessm.com>
-    drm/i915/fbc: disable framebuffer compression on GeminiLake
+                                                 unlock root->log_mutex
 
-Chris Wilson <chris@chris-wilson.co.uk>
-    drm/i915: Fix I915_EXEC_RING_MASK
+    update_log_root()
 
-Christian König <christian.koenig@amd.com>
-    drm/radeon: prefer lower reference dividers
+      sees log root's log_transid
+      with a value of 2
 
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu/psp: move psp version specific function pointers to early_init
+        calls btrfs_update_root(),
+        which fails with -EUCLEAN
+        and causes transaction abort
 
-Dave Airlie <airlied@redhat.com>
-    drm/nouveau: add kconfig option to turn off nouveau legacy contexts. (v3)
+Until recently the race lead to a BUG_ON at btrfs_update_root(), but after
+the recent commit 7ac1e464c4d47 ("btrfs: Don't panic when we can't find a
+root key") we just abort the current transaction.
 
-Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-    drm/gma500/cdv: Check vbt config bits when detecting lvds panels
+A sample trace of the BUG_ON() on a SLE12 kernel:
 
-Dan Carpenter <dan.carpenter@oracle.com>
-    test_firmware: Use correct snprintf() limit
+  ------------[ cut here ]------------
+  kernel BUG at ../fs/btrfs/root-tree.c:157!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  SMP NR_CPUS=2048 NUMA pSeries
+  (...)
+  Supported: Yes, External
+  CPU: 78 PID: 76303 Comm: rtas_errd Tainted: G                 X 4.4.156-94.57-default #1
+  task: c00000ffa906d010 ti: c00000ff42b08000 task.ti: c00000ff42b08000
+  NIP: d000000036ae5cdc LR: d000000036ae5cd8 CTR: 0000000000000000
+  REGS: c00000ff42b0b860 TRAP: 0700   Tainted: G                 X  (4.4.156-94.57-default)
+  MSR: 8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 22444484  XER: 20000000
+  CFAR: d000000036aba66c SOFTE: 1
+  GPR00: d000000036ae5cd8 c00000ff42b0bae0 d000000036bda220 0000000000000054
+  GPR04: 0000000000000001 0000000000000000 c00007ffff8d37c8 0000000000000000
+  GPR08: c000000000e19c00 0000000000000000 0000000000000000 3736343438312079
+  GPR12: 3930373337303434 c000000007a3a800 00000000007fffff 0000000000000023
+  GPR16: c00000ffa9d26028 c00000ffa9d261f8 0000000000000010 c00000ffa9d2ab28
+  GPR20: c00000ff42b0bc48 0000000000000001 c00000ff9f0d9888 0000000000000001
+  GPR24: c00000ffa9d26000 c00000ffa9d261e8 c00000ffa9d2a800 c00000ff9f0d9888
+  GPR28: c00000ffa9d26028 c00000ffa9d2aa98 0000000000000001 c00000ffa98f5b20
+  NIP [d000000036ae5cdc] btrfs_update_root+0x25c/0x4e0 [btrfs]
+  LR [d000000036ae5cd8] btrfs_update_root+0x258/0x4e0 [btrfs]
+  Call Trace:
+  [c00000ff42b0bae0] [d000000036ae5cd8] btrfs_update_root+0x258/0x4e0 [btrfs] (unreliable)
+  [c00000ff42b0bba0] [d000000036b53610] btrfs_sync_log+0x2d0/0xc60 [btrfs]
+  [c00000ff42b0bce0] [d000000036b1785c] btrfs_sync_file+0x44c/0x4e0 [btrfs]
+  [c00000ff42b0bd80] [c00000000032e300] vfs_fsync_range+0x70/0x120
+  [c00000ff42b0bdd0] [c00000000032e44c] do_fsync+0x5c/0xb0
+  [c00000ff42b0be10] [c00000000032e8dc] SyS_fdatasync+0x2c/0x40
+  [c00000ff42b0be30] [c000000000009488] system_call+0x3c/0x100
+  Instruction dump:
+  7f43d378 4bffebb9 60000000 88d90008 3d220000 e8b90000 3b390009 e87a01f0
+  e8898e08 e8f90000 4bfd48e5 60000000 <0fe00000> e95b0060 39200004 394a0ea0
+  ---[ end trace 8f2dc8f919cabab8 ]---
 
-Dan Carpenter <dan.carpenter@oracle.com>
-    genwqe: Prevent an integer overflow in the ioctl
+So fix this by doing the check of log_transid and updating or creating the
+log root's item while holding the root's log_mutex.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "MIPS: perf: ath79: Fix perfcount IRQ assignment"
+Fixes: 7237f1833601d ("Btrfs: fix tree logs parallel sync")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Paul Burton <paul.burton@mips.com>
-    MIPS: pistachio: Build uImage.gz by default
+---
+ fs/btrfs/tree-log.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Paul Burton <paul.burton@mips.com>
-    MIPS: Bounds check virt_addr_valid
-
-Robert Hancock <hancock@sedsystems.ca>
-    i2c: xiic: Add max_read_len quirk
-
-Jiri Kosina <jkosina@suse.cz>
-    x86/power: Fix 'nosmt' vs hibernation triple fault during resume
-
-Kees Cook <keescook@chromium.org>
-    pstore/ram: Run without kernel crash dump region
-
-Kees Cook <keescook@chromium.org>
-    pstore: Convert buf_lock to semaphore
-
-Kees Cook <keescook@chromium.org>
-    pstore: Remove needless lock during console writes
-
-Miklos Szeredi <mszeredi@redhat.com>
-    fuse: fallocate: fix return with locked inode
-
-John David Anglin <dave.anglin@bell.net>
-    parisc: Use implicit space register selection for loading the coherence index of I/O pdirs
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    rcu: locking and unlocking need to always be at least barriers
-
-Hangbin Liu <liuhangbin@gmail.com>
-    Revert "fib_rules: return 0 directly if an exactly same rule exists when NLM_F_EXCL not supplied"
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "fib_rules: fix error in backport of e9919a24d302 ("fib_rules: return 0...")"
-
-Xin Long <lucien.xin@gmail.com>
-    ipv6: fix the check before getting the cookie in rt6_get_cookie
-
-Russell King <rmk+kernel@armlinux.org.uk>
-    net: sfp: read eeprom in maximum 16 byte increments
-
-Olivier Matz <olivier.matz@6wind.com>
-    ipv6: use READ_ONCE() for inet->hdrincl as in ipv4
-
-Olivier Matz <olivier.matz@6wind.com>
-    ipv6: fix EFAULT on sendto with icmpv6 and hdrincl
-
-Paolo Abeni <pabeni@redhat.com>
-    pktgen: do not sleep with the thread lock held.
-
-Zhu Yanjun <yanjun.zhu@oracle.com>
-    net: rds: fix memory leak in rds_ib_flush_mr_pool
-
-Erez Alfasi <ereza@mellanox.com>
-    net/mlx4_en: ethtool, Remove unsupported SFP EEPROM high pages query
-
-David Ahern <dsahern@gmail.com>
-    neighbor: Call __ipv4_neigh_lookup_noref in neigh_xmit
-
-Neil Horman <nhorman@tuxdriver.com>
-    Fix memory leak in sctp_process_init
-
-Vivien Didelot <vivien.didelot@gmail.com>
-    ethtool: fix potential userspace buffer overflow
-
-
--------------
-
-Diffstat:
-
- Makefile                                        |   4 +-
- arch/mips/ath79/setup.c                         |   6 +
- arch/mips/mm/mmap.c                             |   5 +
- arch/mips/pistachio/Platform                    |   1 +
- arch/powerpc/kernel/nvram_64.c                  |   2 -
- arch/x86/power/cpu.c                            |  10 +
- arch/x86/power/hibernate_64.c                   |  33 +++
- drivers/acpi/apei/erst.c                        |   1 -
- drivers/firmware/efi/efi-pstore.c               |   4 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c         |  19 +-
- drivers/gpu/drm/gma500/cdv_intel_lvds.c         |   3 +
- drivers/gpu/drm/gma500/intel_bios.c             |   3 +
- drivers/gpu/drm/gma500/psb_drv.h                |   1 +
- drivers/gpu/drm/i915/intel_fbc.c                |   4 +
- drivers/gpu/drm/nouveau/Kconfig                 |  13 +-
- drivers/gpu/drm/nouveau/nouveau_drm.c           |   7 +-
- drivers/gpu/drm/radeon/radeon_display.c         |   4 +-
- drivers/i2c/busses/i2c-xiic.c                   |   5 +
- drivers/irqchip/irq-ath79-misc.c                |  11 -
- drivers/misc/genwqe/card_dev.c                  |   2 +
- drivers/misc/genwqe/card_utils.c                |   4 +
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |   4 +-
- drivers/net/ethernet/mellanox/mlx4/port.c       |   5 -
- drivers/net/phy/sfp.c                           |  24 +-
- drivers/net/usb/qmi_wwan.c                      |  39 ++-
- drivers/parisc/ccio-dma.c                       |   4 +-
- drivers/parisc/sba_iommu.c                      |   3 +-
- drivers/tty/serial/serial_core.c                |  24 +-
- drivers/xen/xenbus/xenbus_dev_frontend.c        |   4 +-
- fs/fuse/file.c                                  |   6 +-
- fs/open.c                                       |  18 ++
- fs/pstore/platform.c                            |  76 ++---
- fs/pstore/ram.c                                 |  37 ++-
- fs/read_write.c                                 |   5 +-
- include/linux/cpu.h                             |   4 +
- include/linux/fs.h                              |   4 +
- include/linux/pstore.h                          |   7 +-
- include/linux/rcupdate.h                        |   6 +-
- include/net/ip6_fib.h                           |   3 +-
- include/uapi/drm/i915_drm.h                     |   2 +-
- include/uapi/linux/fuse.h                       |   2 +
- kernel/cpu.c                                    |   4 +-
- kernel/power/hibernate.c                        |   9 +
- lib/test_firmware.c                             |  14 +-
- net/core/ethtool.c                              |   5 +-
- net/core/fib_rules.c                            |   7 +-
- net/core/neighbour.c                            |   9 +-
- net/core/pktgen.c                               |  11 +
- net/ipv6/raw.c                                  |  25 +-
- net/rds/ib_rdma.c                               |  10 +-
- net/sctp/sm_make_chunk.c                        |  13 +-
- net/sctp/sm_sideeffect.c                        |   5 +
- scripts/coccinelle/api/stream_open.cocci        | 363 ++++++++++++++++++++++++
- 53 files changed, 720 insertions(+), 174 deletions(-)
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2827,6 +2827,12 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 	log->log_transid = root->log_transid;
+ 	root->log_start_pid = 0;
+ 	/*
++	 * Update or create log root item under the root's log_mutex to prevent
++	 * races with concurrent log syncs that can lead to failure to update
++	 * log root item because it was not created yet.
++	 */
++	ret = update_log_root(trans, log);
++	/*
+ 	 * IO has been started, blocks of the log tree have WRITTEN flag set
+ 	 * in their headers. new modifications of the log will be written to
+ 	 * new positions. so it's safe to allow log writers to go in.
+@@ -2845,8 +2851,6 @@ int btrfs_sync_log(struct btrfs_trans_ha
+ 
+ 	mutex_unlock(&log_root_tree->log_mutex);
+ 
+-	ret = update_log_root(trans, log);
+-
+ 	mutex_lock(&log_root_tree->log_mutex);
+ 	if (atomic_dec_and_test(&log_root_tree->log_writers)) {
+ 		/*
 
 
