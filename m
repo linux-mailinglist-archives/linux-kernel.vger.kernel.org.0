@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E122F3A6F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE313A7B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbfFIQon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:44:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41942 "EHLO mail.kernel.org"
+        id S1732168AbfFIQwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:52:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbfFIQol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:44:41 -0400
+        id S1732154AbfFIQwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:52:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 470752083D;
-        Sun,  9 Jun 2019 16:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 043FC205ED;
+        Sun,  9 Jun 2019 16:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098680;
-        bh=3TiSJFTSAhpeNS6uAwC6G4/rKBhf+NTBYTJ6rAonacA=;
+        s=default; t=1560099133;
+        bh=jlmm+uNC1TnX0UeYFe/dky9+1HbJUhs2EOBbUH01oME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hMjhKRUxCLFq1AX7wJZKhFQOaWfJHiwG4k9goTKw8ieDmu/Zhq5usRhXorNqDH9AP
-         Cfqq6jWwi6rxdurKv1pd88DHfbsLl8m7BFCjlHBc/+MO292pNoLpMsHxQ0fsPoAbnf
-         lwfPCYMZxJb6cydyIblc7DhRAxxHvzAD3V5Z5daY=
+        b=Ne4HONOWGOy4JL9A1ekR9j4CRGFxqWwSwkW7AINnFoVjFASLCmwyBTqCbqgcmu1eL
+         NC+Lo9+/zn+K1J+AlnJmorgDdDRkv5tsPl9qwWTqW54yXhEujMDMtOcBtQeB0QjeO9
+         dit6/RjHLfTi0B+mGGcvo6PdCDiuMIU6BzBs9iyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        stable@kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.1 22/70] rcu: locking and unlocking need to always be at least barriers
+        stable@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 03/83] net: fec: fix the clk mismatch in failed_reset path
 Date:   Sun,  9 Jun 2019 18:41:33 +0200
-Message-Id: <20190609164128.884420002@linuxfoundation.org>
+Message-Id: <20190609164128.000385686@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Andy Duan <fugang.duan@nxp.com>
 
-commit 66be4e66a7f422128748e3c3ef6ee72b20a6197b upstream.
+[ Upstream commit ce8d24f9a5965a58c588f9342689702a1024433c ]
 
-Herbert Xu pointed out that commit bb73c52bad36 ("rcu: Don't disable
-preemption for Tiny and Tree RCU readers") was incorrect in making the
-preempt_disable/enable() be conditional on CONFIG_PREEMPT_COUNT.
+Fix the clk mismatch in the error path "failed_reset" because
+below error path will disable clk_ahb and clk_ipg directly, it
+should use pm_runtime_put_noidle() instead of pm_runtime_put()
+to avoid to call runtime resume callback.
 
-If CONFIG_PREEMPT_COUNT isn't enabled, the preemption enable/disable is
-a no-op, but still is a compiler barrier.
-
-And RCU locking still _needs_ that compiler barrier.
-
-It is simply fundamentally not true that RCU locking would be a complete
-no-op: we still need to guarantee (for example) that things that can
-trap and cause preemption cannot migrate into the RCU locked region.
-
-The way we do that is by making it a barrier.
-
-See for example commit 386afc91144b ("spinlocks and preemption points
-need to be at least compiler barriers") from back in 2013 that had
-similar issues with spinlocks that become no-ops on UP: they must still
-constrain the compiler from moving other operations into the critical
-region.
-
-Now, it is true that a lot of RCU operations already use READ_ONCE() and
-WRITE_ONCE() (which in practice likely would never be re-ordered wrt
-anything remotely interesting), but it is also true that that is not
-globally the case, and that it's not even necessarily always possible
-(ie bitfields etc).
-
-Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
-Fixes: bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree RCU readers")
-Cc: stable@kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+Tested-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/rcupdate.h |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/freescale/fec_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -56,14 +56,12 @@ void __rcu_read_unlock(void);
- 
- static inline void __rcu_read_lock(void)
- {
--	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
--		preempt_disable();
-+	preempt_disable();
- }
- 
- static inline void __rcu_read_unlock(void)
- {
--	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
--		preempt_enable();
-+	preempt_enable();
- }
- 
- static inline int rcu_preempt_depth(void)
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3508,7 +3508,7 @@ failed_init:
+ 	if (fep->reg_phy)
+ 		regulator_disable(fep->reg_phy);
+ failed_reset:
+-	pm_runtime_put(&pdev->dev);
++	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ failed_regulator:
+ failed_clk_ipg:
 
 
