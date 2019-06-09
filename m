@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4DAB3AAC0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 398A33A749
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730396AbfFIQqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:46:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44352 "EHLO mail.kernel.org"
+        id S1731143AbfFIQsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730337AbfFIQqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:46:14 -0400
+        id S1731122AbfFIQsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 730C32081C;
-        Sun,  9 Jun 2019 16:46:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8305D206C3;
+        Sun,  9 Jun 2019 16:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098774;
-        bh=xZk6V8W47holid3x8sEAl6DZJWT45f42r7gly3AseKY=;
+        s=default; t=1560098892;
+        bh=QjKTBDFXtqzZ+YF044l7hB5jMgsETESIngSJvWGBCc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GQ18AyBjCnfSORN4gXbYQ8iRohdH0bv+pvNM7o/1asCIyMPNCW0xCFLZDtLkWgfpl
-         Q9xUVTJeG3EVrDW1JKBvttIqS4/EG0xqdFDExH9hrYDc1vX4hYFEuhLiIGv8ieMEFI
-         OJgpqdaahKBsFbgCxZ/bmFU8jrjSxMwUtxkJbgpE=
+        b=RqRV/sE5SUfkWpmRm4J4q3P8Cd62igic20XsJW1/h0pZpbtvJZ1dtcOiCqHCKnC5B
+         A8bDVTxNErXeB/WZ6Zl5I0XMJo8Wlwkx2O4QkMff8f93YsaUu1GemZnWAfiKUIyjkU
+         JEN+cS7avcpgZaRbjWssPx0oGwQ6Akr4icD0J8X4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Mario Kleiner <mario.kleiner.de@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.1 56/70] drm: Fix timestamp docs for variable refresh properties.
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Yaro Slav <yaro330@gmail.com>
+Subject: [PATCH 4.19 26/51] pstore/ram: Run without kernel crash dump region
 Date:   Sun,  9 Jun 2019 18:42:07 +0200
-Message-Id: <20190609164132.173948370@linuxfoundation.org>
+Message-Id: <20190609164128.663731310@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +43,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mario Kleiner <mario.kleiner.de@gmail.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 0cbd0adc4429930567083d18cc8c0fbc5f635d96 upstream.
+commit 8880fa32c557600f5f624084152668ed3c2ea51e upstream.
 
-As discussed with Nicholas and Daniel Vetter (patchwork
-link to discussion below), the VRR timestamping behaviour
-produced utterly useless and bogus vblank/pageflip
-timestamps. We have found a way to fix this and provide
-sane behaviour.
+The ram pstore backend has always had the crash dumper frontend enabled
+unconditionally. However, it was possible to effectively disable it
+by setting a record_size=0. All the machinery would run (storing dumps
+to the temporary crash buffer), but 0 bytes would ultimately get stored
+due to there being no przs allocated for dumps. Commit 89d328f637b9
+("pstore/ram: Correctly calculate usable PRZ bytes"), however, assumed
+that there would always be at least one allocated dprz for calculating
+the size of the temporary crash buffer. This was, of course, not the
+case when record_size=0, and would lead to a NULL deref trying to find
+the dprz buffer size:
 
-As of Linux 5.2, the amdgpu driver will be able to
-provide exactly the same vblank / pageflip timestamp
-semantic in variable refresh rate mode as in standard
-fixed refresh rate mode. This is achieved by deferring
-core vblank handling (drm_crtc_handle_vblank()) until
-the end of front porch, and also defer the sending of
-pageflip completion events until end of front porch,
-when we can safely compute correct pageflip/vblank
-timestamps.
+BUG: unable to handle kernel NULL pointer dereference at (null)
+...
+IP: ramoops_probe+0x285/0x37e (fs/pstore/ram.c:808)
 
-The same approach will be possible for other VRR
-capable kms drivers, so we can actually have sane
-and useful timestamps in VRR mode.
+        cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
 
-This patch removes the section of the docs that
-describes the broken timestamp behaviour present
-in Linux 5.0/5.1.
+Instead, we need to only enable the frontends based on the success of the
+prz initialization and only take the needed actions when those zones are
+available. (This also fixes a possible error in detecting if the ftrace
+frontend should be enabled.)
 
-Fixes: ab7a664f7a2d ("drm: Document variable refresh properties")
-Link: https://patchwork.freedesktop.org/patch/285333/
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Signed-off-by: Mario Kleiner <mario.kleiner.de@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190418060157.18968-1-mario.kleiner.de@gmail.com
+Reported-and-tested-by: Yaro Slav <yaro330@gmail.com>
+Fixes: 89d328f637b9 ("pstore/ram: Correctly calculate usable PRZ bytes")
 Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_connector.c |    6 ------
- 1 file changed, 6 deletions(-)
+ fs/pstore/platform.c |    3 ++-
+ fs/pstore/ram.c      |   36 +++++++++++++++++++++++-------------
+ 2 files changed, 25 insertions(+), 14 deletions(-)
 
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -1385,12 +1385,6 @@ EXPORT_SYMBOL(drm_mode_create_scaling_mo
-  *
-  *	The driver may place further restrictions within these minimum
-  *	and maximum bounds.
-- *
-- *	The semantics for the vertical blank timestamp differ when
-- *	variable refresh rate is active. The vertical blank timestamp
-- *	is defined to be an estimate using the current mode's fixed
-- *	refresh rate timings. The semantics for the page-flip event
-- *	timestamp remain the same.
-  */
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -583,7 +583,8 @@ int pstore_register(struct pstore_info *
+ 		return -EINVAL;
+ 	}
  
- /**
+-	allocate_buf_for_compression();
++	if (psi->flags & PSTORE_FLAGS_DMESG)
++		allocate_buf_for_compression();
+ 
+ 	if (pstore_is_mounted())
+ 		pstore_get_records(0);
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -803,26 +803,36 @@ static int ramoops_probe(struct platform
+ 
+ 	cxt->pstore.data = cxt;
+ 	/*
+-	 * Since bufsize is only used for dmesg crash dumps, it
+-	 * must match the size of the dprz record (after PRZ header
+-	 * and ECC bytes have been accounted for).
++	 * Prepare frontend flags based on which areas are initialized.
++	 * For ramoops_init_przs() cases, the "max count" variable tells
++	 * if there are regions present. For ramoops_init_prz() cases,
++	 * the single region size is how to check.
+ 	 */
+-	cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
+-	cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
+-	if (!cxt->pstore.buf) {
+-		pr_err("cannot allocate pstore crash dump buffer\n");
+-		err = -ENOMEM;
+-		goto fail_clear;
+-	}
+-
+-	cxt->pstore.flags = PSTORE_FLAGS_DMESG;
++	cxt->pstore.flags = 0;
++	if (cxt->max_dump_cnt)
++		cxt->pstore.flags |= PSTORE_FLAGS_DMESG;
+ 	if (cxt->console_size)
+ 		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
+-	if (cxt->ftrace_size)
++	if (cxt->max_ftrace_cnt)
+ 		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
+ 	if (cxt->pmsg_size)
+ 		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
+ 
++	/*
++	 * Since bufsize is only used for dmesg crash dumps, it
++	 * must match the size of the dprz record (after PRZ header
++	 * and ECC bytes have been accounted for).
++	 */
++	if (cxt->pstore.flags & PSTORE_FLAGS_DMESG) {
++		cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
++		cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
++		if (!cxt->pstore.buf) {
++			pr_err("cannot allocate pstore crash dump buffer\n");
++			err = -ENOMEM;
++			goto fail_clear;
++		}
++	}
++
+ 	err = pstore_register(&cxt->pstore);
+ 	if (err) {
+ 		pr_err("registering with pstore failed\n");
 
 
