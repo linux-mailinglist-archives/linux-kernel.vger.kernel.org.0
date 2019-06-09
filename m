@@ -2,76 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78B23A415
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 09:04:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D44FE3A41B
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 09:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfFIHDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 03:03:54 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18116 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725850AbfFIHDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 03:03:54 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0B0368A77C38820DB5B9;
-        Sun,  9 Jun 2019 15:03:47 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 9 Jun 2019 15:03:40 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <alexandre.belloni@bootlin.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next] ocelot: remove unused variable 'rc' in vcap_cmd()
-Date:   Sun, 9 Jun 2019 15:11:26 +0800
-Message-ID: <20190609071126.183505-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727913AbfFIHPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 03:15:02 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:47451 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfFIHPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 03:15:01 -0400
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x597EoCA007060;
+        Sun, 9 Jun 2019 16:14:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x597EoCA007060
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1560064491;
+        bh=koGfY6G7pzR5wea35jEhPfB4k36cqfiIOGXZGu0RjJo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fqirKY+2gLNxTRv5kBH7wBqEjQRbmUeQlUtjzniC96y/Aox7AKtOb4KC6eLO95+JL
+         Nf+5iE5dUJ05THf7aNB7LUs7SgayPaRNd/fs1E9PSBKrKwVAdoYaYFwGkLDhO2z3TO
+         68AcCzpG5QiEwl/olYdvz5qLi4OQ07uecEhnZZ4zUklZXhMtVELMhZirANMInyGp1g
+         Sqft+IG9jLTQtiW8V9SdrWsOTF3rjhXQsteJx74A6FzdGCRx4hptAaEYN35a0YtU0M
+         dkBN1FajHw3DljGPxMFgROaGpNsuG6EpyyFROk7jAmLqyvdtpL9KZ/4wVVm9k3pfAS
+         bL+PpyecibYZQ==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id v18so2006272uad.12;
+        Sun, 09 Jun 2019 00:14:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAUX1Rtbwo+74Zna2tEwfhG8xxvNA67EMjfpX8/Blf2gCqtmthFc
+        jR9gBaqoVakMHxEM39iuLaenwa+fqJ3oLx2nk2M=
+X-Google-Smtp-Source: APXvYqyryZhaLhtFPJQdqZj/9v77HrZO3uWu0dDn2RY1fJhH8cijdhI3QmNfCZsiuuzzSOHIMYXvGZSJeFuymyzr+p8=
+X-Received: by 2002:ab0:234e:: with SMTP id h14mr5695508uao.25.1560064489796;
+ Sun, 09 Jun 2019 00:14:49 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190604111334.22182-1-yamada.masahiro@socionext.com>
+ <8cf48e20064eabdfe150795365e6ca6f36032e9f.camel@perches.com>
+ <CAK8P3a1oDfNF_T+NCoPsXkJAY2x4_uCWSwrDXHi7dDSaMqfnfA@mail.gmail.com>
+ <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
+ <20190604134213.GA26263@kroah.com> <CAK7LNARyqW3q6_46e-aYjmF8c0jUNDLdyB28zNaBEXqTV+5QSA@mail.gmail.com>
+ <CAK8P3a0bz8XYJOsmND2=CT_oTDmGMJGaRo9+QMroEhpekSMEaQ@mail.gmail.com>
+ <CAK7LNARU+uT0aUBh5niwEafL8+Ok7=sOZYukptpDH1w7Cii3hQ@mail.gmail.com>
+ <20190605051040.GA22760@kroah.com> <b70cf8c1f901ea09abbdb22dd28244b18fd1a39d.camel@perches.com>
+ <20190605071413.779bd821@coco.lan> <a798561d24c486d31063a7994d8630c859df00e9.camel@perches.com>
+In-Reply-To: <a798561d24c486d31063a7994d8630c859df00e9.camel@perches.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 9 Jun 2019 16:14:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARsSFT1ncyRgWi_tga_7KC6ZwZOETXQ2GrO9PfeJgLxyQ@mail.gmail.com>
+Message-ID: <CAK7LNARsSFT1ncyRgWi_tga_7KC6ZwZOETXQ2GrO9PfeJgLxyQ@mail.gmail.com>
+Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
+To:     Joe Perches <joe@perches.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Hi Joe,
 
-drivers/net/ethernet/mscc/ocelot_ace.c: In function ‘vcap_cmd’:
-drivers/net/ethernet/mscc/ocelot_ace.c:108:6: warning: variable ‘rc’ set
-but not used [-Wunused-but-set-variable]
-  int rc;
-      ^
-It's never used since introduction in commit b596229448dd ("net: mscc:
-ocelot: Add support for tcam")
+On Thu, Jun 6, 2019 at 2:06 AM Joe Perches <joe@perches.com> wrote:
+> Perhaps a checkpatch change too:
+>
+> The first block updates unsigned only bitfields
+> The second tests uapi definitions and suggests "__<kernel_types"
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/net/ethernet/mscc/ocelot_ace.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Good.
 
-diff --git a/drivers/net/ethernet/mscc/ocelot_ace.c b/drivers/net/ethernet/mscc/ocelot_ace.c
-index f74b98f7d8d1..39aca1ab4687 100644
---- a/drivers/net/ethernet/mscc/ocelot_ace.c
-+++ b/drivers/net/ethernet/mscc/ocelot_ace.c
-@@ -105,7 +105,6 @@ static void vcap_cmd(struct ocelot *oc, u16 ix, int cmd, int sel)
- 	u32 value = (S2_CORE_UPDATE_CTRL_UPDATE_CMD(cmd) |
- 		     S2_CORE_UPDATE_CTRL_UPDATE_ADDR(ix) |
- 		     S2_CORE_UPDATE_CTRL_UPDATE_SHOT);
--	int rc;
- 
- 	if ((sel & VCAP_SEL_ENTRY) && ix >= vcap_is2.entry_count)
- 		return;
-@@ -120,7 +119,7 @@ static void vcap_cmd(struct ocelot *oc, u16 ix, int cmd, int sel)
- 		value |= S2_CORE_UPDATE_CTRL_UPDATE_CNT_DIS;
- 
- 	ocelot_write(oc, value, S2_CORE_UPDATE_CTRL);
--	rc = readx_poll_timeout(vcap_s2_read_update_ctrl, oc, value,
-+	readx_poll_timeout(vcap_s2_read_update_ctrl, oc, value,
- 				(value & S2_CORE_UPDATE_CTRL_UPDATE_SHOT) == 0,
- 				10, 100000);
- }
+In addition,
+
+"warn if __u8, __u16, __u32, __u64 are used outside of uapi/"
+
+Lots of kernel-space headers use __u{8,16,32,64} instead of u{8,16,32,64}
+just because developers often miss to understand when to use
+the underscore-prefixed types.
+
 -- 
-2.20.1
-
+Best Regards
+Masahiro Yamada
