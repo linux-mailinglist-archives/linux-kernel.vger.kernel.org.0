@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5DF23A954
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A17A23A742
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbfFIRDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42304 "EHLO mail.kernel.org"
+        id S1731061AbfFIQsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388129AbfFIRDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:49 -0400
+        id S1730968AbfFIQrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60B8C204EC;
-        Sun,  9 Jun 2019 17:03:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E1DD206C3;
+        Sun,  9 Jun 2019 16:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099828;
-        bh=Cc03y/FLkW+XjKbTR0OyOAu1ys85Aey1WV9FRu4aPE4=;
+        s=default; t=1560098872;
+        bh=QCtxU2sR28pkPYBHfyAgs8ZVRZgw/+3pheZ7fz1NubI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j6kfO+ZkrBU5CjqyfemoDzJ59tTaJXtuaq+vFs9nFu3mSJdDilsG4Ptb9QHr0HSx4
-         yY3CZt70ayDn2M5YugW/g1BOfuVtD2729d9vXGBOwtrhPg9sdikOCbbrY7npZhFNlD
-         wk1Pmm6LoFYHVbSSiIOUAyyW10i7Pd4pEKrUMjEI=
+        b=1UcUHyrDibmlP2rB5MB/bF7/3+NONSbtb/iu8q2XKyu2Cx3X0K6rinGs1A4Ag7KPf
+         Lu/uPMq3EEFsZbP/gfd+5AafR5IDyZUlAiadx/AASPzyACl8XgdnKy/aQ3d+bBFQl7
+         hKiDWx8/RifDCRMtmYbY9byADfJt4CCV+E7HpDic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 179/241] ASoC: davinci-mcasp: Fix clang warning without CONFIG_PM
+        stable@vger.kernel.org, Yihao Wu <wuyihao@linux.alibaba.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.19 20/51] NFSv4.1: Again fix a race where CB_NOTIFY_LOCK fails to wake a waiter
 Date:   Sun,  9 Jun 2019 18:42:01 +0200
-Message-Id: <20190609164153.010600829@linuxfoundation.org>
+Message-Id: <20190609164128.246232064@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +44,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8ca5104715cfd14254ea5aecc390ae583b707607 ]
+From: Yihao Wu <wuyihao@linux.alibaba.com>
 
-Building with clang shows a variable that is only used by the
-suspend/resume functions but defined outside of their #ifdef block:
+commit 52b042ab9948cc367b61f9ca9c18603aa7813c3a upstream.
 
-sound/soc/ti/davinci-mcasp.c:48:12: error: variable 'context_regs' is not needed and will not be emitted
+Commit b7dbcc0e433f "NFSv4.1: Fix a race where CB_NOTIFY_LOCK fails to wake a waiter"
+found this bug. However it didn't fix it.
 
-We commonly fix these by marking the PM functions as __maybe_unused,
-but here that would grow the davinci_mcasp structure, so instead
-add another #ifdef here.
+This commit replaces schedule_timeout() with wait_woken() and
+default_wake_function() with woken_wake_function() in function
+nfs4_retry_setlk() and nfs4_wake_lock_waiter(). wait_woken() uses
+memory barriers in its implementation to avoid potential race condition
+when putting a process into sleeping state and then waking it up.
 
-Fixes: 1cc0c054f380 ("ASoC: davinci-mcasp: Convert the context save/restore to use array")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: a1d617d8f134 ("nfs: allow blocking locks to be awoken by lock callbacks")
+Cc: stable@vger.kernel.org #4.9+
+Signed-off-by: Yihao Wu <wuyihao@linux.alibaba.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- sound/soc/davinci/davinci-mcasp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/nfs4proc.c |   24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
-index 2ccb8bccc9d4c..512ec25c9ead1 100644
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -43,6 +43,7 @@
- 
- #define MCASP_MAX_AFIFO_DEPTH	64
- 
-+#ifdef CONFIG_PM
- static u32 context_regs[] = {
- 	DAVINCI_MCASP_TXFMCTL_REG,
- 	DAVINCI_MCASP_RXFMCTL_REG,
-@@ -65,6 +66,7 @@ struct davinci_mcasp_context {
- 	u32	*xrsr_regs; /* for serializer configuration */
- 	bool	pm_state;
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -6850,7 +6850,6 @@ struct nfs4_lock_waiter {
+ 	struct task_struct	*task;
+ 	struct inode		*inode;
+ 	struct nfs_lowner	*owner;
+-	bool			notified;
  };
-+#endif
  
- struct davinci_mcasp_ruledata {
- 	struct davinci_mcasp *mcasp;
--- 
-2.20.1
-
+ static int
+@@ -6872,13 +6871,13 @@ nfs4_wake_lock_waiter(wait_queue_entry_t
+ 		/* Make sure it's for the right inode */
+ 		if (nfs_compare_fh(NFS_FH(waiter->inode), &cbnl->cbnl_fh))
+ 			return 0;
+-
+-		waiter->notified = true;
+ 	}
+ 
+ 	/* override "private" so we can use default_wake_function */
+ 	wait->private = waiter->task;
+-	ret = autoremove_wake_function(wait, mode, flags, key);
++	ret = woken_wake_function(wait, mode, flags, key);
++	if (ret)
++		list_del_init(&wait->entry);
+ 	wait->private = waiter;
+ 	return ret;
+ }
+@@ -6887,7 +6886,6 @@ static int
+ nfs4_retry_setlk(struct nfs4_state *state, int cmd, struct file_lock *request)
+ {
+ 	int status = -ERESTARTSYS;
+-	unsigned long flags;
+ 	struct nfs4_lock_state *lsp = request->fl_u.nfs4_fl.owner;
+ 	struct nfs_server *server = NFS_SERVER(state->inode);
+ 	struct nfs_client *clp = server->nfs_client;
+@@ -6897,8 +6895,7 @@ nfs4_retry_setlk(struct nfs4_state *stat
+ 				    .s_dev = server->s_dev };
+ 	struct nfs4_lock_waiter waiter = { .task  = current,
+ 					   .inode = state->inode,
+-					   .owner = &owner,
+-					   .notified = false };
++					   .owner = &owner};
+ 	wait_queue_entry_t wait;
+ 
+ 	/* Don't bother with waitqueue if we don't expect a callback */
+@@ -6911,21 +6908,14 @@ nfs4_retry_setlk(struct nfs4_state *stat
+ 	add_wait_queue(q, &wait);
+ 
+ 	while(!signalled()) {
+-		waiter.notified = false;
+ 		status = nfs4_proc_setlk(state, cmd, request);
+ 		if ((status != -EAGAIN) || IS_SETLK(cmd))
+ 			break;
+ 
+ 		status = -ERESTARTSYS;
+-		spin_lock_irqsave(&q->lock, flags);
+-		if (waiter.notified) {
+-			spin_unlock_irqrestore(&q->lock, flags);
+-			continue;
+-		}
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		spin_unlock_irqrestore(&q->lock, flags);
+-
+-		freezable_schedule_timeout(NFS4_LOCK_MAXTIMEOUT);
++		freezer_do_not_count();
++		wait_woken(&wait, TASK_INTERRUPTIBLE, NFS4_LOCK_MAXTIMEOUT);
++		freezer_count();
+ 	}
+ 
+ 	finish_wait(q, &wait);
 
 
