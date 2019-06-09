@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 149013A7EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED72B3AA6C
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732784AbfFIQzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:55:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57450 "EHLO mail.kernel.org"
+        id S1731794AbfFIRSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:18:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732773AbfFIQzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:55:22 -0400
+        id S1731780AbfFIQuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:50:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39585204EC;
-        Sun,  9 Jun 2019 16:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8344A206DF;
+        Sun,  9 Jun 2019 16:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099321;
-        bh=/ek4AUce4ipkcqRnQIfzGZ375DYFAzQTb61jjPHljYk=;
+        s=default; t=1560099046;
+        bh=D97dp07vttzcT0zf2mnUVwJdjWopWxsQ2RzFPrziyTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dkfmb8fiMOr2NfUi2BodHruR2gDZFaYqdPaTdDugvPveu3kGeGp3TdcwUIKYRhQNu
-         ZpQ+l7OT6ypaUzMzrni23Zmh/ydpg42BbLlXmzlYmXXc0zwEoL577sRNJoSHrKmBNM
-         LkwuQlYSFzlEqrr3tn8I9W7L862fdHXwii+v9kdo=
+        b=qGcdeAQ+OWWAZrlhUXYnnGHMi4qzKKfToh7wjPJFxODMeWJ+YizSROaDc2SQWCnqK
+         yXJM7p6ufwr7HaIrPSibGX62kI3dtmMotPe7sI+XFSvZgHofhjKh6FVAI/F6mBSiNu
+         h5wSMFRpdRMCrqcz5GIHrEHP034uRw6rGR4IeOXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 63/83] neighbor: Call __ipv4_neigh_lookup_noref in neigh_xmit
-Date:   Sun,  9 Jun 2019 18:42:33 +0200
-Message-Id: <20190609164133.192575221@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 28/35] drm/amdgpu/psp: move psp version specific function pointers to early_init
+Date:   Sun,  9 Jun 2019 18:42:34 +0200
+Message-Id: <20190609164127.152712044@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
+References: <20190609164125.377368385@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Ahern <dsahern@gmail.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 4b2a2bfeb3f056461a90bd621e8bd7d03fa47f60 ]
+commit 9d6fea5744d6798353f37ac42a8a653a2607ca69 upstream.
 
-Commit cd9ff4de0107 changed the key for IFF_POINTOPOINT devices to
-INADDR_ANY but neigh_xmit which is used for MPLS encapsulations was not
-updated to use the altered key. The result is that every packet Tx does
-a lookup on the gateway address which does not find an entry, a new one
-is created only to find the existing one in the table right before the
-insert since arp_constructor was updated to reset the primary key. This
-is seen in the allocs and destroys counters:
-    ip -s -4 ntable show | head -10 | grep alloc
+In case we need to use them for GPU reset prior initializing the
+asic.  Fixes a crash if the driver attempts to reset the GPU at driver
+load time.
 
-which increase for each packet showing the unnecessary overhread.
-
-Fix by having neigh_xmit use __ipv4_neigh_lookup_noref for NEIGH_ARP_TABLE.
-
-Fixes: cd9ff4de0107 ("ipv4: Make neigh lookup keys for loopback/point-to-point devices be INADDR_ANY")
-Reported-by: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Tested-by: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/neighbour.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -30,6 +30,7 @@
- #include <linux/times.h>
- #include <net/net_namespace.h>
- #include <net/neighbour.h>
-+#include <net/arp.h>
- #include <net/dst.h>
- #include <net/sock.h>
- #include <net/netevent.h>
-@@ -2489,7 +2490,13 @@ int neigh_xmit(int index, struct net_dev
- 		if (!tbl)
- 			goto out;
- 		rcu_read_lock_bh();
--		neigh = __neigh_lookup_noref(tbl, addr, dev);
-+		if (index == NEIGH_ARP_TABLE) {
-+			u32 key = *((u32 *)addr);
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -37,18 +37,10 @@ static void psp_set_funcs(struct amdgpu_
+ static int psp_early_init(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
++	struct psp_context *psp = &adev->psp;
+ 
+ 	psp_set_funcs(adev);
+ 
+-	return 0;
+-}
+-
+-static int psp_sw_init(void *handle)
+-{
+-	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+-	struct psp_context *psp = &adev->psp;
+-	int ret;
+-
+ 	switch (adev->asic_type) {
+ 	case CHIP_VEGA10:
+ 		psp->init_microcode = psp_v3_1_init_microcode;
+@@ -79,6 +71,15 @@ static int psp_sw_init(void *handle)
+ 
+ 	psp->adev = adev;
+ 
++	return 0;
++}
 +
-+			neigh = __ipv4_neigh_lookup_noref(dev, key);
-+		} else {
-+			neigh = __neigh_lookup_noref(tbl, addr, dev);
-+		}
- 		if (!neigh)
- 			neigh = __neigh_create(tbl, addr, dev, false);
- 		err = PTR_ERR(neigh);
++static int psp_sw_init(void *handle)
++{
++	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
++	struct psp_context *psp = &adev->psp;
++	int ret;
++
+ 	ret = psp_init_microcode(psp);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to load psp firmware!\n");
 
 
