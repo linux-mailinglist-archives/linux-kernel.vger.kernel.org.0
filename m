@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA7753A768
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8977E3A7EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731467AbfFIQtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:49:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48708 "EHLO mail.kernel.org"
+        id S1732772AbfFIQzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:55:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731428AbfFIQtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:49:17 -0400
+        id S1732748AbfFIQzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:55:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4490D206C3;
-        Sun,  9 Jun 2019 16:49:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98BC2207E0;
+        Sun,  9 Jun 2019 16:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098956;
-        bh=S74SuA89s3V4anDQnukivwqwDzCaQwnGacnKXxfMN4E=;
+        s=default; t=1560099319;
+        bh=lTiKP8Sokrx2urBRTyq5x4MBbdM2mVCqeQs98ICc6i8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HEaSYtE3qo/egGjgMRulBJG3eWH4lHhRKLytCTNlkThJG0lT2gMZo7Z6cCnsniOHx
-         eRlVWjhFc1nNwIFsyve34Losh9v5yevqU/uH+k11kGRoage+cnYdKNiwjlxEo9hzq+
-         WMS0mh4Ft8oJGujo3sjSFqLa61jut5j9d/BzWalw=
+        b=h5BVxtHT8Sl7f15lJLC9QqG8yHPpw//QXz5LpUw9VWOm5ALofPLy6hGWGhec844Xi
+         IElgodtRGYuClN/UDFkxe11ugbAMob5gvYcrVXjkbo7SXOYkFVwwCGjuK+OCtwrW5k
+         RHgc2LlfjG0XGaViwqf5E2Hf5boZkEMysl8vnATc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Tina Zhang <tina.zhang@intel.com>
-Subject: [PATCH 4.19 50/51] drm/i915/gvt: Initialize intel_gvt_gtt_entry in stack
-Date:   Sun,  9 Jun 2019 18:42:31 +0200
-Message-Id: <20190609164130.939106753@linuxfoundation.org>
+        stable@vger.kernel.org, Vivien Didelot <vivien.didelot@gmail.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 62/83] ethtool: fix potential userspace buffer overflow
+Date:   Sun,  9 Jun 2019 18:42:32 +0200
+Message-Id: <20190609164133.122061942@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tina Zhang <tina.zhang@intel.com>
+From: Vivien Didelot <vivien.didelot@gmail.com>
 
-commit 387a4c2b55291b37e245c840813bd8a8bd06ed49 upstream.
+[ Upstream commit 0ee4e76937d69128a6a66861ba393ebdc2ffc8a2 ]
 
-Stack struct intel_gvt_gtt_entry value needs to be initialized before
-being used, as the fields may contain garbage values.
+ethtool_get_regs() allocates a buffer of size ops->get_regs_len(),
+and pass it to the kernel driver via ops->get_regs() for filling.
 
-W/o this patch, set_ggtt_entry prints:
--------------------------------------
-274.046840: set_ggtt_entry: vgpu1:set ggtt entry 0x9bed8000ffffe900
-274.046846: set_ggtt_entry: vgpu1:set ggtt entry 0xe55df001
-274.046852: set_ggtt_entry: vgpu1:set ggtt entry 0x9bed8000ffffe900
+There is no restriction about what the kernel drivers can or cannot do
+with the open ethtool_regs structure. They usually set regs->version
+and ignore regs->len or set it to the same size as ops->get_regs_len().
 
-0x9bed8000 is the stack grabage.
+But if userspace allocates a smaller buffer for the registers dump,
+we would cause a userspace buffer overflow in the final copy_to_user()
+call, which uses the regs.len value potentially reset by the driver.
 
-W/ this patch, set_ggtt_entry prints:
-------------------------------------
-274.046840: set_ggtt_entry: vgpu1:set ggtt entry 0xffffe900
-274.046846: set_ggtt_entry: vgpu1:set ggtt entry 0xe55df001
-274.046852: set_ggtt_entry: vgpu1:set ggtt entry 0xffffe900
+To fix this, make this case obvious and store regs.len before calling
+ops->get_regs(), to only copy as much data as requested by userspace,
+up to the value returned by ops->get_regs_len().
 
-v2:
-- Initialize during declaration. (Zhenyu)
+While at it, remove the redundant check for non-null regbuf.
 
-Fixes: 7598e8700e9a ("drm/i915/gvt: Missed to cancel dma map for ggtt entries")
-Cc: stable@vger.kernel.org # v4.20+
-Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Tina Zhang <tina.zhang@intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/gvt/gtt.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/core/ethtool.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/gvt/gtt.c
-+++ b/drivers/gpu/drm/i915/gvt/gtt.c
-@@ -2161,7 +2161,8 @@ static int emulate_ggtt_mmio_write(struc
- 	struct intel_gvt_gtt_pte_ops *ops = gvt->gtt.pte_ops;
- 	unsigned long g_gtt_index = off >> info->gtt_entry_size_shift;
- 	unsigned long gma, gfn;
--	struct intel_gvt_gtt_entry e, m;
-+	struct intel_gvt_gtt_entry e = {.val64 = 0, .type = GTT_TYPE_GGTT_PTE};
-+	struct intel_gvt_gtt_entry m = {.val64 = 0, .type = GTT_TYPE_GGTT_PTE};
- 	dma_addr_t dma_addr;
- 	int ret;
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -1390,13 +1390,16 @@ static int ethtool_get_regs(struct net_d
+ 			return -ENOMEM;
+ 	}
  
-@@ -2237,7 +2238,8 @@ static int emulate_ggtt_mmio_write(struc
++	if (regs.len < reglen)
++		reglen = regs.len;
++
+ 	ops->get_regs(dev, &regs, regbuf);
  
- 	if (ops->test_present(&e)) {
- 		gfn = ops->get_pfn(&e);
--		m = e;
-+		m.val64 = e.val64;
-+		m.type = e.type;
+ 	ret = -EFAULT;
+ 	if (copy_to_user(useraddr, &regs, sizeof(regs)))
+ 		goto out;
+ 	useraddr += offsetof(struct ethtool_regs, data);
+-	if (regbuf && copy_to_user(useraddr, regbuf, regs.len))
++	if (copy_to_user(useraddr, regbuf, reglen))
+ 		goto out;
+ 	ret = 0;
  
- 		/* one PTE update may be issued in multiple writes and the
- 		 * first write may not construct a valid gfn
 
 
