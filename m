@@ -2,44 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C75C93A2FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F1813A324
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfFIC1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 22:27:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55574 "EHLO
+        id S1728434AbfFIC2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 22:28:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55848 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727630AbfFIC1b (ORCPT
+        with ESMTP id S1728218AbfFIC1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 22:27:31 -0400
+        Sat, 8 Jun 2019 22:27:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
         To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=BCV8KXeM7o7hLjXiKVomBp2FcB1GvIsVqbEY0KYw+QY=; b=L5UpeoWjVZ6rFL4yLXAMquVwrh
-        i2LwdsC1nI6rE5M7VrKjc/fHLVxxlE0dVfCgXxNYJ1PaePuZiUiofmv+XbGDHTaPB4vx6e4dSIiav
-        5C6b5A5HoByzmezZaH/N5nntUfdjj4Egm2kUI9uEwABUw6AoGZG3Wcb85wcVTZMD0O2pxcckRISeW
-        PTt+gSe/U6Cj3Avb4AOT+tCkV1Y2EB3px4FqR486KUC4w3GbqMrgBskuWLVKZlcYwMUa2VaG8MlJ1
-        /iWpq0RpP7jgwpcEcC0eXYqvG/jMjSBm24Ao2jV02ZldhvQWukO9+o3lf9vbr9zSplD8AvI+NmrCa
-        UBMMMMqw==;
+        bh=+7YOeZYQMgrlvEvn+ptCX3yYsOcx7RA+feD7vnxkurE=; b=LZvTkvGZ/+MlTYDWNyzV9VPU1C
+        X5Lu5WJjKZG9OyWbSRnjeygyjvXF9HxD+7/urfoL04shunsS9bfz/JVmsizhZrn5mUMFK/T02xNG7
+        e3Bm9cWOIOaT3HJX+JoEi5wP1Kvg+naONmovZZ0VRHlLFy7ZmSwIYkvO5j8szcoZjQl5pNSm04iZX
+        Rt2L+Dmvw3VzZ5TJxi5UoEFBGe7YJMYwkFPu4sHdEE33Wbx1EUeLFA7UOe8+nOuF9+kJVitvi8kmT
+        iQZACVMZxq9+N7rFUMYvnItpDjRYF+LizvqBYVepZXpUtMRqCalmrD0/oe/lcNJow9N7XuHAiq2Ow
+        EInpYwYg==;
 Received: from 179.176.115.133.dynamic.adsl.gvt.net.br ([179.176.115.133] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZnYO-0001mr-18; Sun, 09 Jun 2019 02:27:28 +0000
+        id 1hZnYO-0001my-1e; Sun, 09 Jun 2019 02:27:28 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hZnYL-0000J3-4X; Sat, 08 Jun 2019 23:27:25 -0300
+        id 1hZnYL-0000JJ-6k; Sat, 08 Jun 2019 23:27:25 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Subject: [PATCH v3 13/33] docs: infiniband: convert docs to ReST and rename to *.rst
-Date:   Sat,  8 Jun 2019 23:27:03 -0300
-Message-Id: <09036fdb89c4bec94cb92d25398c026afdb134e7.1560045490.git.mchehab+samsung@kernel.org>
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
+Subject: [PATCH v3 15/33] docs: kdump: convert docs to ReST and rename to *.rst
+Date:   Sat,  8 Jun 2019 23:27:05 -0300
+Message-Id: <6ee88eacdbb21e79bcd7a418ffc84373edb91c9c.1560045490.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560045490.git.mchehab+samsung@kernel.org>
 References: <cover.1560045490.git.mchehab+samsung@kernel.org>
@@ -51,184 +69,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The InfiniBand docs are plain text with no markups.
-So, all we needed to do were to add the title markups and
-some markup sequences in order to properly parse tables,
-lists and literal blocks.
+Convert kdump documentation to ReST and add it to the
+user faced manual, as the documents are mainly focused on
+sysadmins that would be enabling kdump.
+
+Note: the vmcoreinfo.rst has one very long title on one of its
+sub-sections:
+
+	PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
+
+I opted to break this one, into two entries with the same content,
+in order to make it easier to display after being parsed in html and PDF.
+
+The conversion is actually:
+  - add blank lines and identation in order to identify paragraphs;
+  - fix tables markups;
+  - add some lists markups;
+  - mark literal blocks;
+  - adjust title markups.
 
 At its new index.rst, let's add a :orphan: while this is not linked to
 the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{core_locking.txt => core_locking.rst}    |  64 ++++++-----
- Documentation/infiniband/index.rst            |  23 ++++
- .../infiniband/{ipoib.txt => ipoib.rst}       |  24 ++--
- .../infiniband/{opa_vnic.txt => opa_vnic.rst} | 108 +++++++++---------
- .../infiniband/{sysfs.txt => sysfs.rst}       |   4 +-
- .../{tag_matching.txt => tag_matching.rst}    |   5 +
- .../infiniband/{user_mad.txt => user_mad.rst} |  33 ++++--
- .../{user_verbs.txt => user_verbs.rst}        |  12 +-
- drivers/infiniband/core/user_mad.c            |   2 +-
- drivers/infiniband/ulp/ipoib/Kconfig          |   2 +-
- 10 files changed, 174 insertions(+), 103 deletions(-)
- rename Documentation/infiniband/{core_locking.txt => core_locking.rst} (78%)
- create mode 100644 Documentation/infiniband/index.rst
- rename Documentation/infiniband/{ipoib.txt => ipoib.rst} (90%)
- rename Documentation/infiniband/{opa_vnic.txt => opa_vnic.rst} (63%)
- rename Documentation/infiniband/{sysfs.txt => sysfs.rst} (69%)
- rename Documentation/infiniband/{tag_matching.txt => tag_matching.rst} (98%)
- rename Documentation/infiniband/{user_mad.txt => user_mad.rst} (90%)
- rename Documentation/infiniband/{user_verbs.txt => user_verbs.rst} (93%)
+ Documentation/admin-guide/bug-hunting.rst     |   2 +-
+ .../admin-guide/kernel-parameters.txt         |   6 +-
+ Documentation/kdump/index.rst                 |  21 +++
+ Documentation/kdump/{kdump.txt => kdump.rst}  | 131 +++++++++++-------
+ .../kdump/{vmcoreinfo.txt => vmcoreinfo.rst}  |  59 ++++----
+ .../powerpc/firmware-assisted-dump.txt        |   2 +-
+ .../translations/zh_CN/oops-tracing.txt       |   2 +-
+ Documentation/watchdog/hpwdt.txt              |   2 +-
+ arch/arm/Kconfig                              |   2 +-
+ arch/arm64/Kconfig                            |   2 +-
+ arch/sh/Kconfig                               |   2 +-
+ arch/x86/Kconfig                              |   4 +-
+ 12 files changed, 137 insertions(+), 98 deletions(-)
+ create mode 100644 Documentation/kdump/index.rst
+ rename Documentation/kdump/{kdump.txt => kdump.rst} (91%)
+ rename Documentation/kdump/{vmcoreinfo.txt => vmcoreinfo.rst} (95%)
 
-diff --git a/Documentation/infiniband/core_locking.txt b/Documentation/infiniband/core_locking.rst
-similarity index 78%
-rename from Documentation/infiniband/core_locking.txt
-rename to Documentation/infiniband/core_locking.rst
-index 4b1f36b6ada0..f34669beb4fe 100644
---- a/Documentation/infiniband/core_locking.txt
-+++ b/Documentation/infiniband/core_locking.rst
-@@ -1,4 +1,6 @@
--INFINIBAND MIDLAYER LOCKING
-+===========================
-+InfiniBand Midlayer Locking
-+===========================
+diff --git a/Documentation/admin-guide/bug-hunting.rst b/Documentation/admin-guide/bug-hunting.rst
+index f278b289e260..b761aa2a51d2 100644
+--- a/Documentation/admin-guide/bug-hunting.rst
++++ b/Documentation/admin-guide/bug-hunting.rst
+@@ -90,7 +90,7 @@ the disk is not available then you have three options:
+     run a null modem to a second machine and capture the output there
+     using your favourite communication program.  Minicom works well.
  
-   This guide is an attempt to make explicit the locking assumptions
-   made by the InfiniBand midlayer.  It describes the requirements on
-@@ -6,45 +8,47 @@ INFINIBAND MIDLAYER LOCKING
-   protocols that use the midlayer.
+-(3) Use Kdump (see Documentation/kdump/kdump.txt),
++(3) Use Kdump (see Documentation/kdump/kdump.rst),
+     extract the kernel ring buffer from old memory with using dmesg
+     gdbmacro in Documentation/kdump/gdbmacros.txt.
  
- Sleeping and interrupt context
-+==============================
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e4544f0335e3..9789328f5e9d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -708,14 +708,14 @@
+ 			[KNL, x86_64] select a region under 4G first, and
+ 			fall back to reserve region above 4G when '@offset'
+ 			hasn't been specified.
+-			See Documentation/kdump/kdump.txt for further details.
++			See Documentation/kdump/kdump.rst for further details.
  
-   With the following exceptions, a low-level driver implementation of
-   all of the methods in struct ib_device may sleep.  The exceptions
-   are any methods from the list:
+ 	crashkernel=range1:size1[,range2:size2,...][@offset]
+ 			[KNL] Same as above, but depends on the memory
+ 			in the running system. The syntax of range is
+ 			start-[end] where start and end are both
+ 			a memory unit (amount[KMG]). See also
+-			Documentation/kdump/kdump.txt for an example.
++			Documentation/kdump/kdump.rst for an example.
  
--    create_ah
--    modify_ah
--    query_ah
--    destroy_ah
--    post_send
--    post_recv
--    poll_cq
--    req_notify_cq
--    map_phys_fmr
-+    - create_ah
-+    - modify_ah
-+    - query_ah
-+    - destroy_ah
-+    - post_send
-+    - post_recv
-+    - poll_cq
-+    - req_notify_cq
-+    - map_phys_fmr
+ 	crashkernel=size[KMG],high
+ 			[KNL, x86_64] range could be above 4G. Allow kernel
+@@ -1207,7 +1207,7 @@
+ 			Specifies physical address of start of kernel core
+ 			image elf header and optionally the size. Generally
+ 			kexec loader will pass this option to capture kernel.
+-			See Documentation/kdump/kdump.txt for details.
++			See Documentation/kdump/kdump.rst for details.
  
-   which may not sleep and must be callable from any context.
- 
-   The corresponding functions exported to upper level protocol
-   consumers:
- 
--    ib_create_ah
--    ib_modify_ah
--    ib_query_ah
--    ib_destroy_ah
--    ib_post_send
--    ib_post_recv
--    ib_req_notify_cq
--    ib_map_phys_fmr
-+    - ib_create_ah
-+    - ib_modify_ah
-+    - ib_query_ah
-+    - ib_destroy_ah
-+    - ib_post_send
-+    - ib_post_recv
-+    - ib_req_notify_cq
-+    - ib_map_phys_fmr
- 
-   are therefore safe to call from any context.
- 
-   In addition, the function
- 
--    ib_dispatch_event
-+    - ib_dispatch_event
- 
-   used by low-level drivers to dispatch asynchronous events through
-   the midlayer is also safe to call from any context.
- 
- Reentrancy
-+----------
- 
-   All of the methods in struct ib_device exported by a low-level
-   driver must be fully reentrant.  The low-level driver is required to
-@@ -62,6 +66,7 @@ Reentrancy
-   information between different calls of ib_poll_cq() is not defined.
- 
- Callbacks
-+---------
- 
-   A low-level driver must not perform a callback directly from the
-   same callchain as an ib_device method call.  For example, it is not
-@@ -74,18 +79,18 @@ Callbacks
-   completion event handlers for the same CQ are not called
-   simultaneously.  The driver must guarantee that only one CQ event
-   handler for a given CQ is running at a time.  In other words, the
--  following situation is not allowed:
-+  following situation is not allowed::
- 
--        CPU1                                    CPU2
-+          CPU1                                    CPU2
- 
--  low-level driver ->
--    consumer CQ event callback:
--      /* ... */
--      ib_req_notify_cq(cq, ...);
--                                        low-level driver ->
--      /* ... */                           consumer CQ event callback:
--                                            /* ... */
--      return from CQ event handler
-+    low-level driver ->
-+      consumer CQ event callback:
-+        /* ... */
-+        ib_req_notify_cq(cq, ...);
-+                                          low-level driver ->
-+        /* ... */                           consumer CQ event callback:
-+                                              /* ... */
-+        return from CQ event handler
- 
-   The context in which completion event and asynchronous event
-   callbacks run is not defined.  Depending on the low-level driver, it
-@@ -93,6 +98,7 @@ Callbacks
-   Upper level protocol consumers may not sleep in a callback.
- 
- Hot-plug
-+--------
- 
-   A low-level driver announces that a device is ready for use by
-   consumers when it calls ib_register_device(), all initialization
-diff --git a/Documentation/infiniband/index.rst b/Documentation/infiniband/index.rst
+ 	enable_mtrr_cleanup [X86]
+ 			The kernel tries to adjust MTRR layout from continuous
+diff --git a/Documentation/kdump/index.rst b/Documentation/kdump/index.rst
 new file mode 100644
-index 000000000000..22eea64de722
+index 000000000000..2b17fcf6867a
 --- /dev/null
-+++ b/Documentation/infiniband/index.rst
-@@ -0,0 +1,23 @@
++++ b/Documentation/kdump/index.rst
+@@ -0,0 +1,21 @@
 +:orphan:
 +
-+==========
-+InfiniBand
-+==========
++================================================================
++Documentation for Kdump - The kexec-based Crash Dumping Solution
++================================================================
++
++This document includes overview, setup and installation, and analysis
++information.
 +
 +.. toctree::
-+   :maxdepth: 1
++    :maxdepth: 1
 +
-+   core_locking
-+   ipoib
-+   opa_vnic
-+   sysfs
-+   tag_matching
-+   user_mad
-+   user_verbs
++    kdump
++    vmcoreinfo
 +
 +.. only::  subproject and html
 +
@@ -236,516 +180,603 @@ index 000000000000..22eea64de722
 +   =======
 +
 +   * :ref:`genindex`
-diff --git a/Documentation/infiniband/ipoib.txt b/Documentation/infiniband/ipoib.rst
-similarity index 90%
-rename from Documentation/infiniband/ipoib.txt
-rename to Documentation/infiniband/ipoib.rst
-index 47c1dd9818f2..0dd36154c0c9 100644
---- a/Documentation/infiniband/ipoib.txt
-+++ b/Documentation/infiniband/ipoib.rst
-@@ -1,4 +1,6 @@
--IP OVER INFINIBAND
-+==================
-+IP over InfiniBand
-+==================
+diff --git a/Documentation/kdump/kdump.txt b/Documentation/kdump/kdump.rst
+similarity index 91%
+rename from Documentation/kdump/kdump.txt
+rename to Documentation/kdump/kdump.rst
+index 3162eeb8c262..ac7e131d2935 100644
+--- a/Documentation/kdump/kdump.txt
++++ b/Documentation/kdump/kdump.rst
+@@ -71,9 +71,8 @@ This is a symlink to the latest version.
  
-   The ib_ipoib driver is an implementation of the IP over InfiniBand
-   protocol as specified by RFC 4391 and 4392, issued by the IETF ipoib
-@@ -8,16 +10,17 @@ IP OVER INFINIBAND
-   masqueraded to the kernel as ethernet interfaces).
+ The latest kexec-tools git tree is available at:
  
- Partitions and P_Keys
-+=====================
+-git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
+-and
+-http://www.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
++- git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
++- http://www.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
  
-   When the IPoIB driver is loaded, it creates one interface for each
-   port using the P_Key at index 0.  To create an interface with a
-   different P_Key, write the desired P_Key into the main interface's
--  /sys/class/net/<intf name>/create_child file.  For example:
-+  /sys/class/net/<intf name>/create_child file.  For example::
+ There is also a gitweb interface available at
+ http://www.kernel.org/git/?p=utils/kernel/kexec/kexec-tools.git
+@@ -81,25 +80,25 @@ http://www.kernel.org/git/?p=utils/kernel/kexec/kexec-tools.git
+ More information about kexec-tools can be found at
+ http://horms.net/projects/kexec/
  
-     echo 0x8001 > /sys/class/net/ib0/create_child
+-3) Unpack the tarball with the tar command, as follows:
++3) Unpack the tarball with the tar command, as follows::
  
-   This will create an interface named ib0.8001 with P_Key 0x8001.  To
--  remove a subinterface, use the "delete_child" file:
-+  remove a subinterface, use the "delete_child" file::
+-   tar xvpzf kexec-tools.tar.gz
++	tar xvpzf kexec-tools.tar.gz
  
-     echo 0x8001 > /sys/class/net/ib0/delete_child
+-4) Change to the kexec-tools directory, as follows:
++4) Change to the kexec-tools directory, as follows::
  
-@@ -28,6 +31,7 @@ Partitions and P_Keys
-   rtnl_link_ops, where children created using either way behave the same.
+-   cd kexec-tools-VERSION
++	cd kexec-tools-VERSION
  
- Datagram vs Connected modes
-+===========================
+-5) Configure the package, as follows:
++5) Configure the package, as follows::
  
-   The IPoIB driver supports two modes of operation: datagram and
-   connected.  The mode is set and read through an interface's
-@@ -51,6 +55,7 @@ Datagram vs Connected modes
-   networking stack to use the smaller UD MTU for these neighbours.
+-   ./configure
++	./configure
  
- Stateless offloads
-+==================
+-6) Compile the package, as follows:
++6) Compile the package, as follows::
  
-   If the IB HW supports IPoIB stateless offloads, IPoIB advertises
-   TCP/IP checksum and/or Large Send (LSO) offloading capability to the
-@@ -60,9 +65,10 @@ Stateless offloads
-   on/off using ethtool calls.  Currently LRO is supported only for
-   checksum offload capable devices.
+-   make
++	make
  
--  Stateless offloads are supported only in datagram mode.  
-+  Stateless offloads are supported only in datagram mode.
+-7) Install the package, as follows:
++7) Install the package, as follows::
  
- Interrupt moderation
-+====================
+-   make install
++	make install
  
-   If the underlying IB device supports CQ event moderation, one can
-   use ethtool to set interrupt mitigation parameters and thus reduce
-@@ -71,6 +77,7 @@ Interrupt moderation
-   moderation is supported.
  
- Debugging Information
-+=====================
+ Build the system and dump-capture kernels
+@@ -126,25 +125,25 @@ dump-capture kernels for enabling kdump support.
+ System kernel config options
+ ----------------------------
  
-   By compiling the IPoIB driver with CONFIG_INFINIBAND_IPOIB_DEBUG set
-   to 'y', tracing messages are compiled into the driver.  They are
-@@ -79,7 +86,7 @@ Debugging Information
-   runtime through files in /sys/module/ib_ipoib/.
+-1) Enable "kexec system call" in "Processor type and features."
++1) Enable "kexec system call" in "Processor type and features."::
  
-   CONFIG_INFINIBAND_IPOIB_DEBUG also enables files in the debugfs
--  virtual filesystem.  By mounting this filesystem, for example with
-+  virtual filesystem.  By mounting this filesystem, for example with::
+-   CONFIG_KEXEC=y
++	CONFIG_KEXEC=y
  
-     mount -t debugfs none /sys/kernel/debug
+ 2) Enable "sysfs file system support" in "Filesystem" -> "Pseudo
+-   filesystems." This is usually enabled by default.
++   filesystems." This is usually enabled by default::
  
-@@ -96,10 +103,13 @@ Debugging Information
-   performance, because it adds tests to the fast path.
+-   CONFIG_SYSFS=y
++	CONFIG_SYSFS=y
  
- References
+    Note that "sysfs file system support" might not appear in the "Pseudo
+    filesystems" menu if "Configure standard kernel features (for small
+    systems)" is not enabled in "General Setup." In this case, check the
+-   .config file itself to ensure that sysfs is turned on, as follows:
++   .config file itself to ensure that sysfs is turned on, as follows::
+ 
+-   grep 'CONFIG_SYSFS' .config
++	grep 'CONFIG_SYSFS' .config
+ 
+-3) Enable "Compile the kernel with debug info" in "Kernel hacking."
++3) Enable "Compile the kernel with debug info" in "Kernel hacking."::
+ 
+-   CONFIG_DEBUG_INFO=Y
++	CONFIG_DEBUG_INFO=Y
+ 
+    This causes the kernel to be built with debug symbols. The dump
+    analysis tools require a vmlinux with debug symbols in order to read
+@@ -154,29 +153,32 @@ Dump-capture kernel config options (Arch Independent)
+ -----------------------------------------------------
+ 
+ 1) Enable "kernel crash dumps" support under "Processor type and
+-   features":
++   features"::
+ 
+-   CONFIG_CRASH_DUMP=y
++	CONFIG_CRASH_DUMP=y
+ 
+-2) Enable "/proc/vmcore support" under "Filesystems" -> "Pseudo filesystems".
++2) Enable "/proc/vmcore support" under "Filesystems" -> "Pseudo filesystems"::
++
++	CONFIG_PROC_VMCORE=y
+ 
+-   CONFIG_PROC_VMCORE=y
+    (CONFIG_PROC_VMCORE is set by default when CONFIG_CRASH_DUMP is selected.)
+ 
+ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ --------------------------------------------------------------------
+ 
+ 1) On i386, enable high memory support under "Processor type and
+-   features":
++   features"::
+ 
+-   CONFIG_HIGHMEM64G=y
+-   or
+-   CONFIG_HIGHMEM4G
++	CONFIG_HIGHMEM64G=y
++
++   or::
++
++	CONFIG_HIGHMEM4G
+ 
+ 2) On i386 and x86_64, disable symmetric multi-processing support
+-   under "Processor type and features":
++   under "Processor type and features"::
+ 
+-   CONFIG_SMP=n
++	CONFIG_SMP=n
+ 
+    (If CONFIG_SMP=y, then specify maxcpus=1 on the kernel command line
+    when loading the dump-capture kernel, see section "Load the Dump-capture
+@@ -184,9 +186,9 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ 
+ 3) If one wants to build and use a relocatable kernel,
+    Enable "Build a relocatable kernel" support under "Processor type and
+-   features"
++   features"::
+ 
+-   CONFIG_RELOCATABLE=y
++	CONFIG_RELOCATABLE=y
+ 
+ 4) Use a suitable value for "Physical address where the kernel is
+    loaded" (under "Processor type and features"). This only appears when
+@@ -211,13 +213,13 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ Dump-capture kernel config options (Arch Dependent, ppc64)
+ ----------------------------------------------------------
+ 
+-1) Enable "Build a kdump crash kernel" support under "Kernel" options:
++1) Enable "Build a kdump crash kernel" support under "Kernel" options::
+ 
+-   CONFIG_CRASH_DUMP=y
++	CONFIG_CRASH_DUMP=y
+ 
+-2)   Enable "Build a relocatable kernel" support
++2)   Enable "Build a relocatable kernel" support::
+ 
+-   CONFIG_RELOCATABLE=y
++	CONFIG_RELOCATABLE=y
+ 
+    Make and install the kernel and its modules.
+ 
+@@ -231,11 +233,13 @@ Dump-capture kernel config options (Arch Dependent, ia64)
+ 
+   The crashkernel region can be automatically placed by the system
+   kernel at run time. This is done by specifying the base address as 0,
+-  or omitting it all together.
++  or omitting it all together::
+ 
+-  crashkernel=256M@0
+-  or
+-  crashkernel=256M
++	crashkernel=256M@0
++
++  or::
++
++	crashkernel=256M
+ 
+   If the start address is specified, note that the start address of the
+   kernel will be aligned to 64Mb, so if the start address is not then
+@@ -245,9 +249,9 @@ Dump-capture kernel config options (Arch Dependent, arm)
+ ----------------------------------------------------------
+ 
+ -   To use a relocatable kernel,
+-    Enable "AUTO_ZRELADDR" support under "Boot" options:
++    Enable "AUTO_ZRELADDR" support under "Boot" options::
+ 
+-    AUTO_ZRELADDR=y
++	AUTO_ZRELADDR=y
+ 
+ Dump-capture kernel config options (Arch Dependent, arm64)
+ ----------------------------------------------------------
+@@ -265,12 +269,12 @@ on the value of System RAM -- that's mostly for distributors that pre-setup
+ the kernel command line to avoid a unbootable system after some memory has
+ been removed from the machine.
+ 
+-The syntax is:
++The syntax is::
+ 
+     crashkernel=<range1>:<size1>[,<range2>:<size2>,...][@offset]
+     range=start-[end]
+ 
+-For example:
++For example::
+ 
+     crashkernel=512M-2G:64M,2G-:128M
+ 
+@@ -326,35 +330,46 @@ can choose to load the uncompressed vmlinux or compressed bzImage/vmlinuz
+ of dump-capture kernel. Following is the summary.
+ 
+ For i386 and x86_64:
++
+ 	- Use vmlinux if kernel is not relocatable.
+ 	- Use bzImage/vmlinuz if kernel is relocatable.
++
+ For ppc64:
++
+ 	- Use vmlinux
++
+ For ia64:
++
+ 	- Use vmlinux or vmlinuz.gz
++
+ For s390x:
++
+ 	- Use image or bzImage
++
+ For arm:
++
+ 	- Use zImage
++
+ For arm64:
++
+ 	- Use vmlinux or Image
+ 
+ If you are using an uncompressed vmlinux image then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec -p <dump-capture-kernel-vmlinux-image> \
+    --initrd=<initrd-for-dump-capture-kernel> --args-linux \
+    --append="root=<root-dev> <arch-specific-options>"
+ 
+ If you are using a compressed bzImage/vmlinuz, then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec -p <dump-capture-kernel-bzImage> \
+    --initrd=<initrd-for-dump-capture-kernel> \
+    --append="root=<root-dev> <arch-specific-options>"
+ 
+ If you are using a compressed zImage, then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec --type zImage -p <dump-capture-kernel-bzImage> \
+    --initrd=<initrd-for-dump-capture-kernel> \
+@@ -362,7 +377,7 @@ to load dump-capture kernel.
+    --append="root=<root-dev> <arch-specific-options>"
+ 
+ If you are using an uncompressed Image, then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec -p <dump-capture-kernel-Image> \
+    --initrd=<initrd-for-dump-capture-kernel> \
+@@ -376,18 +391,23 @@ Following are the arch specific command line options to be used while
+ loading dump-capture kernel.
+ 
+ For i386, x86_64 and ia64:
++
+ 	"1 irqpoll maxcpus=1 reset_devices"
+ 
+ For ppc64:
++
+ 	"1 maxcpus=1 noirqdistrib reset_devices"
+ 
+ For s390x:
++
+ 	"1 maxcpus=1 cgroup_disable=memory"
+ 
+ For arm:
++
+ 	"1 maxcpus=1 reset_devices"
+ 
+ For arm64:
++
+ 	"1 maxcpus=1 reset_devices"
+ 
+ Notes on loading the dump-capture kernel:
+@@ -464,7 +484,7 @@ Write Out the Dump File
+ =======================
+ 
+ After the dump-capture kernel is booted, write out the dump file with
+-the following command:
++the following command::
+ 
+    cp /proc/vmcore <dump-file>
+ 
+@@ -476,7 +496,7 @@ Before analyzing the dump image, you should reboot into a stable kernel.
+ 
+ You can do limited analysis using GDB on the dump file copied out of
+ /proc/vmcore. Use the debug vmlinux built with -g and run the following
+-command:
++command::
+ 
+    gdb vmlinux <dump-file>
+ 
+@@ -504,6 +524,11 @@ to achieve the same behaviour.
+ Contact
+ =======
+ 
+-Vivek Goyal (vgoyal@redhat.com)
+-Maneesh Soni (maneesh@in.ibm.com)
++- Vivek Goyal (vgoyal@redhat.com)
++- Maneesh Soni (maneesh@in.ibm.com)
+ 
++GDB macros
++==========
++
++.. include:: gdbmacros.txt
++   :literal:
+diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.rst
+similarity index 95%
+rename from Documentation/kdump/vmcoreinfo.txt
+rename to Documentation/kdump/vmcoreinfo.rst
+index bb94a4bd597a..007a6b86e0ee 100644
+--- a/Documentation/kdump/vmcoreinfo.txt
++++ b/Documentation/kdump/vmcoreinfo.rst
+@@ -1,8 +1,7 @@
+-================================================================
+-			VMCOREINFO
+-================================================================
++==========
++VMCOREINFO
 +==========
  
-   Transmission of IP over InfiniBand (IPoIB) (RFC 4391)
--    http://ietf.org/rfc/rfc4391.txt 
-+    http://ietf.org/rfc/rfc4391.txt
+-===========
+ What is it?
+ ===========
+ 
+@@ -12,7 +11,6 @@ values, field offsets, etc. These data are packed into an ELF note
+ section and used by user-space tools like crash and makedumpfile to
+ analyze a kernel's memory layout.
+ 
+-================
+ Common variables
+ ================
+ 
+@@ -49,7 +47,7 @@ in a system, one bit position per node number. Used to keep track of
+ which nodes are in the system and online.
+ 
+ swapper_pg_dir
+--------------
++--------------
+ 
+ The global page directory pointer of the kernel. Used to translate
+ virtual to physical addresses.
+@@ -132,16 +130,14 @@ nodemask_t
+ The size of a nodemask_t type. Used to compute the number of online
+ nodes.
+ 
+-(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
+-       compound_order|compound_head)
+--------------------------------------------------------------------
++(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|compound_order|compound_head)
++-------------------------------------------------------------------------------------------------
+ 
+ User-space tools compute their values based on the offset of these
+ variables. The variables are used when excluding unnecessary pages.
+ 
+-(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
+-              spanned_pages|node_id)
+--------------------------------------------------------------------
++(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_spanned_pages|node_id)
++-----------------------------------------------------------------------------------------
+ 
+ On NUMA machines, each NUMA node has a pg_data_t to describe its memory
+ layout. On UMA machines there is a single pglist_data which describes the
+@@ -245,21 +241,25 @@ NR_FREE_PAGES
+ On linux-2.6.21 or later, the number of free pages is in
+ vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
+ 
+-PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision
+-|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)
+-|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
+------------------------------------------------------------------
++PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask
++------------------------------------------------------------------------------
+ 
+ Page attributes. These flags are used to filter various unnecessary for
+ dumping pages.
+ 
++PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
++-----------------------------------------------------------------------------
 +
-   IP over InfiniBand (IPoIB) Architecture (RFC 4392)
--    http://ietf.org/rfc/rfc4392.txt 
-+    http://ietf.org/rfc/rfc4392.txt
++More page attributes. These flags are used to filter various unnecessary for
++dumping pages.
 +
-   IP over InfiniBand: Connected Mode (RFC 4755)
-     http://ietf.org/rfc/rfc4755.txt
-diff --git a/Documentation/infiniband/opa_vnic.txt b/Documentation/infiniband/opa_vnic.rst
-similarity index 63%
-rename from Documentation/infiniband/opa_vnic.txt
-rename to Documentation/infiniband/opa_vnic.rst
-index 282e17be798a..2f888d9ffec0 100644
---- a/Documentation/infiniband/opa_vnic.txt
-+++ b/Documentation/infiniband/opa_vnic.rst
-@@ -1,3 +1,7 @@
-+=================================================================
-+Intel Omni-Path (OPA) Virtual Network Interface Controller (VNIC)
-+=================================================================
 +
- Intel Omni-Path (OPA) Virtual Network Interface Controller (VNIC) feature
- supports Ethernet functionality over Omni-Path fabric by encapsulating
- the Ethernet packets between HFI nodes.
-@@ -17,70 +21,72 @@ an independent Ethernet network. The configuration is performed by an
- Ethernet Manager (EM) which is part of the trusted Fabric Manager (FM)
- application. HFI nodes can have multiple VNICs each connected to a
- different virtual Ethernet switch. The below diagram presents a case
--of two virtual Ethernet switches with two HFI nodes.
-+of two virtual Ethernet switches with two HFI nodes::
+ HUGETLB_PAGE_DTOR
+ -----------------
  
--                             +-------------------+
--                             |      Subnet/      |
--                             |     Ethernet      |
--                             |      Manager      |
--                             +-------------------+
--                                /          /
--                              /           /
--                            /            /
--                          /             /
--+-----------------------------+  +------------------------------+
--|  Virtual Ethernet Switch    |  |  Virtual Ethernet Switch     |
--|  +---------+    +---------+ |  | +---------+    +---------+   |
--|  | VPORT   |    |  VPORT  | |  | |  VPORT  |    |  VPORT  |   |
--+--+---------+----+---------+-+  +-+---------+----+---------+---+
--         |                 \        /                 |
--         |                   \    /                   |
--         |                     \/                     |
--         |                    /  \                    |
--         |                  /      \                  |
--     +-----------+------------+  +-----------+------------+
--     |   VNIC    |    VNIC    |  |    VNIC   |    VNIC    |
--     +-----------+------------+  +-----------+------------+
--     |          HFI           |  |          HFI           |
--     +------------------------+  +------------------------+
-+                               +-------------------+
-+                               |      Subnet/      |
-+                               |     Ethernet      |
-+                               |      Manager      |
-+                               +-------------------+
-+                                  /          /
-+                                /           /
-+                              /            /
-+                            /             /
-+  +-----------------------------+  +------------------------------+
-+  |  Virtual Ethernet Switch    |  |  Virtual Ethernet Switch     |
-+  |  +---------+    +---------+ |  | +---------+    +---------+   |
-+  |  | VPORT   |    |  VPORT  | |  | |  VPORT  |    |  VPORT  |   |
-+  +--+---------+----+---------+-+  +-+---------+----+---------+---+
-+           |                 \        /                 |
-+           |                   \    /                   |
-+           |                     \/                     |
-+           |                    /  \                    |
-+           |                  /      \                  |
-+       +-----------+------------+  +-----------+------------+
-+       |   VNIC    |    VNIC    |  |    VNIC   |    VNIC    |
-+       +-----------+------------+  +-----------+------------+
-+       |          HFI           |  |          HFI           |
-+       +------------------------+  +------------------------+
+ The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
+ excludes these pages.
  
+-======
+ x86_64
+ ======
  
- The Omni-Path encapsulated Ethernet packet format is as described below.
+@@ -318,12 +318,12 @@ address.
+ Currently, sme_mask stores the value of the C-bit position. If needed,
+ additional SME-relevant info can be placed in that variable.
  
--Bits          Field
--------------------------------------
-+==================== ================================
-+Bits                 Field
-+==================== ================================
- Quad Word 0:
--0-19      SLID (lower 20 bits)
--20-30     Length (in Quad Words)
--31        BECN bit
--32-51     DLID (lower 20 bits)
--52-56     SC (Service Class)
--57-59     RC (Routing Control)
--60        FECN bit
--61-62     L2 (=10, 16B format)
--63        LT (=1, Link Transfer Head Flit)
-+0-19                 SLID (lower 20 bits)
-+20-30                Length (in Quad Words)
-+31                   BECN bit
-+32-51                DLID (lower 20 bits)
-+52-56                SC (Service Class)
-+57-59                RC (Routing Control)
-+60                   FECN bit
-+61-62                L2 (=10, 16B format)
-+63                   LT (=1, Link Transfer Head Flit)
- 
- Quad Word 1:
--0-7       L4 type (=0x78 ETHERNET)
--8-11      SLID[23:20]
--12-15     DLID[23:20]
--16-31     PKEY
--32-47     Entropy
--48-63     Reserved
-+0-7                  L4 type (=0x78 ETHERNET)
-+8-11                 SLID[23:20]
-+12-15                DLID[23:20]
-+16-31                PKEY
-+32-47                Entropy
-+48-63                Reserved
- 
- Quad Word 2:
--0-15      Reserved
--16-31     L4 header
--32-63     Ethernet Packet
-+0-15                 Reserved
-+16-31                L4 header
-+32-63                Ethernet Packet
- 
- Quad Words 3 to N-1:
--0-63      Ethernet packet (pad extended)
-+0-63                 Ethernet packet (pad extended)
- 
- Quad Word N (last):
--0-23      Ethernet packet (pad extended)
--24-55     ICRC
--56-61     Tail
--62-63     LT (=01, Link Transfer Tail Flit)
-+0-23                 Ethernet packet (pad extended)
-+24-55                ICRC
-+56-61                Tail
-+62-63                LT (=01, Link Transfer Tail Flit)
-+==================== ================================
- 
- Ethernet packet is padded on the transmit side to ensure that the VNIC OPA
- packet is quad word aligned. The 'Tail' field contains the number of bytes
-@@ -123,7 +129,7 @@ operation. It also handles the encapsulation of Ethernet packets with an
- Omni-Path header in the transmit path. For each VNIC interface, the
- information required for encapsulation is configured by the EM via VEMA MAD
- interface. It also passes any control information to the HW dependent driver
--by invoking the RDMA netdev control operations.
-+by invoking the RDMA netdev control operations::
- 
-         +-------------------+ +----------------------+
-         |                   | |       Linux          |
-diff --git a/Documentation/infiniband/sysfs.txt b/Documentation/infiniband/sysfs.rst
-similarity index 69%
-rename from Documentation/infiniband/sysfs.txt
-rename to Documentation/infiniband/sysfs.rst
-index 9fab5062f84b..f0abd6fa48f4 100644
---- a/Documentation/infiniband/sysfs.txt
-+++ b/Documentation/infiniband/sysfs.rst
-@@ -1,4 +1,6 @@
--SYSFS FILES
-+===========
-+Sysfs files
-+===========
- 
- The sysfs interface has moved to
- Documentation/ABI/stable/sysfs-class-infiniband.
-diff --git a/Documentation/infiniband/tag_matching.txt b/Documentation/infiniband/tag_matching.rst
-similarity index 98%
-rename from Documentation/infiniband/tag_matching.txt
-rename to Documentation/infiniband/tag_matching.rst
-index d2a3bf819226..ef56ea585f92 100644
---- a/Documentation/infiniband/tag_matching.txt
-+++ b/Documentation/infiniband/tag_matching.rst
-@@ -1,12 +1,16 @@
-+==================
- Tag matching logic
-+==================
- 
- The MPI standard defines a set of rules, known as tag-matching, for matching
- source send operations to destination receives.  The following parameters must
- match the following source and destination parameters:
+-For example:
+-[ misc	        ][ enc bit  ][ other misc SME info       ]
+-0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
+-63   59   55   51   47   43   39   35   31   27   ... 3
++For example::
 +
- *	Communicator
- *	User tag - wild card may be specified by the receiver
- *	Source rank – wild car may be specified by the receiver
- *	Destination rank – wild
-+
- The ordering rules require that when more than one pair of send and receive
- message envelopes may match, the pair that includes the earliest posted-send
- and the earliest posted-receive is the pair that must be used to satisfy the
-@@ -35,6 +39,7 @@ the header to initiate an RDMA READ operation directly to the matching buffer.
- A fin message needs to be received in order for the buffer to be reused.
++  [ misc	        ][ enc bit  ][ other misc SME info       ]
++  0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
++  63   59   55   51   47   43   39   35   31   27   ... 3
  
- Tag matching implementation
-+===========================
+-======
+ x86_32
+ ======
  
- There are two types of matching objects used, the posted receive list and the
- unexpected message list. The application posts receive buffers through calls
-diff --git a/Documentation/infiniband/user_mad.txt b/Documentation/infiniband/user_mad.rst
-similarity index 90%
-rename from Documentation/infiniband/user_mad.txt
-rename to Documentation/infiniband/user_mad.rst
-index 7aca13a54a3a..d88abfc0e370 100644
---- a/Documentation/infiniband/user_mad.txt
-+++ b/Documentation/infiniband/user_mad.rst
-@@ -1,6 +1,9 @@
--USERSPACE MAD ACCESS
-+====================
-+Userspace MAD access
-+====================
+@@ -335,7 +335,6 @@ of a higher page table lookup overhead, and also consumes more page
+ table space per process. Used to check whether PAE was enabled in the
+ crash kernel when converting virtual addresses to physical addresses.
  
- Device files
-+============
+-====
+ ia64
+ ====
  
-   Each port of each InfiniBand device has a "umad" device and an
-   "issm" device attached.  For example, a two-port HCA will have two
-@@ -8,12 +11,13 @@ Device files
-   device of each type (for switch port 0).
+@@ -366,7 +365,6 @@ PGTABLE_3|PGTABLE_4
+ User-space tools need to know whether the crash kernel was in 3-level or
+ 4-level paging mode. Used to distinguish the page table.
  
- Creating MAD agents
-+===================
+-=====
+ ARM64
+ =====
  
-   A MAD agent can be created by filling in a struct ib_user_mad_reg_req
-   and then calling the IB_USER_MAD_REGISTER_AGENT ioctl on a file
-   descriptor for the appropriate device file.  If the registration
-   request succeeds, a 32-bit id will be returned in the structure.
--  For example:
-+  For example::
+@@ -395,9 +393,8 @@ KERNELOFFSET
+ The kernel randomization offset. Used to compute the page offset. If
+ KASLR is disabled, this value is zero.
  
- 	struct ib_user_mad_reg_req req = { /* ... */ };
- 	ret = ioctl(fd, IB_USER_MAD_REGISTER_AGENT, (char *) &req);
-@@ -26,12 +30,14 @@ Creating MAD agents
-   ioctl.  Also, all agents registered through a file descriptor will
-   be unregistered when the descriptor is closed.
+-====
+ arm
+-====
++===
  
--  2014 -- a new registration ioctl is now provided which allows additional
-+  2014
-+       a new registration ioctl is now provided which allows additional
-        fields to be provided during registration.
-        Users of this registration call are implicitly setting the use of
-        pkey_index (see below).
+ ARM_LPAE
+ --------
+@@ -405,12 +402,11 @@ ARM_LPAE
+ It indicates whether the crash kernel supports large physical address
+ extensions. Used to translate virtual to physical addresses.
  
- Receiving MADs
-+==============
+-====
+ s390
+ ====
  
-   MADs are received using read().  The receive side now supports
-   RMPP. The buffer passed to read() must be at least one
-@@ -41,7 +47,8 @@ Receiving MADs
-   MAD (RMPP), the errno is set to ENOSPC and the length of the
-   buffer needed is set in mad.length.
+ lowcore_ptr
+-----------
++-----------
  
--  Example for normal MAD (non RMPP) reads:
-+  Example for normal MAD (non RMPP) reads::
-+
- 	struct ib_user_mad *mad;
- 	mad = malloc(sizeof *mad + 256);
- 	ret = read(fd, mad, sizeof *mad + 256);
-@@ -50,7 +57,8 @@ Receiving MADs
- 		free(mad);
- 	}
+ An array with a pointer to the lowcore of every CPU. Used to print the
+ psw and all registers information.
+@@ -425,7 +421,6 @@ Used to get the vmalloc_start address from the high_memory symbol.
  
--  Example for RMPP reads:
-+  Example for RMPP reads::
-+
- 	struct ib_user_mad *mad;
- 	mad = malloc(sizeof *mad + 256);
- 	ret = read(fd, mad, sizeof *mad + 256);
-@@ -76,11 +84,12 @@ Receiving MADs
-   poll()/select() may be used to wait until a MAD can be read.
+ The maximum number of CPUs.
  
- Sending MADs
-+============
+-=======
+ powerpc
+ =======
  
-   MADs are sent using write().  The agent ID for sending should be
-   filled into the id field of the MAD, the destination LID should be
-   filled into the lid field, and so on.  The send side does support
--  RMPP so arbitrary length MAD can be sent. For example:
-+  RMPP so arbitrary length MAD can be sent. For example::
+@@ -460,9 +455,8 @@ Page size definitions, i.e. 4k, 64k, or 16M.
  
- 	struct ib_user_mad *mad;
+ Used to make vtop translations.
  
-@@ -97,6 +106,7 @@ Sending MADs
- 		perror("write");
+-vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
+-(vmemmap_backing, virt_addr)
+-----------------------------------------------------------------
++vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|(vmemmap_backing, virt_addr)
++--------------------------------------------------------------------------------------------
  
- Transaction IDs
-+===============
+ The vmemmap virtual address space management does not have a traditional
+ page table to track which virtual struct pages are backed by a physical
+@@ -480,7 +474,6 @@ member.
  
-   Users of the umad devices can use the lower 32 bits of the
-   transaction ID field (that is, the least significant half of the
-@@ -105,6 +115,7 @@ Transaction IDs
-   the kernel and will be overwritten before a MAD is sent.
+ Used in vtop translations.
  
- P_Key Index Handling
-+====================
+-==
+ sh
+ ==
  
-   The old ib_umad interface did not allow setting the P_Key index for
-   MADs that are sent and did not provide a way for obtaining the P_Key
-@@ -119,6 +130,7 @@ P_Key Index Handling
-   default, and the IB_USER_MAD_ENABLE_PKEY ioctl will be removed.
+diff --git a/Documentation/powerpc/firmware-assisted-dump.txt b/Documentation/powerpc/firmware-assisted-dump.txt
+index 18c5feef2577..0c41d6d463f3 100644
+--- a/Documentation/powerpc/firmware-assisted-dump.txt
++++ b/Documentation/powerpc/firmware-assisted-dump.txt
+@@ -59,7 +59,7 @@ as follows:
+          the default calculated size. Use this option if default
+          boot memory size is not sufficient for second kernel to
+          boot successfully. For syntax of crashkernel= parameter,
+-         refer to Documentation/kdump/kdump.txt. If any offset is
++         refer to Documentation/kdump/kdump.rst. If any offset is
+          provided in crashkernel= parameter, it will be ignored
+          as fadump uses a predefined offset to reserve memory
+          for boot memory dump preservation in case of a crash.
+diff --git a/Documentation/translations/zh_CN/oops-tracing.txt b/Documentation/translations/zh_CN/oops-tracing.txt
+index 93fa061cf9e4..368ddd05b304 100644
+--- a/Documentation/translations/zh_CN/oops-tracing.txt
++++ b/Documentation/translations/zh_CN/oops-tracing.txt
+@@ -53,7 +53,7 @@ cat /proc/kmsg > file， 然而你必须介入中止传输， kmsg是一个“
+ （2）用串口终端启动（请参看Documentation/admin-guide/serial-console.rst），运行一个null
+ modem到另一台机器并用你喜欢的通讯工具获取输出。Minicom工作地很好。
  
- Setting IsSM Capability Bit
-+===========================
+-（3）使用Kdump（请参看Documentation/kdump/kdump.txt），
++（3）使用Kdump（请参看Documentation/kdump/kdump.rst），
+ 使用在Documentation/kdump/gdbmacros.txt中定义的dmesg gdb宏，从旧的内存中提取内核
+ 环形缓冲区。
  
-   To set the IsSM capability bit for a port, simply open the
-   corresponding issm device file.  If the IsSM bit is already set,
-@@ -129,25 +141,26 @@ Setting IsSM Capability Bit
-   the issm file.
+diff --git a/Documentation/watchdog/hpwdt.txt b/Documentation/watchdog/hpwdt.txt
+index 55df692c5595..aaa9e4b4bdcd 100644
+--- a/Documentation/watchdog/hpwdt.txt
++++ b/Documentation/watchdog/hpwdt.txt
+@@ -51,7 +51,7 @@ Last reviewed: 08/20/2018
+  and loop forever.  This is generally not what a watchdog user wants.
  
- /dev files
-+==========
+  For those wishing to learn more please see:
+-	Documentation/kdump/kdump.txt
++	Documentation/kdump/kdump.rst
+ 	Documentation/admin-guide/kernel-parameters.txt (panic=)
+ 	Your Linux Distribution specific documentation.
  
-   To create the appropriate character device files automatically with
--  udev, a rule like
-+  udev, a rule like::
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 204cbc6bf234..af58d31ee4e1 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -2006,7 +2006,7 @@ config CRASH_DUMP
+ 	  kdump/kexec. The crash dump kernel must be compiled to a
+ 	  memory address not used by the main kernel
  
-     KERNEL=="umad*", NAME="infiniband/%k"
-     KERNEL=="issm*", NAME="infiniband/%k"
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
  
--  can be used.  This will create device nodes named
-+  can be used.  This will create device nodes named::
+ config AUTO_ZRELADDR
+ 	bool "Auto calculation of the decompressed kernel image address"
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index c2afcea9b19b..ac33b4bd1624 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -996,7 +996,7 @@ config CRASH_DUMP
+ 	  reserved region and then later executed after a crash by
+ 	  kdump/kexec.
  
-     /dev/infiniband/umad0
-     /dev/infiniband/issm0
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
  
-   for the first port, and so on.  The InfiniBand device and port
--  associated with these devices can be determined from the files
-+  associated with these devices can be determined from the files::
+ config XEN_DOM0
+ 	def_bool y
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index b77f512bb176..ce1a28654507 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -623,7 +623,7 @@ config CRASH_DUMP
+ 	  to a memory address not used by the main kernel using
+ 	  PHYSICAL_START.
  
-     /sys/class/infiniband_mad/umad0/ibdev
-     /sys/class/infiniband_mad/umad0/port
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
  
--  and
-+  and::
+ config KEXEC_JUMP
+ 	bool "kexec jump (EXPERIMENTAL)"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index da5e0c34c239..2057254c6c8a 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2037,7 +2037,7 @@ config CRASH_DUMP
+ 	  to a memory address not used by the main kernel or BIOS using
+ 	  PHYSICAL_START, or it must be built as a relocatable image
+ 	  (CONFIG_RELOCATABLE=y).
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
  
-     /sys/class/infiniband_mad/issm0/ibdev
-     /sys/class/infiniband_mad/issm0/port
-diff --git a/Documentation/infiniband/user_verbs.txt b/Documentation/infiniband/user_verbs.rst
-similarity index 93%
-rename from Documentation/infiniband/user_verbs.txt
-rename to Documentation/infiniband/user_verbs.rst
-index 47ebf2f80b2b..8ddc4b1cfef2 100644
---- a/Documentation/infiniband/user_verbs.txt
-+++ b/Documentation/infiniband/user_verbs.rst
-@@ -1,4 +1,6 @@
--USERSPACE VERBS ACCESS
-+======================
-+Userspace verbs access
-+======================
+ config KEXEC_JUMP
+ 	bool "kexec jump"
+@@ -2074,7 +2074,7 @@ config PHYSICAL_START
+ 	  the reserved region.  In other words, it can be set based on
+ 	  the "X" value as specified in the "crashkernel=YM@XM"
+ 	  command line boot parameter passed to the panic-ed
+-	  kernel. Please take a look at Documentation/kdump/kdump.txt
++	  kernel. Please take a look at Documentation/kdump/kdump.rst
+ 	  for more details about crash dumps.
  
-   The ib_uverbs module, built by enabling CONFIG_INFINIBAND_USER_VERBS,
-   enables direct userspace access to IB hardware via "verbs," as
-@@ -13,6 +15,7 @@ USERSPACE VERBS ACCESS
-   libmthca userspace driver be installed.
- 
- User-kernel communication
-+=========================
- 
-   Userspace communicates with the kernel for slow path, resource
-   management operations via the /dev/infiniband/uverbsN character
-@@ -28,6 +31,7 @@ User-kernel communication
-   system call.
- 
- Resource management
-+===================
- 
-   Since creation and destruction of all IB resources is done by
-   commands passed through a file descriptor, the kernel can keep track
-@@ -41,6 +45,7 @@ Resource management
-   prevent one process from touching another process's resources.
- 
- Memory pinning
-+==============
- 
-   Direct userspace I/O requires that memory regions that are potential
-   I/O targets be kept resident at the same physical address.  The
-@@ -54,13 +59,14 @@ Memory pinning
-   number of pages pinned by a process.
- 
- /dev files
-+==========
- 
-   To create the appropriate character device files automatically with
--  udev, a rule like
-+  udev, a rule like::
- 
-     KERNEL=="uverbs*", NAME="infiniband/%k"
- 
--  can be used.  This will create device nodes named
-+  can be used.  This will create device nodes named::
- 
-     /dev/infiniband/uverbs0
- 
-diff --git a/drivers/infiniband/core/user_mad.c b/drivers/infiniband/core/user_mad.c
-index 671f07ba1fad..5ecd370e018b 100644
---- a/drivers/infiniband/core/user_mad.c
-+++ b/drivers/infiniband/core/user_mad.c
-@@ -744,7 +744,7 @@ static int ib_umad_reg_agent(struct ib_umad_file *file, void __user *arg,
- 				"process %s did not enable P_Key index support.\n",
- 				current->comm);
- 			dev_warn(&file->port->dev,
--				"   Documentation/infiniband/user_mad.txt has info on the new ABI.\n");
-+				"   Documentation/infiniband/user_mad.rst has info on the new ABI.\n");
- 		}
- 	}
- 
-diff --git a/drivers/infiniband/ulp/ipoib/Kconfig b/drivers/infiniband/ulp/ipoib/Kconfig
-index 4760ce465d89..7af68604af77 100644
---- a/drivers/infiniband/ulp/ipoib/Kconfig
-+++ b/drivers/infiniband/ulp/ipoib/Kconfig
-@@ -7,7 +7,7 @@ config INFINIBAND_IPOIB
- 	  transports IP packets over InfiniBand so you can use your IB
- 	  device as a fancy NIC.
- 
--	  See Documentation/infiniband/ipoib.txt for more information
-+	  See Documentation/infiniband/ipoib.rst for more information
- 
- config INFINIBAND_IPOIB_CM
- 	bool "IP-over-InfiniBand Connected Mode support"
+ 	  Usage of bzImage for capturing the crash dump is recommended as
 -- 
 2.21.0
 
