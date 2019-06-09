@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFCC3A74C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5113A7C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:53:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbfFIQsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47392 "EHLO mail.kernel.org"
+        id S1732345AbfFIQxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:53:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729778AbfFIQsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:20 -0400
+        id S1732333AbfFIQxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:53:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C23D7206DF;
-        Sun,  9 Jun 2019 16:48:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58DC8204EC;
+        Sun,  9 Jun 2019 16:53:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098900;
-        bh=djcMLwIfe/22lcru6QrlwMZ98x837/yYlP/0xOJ48ow=;
+        s=default; t=1560099182;
+        bh=op1gChslQGxNPa936LUqZEqpWuej5GsHZdQxDraDVkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFx7FCYaXpX8yydFEq97I06v1UytuhKwguHeb3cT99bDof7lG+gHUQxXUeuJVnRoZ
-         5gBUE4UwfaVoi/llt+HPUxCFUddbqjmZaE4j8j8NeRZk59sXLEUh5d9hYjYs8qPOZf
-         J7MmoiMfYtFQtH8v5G3PqraFKQ/+YyrTHeII0uzM=
+        b=zWfWQ4eMhjWLSEWUtqE13N30Z8F8+oZ8Z/ZCTEK0xkyDthClvEofe+dHyPGtnNPdn
+         PMOeVr6q/xZyq1n6rTksjBcM48wipe6prYfano6O4A4kVSN0lDcGxPr0XC+kyX+yma
+         nuGHR4UD5kfRXqeJNNa4V1+LGtuHwaHWoUUQKYLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Hancock <hancock@sedsystems.ca>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 4.19 29/51] i2c: xiic: Add max_read_len quirk
+        stable@vger.kernel.org,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH 4.9 40/83] tty: serial: msm_serial: Fix XON/XOFF
 Date:   Sun,  9 Jun 2019 18:42:10 +0200
-Message-Id: <20190609164128.917244197@linuxfoundation.org>
+Message-Id: <20190609164131.277962861@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Hancock <hancock@sedsystems.ca>
+From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 
-commit 49b809586730a77b57ce620b2f9689de765d790b upstream.
+commit 61c0e37950b88bad590056286c1d766b1f167f4e upstream.
 
-This driver does not support reading more than 255 bytes at once because
-the register for storing the number of bytes to read is only 8 bits. Add
-a max_read_len quirk to enforce this.
+When the tty layer requests the uart to throttle, the current code
+executing in msm_serial will trigger "Bad mode in Error Handler" and
+generate an invalid stack frame in pstore before rebooting (that is if
+pstore is indeed configured: otherwise the user shall just notice a
+reboot with no further information dumped to the console).
 
-This was found when using this driver with the SFP driver, which was
-previously reading all 256 bytes in the SFP EEPROM in one transaction.
-This caused a bunch of hard-to-debug errors in the xiic driver since the
-driver/logic was treating the number of bytes to read as zero.
-Rejecting transactions that aren't supported at least allows the problem
-to be diagnosed more easily.
+This patch replaces the PIO byte accessor with the word accessor
+already used in PIO mode.
 
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Reviewed-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+Fixes: 68252424a7c7 ("tty: serial: msm: Support big-endian CPUs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-xiic.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/serial/msm_serial.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-xiic.c
-+++ b/drivers/i2c/busses/i2c-xiic.c
-@@ -718,11 +718,16 @@ static const struct i2c_algorithm xiic_a
- 	.functionality = xiic_func,
- };
+--- a/drivers/tty/serial/msm_serial.c
++++ b/drivers/tty/serial/msm_serial.c
+@@ -868,6 +868,7 @@ static void msm_handle_tx(struct uart_po
+ 	struct circ_buf *xmit = &msm_port->uart.state->xmit;
+ 	struct msm_dma *dma = &msm_port->tx_dma;
+ 	unsigned int pio_count, dma_count, dma_min;
++	char buf[4] = { 0 };
+ 	void __iomem *tf;
+ 	int err = 0;
  
-+static const struct i2c_adapter_quirks xiic_quirks = {
-+	.max_read_len = 255,
-+};
+@@ -877,10 +878,12 @@ static void msm_handle_tx(struct uart_po
+ 		else
+ 			tf = port->membase + UART_TF;
+ 
++		buf[0] = port->x_char;
 +
- static const struct i2c_adapter xiic_adapter = {
- 	.owner = THIS_MODULE,
- 	.name = DRIVER_NAME,
- 	.class = I2C_CLASS_DEPRECATED,
- 	.algo = &xiic_algorithm,
-+	.quirks = &xiic_quirks,
- };
+ 		if (msm_port->is_uartdm)
+ 			msm_reset_dm_count(port, 1);
  
- 
+-		iowrite8_rep(tf, &port->x_char, 1);
++		iowrite32_rep(tf, buf, 1);
+ 		port->icount.tx++;
+ 		port->x_char = 0;
+ 		return;
 
 
