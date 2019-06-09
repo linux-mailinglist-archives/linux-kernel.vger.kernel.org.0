@@ -2,169 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 791153A661
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 16:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D103A665
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 16:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfFIObi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 10:31:38 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42814 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfFIObi (ORCPT
+        id S1728858AbfFIOhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 10:37:05 -0400
+Received: from webmail.newmedia-net.de ([185.84.6.166]:38267 "EHLO
+        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727514AbfFIOhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 10:31:38 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y13so4842908lfh.9
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 07:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YgVgjJRZpCz9nTLBwfFgFqqvq2EsxYLpfjzYfKQFnJ4=;
-        b=EqucCPXTtVHpMwCdI7LAxvowLp5hWcDsEi0LmmDP0/Tg5JdSC+jX2b4qg5fGYOpeAa
-         TlMjuC9nzjAn4g2NvmPQ6mhM56YfhtgQFd31zrd2+7j9KF8ZKAhgW2fox9lKi+t75hmn
-         d52jseicKOibzH2X/U5xUybKuWrB4xCw+Negyd7DtUDuT5jyQMNI1ZvjQ3YueTzzcZ6P
-         mUKlDMtLzaRvpi7gI3b+0qM2o4a7BJl0sCPGJd1tQVJwTff2XIy/+O888vvCe/7uZiJF
-         6GJbyqfV47jYV3e6t1Xkl0b9+88NHJbily2qMgf4xQav9vtriI1GwOmj75h7cZYiPobs
-         Rpag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YgVgjJRZpCz9nTLBwfFgFqqvq2EsxYLpfjzYfKQFnJ4=;
-        b=iFDeAn3/q8hqSeRiTnLL7jNWQEwYHdlQDcBronVgdOdhc2Az75ILAOGbRT8oqV+Qrv
-         OCBdFCRDfhctWAYrsTFnFRvYEEaaUeVPyaql7/pFPwntw8W81ATr3sbTWz8FUjc7dFnv
-         x+vkTJW6nn1dZnFjFvhtRdzPZZcSEji2f8VcNH34B67z4zFVcRlgKrL8NKy8pdlf9MIs
-         kQxGY+kyWVDpdBsPo4E5/aMF7AFHtxYJ5I1jRl20CeLtIUn44IlBS3kFCCsdvp0H5Dff
-         2g3v4rMKYU3IhcJ0ibIIdzpjyzWXy5rP6E11g+ywxZNAdTXP3BLUQNrUiEch0/ZFPloI
-         Rdug==
-X-Gm-Message-State: APjAAAXmHpoMaulpoiOW2wtCG4acvBt817gmlO5Ccb1tOcofEhJzT7Dy
-        YBbFoulBE/Q+acFEDQ8cuSae1dcmegs=
-X-Google-Smtp-Source: APXvYqyDJ0YYG87q+UXcO9Am1kPS6on/zrzIe7zNYQwBx1bx6kaIYrPPGTw8xhaSY2e3rT2oZh7HlQ==
-X-Received: by 2002:ac2:558a:: with SMTP id v10mr33038430lfg.41.1560090695584;
-        Sun, 09 Jun 2019 07:31:35 -0700 (PDT)
-Received: from esperanza ([176.120.239.149])
-        by smtp.gmail.com with ESMTPSA id i188sm1388832lji.4.2019.06.09.07.31.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Jun 2019 07:31:34 -0700 (PDT)
-Date:   Sun, 9 Jun 2019 17:31:32 +0300
-From:   Vladimir Davydov <vdavydov.dev@gmail.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v6 07/10] mm: synchronize access to kmem_cache dying flag
- using a spinlock
-Message-ID: <20190609143132.cv7b4w5caghuhi53@esperanza>
-References: <20190605024454.1393507-1-guro@fb.com>
- <20190605024454.1393507-8-guro@fb.com>
+        Sun, 9 Jun 2019 10:37:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=newmedia-net.de; s=mikd;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=2B/RIjGHUT/vsYG/v5Zt/3JaknSAy9TmyLhmt7XtUBg=;
+        b=A3KbMpqYfU3xcPjB0rJvhgtG6Cj9B2adg6gtwbH/1LQ/jWsNyAh3DaoJBEw6l+BPmfOCjr9eWLxXROyymbXFjPhW6FrD2rubaxFrn1BtgYP1WCOLmW4+NCaktC3H9P+VqXDnihypMN8hGJBZydjjVbNnJJEJ+ItA4Fgq2FX4FUY=;
+Subject: Re: [PATCH v3 1/2] mt76: mt7615: enable support for mesh
+To:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Cc:     Ryder Lee <ryder.lee@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+        Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
+        Yiwei Chung <yiwei.chung@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Chih-Min Chen <chih-min.Chen@mediatek.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <a1ff446dfc06e2443552e7ec2d754099aacce7df.1559541944.git.ryder.lee@mediatek.com>
+ <ade7ef01-8b06-ec7d-4caf-e581f4033819@newmedia-net.de>
+ <CAJ0CqmVBogQrqf4Gckr5gQ6tCrdZG=p60ZiC+-WW-yxt93+40Q@mail.gmail.com>
+From:   Sebastian Gottschall <s.gottschall@newmedia-net.de>
+Message-ID: <0eea6d21-1de2-abc3-93f4-70ed04dac3df@newmedia-net.de>
+Date:   Sun, 9 Jun 2019 16:36:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605024454.1393507-8-guro@fb.com>
+In-Reply-To: <CAJ0CqmVBogQrqf4Gckr5gQ6tCrdZG=p60ZiC+-WW-yxt93+40Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Received:  from [2003:c9:3f05:3a00:f095:7be4:6d09:fd49]
+        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.72)
+        (envelope-from <s.gottschall@newmedia-net.de>)
+        id 1hZywV-0005Wr-8f; Sun, 09 Jun 2019 16:37:07 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 07:44:51PM -0700, Roman Gushchin wrote:
-> Currently the memcg_params.dying flag and the corresponding
-> workqueue used for the asynchronous deactivation of kmem_caches
-> is synchronized using the slab_mutex.
-> 
-> It makes impossible to check this flag from the irq context,
-> which will be required in order to implement asynchronous release
-> of kmem_caches.
-> 
-> So let's switch over to the irq-save flavor of the spinlock-based
-> synchronization.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> ---
->  mm/slab_common.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 09b26673b63f..2914a8f0aa85 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -130,6 +130,7 @@ int __kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t nr,
->  #ifdef CONFIG_MEMCG_KMEM
->  
->  LIST_HEAD(slab_root_caches);
-> +static DEFINE_SPINLOCK(memcg_kmem_wq_lock);
->  
->  void slab_init_memcg_params(struct kmem_cache *s)
->  {
-> @@ -629,6 +630,7 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
->  	struct memcg_cache_array *arr;
->  	struct kmem_cache *s = NULL;
->  	char *cache_name;
-> +	bool dying;
->  	int idx;
->  
->  	get_online_cpus();
-> @@ -640,7 +642,13 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
->  	 * The memory cgroup could have been offlined while the cache
->  	 * creation work was pending.
->  	 */
-> -	if (memcg->kmem_state != KMEM_ONLINE || root_cache->memcg_params.dying)
-> +	if (memcg->kmem_state != KMEM_ONLINE)
-> +		goto out_unlock;
-> +
-> +	spin_lock_irq(&memcg_kmem_wq_lock);
-> +	dying = root_cache->memcg_params.dying;
-> +	spin_unlock_irq(&memcg_kmem_wq_lock);
-> +	if (dying)
->  		goto out_unlock;
+by the way. this big fat kernel warning exists in all operation modes 
+unless anything else but aes-128 ccmp is used. since the chipset is 
+capable of doing gcmp etc. as well
+it would be nice if this issue can be fixed. otherwise encryption 
+support can be defined as "broken" for mt7615
 
-I do understand why we need to sync setting dying flag for a kmem cache
-about to be destroyed in flush_memcg_workqueue vs checking the flag in
-kmemcg_cache_deactivate: this is needed so that we don't schedule a new
-deactivation work after we flush RCU/workqueue. However, I don't think
-it's necessary to check the dying flag here, in memcg_create_kmem_cache:
-we can't schedule a new cache creation work after kmem_cache_destroy has
-started, because one mustn't allocate from a dead kmem cache; since we
-flush the queue before getting to actual destruction, no cache creation
-work can be pending. Yeah, it might happen that a cache creation work
-starts execution while flush_memcg_workqueue is in progress, but I don't
-see any point in optimizing this case - after all, cache destruction is
-a very cold path. Since checking the flag in memcg_create_kmem_cache
-raises question, I suggest to simply drop this check.
-
-Anyway, it would be nice to see some comment in the code explaining why
-we check dying flag under a spin lock in kmemcg_cache_deactivate.
-
->  
->  	idx = memcg_cache_id(memcg);
-> @@ -735,14 +743,17 @@ static void kmemcg_cache_deactivate(struct kmem_cache *s)
->  
->  	__kmemcg_cache_deactivate(s);
->  
-> +	spin_lock_irq(&memcg_kmem_wq_lock);
->  	if (s->memcg_params.root_cache->memcg_params.dying)
-> -		return;
-> +		goto unlock;
->  
->  	/* pin memcg so that @s doesn't get destroyed in the middle */
->  	css_get(&s->memcg_params.memcg->css);
->  
->  	s->memcg_params.work_fn = __kmemcg_cache_deactivate_after_rcu;
->  	call_rcu(&s->memcg_params.rcu_head, kmemcg_rcufn);
-> +unlock:
-> +	spin_unlock_irq(&memcg_kmem_wq_lock);
->  }
->  
->  void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
-> @@ -852,9 +863,9 @@ static int shutdown_memcg_caches(struct kmem_cache *s)
->  
->  static void flush_memcg_workqueue(struct kmem_cache *s)
->  {
-> -	mutex_lock(&slab_mutex);
-> +	spin_lock_irq(&memcg_kmem_wq_lock);
->  	s->memcg_params.dying = true;
-> -	mutex_unlock(&slab_mutex);
-> +	spin_unlock_irq(&memcg_kmem_wq_lock);
->  
->  	/*
->  	 * SLAB and SLUB deactivate the kmem_caches through call_rcu. Make
+Am 06.06.2019 um 18:19 schrieb Lorenzo Bianconi:
+>> i tested your patch against a qca 9984 chipset using SAE and without
+>> encryption. both did not work. the devices are connecting, but no data
+>> connection is possible
+> Hi Sebastian,
+>
+> I tested Ryder's patch using mt76x2 as mesh peer and it works fine for me.
+> Could you please provide some more info?
+>
+> Regards,
+> Lorenzo
+>
+>>
+>> Sebastian
+>>
+>> Am 03.06.2019 um 08:08 schrieb Ryder Lee:
+>>> Enable NL80211_IFTYPE_MESH_POINT and update its path.
+>>>
+>>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+>>> ---
+>>> Changes since v3 - fix a wrong expression
+>>> Changes since v2 - remove unused definitions
+>>> ---
+>>>    drivers/net/wireless/mediatek/mt76/mt7615/init.c | 6 ++++++
+>>>    drivers/net/wireless/mediatek/mt76/mt7615/main.c | 1 +
+>>>    drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  | 4 +++-
+>>>    drivers/net/wireless/mediatek/mt76/mt7615/mcu.h  | 6 ------
+>>>    4 files changed, 10 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+>>> index 59f604f3161f..f860af6a42da 100644
+>>> --- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+>>> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+>>> @@ -133,6 +133,9 @@ static const struct ieee80211_iface_limit if_limits[] = {
+>>>        {
+>>>                .max = MT7615_MAX_INTERFACES,
+>>>                .types = BIT(NL80211_IFTYPE_AP) |
+>>> +#ifdef CONFIG_MAC80211_MESH
+>>> +                      BIT(NL80211_IFTYPE_MESH_POINT) |
+>>> +#endif
+>>>                         BIT(NL80211_IFTYPE_STATION)
+>>>        }
+>>>    };
+>>> @@ -195,6 +198,9 @@ int mt7615_register_device(struct mt7615_dev *dev)
+>>>        dev->mt76.antenna_mask = 0xf;
+>>>
+>>>        wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
+>>> +#ifdef CONFIG_MAC80211_MESH
+>>> +                              BIT(NL80211_IFTYPE_MESH_POINT) |
+>>> +#endif
+>>>                                 BIT(NL80211_IFTYPE_AP);
+>>>
+>>>        ret = mt76_register_device(&dev->mt76, true, mt7615_rates,
+>>> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+>>> index b0bb7cc12385..585e67fa2728 100644
+>>> --- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+>>> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+>>> @@ -37,6 +37,7 @@ static int get_omac_idx(enum nl80211_iftype type, u32 mask)
+>>>
+>>>        switch (type) {
+>>>        case NL80211_IFTYPE_AP:
+>>> +     case NL80211_IFTYPE_MESH_POINT:
+>>>                /* ap use hw bssid 0 and ext bssid */
+>>>                if (~mask & BIT(HW_BSSID_0))
+>>>                        return HW_BSSID_0;
+>>> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+>>> index 43f70195244c..e82297048449 100644
+>>> --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+>>> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+>>> @@ -754,6 +754,7 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
+>>>
+>>>        switch (vif->type) {
+>>>        case NL80211_IFTYPE_AP:
+>>> +     case NL80211_IFTYPE_MESH_POINT:
+>>>                tx_wlan_idx = mvif->sta.wcid.idx;
+>>>                conn_type = CONNECTION_INFRA_AP;
+>>>                break;
+>>> @@ -968,7 +969,7 @@ int mt7615_mcu_add_wtbl(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+>>>                .rx_wtbl = {
+>>>                        .tag = cpu_to_le16(WTBL_RX),
+>>>                        .len = cpu_to_le16(sizeof(struct wtbl_rx)),
+>>> -                     .rca1 = vif->type != NL80211_IFTYPE_AP,
+>>> +                     .rca1 = vif->type == NL80211_IFTYPE_STATION,
+>>>                        .rca2 = 1,
+>>>                        .rv = 1,
+>>>                },
+>>> @@ -1042,6 +1043,7 @@ static void sta_rec_convert_vif_type(enum nl80211_iftype type, u32 *conn_type)
+>>>    {
+>>>        switch (type) {
+>>>        case NL80211_IFTYPE_AP:
+>>> +     case NL80211_IFTYPE_MESH_POINT:
+>>>                if (conn_type)
+>>>                        *conn_type = CONNECTION_INFRA_STA;
+>>>                break;
+>>> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+>>> index e96efb13fa4d..0915cb735699 100644
+>>> --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+>>> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+>>> @@ -105,25 +105,19 @@ enum {
+>>>    #define STA_TYPE_STA                BIT(0)
+>>>    #define STA_TYPE_AP         BIT(1)
+>>>    #define STA_TYPE_ADHOC              BIT(2)
+>>> -#define STA_TYPE_TDLS                BIT(3)
+>>>    #define STA_TYPE_WDS                BIT(4)
+>>>    #define STA_TYPE_BC         BIT(5)
+>>>
+>>>    #define NETWORK_INFRA               BIT(16)
+>>>    #define NETWORK_P2P         BIT(17)
+>>>    #define NETWORK_IBSS                BIT(18)
+>>> -#define NETWORK_MESH         BIT(19)
+>>> -#define NETWORK_BOW          BIT(20)
+>>>    #define NETWORK_WDS         BIT(21)
+>>>
+>>>    #define CONNECTION_INFRA_STA        (STA_TYPE_STA | NETWORK_INFRA)
+>>>    #define CONNECTION_INFRA_AP (STA_TYPE_AP | NETWORK_INFRA)
+>>>    #define CONNECTION_P2P_GC   (STA_TYPE_STA | NETWORK_P2P)
+>>>    #define CONNECTION_P2P_GO   (STA_TYPE_AP | NETWORK_P2P)
+>>> -#define CONNECTION_MESH_STA  (STA_TYPE_STA | NETWORK_MESH)
+>>> -#define CONNECTION_MESH_AP   (STA_TYPE_AP | NETWORK_MESH)
+>>>    #define CONNECTION_IBSS_ADHOC       (STA_TYPE_ADHOC | NETWORK_IBSS)
+>>> -#define CONNECTION_TDLS              (STA_TYPE_STA | NETWORK_INFRA | STA_TYPE_TDLS)
+>>>    #define CONNECTION_WDS              (STA_TYPE_WDS | NETWORK_WDS)
+>>>    #define CONNECTION_INFRA_BC (STA_TYPE_BC | NETWORK_INFRA)
+>>>
