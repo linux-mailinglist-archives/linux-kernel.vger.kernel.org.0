@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655893AA31
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D62C53A761
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387424AbfFIRQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:16:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54758 "EHLO mail.kernel.org"
+        id S1730454AbfFIQtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732404AbfFIQx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:53:28 -0400
+        id S1731380AbfFIQtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE43A206DF;
-        Sun,  9 Jun 2019 16:53:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 499A2206DF;
+        Sun,  9 Jun 2019 16:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099208;
-        bh=4dRqwOCNbDrUOH84RUkkjW9jPHaTGW3Y2CIITnQ3V0Y=;
+        s=default; t=1560098942;
+        bh=lVvONsK8aHnJphzCHw+ySLVGodwHhULxSw4z2hudIUY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S806TS6Kqe8r13/Vx+1j42apCkm/UB4Qcs7g9c/QxhUGUbRUFKF9k9WNnHuphgf19
-         7oyyLDOFV4SBpdHrg4SI2AW8EE8iGx/zo6lRnBvxSbISvbzKL9b1p8R/2CO4nFcEoT
-         ZbPBUE22H+DFeREwnsz2UHNTuyI/pEektOFjUDr8=
+        b=mxQ1xocwLoLbO2JD+fNnTTpBy86/R8yXOW3eHlCk+Un8P9FNK+3qQBEF3MtbTLtj5
+         InUwKWqdF/Uw2NxBt2Pig/+SxP0V1YdTPUx8J4H/yO6pajyaf1Djhg//Hh/U4vRwen
+         dQ7B5XBDambc4IZZgArgDGjjHxlE22BRHYm+xi18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Rawat <drawat@vmware.com>
-Subject: [PATCH 4.9 48/83] drm/vmwgfx: Dont send drm sysfs hotplug events on initial master set
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Subject: [PATCH 4.19 37/51] drm/gma500/cdv: Check vbt config bits when detecting lvds panels
 Date:   Sun,  9 Jun 2019 18:42:18 +0200
-Message-Id: <20190609164132.030491942@linuxfoundation.org>
+Message-Id: <20190609164129.590532035@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
 
-commit 63cb44441826e842b7285575b96db631cc9f2505 upstream.
+commit 7c420636860a719049fae9403e2c87804f53bdde upstream.
 
-This may confuse user-space clients like plymouth that opens a drm
-file descriptor as a result of a hotplug event and then generates a
-new event...
+Some machines have an lvds child device in vbt even though a panel is
+not attached. To make detection more reliable we now also check the lvds
+config bits available in the vbt.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 5ea1734827bb ("drm/vmwgfx: Send a hotplug event at master_set")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1665766
+Cc: stable@vger.kernel.org
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190416114607.1072-1-patrik.r.jakobsson@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c |    3 +++
+ drivers/gpu/drm/gma500/intel_bios.c     |    3 +++
+ drivers/gpu/drm/gma500/psb_drv.h        |    1 +
+ 3 files changed, 7 insertions(+)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -1245,7 +1245,13 @@ static int vmw_master_set(struct drm_dev
- 	}
+--- a/drivers/gpu/drm/gma500/cdv_intel_lvds.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
+@@ -594,6 +594,9 @@ void cdv_intel_lvds_init(struct drm_devi
+ 	int pipe;
+ 	u8 pin;
  
- 	dev_priv->active_master = vmaster;
--	drm_sysfs_hotplug_event(dev);
++	if (!dev_priv->lvds_enabled_in_vbt)
++		return;
 +
-+	/*
-+	 * Inform a new master that the layout may have changed while
-+	 * it was gone.
-+	 */
-+	if (!from_open)
-+		drm_sysfs_hotplug_event(dev);
+ 	pin = GMBUS_PORT_PANEL;
+ 	if (!lvds_is_present_in_vbt(dev, &pin)) {
+ 		DRM_DEBUG_KMS("LVDS is not present in VBT\n");
+--- a/drivers/gpu/drm/gma500/intel_bios.c
++++ b/drivers/gpu/drm/gma500/intel_bios.c
+@@ -436,6 +436,9 @@ parse_driver_features(struct drm_psb_pri
+ 	if (driver->lvds_config == BDB_DRIVER_FEATURE_EDP)
+ 		dev_priv->edp.support = 1;
  
- 	return 0;
- }
++	dev_priv->lvds_enabled_in_vbt = driver->lvds_config != 0;
++	DRM_DEBUG_KMS("LVDS VBT config bits: 0x%x\n", driver->lvds_config);
++
+ 	/* This bit means to use 96Mhz for DPLL_A or not */
+ 	if (driver->primary_lfp_id)
+ 		dev_priv->dplla_96mhz = true;
+--- a/drivers/gpu/drm/gma500/psb_drv.h
++++ b/drivers/gpu/drm/gma500/psb_drv.h
+@@ -538,6 +538,7 @@ struct drm_psb_private {
+ 	int lvds_ssc_freq;
+ 	bool is_lvds_on;
+ 	bool is_mipi_on;
++	bool lvds_enabled_in_vbt;
+ 	u32 mipi_ctrl_display;
+ 
+ 	unsigned int core_freq;
 
 
