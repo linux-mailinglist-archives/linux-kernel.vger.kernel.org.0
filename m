@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A04843A8BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85AF3AAB8
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388498AbfFIRDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42266 "EHLO mail.kernel.org"
+        id S1730201AbfFIQp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:45:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388485AbfFIRDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:46 -0400
+        id S1730153AbfFIQpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:45:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C43E8206C3;
-        Sun,  9 Jun 2019 17:03:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4A2F2083D;
+        Sun,  9 Jun 2019 16:45:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099826;
-        bh=9LJBPhhgCXn4j8CTWEVyTQ6fo+0Of7f5Yrs6ApXe3N8=;
+        s=default; t=1560098755;
+        bh=Mjf7Rt6iqYHloLb1/9Qpabwbah0SAIVcdVrP/WMBHPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gYksygU4cIaPOPZy+JFlFw/ciy6iVfsA2rFsbZ8GQKNa3qSSDCgyNKoJZ/3fzNSpx
-         n6GxerVskqBKXDbxGdX5JlmKXiNN/Q/Jmipzetr0oora4BPIVLXCKKPr+o8gJKLF3T
-         seXxkeCj2cOoCQ+QPoy0HQdkY4Z3530/8rF2tMBw=
+        b=khT2CwfpxnTOiSgnwt/EK28J4NVrKY1QKQdFhqZW98vf2xS79vrppnOG752oD45T6
+         UqOZD4CeNABqmV51SveXrLlzhjtwCCYTIO1dc5z1xJyiEOAbctoOSTz7VIQlRCy8L1
+         J+rkwHsJSZ5NyuxJMc5vPBjmBcy7NgilcG6OAimc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 178/241] spi: Fix zero length xfer bug
-Date:   Sun,  9 Jun 2019 18:42:00 +0200
-Message-Id: <20190609164152.975610585@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Helen Koike <helen.koike@collabora.com>
+Subject: [PATCH 5.1 50/70] drm/vc4: fix fb references in async update
+Date:   Sun,  9 Jun 2019 18:42:01 +0200
+Message-Id: <20190609164131.618666447@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5442dcaa0d90fc376bdfc179a018931a8f43dea4 ]
+From: Helen Koike <helen.koike@collabora.com>
 
-This fixes a bug for messages containing both zero length and
-unidirectional xfers.
+commit c16b85559dcfb5a348cc085a7b4c75ed49b05e2c upstream.
 
-The function spi_map_msg will allocate dummy tx and/or rx buffers
-for use with unidirectional transfers when the hardware can only do
-a bidirectional transfer.  That dummy buffer will be used in place
-of a NULL buffer even when the xfer length is 0.
+Async update callbacks are expected to set the old_fb in the new_state
+so prepare/cleanup framebuffers are balanced.
 
-Then in the function __spi_map_msg, if he hardware can dma,
-the zero length xfer will have spi_map_buf called on the dummy
-buffer.
+Calling drm_atomic_set_fb_for_plane() (which gets a reference of the new
+fb and put the old fb) is not required, as it's taken care by
+drm_mode_cursor_universal() when calling drm_atomic_helper_update_plane().
 
-Eventually, __sg_alloc_table is called and returns -EINVAL
-because nents == 0.
+Cc: <stable@vger.kernel.org> # v4.19+
+Fixes: 539c320bfa97 ("drm/vc4: update cursors asynchronously through atomic")
+Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190603165610.24614-5-helen.koike@collabora.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This fix prevents the error by not using the dummy buffer when
-the xfer length is zero.
-
-Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/vc4/vc4_plane.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 04fd651f9e3e3..c132c676df3a6 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -903,6 +903,8 @@ static int spi_map_msg(struct spi_master *master, struct spi_message *msg)
- 		if (max_tx || max_rx) {
- 			list_for_each_entry(xfer, &msg->transfers,
- 					    transfer_list) {
-+				if (!xfer->len)
-+					continue;
- 				if (!xfer->tx_buf)
- 					xfer->tx_buf = master->dummy_tx;
- 				if (!xfer->rx_buf)
--- 
-2.20.1
-
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -968,7 +968,7 @@ static void vc4_plane_atomic_async_updat
+ {
+ 	struct vc4_plane_state *vc4_state, *new_vc4_state;
+ 
+-	drm_atomic_set_fb_for_plane(plane->state, state->fb);
++	swap(plane->state->fb, state->fb);
+ 	plane->state->crtc_x = state->crtc_x;
+ 	plane->state->crtc_y = state->crtc_y;
+ 	plane->state->crtc_w = state->crtc_w;
 
 
