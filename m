@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C66713A30E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44AF23A342
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbfFIC1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 22:27:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55658 "EHLO
+        id S1728748AbfFIC3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 22:29:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55674 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727929AbfFIC1d (ORCPT
+        with ESMTP id S1727982AbfFIC1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 8 Jun 2019 22:27:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,28 +18,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ek1YxZXqpgW8Xkg9VWvB5QFV11VlpBzdQZNl/oIX+Jg=; b=gpvQ1kevvOeZ2zA4DOoPyXzyaD
-        B54Gm6Y5ILc+AX7uWrosU2qvC0LKQLbXyKzk+D+Y8705eVD6autmgxwcKHC0+xwxs2ohhMqKTzk7h
-        ojkI7pGkZmWvYJ8GBvbFqxuEccn68NcN5+xPn9wFJRwlAxhndrRnzYKjXAbZ2JF+wGg4vKhYy+Ax+
-        N4JFj/zUiUHYElYcdQNrKirLycJ27vxW9eNlBVRluny9eW9FnsggUJlDQTIxSXDPU/Pdfciq7oc7r
-        AplKCJWY4JBGyybo2mWnQAgZGOfurFz92odD6qIF1vNaRLfJH+/IhgnuAkvDSED2GmhdZohkY9ng3
-        L3caq9DQ==;
+        bh=YvaWc7/jIKu+tp7QGKqga7yKT74/WnMkBzkmsTWeFfs=; b=TfO4n5+Yw7gpcO0GqJP2nbiL+8
+        CFszIf4pGyYBI/86jdAK81WXmFf1UgReMW7RJ5DcL2RMCEomhz5bgY9/5Q29PoJrgrHsAds0rckd/
+        YbXztYZQveklC/G3jllL8+j3cC2c1Sz4PfASLOAKosi/NjyAPBTIf2kHTiWXZTo67lhKCDG0aJWd2
+        2lG+2ntlUsu5FQ8HjmAhdS90LS/L+l0yTYmBuRrELPz5O6ZM5LvpAA1gbY8Z2/YutMKspV8Dvw4+E
+        dQr6Wl6WpINAfsLmfLDD46SDWBS0fsSgTM/aof7MzRpwT40dzpqRsZ2MrtNTtzkdRccyw37BNhHLA
+        FnSYxy7g==;
 Received: from 179.176.115.133.dynamic.adsl.gvt.net.br ([179.176.115.133] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZnYS-0001n0-Dj; Sun, 09 Jun 2019 02:27:32 +0000
+        id 1hZnYS-0001n1-FB; Sun, 09 Jun 2019 02:27:32 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hZnYL-0000Jx-Eo; Sat, 08 Jun 2019 23:27:25 -0300
+        id 1hZnYL-0000K2-Fa; Sat, 08 Jun 2019 23:27:25 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH v3 23/33] docs: ptp.txt: convert to ReST and move to driver-api
-Date:   Sat,  8 Jun 2019 23:27:13 -0300
-Message-Id: <1736539355fdee1effe3b332cf3d93124394672b.1560045490.git.mchehab+samsung@kernel.org>
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH v3 24/33] docs: riscv: convert docs to ReST and rename to *.rst
+Date:   Sat,  8 Jun 2019 23:27:14 -0300
+Message-Id: <55623342910f7ef470a3c49a3d42cfb23fb12e76.1560045490.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560045490.git.mchehab+samsung@kernel.org>
 References: <cover.1560045490.git.mchehab+samsung@kernel.org>
@@ -50,123 +51,223 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The conversion is trivial: just adjust title markups.
+The conversion here is trivial:
+ - Adjust the document title's markup
+ - Do some whitespace alignment;
+ - mark literal blocks;
+ - Use ReST way to markup indented lists.
 
-In order to avoid conflicts, let's add an :orphan: tag
-to it, to be removed when this file gets added to the
-driver-api book.
+At its new index.rst, let's add a :orphan: while this is not linked to
+the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{ptp/ptp.txt => driver-api/ptp.rst}       | 26 +++++++++++++------
- Documentation/networking/timestamping.txt     |  2 +-
- MAINTAINERS                                   |  2 +-
- 3 files changed, 20 insertions(+), 10 deletions(-)
- rename Documentation/{ptp/ptp.txt => driver-api/ptp.rst} (88%)
+ Documentation/riscv/index.rst            | 17 ++++
+ Documentation/riscv/{pmu.txt => pmu.rst} | 98 +++++++++++++-----------
+ 2 files changed, 69 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/riscv/index.rst
+ rename Documentation/riscv/{pmu.txt => pmu.rst} (77%)
 
-diff --git a/Documentation/ptp/ptp.txt b/Documentation/driver-api/ptp.rst
-similarity index 88%
-rename from Documentation/ptp/ptp.txt
-rename to Documentation/driver-api/ptp.rst
-index 11e904ee073f..b6e65d66d37a 100644
---- a/Documentation/ptp/ptp.txt
-+++ b/Documentation/driver-api/ptp.rst
-@@ -1,5 +1,8 @@
+diff --git a/Documentation/riscv/index.rst b/Documentation/riscv/index.rst
+new file mode 100644
+index 000000000000..c4b906d9b5a7
+--- /dev/null
++++ b/Documentation/riscv/index.rst
+@@ -0,0 +1,17 @@
 +:orphan:
- 
--* PTP hardware clock infrastructure for Linux
-+===========================================
-+PTP hardware clock infrastructure for Linux
-+===========================================
- 
-   This patch set introduces support for IEEE 1588 PTP clocks in
-   Linux. Together with the SO_TIMESTAMPING socket options, this
-@@ -22,7 +25,8 @@
-     - Period output signals configurable from user space
-     - Synchronization of the Linux system time via the PPS subsystem
- 
--** PTP hardware clock kernel API
-+PTP hardware clock kernel API
-+=============================
- 
-    A PTP clock driver registers itself with the class driver. The
-    class driver handles all of the dealings with user space. The
-@@ -36,7 +40,8 @@
-    development, it can be useful to have more than one clock in a
-    single system, in order to allow performance comparisons.
- 
--** PTP hardware clock user space API
-+PTP hardware clock user space API
-+=================================
- 
-    The class driver also creates a character device for each
-    registered clock. User space can use an open file descriptor from
-@@ -49,7 +54,8 @@
-    ancillary clock features. User space can receive time stamped
-    events via blocking read() and poll().
- 
--** Writing clock drivers
-+Writing clock drivers
-+=====================
- 
-    Clock drivers include include/linux/ptp_clock_kernel.h and register
-    themselves by presenting a 'struct ptp_clock_info' to the
-@@ -66,14 +72,17 @@
-    class driver, since the lock may also be needed by the clock
-    driver's interrupt service routine.
- 
--** Supported hardware
-+Supported hardware
-+==================
 +
-+   * Freescale eTSEC gianfar
- 
--   + Freescale eTSEC gianfar
-      - 2 Time stamp external triggers, programmable polarity (opt. interrupt)
-      - 2 Alarm registers (optional interrupt)
-      - 3 Periodic signals (optional interrupt)
- 
--   + National DP83640
-+   * National DP83640
++===================
++RISC-V architecture
++===================
 +
-      - 6 GPIOs programmable as inputs or outputs
-      - 6 GPIOs with dedicated functions (LED/JTAG/clock) can also be
-        used as general inputs or outputs
-@@ -81,6 +90,7 @@
-      - GPIO outputs can produce periodic signals
-      - 1 interrupt pin
- 
--   + Intel IXP465
-+   * Intel IXP465
++.. toctree::
++    :maxdepth: 1
 +
-      - Auxiliary Slave/Master Mode Snapshot (optional interrupt)
-      - Target Time (optional interrupt)
-diff --git a/Documentation/networking/timestamping.txt b/Documentation/networking/timestamping.txt
-index bbdaf8990031..8dd6333c3270 100644
---- a/Documentation/networking/timestamping.txt
-+++ b/Documentation/networking/timestamping.txt
-@@ -368,7 +368,7 @@ ts[1] used to hold hardware timestamps converted to system time.
- Instead, expose the hardware clock device on the NIC directly as
- a HW PTP clock source, to allow time conversion in userspace and
- optionally synchronize system time with a userspace PTP stack such
--as linuxptp. For the PTP clock API, see Documentation/ptp/ptp.txt.
-+as linuxptp. For the PTP clock API, see Documentation/driver-api/ptp.rst.
++    pmu
++
++.. only::  subproject and html
++
++   Indices
++   =======
++
++   * :ref:`genindex`
+diff --git a/Documentation/riscv/pmu.txt b/Documentation/riscv/pmu.rst
+similarity index 77%
+rename from Documentation/riscv/pmu.txt
+rename to Documentation/riscv/pmu.rst
+index b29f03a6d82f..acb216b99c26 100644
+--- a/Documentation/riscv/pmu.txt
++++ b/Documentation/riscv/pmu.rst
+@@ -1,5 +1,7 @@
++===================================
+ Supporting PMUs on RISC-V platforms
+-==========================================
++===================================
++
+ Alan Kao <alankao@andestech.com>, Mar 2018
  
- Note that if the SO_TIMESTAMP or SO_TIMESTAMPNS option is enabled
- together with SO_TIMESTAMPING using SOF_TIMESTAMPING_SOFTWARE, a false
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b982622ea7ee..72d1e5da0779 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12795,7 +12795,7 @@ L:	netdev@vger.kernel.org
- S:	Maintained
- W:	http://linuxptp.sourceforge.net/
- F:	Documentation/ABI/testing/sysfs-ptp
--F:	Documentation/ptp/*
-+F:	Documentation/driver-api/ptp.rst
- F:	drivers/net/phy/dp83640*
- F:	drivers/ptp/*
- F:	include/linux/ptp_cl*
+ Introduction
+@@ -77,13 +79,13 @@ Note that some features can be done in this stage as well:
+ (2) privilege level setting (user space only, kernel space only, both);
+ (3) destructor setting.  Normally it is sufficient to apply *riscv_destroy_event*;
+ (4) tweaks for non-sampling events, which will be utilized by functions such as
+-*perf_adjust_period*, usually something like the follows:
++    *perf_adjust_period*, usually something like the follows::
+ 
+-if (!is_sampling_event(event)) {
+-        hwc->sample_period = x86_pmu.max_period;
+-        hwc->last_period = hwc->sample_period;
+-        local64_set(&hwc->period_left, hwc->sample_period);
+-}
++      if (!is_sampling_event(event)) {
++              hwc->sample_period = x86_pmu.max_period;
++              hwc->last_period = hwc->sample_period;
++              local64_set(&hwc->period_left, hwc->sample_period);
++      }
+ 
+ In the case of *riscv_base_pmu*, only (3) is provided for now.
+ 
+@@ -94,10 +96,10 @@ In the case of *riscv_base_pmu*, only (3) is provided for now.
+ 3.1. Interrupt Initialization
+ 
+ This often occurs at the beginning of the *event_init* method. In common
+-practice, this should be a code segment like
++practice, this should be a code segment like::
+ 
+-int x86_reserve_hardware(void)
+-{
++  int x86_reserve_hardware(void)
++  {
+         int err = 0;
+ 
+         if (!atomic_inc_not_zero(&pmc_refcount)) {
+@@ -114,7 +116,7 @@ int x86_reserve_hardware(void)
+         }
+ 
+         return err;
+-}
++  }
+ 
+ And the magic is in *reserve_pmc_hardware*, which usually does atomic
+ operations to make implemented IRQ accessible from some global function pointer.
+@@ -128,28 +130,28 @@ which will be introduced in the next section.)
+ 
+ 3.2. IRQ Structure
+ 
+-Basically, a IRQ runs the following pseudo code:
++Basically, a IRQ runs the following pseudo code::
+ 
+-for each hardware counter that triggered this overflow
++  for each hardware counter that triggered this overflow
+ 
+-    get the event of this counter
++      get the event of this counter
+ 
+-    // following two steps are defined as *read()*,
+-    // check the section Reading/Writing Counters for details.
+-    count the delta value since previous interrupt
+-    update the event->count (# event occurs) by adding delta, and
+-               event->hw.period_left by subtracting delta
++      // following two steps are defined as *read()*,
++      // check the section Reading/Writing Counters for details.
++      count the delta value since previous interrupt
++      update the event->count (# event occurs) by adding delta, and
++                 event->hw.period_left by subtracting delta
+ 
+-    if the event overflows
+-        sample data
+-        set the counter appropriately for the next overflow
++      if the event overflows
++          sample data
++          set the counter appropriately for the next overflow
+ 
+-        if the event overflows again
+-            too frequently, throttle this event
+-        fi
+-    fi
++          if the event overflows again
++              too frequently, throttle this event
++          fi
++      fi
+ 
+-end for
++  end for
+ 
+ However as of this writing, none of the RISC-V implementations have designed an
+ interrupt for perf, so the details are to be completed in the future.
+@@ -195,23 +197,26 @@ A normal flow of these state transitions are as follows:
+   At this stage, a general event is bound to a physical counter, if any.
+   The state changes to PERF_HES_STOPPED and PERF_HES_UPTODATE, because it is now
+   stopped, and the (software) event count does not need updating.
+-** *start* is then called, and the counter is enabled.
+-   With flag PERF_EF_RELOAD, it writes an appropriate value to the counter (check
+-   previous section for detail).
+-   Nothing is written if the flag does not contain PERF_EF_RELOAD.
+-   The state now is reset to none, because it is neither stopped nor updated
+-   (the counting already started)
++
++  - *start* is then called, and the counter is enabled.
++    With flag PERF_EF_RELOAD, it writes an appropriate value to the counter (check
++    previous section for detail).
++    Nothing is written if the flag does not contain PERF_EF_RELOAD.
++    The state now is reset to none, because it is neither stopped nor updated
++    (the counting already started)
++
+ * When being context-switched out, *del* is called.  It then checks out all the
+   events in the PMU and calls *stop* to update their counts.
+-** *stop* is called by *del*
+-   and the perf core with flag PERF_EF_UPDATE, and it often shares the same
+-   subroutine as *read* with the same logic.
+-   The state changes to PERF_HES_STOPPED and PERF_HES_UPTODATE, again.
+ 
+-** Life cycle of these two pairs: *add* and *del* are called repeatedly as
+-  tasks switch in-and-out; *start* and *stop* is also called when the perf core
+-  needs a quick stop-and-start, for instance, when the interrupt period is being
+-  adjusted.
++  - *stop* is called by *del*
++    and the perf core with flag PERF_EF_UPDATE, and it often shares the same
++    subroutine as *read* with the same logic.
++    The state changes to PERF_HES_STOPPED and PERF_HES_UPTODATE, again.
++
++  - Life cycle of these two pairs: *add* and *del* are called repeatedly as
++    tasks switch in-and-out; *start* and *stop* is also called when the perf core
++    needs a quick stop-and-start, for instance, when the interrupt period is being
++    adjusted.
+ 
+ Current implementation is sufficient for now and can be easily extended to
+ features in the future.
+@@ -225,25 +230,26 @@ A. Related Structures
+   Both structures are designed to be read-only.
+ 
+   *struct pmu* defines some function pointer interfaces, and most of them take
+-*struct perf_event* as a main argument, dealing with perf events according to
+-perf's internal state machine (check kernel/events/core.c for details).
++  *struct perf_event* as a main argument, dealing with perf events according to
++  perf's internal state machine (check kernel/events/core.c for details).
+ 
+   *struct riscv_pmu* defines PMU-specific parameters.  The naming follows the
+-convention of all other architectures.
++  convention of all other architectures.
+ 
+ * struct perf_event: include/linux/perf_event.h
+ * struct hw_perf_event
+ 
+   The generic structure that represents perf events, and the hardware-related
+-details.
++  details.
+ 
+ * struct riscv_hw_events: arch/riscv/include/asm/perf_event.h
+ 
+   The structure that holds the status of events, has two fixed members:
+-the number of events and the array of the events.
++  the number of events and the array of the events.
+ 
+ References
+ ----------
+ 
+ [1] https://github.com/riscv/riscv-linux/pull/124
++
+ [2] https://groups.google.com/a/groups.riscv.org/forum/#!topic/sw-dev/f19TmCNP6yA
 -- 
 2.21.0
 
