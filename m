@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D70483A8D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCA53A7D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388094AbfFIREd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:04:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43324 "EHLO mail.kernel.org"
+        id S1732428AbfFIQxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:53:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388631AbfFIREb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:31 -0400
+        id S1732421AbfFIQxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:53:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D440320840;
-        Sun,  9 Jun 2019 17:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7313C206DF;
+        Sun,  9 Jun 2019 16:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099870;
-        bh=z20JovjBjAaVI1irKytMq5ZxVjvUa1V4PARnyvM+2nw=;
+        s=default; t=1560099210;
+        bh=Qnqvb0bwuWUZl0on7p+Ii6HsgQVKN92+YuGzCQm/g3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TBSJzLiYz+uRmgjikxLidXBYrwjCCvDOYJHslUidzfMvS3pKaPgn4x7N9+lJzkvHQ
-         S9GrenfRbham+8U0c2oNVbj02YKBcvZ9xGsKUwmaqVewOn/TjxVqQHhXgBgvNOFMb3
-         hdm/NzqPnEaCT0MIrkDZPnSizjZFBxShh8rwwxBw=
+        b=tMNA3X3rgn3o+MYEKQvLS6hIVrWGCBrEFCcKfOu9r7R1xT3AlnVcaF3imgD19ILcx
+         jLPATeWvI9AvEbchTrwjyf6q0e7qbID7+Sfp3nfQIi/dRta3fHKtwvpwFwRqMCyQZd
+         ZHKfAK5/TjeAusPQxjPArsOOqjWYLu22J+eTo218=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, oliver Neukum <oneukum@suse.com>,
-        syzbot+a0cbdbd6d169020c8959@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 197/241] USB: sisusbvga: fix oops in error path of sisusb_probe
+        stable@vger.kernel.org,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.9 49/83] brcmfmac: add length checks in scheduled scan result handler
 Date:   Sun,  9 Jun 2019 18:42:19 +0200
-Message-Id: <20190609164153.668930689@linuxfoundation.org>
+Message-Id: <20190609164132.115944698@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +48,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
 
-commit 9a5729f68d3a82786aea110b1bfe610be318f80a upstream.
+commit 4835f37e3bafc138f8bfa3cbed2920dd56fed283 upstream.
 
-The pointer used to log a failure of usb_register_dev() must
-be set before the error is logged.
+Assure the event data buffer is long enough to hold the array
+of netinfo items and that SSID length does not exceed the maximum
+of 32 characters as per 802.11 spec.
 
-v2: fix that minor is not available before registration
-
-Signed-off-by: oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+a0cbdbd6d169020c8959@syzkaller.appspotmail.com
-Fixes: 7b5cd5fefbe02 ("USB: SisUSB2VGA: Convert printk to dev_* macros")
-Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[bwh: Backported to 4.9:
+ - Move the assignment to "data" along with the assignment to "netinfo_start"
+   that depends on it
+ - Adjust context, indentation]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/misc/sisusbvga/sisusb.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |   14 +++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/misc/sisusbvga/sisusb.c
-+++ b/drivers/usb/misc/sisusbvga/sisusb.c
-@@ -3103,6 +3103,13 @@ static int sisusb_probe(struct usb_inter
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -3220,6 +3220,7 @@ brcmf_notify_sched_scan_results(struct b
+ 	struct brcmf_pno_scanresults_le *pfn_result;
+ 	u32 result_count;
+ 	u32 status;
++	u32 datalen;
  
- 	mutex_init(&(sisusb->lock));
+ 	brcmf_dbg(SCAN, "Enter\n");
  
-+	sisusb->sisusb_dev = dev;
-+	sisusb->vrambase   = SISUSB_PCI_MEMBASE;
-+	sisusb->mmiobase   = SISUSB_PCI_MMIOBASE;
-+	sisusb->mmiosize   = SISUSB_PCI_MMIOSIZE;
-+	sisusb->ioportbase = SISUSB_PCI_IOPORTBASE;
-+	/* Everything else is zero */
+@@ -3245,6 +3246,14 @@ brcmf_notify_sched_scan_results(struct b
+ 	if (result_count > 0) {
+ 		int i;
+ 
++		data += sizeof(struct brcmf_pno_scanresults_le);
++		netinfo_start = (struct brcmf_pno_net_info_le *)data;
++		datalen = e->datalen - ((void *)netinfo_start - (void *)pfn_result);
++		if (datalen < result_count * sizeof(*netinfo)) {
++			brcmf_err("insufficient event data\n");
++			goto out_err;
++		}
 +
- 	/* Register device */
- 	retval = usb_register_dev(intf, &usb_sisusb_class);
- 	if (retval) {
-@@ -3112,13 +3119,7 @@ static int sisusb_probe(struct usb_inter
- 		goto error_1;
- 	}
+ 		request = kzalloc(sizeof(*request), GFP_KERNEL);
+ 		ssid = kcalloc(result_count, sizeof(*ssid), GFP_KERNEL);
+ 		channel = kcalloc(result_count, sizeof(*channel), GFP_KERNEL);
+@@ -3254,9 +3263,6 @@ brcmf_notify_sched_scan_results(struct b
+ 		}
  
--	sisusb->sisusb_dev = dev;
--	sisusb->minor      = intf->minor;
--	sisusb->vrambase   = SISUSB_PCI_MEMBASE;
--	sisusb->mmiobase   = SISUSB_PCI_MMIOBASE;
--	sisusb->mmiosize   = SISUSB_PCI_MMIOSIZE;
--	sisusb->ioportbase = SISUSB_PCI_IOPORTBASE;
--	/* Everything else is zero */
-+	sisusb->minor = intf->minor;
+ 		request->wiphy = wiphy;
+-		data += sizeof(struct brcmf_pno_scanresults_le);
+-		netinfo_start = (struct brcmf_pno_net_info_le *)data;
+-
+ 		for (i = 0; i < result_count; i++) {
+ 			netinfo = &netinfo_start[i];
+ 			if (!netinfo) {
+@@ -3266,6 +3272,8 @@ brcmf_notify_sched_scan_results(struct b
+ 				goto out_err;
+ 			}
  
- 	/* Allocate buffers */
- 	sisusb->ibufsize = SISUSB_IBUF_SIZE;
++			if (netinfo->SSID_len > IEEE80211_MAX_SSID_LEN)
++				netinfo->SSID_len = IEEE80211_MAX_SSID_LEN;
+ 			brcmf_dbg(SCAN, "SSID:%s Channel:%d\n",
+ 				  netinfo->SSID, netinfo->channel);
+ 			memcpy(ssid[i].ssid, netinfo->SSID, netinfo->SSID_len);
 
 
