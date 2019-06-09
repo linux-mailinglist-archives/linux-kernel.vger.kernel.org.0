@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 580843A798
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D07423A8D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731887AbfFIQvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:51:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51342 "EHLO mail.kernel.org"
+        id S2388093AbfFIREw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:04:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731867AbfFIQvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:51:10 -0400
+        id S2388670AbfFIREp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51E3C205ED;
-        Sun,  9 Jun 2019 16:51:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39A64206C3;
+        Sun,  9 Jun 2019 17:04:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099069;
-        bh=lCNu8BKryD8vOBp4qR99NS0l/tYhJ1ueCg69ARnyyCk=;
+        s=default; t=1560099884;
+        bh=A7eutUFKo6yo83oVU/tFlirD2+eZz5kRU4Rm7mtouf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bCPGvOVuXc36JWFGKKCphXtx5L/CdgWKcTvRqtShzeYGhyAG93wGnt8suiHEXeM86
-         ueQGNEa85ktSpwcyOkjxsILClLBPNz//oxw8J3tT4E9Kcx3QBdFA0qxxsB+6Z1RQPN
-         OddYdI9IfSo1z4ppKchJoXQ1YNEJuxmNCYTDauwQ=
+        b=KAF7DL4PC08FzmUyTURjFlfAeBIA74REuUZdI9QYSUt+a0oqM12x7hjsK1zycMRK5
+         D+ZyFv/vA9OH8xXjSN4sCOdSqMu4DAeO0Y47TU9bdwPHTgLNW/xU7k5W3i5Fe1J+Wz
+         wEScUxDNskapcU5ohIc0uNovpM0NVnQz2+ZqvMT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Yaro Slav <yaro330@gmail.com>
-Subject: [PATCH 4.14 18/35] pstore/ram: Run without kernel crash dump region
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH 4.4 202/241] media: usb: siano: Fix false-positive "uninitialized variable" warning
 Date:   Sun,  9 Jun 2019 18:42:24 +0200
-Message-Id: <20190609164126.562533917@linuxfoundation.org>
+Message-Id: <20190609164154.178300270@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-References: <20190609164125.377368385@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,106 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 8880fa32c557600f5f624084152668ed3c2ea51e upstream.
+commit 45457c01171fd1488a7000d1751c06ed8560ee38 upstream.
 
-The ram pstore backend has always had the crash dumper frontend enabled
-unconditionally. However, it was possible to effectively disable it
-by setting a record_size=0. All the machinery would run (storing dumps
-to the temporary crash buffer), but 0 bytes would ultimately get stored
-due to there being no przs allocated for dumps. Commit 89d328f637b9
-("pstore/ram: Correctly calculate usable PRZ bytes"), however, assumed
-that there would always be at least one allocated dprz for calculating
-the size of the temporary crash buffer. This was, of course, not the
-case when record_size=0, and would lead to a NULL deref trying to find
-the dprz buffer size:
+GCC complains about an apparently uninitialized variable recently
+added to smsusb_init_device().  It's a false positive, but to silence
+the warning this patch adds a trivial initialization.
 
-BUG: unable to handle kernel NULL pointer dereference at (null)
-...
-IP: ramoops_probe+0x285/0x37e (fs/pstore/ram.c:808)
-
-        cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
-
-Instead, we need to only enable the frontends based on the success of the
-prz initialization and only take the needed actions when those zones are
-available. (This also fixes a possible error in detecting if the ftrace
-frontend should be enabled.)
-
-Reported-and-tested-by: Yaro Slav <yaro330@gmail.com>
-Fixes: 89d328f637b9 ("pstore/ram: Correctly calculate usable PRZ bytes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-by: kbuild test robot <lkp@intel.com>
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pstore/platform.c |    3 ++-
- fs/pstore/ram.c      |   36 +++++++++++++++++++++++-------------
- 2 files changed, 25 insertions(+), 14 deletions(-)
+ drivers/media/usb/siano/smsusb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -702,7 +702,8 @@ int pstore_register(struct pstore_info *
- 		return -EINVAL;
- 	}
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -391,7 +391,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsusb_device_t *dev;
+ 	void *mdev;
+ 	int i, rc;
+-	int in_maxp;
++	int in_maxp = 0;
  
--	allocate_buf_for_compression();
-+	if (psi->flags & PSTORE_FLAGS_DMESG)
-+		allocate_buf_for_compression();
- 
- 	if (pstore_is_mounted())
- 		pstore_get_records(0);
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -801,26 +801,36 @@ static int ramoops_probe(struct platform
- 
- 	cxt->pstore.data = cxt;
- 	/*
--	 * Since bufsize is only used for dmesg crash dumps, it
--	 * must match the size of the dprz record (after PRZ header
--	 * and ECC bytes have been accounted for).
-+	 * Prepare frontend flags based on which areas are initialized.
-+	 * For ramoops_init_przs() cases, the "max count" variable tells
-+	 * if there are regions present. For ramoops_init_prz() cases,
-+	 * the single region size is how to check.
- 	 */
--	cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
--	cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
--	if (!cxt->pstore.buf) {
--		pr_err("cannot allocate pstore crash dump buffer\n");
--		err = -ENOMEM;
--		goto fail_clear;
--	}
--
--	cxt->pstore.flags = PSTORE_FLAGS_DMESG;
-+	cxt->pstore.flags = 0;
-+	if (cxt->max_dump_cnt)
-+		cxt->pstore.flags |= PSTORE_FLAGS_DMESG;
- 	if (cxt->console_size)
- 		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
--	if (cxt->ftrace_size)
-+	if (cxt->max_ftrace_cnt)
- 		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
- 	if (cxt->pmsg_size)
- 		cxt->pstore.flags |= PSTORE_FLAGS_PMSG;
- 
-+	/*
-+	 * Since bufsize is only used for dmesg crash dumps, it
-+	 * must match the size of the dprz record (after PRZ header
-+	 * and ECC bytes have been accounted for).
-+	 */
-+	if (cxt->pstore.flags & PSTORE_FLAGS_DMESG) {
-+		cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
-+		cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
-+		if (!cxt->pstore.buf) {
-+			pr_err("cannot allocate pstore crash dump buffer\n");
-+			err = -ENOMEM;
-+			goto fail_clear;
-+		}
-+	}
-+
- 	err = pstore_register(&cxt->pstore);
- 	if (err) {
- 		pr_err("registering with pstore failed\n");
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
 
 
