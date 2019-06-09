@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A48D3A757
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21ED43A717
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731306AbfFIQst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47978 "EHLO mail.kernel.org"
+        id S1730332AbfFIQqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731294AbfFIQsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:46 -0400
+        id S1730287AbfFIQqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623A9205ED;
-        Sun,  9 Jun 2019 16:48:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1238D2081C;
+        Sun,  9 Jun 2019 16:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098925;
-        bh=pzVPEGB29rxDVyY7UFKBEsxqkSSuIe3pdooEKe9VtJU=;
+        s=default; t=1560098768;
+        bh=IIB1uD1rdodZdpT8IqlfcD9qd8G39FVgYrZnHSY96PI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XEtD40CH7vNbRNNlGUfsdc0R3BvZZS+tvUjevgYFCNxV1krK4bZVMdKcc3ambyAug
-         tAHd0qLmsKybFaWHMVOKRnbmgv4SXv9FtZ8qNaUGz4859A/pQ0wIKmOgGwF05bxKVd
-         /EyEdOLniAdmMI1LvSP7/N6POx7XFY04ZxxXKd9s=
+        b=uPa1MMtC8ClkoeggHJyqAvbVH9gJ3WVG4mPFi5Pdp23C9YLbYdcwbVHHzJSzytxlZ
+         I/GMeusvxbQMRgyBeZv4oKzGzMrB8mG6L+K9ebS7R4gUSL2ZhPhf/JTae+6uW2uEsj
+         +f8NCk4rpHMXVLNgfxCTRb1/ynhi/zPgPs8e7yEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erez Alfasi <ereza@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 07/51] net/mlx4_en: ethtool, Remove unsupported SFP EEPROM high pages query
+        stable@vger.kernel.org,
+        Takeshi Saito <takeshi.saito.xv@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.1 37/70] mmc: tmio: fix SCC error handling to avoid false positive CRC error
 Date:   Sun,  9 Jun 2019 18:41:48 +0200
-Message-Id: <20190609164127.544618985@linuxfoundation.org>
+Message-Id: <20190609164130.287939631@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erez Alfasi <ereza@mellanox.com>
+From: Takeshi Saito <takeshi.saito.xv@renesas.com>
 
-[ Upstream commit 135dd9594f127c8a82d141c3c8430e9e2143216a ]
+commit 51b72656bb39fdcb8f3174f4007bcc83ad1d275f upstream.
 
-Querying EEPROM high pages data for SFP module is currently
-not supported by our driver but is still tried, resulting in
-invalid FW queries.
+If an SCC error occurs during a read/write command execution, a false
+positive CRC error message is output.
 
-Set the EEPROM ethtool data length to 256 for SFP module to
-limit the reading for page 0 only and prevent invalid FW queries.
+mmcblk0: response CRC error sending r/w cmd command, card status 0x900
 
-Fixes: 7202da8b7f71 ("ethtool, net/mlx4_en: Cable info, get_module_info/eeprom ethtool support")
-Signed-off-by: Erez Alfasi <ereza@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+check_scc_error() checks SCC_RVSREQ.RVSERR bit. RVSERR detects a
+correction error in the next (up or down) delay tap position. However,
+since the command is successful, only retuning needs to be executed.
+This has been confirmed by HW engineers.
+
+Thus, on SCC error, set retuning flag instead of setting an error code.
+
+Fixes: b85fb0a1c8ae ("mmc: tmio: Fix SCC error detection")
+Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
+[wsa: updated comment and commit message, removed some braces]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |    4 +++-
- drivers/net/ethernet/mellanox/mlx4/port.c       |    5 -----
- 2 files changed, 3 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -2010,6 +2010,8 @@ static int mlx4_en_set_tunable(struct ne
- 	return ret;
- }
+---
+ drivers/mmc/host/tmio_mmc_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -842,8 +842,9 @@ static void tmio_mmc_finish_request(stru
+ 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+ 		tmio_mmc_abort_dma(host);
  
-+#define MLX4_EEPROM_PAGE_LEN 256
-+
- static int mlx4_en_get_module_info(struct net_device *dev,
- 				   struct ethtool_modinfo *modinfo)
- {
-@@ -2044,7 +2046,7 @@ static int mlx4_en_get_module_info(struc
- 		break;
- 	case MLX4_MODULE_ID_SFP:
- 		modinfo->type = ETH_MODULE_SFF_8472;
--		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
-+		modinfo->eeprom_len = MLX4_EEPROM_PAGE_LEN;
- 		break;
- 	default:
- 		return -EINVAL;
---- a/drivers/net/ethernet/mellanox/mlx4/port.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/port.c
-@@ -2077,11 +2077,6 @@ int mlx4_get_module_info(struct mlx4_dev
- 		size -= offset + size - I2C_PAGE_SIZE;
++	/* SCC error means retune, but executed command was still successful */
+ 	if (host->check_scc_error && host->check_scc_error(host))
+-		mrq->cmd->error = -EILSEQ;
++		mmc_retune_needed(host->mmc);
  
- 	i2c_addr = I2C_ADDR_LOW;
--	if (offset >= I2C_PAGE_SIZE) {
--		/* Reset offset to high page */
--		i2c_addr = I2C_ADDR_HIGH;
--		offset -= I2C_PAGE_SIZE;
--	}
- 
- 	cable_info = (struct mlx4_cable_info *)inmad->data;
- 	cable_info->dev_mem_address = cpu_to_be16(offset);
+ 	/* If SET_BLOCK_COUNT, continue with main command */
+ 	if (host->mrq && !mrq->cmd->error) {
 
 
