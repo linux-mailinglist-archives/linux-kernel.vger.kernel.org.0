@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917883A958
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E88843A8C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388902AbfFIRJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:09:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42720 "EHLO mail.kernel.org"
+        id S2388567AbfFIREK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388549AbfFIREF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:04:05 -0400
+        id S2388543AbfFIREI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:04:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9C14206C3;
-        Sun,  9 Jun 2019 17:04:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82586204EC;
+        Sun,  9 Jun 2019 17:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099845;
-        bh=dtCy8NxLywADGR3g1b1WIkbIHMEPVPieh+HB0Gs1iyI=;
+        s=default; t=1560099848;
+        bh=znFL7krxnAtQKb0YeVjDyTYArkXpnF0QQBKi7kjZNRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ujUO1S49uyOhw49FcuIM11aU7ZDgKS57zUlaQl3YSDBPuAvDyS1Kwx3xiR4eBHQqJ
-         65RV4PN/86/CRNsOY/3OWLthGyMiUDqy3+JBOGoHx9jPubqft49jeRUvH1GyzZopVA
-         weIc/xuSTHFqzLrgqShh1ItPzuSThZs22W0+fTK0=
+        b=Zw2NI/67hrGJJvndtvNUh5P4C6SVUVAaT0lIK5p2kwqiySmKGuZ0Rm/z97ZVH3tzN
+         F182KET8whs8RW71iggA1949IViP4cdsxZjx0rzJuzSBHx1Wx+3QcI16lEo2QFUku8
+         jhhLFwq96lHcnSG7XuLrLn7X2XuG8KIa5gvTZsVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 142/241] extcon: arizona: Disable mic detect if running when driver is removed
-Date:   Sun,  9 Jun 2019 18:41:24 +0200
-Message-Id: <20190609164151.883673434@linuxfoundation.org>
+Subject: [PATCH 4.4 143/241] s390: cio: fix cio_irb declaration
+Date:   Sun,  9 Jun 2019 18:41:25 +0200
+Message-Id: <20190609164151.911104770@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
 References: <20190609164147.729157653@linuxfoundation.org>
@@ -45,45 +46,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 00053de52231117ddc154042549f2256183ffb86 ]
+[ Upstream commit e91012ee855ad9f5ef2ab106a3de51db93fe4d0c ]
 
-Microphone detection provides the button detection features on the
-Arizona CODECs as such it will be running if the jack is currently
-inserted. If the driver is unbound whilst the jack is still inserted
-this will cause warnings from the regulator framework as the MICVDD
-regulator is put but was never disabled.
+clang points out that the declaration of cio_irb does not match the
+definition exactly, it is missing the alignment attribute:
 
-Correct this by disabling microphone detection on driver removal and if
-the microphone detection was running disable the regulator and put the
-runtime reference that was currently held.
+../drivers/s390/cio/cio.c:50:1: warning: section does not match previous declaration [-Wsection]
+DEFINE_PER_CPU_ALIGNED(struct irb, cio_irb);
+^
+../include/linux/percpu-defs.h:150:2: note: expanded from macro 'DEFINE_PER_CPU_ALIGNED'
+        DEFINE_PER_CPU_SECTION(type, name, PER_CPU_ALIGNED_SECTION)     \
+        ^
+../include/linux/percpu-defs.h:93:9: note: expanded from macro 'DEFINE_PER_CPU_SECTION'
+        extern __PCPU_ATTRS(sec) __typeof__(type) name;                 \
+               ^
+../include/linux/percpu-defs.h:49:26: note: expanded from macro '__PCPU_ATTRS'
+        __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))     \
+                                ^
+../drivers/s390/cio/cio.h:118:1: note: previous attribute is here
+DECLARE_PER_CPU(struct irb, cio_irb);
+^
+../include/linux/percpu-defs.h:111:2: note: expanded from macro 'DECLARE_PER_CPU'
+        DECLARE_PER_CPU_SECTION(type, name, "")
+        ^
+../include/linux/percpu-defs.h:87:9: note: expanded from macro 'DECLARE_PER_CPU_SECTION'
+        extern __PCPU_ATTRS(sec) __typeof__(type) name
+               ^
+../include/linux/percpu-defs.h:49:26: note: expanded from macro '__PCPU_ATTRS'
+        __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))     \
+                                ^
+Use DECLARE_PER_CPU_ALIGNED() here, to make the two match.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/extcon/extcon-arizona.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/s390/cio/cio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-index e4890dd4fefd6..38fb212e58ee8 100644
---- a/drivers/extcon/extcon-arizona.c
-+++ b/drivers/extcon/extcon-arizona.c
-@@ -1616,6 +1616,16 @@ static int arizona_extcon_remove(struct platform_device *pdev)
- 	struct arizona_extcon_info *info = platform_get_drvdata(pdev);
- 	struct arizona *arizona = info->arizona;
- 	int jack_irq_rise, jack_irq_fall;
-+	bool change;
-+
-+	regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
-+				 ARIZONA_MICD_ENA, 0,
-+				 &change);
-+
-+	if (change) {
-+		regulator_disable(info->micvdd);
-+		pm_runtime_put(info->dev);
-+	}
+diff --git a/drivers/s390/cio/cio.h b/drivers/s390/cio/cio.h
+index a01376ae17493..fdb87520543fe 100644
+--- a/drivers/s390/cio/cio.h
++++ b/drivers/s390/cio/cio.h
+@@ -102,7 +102,7 @@ struct subchannel {
+ 	struct schib_config config;
+ } __attribute__ ((aligned(8)));
  
- 	gpiod_put(info->micd_pol_gpio);
+-DECLARE_PER_CPU(struct irb, cio_irb);
++DECLARE_PER_CPU_ALIGNED(struct irb, cio_irb);
+ 
+ #define to_subchannel(n) container_of(n, struct subchannel, dev)
  
 -- 
 2.20.1
