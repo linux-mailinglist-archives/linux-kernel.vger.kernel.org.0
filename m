@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A843AA2D
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3773AAC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbfFIRPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55712 "EHLO mail.kernel.org"
+        id S1730108AbfFIQpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:45:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732538AbfFIQyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:54:08 -0400
+        id S1730033AbfFIQps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:45:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CA94206BB;
-        Sun,  9 Jun 2019 16:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFE7C20833;
+        Sun,  9 Jun 2019 16:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099247;
-        bh=PHC6wVTNr/ilVN+aLfu0QMFCGVE1NOjtBg+sd/FYZzI=;
+        s=default; t=1560098747;
+        bh=3QIcKu0AVrUSUlmPC59YAtlLMAzQkttuqt2FFBAOSwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RQQfvQuAg5SNG2ICWGyfQyi3gxIcZnKxzcnhlcx8dMW0wL/NG/E9RS7HvlIL/4OPz
-         9jq1XnSzYQgxr9URkLRRcRbovtK/7Y+CXzQpCG1GRoJ4ilWHmn2fR2lqhGaDrjfWxL
-         rsJ/n9660CrHqkx0WVuNs/Rk5/meCpqicreTpM5Q=
+        b=zEBEtNTn1N6NIvsz9kBY84ySVtzWqMRe3vTPwDoJD+Fu18SH32hyza7KGI/fMmprx
+         7HvgKJVDFDNsHMn5dbYjRRK/0tScv2YeBDOz/a3H1neeS6IIYjgJADDhawp3cTh5gR
+         2GgW6HNTs80ui+g5YnVoWBRR5XdR78hfBODXDkks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maximilian Luz <luzmaximilian@gmail.com>
-Subject: [PATCH 4.9 28/83] USB: Add LPM quirk for Surface Dock GigE adapter
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 5.1 47/70] genwqe: Prevent an integer overflow in the ioctl
 Date:   Sun,  9 Jun 2019 18:41:58 +0200
-Message-Id: <20190609164129.996434973@linuxfoundation.org>
+Message-Id: <20190609164131.329221760@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,37 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maximilian Luz <luzmaximilian@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit ea261113385ac0a71c2838185f39e8452d54b152 upstream.
+commit 110080cea0d0e4dfdb0b536e7f8a5633ead6a781 upstream.
 
-Without USB_QUIRK_NO_LPM ethernet will not work and rtl8152 will
-complain with
+There are a couple potential integer overflows here.
 
-    r8152 <device...>: Stop submitting intr, status -71
+	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
 
-Adding the quirk resolves this. As the dock is externally powered, this
-should not have any drawbacks.
+The first thing is that the "m->size + (...)" addition could overflow,
+and the second is that round_up() overflows to zero if the result is
+within PAGE_SIZE of the type max.
 
-Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
+In this code, the "m->size" variable is an u64 but we're saving the
+result in "map_size" which is an unsigned long and genwqe_user_vmap()
+takes an unsigned long as well.  So I have used ULONG_MAX as the upper
+bound.  From a practical perspective unsigned long is fine/better than
+trying to change all the types to u64.
+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/misc/genwqe/card_dev.c   |    2 ++
+ drivers/misc/genwqe/card_utils.c |    4 ++++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -64,6 +64,9 @@ static const struct usb_device_id usb_qu
- 	/* Microsoft LifeCam-VX700 v2.0 */
- 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -780,6 +780,8 @@ static int genwqe_pin_mem(struct genwqe_
  
-+	/* Microsoft Surface Dock Ethernet (RTL8153 GigE) */
-+	{ USB_DEVICE(0x045e, 0x07c6), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
- 	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
+ 	if ((m->addr == 0x0) || (m->size == 0))
+ 		return -EINVAL;
++	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
++		return -EINVAL;
  
+ 	map_addr = (m->addr & PAGE_MASK);
+ 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -586,6 +586,10 @@ int genwqe_user_vmap(struct genwqe_dev *
+ 	/* determine space needed for page_list. */
+ 	data = (unsigned long)uaddr;
+ 	offs = offset_in_page(data);
++	if (size > ULONG_MAX - PAGE_SIZE - offs) {
++		m->size = 0;	/* mark unused and not added */
++		return -EINVAL;
++	}
+ 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
+ 
+ 	m->page_list = kcalloc(m->nr_pages,
 
 
