@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 526F13A8F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51AF53A910
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388951AbfFIRGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45492 "EHLO mail.kernel.org"
+        id S2389127AbfFIRHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:07:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388910AbfFIRGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:06:01 -0400
+        id S2388593AbfFIRHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:07:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4235F204EC;
-        Sun,  9 Jun 2019 17:06:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C41A1204EC;
+        Sun,  9 Jun 2019 17:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099960;
-        bh=4VE399NmQi0yl//Hfg5jFZhYd5DXcjKwk5UB8L9ERCM=;
+        s=default; t=1560100020;
+        bh=kwW5+pOo3pPjSz9BOXtdOb8u8nq7tl+VmP88bEPje4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r73ebhjYms7B8UvxJNY3LOl6YWNQPQLLwg2qZGddZ3U7xMyyl0GYnU49MddYDWqea
-         hXF5Q0uQ6AMPFFVSxyWwXLswUSXDLBUXWK4n1/xhhDwCaT7KrBinywttUTNA4m2zZi
-         fD+z8DAYkCsyjtDMmZJItFOfltlJNyW64JvF3bw8=
+        b=uqMqn3LkXPEhFlak4hl1gXV5PeGKLY/m7y9/h6KxdFIMuh9uNbPx/hxZJIuJC5foQ
+         sSyhmjz+mATftxSWG/y50AUQTzZW8lH4VNl25Ik7buQj2sBw7RUv90XMGvZfCwmbkl
+         drFJsMHvyDXq/4E3asd7AAB14U5gwonm1OCH7gWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Enrico Mioso <mrkiko.rs@gmail.com>,
-        Christian Panton <christian@panton.org>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, "Felipe F. Tonello" <eu@felipetonello.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Peter Chen <peter.chen@nxp.com>,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH 4.4 226/241] net: cdc_ncm: GetNtbFormat endian fix
-Date:   Sun,  9 Jun 2019 18:42:48 +0200
-Message-Id: <20190609164155.230981076@linuxfoundation.org>
+Subject: [PATCH 4.4 227/241] usb: gadget: fix request length error for isoc transfer
+Date:   Sun,  9 Jun 2019 18:42:49 +0200
+Message-Id: <20190609164155.265088934@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
 References: <20190609164147.729157653@linuxfoundation.org>
@@ -48,51 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjørn Mork <bjorn@mork.no>
+From: Peter Chen <peter.chen@nxp.com>
 
-commit 6314dab4b8fb8493d810e175cb340376052c69b6 upstream.
+commit 982555fc26f9d8bcdbd5f9db0378fe0682eb4188 upstream.
 
-The GetNtbFormat and SetNtbFormat requests operate on 16 bit little
-endian values. We get away with ignoring this most of the time, because
-we only care about USB_CDC_NCM_NTB16_FORMAT which is 0x0000.  This
-fails for USB_CDC_NCM_NTB32_FORMAT.
+For isoc endpoint descriptor, the wMaxPacketSize is not real max packet
+size (see Table 9-13. Standard Endpoint Descriptor, USB 2.0 specifcation),
+it may contain the number of packet, so the real max packet should be
+ep->desc->wMaxPacketSize && 0x7ff.
 
-Fix comparison between LE value from device and constant by converting
-the constant to LE.
+Cc: Felipe F. Tonello <eu@felipetonello.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 16b114a6d797 ("usb: gadget: fix usb_ep_align_maybe
+  endianness and new usb_ep_aligna")
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Fixes: 2b02c20ce0c2 ("cdc_ncm: Set NTB format again after altsetting switch for Huawei devices")
-Cc: Enrico Mioso <mrkiko.rs@gmail.com>
-Cc: Christian Panton <christian@panton.org>
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Acked-By: Enrico Mioso <mrkiko.rs@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/cdc_ncm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/usb/gadget.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -727,7 +727,7 @@ int cdc_ncm_bind_common(struct usbnet *d
- 	int err;
- 	u8 iface_no;
- 	struct usb_cdc_parsed_header hdr;
--	u16 curr_ntb_format;
-+	__le16 curr_ntb_format;
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -671,7 +671,9 @@ static inline struct usb_gadget *dev_to_
+  */
+ static inline size_t usb_ep_align(struct usb_ep *ep, size_t len)
+ {
+-	return round_up(len, (size_t)le16_to_cpu(ep->desc->wMaxPacketSize));
++	int max_packet_size = (size_t)usb_endpoint_maxp(ep->desc) & 0x7ff;
++
++	return round_up(len, max_packet_size);
+ }
  
- 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
-@@ -841,7 +841,7 @@ int cdc_ncm_bind_common(struct usbnet *d
- 			goto error2;
- 		}
- 
--		if (curr_ntb_format == USB_CDC_NCM_NTB32_FORMAT) {
-+		if (curr_ntb_format == cpu_to_le16(USB_CDC_NCM_NTB32_FORMAT)) {
- 			dev_info(&intf->dev, "resetting NTB format to 16-bit");
- 			err = usbnet_write_cmd(dev, USB_CDC_SET_NTB_FORMAT,
- 					       USB_TYPE_CLASS | USB_DIR_OUT
+ /**
 
 
