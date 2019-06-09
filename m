@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A18F3A88C
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF223A700
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388117AbfFIRBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:01:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39064 "EHLO mail.kernel.org"
+        id S1729826AbfFIQpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:45:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388107AbfFIRBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:01:39 -0400
+        id S1729784AbfFIQpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:45:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98FDC206C3;
-        Sun,  9 Jun 2019 17:01:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63C252084A;
+        Sun,  9 Jun 2019 16:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099699;
-        bh=J4uwusvLtrICANSHTWdP5KgOtyuG4ox8q63z/IbzCHk=;
+        s=default; t=1560098719;
+        bh=kP0Yut2/zuLHJBMavSITCKW027Z7R1PEPQXGNPspRks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fhPAWUKFycyNT68Ni+Kg96nNTzru87PVT4R0b4EZq4lYX15xlFpTHRZ4XXWdvzZ1D
-         5Y9FQ4GF/mFM+FPOSMidSasxk3BJPyC6JUtYed4FGnNJR4DPlnfhN4MeEnV0dZE7OF
-         EmIyZmYAHIkCB+f8BWI1ogxzos8uXYPagVL9F38E=
+        b=ZVM3Y0qW1kz5ChfCVFaxnTrcJ9IdpznLWUp1UduSdYoSL5k0eqTylVrWJb2g2y3QA
+         xgwAd2Qh25z9/bZOpubJeUWcwaPbcYZ26PNsoFebLnxSUbTV/+LhUyiCzblqkeiD1c
+         Ci0+550wfhN9s7uh8LN7IKA4d4VYNKiG1qvFD6A4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 132/241] hwmon: (vt1211) Use request_muxed_region for Super-IO accesses
-Date:   Sun,  9 Jun 2019 18:41:14 +0200
-Message-Id: <20190609164151.608346696@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 04/70] ipv6: fix the check before getting the cookie in rt6_get_cookie
+Date:   Sun,  9 Jun 2019 18:41:15 +0200
+Message-Id: <20190609164127.773346412@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,70 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 14b97ba5c20056102b3dd22696bf17b057e60976 ]
+From: Xin Long <lucien.xin@gmail.com>
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+[ Upstream commit b7999b07726c16974ba9ca3bb9fe98ecbec5f81c ]
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+In Jianlin's testing, netperf was broken with 'Connection reset by peer',
+as the cookie check failed in rt6_check() and ip6_dst_check() always
+returned NULL.
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
+It's caused by Commit 93531c674315 ("net/ipv6: separate handling of FIB
+entries from dst based routes"), where the cookie can be got only when
+'c1'(see below) for setting dst_cookie whereas rt6_check() is called
+when !'c1' for checking dst_cookie, as we can see in ip6_dst_check().
 
-Fixes: 2219cd81a6cd ("hwmon/vt1211: Add probing of alternate config index port")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Since in ip6_dst_check() both rt6_dst_from_check() (c1) and rt6_check()
+(!c1) will check the 'from' cookie, this patch is to remove the c1 check
+in rt6_get_cookie(), so that the dst_cookie can always be set properly.
+
+c1:
+  (rt->rt6i_flags & RTF_PCPU || unlikely(!list_empty(&rt->rt6i_uncached)))
+
+Fixes: 93531c674315 ("net/ipv6: separate handling of FIB entries from dst based routes")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/vt1211.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ include/net/ip6_fib.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/vt1211.c b/drivers/hwmon/vt1211.c
-index 3a6bfa51cb94f..95d5e8ec8b7fc 100644
---- a/drivers/hwmon/vt1211.c
-+++ b/drivers/hwmon/vt1211.c
-@@ -226,15 +226,21 @@ static inline void superio_select(int sio_cip, int ldn)
- 	outb(ldn, sio_cip + 1);
- }
+--- a/include/net/ip6_fib.h
++++ b/include/net/ip6_fib.h
+@@ -259,8 +259,7 @@ static inline u32 rt6_get_cookie(const s
+ 	rcu_read_lock();
  
--static inline void superio_enter(int sio_cip)
-+static inline int superio_enter(int sio_cip)
- {
-+	if (!request_muxed_region(sio_cip, 2, DRVNAME))
-+		return -EBUSY;
-+
- 	outb(0x87, sio_cip);
- 	outb(0x87, sio_cip);
-+
-+	return 0;
- }
+ 	from = rcu_dereference(rt->from);
+-	if (from && (rt->rt6i_flags & RTF_PCPU ||
+-	    unlikely(!list_empty(&rt->rt6i_uncached))))
++	if (from)
+ 		fib6_get_cookie_safe(from, &cookie);
  
- static inline void superio_exit(int sio_cip)
- {
- 	outb(0xaa, sio_cip);
-+	release_region(sio_cip, 2);
- }
- 
- /* ---------------------------------------------------------------------
-@@ -1282,11 +1288,14 @@ static int __init vt1211_device_add(unsigned short address)
- 
- static int __init vt1211_find(int sio_cip, unsigned short *address)
- {
--	int err = -ENODEV;
-+	int err;
- 	int devid;
- 
--	superio_enter(sio_cip);
-+	err = superio_enter(sio_cip);
-+	if (err)
-+		return err;
- 
-+	err = -ENODEV;
- 	devid = force_id ? force_id : superio_inb(sio_cip, SIO_VT1211_DEVID);
- 	if (devid != SIO_VT1211_ID)
- 		goto EXIT;
--- 
-2.20.1
-
+ 	rcu_read_unlock();
 
 
