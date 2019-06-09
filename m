@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 449C53AA33
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EB7A3A727
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733152AbfFIRQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:16:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54704 "EHLO mail.kernel.org"
+        id S1730629AbfFIQqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732390AbfFIQxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:53:25 -0400
+        id S1730609AbfFIQqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F16D0206C3;
-        Sun,  9 Jun 2019 16:53:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 316722081C;
+        Sun,  9 Jun 2019 16:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099205;
-        bh=hNB1wprvtxnjsYwue8uW3eaTDIfm1Io0/AFQvzzbeUM=;
+        s=default; t=1560098804;
+        bh=gDN3Royv62WSTTTpPYuCAZqOoHLWjI5lA2MMTSlDF8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iDOneP5vaHXyS3nHNfjW/NzCN9iI1ii62vdZeCENB1PP81DiMRyi1oTrneix3MtTY
-         oPza9dhaxXd5XcCr3TGSRLQv/lVUXn83SjMH/q7uMJgkQ4HQBe6xX9b1AZ4RNDRXru
-         R4gtAizs7zeWbZyErWAa8FaubmrWZdZgjUqvFvyg=
+        b=QtH8pbnN6r4UIVgsXy7peffjrWToHcaiFPj9YZd/FvwsEobo1VuOErfYqG8uNUTxX
+         YpCOy1oY7h5zWPf18VKISQPMSjIz2Tr+PYqawMM4gIr3lbvefNcrLEX2hlezO3yu6x
+         6wU14vpcOQmU+pSfI5z4MM15ppfYKyEccKOVolFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 4.9 47/83] gcc-plugins: Fix build failures under Darwin host
+        stable@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 5.1 66/70] drm/i915: Maintain consistent documentation subsection ordering
 Date:   Sun,  9 Jun 2019 18:42:17 +0200
-Message-Id: <20190609164131.941678976@linuxfoundation.org>
+Message-Id: <20190609164132.953760538@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
-References: <20190609164127.843327870@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Jonathan Corbet <corbet@lwn.net>
 
-commit 7210e060155b9cf557fb13128353c3e494fa5ed3 upstream.
+commit 551bd3368a7b3cfef01edaade8970948d178d40a upstream.
 
-The gcc-common.h file did not take into account certain macros that
-might have already been defined in the build environment. This updates
-the header to avoid redefining the macros, as seen on a Darwin host
-using gcc 4.9.2:
+With Sphinx 2.0 (or prior versions with the deprecation warnings fixed) the
+docs build fails with:
 
- HOSTCXX -fPIC scripts/gcc-plugins/arm_ssp_per_task_plugin.o - due to: scripts/gcc-plugins/gcc-common.h
-In file included from scripts/gcc-plugins/arm_ssp_per_task_plugin.c:3:0:
-scripts/gcc-plugins/gcc-common.h:153:0: warning: "__unused" redefined
-^
-In file included from /usr/include/stdio.h:64:0,
-                from /Users/hns/Documents/Projects/QuantumSTEP/System/Library/Frameworks/System.framework/Versions-jessie/x86_64-apple-darwin15.0.0/gcc/arm-linux-gnueabi/bin/../lib/gcc/arm-linux-gnueabi/4.9.2/plugin/include/system.h:40,
-                from /Users/hns/Documents/Projects/QuantumSTEP/System/Library/Frameworks/System.framework/Versions-jessie/x86_64-apple-darwin15.0.0/gcc/arm-linux-gnueabi/bin/../lib/gcc/arm-linux-gnueabi/4.9.2/plugin/include/gcc-plugin.h:28,
-                from /Users/hns/Documents/Projects/QuantumSTEP/System/Library/Frameworks/System.framework/Versions-jessie/x86_64-apple-darwin15.0.0/gcc/arm-linux-gnueabi/bin/../lib/gcc/arm-linux-gnueabi/4.9.2/plugin/include/plugin.h:23,
-                from scripts/gcc-plugins/gcc-common.h:9,
-                from scripts/gcc-plugins/arm_ssp_per_task_plugin.c:3:
-/usr/include/sys/cdefs.h:161:0: note: this is the location of the previous definition
-^
+  Documentation/gpu/i915.rst:403: WARNING: Title level inconsistent:
 
-Reported-and-tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
-Fixes: 189af4657186 ("ARM: smp: add support for per-task stack canaries")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+  Global GTT Fence Handling
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  reST markup error:
+  Documentation/gpu/i915.rst:403: (SEVERE/4) Title level inconsistent:
+
+I "fixed" it by changing the subsections in i915.rst, but that didn't seem
+like the correct change.  It turns out that a couple of i915 files create
+their own subsections in kerneldoc comments using apostrophes as the
+heading marker:
+
+  Layout
+  ''''''
+
+That breaks the normal subsection marker ordering, and newer Sphinx is
+rather more strict about enforcing that ordering.  So fix the offending
+comments to make Sphinx happy.
+
+(This is unfortunate, in that kerneldoc comments shouldn't need to be aware
+of where they might be included in the heading hierarchy, but I don't see
+a better way around it).
+
+Cc: stable@vger.kernel.org  # v4.14+
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/gcc-plugins/gcc-common.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/i915/i915_reg.h          |    6 +++---
+ drivers/gpu/drm/i915/intel_workarounds.c |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/scripts/gcc-plugins/gcc-common.h
-+++ b/scripts/gcc-plugins/gcc-common.h
-@@ -135,8 +135,12 @@ extern void print_gimple_expr(FILE *, gi
- extern void dump_gimple_stmt(pretty_printer *, gimple, int, int);
- #endif
- 
-+#ifndef __unused
- #define __unused __attribute__((__unused__))
-+#endif
-+#ifndef __visible
- #define __visible __attribute__((visibility("default")))
-+#endif
- 
- #define DECL_NAME_POINTER(node) IDENTIFIER_POINTER(DECL_NAME(node))
- #define DECL_NAME_LENGTH(node) IDENTIFIER_LENGTH(DECL_NAME(node))
+--- a/drivers/gpu/drm/i915/i915_reg.h
++++ b/drivers/gpu/drm/i915/i915_reg.h
+@@ -32,7 +32,7 @@
+  * macros. Do **not** mass change existing definitions just to update the style.
+  *
+  * Layout
+- * ''''''
++ * ~~~~~~
+  *
+  * Keep helper macros near the top. For example, _PIPE() and friends.
+  *
+@@ -78,7 +78,7 @@
+  * style. Use lower case in hexadecimal values.
+  *
+  * Naming
+- * ''''''
++ * ~~~~~~
+  *
+  * Try to name registers according to the specs. If the register name changes in
+  * the specs from platform to another, stick to the original name.
+@@ -96,7 +96,7 @@
+  * suffix to the name. For example, ``_SKL`` or ``_GEN8``.
+  *
+  * Examples
+- * ''''''''
++ * ~~~~~~~~
+  *
+  * (Note that the values in the example are indented using spaces instead of
+  * TABs to avoid misalignment in generated documentation. Use TABs in the
+--- a/drivers/gpu/drm/i915/intel_workarounds.c
++++ b/drivers/gpu/drm/i915/intel_workarounds.c
+@@ -37,7 +37,7 @@
+  *    costly and simplifies things. We can revisit this in the future.
+  *
+  * Layout
+- * ''''''
++ * ~~~~~~
+  *
+  * Keep things in this file ordered by WA type, as per the above (context, GT,
+  * display, register whitelist, batchbuffer). Then, inside each type, keep the
 
 
