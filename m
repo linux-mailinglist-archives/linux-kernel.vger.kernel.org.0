@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0E23A7A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F133A763
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbfFIQvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
+        id S1730754AbfFIQtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:49:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731931AbfFIQv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:51:26 -0400
+        id S1729661AbfFIQtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:49:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAFBF205ED;
-        Sun,  9 Jun 2019 16:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004002070B;
+        Sun,  9 Jun 2019 16:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099086;
-        bh=RraCkwXdzglEq/7vdS33A/72ye87OZQO/agCNTF+Lok=;
+        s=default; t=1560098948;
+        bh=3snimYtLiW81QvdIBMukURLkhku++669pMJK/Z942Rw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ng24ya3nB0GOPTEqXQNwO8AwRFCw4cHmS6QEN9NpTS9STE//xfMa0ldoSiL7M+QAJ
-         7+CvPVetCiYR8tDnoQk3VB6YDcvgsaNDxWZ3fXrFHwxdZxgq0DOQozzCJqEFPCLPIv
-         HGOuTvLppaluQ60sIvjmbXGCQMU0EiAgHqJQ8pI8=
+        b=Lv5lgMaGMA2j0v1iovgeEDCh5oRmF5isNngFZKzin0BlxI8519IbXtLFJ8sIXXhZg
+         9A7+WrVkdQzPORFMgk7YBBkNjdKsWppPeTbViE+A1ymiFmDw/I/CsxnIkEH26sAg9w
+         t1W54AC9J6JJuvPGlhW9N/NMii/U4QeFUsYEMXfs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        Kevin Hilman <khilman@baylibre.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.14 22/35] MIPS: pistachio: Build uImage.gz by default
+        stable@vger.kernel.org, Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.19 47/51] drm/i915/fbc: disable framebuffer compression on GeminiLake
 Date:   Sun,  9 Jun 2019 18:42:28 +0200
-Message-Id: <20190609164126.812231250@linuxfoundation.org>
+Message-Id: <20190609164130.583496940@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-References: <20190609164125.377368385@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+From: Daniel Drake <drake@endlessm.com>
 
-commit e4f2d1af7163becb181419af9dece9206001e0a6 upstream.
+commit 396dd8143bdd94bd1c358a228a631c8c895a1126 upstream.
 
-The pistachio platform uses the U-Boot bootloader & generally boots a
-kernel in the uImage format. As such it's useful to build one when
-building the kernel, but to do so currently requires the user to
-manually specify a uImage target on the make command line.
+On many (all?) the Gemini Lake systems we work with, there is frequent
+momentary graphical corruption at the top of the screen, and it seems
+that disabling framebuffer compression can avoid this.
 
-Make uImage.gz the pistachio platform's default build target, so that
-the default is to build a kernel image that we can actually boot on a
-board such as the MIPS Creator Ci40.
+The ticket was reported 6 months ago and has already affected a
+multitude of users, without any real progress being made. So, lets
+disable framebuffer compression on GeminiLake until a solution is found.
 
-Marked for stable backport as far as v4.1 where pistachio support was
-introduced. This is primarily useful for CI systems such as kernelci.org
-which will benefit from us building a suitable image which can then be
-booted as part of automated testing, extending our test coverage to the
-affected stable branches.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-URL: https://groups.io/g/kernelci/message/388
-Cc: stable@vger.kernel.org # v4.1+
-Cc: linux-mips@vger.kernel.org
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108085
+Fixes: fd7d6c5c8f3e ("drm/i915: enable FBC on gen9+ too")
+Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v4.11+
+Reviewed-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190423092810.28359-1-jian-hong@endlessm.com
+(cherry picked from commit 1d25724b41fad7eeb2c3058a5c8190d6ece73e08)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/pistachio/Platform |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/i915/intel_fbc.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/mips/pistachio/Platform
-+++ b/arch/mips/pistachio/Platform
-@@ -6,3 +6,4 @@ cflags-$(CONFIG_MACH_PISTACHIO)		+=				\
- 		-I$(srctree)/arch/mips/include/asm/mach-pistachio
- load-$(CONFIG_MACH_PISTACHIO)		+= 0xffffffff80400000
- zload-$(CONFIG_MACH_PISTACHIO)		+= 0xffffffff81000000
-+all-$(CONFIG_MACH_PISTACHIO)		:= uImage.gz
+--- a/drivers/gpu/drm/i915/intel_fbc.c
++++ b/drivers/gpu/drm/i915/intel_fbc.c
+@@ -1267,6 +1267,10 @@ static int intel_sanitize_fbc_option(str
+ 	if (!HAS_FBC(dev_priv))
+ 		return 0;
+ 
++	/* https://bugs.freedesktop.org/show_bug.cgi?id=108085 */
++	if (IS_GEMINILAKE(dev_priv))
++		return 0;
++
+ 	if (IS_BROADWELL(dev_priv) || INTEL_GEN(dev_priv) >= 9)
+ 		return 1;
+ 
 
 
