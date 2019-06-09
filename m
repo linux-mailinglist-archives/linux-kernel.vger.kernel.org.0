@@ -2,183 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECF53A5E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D8B3A5ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 15:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfFINTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 09:19:03 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40755 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728473AbfFINTC (ORCPT
+        id S1728651AbfFINfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 09:35:19 -0400
+Received: from smtprelay0154.hostedemail.com ([216.40.44.154]:60483 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727382AbfFINfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 09:19:02 -0400
-Received: by mail-qt1-f196.google.com with SMTP id a15so7689201qtn.7
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 06:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=etxGqIHWh7lXIY7Ft8zi2MkE7mqUIZh/y1UeJH95Z4A=;
-        b=ruJtE3xGr+tnyKqfapDlRISInN2rP94g72KXr4/dpWyEtp7AE/rbD4oub9hFcH4Puw
-         IUmn8M5EFNnDes8SLB3zECCLoNhHdqDjLLhCsQg9yQav0ZuuPU13WD73pvQDZtgSB+wX
-         TZ+TgwC3mf78ZkilCO+V6SzAgwqei+ob1AS4wZ/YsRV1QAbVjqFhR+87SHtj7CfkmjYo
-         jDOMN82gYNmnTgXqbl4tBNNkrdSMrx0vDqcXIsdf3lYFhp+gHNHiBoIy9aovH9srteaf
-         HHqXjNbxTCq61Id3ecFwmpTAzn3E1OdEPml+V3Ug8qR09V1oIqdlAywJ0W3r9/SnfRlZ
-         g24A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=etxGqIHWh7lXIY7Ft8zi2MkE7mqUIZh/y1UeJH95Z4A=;
-        b=PiXFyWucFt5uFyvjEHL/QceXYfokwYbNzCwZqWjDndsmettpdKeHlcar/VQVxIPAGK
-         7YAMT28O+Ghvt4pVyh9H5W9NM6CkB2zi7Jvc+GW1JKZwY7MuxNhTBVZ2tmxtW5IvDojA
-         YPUuNXtHe8U60A0t4Z4lt9MzXeSo2uau1LMVHVQFWGvC2ZenIviInh9vlbyuiey6e33p
-         NTWX7Wmre23PiT+/dmUEIdRugUeqKVQ/ibuiPrVg6p+ojRV7VsrFggwW0s8zTcA1cPPg
-         9XmUmfBoqis4f4JqworsWzHIN8uAoAd00GeLe58T8739AObXoViWSB/uaVCAgQy+1nbm
-         zbGg==
-X-Gm-Message-State: APjAAAVD09RAWGZvjgX48TLhazecz/d6AFeZeXrONPxmSq+m9Elia2rT
-        a993H3q1UJhGA94wqM/rmSL8og==
-X-Google-Smtp-Source: APXvYqy1L8DH3xHracVgoI5HWVB9bV7DzOm+SWwRyVa2hn74Yz+jgsPa9pMJnVAg22aimidyOekenQ==
-X-Received: by 2002:a0c:d003:: with SMTP id u3mr40252953qvg.112.1560086341257;
-        Sun, 09 Jun 2019 06:19:01 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
-        by smtp.gmail.com with ESMTPSA id y8sm4397406qth.22.2019.06.09.06.18.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Jun 2019 06:19:00 -0700 (PDT)
-Date:   Sun, 9 Jun 2019 21:18:49 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] perf augmented_raw_syscalls: Support arm64 raw
- syscalls
-Message-ID: <20190609131849.GB6357@leoy-ThinkPad-X240s>
-References: <20190606094845.4800-1-leo.yan@linaro.org>
- <20190606094845.4800-4-leo.yan@linaro.org>
- <20190606133838.GC30166@kernel.org>
- <20190606141231.GC5970@leoy-ThinkPad-X240s>
- <20190606144412.GC21245@kernel.org>
- <20190607095831.GG5970@leoy-ThinkPad-X240s>
+        Sun, 9 Jun 2019 09:35:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id D7DFB18029125;
+        Sun,  9 Jun 2019 13:35:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2692:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:7653:10004:10400:10848:11026:11232:11473:11658:11914:12740:12760:12895:13069:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21627:30054:30060:30070:30090:30091,0,RBL:107.134.184.123:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: pies35_2dd16e86e5d0d
+X-Filterd-Recvd-Size: 3394
+Received: from XPS-9350 (107-134-184-123.lightspeed.renonv.sbcglobal.net [107.134.184.123])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  9 Jun 2019 13:35:14 +0000 (UTC)
+Message-ID: <bd1ef99fc503fed492ad036f781963ca15a8596f.camel@perches.com>
+Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Sun, 09 Jun 2019 06:35:07 -0700
+In-Reply-To: <CAK7LNAToTXt71obf8NvOiuN5MnxHs+-dkCp_Midu9e6OaOqc4g@mail.gmail.com>
+References: <20190604111334.22182-1-yamada.masahiro@socionext.com>
+         <8cf48e20064eabdfe150795365e6ca6f36032e9f.camel@perches.com>
+         <CAK8P3a1oDfNF_T+NCoPsXkJAY2x4_uCWSwrDXHi7dDSaMqfnfA@mail.gmail.com>
+         <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
+         <20190604134213.GA26263@kroah.com>
+         <CAK7LNARyqW3q6_46e-aYjmF8c0jUNDLdyB28zNaBEXqTV+5QSA@mail.gmail.com>
+         <CAK8P3a0bz8XYJOsmND2=CT_oTDmGMJGaRo9+QMroEhpekSMEaQ@mail.gmail.com>
+         <CAK7LNARU+uT0aUBh5niwEafL8+Ok7=sOZYukptpDH1w7Cii3hQ@mail.gmail.com>
+         <20190605051040.GA22760@kroah.com>
+         <b70cf8c1f901ea09abbdb22dd28244b18fd1a39d.camel@perches.com>
+         <20190605071413.779bd821@coco.lan>
+         <a798561d24c486d31063a7994d8630c859df00e9.camel@perches.com>
+         <CAK7LNARsSFT1ncyRgWi_tga_7KC6ZwZOETXQ2GrO9PfeJgLxyQ@mail.gmail.com>
+         <ba5ec856bce34eead8ba655b9bd6c54b002c40b5.camel@perches.com>
+         <CAK7LNAToTXt71obf8NvOiuN5MnxHs+-dkCp_Midu9e6OaOqc4g@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607095831.GG5970@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 05:58:31PM +0800, Leo Yan wrote:
-> Hi Arnaldo,
-> 
-> On Thu, Jun 06, 2019 at 11:44:12AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Jun 06, 2019 at 10:12:31PM +0800, Leo Yan escreveu:
-> > > Hi Arnaldo,
+On Sun, 2019-06-09 at 22:08 +0900, Masahiro Yamada wrote:
+> On Sun, Jun 9, 2019 at 8:57 PM Joe Perches <joe@perches.com> wrote:
+> > On Sun, 2019-06-09 at 16:14 +0900, Masahiro Yamada wrote:
+> > > Hi Joe,
 > > > 
-> > > On Thu, Jun 06, 2019 at 10:38:38AM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > Em Thu, Jun 06, 2019 at 05:48:44PM +0800, Leo Yan escreveu:
-> > > > > This patch adds support for arm64 raw syscall numbers so that we can use
-> > > > > it on arm64 platform.
-> > > > > 
-> > > > > After applied this patch, we need to specify macro -D__aarch64__ or
-> > > > > -D__x86_64__ in compilation option so Clang can use the corresponding
-> > > > > syscall numbers for arm64 or x86_64 respectively, other architectures
-> > > > > will report failure when compilation.
+> > > On Thu, Jun 6, 2019 at 2:06 AM Joe Perches <joe@perches.com> wrote:
+> > > > Perhaps a checkpatch change too:
 > > > > 
-> > > > So, please check what I have in my perf/core branch, I've completely
-> > > > removed arch specific stuff from augmented_raw_syscalls.c.
-> > > > 
-> > > > What is done now is use a map to specify what to copy, that same map
-> > > > that is used to state which syscalls should be traced.
-> > > > 
-> > > > It uses that tools/perf/arch/arm64/entry/syscalls/mksyscalltbl to figure
-> > > > out the mapping of syscall names to ids, just like is done for x86_64
-> > > > and other arches, falling back to audit-libs when that syscalltbl thing
-> > > > is not present.
+> > > > The first block updates unsigned only bitfields
+> > > > The second tests uapi definitions and suggests "__<kernel_types"
 > > > 
-> > > Actually I have noticed mksyscalltbl has been enabled for arm64, and
-> > > had to say your approach is much better :)
+> > > Good.
 > > > 
-> > > Thanks for the info and I will try your patch at my side.
+> > > In addition,
+> > > 
+> > > "warn if __u8, __u16, __u32, __u64 are used outside of uapi/"
+> > > 
+> > > Lots of kernel-space headers use __u{8,16,32,64} instead of u{8,16,32,64}
+> > > just because developers often miss to understand when to use
+> > > the underscore-prefixed types.
 > > 
-> > That is excellent news! I'm eager to hear from you if this perf+BPF
-> > integration experiment works for arm64.
+> > The problem there is that checkpatch can't know if the
+> > __<uapi_type> being used is for an actual uapi use or not.
+> > 
+> > coccinelle could be much better at that.
 > 
-> I tested with the lastest perf/core branch which contains the patch:
-> 'perf augmented_raw_syscalls: Tell which args are filenames and how
-> many bytes to copy' and got the error as below:
-> 
-> # perf trace -e string -e /mnt/linux-kernel/linux-cs-dev/tools/perf/examples/bpf/augmented_raw_syscalls.c
-> Error:  Invalid syscall access, chmod, chown, creat, futimesat, lchown, link, lstat, mkdir, mknod, newfstatat, open, readlink, rename,
-> rmdir, stat, statfs, symlink, truncate, unlink
-> Hint:   try 'perf list syscalls:sys_enter_*'
-> Hint:   and: 'man syscalls'
-> 
-> So seems mksyscalltbl has not included completely for syscalls, I
-> use below command to generate syscalltbl_arm64[] array and it don't
-> include related entries for access, chmod, chown, etc ...
-> 
-> You could refer the generated syscalltbl_arm64 in:
-> http://paste.ubuntu.com/p/8Bj7Jkm2mP/
+> Why?
 
-After digging into this issue on Arm64, below is summary info:
 
-- arm64 uses the header include/uapi/linux/unistd.h to define system
-  call numbers, in this header some system calls are not defined (I
-  think the reason is these system calls are obsolete at the end) so the
-  corresponding strings are missed in the array syscalltbl_native,
-  for arm64 the array is defined in the file:
-  tools/perf/arch/arm64/include/generated/asm/syscalls.c.
+Perhaps it's (somewhat) bad form to have a __uapi type in a
+structure, include that structure in a driver for something
+like a copy_to/from_user, and map the __<uapi_type> to a non
+underscore prefixed <kernel_type>
 
-  On the other hand, the file tools/perf/trace/strace/groups/string
-  stores the required system call strings, these system call strings
-  are based on x86_64 platform but not for arm64, the strings mismatch
-  with the system call defined in the array syscalltbl_native.  This
-  is the reason why reports the fail: "Error:  Invalid syscall access,
-  chmod, chown, creat, futimesat, lchown, link, lstat, mkdir, mknod,
-  newfstatat, open, readlink, rename, rmdir, stat, statfs, symlink,
-  truncate, unlink".
+For instance
 
-  I tried to manually remove these reported strings from
-  tools/perf/trace/strace/groups/string, then 'perf trace' can work
-  well.
+struct flat_binder_object in drivers/android/binder.c
 
-  But I don't know what's a good way to proceed.  Seems to me, we can
-  create a dedicated string file
-  tools/perf/trace/strace/groups/uapi_string which can be used to
-  match with system calls definitions in include/uapi/linux/unistd.h.
-  If there have other more general methods, will be great.
+How is checkpatch supposed to know that __u32 flags is
+inappropriate?
 
-- As a side topic, arm64 also supports aarch32 compat system call
-  which are defined in header arch/arm64/include/asm/unistd32.h.
 
-  For either aarch64 or aarch32 system call, both of them finally will
-  invoke function el0_svc_common() to handle system call [1].  But so
-  far we don't distinguish the system call numbers is for aarch64 or
-  aarch32 and always consider it's aarch64 system call.
-
-  I think we can set an extra bit (e.g. use the 16th bit in 32 bits
-  signed int) to indicate it's a aarch32 compat system call, but not
-  sure if this is general method or not.
-
-  Maybe there have existed solution in other architectures for this,
-  especially other platforms also should support 32 bits and 64 bits
-  system calls along with the architecture evoluation, so want to
-  inquiry firstly to avoid duplicate works.
-
-Thanks a lot for suggestions!
-Leo.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/kernel/syscall.c#n93
