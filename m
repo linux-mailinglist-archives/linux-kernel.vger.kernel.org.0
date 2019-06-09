@@ -2,892 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D13F3A4C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 451F53A4CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 12:33:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbfFIKcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 06:32:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42060 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbfFIKck (ORCPT
+        id S1728409AbfFIKcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 06:32:54 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:57814 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728168AbfFIKcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 06:32:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q10so3608373pff.9
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 03:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=mlj+QLkLQQMm63yfV3acS0P0vf43I3zjLjjqMLne79E=;
-        b=M4HnVFeFdEmREXCiSKvuqb4gwH4ZDa/2bfpqTi9qWbkjeBhWmUByz3x/SLmAsycOi6
-         2XwFQ/sbUzvRQrZDMPME3sxCD5e06j1BPjRLypQo9lGAB7Yf8lEohFFJecJCJyVAI9MF
-         y+ZO5/fzDzX09g2WNMGMDVagkn/urdjvWGmXbQngDEfrGJQ47KADnLsFR2+BEAxqh96J
-         qLxstL3+T++CX86SzIQ6x9KudbZLxAf6GUSwz6yGf8BKLOyvj/cuzVR5/CEGf2e75BwK
-         UmDfmjqmciwj7RLq/IriaYJ0Uxmpsk0rV71vEJSQO18VWH1eXCE9VPA+PpMbLbWJS6uO
-         62AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=mlj+QLkLQQMm63yfV3acS0P0vf43I3zjLjjqMLne79E=;
-        b=uN7H/CJLRgI/lqj3Q/uvjVUUGeyBO7+5NcFjA5aGGNcJb9WtmUp0wgOx8rLEtKXdtE
-         /+Zq8qBWS5Mw8DgyxczAeASBkTeUP1fPtLpvnxm4Kn2Njq689xDFaw1JqWCW2z/IT3q0
-         P2WpH5FPkUxM5hKEHT1Im9qvl1PV1txrAZls2tvlaY0UOj7bCaFn8D8vwfcTMKc2oMmg
-         K47fAtonLP7zUivIyz1mR3Z2Uv7tKdm44lbpn5e2JPDIZNUMzI30e3zx7peM9VgFwmMH
-         lmvFVagVET+npPRKXEhGLEG3NNEMsuL55EDQr4QkjQo96zkkvWziJ6AKiaoLzHpghVvm
-         Umeg==
-X-Gm-Message-State: APjAAAUr60zPkLEoXt7hz5yIAYhEHPArxiki/IijimlhMbfZoNzTNww0
-        5WUvBJLESEifhDhOGePP97klhdWI
-X-Google-Smtp-Source: APXvYqxOnbbvnc223uZ24ysh46YcRve+EKvkSJzIt/e1tMPsoSukOqO1hRasFE3/4vPG6Qf52bybSA==
-X-Received: by 2002:a17:90a:1785:: with SMTP id q5mr15414425pja.106.1560076358523;
-        Sun, 09 Jun 2019 03:32:38 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.89.153])
-        by smtp.gmail.com with ESMTPSA id d132sm7916294pfd.61.2019.06.09.03.32.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Jun 2019 03:32:37 -0700 (PDT)
-Date:   Sun, 9 Jun 2019 16:02:32 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: hal: move common code to macro
-Message-ID: <20190609103232.GA9769@hari-Inspiron-1545>
+        Sun, 9 Jun 2019 06:32:51 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id C6F642002D;
+        Sun,  9 Jun 2019 12:32:42 +0200 (CEST)
+Date:   Sun, 9 Jun 2019 12:32:41 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>, stonea168@163.com,
+        dri-devel@lists.freedesktop.org,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        cawa.cheng@mediatek.com,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        linux-arm-kernel@lists.infradead.org,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [1/2] dt-bindngs: display: panel: Add BOE tv101wum-nl6 panel
+ bindings
+Message-ID: <20190609103241.GA28935@ravnborg.org>
+References: <20190608070230.55381-1-jitao.shi@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190608070230.55381-1-jitao.shi@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=mpaa-ttXAAAA:8
+        a=GOHkJZeNjhEJBjOU3QsA:9 a=zQRrZ5hHoVty9KUv:21 a=G8XELezRatH2Uwd4:21
+        a=CjuIK1q_8ugA:10 a=6heAxKwa5pAsJatQ0mat:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jitao
 
-    As part of halbtc8723b2ant_TdmaDurationAdjust function below
-    piece of code is used many times.
+Always good to see more panels added.
 
-    halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, val);
-    pCoexDm->psTdmaDuAdjType = val;
+On Sat, Jun 08, 2019 at 03:02:29PM +0800, Jitao Shi wrote:
+> Add documentation for boe tv101wum-n16 panel.
 
-    This patch replaces this common code with MACRO
-    HAL_BTC8723B2ANT_DMA_DURATION_ADJUST
+The changelog says tv101wum-n16 but the compatible says tv101wum-nl6.
+Please pick the right one and be consistent. (number one '1' versus
+character 'l')
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c | 746 ++++++++++--------------
- 1 file changed, 293 insertions(+), 453 deletions(-)
+> 
+> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> ---
+>  .../display/panel/boe,tv101wum-nl6.txt        | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv101wum-nl6.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/boe,tv101wum-nl6.txt b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-nl6.txt
+> new file mode 100644
+> index 000000000000..2a84735d742d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-nl6.txt
+> @@ -0,0 +1,34 @@
+> +Boe Corporation 10.1" WUXGA TFT LCD panel
+> +
+> +Required properties:
+> +- compatible: should be "boe,tv101wum"
+The example uses "boe,tv101wum-nl6", which matches the filename.
+Please fix so it is the same all over.
 
-diff --git a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
-index cb62fc0..56d842e 100644
---- a/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
-+++ b/drivers/staging/rtl8723bs/hal/HalBtc8723b2Ant.c
-@@ -7,6 +7,13 @@
- 
- #include "Mp_Precomp.h"
- 
-+/* defines */
-+#define HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(val)			      \
-+do {									      \
-+	halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, val);           \
-+	pCoexDm->psTdmaDuAdjType = val;                                       \
-+} while (0)
-+
- /*  Global variables, these are static variables */
- static COEX_DM_8723B_2ANT GLCoexDm8723b2Ant;
- static PCOEX_DM_8723B_2ANT pCoexDm = &GLCoexDm8723b2Ant;
-@@ -1599,64 +1606,44 @@ static void halbtc8723b2ant_TdmaDurationAdjust(
- 		{
- 			if (bScoHid) {
- 				if (bTxPause) {
--					if (maxInterval == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 13);
--						pCoexDm->psTdmaDuAdjType = 13;
--					} else if (maxInterval == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--						pCoexDm->psTdmaDuAdjType = 14;
--					} else if (maxInterval == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					}
-+					if (maxInterval == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(13);
-+					else if (maxInterval == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+					else if (maxInterval == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
- 				} else {
--					if (maxInterval == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 9);
--						pCoexDm->psTdmaDuAdjType = 9;
--					} else if (maxInterval == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--						pCoexDm->psTdmaDuAdjType = 10;
--					} else if (maxInterval == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					}
-+					if (maxInterval == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(9);
-+					else if (maxInterval == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+					else if (maxInterval == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
- 				}
- 			} else {
- 				if (bTxPause) {
--					if (maxInterval == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 5);
--						pCoexDm->psTdmaDuAdjType = 5;
--					} else if (maxInterval == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--						pCoexDm->psTdmaDuAdjType = 6;
--					} else if (maxInterval == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					}
-+					if (maxInterval == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(5);
-+					else if (maxInterval == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+					else if (maxInterval == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
- 				} else {
--					if (maxInterval == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 1);
--						pCoexDm->psTdmaDuAdjType = 1;
--					} else if (maxInterval == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--						pCoexDm->psTdmaDuAdjType = 2;
--					} else if (maxInterval == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					}
--				}
-+					if (maxInterval == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(1);
-+					else if (maxInterval == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+					else if (maxInterval == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+			      }
- 			}
- 		}
- 		/*  */
-@@ -1741,442 +1728,295 @@ static void halbtc8723b2ant_TdmaDurationAdjust(
- 			if (bTxPause) {
- 				BTC_PRINT(BTC_MSG_ALGORITHM, ALGO_TRACE_FW_DETAIL, ("[BTCoex], TxPause = 1\n"));
- 
--				if (pCoexDm->curPsTdma == 71) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 5);
--					pCoexDm->psTdmaDuAdjType = 5;
--				} else if (pCoexDm->curPsTdma == 1) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 5);
--					pCoexDm->psTdmaDuAdjType = 5;
--				} else if (pCoexDm->curPsTdma == 2) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--					pCoexDm->psTdmaDuAdjType = 6;
--				} else if (pCoexDm->curPsTdma == 3) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--					pCoexDm->psTdmaDuAdjType = 7;
--				} else if (pCoexDm->curPsTdma == 4) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 8);
--					pCoexDm->psTdmaDuAdjType = 8;
--				}
--
--				if (pCoexDm->curPsTdma == 9) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 13);
--					pCoexDm->psTdmaDuAdjType = 13;
--				} else if (pCoexDm->curPsTdma == 10) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--					pCoexDm->psTdmaDuAdjType = 14;
--				} else if (pCoexDm->curPsTdma == 11) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--					pCoexDm->psTdmaDuAdjType = 15;
--				} else if (pCoexDm->curPsTdma == 12) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 16);
--					pCoexDm->psTdmaDuAdjType = 16;
--				}
-+				if (pCoexDm->curPsTdma == 71)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(5);
-+				else if (pCoexDm->curPsTdma == 1)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(5);
-+				else if (pCoexDm->curPsTdma == 2)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+				else if (pCoexDm->curPsTdma == 3)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+				else if (pCoexDm->curPsTdma == 4)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(8);
-+
-+				if (pCoexDm->curPsTdma == 9)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(13);
-+				else if (pCoexDm->curPsTdma == 10)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+				else if (pCoexDm->curPsTdma == 11)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+				else if (pCoexDm->curPsTdma == 12)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(16);
- 
- 				if (result == -1) {
--					if (pCoexDm->curPsTdma == 5) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--						pCoexDm->psTdmaDuAdjType = 6;
--					} else if (pCoexDm->curPsTdma == 6) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 7) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 8);
--						pCoexDm->psTdmaDuAdjType = 8;
--					} else if (pCoexDm->curPsTdma == 13) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--						pCoexDm->psTdmaDuAdjType = 14;
--					} else if (pCoexDm->curPsTdma == 14) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 15) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 16);
--						pCoexDm->psTdmaDuAdjType = 16;
--					}
-+					if (pCoexDm->curPsTdma == 5)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+					else if (pCoexDm->curPsTdma == 6)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 7)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(8);
-+					else if (pCoexDm->curPsTdma == 13)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+					else if (pCoexDm->curPsTdma == 14)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 15)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(16);
- 				} else if (result == 1) {
--					if (pCoexDm->curPsTdma == 8) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 7) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--						pCoexDm->psTdmaDuAdjType = 6;
--					} else if (pCoexDm->curPsTdma == 6) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 5);
--						pCoexDm->psTdmaDuAdjType = 5;
--					} else if (pCoexDm->curPsTdma == 16) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 15) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--						pCoexDm->psTdmaDuAdjType = 14;
--					} else if (pCoexDm->curPsTdma == 14) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 13);
--						pCoexDm->psTdmaDuAdjType = 13;
--					}
-+					if (pCoexDm->curPsTdma == 8)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 7)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+					else if (pCoexDm->curPsTdma == 6)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(5);
-+					else if (pCoexDm->curPsTdma == 16)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 15)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+					else if (pCoexDm->curPsTdma == 14)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(13);
- 				}
- 			} else {
- 				BTC_PRINT(BTC_MSG_ALGORITHM, ALGO_TRACE_FW_DETAIL, ("[BTCoex], TxPause = 0\n"));
--				if (pCoexDm->curPsTdma == 5) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 71);
--					pCoexDm->psTdmaDuAdjType = 71;
--				} else if (pCoexDm->curPsTdma == 6) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--					pCoexDm->psTdmaDuAdjType = 2;
--				} else if (pCoexDm->curPsTdma == 7) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--					pCoexDm->psTdmaDuAdjType = 3;
--				} else if (pCoexDm->curPsTdma == 8) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 4);
--					pCoexDm->psTdmaDuAdjType = 4;
--				}
--
--				if (pCoexDm->curPsTdma == 13) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 9);
--					pCoexDm->psTdmaDuAdjType = 9;
--				} else if (pCoexDm->curPsTdma == 14) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--					pCoexDm->psTdmaDuAdjType = 10;
--				} else if (pCoexDm->curPsTdma == 15) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--					pCoexDm->psTdmaDuAdjType = 11;
--				} else if (pCoexDm->curPsTdma == 16) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 12);
--					pCoexDm->psTdmaDuAdjType = 12;
--				}
-+				if (pCoexDm->curPsTdma == 5)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(71);
-+				else if (pCoexDm->curPsTdma == 6)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+				else if (pCoexDm->curPsTdma == 7)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+				else if (pCoexDm->curPsTdma == 8)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(4);
-+
-+				if (pCoexDm->curPsTdma == 13)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(9);
-+				else if (pCoexDm->curPsTdma == 14)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+				else if (pCoexDm->curPsTdma == 15)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+				else if (pCoexDm->curPsTdma == 16)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(12);
- 
- 				if (result == -1) {
--					if (pCoexDm->curPsTdma == 71) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 1);
--						pCoexDm->psTdmaDuAdjType = 1;
--					} else if (pCoexDm->curPsTdma == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--						pCoexDm->psTdmaDuAdjType = 2;
--					} else if (pCoexDm->curPsTdma == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 4);
--						pCoexDm->psTdmaDuAdjType = 4;
--					} else if (pCoexDm->curPsTdma == 9) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--						pCoexDm->psTdmaDuAdjType = 10;
--					} else if (pCoexDm->curPsTdma == 10) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 11) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 12);
--						pCoexDm->psTdmaDuAdjType = 12;
--					}
-+					if (pCoexDm->curPsTdma == 71)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(1);
-+					else if (pCoexDm->curPsTdma == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+					else if (pCoexDm->curPsTdma == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(4);
-+					else if (pCoexDm->curPsTdma == 9)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+					else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(12);
- 				} else if (result == 1) {
--					if (pCoexDm->curPsTdma == 4) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--						pCoexDm->psTdmaDuAdjType = 2;
--					} else if (pCoexDm->curPsTdma == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 1);
--						pCoexDm->psTdmaDuAdjType = 1;
--					} else if (pCoexDm->curPsTdma == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 71);
--						pCoexDm->psTdmaDuAdjType = 71;
--					} else if (pCoexDm->curPsTdma == 12) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 11) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--						pCoexDm->psTdmaDuAdjType = 10;
--					} else if (pCoexDm->curPsTdma == 10) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 9);
--						pCoexDm->psTdmaDuAdjType = 9;
--					}
-+					if (pCoexDm->curPsTdma == 4)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+					else if (pCoexDm->curPsTdma == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(1);
-+					else if (pCoexDm->curPsTdma == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(71);
-+					else if (pCoexDm->curPsTdma == 12)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+					else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(9);
- 				}
- 			}
- 		} else if (maxInterval == 2) {
- 			if (bTxPause) {
- 				BTC_PRINT(BTC_MSG_ALGORITHM, ALGO_TRACE_FW_DETAIL, ("[BTCoex], TxPause = 1\n"));
--				if (pCoexDm->curPsTdma == 1) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--					pCoexDm->psTdmaDuAdjType = 6;
--				} else if (pCoexDm->curPsTdma == 2) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--					pCoexDm->psTdmaDuAdjType = 6;
--				} else if (pCoexDm->curPsTdma == 3) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--					pCoexDm->psTdmaDuAdjType = 7;
--				} else if (pCoexDm->curPsTdma == 4) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 8);
--					pCoexDm->psTdmaDuAdjType = 8;
--				}
--
--				if (pCoexDm->curPsTdma == 9) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--					pCoexDm->psTdmaDuAdjType = 14;
--				} else if (pCoexDm->curPsTdma == 10) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--					pCoexDm->psTdmaDuAdjType = 14;
--				} else if (pCoexDm->curPsTdma == 11) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--					pCoexDm->psTdmaDuAdjType = 15;
--				} else if (pCoexDm->curPsTdma == 12) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 16);
--					pCoexDm->psTdmaDuAdjType = 16;
--				}
-+				if (pCoexDm->curPsTdma == 1)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+				else if (pCoexDm->curPsTdma == 2)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+				else if (pCoexDm->curPsTdma == 3)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+				else if (pCoexDm->curPsTdma == 4)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(8);
-+
-+				if (pCoexDm->curPsTdma == 9)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+				else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+				else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+				else if (pCoexDm->curPsTdma == 12)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(16);
- 
- 				if (result == -1) {
--					if (pCoexDm->curPsTdma == 5) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--						pCoexDm->psTdmaDuAdjType = 6;
--					} else if (pCoexDm->curPsTdma == 6) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 7) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 8);
--						pCoexDm->psTdmaDuAdjType = 8;
--					} else if (pCoexDm->curPsTdma == 13) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--						pCoexDm->psTdmaDuAdjType = 14;
--					} else if (pCoexDm->curPsTdma == 14) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 15) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 16);
--						pCoexDm->psTdmaDuAdjType = 16;
--					}
-+					if (pCoexDm->curPsTdma == 5)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+					else if (pCoexDm->curPsTdma == 6)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 7)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(8);
-+					else if (pCoexDm->curPsTdma == 13)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+					else if (pCoexDm->curPsTdma == 14)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 15)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(16);
- 				} else if (result == 1) {
--					if (pCoexDm->curPsTdma == 8) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 7) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--						pCoexDm->psTdmaDuAdjType = 6;
--					} else if (pCoexDm->curPsTdma == 6) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 6);
--						pCoexDm->psTdmaDuAdjType = 6;
--					} else if (pCoexDm->curPsTdma == 16) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 15) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--						pCoexDm->psTdmaDuAdjType = 14;
--					} else if (pCoexDm->curPsTdma == 14) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 14);
--						pCoexDm->psTdmaDuAdjType = 14;
--					}
--				}
-+					if (pCoexDm->curPsTdma == 8)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 7)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+					else if (pCoexDm->curPsTdma == 6)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(6);
-+					else if (pCoexDm->curPsTdma == 16)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 15)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+					else if (pCoexDm->curPsTdma == 14)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(14);
-+			        }
- 			} else {
- 				BTC_PRINT(BTC_MSG_ALGORITHM, ALGO_TRACE_FW_DETAIL, ("[BTCoex], TxPause = 0\n"));
--				if (pCoexDm->curPsTdma == 5) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--					pCoexDm->psTdmaDuAdjType = 2;
--				} else if (pCoexDm->curPsTdma == 6) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--					pCoexDm->psTdmaDuAdjType = 2;
--				} else if (pCoexDm->curPsTdma == 7) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--					pCoexDm->psTdmaDuAdjType = 3;
--				} else if (pCoexDm->curPsTdma == 8) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 4);
--					pCoexDm->psTdmaDuAdjType = 4;
--				}
--
--				if (pCoexDm->curPsTdma == 13) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--					pCoexDm->psTdmaDuAdjType = 10;
--				} else if (pCoexDm->curPsTdma == 14) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--					pCoexDm->psTdmaDuAdjType = 10;
--				} else if (pCoexDm->curPsTdma == 15) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--					pCoexDm->psTdmaDuAdjType = 11;
--				} else if (pCoexDm->curPsTdma == 16) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 12);
--					pCoexDm->psTdmaDuAdjType = 12;
--				}
-+				if (pCoexDm->curPsTdma == 5)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+				else if (pCoexDm->curPsTdma == 6)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+				else if (pCoexDm->curPsTdma == 7)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+				else if (pCoexDm->curPsTdma == 8)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(4);
-+
-+				if (pCoexDm->curPsTdma == 13)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+				else if (pCoexDm->curPsTdma == 14)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+				else if (pCoexDm->curPsTdma == 15)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+				else if (pCoexDm->curPsTdma == 16)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(12);
- 
- 				if (result == -1) {
--					if (pCoexDm->curPsTdma == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--						pCoexDm->psTdmaDuAdjType = 2;
--					} else if (pCoexDm->curPsTdma == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 4);
--						pCoexDm->psTdmaDuAdjType = 4;
--					} else if (pCoexDm->curPsTdma == 9) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--						pCoexDm->psTdmaDuAdjType = 10;
--					} else if (pCoexDm->curPsTdma == 10) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 11) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 12);
--						pCoexDm->psTdmaDuAdjType = 12;
--					}
-+					if (pCoexDm->curPsTdma == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+					else if (pCoexDm->curPsTdma == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(4);
-+					else if (pCoexDm->curPsTdma == 9)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+					else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(12);
- 				} else if (result == 1) {
--					if (pCoexDm->curPsTdma == 4) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--						pCoexDm->psTdmaDuAdjType = 2;
--					} else if (pCoexDm->curPsTdma == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 2);
--						pCoexDm->psTdmaDuAdjType = 2;
--					} else if (pCoexDm->curPsTdma == 12) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 11) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--						pCoexDm->psTdmaDuAdjType = 10;
--					} else if (pCoexDm->curPsTdma == 10) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 10);
--						pCoexDm->psTdmaDuAdjType = 10;
--					}
-+					if (pCoexDm->curPsTdma == 4)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+					else if (pCoexDm->curPsTdma == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(2);
-+					else if (pCoexDm->curPsTdma == 12)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
-+					else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(10);
- 				}
- 			}
- 		} else if (maxInterval == 3) {
- 			if (bTxPause) {
- 				BTC_PRINT(BTC_MSG_ALGORITHM, ALGO_TRACE_FW_DETAIL, ("[BTCoex], TxPause = 1\n"));
--				if (pCoexDm->curPsTdma == 1) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--					pCoexDm->psTdmaDuAdjType = 7;
--				} else if (pCoexDm->curPsTdma == 2) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--					pCoexDm->psTdmaDuAdjType = 7;
--				} else if (pCoexDm->curPsTdma == 3) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--					pCoexDm->psTdmaDuAdjType = 7;
--				} else if (pCoexDm->curPsTdma == 4) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 8);
--					pCoexDm->psTdmaDuAdjType = 8;
--				}
--
--				if (pCoexDm->curPsTdma == 9) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--					pCoexDm->psTdmaDuAdjType = 15;
--				} else if (pCoexDm->curPsTdma == 10) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--					pCoexDm->psTdmaDuAdjType = 15;
--				} else if (pCoexDm->curPsTdma == 11) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--					pCoexDm->psTdmaDuAdjType = 15;
--				} else if (pCoexDm->curPsTdma == 12) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 16);
--					pCoexDm->psTdmaDuAdjType = 16;
--				}
-+				if (pCoexDm->curPsTdma == 1)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+				else if (pCoexDm->curPsTdma == 2)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+				else if (pCoexDm->curPsTdma == 3)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+				else if (pCoexDm->curPsTdma == 4)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(8);
-+
-+				if (pCoexDm->curPsTdma == 9)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+				else if (pCoexDm->curPsTdma == 10)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+				else if (pCoexDm->curPsTdma == 11)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+				else if (pCoexDm->curPsTdma == 12)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(16);
- 
- 				if (result == -1) {
--					if (pCoexDm->curPsTdma == 5) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 6) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 7) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 8);
--						pCoexDm->psTdmaDuAdjType = 8;
--					} else if (pCoexDm->curPsTdma == 13) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 14) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 15) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 16);
--						pCoexDm->psTdmaDuAdjType = 16;
--					}
-+					if (pCoexDm->curPsTdma == 5)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 6)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 7)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(8);
-+					else if (pCoexDm->curPsTdma == 13)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 14)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 15)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(16);
- 				} else if (result == 1) {
--					if (pCoexDm->curPsTdma == 8) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 7) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 6) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 7);
--						pCoexDm->psTdmaDuAdjType = 7;
--					} else if (pCoexDm->curPsTdma == 16) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 15) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					} else if (pCoexDm->curPsTdma == 14) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 15);
--						pCoexDm->psTdmaDuAdjType = 15;
--					}
-+					if (pCoexDm->curPsTdma == 8)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 7)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 6)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(7);
-+					else if (pCoexDm->curPsTdma == 16)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 15)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
-+					else if (pCoexDm->curPsTdma == 14)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(15);
- 				}
- 			} else {
- 				BTC_PRINT(BTC_MSG_ALGORITHM, ALGO_TRACE_FW_DETAIL, ("[BTCoex], TxPause = 0\n"));
--				if (pCoexDm->curPsTdma == 5) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--					pCoexDm->psTdmaDuAdjType = 3;
--				} else if (pCoexDm->curPsTdma == 6) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--					pCoexDm->psTdmaDuAdjType = 3;
--				} else if (pCoexDm->curPsTdma == 7) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--					pCoexDm->psTdmaDuAdjType = 3;
--				} else if (pCoexDm->curPsTdma == 8) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 4);
--					pCoexDm->psTdmaDuAdjType = 4;
--				}
--
--				if (pCoexDm->curPsTdma == 13) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--					pCoexDm->psTdmaDuAdjType = 11;
--				} else if (pCoexDm->curPsTdma == 14) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--					pCoexDm->psTdmaDuAdjType = 11;
--				} else if (pCoexDm->curPsTdma == 15) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--					pCoexDm->psTdmaDuAdjType = 11;
--				} else if (pCoexDm->curPsTdma == 16) {
--					halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 12);
--					pCoexDm->psTdmaDuAdjType = 12;
--				}
-+				if (pCoexDm->curPsTdma == 5)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+				else if (pCoexDm->curPsTdma == 6)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+				else if (pCoexDm->curPsTdma == 7)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+				else if (pCoexDm->curPsTdma == 8)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(4);
-+
-+				if (pCoexDm->curPsTdma == 13)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+				else if (pCoexDm->curPsTdma == 14)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+				else if (pCoexDm->curPsTdma == 15)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+				else if (pCoexDm->curPsTdma == 16)
-+					HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(12);
- 
- 				if (result == -1) {
--					if (pCoexDm->curPsTdma == 1) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 4);
--						pCoexDm->psTdmaDuAdjType = 4;
--					} else if (pCoexDm->curPsTdma == 9) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 10) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 11) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 12);
--						pCoexDm->psTdmaDuAdjType = 12;
--					}
-+					if (pCoexDm->curPsTdma == 1)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(4);
-+					else if (pCoexDm->curPsTdma == 9)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(12);
- 				} else if (result == 1) {
--					if (pCoexDm->curPsTdma == 4) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 3) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 2) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 3);
--						pCoexDm->psTdmaDuAdjType = 3;
--					} else if (pCoexDm->curPsTdma == 12) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 11) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					} else if (pCoexDm->curPsTdma == 10) {
--						halbtc8723b2ant_PsTdma(pBtCoexist, NORMAL_EXEC, true, 11);
--						pCoexDm->psTdmaDuAdjType = 11;
--					}
-+					if (pCoexDm->curPsTdma == 4)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 3)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 2)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(3);
-+					else if (pCoexDm->curPsTdma == 12)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 11)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
-+					else if (pCoexDm->curPsTdma == 10)
-+						HAL_BTC8723B2ANT_DMA_DURATION_ADJUST(11);
- 				}
- 			}
- 		}
--- 
-2.7.4
+> +- reg: the virtual channel number of a DSI peripheral
+> +- enable-gpios: a GPIO spec for the enable pin
+> +- pp1800-supply: core voltage supply
+> +- avdd-supply: 
+> +- avee-supply: 
+Missing descriptions - please add.
+> +- backlight: phandle of the backlight device attached to the panel
+> +
+> +The device node can contain one 'port' child node with one child
+> +'endpoint' node, according to the bindings defined in
+> +media/video-interfaces.txt. This node should describe panel's video bus.
+> +
+> +Example:
+> +&dsi {
+> +	...
+> +	panel@0 {
+> +		compatible = "boe,tv101wum-nl6";
+> +		reg = <0>;
+> +		enable-gpios = <&pio 45 0>;
+> +		avdd-supply = <&ppvarn_lcd>;
+> +		avee-supply = <&ppvarp_lcd>;
+> +		pp1800-supply = <&pp1800_lcd>;
+> +		backlight = <&backlight_lcd0>;
+> +		status = "okay";
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint = <&dsi_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> \ No newline at end of file
+Please add newline.
 
+	Sam
