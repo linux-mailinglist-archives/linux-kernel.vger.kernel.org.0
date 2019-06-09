@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 548BF3A8B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04BE3A733
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388430AbfFIRDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:03:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41842 "EHLO mail.kernel.org"
+        id S1729847AbfFIQrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:47:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388418AbfFIRD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:03:29 -0400
+        id S1729053AbfFIQrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73E3B20833;
-        Sun,  9 Jun 2019 17:03:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1BFC2081C;
+        Sun,  9 Jun 2019 16:47:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099807;
-        bh=6c0JvXqW24/fFraJcbdkf9/+JGz+n4y9+ZrlOB6V2lE=;
+        s=default; t=1560098832;
+        bh=vaYwb1577dLTm2yh/ziP4tzrtY8aiMNv6GGrTDhWrVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qXOFsDb7Dxhle7a1+KB0bhYZGdttMhdKXEv8M5vZQUKEPjo3VZh0k+kt7PuuMvxEz
-         QccrBHDCE81NHX8bvF39K0u4qsif+vHj249KRI2HFfgbOo8hkq8/TCAG75VpvkDIqJ
-         hqz/X6TLRDux+mTmQm4UbaIJw9DvOILuUdcYlJA4=
+        b=W6pGPu7nLMYdcpDRenkrHDzhJcIP5YOfJ/SzdF6R7yEZ5+LoXCHrp/9ZBVDTzYV2H
+         Qrr0YA9IFWZL9/DntfsDmhy4veqs7PHxgdmNlrG2Uv7bVreAwWw0JAyuDpnOmKg6hm
+         E+LtlfudAXYV8yjnNxQkNk/m2o8ZGxy6LfA0tRCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Hutchinson <jahutchinson99@googlemail.com>,
-        Antti Palosaari <crope@iki.fi>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 172/241] media: m88ds3103: serialize reset messages in m88ds3103_set_frontend
-Date:   Sun,  9 Jun 2019 18:41:54 +0200
-Message-Id: <20190609164152.757399090@linuxfoundation.org>
+        stable@vger.kernel.org, Ian Jackson <ian.jackson@citrix.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 5.1 44/70] xen-blkfront: switch kcalloc to kvcalloc for large array allocation
+Date:   Sun,  9 Jun 2019 18:41:55 +0200
+Message-Id: <20190609164131.025191741@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,102 +46,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 981fbe3da20a6f35f17977453bce7dfc1664d74f ]
+From: Roger Pau Monne <roger.pau@citrix.com>
 
-Ref: https://bugzilla.kernel.org/show_bug.cgi?id=199323
+commit 1d5c76e66433382a1e170d1d5845bb0fed7467aa upstream.
 
-Users are experiencing problems with the DVBSky S960/S960C USB devices
-since the following commit:
+There's no reason to request physically contiguous memory for those
+allocations.
 
-9d659ae: ("locking/mutex: Add lock handoff to avoid starvation")
+[boris: added CC to stable]
 
-The device malfunctions after running for an indeterminable period of
-time, and the problem can only be cleared by rebooting the machine.
+Cc: stable@vger.kernel.org
+Reported-by: Ian Jackson <ian.jackson@citrix.com>
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-It is possible to encourage the problem to surface by blocking the
-signal to the LNB.
-
-Further debugging revealed the cause of the problem.
-
-In the following capture:
-- thread #1325 is running m88ds3103_set_frontend
-- thread #42 is running ts2020_stat_work
-
-a> [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 07 80
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 08
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 68 3f
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 08 ff
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 3d
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
-b> [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 07 00
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 21
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 66
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
-   [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 60 02 10 0b
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-
-Two i2c messages are sent to perform a reset in m88ds3103_set_frontend:
-
-  a. 0x07, 0x80
-  b. 0x07, 0x00
-
-However, as shown in the capture, the regmap mutex is being handed over
-to another thread (ts2020_stat_work) in between these two messages.
-
->From here, the device responds to every i2c message with an 07 message,
-and will only return to normal operation following a power cycle.
-
-Use regmap_multi_reg_write to group the two reset messages, ensuring
-both are processed before the regmap mutex is unlocked.
-
-Signed-off-by: James Hutchinson <jahutchinson99@googlemail.com>
-Reviewed-by: Antti Palosaari <crope@iki.fi>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/dvb-frontends/m88ds3103.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/block/xen-blkfront.c |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index d14d075ab1d63..9f0956e739a45 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -309,6 +309,9 @@ static int m88ds3103_set_frontend(struct dvb_frontend *fe)
- 	u16 u16tmp, divide_ratio = 0;
- 	u32 tuner_frequency, target_mclk;
- 	s32 s32tmp;
-+	static const struct reg_sequence reset_buf[] = {
-+		{0x07, 0x80}, {0x07, 0x00}
-+	};
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -1310,11 +1310,11 @@ static void blkif_free_ring(struct blkfr
+ 		}
  
- 	dev_dbg(&client->dev,
- 		"delivery_system=%d modulation=%d frequency=%u symbol_rate=%d inversion=%d pilot=%d rolloff=%d\n",
-@@ -321,11 +324,7 @@ static int m88ds3103_set_frontend(struct dvb_frontend *fe)
+ free_shadow:
+-		kfree(rinfo->shadow[i].grants_used);
++		kvfree(rinfo->shadow[i].grants_used);
+ 		rinfo->shadow[i].grants_used = NULL;
+-		kfree(rinfo->shadow[i].indirect_grants);
++		kvfree(rinfo->shadow[i].indirect_grants);
+ 		rinfo->shadow[i].indirect_grants = NULL;
+-		kfree(rinfo->shadow[i].sg);
++		kvfree(rinfo->shadow[i].sg);
+ 		rinfo->shadow[i].sg = NULL;
  	}
  
- 	/* reset */
--	ret = regmap_write(dev->regmap, 0x07, 0x80);
--	if (ret)
--		goto err;
--
--	ret = regmap_write(dev->regmap, 0x07, 0x00);
-+	ret = regmap_multi_reg_write(dev->regmap, reset_buf, 2);
- 	if (ret)
- 		goto err;
+@@ -1353,7 +1353,7 @@ static void blkif_free(struct blkfront_i
+ 	for (i = 0; i < info->nr_rings; i++)
+ 		blkif_free_ring(&info->rinfo[i]);
  
--- 
-2.20.1
-
+-	kfree(info->rinfo);
++	kvfree(info->rinfo);
+ 	info->rinfo = NULL;
+ 	info->nr_rings = 0;
+ }
+@@ -1914,9 +1914,9 @@ static int negotiate_mq(struct blkfront_
+ 	if (!info->nr_rings)
+ 		info->nr_rings = 1;
+ 
+-	info->rinfo = kcalloc(info->nr_rings,
+-			      sizeof(struct blkfront_ring_info),
+-			      GFP_KERNEL);
++	info->rinfo = kvcalloc(info->nr_rings,
++			       sizeof(struct blkfront_ring_info),
++			       GFP_KERNEL);
+ 	if (!info->rinfo) {
+ 		xenbus_dev_fatal(info->xbdev, -ENOMEM, "allocating ring_info structure");
+ 		info->nr_rings = 0;
+@@ -2232,17 +2232,17 @@ static int blkfront_setup_indirect(struc
+ 
+ 	for (i = 0; i < BLK_RING_SIZE(info); i++) {
+ 		rinfo->shadow[i].grants_used =
+-			kcalloc(grants,
+-				sizeof(rinfo->shadow[i].grants_used[0]),
+-				GFP_NOIO);
+-		rinfo->shadow[i].sg = kcalloc(psegs,
+-					      sizeof(rinfo->shadow[i].sg[0]),
+-					      GFP_NOIO);
++			kvcalloc(grants,
++				 sizeof(rinfo->shadow[i].grants_used[0]),
++				 GFP_NOIO);
++		rinfo->shadow[i].sg = kvcalloc(psegs,
++					       sizeof(rinfo->shadow[i].sg[0]),
++					       GFP_NOIO);
+ 		if (info->max_indirect_segments)
+ 			rinfo->shadow[i].indirect_grants =
+-				kcalloc(INDIRECT_GREFS(grants),
+-					sizeof(rinfo->shadow[i].indirect_grants[0]),
+-					GFP_NOIO);
++				kvcalloc(INDIRECT_GREFS(grants),
++					 sizeof(rinfo->shadow[i].indirect_grants[0]),
++					 GFP_NOIO);
+ 		if ((rinfo->shadow[i].grants_used == NULL) ||
+ 			(rinfo->shadow[i].sg == NULL) ||
+ 		     (info->max_indirect_segments &&
+@@ -2256,11 +2256,11 @@ static int blkfront_setup_indirect(struc
+ 
+ out_of_memory:
+ 	for (i = 0; i < BLK_RING_SIZE(info); i++) {
+-		kfree(rinfo->shadow[i].grants_used);
++		kvfree(rinfo->shadow[i].grants_used);
+ 		rinfo->shadow[i].grants_used = NULL;
+-		kfree(rinfo->shadow[i].sg);
++		kvfree(rinfo->shadow[i].sg);
+ 		rinfo->shadow[i].sg = NULL;
+-		kfree(rinfo->shadow[i].indirect_grants);
++		kvfree(rinfo->shadow[i].indirect_grants);
+ 		rinfo->shadow[i].indirect_grants = NULL;
+ 	}
+ 	if (!list_empty(&rinfo->indirect_pages)) {
 
 
