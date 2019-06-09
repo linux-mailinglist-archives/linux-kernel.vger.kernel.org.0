@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578983A720
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E14643A753
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfFIQqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44798 "EHLO mail.kernel.org"
+        id S1730506AbfFIQsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:48:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730508AbfFIQqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:46:33 -0400
+        id S1731232AbfFIQsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:48:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACD8D2081C;
-        Sun,  9 Jun 2019 16:46:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28246205ED;
+        Sun,  9 Jun 2019 16:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098793;
-        bh=LDAErhTgldvVUzf3wXt11d1c2wKcCbcc1Y/hoi6y5E8=;
+        s=default; t=1560098914;
+        bh=RraCkwXdzglEq/7vdS33A/72ye87OZQO/agCNTF+Lok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ANk61pUxfvdUvPOeEsXNKFI/qBZW8ro8cx2KO9rJX0KGKzXCh8c6XHXXa56DuCjGP
-         zL1mbSORt+yy9B3iCVKsM/4ghKBv6OdTRLilFt7TIctLiagoTVeWGrLHtFpwOBGU88
-         iw2N2CLByuR4O5P9+zksQYg984lmcAF2JcAdG6Zk=
+        b=Ccsxcei6/nm0gUVfv/9l3kkUGB9aZwrhP7XKlFfm8XgYrCkziI0I7wGPV2/h5eeV4
+         7NyZVox0MW0h/Qz5gsTxHcuNIs22MAGZMZpFytd4keIRDqMx4AYUf5SF/xw697Wv/z
+         uVM9L3l55QWhfKWeS51FryLywk6V6ypXS1oKNASo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Louis Li <Ching-shih.Li@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 5.1 63/70] drm/amdgpu: fix ring test failure issue during s3 in vce 3.0 (V2)
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
+        Kevin Hilman <khilman@baylibre.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 4.19 33/51] MIPS: pistachio: Build uImage.gz by default
 Date:   Sun,  9 Jun 2019 18:42:14 +0200
-Message-Id: <20190609164132.727504869@linuxfoundation.org>
+Message-Id: <20190609164129.245033949@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Louis Li <Ching-shih.Li@amd.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit ce0e22f5d886d1b56c7ab4347c45b9ac5fcc058d upstream.
+commit e4f2d1af7163becb181419af9dece9206001e0a6 upstream.
 
-[What]
-vce ring test fails consistently during resume in s3 cycle, due to
-mismatch read & write pointers.
-On debug/analysis its found that rptr to be compared is not being
-correctly updated/read, which leads to this failure.
-Below is the failure signature:
-	[drm:amdgpu_vce_ring_test_ring] *ERROR* amdgpu: ring 12 test failed
-	[drm:amdgpu_device_ip_resume_phase2] *ERROR* resume of IP block <vce_v3_0> failed -110
-	[drm:amdgpu_device_resume] *ERROR* amdgpu_device_ip_resume failed (-110).
+The pistachio platform uses the U-Boot bootloader & generally boots a
+kernel in the uImage format. As such it's useful to build one when
+building the kernel, but to do so currently requires the user to
+manually specify a uImage target on the make command line.
 
-[How]
-fetch rptr appropriately, meaning move its read location further down
-in the code flow.
-With this patch applied the s3 failure is no more seen for >5k s3 cycles,
-which otherwise is pretty consistent.
+Make uImage.gz the pistachio platform's default build target, so that
+the default is to build a kernel image that we can actually boot on a
+board such as the MIPS Creator Ci40.
 
-V2: remove reduntant fetch of rptr
+Marked for stable backport as far as v4.1 where pistachio support was
+introduced. This is primarily useful for CI systems such as kernelci.org
+which will benefit from us building a suitable image which can then be
+booted as part of automated testing, extending our test coverage to the
+affected stable branches.
 
-Signed-off-by: Louis Li <Ching-shih.Li@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+URL: https://groups.io/g/kernelci/message/388
+Cc: stable@vger.kernel.org # v4.1+
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/mips/pistachio/Platform |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-@@ -1072,7 +1072,7 @@ void amdgpu_vce_ring_emit_fence(struct a
- int amdgpu_vce_ring_test_ring(struct amdgpu_ring *ring)
- {
- 	struct amdgpu_device *adev = ring->adev;
--	uint32_t rptr = amdgpu_ring_get_rptr(ring);
-+	uint32_t rptr;
- 	unsigned i;
- 	int r, timeout = adev->usec_timeout;
- 
-@@ -1084,6 +1084,8 @@ int amdgpu_vce_ring_test_ring(struct amd
- 	if (r)
- 		return r;
- 
-+	rptr = amdgpu_ring_get_rptr(ring);
-+
- 	amdgpu_ring_write(ring, VCE_CMD_END);
- 	amdgpu_ring_commit(ring);
- 
+--- a/arch/mips/pistachio/Platform
++++ b/arch/mips/pistachio/Platform
+@@ -6,3 +6,4 @@ cflags-$(CONFIG_MACH_PISTACHIO)		+=				\
+ 		-I$(srctree)/arch/mips/include/asm/mach-pistachio
+ load-$(CONFIG_MACH_PISTACHIO)		+= 0xffffffff80400000
+ zload-$(CONFIG_MACH_PISTACHIO)		+= 0xffffffff81000000
++all-$(CONFIG_MACH_PISTACHIO)		:= uImage.gz
 
 
