@@ -2,84 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1813A324
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476223A337
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 04:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfFIC2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 8 Jun 2019 22:28:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55848 "EHLO
+        id S1728635AbfFIC3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 8 Jun 2019 22:29:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55690 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728218AbfFIC1k (ORCPT
+        with ESMTP id S1728005AbfFIC1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Jun 2019 22:27:40 -0400
+        Sat, 8 Jun 2019 22:27:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
-        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+7YOeZYQMgrlvEvn+ptCX3yYsOcx7RA+feD7vnxkurE=; b=LZvTkvGZ/+MlTYDWNyzV9VPU1C
-        X5Lu5WJjKZG9OyWbSRnjeygyjvXF9HxD+7/urfoL04shunsS9bfz/JVmsizhZrn5mUMFK/T02xNG7
-        e3Bm9cWOIOaT3HJX+JoEi5wP1Kvg+naONmovZZ0VRHlLFy7ZmSwIYkvO5j8szcoZjQl5pNSm04iZX
-        Rt2L+Dmvw3VzZ5TJxi5UoEFBGe7YJMYwkFPu4sHdEE33Wbx1EUeLFA7UOe8+nOuF9+kJVitvi8kmT
-        iQZACVMZxq9+N7rFUMYvnItpDjRYF+LizvqBYVepZXpUtMRqCalmrD0/oe/lcNJow9N7XuHAiq2Ow
-        EInpYwYg==;
+        bh=TFX6hBqSljS5aX8FTGQmbqdoWrqLCyd7H64zLGcqzwI=; b=WZ89TWCmvrJpRpDn3bAKLNKmIy
+        gEYIPGDn7bdTBPsSZdKtGyYiQkXaQppAMaN+3oUZ9gHg9K5ZLwWd9czeHUkFcwk8Hyh6Gj0xRESMn
+        G/fbIIJmUqJIcQVUugbgNdcv2vmHM9opdEAS/HJ/mfg5OdjnhCHM3uROPjm14QmvoPslamgag9vEp
+        09hF132v2UuvmgIBzFS4RafEl6w80Pa7cHLAyobMLkg2YoqwXOj31Sle3BSeTO/h16Pv8U0BUzpVA
+        akOFc9+jid6hT1PMuDvNn2F8mqNwFhvvJfqyPMeixetdtkQUOKIhowudz+t6sOVMukiG74WKz8RfN
+        32aYhakA==;
 Received: from 179.176.115.133.dynamic.adsl.gvt.net.br ([179.176.115.133] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZnYO-0001my-1e; Sun, 09 Jun 2019 02:27:28 +0000
+        id 1hZnYO-0001mx-1P; Sun, 09 Jun 2019 02:27:29 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hZnYL-0000JJ-6k; Sat, 08 Jun 2019 23:27:25 -0300
+        id 1hZnYL-0000JS-8M; Sat, 08 Jun 2019 23:27:25 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kexec@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
-Subject: [PATCH v3 15/33] docs: kdump: convert docs to ReST and rename to *.rst
-Date:   Sat,  8 Jun 2019 23:27:05 -0300
-Message-Id: <6ee88eacdbb21e79bcd7a418ffc84373edb91c9c.1560045490.git.mchehab+samsung@kernel.org>
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v3 16/33] docs: locking: convert docs to ReST and rename to *.rst
+Date:   Sat,  8 Jun 2019 23:27:06 -0300
+Message-Id: <d5a915447d63fce96cbf463a512cce89423776c3.1560045490.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560045490.git.mchehab+samsung@kernel.org>
 References: <cover.1560045490.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert kdump documentation to ReST and add it to the
-user faced manual, as the documents are mainly focused on
-sysadmins that would be enabling kdump.
+Convert the locking documents to ReST and add them to the
+kernel development book where it belongs.
 
-Note: the vmcoreinfo.rst has one very long title on one of its
-sub-sections:
-
-	PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
-
-I opted to break this one, into two entries with the same content,
-in order to make it easier to display after being parsed in html and PDF.
+Most of the stuff here is just to make Sphinx to properly
+parse the text file, as they're already in good shape,
+not requiring massive changes in order to be parsed.
 
 The conversion is actually:
   - add blank lines and identation in order to identify paragraphs;
@@ -93,86 +76,72 @@ the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/admin-guide/bug-hunting.rst     |   2 +-
- .../admin-guide/kernel-parameters.txt         |   6 +-
- Documentation/kdump/index.rst                 |  21 +++
- Documentation/kdump/{kdump.txt => kdump.rst}  | 131 +++++++++++-------
- .../kdump/{vmcoreinfo.txt => vmcoreinfo.rst}  |  59 ++++----
- .../powerpc/firmware-assisted-dump.txt        |   2 +-
- .../translations/zh_CN/oops-tracing.txt       |   2 +-
- Documentation/watchdog/hpwdt.txt              |   2 +-
- arch/arm/Kconfig                              |   2 +-
- arch/arm64/Kconfig                            |   2 +-
- arch/sh/Kconfig                               |   2 +-
- arch/x86/Kconfig                              |   4 +-
- 12 files changed, 137 insertions(+), 98 deletions(-)
- create mode 100644 Documentation/kdump/index.rst
- rename Documentation/kdump/{kdump.txt => kdump.rst} (91%)
- rename Documentation/kdump/{vmcoreinfo.txt => vmcoreinfo.rst} (95%)
+ Documentation/kernel-hacking/locking.rst      |   2 +-
+ Documentation/locking/index.rst               |  24 ++
+ ...{lockdep-design.txt => lockdep-design.rst} |  51 ++--
+ .../locking/{lockstat.txt => lockstat.rst}    | 221 ++++++++++--------
+ .../{locktorture.txt => locktorture.rst}      | 105 +++++----
+ .../{mutex-design.txt => mutex-design.rst}    |  26 ++-
+ ...t-mutex-design.txt => rt-mutex-design.rst} | 139 ++++++-----
+ .../locking/{rt-mutex.txt => rt-mutex.rst}    |  30 +--
+ .../locking/{spinlocks.txt => spinlocks.rst}  |  32 ++-
+ ...w-mutex-design.txt => ww-mutex-design.rst} |  82 ++++---
+ Documentation/pi-futex.txt                    |   2 +-
+ .../it_IT/kernel-hacking/locking.rst          |   2 +-
+ drivers/gpu/drm/drm_modeset_lock.c            |   2 +-
+ include/linux/lockdep.h                       |   2 +-
+ include/linux/mutex.h                         |   2 +-
+ include/linux/rwsem.h                         |   2 +-
+ kernel/locking/mutex.c                        |   2 +-
+ kernel/locking/rtmutex.c                      |   2 +-
+ lib/Kconfig.debug                             |   4 +-
+ 19 files changed, 428 insertions(+), 304 deletions(-)
+ create mode 100644 Documentation/locking/index.rst
+ rename Documentation/locking/{lockdep-design.txt => lockdep-design.rst} (93%)
+ rename Documentation/locking/{lockstat.txt => lockstat.rst} (41%)
+ rename Documentation/locking/{locktorture.txt => locktorture.rst} (57%)
+ rename Documentation/locking/{mutex-design.txt => mutex-design.rst} (94%)
+ rename Documentation/locking/{rt-mutex-design.txt => rt-mutex-design.rst} (91%)
+ rename Documentation/locking/{rt-mutex.txt => rt-mutex.rst} (71%)
+ rename Documentation/locking/{spinlocks.txt => spinlocks.rst} (89%)
+ rename Documentation/locking/{ww-mutex-design.txt => ww-mutex-design.rst} (93%)
 
-diff --git a/Documentation/admin-guide/bug-hunting.rst b/Documentation/admin-guide/bug-hunting.rst
-index f278b289e260..b761aa2a51d2 100644
---- a/Documentation/admin-guide/bug-hunting.rst
-+++ b/Documentation/admin-guide/bug-hunting.rst
-@@ -90,7 +90,7 @@ the disk is not available then you have three options:
-     run a null modem to a second machine and capture the output there
-     using your favourite communication program.  Minicom works well.
+diff --git a/Documentation/kernel-hacking/locking.rst b/Documentation/kernel-hacking/locking.rst
+index 519673df0e82..71a843464ec2 100644
+--- a/Documentation/kernel-hacking/locking.rst
++++ b/Documentation/kernel-hacking/locking.rst
+@@ -1364,7 +1364,7 @@ Futex API reference
+ Further reading
+ ===============
  
--(3) Use Kdump (see Documentation/kdump/kdump.txt),
-+(3) Use Kdump (see Documentation/kdump/kdump.rst),
-     extract the kernel ring buffer from old memory with using dmesg
-     gdbmacro in Documentation/kdump/gdbmacros.txt.
+--  ``Documentation/locking/spinlocks.txt``: Linus Torvalds' spinlocking
++-  ``Documentation/locking/spinlocks.rst``: Linus Torvalds' spinlocking
+    tutorial in the kernel sources.
  
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e4544f0335e3..9789328f5e9d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -708,14 +708,14 @@
- 			[KNL, x86_64] select a region under 4G first, and
- 			fall back to reserve region above 4G when '@offset'
- 			hasn't been specified.
--			See Documentation/kdump/kdump.txt for further details.
-+			See Documentation/kdump/kdump.rst for further details.
- 
- 	crashkernel=range1:size1[,range2:size2,...][@offset]
- 			[KNL] Same as above, but depends on the memory
- 			in the running system. The syntax of range is
- 			start-[end] where start and end are both
- 			a memory unit (amount[KMG]). See also
--			Documentation/kdump/kdump.txt for an example.
-+			Documentation/kdump/kdump.rst for an example.
- 
- 	crashkernel=size[KMG],high
- 			[KNL, x86_64] range could be above 4G. Allow kernel
-@@ -1207,7 +1207,7 @@
- 			Specifies physical address of start of kernel core
- 			image elf header and optionally the size. Generally
- 			kexec loader will pass this option to capture kernel.
--			See Documentation/kdump/kdump.txt for details.
-+			See Documentation/kdump/kdump.rst for details.
- 
- 	enable_mtrr_cleanup [X86]
- 			The kernel tries to adjust MTRR layout from continuous
-diff --git a/Documentation/kdump/index.rst b/Documentation/kdump/index.rst
+ -  Unix Systems for Modern Architectures: Symmetric Multiprocessing and
+diff --git a/Documentation/locking/index.rst b/Documentation/locking/index.rst
 new file mode 100644
-index 000000000000..2b17fcf6867a
+index 000000000000..ef5da7fe9aac
 --- /dev/null
-+++ b/Documentation/kdump/index.rst
-@@ -0,0 +1,21 @@
++++ b/Documentation/locking/index.rst
+@@ -0,0 +1,24 @@
 +:orphan:
 +
-+================================================================
-+Documentation for Kdump - The kexec-based Crash Dumping Solution
-+================================================================
-+
-+This document includes overview, setup and installation, and analysis
-+information.
++=======
++locking
++=======
 +
 +.. toctree::
 +    :maxdepth: 1
 +
-+    kdump
-+    vmcoreinfo
++    lockdep-design
++    lockstat
++    locktorture
++    mutex-design
++    rt-mutex-design
++    rt-mutex
++    spinlocks
++    ww-mutex-design
 +
 +.. only::  subproject and html
 +
@@ -180,603 +149,1583 @@ index 000000000000..2b17fcf6867a
 +   =======
 +
 +   * :ref:`genindex`
-diff --git a/Documentation/kdump/kdump.txt b/Documentation/kdump/kdump.rst
-similarity index 91%
-rename from Documentation/kdump/kdump.txt
-rename to Documentation/kdump/kdump.rst
-index 3162eeb8c262..ac7e131d2935 100644
---- a/Documentation/kdump/kdump.txt
-+++ b/Documentation/kdump/kdump.rst
-@@ -71,9 +71,8 @@ This is a symlink to the latest version.
+diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.rst
+similarity index 93%
+rename from Documentation/locking/lockdep-design.txt
+rename to Documentation/locking/lockdep-design.rst
+index f189d130e543..23fcbc4d3fc0 100644
+--- a/Documentation/locking/lockdep-design.txt
++++ b/Documentation/locking/lockdep-design.rst
+@@ -2,6 +2,7 @@ Runtime locking correctness validator
+ =====================================
  
- The latest kexec-tools git tree is available at:
- 
--git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
--and
--http://www.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
-+- git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
-+- http://www.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
- 
- There is also a gitweb interface available at
- http://www.kernel.org/git/?p=utils/kernel/kexec/kexec-tools.git
-@@ -81,25 +80,25 @@ http://www.kernel.org/git/?p=utils/kernel/kexec/kexec-tools.git
- More information about kexec-tools can be found at
- http://horms.net/projects/kexec/
- 
--3) Unpack the tarball with the tar command, as follows:
-+3) Unpack the tarball with the tar command, as follows::
- 
--   tar xvpzf kexec-tools.tar.gz
-+	tar xvpzf kexec-tools.tar.gz
- 
--4) Change to the kexec-tools directory, as follows:
-+4) Change to the kexec-tools directory, as follows::
- 
--   cd kexec-tools-VERSION
-+	cd kexec-tools-VERSION
- 
--5) Configure the package, as follows:
-+5) Configure the package, as follows::
- 
--   ./configure
-+	./configure
- 
--6) Compile the package, as follows:
-+6) Compile the package, as follows::
- 
--   make
-+	make
- 
--7) Install the package, as follows:
-+7) Install the package, as follows::
- 
--   make install
-+	make install
- 
- 
- Build the system and dump-capture kernels
-@@ -126,25 +125,25 @@ dump-capture kernels for enabling kdump support.
- System kernel config options
- ----------------------------
- 
--1) Enable "kexec system call" in "Processor type and features."
-+1) Enable "kexec system call" in "Processor type and features."::
- 
--   CONFIG_KEXEC=y
-+	CONFIG_KEXEC=y
- 
- 2) Enable "sysfs file system support" in "Filesystem" -> "Pseudo
--   filesystems." This is usually enabled by default.
-+   filesystems." This is usually enabled by default::
- 
--   CONFIG_SYSFS=y
-+	CONFIG_SYSFS=y
- 
-    Note that "sysfs file system support" might not appear in the "Pseudo
-    filesystems" menu if "Configure standard kernel features (for small
-    systems)" is not enabled in "General Setup." In this case, check the
--   .config file itself to ensure that sysfs is turned on, as follows:
-+   .config file itself to ensure that sysfs is turned on, as follows::
- 
--   grep 'CONFIG_SYSFS' .config
-+	grep 'CONFIG_SYSFS' .config
- 
--3) Enable "Compile the kernel with debug info" in "Kernel hacking."
-+3) Enable "Compile the kernel with debug info" in "Kernel hacking."::
- 
--   CONFIG_DEBUG_INFO=Y
-+	CONFIG_DEBUG_INFO=Y
- 
-    This causes the kernel to be built with debug symbols. The dump
-    analysis tools require a vmlinux with debug symbols in order to read
-@@ -154,29 +153,32 @@ Dump-capture kernel config options (Arch Independent)
- -----------------------------------------------------
- 
- 1) Enable "kernel crash dumps" support under "Processor type and
--   features":
-+   features"::
- 
--   CONFIG_CRASH_DUMP=y
-+	CONFIG_CRASH_DUMP=y
- 
--2) Enable "/proc/vmcore support" under "Filesystems" -> "Pseudo filesystems".
-+2) Enable "/proc/vmcore support" under "Filesystems" -> "Pseudo filesystems"::
+ started by Ingo Molnar <mingo@redhat.com>
 +
-+	CONFIG_PROC_VMCORE=y
+ additions by Arjan van de Ven <arjan@linux.intel.com>
  
--   CONFIG_PROC_VMCORE=y
-    (CONFIG_PROC_VMCORE is set by default when CONFIG_CRASH_DUMP is selected.)
+ Lock-class
+@@ -56,7 +57,7 @@ where the last 1 category is:
  
- Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
- --------------------------------------------------------------------
+ When locking rules are violated, these usage bits are presented in the
+ locking error messages, inside curlies, with a total of 2 * n STATEs bits.
+-A contrived example:
++A contrived example::
  
- 1) On i386, enable high memory support under "Processor type and
--   features":
-+   features"::
+    modprobe/2287 is trying to acquire lock:
+     (&sio_locks[i].lock){-.-.}, at: [<c02867fd>] mutex_lock+0x21/0x24
+@@ -70,12 +71,14 @@ of the lock and readlock (if exists), for each of the n STATEs listed
+ above respectively, and the character displayed at each bit position
+ indicates:
  
--   CONFIG_HIGHMEM64G=y
--   or
--   CONFIG_HIGHMEM4G
-+	CONFIG_HIGHMEM64G=y
++   ===  ===================================================
+    '.'  acquired while irqs disabled and not in irq context
+    '-'  acquired in irq context
+    '+'  acquired with irqs enabled
+    '?'  acquired in irq context with irqs enabled.
++   ===  ===================================================
+ 
+-The bits are illustrated with an example:
++The bits are illustrated with an example::
+ 
+     (&sio_locks[i].lock){-.-.}, at: [<c02867fd>] mutex_lock+0x21/0x24
+                          ||||
+@@ -90,13 +93,13 @@ context and whether that STATE is enabled yields four possible cases as
+ shown in the table below. The bit character is able to indicate which
+ exact case is for the lock as of the reporting time.
+ 
+-   -------------------------------------------
++  +--------------+-------------+--------------+
+   |              | irq enabled | irq disabled |
+-  |-------------------------------------------|
++  +--------------+-------------+--------------+
+   | ever in irq  |      ?      |       -      |
+-  |-------------------------------------------|
++  +--------------+-------------+--------------+
+   | never in irq |      +      |       .      |
+-   -------------------------------------------
++  +--------------+-------------+--------------+
+ 
+ The character '-' suggests irq is disabled because if otherwise the
+ charactor '?' would have been shown instead. Similar deduction can be
+@@ -113,7 +116,7 @@ is irq-unsafe means it was ever acquired with irq enabled.
+ 
+ A softirq-unsafe lock-class is automatically hardirq-unsafe as well. The
+ following states must be exclusive: only one of them is allowed to be set
+-for any lock-class based on its usage:
++for any lock-class based on its usage::
+ 
+  <hardirq-safe> or <hardirq-unsafe>
+  <softirq-safe> or <softirq-unsafe>
+@@ -134,7 +137,7 @@ Multi-lock dependency rules:
+ The same lock-class must not be acquired twice, because this could lead
+ to lock recursion deadlocks.
+ 
+-Furthermore, two locks can not be taken in inverse order:
++Furthermore, two locks can not be taken in inverse order::
+ 
+  <L1> -> <L2>
+  <L2> -> <L1>
+@@ -148,7 +151,7 @@ operations; the validator will still find whether these locks can be
+ acquired in a circular fashion.
+ 
+ Furthermore, the following usage based lock dependencies are not allowed
+-between any two lock-classes:
++between any two lock-classes::
+ 
+    <hardirq-safe>   ->  <hardirq-unsafe>
+    <softirq-safe>   ->  <softirq-unsafe>
+@@ -204,16 +207,16 @@ the ordering is not static.
+ In order to teach the validator about this correct usage model, new
+ versions of the various locking primitives were added that allow you to
+ specify a "nesting level". An example call, for the block device mutex,
+-looks like this:
++looks like this::
+ 
+-enum bdev_bd_mutex_lock_class
+-{
++  enum bdev_bd_mutex_lock_class
++  {
+        BD_MUTEX_NORMAL,
+        BD_MUTEX_WHOLE,
+        BD_MUTEX_PARTITION
+-};
++  };
+ 
+- mutex_lock_nested(&bdev->bd_contains->bd_mutex, BD_MUTEX_PARTITION);
++mutex_lock_nested(&bdev->bd_contains->bd_mutex, BD_MUTEX_PARTITION);
+ 
+ In this case the locking is done on a bdev object that is known to be a
+ partition.
+@@ -234,7 +237,7 @@ must be held: lockdep_assert_held*(&lock) and lockdep_*pin_lock(&lock).
+ As the name suggests, lockdep_assert_held* family of macros assert that a
+ particular lock is held at a certain time (and generate a WARN() otherwise).
+ This annotation is largely used all over the kernel, e.g. kernel/sched/
+-core.c
++core.c::
+ 
+   void update_rq_clock(struct rq *rq)
+   {
+@@ -253,7 +256,7 @@ out to be especially helpful to debug code with callbacks, where an upper
+ layer assumes a lock remains taken, but a lower layer thinks it can maybe drop
+ and reacquire the lock ("unwittingly" introducing races). lockdep_pin_lock()
+ returns a 'struct pin_cookie' that is then used by lockdep_unpin_lock() to check
+-that nobody tampered with the lock, e.g. kernel/sched/sched.h
++that nobody tampered with the lock, e.g. kernel/sched/sched.h::
+ 
+   static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+   {
+@@ -280,7 +283,7 @@ correctness) in the sense that for every simple, standalone single-task
+ locking sequence that occurred at least once during the lifetime of the
+ kernel, the validator proves it with a 100% certainty that no
+ combination and timing of these locking sequences can cause any class of
+-lock related deadlock. [*]
++lock related deadlock. [1]_
+ 
+ I.e. complex multi-CPU and multi-task locking scenarios do not have to
+ occur in practice to prove a deadlock: only the simple 'component'
+@@ -299,7 +302,9 @@ possible combination of locking interaction between CPUs, combined with
+ every possible hardirq and softirq nesting scenario (which is impossible
+ to do in practice).
+ 
+-[*] assuming that the validator itself is 100% correct, and no other
++.. [1]
 +
-+   or::
++    assuming that the validator itself is 100% correct, and no other
+     part of the system corrupts the state of the validator in any way.
+     We also assume that all NMI/SMM paths [which could interrupt
+     even hardirq-disabled codepaths] are correct and do not interfere
+@@ -310,7 +315,7 @@ to do in practice).
+ Performance:
+ ------------
+ 
+-The above rules require _massive_ amounts of runtime checking. If we did
++The above rules require **massive** amounts of runtime checking. If we did
+ that for every lock taken and for every irqs-enable event, it would
+ render the system practically unusably slow. The complexity of checking
+ is O(N^2), so even with just a few hundred lock-classes we'd have to do
+@@ -369,17 +374,17 @@ be harder to do than to say.
+ 
+ Of course, if you do run out of lock classes, the next thing to do is
+ to find the offending lock classes.  First, the following command gives
+-you the number of lock classes currently in use along with the maximum:
++you the number of lock classes currently in use along with the maximum::
+ 
+ 	grep "lock-classes" /proc/lockdep_stats
+ 
+-This command produces the following output on a modest system:
++This command produces the following output on a modest system::
+ 
+-	 lock-classes:                          748 [max: 8191]
++	lock-classes:                          748 [max: 8191]
+ 
+ If the number allocated (748 above) increases continually over time,
+ then there is likely a leak.  The following command can be used to
+-identify the leaking lock classes:
++identify the leaking lock classes::
+ 
+ 	grep "BD" /proc/lockdep
+ 
+diff --git a/Documentation/locking/lockstat.txt b/Documentation/locking/lockstat.rst
+similarity index 41%
+rename from Documentation/locking/lockstat.txt
+rename to Documentation/locking/lockstat.rst
+index fdbeb0c45ef3..536eab8dbd99 100644
+--- a/Documentation/locking/lockstat.txt
++++ b/Documentation/locking/lockstat.rst
+@@ -1,20 +1,25 @@
++===============
++Lock Statistics
++===============
+ 
+-LOCK STATISTICS
+-
+-- WHAT
++What
++====
+ 
+ As the name suggests, it provides statistics on locks.
+ 
+-- WHY
 +
-+	CONFIG_HIGHMEM4G
- 
- 2) On i386 and x86_64, disable symmetric multi-processing support
--   under "Processor type and features":
-+   under "Processor type and features"::
- 
--   CONFIG_SMP=n
-+	CONFIG_SMP=n
- 
-    (If CONFIG_SMP=y, then specify maxcpus=1 on the kernel command line
-    when loading the dump-capture kernel, see section "Load the Dump-capture
-@@ -184,9 +186,9 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
- 
- 3) If one wants to build and use a relocatable kernel,
-    Enable "Build a relocatable kernel" support under "Processor type and
--   features"
-+   features"::
- 
--   CONFIG_RELOCATABLE=y
-+	CONFIG_RELOCATABLE=y
- 
- 4) Use a suitable value for "Physical address where the kernel is
-    loaded" (under "Processor type and features"). This only appears when
-@@ -211,13 +213,13 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
- Dump-capture kernel config options (Arch Dependent, ppc64)
- ----------------------------------------------------------
- 
--1) Enable "Build a kdump crash kernel" support under "Kernel" options:
-+1) Enable "Build a kdump crash kernel" support under "Kernel" options::
- 
--   CONFIG_CRASH_DUMP=y
-+	CONFIG_CRASH_DUMP=y
- 
--2)   Enable "Build a relocatable kernel" support
-+2)   Enable "Build a relocatable kernel" support::
- 
--   CONFIG_RELOCATABLE=y
-+	CONFIG_RELOCATABLE=y
- 
-    Make and install the kernel and its modules.
- 
-@@ -231,11 +233,13 @@ Dump-capture kernel config options (Arch Dependent, ia64)
- 
-   The crashkernel region can be automatically placed by the system
-   kernel at run time. This is done by specifying the base address as 0,
--  or omitting it all together.
-+  or omitting it all together::
- 
--  crashkernel=256M@0
--  or
--  crashkernel=256M
-+	crashkernel=256M@0
-+
-+  or::
-+
-+	crashkernel=256M
- 
-   If the start address is specified, note that the start address of the
-   kernel will be aligned to 64Mb, so if the start address is not then
-@@ -245,9 +249,9 @@ Dump-capture kernel config options (Arch Dependent, arm)
- ----------------------------------------------------------
- 
- -   To use a relocatable kernel,
--    Enable "AUTO_ZRELADDR" support under "Boot" options:
-+    Enable "AUTO_ZRELADDR" support under "Boot" options::
- 
--    AUTO_ZRELADDR=y
-+	AUTO_ZRELADDR=y
- 
- Dump-capture kernel config options (Arch Dependent, arm64)
- ----------------------------------------------------------
-@@ -265,12 +269,12 @@ on the value of System RAM -- that's mostly for distributors that pre-setup
- the kernel command line to avoid a unbootable system after some memory has
- been removed from the machine.
- 
--The syntax is:
-+The syntax is::
- 
-     crashkernel=<range1>:<size1>[,<range2>:<size2>,...][@offset]
-     range=start-[end]
- 
--For example:
-+For example::
- 
-     crashkernel=512M-2G:64M,2G-:128M
- 
-@@ -326,35 +330,46 @@ can choose to load the uncompressed vmlinux or compressed bzImage/vmlinuz
- of dump-capture kernel. Following is the summary.
- 
- For i386 and x86_64:
-+
- 	- Use vmlinux if kernel is not relocatable.
- 	- Use bzImage/vmlinuz if kernel is relocatable.
-+
- For ppc64:
-+
- 	- Use vmlinux
-+
- For ia64:
-+
- 	- Use vmlinux or vmlinuz.gz
-+
- For s390x:
-+
- 	- Use image or bzImage
-+
- For arm:
-+
- 	- Use zImage
-+
- For arm64:
-+
- 	- Use vmlinux or Image
- 
- If you are using an uncompressed vmlinux image then use following command
--to load dump-capture kernel.
-+to load dump-capture kernel::
- 
-    kexec -p <dump-capture-kernel-vmlinux-image> \
-    --initrd=<initrd-for-dump-capture-kernel> --args-linux \
-    --append="root=<root-dev> <arch-specific-options>"
- 
- If you are using a compressed bzImage/vmlinuz, then use following command
--to load dump-capture kernel.
-+to load dump-capture kernel::
- 
-    kexec -p <dump-capture-kernel-bzImage> \
-    --initrd=<initrd-for-dump-capture-kernel> \
-    --append="root=<root-dev> <arch-specific-options>"
- 
- If you are using a compressed zImage, then use following command
--to load dump-capture kernel.
-+to load dump-capture kernel::
- 
-    kexec --type zImage -p <dump-capture-kernel-bzImage> \
-    --initrd=<initrd-for-dump-capture-kernel> \
-@@ -362,7 +377,7 @@ to load dump-capture kernel.
-    --append="root=<root-dev> <arch-specific-options>"
- 
- If you are using an uncompressed Image, then use following command
--to load dump-capture kernel.
-+to load dump-capture kernel::
- 
-    kexec -p <dump-capture-kernel-Image> \
-    --initrd=<initrd-for-dump-capture-kernel> \
-@@ -376,18 +391,23 @@ Following are the arch specific command line options to be used while
- loading dump-capture kernel.
- 
- For i386, x86_64 and ia64:
-+
- 	"1 irqpoll maxcpus=1 reset_devices"
- 
- For ppc64:
-+
- 	"1 maxcpus=1 noirqdistrib reset_devices"
- 
- For s390x:
-+
- 	"1 maxcpus=1 cgroup_disable=memory"
- 
- For arm:
-+
- 	"1 maxcpus=1 reset_devices"
- 
- For arm64:
-+
- 	"1 maxcpus=1 reset_devices"
- 
- Notes on loading the dump-capture kernel:
-@@ -464,7 +484,7 @@ Write Out the Dump File
- =======================
- 
- After the dump-capture kernel is booted, write out the dump file with
--the following command:
-+the following command::
- 
-    cp /proc/vmcore <dump-file>
- 
-@@ -476,7 +496,7 @@ Before analyzing the dump image, you should reboot into a stable kernel.
- 
- You can do limited analysis using GDB on the dump file copied out of
- /proc/vmcore. Use the debug vmlinux built with -g and run the following
--command:
-+command::
- 
-    gdb vmlinux <dump-file>
- 
-@@ -504,6 +524,11 @@ to achieve the same behaviour.
- Contact
- =======
- 
--Vivek Goyal (vgoyal@redhat.com)
--Maneesh Soni (maneesh@in.ibm.com)
-+- Vivek Goyal (vgoyal@redhat.com)
-+- Maneesh Soni (maneesh@in.ibm.com)
- 
-+GDB macros
-+==========
-+
-+.. include:: gdbmacros.txt
-+   :literal:
-diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.rst
-similarity index 95%
-rename from Documentation/kdump/vmcoreinfo.txt
-rename to Documentation/kdump/vmcoreinfo.rst
-index bb94a4bd597a..007a6b86e0ee 100644
---- a/Documentation/kdump/vmcoreinfo.txt
-+++ b/Documentation/kdump/vmcoreinfo.rst
-@@ -1,8 +1,7 @@
--================================================================
--			VMCOREINFO
--================================================================
-+==========
-+VMCOREINFO
-+==========
- 
--===========
- What is it?
- ===========
- 
-@@ -12,7 +11,6 @@ values, field offsets, etc. These data are packed into an ELF note
- section and used by user-space tools like crash and makedumpfile to
- analyze a kernel's memory layout.
- 
--================
- Common variables
- ================
- 
-@@ -49,7 +47,7 @@ in a system, one bit position per node number. Used to keep track of
- which nodes are in the system and online.
- 
- swapper_pg_dir
---------------
-+--------------
- 
- The global page directory pointer of the kernel. Used to translate
- virtual to physical addresses.
-@@ -132,16 +130,14 @@ nodemask_t
- The size of a nodemask_t type. Used to compute the number of online
- nodes.
- 
--(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
--       compound_order|compound_head)
---------------------------------------------------------------------
-+(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|compound_order|compound_head)
-+-------------------------------------------------------------------------------------------------
- 
- User-space tools compute their values based on the offset of these
- variables. The variables are used when excluding unnecessary pages.
- 
--(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
--              spanned_pages|node_id)
---------------------------------------------------------------------
-+(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_spanned_pages|node_id)
-+-----------------------------------------------------------------------------------------
- 
- On NUMA machines, each NUMA node has a pg_data_t to describe its memory
- layout. On UMA machines there is a single pglist_data which describes the
-@@ -245,21 +241,25 @@ NR_FREE_PAGES
- On linux-2.6.21 or later, the number of free pages is in
- vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
- 
--PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision
--|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)
--|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
-------------------------------------------------------------------
-+PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask
-+------------------------------------------------------------------------------
- 
- Page attributes. These flags are used to filter various unnecessary for
- dumping pages.
- 
-+PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
-+-----------------------------------------------------------------------------
-+
-+More page attributes. These flags are used to filter various unnecessary for
-+dumping pages.
-+
-+
- HUGETLB_PAGE_DTOR
- -----------------
- 
- The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
- excludes these pages.
- 
--======
- x86_64
- ======
- 
-@@ -318,12 +318,12 @@ address.
- Currently, sme_mask stores the value of the C-bit position. If needed,
- additional SME-relevant info can be placed in that variable.
- 
--For example:
--[ misc	        ][ enc bit  ][ other misc SME info       ]
--0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
--63   59   55   51   47   43   39   35   31   27   ... 3
-+For example::
-+
-+  [ misc	        ][ enc bit  ][ other misc SME info       ]
-+  0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
-+  63   59   55   51   47   43   39   35   31   27   ... 3
- 
--======
- x86_32
- ======
- 
-@@ -335,7 +335,6 @@ of a higher page table lookup overhead, and also consumes more page
- table space per process. Used to check whether PAE was enabled in the
- crash kernel when converting virtual addresses to physical addresses.
- 
--====
- ia64
- ====
- 
-@@ -366,7 +365,6 @@ PGTABLE_3|PGTABLE_4
- User-space tools need to know whether the crash kernel was in 3-level or
- 4-level paging mode. Used to distinguish the page table.
- 
--=====
- ARM64
- =====
- 
-@@ -395,9 +393,8 @@ KERNELOFFSET
- The kernel randomization offset. Used to compute the page offset. If
- KASLR is disabled, this value is zero.
- 
--====
- arm
--====
++Why
 +===
  
- ARM_LPAE
- --------
-@@ -405,12 +402,11 @@ ARM_LPAE
- It indicates whether the crash kernel supports large physical address
- extensions. Used to translate virtual to physical addresses.
+ Because things like lock contention can severely impact performance.
  
--====
- s390
- ====
+-- HOW
++How
++===
  
- lowcore_ptr
------------
-+-----------
+ Lockdep already has hooks in the lock functions and maps lock instances to
+-lock classes. We build on that (see Documentation/locking/lockdep-design.txt).
++lock classes. We build on that (see Documentation/locking/lockdep-design.rst).
+ The graph below shows the relation between the lock functions and the various
+-hooks therein.
++hooks therein::
  
- An array with a pointer to the lowcore of every CPU. Used to print the
- psw and all registers information.
-@@ -425,7 +421,6 @@ Used to get the vmalloc_start address from the high_memory symbol.
+         __acquire
+             |
+@@ -36,24 +41,38 @@ hooks therein.
+             |
+          unlock
  
- The maximum number of CPUs.
+-lock, unlock	- the regular lock functions
+-__*		- the hooks
+-<> 		- states
++  lock, unlock	- the regular lock functions
++  __*		- the hooks
++  <> 		- states
  
--=======
- powerpc
- =======
+ With these hooks we provide the following statistics:
  
-@@ -460,9 +455,8 @@ Page size definitions, i.e. 4k, 64k, or 16M.
+- con-bounces       - number of lock contention that involved x-cpu data
+- contentions       - number of lock acquisitions that had to wait
+- wait time min     - shortest (non-0) time we ever had to wait for a lock
+-           max     - longest time we ever had to wait for a lock
+-	   total   - total time we spend waiting on this lock
+-	   avg     - average time spent waiting on this lock
+- acq-bounces       - number of lock acquisitions that involved x-cpu data
+- acquisitions      - number of times we took the lock
+- hold time min     - shortest (non-0) time we ever held the lock
+-	   max     - longest time we ever held the lock
+-	   total   - total time this lock was held
+-	   avg     - average time this lock was held
++ con-bounces
++	- number of lock contention that involved x-cpu data
++ contentions
++	- number of lock acquisitions that had to wait
++ wait time
++     min
++	- shortest (non-0) time we ever had to wait for a lock
++     max
++	- longest time we ever had to wait for a lock
++     total
++	- total time we spend waiting on this lock
++     avg
++	- average time spent waiting on this lock
++ acq-bounces
++	- number of lock acquisitions that involved x-cpu data
++ acquisitions
++	- number of times we took the lock
++ hold time
++     min
++	- shortest (non-0) time we ever held the lock
++     max
++	- longest time we ever held the lock
++     total
++	- total time this lock was held
++     avg
++	- average time this lock was held
  
- Used to make vtop translations.
+ These numbers are gathered per lock class, per read/write state (when
+ applicable).
+@@ -61,58 +80,60 @@ applicable).
+ It also tracks 4 contention points per class. A contention point is a call site
+ that had to wait on lock acquisition.
  
--vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
--(vmemmap_backing, virt_addr)
------------------------------------------------------------------
-+vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|(vmemmap_backing, virt_addr)
-+--------------------------------------------------------------------------------------------
+- - CONFIGURATION
++Configuration
++-------------
  
- The vmemmap virtual address space management does not have a traditional
- page table to track which virtual struct pages are backed by a physical
-@@ -480,7 +474,6 @@ member.
+ Lock statistics are enabled via CONFIG_LOCK_STAT.
  
- Used in vtop translations.
+- - USAGE
+-
+-Enable collection of statistics:
+-
+-# echo 1 >/proc/sys/kernel/lock_stat
+-
+-Disable collection of statistics:
+-
+-# echo 0 >/proc/sys/kernel/lock_stat
+-
+-Look at the current lock statistics:
+-
+-( line numbers not part of actual output, done for clarity in the explanation
+-  below )
+-
+-# less /proc/lock_stat
+-
+-01 lock_stat version 0.4
+-02-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-03                              class name    con-bounces    contentions   waittime-min   waittime-max waittime-total   waittime-avg    acq-bounces   acquisitions   holdtime-min   holdtime-max holdtime-total   holdtime-avg
+-04-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-05
+-06                         &mm->mmap_sem-W:            46             84           0.26         939.10       16371.53         194.90          47291        2922365           0.16     2220301.69 17464026916.32        5975.99
+-07                         &mm->mmap_sem-R:            37            100           1.31      299502.61      325629.52        3256.30         212344       34316685           0.10        7744.91    95016910.20           2.77
+-08                         ---------------
+-09                           &mm->mmap_sem              1          [<ffffffff811502a7>] khugepaged_scan_mm_slot+0x57/0x280
+-10                           &mm->mmap_sem             96          [<ffffffff815351c4>] __do_page_fault+0x1d4/0x510
+-11                           &mm->mmap_sem             34          [<ffffffff81113d77>] vm_mmap_pgoff+0x87/0xd0
+-12                           &mm->mmap_sem             17          [<ffffffff81127e71>] vm_munmap+0x41/0x80
+-13                         ---------------
+-14                           &mm->mmap_sem              1          [<ffffffff81046fda>] dup_mmap+0x2a/0x3f0
+-15                           &mm->mmap_sem             60          [<ffffffff81129e29>] SyS_mprotect+0xe9/0x250
+-16                           &mm->mmap_sem             41          [<ffffffff815351c4>] __do_page_fault+0x1d4/0x510
+-17                           &mm->mmap_sem             68          [<ffffffff81113d77>] vm_mmap_pgoff+0x87/0xd0
+-18
+-19.............................................................................................................................................................................................................................
+-20
+-21                         unix_table_lock:           110            112           0.21          49.24         163.91           1.46          21094          66312           0.12         624.42       31589.81           0.48
+-22                         ---------------
+-23                         unix_table_lock             45          [<ffffffff8150ad8e>] unix_create1+0x16e/0x1b0
+-24                         unix_table_lock             47          [<ffffffff8150b111>] unix_release_sock+0x31/0x250
+-25                         unix_table_lock             15          [<ffffffff8150ca37>] unix_find_other+0x117/0x230
+-26                         unix_table_lock              5          [<ffffffff8150a09f>] unix_autobind+0x11f/0x1b0
+-27                         ---------------
+-28                         unix_table_lock             39          [<ffffffff8150b111>] unix_release_sock+0x31/0x250
+-29                         unix_table_lock             49          [<ffffffff8150ad8e>] unix_create1+0x16e/0x1b0
+-30                         unix_table_lock             20          [<ffffffff8150ca37>] unix_find_other+0x117/0x230
+-31                         unix_table_lock              4          [<ffffffff8150a09f>] unix_autobind+0x11f/0x1b0
++Usage
++-----
++
++Enable collection of statistics::
++
++	# echo 1 >/proc/sys/kernel/lock_stat
++
++Disable collection of statistics::
++
++	# echo 0 >/proc/sys/kernel/lock_stat
++
++Look at the current lock statistics::
++
++  ( line numbers not part of actual output, done for clarity in the explanation
++    below )
++
++  # less /proc/lock_stat
++
++  01 lock_stat version 0.4
++  02-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++  03                              class name    con-bounces    contentions   waittime-min   waittime-max waittime-total   waittime-avg    acq-bounces   acquisitions   holdtime-min   holdtime-max holdtime-total   holdtime-avg
++  04-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++  05
++  06                         &mm->mmap_sem-W:            46             84           0.26         939.10       16371.53         194.90          47291        2922365           0.16     2220301.69 17464026916.32        5975.99
++  07                         &mm->mmap_sem-R:            37            100           1.31      299502.61      325629.52        3256.30         212344       34316685           0.10        7744.91    95016910.20           2.77
++  08                         ---------------
++  09                           &mm->mmap_sem              1          [<ffffffff811502a7>] khugepaged_scan_mm_slot+0x57/0x280
++  10                           &mm->mmap_sem             96          [<ffffffff815351c4>] __do_page_fault+0x1d4/0x510
++  11                           &mm->mmap_sem             34          [<ffffffff81113d77>] vm_mmap_pgoff+0x87/0xd0
++  12                           &mm->mmap_sem             17          [<ffffffff81127e71>] vm_munmap+0x41/0x80
++  13                         ---------------
++  14                           &mm->mmap_sem              1          [<ffffffff81046fda>] dup_mmap+0x2a/0x3f0
++  15                           &mm->mmap_sem             60          [<ffffffff81129e29>] SyS_mprotect+0xe9/0x250
++  16                           &mm->mmap_sem             41          [<ffffffff815351c4>] __do_page_fault+0x1d4/0x510
++  17                           &mm->mmap_sem             68          [<ffffffff81113d77>] vm_mmap_pgoff+0x87/0xd0
++  18
++  19.............................................................................................................................................................................................................................
++  20
++  21                         unix_table_lock:           110            112           0.21          49.24         163.91           1.46          21094          66312           0.12         624.42       31589.81           0.48
++  22                         ---------------
++  23                         unix_table_lock             45          [<ffffffff8150ad8e>] unix_create1+0x16e/0x1b0
++  24                         unix_table_lock             47          [<ffffffff8150b111>] unix_release_sock+0x31/0x250
++  25                         unix_table_lock             15          [<ffffffff8150ca37>] unix_find_other+0x117/0x230
++  26                         unix_table_lock              5          [<ffffffff8150a09f>] unix_autobind+0x11f/0x1b0
++  27                         ---------------
++  28                         unix_table_lock             39          [<ffffffff8150b111>] unix_release_sock+0x31/0x250
++  29                         unix_table_lock             49          [<ffffffff8150ad8e>] unix_create1+0x16e/0x1b0
++  30                         unix_table_lock             20          [<ffffffff8150ca37>] unix_find_other+0x117/0x230
++  31                         unix_table_lock              4          [<ffffffff8150a09f>] unix_autobind+0x11f/0x1b0
  
--==
- sh
- ==
  
-diff --git a/Documentation/powerpc/firmware-assisted-dump.txt b/Documentation/powerpc/firmware-assisted-dump.txt
-index 18c5feef2577..0c41d6d463f3 100644
---- a/Documentation/powerpc/firmware-assisted-dump.txt
-+++ b/Documentation/powerpc/firmware-assisted-dump.txt
-@@ -59,7 +59,7 @@ as follows:
-          the default calculated size. Use this option if default
-          boot memory size is not sufficient for second kernel to
-          boot successfully. For syntax of crashkernel= parameter,
--         refer to Documentation/kdump/kdump.txt. If any offset is
-+         refer to Documentation/kdump/kdump.rst. If any offset is
-          provided in crashkernel= parameter, it will be ignored
-          as fadump uses a predefined offset to reserve memory
-          for boot memory dump preservation in case of a crash.
-diff --git a/Documentation/translations/zh_CN/oops-tracing.txt b/Documentation/translations/zh_CN/oops-tracing.txt
-index 93fa061cf9e4..368ddd05b304 100644
---- a/Documentation/translations/zh_CN/oops-tracing.txt
-+++ b/Documentation/translations/zh_CN/oops-tracing.txt
-@@ -53,7 +53,7 @@ cat /proc/kmsg > file， 然而你必须介入中止传输， kmsg是一个“
- （2）用串口终端启动（请参看Documentation/admin-guide/serial-console.rst），运行一个null
- modem到另一台机器并用你喜欢的通讯工具获取输出。Minicom工作地很好。
+ This excerpt shows the first two lock class statistics. Line 01 shows the
+@@ -133,40 +154,40 @@ points are the points we're contending with.
  
--（3）使用Kdump（请参看Documentation/kdump/kdump.txt），
-+（3）使用Kdump（请参看Documentation/kdump/kdump.rst），
- 使用在Documentation/kdump/gdbmacros.txt中定义的dmesg gdb宏，从旧的内存中提取内核
- 环形缓冲区。
+ The integer part of the time values is in us.
  
-diff --git a/Documentation/watchdog/hpwdt.txt b/Documentation/watchdog/hpwdt.txt
-index 55df692c5595..aaa9e4b4bdcd 100644
---- a/Documentation/watchdog/hpwdt.txt
-+++ b/Documentation/watchdog/hpwdt.txt
-@@ -51,7 +51,7 @@ Last reviewed: 08/20/2018
-  and loop forever.  This is generally not what a watchdog user wants.
+-Dealing with nested locks, subclasses may appear:
++Dealing with nested locks, subclasses may appear::
  
-  For those wishing to learn more please see:
--	Documentation/kdump/kdump.txt
-+	Documentation/kdump/kdump.rst
- 	Documentation/admin-guide/kernel-parameters.txt (panic=)
- 	Your Linux Distribution specific documentation.
+-32...........................................................................................................................................................................................................................
+-33
+-34                               &rq->lock:       13128          13128           0.43         190.53      103881.26           7.91          97454        3453404           0.00         401.11    13224683.11           3.82
+-35                               ---------
+-36                               &rq->lock          645          [<ffffffff8103bfc4>] task_rq_lock+0x43/0x75
+-37                               &rq->lock          297          [<ffffffff8104ba65>] try_to_wake_up+0x127/0x25a
+-38                               &rq->lock          360          [<ffffffff8103c4c5>] select_task_rq_fair+0x1f0/0x74a
+-39                               &rq->lock          428          [<ffffffff81045f98>] scheduler_tick+0x46/0x1fb
+-40                               ---------
+-41                               &rq->lock           77          [<ffffffff8103bfc4>] task_rq_lock+0x43/0x75
+-42                               &rq->lock          174          [<ffffffff8104ba65>] try_to_wake_up+0x127/0x25a
+-43                               &rq->lock         4715          [<ffffffff8103ed4b>] double_rq_lock+0x42/0x54
+-44                               &rq->lock          893          [<ffffffff81340524>] schedule+0x157/0x7b8
+-45
+-46...........................................................................................................................................................................................................................
+-47
+-48                             &rq->lock/1:        1526          11488           0.33         388.73      136294.31          11.86          21461          38404           0.00          37.93      109388.53           2.84
+-49                             -----------
+-50                             &rq->lock/1        11526          [<ffffffff8103ed58>] double_rq_lock+0x4f/0x54
+-51                             -----------
+-52                             &rq->lock/1         5645          [<ffffffff8103ed4b>] double_rq_lock+0x42/0x54
+-53                             &rq->lock/1         1224          [<ffffffff81340524>] schedule+0x157/0x7b8
+-54                             &rq->lock/1         4336          [<ffffffff8103ed58>] double_rq_lock+0x4f/0x54
+-55                             &rq->lock/1          181          [<ffffffff8104ba65>] try_to_wake_up+0x127/0x25a
++  32...........................................................................................................................................................................................................................
++  33
++  34                               &rq->lock:       13128          13128           0.43         190.53      103881.26           7.91          97454        3453404           0.00         401.11    13224683.11           3.82
++  35                               ---------
++  36                               &rq->lock          645          [<ffffffff8103bfc4>] task_rq_lock+0x43/0x75
++  37                               &rq->lock          297          [<ffffffff8104ba65>] try_to_wake_up+0x127/0x25a
++  38                               &rq->lock          360          [<ffffffff8103c4c5>] select_task_rq_fair+0x1f0/0x74a
++  39                               &rq->lock          428          [<ffffffff81045f98>] scheduler_tick+0x46/0x1fb
++  40                               ---------
++  41                               &rq->lock           77          [<ffffffff8103bfc4>] task_rq_lock+0x43/0x75
++  42                               &rq->lock          174          [<ffffffff8104ba65>] try_to_wake_up+0x127/0x25a
++  43                               &rq->lock         4715          [<ffffffff8103ed4b>] double_rq_lock+0x42/0x54
++  44                               &rq->lock          893          [<ffffffff81340524>] schedule+0x157/0x7b8
++  45
++  46...........................................................................................................................................................................................................................
++  47
++  48                             &rq->lock/1:        1526          11488           0.33         388.73      136294.31          11.86          21461          38404           0.00          37.93      109388.53           2.84
++  49                             -----------
++  50                             &rq->lock/1        11526          [<ffffffff8103ed58>] double_rq_lock+0x4f/0x54
++  51                             -----------
++  52                             &rq->lock/1         5645          [<ffffffff8103ed4b>] double_rq_lock+0x42/0x54
++  53                             &rq->lock/1         1224          [<ffffffff81340524>] schedule+0x157/0x7b8
++  54                             &rq->lock/1         4336          [<ffffffff8103ed58>] double_rq_lock+0x4f/0x54
++  55                             &rq->lock/1          181          [<ffffffff8104ba65>] try_to_wake_up+0x127/0x25a
  
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 204cbc6bf234..af58d31ee4e1 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -2006,7 +2006,7 @@ config CRASH_DUMP
- 	  kdump/kexec. The crash dump kernel must be compiled to a
- 	  memory address not used by the main kernel
+ Line 48 shows statistics for the second subclass (/1) of &rq->lock class
+ (subclass starts from 0), since in this case, as line 50 suggests,
+ double_rq_lock actually acquires a nested lock of two spinlocks.
  
--	  For more details see Documentation/kdump/kdump.txt
-+	  For more details see Documentation/kdump/kdump.rst
+-View the top contending locks:
++View the top contending locks::
  
- config AUTO_ZRELADDR
- 	bool "Auto calculation of the decompressed kernel image address"
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index c2afcea9b19b..ac33b4bd1624 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -996,7 +996,7 @@ config CRASH_DUMP
- 	  reserved region and then later executed after a crash by
- 	  kdump/kexec.
+-# grep : /proc/lock_stat | head
++  # grep : /proc/lock_stat | head
+ 			clockevents_lock:       2926159        2947636           0.15       46882.81  1784540466.34         605.41        3381345        3879161           0.00        2260.97    53178395.68          13.71
+ 		     tick_broadcast_lock:        346460         346717           0.18        2257.43    39364622.71         113.54        3642919        4242696           0.00        2263.79    49173646.60          11.59
+ 		  &mapping->i_mmap_mutex:        203896         203899           3.36      645530.05 31767507988.39      155800.21        3361776        8893984           0.17        2254.15    14110121.02           1.59
+@@ -178,6 +199,6 @@ View the top contending locks:
+        &(&dentry->d_lockref.lock)->rlock:         39791          40179           0.15        1302.08       88851.96           2.21        2790851       12527025           0.10        1910.75     3379714.27           0.27
+ 			      rcu_node_0:         29203          30064           0.16         786.55     1555573.00          51.74          88963         244254           0.00         398.87      428872.51           1.76
  
--	  For more details see Documentation/kdump/kdump.txt
-+	  For more details see Documentation/kdump/kdump.rst
+-Clear the statistics:
++Clear the statistics::
  
- config XEN_DOM0
- 	def_bool y
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index b77f512bb176..ce1a28654507 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -623,7 +623,7 @@ config CRASH_DUMP
- 	  to a memory address not used by the main kernel using
- 	  PHYSICAL_START.
+-# echo 0 > /proc/lock_stat
++  # echo 0 > /proc/lock_stat
+diff --git a/Documentation/locking/locktorture.txt b/Documentation/locking/locktorture.rst
+similarity index 57%
+rename from Documentation/locking/locktorture.txt
+rename to Documentation/locking/locktorture.rst
+index 6a8df4cd19bf..e79eeeca3ac6 100644
+--- a/Documentation/locking/locktorture.txt
++++ b/Documentation/locking/locktorture.rst
+@@ -1,6 +1,9 @@
++==================================
+ Kernel Lock Torture Test Operation
++==================================
  
--	  For more details see Documentation/kdump/kdump.txt
-+	  For more details see Documentation/kdump/kdump.rst
+ CONFIG_LOCK_TORTURE_TEST
++========================
  
- config KEXEC_JUMP
- 	bool "kexec jump (EXPERIMENTAL)"
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index da5e0c34c239..2057254c6c8a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2037,7 +2037,7 @@ config CRASH_DUMP
- 	  to a memory address not used by the main kernel or BIOS using
- 	  PHYSICAL_START, or it must be built as a relocatable image
- 	  (CONFIG_RELOCATABLE=y).
--	  For more details see Documentation/kdump/kdump.txt
-+	  For more details see Documentation/kdump/kdump.rst
+ The CONFIG LOCK_TORTURE_TEST config option provides a kernel module
+ that runs torture tests on core kernel locking primitives. The kernel
+@@ -18,61 +21,77 @@ can be simulated by either enlarging this critical region hold time and/or
+ creating more kthreads.
  
- config KEXEC_JUMP
- 	bool "kexec jump"
-@@ -2074,7 +2074,7 @@ config PHYSICAL_START
- 	  the reserved region.  In other words, it can be set based on
- 	  the "X" value as specified in the "crashkernel=YM@XM"
- 	  command line boot parameter passed to the panic-ed
--	  kernel. Please take a look at Documentation/kdump/kdump.txt
-+	  kernel. Please take a look at Documentation/kdump/kdump.rst
- 	  for more details about crash dumps.
  
- 	  Usage of bzImage for capturing the crash dump is recommended as
+-MODULE PARAMETERS
++Module Parameters
++=================
+ 
+ This module has the following parameters:
+ 
+ 
+-	    ** Locktorture-specific **
++Locktorture-specific
++--------------------
+ 
+-nwriters_stress   Number of kernel threads that will stress exclusive lock
++nwriters_stress
++		  Number of kernel threads that will stress exclusive lock
+ 		  ownership (writers). The default value is twice the number
+ 		  of online CPUs.
+ 
+-nreaders_stress   Number of kernel threads that will stress shared lock
++nreaders_stress
++		  Number of kernel threads that will stress shared lock
+ 		  ownership (readers). The default is the same amount of writer
+ 		  locks. If the user did not specify nwriters_stress, then
+ 		  both readers and writers be the amount of online CPUs.
+ 
+-torture_type	  Type of lock to torture. By default, only spinlocks will
++torture_type
++		  Type of lock to torture. By default, only spinlocks will
+ 		  be tortured. This module can torture the following locks,
+ 		  with string values as follows:
+ 
+-		     o "lock_busted": Simulates a buggy lock implementation.
++		     - "lock_busted":
++				Simulates a buggy lock implementation.
+ 
+-		     o "spin_lock": spin_lock() and spin_unlock() pairs.
++		     - "spin_lock":
++				spin_lock() and spin_unlock() pairs.
+ 
+-		     o "spin_lock_irq": spin_lock_irq() and spin_unlock_irq()
+-					pairs.
++		     - "spin_lock_irq":
++				spin_lock_irq() and spin_unlock_irq() pairs.
+ 
+-		     o "rw_lock": read/write lock() and unlock() rwlock pairs.
++		     - "rw_lock":
++				read/write lock() and unlock() rwlock pairs.
+ 
+-		     o "rw_lock_irq": read/write lock_irq() and unlock_irq()
+-				      rwlock pairs.
++		     - "rw_lock_irq":
++				read/write lock_irq() and unlock_irq()
++				rwlock pairs.
+ 
+-		     o "mutex_lock": mutex_lock() and mutex_unlock() pairs.
++		     - "mutex_lock":
++				mutex_lock() and mutex_unlock() pairs.
+ 
+-		     o "rtmutex_lock": rtmutex_lock() and rtmutex_unlock()
+-				       pairs. Kernel must have CONFIG_RT_MUTEX=y.
++		     - "rtmutex_lock":
++				rtmutex_lock() and rtmutex_unlock() pairs.
++				Kernel must have CONFIG_RT_MUTEX=y.
+ 
+-		     o "rwsem_lock": read/write down() and up() semaphore pairs.
++		     - "rwsem_lock":
++				read/write down() and up() semaphore pairs.
+ 
+ 
+-	    ** Torture-framework (RCU + locking) **
++Torture-framework (RCU + locking)
++---------------------------------
+ 
+-shutdown_secs	  The number of seconds to run the test before terminating
++shutdown_secs
++		  The number of seconds to run the test before terminating
+ 		  the test and powering off the system.  The default is
+ 		  zero, which disables test termination and system shutdown.
+ 		  This capability is useful for automated testing.
+ 
+-onoff_interval	  The number of seconds between each attempt to execute a
++onoff_interval
++		  The number of seconds between each attempt to execute a
+ 		  randomly selected CPU-hotplug operation.  Defaults
+ 		  to zero, which disables CPU hotplugging.  In
+ 		  CONFIG_HOTPLUG_CPU=n kernels, locktorture will silently
+ 		  refuse to do any CPU-hotplug operations regardless of
+ 		  what value is specified for onoff_interval.
+ 
+-onoff_holdoff	  The number of seconds to wait until starting CPU-hotplug
++onoff_holdoff
++		  The number of seconds to wait until starting CPU-hotplug
+ 		  operations.  This would normally only be used when
+ 		  locktorture was built into the kernel and started
+ 		  automatically at boot time, in which case it is useful
+@@ -80,53 +99,59 @@ onoff_holdoff	  The number of seconds to wait until starting CPU-hotplug
+ 		  coming and going. This parameter is only useful if
+ 		  CONFIG_HOTPLUG_CPU is enabled.
+ 
+-stat_interval	  Number of seconds between statistics-related printk()s.
++stat_interval
++		  Number of seconds between statistics-related printk()s.
+ 		  By default, locktorture will report stats every 60 seconds.
+ 		  Setting the interval to zero causes the statistics to
+ 		  be printed -only- when the module is unloaded, and this
+ 		  is the default.
+ 
+-stutter		  The length of time to run the test before pausing for this
++stutter
++		  The length of time to run the test before pausing for this
+ 		  same period of time.  Defaults to "stutter=5", so as
+ 		  to run and pause for (roughly) five-second intervals.
+ 		  Specifying "stutter=0" causes the test to run continuously
+ 		  without pausing, which is the old default behavior.
+ 
+-shuffle_interval  The number of seconds to keep the test threads affinitied
++shuffle_interval
++		  The number of seconds to keep the test threads affinitied
+ 		  to a particular subset of the CPUs, defaults to 3 seconds.
+ 		  Used in conjunction with test_no_idle_hz.
+ 
+-verbose		  Enable verbose debugging printing, via printk(). Enabled
++verbose
++		  Enable verbose debugging printing, via printk(). Enabled
+ 		  by default. This extra information is mostly related to
+ 		  high-level errors and reports from the main 'torture'
+ 		  framework.
+ 
+ 
+-STATISTICS
++Statistics
++==========
+ 
+-Statistics are printed in the following format:
++Statistics are printed in the following format::
+ 
+-spin_lock-torture: Writes:  Total: 93746064  Max/Min: 0/0   Fail: 0
+-   (A)		    (B)		   (C)		  (D)	       (E)
++  spin_lock-torture: Writes:  Total: 93746064  Max/Min: 0/0   Fail: 0
++     (A)		    (B)		   (C)		  (D)	       (E)
+ 
+-(A): Lock type that is being tortured -- torture_type parameter.
++  (A): Lock type that is being tortured -- torture_type parameter.
+ 
+-(B): Number of writer lock acquisitions. If dealing with a read/write primitive
+-     a second "Reads" statistics line is printed.
++  (B): Number of writer lock acquisitions. If dealing with a read/write
++       primitive a second "Reads" statistics line is printed.
+ 
+-(C): Number of times the lock was acquired.
++  (C): Number of times the lock was acquired.
+ 
+-(D): Min and max number of times threads failed to acquire the lock.
++  (D): Min and max number of times threads failed to acquire the lock.
+ 
+-(E): true/false values if there were errors acquiring the lock. This should
+-     -only- be positive if there is a bug in the locking primitive's
+-     implementation. Otherwise a lock should never fail (i.e., spin_lock()).
+-     Of course, the same applies for (C), above. A dummy example of this is
+-     the "lock_busted" type.
++  (E): true/false values if there were errors acquiring the lock. This should
++       -only- be positive if there is a bug in the locking primitive's
++       implementation. Otherwise a lock should never fail (i.e., spin_lock()).
++       Of course, the same applies for (C), above. A dummy example of this is
++       the "lock_busted" type.
+ 
+-USAGE
++Usage
++=====
+ 
+-The following script may be used to torture locks:
++The following script may be used to torture locks::
+ 
+ 	#!/bin/sh
+ 
+diff --git a/Documentation/locking/mutex-design.txt b/Documentation/locking/mutex-design.rst
+similarity index 94%
+rename from Documentation/locking/mutex-design.txt
+rename to Documentation/locking/mutex-design.rst
+index 818aca19612f..4d8236b81fa5 100644
+--- a/Documentation/locking/mutex-design.txt
++++ b/Documentation/locking/mutex-design.rst
+@@ -1,6 +1,9 @@
++=======================
+ Generic Mutex Subsystem
++=======================
+ 
+ started by Ingo Molnar <mingo@redhat.com>
++
+ updated by Davidlohr Bueso <davidlohr@hp.com>
+ 
+ What are mutexes?
+@@ -23,7 +26,7 @@ Implementation
+ Mutexes are represented by 'struct mutex', defined in include/linux/mutex.h
+ and implemented in kernel/locking/mutex.c. These locks use an atomic variable
+ (->owner) to keep track of the lock state during its lifetime.  Field owner
+-actually contains 'struct task_struct *' to the current lock owner and it is
++actually contains `struct task_struct *` to the current lock owner and it is
+ therefore NULL if not currently owned. Since task_struct pointers are aligned
+ at at least L1_CACHE_BYTES, low bits (3) are used to store extra state (e.g.,
+ if waiter list is non-empty).  In its most basic form it also includes a
+@@ -101,29 +104,36 @@ features that make lock debugging easier and faster:
+ 
+ Interfaces
+ ----------
+-Statically define the mutex:
++Statically define the mutex::
++
+    DEFINE_MUTEX(name);
+ 
+-Dynamically initialize the mutex:
++Dynamically initialize the mutex::
++
+    mutex_init(mutex);
+ 
+-Acquire the mutex, uninterruptible:
++Acquire the mutex, uninterruptible::
++
+    void mutex_lock(struct mutex *lock);
+    void mutex_lock_nested(struct mutex *lock, unsigned int subclass);
+    int  mutex_trylock(struct mutex *lock);
+ 
+-Acquire the mutex, interruptible:
++Acquire the mutex, interruptible::
++
+    int mutex_lock_interruptible_nested(struct mutex *lock,
+ 				       unsigned int subclass);
+    int mutex_lock_interruptible(struct mutex *lock);
+ 
+-Acquire the mutex, interruptible, if dec to 0:
++Acquire the mutex, interruptible, if dec to 0::
++
+    int atomic_dec_and_mutex_lock(atomic_t *cnt, struct mutex *lock);
+ 
+-Unlock the mutex:
++Unlock the mutex::
++
+    void mutex_unlock(struct mutex *lock);
+ 
+-Test if the mutex is taken:
++Test if the mutex is taken::
++
+    int mutex_is_locked(struct mutex *lock);
+ 
+ Disadvantages
+diff --git a/Documentation/locking/rt-mutex-design.txt b/Documentation/locking/rt-mutex-design.rst
+similarity index 91%
+rename from Documentation/locking/rt-mutex-design.txt
+rename to Documentation/locking/rt-mutex-design.rst
+index 3d7b865539cc..59c2a64efb21 100644
+--- a/Documentation/locking/rt-mutex-design.txt
++++ b/Documentation/locking/rt-mutex-design.rst
+@@ -1,14 +1,15 @@
+-#
+-# Copyright (c) 2006 Steven Rostedt
+-# Licensed under the GNU Free Documentation License, Version 1.2
+-#
+-
++==============================
+ RT-mutex implementation design
+-------------------------------
++==============================
++
++Copyright (c) 2006 Steven Rostedt
++
++Licensed under the GNU Free Documentation License, Version 1.2
++
+ 
+ This document tries to describe the design of the rtmutex.c implementation.
+ It doesn't describe the reasons why rtmutex.c exists. For that please see
+-Documentation/locking/rt-mutex.txt.  Although this document does explain problems
++Documentation/locking/rt-mutex.rst.  Although this document does explain problems
+ that happen without this code, but that is in the concept to understand
+ what the code actually is doing.
+ 
+@@ -41,17 +42,17 @@ to release the lock, because for all we know, B is a CPU hog and will
+ never give C a chance to release the lock.  This is called unbounded priority
+ inversion.
+ 
+-Here's a little ASCII art to show the problem.
++Here's a little ASCII art to show the problem::
+ 
+-   grab lock L1 (owned by C)
+-     |
+-A ---+
+-        C preempted by B
+-          |
+-C    +----+
++     grab lock L1 (owned by C)
++       |
++  A ---+
++          C preempted by B
++            |
++  C    +----+
+ 
+-B         +-------->
+-                B now keeps A from running.
++  B         +-------->
++                  B now keeps A from running.
+ 
+ 
+ Priority Inheritance (PI)
+@@ -75,24 +76,29 @@ Terminology
+ Here I explain some terminology that is used in this document to help describe
+ the design that is used to implement PI.
+ 
+-PI chain - The PI chain is an ordered series of locks and processes that cause
++PI chain
++         - The PI chain is an ordered series of locks and processes that cause
+            processes to inherit priorities from a previous process that is
+            blocked on one of its locks.  This is described in more detail
+            later in this document.
+ 
+-mutex    - In this document, to differentiate from locks that implement
++mutex
++         - In this document, to differentiate from locks that implement
+            PI and spin locks that are used in the PI code, from now on
+            the PI locks will be called a mutex.
+ 
+-lock     - In this document from now on, I will use the term lock when
++lock
++         - In this document from now on, I will use the term lock when
+            referring to spin locks that are used to protect parts of the PI
+            algorithm.  These locks disable preemption for UP (when
+            CONFIG_PREEMPT is enabled) and on SMP prevents multiple CPUs from
+            entering critical sections simultaneously.
+ 
+-spin lock - Same as lock above.
++spin lock
++         - Same as lock above.
+ 
+-waiter   - A waiter is a struct that is stored on the stack of a blocked
++waiter
++         - A waiter is a struct that is stored on the stack of a blocked
+            process.  Since the scope of the waiter is within the code for
+            a process being blocked on the mutex, it is fine to allocate
+            the waiter on the process's stack (local variable).  This
+@@ -104,14 +110,18 @@ waiter   - A waiter is a struct that is stored on the stack of a blocked
+            waiter is sometimes used in reference to the task that is waiting
+            on a mutex. This is the same as waiter->task.
+ 
+-waiters  - A list of processes that are blocked on a mutex.
++waiters
++         - A list of processes that are blocked on a mutex.
+ 
+-top waiter - The highest priority process waiting on a specific mutex.
++top waiter
++         - The highest priority process waiting on a specific mutex.
+ 
+-top pi waiter - The highest priority process waiting on one of the mutexes
++top pi waiter
++              - The highest priority process waiting on one of the mutexes
+                 that a specific process owns.
+ 
+-Note:  task and process are used interchangeably in this document, mostly to
++Note:
++       task and process are used interchangeably in this document, mostly to
+        differentiate between two processes that are being described together.
+ 
+ 
+@@ -123,7 +133,7 @@ inheritance to take place.  Multiple chains may converge, but a chain
+ would never diverge, since a process can't be blocked on more than one
+ mutex at a time.
+ 
+-Example:
++Example::
+ 
+    Process:  A, B, C, D, E
+    Mutexes:  L1, L2, L3, L4
+@@ -137,21 +147,21 @@ Example:
+                          D owns L4
+                                 E blocked on L4
+ 
+-The chain would be:
++The chain would be::
+ 
+    E->L4->D->L3->C->L2->B->L1->A
+ 
+ To show where two chains merge, we could add another process F and
+ another mutex L5 where B owns L5 and F is blocked on mutex L5.
+ 
+-The chain for F would be:
++The chain for F would be::
+ 
+    F->L5->B->L1->A
+ 
+ Since a process may own more than one mutex, but never be blocked on more than
+ one, the chains merge.
+ 
+-Here we show both chains:
++Here we show both chains::
+ 
+    E->L4->D->L3->C->L2-+
+                        |
+@@ -165,12 +175,12 @@ than the processes to the left or below in the chain.
+ 
+ Also since a mutex may have more than one process blocked on it, we can
+ have multiple chains merge at mutexes.  If we add another process G that is
+-blocked on mutex L2:
++blocked on mutex L2::
+ 
+   G->L2->B->L1->A
+ 
+ And once again, to show how this can grow I will show the merging chains
+-again.
++again::
+ 
+    E->L4->D->L3->C-+
+                    +->L2-+
+@@ -184,7 +194,7 @@ the chain (A and B in this example), must have their priorities increased
+ to that of G.
+ 
+ Mutex Waiters Tree
+------------------
++------------------
+ 
+ Every mutex keeps track of all the waiters that are blocked on itself. The
+ mutex has a rbtree to store these waiters by priority.  This tree is protected
+@@ -219,19 +229,19 @@ defined.  But is very complex to figure it out, since it depends on all
+ the nesting of mutexes.  Let's look at the example where we have 3 mutexes,
+ L1, L2, and L3, and four separate functions func1, func2, func3 and func4.
+ The following shows a locking order of L1->L2->L3, but may not actually
+-be directly nested that way.
++be directly nested that way::
+ 
+-void func1(void)
+-{
++  void func1(void)
++  {
+ 	mutex_lock(L1);
+ 
+ 	/* do anything */
+ 
+ 	mutex_unlock(L1);
+-}
++  }
+ 
+-void func2(void)
+-{
++  void func2(void)
++  {
+ 	mutex_lock(L1);
+ 	mutex_lock(L2);
+ 
+@@ -239,10 +249,10 @@ void func2(void)
+ 
+ 	mutex_unlock(L2);
+ 	mutex_unlock(L1);
+-}
++  }
+ 
+-void func3(void)
+-{
++  void func3(void)
++  {
+ 	mutex_lock(L2);
+ 	mutex_lock(L3);
+ 
+@@ -250,30 +260,30 @@ void func3(void)
+ 
+ 	mutex_unlock(L3);
+ 	mutex_unlock(L2);
+-}
++  }
+ 
+-void func4(void)
+-{
++  void func4(void)
++  {
+ 	mutex_lock(L3);
+ 
+ 	/* do something again */
+ 
+ 	mutex_unlock(L3);
+-}
++  }
+ 
+ Now we add 4 processes that run each of these functions separately.
+ Processes A, B, C, and D which run functions func1, func2, func3 and func4
+ respectively, and such that D runs first and A last.  With D being preempted
+-in func4 in the "do something again" area, we have a locking that follows:
++in func4 in the "do something again" area, we have a locking that follows::
+ 
+-D owns L3
+-       C blocked on L3
+-       C owns L2
+-              B blocked on L2
+-              B owns L1
+-                     A blocked on L1
++  D owns L3
++         C blocked on L3
++         C owns L2
++                B blocked on L2
++                B owns L1
++                       A blocked on L1
+ 
+-And thus we have the chain A->L1->B->L2->C->L3->D.
++  And thus we have the chain A->L1->B->L2->C->L3->D.
+ 
+ This gives us a PI depth of 4 (four processes), but looking at any of the
+ functions individually, it seems as though they only have at most a locking
+@@ -298,7 +308,7 @@ not true, the rtmutex.c code will be broken!), this allows for the least
+ significant bit to be used as a flag.  Bit 0 is used as the "Has Waiters"
+ flag. It's set whenever there are waiters on a mutex.
+ 
+-See Documentation/locking/rt-mutex.txt for further details.
++See Documentation/locking/rt-mutex.rst for further details.
+ 
+ cmpxchg Tricks
+ --------------
+@@ -307,17 +317,17 @@ Some architectures implement an atomic cmpxchg (Compare and Exchange).  This
+ is used (when applicable) to keep the fast path of grabbing and releasing
+ mutexes short.
+ 
+-cmpxchg is basically the following function performed atomically:
++cmpxchg is basically the following function performed atomically::
+ 
+-unsigned long _cmpxchg(unsigned long *A, unsigned long *B, unsigned long *C)
+-{
++  unsigned long _cmpxchg(unsigned long *A, unsigned long *B, unsigned long *C)
++  {
+ 	unsigned long T = *A;
+ 	if (*A == *B) {
+ 		*A = *C;
+ 	}
+ 	return T;
+-}
+-#define cmpxchg(a,b,c) _cmpxchg(&a,&b,&c)
++  }
++  #define cmpxchg(a,b,c) _cmpxchg(&a,&b,&c)
+ 
+ This is really nice to have, since it allows you to only update a variable
+ if the variable is what you expect it to be.  You know if it succeeded if
+@@ -352,9 +362,10 @@ Then rt_mutex_setprio is called to adjust the priority of the task to the
+ new priority. Note that rt_mutex_setprio is defined in kernel/sched/core.c
+ to implement the actual change in priority.
+ 
+-(Note:  For the "prio" field in task_struct, the lower the number, the
++Note:
++	For the "prio" field in task_struct, the lower the number, the
+ 	higher the priority. A "prio" of 5 is of higher priority than a
+-	"prio" of 10.)
++	"prio" of 10.
+ 
+ It is interesting to note that rt_mutex_adjust_prio can either increase
+ or decrease the priority of the task.  In the case that a higher priority
+@@ -439,6 +450,7 @@ wait_lock, which this code currently holds. So setting the "Has Waiters" flag
+ forces the current owner to synchronize with this code.
+ 
+ The lock is taken if the following are true:
++
+    1) The lock has no owner
+    2) The current task is the highest priority against all other
+       waiters of the lock
+@@ -546,10 +558,13 @@ Credits
+ -------
+ 
+ Author:  Steven Rostedt <rostedt@goodmis.org>
++
+ Updated: Alex Shi <alex.shi@linaro.org>	- 7/6/2017
+ 
+-Original Reviewers:  Ingo Molnar, Thomas Gleixner, Thomas Duetsch, and
++Original Reviewers:
++		     Ingo Molnar, Thomas Gleixner, Thomas Duetsch, and
+ 		     Randy Dunlap
++
+ Update (7/6/2017) Reviewers: Steven Rostedt and Sebastian Siewior
+ 
+ Updates
+diff --git a/Documentation/locking/rt-mutex.txt b/Documentation/locking/rt-mutex.rst
+similarity index 71%
+rename from Documentation/locking/rt-mutex.txt
+rename to Documentation/locking/rt-mutex.rst
+index 35793e003041..c365dc302081 100644
+--- a/Documentation/locking/rt-mutex.txt
++++ b/Documentation/locking/rt-mutex.rst
+@@ -1,5 +1,6 @@
++==================================
+ RT-mutex subsystem with PI support
+-----------------------------------
++==================================
+ 
+ RT-mutexes with priority inheritance are used to support PI-futexes,
+ which enable pthread_mutex_t priority inheritance attributes
+@@ -46,27 +47,30 @@ The state of the rt-mutex is tracked via the owner field of the rt-mutex
+ structure:
+ 
+ lock->owner holds the task_struct pointer of the owner. Bit 0 is used to
+-keep track of the "lock has waiters" state.
++keep track of the "lock has waiters" state:
+ 
+- owner        bit0
++ ============ ======= ================================================
++ owner        bit0    Notes
++ ============ ======= ================================================
+  NULL         0       lock is free (fast acquire possible)
+  NULL         1       lock is free and has waiters and the top waiter
+-			is going to take the lock*
++		      is going to take the lock [1]_
+  taskpointer  0       lock is held (fast release possible)
+- taskpointer  1       lock is held and has waiters**
++ taskpointer  1       lock is held and has waiters [2]_
++ ============ ======= ================================================
+ 
+ The fast atomic compare exchange based acquire and release is only
+ possible when bit 0 of lock->owner is 0.
+ 
+-(*) It also can be a transitional state when grabbing the lock
+-with ->wait_lock is held. To prevent any fast path cmpxchg to the lock,
+-we need to set the bit0 before looking at the lock, and the owner may be
+-NULL in this small time, hence this can be a transitional state.
++.. [1] It also can be a transitional state when grabbing the lock
++       with ->wait_lock is held. To prevent any fast path cmpxchg to the lock,
++       we need to set the bit0 before looking at the lock, and the owner may
++       be NULL in this small time, hence this can be a transitional state.
+ 
+-(**) There is a small time when bit 0 is set but there are no
+-waiters. This can happen when grabbing the lock in the slow path.
+-To prevent a cmpxchg of the owner releasing the lock, we need to
+-set this bit before looking at the lock.
++.. [2] There is a small time when bit 0 is set but there are no
++       waiters. This can happen when grabbing the lock in the slow path.
++       To prevent a cmpxchg of the owner releasing the lock, we need to
++       set this bit before looking at the lock.
+ 
+ BTW, there is still technically a "Pending Owner", it's just not called
+ that anymore. The pending owner happens to be the top_waiter of a lock
+diff --git a/Documentation/locking/spinlocks.txt b/Documentation/locking/spinlocks.rst
+similarity index 89%
+rename from Documentation/locking/spinlocks.txt
+rename to Documentation/locking/spinlocks.rst
+index ff35e40bdf5b..098107fb7d86 100644
+--- a/Documentation/locking/spinlocks.txt
++++ b/Documentation/locking/spinlocks.rst
+@@ -1,8 +1,13 @@
++===============
++Locking lessons
++===============
++
+ Lesson 1: Spin locks
++====================
+ 
+-The most basic primitive for locking is spinlock.
++The most basic primitive for locking is spinlock::
+ 
+-static DEFINE_SPINLOCK(xxx_lock);
++  static DEFINE_SPINLOCK(xxx_lock);
+ 
+ 	unsigned long flags;
+ 
+@@ -19,23 +24,25 @@ worry about UP vs SMP issues: the spinlocks work correctly under both.
+    NOTE! Implications of spin_locks for memory are further described in:
+ 
+      Documentation/memory-barriers.txt
++
+        (5) LOCK operations.
++
+        (6) UNLOCK operations.
+ 
+ The above is usually pretty simple (you usually need and want only one
+ spinlock for most things - using more than one spinlock can make things a
+ lot more complex and even slower and is usually worth it only for
+-sequences that you _know_ need to be split up: avoid it at all cost if you
++sequences that you **know** need to be split up: avoid it at all cost if you
+ aren't sure).
+ 
+ This is really the only really hard part about spinlocks: once you start
+ using spinlocks they tend to expand to areas you might not have noticed
+ before, because you have to make sure the spinlocks correctly protect the
+-shared data structures _everywhere_ they are used. The spinlocks are most
++shared data structures **everywhere** they are used. The spinlocks are most
+ easily added to places that are completely independent of other code (for
+ example, internal driver data structures that nobody else ever touches).
+ 
+-   NOTE! The spin-lock is safe only when you _also_ use the lock itself
++   NOTE! The spin-lock is safe only when you **also** use the lock itself
+    to do locking across CPU's, which implies that EVERYTHING that
+    touches a shared variable has to agree about the spinlock they want
+    to use.
+@@ -43,6 +50,7 @@ example, internal driver data structures that nobody else ever touches).
+ ----
+ 
+ Lesson 2: reader-writer spinlocks.
++==================================
+ 
+ If your data accesses have a very natural pattern where you usually tend
+ to mostly read from the shared variables, the reader-writer locks
+@@ -54,7 +62,7 @@ to change the variables it has to get an exclusive write lock.
+    simple spinlocks.  Unless the reader critical section is long, you
+    are better off just using spinlocks.
+ 
+-The routines look the same as above:
++The routines look the same as above::
+ 
+    rwlock_t xxx_lock = __RW_LOCK_UNLOCKED(xxx_lock);
+ 
+@@ -71,7 +79,7 @@ The routines look the same as above:
+ The above kind of lock may be useful for complex data structures like
+ linked lists, especially searching for entries without changing the list
+ itself.  The read lock allows many concurrent readers.  Anything that
+-_changes_ the list will have to get the write lock.
++**changes** the list will have to get the write lock.
+ 
+    NOTE! RCU is better for list traversal, but requires careful
+    attention to design detail (see Documentation/RCU/listRCU.txt).
+@@ -87,10 +95,11 @@ to get the write-lock at the very beginning.
+ ----
+ 
+ Lesson 3: spinlocks revisited.
++==============================
+ 
+ The single spin-lock primitives above are by no means the only ones. They
+ are the most safe ones, and the ones that work under all circumstances,
+-but partly _because_ they are safe they are also fairly slow. They are slower
++but partly **because** they are safe they are also fairly slow. They are slower
+ than they'd need to be, because they do have to disable interrupts
+ (which is just a single instruction on a x86, but it's an expensive one -
+ and on other architectures it can be worse).
+@@ -98,7 +107,7 @@ and on other architectures it can be worse).
+ If you have a case where you have to protect a data structure across
+ several CPU's and you want to use spinlocks you can potentially use
+ cheaper versions of the spinlocks. IFF you know that the spinlocks are
+-never used in interrupt handlers, you can use the non-irq versions:
++never used in interrupt handlers, you can use the non-irq versions::
+ 
+ 	spin_lock(&lock);
+ 	...
+@@ -110,7 +119,7 @@ This is useful if you know that the data in question is only ever
+ manipulated from a "process context", ie no interrupts involved.
+ 
+ The reasons you mustn't use these versions if you have interrupts that
+-play with the spinlock is that you can get deadlocks:
++play with the spinlock is that you can get deadlocks::
+ 
+ 	spin_lock(&lock);
+ 	...
+@@ -147,9 +156,10 @@ indeed), while write-locks need to protect themselves against interrupts.
+ ----
+ 
+ Reference information:
++======================
+ 
+ For dynamic initialization, use spin_lock_init() or rwlock_init() as
+-appropriate:
++appropriate::
+ 
+    spinlock_t xxx_lock;
+    rwlock_t xxx_rw_lock;
+diff --git a/Documentation/locking/ww-mutex-design.txt b/Documentation/locking/ww-mutex-design.rst
+similarity index 93%
+rename from Documentation/locking/ww-mutex-design.txt
+rename to Documentation/locking/ww-mutex-design.rst
+index f0ed7c30e695..1846c199da23 100644
+--- a/Documentation/locking/ww-mutex-design.txt
++++ b/Documentation/locking/ww-mutex-design.rst
+@@ -1,3 +1,4 @@
++======================================
+ Wound/Wait Deadlock-Proof Mutex Design
+ ======================================
+ 
+@@ -85,6 +86,7 @@ Furthermore there are three different class of w/w lock acquire functions:
+   no deadlock potential and hence the ww_mutex_lock call will block and not
+   prematurely return -EDEADLK. The advantage of the _slow functions is in
+   interface safety:
++
+   - ww_mutex_lock has a __must_check int return type, whereas ww_mutex_lock_slow
+     has a void return type. Note that since ww mutex code needs loops/retries
+     anyway the __must_check doesn't result in spurious warnings, even though the
+@@ -115,36 +117,36 @@ expect the number of simultaneous competing transactions to be typically small,
+ and you want to reduce the number of rollbacks.
+ 
+ Three different ways to acquire locks within the same w/w class. Common
+-definitions for methods #1 and #2:
++definitions for methods #1 and #2::
+ 
+-static DEFINE_WW_CLASS(ww_class);
++  static DEFINE_WW_CLASS(ww_class);
+ 
+-struct obj {
++  struct obj {
+ 	struct ww_mutex lock;
+ 	/* obj data */
+-};
++  };
+ 
+-struct obj_entry {
++  struct obj_entry {
+ 	struct list_head head;
+ 	struct obj *obj;
+-};
++  };
+ 
+ Method 1, using a list in execbuf->buffers that's not allowed to be reordered.
+ This is useful if a list of required objects is already tracked somewhere.
+ Furthermore the lock helper can use propagate the -EALREADY return code back to
+ the caller as a signal that an object is twice on the list. This is useful if
+ the list is constructed from userspace input and the ABI requires userspace to
+-not have duplicate entries (e.g. for a gpu commandbuffer submission ioctl).
++not have duplicate entries (e.g. for a gpu commandbuffer submission ioctl)::
+ 
+-int lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
+-{
++  int lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
++  {
+ 	struct obj *res_obj = NULL;
+ 	struct obj_entry *contended_entry = NULL;
+ 	struct obj_entry *entry;
+ 
+ 	ww_acquire_init(ctx, &ww_class);
+ 
+-retry:
++  retry:
+ 	list_for_each_entry (entry, list, head) {
+ 		if (entry->obj == res_obj) {
+ 			res_obj = NULL;
+@@ -160,7 +162,7 @@ retry:
+ 	ww_acquire_done(ctx);
+ 	return 0;
+ 
+-err:
++  err:
+ 	list_for_each_entry_continue_reverse (entry, list, head)
+ 		ww_mutex_unlock(&entry->obj->lock);
+ 
+@@ -176,14 +178,14 @@ err:
+ 	ww_acquire_fini(ctx);
+ 
+ 	return ret;
+-}
++  }
+ 
+ Method 2, using a list in execbuf->buffers that can be reordered. Same semantics
+ of duplicate entry detection using -EALREADY as method 1 above. But the
+-list-reordering allows for a bit more idiomatic code.
++list-reordering allows for a bit more idiomatic code::
+ 
+-int lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
+-{
++  int lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
++  {
+ 	struct obj_entry *entry, *entry2;
+ 
+ 	ww_acquire_init(ctx, &ww_class);
+@@ -216,24 +218,25 @@ int lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
+ 
+ 	ww_acquire_done(ctx);
+ 	return 0;
+-}
++  }
+ 
+-Unlocking works the same way for both methods #1 and #2:
++Unlocking works the same way for both methods #1 and #2::
+ 
+-void unlock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
+-{
++  void unlock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
++  {
+ 	struct obj_entry *entry;
+ 
+ 	list_for_each_entry (entry, list, head)
+ 		ww_mutex_unlock(&entry->obj->lock);
+ 
+ 	ww_acquire_fini(ctx);
+-}
++  }
+ 
+ Method 3 is useful if the list of objects is constructed ad-hoc and not upfront,
+ e.g. when adjusting edges in a graph where each node has its own ww_mutex lock,
+ and edges can only be changed when holding the locks of all involved nodes. w/w
+ mutexes are a natural fit for such a case for two reasons:
++
+ - They can handle lock-acquisition in any order which allows us to start walking
+   a graph from a starting point and then iteratively discovering new edges and
+   locking down the nodes those edges connect to.
+@@ -243,6 +246,7 @@ mutexes are a natural fit for such a case for two reasons:
+   as a starting point).
+ 
+ Note that this approach differs in two important ways from the above methods:
++
+ - Since the list of objects is dynamically constructed (and might very well be
+   different when retrying due to hitting the -EDEADLK die condition) there's
+   no need to keep any object on a persistent list when it's not locked. We can
+@@ -260,17 +264,17 @@ any interface misuse for these cases.
+ 
+ Also, method 3 can't fail the lock acquisition step since it doesn't return
+ -EALREADY. Of course this would be different when using the _interruptible
+-variants, but that's outside of the scope of these examples here.
++variants, but that's outside of the scope of these examples here::
+ 
+-struct obj {
++  struct obj {
+ 	struct ww_mutex ww_mutex;
+ 	struct list_head locked_list;
+-};
++  };
+ 
+-static DEFINE_WW_CLASS(ww_class);
++  static DEFINE_WW_CLASS(ww_class);
+ 
+-void __unlock_objs(struct list_head *list)
+-{
++  void __unlock_objs(struct list_head *list)
++  {
+ 	struct obj *entry, *temp;
+ 
+ 	list_for_each_entry_safe (entry, temp, list, locked_list) {
+@@ -279,15 +283,15 @@ void __unlock_objs(struct list_head *list)
+ 		list_del(&entry->locked_list);
+ 		ww_mutex_unlock(entry->ww_mutex)
+ 	}
+-}
++  }
+ 
+-void lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
+-{
++  void lock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
++  {
+ 	struct obj *obj;
+ 
+ 	ww_acquire_init(ctx, &ww_class);
+ 
+-retry:
++  retry:
+ 	/* re-init loop start state */
+ 	loop {
+ 		/* magic code which walks over a graph and decides which objects
+@@ -312,13 +316,13 @@ retry:
+ 
+ 	ww_acquire_done(ctx);
+ 	return 0;
+-}
++  }
+ 
+-void unlock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
+-{
++  void unlock_objs(struct list_head *list, struct ww_acquire_ctx *ctx)
++  {
+ 	__unlock_objs(list);
+ 	ww_acquire_fini(ctx);
+-}
++  }
+ 
+ Method 4: Only lock one single objects. In that case deadlock detection and
+ prevention is obviously overkill, since with grabbing just one lock you can't
+@@ -329,11 +333,14 @@ Implementation Details
+ ----------------------
+ 
+ Design:
++^^^^^^^
++
+   ww_mutex currently encapsulates a struct mutex, this means no extra overhead for
+   normal mutex locks, which are far more common. As such there is only a small
+   increase in code size if wait/wound mutexes are not used.
+ 
+   We maintain the following invariants for the wait list:
++
+   (1) Waiters with an acquire context are sorted by stamp order; waiters
+       without an acquire context are interspersed in FIFO order.
+   (2) For Wait-Die, among waiters with contexts, only the first one can have
+@@ -355,6 +362,8 @@ Design:
+   therefore be directed towards the uncontended cases.
+ 
+ Lockdep:
++^^^^^^^^
++
+   Special care has been taken to warn for as many cases of api abuse
+   as possible. Some common api abuses will be caught with
+   CONFIG_DEBUG_MUTEXES, but CONFIG_PROVE_LOCKING is recommended.
+@@ -379,5 +388,6 @@ Lockdep:
+      having called ww_acquire_fini on the first.
+    - 'normal' deadlocks that can occur.
+ 
+-FIXME: Update this section once we have the TASK_DEADLOCK task state flag magic
+-implemented.
++FIXME:
++  Update this section once we have the TASK_DEADLOCK task state flag magic
++  implemented.
+diff --git a/Documentation/pi-futex.txt b/Documentation/pi-futex.txt
+index b154f6c0c36e..c33ba2befbf8 100644
+--- a/Documentation/pi-futex.txt
++++ b/Documentation/pi-futex.txt
+@@ -119,4 +119,4 @@ properties of futexes, and all four combinations are possible: futex,
+ robust-futex, PI-futex, robust+PI-futex.
+ 
+ More details about priority inheritance can be found in
+-Documentation/locking/rt-mutex.txt.
++Documentation/locking/rt-mutex.rst.
+diff --git a/Documentation/translations/it_IT/kernel-hacking/locking.rst b/Documentation/translations/it_IT/kernel-hacking/locking.rst
+index 0ef31666663b..75d9b86fcc50 100644
+--- a/Documentation/translations/it_IT/kernel-hacking/locking.rst
++++ b/Documentation/translations/it_IT/kernel-hacking/locking.rst
+@@ -1404,7 +1404,7 @@ Riferimento per l'API dei Futex
+ Approfondimenti
+ ===============
+ 
+--  ``Documentation/locking/spinlocks.txt``: la guida di Linus Torvalds agli
++-  ``Documentation/locking/spinlocks.rst``: la guida di Linus Torvalds agli
+    spinlock del kernel.
+ 
+ -  Unix Systems for Modern Architectures: Symmetric Multiprocessing and
+diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
+index 53187821df01..fcfe1a03c4a1 100644
+--- a/drivers/gpu/drm/drm_modeset_lock.c
++++ b/drivers/gpu/drm/drm_modeset_lock.c
+@@ -36,7 +36,7 @@
+  * of extra utility/tracking out of our acquire-ctx.  This is provided
+  * by &struct drm_modeset_lock and &struct drm_modeset_acquire_ctx.
+  *
+- * For basic principles of &ww_mutex, see: Documentation/locking/ww-mutex-design.txt
++ * For basic principles of &ww_mutex, see: Documentation/locking/ww-mutex-design.rst
+  *
+  * The basic usage pattern is to::
+  *
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 30a0f81aa130..ebeedee924f6 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -5,7 +5,7 @@
+  *  Copyright (C) 2006,2007 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
+  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
+  *
+- * see Documentation/locking/lockdep-design.txt for more details.
++ * see Documentation/locking/lockdep-design.rst for more details.
+  */
+ #ifndef __LINUX_LOCKDEP_H
+ #define __LINUX_LOCKDEP_H
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 3093dd162424..dcd03fee6e01 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -151,7 +151,7 @@ static inline bool mutex_is_locked(struct mutex *lock)
+ 
+ /*
+  * See kernel/locking/mutex.c for detailed documentation of these APIs.
+- * Also see Documentation/locking/mutex-design.txt.
++ * Also see Documentation/locking/mutex-design.rst.
+  */
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ extern void mutex_lock_nested(struct mutex *lock, unsigned int subclass);
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 2ea18a3def04..61a084ae17ac 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -158,7 +158,7 @@ extern void downgrade_write(struct rw_semaphore *sem);
+  * static then another method for expressing nested locking is
+  * the explicit definition of lock class keys and the use of
+  * lockdep_set_class() at lock initialization time.
+- * See Documentation/locking/lockdep-design.txt for more details.)
++ * See Documentation/locking/lockdep-design.rst for more details.)
+  */
+ extern void down_read_nested(struct rw_semaphore *sem, int subclass);
+ extern void down_write_nested(struct rw_semaphore *sem, int subclass);
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index 0c601ae072b3..edd1c082dbf5 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -16,7 +16,7 @@
+  *    by Steven Rostedt, based on work by Gregory Haskins, Peter Morreale
+  *    and Sven Dietrich.
+  *
+- * Also see Documentation/locking/mutex-design.txt.
++ * Also see Documentation/locking/mutex-design.rst.
+  */
+ #include <linux/mutex.h>
+ #include <linux/ww_mutex.h>
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 38fbf9fa7f1b..fa83d36e30c6 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -9,7 +9,7 @@
+  *  Copyright (C) 2005 Kihon Technologies Inc., Steven Rostedt
+  *  Copyright (C) 2006 Esben Nielsen
+  *
+- *  See Documentation/locking/rt-mutex-design.txt for details.
++ *  See Documentation/locking/rt-mutex-design.rst for details.
+  */
+ #include <linux/spinlock.h>
+ #include <linux/export.h>
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 3a3554e8ca0f..0a3abf806ae8 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1132,7 +1132,7 @@ config PROVE_LOCKING
+ 	 the proof of observed correctness is also maintained for an
+ 	 arbitrary combination of these separate locking variants.
+ 
+-	 For more details, see Documentation/locking/lockdep-design.txt.
++	 For more details, see Documentation/locking/lockdep-design.rst.
+ 
+ config LOCK_STAT
+ 	bool "Lock usage statistics"
+@@ -1146,7 +1146,7 @@ config LOCK_STAT
+ 	help
+ 	 This feature enables tracking lock contention points
+ 
+-	 For more details, see Documentation/locking/lockstat.txt
++	 For more details, see Documentation/locking/lockstat.rst
+ 
+ 	 This also enables lock events required by "perf lock",
+ 	 subcommand of perf.
 -- 
 2.21.0
 
