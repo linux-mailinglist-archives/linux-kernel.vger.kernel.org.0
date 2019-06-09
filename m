@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21ED43A717
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ECB93A8B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbfFIQqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:46:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44220 "EHLO mail.kernel.org"
+        id S2388376AbfFIRDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:03:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730287AbfFIQqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:46:09 -0400
+        id S2388367AbfFIRDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:03:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1238D2081C;
-        Sun,  9 Jun 2019 16:46:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3DD02084A;
+        Sun,  9 Jun 2019 17:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098768;
-        bh=IIB1uD1rdodZdpT8IqlfcD9qd8G39FVgYrZnHSY96PI=;
+        s=default; t=1560099791;
+        bh=jv/8gljX84a+VucxrOBDI2DmiV4NZyXg7ZLVkX1FFF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uPa1MMtC8ClkoeggHJyqAvbVH9gJ3WVG4mPFi5Pdp23C9YLbYdcwbVHHzJSzytxlZ
-         I/GMeusvxbQMRgyBeZv4oKzGzMrB8mG6L+K9ebS7R4gUSL2ZhPhf/JTae+6uW2uEsj
-         +f8NCk4rpHMXVLNgfxCTRb1/ynhi/zPgPs8e7yEo=
+        b=v6loinIpda8HWXsJQBVFz3LFCzMv3UkEyqdj34X8Kgojg1tRTPUd1Gl6Xbe4i48Ds
+         vDlMJbensrmgrVcmlcVxnrxh2LfHmy8rNGCdA921lkDghTJPSYklIkSL0S644pI/S+
+         2/Gag8pw9NhyrRusYNl3c3Aw6YryYUiCRAPXBwZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.1 37/70] mmc: tmio: fix SCC error handling to avoid false positive CRC error
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 166/241] media: wl128x: prevent two potential buffer overflows
 Date:   Sun,  9 Jun 2019 18:41:48 +0200
-Message-Id: <20190609164130.287939631@linuxfoundation.org>
+Message-Id: <20190609164152.566439086@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,48 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+[ Upstream commit 9c2ccc324b3a6cbc865ab8b3e1a09e93d3c8ade9 ]
 
-commit 51b72656bb39fdcb8f3174f4007bcc83ad1d275f upstream.
+Smatch marks skb->data as untrusted so it warns that "evt_hdr->dlen"
+can copy up to 255 bytes and we only have room for two bytes.  Even
+if this comes from the firmware and we trust it, the new policy
+generally is just to fix it as kernel hardenning.
 
-If an SCC error occurs during a read/write command execution, a false
-positive CRC error message is output.
+I can't test this code so I tried to be very conservative.  I considered
+not allowing "evt_hdr->dlen == 1" because it doesn't initialize the
+whole variable but in the end I decided to allow it and manually
+initialized "asic_id" and "asic_ver" to zero.
 
-mmcblk0: response CRC error sending r/w cmd command, card status 0x900
+Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
 
-check_scc_error() checks SCC_RVSREQ.RVSERR bit. RVSERR detects a
-correction error in the next (up or down) delay tap position. However,
-since the command is successful, only retuning needs to be executed.
-This has been confirmed by HW engineers.
-
-Thus, on SCC error, set retuning flag instead of setting an error code.
-
-Fixes: b85fb0a1c8ae ("mmc: tmio: Fix SCC error detection")
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[wsa: updated comment and commit message, removed some braces]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/tmio_mmc_core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/radio/wl128x/fmdrv_common.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -842,8 +842,9 @@ static void tmio_mmc_finish_request(stru
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index ebc73b0342496..51639a3f7abe4 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -494,7 +494,8 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+ 		return -EIO;
+ 	}
+ 	/* Send response data to caller */
+-	if (response != NULL && response_len != NULL && evt_hdr->dlen) {
++	if (response != NULL && response_len != NULL && evt_hdr->dlen &&
++	    evt_hdr->dlen <= payload_len) {
+ 		/* Skip header info and copy only response data */
+ 		skb_pull(skb, sizeof(struct fm_event_msg_hdr));
+ 		memcpy(response, skb->data, evt_hdr->dlen);
+@@ -590,6 +591,8 @@ static void fm_irq_handle_flag_getcmd_resp(struct fmdev *fmdev)
+ 		return;
  
-+	/* SCC error means retune, but executed command was still successful */
- 	if (host->check_scc_error && host->check_scc_error(host))
--		mrq->cmd->error = -EILSEQ;
-+		mmc_retune_needed(host->mmc);
+ 	fm_evt_hdr = (void *)skb->data;
++	if (fm_evt_hdr->dlen > sizeof(fmdev->irq_info.flag))
++		return;
  
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
+ 	/* Skip header info and copy only response data */
+ 	skb_pull(skb, sizeof(struct fm_event_msg_hdr));
+@@ -1315,7 +1318,7 @@ static int load_default_rx_configuration(struct fmdev *fmdev)
+ static int fm_power_up(struct fmdev *fmdev, u8 mode)
+ {
+ 	u16 payload;
+-	__be16 asic_id, asic_ver;
++	__be16 asic_id = 0, asic_ver = 0;
+ 	int resp_len, ret;
+ 	u8 fw_name[50];
+ 
+-- 
+2.20.1
+
 
 
