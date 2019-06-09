@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED3C3A744
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28FB83A712
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbfFIQsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46894 "EHLO mail.kernel.org"
+        id S1730244AbfFIQqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:46:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731064AbfFIQsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:01 -0400
+        id S1730223AbfFIQqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:46:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28545205ED;
-        Sun,  9 Jun 2019 16:48:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDEB020833;
+        Sun,  9 Jun 2019 16:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098880;
-        bh=j8+0werx+ueP1SttlAq1Hd3V5fyJGBI9OfJYTnaDHTA=;
+        s=default; t=1560098760;
+        bh=0w8EPY/CHDH5XzP9DrRziVgz6vAycpXOVTkTfLm0cYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GlbIGjRr2hFcDYMJ4vGzEe9cmc3sx4EXaC1tyB3/i+BSklDrY5CUXNaZDcV0kDpfv
-         CQoYGwNswGKZKJhJ/vwj/87cQ08b1jJorrvmjmgA6JvCqqxZBa3UD39hNfNAK7Fumu
-         6Dcl+JT50nZLe3fYcdvEK9iTmd+DQMboZf/HJBbU=
+        b=O8p3Yl/bht597szCHk549rIJrLzsN/UNM3RbqjV3QK2p5iSdo+iwfYTiP5s4uTvFp
+         ORshFH1dar/LKMKC1xDdunIhsnuE4qvec8xWBiIaQI9ScS1uuTN9uu+CZvttp/hVAP
+         J90rVlj6SRtB5DLBl6HOeZYv4fI11UBKcXItPips=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 22/51] fuse: fallocate: fix return with locked inode
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Helen Koike <helen.koike@collabora.com>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH 5.1 52/70] drm/msm: fix fb references in async update
 Date:   Sun,  9 Jun 2019 18:42:03 +0200
-Message-Id: <20190609164128.380174810@linuxfoundation.org>
+Message-Id: <20190609164131.797339670@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
+References: <20190609164127.541128197@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Helen Koike <helen.koike@collabora.com>
 
-commit 35d6fcbb7c3e296a52136347346a698a35af3fda upstream.
+commit 474d952b4870cfbdc55d3498f4d498775fe77e81 upstream.
 
-Do the proper cleanup in case the size check fails.
+Async update callbacks are expected to set the old_fb in the new_state
+so prepare/cleanup framebuffers are balanced.
 
-Tested with xfstests:generic/228
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 0cbade024ba5 ("fuse: honor RLIMIT_FSIZE in fuse_file_fallocate")
-Cc: Liu Bo <bo.liu@linux.alibaba.com>
-Cc: <stable@vger.kernel.org> # v3.5
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Fixes: 224a4c970987 ("drm/msm: update cursors asynchronously through atomic")
+Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Acked-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190603165610.24614-4-helen.koike@collabora.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2981,7 +2981,7 @@ static long fuse_file_fallocate(struct f
- 	    offset + length > i_size_read(inode)) {
- 		err = inode_newsize_ok(inode, offset + length);
- 		if (err)
--			return err;
-+			goto out;
- 	}
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c
+@@ -502,6 +502,8 @@ static int mdp5_plane_atomic_async_check
+ static void mdp5_plane_atomic_async_update(struct drm_plane *plane,
+ 					   struct drm_plane_state *new_state)
+ {
++	struct drm_framebuffer *old_fb = plane->state->fb;
++
+ 	plane->state->src_x = new_state->src_x;
+ 	plane->state->src_y = new_state->src_y;
+ 	plane->state->crtc_x = new_state->crtc_x;
+@@ -524,6 +526,8 @@ static void mdp5_plane_atomic_async_upda
  
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
+ 	*to_mdp5_plane_state(plane->state) =
+ 		*to_mdp5_plane_state(new_state);
++
++	new_state->fb = old_fb;
+ }
+ 
+ static const struct drm_plane_helper_funcs mdp5_plane_helper_funcs = {
 
 
