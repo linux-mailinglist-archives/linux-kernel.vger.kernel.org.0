@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB883A74E
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD643A8F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfFIQs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:48:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
+        id S2388959AbfFIRGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 13:06:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731181AbfFIQsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:48:23 -0400
+        id S2388514AbfFIRGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 13:06:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5B8A205ED;
-        Sun,  9 Jun 2019 16:48:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62E4E20840;
+        Sun,  9 Jun 2019 17:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098903;
-        bh=s+85UkDRD4Gmb7EflBa5nFb+DWD4qiK/bjOx8AjW+6Y=;
+        s=default; t=1560099963;
+        bh=K3HweLCpeokOm366BXIvoHi/dJtHz0DI3sdBKIKEuDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TlI2QwfDdq+Plaj+thedd/v6NMok1/ZkOFxG+QnSSdbYuyIOiCdUiZ3gaUevPBfIl
-         FK9KFDBF/fJMtPoNvLpt5eKd9aNCpRP9r2+iz2op5nUnKQjPj0nERgmmgCoAMyhDEg
-         Bq3bPCoNadRCUePAuvlQ3J8c6LyX/UynpkPLiDjo=
+        b=YPZM+iSVsevG/wMg1gM394R7IWbCkTv/xnzawpcFUqdtRyl1sF9WZ3NOdnYW3cFhV
+         50hnTnWbzijYnvAg5bOLyNhzuebcKoI/yTlLDiWdj4471aAJld06v9x0/cjzuVDir9
+         6hKzRBujROfldJjbGuwxQI5cAXRCYes/OtvqaRK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Subject: [PATCH 4.19 30/51] s390/mm: fix address space detection in exception handling
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 189/241] xen/pciback: Dont disable PCI_COMMAND on PCI device reset.
 Date:   Sun,  9 Jun 2019 18:42:11 +0200
-Message-Id: <20190609164128.993661015@linuxfoundation.org>
+Message-Id: <20190609164153.368548323@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-References: <20190609164127.123076536@linuxfoundation.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 962f0af83c239c0aef05639631e871c874b00f99 upstream.
+commit 7681f31ec9cdacab4fd10570be924f2cef6669ba upstream.
 
-Commit 0aaba41b58bc ("s390: remove all code using the access register
-mode") removed access register mode from the kernel, and also from the
-address space detection logic. However, user space could still switch
-to access register mode (trans_exc_code == 1), and exceptions in that
-mode would not be correctly assigned.
+There is no need for this at all. Worst it means that if
+the guest tries to write to BARs it could lead (on certain
+platforms) to PCI SERR errors.
 
-Fix this by adding a check for trans_exc_code == 1 to get_fault_type(),
-and remove the wrong comment line before that function.
+Please note that with af6fc858a35b90e89ea7a7ee58e66628c55c776b
+"xen-pciback: limit guest control of command register"
+a guest is still allowed to enable those control bits (safely), but
+is not allowed to disable them and that therefore a well behaved
+frontend which enables things before using them will still
+function correctly.
 
-Fixes: 0aaba41b58bc ("s390: remove all code using the access register mode")
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: <stable@vger.kernel.org> # v4.15+
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+This is done via an write to the configuration register 0x4 which
+triggers on the backend side:
+command_write
+  \- pci_enable_device
+     \- pci_enable_device_flags
+        \- do_pci_enable_device
+           \- pcibios_enable_device
+              \-pci_enable_resourcess
+                [which enables the PCI_COMMAND_MEMORY|PCI_COMMAND_IO]
+
+However guests (and drivers) which don't do this could cause
+problems, including the security issues which XSA-120 sought
+to address.
+
+Reported-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/mm/fault.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/xen/xen-pciback/pciback_ops.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -107,7 +107,6 @@ void bust_spinlocks(int yes)
+--- a/drivers/xen/xen-pciback/pciback_ops.c
++++ b/drivers/xen/xen-pciback/pciback_ops.c
+@@ -126,8 +126,6 @@ void xen_pcibk_reset_device(struct pci_d
+ 		if (pci_is_enabled(dev))
+ 			pci_disable_device(dev);
  
- /*
-  * Find out which address space caused the exception.
-- * Access register mode is impossible, ignore space == 3.
-  */
- static inline enum fault_type get_fault_type(struct pt_regs *regs)
- {
-@@ -132,6 +131,10 @@ static inline enum fault_type get_fault_
- 		}
- 		return VDSO_FAULT;
- 	}
-+	if (trans_exc_code == 1) {
-+		/* access register mode, not used in the kernel */
-+		return USER_FAULT;
-+	}
- 	/* home space exception -> access via kernel ASCE */
- 	return KERNEL_FAULT;
- }
+-		pci_write_config_word(dev, PCI_COMMAND, 0);
+-
+ 		dev->is_busmaster = 0;
+ 	} else {
+ 		pci_read_config_word(dev, PCI_COMMAND, &cmd);
 
 
