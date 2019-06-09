@@ -2,63 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816B63A685
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 16:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 684393AC26
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 23:58:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbfFIOuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 10:50:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40762 "EHLO mail.kernel.org"
+        id S1729514AbfFIV60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 17:58:26 -0400
+Received: from mtax.cdmx.gob.mx ([187.141.35.197]:12518 "EHLO mtax.cdmx.gob.mx"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbfFIOuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 10:50:04 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B017820684;
-        Sun,  9 Jun 2019 14:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560091804;
-        bh=hGl7xz2P5Qx18s3E5Uq3MjSkKhmAwEH4t3jJGsTUYmw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UeH7+uF++dgCQwnfpCs6jfddzA8IG/dUU1Va9U+G0E+IS1aLaqShE9wRxpZPc2tmw
-         SHbzds0P7ql8331Wcu9OaSgosMn8vJu0VvGyO/UTYtqcg+99zV7r9AcisBv/9/dzVY
-         XSF9/OSOdaGHSsMV1R3cOsxD7lX4lgHqtMtWRg94=
-Date:   Sun, 9 Jun 2019 16:50:01 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc:     Nadav Amit <namit@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Caspar Zhang <caspar@linux.alibaba.com>,
-        jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [bug report][stable] kernel tried to execute NX-protected page -
- exploit attempt? (uid: 0)
-Message-ID: <20190609145001.GA26365@kroah.com>
-References: <5817eaac-29cc-6331-af3b-b9d85a7c1cd7@linux.alibaba.com>
- <bde5bf17-35d2-45d8-1d1d-59d0f027b9c0@linux.alibaba.com>
- <D0F0870A-B396-4390-B5F1-164B68E13C73@vmware.com>
- <c2411bbb-d0e7-59b2-3418-63650b354544@linux.alibaba.com>
+        id S1726211AbfFIV60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 17:58:26 -0400
+X-NAI-Header: Modified by McAfee Email Gateway (4500)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
+        t=1560117236; h=DKIM-Filter:X-Virus-Scanned:
+         Content-Type:MIME-Version:Content-Transfer-Encoding:
+         Content-Description:Subject:To:From:Date:Reply-To:
+         Message-Id:X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
+         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
+         X-SAAS-TrackingID:X-NAI-Spam-Flag:X-NAI-Spam-Threshold:
+         X-NAI-Spam-Score:X-NAI-Spam-Rules:X-NAI-Spam-Version;
+        bh=U0Muiz5ECa3gaTzMJe13Eshf2iywdDpIp+lqwE
+        FBq5U=; b=ROno9U4nIC4G+e9dn1GwsR0ZtuqLlGibtUxrA28D
+        RkwsXQwrWZS++ksf2/mxfvc8MRuGV3251kCfWGQplzhW2fhIbC
+        zGLyKjVdJjvvsIT07BUh0iBn8IT3VT7SqnaYh9oa3Dctb99tyu
+        F0679x4I2NQ81vdpLi97YV5dgaT2wk0=
+Received: from cdmx.gob.mx (unknown [10.250.108.150]) by mtax.cdmx.gob.mx with smtp
+        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-GCM-SHA384)
+         id 06a7_b8bf_a7490048_6d3c_47ec_ad8a_23613b33381a;
+        Sun, 09 Jun 2019 16:53:55 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by cdmx.gob.mx (Postfix) with ESMTP id 2DC512E8616;
+        Sun,  9 Jun 2019 14:17:02 -0500 (CDT)
+Received: from cdmx.gob.mx ([127.0.0.1])
+        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wai8wptn79JV; Sun,  9 Jun 2019 14:17:02 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+        by cdmx.gob.mx (Postfix) with ESMTP id 42E581E32CE;
+        Sun,  9 Jun 2019 11:08:56 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.9.2 cdmx.gob.mx 42E581E32CE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cdmx.gob.mx;
+        s=72359050-3965-11E6-920A-0192F7A2F08E; t=1560096536;
+        bh=U0Muiz5ECa3gaTzMJe13Eshf2iywdDpIp+lqwEFBq5U=;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
+         From:Date:Reply-To:Message-Id;
+        b=NWniCQteXX2de2CZG6jaby0xOgWahRLSFd/+ttRtnp/Xs0Rf2AYVmE2WyF3PdcYlc
+         sv7oXEb4IDjN33o8oH9DFEROG4pkRztkW+/IC8xbaqktD72yWFC8VomMB3ZVAgi/yW
+         soXYz+ZvfFEYv+QybT0TUio90FdSVfrIjwO6FiZY=
+X-Virus-Scanned: amavisd-new at cdmx.gob.mx
+Received: from cdmx.gob.mx ([127.0.0.1])
+        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id eX0pxY32qPrQ; Sun,  9 Jun 2019 11:08:56 -0500 (CDT)
+Received: from [51.38.116.193] (ip193.ip-51-38-116.eu [51.38.116.193])
+        by cdmx.gob.mx (Postfix) with ESMTPSA id 682B11FCDEC;
+        Sun,  9 Jun 2019 09:52:47 -0500 (CDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2411bbb-d0e7-59b2-3418-63650b354544@linux.alibaba.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: =?utf-8?b?4oKsIDIuMDAwLjAwMCwwMCBFdXJv?=
+To:     Recipients <cilpinez@cdmx.gob.mx>
+From:   cilpinez@cdmx.gob.mx
+Date:   Sun, 09 Jun 2019 07:52:49 -0700
+Reply-To: johnwalterlove2010@gmail.com
+Message-Id: <20190609145248.682B11FCDEC@cdmx.gob.mx>
+X-AnalysisOut: [v=2.2 cv=Fp91xyjq c=1 sm=1 tr=0 p=d_9A9YPZgCEA:10 p=UhPmRW]
+X-AnalysisOut: [QW4yN_uUvCwugA:9 p=Ner0o0mvyuUA:10 p=CwrrfTYHidcoWUP_FusY:]
+X-AnalysisOut: [22 p=Z3hVr4-9LPz_iBwj1Snb:22 a=T6zFoIZ12MK39YzkfxrL7A==:11]
+X-AnalysisOut: [7 a=o6exIZH9ckoXPxROjXgmHg==:17 a=IkcTkHD0fZMA:10 a=x7bEGL]
+X-AnalysisOut: [p0ZPQA:10 a=dq6fvYVFJ5YA:10 a=pGLkceISAAAA:8 a=QEXdDO2ut3Y]
+X-AnalysisOut: [A:10 a=uXetiwfYVjQA:10]
+X-SAAS-TrackingID: 1108dfc5.0.365862668.00-2381.625491339.s12p02m014.mxlogic.net
+X-NAI-Spam-Flag: NO
+X-NAI-Spam-Threshold: 3
+X-NAI-Spam-Score: -5000
+X-NAI-Spam-Rules: 1 Rules triggered
+        WHITELISTED=-5000
+X-NAI-Spam-Version: 2.3.0.9418 : core <6564> : inlines <7098> : streams
+ <1824022> : uri <2854373>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 09, 2019 at 09:10:45PM +0800, Joseph Qi wrote:
-> Hi Nadav,
-> Thanks for the comments.
-> I'll test the 3 patches in the mentioned thread.
-
-This should all be fixed in the latest release that happened today.  If
-not, please let us know.
-
-thanks,
-
-greg k-h
+Ich bin Herr Richard Wahl der Mega-Gewinner von $ 533M In Mega Millions Jac=
+kpot spende ich an 5 zuf=C3=A4llige Personen, wenn Sie diese E-Mail erhalte=
+n, dann wurde Ihre E-Mail nach einem Spinball ausgew=C3=A4hlt. Ich habe den=
+ gr=C3=B6=C3=9Ften Teil meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=
+=A4tigkeitsorganisationen und Organisationen verteilt. Ich habe mich freiwi=
+llig dazu entschieden, Ihnen den Betrag von =E2=82=AC 2.000.000,00 zu spend=
+en eine der ausgew=C3=A4hlten 5, um meine Gewinne zu =C3=BCberpr=C3=BCfen. =
+Das ist dein Spendencode: [DF00430342018] Antworten Sie mit dem Spendencode=
+ auf diese E-Mail: richardpovertyorg@gmail.com
