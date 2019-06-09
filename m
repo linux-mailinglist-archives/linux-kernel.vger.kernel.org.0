@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E264A3A92B
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 19:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C58A3A7E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:55:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfFIRHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 13:07:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45446 "EHLO mail.kernel.org"
+        id S1732700AbfFIQyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:54:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388931AbfFIRF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 13:05:58 -0400
+        id S1732683AbfFIQyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:54:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB783206C3;
-        Sun,  9 Jun 2019 17:05:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F708204EC;
+        Sun,  9 Jun 2019 16:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560099958;
-        bh=CfTl+fpW6LjVBvYMIX4vzX8rNYYe/sXxr5dMJWGW3Ko=;
+        s=default; t=1560099287;
+        bh=XbF+Fbw0YUo7hx0ywMUR4QLETQp349Wrkcg+6+6D23A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bX18AZYACaBhJ1c/IwSneT2i6mTAeaJmAoHIHudGMzJ7ru9abD1kY8QjTSFtLc8bs
-         hVBJLgoYJxco3fXmxAI0ucK1gwBBQv09kn0jP9RvJ7jqMqz/4YZ7feC7T1ZZIyhGX3
-         sq+RdXxIcUNbTTZ+AVROQNgPKyN5d+ITvImpisSo=
+        b=r2FjtMsSA+Gm7ezPy3LVGaKkcJR+JOw1vd68cdlMzXDMJ7/tH/EeBpZwoK4HHFdjG
+         qav9Xg+RmVSJJgTi7x/sPwo6RDcE1G9aBxXqzjj492dzdIZJE2Vx63SmPPVyFB2B8J
+         aqbTScTFEv3UixGHHfqzS7A4XY0Adv7XzPrdapTw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alec Ari <neotheuser@gmail.com>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 225/241] Revert "x86/build: Move _etext to actual end of .text"
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.9 77/83] genwqe: Prevent an integer overflow in the ioctl
 Date:   Sun,  9 Jun 2019 18:42:47 +0200
-Message-Id: <20190609164155.196404269@linuxfoundation.org>
+Message-Id: <20190609164134.500864352@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
-References: <20190609164147.729157653@linuxfoundation.org>
+In-Reply-To: <20190609164127.843327870@linuxfoundation.org>
+References: <20190609164127.843327870@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,42 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-This reverts commit 392bef709659abea614abfe53cf228e7a59876a4.
+commit 110080cea0d0e4dfdb0b536e7f8a5633ead6a781 upstream.
 
-It seems to cause lots of problems when using the gold linker, and no
-one really needs this at the moment, so just revert it from the stable
-trees.
+There are a couple potential integer overflows here.
 
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Reported-by: Kees Cook <keescook@chromium.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Reported-by: Alec Ari <neotheuser@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
+	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+
+The first thing is that the "m->size + (...)" addition could overflow,
+and the second is that round_up() overflows to zero if the result is
+within PAGE_SIZE of the type max.
+
+In this code, the "m->size" variable is an u64 but we're saving the
+result in "map_size" which is an unsigned long and genwqe_user_vmap()
+takes an unsigned long as well.  So I have used ULONG_MAX as the upper
+bound.  From a practical perspective unsigned long is fine/better than
+trying to change all the types to u64.
+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/vmlinux.lds.S |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -110,10 +110,10 @@ SECTIONS
- 		*(.text.__x86.indirect_thunk)
- 		__indirect_thunk_end = .;
- #endif
--	} :text = 0x9090
+---
+ drivers/misc/genwqe/card_dev.c   |    2 ++
+ drivers/misc/genwqe/card_utils.c |    4 ++++
+ 2 files changed, 6 insertions(+)
+
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -782,6 +782,8 @@ static int genwqe_pin_mem(struct genwqe_
  
--	/* End of text section */
--	_etext = .;
-+		/* End of text section */
-+		_etext = .;
-+	} :text = 0x9090
+ 	if ((m->addr == 0x0) || (m->size == 0))
+ 		return -EINVAL;
++	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
++		return -EINVAL;
  
- 	NOTES :text :note
+ 	map_addr = (m->addr & PAGE_MASK);
+ 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -582,6 +582,10 @@ int genwqe_user_vmap(struct genwqe_dev *
+ 	/* determine space needed for page_list. */
+ 	data = (unsigned long)uaddr;
+ 	offs = offset_in_page(data);
++	if (size > ULONG_MAX - PAGE_SIZE - offs) {
++		m->size = 0;	/* mark unused and not added */
++		return -EINVAL;
++	}
+ 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
  
+ 	m->page_list = kcalloc(m->nr_pages,
 
 
