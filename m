@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB66B3A6FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C79D3A739
+	for <lists+linux-kernel@lfdr.de>; Sun,  9 Jun 2019 18:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbfFIQpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 12:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42692 "EHLO mail.kernel.org"
+        id S1730852AbfFIQr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 12:47:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729667AbfFIQpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 12:45:09 -0400
+        id S1729961AbfFIQrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 12:47:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B9962081C;
-        Sun,  9 Jun 2019 16:45:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91B0920833;
+        Sun,  9 Jun 2019 16:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560098708;
-        bh=LnQDjO4Vhdgtle2baR7Jpn2WfXmPbMBsg1JM9CfT5io=;
+        s=default; t=1560098838;
+        bh=xeVUjfGxQoVjSw7j4OLGkhuBu4NcXNktCtrf/zMLpYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAYXPSSg6lOhmO018jbjekSgdaKu5KJ2g1JEwjhHtVaCOv9Xa1JbJrpF16unHAKPw
-         Im3ChJiMGLsn3evKhBmhiUM3NW49wr6LGZRZOxkLjsjPFSCRSoLYscZyoMccNOep6/
-         XuGTBmVC+O5Gqlg54cvkZxa/W4Kfg1pew/byLwO0=
+        b=LMD7sTXh30lr13MLGJOiF111WcmofOjroFlU8wzpNRhrFF5MvgR5UIZr5qvvOaffZ
+         Hj3ss/T1DJZ5cKOmCneTVkg7q9m4ZcH1G9X6/l/cio1kM/HmVPdIVycYgid2GJdkuV
+         0qAL/XMmyW4f9UHNOz36a5uV1aVCs+b0zVNrajms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.1 31/70] fuse: fallocate: fix return with locked inode
+        stable@vger.kernel.org, Vivien Didelot <vivien.didelot@gmail.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 01/51] ethtool: fix potential userspace buffer overflow
 Date:   Sun,  9 Jun 2019 18:41:42 +0200
-Message-Id: <20190609164129.661807429@linuxfoundation.org>
+Message-Id: <20190609164127.215699992@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190609164127.541128197@linuxfoundation.org>
-References: <20190609164127.541128197@linuxfoundation.org>
+In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
+References: <20190609164127.123076536@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,36 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Vivien Didelot <vivien.didelot@gmail.com>
 
-commit 35d6fcbb7c3e296a52136347346a698a35af3fda upstream.
+[ Upstream commit 0ee4e76937d69128a6a66861ba393ebdc2ffc8a2 ]
 
-Do the proper cleanup in case the size check fails.
+ethtool_get_regs() allocates a buffer of size ops->get_regs_len(),
+and pass it to the kernel driver via ops->get_regs() for filling.
 
-Tested with xfstests:generic/228
+There is no restriction about what the kernel drivers can or cannot do
+with the open ethtool_regs structure. They usually set regs->version
+and ignore regs->len or set it to the same size as ops->get_regs_len().
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 0cbade024ba5 ("fuse: honor RLIMIT_FSIZE in fuse_file_fallocate")
-Cc: Liu Bo <bo.liu@linux.alibaba.com>
-Cc: <stable@vger.kernel.org> # v3.5
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+But if userspace allocates a smaller buffer for the registers dump,
+we would cause a userspace buffer overflow in the final copy_to_user()
+call, which uses the regs.len value potentially reset by the driver.
+
+To fix this, make this case obvious and store regs.len before calling
+ops->get_regs(), to only copy as much data as requested by userspace,
+up to the value returned by ops->get_regs_len().
+
+While at it, remove the redundant check for non-null regbuf.
+
+Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/fuse/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/ethtool.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3050,7 +3050,7 @@ static long fuse_file_fallocate(struct f
- 	    offset + length > i_size_read(inode)) {
- 		err = inode_newsize_ok(inode, offset + length);
- 		if (err)
--			return err;
-+			goto out;
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -1434,13 +1434,16 @@ static int ethtool_get_regs(struct net_d
+ 			return -ENOMEM;
  	}
  
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
++	if (regs.len < reglen)
++		reglen = regs.len;
++
+ 	ops->get_regs(dev, &regs, regbuf);
+ 
+ 	ret = -EFAULT;
+ 	if (copy_to_user(useraddr, &regs, sizeof(regs)))
+ 		goto out;
+ 	useraddr += offsetof(struct ethtool_regs, data);
+-	if (regbuf && copy_to_user(useraddr, regbuf, regs.len))
++	if (copy_to_user(useraddr, regbuf, reglen))
+ 		goto out;
+ 	ret = 0;
+ 
 
 
