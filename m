@@ -2,174 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27333B399
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 13:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14DC43B39E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 13:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388967AbfFJK7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 06:59:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:40554 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388100AbfFJK7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 06:59:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04AE8337;
-        Mon, 10 Jun 2019 03:59:08 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18E233F557;
-        Mon, 10 Jun 2019 04:00:46 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 11:59:03 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Souvik Chakravarty <souvik.chakravarty@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lina Iyer <lina.iyer@linaro.org>
-Subject: Re: [PATCH 09/18] drivers: firmware: psci: Add support for PM
- domains using genpd
-Message-ID: <20190610105903.GC26602@e107155-lin>
-References: <20190513192300.653-1-ulf.hansson@linaro.org>
- <20190513192300.653-10-ulf.hansson@linaro.org>
- <20190607152751.GH15577@e107155-lin>
- <CAPDyKFq3FFZEAEKrPfvBPUpAGKaTo05zS0-5sfgBjGFhRZ0b=w@mail.gmail.com>
+        id S2389104AbfFJK7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 06:59:39 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46470 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388912AbfFJK7i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 06:59:38 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h21so9954770qtn.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 03:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lYS873xwFvgHJlWnAlNcy3+738aq6TAuNgiiGGA4PYI=;
+        b=DucPq623iXSUdIpU0sIAvsS6WoDxfPXDCI8M1Z/cLDSvAghOCQhzkn7n7CRUZTV+n4
+         D7kno671l158zYXcQ5CcTKS//ZnxFCq2lAzzR8jkfMiXRI7qZOJ39ioMp2roV7C+XDeh
+         18gxi0DLvMAiIoesnOPgfWT/y6QIiThSsrAXQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lYS873xwFvgHJlWnAlNcy3+738aq6TAuNgiiGGA4PYI=;
+        b=PFU7/TI+4b1sQ7DvY4V+fvbWnCwfJDKUhAxAO3nWH0jkggJmynQUeW1GicJlwZbyJc
+         9dvBaokQ+1U3uD8cOCf24G2Z0J+NoMzMLeeo/CvlfDUCOW11BdGKR+dSM/cdpMCFU3nT
+         T65dlmlQrug7wkybxjdyQch9nIdq8TuWKRHAyw+Jrt1vysccg+6vw8JT/Ws19aklKA9n
+         D75+hTxX3vjClhKmusMdF7pPv6CFpzFH1MdI9xW0sPqu6VJ2dNb5iLQ16+HA9fVYARiY
+         xAAa/zMbuMf18mvTcLaNLMPcSR2wyFp0gU5egvh/dincZPkpV8ugEGUPxeMK6UfxWYxa
+         WHrQ==
+X-Gm-Message-State: APjAAAUwnEQiJ3RMII7MnYTScT1ahO/2ao9GkZq8DasvcBuirVel2yeZ
+        GQ8PpmutenaSqEdoq73eVN62hKY6TEHqPTWoEEMF7w==
+X-Google-Smtp-Source: APXvYqwfm97Zg0Zz9VmQex8hsHuU/WItevpCJwgENnoSKs11e4b9vXzYpWawPLMtR9aoaRwrQ+h4hOapW5NQrVQbggk=
+X-Received: by 2002:ac8:42d4:: with SMTP id g20mr58845965qtm.78.1560164377769;
+ Mon, 10 Jun 2019 03:59:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFq3FFZEAEKrPfvBPUpAGKaTo05zS0-5sfgBjGFhRZ0b=w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190527043336.112854-1-hsinyi@chromium.org> <20190527043336.112854-2-hsinyi@chromium.org>
+ <5ced598d.1c69fb81.dabd8.339d@mx.google.com>
+In-Reply-To: <5ced598d.1c69fb81.dabd8.339d@mx.google.com>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Mon, 10 Jun 2019 18:59:11 +0800
+Message-ID: <CAJMQK-i0z1EHCMK3eTya+SmK6GD_C4Ljvb7BHvsaMWLDxxmwMg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] fdt: add support for rng-seed
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 12:21:41PM +0200, Ulf Hansson wrote:
-> On Fri, 7 Jun 2019 at 17:27, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > On Mon, May 13, 2019 at 09:22:51PM +0200, Ulf Hansson wrote:
-> > > When the hierarchical CPU topology layout is used in DT, we need to setup
-> > > the corresponding PM domain data structures, as to allow a CPU and a group
-> > > of CPUs to be power managed accordingly. Let's enable this by deploying
-> > > support through the genpd interface.
-> > >
-> > > Additionally, when the OS initiated mode is supported by the PSCI FW, let's
-> > > also parse the domain idle states DT bindings as to make genpd responsible
-> > > for the state selection, when the states are compatible with
-> > > "domain-idle-state". Otherwise, when only Platform Coordinated mode is
-> > > supported, we rely solely on the state selection to be managed through the
-> > > regular cpuidle framework.
-> > >
-> > > If the initialization of the PM domain data structures succeeds and the OS
-> > > initiated mode is supported, we try to switch to it. In case it fails,
-> > > let's fall back into a degraded mode, rather than bailing out and returning
-> > > an error code.
-> > >
-> > > Due to that the OS initiated mode may become enabled, we need to adjust to
-> > > maintain backwards compatibility for a kernel started through a kexec call.
-> > > Do this by explicitly switch to Platform Coordinated mode during boot.
-> > >
-> > > Finally, the actual initialization of the PM domain data structures, is
-> > > done via calling the new shared function, psci_dt_init_pm_domains().
-> > > However, this is implemented by subsequent changes.
-> > >
-> > > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> > > Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > ---
-> > >
-> > > Changes:
-> > >       - Simplify code setting domain_state at power off.
-> > >       - Use the genpd ->free_state() callback to manage freeing of states.
-> > >       - Fixup a bogus while loop.
-> > >
-> > > ---
-> > >  drivers/firmware/psci/Makefile         |   2 +-
-> > >  drivers/firmware/psci/psci.c           |   7 +-
-> > >  drivers/firmware/psci/psci.h           |   5 +
-> > >  drivers/firmware/psci/psci_pm_domain.c | 268 +++++++++++++++++++++++++
-> > >  4 files changed, 280 insertions(+), 2 deletions(-)
-> > >  create mode 100644 drivers/firmware/psci/psci_pm_domain.c
-> > >
-
-[...]
-
-> > > +
-> > > +static int psci_pd_parse_states(struct device_node *np,
-> > > +                     struct genpd_power_state **states, int *state_count)
-> > > +{
-> > > +     int ret;
-> > > +
-> > > +     /* Parse the domain idle states. */
-> > > +     ret = of_genpd_parse_idle_states(np, states, state_count);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> >
-> >
-> > Lots of things here in this file are not psci specific. They can be
-> > moved as generic CPU PM domain support.
+On Tue, May 28, 2019 at 11:53 PM Stephen Boyd <swboyd@chromium.org> wrote:
 >
-> What exactly do you mean by CPU PM domain support?
+> Quoting Hsin-Yi Wang (2019-05-26 21:33:35)
+> > Introducing a chosen node, rng-seed, which is an entropy that can be
+> > passed to kernel called very early to increase initial device
+> > randomness. Bootloader should provide this entropy and the value is
+> > read from /chosen/rng-seed in DT.
+> >
+> > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > ---
 >
-> The current split is based upon how the generic PM domain (genpd)
-> supports CPU devices (see GENPD_FLAG_CPU_DOMAIN), which is already
-> available.
->
-> I agree that finding the right balance between what can be made
-> generic and driver specific is not always obvious. Often it's better
-> to start with having more things in the driver code, then move things
-> into a common framework, later on, when that turns out to make sense.
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 >
 
-Indeed, I agree. But when reviewing this time I thought it should be
-possible to push generic stuff into existing dt_idle_driver. I must
-admit that I haven't thought much in details, just thought of expressing
-the idea and see. But yes it's difficult to find the balance but at the
-same time we need reasons to have these in psci :)
+Hi Rob,
 
+Is this series accepted? Or is there any other related concern?
 
-> >
-> > > +     /* Fill out the PSCI specifics for each found state. */
-> > > +     ret = psci_pd_parse_state_nodes(*states, *state_count);
-> > > +     if (ret)
-> > > +             kfree(*states);
-> > > +
-> >
-> > Things like above are PSCI.
-> >
-> > I am trying to see if we can do something to achieve partitions like we
-> > have today: psci.c just has PSCI specific stuff and dt_idle_states.c
-> > deals with generic idle stuff.
-> 
-> I am open to any suggestions. Although, I am not sure I understand
-> your comment and nor the reason to why you want me to change.
-> 
-> So, what is the problem with having the code that you refer to, inside
-> drivers/firmware/psci/psci_pm_domain.c? Can't we just start with that
-> and see how it plays?
-> 
+If it's fine, I also have sent a patch for updating
+schemas/chosen.yaml document.
 
-I need to think how to partition this well. I don't have suggestions
-right away, but I need to get convinced what we have here is best we
-can do or come up with a better solution. I didn't like it as is at
-this time.
-
---
-Regards,
-Sudeep
+Thanks
