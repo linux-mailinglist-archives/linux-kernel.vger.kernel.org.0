@@ -2,68 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D663B5B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DD4F3B5B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:04:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390218AbfFJND3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 09:03:29 -0400
-Received: from foss.arm.com ([217.140.110.172]:42644 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389123AbfFJND3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 09:03:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FFC1337;
-        Mon, 10 Jun 2019 06:03:28 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 976183F557;
-        Mon, 10 Jun 2019 06:03:27 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 14:03:25 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clocksource/arm_arch_timer: extract elf_hwcap use to
- arch-helper
-Message-ID: <20190610130325.GB25803@arrakis.emea.arm.com>
-References: <20190430131413.10017-1-andrew.murray@arm.com>
+        id S2390236AbfFJNEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 09:04:06 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34152 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390220AbfFJNEF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 09:04:05 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y198so6586153lfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 06:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WcJ8L2VIZpozOUCxmAIAp8kABMEhkWByzfpSGr3ZIIo=;
+        b=lo0a8oKwwI2k/gAiDktR2QOF6rFcxgeFG/RSLWlqrjAPY3hFnEkgRMGUp0oFBhtm2A
+         nVrhhjaXFqDUC1zwdRa4lAaDYf4gxp5jSyH7j+0DiTbweuTovBS0I743+wsnXtz5uHfd
+         EfCxY4Uctl1YmOcTq2BIYllN0gL4R8ov1RJxCavY80DwpQJ+3sK0MSc4IaonvDebWRuu
+         y9Aw24jPK7gQaFHtuTeuki9lIbuEj7a4WF4h0m6bZklZ1bX0W7j18+AHc0Aj9q+PiHO0
+         W7Nf262vjP33Pp4dDm5MFNOiLhXgoX6lkMfm365V586L4kBGbCtDbbb/xd4uWw+mCbjG
+         R++A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WcJ8L2VIZpozOUCxmAIAp8kABMEhkWByzfpSGr3ZIIo=;
+        b=GOAoG4bDNrSotyEpj8bznrL03+TCafRvbei3XYsglHmMsEk9mzFhvKKFewAVWeWLMV
+         HR4yHJPtwsIDsmC0HYuooCrhencvCblkzrYRLbx4/UZrBXq+xvZTphuqKZ7wCRvmQ14q
+         tM6kaQ6i3SDYoYPYAi/vt5UyYjaRxzlqXEOT++DHYEmBJam5sH7XzezlPdJL8aaZc+x1
+         HspSNkcuwl9hGtYLCO2xzFQF/abUCVJwFK+eGUx5EVO60L04QXa3Vq+4OZubLdZ3Bz/G
+         xMaD1zNfJMSR/6aatw/M3u5HW2Xz3zmjLAxysMyh+xA6EZDI4FOxyZEZW9nDCXQSWuuY
+         wF9w==
+X-Gm-Message-State: APjAAAWxNG5sHA8h8w/w6tscQ+nAcd61NfFBWORoisks0ZZrEmlzDW8v
+        kpgc+etU9MBLcX+JpuQAFMBkshxEI8KKG799HhEMTA==
+X-Google-Smtp-Source: APXvYqzM5swNZJ4w1rVu6nw3oQdiqx3Km/1wZnjPG7wePICVaK1Y/o7E/3VRoxqpRWAudLGWuSAHSADwVXTzzfRVtds=
+X-Received: by 2002:a19:c383:: with SMTP id t125mr27992403lff.89.1560171843304;
+ Mon, 10 Jun 2019 06:04:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430131413.10017-1-andrew.murray@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190606094722.23816-1-anders.roxell@linaro.org> <d6b79ee0-07c6-ad81-16b0-8cf929cc214d@xs4all.nl>
+In-Reply-To: <d6b79ee0-07c6-ad81-16b0-8cf929cc214d@xs4all.nl>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Mon, 10 Jun 2019 15:03:52 +0200
+Message-ID: <CADYN=9KY5=FzrkC7MKj9QnG-eM1NVuL00w8Xv4yU2r05rhr7WQ@mail.gmail.com>
+Subject: Re: [PATCH 5/8] drivers: media: coda: fix warning same module names
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, p.zabel@pengutronix.de,
+        andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        marex@denx.de, stefan@agner.ch, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, b.zolnierkie@samsung.com,
+        a.hajda@samsung.com, hkallweit1@gmail.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fbdev@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 02:14:13PM +0100, Andrew Murray wrote:
-> diff --git a/arch/arm/include/asm/arch_timer.h b/arch/arm/include/asm/arch_timer.h
-> index 0a8d7bba2cb0..f21e038dc9f3 100644
-> --- a/arch/arm/include/asm/arch_timer.h
-> +++ b/arch/arm/include/asm/arch_timer.h
-> @@ -4,6 +4,7 @@
->  
->  #include <asm/barrier.h>
->  #include <asm/errno.h>
-> +#include <asm/hwcap.h>
->  #include <linux/clocksource.h>
->  #include <linux/init.h>
->  #include <linux/types.h>
-> @@ -110,6 +111,18 @@ static inline void arch_timer_set_cntkctl(u32 cntkctl)
->  	isb();
->  }
->  
-> +static inline bool arch_timer_set_evtstrm_feature(void)
-> +{
-> +	elf_hwcap |= HWCAP_EVTSTRM;
-> +#ifdef CONFIG_COMPAT
-> +	compat_elf_hwcap |= COMPAT_HWCAP_EVTSTRM;
-> +#endif
-> +}
+On Thu, 6 Jun 2019 at 12:13, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 6/6/19 11:47 AM, Anders Roxell wrote:
+> > When building with CONFIG_VIDEO_CODA and CONFIG_CODA_FS enabled as
+> > loadable modules, we see the following warning:
+> >
+> > warning: same module names found:
+> >   fs/coda/coda.ko
+> >   drivers/media/platform/coda/coda.ko
+> >
+> > Rework so media coda matches the config fragment. Leaving CODA_FS as is
+> > since thats a well known module.
+> >
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  drivers/media/platform/coda/Makefile | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/coda/Makefile b/drivers/media/platform/coda/Makefile
+> > index 54e9a73a92ab..588e6bf7c190 100644
+> > --- a/drivers/media/platform/coda/Makefile
+> > +++ b/drivers/media/platform/coda/Makefile
+> > @@ -1,6 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >
+> > -coda-objs := coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-mpeg2.o coda-mpeg4.o coda-jpeg.o
+> > +video-coda-objs := coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-mpeg2.o coda-mpeg4.o coda-jpeg.o
+> >
+> > -obj-$(CONFIG_VIDEO_CODA) += coda.o
+> > +obj-$(CONFIG_VIDEO_CODA) += video-coda.o
+>
+> How about imx-coda? video-coda suggests it is part of the video subsystem,
+> which it isn't.
 
-There is no COMPAT support on arm32.
+I'll resend a v2 shortly with imx-coda instead.
 
--- 
-Catalin
+
+Cheers,
+Anders
+
+>
+> Regards,
+>
+>         Hans
+>
+> >  obj-$(CONFIG_VIDEO_IMX_VDOA) += imx-vdoa.o
+> >
+>
