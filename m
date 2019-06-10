@@ -2,149 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C1D53B8B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4673B8C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404018AbfFJPzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:55:45 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:44256 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404005AbfFJPzn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:55:43 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 79D5AC5896;
-        Mon, 10 Jun 2019 15:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1560182141; bh=aihNbKp08qv3DocJmNBn+1cqwnR6GWVl1CV2mAjc24U=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=iD93RKJs/EbchZsrL1WjVDrxDFv9IToe8PnqWY1KtMl6yN80aQqdRjpdKJZxNNKHm
-         DbQJz1DWUGgUBkXgmo6VHAOvHU1k+/SY09ttUqAj62JO2uw/ARIIGT+sX25pJA428H
-         /WyHNbF5/9z6l1GzRJrXlWo4wEAhl607nvt30OH4oiNr725gslsq2exmbKFu48sYEB
-         n+bljA7YRJDwb8HwHgOYl8B5G+m1hymXxAmkai7AXwOKsZu8HuFP+N3ckBtUolbRyE
-         6Si4gqf9ckH/9DOJya1YWB10LUZiHf/fy535HVbW9vFl757aN78pJazA+sRh5aeNDX
-         HrBCAAQzvm6/g==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 3B5E5A0276;
-        Mon, 10 Jun 2019 15:55:42 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.22]) by
- US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0415.000; Mon, 10 Jun 2019 08:55:41 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Cupertino Miranda <Cupertino.Miranda@synopsys.com>
-CC:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: ARC Assembler: bundle_align_mode directive support
-Thread-Topic: ARC Assembler: bundle_align_mode directive support
-Thread-Index: AQHVHicA2N+x/AVgjkyWYOIr/ofXig==
-Date:   Mon, 10 Jun 2019 15:55:41 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA2307501A2525686@us01wembx1.internal.synopsys.com>
-References: <3962a9ad199cea45b1cfadb80be551aab83b7028.camel@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.19]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2404060AbfFJP4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:56:02 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5731 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404020AbfFJPzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:55:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 08:55:49 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga004.jf.intel.com with ESMTP; 10 Jun 2019 08:55:49 -0700
+Date:   Mon, 10 Jun 2019 08:55:49 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
+Message-ID: <20190610155549.GB15995@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-2-sean.j.christopherson@intel.com>
+ <20190610150600.GA3752@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610150600.GA3752@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/8/19 11:21 AM, Eugeniy Paltsev wrote:=0A=
-> Hi Cupertino,=0A=
->=0A=
-> I tried to use ".bundle_align_mode" directive in ARC assembly, but I got =
-following error:=0A=
-> ----------------->8--------------=0A=
-> Assembler messages:=0A=
-> Error: unknown pseudo-op: `.bundle_align_mode'=0A=
-> ----------------->8--------------=0A=
->=0A=
-> Is it possible to implement it in ARC assembler?=0A=
-> There is some context about the reason we want to have it:=0A=
->=0A=
-> I'm trying to add support of jump labels for ARC in linux kernel. Jump la=
-bels=0A=
-> provide an interface to generate static branches using self-modifying cod=
-e.=0A=
-> This allows us to implement conditional branches where changing branch=0A=
-> direction is expensive but branch selection is basically 'free'.=0A=
->=0A=
-> There is nuance in current implementation:=0A=
-> We need to patch code by rewriting 32-bit NOP by 32-bit BRANCH instructio=
-n (or vice versa).=0A=
-> It can be easily done with following code:=0A=
-> ----------------->8--------------=0A=
-> write_32_bit(new_instruction)=0A=
-> flush_l1_dcache_range_this_cpu=0A=
-> invalidate_l1_icache_range_all_cpu=0A=
-> ----------------->8--------------=0A=
->=0A=
-> I$ update will be atomic in most of cases except the patched instruction =
-share=0A=
-> two L1 cache lines (so first 16 bits of instruction are in the one cache =
-line and=0A=
-> last 16 bit are in another cache line).=0A=
-> In such case we can execute half-updated instruction if we are patching l=
-ive code (and we are unlucky enough :)=0A=
-=0A=
-While I understand your need for alignment, I don't see how you can possibl=
-y=0A=
-execute stray lines.=0A=
-dcache flush will be propagated by hardware (SCU) to all cores (as applicab=
-le) and=0A=
-the icache cache flush xcall is synchronous and will have to finish on all =
-cores=0A=
-before we proceed to execute the cod eitself.=0A=
-=0A=
->=0A=
-> As of today I simply align by 4 byte instruction which can be patched wit=
-h ".balign 4" directive:=0A=
-> ----------------->8--------------=0A=
-> static __always_inline bool arch_static_branch_jump(struct static_key *ke=
-y,=0A=
->     bool branch)=0A=
-> {=0A=
-> asm_volatile_goto(".balign 4\n"=0A=
->  "1:\n"=0A=
->  "b %l[l_yes]\n" // <- instruction which can be patched=0A=
->  ".pushsection __jump_table, \"aw\"\n"=0A=
->  ".word 1b, %l[l_yes], %c0\n"=0A=
->  ".popsection\n"=0A=
->  : : "i" (&((char *)key)[branch]) : : l_yes);=0A=
->=0A=
-> return false;=0A=
-> l_yes:=0A=
-> return true;=0A=
-> }=0A=
-> ----------------->8--------------=0A=
->=0A=
-> In that case patched instruction is aligned with one 16-bit NOP if this i=
-s required.=0A=
-> However 'align by 4' directive is much stricter than it actually required=
-. =0A=
-=0A=
-I don't quite understand. Can u write a couple of lines of pseudo assembly =
-to show=0A=
-what the issue is.=0A=
-=0A=
-> It's enough=0A=
-> that our 32-bit instruction don't cross l1 cache line boundary.=0A=
-> That will save us from adding useless NOP padding in most of the cases.=
-=0A=
-> It can be implemented with ".bundle_align_mode" directive which isn't sup=
-ported by ARC AS unfortunately.=0A=
-=0A=
-This seems like a reasonable request (contingent to the difficulty of=0A=
-implementation in binutils). but I can't comprehend why you would need it.=
-=0A=
+On Mon, Jun 10, 2019 at 06:06:00PM +0300, Jarkko Sakkinen wrote:
+> On Wed, Jun 05, 2019 at 07:11:41PM -0700, Sean Christopherson wrote:
+> > SGX will use the may_mprotect() hook to prevent userspace from
+> > circumventing various security checks, e.g. Linux Security Modules.
+> > Naming it may_mprotect() instead of simply mprotect() is intended to
+> > reflect the hook's purpose as a way to gate mprotect() as opposed to
+> > a wholesale replacement.
+> 
+> "This commit adds may_mprotect() to struct vm_operations_struct, which
+> can be used to ask from the owner of a VMA if mprotect() is allowed."
+> 
+> This would be more appropriate statement because that is what the code
+> change aims for precisely. I did not even understand what you meant by
+> gating in this context. I would leave SGX and LSM's (and especially
+> "various security checks", which means abssolutely nothing) out of the
+> first paragraph completely.
+> 
+> > Enclaves are built by copying data from normal memory into the Enclave
+> > Page Cache (EPC).  Due to the nature of SGX, the EPC is represented by a
+> > single file that must be MAP_SHARED, i.e. mprotect() only ever sees a
+> > MAP_SHARED vm_file that references single file path.  Furthermore, all
+> > enclaves will need read, write and execute pages in the EPC.
+> 
+> I would just say that "Due to the fact that EPC is delivered as IO
+> memory from the preboot firmware, it can be only mapped as MAP_SHARED".
+> It is what it is.
+
+I was trying to convey that the nature of SGX itself requires that an
+enclave's pages are shared between process.  E.g. {MAP,VM}_SHARED would be
+required even if we modified the mmu to handle EPC memory in such a way
+that it didn't have to be tagged with VM_PFNMAP.
+
+> > As a result, LSM policies cannot be meaningfully applied, e.g. an LSM
+> > can deny access to the EPC as a whole, but can't deny PROT_EXEC on page
+> > that originated in a non-EXECUTE file (which is long gone by the time
+> > mprotect() is called).
+> 
+> I have hard time following what is paragraph is trying to say.
+> 
+> > By hooking mprotect(), SGX can make explicit LSM upcalls while an
+> > enclave is being built, i.e. when the kernel has a handle to origin of
+> > each enclave page, and enforce the result of the LSM policy whenever
+> > userspace maps the enclave page in the future.
+> 
+> "LSM policy whenever calls mprotect()"? I'm no sure why you mean by
+> mapping here and if there is any need to talk about future. Isn't this
+> needed now?
+
+Future is referring to the timeline of a running kernel, not the future
+of the kernel code.
+
+Rather than trying to explain all of the above with words, I'll provide
+code examples to show how ->may_protect() will be used by SGX and why it
+is the preferred solution.
+
+> > Alternatively, SGX could play games with MAY_{READ,WRITE,EXEC}, but
+> > that approach is quite ugly, e.g. would require userspace to call an
+> > SGX ioctl() prior to using mprotect() to extend a page's protections.
+> 
+> Instead of talking "playing games" I would state what could be done with
+> VM_MAY{READ,WRITE,EXEC} and why it is bad. Leaves questions otherwise.
+> 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > ---
+> >  include/linux/mm.h |  2 ++
+> >  mm/mprotect.c      | 15 +++++++++++----
+> >  2 files changed, 13 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 0e8834ac32b7..a697996040ac 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -458,6 +458,8 @@ struct vm_operations_struct {
+> >  	void (*close)(struct vm_area_struct * area);
+> >  	int (*split)(struct vm_area_struct * area, unsigned long addr);
+> >  	int (*mremap)(struct vm_area_struct * area);
+> > +	int (*may_mprotect)(struct vm_area_struct * area, unsigned long start,
+> > +			    unsigned long end, unsigned long prot);
+> 
+> Could be just boolean.
+> 
+> /Jarkko
