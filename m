@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2801E3B9F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 835CB3B9F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387794AbfFJQsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 12:48:42 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43336 "EHLO
+        id S2387670AbfFJQs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 12:48:28 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38762 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728015AbfFJQs0 (ORCPT
+        with ESMTP id S2387591AbfFJQs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 12:48:26 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w33so15396293edb.10;
-        Mon, 10 Jun 2019 09:48:24 -0700 (PDT)
+        Mon, 10 Jun 2019 12:48:27 -0400
+Received: by mail-ed1-f68.google.com with SMTP id g13so15410676edu.5;
+        Mon, 10 Jun 2019 09:48:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RNaE+JyTMbe3vWyJjoPXuE9tx9E7XgUahA0r4EQDpWk=;
-        b=UNaUhZ4J26e1YN0E5HgpidahdbTAdrZZAE74lVVCvMFAkthT7xS4FQjXqjcWYxowzV
-         YFn4c2Yl06QJFUIdlkRMsOFqI9l4bDJwRVc5vB+WS9L1XPONYnbQG0ifRADi7tcsIlVD
-         Jl+YF0lzUxt1hG8JFipYQ23QNrIXzAfDQI7KWjJCZeZHVeWpHyiYMNTUrdhE7K6y8U5/
-         MaBwZsm/I2iYHWJaZWjAO3rxvJ28C4NkUrdAfG3gaOPuZrA4KIOOMffaBiRz9iy59ZeY
-         XMNsUAAG+DsTkjxvX/t/bGMwxeNEnhLIe1oMh7XQVj0pqULa22CpbYQEFF/IX4GV19rW
-         5nTA==
+        bh=JeS1NZV9l6cKb9kBau6tKM3IexXNZlumeWCO8CC2qpE=;
+        b=oG0nn8Khx/Etm7tZOkNf97tgp8ZYFbygkpMs6tBWr4hwbvLNO8iViNDU9acxyf5ikk
+         +vkmDH7LQUaB2DqAFRQTELxmItYRnfGk+VHhm/Wr/WruyrIaFhKvjF4B2IKoyOUp6KbI
+         qhatueJBoHMJvud6f4z3gl7N3EQmbbqNwGXtixcacQkOlcRrt8+/6wI5xtq0KH58zgsz
+         E3p1SJ4OKPTflXnGEW8VMaAtH56x/KI0poFLbvlQCSGB8Qn4F/LUpz5TZzAqpCB/nKu6
+         prpQl71jFagoQIPsyeBvstZbPtYLDG5+LP6vY+pbxdY7cOgtIAMpFSnXHJ2qT+Eya+hj
+         xW5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RNaE+JyTMbe3vWyJjoPXuE9tx9E7XgUahA0r4EQDpWk=;
-        b=CZCbLG11/bIuQ5sk3hfBSMt/W1EBU9+euiCEq4NAqbHofYlUZe56lOL9DCvlaKANkk
-         2ie1FHwva551/68p0KQ6wrHn4UXSjdd1gPha1kuG4Wjfff83EUnzk1I6Q0CqijbnnPIU
-         iVZP8Y2MClFTNQWGtoESr41z+Cwfb2GU4alP/hcg2MCZHaLFlMg1GXpI+Srr3Zmnpbl6
-         gf+TpKitCN8KXJKmB6+VFYO7QqWfpIcRADB3Qj7J5VX2Fn8sG3mx3bua1pfBy1c6JPOF
-         CL4YmzJGw1ePn+pqYvOBMSltN04hj5jLHk97tgA0Cb9Ky39h6+v7HyYqGFSKs/jlbnna
-         p5GA==
-X-Gm-Message-State: APjAAAX6PfcKxaRWS3BWl+dp3P6O3q+OlM6VN5P9er+8FDnG6VdBiV6d
-        hD9oIsxyjzDNQ5WJCromjcbU+WbC
-X-Google-Smtp-Source: APXvYqzrc8u6mQ+GuOk68KhLmwetYvKai4YQWu7MPs8Supql0qozPF1RQWyfBAR4OVbjVtjW2cuvig==
-X-Received: by 2002:a17:906:d154:: with SMTP id br20mr5543813ejb.76.1560185304079;
-        Mon, 10 Jun 2019 09:48:24 -0700 (PDT)
+        bh=JeS1NZV9l6cKb9kBau6tKM3IexXNZlumeWCO8CC2qpE=;
+        b=p+TlsnOHST2swzE3nAhpLPzR0n6C9iHJ8uE0yci33XTrRYLrrcYu7LliWZ7+EoESC+
+         jzKlEBQP7op18gKReSIjsQ9NCuFt27nSq8qpSvX+wcdbkzMydsnf8IvN69fQghm1bzgg
+         GXgD7u6taDkJeL8hkhq1HUfr0MlL6u8FUx+QCxxSb9//13Q71H42pcKnxfhVOJEPRqRJ
+         GiTkO8ErFMp7/gmbAuFIC7PL2QbGXR5LjuVXXNWMmw2IRhTQBRo8hlJ34jGy2THKn2ZC
+         LklFhN9RkDmC7CHFfm6ySRxTUbhK2peW9W9bj6sPYz8BT0wtlYE+F6DtvTlVrHRXxb24
+         IjHQ==
+X-Gm-Message-State: APjAAAWFfur4z5RR9Tr4Cnefm71hGT9NhY3WJwgVQATsnm7NgJ/bY+EU
+        1Bl+EJj12UdUtyIOKbbmZE4=
+X-Google-Smtp-Source: APXvYqzW5FmOjsrmFKMH1f5FKBZgReQQBW1m46ckDr/kAUa4/FMiGEFaI0VsUNI8jhjJwPwr6HJruA==
+X-Received: by 2002:a17:906:e9d3:: with SMTP id kb19mr59416694ejb.248.1560185305194;
+        Mon, 10 Jun 2019 09:48:25 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id a9sm3075799edc.44.2019.06.10.09.48.22
+        by smtp.gmail.com with ESMTPSA id a9sm3075799edc.44.2019.06.10.09.48.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 09:48:23 -0700 (PDT)
+        Mon, 10 Jun 2019 09:48:24 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Joseph Lo <josephl@nvidia.com>,
@@ -52,9 +52,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] clocksource/drivers/tegra: Set and use timer's period
-Date:   Mon, 10 Jun 2019 19:43:57 +0300
-Message-Id: <20190610164400.11830-4-digetx@gmail.com>
+Subject: [PATCH v2 4/6] clocksource/drivers/tegra: Drop unneeded typecasting in one place
+Date:   Mon, 10 Jun 2019 19:43:58 +0300
+Message-Id: <20190610164400.11830-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190610164400.11830-1-digetx@gmail.com>
 References: <20190610164400.11830-1-digetx@gmail.com>
@@ -65,42 +65,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The of_clk structure has a period field that is set up initially by
-timer_of_clk_init(), that period value need to be adjusted for a case of
-TIMER1-9 that are running at a fixed rate that doesn't match the clock's
-rate. Note that the period value is currently used only by some of the
-clocksource drivers internally and hence this is just a minor cleanup
-change that doesn't fix anything.
+There is no need to cast void because kernel allows to do that without
+a warning message from a compiler.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index 810b4e7435cf..646b3530c2d2 100644
+index 646b3530c2d2..a7fa12488066 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
- static int tegra_timer_set_periodic(struct clock_event_device *evt)
+@@ -81,7 +81,7 @@ static int tegra_timer_set_periodic(struct clock_event_device *evt)
+ 
+ static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
  {
+-	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
++	struct clock_event_device *evt = dev_id;
  	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
-+	unsigned long period = timer_of_period(to_timer_of(evt));
  
--	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
--		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
-+	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
- 		       reg_base + TIMER_PTV);
- 
- 	return 0;
-@@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
- 		cpu_to->clkevt.rating = rating;
- 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
- 		cpu_to->of_base.base = timer_reg_base + base;
-+		cpu_to->of_clk.period = DIV_ROUND_UP(rate, HZ);
- 		cpu_to->of_clk.rate = rate;
- 
- 		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
+ 	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
 -- 
 2.21.0
 
