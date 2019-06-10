@@ -2,61 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25EFA3AE32
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 06:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B74343AE39
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 06:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfFJEg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 00:36:28 -0400
-Received: from foss.arm.com ([217.140.110.172]:36028 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbfFJEg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 00:36:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C058337;
-        Sun,  9 Jun 2019 21:36:26 -0700 (PDT)
-Received: from [10.162.42.131] (p8cg001049571a15.blr.arm.com [10.162.42.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A664B3F557;
-        Sun,  9 Jun 2019 21:36:16 -0700 (PDT)
-Subject: Re: [RFC V3] mm: Generalize and rename notify_page_fault() as
- kprobe_page_fault()
-To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <1559903655-5609-1-git-send-email-anshuman.khandual@arm.com>
- <6e095842-0f7f-f428-653d-2b6e98fea6b3@intel.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <bc8e2140-dc78-ce99-a336-91733c2fda67@arm.com>
-Date:   Mon, 10 Jun 2019 10:06:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728457AbfFJEi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 00:38:26 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39062 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbfFJEi0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 00:38:26 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g9so3117632plm.6
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 21:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mpvEIcub74Ft9tQ19C+ftgMqPmIXoqD9CmzUzCOdNHo=;
+        b=Pi8MLwR4TLdpCZ6t/LUx60qyKNBsya1oMtOVGH8Y2QkkD4FISlPx4rri2+Zc40wAAC
+         uNJnxIHb4x0TjU3oQ2BYr3ymaaof65cJdhUGwWBzCEvZfsHwP3JA99DCD2Pli/UZ5L6k
+         38hk8vOkAwnr81DK3tNkSdBjIYbby7+CuOdx3fF9Pq6CdcBX1zzOzzu5uwqHHgjVsvX0
+         U6t+0MCMUfPRYhIiOuVs77ir1LyqVoc5eyR5GAUE2rAoP6XsqXy4PVBAUPa6oV6VOJ+/
+         0NR+iMgET5E8ECG7DjQazl06DgVKpgQLO7iLiPfN5MJtbhechkNSVkKhz79BpftzA650
+         wQoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mpvEIcub74Ft9tQ19C+ftgMqPmIXoqD9CmzUzCOdNHo=;
+        b=mxPcuAPMprkLplBa0bvSF/uQc3XliKFn+//93MsdILLh5UzTo/y40wN47uYrRuRCux
+         pOvIGMHFYFoV8TyY45TinMCG1YRioQ3R1WD9piJD8TMOG9/++7XkEA206uv36XoVyo1l
+         YX8pZuhT13u480C3trmUz1Yry/fY2t/ul+iWBOKAy6bVBtpRKkWWgbySIT6tioK4KCwb
+         Rg2FuL43epgT/xIk/guZUqote1bWMZafL5ztiJT4Ons+ZzVr5MLf7EVL5LMiFmYpAt6M
+         pqXzEh/jwYDLNQ5uk9MrBfxuX7wDHbtzG2yhD2+ypvC356VFcYiFl0Yu6p+n3LRKlt+M
+         Lk7A==
+X-Gm-Message-State: APjAAAWmlUzL6yLKg6aDhFM1Oh8Iu8ZuzDWpPwd1VU/TLi4T1u1FzQpT
+        YO594YMdbwXIvxBx0UCxFMbCPrmk
+X-Google-Smtp-Source: APXvYqxRvLX40gv+OgzBjTF3wrCildCfFd1d4SpB/WueK+15EvhScQvfwHZvJubUBIUMqikrDRLAaA==
+X-Received: by 2002:a17:902:a516:: with SMTP id s22mr29601481plq.178.1560141505994;
+        Sun, 09 Jun 2019 21:38:25 -0700 (PDT)
+Received: from [10.0.2.15] ([171.79.92.225])
+        by smtp.gmail.com with ESMTPSA id n32sm8603724pji.29.2019.06.09.21.38.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Jun 2019 21:38:25 -0700 (PDT)
+Subject: Re: [PATCH] staging: rtl8723bs: core: rtw_mlme_ext.c: Remove unused
+ variables
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        straube.linux@gmail.com, benniciemanuel78@gmail.com,
+        hardiksingh.k@gmail.com
+References: <20190607071123.28193-1-nishkadg.linux@gmail.com>
+ <20190609110206.GD30671@kroah.com>
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+Message-ID: <74fd5a83-0f60-baae-a65f-bbc0cd9f4ad0@gmail.com>
+Date:   Mon, 10 Jun 2019 10:08:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <6e095842-0f7f-f428-653d-2b6e98fea6b3@intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190609110206.GD30671@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,43 +69,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/07/2019 08:36 PM, Dave Hansen wrote:
-> On 6/7/19 3:34 AM, Anshuman Khandual wrote:
->> +static nokprobe_inline bool kprobe_page_fault(struct pt_regs *regs,
->> +					      unsigned int trap)
->> +{
->> +	int ret = 0;
->> +
->> +	/*
->> +	 * To be potentially processing a kprobe fault and to be allowed
->> +	 * to call kprobe_running(), we have to be non-preemptible.
->> +	 */
->> +	if (kprobes_built_in() && !preemptible() && !user_mode(regs)) {
->> +		if (kprobe_running() && kprobe_fault_handler(regs, trap))
->> +			ret = 1;
->> +	}
->> +	return ret;
->> +}
+On 09/06/19 4:32 PM, Greg KH wrote:
+> On Fri, Jun 07, 2019 at 12:41:23PM +0530, Nishka Dasgupta wrote:
+>> Remove variables that are declared and assigned values but not otherwise
+>> used.
+>> Issue found with Coccinelle.
+>>
+>> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+>> ---
+>>   drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 9 ---------
+>>   1 file changed, 9 deletions(-)
 > 
-> Nits: Other that taking the nice, readable, x86 one and globbing it onto
-> a single line, looks OK to me.  It does seem a _bit_ silly to go to the
-> trouble of converting to 'bool' and then using 0/1 and an 'int'
-> internally instead of true/false and a bool, though.  It's also not a
-
-Changing to 'bool'...
-
-> horrible thing to add a single line comment to this sucker to say:
+> You sent me 8 patches for this driver, yet only 2 were ordered in a
+> series.  I have no idea what order to apply these in :(
 > 
-> /* returns true if kprobes handled the fault */
-> 
+> Please resend them _all_ in a numbered patch series so I have a chance
+> to get this correct.
 
-Picking this in-code comment.
+Yes, I can do that. Who do I send the patch series to in that case? The 
+maintainers list is slightly different for each file, and most of the 
+patches in this driver are for different and unrelated files (except, I 
+think, the two that I did send as a patch series). Do I combine the 
+maintainers lists and send the entire patch series to everyone listed as 
+a maintainer for any one of the patches in it?
 
-> In any case, and even if you don't clean any of this up:
+Thanking you,
+Nishka
+
+> thanks,
 > 
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+> greg k-h
 > 
 
-Thanks !
