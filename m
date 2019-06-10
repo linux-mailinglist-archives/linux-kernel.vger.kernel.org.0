@@ -2,88 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7CC3BE5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D5D3BE6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390410AbfFJVVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:21:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39350 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390360AbfFJVVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:21:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=q10pHG3ogaKOvbsSkhn8aFuqHA9X6EOL7rEdJvEUOlc=; b=k5gK2rAcRV04Sh79BrDU2YKhQn
-        pa6mx17pxufIw+EOMbM1CvH5R8x6Qy8Wt6KORtiH5rnWqhpOEDnXx+o7Sldh7FvDKFfB/dF4a1lup
-        LW4Zt/eDWQi3l5KziYxGcgFzzWG4CYHx1IOA7wHbpThQhByg56uuHGqCum+Hk4fuiEXPm2IaGjIbt
-        /g/hqgKk+qk0Y62uRfswgRWcLmdYNc8Zjd+TeX/4BTsBgAYtp5J+0UboPHGsa5+DzEO7zSrMwjQIf
-        Dzn1Vsp0m3pNLGWwFiLF/HLcjSA8sc+J1+KKyZYODym2hJdINhfrlKLZ0BKurPLAiWjDgx/2O/fKx
-        mGfsPnuQ==;
-Received: from 089144193064.atnat0002.highway.a1.net ([89.144.193.64] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1haRis-0000rG-Fv; Mon, 10 Jun 2019 21:20:59 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 15/15] riscv: add binfmt_flat support
-Date:   Mon, 10 Jun 2019 23:20:15 +0200
-Message-Id: <20190610212015.9157-16-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190610212015.9157-1-hch@lst.de>
-References: <20190610212015.9157-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S2390447AbfFJVVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:21:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390072AbfFJVUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 17:20:35 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 253C220859;
+        Mon, 10 Jun 2019 21:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560201634;
+        bh=gk2LT6fcQsSzPtvSDO++ABbQbp8Uy6r4UjS6ey/0Juc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=K33EzM6D4Va30ZI5NAiOD9fA+ukRykQXFJG5QhB6faCgv/G+xtgEoePHQSqT5UjMf
+         Bivmju9CUBeJZRonOrZqoGsgPv0BZspRU37kfy3jf/Fs2eucmqTIhI2BCqIwrogQjH
+         ZNVIH2JyUj2bBFOcXqonoxSslpKMrOvFcjoAwiYE=
+Date:   Mon, 10 Jun 2019 14:20:33 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        xishi.qiuxishi@alibaba-inc.com,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
+ set_hwpoison_free_buddy_page() fails
+Message-Id: <20190610142033.6096a8ec73d4bf40b2612fb5@linux-foundation.org>
+In-Reply-To: <1560154686-18497-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+        <1560154686-18497-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the generic support with arguments are on the stack.  Same as arm
-and m68k.
+On Mon, 10 Jun 2019 17:18:05 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/Kconfig            | 2 ++
- arch/riscv/include/asm/Kbuild | 1 +
- 2 files changed, 3 insertions(+)
+> The pass/fail of soft offline should be judged by checking whether the
+> raw error page was finally contained or not (i.e. the result of
+> set_hwpoison_free_buddy_page()), but current code do not work like that.
+> So this patch is suggesting to fix it.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0c4b12205632..2e3b60cdeef4 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -17,7 +17,9 @@ config RISCV
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select OF_IRQ
-+	select ARCH_HAS_BINFMT_FLAT
- 	select ARCH_WANT_FRAME_POINTERS
-+	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-index 5ee646619cc3..1efaeddf1e4b 100644
---- a/arch/riscv/include/asm/Kbuild
-+++ b/arch/riscv/include/asm/Kbuild
-@@ -5,6 +5,7 @@ generic-y += compat.h
- generic-y += device.h
- generic-y += div64.h
- generic-y += extable.h
-+generic-y += flat.h
- generic-y += dma.h
- generic-y += dma-contiguous.h
- generic-y += dma-mapping.h
--- 
-2.20.1
-
+Please describe the user-visible runtime effects of this change?
