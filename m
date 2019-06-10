@@ -2,123 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F473B224
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:31:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C9D3B245
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:35:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388761AbfFJJaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 05:30:07 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37469 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388380AbfFJJaG (ORCPT
+        id S2389051AbfFJJfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 05:35:17 -0400
+Received: from mail.codeweavers.com ([50.203.203.244]:57670 "EHLO
+        mail.codeweavers.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389030AbfFJJfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 05:30:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id j18so7108277ioj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:30:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Np+xPJWikxtIIlIvGvVx4ZfVKde2a2GTO356MNseHYo=;
-        b=jgqjHfoqTDqz37qexxOpEsTq11cEhkUCvsOoqKbFCe5Y/H3sPCzUsN22D+kyPvMYyQ
-         sH+K/Hvd5BiSe4lOIBtoHn8D5+p1lWH3NLxAFBtAwmUizDt5zYr8F0z/xds+Ukiv8qcU
-         a5LMhPaTa4DSHiTZp2ucfCXFNaV6cIV/1VK9Yq/J8YhqKDMKI66Wp3rcARAxZF2Cj4vH
-         5Z0N8IYl/FA0cD+vbP8Gpmuu6QlpTG4K+rq15oT/vJMwO649xoocvycwUbG4hpeeYeM2
-         uPQ3s1ombALYCz9sYiPECwtAe/AQEZoHiLkTZt1AMkNs+bkKgMIzSIDVEMvnc+zTH0m6
-         wk+Q==
-X-Gm-Message-State: APjAAAWZY37a5iHX+KVacln6SeUROd3RbJHVF3Si7+G4/9X1tgrijUN/
-        ligBzPzkV0Pa3FNidoDZjWIdDJLD4/WfiaD/om5qvlBPkr8d
-X-Google-Smtp-Source: APXvYqz2M+f0Q17h76RoBB7choSL+vGIvH++EpNIaPAzhimyQwDJcGoElZVdPCA72l9rTJFgMT/hvree53vNcYjlWWDhxWCDz0Rs
+        Mon, 10 Jun 2019 05:35:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=codeweavers.com; s=6377696661; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=D3RBY8TIHtG5Pkuqx3E5W7zI7qjnd6MB9Gprngg5/i4=; b=OLK5H1IT1rEt2tLy4eGXNqedt
+        K7BKI6OvbDwSJuyOV8HVr8BsLOnlWwH47Mm13W/fiLWpqpCZo8i5PE9UIsu+7d98BlVKfOjkWrO4e
+        8m08hWwR3Ha4tyLIO2w1GDqhoCUYsHMeHBj3nOC2kI9g/O9pxrpudmVTC0+Bec/lwOiOA=;
+Received: from merlot.physics.ox.ac.uk ([163.1.241.98] helo=merlot)
+        by mail.codeweavers.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <huw@codeweavers.com>)
+        id 1haGfB-0003dE-8i; Mon, 10 Jun 2019 04:32:26 -0500
+Received: from daviesh by merlot with local (Exim 4.90_1)
+        (envelope-from <huw@codeweavers.com>)
+        id 1haGeY-00039s-FG; Mon, 10 Jun 2019 10:31:46 +0100
+Date:   Mon, 10 Jun 2019 10:31:46 +0100
+From:   Huw Davies <huw@codeweavers.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v6 02/19] kernel: Define gettimeofday vdso common code
+Message-ID: <20190610093146.GB11076@merlot.physics.ox.ac.uk>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <20190530141531.43462-3-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:690f:: with SMTP id e15mr378569itc.31.1560159005811;
- Mon, 10 Jun 2019 02:30:05 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 02:30:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000055aba7058af4d378@google.com>
-Subject: KASAN: null-ptr-deref Read in css_task_iter_advance
-From:   syzbot <syzbot+d4bba5ccd4f9a2a68681@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bpf@vger.kernel.org, cgroups@vger.kernel.org,
-        daniel@iogearbox.net, hannes@cmpxchg.org, kafai@fb.com,
-        linux-kernel@vger.kernel.org, lizefan@huawei.com,
-        netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, tj@kernel.org, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530141531.43462-3-vincenzo.frascino@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Score: -106.0
+X-Spam-Report: Spam detection software, running on the system "mail.codeweavers.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  On Thu, May 30, 2019 at 03:15:14PM +0100, Vincenzo Frascino
+    wrote: > In the last few years we assisted to an explosion of vdso > implementations
+    that mostly share similar code. This doesn't make much sense. Perhaps: "In
+    the last few years we have seen an explosion in vdso..." ? 
+ Content analysis details:   (-106.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -100 USER_IN_WHITELIST      From: address is in the user's white-list
+ -6.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, May 30, 2019 at 03:15:14PM +0100, Vincenzo Frascino wrote:
+> In the last few years we assisted to an explosion of vdso
+> implementations that mostly share similar code.
 
-syzbot found the following crash on:
+This doesn't make much sense.  Perhaps: "In the last few years we
+have seen an explosion in vdso..." ?
 
-HEAD commit:    3f310e51 Add linux-next specific files for 20190607
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=170acfa6a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d176e1849bbc45
-dashboard link: https://syzkaller.appspot.com/bug?extid=d4bba5ccd4f9a2a68681
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d4bba5ccd4f9a2a68681@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: null-ptr-deref in atomic_read  
-include/asm-generic/atomic-instrumented.h:26 [inline]
-BUG: KASAN: null-ptr-deref in css_task_iter_advance+0x240/0x540  
-kernel/cgroup/cgroup.c:4503
-Read of size 4 at addr 0000000000000004 by task syz-executor.2/26575
-
-CPU: 1 PID: 26575 Comm: syz-executor.2 Not tainted 5.2.0-rc3-next-20190607  
-#11
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  __kasan_report.cold+0x5/0x36 mm/kasan/report.c:486
-  kasan_report+0x12/0x20 mm/kasan/common.c:614
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
-  kasan_check_read+0x11/0x20 mm/kasan/common.c:94
-  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-  css_task_iter_advance+0x240/0x540 kernel/cgroup/cgroup.c:4503
-  css_task_iter_start+0x18b/0x230 kernel/cgroup/cgroup.c:4543
-  __cgroup_procs_start.isra.0+0x32f/0x400 kernel/cgroup/cgroup.c:4638
-  cgroup_procs_start kernel/cgroup/cgroup.c:4660 [inline]
-  cgroup_procs_start+0x1e7/0x260 kernel/cgroup/cgroup.c:4647
-  cgroup_seqfile_start+0xa4/0xd0 kernel/cgroup/cgroup.c:3752
-  kernfs_seq_start+0xdc/0x190 fs/kernfs/file.c:118
-  seq_read+0x2a7/0x1110 fs/seq_file.c:224
-  kernfs_fop_read+0xed/0x560 fs/kernfs/file.c:252
-  do_loop_readv_writev fs/read_write.c:714 [inline]
-  do_loop_readv_writev fs/read_write.c:701 [inline]
-  do_iter_read+0x4a4/0x660 fs/read_write.c:935
-  vfs_readv+0xf0/0x160 fs/read_write.c:997
-  do_preadv+0x1c4/0x280 fs/read_write.c:1089
-  __do_sys_preadv fs/read_write.c:1139 [inline]
-  __se_sys_preadv fs/read_write.c:1134 [inline]
-  __x64_sys_preadv+0x9a/0xf0 fs/read_write.c:1134
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459279
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4ee9fa8c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000459279
-RDX: 0000000000000001 RSI: 0000000020000180 RDI: 0000000000000005
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f4ee9fa96d4
-R13: 00000000004c6376 R14: 00000000004dae78 R15: 00000000ffffffff
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Huw.
