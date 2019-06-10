@@ -2,92 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C533B9F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47C1D3B9C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:45:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387722AbfFJQsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 12:48:31 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45176 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387631AbfFJQs3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 12:48:29 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a14so13523550edv.12;
-        Mon, 10 Jun 2019 09:48:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BxXKYRWk7wLff/X0PCdAhA7tlHzWZaCttQ0fF+vhvTg=;
-        b=Xdj5HEagIq9at0zndmhl0YU/6tSpCliQTx7V5rV0vEAO6AyOd8Rju8GO/6Up3Agtoz
-         GwdAYJOGiQn5SNwnqbEOzfgidEIZzlRNwZ7/GUI1xnZbbXQgWFiedR+sfem0+w7JpExR
-         mKBIKtJyfhrwiXZwnXoIGelLqkepp5Fz8oTTjRXerL3N7E9z4ay6WYKoZbM2J7eVc3km
-         S1AOKRDysxidqcmk6P+3Q1M1A64U1PRkVJ87Zx9BbACL1dfQoAUwbW6CJdLoXwMcgiY0
-         +tQ7sJ+cmjm0J0UvaD3IYaS5B5QM/KLfzmXSaX/99DDiO5AZYRMVViIu5SDBGWr+SjV5
-         1aaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BxXKYRWk7wLff/X0PCdAhA7tlHzWZaCttQ0fF+vhvTg=;
-        b=Lvwyoh6kAY4tprQxCOcRJPNSfWDNnwLXcg+s0fxiOvF9A8xI34aGFT3IsSip7MaXXA
-         48xW0+JfquE9F4cLD4HsqwTG0CoICpIlhDnuwhhD3erQ7W+vmTCB3fHZf2hwM5hT44vA
-         Cw61Gw6cPVKEcR2AyRBKkhVkor5ZJ2vANddF8JaUC0RmU/yibILTUewoadbS3ScEWoCo
-         65lHTZwjqSS7L5t8rQWCZsYQHK0qid+G4jZRHiErK5Haic7CFIjp8KL8NnSd2JShSzdq
-         vaLKPYjppLObQXfYTKHof4xBbkR/+EN3jq7lKk9twbIx7GgAA3fBIxIceNS2mvAtC/Gs
-         MP9g==
-X-Gm-Message-State: APjAAAV2BGQr6Zzt94b6OHVeGmay4YHt5xZaaQfCzffUFVoAillIFiLi
-        obfzUsjlwCdQ7VZfqNj30z8=
-X-Google-Smtp-Source: APXvYqxcIZXx5c5l3eAVsYrhZtfTvMKVzaWiRk2WfamNhsAjGYdWWZqiILUTGnjekHyXFLf0vJCY6A==
-X-Received: by 2002:a17:906:1f44:: with SMTP id d4mr50587328ejk.195.1560185307551;
-        Mon, 10 Jun 2019 09:48:27 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id a9sm3075799edc.44.2019.06.10.09.48.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 09:48:27 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] clocksource/drivers/tegra: Restore base address before cleanup
-Date:   Mon, 10 Jun 2019 19:44:00 +0300
-Message-Id: <20190610164400.11830-7-digetx@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190610164400.11830-1-digetx@gmail.com>
-References: <20190610164400.11830-1-digetx@gmail.com>
+        id S1727884AbfFJQpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 12:45:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727720AbfFJQpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 12:45:09 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6C7021721
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 16:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560185109;
+        bh=Y8E+4PLVaGcBC0QnRuAjUawfq3/72hXoE582Tg5tIuw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Fdl5Mp6OFSDt3DCrov3d5WLecAs8AUPX1ywAScLTsCKksWtXDo2JJqnW3akTYEVlF
+         iSlMkzu6Ioq3+PYsbL2AtxOzNh4FtmhrlJgmlKU9ZhoQwnwjdO3mm0JIhFqWIsn70P
+         wiVCMaw4aSvGl/y7bYPEV5gs0S9vVdxgVt9FzYXM=
+Received: by mail-wr1-f42.google.com with SMTP id f9so9869375wre.12
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 09:45:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAWO3b28E+oVhTLe5WJ+GY3BkXeQj1vIgUMytoRoiJ/OGBNbggRf
+        Zj9kZ5u2hBTud4AmXqZEWV7y8Q7o1pV2W8ZM5aVLUg==
+X-Google-Smtp-Source: APXvYqzYkr99eA23CbFFE0bAMXptfrueXWcrQU2TMu+R/pORoCW0lJCU07jWbIkOi7KgS2qyV0BaNVqRqxtywNB94M0=
+X-Received: by 2002:a5d:4d06:: with SMTP id z6mr19532206wrt.343.1560185107248;
+ Mon, 10 Jun 2019 09:45:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-4-sean.j.christopherson@intel.com> <20190610160005.GC3752@linux.intel.com>
+In-Reply-To: <20190610160005.GC3752@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 10 Jun 2019 09:44:55 -0700
+X-Gmail-Original-Message-ID: <CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com>
+Message-ID: <CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/5] x86/sgx: Enforce noexec filesystem restriction
+ for enclaves
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We're adjusting the timer's base for each per-CPU timer to point to the
-actual start of the timer since device-tree defines a compound registers
-range that includes all of the timers. In this case the original base
-need to be restore before calling iounmap to unmap the proper address.
+On Mon, Jun 10, 2019 at 9:00 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Jun 05, 2019 at 07:11:43PM -0700, Sean Christopherson wrote:
+> > +             goto out;
+> > +     }
+> > +
+> > +     /*
+> > +      * Query VM_MAYEXEC as an indirect path_noexec() check (see do_mmap()),
+> > +      * but with some future proofing against other cases that may deny
+> > +      * execute permissions.
+> > +      */
+> > +     if (!(vma->vm_flags & VM_MAYEXEC)) {
+> > +             ret = -EACCES;
+> > +             goto out;
+> > +     }
+> > +
+> > +     if (copy_from_user(dst, (void __user *)src, PAGE_SIZE))
+> > +             ret = -EFAULT;
+> > +     else
+> > +             ret = 0;
+> > +
+> > +out:
+> > +     up_read(&current->mm->mmap_sem);
+> > +
+> > +     return ret;
+> > +}
+>
+> I would suggest to express the above instead like this for clarity
+> and consistency:
+>
+>                 goto err_map_sem;
+>         }
+>
+>         /* Query VM_MAYEXEC as an indirect path_noexec() check
+>          * (see do_mmap()).
+>          */
+>         if (!(vma->vm_flags & VM_MAYEXEC)) {
+>                 ret = -EACCES;
+>                 goto err_mmap_sem;
+>         }
+>
+>         if (copy_from_user(dst, (void __user *)src, PAGE_SIZE)) {
+>                 ret = -EFAULT;
+>                 goto err_mmap_sem;
+>         }
+>
+>         return 0;
+>
+> err_mmap_sem:
+>         up_read(&current->mm->mmap_sem);
+>         return ret;
+> }
+>
+> The comment about future proofing is unnecessary.
+>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clocksource/timer-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index 2a428fdf702f..7be91db98bd7 100644
---- a/drivers/clocksource/timer-tegra.c
-+++ b/drivers/clocksource/timer-tegra.c
-@@ -345,6 +345,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
- 			irq_dispose_mapping(cpu_to->clkevt.irq);
- 		}
- 	}
-+
-+	to->of_base.base = timer_reg_base;
- out:
- 	timer_of_cleanup(to);
- 
--- 
-2.21.0
-
+I'm also torn as to whether this patch is needed at all.  If we ever
+get O_MAYEXEC, then enclave loaders should use it to enforce noexec in
+userspace.  Otherwise I'm unconvinced it's that special.
