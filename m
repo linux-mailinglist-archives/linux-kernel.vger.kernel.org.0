@@ -2,155 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB52D3B1E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:22:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCCB43B23F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388983AbfFJJWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 05:22:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43502 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388218AbfFJJWt (ORCPT
+        id S2389036AbfFJJfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 05:35:13 -0400
+Received: from mail.codeweavers.com ([50.203.203.244]:57668 "EHLO
+        mail.codeweavers.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388033AbfFJJfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 05:22:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r18so8371670wrm.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=G1lpUotvma47Z1RO2D5VX/I7uflkBXZ22xkg1HQ/USI=;
-        b=hJCkx2KR+NIkDwRFeraGfF4DHt2DUmwtr60qd9nLSH36qGSOynSiXeBtl5ybF8L0dn
-         pnA/bDiJGCLtMFrKG64+F4PxE/BCjEnmUfgybp5rvC84ASqfVLs+C7uKecLuJCDAOxWo
-         nL4ORmsbFf6ofo5z0z78tNg1LeWUIxyO901/KwIoH+c/xzpLZJLgrkprAWxAZqJ+OEP1
-         nFZLqfILmv5pT7tNKbySmIy22ONGFTE8fGEDz8KzFkJJaGzD9V9yDSEzeGC+4BWr4Z9e
-         FdxvQDp8O5Loq/iEqqXceHHaLCdkegi8ZozuBckAqV6LiQPJDHVQJTe4H0zcalEQXVFh
-         INAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=G1lpUotvma47Z1RO2D5VX/I7uflkBXZ22xkg1HQ/USI=;
-        b=Kk/sxrnx9c1GukqRZjhKf9ONpPvMcrftnrd8HcLRWEqDyJjXkAXxtXg2KY0JEScJjO
-         ysH7UT8S6oTrf18XitvAh/qKwWEUZEgFhg5GvMi26TfMKB0zfEhdz6rNTAy83uAGjc8I
-         ZQLKNmri8syNGah2YgUqOduqu4s+nroGPAtt82MxEMQ/rLrsFLgQJjE7LEkSPzkCKPsX
-         cWwHnLi+zBMARp3y1BF1JNBlQAFvW1ugFguXtNPklJPstt1aiOjbg3rBiMjzLKv1lhXp
-         NoGUQZ8UuhY7fv9+8sMnKiOpTxO6ArIUfZ1LU9rgGKrQBS3NAozhmsNPx/TPJnvG1B0q
-         oBvw==
-X-Gm-Message-State: APjAAAWDkVueON5pB9SPiaXEGFptkjERk76Rdab5LEqUT7oekIicSTjO
-        zGvv5R3/uJM+CyI0s8Z4iHh2Jw==
-X-Google-Smtp-Source: APXvYqwF7A2E5R4fmM/F0NbqYzotL3Yb9yzsKrwKjxbsYMU0XzfAxqQRhUHKAoBn6OW6wfm5SWZNSQ==
-X-Received: by 2002:adf:b64b:: with SMTP id i11mr44160150wre.205.1560158567552;
-        Mon, 10 Jun 2019 02:22:47 -0700 (PDT)
-Received: from dell ([2.31.167.229])
-        by smtp.gmail.com with ESMTPSA id l18sm7825015wrv.38.2019.06.10.02.22.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Jun 2019 02:22:46 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 10:22:45 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        wsa+renesas@sang-engineering.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, balbi@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeffrey Hugo <jlhugo@gmail.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/8] pinctrl: qcom: sdm845: Provide ACPI support
-Message-ID: <20190610092245.GN4797@dell>
-References: <20190610084213.1052-1-lee.jones@linaro.org>
- <20190610084213.1052-4-lee.jones@linaro.org>
- <CAKv+Gu_s7i8JC4cv-dJMvm1_0cGzzhzf+Dxu0rxcF7iugF=vHg@mail.gmail.com>
- <20190610085542.GL4797@dell>
- <CAKv+Gu8rhxciy1cOG3B3pda9+p4R_COGrrqa7S_Rj9y2HeBxYw@mail.gmail.com>
+        Mon, 10 Jun 2019 05:35:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=codeweavers.com; s=6377696661; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hvHEIsUHuFBpJysJSAh/TndXcB04oV4yePbtGuMBdHk=; b=ieSZLelSnKpjvNpvH2LPvshAf
+        nDwm8iPPnsYNiFhs+BE5xIvXfmbYFHGIXXrH9fKXziYzO79y92u/Tbl/b0xHbZRw3KBWCC4dRA0do
+        EK1YEYI5aUENNJlKGRA06BN33Vt+P+IJaLy8gJK1SBhS+F3ZahSFihKjyxiK2g3wlJj7M=;
+Received: from merlot.physics.ox.ac.uk ([163.1.241.98] helo=merlot)
+        by mail.codeweavers.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <huw@codeweavers.com>)
+        id 1haGbQ-0003aw-G6; Mon, 10 Jun 2019 04:28:33 -0500
+Received: from daviesh by merlot with local (Exim 4.90_1)
+        (envelope-from <huw@codeweavers.com>)
+        id 1haGam-00039Z-E5; Mon, 10 Jun 2019 10:27:52 +0100
+Date:   Mon, 10 Jun 2019 10:27:52 +0100
+From:   Huw Davies <huw@codeweavers.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v6 01/19] kernel: Standardize vdso_datapage
+Message-ID: <20190610092751.GA11076@merlot.physics.ox.ac.uk>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <20190530141531.43462-2-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKv+Gu8rhxciy1cOG3B3pda9+p4R_COGrrqa7S_Rj9y2HeBxYw@mail.gmail.com>
+In-Reply-To: <20190530141531.43462-2-vincenzo.frascino@arm.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Score: -106.0
+X-Spam-Report: Spam detection software, running on the system "mail.codeweavers.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  On Thu, May 30, 2019 at 03:15:13PM +0100, Vincenzo Frascino
+    wrote: > --- /dev/null > +++ b/include/vdso/datapage.h > @@ -0,0 +1,91 @@
+    > +/* SPDX-License-Identifier: GPL-2.0 */ > +#ifndef __VDSO_DATAPA [...] 
+ Content analysis details:   (-106.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -100 USER_IN_WHITELIST      From: address is in the user's white-list
+ -6.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Jun 2019, Ard Biesheuvel wrote:
+On Thu, May 30, 2019 at 03:15:13PM +0100, Vincenzo Frascino wrote:
+> --- /dev/null
+> +++ b/include/vdso/datapage.h
+> @@ -0,0 +1,91 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __VDSO_DATAPAGE_H
+> +#define __VDSO_DATAPAGE_H
+> +
+> +#ifdef __KERNEL__
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <linux/bits.h>
+> +#include <linux/time.h>
+> +#include <linux/types.h>
+> +
+> +#define VDSO_BASES	(CLOCK_TAI + 1)
+> +#define VDSO_HRES	(BIT(CLOCK_REALTIME)		| \
+> +			 BIT(CLOCK_MONOTONIC)		| \
+> +			 BIT(CLOCK_BOOTTIME)		| \
+> +			 BIT(CLOCK_TAI))
+> +#define VDSO_COARSE	(BIT(CLOCK_REALTIME_COARSE)	| \
+> +			 BIT(CLOCK_MONOTONIC_COARSE))
+> +#define VDSO_RAW	(BIT(CLOCK_MONOTONIC_RAW))
+> +
+> +#define CS_HRES_COARSE	0
+> +#define CS_RAW		1
 
-> On Mon, 10 Jun 2019 at 10:55, Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > On Mon, 10 Jun 2019, Ard Biesheuvel wrote:
-> >
-> > > On Mon, 10 Jun 2019 at 10:42, Lee Jones <lee.jones@linaro.org> wrote:
-> > > >
-> > > > This patch provides basic support for booting with ACPI instead
-> > > > of the currently supported Device Tree.  When doing so there are a
-> > > > couple of differences which we need to taken into consideration.
-> > > >
-> > > > Firstly, the SDM850 ACPI tables omit information pertaining to the
-> > > > 4 reserved GPIOs on the platform.  If Linux attempts to touch/
-> > > > initialise any of these lines, the firmware will restart the
-> > > > platform.
-> > > >
-> > > > Secondly, when booting with ACPI, it is expected that the firmware
-> > > > will set-up things like; Regulators, Clocks, Pin Functions, etc in
-> > > > their ideal configuration.  Thus, the possible Pin Functions
-> > > > available to this platform are not advertised when providing the
-> > > > higher GPIOD/Pinctrl APIs with pin information.
-> > > >
-> > > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > >
-> > > For the ACPI probing boilerplate:
-> > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > >
-> > > *However*, I really don't like hardcoding reserved GPIOs like this.
-> > > What guarantee do we have that each and every ACPI system
-> > > incorporating the QCOM0217 device has the exact same list of reserved
-> > > GPIOs?
-> >
-> > This is SDM845 specific, so the chances are reduced.
-> 
-> You don't know that.
+CS_HRES_COARSE seems like a confusing name choice to me.  What you
+really mean is not RAW.
 
-All the evidence I have to hand tells me that this is the case.  Even
-on very closely related variants Qualcomm uses different H/W blocks
-for GPIO.
+How about CS_ADJ to indicate that its updated by adjtime?
+CS_XTIME might be another option.
 
-> > However, if another SDM845 variant does crop up, also lacking the
-> > "gpios" property, we will have to find another differentiating factor
-> > between them and conduct some matching.  What else can you do with
-> > platforms supporting non-complete/non-forthcoming ACPI tables?
-> >
-> 
-> Either we don't touch any pins at all if they are not referenced
-> explicitly anywhere
-
-I guess this would require an API change, which is out of scope of
-this patch-set.  Happy to change this implementation later if the
-subsystem allows for it though.
-
-> or we parse the PEP tables, which seem to cover
-> some of this information (if Bjorn's analysis is correct)
-
-Maybe someone can conduct some further work on this when we start to
-enable or write a driver for the PEP (Windows-compatible System Power
-Management Controller).  The tables for the PEP look pretty complex,
-so this task would be extremely difficult if not impossible without
-Qualcomm's help.  I wouldn't even know how to extrapolate this
-information from the tables.
-
-> (if Bjorn's analysis is correct)
-
-Bjorn is about to provide his Reviewed-by for this implementation.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Huw.
