@@ -2,168 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308E13B631
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E613F3B634
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390418AbfFJNle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 09:41:34 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42668 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390156AbfFJNle (ORCPT
+        id S2390436AbfFJNoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 09:44:04 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:45980 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390156AbfFJNoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 09:41:34 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q10so5326264pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 06:41:33 -0700 (PDT)
+        Mon, 10 Jun 2019 09:44:04 -0400
+Received: by mail-wr1-f47.google.com with SMTP id f9so9229562wre.12;
+        Mon, 10 Jun 2019 06:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ErGbE0m83drl7dTry1xy777Y6e0hhPDAZgr47/W8iV4=;
-        b=Uty0cYCcUyTPhGivuo38Ob2kXf+Xu8/9JLqYha/HPU0lFdVNvXgIrI5qKDzyoArMC2
-         Vc2oLjOqZ1cu0c46mcrYCP5JRGpkQSGkji0rpT3UEQQO4bmFKKcDlY981G6xAPXDiGaL
-         L8XAZo4FW4ndKyGqSFL2IUBPuH3g54z6ze3awEbnHv+Dt1eq9mvqlHCgD2ZHmeZrZY4w
-         tpD+VKWLApK4Vg36ZsHLXyzJ5398zSnxUbdpEKl+vXzxEUAlhHP8L1rbicREAq0D52nn
-         p5wVO7MAhcMIVLCvxAfdLdHFbC1NMIiXzx+GznqPILCgnHPi9jj6EU0k4sF49zPhlUsh
-         99+w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=GDu0QwPCusVspXV4UKYTJxVUs5M4uFp08JVK5Ji1WKs=;
+        b=M4mWtFUiuUezKyHLHRGvKjvTcvOwmZ65rlQTjHp0sreALkQBCnEAxb49u5gK5XwsUY
+         94aWJfFYiG+ZRQbg7kC67ww323amM9OKXgttJJqsd4NzhQW74zw5bnYV/uhUjvoq8e0/
+         jws+oaf+Shs8hMqKvAyNstFeoVxrCkGGII+J0yDCR5om3YgKFSgrT6DYHvYnSKT0IRK8
+         vMjV0fLwvXQKoTYnmdWXVOPFmlWndMhZo12X70nCFOAtD+M+AP7C6alapn/oLBu1/9uf
+         QpaVFk+vQNm0sOBSGHyjbOtiwYTIAVUd6YQvw0RNjptcehjvQz/Jcsjr63zVrVChyuSd
+         EtiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ErGbE0m83drl7dTry1xy777Y6e0hhPDAZgr47/W8iV4=;
-        b=LxPmCT7BE06dH9lgHXz2Ham7cF6kmqRW+vQOPgFBExLdB/5HrYZ3FOoeD7OCHbYGAj
-         v+WGVClfel5S9RfpgW7pVEoX5mInHi3x2ESBA4nUxRTsppe1Wfnh++v27ldZ8JWRdJoT
-         XY3Xapgt3zl1ndVD+4qDCfyXo5x/iuD8dtz3GuvRY8EEB0KwJzCNiRL5jpW2SXlMclU2
-         rLtLRVMbxtFv6ia4JjcieEFMmMT32bC16eE5SH8nSdrreg3NWYhl4IpZ5hEuJSDrxpfN
-         1MX0D9jifJWJ+xPzX07eJFS5pMu64JBPPoj7E1HRH9EbWCVlXvQ5pJQuxGUdqHNNVUhk
-         udzw==
-X-Gm-Message-State: APjAAAVMa2bsc5Zkw5qGsorEujPBhKETxAL80EG62jUU7ddypxHuHCmn
-        GpYwYcgZ/vm0oVNxvuSpqM3wyw==
-X-Google-Smtp-Source: APXvYqxhrxiUVcfVbGUTiO4KPhdvKgUKhNT7d2fxHa6SxCJAGIsN24f0nBxpYU55AxdD6B0MWAaRtQ==
-X-Received: by 2002:aa7:8b12:: with SMTP id f18mr73733166pfd.178.1560174093464;
-        Mon, 10 Jun 2019 06:41:33 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:40ea:1a58:6516:d6f2? ([2601:646:c200:1ef2:40ea:1a58:6516:d6f2])
-        by smtp.gmail.com with ESMTPSA id m20sm10718928pjn.16.2019.06.10.06.41.32
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=GDu0QwPCusVspXV4UKYTJxVUs5M4uFp08JVK5Ji1WKs=;
+        b=obcZMOyqTcmMOIS2W6O3TSBcIHY9Pw9Bp6KOQ4YkE11MtZj94/tpPRGV0s/aBA5gSy
+         usgnBpR9HYR49e/cPrvlYeEquDRysWDjFcq+42qTUnZyQTrJDpHS2BbUlYXKKyjJZ1iN
+         zgz4+amqDiE8c2yJ4RZigAUDugd7CxdqCLLFNLvW2FSvLmgLUGqSEXkUpLvzs2GeyVYT
+         nj0tIudSN1Hp1KAIlB9wM6U2Su7bohxhR48888+ut4QefbshYTBq8IuGFyCIABLGY+iN
+         HYm0s1Z8e9HAAmxeckjJI+IVqJKmej2knf9g6msSU/wokkeR49SVxpi10EXHJn2zJ41q
+         Xp0w==
+X-Gm-Message-State: APjAAAV7uETbZyht2em3Rc1Tuc7QgNUm+C09vWKEYiI0/aEG68fFNyfX
+        QCTviL0zlMc9fe8GK96Gg5IF0TBW
+X-Google-Smtp-Source: APXvYqxBDuVR7450I2FIYHtLVnW+5dWWGYu5KZPvAViadIdj6/DBBVkyjoJdLn5nT8k2FwSNtCMmYw==
+X-Received: by 2002:adf:de8b:: with SMTP id w11mr21313791wrl.134.1560174242212;
+        Mon, 10 Jun 2019 06:44:02 -0700 (PDT)
+Received: from gmail.com (net-31-27-155-100.cust.vodafonedsl.it. [31.27.155.100])
+        by smtp.gmail.com with ESMTPSA id u1sm3954706wml.14.2019.06.10.06.44.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 06:41:32 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait C0.2 state
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16F203)
-In-Reply-To: <20190610060234.GD162238@romley-ivt3.sc.intel.com>
-Date:   Mon, 10 Jun 2019 06:41:31 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F021B947-90E9-450A-9196-531B7EE965F1@amacapital.net>
-References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com> <1559944837-149589-4-git-send-email-fenghua.yu@intel.com> <CALCETrXEqqc3cKyJ5guRV3T6LP9dpSExk3a7dvR4PF8TDgD_OA@mail.gmail.com> <20190610035302.GA162238@romley-ivt3.sc.intel.com> <CALCETrUSpk+_FDaPpA3a-duajUdF8kOK64AQJjsr7Pm0Gi04OA@mail.gmail.com> <20190610060234.GD162238@romley-ivt3.sc.intel.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>
+        Mon, 10 Jun 2019 06:44:01 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 15:44:01 +0200
+From:   Paolo Pisati <p.pisati@gmail.com>
+To:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: msm8996: qcom-qmp: apq8096-db820c fails to boot, reset back to
+ fastboot and locks up
+Message-ID: <20190610134401.GA12964@harukaze>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From time to time, my apq8096-db820c fails to boot to userspace, reset back to
+fastboot and locks up: to easily reproduce the issue, i'm boot looping using a
+cron job with a 1 min reboot entry on the board while leaving a "while 1; do
+fastboot boot boot.img; done" on the host pc.
 
+The issue is present in mainline up to 5.2-rc4, using defconfig and:
 
-> On Jun 9, 2019, at 11:02 PM, Fenghua Yu <fenghua.yu@intel.com> wrote:
->=20
->> On Sun, Jun 09, 2019 at 09:24:18PM -0700, Andy Lutomirski wrote:
->>> On Sun, Jun 9, 2019 at 9:02 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
->>>=20
->>>> On Sat, Jun 08, 2019 at 03:50:32PM -0700, Andy Lutomirski wrote:
->>>>> On Fri, Jun 7, 2019 at 3:10 PM Fenghua Yu <fenghua.yu@intel.com> wrote=
-:
->>>>>=20
->>>>> C0.2 state in umwait and tpause instructions can be enabled or disable=
-d
->>>>> on a processor through IA32_UMWAIT_CONTROL MSR register.
->>>>>=20
->>>>> By default, C0.2 is enabled and the user wait instructions result in
->>>>> lower power consumption with slower wakeup time.
->>>>>=20
->>>>> But in real time systems which require faster wakeup time although pow=
-er
->>>>> savings could be smaller, the administrator needs to disable C0.2 and a=
-ll
->>>>> C0.2 requests from user applications revert to C0.1.
->>>>>=20
->>>>> A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c02" i=
-s
->>>>> created to allow the administrator to control C0.2 state during run ti=
-me.
->>>>=20
->>>> This looks better than the previous version.  I think the locking is
->>>> still rather confused.  You have a mutex that you hold while changing
->>>> the value, which is entirely reasonable.  But, of the code paths that
->>>> write the MSR, only one takes the mutex.
->>>>=20
->>>> I think you should consider making a function that just does:
->>>>=20
->>>> wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0);
->>>>=20
->>>> and using it in all the places that update the MSR.  The only thing
->>>> that should need the lock is the sysfs code to avoid accidentally
->>>> corrupting the value, but that code should also use WRITE_ONCE to do
->>>> its update.
->>>=20
->>> Based on the comment, the illustrative CPU online and enable_c02 store
->>> functions would be:
->>>=20
->>> umwait_cpu_online()
->>> {
->>>        wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0=
-);
->>>        return 0;
->>> }
->>>=20
->>> enable_c02_store()
->>> {
->>>       mutex_lock(&umwait_lock);
->>>       umwait_control_c02 =3D (u32)!c02_enabled;
->>>       WRITE_ONCE(umwait_control_cached, 2 | get_umwait_control_max_time(=
-));
->>>       on_each_cpu(umwait_control_msr_update, NULL, 1);
->>>       mutex_unlock(&umwait_lock);
->>> }
->>>=20
->>> Then suppose umwait_control_cached =3D 100000 initially and only CPU0 is=
+CONFIG_SCSI_UFS_QCOM=y
+CONFIG_PHY_QCOM_QMP=y
+CONFIG_PHY_QCOM_UFS=y
 
->>> running. Admin change bit 0 in MSR from 0 to 1 to disable C0.2 and is
->>> onlining CPU1 in the same time:
->>>=20
->>> 1. On CPU1, read umwait_control_cached to eax as 100000 in
->>> umwait_cpu_online()
->>> 2. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
->>> 3. On CPU1, wrmsr with eax=3D100000 in umwaint_cpu_online()
->>> 4. On CPU0, wrmsr with 100001 in enabled_c02_store()
->>>=20
->>> The result is CPU0 and CPU1 have different MSR values.
->>=20
->> Yes, but only transiently, because you didn't finish your example.
->>=20
->> Step 5: enable_c02_store() does on_each_cpu(), and CPU 1 gets updated.
->=20
-> There is no sync on wrmsr on CPU0 and CPU1.
+but was present in previous releases too (e.g. 4.14., 4.19, etc qcom-lt or
+mainline), where it's even easier to reproduce (e.g. takes way less reboots to
+trigger it).
 
-What do you mean by sync?
+These are the last lines printed out:
+...
+[    7.407209] qcom-qmp-phy 34000.phy: Registered Qcom-QMP phy
+[    7.448058] qcom-qmp-phy 7410000.phy: Registered Qcom-QMP phy
+[    7.461859] ufs_qcom_phy_qmp_14nm 627000.phy: invalid resource
+[    7.535434] qcom-qmp-phy 34000.phy: phy common block init timed-out
+[    7.538596] phy phy-34000.phy.0: phy init failed --> -110
+[    7.550891] qcom-pcie: probe of 600000.pcie failed with error -110
+[    7.619008] qcom-pcie 608000.pcie: 608000.pcie supply vddpe-3v3 not found,
+using dummy regulator
 
-> So a better sequence to
-> describe the problem is changing the order of wrmsr:
->=20
-> 1. On CPU1, read umwait_control_cached to eax as 100000 in
-> umwait_cpu_online()
-> 2. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
-> 3. On CPU0, wrmsr with 100001 in on_each_cpu() in enabled_c02_store()
-> 4. On CPU1, wrmsr with eax=3D100000 in umwaint_cpu_online()
->=20
-> So CPU1 and CPU0 have different MSR values. This won't be transient.
+Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
+S - QC_IMAGE_VERSION_STRING=BOOT.XF.1.0-00301
+S - IMAGE_VARIANT_STRING=M8996LAB
+S - OEM_IMAGE_VERSION_STRING=crm-ubuntu68
+S - Boot Interface: UFS
+S - Secure Boot: Off
+...
 
-You are still ignoring the wrmsr on CPU1 due to on_each_cpu().
+Full boot here: https://pastebin.ubuntu.com/p/rtjVrD3yzk/
 
+Any idea what is going on? Am i doing something wrong?
+-- 
+bye,
+p.
