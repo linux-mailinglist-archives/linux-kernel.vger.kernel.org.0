@@ -2,105 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4313BE23
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE453BE1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389886AbfFJVK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:10:56 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:65110 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbfFJVK4 (ORCPT
+        id S2389961AbfFJVJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:09:27 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42727 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfFJVJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:10:56 -0400
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x5ALAWZE002713
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 06:10:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x5ALAWZE002713
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1560201033;
-        bh=lNPyQit/PTVpbltD9uErMFNxvWNgSdq7GxMwpnt7v0g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ITbLXu6jY/b6NkIh298KyjmCUcYAF+qt4/FbSWApfTS8GtT0qRQ7QVi3fYahThQmB
-         j6LG4L8mOQUUEyw5teFFT45LCMbHEoxc1YuQwFYEh+/S1NtykOr6jaQXpkoEb/wuKY
-         6+qdSwkf6wlbIMo3FowUtf5Nv1tJGk0CbaJmgfJ2VYASXawh44fwQpR0v/+aCuvi4c
-         APk79aO3zYNhA2eY2ppsbOw04MfQr1YvewJ4h7hHcwdfO8kigRPJQjCj1jwnwfomjD
-         nFFkRl3Cp0IHZ1bsf7PaIF6Bv+zKJWrGZlsGSPtMyzS020QBWFWpf/ugmgOC/A7E8f
-         3qEYiX2yEWefQ==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id a186so4606713vsd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:10:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAUbxi8ajTD3UNf/Yy93gA/697UWDicvOVOHo+wSfXpq88t4AdMU
-        BR6QT+PmGG/QlJkSezG+dyN2FvY8aUwiKYPTLts=
-X-Google-Smtp-Source: APXvYqweJme3llImNA/qFC9wfjG0KEpluu7ZSNcLFL9FXISg9pYRvY9Og9Fi5f/+CEmA6sD9QKffU/JzbDto8XnSarI=
-X-Received: by 2002:a67:de99:: with SMTP id r25mr38156248vsk.215.1560201032036;
- Mon, 10 Jun 2019 14:10:32 -0700 (PDT)
+        Mon, 10 Jun 2019 17:09:27 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s184so7313219oie.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RnqJvuP47eygGAcCI6o0uHW2YRUzwdS2mc5Ld3Nd0qg=;
+        b=TvZtoqZbjQpegfCVWww5yb1sIBQbI2vFCZ+2g/WKSDMnmvZ7g0ZUr1jH24/VG+adbt
+         tM9pqVnaK4zqgDgpNiyWwa4cEHXWwAp1chnHNbhAIUs07Qt5KYFTVN0nS4aCMdPawYsw
+         aAb1LlawIeJ07zDUJjNasfCU3TsOb2pFCowJNfwtH1ikerpLpPE0WNtfBMJGmg9bty+G
+         Jsg5ptgyzc5FnTmBZ3OW6xvqGcK6ISzYlCsc4x0mi+q+ZgbumcSsciozDCUvacAm8Pw9
+         lqndUJduHc226pY57AjtHpEypNWUKzc/Kfkwq8kOnpExipVG+uoUE+aKXZj9g9ZvFuV9
+         PT+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RnqJvuP47eygGAcCI6o0uHW2YRUzwdS2mc5Ld3Nd0qg=;
+        b=BQYKxY0GkaCpRjZw+CNVlhjvU2vtYDNwoOZqFVMaPYLWUcMWxdoEi2OpiuC9mKI1SY
+         pJ64w497rUxmYk6LqtcVNk3nj0RsVLWcAd/pw909GcJL2TtFbIL5ds/gposjgshs78UR
+         7ipeKaXvjVAW+GkgrJCcvT0SecgGIMvupp8KbaCMd/GBLPcbmuX6yp8z3tazVo3gbzXo
+         i82zAe2ELIqSwKGhWIBVehtd0A9vvfVpUVVCBSL4ViIsR9kA2heJ/BgnvhCYPiErDZ4v
+         LTHfpI8JXs2Bf0IzT8Gx9R/Nlf03B/DHzrs47n49Oe5yKB+Fo4c+4CV7+rzQyQxhIpuc
+         aVeA==
+X-Gm-Message-State: APjAAAXmL8L1gnsuuv0x950KG+3XhEMiTR4MyYFBwdPu4e+jeiUpgQvs
+        aKSl0cnm9K+RPZywcg8TKd34BPefCzY=
+X-Google-Smtp-Source: APXvYqwnuhu+6dREhWSI2u5WQL/rb2YVC1KZBNsqmNu3b/EdFqjhrLwLZW3wlRwcX2xiUvRViX0q/Q==
+X-Received: by 2002:aca:318c:: with SMTP id x134mr12789946oix.125.1560200966914;
+        Mon, 10 Jun 2019 14:09:26 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id b62sm4392772otc.9.2019.06.10.14.09.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 14:09:26 -0700 (PDT)
+Subject: Re: [PATCH 1/7] signal.h: Define SIGINFO on all architectures
+To:     Arseny Maslennikov <ar@cs.msu.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     "Vladimir D . Seleznev" <vseleznv@altlinux.org>
+References: <20190605081906.28938-1-ar@cs.msu.ru>
+ <20190605081906.28938-2-ar@cs.msu.ru>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <43d9e091-7f7c-1175-dca9-06c5e547803d@landley.net>
+Date:   Mon, 10 Jun 2019 16:10:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190604174412.13324-1-yamada.masahiro@socionext.com> <20190610174538.GA10617@kroah.com>
-In-Reply-To: <20190610174538.GA10617@kroah.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 11 Jun 2019 06:09:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS=Vt__0E_WXzTB76gkJ6bUng9P1_wiWCi5aRLTP=1Www@mail.gmail.com>
-Message-ID: <CAK7LNAS=Vt__0E_WXzTB76gkJ6bUng9P1_wiWCi5aRLTP=1Www@mail.gmail.com>
-Subject: Re: [PATCH] kobject: return -ENOSPC when add_uevent_var() fails
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190605081906.28938-2-ar@cs.msu.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 2:47 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Jun 05, 2019 at 02:44:12AM +0900, Masahiro Yamada wrote:
-> > This function never attempts to allocate memory, so returning -ENOMEM
-> > looks weird to me. The reason of the failure is there is no more space
-> > in the given kobj_uevent_env structure.
-> >
-> > No caller of this function relies on this functing returning a specific
-> > error code, so just change it to return -ENOSPC. The intended change,
-> > if any, is the error number displayed in log messages.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  lib/kobject_uevent.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-> > index 7998affa45d4..5ffd44bf4aad 100644
-> > --- a/lib/kobject_uevent.c
-> > +++ b/lib/kobject_uevent.c
-> > @@ -647,7 +647,7 @@ EXPORT_SYMBOL_GPL(kobject_uevent);
-> >   * @env: environment buffer structure
-> >   * @format: printf format for the key=value pair
-> >   *
-> > - * Returns 0 if environment variable was added successfully or -ENOMEM
-> > + * Returns 0 if environment variable was added successfully or -ENOSPC
-> >   * if no space was available.
-> >   */
-> >  int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
-> > @@ -657,7 +657,7 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
-> >
-> >       if (env->envp_idx >= ARRAY_SIZE(env->envp)) {
-> >               WARN(1, KERN_ERR "add_uevent_var: too many keys\n");
-> > -             return -ENOMEM;
-> > +             return -ENOSPC;
->
-> As Rafael says, changing this for no good reason is not a good idea,
-> sorry.  Let's live with it as-is unless you can show some place where
-> this specific error value is causing problems.
+On 6/5/19 3:19 AM, Arseny Maslennikov wrote:
+> This complementary patch defines SIGINFO as a synonym for SIGPWR
+> on every architecture supported by the kernel.
+> The particular signal number chosen does not really matter and is only
+> required for the related tty functionality to work properly,
+> so if it does not suite expectations, any suggestions are warmly
+> welcome.
 
+This was the problem I saw last month: 32 bits worth of signal numbers already
+defined, gotta alias something.
 
+> SIGPWR looks like a nice candidate for this role, because it is
+> defined on every supported arch; it is currently only used to inform
+> PID 1 of power failures, and daemons that care about low-level
+> events do not tend to have a controlling terminal.
 
-Didn't you see WARN() above the return code?
-I rephrased the commit log for clarification in v2.
+/dev/console isn't a controlling tty so ctrl-T wouldn't send SIGPWR to PID 1 anyway.
 
-Thanks.
+> However, on sparcs SIGPWR is a synonym for SIGLOST, a signal unique
+> to that architecture, with a narrow set of intended uses that do not
+> combine well with interactively requesting status.
+> SIGLOST is not used by any kernel code at the moment.
+> I'm not sure there is a more reasonable alternative right now.
 
+The fact it's already _been_ aliased once says it's a good candidate for it. The
+easy solution is don't support SIGINFO on sparc until the sparc guys figure out
+what to do there and add sparc support in a follow-up patch.
 
--- 
-Best Regards
-Masahiro Yamada
+Rob
