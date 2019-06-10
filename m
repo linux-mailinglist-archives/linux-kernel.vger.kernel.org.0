@@ -2,127 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4867F3BA6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 764FC3BA7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfFJRJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:09:04 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16633 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbfFJRJC (ORCPT
+        id S2387621AbfFJRL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:11:26 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44254 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728373AbfFJRLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:09:02 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cfe8eae0000>; Mon, 10 Jun 2019 10:09:02 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 10 Jun 2019 10:09:01 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 10 Jun 2019 10:09:01 -0700
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Jun
- 2019 17:09:01 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 10 Jun 2019 17:09:01 +0000
-Received: from dhcp-10-19-65-14.client.nvidia.com (Not Verified[10.19.65.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cfe8ea90008>; Mon, 10 Jun 2019 10:09:00 -0700
-From:   Bitan Biswas <bbiswas@nvidia.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Dmitry Osipenko <digetx@gmail.com>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V4 6/6] i2c: tegra: remove BUG, BUG_ON
-Date:   Mon, 10 Jun 2019 10:08:35 -0700
-Message-ID: <1560186515-30797-6-git-send-email-bbiswas@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560186515-30797-1-git-send-email-bbiswas@nvidia.com>
-References: <1560186515-30797-1-git-send-email-bbiswas@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 10 Jun 2019 13:11:24 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5AHBCWa121338;
+        Mon, 10 Jun 2019 12:11:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560186672;
+        bh=t38w1L4mrxYXXMjDQM1becdv+NFut23PDyS5X30wChs=;
+        h=From:To:CC:Subject:Date;
+        b=IY7mJsgQmMZXyAx1hLY3wQu261gSm79u4CiTJ53uSmXqLjbf7invQW++CCrFO2mb7
+         V3Ag3YM3RSQuMRUJmbTfgRAYLvLu9YCWbjTDjb2g9UXuZTI1p4doIEb1128wCPwOh/
+         RgT+mKi7stL9fx7C4U/xUt+07bLYEVs1JPf9DCb4=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5AHBCiO079481
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Jun 2019 12:11:12 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 10
+ Jun 2019 12:11:11 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 10 Jun 2019 12:11:11 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5AHBAaL066346;
+        Mon, 10 Jun 2019 12:11:11 -0500
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Russell King <rmk@arm.linux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>
+CC:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH-next 00/20]  gpio: gpio-omap: set of fixes and big clean-up
+Date:   Mon, 10 Jun 2019 20:10:43 +0300
+Message-ID: <20190610171103.30903-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560186542; bh=Gfzngx0clR6d9UOZuOxpnc3aAu0Ti7qqGyhmjCpt1n4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=CnZ9KZRSzFQr/Nh/EZ7I2TECnVjGCnyvPuX3xtQ5DQ/hp4HafifFDPi3l/NMdcFtq
-         n/K0+d2icjKpWl0UyD3G/jVymPoF6Dfb79eUZ+ET1ZYvGIM2rBML9y3jqV6ugFkYgs
-         nDtWPxrciogvVLsDXQn9kCesh12z036RkYhUvHk1WYrPOWmMvBivA3bQ8iiqituen9
-         3XBjTtBtotpS/cBfwVOMP//rBkO5XuHjQac6jw0SEGTTDBB5Fd6FU8YELpdr4cK9SP
-         SVuUtrxQg7EqnSVbDKL1Wq3EYN6rpvyoxSBMiKoW2ElS35I5QgawBE1eEOo9WmEkzy
-         xC87pccMwpl8w==
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
-as needed. Remove BUG() and make Rx and Tx case handling
-similar.
+Hi Linus, Russell, Tony, All,
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+This series contains set of patches from Russell King which were circulated
+internally for quite some time already and I fill it's reasonable to move
+future discussion upstream (and also avoid rebasing).
+Fisrt two patches are fixes and the rest are big, great clean up
+from Russell King.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 4dfb4c1..30619d6 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -515,7 +515,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 * prevent overwriting past the end of buf
- 	 */
- 	if (rx_fifo_avail > 0 && buf_remaining > 0) {
--		BUG_ON(buf_remaining > 3);
- 		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
- 		val = cpu_to_le32(val);
- 		memcpy(buf, &val, buf_remaining);
-@@ -523,7 +522,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 		rx_fifo_avail--;
- 	}
- 
--	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
- 	i2c_dev->msg_buf_remaining = buf_remaining;
- 	i2c_dev->msg_buf = buf;
- 
-@@ -581,7 +579,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	 * boundary and fault.
- 	 */
- 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
--		BUG_ON(buf_remaining > 3);
- 		memcpy(&val, buf, buf_remaining);
- 		val = le32_to_cpu(val);
- 
-@@ -850,7 +847,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 			if (i2c_dev->msg_buf_remaining)
- 				tegra_i2c_empty_rx_fifo(i2c_dev);
- 			else
--				BUG();
-+				tegra_i2c_mask_irq(i2c_dev,
-+						   I2C_INT_RX_FIFO_DATA_REQ);
- 		}
- 
- 		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
-@@ -876,7 +874,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
- 		if (i2c_dev->is_curr_dma_xfer)
- 			i2c_dev->msg_buf_remaining = 0;
--		BUG_ON(i2c_dev->msg_buf_remaining);
-+		if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) {
-+			i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
-+			goto err;
-+		}
- 		complete(&i2c_dev->msg_complete);
- 	}
- 	goto done;
+Personally, I like this clean up and refactoring very much and don't want
+it to be lost.
+
+Code can be found at:
+ git@git.ti.com:~gragst/ti-linux-kernel/gragsts-ti-linux-kernel.git
+branch:
+ lkml-next-gpio-clean-up
+
+Russell King (20):
+  gpio: gpio-omap: ensure irq is enabled before wakeup
+  gpio: gpio-omap: fix lack of irqstatus_raw0 for OMAP4
+  gpio: gpio-omap: remove remainder of list management
+  gpio: gpio-omap: clean up edge interrupt handling
+  gpio: gpio-omap: remove irq_ack method
+  gpio: gpio-omap: move omap_gpio_request() and omap_gpio_free()
+  gpio: gpio-omap: simplify omap_gpio_get_direction()
+  gpio: gpio-omap: simplify get() method
+  gpio: gpio-omap: simplify get_multiple()
+  gpio: gpio-omap: simplify set_multiple()
+  gpio: gpio-omap: simplify bank->level_mask
+  gpio: gpio-omap: simplify read-modify-write
+  gpio: gpio-omap: simplify omap_toggle_gpio_edge_triggering()
+  gpio: gpio-omap: simplify omap_set_gpio_irqenable()
+  gpio: gpio-omap: remove dataout variation in context handling
+  gpio: gpio-omap: clean up omap_gpio_restore_context()
+  gpio: gpio-omap: constify register tables
+  gpio: gpio-omap: clean up wakeup handling
+  gpio: gpio-omap: irq_startup() must not return error codes
+  gpio: gpio-omap: clean up register access in omap2_set_gpio_debounce()
+
+ drivers/gpio/gpio-omap.c                | 497 ++++++++----------------
+ include/linux/platform_data/gpio-omap.h |   2 +-
+ 2 files changed, 161 insertions(+), 338 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
