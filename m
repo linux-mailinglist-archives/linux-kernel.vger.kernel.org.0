@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D08453B64E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:46:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B26243B644
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390588AbfFJNqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 09:46:11 -0400
+        id S2390555AbfFJNpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 09:45:51 -0400
 Received: from mail-eopbgr730084.outbound.protection.outlook.com ([40.107.73.84]:15232
         "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390490AbfFJNpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 09:45:42 -0400
+        id S2390507AbfFJNpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 09:45:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kxwi6c/RufAgHDd/B+jUdNiuYv/Qd/tnF77JZ7SB5bQ=;
- b=hLvP7x0cOPRBCrgvMuDFhGp4/6O2SEr7X/ZswijI4pS9rVnXCn+jvvv0ZI/AMMTLtlAVxt2kKfws/C57TYlHG/RJ7XiHdLhu95Jo3KqopkkB0eYvQ+hdnqJ7aFanwkQxyfXBYetkZY9KjA5kGX/Z2Ap5H88/7qsu9wAg/H/6riw=
+ bh=Qh2jW16gPA0Bf28c9FxfM2ZL4qlsykx3cxASQhjWgfE=;
+ b=3VQ8rZgBUn2n2C9bxHzg+nXJ46cwGuQ0QZ/P8EGSyoNyjrPPzJG0OvrzEi4CjAoqwynJ9gC2UYObUbynmG+mmOfvLwkVpzBK1a6Oe5tLRykRr8Bm+DkSgYTM9Ru6X/MR46w6QrnGYU3183k8Z9Ky+7OG1mGMfQy5bZ0yV6NP9Sc=
 Received: from MWHPR0201CA0021.namprd02.prod.outlook.com
  (2603:10b6:301:74::34) by SN6PR02MB4943.namprd02.prod.outlook.com
  (2603:10b6:805:99::21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.15; Mon, 10 Jun
- 2019 13:45:38 +0000
+ 2019 13:45:39 +0000
 Received: from BL2NAM02FT036.eop-nam02.prod.protection.outlook.com
  (2a01:111:f400:7e46::202) by MWHPR0201CA0021.outlook.office365.com
  (2603:10b6:301:74::34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1965.15 via Frontend
- Transport; Mon, 10 Jun 2019 13:45:38 +0000
+ Transport; Mon, 10 Jun 2019 13:45:39 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.80.198)
  smtp.mailfrom=xilinx.com; arndb.de; dkim=none (message not signed)
  header.d=none;arndb.de; dmarc=bestguesspass action=none
@@ -37,7 +37,7 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
 Received: from xir-pvapexch01.xlnx.xilinx.com (149.199.80.198) by
  BL2NAM02FT036.mail.protection.outlook.com (10.152.77.154) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.1965.12 via Frontend Transport; Mon, 10 Jun 2019 13:45:37 +0000
+ 15.20.1965.12 via Frontend Transport; Mon, 10 Jun 2019 13:45:38 +0000
 Received: from xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) by
  xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -58,7 +58,7 @@ Envelope-to: arnd@arndb.de,
 Received: from [149.199.110.15] (port=49286 helo=xirdraganc40.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <dragan.cvetic@xilinx.com>)
-        id 1haKc7-00074r-HF; Mon, 10 Jun 2019 14:45:31 +0100
+        id 1haKc7-00074r-Hs; Mon, 10 Jun 2019 14:45:31 +0100
 From:   Dragan Cvetic <dragan.cvetic@xilinx.com>
 To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
         <michal.simek@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
@@ -67,9 +67,9 @@ To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
 CC:     <linux-kernel@vger.kernel.org>,
         Dragan Cvetic <dragan.cvetic@xilinx.com>,
         Derek Kiernan <derek.kiernan@xilinx.com>
-Subject: [PATCH V6 09/11] misc: xilinx_sdfec: Add stats & status ioctls
-Date:   Mon, 10 Jun 2019 14:45:12 +0100
-Message-ID: <1560174314-124649-10-git-send-email-dragan.cvetic@xilinx.com>
+Subject: [PATCH V6 10/11] Docs: misc: xilinx_sdfec: Add documentation
+Date:   Mon, 10 Jun 2019 14:45:13 +0100
+Message-ID: <1560174314-124649-11-git-send-email-dragan.cvetic@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560174314-124649-1-git-send-email-dragan.cvetic@xilinx.com>
 References: <1560174314-124649-1-git-send-email-dragan.cvetic@xilinx.com>
@@ -77,21 +77,22 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.80.198;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(346002)(39860400002)(2980300002)(189003)(199004)(486006)(47776003)(60926002)(50466002)(8936002)(26826003)(11346002)(5660300002)(26005)(48376002)(2201001)(2616005)(446003)(956004)(186003)(110136005)(54906003)(106002)(246002)(44832011)(28376004)(76176011)(6666004)(356004)(476003)(50226002)(426003)(71366001)(76130400001)(14444005)(7636002)(316002)(305945005)(16586007)(36756003)(126002)(70206006)(51416003)(7696005)(2906002)(478600001)(8676002)(36906005)(336012)(70586007)(107886003)(4326008)(9786002)(102446001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4943;H:xir-pvapexch01.xlnx.xilinx.com;FPR:;SPF:Pass;LANG:en;PTR:unknown-80-198.xilinx.com;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:149.199.80.198;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(346002)(39860400002)(2980300002)(189003)(199004)(486006)(47776003)(60926002)(50466002)(8936002)(26826003)(11346002)(5660300002)(26005)(48376002)(2201001)(2616005)(446003)(956004)(186003)(110136005)(54906003)(106002)(246002)(30864003)(44832011)(28376004)(76176011)(6666004)(356004)(476003)(50226002)(426003)(71366001)(76130400001)(14444005)(7636002)(316002)(305945005)(16586007)(36756003)(126002)(70206006)(51416003)(7696005)(2906002)(478600001)(8676002)(36906005)(336012)(70586007)(107886003)(6306002)(4326008)(9786002)(102446001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4943;H:xir-pvapexch01.xlnx.xilinx.com;FPR:;SPF:Pass;LANG:en;PTR:unknown-80-198.xilinx.com;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 90d5d266-3b6f-4df6-0541-08d6eda9ebb9
+X-MS-Office365-Filtering-Correlation-Id: ef286e9c-1e14-4c21-e357-08d6eda9ec51
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:SN6PR02MB4943;
 X-MS-TrafficTypeDiagnostic: SN6PR02MB4943:
+X-MS-Exchange-PUrlCount: 2
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN6PR02MB4943CFEA1223B904DA1DF41CCB130@SN6PR02MB4943.namprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3513;
+X-Microsoft-Antispam-PRVS: <SN6PR02MB4943C8CA278316BBEA9BCE49CB130@SN6PR02MB4943.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1417;
 X-Forefront-PRVS: 0064B3273C
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 9naKTMg6vgiev+4/HFkfhuUpbL0LMYntHSDVjseNwdBh0FUfhrBhlrh1HHoQ9iBoxscccTS4FfWU0uu4uJ7JHmkJ3W8AZWQcQ90R9y1aj4OnBRh49LBFefznzIiEuzPgjpEE71su5GkcY0Z4nV78Tpi9hT10nU1mCLldL+Ky2X6jq1ugyybAUXSoJRpPD7MpgO5Vbl8R225pMDLJbO4nUV6AJLQD91BLQTCT+btJ9VH57xTNPPOzmJHyvf5fDiBgObPewrGBrtmZFHJPuXm7QMksSXCMMv69/gvEvTwRgvnmMMHb7pMJvg2B1UjCayVwKXXX5/+y+phuWrniCHApZ5SoSpxXptHztpivuD7r4uDvZbxeD5e4Q2/bF3V0yidjo5JInnOUPwPiT9E4mCk2D8rd7cv0SP5WC6EtK1ubjjE=
+X-Microsoft-Antispam-Message-Info: FLdg5yCkcBOCUbLUhyQJ4RI4/gyyvIfliAzZ4agH6dvXaOIkAELETOzwMVOtstyEna0RtQ7XuGEPG5WjeZlQo9pszJ9NNBa+MVdngeDkCMpHBGn6Ljm+W1WmMs4FLGZwrsC+aqRAQK47XF5Lt3vvtyS4SZJasfgxPa8lePgfHOmejQPrX1p3ZHBxS6FbeJ8msRjh4IhoHkz1O4tLLkj0HfFN3WSSinyLwp3/EaJq/TS29TCRVIQe60aFGwBVXN5z3CHYQyUGF1ZO7cDSeGuHYHz5MRNNqB5KLjVPvggly263Y3Xj2hVbXZ+aeMtRdBQLaD5IN8hLmcflIibtUzpM/39ofcwR9KLFI+siM2VDsKdnVQls5Dsc9t2lQVPGUQGEp3rLFdR0a/qE/4eSP6bi1egc///WGNmqgyakkwLlFl4=
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2019 13:45:37.7919
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2019 13:45:38.7938
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90d5d266-3b6f-4df6-0541-08d6eda9ebb9
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef286e9c-1e14-4c21-e357-08d6eda9ec51
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch01.xlnx.xilinx.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
@@ -101,309 +102,323 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SD-FEC statistic data are:
-- count of data interface errors (isr_err_count)
-- count of Correctable ECC errors (cecc_count)
-- count of Uncorrectable ECC errors (uecc_count)
+Add SD-FEC driver documentation.
 
-Add support:
-1. clear stats ioctl callback which clears collected
-statistic data,
-2. get stats ioctl callback which reads a collected
-statistic data,
-3. set default configuration ioctl callback,
-4. start ioctl callback enables SD-FEC HW,
-5. stop ioctl callback disables SD-FEC HW.
-
-In a failed state driver enables the following ioctls:
-- get status
-- get statistics
-- clear stats
-- set default SD-FEC device configuration
-
-Tested-by: Santhosh Dyavanapally <SDYAVANA@xilinx.com>
-Tested by: Punnaiah Choudary Kalluri <punnaia@xilinx.com>
-Tested-by: Derek Kiernan <derek.kiernan@xilinx.com>
-Tested-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
 Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
 Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
 ---
- drivers/misc/xilinx_sdfec.c      | 125 +++++++++++++++++++++++++++++++++++++++
- include/uapi/misc/xilinx_sdfec.h |  75 +++++++++++++++++++++++
- 2 files changed, 200 insertions(+)
+ Documentation/misc-devices/index.rst        |   1 +
+ Documentation/misc-devices/xilinx_sdfec.rst | 291 ++++++++++++++++++++++++++++
+ 2 files changed, 292 insertions(+)
+ create mode 100644 Documentation/misc-devices/xilinx_sdfec.rst
 
-diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
-index 040dc59..881f464 100644
---- a/drivers/misc/xilinx_sdfec.c
-+++ b/drivers/misc/xilinx_sdfec.c
-@@ -193,6 +193,7 @@ struct xsdfec_clks {
-  * @dev: pointer to device struct
-  * @state: State of the SDFEC device
-  * @config: Configuration of the SDFEC device
-+ * @intr_enabled: indicates IRQ enabled
-  * @state_updated: indicates State updated by interrupt handler
-  * @stats_updated: indicates Stats updated by interrupt handler
-  * @isr_err_count: Count of ISR errors
-@@ -213,6 +214,7 @@ struct xsdfec_dev {
- 	struct device *dev;
- 	enum xsdfec_state state;
- 	struct xsdfec_config config;
-+	bool intr_enabled;
- 	bool state_updated;
- 	bool stats_updated;
- 	u32 isr_err_count;
-@@ -288,6 +290,25 @@ static void update_config_from_hw(struct xsdfec_dev *xsdfec)
- 		xsdfec->state = XSDFEC_STOPPED;
- }
+diff --git a/Documentation/misc-devices/index.rst b/Documentation/misc-devices/index.rst
+index dfd1f45..b5b4757 100644
+--- a/Documentation/misc-devices/index.rst
++++ b/Documentation/misc-devices/index.rst
+@@ -15,3 +15,4 @@ fit into other categories.
+    :maxdepth: 2
  
-+static int xsdfec_get_status(struct xsdfec_dev *xsdfec, void __user *arg)
-+{
-+	struct xsdfec_status status;
-+	int err;
+    ibmvmc
++   xilinx_sdfec
+diff --git a/Documentation/misc-devices/xilinx_sdfec.rst b/Documentation/misc-devices/xilinx_sdfec.rst
+new file mode 100644
+index 0000000..87966e3
+--- /dev/null
++++ b/Documentation/misc-devices/xilinx_sdfec.rst
+@@ -0,0 +1,291 @@
++.. SPDX-License-Identifier: GPL-2.0+
++====================
++Xilinx SD-FEC Driver
++====================
 +
-+	spin_lock_irqsave(&xsdfec->error_data_lock, xsdfec->flags);
-+	status.state = xsdfec->state;
-+	xsdfec->state_updated = false;
-+	spin_unlock_irqrestore(&xsdfec->error_data_lock, xsdfec->flags);
-+	status.activity = (xsdfec_regread(xsdfec, XSDFEC_ACTIVE_ADDR) &
-+			   XSDFEC_IS_ACTIVITY_SET);
++Overview
++========
 +
-+	err = copy_to_user(arg, &status, sizeof(status));
-+	if (err)
-+		err = -EFAULT;
++This driver supports SD-FEC Integrated Block for Zynq |Ultrascale+ (TM)| RFSoCs.
 +
-+	return err;
-+}
++.. |Ultrascale+ (TM)| unicode:: Ultrascale+ U+2122
++   .. with trademark sign
 +
- static int xsdfec_get_config(struct xsdfec_dev *xsdfec, void __user *arg)
- {
- 	int err;
-@@ -839,6 +860,82 @@ static int xsdfec_dev_release(struct inode *iptr, struct file *fptr)
- 	return 0;
- }
- 
-+static int xsdfec_start(struct xsdfec_dev *xsdfec)
-+{
-+	u32 regread;
++For a full description of SD-FEC core features, see the `SD-FEC Product Guide (PG256) <https://www.xilinx.com/cgi-bin/docs/ipdoc?c=sd_fec;v=latest;d=pg256-sdfec-integrated-block.pdf>`_
 +
-+	regread = xsdfec_regread(xsdfec, XSDFEC_FEC_CODE_ADDR);
-+	regread &= 0x1;
-+	if (regread != xsdfec->config.code) {
-+		dev_dbg(xsdfec->dev,
-+			"%s SDFEC HW code does not match driver code, reg %d, code %d",
-+			__func__, regread, xsdfec->config.code);
-+		return -EINVAL;
-+	}
++This driver supports the following features:
 +
-+	/* Set AXIS enable */
-+	xsdfec_regwrite(xsdfec, XSDFEC_AXIS_ENABLE_ADDR,
-+			XSDFEC_AXIS_ENABLE_MASK);
-+	/* Done */
-+	xsdfec->state = XSDFEC_STARTED;
-+	return 0;
-+}
++  - Retrieval of the Integrated Block configuration and status information
++  - Configuration of LDPC codes
++  - Configuration of Turbo decoding
++  - Monitoring errors
 +
-+static int xsdfec_stop(struct xsdfec_dev *xsdfec)
-+{
-+	u32 regread;
++Missing features, known issues, and limitations of the SD-FEC driver are as
++follows:
 +
-+	if (xsdfec->state != XSDFEC_STARTED)
-+		dev_dbg(xsdfec->dev, "Device not started correctly");
-+	/* Disable AXIS_ENABLE Input interfaces only */
-+	regread = xsdfec_regread(xsdfec, XSDFEC_AXIS_ENABLE_ADDR);
-+	regread &= (~XSDFEC_AXIS_IN_ENABLE_MASK);
-+	xsdfec_regwrite(xsdfec, XSDFEC_AXIS_ENABLE_ADDR, regread);
-+	/* Stop */
-+	xsdfec->state = XSDFEC_STOPPED;
-+	return 0;
-+}
++  - Only allows a single open file handler to any instance of the driver at any time
++  - Reset of the SD-FEC Integrated Block is not controlled by this driver
++  - Does not support shared LDPC code table wraparound
 +
-+static int xsdfec_clear_stats(struct xsdfec_dev *xsdfec)
-+{
-+	spin_lock_irqsave(&xsdfec->error_data_lock, xsdfec->flags);
-+	xsdfec->isr_err_count = 0;
-+	xsdfec->uecc_count = 0;
-+	xsdfec->cecc_count = 0;
-+	spin_unlock_irqrestore(&xsdfec->error_data_lock, xsdfec->flags);
++The device tree entry is described in:
++`linux-xlnx/Documentation/devicetree/bindings/misc/xlnx,sd-fec.txt <https://github.com/Xilinx/linux-xlnx/blob/master/Documentation/devicetree/bindings/misc/xlnx%2Csd-fec.txt>`_
 +
-+	return 0;
-+}
 +
-+static int xsdfec_get_stats(struct xsdfec_dev *xsdfec, void __user *arg)
-+{
-+	int err;
-+	struct xsdfec_stats user_stats;
++Modes of Operation
++------------------
 +
-+	spin_lock_irqsave(&xsdfec->error_data_lock, xsdfec->flags);
-+	user_stats.isr_err_count = xsdfec->isr_err_count;
-+	user_stats.cecc_count = xsdfec->cecc_count;
-+	user_stats.uecc_count = xsdfec->uecc_count;
-+	xsdfec->stats_updated = false;
-+	spin_unlock_irqrestore(&xsdfec->error_data_lock, xsdfec->flags);
++The driver works with the SD-FEC core in two modes of operation:
 +
-+	err = copy_to_user(arg, &user_stats, sizeof(user_stats));
-+	if (err)
-+		err = -EFAULT;
++  - Run-time configuration
++  - Programmable Logic (PL) initialization
 +
-+	return err;
-+}
 +
-+static int xsdfec_set_default_config(struct xsdfec_dev *xsdfec)
-+{
-+	/* Ensure registers are aligned with core configuration */
-+	xsdfec_regwrite(xsdfec, XSDFEC_FEC_CODE_ADDR, xsdfec->config.code);
-+	xsdfec_cfg_axi_streams(xsdfec);
-+	update_config_from_hw(xsdfec);
++Run-time Configuration
++~~~~~~~~~~~~~~~~~~~~~~
 +
-+	return 0;
-+}
++For Run-time configuration the role of driver is to allow the software application to do the following:
 +
- static long xsdfec_dev_ioctl(struct file *fptr, unsigned int cmd,
- 			     unsigned long data)
- {
-@@ -848,6 +945,16 @@ static long xsdfec_dev_ioctl(struct file *fptr, unsigned int cmd,
- 
- 	xsdfec = container_of(fptr->private_data, struct xsdfec_dev, miscdev);
- 
-+	/* In failed state allow only reset and get status IOCTLs */
-+	if (xsdfec->state == XSDFEC_NEEDS_RESET &&
-+	    (cmd != XSDFEC_SET_DEFAULT_CONFIG && cmd != XSDFEC_GET_STATUS &&
-+	     cmd != XSDFEC_GET_STATS && cmd != XSDFEC_CLEAR_STATS)) {
-+		return -EPERM;
-+	}
++	- Load the configuration parameters for either Turbo decode or LDPC encode or decode
++	- Activate the SD-FEC core
++	- Monitor the SD-FEC core for errors
++	- Retrieve the status and configuration of the SD-FEC core
 +
-+	if (_IOC_TYPE(cmd) != XSDFEC_MAGIC)
-+		return -ENOTTY;
++Programmable Logic (PL) Initialization
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +
- 	/* check if ioctl argument is present and valid */
- 	if (_IOC_DIR(cmd) != _IOC_NONE) {
- 		arg = (void __user *)data;
-@@ -856,9 +963,27 @@ static long xsdfec_dev_ioctl(struct file *fptr, unsigned int cmd,
- 	}
- 
- 	switch (cmd) {
-+	case XSDFEC_START_DEV:
-+		rval = xsdfec_start(xsdfec);
-+		break;
-+	case XSDFEC_STOP_DEV:
-+		rval = xsdfec_stop(xsdfec);
-+		break;
-+	case XSDFEC_CLEAR_STATS:
-+		rval = xsdfec_clear_stats(xsdfec);
-+		break;
-+	case XSDFEC_GET_STATS:
-+		rval = xsdfec_get_stats(xsdfec, arg);
-+		break;
-+	case XSDFEC_GET_STATUS:
-+		rval = xsdfec_get_status(xsdfec, arg);
-+		break;
- 	case XSDFEC_GET_CONFIG:
- 		rval = xsdfec_get_config(xsdfec, arg);
- 		break;
-+	case XSDFEC_SET_DEFAULT_CONFIG:
-+		rval = xsdfec_set_default_config(xsdfec);
-+		break;
- 	case XSDFEC_SET_IRQ:
- 		rval = xsdfec_set_irq(xsdfec, arg);
- 		break;
-diff --git a/include/uapi/misc/xilinx_sdfec.h b/include/uapi/misc/xilinx_sdfec.h
-index 59ee10c..31a9110 100644
---- a/include/uapi/misc/xilinx_sdfec.h
-+++ b/include/uapi/misc/xilinx_sdfec.h
-@@ -234,6 +234,21 @@ struct xsdfec_config {
- };
- 
- /**
-+ * struct xsdfec_stats - Stats retrived by ioctl XSDFEC_GET_STATS. Used
-+ *			 to buffer atomic_t variables from struct
-+ *			 xsdfec_dev. Counts are accumulated until
-+ *			 the user clears them.
-+ * @isr_err_count: Count of ISR errors
-+ * @cecc_count: Count of Correctable ECC errors (SBE)
-+ * @uecc_count: Count of Uncorrectable ECC errors (MBE)
-+ */
-+struct xsdfec_stats {
-+	__u32 isr_err_count;
-+	__u32 cecc_count;
-+	__u32 uecc_count;
-+};
++For PL initialization, supporting logic loads configuration parameters for either
++the Turbo decode or LDPC encode or decode.  The role of the driver is to allow
++the software application to do the following:
 +
-+/**
-  * struct xsdfec_ldpc_param_table_sizes - Used to store sizes of SD-FEC table
-  *					  entries for an individual LPDC code
-  *					  parameter.
-@@ -252,6 +267,32 @@ struct xsdfec_ldpc_param_table_sizes {
-  */
- #define XSDFEC_MAGIC 'f'
- /**
-+ * DOC: XSDFEC_START_DEV
-+ *
-+ * @Description
-+ *
-+ * ioctl to start SD-FEC core
-+ *
-+ * This fails if the XSDFEC_SET_ORDER ioctl has not been previously called
-+ */
-+#define XSDFEC_START_DEV _IO(XSDFEC_MAGIC, 0)
-+/**
-+ * DOC: XSDFEC_STOP_DEV
-+ *
-+ * @Description
-+ *
-+ * ioctl to stop the SD-FEC core
-+ */
-+#define XSDFEC_STOP_DEV _IO(XSDFEC_MAGIC, 1)
-+/**
-+ * DOC: XSDFEC_GET_STATUS
-+ *
-+ * @Description
-+ *
-+ * ioctl that returns status of SD-FEC core
-+ */
-+#define XSDFEC_GET_STATUS _IOR(XSDFEC_MAGIC, 2, struct xsdfec_status)
-+/**
-  * DOC: XSDFEC_SET_IRQ
-  * @Parameters
-  *
-@@ -370,4 +411,38 @@ struct xsdfec_ldpc_param_table_sizes {
-  * ioctl that determines if SD-FEC is processing data
-  */
- #define XSDFEC_IS_ACTIVE _IOR(XSDFEC_MAGIC, 10, bool)
-+/**
-+ * DOC: XSDFEC_CLEAR_STATS
-+ *
-+ * @Description
-+ *
-+ * ioctl that clears error stats collected during interrupts
-+ */
-+#define XSDFEC_CLEAR_STATS _IO(XSDFEC_MAGIC, 11)
-+/**
-+ * DOC: XSDFEC_GET_STATS
-+ * @Parameters
-+ *
-+ * @struct xsdfec_stats *
-+ *	Pointer to the &struct xsdfec_stats that will contain the updated stats
-+ *	values
-+ *
-+ * @Description
-+ *
-+ * ioctl that returns SD-FEC core stats
-+ *
-+ * This can only be used when the driver is in the XSDFEC_STOPPED state
-+ */
-+#define XSDFEC_GET_STATS _IOR(XSDFEC_MAGIC, 12, struct xsdfec_stats)
-+/**
-+ * DOC: XSDFEC_SET_DEFAULT_CONFIG
-+ *
-+ * @Description
-+ *
-+ * ioctl that returns SD-FEC core to default config, use after a reset
-+ *
-+ * This can only be used when the driver is in the XSDFEC_STOPPED state
-+ */
-+#define XSDFEC_SET_DEFAULT_CONFIG _IO(XSDFEC_MAGIC, 13)
++	- Activate the SD-FEC core
++	- Monitor the SD-FEC core for errors
++	- Retrieve the status and configuration of the SD-FEC core
 +
- #endif /* __XILINX_SDFEC_H__ */
++
++Driver Structure
++================
++
++The driver provides a platform device where the ``probe`` and ``remove``
++operations are provided.
++
++  - probe: Updates configuration register with device-tree entries plus determines the current activate state of the core, for example, is the core bypassed or has the core been started.
++
++
++The driver defines the following driver file operations to provide user
++application interfaces:
++
++  - open: Implements restriction that only a single file descriptor can be open per SD-FEC instance at any time
++  - release: Allows another file descriptor to be open, that is after current file descriptor is closed
++  - poll: Provides a method to monitor for SD-FEC Error events
++  - unlocked_ioctl: Provides the the following ioctl commands that allows the application configure the SD-FEC core:
++
++		- :c:macro:`XSDFEC_START_DEV`
++		- :c:macro:`XSDFEC_STOP_DEV`
++		- :c:macro:`XSDFEC_GET_STATUS`
++		- :c:macro:`XSDFEC_SET_IRQ`
++		- :c:macro:`XSDFEC_SET_TURBO`
++		- :c:macro:`XSDFEC_ADD_LDPC_CODE_PARAMS`
++		- :c:macro:`XSDFEC_GET_CONFIG`
++		- :c:macro:`XSDFEC_SET_ORDER`
++		- :c:macro:`XSDFEC_SET_BYPASS`
++		- :c:macro:`XSDFEC_IS_ACTIVE`
++		- :c:macro:`XSDFEC_CLEAR_STATS`
++		- :c:macro:`XSDFEC_SET_DEFAULT_CONFIG`
++
++
++Driver Usage
++============
++
++
++Overview
++--------
++
++After opening the driver, the user should find out what operations need to be
++performed to configure and activate the SD-FEC core and determine the
++configuration of the driver.
++The following outlines the flow the user should perform:
++
++  - Determine Configuration
++  - Set the order, if not already configured as desired
++  - Set Turbo decode, LPDC encode or decode parameters, depending on how the
++    SD-FEC core is configured plus if the SD-FEC has not been configured for PL
++    initialization
++  - Enable interrupts, if not already enabled
++  - Bypass the SD-FEC core, if required
++  - Start the SD-FEC core if not already started
++  - Get the SD-FEC core status
++  - Monitor for interrupts
++  - Stop the SD-FEC core
++
++
++Note: When monitoring for interrupts if a critical error is detected where a reset is required, the driver will be required to load the default configuration.
++
++
++Determine Configuration
++-----------------------
++
++Determine the configuration of the SD-FEC core by using the ioctl
++:c:macro:`XSDFEC_GET_CONFIG`.
++
++Set the Order
++-------------
++
++Setting the order determines how the order of Blocks can change from input to output.
++
++Setting the order is done by using the ioctl :c:macro:`XSDFEC_SET_ORDER`
++
++Setting the order can only be done if the following restrictions are met:
++
++	- The ``state`` member of struct :c:type:`xsdfec_status <xsdfec_status>` filled by the ioctl :c:macro:`XSDFEC_GET_STATUS` indicates the SD-FEC core has not STARTED
++
++
++Add LDPC Codes
++--------------
++
++The following steps indicate how to add LDPC codes to the SD-FEC core:
++
++	- Use the auto-generated parameters to fill the :c:type:`struct xsdfec_ldpc_params <xsdfec_ldpc_params>` for the desired LDPC code.
++	- Set the SC, QA, and LA table offsets for the LPDC parameters and the parameters in the structure :c:type:`struct xsdfec_ldpc_params <xsdfec_ldpc_params>`
++	- Set the desired Code Id value in the structure :c:type:`struct xsdfec_ldpc_params <xsdfec_ldpc_params>`
++	- Add the LPDC Code Parameters using the ioctl :c:macro:`XSDFEC_ADD_LDPC_CODE_PARAMS`
++	- For the applied LPDC Code Parameter use the function :c:func:`xsdfec_calculate_shared_ldpc_table_entry_size` to calculate the size of shared LPDC code tables. This allows the user to determine the shared table usage so when selecting the table offsets for the next LDPC code parameters unused table areas can be selected.
++	- Repeat for each LDPC code parameter.
++
++Adding LDPC codes can only be done if the following restrictions are met:
++
++	- The ``code`` member of :c:type:`struct xsdfec_config <xsdfec_config>` filled by the ioctl :c:macro:`XSDFEC_GET_CONFIG` indicates the SD-FEC core is configured as LDPC
++	- The ``code_wr_protect`` of :c:type:`struct xsdfec_config <xsdfec_config>` filled by the ioctl :c:macro:`XSDFEC_GET_CONFIG` indicates that write protection is not enabled
++	- The ``state`` member of struct :c:type:`xsdfec_status <xsdfec_status>` filled by the ioctl :c:macro:`XSDFEC_GET_STATUS` indicates the SD-FEC core has not started
++
++Set Turbo Decode
++----------------
++
++Configuring the Turbo decode parameters is done by using the ioctl :c:macro:`XSDFEC_SET_TURBO` using auto-generated parameters to fill the :c:type:`struct xsdfec_turbo <xsdfec_turbo>` for the desired Turbo code.
++
++Adding Turbo decode can only be done if the following restrictions are met:
++
++	- The ``code`` member of :c:type:`struct xsdfec_config <xsdfec_config>` filled by the ioctl :c:macro:`XSDFEC_GET_CONFIG` indicates the SD-FEC core is configured as TURBO
++	- The ``state`` member of struct :c:type:`xsdfec_status <xsdfec_status>` filled by the ioctl :c:macro:`XSDFEC_GET_STATUS` indicates the SD-FEC core has not STARTED
++
++Enable Interrupts
++-----------------
++
++Enabling or disabling interrupts is done by using the ioctl :c:macro:`XSDFEC_SET_IRQ`. The members of the parameter passed, :c:type:`struct xsdfec_irq <xsdfec_irq>`, to the ioctl are used to set and clear different categories of interrupts. The category of interrupt is controlled as following:
++
++  - ``enable_isr`` controls the ``tlast`` interrupts
++  - ``enable_ecc_isr`` controls the ECC interrupts
++
++If the ``code`` member of :c:type:`struct xsdfec_config <xsdfec_config>` filled by the ioctl :c:macro:`XSDFEC_GET_CONFIG` indicates the SD-FEC core is configured as TURBO then the enabling ECC errors is not required.
++
++Bypass the SD-FEC
++-----------------
++
++Bypassing the SD-FEC is done by using the ioctl :c:macro:`XSDFEC_SET_BYPASS`
++
++Bypassing the SD-FEC can only be done if the following restrictions are met:
++
++	- The ``state`` member of :c:type:`struct xsdfec_status <xsdfec_status>` filled by the ioctl :c:macro:`XSDFEC_GET_STATUS` indicates the SD-FEC core has not STARTED
++
++Start the SD-FEC core
++---------------------
++
++Start the SD-FEC core by using the ioctl :c:macro:`XSDFEC_START_DEV`
++
++Get SD-FEC Status
++-----------------
++
++Get the SD-FEC status of the device by using the ioctl :c:macro:`XSDFEC_GET_STATUS`, which will fill the :c:type:`struct xsdfec_status <xsdfec_status>`
++
++Monitor for Interrupts
++----------------------
++
++	- Use the poll system call to monitor for an interrupt. The poll system call waits for an interrupt to wake it up or times out if no interrupt occurs.
++	- On return Poll ``revents`` will indicate whether stats and/or state have been updated
++		- ``POLLPRI`` indicates a critical error and the user should use :c:macro:`XSDFEC_GET_STATUS` and :c:macro:`XSDFEC_GET_STATS` to confirm
++		- ``POLLRDNORM`` indicates a non-critical error has occurred and the user should use  :c:macro:`XSDFEC_GET_STATS` to confirm
++	- Get stats by using the ioctl :c:macro:`XSDFEC_GET_STATS`
++		- For critical error the ``isr_err_count`` or ``uecc_count`` member  of :c:type:`struct xsdfec_stats <xsdfec_stats>` is non-zero
++		- For non-critical errors the ``cecc_count`` member of :c:type:`struct xsdfec_stats <xsdfec_stats>` is non-zero
++	- Get state by using the ioctl :c:macro:`XSDFEC_GET_STATUS`
++		- For a critical error the ``state`` of :c:type:`xsdfec_status <xsdfec_status>` will indicate a Reset Is Required
++	- Clear stats by using the ioctl :c:macro:`XSDFEC_CLEAR_STATS`
++
++If a critical error is detected where a reset is required. The application is required to call the ioctl :c:macro:`XSDFEC_SET_DEFAULT_CONFIG`, after the reset and it is not required to call the ioctl :c:macro:`XSDFEC_STOP_DEV`
++
++Note: Using poll system call prevents busy looping using :c:macro:`XSDFEC_GET_STATS` and :c:macro:`XSDFEC_GET_STATUS`
++
++Stop the SD-FEC Core
++---------------------
++
++Stop the device by using the ioctl :c:macro:`XSDFEC_STOP_DEV`
++
++Set the Default Configuration
++-----------------------------
++
++Load default configuration by using the ioctl :c:macro:`XSDFEC_SET_DEFAULT_CONFIG` to restore the driver.
++
++Limitations
++-----------
++
++Users should not duplicate SD-FEC device file handlers, for example fork() or dup() a process that has a created an SD-FEC file handler.
++
++Driver IOCTLs
++==============
++
++.. c:macro:: XSDFEC_START_DEV
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_START_DEV
++
++.. c:macro:: XSDFEC_STOP_DEV
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_STOP_DEV
++
++.. c:macro:: XSDFEC_GET_STATUS
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_GET_STATUS
++
++.. c:macro:: XSDFEC_SET_IRQ
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_SET_IRQ
++
++.. c:macro:: XSDFEC_SET_TURBO
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_SET_TURBO
++
++.. c:macro:: XSDFEC_ADD_LDPC_CODE_PARAMS
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_ADD_LDPC_CODE_PARAMS
++
++.. c:macro:: XSDFEC_GET_CONFIG
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_GET_CONFIG
++
++.. c:macro:: XSDFEC_SET_ORDER
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_SET_ORDER
++
++.. c:macro:: XSDFEC_SET_BYPASS
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_SET_BYPASS
++
++.. c:macro:: XSDFEC_IS_ACTIVE
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_IS_ACTIVE
++
++.. c:macro:: XSDFEC_CLEAR_STATS
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_CLEAR_STATS
++
++.. c:macro:: XSDFEC_GET_STATS
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_GET_STATS
++
++.. c:macro:: XSDFEC_SET_DEFAULT_CONFIG
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :doc: XSDFEC_SET_DEFAULT_CONFIG
++
++Driver Type Definitions
++=======================
++
++.. kernel-doc:: include/uapi/misc/xilinx_sdfec.h
++   :internal:
+\ No newline at end of file
 -- 
 2.7.4
 
