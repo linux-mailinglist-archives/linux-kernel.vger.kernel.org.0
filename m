@@ -2,63 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DE43B7C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EBF63B7C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:51:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390969AbfFJOvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 10:51:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49326 "EHLO mail.kernel.org"
+        id S2390981AbfFJOve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 10:51:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389123AbfFJOvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 10:51:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S2389123AbfFJOvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 10:51:33 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0EE2206C3;
-        Mon, 10 Jun 2019 14:51:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD1132085A;
+        Mon, 10 Jun 2019 14:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560178276;
-        bh=IZ48GrMjAPiqcC5o9zECGFcbIG65yiVN7gHwu4ZFq0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jFhcQXnyt3AAV2/8mUPHjqQssWIvFLprn6nPSNDof2Qu5aszoZp5xsv3nRGwZm6Gh
-         ToyQJf7mIhl+Ufrl9VbjzFVoezHftLE8MC1qW26vppFMdpZlpBS/1oDlVJdXF7l2Tn
-         8x7l6y8DNdvm+P/XO/n5eT3CfNDPoQcM92WZYofQ=
-Date:   Mon, 10 Jun 2019 16:51:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.1 00/70] 5.1.9-stable review
-Message-ID: <20190610145113.GC1481@kroah.com>
-References: <20190609164127.541128197@linuxfoundation.org>
- <20190610144503.GE7705@roeck-us.net>
+        s=default; t=1560178293;
+        bh=/U+wRbtteOILfQyqQEFAX34EWpIssdlfePMqvbBQcok=;
+        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
+        b=Ni0M5RTJQlOeKFtGcIhyjvjbFQh9+sc5iJLSUSog2oF2FOHTnobpDTXHykwpzxgoP
+         TZDXbEjB6h0jAElBvVK5dtBxqTyu8J34WTjIwPSqdNbb/z4yUNw2TDvhq+BsP3AHAK
+         dF5aylUD2a3MN7MyeBl1zrHT8NaBG5H7Zs8xVfko=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610144503.GE7705@roeck-us.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CACRpkdbdkbSofrvJ0hSV66DX+DcwWXp0ONDjx0265Pz50yE8TA@mail.gmail.com>
+References: <1559285512-27784-1-git-send-email-tengfeif@codeaurora.org> <CACRpkdbdkbSofrvJ0hSV66DX+DcwWXp0ONDjx0265Pz50yE8TA@mail.gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Tengfei Fan <tengfeif@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: qcom: Clear status bit on irq_unmask
+User-Agent: alot/0.8.1
+Date:   Mon, 10 Jun 2019 07:51:32 -0700
+Message-Id: <20190610145132.DD1132085A@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 07:45:03AM -0700, Guenter Roeck wrote:
-> On Sun, Jun 09, 2019 at 06:41:11PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.1.9 release.
-> > There are 70 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue 11 Jun 2019 04:40:04 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> Build results:
-> 	total: 159 pass: 159 fail: 0
-> Qemu test results:
-> 	total: 351 pass: 351 fail: 0
+Quoting Linus Walleij (2019-06-07 14:08:10)
+> On Fri, May 31, 2019 at 8:52 AM Tengfei Fan <tengfeif@codeaurora.org> wro=
+te:
+>=20
+> > The gpio interrupt status bit is getting set after the
+> > irq is disabled and causing an immediate interrupt after
+> > enablling the irq, so clear status bit on irq_unmask.
+> >
+> > Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
+>=20
+> This looks pretty serious, can one of the Qcom maintainers ACK
+> this?
+>=20
+> Should it be sent to fixes and even stable?
+>=20
+> Fixes: tag?
+>=20
 
-Thanks for testing all of these and letting me know.
+How is the interrupt status bit getting set after the irq is disabled?
+It looks like this is a level type interrupt? I thought that after
+commit b55326dc969e ("pinctrl: msm: Really mask level interrupts to
+prevent latching") this wouldn't be a problem. Am I wrong, or is qcom
+just clearing out patches on drivers and this is the last one that needs
+to be upstreamed?
 
-greg k-h
