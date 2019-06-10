@@ -2,72 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FCD13B3FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 13:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B04B3B407
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 13:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389712AbfFJLYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 07:24:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51056 "EHLO mail.skyhub.de"
+        id S2389503AbfFJLbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 07:31:14 -0400
+Received: from mx.socionext.com ([202.248.49.38]:48102 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388611AbfFJLYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 07:24:37 -0400
-Received: from zn.tnic (p200300EC2F052B00DC69C02FEF5E8A62.dip0.t-ipconnect.de [IPv6:2003:ec:2f05:2b00:dc69:c02f:ef5e:8a62])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4AC991EC058B;
-        Mon, 10 Jun 2019 13:24:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560165876;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ah8te1umBfDARXJum2UBL7IkROuTWyGRC83CORZOQPc=;
-        b=kZvnhNOLKQUZDEgg8h6ue3KRJPUeSo1yM9LyFvufiadt02+CLDjUlQtbz9ZORrvrGtQKue
-        fPHdQq8SRGk8iwNVjoDt9WXg5PSems6Uz1RGMvZh+X1IyHwqw5Z+nOp1UbayFeyW8AXASP
-        9sKfokWBhR1b87y9kN1sM5rqSYjNnBo=
-Date:   Mon, 10 Jun 2019 13:24:31 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Junichi Nomura <j-nomura@ce.jp.nec.com>
-Cc:     Kairui Song <kasong@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
-Subject: Re: [PATCH] x86/kexec: Add ACPI NVS region to the ident map
-Message-ID: <20190610112431.GC5488@zn.tnic>
-References: <20190610073617.19767-1-kasong@redhat.com>
- <20190610095150.GA5488@zn.tnic>
- <CACPcB9f-sussXaOuOau6=CD85pS2KhcsknpJDQH_aEkwvLfvVA@mail.gmail.com>
- <20190610105959.GB5488@zn.tnic>
- <1555938c-e00f-d40f-5f24-146aec7a67eb@ce.jp.nec.com>
+        id S2388373AbfFJLbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 07:31:14 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 10 Jun 2019 20:31:12 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 9D788180039;
+        Mon, 10 Jun 2019 20:31:12 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Mon, 10 Jun 2019 20:31:12 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 05F791A04FC;
+        Mon, 10 Jun 2019 20:31:12 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id E62AB120138;
+        Mon, 10 Jun 2019 20:31:11 +0900 (JST)
+Subject: Re: [PATCH] serial: Fix an invalid comparing statement
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Colin Ian King <colin.king@canonical.com>
+Cc:     Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <1558933288-30023-1-git-send-email-sugaya.taichi@socionext.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <3757b7f8-32a2-4d79-ef03-09b3e7420c54@socionext.com>
+Date:   Mon, 10 Jun 2019 20:31:11 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1555938c-e00f-d40f-5f24-146aec7a67eb@ce.jp.nec.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1558933288-30023-1-git-send-email-sugaya.taichi@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 11:07:05AM +0000, Junichi Nomura wrote:
-> I had tested the version I posted here on bunch of physical machines
-> I had access and confirmed it didn't broke working setups:
-> https://lore.kernel.org/lkml/20190515051717.GA13703@jeru.linux.bs1.fc.nec.co.jp/
+Hi
+
+Does anyone have comments?
+
+On 2019/05/27 14:01, Sugaya Taichi wrote:
+> Drop the if-statement which refers to 8th bit field of u8 variable.
+> The bit field is no longer used.
 > 
-> Since the logic in the patch seems unchanged, I'm very sure it's ok.
+> Fixes: ba44dc043004 ("serial: Add Milbeaut serial control")
+> Reported-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+> ---
+>   drivers/tty/serial/milbeaut_usio.c | 15 +++++----------
+>   1 file changed, 5 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/milbeaut_usio.c b/drivers/tty/serial/milbeaut_usio.c
+> index 949ab7e..d7207ab 100644
+> --- a/drivers/tty/serial/milbeaut_usio.c
+> +++ b/drivers/tty/serial/milbeaut_usio.c
+> @@ -56,7 +56,6 @@
+>   #define MLB_USIO_SSR_FRE		BIT(4)
+>   #define MLB_USIO_SSR_PE			BIT(5)
+>   #define MLB_USIO_SSR_REC		BIT(7)
+> -#define MLB_USIO_SSR_BRK		BIT(8)
+>   #define MLB_USIO_FCR_FE1		BIT(0)
+>   #define MLB_USIO_FCR_FE2		BIT(1)
+>   #define MLB_USIO_FCR_FCL1		BIT(2)
+> @@ -180,18 +179,14 @@ static void mlb_usio_rx_chars(struct uart_port *port)
+>   		if (status & MLB_USIO_SSR_ORE)
+>   			port->icount.overrun++;
+>   		status &= port->read_status_mask;
+> -		if (status & MLB_USIO_SSR_BRK) {
+> -			flag = TTY_BREAK;
+> +		if (status & MLB_USIO_SSR_PE) {
+> +			flag = TTY_PARITY;
+>   			ch = 0;
+>   		} else
+> -			if (status & MLB_USIO_SSR_PE) {
+> -				flag = TTY_PARITY;
+> +			if (status & MLB_USIO_SSR_FRE) {
+> +				flag = TTY_FRAME;
+>   				ch = 0;
+> -			} else
+> -				if (status & MLB_USIO_SSR_FRE) {
+> -					flag = TTY_FRAME;
+> -					ch = 0;
+> -				}
+> +			}
+>   		if (flag)
+>   			uart_insert_char(port, status, MLB_USIO_SSR_ORE,
+>   					 ch, flag);
+> 
 
-Ok, thanks for testing.
-
-I'll add your Tested-by.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
