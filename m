@@ -2,66 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8109A3B7EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DA93B7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391035AbfFJPCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:02:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbfFJPCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:02:01 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A32220859;
-        Mon, 10 Jun 2019 15:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560178920;
-        bh=OE8GdsTUm6Imy2zPdYlPLj1uy7lqP03V060qQqNy6s8=;
-        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=09qdbjyTF0YwhwLeCe/ZJYYrjFSo7df/akOmOhnJL1Nz3+iRIEvhIDMmr6W1dCBIf
-         bE7KCXS2+R0ZyWXhbq4kpFl1epH3RXBDn+J48Pc3eOudwxKGJ4+mMIXjGfXhruxbkL
-         xuh+QFQ8z+yVqfnuBQzH1Utbh7+3X9fCqVIbXVQw=
-Content-Type: text/plain; charset="utf-8"
+        id S2390171AbfFJPER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:04:17 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.130]:19312 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390128AbfFJPEQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:04:16 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id ECF9A38F5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 10:04:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id aLqJhZEhydnCeaLqJhBode; Mon, 10 Jun 2019 10:04:15 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.75.107] (port=58560 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1haLqI-000U5a-FH; Mon, 10 Jun 2019 10:04:15 -0500
+Date:   Mon, 10 Jun 2019 10:04:12 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] block: bio: Use struct_size() in kmalloc()
+Message-ID: <20190610150412.GA8430@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190608195317.6336-2-manivannan.sadhasivam@linaro.org>
-References: <20190608195317.6336-1-manivannan.sadhasivam@linaro.org> <20190608195317.6336-2-manivannan.sadhasivam@linaro.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, robh+dt@kernel.org, ulf.hansson@linaro.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 1/7] clk: actions: Fix factor clk struct member access
-User-Agent: alot/0.8.1
-Date:   Mon, 10 Jun 2019 08:01:59 -0700
-Message-Id: <20190610150200.8A32220859@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.75.107
+X-Source-L: No
+X-Exim-ID: 1haLqI-000U5a-FH
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.75.107]:58560
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-06-08 12:53:11)
-> Since the helper "owl_factor_helper_round_rate" is shared between factor
-> and composite clocks, using the factor clk specific helper function
-> like "hw_to_owl_factor" to access its members will create issues when
-> called from composite clk specific code. Hence, pass the "factor_hw"
-> struct pointer directly instead of fetching it using factor clk specific
-> helpers.
->=20
-> This issue has been observed when a composite clock like "sd0_clk" tried
-> to call "owl_factor_helper_round_rate" resulting in pointer dereferencing
-> error.
->=20
-> Fixes: 4bb78fc9744a ("clk: actions: Add factor clock support")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-I agree with Andreas on the function name. With that change you can add
+struct bio_map_data {
+	...
+        struct iovec iov[];
+};
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+instance = kmalloc(sizeof(sizeof(struct bio_map_data) + sizeof(struct iovec) *
+                          count, GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kmalloc(struct_size(instance, iov, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ block/bio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/block/bio.c b/block/bio.c
+index 683cbb40f051..4bcdcd3f63f4 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1120,8 +1120,7 @@ static struct bio_map_data *bio_alloc_map_data(struct iov_iter *data,
+ 	if (data->nr_segs > UIO_MAXIOV)
+ 		return NULL;
+ 
+-	bmd = kmalloc(sizeof(struct bio_map_data) +
+-		       sizeof(struct iovec) * data->nr_segs, gfp_mask);
++	bmd = kmalloc(struct_size(bmd, iov, data->nr_segs), gfp_mask);
+ 	if (!bmd)
+ 		return NULL;
+ 	memcpy(bmd->iov, data->iov, sizeof(struct iovec) * data->nr_segs);
+-- 
+2.21.0
 
