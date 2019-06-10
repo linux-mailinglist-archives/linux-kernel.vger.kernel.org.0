@@ -2,290 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1006E3B216
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EF083B225
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388695AbfFJJ2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 05:28:33 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43294 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388033AbfFJJ2c (ORCPT
+        id S2388899AbfFJJaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 05:30:10 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54126 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388798AbfFJJaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 05:28:32 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 16so7227307ljv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:28:30 -0700 (PDT)
+        Mon, 10 Jun 2019 05:30:09 -0400
+Received: by mail-wm1-f67.google.com with SMTP id x15so7766540wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=siqDWvGSxvpmTq2GM5l552jdMTJFA9bvabxI7lDs8sw=;
-        b=M9UkW3UPLP9GJr/RX3CrUt/jlkZJFeuT8xn9FDO/o0bCTKm3BUpm+VS2jfEfaFXAda
-         rsALVxrCr4vcm45HVjeopfXPfGr+nAbf6y494V78N1MaBSQuE2UrGfCPgXYo5KMAQ9XF
-         fkbrMEzn5GbgduyyIfXA1hAIvGEf3sJwS7S16AAk1OPP+4LYQ8Pb8pgnOjUWKwG5Vgbk
-         FMD7096bhBhdzS/KFWiL9Wl+ioJJ0vhyUCRbpYHR3/GHXxTV2XoKJcxSB9qbNDRpdiwc
-         kMNHrcApaUuakOyY8iQ7XD6YcfKT2HC3LpdWheqw9JfBOziEnPiGu1oDbTE0X09FqE+d
-         +1Yw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ReCc469/hMNgKKDRaI/8/xE7tbMybb43zKTGTTYrE/I=;
+        b=K7jf9S3DT5/YZPXxDbox6LiHnAsH5cSs2RGmlrGV7k9YC3+cBMpqpSbHzebBRcAqse
+         BdXlxZVNB4xLsD0u1Qsm5gD1vqRWXbAHDRmo6ogvwG6RZyTT6Pd1+5RReD3NMsmnQZcK
+         5+Vr+mYR2SpgBnFw7esR0Feox1aITxXcpsqFswNVy/Pp0OvHx6GnIPORpCOnUzLhty/2
+         EAMFOUUS/4UE0R/xeCs8enfXInYGd8Cka5OrsukgQB/aY6OxykPRuJjBW1YkPs/uW5wT
+         +afPXZyOlCOg9wAzmk80b5dQj0o9kbL4mfq/ZDfZwsll2mHE124xabykrW6j/uOuGfaI
+         fBXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=siqDWvGSxvpmTq2GM5l552jdMTJFA9bvabxI7lDs8sw=;
-        b=j57McN4mKJ1FDDH1NnEnVg+rXMRm0YfbapfpZ+1tMdG+CFO/mKQdigm/YB9C0otmFJ
-         DJi3vQX+XUwK5fltjKbIPG+ehBI4eUMvePW+oLK5NpoWMFC7jTLPUVQWMDs3EBQm5HIT
-         6ckjuoMotCb+gsaYrq0BD1O5yiszEWD9ZkYSPr6jZubElGFR9uJ3LDYguXjL2pye2hoV
-         nlOaHnSy/b28SK9yRiXS+A2ZgEc4vagJWsLzlqut2ZI7gutZfvJmOwGiNwTQZOT08PCK
-         17pbd782dgP9hRZkV4B7uAR1eF3jsvAva+Q5jO9ThtNZbpPB9Dmtzivck0q/e6iHvi+4
-         kmPw==
-X-Gm-Message-State: APjAAAVXSXrS/D/blJYkx+V0d/j/MOcPr49jJLZhgrx2I8NKnlbBs5gL
-        hhsuAcb34cfUwgbMySyk8ZX/tw==
-X-Google-Smtp-Source: APXvYqwTwqoLaAq9vX4Zoq2YgFBIJYHMlu+uKRsYN5By8Xhb99xxFDC8Uata1k4OsVPpJ3zmmHWJDA==
-X-Received: by 2002:a2e:9c4d:: with SMTP id t13mr36547053ljj.106.1560158908417;
-        Mon, 10 Jun 2019 02:28:28 -0700 (PDT)
-Received: from [192.168.1.169] (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id q7sm2218753ljc.45.2019.06.10.02.28.26
+        bh=ReCc469/hMNgKKDRaI/8/xE7tbMybb43zKTGTTYrE/I=;
+        b=rhrON5xa4aSQ+2lwDPuazQ10qUn2p5HtSAiqXHgpzmpkLoYpU10xfYudVpEfDSZKU3
+         bu2LTVszVBI9dzXDjMKVnkrINpVcjdqJQCppWl9T2TDMnfIH7UX+KFXhaLpmuXAiydiJ
+         +tReNYe52xTA+XRzUeAMpQV4RDWJW58D/tOMRdh4WkHcjC2aWpbxXlix02BkAEcNQDj2
+         WDHe9Ks9IeghdAGvdke6nLzSkWKiNU4rlf9u+KAP1e+ZjmMh8HkoR26rFF+mN8cD0xKg
+         5xqrv5VaBRWsO0aPCqY55a4rf48U4dFeAmmbgnVQ6QDM3FVUWBzjKbJ4vtc0b9yvI3fJ
+         SE4A==
+X-Gm-Message-State: APjAAAX1QiqHs3EY4mmoAB7fUc36rvpiQhKm0jMNDa+EYH4PlQjfpWwU
+        IBjBCEEqQAPdHXDTPFoRWQDTNg==
+X-Google-Smtp-Source: APXvYqz/c0tI9OV2RYHdb+EY+X14qnPe9z8tweSoQF6lpYD7pTkq39JwbtdeSUdT09qt9cWEhCZvxg==
+X-Received: by 2002:a7b:c776:: with SMTP id x22mr7854269wmk.55.1560159007741;
+        Mon, 10 Jun 2019 02:30:07 -0700 (PDT)
+Received: from pop-os.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id j123sm11881943wmb.32.2019.06.10.02.30.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 02:28:27 -0700 (PDT)
-Subject: Re: [PATCH] mtd: spi-nor: use 16-bit WRR command when QE is set on
- spansion flashes
-To:     Tudor.Ambarus@microchip.com, geert@linux-m68k.org,
-        marek.vasut+renesas@gmail.com, marek.vasut@gmail.com,
-        vigneshr@ti.com
-Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        miquel.raynal@bootlin.com, richard@nod.at,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <c57fe97b-ad4a-874e-663f-7f3a737824c9@microchip.com>
- <20190610062351.24405-1-tudor.ambarus@microchip.com>
-From:   Jonas Bonn <jonas@norrbonn.se>
-Message-ID: <f4b968d3-b982-68e7-e8e4-d153875f0e1f@norrbonn.se>
-Date:   Mon, 10 Jun 2019 11:28:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 10 Jun 2019 02:30:07 -0700 (PDT)
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, jic23@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        baylibre-upstreaming@groups.io, dmitry.torokhov@gmail.com,
+        linux-input@vger.kernel.org,
+        Alexandre Mergnat <amergnat@baylibre.com>
+Subject: [PATCH v3 0/3] Add PAT9125 optical tracker driver
+Date:   Mon, 10 Jun 2019 11:29:42 +0200
+Message-Id: <20190610092945.6330-1-amergnat@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20190610062351.24405-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tudor,
+PixArt Imaging PAT9125 is a miniature low power optical navigation chip
+using LASER light source enabling digital surface tracking.
 
-On 10/06/2019 08:24, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> SPI memory devices from different manufacturers have widely
-> different configurations for Status, Control and Configuration
-> registers. JEDEC 216C defines a new map for these common register
-> bits and their functions, and describes how the individual bits may
-> be accessed for a specific device. For the JEDEC 216B compliant
-> flashes, we can partially deduce Status and Configuration registers
-> functions by inspecting the 16th DWORD of BFPT. Older flashes that
-> don't declare the SFDP tables (SPANSION FL512SAIFG1 311QQ063 A ©11
-> SPANSION) let the software decide how to interact with these registers.
-> 
-> The commit dcb4b22eeaf4 ("spi-nor: s25fl512s supports region locking")
-> uncovered a probe error for s25fl512s, when the QUAD bit CR[1] was set
-> in the bootloader. When this bit is set, only the Write Register
-> WRR command format with 16 data bits may be used, WRR with 8 bits
-> is not recognized and hence the error when trying to clear the block
-> protection bits.
-> 
-> Fix the above by using 16-bits WRR command when Quad bit is set.
-> 
-> Backward compatibility should be fine. The newly introduced
-> spi_nor_spansion_clear_sr_bp() is tightly coupled with the
-> spansion_quad_enable() function. Both assume that the Write Register
-> with 16 bits, together with the Read Configuration Register (35h)
-> instructions are supported.
-> 
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
-> Geert, Jonas,
-> 
-> This patch is compile-tested only. I don't have the flash, I need your
-> help for testing this.
+This device driver use IIO API to provide punctual and/or buffered data.
+The data could be relative position or delta value, both on X and Y axis,
+depend on CPI (Counts Per Inch) resolution setting chosen.
 
-Tested this on my hardware.  It works fine in the non-quad case.
+The device support configuration through module parameter interface.
 
-Tested-by: Jonas Bonn <jonas@norrbonn.se>
+This patchset :
+- Update vendor prefix
+- Add the bindings for this device
+- Add the device driver
+- Add directory for optical tracker devices
 
-/Jonas
+Change since v1:
+- Fix typo
+- Rename some defines / variables
+- Remove I2C client from driver structure
+- Change type of delta_x and delta_y from s16 to s32 to simplify signed
+  operations
+- Add module parameter for axis resolution
+- Replace "IIO_MOD_X_AND_Y" by "IIO_MOD_X" and "IIO_MOD_Y"
+- Add sign extension macro
+- Improve read value algorithm to avoid data loss
+- Implement a trigger handler function which can work with any IIO trigger,
+  independently of it own GPIO IRQ, to match with IIO requirement/behaviour
+- Replace iio push event function by iio trigger poll in GPIO IRQ handler
+- Use triggered_buffer helpers to replace kfifo use, setup buffer,
+  implement enable/disable setup buffer operations, IIO trigger allocation
+  and re-enable operations
+- Remove useless "goto"
+- Change GPIO IRQ handler from planified thread to IRQ thread
+- Change GPIO IRQ trigger from low level and one shot to falling edge
+- Add device unregister and buffer cleanup to driver remove function
 
-> 
-> Thanks,
-> ta
-> 
->   drivers/mtd/spi-nor/spi-nor.c | 116 ++++++++++++++++++++++++++++++++++++++----
->   include/linux/mtd/spi-nor.h   |   1 +
->   2 files changed, 106 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index c0a8837c0575..af9ac7f09cc2 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1636,6 +1636,92 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
->   	return 0;
->   }
->   
-> +/**
-> + * spi_nor_clear_sr_bp() - clear the Status Register Block Protection bits.
-> + * @nor:        pointer to a 'struct spi_nor'
-> + *
-> + * Read-modify-write function that clears the Block Protection bits from the
-> + * Status Register without affecting other bits.
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +static int spi_nor_clear_sr_bp(struct spi_nor *nor)
-> +{
-> +	int ret;
-> +	u8 mask = SR_BP2 | SR_BP1 | SR_BP0;
-> +
-> +	ret = read_sr(nor);
-> +	if (ret < 0) {
-> +		dev_err(nor->dev, "error while reading status register\n");
-> +		return ret;
-> +	}
-> +
-> +	write_enable(nor);
-> +
-> +	ret = write_sr(nor, ret & ~mask);
-> +	if (ret) {
-> +		dev_err(nor->dev, "write to status register failed\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = spi_nor_wait_till_ready(nor);
-> +	if (ret)
-> +		dev_err(nor->dev, "timeout while writing status register\n");
-> +	return ret;
-> +}
-> +
-> +/**
-> + * spi_nor_spansion_clear_sr_bp() - clear the Status Register Block Protection
-> + * bits on spansion flashes.
-> + * @nor:        pointer to a 'struct spi_nor'
-> + *
-> + * Read-modify-write function that clears the Block Protection bits from the
-> + * Status Register without affecting other bits. The function is tightly
-> + * coupled with the spansion_quad_enable() function. Both assume that the Write
-> + * Register with 16 bits, together with the Read Configuration Register (35h)
-> + * instructions are supported
-> + *
-> + * Return: 0 on success, -errno otherwise.
-> + */
-> +static int spi_nor_spansion_clear_sr_bp(struct spi_nor *nor)
-> +{
-> +	int ret;
-> +	u8 mask = SR_BP2 | SR_BP1 | SR_BP0;
-> +	u8 sr_cr[2] = {0};
-> +
-> +	/* Check current Quad Enable bit value. */
-> +	ret = read_cr(nor);
-> +	if (ret < 0) {
-> +		dev_err(nor->dev,
-> +			"error while reading configuration register\n");
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * When the configuration register QUAD bit CR[1] is 1, only
-> +	 * the WRR command format with 16 data bits may be used.
-> +	 */
-> +	if (ret & CR_QUAD_EN_SPAN) {
-> +		sr_cr[1] = ret;
-> +
-> +		ret = read_sr(nor);
-> +		if (ret < 0) {
-> +			dev_err(nor->dev,
-> +				"error while reading status register\n");
-> +			return ret;
-> +		}
-> +		sr_cr[0] = ret & ~mask;
-> +
-> +		ret = write_sr_cr(nor, sr_cr);
-> +		if (ret)
-> +			dev_err(nor->dev, "16-bit write register failed\n");
-> +		return ret;
-> +	}
-> +
-> +	/* If quad bit is not set, use 8-bit WRR command. */
-> +	return spi_nor_clear_sr_bp(nor);
-> +}
-> +
->   /* Used when the "_ext_id" is two bytes at most */
->   #define INFO(_jedec_id, _ext_id, _sector_size, _n_sectors, _flags)	\
->   		.id = {							\
-> @@ -3663,6 +3749,8 @@ static int spi_nor_init_params(struct spi_nor *nor,
->   		default:
->   			/* Kept only for backward compatibility purpose. */
->   			params->quad_enable = spansion_quad_enable;
-> +			if (nor->clear_sr_bp)
-> +				nor->clear_sr_bp = spi_nor_spansion_clear_sr_bp;
->   			break;
->   		}
->   
-> @@ -3915,17 +4003,13 @@ static int spi_nor_init(struct spi_nor *nor)
->   {
->   	int err;
->   
-> -	/*
-> -	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
-> -	 * with the software protection bits set
-> -	 */
-> -	if (JEDEC_MFR(nor->info) == SNOR_MFR_ATMEL ||
-> -	    JEDEC_MFR(nor->info) == SNOR_MFR_INTEL ||
-> -	    JEDEC_MFR(nor->info) == SNOR_MFR_SST ||
-> -	    nor->info->flags & SPI_NOR_HAS_LOCK) {
-> -		write_enable(nor);
-> -		write_sr(nor, 0);
-> -		spi_nor_wait_till_ready(nor);
-> +	if (nor->clear_sr_bp) {
-> +		err = nor->clear_sr_bp(nor);
-> +		if (err) {
-> +			dev_err(nor->dev,
-> +				"fail to clear block protection bits\n");
-> +			return err;
-> +		}
+Change since v2:
+- Fix typo
+- Add constructor webpage and datasheet in commit message
+- Use BIT() macro for define bit mask
+- Remove shift from IIO channel spec structure
+- Replace IIO_LE by IIO_CPU from IIO channel spec structure
+- Replace memcpy() by cast (s32)
+- Rename "pat9125_trig_try_reen" to "pat9125_trig_try_reenable"
+- Add carriage return (\n) at the end of each "dev_err" function
+- Remove "iio_trigger_unregister" in case of "iio_trigger_register" fail,
+  register function already manage it
+- Remove log which print device name in case of successful initialization
+- Fix enabled IRQ flag warning during nested IRQ thread
+- Improve retry algo now based on status register
+- Remove "ts", "motion_detected" and "buffer_mode" from pat9125_data
+  structure
+- Rename all "ot" directories to "position"
+- Polling sample through IIO_CHAN_INFO_RAW now return position value
+  (relative to the position at initialization time) instead of delta
+  position
+- Clean iio_buffer_setup_ops structure by removing NULL pointer.
+- Use devm_iio_ function for all init functions and then delete
+  "pat9125_remove"
+- Move device_register at the end of probe function
+- Replace MODULE_PARM_DESC by IIO_SCALE to set axis resolution (CPI)
 
+Alexandre Mergnat (3):
+  dt-bindings: Add pixart vendor
+  dt-bindings: iio: position: Add docs pat9125
+  iio: Add PAT9125 optical tracker sensor
 
+ .../bindings/iio/position/pat9125.txt         |  18 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ drivers/iio/Kconfig                           |   1 +
+ drivers/iio/Makefile                          |   1 +
+ drivers/iio/position/Kconfig                  |  18 +
+ drivers/iio/position/Makefile                 |   6 +
+ drivers/iio/position/pat9125.c                | 499 ++++++++++++++++++
+ 7 files changed, 545 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/position/pat9125.txt
+ create mode 100644 drivers/iio/position/Kconfig
+ create mode 100644 drivers/iio/position/Makefile
+ create mode 100644 drivers/iio/position/pat9125.c
 
+-- 
+2.17.1
 
->   	}
->   
->   	if (nor->quad_enable) {
-> @@ -4050,6 +4134,16 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
->   	if (info->flags & SPI_S3AN)
->   		nor->flags |=  SNOR_F_READY_XSR_RDY;
->   
-> +	/*
-> +	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
-> +	 * with the software protection bits set.
-> +	 */
-> +	if (JEDEC_MFR(nor->info) == SNOR_MFR_ATMEL ||
-> +	    JEDEC_MFR(nor->info) == SNOR_MFR_INTEL ||
-> +	    JEDEC_MFR(nor->info) == SNOR_MFR_SST ||
-> +	    nor->info->flags & SPI_NOR_HAS_LOCK)
-> +		nor->clear_sr_bp = spi_nor_clear_sr_bp;
-> +
->   	/* Parse the Serial Flash Discoverable Parameters table. */
->   	ret = spi_nor_init_params(nor, &params);
->   	if (ret)
-> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-> index b3d360b0ee3d..566bd5010bc8 100644
-> --- a/include/linux/mtd/spi-nor.h
-> +++ b/include/linux/mtd/spi-nor.h
-> @@ -410,6 +410,7 @@ struct spi_nor {
->   	int (*flash_unlock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
->   	int (*flash_is_locked)(struct spi_nor *nor, loff_t ofs, uint64_t len);
->   	int (*quad_enable)(struct spi_nor *nor);
-> +	int (*clear_sr_bp)(struct spi_nor *nor);
->   
->   	void *priv;
->   };
-> 
