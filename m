@@ -2,178 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8161C3BF97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 00:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 057D53BF9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 00:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390433AbfFJWs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 18:48:57 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33088 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390340AbfFJWs4 (ORCPT
+        id S2390422AbfFJWwk convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 18:52:40 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:42319 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390301AbfFJWwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 18:48:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CE2758EE182;
-        Mon, 10 Jun 2019 15:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1560206935;
-        bh=mb6IzwM78BT/viG2YgEvk/s6gBgJO14fZN6QaNMTcf0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jrk/1QedcyxDoeH/nG3zibD+xvky2BjHsl77hFVLLkn8RtjNGKG+ui2IHJJiFOsAd
-         mrCUm9W/U0SZA9+ac9aDNJftoFL118Pk1K8N3fUWBj56jSOc2W9U+f3NP4SgzM5FuL
-         /48jgcNYp4iiQH+T4GgcAYd1ZlKL+h36987ETg1E=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ASJhwJ4X_a3j; Mon, 10 Jun 2019 15:48:55 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3B0818EE105;
-        Mon, 10 Jun 2019 15:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1560206935;
-        bh=mb6IzwM78BT/viG2YgEvk/s6gBgJO14fZN6QaNMTcf0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jrk/1QedcyxDoeH/nG3zibD+xvky2BjHsl77hFVLLkn8RtjNGKG+ui2IHJJiFOsAd
-         mrCUm9W/U0SZA9+ac9aDNJftoFL118Pk1K8N3fUWBj56jSOc2W9U+f3NP4SgzM5FuL
-         /48jgcNYp4iiQH+T4GgcAYd1ZlKL+h36987ETg1E=
-Message-ID: <1560206933.3698.27.camel@HansenPartnership.com>
-Subject: Re: [PATCH] drivers/ata: print trim features at device
- initialization
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Date:   Mon, 10 Jun 2019 15:48:53 -0700
-In-Reply-To: <b554c428-417e-5fef-1776-87a4db1d674a@yandex-team.ru>
-References: <155989287898.1506.14253954112551051148.stgit@buzz>
-         <yq1wohxib7t.fsf@oracle.com>
-         <eebfb1cc-f6d0-580e-1d56-2af0f481a92f@yandex-team.ru>
-         <048ed77f-8faa-fb67-c6bc-10d953f52f89@yandex-team.ru>
-         <1560116241.3324.19.camel@HansenPartnership.com>
-         <b554c428-417e-5fef-1776-87a4db1d674a@yandex-team.ru>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 10 Jun 2019 18:52:40 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x5AMqLnn024430
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Jun 2019 07:52:21 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5AMqL6q016179;
+        Tue, 11 Jun 2019 07:52:21 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5AMpo63002979;
+        Tue, 11 Jun 2019 07:52:21 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-5829201; Tue, 11 Jun 2019 07:51:34 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0319.002; Tue,
+ 11 Jun 2019 07:51:33 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
+ set_hwpoison_free_buddy_page() fails
+Thread-Topic: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
+ set_hwpoison_free_buddy_page() fails
+Thread-Index: AQHVH2UNBW9Lhf3e5UinMjf59GXrMKaUzwKAgAAZdgA=
+Date:   Mon, 10 Jun 2019 22:51:33 +0000
+Message-ID: <20190610225140.GA30991@hori.linux.bs1.fc.nec.co.jp>
+References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <1560154686-18497-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20190610142033.6096a8ec73d4bf40b2612fb5@linux-foundation.org>
+In-Reply-To: <20190610142033.6096a8ec73d4bf40b2612fb5@linux-foundation.org>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.96]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <03697C5541B2D04CB700AC95BD5D6F50@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-10 at 10:49 +0300, Konstantin Khlebnikov wrote:
-> On 10.06.2019 0:37, James Bottomley wrote:
-> > On Sat, 2019-06-08 at 17:13 +0300, Konstantin Khlebnikov wrote:
-> > > > On 08.06.2019 11:25, Christoph Hellwig wrote:> On Fri, Jun 07,
-> > > > 2019
-> > > > at 10:34:39AM +0300, Konstantin Khlebnikov wrote:
-> > > >   >
-> > > >   > Do we really need to spam dmesg with even more ATA
-> > > > crap?  What
-> > > > about
-> > > >   > a sysfs file that can be read on demand instead?
-> > > >   >
-> > > > 
-> > > > Makes sense.
-> > > > 
-> > > > Trim state is exposed for ata_device:
-> > > > /sys/class/ata_device/devX.Y/trim
-> > > > but there is no link from scsi device to ata device so they
-> > > > hard to match.
-> > > > 
-> > > > I'll think about it.
-> > > 
-> > > Nope. There is no obvious way to link scsi device with
-> > > ata_device. ata_device is built on top of "transport_class" and
-> > > "attribute_container". This some extremely over engineered sysfs
-> > > framework used only in ata/scsi. I don't want to touch this.
-> > 
-> > You don't need to know any of that.  The problem is actually when
-> > the ata transport classes were first created, the devices weren't
-> > properly parented.  What should have happened, like every other
-> > transport class, is that the devices should have descended down to
-> > the scsi device as the leaf in an integrated fashion.  Instead,
-> > what we seem to have is three completely separate trees.
-> > 
-> > So if you look at a SAS device, you see from the pci device:
-> > 
-> > host2/port-2:0/end_device-2:0/target2:0:0/2:0:0:0/block/sdb/sdb1
-> > 
-> > But if you look at a SATA device, you see three separate paths:
-> > 
-> > ata3/host3/target3\:0\:0/3\:0\:0\:0/block/sda/sda1
-> > ata3/link3/dev3.0/ata_device/dev3.0
-> > ata3/ata_port/ata3
-> > 
-> > Instead of an integrated tree
-> > 
-> > Unfortunately, this whole thing is unfixable now.  If I integrate
-> > the tree properly, the separate port and link directories will get
-> > subsumed and we won't be able to recover them with judicious
-> > linking so scripts relying on them will break.  The best we can
-> > probably do is add additional links with what we have.
-> > 
-> > To follow the way we usually do it, there should be a link from the
-> > ata device to the scsi target, but that wouldn't help you find the
-> > "trim" files, so it sounds like you want a link from the scsi
-> > device to the ata device, which would?
+On Mon, Jun 10, 2019 at 02:20:33PM -0700, Andrew Morton wrote:
+> On Mon, 10 Jun 2019 17:18:05 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
 > 
-> Yes, I'm talking about link from scsi device to leaf ata_device node.
+> > The pass/fail of soft offline should be judged by checking whether the
+> > raw error page was finally contained or not (i.e. the result of
+> > set_hwpoison_free_buddy_page()), but current code do not work like that.
+> > So this patch is suggesting to fix it.
 > 
-> In libata scsi_device has one to one relation with ata_device.
-> So making link like /sys/class/block/sda/device/ata_device should be
-> possible easy.
-> But I haven't found implicit reference from struct ata_device to
-> ata_device in sysfs.
+> Please describe the user-visible runtime effects of this change?
 
-If that's all you want, it is pretty simple modulo the fact we can only
-get at the tdev, not the lower transport device, which is what you
-want, but at least it's linear from the symlink.
+Sorry, could you replace the description as follows (I inserted one sentence)?
 
-The attached patch should do this.
+    The pass/fail of soft offline should be judged by checking whether the
+    raw error page was finally contained or not (i.e. the result of
+    set_hwpoison_free_buddy_page()), but current code do not work like that.
+    It might lead us to misjudge the test result when
+    set_hwpoison_free_buddy_page() fails.  So this patch is suggesting to
+    fix it.
 
-Now I see this for my non-sas device:
-
-# ls -l /sys/class/scsi_device/3\:0\:0\:0/device/ata_device
-lrwxrwxrwx 1 root root 0 Jun 10 13:39 /sys/class/scsi_device/3:0:0:0/device/ata_device -> ../../../link3/dev3.0
-
-James
-
----
-
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 391ac0503dc0..b644336a6d65 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -4576,7 +4576,20 @@ void ata_scsi_scan_host(struct ata_port *ap, int sync)
- 			sdev = __scsi_add_device(ap->scsi_host, channel, id, 0,
- 						 NULL);
- 			if (!IS_ERR(sdev)) {
-+				int r;
-+
- 				dev->sdev = sdev;
-+				/* this is a sysfs stupidity: we don't
-+				 * care if the link actually gets
-+				 * created: there's no error handling
-+				 * for failure and we continue on
-+				 * regardless, but we have to discard
-+				 * the return value like this to
-+				 * defeat unused result checking */
-+				r = sysfs_create_link(&sdev->sdev_gendev.kobj,
-+						      &dev->tdev.kobj,
-+						      "ata_device");
-+				(void)r;
- 				scsi_device_put(sdev);
- 			} else {
- 				dev->sdev = NULL;
-@@ -4703,6 +4716,7 @@ static void ata_scsi_remove_dev(struct ata_device *dev)
- 		ata_dev_info(dev, "detaching (SCSI %s)\n",
- 			     dev_name(&sdev->sdev_gendev));
- 
-+		sysfs_remove_link(&sdev->sdev_gendev.kobj, "ata_device");
- 		scsi_remove_device(sdev);
- 		scsi_device_put(sdev);
- 	}
+Thanks,
+Naoya Horiguchi
