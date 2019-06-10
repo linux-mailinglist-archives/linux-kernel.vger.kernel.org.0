@@ -2,102 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37E383AD06
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 04:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4E73AD0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 04:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730346AbfFJCeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 22:34:04 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46220 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730278AbfFJCeE (ORCPT
+        id S2387469AbfFJCeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 22:34:36 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:35692 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730224AbfFJCef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 22:34:04 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h10so12124744edi.13
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 19:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=afKgTHmsyagHLmYfWGsSLRAHwZWSCleIZNkXxK90uPY=;
-        b=fawIqtj7htmk9JLOUC28S3iKNbxX4HMtjGN+MuVQUAVuCjMhYUz6VWwQ727OC2TTt4
-         W5z42Nj1T8lmxR/j7JX2G/xkWIznAEh54U6SciR/Py1AiQQ97VIHcIfNhg7M+zqeL7gK
-         izRcmPWT4FC06S8MN1aWWe825DOKTmxJM7433UVz2/MiCaj8Sz4LpRPzK7PDdPsyVETN
-         QR4AJ6dqdo+Lu1gSRb3uPqLcByPZNMcPQHqBtKIumdmVs7248ruDEZxzggK8rE72NPxk
-         oCxocsJ0+FYyrkeVnrDf1c2D/DC+TFx/SVnL9hSuiS3a/m0iWaGSv3k+BBZlFXVajXAB
-         JwBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=afKgTHmsyagHLmYfWGsSLRAHwZWSCleIZNkXxK90uPY=;
-        b=dmia+S/jMn+xZqT2D2ylUbLZooAjZqBa7ybPOMKVNsu2xQYALfshN2aHZqRevx+i1C
-         TQt67e+WulgciQc9j5S5Np2tLcmtj7QXVYdzAlm6CA/mFtjovuJVrfLmDUPJHvviWGp/
-         ABEuRmp/wMWab9pEWY8GjrMShjDZ3rkDYbWRLJAlIWoBa61SQqITk4TBIbf3yU7msrYj
-         2nWJ3itbwmPYXYD8iILrEoGwfs3vo+4L5jI+/RIbg3Zlb7yel5Y1uq0RyL1h/jLOWT/V
-         4quFB72HLhJqHEkJ9VOCbrJTJkGNaH44W/TYz7R2nNxOIw+Zv4e7pdWuQqp+vq2Rpdw/
-         69sw==
-X-Gm-Message-State: APjAAAWfssKVxwfXCPqAIV1S67OJ8m8IySlF/eYdqyWq3FdMLdKNyuk6
-        294YXDyxXhZlSJqeQyIofHFkeqdp0nTiP+z46wFNXQ==
-X-Google-Smtp-Source: APXvYqyZ4zJSQrjpclg/tB88jotg/Lr0qMzgyhbyLXcOThxD7RIRBMYssHeHhkPCoz1e8x5WG9KYWcH5HQbN/vEAUJ0=
-X-Received: by 2002:a50:ec1a:: with SMTP id g26mr71250547edr.174.1560134042811;
- Sun, 09 Jun 2019 19:34:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190605111412.3461-1-zhang.chunyan@linaro.org> <20190606010857.GF29739@sasha-vm>
-In-Reply-To: <20190606010857.GF29739@sasha-vm>
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-Date:   Mon, 10 Jun 2019 10:33:51 +0800
-Message-ID: <CAG2=9p_6Rk4oUu0hWKdzHNxRg=Hsboz=vYwsmfagmuCHzEKMOg@mail.gmail.com>
-Subject: Re: [BACKPORT 4.4.y] PM / sleep: prohibit devices probing during suspend/hibernation
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.Strashko@ti.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
+        Sun, 9 Jun 2019 22:34:35 -0400
+X-UUID: 28b4b304262c4b5982a4936f05fcd734-20190610
+X-UUID: 28b4b304262c4b5982a4936f05fcd734-20190610
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1668713502; Mon, 10 Jun 2019 10:34:25 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 10 Jun 2019 10:34:24 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 10 Jun 2019 10:34:17 +0800
+Message-ID: <1560134057.28527.5.camel@mtksdaap41>
+Subject: Re: [PATCH v4 01/14] dt-bindings: Add binding for MT2712 MIPI-CSI2
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Mon, 10 Jun 2019 10:34:17 +0800
+In-Reply-To: <1559643115-15124-2-git-send-email-stu.hsieh@mediatek.com>
+References: <1559643115-15124-1-git-send-email-stu.hsieh@mediatek.com>
+         <1559643115-15124-2-git-send-email-stu.hsieh@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019 at 09:08, Sasha Levin <sashal@kernel.org> wrote:
->
-> On Wed, Jun 05, 2019 at 07:14:12PM +0800, Chunyan Zhang wrote:
-> >From: "Strashko, Grygorii" <grygorii.strashko@ti.com>
-> >
-> >[ Upstream commit 013c074f8642d8e815ad670601f8e27155a74b57 ]
-> >
-> >It is unsafe [1] if probing of devices will happen during suspend or
-> >hibernation and system behavior will be unpredictable in this case.
-> >So, let's prohibit device's probing in dpm_prepare() and defer their
-> >probing instead. The normal behavior will be restored in
-> >dpm_complete().
-> >
-> >This patch introduces new DD core APIs:
-> > device_block_probing()
-> >   It will disable probing of devices and defer their probes instead.
-> > device_unblock_probing()
-> >   It will restore normal behavior and trigger re-probing of deferred
-> >   devices.
-> >
-> >[1] https://lkml.org/lkml/2015/9/11/554
-> >
-> >Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> >Acked-by: Pavel Machek <pavel@ucw.cz>
-> >Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->
-> This patch had to be fixed a few times (see 015bb5e134 and 9a2a5a638f8),
-> we can't just take it as is.
->
-> It might be just simpler to move to a newer kernel at this point.
+Hi, Stu:
 
-Thanks for the information and suggestion!
+"mediatek,mt2712-mipicsi" and "mediatek,mt2712-mipicsi-common" have many
+common part with "mediatek,mt8183-seninf", and I've a discussion in [1],
+so I would like these two to be merged together.
 
-Chunyan
+[1] https://patchwork.kernel.org/patch/10979131/
 
->
-> --
-> Thanks,
-> Sasha
+Regards,
+CK
+
+On Tue, 2019-06-04 at 18:11 +0800, Stu Hsieh wrote:
+> Add MIPI-CSI2 dt-binding for Mediatek MT2712 SoC
+> 
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  .../bindings/media/mediatek-mipicsi.txt       | 58 +++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek-mipicsi.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-mipicsi.txt b/Documentation/devicetree/bindings/media/mediatek-mipicsi.txt
+> new file mode 100644
+> index 000000000000..e30b6a468129
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek-mipicsi.txt
+> @@ -0,0 +1,58 @@
+> +* Mediatek MIPI-CSI2 receiver
+> +
+> +Mediatek MIPI-CSI2 receiver is the MIPI Signal capture hardware present in Mediatek SoCs
+> +
+> +Required properties:
+> +- compatible: should be "mediatek,mt2712-mipicsi"
+> +- reg : physical base address of the mipicsi receiver registers and length of
+> +  memory mapped region.
+> +- power-domains: a phandle to the power domain, see
+> +  Documentation/devicetree/bindings/power/power_domain.txt for details.
+> +- mediatek,larb: must contain the local arbiters in the current Socs, see
+> +  Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+> +  for details.
+> +- iommus: should point to the respective IOMMU block with master port as
+> +  argument, see Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
+> +  for details.
+> +- mediatek,seninf_mux_camsv: seninf_mux_camsv the data go through of the mipicsi port
+> +  any mipicsi port can contain max four seninf_mux_camsv
+> +  The Total seninf_mux_camsv is six for mt2712
+> +- mediatek,mipicsiid: the id of the mipicsi port, there are two port for mt2712
+> +- mediatek,mipicsi: the common component of the two mipicsi port
+> +- mediatek,mipicsi_max_vc: the number of virtual channel which subdev used
+> +- mediatek,serdes_link_reg: the register of subdev to get the link status
+> +
+> +Example:
+> +	mipicsi0: mipicsi@10217000 {
+> +		compatible = "mediatek,mt2712-mipicsi";
+> +		mediatek,mipicsi = <&mipicsi>;
+> +		iommus = <&iommu0 M4U_PORT_CAM_DMA0>,
+> +			 <&iommu0 M4U_PORT_CAM_DMA1>;
+> +		mediatek,larb = <&larb2>;
+> +		power-domains = <&scpsys MT2712_POWER_DOMAIN_ISP>;
+> +
+> +		mediatek,seninf_mux_camsv = <&seninf1_mux_camsv0
+> +					     &seninf2_mux_camsv1
+> +					     &seninf3_mux_camsv2
+> +					     &seninf4_mux_camsv3>;
+> +		reg = <0 0x10217000 0 0x60>,
+> +		      <0 0x15002100 0 0x4>,
+> +		      <0 0x15002300 0 0x100>;
+> +		mediatek,mipicsiid = <0>;
+> +		mediatek,mipicsi_max_vc = <4>;
+> +		mediatek,serdes_link_reg = <0x49>;
+> +	};
+> +
+> +	mipicsi1: mipicsi@10218000 {
+> +		compatible = "mediatek,mt2712-mipicsi";
+> +		mediatek,mipicsi = <&mipicsi>;
+> +		iommus = <&iommu0 M4U_PORT_CAM_DMA2>;
+> +		mediatek,larb = <&larb2>;
+> +		power-domains = <&scpsys MT2712_POWER_DOMAIN_ISP>;
+> +		mediatek,seninf_mux_camsv = <&seninf5_mux_camsv4
+> +					     &seninf6_mux_camsv5>;
+> +		reg = <0 0x10218000 0 0x60>,
+> +		      <0 0x15002500 0 0x4>,
+> +		      <0 0x15002700 0 0x100>;
+> +		mediatek,mipicsiid = <1>;
+> +	};
+
+
