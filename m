@@ -2,92 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C3B3B75C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 485A03B747
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390836AbfFJO3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 10:29:45 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52760 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388936AbfFJO3o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 10:29:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2/NqQ9GziQyACvNe8rO0FclnMIOpXZ8VTVPH+dJ3XXU=; b=H8yz6bGemIr3PKdNfZG7Y+xcs
-        /VCuDg0n/sRq/XgiLSJA43mwJxFsfx7v/OCieQKyDxhs+6trMhGj6XrZZt3oUtXNJNwecO8M4VP7N
-        k0or+VQpTKQidsTSs+BZFfHypE18nAGmcSYohF8k0ECatdTEHSk9X2degWudMtvO/sIss=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1haLIs-0005ug-OE; Mon, 10 Jun 2019 14:29:42 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 37284440046; Mon, 10 Jun 2019 15:29:42 +0100 (BST)
-Date:   Mon, 10 Jun 2019 15:29:42 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [GIT PULL] regulator fix for v5.2
-Message-ID: <20190610142942.GC5316@sirena.org.uk>
+        id S2403900AbfFJOZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 10:25:53 -0400
+Received: from mout.gmx.net ([212.227.15.19]:51201 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403856AbfFJOZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 10:25:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1560176742;
+        bh=U44tvgLFlGaanEXUft8L0ra5RPYPwCR8fVvFRN9rId0=;
+        h=X-UI-Sender-Class:Date:From:To:Subject;
+        b=jhPIwgyZDrcYiBE+EBVITpjmvPs8k9ybFnBqORDaxjODcpAt37tHB6PfgUKF0NCCb
+         DWtjsoQEsXz93E+sAXRMVK0jGkQ1UcV2K45xvSwaqRdZ+xh+i8cY47FtkfzCAK/KyI
+         mGp+4SMoCWEj61fxRNs3x6hUdm/HJCQl8c9cXj5c=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from baum ([188.192.86.147]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3siA-1gamQQ0aDg-00zrCT; Mon, 10
+ Jun 2019 16:25:42 +0200
+Date:   Mon, 10 Jun 2019 16:30:26 +0200
+From:   Li Mingshuo <linuxli@gmx.de>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: remove the leading spaces
+Message-ID: <20190610143024.GA6154@baum>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RIYY1s2vRbPFwWeW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:5EtO3LE+QSuVCzAbJwqSNCufpBC2Aw1MmQ7nY0FBtBEGaeD6eeE
+ GzWcSLsYFO5hgsc3foTkbP4WUF/moYt8MCT75YxmSB+RY8YY5GxsPP0f+vlkK763J/SSYEX
+ qGTMU5lpLf27wlpWcfNuD7TB0FjYgDHdiD3brcjnDoIJTX0ou7UOIwDWbCNPJ6XTa6NFvwJ
+ Ry4VQt9y4dG8WozhKP4tA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1nwd2riEFaY=:H9YGwNcLOMEljwutjRS/5e
+ rstzuPeNjjJKws6LSo5xKkaCGN0ASct7o9aGbSKMMmdKzpWleoO9tJyuaOGMhh5UFoEgoupnk
+ lkHCAMJ0ZT1hHRSmMeVyxiV1UY55amaKRuQ8OmHTTsFNwnasfhvWkuVluifFguUxmPFUrQARt
+ P5OJqg2nIFFkqMz6wtC/acQNGvPQdrnryvfFf5lYBfD5tDRdt8G+ETXo6UhxHduCkKiau12Xq
+ wjofvbJo4wNyfT5NkZLgZPAXnsEfwX+FrtQluu//r5oPZIlGJClPI23mEOGj10wYfB6wu9/Ni
+ Z2JXfQZujesZNqRY9tSq3ocgzDPBMSOYRprqXpwnEgAqthBMpGoGzrohBUJ/DFk8WOJh6M+iE
+ CAqScJhJVn6NbYmR3iu5wgiOjaCmiLXwetB1F5VKY1jcwoqAK0+o9mjrvaM7+l5qNHm2E9U67
+ nhORmubxQZhzRegBc1hp7vF+8uR4/pEX1YjeUNyMB9MqT9c11U0Y2XvbrduT0joPD1VDRjFC+
+ PIhvw/pHDrxt5NQxnKKq0pL7Ptn0P1/OCfcrbvnOriXjI4yAQORa+FIreNGbWLrjl2afmLQVB
+ C5V2AdsP6azJ2cESHHnE+jwf1F6iBiytTF3ghFiQArOq0p6jk+xpI8moWw/y7Ps5LNqwAbEwj
+ 7TuMGiKna35CLT4aIvW0+4ZvI7Kl/FwRNCoxAkmDM4P+Zz9tn1/POEHkulQl8Azh4rMi11r1V
+ KktbpTfULV45/EVLOvERiBt5V4YbOE5lpBHBOHqbJr36RRXOwSIQyaiYAXhwbz1H0X2JdcyyG
+ B49RRe81gct9w5FUYx3BF2Q+FKjuymqafsMf4/CaZRIZ+XUytvNZtXFsnXpib86+MPnk+vv/e
+ vtEcBPpG5k51FUxdea6n5gJbZvf7f1DTq4r+EoeApRPui1BqkM5bPECJCbPu0LYUmijmKxllP
+ jzAhqWPWAJXKgpuW/T3IQHQIDUlyG21I=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch fixes the checkpatch warning, removing leading spaces to make
+sure that tabstop starts a new line.
 
---RIYY1s2vRbPFwWeW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Li Mingshuo <linuxli@gmx.de>
+=2D--
+ drivers/staging/rtl8712/rtl871x_xmit.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The following changes since commit 498209445124920b365ef43aac93d6f1acbaa1b7:
+diff --git a/drivers/staging/rtl8712/rtl871x_xmit.h b/drivers/staging/rtl8=
+712/rtl871x_xmit.h
+index 3bea2e374f13..4199cb586fb1 100644
+=2D-- a/drivers/staging/rtl8712/rtl871x_xmit.h
++++ b/drivers/staging/rtl8712/rtl871x_xmit.h
+@@ -148,8 +148,8 @@ struct xmit_frame {
+ 	_pkt *pkt;
+ 	int frame_tag;
+ 	struct _adapter *padapter;
+-	 u8 *buf_addr;
+-	 struct xmit_buf *pxmitbuf;
++	u8 *buf_addr;
++	struct xmit_buf *pxmitbuf;
+ 	u8 *mem_addr;
+ 	u16 sz[8];
+ 	struct urb *pxmit_urb[8];
+=2D-
+2.21.0
 
-  regulator: core: simplify return value on suported_voltage (2019-05-03 15:34:26 +0900)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v5.2-rc4
-
-for you to fetch changes up to 7d293f56456120efa97c4e18250d86d2a05ad0bd:
-
-  regulator: tps6507x: Fix boot regression due to testing wrong init_data pointer (2019-05-16 17:11:47 +0100)
-
-----------------------------------------------------------------
-regulator: Fix for v5.2
-
-Just one driver specific fix here, for a boot regression introduced
-during some modernization work on the tps6507x driver.
-
-----------------------------------------------------------------
-Axel Lin (1):
-      regulator: tps6507x: Fix boot regression due to testing wrong init_data pointer
-
- drivers/regulator/tps6507x-regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---RIYY1s2vRbPFwWeW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz+aVUACgkQJNaLcl1U
-h9D5ewf+IpUdK5zI5WBpQdS/szpJWn3D7lfeGUV08YY1/f0V7Mk6jP+xsbJnDCm6
-M/ozzGsDxOrrPkJZ/UXNNsDzrG/xy2FQ5qrhP10z6Jxp1c9C8DT1dJDyVHkL5S28
-8TaJR6HtW1trusIz4AlS9SMYkc2llDFJkQWeTDVALsiNAtD4QlInEI+f1Frlzxx8
-GAVkKppcrOb6H1xSbe1DlFvvN6x7UDDbe5vhgqcfzRZMnqAJ5aGuxbZFagggtFEZ
-Odr8bu+ZgkuvHG40CX9rr64n6KtsnlyuEjrSLL10e5a9rGuWI5J8JDVgvPL0IGNO
-Wbm6pXrclmLN1jwXH5MFHL/TTuOZgA==
-=pI5p
------END PGP SIGNATURE-----
-
---RIYY1s2vRbPFwWeW--
