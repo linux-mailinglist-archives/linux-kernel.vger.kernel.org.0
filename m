@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22A43BC37
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0598F3BC3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388865AbfFJSya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 14:54:30 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55942 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387674AbfFJSya (ORCPT
+        id S2388974AbfFJSzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 14:55:06 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40774 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388491AbfFJSzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:54:30 -0400
-Received: by mail-it1-f196.google.com with SMTP id i21so753710ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 11:54:30 -0700 (PDT)
+        Mon, 10 Jun 2019 14:55:05 -0400
+Received: by mail-it1-f194.google.com with SMTP id q14so718692itc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 11:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=daXs+Zg5JpwmvESTwSzf5RK4ZRVQCRqGZBkG95Vym1M=;
-        b=XOsFbF7g+awpsBdgzHfH8P/28fJNJjNhXimq9Up5pVmSfDU0fwNM5F6pLhQXpGc8GG
-         TMRbaNyazBpfStpSX+zSD4so0HCQ7ThrF3MTUSoYZ95pjUD+l4b+du8psedaFbjddUeD
-         yX/zDbgHnGzN9ud6eAaHJDmEWr/3jP4vtx4Cw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cQMhD/I3Y/XjJlDvubFbz6WnQ+Gl+pIyjaq6A0eWHVw=;
+        b=Emfxz6RY6w4czebKElQtlB10YASnT8iWdQGOGp5SE0x45AofJTF1UyNsWWCuBsQjW5
+         AaE90CsW7B+edHf6Hr5Ft6VbCu/bCscAC9k2L5NI+KrT/ipthSMMxbGdGy5FtDJnhzf9
+         LIc+nBiUlpKf7+hN8T5yZK+JOhAhURg8/Pa8Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=daXs+Zg5JpwmvESTwSzf5RK4ZRVQCRqGZBkG95Vym1M=;
-        b=JITPaxQN8E6Wcoek9JPRQIjii7Z7ABIGL2hLWl2Y4X6pVPE9bYuLbqVGl8q9qPrDT1
-         /VCo8Y1WcRSPhbkzoYzBDkUiMmh0pORb+HA+w1daYmVdzx1H5sUzbty4sEvt6SOLpkiG
-         0mvWVo7wuTt8WaOSqwrNMv1Wme2oSl72cS34hsbaCtTd0NU94vfK8MD3oKBAnJrhN/ut
-         rpeYBBvcB3EnOywZ+JBYhvnaD1JqHkGPTSDX8fuZOx5j9BhS6O6X5uNatB90+4euq3hy
-         wyUBJMDmFlsGerql0pXQlsHaJ4Y49qXKdxRkgcAQttX7EP3XwNXRbsxWoFv52VqDCfrM
-         30NA==
-X-Gm-Message-State: APjAAAVRv7H/457crcfA+LCXL97CkbswYHzYjirhYyLxQm4ffRGDuSq3
-        k6xgv7E24pPU7BJBifIZzkYHLw==
-X-Google-Smtp-Source: APXvYqxsczNm4XKbk5o9HtKx57BlZ6zZ8Ncz/ayRFUvobSV3RUF/A0TzU7Di7woJOM4m1Sgqdb6jRw==
-X-Received: by 2002:a24:2b0f:: with SMTP id h15mr12121916ita.99.1560192869752;
-        Mon, 10 Jun 2019 11:54:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cQMhD/I3Y/XjJlDvubFbz6WnQ+Gl+pIyjaq6A0eWHVw=;
+        b=n3dZUxpbg3gKIGLhloACjD1skA+KvHemBh2BQL1bHMBn4jqO00Vf20mmahwa/lx2MC
+         RfT1pMdPtUUoEj9jR7kBrn9ZL05l1aL1csHJEGo/lDz1xBdBu/tn9u8amkmlqTtlFNby
+         drUcCYsSlM3xqM9vbf06XNZ6FUhbe8L9m4dJYZGekPUhHL1IwHtDX7FTBUcP8/a/tDCN
+         kxhYTpM1KaD+hjMxEHHFTgTuxEPKcdAWMlXMmhwqudgKdXEoAMR2Z88MOaW723aBmjyH
+         cXFHEoLFzMhoseu2drFE26oS2rKKULbS4Ghg5fA0HwJRSpCohesSrPOj7FMuKSLNZEte
+         Z+Dw==
+X-Gm-Message-State: APjAAAWBjgJwtJ5iQzDv7RqNwCyqPFCitwD+nvtFrTY9p7wZbB5v1aiO
+        DAw2B8UwTrEYIrzz2F3bEUFiqRhfZII=
+X-Google-Smtp-Source: APXvYqxJNfXV5i5V6uCmFvPs3vnRHn3+3uGvUWKJPHMZzmWz1MeUuxrppe7rrcjxVS3l3hqi0W8cDw==
+X-Received: by 2002:a24:7cd8:: with SMTP id a207mr14906744itd.68.1560192904769;
+        Mon, 10 Jun 2019 11:55:04 -0700 (PDT)
 Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id t133sm4107359iof.21.2019.06.10.11.54.28
+        by smtp.gmail.com with ESMTPSA id r69sm175876itc.11.2019.06.10.11.55.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 11:54:29 -0700 (PDT)
+        Mon, 10 Jun 2019 11:55:04 -0700 (PDT)
 From:   Raul E Rangel <rrangel@chromium.org>
 To:     linux-mmc@vger.kernel.org
 Cc:     ernest.zhang@bayhubtech.com, djkurtz@chromium.org,
@@ -49,10 +49,12 @@ Cc:     ernest.zhang@bayhubtech.com, djkurtz@chromium.org,
         linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 1/3] mmc: sdhci: sdhci-pci-o2micro: Correctly set bus width when tuning
-Date:   Mon, 10 Jun 2019 12:53:51 -0600
-Message-Id: <20190610185354.35310-1-rrangel@chromium.org>
+Subject: [PATCH 2/3] mmc: sdhci: sdhci-pci-o2micro: Check if controller supports 8-bit width
+Date:   Mon, 10 Jun 2019 12:53:52 -0600
+Message-Id: <20190610185354.35310-2-rrangel@chromium.org>
 X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+In-Reply-To: <20190610185354.35310-1-rrangel@chromium.org>
+References: <20190610185354.35310-1-rrangel@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,40 +62,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sdhci_send_tuning uses mmc->ios.bus_width to determine the block size.
-Without this patch the block size would be set incorrectly when the
-bus_width == 8 which results in tuning failing.
+The O2 controller supports 8-bit EMMC access. mmc_select_bus_width()
+will be used to determine if the MMC supports 8-bit or 4-bit access.
 
 Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 ---
+I tested this on an AMD chromebook.
 
- drivers/mmc/host/sdhci-pci-o2micro.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+$ cat /sys/kernel/debug/mmc1/ios
+clock:          200000000 Hz
+actual clock:   200000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    9 (mmc HS200)
+signal voltage: 1 (1.80 V)
+driver type:    0 (driver type B)
+
+Before this patch only 4 bit was negotiated.
+
+ drivers/mmc/host/sdhci-pci-o2micro.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index b29bf4e7dcb48..dd21315922c87 100644
+index dd21315922c87..07bb91cbdf1f8 100644
 --- a/drivers/mmc/host/sdhci-pci-o2micro.c
 +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -115,6 +115,7 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 	 */
- 	if (mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
- 		current_bus_width = mmc->ios.bus_width;
-+		mmc->ios.bus_width = MMC_BUS_WIDTH_4;
- 		sdhci_set_bus_width(host, MMC_BUS_WIDTH_4);
- 	}
+@@ -395,11 +395,16 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+ {
+ 	struct sdhci_pci_chip *chip;
+ 	struct sdhci_host *host;
+-	u32 reg;
++	u32 reg, caps;
+ 	int ret;
  
-@@ -126,8 +127,10 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 
- 	sdhci_end_tuning(host);
- 
--	if (current_bus_width == MMC_BUS_WIDTH_8)
-+	if (current_bus_width == MMC_BUS_WIDTH_8) {
-+		mmc->ios.bus_width = MMC_BUS_WIDTH_8;
- 		sdhci_set_bus_width(host, current_bus_width);
-+	}
- 
- 	host->flags &= ~SDHCI_HS400_TUNING;
- 	return 0;
+ 	chip = slot->chip;
+ 	host = slot->host;
++
++	caps = sdhci_readl(host, SDHCI_CAPABILITIES);
++	if (caps & SDHCI_CAN_DO_8BIT)
++		host->mmc->caps |= MMC_CAP_8_BIT_DATA;
++
+ 	switch (chip->pdev->device) {
+ 	case PCI_DEVICE_ID_O2_SDS0:
+ 	case PCI_DEVICE_ID_O2_SEABIRD0:
 -- 
 2.22.0.rc2.383.gf4fbbf30c2-goog
 
