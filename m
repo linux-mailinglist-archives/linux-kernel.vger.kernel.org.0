@@ -2,58 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D9763B45E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D3853B46E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389718AbfFJMIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 08:08:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:41406 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389229AbfFJMIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 08:08:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3FFB337;
-        Mon, 10 Jun 2019 05:08:42 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C85613F557;
-        Mon, 10 Jun 2019 05:10:23 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 13:08:39 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
+        id S2389791AbfFJMPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 08:15:51 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54194 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388866AbfFJMPv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 08:15:51 -0400
+Received: by mail-wm1-f65.google.com with SMTP id x15so8264694wmj.3;
+        Mon, 10 Jun 2019 05:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=G/jDmCEBdW+KnNnzIkI5FBxnykVJAEM3IcCO6wGYvxQ=;
+        b=VjIypT6jxNeDcP3wUSkxn+P8CxxAUuMUNzeZgTuyvcKeoibelkyyRwRwXo7aPfSjUQ
+         Q3v7OyN788mNnJacP6rY+JqmUhSABKuQjwGSKgdSIgNdHLdpPQiG4rtmNU1t7N7IHcmK
+         nKHcw+Tloj67CNuGvh8/mUeuS7GEic2+TdmmDjK8bjZkORCIZAYC6801bb8F1Mu/UT5F
+         F6yBHxWkYxGdneJVZ1cb6xAm5yVDez2tj2BC1zOA4h+/f03ff6iaj0CskD8DSNOOZsL1
+         I3zmkYmnRzyJg4TYipAau0Rqvbd2Mqn7JFZV+cg2TLmfJTOFkMY0MD4oDMOswXtX9aOg
+         ZL4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=G/jDmCEBdW+KnNnzIkI5FBxnykVJAEM3IcCO6wGYvxQ=;
+        b=RZdlEbouOjBShWcbLGMIS7UrdSMVHlYqcwtOTgRGn2Cju9s/40u3Bi7t2Z/L9M8Tir
+         1SLwc+UCOIVimZPNEdRGBrObGAJKFDHAMqdEAoqM5IBe3HGSHxltp9+WWKSkyK2+vlbb
+         e2IkRYaJsRqokv3BgeOFSy8Bk0ItYDnsuB9EvkA5n/n6pCngpqnI15rPKVrFrysvvpW0
+         9zouNwgPliafSNOcdnDGjWueG55IYtaJlZX1rXDS7q4Q52826XGM+zGTh81GvVFbWYYj
+         Up9o76g4ZXGjfA1zdc+h44zsliTSc0SzGauEL6ECui6PHkH3Fu8ZD5kiDlLUzN319vcS
+         V+3Q==
+X-Gm-Message-State: APjAAAUpCGukWlJjRB0RY/s1BBXArdrTmBHWimLDhFZL9t8347yqoI9B
+        0wR2QBZ/gQVW+EJ5erCj+so=
+X-Google-Smtp-Source: APXvYqxAzpVPFjmvXHC7Dyyt0DOCvzn4V9dg6udoS70h922GjJQFGyHYQYvnE4PoiIh4fnOVv7NBJw==
+X-Received: by 2002:a05:600c:228f:: with SMTP id 15mr14125457wmf.31.1560168949128;
+        Mon, 10 Jun 2019 05:15:49 -0700 (PDT)
+Received: from ryzen.lan (5-12-114-167.residential.rdsnet.ro. [5.12.114.167])
+        by smtp.gmail.com with ESMTPSA id f21sm10385574wmb.2.2019.06.10.05.15.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Jun 2019 05:15:48 -0700 (PDT)
+From:   Abel Vesa <abelvesa@gmail.com>
+X-Google-Original-From: Abel Vesa <abel.vesa@nxp.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clocksource/arm_arch_timer: extract elf_hwcap use to
- arch-helper
-Message-ID: <20190610120839.GH15979@fuggles.cambridge.arm.com>
-References: <20190430131413.10017-1-andrew.murray@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190430131413.10017-1-andrew.murray@arm.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bai Ping <ping.bai@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Carlo Caione <ccaione@baylibre.com>
+Subject: [RFC 0/2] Add workaround for core wake-up on IPI for i.MX8MQ
+Date:   Mon, 10 Jun 2019 15:13:44 +0300
+Message-Id: <20190610121346.15779-1-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 02:14:13PM +0100, Andrew Murray wrote:
-> Different mechanisms are used to test and set elf_hwcaps between ARM
-> and ARM64, this results in the use of #ifdef's in this file when
-> setting/testing for the EVTSTRM hwcap.
-> 
-> Let's improve readability by extracting this to an arch helper.
-> 
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> ---
->  arch/arm/include/asm/arch_timer.h    | 13 +++++++++++++
->  arch/arm64/include/asm/arch_timer.h  | 13 +++++++++++++
->  drivers/clocksource/arm_arch_timer.c | 15 ++-------------
->  3 files changed, 28 insertions(+), 13 deletions(-)
+This is another alternative for the RFC:
+https://lkml.org/lkml/2019/3/27/545
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+This new workaround proposal is a little bit more hacky but more contained
+since everything is done within the irq-imx-gpcv2 driver.
 
-I assume this is going via Marc Z.
+Basically, it 'hijacks' the registered gic_raise_softirq __smp_cross_call
+handler and registers instead a wrapper which calls in the 'hijacked' 
+handler, after that calling into EL3 which will take care of the actual
+wake up. This time, instead of expanding the PSCI ABI, we use a new vendor SIP.
 
-Will
+I also have the patches ready for TF-A but I'll hold on to them until I see if
+this has a chance of getting in.
+
+Abel Vesa (2):
+  irqchip: irq-imx-gpcv2: Add workaround for i.MX8MQ ERR11171
+  arm64: dts: imx8mq: Add idle states and gpcv2 wake_request broken
+    property
+
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 20 +++++++++++++++
+ drivers/irqchip/irq-imx-gpcv2.c           | 42 +++++++++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+
+-- 
+2.7.4
+
