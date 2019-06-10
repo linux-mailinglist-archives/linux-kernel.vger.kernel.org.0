@@ -2,91 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5763BBE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A46BE3BBED
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388110AbfFJSlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 14:41:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38468 "EHLO mail.kernel.org"
+        id S2388555AbfFJSmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 14:42:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:55007 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387398AbfFJSlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:41:07 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387398AbfFJSmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 14:42:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40CCA20820;
-        Mon, 10 Jun 2019 18:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560192066;
-        bh=2ymFpgEEZ8TWmSlRAxNiVZGhcCAfLnl6klJhS+j3XUk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Riz7I1FaxSrLQkloA/Pah1yPP2bFV5nQCZ61L7dhwoIYboWKcUmM44zCctE4a8Y7x
-         MavM2RftvPG0mE2WBlFeOkuoMwIba+1mgK//6LFg57gJx/OZXCClhXUUXlqJo/kwLp
-         3fPJ0Gf+XXD3XRA74YgdmP2WK7hrnI4OIcF3qcP0=
-Date:   Mon, 10 Jun 2019 11:41:04 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Vakul Garg <vakul.garg@nxp.com>
-Cc:     syzbot <syzbot+df0d4ec12332661dd1f9@syzkaller.appspotmail.com>,
-        ast@kernel.org, aviadye@mellanox.com, borisp@mellanox.com,
-        bpf@vger.kernel.org, daniel@iogearbox.net, davejwatson@fb.com,
-        davem@davemloft.net, john.fastabend@gmail.com, kafai@fb.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
-Subject: Re: kernel BUG at include/linux/scatterlist.h:LINE!
-Message-ID: <20190610184103.GF63833@gmail.com>
-References: <000000000000f41cd905897c075e@google.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45N26c0Wd8z9sNT;
+        Tue, 11 Jun 2019 04:41:59 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560192120;
+        bh=td/hw+So+4iP64koL8dtNxsx3PBw/MlsVMwrb15FM+o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=I6qPHaSiRCxoFnKjY7uYRCCJpUiD+uaaORFGai5vzIrYKZfBxplWfCFQVyrgZtfYV
+         zTOmUN2TYatHfD++MT54VaUBGsAOtREqhMJOP00PPtMloigbNyP4rsIAdKZbcGRP8I
+         LX58YRWGn+88aaddqxxAnptCfiOmpr+jJknZlm29Fjf7jklFNzg5k1yuoLPQoV/lj/
+         +N1S1nrJ68zmvDyW7TkFoPD79IdKcgnrMudb9+A8MzCRVjDmgKcXL2JmmYP3gjoEuK
+         IqIlOZIUnEeLs0uCOMX32VFWkYFMiLM6felK0ahKLECCg10z6Yj1L49XtDJVZaH55j
+         QXzOLTAQatK2Q==
+Date:   Tue, 11 Jun 2019 04:41:59 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
+Message-ID: <20190611044159.404eeca8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000f41cd905897c075e@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/or3r.EkbKmEUakTMut__poe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 08:58:05AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    af8f3fb7 net: stmmac: dma channel control register need to..
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17c2d418a00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fc045131472947d7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=df0d4ec12332661dd1f9
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b53ce4a00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b0aa52a00000
-> 
-> The bug was bisected to:
-> 
-> commit f295b3ae9f5927e084bd5decdff82390e3471801
-> Author: Vakul Garg <vakul.garg@nxp.com>
-> Date:   Wed Mar 20 02:03:36 2019 +0000
-> 
->     net/tls: Add support of AES128-CCM based ciphers
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16915282a00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15915282a00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11915282a00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+df0d4ec12332661dd1f9@syzkaller.appspotmail.com
-> Fixes: f295b3ae9f59 ("net/tls: Add support of AES128-CCM based ciphers")
-> 
-> ------------[ cut here ]------------
-> kernel BUG at include/linux/scatterlist.h:97!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 8868 Comm: syz-executor428 Not tainted 5.2.0-rc1+ #21
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:sg_assign_page include/linux/scatterlist.h:97 [inline]
-> RIP: 0010:sg_set_page include/linux/scatterlist.h:119 [inline]
-> RIP: 0010:sk_msg_page_add include/linux/skmsg.h:246 [inline]
-> RIP: 0010:tls_sw_do_sendpage net/tls/tls_sw.c:1171 [inline]
-> RIP: 0010:tls_sw_sendpage+0xd63/0xf50 net/tls/tls_sw.c:1230
+--Sig_/or3r.EkbKmEUakTMut__poe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vakul, when are you planning to fix this?
+Hi all,
 
-- Eric
+In commit
+
+  495f926c68dd ("ASoC: core: Fix deadlock in snd_soc_instantiate_card()")
+
+Fixes tag
+
+  Fixes: 34ac3c3eb8 (ASoC: core: lock client_mutex while removing
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+  - Subject has leading but no trailing parentheses
+
+Please do not split FIxe tags over more than one line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/or3r.EkbKmEUakTMut__poe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz+pHcACgkQAVBC80lX
+0GyD7gf/Xi/QM17HlMan9fAoHBii6N9Zq96NqMlChelvws87hgJH2k5wmXNT0qUV
+2pt7vBsupUaLnk35eayTSjqImMuP4z/gkiUmRZQsfajcaNdN4SJaPfuCxQBMMhrD
+EhVOFPPdfiW4qAqgoR0cmh9FbDq8eI6JEm4akiX22kCOPUgiUTwwy76Mj3uImJWI
+A2qWwZCsmZAI4IlGDTuYnw3GVx5w+dbUaqbDsl4xdDQI2ayuwMDHUKbzUUh/OR76
+e6wfxdXioTDcUyJrp/oWkaeQyluOjMCKR4Pd96i4lGACVmZHso5F3a01HwAL6Yrp
+ejPah6E40m15+T0jDVTId6e0SYcxXg==
+=Kz7Z
+-----END PGP SIGNATURE-----
+
+--Sig_/or3r.EkbKmEUakTMut__poe--
