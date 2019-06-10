@@ -2,112 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCB43B23F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1006E3B216
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:28:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389036AbfFJJfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 05:35:13 -0400
-Received: from mail.codeweavers.com ([50.203.203.244]:57668 "EHLO
-        mail.codeweavers.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388033AbfFJJfM (ORCPT
+        id S2388695AbfFJJ2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 05:28:33 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43294 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388033AbfFJJ2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 05:35:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=codeweavers.com; s=6377696661; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hvHEIsUHuFBpJysJSAh/TndXcB04oV4yePbtGuMBdHk=; b=ieSZLelSnKpjvNpvH2LPvshAf
-        nDwm8iPPnsYNiFhs+BE5xIvXfmbYFHGIXXrH9fKXziYzO79y92u/Tbl/b0xHbZRw3KBWCC4dRA0do
-        EK1YEYI5aUENNJlKGRA06BN33Vt+P+IJaLy8gJK1SBhS+F3ZahSFihKjyxiK2g3wlJj7M=;
-Received: from merlot.physics.ox.ac.uk ([163.1.241.98] helo=merlot)
-        by mail.codeweavers.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <huw@codeweavers.com>)
-        id 1haGbQ-0003aw-G6; Mon, 10 Jun 2019 04:28:33 -0500
-Received: from daviesh by merlot with local (Exim 4.90_1)
-        (envelope-from <huw@codeweavers.com>)
-        id 1haGam-00039Z-E5; Mon, 10 Jun 2019 10:27:52 +0100
-Date:   Mon, 10 Jun 2019 10:27:52 +0100
-From:   Huw Davies <huw@codeweavers.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v6 01/19] kernel: Standardize vdso_datapage
-Message-ID: <20190610092751.GA11076@merlot.physics.ox.ac.uk>
-References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
- <20190530141531.43462-2-vincenzo.frascino@arm.com>
+        Mon, 10 Jun 2019 05:28:32 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 16so7227307ljv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:28:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=siqDWvGSxvpmTq2GM5l552jdMTJFA9bvabxI7lDs8sw=;
+        b=M9UkW3UPLP9GJr/RX3CrUt/jlkZJFeuT8xn9FDO/o0bCTKm3BUpm+VS2jfEfaFXAda
+         rsALVxrCr4vcm45HVjeopfXPfGr+nAbf6y494V78N1MaBSQuE2UrGfCPgXYo5KMAQ9XF
+         fkbrMEzn5GbgduyyIfXA1hAIvGEf3sJwS7S16AAk1OPP+4LYQ8Pb8pgnOjUWKwG5Vgbk
+         FMD7096bhBhdzS/KFWiL9Wl+ioJJ0vhyUCRbpYHR3/GHXxTV2XoKJcxSB9qbNDRpdiwc
+         kMNHrcApaUuakOyY8iQ7XD6YcfKT2HC3LpdWheqw9JfBOziEnPiGu1oDbTE0X09FqE+d
+         +1Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=siqDWvGSxvpmTq2GM5l552jdMTJFA9bvabxI7lDs8sw=;
+        b=j57McN4mKJ1FDDH1NnEnVg+rXMRm0YfbapfpZ+1tMdG+CFO/mKQdigm/YB9C0otmFJ
+         DJi3vQX+XUwK5fltjKbIPG+ehBI4eUMvePW+oLK5NpoWMFC7jTLPUVQWMDs3EBQm5HIT
+         6ckjuoMotCb+gsaYrq0BD1O5yiszEWD9ZkYSPr6jZubElGFR9uJ3LDYguXjL2pye2hoV
+         nlOaHnSy/b28SK9yRiXS+A2ZgEc4vagJWsLzlqut2ZI7gutZfvJmOwGiNwTQZOT08PCK
+         17pbd782dgP9hRZkV4B7uAR1eF3jsvAva+Q5jO9ThtNZbpPB9Dmtzivck0q/e6iHvi+4
+         kmPw==
+X-Gm-Message-State: APjAAAVXSXrS/D/blJYkx+V0d/j/MOcPr49jJLZhgrx2I8NKnlbBs5gL
+        hhsuAcb34cfUwgbMySyk8ZX/tw==
+X-Google-Smtp-Source: APXvYqwTwqoLaAq9vX4Zoq2YgFBIJYHMlu+uKRsYN5By8Xhb99xxFDC8Uata1k4OsVPpJ3zmmHWJDA==
+X-Received: by 2002:a2e:9c4d:: with SMTP id t13mr36547053ljj.106.1560158908417;
+        Mon, 10 Jun 2019 02:28:28 -0700 (PDT)
+Received: from [192.168.1.169] (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
+        by smtp.gmail.com with ESMTPSA id q7sm2218753ljc.45.2019.06.10.02.28.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 02:28:27 -0700 (PDT)
+Subject: Re: [PATCH] mtd: spi-nor: use 16-bit WRR command when QE is set on
+ spansion flashes
+To:     Tudor.Ambarus@microchip.com, geert@linux-m68k.org,
+        marek.vasut+renesas@gmail.com, marek.vasut@gmail.com,
+        vigneshr@ti.com
+Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
+        miquel.raynal@bootlin.com, richard@nod.at,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <c57fe97b-ad4a-874e-663f-7f3a737824c9@microchip.com>
+ <20190610062351.24405-1-tudor.ambarus@microchip.com>
+From:   Jonas Bonn <jonas@norrbonn.se>
+Message-ID: <f4b968d3-b982-68e7-e8e4-d153875f0e1f@norrbonn.se>
+Date:   Mon, 10 Jun 2019 11:28:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530141531.43462-2-vincenzo.frascino@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Spam-Score: -106.0
-X-Spam-Report: Spam detection software, running on the system "mail.codeweavers.com",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  On Thu, May 30, 2019 at 03:15:13PM +0100, Vincenzo Frascino
-    wrote: > --- /dev/null > +++ b/include/vdso/datapage.h > @@ -0,0 +1,91 @@
-    > +/* SPDX-License-Identifier: GPL-2.0 */ > +#ifndef __VDSO_DATAPA [...] 
- Content analysis details:   (-106.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -100 USER_IN_WHITELIST      From: address is in the user's white-list
- -6.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+In-Reply-To: <20190610062351.24405-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 03:15:13PM +0100, Vincenzo Frascino wrote:
-> --- /dev/null
-> +++ b/include/vdso/datapage.h
-> @@ -0,0 +1,91 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_DATAPAGE_H
-> +#define __VDSO_DATAPAGE_H
-> +
-> +#ifdef __KERNEL__
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <linux/bits.h>
-> +#include <linux/time.h>
-> +#include <linux/types.h>
-> +
-> +#define VDSO_BASES	(CLOCK_TAI + 1)
-> +#define VDSO_HRES	(BIT(CLOCK_REALTIME)		| \
-> +			 BIT(CLOCK_MONOTONIC)		| \
-> +			 BIT(CLOCK_BOOTTIME)		| \
-> +			 BIT(CLOCK_TAI))
-> +#define VDSO_COARSE	(BIT(CLOCK_REALTIME_COARSE)	| \
-> +			 BIT(CLOCK_MONOTONIC_COARSE))
-> +#define VDSO_RAW	(BIT(CLOCK_MONOTONIC_RAW))
-> +
-> +#define CS_HRES_COARSE	0
-> +#define CS_RAW		1
+Hi Tudor,
 
-CS_HRES_COARSE seems like a confusing name choice to me.  What you
-really mean is not RAW.
+On 10/06/2019 08:24, Tudor.Ambarus@microchip.com wrote:
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 
+> SPI memory devices from different manufacturers have widely
+> different configurations for Status, Control and Configuration
+> registers. JEDEC 216C defines a new map for these common register
+> bits and their functions, and describes how the individual bits may
+> be accessed for a specific device. For the JEDEC 216B compliant
+> flashes, we can partially deduce Status and Configuration registers
+> functions by inspecting the 16th DWORD of BFPT. Older flashes that
+> don't declare the SFDP tables (SPANSION FL512SAIFG1 311QQ063 A ©11
+> SPANSION) let the software decide how to interact with these registers.
+> 
+> The commit dcb4b22eeaf4 ("spi-nor: s25fl512s supports region locking")
+> uncovered a probe error for s25fl512s, when the QUAD bit CR[1] was set
+> in the bootloader. When this bit is set, only the Write Register
+> WRR command format with 16 data bits may be used, WRR with 8 bits
+> is not recognized and hence the error when trying to clear the block
+> protection bits.
+> 
+> Fix the above by using 16-bits WRR command when Quad bit is set.
+> 
+> Backward compatibility should be fine. The newly introduced
+> spi_nor_spansion_clear_sr_bp() is tightly coupled with the
+> spansion_quad_enable() function. Both assume that the Write Register
+> with 16 bits, together with the Read Configuration Register (35h)
+> instructions are supported.
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> ---
+> Geert, Jonas,
+> 
+> This patch is compile-tested only. I don't have the flash, I need your
+> help for testing this.
 
-How about CS_ADJ to indicate that its updated by adjtime?
-CS_XTIME might be another option.
+Tested this on my hardware.  It works fine in the non-quad case.
 
-Huw.
+Tested-by: Jonas Bonn <jonas@norrbonn.se>
+
+/Jonas
+
+> 
+> Thanks,
+> ta
+> 
+>   drivers/mtd/spi-nor/spi-nor.c | 116 ++++++++++++++++++++++++++++++++++++++----
+>   include/linux/mtd/spi-nor.h   |   1 +
+>   2 files changed, 106 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index c0a8837c0575..af9ac7f09cc2 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1636,6 +1636,92 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+>   	return 0;
+>   }
+>   
+> +/**
+> + * spi_nor_clear_sr_bp() - clear the Status Register Block Protection bits.
+> + * @nor:        pointer to a 'struct spi_nor'
+> + *
+> + * Read-modify-write function that clears the Block Protection bits from the
+> + * Status Register without affecting other bits.
+> + *
+> + * Return: 0 on success, -errno otherwise.
+> + */
+> +static int spi_nor_clear_sr_bp(struct spi_nor *nor)
+> +{
+> +	int ret;
+> +	u8 mask = SR_BP2 | SR_BP1 | SR_BP0;
+> +
+> +	ret = read_sr(nor);
+> +	if (ret < 0) {
+> +		dev_err(nor->dev, "error while reading status register\n");
+> +		return ret;
+> +	}
+> +
+> +	write_enable(nor);
+> +
+> +	ret = write_sr(nor, ret & ~mask);
+> +	if (ret) {
+> +		dev_err(nor->dev, "write to status register failed\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = spi_nor_wait_till_ready(nor);
+> +	if (ret)
+> +		dev_err(nor->dev, "timeout while writing status register\n");
+> +	return ret;
+> +}
+> +
+> +/**
+> + * spi_nor_spansion_clear_sr_bp() - clear the Status Register Block Protection
+> + * bits on spansion flashes.
+> + * @nor:        pointer to a 'struct spi_nor'
+> + *
+> + * Read-modify-write function that clears the Block Protection bits from the
+> + * Status Register without affecting other bits. The function is tightly
+> + * coupled with the spansion_quad_enable() function. Both assume that the Write
+> + * Register with 16 bits, together with the Read Configuration Register (35h)
+> + * instructions are supported
+> + *
+> + * Return: 0 on success, -errno otherwise.
+> + */
+> +static int spi_nor_spansion_clear_sr_bp(struct spi_nor *nor)
+> +{
+> +	int ret;
+> +	u8 mask = SR_BP2 | SR_BP1 | SR_BP0;
+> +	u8 sr_cr[2] = {0};
+> +
+> +	/* Check current Quad Enable bit value. */
+> +	ret = read_cr(nor);
+> +	if (ret < 0) {
+> +		dev_err(nor->dev,
+> +			"error while reading configuration register\n");
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * When the configuration register QUAD bit CR[1] is 1, only
+> +	 * the WRR command format with 16 data bits may be used.
+> +	 */
+> +	if (ret & CR_QUAD_EN_SPAN) {
+> +		sr_cr[1] = ret;
+> +
+> +		ret = read_sr(nor);
+> +		if (ret < 0) {
+> +			dev_err(nor->dev,
+> +				"error while reading status register\n");
+> +			return ret;
+> +		}
+> +		sr_cr[0] = ret & ~mask;
+> +
+> +		ret = write_sr_cr(nor, sr_cr);
+> +		if (ret)
+> +			dev_err(nor->dev, "16-bit write register failed\n");
+> +		return ret;
+> +	}
+> +
+> +	/* If quad bit is not set, use 8-bit WRR command. */
+> +	return spi_nor_clear_sr_bp(nor);
+> +}
+> +
+>   /* Used when the "_ext_id" is two bytes at most */
+>   #define INFO(_jedec_id, _ext_id, _sector_size, _n_sectors, _flags)	\
+>   		.id = {							\
+> @@ -3663,6 +3749,8 @@ static int spi_nor_init_params(struct spi_nor *nor,
+>   		default:
+>   			/* Kept only for backward compatibility purpose. */
+>   			params->quad_enable = spansion_quad_enable;
+> +			if (nor->clear_sr_bp)
+> +				nor->clear_sr_bp = spi_nor_spansion_clear_sr_bp;
+>   			break;
+>   		}
+>   
+> @@ -3915,17 +4003,13 @@ static int spi_nor_init(struct spi_nor *nor)
+>   {
+>   	int err;
+>   
+> -	/*
+> -	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
+> -	 * with the software protection bits set
+> -	 */
+> -	if (JEDEC_MFR(nor->info) == SNOR_MFR_ATMEL ||
+> -	    JEDEC_MFR(nor->info) == SNOR_MFR_INTEL ||
+> -	    JEDEC_MFR(nor->info) == SNOR_MFR_SST ||
+> -	    nor->info->flags & SPI_NOR_HAS_LOCK) {
+> -		write_enable(nor);
+> -		write_sr(nor, 0);
+> -		spi_nor_wait_till_ready(nor);
+> +	if (nor->clear_sr_bp) {
+> +		err = nor->clear_sr_bp(nor);
+> +		if (err) {
+> +			dev_err(nor->dev,
+> +				"fail to clear block protection bits\n");
+> +			return err;
+> +		}
+
+
+
+
+>   	}
+>   
+>   	if (nor->quad_enable) {
+> @@ -4050,6 +4134,16 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
+>   	if (info->flags & SPI_S3AN)
+>   		nor->flags |=  SNOR_F_READY_XSR_RDY;
+>   
+> +	/*
+> +	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
+> +	 * with the software protection bits set.
+> +	 */
+> +	if (JEDEC_MFR(nor->info) == SNOR_MFR_ATMEL ||
+> +	    JEDEC_MFR(nor->info) == SNOR_MFR_INTEL ||
+> +	    JEDEC_MFR(nor->info) == SNOR_MFR_SST ||
+> +	    nor->info->flags & SPI_NOR_HAS_LOCK)
+> +		nor->clear_sr_bp = spi_nor_clear_sr_bp;
+> +
+>   	/* Parse the Serial Flash Discoverable Parameters table. */
+>   	ret = spi_nor_init_params(nor, &params);
+>   	if (ret)
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index b3d360b0ee3d..566bd5010bc8 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -410,6 +410,7 @@ struct spi_nor {
+>   	int (*flash_unlock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
+>   	int (*flash_is_locked)(struct spi_nor *nor, loff_t ofs, uint64_t len);
+>   	int (*quad_enable)(struct spi_nor *nor);
+> +	int (*clear_sr_bp)(struct spi_nor *nor);
+>   
+>   	void *priv;
+>   };
+> 
