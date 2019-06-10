@@ -2,95 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1BB3BABE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7743BA72
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbfFJRNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:13:23 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44604 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728549AbfFJRNU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:13:20 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5AHDBKD121923;
-        Mon, 10 Jun 2019 12:13:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560186791;
-        bh=SNBUl0AgT9mDHDFh2idiGb/Cxs8x27UMIHDIZ9dVyA0=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=bk/jLN7JU0Xwhpv1oxdpoIqxrYHN0mmIkWOUuyHSkPnX7Iy0b/CX2pdRKgdZJlo9X
-         iUOG/vnrJTs8sX/Sh+CH9BAWQVbHcmbFOFQ8+9FkkKMogcmkmr29K/cZ+jWNYHwRsa
-         GDzxciiiJaBIMTr3GcIgfKh0sPrpGkDm+CZ74HLw=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5AHDA4b047205
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Jun 2019 12:13:10 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 10
- Jun 2019 12:13:10 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 10 Jun 2019 12:13:10 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5AHD9fs052679;
-        Mon, 10 Jun 2019 12:13:10 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     Russell King <rmk@arm.linux.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-CC:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH-next 20/20] gpio: gpio-omap: clean up register access in omap2_set_gpio_debounce()
-Date:   Mon, 10 Jun 2019 20:11:03 +0300
-Message-ID: <20190610171103.30903-21-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190610171103.30903-1-grygorii.strashko@ti.com>
-References: <20190610171103.30903-1-grygorii.strashko@ti.com>
+        id S1728462AbfFJRLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:11:13 -0400
+Received: from ms.lwn.net ([45.79.88.28]:44806 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbfFJRLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:11:12 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id C166D2BB;
+        Mon, 10 Jun 2019 17:11:11 +0000 (UTC)
+Date:   Mon, 10 Jun 2019 11:11:10 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/13] keys: Add a notification facility [ver #4]
+Message-ID: <20190610111110.72468326@lwn.net>
+In-Reply-To: <155991709983.15579.13232123365803197237.stgit@warthog.procyon.org.uk>
+References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+        <155991709983.15579.13232123365803197237.stgit@warthog.procyon.org.uk>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+On Fri, 07 Jun 2019 15:18:19 +0100
+David Howells <dhowells@redhat.com> wrote:
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpio-omap.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> Add a key/keyring change notification facility whereby notifications about
+> changes in key and keyring content and attributes can be received.
+> 
+> Firstly, an event queue needs to be created:
+> 
+> 	fd = open("/dev/event_queue", O_RDWR);
+> 	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
+> 
+> then a notification can be set up to report notifications via that queue:
+> 
+> 	struct watch_notification_filter filter = {
+> 		.nr_filters = 1,
+> 		.filters = {
+> 			[0] = {
+> 				.type = WATCH_TYPE_KEY_NOTIFY,
+> 				.subtype_filter[0] = UINT_MAX,
+> 			},
+> 		},
+> 	};
+> 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+> 	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 94b10dfbff3f..52592eac0895 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -181,7 +181,6 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
- static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
- 				   unsigned debounce)
- {
--	void __iomem		*reg;
- 	u32			val;
- 	u32			l;
- 	bool			enable = !!debounce;
-@@ -198,8 +197,7 @@ static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
- 	l = BIT(offset);
- 
- 	clk_enable(bank->dbck);
--	reg = bank->base + bank->regs->debounce;
--	writel_relaxed(debounce, reg);
-+	writel_relaxed(debounce, bank->base + bank->regs->debounce);
- 
- 	val = omap_gpio_rmw(bank->base + bank->regs->debounce_en, l, enable);
- 	bank->dbck_enable_mask = val;
--- 
-2.17.1
+One little nit: it seems that keyctl_watch_key is actually spelled
+keyctl(KEYCTL_WATCH_KEY, ...).
 
+jon
