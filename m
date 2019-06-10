@@ -2,164 +2,459 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AB123AF9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 919F23AFA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbfFJH2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 03:28:06 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44195 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387920AbfFJH2G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 03:28:06 -0400
-Received: by mail-lj1-f194.google.com with SMTP id k18so6922384ljc.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 00:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=AEa1FvePR8TjZ5tPsRxQlttPXPZqqsvCq8N8U2/BMvw=;
-        b=HtcwgU062b6u+RMDqDvjGg74AJiA9+ynAuFKqphFqFl/JshKhw9MMzPTmOfzMRCzem
-         1HrS3tD6d1r+uUzzHzl1jN/eEMcwxSzER/EM2I0OGhlySIbnpWr5i4j0ry2h+UQK0XYB
-         UV2cH0EQmVkdMLPX1DueHV9K8zIDOTv9DZOnOu5SuYdcZsNT6xV15huchBnzS2FxNwHL
-         LLysgv0x+8vutN+rFP19VAhpRNOrmO98gC/CCGdYIg1Qp9tXmMJ5zYHVh74pXGtIK23/
-         HcIofiUB+ZAG4Rhf5Jfu8DJ5Ki5bYqHseuw5HvM3AD9pmvKy4NH5qLkCbfSQso0sz7yR
-         k2oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=AEa1FvePR8TjZ5tPsRxQlttPXPZqqsvCq8N8U2/BMvw=;
-        b=fHxxBaKum8T/HIjvmnAOzbX4FlDblpw1/uK1TemsqXBFmaw+HAO5rmyKF2eZ9F6SuJ
-         KWkKvPwIEp+rDUS2e0xzrHggBEKus21bpuzvzuNI8rA8r5uZLXzKAMynp+6zDj7RXjC7
-         82srCRW9EQUo+EBkQyvhPW9y7oyTRdzlBQK27r3f0R3migpLb8kDY7f9mzF+HDuFw32X
-         I+JdRuMgY5kvOZ2LlHDclRhkbECGdpCP73eaBGJMUaEJdY3U/6zMnjzsLm+nWYzdu/np
-         Olbpw1d7tPYuxHz13yH2SD4JsYnDIm9iNR+Z2u6xvMlhSnFlSwgaOekpfniUHQ5jLUgh
-         Zurw==
-X-Gm-Message-State: APjAAAUvRB2lYx+c/9Nkw9SkX1L8YTdq+H/Su/yhY6aa7a8DmSxGnAB1
-        iSrw3zwv2kLnMf/l0QZu5LQ72LclVx5HbUj927JBkQ==
-X-Google-Smtp-Source: APXvYqwBYt0/vgndwbBN442Oa6LqSSXlPXPKb/oJDcXi16DiDK8SFaZYvjOj65nGlZvGc3NAeTvdGGmw1Q3TRRd3GGs=
-X-Received: by 2002:a2e:9192:: with SMTP id f18mr35053516ljg.112.1560151684109;
- Mon, 10 Jun 2019 00:28:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190609164125.377368385@linuxfoundation.org>
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 10 Jun 2019 12:57:53 +0530
-Message-ID: <CA+G9fYuer7Pf3ZK+8up9_JQ0Vbs+09dwqgs7WC-yxZ-1WmK1Fg@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/35] 4.14.125-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S2388066AbfFJH3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 03:29:23 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14541 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388050AbfFJH3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 03:29:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 00:29:20 -0700
+X-ExtLoop1: 1
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
+  by orsmga006.jf.intel.com with ESMTP; 10 Jun 2019 00:29:19 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/11] perf intel-pt: Add new packets for PEBS via PT
+Date:   Mon, 10 Jun 2019 10:27:53 +0300
+Message-Id: <20190610072803.10456-2-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190610072803.10456-1-adrian.hunter@intel.com>
+References: <20190610072803.10456-1-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Jun 2019 at 22:20, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.14.125 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue 11 Jun 2019 04:40:01 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.125-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Add 3 new packets to supports PEBS via PT, namely Block Begin Packet (BBP),
+Block Item Packet (BIP) and Block End Packet (BEP). PEBS data is encoded
+into multiple BIP packets that come between BBP and BEP. The BEP packet
+might be associated with a FUP packet. That is indicated by using a
+separate packet type (INTEL_PT_BEP_IP) similar to other packets types with
+the _IP suffix.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Refer to the Intel SDM for more information about PEBS via PT.
 
-Summary
-------------------------------------------------------------------------
+Decoding of BIP packets conflicts with single-byte TNT packets. Since BIP
+packets only occur in the context of a block (i.e. between BBP and BEP),
+that context must be recorded and passed to the packet decoder.
 
-kernel: 4.14.125-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 396ea3538ca4ce6f760fff7a837e10f2450c5526
-git describe: v4.14.123-106-g396ea3538ca4
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.123-106-g396ea3538ca4
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ .../util/intel-pt-decoder/intel-pt-decoder.c  |  38 ++++-
+ .../intel-pt-decoder/intel-pt-pkt-decoder.c   | 140 +++++++++++++++++-
+ .../intel-pt-decoder/intel-pt-pkt-decoder.h   |  21 ++-
+ tools/perf/util/intel-pt.c                    |   3 +-
+ 4 files changed, 193 insertions(+), 9 deletions(-)
 
-No regressions (compared to build v4.14.123)
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index 9eb778f9c911..44218f9cf16a 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -140,6 +140,7 @@ struct intel_pt_decoder {
+ 	int mtc_shift;
+ 	struct intel_pt_stack stack;
+ 	enum intel_pt_pkt_state pkt_state;
++	enum intel_pt_pkt_ctx pkt_ctx;
+ 	struct intel_pt_pkt packet;
+ 	struct intel_pt_pkt tnt;
+ 	int pkt_step;
+@@ -558,7 +559,7 @@ static int intel_pt_get_split_packet(struct intel_pt_decoder *decoder)
+ 	memcpy(buf + len, decoder->buf, n);
+ 	len += n;
+ 
+-	ret = intel_pt_get_packet(buf, len, &decoder->packet);
++	ret = intel_pt_get_packet(buf, len, &decoder->packet, &decoder->pkt_ctx);
+ 	if (ret < (int)old_len) {
+ 		decoder->next_buf = decoder->buf;
+ 		decoder->next_len = decoder->len;
+@@ -593,6 +594,7 @@ static int intel_pt_pkt_lookahead(struct intel_pt_decoder *decoder,
+ {
+ 	struct intel_pt_pkt_info pkt_info;
+ 	const unsigned char *buf = decoder->buf;
++	enum intel_pt_pkt_ctx pkt_ctx = decoder->pkt_ctx;
+ 	size_t len = decoder->len;
+ 	int ret;
+ 
+@@ -611,7 +613,8 @@ static int intel_pt_pkt_lookahead(struct intel_pt_decoder *decoder,
+ 			if (!len)
+ 				return INTEL_PT_NEED_MORE_BYTES;
+ 
+-			ret = intel_pt_get_packet(buf, len, &pkt_info.packet);
++			ret = intel_pt_get_packet(buf, len, &pkt_info.packet,
++						  &pkt_ctx);
+ 			if (!ret)
+ 				return INTEL_PT_NEED_MORE_BYTES;
+ 			if (ret < 0)
+@@ -686,6 +689,10 @@ static int intel_pt_calc_cyc_cb(struct intel_pt_pkt_info *pkt_info)
+ 	case INTEL_PT_MNT:
+ 	case INTEL_PT_PTWRITE:
+ 	case INTEL_PT_PTWRITE_IP:
++	case INTEL_PT_BBP:
++	case INTEL_PT_BIP:
++	case INTEL_PT_BEP:
++	case INTEL_PT_BEP_IP:
+ 		return 0;
+ 
+ 	case INTEL_PT_MTC:
+@@ -878,7 +885,7 @@ static int intel_pt_get_next_packet(struct intel_pt_decoder *decoder)
+ 		}
+ 
+ 		ret = intel_pt_get_packet(decoder->buf, decoder->len,
+-					  &decoder->packet);
++					  &decoder->packet, &decoder->pkt_ctx);
+ 		if (ret == INTEL_PT_NEED_MORE_BYTES && BITS_PER_LONG == 32 &&
+ 		    decoder->len < INTEL_PT_PKT_MAX_SZ && !decoder->next_buf) {
+ 			ret = intel_pt_get_split_packet(decoder);
+@@ -1624,6 +1631,10 @@ static int intel_pt_walk_psbend(struct intel_pt_decoder *decoder)
+ 		case INTEL_PT_MWAIT:
+ 		case INTEL_PT_PWRE:
+ 		case INTEL_PT_PWRX:
++		case INTEL_PT_BBP:
++		case INTEL_PT_BIP:
++		case INTEL_PT_BEP:
++		case INTEL_PT_BEP_IP:
+ 			decoder->have_tma = false;
+ 			intel_pt_log("ERROR: Unexpected packet\n");
+ 			err = -EAGAIN;
+@@ -1717,6 +1728,10 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
+ 		case INTEL_PT_MWAIT:
+ 		case INTEL_PT_PWRE:
+ 		case INTEL_PT_PWRX:
++		case INTEL_PT_BBP:
++		case INTEL_PT_BIP:
++		case INTEL_PT_BEP:
++		case INTEL_PT_BEP_IP:
+ 			intel_pt_log("ERROR: Missing TIP after FUP\n");
+ 			decoder->pkt_state = INTEL_PT_STATE_ERR3;
+ 			decoder->pkt_step = 0;
+@@ -2038,6 +2053,12 @@ static int intel_pt_walk_trace(struct intel_pt_decoder *decoder)
+ 			decoder->state.pwrx_payload = decoder->packet.payload;
+ 			return 0;
+ 
++		case INTEL_PT_BBP:
++		case INTEL_PT_BIP:
++		case INTEL_PT_BEP:
++		case INTEL_PT_BEP_IP:
++			break;
++
+ 		default:
+ 			return intel_pt_bug(decoder);
+ 		}
+@@ -2076,6 +2097,10 @@ static int intel_pt_walk_psb(struct intel_pt_decoder *decoder)
+ 		case INTEL_PT_MWAIT:
+ 		case INTEL_PT_PWRE:
+ 		case INTEL_PT_PWRX:
++		case INTEL_PT_BBP:
++		case INTEL_PT_BIP:
++		case INTEL_PT_BEP:
++		case INTEL_PT_BEP_IP:
+ 			intel_pt_log("ERROR: Unexpected packet\n");
+ 			err = -ENOENT;
+ 			goto out;
+@@ -2282,6 +2307,10 @@ static int intel_pt_walk_to_ip(struct intel_pt_decoder *decoder)
+ 		case INTEL_PT_MWAIT:
+ 		case INTEL_PT_PWRE:
+ 		case INTEL_PT_PWRX:
++		case INTEL_PT_BBP:
++		case INTEL_PT_BIP:
++		case INTEL_PT_BEP:
++		case INTEL_PT_BEP_IP:
+ 		default:
+ 			break;
+ 		}
+@@ -2632,11 +2661,12 @@ static unsigned char *intel_pt_last_psb(unsigned char *buf, size_t len)
+ static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc,
+ 			      size_t *rem)
+ {
++	enum intel_pt_pkt_ctx ctx = INTEL_PT_NO_CTX;
+ 	struct intel_pt_pkt packet;
+ 	int ret;
+ 
+ 	while (len) {
+-		ret = intel_pt_get_packet(buf, len, &packet);
++		ret = intel_pt_get_packet(buf, len, &packet, &ctx);
+ 		if (ret <= 0)
+ 			return false;
+ 		if (packet.type == INTEL_PT_TSC) {
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c
+index d426761a549d..2b2793b339c0 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c
+@@ -71,6 +71,10 @@ static const char * const packet_name[] = {
+ 	[INTEL_PT_MWAIT]	= "MWAIT",
+ 	[INTEL_PT_PWRE]		= "PWRE",
+ 	[INTEL_PT_PWRX]		= "PWRX",
++	[INTEL_PT_BBP]		= "BBP",
++	[INTEL_PT_BIP]		= "BIP",
++	[INTEL_PT_BEP]		= "BEP",
++	[INTEL_PT_BEP_IP]	= "BEP",
+ };
+ 
+ const char *intel_pt_pkt_name(enum intel_pt_pkt_type type)
+@@ -289,6 +293,55 @@ static int intel_pt_get_pwrx(const unsigned char *buf, size_t len,
+ 	return 7;
+ }
+ 
++static int intel_pt_get_bbp(const unsigned char *buf, size_t len,
++			    struct intel_pt_pkt *packet)
++{
++	if (len < 3)
++		return INTEL_PT_NEED_MORE_BYTES;
++	packet->type = INTEL_PT_BBP;
++	packet->count = buf[2] >> 7;
++	packet->payload = buf[2] & 0x1f;
++	return 3;
++}
++
++static int intel_pt_get_bip_4(const unsigned char *buf, size_t len,
++			      struct intel_pt_pkt *packet)
++{
++	if (len < 5)
++		return INTEL_PT_NEED_MORE_BYTES;
++	packet->type = INTEL_PT_BIP;
++	packet->count = buf[0] >> 3;
++	memcpy_le64(&packet->payload, buf + 1, 4);
++	return 5;
++}
++
++static int intel_pt_get_bip_8(const unsigned char *buf, size_t len,
++			      struct intel_pt_pkt *packet)
++{
++	if (len < 9)
++		return INTEL_PT_NEED_MORE_BYTES;
++	packet->type = INTEL_PT_BIP;
++	packet->count = buf[0] >> 3;
++	memcpy_le64(&packet->payload, buf + 1, 8);
++	return 9;
++}
++
++static int intel_pt_get_bep(size_t len, struct intel_pt_pkt *packet)
++{
++	if (len < 2)
++		return INTEL_PT_NEED_MORE_BYTES;
++	packet->type = INTEL_PT_BEP;
++	return 2;
++}
++
++static int intel_pt_get_bep_ip(size_t len, struct intel_pt_pkt *packet)
++{
++	if (len < 2)
++		return INTEL_PT_NEED_MORE_BYTES;
++	packet->type = INTEL_PT_BEP_IP;
++	return 2;
++}
++
+ static int intel_pt_get_ext(const unsigned char *buf, size_t len,
+ 			    struct intel_pt_pkt *packet)
+ {
+@@ -329,6 +382,12 @@ static int intel_pt_get_ext(const unsigned char *buf, size_t len,
+ 		return intel_pt_get_pwre(buf, len, packet);
+ 	case 0xA2: /* PWRX */
+ 		return intel_pt_get_pwrx(buf, len, packet);
++	case 0x63: /* BBP */
++		return intel_pt_get_bbp(buf, len, packet);
++	case 0x33: /* BEP no IP */
++		return intel_pt_get_bep(len, packet);
++	case 0xb3: /* BEP with IP */
++		return intel_pt_get_bep_ip(len, packet);
+ 	default:
+ 		return INTEL_PT_BAD_PACKET;
+ 	}
+@@ -477,7 +536,8 @@ static int intel_pt_get_mtc(const unsigned char *buf, size_t len,
+ }
+ 
+ static int intel_pt_do_get_packet(const unsigned char *buf, size_t len,
+-				  struct intel_pt_pkt *packet)
++				  struct intel_pt_pkt *packet,
++				  enum intel_pt_pkt_ctx ctx)
+ {
+ 	unsigned int byte;
+ 
+@@ -487,6 +547,22 @@ static int intel_pt_do_get_packet(const unsigned char *buf, size_t len,
+ 		return INTEL_PT_NEED_MORE_BYTES;
+ 
+ 	byte = buf[0];
++
++	switch (ctx) {
++	case INTEL_PT_NO_CTX:
++		break;
++	case INTEL_PT_BLK_4_CTX:
++		if ((byte & 0x7) == 4)
++			return intel_pt_get_bip_4(buf, len, packet);
++		break;
++	case INTEL_PT_BLK_8_CTX:
++		if ((byte & 0x7) == 4)
++			return intel_pt_get_bip_8(buf, len, packet);
++		break;
++	default:
++		break;
++	};
++
+ 	if (!(byte & BIT(0))) {
+ 		if (byte == 0)
+ 			return intel_pt_get_pad(packet);
+@@ -525,15 +601,65 @@ static int intel_pt_do_get_packet(const unsigned char *buf, size_t len,
+ 	}
+ }
+ 
++void intel_pt_upd_pkt_ctx(const struct intel_pt_pkt *packet,
++			  enum intel_pt_pkt_ctx *ctx)
++{
++	switch (packet->type) {
++	case INTEL_PT_BAD:
++	case INTEL_PT_PAD:
++	case INTEL_PT_TSC:
++	case INTEL_PT_TMA:
++	case INTEL_PT_MTC:
++	case INTEL_PT_FUP:
++	case INTEL_PT_CYC:
++	case INTEL_PT_CBR:
++	case INTEL_PT_MNT:
++	case INTEL_PT_EXSTOP:
++	case INTEL_PT_EXSTOP_IP:
++	case INTEL_PT_PWRE:
++	case INTEL_PT_PWRX:
++	case INTEL_PT_BIP:
++		break;
++	case INTEL_PT_TNT:
++	case INTEL_PT_TIP:
++	case INTEL_PT_TIP_PGD:
++	case INTEL_PT_TIP_PGE:
++	case INTEL_PT_MODE_EXEC:
++	case INTEL_PT_MODE_TSX:
++	case INTEL_PT_PIP:
++	case INTEL_PT_OVF:
++	case INTEL_PT_VMCS:
++	case INTEL_PT_TRACESTOP:
++	case INTEL_PT_PSB:
++	case INTEL_PT_PSBEND:
++	case INTEL_PT_PTWRITE:
++	case INTEL_PT_PTWRITE_IP:
++	case INTEL_PT_MWAIT:
++	case INTEL_PT_BEP:
++	case INTEL_PT_BEP_IP:
++		*ctx = INTEL_PT_NO_CTX;
++		break;
++	case INTEL_PT_BBP:
++		if (packet->count)
++			*ctx = INTEL_PT_BLK_4_CTX;
++		else
++			*ctx = INTEL_PT_BLK_8_CTX;
++		break;
++	default:
++		break;
++	}
++}
++
+ int intel_pt_get_packet(const unsigned char *buf, size_t len,
+-			struct intel_pt_pkt *packet)
++			struct intel_pt_pkt *packet, enum intel_pt_pkt_ctx *ctx)
+ {
+ 	int ret;
+ 
+-	ret = intel_pt_do_get_packet(buf, len, packet);
++	ret = intel_pt_do_get_packet(buf, len, packet, *ctx);
+ 	if (ret > 0) {
+ 		while (ret < 8 && len > (size_t)ret && !buf[ret])
+ 			ret += 1;
++		intel_pt_upd_pkt_ctx(packet, ctx);
+ 	}
+ 	return ret;
+ }
+@@ -611,8 +737,10 @@ int intel_pt_pkt_desc(const struct intel_pt_pkt *packet, char *buf,
+ 		return snprintf(buf, buf_len, "%s 0x%llx IP:0", name, payload);
+ 	case INTEL_PT_PTWRITE_IP:
+ 		return snprintf(buf, buf_len, "%s 0x%llx IP:1", name, payload);
++	case INTEL_PT_BEP:
+ 	case INTEL_PT_EXSTOP:
+ 		return snprintf(buf, buf_len, "%s IP:0", name);
++	case INTEL_PT_BEP_IP:
+ 	case INTEL_PT_EXSTOP_IP:
+ 		return snprintf(buf, buf_len, "%s IP:1", name);
+ 	case INTEL_PT_MWAIT:
+@@ -630,6 +758,12 @@ int intel_pt_pkt_desc(const struct intel_pt_pkt *packet, char *buf,
+ 				(unsigned int)((payload >> 4) & 0xf),
+ 				(unsigned int)(payload & 0xf),
+ 				(unsigned int)((payload >> 8) & 0xf));
++	case INTEL_PT_BBP:
++		return snprintf(buf, buf_len, "%s SZ %s-byte Type 0x%llx",
++				name, packet->count ? "4" : "8", payload);
++	case INTEL_PT_BIP:
++		return snprintf(buf, buf_len, "%s ID 0x%02x Value 0x%llx",
++				name, packet->count, payload);
+ 	default:
+ 		break;
+ 	}
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.h b/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.h
+index 73ddc3a88d07..682b35282abc 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.h
+@@ -59,6 +59,10 @@ enum intel_pt_pkt_type {
+ 	INTEL_PT_MWAIT,
+ 	INTEL_PT_PWRE,
+ 	INTEL_PT_PWRX,
++	INTEL_PT_BBP,
++	INTEL_PT_BIP,
++	INTEL_PT_BEP,
++	INTEL_PT_BEP_IP,
+ };
+ 
+ struct intel_pt_pkt {
+@@ -67,10 +71,25 @@ struct intel_pt_pkt {
+ 	uint64_t		payload;
+ };
+ 
++/*
++ * Decoding of BIP packets conflicts with single-byte TNT packets. Since BIP
++ * packets only occur in the context of a block (i.e. between BBP and BEP), that
++ * context must be recorded and passed to the packet decoder.
++ */
++enum intel_pt_pkt_ctx {
++	INTEL_PT_NO_CTX,	/* BIP packets are invalid */
++	INTEL_PT_BLK_4_CTX,	/* 4-byte BIP packets */
++	INTEL_PT_BLK_8_CTX,	/* 8-byte BIP packets */
++};
++
+ const char *intel_pt_pkt_name(enum intel_pt_pkt_type);
+ 
+ int intel_pt_get_packet(const unsigned char *buf, size_t len,
+-			struct intel_pt_pkt *packet);
++			struct intel_pt_pkt *packet,
++			enum intel_pt_pkt_ctx *ctx);
++
++void intel_pt_upd_pkt_ctx(const struct intel_pt_pkt *packet,
++			  enum intel_pt_pkt_ctx *ctx);
+ 
+ int intel_pt_pkt_desc(const struct intel_pt_pkt *packet, char *buf, size_t len);
+ 
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 3cff8fe2eaa0..f43d3ac2db8b 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -174,13 +174,14 @@ static void intel_pt_dump(struct intel_pt *pt __maybe_unused,
+ 	int ret, pkt_len, i;
+ 	char desc[INTEL_PT_PKT_DESC_MAX];
+ 	const char *color = PERF_COLOR_BLUE;
++	enum intel_pt_pkt_ctx ctx = INTEL_PT_NO_CTX;
+ 
+ 	color_fprintf(stdout, color,
+ 		      ". ... Intel Processor Trace data: size %zu bytes\n",
+ 		      len);
+ 
+ 	while (len) {
+-		ret = intel_pt_get_packet(buf, len, &packet);
++		ret = intel_pt_get_packet(buf, len, &packet, &ctx);
+ 		if (ret > 0)
+ 			pkt_len = ret;
+ 		else
+-- 
+2.17.1
 
-No fixes (compared to build v4.14.123)
-
-Ran 23749 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-commands-tests
-* ltp-hugetlb-tests
-* ltp-math-tests
-* ltp-mm-tests
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
