@@ -2,349 +2,284 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05F433B8BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06633B8C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404035AbfFJPzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:55:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49910 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404005AbfFJPzu (ORCPT
+        id S2391361AbfFJP5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:57:50 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:40419 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389447AbfFJP5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:55:50 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5AFmuiO169598;
-        Mon, 10 Jun 2019 15:54:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=n55ozwFz00A2KXGo1PAw80PdY3qKDI+uXTKqCoomPkY=;
- b=BQ5Zffl+TUiRH63AoxY92oX/Nzh4tQGsrw5TSYg5FlwSnXdLuIKfqq849q7/25mdFYde
- hAN/yDutH24429pk+UzaCsUwqkBOsUtKKLao3W//sIL0kLuyH8vEQcF4vjcwLq/uzL5B
- I/Jjor3ZeUiMKNhF7g+imOX1kY2rpJS4TXZk27rQC0KKm/k3aN8TK3foNy8KP9HZMaIx
- bzenZVap8QoggkT8mvMfUAH8ldOmuBBm7706wje0EmeKdsASWiiGXFGCiMRl5b4oyiFI
- GyaiM8bQGD6RjN0JiuAGOr8nj4b0grq1YJXN8C4ZAV5WIenqjLkScTXYn7L1Fe+/cy3z 4g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2t04etft6r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 15:54:57 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5AFsjhj185210;
-        Mon, 10 Jun 2019 15:54:56 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2t1jpgxq6t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 15:54:56 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5AFsrD1000784;
-        Mon, 10 Jun 2019 15:54:53 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Jun 2019 08:54:52 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 1C7CE6A00FC; Mon, 10 Jun 2019 11:56:15 -0400 (EDT)
-Date:   Mon, 10 Jun 2019 11:56:15 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH v4 4/9] iommu: Add bounce page APIs
-Message-ID: <20190610155614.GV28796@char.us.oracle.com>
-References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
- <20190603011620.31999-5-baolu.lu@linux.intel.com>
+        Mon, 10 Jun 2019 11:57:50 -0400
+Received: by mail-ua1-f65.google.com with SMTP id s4so3220220uad.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 08:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version;
+        bh=aRAWyVb7T/pu55YIusBAX8P46//GPGyU/Kan5m7eqCo=;
+        b=Wo0JoL3ONHGWQdF0PGrZJ5QKkIu6siHwVXdNEK+PZjNp/QmRYrb1ZqI/qXctBPSg3T
+         ka0oTBpnVpmWvlYSre9bVgaVvYg/7Uuw1yVGJh3rTineRd+jxVjpNyM5qbb9iYgFFnAg
+         YQrJAecw5BTnb2ghfaxRCTnaY958vISiKT6yH9V7Xtelfylgl92rfPTRZIb3z7lFdKyj
+         YVkSfe5Hhd0+Wzd9oSWVMdfOOn40wvp55ik037pd3Nt+km0se1//3xDSxnsaEcOGMelY
+         juYByA4rwB4mzGS9LC40iBwu59cHE53UEXJUePp0L27Vh18sf6J2rsHIt0fRhbbHv8mw
+         xEKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version;
+        bh=aRAWyVb7T/pu55YIusBAX8P46//GPGyU/Kan5m7eqCo=;
+        b=S26VsjcJRtbuHhc+nM1qXNMpbyFqMLHy2RzCZr26kwHQRZ9vNZTDxnlEn+CxqsWNt0
+         TJZcH/qvTu5b9e7kE+hC5ySMpR5zv9YP4REpELOh8e48ePb5ffl2K4msvKdtmjhDzMaH
+         rDYbPo/lBl33AhBFeetpc3hK0VGY9k6IpvI9ZHIGm3LRAa7st8FHfBz/lRtah/+1Pysp
+         QMEie0/wKXu1RQwWsQmHmdvWnzhbd+5vdS/A78zDpkZ9HACgNgP9Kn+0I7MJEvmiBf7a
+         x9zKMdxedfBac6fj5FgFESsV5iRT6BmElVWpbg3lbJCUyxxyV0JcNm9Ux4BePwSlcPIE
+         QBWQ==
+X-Gm-Message-State: APjAAAXec0dVwjYHrLY/izv5TuvOsPf8xD6Rxp10K1zQ5u9eUuqYHpYb
+        UvGDv2rwlmBuuKFh92P5qPaM2Q==
+X-Google-Smtp-Source: APXvYqwLQDesqUmKTmojJdikYYaptNzhKaUFR4puTmpiUQbDKjarHEaYT5uxBnbG3vEEECo8t7UuBw==
+X-Received: by 2002:ab0:6619:: with SMTP id r25mr11398562uam.33.1560182269131;
+        Mon, 10 Jun 2019 08:57:49 -0700 (PDT)
+Received: from tpx230-nicolas (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
+        by smtp.gmail.com with ESMTPSA id q77sm2952584vke.13.2019.06.10.08.57.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 08:57:47 -0700 (PDT)
+Message-ID: <e40174b9a3d813389dc9529598541e4849067387.camel@ndufresne.ca>
+Subject: Re: [PATCHv4 0/2] Document memory-to-memory video codec interfaces
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org
+Cc:     Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Pawel Osciak <posciak@chromium.org>
+Date:   Mon, 10 Jun 2019 11:57:45 -0400
+In-Reply-To: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
+References: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-nGMRhe68cITpEahwQfZ0"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603011620.31999-5-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906100108
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906100108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 09:16:15AM +0800, Lu Baolu wrote:
-> IOMMU hardware always use paging for DMA remapping.  The
-> minimum mapped window is a page size. The device drivers
-> may map buffers not filling whole IOMMU window. It allows
-> device to access to possibly unrelated memory and various
-> malicious devices can exploit this to perform DMA attack.
-> 
-> This introduces the bouce buffer mechanism for DMA buffers
-> which doesn't fill a minimal IOMMU page. It could be used
-> by various vendor specific IOMMU drivers as long as the
-> DMA domain is managed by the generic IOMMU layer. Below
-> APIs are added:
-> 
-> * iommu_bounce_map(dev, addr, paddr, size, dir, attrs)
->   - Map a buffer start at DMA address @addr in bounce page
->     manner. For buffer parts that doesn't cross a whole
->     minimal IOMMU page, the bounce page policy is applied.
->     A bounce page mapped by swiotlb will be used as the DMA
->     target in the IOMMU page table. Otherwise, the physical
->     address @paddr is mapped instead.
-> 
-> * iommu_bounce_unmap(dev, addr, size, dir, attrs)
->   - Unmap the buffer mapped with iommu_bounce_map(). The bounce
->     page will be torn down after the bounced data get synced.
-> 
-> * iommu_bounce_sync(dev, addr, size, dir, target)
->   - Synce the bounced data in case the bounce mapped buffer is
->     reused.
-> 
-> The whole APIs are included within a kernel option IOMMU_BOUNCE_PAGE.
-> It's useful for cases where bounce page doesn't needed, for example,
-> embedded cases.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Alan Cox <alan@linux.intel.com>
-> Cc: Mika Westerberg <mika.westerberg@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/Kconfig |  14 +++++
->  drivers/iommu/iommu.c | 119 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/iommu.h |  35 +++++++++++++
->  3 files changed, 168 insertions(+)
-> 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 83664db5221d..d837ec3f359b 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -86,6 +86,20 @@ config IOMMU_DEFAULT_PASSTHROUGH
->  
->  	  If unsure, say N here.
->  
-> +config IOMMU_BOUNCE_PAGE
-> +	bool "Use bounce page for untrusted devices"
-> +	depends on IOMMU_API
-> +	select SWIOTLB
 
-I think you want:
-	depends on IOMMU_API && SWIOTLB
+--=-nGMRhe68cITpEahwQfZ0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As people may want to have IOMMU and SWIOTLB, and not IOMMU_BOUNCE_PAGE enabled.
+Le lundi 03 juin 2019 =C3=A0 13:28 +0200, Hans Verkuil a =C3=A9crit :
+> Since Thomasz was very busy with other things, I've taken over this
+> patch series. This v4 includes his draft changes and additional changes
+> from me.
+>=20
+> This series attempts to add the documentation of what was discussed
+> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
+> later Embedded Linux Conference Europe 2014 in D=C3=BCsseldorf and then
+> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
+> video team (but mostly in a cosmetic way or making the document more
+> precise), during the several years of Chrome OS using the APIs in
+> production.
+>=20
+> Note that most, if not all, of the API is already implemented in
+> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
+> this series is just to formalize what we already have.
+>=20
+> Thanks everyone for the huge amount of useful comments to previous
+> versions of this series. Much of the credits should go to Pawel Osciak
+> too, for writing most of the original text of the initial RFC.
+>=20
+> This v4 incorporates all known comments (let me know if I missed
+> something!) and should be complete for the decoder.
+>=20
+> For the encoder there are two remaining TODOs for the API:
+>=20
+> 1) Setting the frame rate so bitrate control can make sense, since
+>    they need to know this information.
+>=20
+>    Suggested solution: require support for ENUM_FRAMEINTERVALS for the
+>    coded pixelformats and S_PARM(OUTPUT). Open question: some drivers
+>    (mediatek, hva, coda) require S_PARM(OUTPUT), some (venus) allow both
+>    S_PARM(CAPTURE) and S_PARM(OUTPUT). I am inclined to allow both since
+>    this is not a CAPTURE vs OUTPUT thing, it is global to both queues.
 
-> +	help
-> +	  IOMMU hardware always use paging for DMA remapping. The minimum
-> +	  mapped window is a page size. The device drivers may map buffers
-> +	  not filling whole IOMMU window. This allows device to access to
-> +	  possibly unrelated memory and malicious device can exploit this
-> +	  to perform a DMA attack. Select this to use a bounce page for the
-> +	  buffer which doesn't fill a whole IOMU page.
-> +
-> +	  If unsure, say N here.
-> +
->  config OF_IOMMU
->         def_bool y
->         depends on OF && IOMMU_API
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 2a906386bb8e..fa44f681a82b 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -2246,3 +2246,122 @@ int iommu_sva_get_pasid(struct iommu_sva *handle)
->  	return ops->sva_get_pasid(handle);
->  }
->  EXPORT_SYMBOL_GPL(iommu_sva_get_pasid);
-> +
-> +#ifdef CONFIG_IOMMU_BOUNCE_PAGE
-> +
-> +/*
-> + * Bounce buffer support for external devices:
-> + *
-> + * IOMMU hardware always use paging for DMA remapping. The minimum mapped
-> + * window is a page size. The device drivers may map buffers not filling
-> + * whole IOMMU window. This allows device to access to possibly unrelated
-> + * memory and malicious device can exploit this to perform a DMA attack.
-> + * Use bounce pages for the buffer which doesn't fill whole IOMMU pages.
-> + */
-> +
-> +static inline size_t
-> +get_aligned_size(struct iommu_domain *domain, dma_addr_t addr, size_t size)
-> +{
-> +	unsigned long page_size = 1 << __ffs(domain->pgsize_bitmap);
-> +	unsigned long offset = page_size - 1;
-> +
-> +	return ALIGN((addr & offset) + size, page_size);
-> +}
-> +
-> +dma_addr_t iommu_bounce_map(struct device *dev, dma_addr_t iova,
-> +			    phys_addr_t paddr, size_t size,
-> +			    enum dma_data_direction dir,
-> +			    unsigned long attrs)
-> +{
-> +	struct iommu_domain *domain;
-> +	unsigned int min_pagesz;
-> +	phys_addr_t tlb_addr;
-> +	size_t aligned_size;
-> +	int prot = 0;
-> +	int ret;
-> +
-> +	domain = iommu_get_dma_domain(dev);
-> +	if (!domain)
-> +		return DMA_MAPPING_ERROR;
-> +
-> +	if (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL)
-> +		prot |= IOMMU_READ;
-> +	if (dir == DMA_FROM_DEVICE || dir == DMA_BIDIRECTIONAL)
-> +		prot |= IOMMU_WRITE;
-> +
-> +	aligned_size = get_aligned_size(domain, paddr, size);
-> +	min_pagesz = 1 << __ffs(domain->pgsize_bitmap);
-> +
-> +	/*
-> +	 * If both the physical buffer start address and size are
-> +	 * page aligned, we don't need to use a bounce page.
-> +	 */
-> +	if (!IS_ALIGNED(paddr | size, min_pagesz)) {
-> +		tlb_addr = swiotlb_tbl_map_single(dev,
-> +				__phys_to_dma(dev, io_tlb_start),
-> +				paddr, size, aligned_size, dir, attrs);
-> +		if (tlb_addr == DMA_MAPPING_ERROR)
-> +			return DMA_MAPPING_ERROR;
-> +	} else {
-> +		tlb_addr = paddr;
-> +	}
-> +
-> +	ret = iommu_map(domain, iova, tlb_addr, aligned_size, prot);
-> +	if (ret) {
-> +		swiotlb_tbl_unmap_single(dev, tlb_addr, size,
-> +					 aligned_size, dir, attrs);
-> +		return DMA_MAPPING_ERROR;
-> +	}
-> +
-> +	return iova;
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_bounce_map);
-> +
-> +static inline phys_addr_t
-> +iova_to_tlb_addr(struct iommu_domain *domain, dma_addr_t addr)
-> +{
-> +	if (unlikely(!domain->ops || !domain->ops->iova_to_phys))
-> +		return 0;
-> +
-> +	return domain->ops->iova_to_phys(domain, addr);
-> +}
-> +
-> +void iommu_bounce_unmap(struct device *dev, dma_addr_t iova, size_t size,
-> +			enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +	struct iommu_domain *domain;
-> +	phys_addr_t tlb_addr;
-> +	size_t aligned_size;
-> +
-> +	domain = iommu_get_dma_domain(dev);
-> +	if (WARN_ON(!domain))
-> +		return;
-> +
-> +	aligned_size = get_aligned_size(domain, iova, size);
-> +	tlb_addr = iova_to_tlb_addr(domain, iova);
-> +	if (WARN_ON(!tlb_addr))
-> +		return;
-> +
-> +	iommu_unmap(domain, iova, aligned_size);
-> +	if (is_swiotlb_buffer(tlb_addr))
-> +		swiotlb_tbl_unmap_single(dev, tlb_addr, size,
-> +					 aligned_size, dir, attrs);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_bounce_unmap);
-> +
-> +void iommu_bounce_sync(struct device *dev, dma_addr_t addr, size_t size,
-> +		       enum dma_data_direction dir, enum dma_sync_target target)
-> +{
-> +	struct iommu_domain *domain;
-> +	phys_addr_t tlb_addr;
-> +
-> +	domain = iommu_get_dma_domain(dev);
-> +	if (WARN_ON(!domain))
-> +		return;
-> +
-> +	tlb_addr = iova_to_tlb_addr(domain, addr);
-> +	if (is_swiotlb_buffer(tlb_addr))
-> +		swiotlb_tbl_sync_single(dev, tlb_addr, size, dir, target);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_bounce_sync);
-> +#endif /* CONFIG_IOMMU_BOUNCE_PAGE */
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 91af22a344e2..814c0da64692 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -25,6 +25,8 @@
->  #include <linux/errno.h>
->  #include <linux/err.h>
->  #include <linux/of.h>
-> +#include <linux/swiotlb.h>
-> +#include <linux/dma-direct.h>
->  
->  #define IOMMU_READ	(1 << 0)
->  #define IOMMU_WRITE	(1 << 1)
-> @@ -499,6 +501,39 @@ int iommu_sva_set_ops(struct iommu_sva *handle,
->  		      const struct iommu_sva_ops *ops);
->  int iommu_sva_get_pasid(struct iommu_sva *handle);
->  
-> +#ifdef CONFIG_IOMMU_BOUNCE_PAGE
-> +dma_addr_t iommu_bounce_map(struct device *dev, dma_addr_t iova,
-> +			    phys_addr_t paddr, size_t size,
-> +			    enum dma_data_direction dir,
-> +			    unsigned long attrs);
-> +void iommu_bounce_unmap(struct device *dev, dma_addr_t iova, size_t size,
-> +			enum dma_data_direction dir, unsigned long attrs);
-> +void iommu_bounce_sync(struct device *dev, dma_addr_t addr, size_t size,
-> +		       enum dma_data_direction dir,
-> +		       enum dma_sync_target target);
-> +#else
-> +static inline
-> +dma_addr_t iommu_bounce_map(struct device *dev, dma_addr_t iova,
-> +			    phys_addr_t paddr, size_t size,
-> +			    enum dma_data_direction dir,
-> +			    unsigned long attrs)
-> +{
-> +	return DMA_MAPPING_ERROR;
-> +}
-> +
-> +static inline
-> +void iommu_bounce_unmap(struct device *dev, dma_addr_t iova, size_t size,
-> +			enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +}
-> +
-> +static inline
-> +void iommu_bounce_sync(struct device *dev, dma_addr_t addr, size_t size,
-> +		       enum dma_data_direction dir, enum dma_sync_target target)
-> +{
-> +}
-> +#endif /* CONFIG_IOMMU_BOUNCE_PAGE */
-> +
->  #else /* CONFIG_IOMMU_API */
->  
->  struct iommu_ops {};
-> -- 
-> 2.17.1
-> 
+Is ENUM_FRAMEINTERVALS really required ? This will be a hint to the
+encoder, so that the encoder round to it's internal precision does not
+seem very important.
+
+>=20
+> 2) Interactions between OUTPUT and CAPTURE formats.
+>=20
+>    The main problem is what to do if the capture sizeimage is too small
+>    for the OUTPUT resolution when streaming starts.
+>=20
+>    Proposal: width and height of S_FMT(OUTPUT) are used to
+>    calculate a minimum sizeimage (app may request more). This is
+>    driver-specific.
+>=20
+>    V4L2_FMT_FLAG_FIXED_RESOLUTION is always set for codec formats
+>    for the encoder (i.e. we don't support mid-stream resolution
+>    changes for now) and V4L2_EVENT_SOURCE_CHANGE is not
+>    supported. See https://patchwork.linuxtv.org/patch/56478/ for
+>    the patch adding this flag.
+>=20
+>    Of course, if we start to support mid-stream resolution
+>    changes (or other changes that require a source change event),
+>    then this flag should be dropped by the encoder driver and
+>    documentation on how to handle the source change event should
+>    be documented in the encoder spec. I prefer to postpone this
+>    until we have an encoder than can actually do mid-stream
+>    resolution changes.
+
+For H264, mid-stream changes would make sense for the case we'd like
+the statefull encoder to emit multiple PPS at start, so then the switch
+would simply change the PPS index. The problem seems to be how do we
+expose "multiple" resolution in our interface ? As there is currently
+no solution to this, I would not see much use for having this supported
+at the moment.
+
+>=20
+>    If sizeimage of the OUTPUT is too small for the CAPTURE
+>    resolution and V4L2_EVENT_SOURCE_CHANGE is not supported,
+>    then the second STREAMON (either CAPTURE or OUTPUT) will
+>    return -ENOMEM since there is not enough memory to do the
+>    encode.
+>=20
+>    If V4L2_FMT_FLAG_FIXED_RESOLUTION is set (i.e. that should
+>    be the case for all current encoders), then any bitrate controls
+>    will be limited in range to what the current state (CAPTURE and
+>    OUTPUT formats and frame rate) supports.
+>=20
+> Comments regarding these two encoder proposals are welcome!
+>=20
+> Regards,
+>=20
+> 	Hans
+>=20
+> Changes since v3:
+>=20
+> - Lots of stylistic fixes and fixing typos/grammar/etc.
+>=20
+> Decoder:
+>=20
+> - width/height for S_FMT(OUTPUT):
+>=20
+>   Expects that the output width and height is always a valid
+>   resolution (i.e. never 0x0), and G/S/TRY_FMT and REQBUFS will use that
+>   instead of returning an error. Note that this resolution is a placehold=
+er
+>   until the actual resolution is parsed from the stream.
+>=20
+> - Dropped step 3 (Query the minimum number of buffers required for the CA=
+PTURE
+>   queue via VIDIOC_G_CTRL().) in the Capture Setup section. It seems to b=
+e
+>   a left-over from earlier versions. The same information is also in Step=
+ 10,
+>   so no need to have this in two places.
+>=20
+> - Added step 5 in the Capture Setup section: set COMPOSE rectangle if nee=
+ded.
+>=20
+> - VIDIO_DECODER_CMD: document EBUSY return while draining the queue.
+>=20
+> Encoder:
+>=20
+> - width/height for S_FMT(CAPTURE): The width/height for the CAPTURE forma=
+t
+>   are marked as read-only and are based on the encoders current state suc=
+h
+>   as the OUTPUT format.
+>=20
+> - Drop TGT_COMPOSE support in the encoder: there are currently
+>   no encoders that can do composing/scaling.
+>=20
+> - Document corner cases in the Drain sequence
+>=20
+> - Document error handling.
+>=20
+> - VIDIO_ENCODER_CMD: document EBUSY return while draining the queue.
+>=20
+> Changes since v2:
+> (https://lore.kernel.org/patchwork/cover/1002474/)
+> Decoder:
+>  - Specified that the initial source change event is signaled
+>    regardless of whether the client-set format matches the
+>    stream format.
+>  - Dropped V4L2_CID_MIN_BUFFERS_FOR_OUTPUT since it's meaningless
+>    for the bitstream input buffers of decoders.
+>  - Explicitly stated that VIDIOC_REQBUFS is not allowed on CAPTURE
+>    if the stream information is not available.
+>  - Described decode error handling.
+>  - Mentioned that timestamps can be observed after a seek to
+>    determine whether the CAPTURE buffers originated from before
+>    or after the seek.
+>  - Explicitly stated that after a pair of V4L2_DEC_CMD_STOP and
+>    V4L2_DEC_CMD_START, the decoder is not reset and preserves
+>    all the state.
+>=20
+> Encoder:
+>  - Specified that width and height of CAPTURE format are ignored
+>    and always zero.
+>  - Explicitly noted the common use case for the CROP target with
+>    macroblock-unaligned video resolutions.
+>  - Added a reference to Request API.
+>  - Dropped V4L2_CID_MIN_BUFFERS_FOR_CAPTURE since it's meaningless
+>    for the bitstream output buffers of encoders.
+>  - Explicitly stated that after a pair of V4L2_ENC_CMD_STOP and
+>    V4L2_ENC_CMD_START, the encoder is not reset and preserves
+>    all the state.
+>=20
+> General:
+>  - Dropped format enumeration from "Initialization", since it's already
+>    a part of "Querying capabilities".
+>  - Many spelling, grammar, stylistic, etc. changes.
+>  - Changed the style of note blocks.
+>  - Rebased onto Hans' documentation cleanup series.
+>    (https://patchwork.kernel.org/cover/10775407/
+>     https://patchwork.kernel.org/patch/10776737/)
+>  - Moved the interfaces under the "Video Memory-To-Memory Interface"
+>    section.
+>=20
+> For changes since v1 see the v2:
+> https://lore.kernel.org/patchwork/cover/1002474/
+>=20
+> For changes since RFC see the v1:
+> https://patchwork.kernel.org/cover/10542207/
+>=20
+> Tomasz Figa (2):
+>   media: docs-rst: Document memory-to-memory video decoder interface
+>   media: docs-rst: Document memory-to-memory video encoder interface
+>=20
+>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1084 +++++++++++++++++
+>  Documentation/media/uapi/v4l/dev-encoder.rst  |  608 +++++++++
+>  Documentation/media/uapi/v4l/dev-mem2mem.rst  |    9 +-
+>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |   10 +
+>  Documentation/media/uapi/v4l/v4l2.rst         |   12 +-
+>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   41 +-
+>  .../media/uapi/v4l/vidioc-encoder-cmd.rst     |   51 +-
+>  7 files changed, 1779 insertions(+), 36 deletions(-)
+>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+>  create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
+>=20
+
+--=-nGMRhe68cITpEahwQfZ0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXP59+QAKCRBxUwItrAao
+HMpzAJ9i+5QrRORHUeV85CGN2nvRVqO/0QCgwmNQtt7qX04cHquHnxGx2vrhF6U=
+=ngKe
+-----END PGP SIGNATURE-----
+
+--=-nGMRhe68cITpEahwQfZ0--
+
