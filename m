@@ -2,87 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D57B3BBB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB64D3BBC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfFJSTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 14:19:04 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40931 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfFJSTE (ORCPT
+        id S2387969AbfFJSWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 14:22:18 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33379 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387398AbfFJSWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:19:04 -0400
-Received: by mail-lf1-f65.google.com with SMTP id a9so7332673lff.7
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 11:19:03 -0700 (PDT)
+        Mon, 10 Jun 2019 14:22:17 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k187so4971436pga.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 11:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
-        b=FyW1aInrvSW2ZdvND8sfLjLRjeCma49EHSQOMyP5qSKfAlIC9CKTBl2eTaW6br8mEV
-         5bugaIvwkEOfT933aQwypjQY9WogYJZ4BU82ijQPj90eAH7zYHfbZ7fIAg1ueDORqAjy
-         czSC0RjMU9N7A9S4hfbmz6Zv93bmF1KkJbeSABcJG7NRbAT20gkJUwlozUJ/+yXlzrsZ
-         4OeVW4ZtqeHzXOplgpCr358o6YgA2STiLJDVSsNZyTxUuPM3bxS9UBYQiovCFhl5POC5
-         Wu5OGvISEKU3R22vc/sT5OBEdlrkCRJRC4qeTJHUs1IVyJBJ+D7eqBaH0rIJMth60fpT
-         Y2LQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QY6i0yhlosYKBzQSKH6aCBy2mSO5xg+k21z4/T/g/QU=;
+        b=CWrMCQpEHfiGDH0/APPguYvej1X08PVZNfvMJvyD21ZEb3eivAPQzuJ8tMNj9FYVca
+         jql6TF1mR9e/BXtgpx/0lzJODxMFkITGUR41xdyHsLIfqch+LeMsbWN6NTv+5wuIWO5w
+         k/dR+pBTAAG82Or6u+B72UnwccZfrBi5DcRsbNOYJG2T8j+OXK5OPjgqSIL9e2LlYKMm
+         E6jBgwWnOtQ1n28ITAzOc9zWCcVIXOkz/DmXY2lcbUsRKz5yMVS59ue8TFiNaZ72DAS/
+         mey4HI5P1ReXAsJ8bNndgX98pMZXNuvfQyLKjH8LS31IW3AfyzhvNold+rai1GTNyc8r
+         ysHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
-        b=Y9fIc4Wj1BPQBItg3ufIQFYgiA9g3yHmB91JpRVmRrQHOn+WXz+RCji2Gfi7a0kwgr
-         8LhgPNSJSxmHr4AY1267109ltSV32ETe/7ub1quKTXagNZ9e6ACGkIwdKfWRBh72Vj5m
-         /xHx7fJ+s4cmdeLZy4xjtNZDA0MhaiclQm/g+Knkj6meUYkkf/NdSOtGQ1CCJdd/f3/V
-         KKEVII5llq4ajuUaegCZ/ElPt2zfatHhWnz/kEAkPZ5EZgmO+Bp5BuX4/k8s+1tghWMz
-         ep+cZImP0T42745t+DR7xo+LavaoSgBkXBFR3r5P5tPtwgn5uMToaNqbasgLy/5dn2bQ
-         CeWQ==
-X-Gm-Message-State: APjAAAUJvd4c+OS/QRI/1Pusb1G6u0oGeE2BWSIy05gbAoR5+kvh2hxI
-        fltwGgx/M2z9HhBmhlkT0XAT1fwPPSKODF+gAA==
-X-Google-Smtp-Source: APXvYqzBxOYV4ZA24YSnCRt8e+Lhvov2rxH7z6b4ftkdF6thlS0uXDX8QaVdzkDB7Pv4fUOR+2v0WnHF/7YmmEwOOQE=
-X-Received: by 2002:ac2:5595:: with SMTP id v21mr20252633lfg.54.1560190742712;
- Mon, 10 Jun 2019 11:19:02 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:8910:0:0:0:0:0 with HTTP; Mon, 10 Jun 2019 11:19:01
- -0700 (PDT)
-Reply-To: kylieelizabethwatson2019@gmail.com
-From:   "Sgt. Kylie Elizabeth Watson" <kyliewatson974@gmail.com>
-Date:   Mon, 10 Jun 2019 22:49:01 +0430
-Message-ID: <CAAH3L_ZK7WS5+k=HAUPib1tKheqr2s+cZ2pssf_6uX8V0afOpw@mail.gmail.com>
-Subject: Assist Request From You
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QY6i0yhlosYKBzQSKH6aCBy2mSO5xg+k21z4/T/g/QU=;
+        b=eVpJaciAC4adtZQPpeeGejNK8l3JPN3J8jwhg2YHXwiR2O5aqe5+rh//Q1WTZ0aTB7
+         7b7CQhPfLcH0zbzIbCOxP2kUEOUTge8ToRFu+7hmHqnYAhd2cLB/t1oabv1t7u0Hzf3m
+         5jkWcIV/DIGItzcWE1zm6CTHoh+GW51rjccdpbbRCnMqL56NEEMlKBPZ/O8uyiZau1a1
+         bWIsPraTCZ8tKrNmQ53W6OWpSv8fj1nETOqLKoR0Jn+dxUgzF8kEYXVi1lt+RyLUTOIw
+         VSqfjpvzLsK0tb/R2OceCL/yVZqUFucMAhY7PjGLmEwckUPIGMb0wGoJVsApq1vpR1LK
+         Pfew==
+X-Gm-Message-State: APjAAAWtWdoOMIMG+zJc51OeeWmY6mmAvr3/0EoZZ+lbDUpQ6ZOFPc4s
+        Ws2CzUCytYPlQ1aJjhqwa5+i0A==
+X-Google-Smtp-Source: APXvYqxGA1nZyul0VfHAaNroAGuQ2k9Yaas0jtGOC35rwVfjQ8fqFhDRbECVetl1ZMn+hm+FtIhQTw==
+X-Received: by 2002:a17:90a:a410:: with SMTP id y16mr22740984pjp.62.1560190936876;
+        Mon, 10 Jun 2019 11:22:16 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b007:4b59:4135:ea27:71a0:a536? ([2600:1010:b007:4b59:4135:ea27:71a0:a536])
+        by smtp.gmail.com with ESMTPSA id d35sm10598703pgm.31.2019.06.10.11.22.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 11:22:15 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC][PATCH 00/13] Mount, FS, Block and Keyrings notifications [ver #4]
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com>
+Date:   Mon, 10 Jun 2019 11:22:13 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        USB list <linux-usb@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        raven@themaw.net, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E0925E1F-E5F2-4457-8704-47B6E64FE3F3@amacapital.net>
+References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <be966d9c-e38d-7a30-8d80-fad5f25ab230@tycho.nsa.gov> <0cf7a49d-85f6-fba9-62ec-a378e0b76adf@schaufler-ca.com> <CALCETrX5O18q2=dUeC=hEtK2=t5KQpGBy9XveHxFw36OqkbNOg@mail.gmail.com> <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Accept my greetings to you
 
-Assist Request From You
+> On Jun 10, 2019, at 11:01 AM, Casey Schaufler <casey@schaufler-ca.com> wro=
+te:
+>=20
+>> On 6/10/2019 9:42 AM, Andy Lutomirski wrote:
+>>> On Mon, Jun 10, 2019 at 9:34 AM Casey Schaufler <casey@schaufler-ca.com>=
+ wrote:
+>>>> On 6/10/2019 8:21 AM, Stephen Smalley wrote:
+>>>>> On 6/7/19 10:17 AM, David Howells wrote:
+>>>>> Hi Al,
+>>>>>=20
+>>>>> Here's a set of patches to add a general variable-length notification q=
+ueue
+>>>>> concept and to add sources of events for:
+>>>>>=20
+>>>>>  (1) Mount topology events, such as mounting, unmounting, mount expiry=
+,
+>>>>>      mount reconfiguration.
+>>>>>=20
+>>>>>  (2) Superblock events, such as R/W<->R/O changes, quota overrun and I=
+/O
+>>>>>      errors (not complete yet).
+>>>>>=20
+>>>>>  (3) Key/keyring events, such as creating, linking and removal of keys=
+.
+>>>>>=20
+>>>>>  (4) General device events (single common queue) including:
+>>>>>=20
+>>>>>      - Block layer events, such as device errors
+>>>>>=20
+>>>>>      - USB subsystem events, such as device/bus attach/remove, device
+>>>>>        reset, device errors.
+>>>>>=20
+>>>>> One of the reasons for this is so that we can remove the issue of proc=
+esses
+>>>>> having to repeatedly and regularly scan /proc/mounts, which has proven=
+ to
+>>>>> be a system performance problem.  To further aid this, the fsinfo() sy=
+scall
+>>>>> on which this patch series depends, provides a way to access superbloc=
+k and
+>>>>> mount information in binary form without the need to parse /proc/mount=
+s.
+>>>>>=20
+>>>>>=20
+>>>>> LSM support is included, but controversial:
+>>>>>=20
+>>>>>  (1) The creds of the process that did the fput() that reduced the ref=
+count
+>>>>>      to zero are cached in the file struct.
+>>>>>=20
+>>>>>  (2) __fput() overrides the current creds with the creds from (1) whil=
+st
+>>>>>      doing the cleanup, thereby making sure that the creds seen by the=
 
-I am 28 years old single an orphan my parents died when I am five
-years old nobody to help me,I send you my business proposal with tears
-and sorrow,Please let this not be a surprised message to you because I
-decided to contact you on this magnitude and lucrative transaction for
-our present and future survival in life. Moreover, I have laid all the
-solemn trust in you before i decided to disclose this successful and
-confidential transaction to you.
+>>>>>      destruction notification generated by mntput() appears to come fr=
+om
+>>>>>      the last fputter.
+>>>>>=20
+>>>>>  (3) security_post_notification() is called for each queue that we mig=
+ht
+>>>>>      want to post a notification into, thereby allowing the LSM to pre=
+vent
+>>>>>      covert communications.
+>>>>>=20
+>>>>>  (?) Do I need to add security_set_watch(), say, to rule on whether a w=
+atch
+>>>>>      may be set in the first place?  I might need to add a variant per=
 
-I am  Kylie Elizabeth Watson ,I hope all is well with you? I am female
-soldier working as United Nations peace keeping troop in Afghanistan
-on war against terrorism. I have in my possession the sum of
-$3.5million USD Which I made here in Afghanistan 2014,I deposited this
-money with a Red Cross agent. I want you to stand as my beneficiary
-and receive the fund And keep it safe so that as soon as am through
-with my mission here in Afghanistan.
+>>>>>      watch-type.
+>>>>>=20
+>>>>>  (?) Do I really need to keep track of the process creds in which an
+>>>>>      implicit object destruction happened?  For example, imagine you c=
+reate
+>>>>>      an fd with fsopen()/fsmount().  It is marked to dissolve the moun=
+t it
+>>>>>      refers to on close unless move_mount() clears that flag.  Now, im=
+agine
+>>>>>      someone looking at that fd through procfs at the same time as you=
+ exit
+>>>>>      due to an error.  The LSM sees the destruction notification come f=
+rom
+>>>>>      the looker if they happen to do their fput() after yours.
+>>>> I remain unconvinced that (1), (2), (3), and the final (?) above are a g=
+ood idea.
+>>>>=20
+>>>> For SELinux, I would expect that one would implement a collection of pe=
+r watch-type WATCH permission checks on the target object (or to some well-d=
+efined object label like the kernel SID if there is no object) that allow re=
+ceipt of all notifications of that watch-type for objects related to the tar=
+get object, where "related to" is defined per watch-type.
+>>>>=20
+>>>> I wouldn't expect SELinux to implement security_post_notification() at a=
+ll.  I can't see how one can construct a meaningful, stable policy for it.  I=
+'d argue that the triggering process is not posting the notification; the ke=
+rnel is posting the notification and the watcher has been authorized to rece=
+ive it.
+>>> I cannot agree. There is an explicit action by a subject that results
+>>> in information being delivered to an object. Just like a signal or a
+>>> UDP packet delivery. Smack handles this kind of thing just fine. The
+>>> internal mechanism that results in the access is irrelevant from
+>>> this viewpoint. I can understand how a mechanism like SELinux that
+>>> works on finer granularity might view it differently.
+>> I think you really need to give an example of a coherent policy that
+>> needs this.
+>=20
+> I keep telling you, and you keep ignoring what I say.
+>=20
+>>  As it stands, your analogy seems confusing.
+>=20
+> It's pretty simple. I have given both the abstract
+> and examples.
 
-You will assist me to invest it in a good profitable Venture or you
-keep it for me until I arrive your country, I will give You 40% of the
-total money for your assistance after you have receive The money.
-Please reply back to me if you are willing to work with me so that I
-can send you the information where the money is been deposited, your
-urgent reply is needed in my email address below
-(kylieelizabethwatson2019@gmail.com) so i can send you more details.
+You gave the /dev/null example, which is inapplicable to this patchset.
 
-Thank Yours
-Sgt,Kylie Elizabeth Watson
+>=20
+>>  If someone
+>> changes the system clock, we don't restrict who is allowed to be
+>> notified (via, for example, TFD_TIMER_CANCEL_ON_SET) that the clock
+>> was changed based on who changed the clock.
+>=20
+> That's right. The system clock is not an object that
+> unprivileged processes can modify. In fact, it is not
+> an object at all. If you care to look, you will see that
+> Smack does nothing with the clock.
+
+And this is different from the mount tree how?
+
+>=20
+>>  Similarly, if someone
+>> tries to receive a packet on a socket, we check whether they have the
+>> right to receive on that socket (from the endpoint in question) and,
+>> if the sender is local, whether the sender can send to that socket.
+>> We do not check whether the sender can send to the receiver.
+>=20
+> Bzzzt! Smack sure does.
+
+This seems dubious. I=E2=80=99m still trying to get you to explain to a non-=
+Smack person why this makes sense.
+
+>=20
+>> The signal example is inapplicable.
+>=20
+> =46rom a modeling viewpoint the actions are identical.
+
+This seems incorrect to me and, I think, to most everyone else reading this.=
+ Can you explain?
+
+In SELinux-ese, when you write to a file, the subject is the writer and the o=
+bject is the file.  When you send a signal to a process, the object is the t=
+arget process.=
