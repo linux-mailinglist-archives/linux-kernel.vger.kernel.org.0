@@ -2,119 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4B83BBF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA9A3BC0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388646AbfFJSqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 14:46:00 -0400
-Received: from mail-eopbgr750044.outbound.protection.outlook.com ([40.107.75.44]:16033
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387643AbfFJSp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:45:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D7UoZtI4cOmaUIZpi90EYVLT7+4P18Hw37/tcKZEN9o=;
- b=TsTK7lUjcxWUshBhc+kMj9iUajBttsf9f1FrPuQJEEtJNE+IptZdP/fRDzZvwNgur8disExjsRGp4Shbf5BQvqs6IX4QJzFZZUxFX8qjpUOVixgXzuAdzB0cPxXqKeV6VJzfKmclQBOP5bwsb0tRmGNy1CdIaj3XaN4lJRpnQW4=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6389.namprd05.prod.outlook.com (20.178.232.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.7; Mon, 10 Jun 2019 18:45:53 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::134:af66:bedb:ead9]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::134:af66:bedb:ead9%3]) with mapi id 15.20.1987.008; Mon, 10 Jun 2019
- 18:45:52 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 13/15] x86/static_call: Add inline static call
- implementation for x86-64
-Thread-Topic: [PATCH 13/15] x86/static_call: Add inline static call
- implementation for x86-64
-Thread-Index: AQHVG6HbUZEsVsjdrUOVxRZQdAn/WKaVPtyAgAADVIA=
-Date:   Mon, 10 Jun 2019 18:45:52 +0000
-Message-ID: <40096B8A-C063-4219-89FC-A8E42981BF28@vmware.com>
-References: <20190605130753.327195108@infradead.org>
- <20190605131945.313688119@infradead.org>
- <20190610183357.zj6rwdpgw36anpfc@treble>
-In-Reply-To: <20190610183357.zj6rwdpgw36anpfc@treble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8d0dbba8-dd68-444e-dda0-08d6edd3dd83
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB6389;
-x-ms-traffictypediagnostic: BYAPR05MB6389:
-x-microsoft-antispam-prvs: <BYAPR05MB6389AF282291FD1F4FFCC31AD0130@BYAPR05MB6389.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0064B3273C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(366004)(136003)(396003)(199004)(54094003)(189003)(6436002)(25786009)(5660300002)(86362001)(83716004)(71190400001)(71200400001)(3846002)(6116002)(53936002)(6246003)(4326008)(229853002)(33656002)(256004)(316002)(82746002)(6486002)(6512007)(54906003)(81166006)(186003)(486006)(2616005)(11346002)(305945005)(446003)(8676002)(66066001)(7736002)(81156014)(7416002)(8936002)(76116006)(2906002)(476003)(66556008)(66476007)(64756008)(68736007)(66946007)(66446008)(76176011)(99286004)(36756003)(6916009)(73956011)(102836004)(26005)(478600001)(6506007)(14454004)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6389;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Nd+YuBq3TtzmF0vO7+XogWeH1kNs5a3Pl4jz91Kuxuufh58Cr6+UGMm3kUmRVBvCMJLLoRwUpvBG8ESRwuVzV1VPQkEm13UlB3tRjWN5+WLMnJBWvsCjVJA7vwn9wT5QNQM5m82bM5zE0nvXjpJpzcQg37GfALuSEfhdmoeSe1V1qAYtNusCt9vC3ab027bFF8UBsAsiVrqokNix7sKUJ5awyp0tf6pZMF9wIGDpYcTSmcxsquNKr7dYN0kp+/uR8X7NaSJtAi+CJCXtoLy+P0ckU2IlkPAQmoagrLETvCFCL+2E16XGW4gudS6KMsgUfA6gRXpsIDf4PnnThfKZLv5WcL1GeneNGPs1yApC6vHBJ37srqzc4etbSKo4f1Bp6RNytUUUAoFd3RIhJeJ7wYgPY8O5qXrsuyKfNe/1jUo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <ED5D4475B15428419DB0B4DF2C368EA9@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2388625AbfFJSvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 14:51:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:47510 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387643AbfFJSvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 14:51:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C227C337;
+        Mon, 10 Jun 2019 11:51:48 -0700 (PDT)
+Received: from ostrya.cambridge.arm.com (ostrya.cambridge.arm.com [10.1.196.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 511F03F246;
+        Mon, 10 Jun 2019 11:51:47 -0700 (PDT)
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+To:     will.deacon@arm.com
+Cc:     joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        robin.murphy@arm.com, jacob.jun.pan@linux.intel.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        eric.auger@redhat.com
+Subject: [PATCH 0/8] iommu: Add auxiliary domain and PASID support to Arm SMMUv3
+Date:   Mon, 10 Jun 2019 19:47:06 +0100
+Message-Id: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d0dbba8-dd68-444e-dda0-08d6edd3dd83
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2019 18:45:52.7824
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6389
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBKdW4gMTAsIDIwMTksIGF0IDExOjMzIEFNLCBKb3NoIFBvaW1ib2V1ZiA8anBvaW1ib2VA
-cmVkaGF0LmNvbT4gd3JvdGU6DQo+IA0KPiBPbiBXZWQsIEp1biAwNSwgMjAxOSBhdCAwMzowODow
-NlBNICswMjAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToNCj4+IC0tLSBhL2FyY2gveDg2L2luY2x1
-ZGUvYXNtL3N0YXRpY19jYWxsLmgNCj4+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3N0YXRp
-Y19jYWxsLmgNCj4+IEBAIC0yLDYgKzIsMjAgQEANCj4+ICNpZm5kZWYgX0FTTV9TVEFUSUNfQ0FM
-TF9IDQo+PiAjZGVmaW5lIF9BU01fU1RBVElDX0NBTExfSA0KPj4gDQo+PiArI2luY2x1ZGUgPGFz
-bS9hc20tb2Zmc2V0cy5oPg0KPj4gKw0KPj4gKyNpZmRlZiBDT05GSUdfSEFWRV9TVEFUSUNfQ0FM
-TF9JTkxJTkUNCj4+ICsNCj4+ICsvKg0KPj4gKyAqIFRoaXMgdHJhbXBvbGluZSBpcyBvbmx5IHVz
-ZWQgZHVyaW5nIGJvb3QgLyBtb2R1bGUgaW5pdCwgc28gaXQncyBzYWZlIHRvIHVzZQ0KPj4gKyAq
-IHRoZSBpbmRpcmVjdCBicmFuY2ggd2l0aG91dCBhIHJldHBvbGluZS4NCj4+ICsgKi8NCj4+ICsj
-ZGVmaW5lIF9fQVJDSF9TVEFUSUNfQ0FMTF9UUkFNUF9KTVAoa2V5LCBmdW5jKQkJCQlcDQo+PiAr
-CUFOTk9UQVRFX1JFVFBPTElORV9TQUZFCQkJCQkJXA0KPj4gKwkiam1wcSAqIiBfX3N0cmluZ2lm
-eShrZXkpICIrIiBfX3N0cmluZ2lmeShTQ19LRVlfZnVuYykgIiglcmlwKSBcbiINCj4+ICsNCj4+
-ICsjZWxzZSAvKiAhQ09ORklHX0hBVkVfU1RBVElDX0NBTExfSU5MSU5FICovDQo+IA0KPiBJIHdv
-bmRlciBpZiB3ZSBjYW4gc2ltcGxpZnkgdGhpcyAoYW5kIGRyb3AgdGhlIGluZGlyZWN0IGJyYW5j
-aCkgYnkNCj4gZ2V0dGluZyByaWQgb2YgdGhlIGFib3ZlIGNydWZ0LCBhbmQgaW5zdGVhZCBqdXN0
-IHVzZSB0aGUgb3V0LW9mLWxpbmUNCj4gdHJhbXBvbGluZSBhcyB0aGUgZGVmYXVsdCBmb3IgaW5s
-aW5lIGFzIHdlbGwuDQo+IA0KPiBUaGVuIHRoZSBpbmxpbmUgY2FzZSBjb3VsZCBmYWxsIGJhY2sg
-dG8gdGhlIG91dC1vZi1saW5lIGltcGxlbWVudGF0aW9uDQo+IChieSBwYXRjaGluZyB0aGUgdHJh
-bXBvbGluZSdzIGptcCBkZXN0KSBiZWZvcmUgc3RhdGljX2NhbGxfaW5pdGlhbGl6ZWQNCj4gaXMg
-c2V0Lg0KDQpJIG11c3QgYmUgbWlzc2luZyBzb21lIGNvbnRleHQgLSBidXQgd2hhdCBndWFyYW50
-ZWVzIHRoYXQgdGhpcyBpbmRpcmVjdA0KYnJhbmNoIHdvdWxkIGJlIGV4YWN0bHkgNSBieXRlcyBs
-b25nPyBJc27igJl0IHRoZXJlIGFuIGFzc3VtcHRpb24gdGhhdCB0aGlzDQp3b3VsZCBiZSB0aGUg
-Y2FzZT8gU2hvdWxkbuKAmXQgdGhlcmUgYmUgc29tZSBoYW5kbGluZyBvZiB0aGUgcGFkZGluZz8N
-Cg0K
+Add substreams and PCI PASID support to the SMMUv3 driver. At the moment
+the driver supports a single address space per device. PASID enables
+multiple address spaces per device, up to a million in theory (1 << 20).
+
+Two kernel features will make use of PASIDs, auxiliary domains (AUXD)
+and Shared Virtual Addressing (SVA). Auxiliary domains allow to program
+PASID contexts using IOMMU domains. SVA allows to bind process address
+spaces to device contexts and relieve device drivers of DMA management.
+
+Since SVA support for SMMUv3 has a lot more dependencies (new fault API,
+ASID pinning, generic bind, PRI or stall support, and so on),
+introducing PASID support to the SMMUv3 driver is easier with auxiliary
+domains.
+
+The AUXD API allows device drivers to easily test PASID support of their
+devices, although they need to allocate IOVA and pages themselves
+because the DMA API doesn't support AUXD for the moment:
+
+	iommu_dev_enable_feature(dev, IOMMU_DEV_FEAT_AUX);
+	domain = iommu_domain_alloc(dev->bus);
+	iommu_aux_attach_device(domain, dev);
+	iommu_map(domain, iova, phys_addr, size, prot);
+	pasid = iommu_aux_get_pasid(domain);
+	/* Then launch DMA with the PASID and IOVA */
+
+Auxiliary domains also allow to split devices into multiple contexts
+assignable to guest, with vfio-mdev.
+
+Past discussions for these patches:
+* Auxiliary domains (patch 6)
+  [RFC PATCH 0/6] Auxiliary IOMMU domains and Arm SMMUv3
+  https://www.spinics.net/lists/iommu/msg30637.html
+* SSID support for the SMMU (patches 2, 3, 4, 5, 7 and 8)
+  [PATCH v2 00/40] Shared Virtual Addressing for the IOMMU
+  https://lists.linuxfoundation.org/pipermail/iommu/2018-May/027595.html
+* I/O ASID (patch 1)
+  [PATCH v3 00/16] Shared virtual address IOMMU and VT-d support
+  https://lkml.kernel.org/lkml/1556922737-76313-4-git-send-email-jacob.jun.pan@linux.intel.com/
+
+Jean-Philippe Brucker (8):
+  iommu: Add I/O ASID allocator
+  dt-bindings: document PASID property for IOMMU masters
+  iommu/arm-smmu-v3: Support platform SSID
+  iommu/arm-smmu-v3: Add support for Substream IDs
+  iommu/arm-smmu-v3: Add second level of context descriptor table
+  iommu/arm-smmu-v3: Support auxiliary domains
+  iommu/arm-smmu-v3: Improve add_device() error handling
+  iommu/arm-smmu-v3: Add support for PCI PASID
+
+ .../devicetree/bindings/iommu/iommu.txt       |   6 +
+ drivers/iommu/Kconfig                         |   5 +
+ drivers/iommu/Makefile                        |   1 +
+ drivers/iommu/arm-smmu-v3.c                   | 714 ++++++++++++++++--
+ drivers/iommu/ioasid.c                        | 150 ++++
+ drivers/iommu/of_iommu.c                      |   6 +-
+ include/linux/ioasid.h                        |  49 ++
+ include/linux/iommu.h                         |   1 +
+ 8 files changed, 865 insertions(+), 67 deletions(-)
+ create mode 100644 drivers/iommu/ioasid.c
+ create mode 100644 include/linux/ioasid.h
+
+-- 
+2.21.0
+
