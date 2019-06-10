@@ -2,120 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF4F3B056
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59FD43B091
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:18:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388593AbfFJIQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 04:16:50 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:37708 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388538AbfFJIQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 04:16:47 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D47E31A07AC;
-        Mon, 10 Jun 2019 10:16:45 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A274A1A07C7;
-        Mon, 10 Jun 2019 10:16:37 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0A8F5402D2;
-        Mon, 10 Jun 2019 16:16:27 +0800 (SGT)
-From:   yibin.gong@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, broonie@kernel.org,
-        festevam@gmail.com, vkoul@kernel.org, dan.j.williams@intel.com,
-        u.kleine-koenig@pengutronix.de, catalin.marinas@arm.com,
-        l.stach@pengutronix.de, will.deacon@arm.com
-Cc:     linux-spi@vger.kernel.org, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v5 15/15] dmaengine: imx-sdma: add uart rom script
-Date:   Mon, 10 Jun 2019 16:17:53 +0800
-Message-Id: <20190610081753.11422-16-yibin.gong@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190610081753.11422-1-yibin.gong@nxp.com>
-References: <20190610081753.11422-1-yibin.gong@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2388385AbfFJISM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 04:18:12 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42105 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387825AbfFJISL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 04:18:11 -0400
+Received: by mail-pl1-f195.google.com with SMTP id go2so3326243plb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=wZDIYtcBm6YBkeyQZrwF6W6HfPYDVvweCiUtUBQSDhE=;
+        b=OJysVsS4wUoxpTrYPZCzSuUr4dVnQwKGoNVhbBMASOTHgAReWykQJuWYzmunROa2Uv
+         LeuumQ3UqH2lSV3lSkc5h0Wk39Q5j/HGV8RyT2xj8Ets+MCl6cegN3FhhZM1Rt2vtlIS
+         lORjLczZVJ4kIrgl5Ixgg7a12Vkafcy9uWxPvhKI2gXHiIPHnBbTXk/5K6oYl5wDH1HQ
+         /NIQzsGHcNkaPqUd5RAfNI2U6YbCVQ3EsiPK3ymyy73AyzxteL8LeW+M6YIjF+B+l7QD
+         zvWQ95bE26Q6Jq4th4uSyvPXP5w8eXYSecAHYUnagWW2JLrwhKLLJIf/4/UycO/xZvdc
+         mDkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=wZDIYtcBm6YBkeyQZrwF6W6HfPYDVvweCiUtUBQSDhE=;
+        b=npTUYm3XUuyYugOiDZTye3hJb/+hdljiIazRXGb4CRwX2EoMaR9ae6fIgBT9DEaV45
+         Z0H6CyDcGU2Bg9p0QDGdEdI8BM2qduT2EYiwkmZ3CY5rZakx0wfohp375305ivDMBxU0
+         mCHRXEuYUiS6oy+gIfsjVjV+VE1Eeb8pTxEP1UcQNR5b64TYzncWxaiD2WODEt3PmZuj
+         Fv1wSzOYThorN3TrHujOAWfx+eKv7SR89PoGwhnPZzGdtMBPueI4tI7hLWeYLwTZyGTj
+         cbdYfmTpvhwtPhD7iGK1HbaSne3AVky6Gro7T/f0b/FA5/XFMtS2ETAtBkf2DMULVu9e
+         zr1Q==
+X-Gm-Message-State: APjAAAWTVrIcuaD7TcjDpItm//KrxJx1PHGs6zwtpo+cDmrNvY/iX5TX
+        fXYzou+Z2PG6GcGxYfZqgw==
+X-Google-Smtp-Source: APXvYqwZP/N/nuah30nBCi60qQxwirzSlklAIR0pdCjT3zNj8/gP2jcnz1KC411PHNZJZcjQfFwdAA==
+X-Received: by 2002:a17:902:4181:: with SMTP id f1mr66838981pld.22.1560154690983;
+        Mon, 10 Jun 2019 01:18:10 -0700 (PDT)
+Received: from www9186uo.sakura.ne.jp (www9186uo.sakura.ne.jp. [153.121.56.200])
+        by smtp.gmail.com with ESMTPSA id j7sm9525014pfa.184.2019.06.10.01.18.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 01:18:10 -0700 (PDT)
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        xishi.qiuxishi@alibaba-inc.com,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/02] fix return value issue of soft offlining hugepages
+Date:   Mon, 10 Jun 2019 17:18:04 +0900
+Message-Id: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+X-Mailer: git-send-email 2.7.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Gong <yibin.gong@nxp.com>
+Hi everyone,
 
-For the compatibility of NXP internal legacy kernel before 4.19 which
-is based on uart ram script and upstreaming kernel based on uart rom
-script, add both uart ram/rom script in latest sdma firmware. By default
-uart rom script used.
-Besides, add two multi-fifo scripts for SAI/PDM on i.mx8m/8mm and add
-back qspi script miss for v4(i.mx7d/8m/8mm family, but v3 is for i.mx6).
+This is an update of the fix of return value issue of hugepage soft-offlining
+(v1: https://patchwork.kernel.org/patch/10962135/).
 
-rom script:
-	uart_2_mcu_addr
-	uartsh_2_mcu_addr /* through spba bus */
-ram script:
-	uart_2_mcu_ram_addr
-	uartsh_2_mcu_ram_addr /* through spba bus */
+The code itself has no change since v1 but I updated the description.
+Jerry helped testing and finally confirmed that the patch is OK.
 
-Please get latest sdma firmware from the below and put them into the path
-(/lib/firmware/imx/sdma/):
-https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-/tree/imx/sdma
+In previous discussion, it's pointed out by Mike that this problem contained
+two separate issues (a problem of dissolve_free_huge_page() and a problem of
+soft_offline_huge_page() itself) and I agree with it (althouth I stated
+differently at v1). So I separated the patch.
 
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
----
- drivers/dma/imx-sdma.c                     |  4 ++--
- include/linux/platform_data/dma-imx-sdma.h | 10 ++++++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+Hopefully this will help finishing the issue.
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index f7c150d..deea9aa 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1733,8 +1733,8 @@ static void sdma_issue_pending(struct dma_chan *chan)
- 
- #define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V1	34
- #define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V2	38
--#define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3	41
--#define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V4	42
-+#define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V3	45
-+#define SDMA_SCRIPT_ADDRS_ARRAY_SIZE_V4	46
- 
- static void sdma_add_scripts(struct sdma_engine *sdma,
- 		const struct sdma_script_start_addrs *addr)
-diff --git a/include/linux/platform_data/dma-imx-sdma.h b/include/linux/platform_data/dma-imx-sdma.h
-index f794fee..e12d2e8 100644
---- a/include/linux/platform_data/dma-imx-sdma.h
-+++ b/include/linux/platform_data/dma-imx-sdma.h
-@@ -20,12 +20,12 @@ struct sdma_script_start_addrs {
- 	s32 per_2_firi_addr;
- 	s32 mcu_2_firi_addr;
- 	s32 uart_2_per_addr;
--	s32 uart_2_mcu_addr;
-+	s32 uart_2_mcu_ram_addr;
- 	s32 per_2_app_addr;
- 	s32 mcu_2_app_addr;
- 	s32 per_2_per_addr;
- 	s32 uartsh_2_per_addr;
--	s32 uartsh_2_mcu_addr;
-+	s32 uartsh_2_mcu_ram_addr;
- 	s32 per_2_shp_addr;
- 	s32 mcu_2_shp_addr;
- 	s32 ata_2_mcu_addr;
-@@ -52,7 +52,13 @@ struct sdma_script_start_addrs {
- 	s32 zcanfd_2_mcu_addr;
- 	s32 zqspi_2_mcu_addr;
- 	s32 mcu_2_ecspi_addr;
-+	s32 mcu_2_sai_addr;
-+	s32 sai_2_mcu_addr;
-+	s32 uart_2_mcu_addr;
-+	s32 uartsh_2_mcu_addr;
- 	/* End of v3 array */
-+	s32 mcu_2_zqspi_addr;
-+	/* End of v4 array */
- };
- 
- /**
--- 
-2.7.4
-
+Thanks,
+Naoya Horiguchi
