@@ -2,90 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E81533BBBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D57B3BBB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387569AbfFJSTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 14:19:08 -0400
-Received: from mail-ua1-f43.google.com ([209.85.222.43]:34690 "EHLO
-        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfFJSTG (ORCPT
+        id S1728528AbfFJSTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 14:19:04 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40931 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfFJSTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:19:06 -0400
-Received: by mail-ua1-f43.google.com with SMTP id 7so3450214uah.1;
-        Mon, 10 Jun 2019 11:19:06 -0700 (PDT)
+        Mon, 10 Jun 2019 14:19:04 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a9so7332673lff.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 11:19:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Rd7jWnbbAp4RfevQw78c7K7px6JtJUHSgmHkrc6gVU4=;
-        b=NoqhzsNrSi7dYNU8yAmO1tRvsVK2jYNpAak6UvyF+UpISCg7sKKp+j/LODUeyNnGGM
-         hB7/cEOSqt99ksyAvEbmXLwW8gjf7zgNTpXKPcsWgHJE4LXlXBTkZJGO863W9xk+Vfat
-         bVgUYj+I5DTk0xpfsYwKEFMzHbBQ25NIZlsNGltPdj8av7Iu80Z3ZEndzt9anwoXuCJg
-         w9DHDLsr4c9Shkn8cu5DWwZD9OGLwo8vPBxuBGW+Dso5njoo8SXGL4M9eyzxFV0sZd+c
-         pIqDtQM6P93Q2vkFkzEs75Hx4V++tpJfhxoXy6X8hAERs+zTcnH3Ww+l4K093n0sdlZm
-         G5qA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
+        b=FyW1aInrvSW2ZdvND8sfLjLRjeCma49EHSQOMyP5qSKfAlIC9CKTBl2eTaW6br8mEV
+         5bugaIvwkEOfT933aQwypjQY9WogYJZ4BU82ijQPj90eAH7zYHfbZ7fIAg1ueDORqAjy
+         czSC0RjMU9N7A9S4hfbmz6Zv93bmF1KkJbeSABcJG7NRbAT20gkJUwlozUJ/+yXlzrsZ
+         4OeVW4ZtqeHzXOplgpCr358o6YgA2STiLJDVSsNZyTxUuPM3bxS9UBYQiovCFhl5POC5
+         Wu5OGvISEKU3R22vc/sT5OBEdlrkCRJRC4qeTJHUs1IVyJBJ+D7eqBaH0rIJMth60fpT
+         Y2LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rd7jWnbbAp4RfevQw78c7K7px6JtJUHSgmHkrc6gVU4=;
-        b=kAe/cL6qFoeAr8n1bnqFNTGbwblwVe3x+CaD0KysG7ckp0vKTlCG8LqnU9leE4aHpM
-         WGz54vrpPqM/INDqBNcIhLuX+4yrt7pcE+VE1Xz7p5ZHhIfyqT4+FlM+WV6epUh8p8qV
-         qb6MYibGtMNTvwJ+Iifn1vb7NT8BLr6hzhUt18f+gW+EYNVgszOhJgFG4ubj8FkSnNPV
-         Z9sOJjjyfsUwL4AfTgnAw2P3WG88UrVPudwmud+8/i6NCZW1dfDsCAO2I1K77oGCUrMY
-         r6PkOVB8s4fP5y7k7DHYHOabkMwKLTCMvNAhDELDTP1xewavc1uUzv8OxuEekJ48YzC9
-         jWFA==
-X-Gm-Message-State: APjAAAXfPdG0CQk3CYTYuc2AgFHglUzTMdtRRurxrElUFHt8Tm4hF3WQ
-        uXJ1MY5dO7sgVOF2QCGJ/2Y=
-X-Google-Smtp-Source: APXvYqyQrkANAPukJc9v5IcPa2tL2EIoyvjbdXZpPEWyXnxL8ESjiYbyJ4IvKpakUqHqBNPtNUcbQw==
-X-Received: by 2002:ab0:60c4:: with SMTP id g4mr8141145uam.46.1560190745317;
-        Mon, 10 Jun 2019 11:19:05 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:1677])
-        by smtp.gmail.com with ESMTPSA id t20sm4657335vkd.53.2019.06.10.11.19.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 11:19:04 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 11:19:01 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     syzbot <syzbot+d4bba5ccd4f9a2a68681@syzkaller.appspotmail.com>,
-        ast@kernel.org, bpf@vger.kernel.org, cgroups@vger.kernel.org,
-        daniel@iogearbox.net, hannes@cmpxchg.org, kafai@fb.com,
-        linux-kernel@vger.kernel.org, lizefan@huawei.com,
-        netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com
-Subject: Re: KASAN: null-ptr-deref Read in css_task_iter_advance
-Message-ID: <20190610181901.GC3341036@devbig004.ftw2.facebook.com>
-References: <00000000000055aba7058af4d378@google.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=GpNdYRES46RfzpVIgTMPzZ6u6WQI6KIHaSlhSlcg/+c=;
+        b=Y9fIc4Wj1BPQBItg3ufIQFYgiA9g3yHmB91JpRVmRrQHOn+WXz+RCji2Gfi7a0kwgr
+         8LhgPNSJSxmHr4AY1267109ltSV32ETe/7ub1quKTXagNZ9e6ACGkIwdKfWRBh72Vj5m
+         /xHx7fJ+s4cmdeLZy4xjtNZDA0MhaiclQm/g+Knkj6meUYkkf/NdSOtGQ1CCJdd/f3/V
+         KKEVII5llq4ajuUaegCZ/ElPt2zfatHhWnz/kEAkPZ5EZgmO+Bp5BuX4/k8s+1tghWMz
+         ep+cZImP0T42745t+DR7xo+LavaoSgBkXBFR3r5P5tPtwgn5uMToaNqbasgLy/5dn2bQ
+         CeWQ==
+X-Gm-Message-State: APjAAAUJvd4c+OS/QRI/1Pusb1G6u0oGeE2BWSIy05gbAoR5+kvh2hxI
+        fltwGgx/M2z9HhBmhlkT0XAT1fwPPSKODF+gAA==
+X-Google-Smtp-Source: APXvYqzBxOYV4ZA24YSnCRt8e+Lhvov2rxH7z6b4ftkdF6thlS0uXDX8QaVdzkDB7Pv4fUOR+2v0WnHF/7YmmEwOOQE=
+X-Received: by 2002:ac2:5595:: with SMTP id v21mr20252633lfg.54.1560190742712;
+ Mon, 10 Jun 2019 11:19:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000055aba7058af4d378@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a2e:8910:0:0:0:0:0 with HTTP; Mon, 10 Jun 2019 11:19:01
+ -0700 (PDT)
+Reply-To: kylieelizabethwatson2019@gmail.com
+From:   "Sgt. Kylie Elizabeth Watson" <kyliewatson974@gmail.com>
+Date:   Mon, 10 Jun 2019 22:49:01 +0430
+Message-ID: <CAAH3L_ZK7WS5+k=HAUPib1tKheqr2s+cZ2pssf_6uX8V0afOpw@mail.gmail.com>
+Subject: Assist Request From You
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Hillf.
-
-On Tue, Jun 11, 2019 at 12:59:23AM +0800, Hillf Danton wrote:
-> >syzbot will keep track of this bug report. See:
-> >https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> Ignore my noise if you have no interest seeing the syzbot report.
-
-They're awesome.
-
-> The following tiny diff, made in the hope that it may help you perhaps
-> reproduce the crash, waits css lock holders and then pick task off
-> the list of dying tasks.
-
-I already posted a fix.  Well, at least I think it's the fix.
-
-  https://www.spinics.net/lists/cgroups/msg22468.html
-
-Thanks.
-
 -- 
-tejun
+Accept my greetings to you
+
+Assist Request From You
+
+I am 28 years old single an orphan my parents died when I am five
+years old nobody to help me,I send you my business proposal with tears
+and sorrow,Please let this not be a surprised message to you because I
+decided to contact you on this magnitude and lucrative transaction for
+our present and future survival in life. Moreover, I have laid all the
+solemn trust in you before i decided to disclose this successful and
+confidential transaction to you.
+
+I am  Kylie Elizabeth Watson ,I hope all is well with you? I am female
+soldier working as United Nations peace keeping troop in Afghanistan
+on war against terrorism. I have in my possession the sum of
+$3.5million USD Which I made here in Afghanistan 2014,I deposited this
+money with a Red Cross agent. I want you to stand as my beneficiary
+and receive the fund And keep it safe so that as soon as am through
+with my mission here in Afghanistan.
+
+You will assist me to invest it in a good profitable Venture or you
+keep it for me until I arrive your country, I will give You 40% of the
+total money for your assistance after you have receive The money.
+Please reply back to me if you are willing to work with me so that I
+can send you the information where the money is been deposited, your
+urgent reply is needed in my email address below
+(kylieelizabethwatson2019@gmail.com) so i can send you more details.
+
+Thank Yours
+Sgt,Kylie Elizabeth Watson
