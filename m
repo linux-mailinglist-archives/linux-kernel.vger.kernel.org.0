@@ -2,108 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C8023C035
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 01:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8A03C032
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 01:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390891AbfFJXwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 19:52:14 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:38196 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390682AbfFJXwM (ORCPT
+        id S2390834AbfFJXwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 19:52:08 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44890 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390682AbfFJXwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 19:52:12 -0400
-Received: by mail-qk1-f201.google.com with SMTP id n190so9512660qkd.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 16:52:11 -0700 (PDT)
+        Mon, 10 Jun 2019 19:52:05 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t7so1655130plr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 16:52:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=ud/bw4V77SyFt8nVuKDtI0QWt52VBA0pzrjbI+vip8M=;
-        b=KAN6/KWKmZUHGkzA9fGRB0gmQg1st991k9TnAZHO0PVnyG/tFwNFeClhlR8QIhgMmc
-         ySp4Mjm1oKbocU4TYzPvBXKryJNQRzJs4yKNjRX3Xj626CmIKFKPE1k4/auhPTABTjDm
-         bAObuyqNR78lPx6zonAIzf8sku2qHPqRzC7PYxP8BRy7uvvxcKvHFlOMz/Nvi8CbMuyR
-         d69Hr+YKWiC/nBr5l7sBAi5IvsgKQH4zr65RTFj8q75fQic4bswDtYm7DjNq741gTMdA
-         aWZooTU7blyJslshfe86WWadiZ3w9pNuRcRgtdeQdcsEVrMkJa2d3/KUI9VsQivIV+4W
-         +wFw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zTMxpEEXAhPalCGk2uwvI4Mw2/TbyDqYYFDJpjeMgJM=;
+        b=CA/9jjUGtQ1g8jH3eI7LaH1zTRGcBGM6SIXNKdkqtIKxVMJ52CM8PTouVpZI532u8j
+         ujrtQ/dbZ8tEkdej07Kn9Lf2dtpz5B6iMdvzCi0kZHyDAN65FbQPSY2W1MdE62/VJNFD
+         DokqiXe3WIqy3Tj6Zsjmbq181/8BklVk2IFTM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=ud/bw4V77SyFt8nVuKDtI0QWt52VBA0pzrjbI+vip8M=;
-        b=LGZGcLx5e3ZcT1xZFysuTYubFQOOmdIBMk/CWc5URr621im7aIK34SRK8Jy1dsk5ww
-         n/Mkd+0X+N8arkYaTyujQ41dtOfoav4tlB36ADwR3qjBD54bCi2jyRnLEzrAdVuNLgA8
-         3c/AToOq//PTBWAXKj5a1jYWHC7qdvxM6YJN9xt3paS4mo7dnPNROCAlUa+yjebfeClD
-         0peTvcMIA+y1y674hPw5Mwxi5iIMwc02jE4/XCOG9ECtm4b4qy7ftgGK8y8GTR3aWJBu
-         1CFItkAfg6ipfQJEc+VwnEb7XE5xhVS6779FWKcQMYt0IHldclSccB5maUhTRvZ2C2zS
-         qnPA==
-X-Gm-Message-State: APjAAAV7nAv5lTgKJTDK3GRiypIT39i1+OW9wJH6+Fcjmv6UGNHi5Mfx
-        MT4z77FasV+gGOJHuAUTg7+W1GH1WBoZ6jjZOnAJPGRW/zIXtL4ePXPGvOgWjDYt25x/xF0BRjs
-        TpZs1/or3nq8IzY41WEyY2hYEZRU9F4/Q+NVL1R8J5dGIYId1f2deC7T7vZuf0xZUkZQ=
-X-Google-Smtp-Source: APXvYqzmXbzsD3tHKHiIsN5XXzhsSJvjTCuBQqiKTV7myw/rxhDuWjYx7IJNlPfLcNFc2OLFeWBMMGJi/Q==
-X-Received: by 2002:a0c:81e7:: with SMTP id 36mr26133271qve.5.1560210731131;
- Mon, 10 Jun 2019 16:52:11 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 16:52:01 -0700
-In-Reply-To: <20190610235201.145457-1-fengc@google.com>
-Message-Id: <20190610235201.145457-4-fengc@google.com>
-Mime-Version: 1.0
-References: <20190610235201.145457-1-fengc@google.com>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-Subject: [RESEND PATCH v3 3/3] dma-buf: add show_fdinfo handler
-From:   Chenbo Feng <fengc@google.com>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        --validate@google.com
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>, kernel-team@android.com
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zTMxpEEXAhPalCGk2uwvI4Mw2/TbyDqYYFDJpjeMgJM=;
+        b=k3sq9AuYAUxay7eiLTQVX+JAFclVi5HWAmSelofTaERc3OYPHWfVNH3oHdeuIEOGEn
+         jTmGH/KDi0TyiLU2kVnmmFYObJ4NKjuwCQH1ydGj9OU/UEcaBV0XEnV+ooRvOFboJkzS
+         X2s97rn+kFbbEYosa3iehHvUgIzFH6tWI8lJa8tc9Zh+Unkc7XldgcTBvjYo9vPItovi
+         fcm7U/JpHx8PRRYN90A4w7rJOSrCRw9VBfJT5xXPnLe9Gm1HGilAchSp9OxHSHFXPpqE
+         lUooJPGZdIDLYWmo/IyiKUnaHjVZVD9UVd2fAX0RPxS3c8LNPl0uo9GnkvzN/IIEKXgy
+         Bv+g==
+X-Gm-Message-State: APjAAAXTE8fDXt+QigUKGXMXI4wWglKsO8JYY2qwPJTOR1GQft/UqPjS
+        paC7i9rLf5IKP63cJRpSFKcQlA==
+X-Google-Smtp-Source: APXvYqwEq2Riap96orfEJ5J7t1DMOxlcSqT8vZ+0LAjMb9tv27xDvdsQ7kXG4J9ZyFg707prgfvnQg==
+X-Received: by 2002:a17:902:a708:: with SMTP id w8mr69255143plq.162.1560210724170;
+        Mon, 10 Jun 2019 16:52:04 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y4sm11934800pgc.85.2019.06.10.16.52.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Jun 2019 16:52:03 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 16:52:02 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        Thomas Garnier <thgarnie@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 08/12] x86/acpi: Adapt assembly for PIE support
+Message-ID: <201906101652.CA88F8F@keescook>
+References: <20190520231948.49693-1-thgarnie@chromium.org>
+ <20190520231948.49693-9-thgarnie@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520231948.49693-9-thgarnie@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Hackmann <ghackmann@google.com>
+On Mon, May 20, 2019 at 04:19:33PM -0700, Thomas Garnier wrote:
+> From: Thomas Garnier <thgarnie@google.com>
+> 
+> Change the assembly code to use only relative references of symbols for the
+> kernel to be PIE compatible.
+> 
+> Position Independent Executable (PIE) support will allow to extend the
+> KASLR randomization range below 0xffffffff80000000.
+> 
+> Signed-off-by: Thomas Garnier <thgarnie@google.com>
 
-The show_fdinfo handler exports the same information available through
-debugfs on a per-buffer basis.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Chenbo Feng <fengc@google.com>
----
- drivers/dma-buf/dma-buf.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+-Kees
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index c1da5f9ce44d..c4efc272fc34 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -381,6 +381,20 @@ static long dma_buf_ioctl(struct file *file,
- 	}
- }
- 
-+static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
-+{
-+	struct dma_buf *dmabuf = file->private_data;
-+
-+	seq_printf(m, "size:\t%zu\n", dmabuf->size);
-+	/* Don't count the temporary reference taken inside procfs seq_show */
-+	seq_printf(m, "count:\t%ld\n", file_count(dmabuf->file) - 1);
-+	seq_printf(m, "exp_name:\t%s\n", dmabuf->exp_name);
-+	mutex_lock(&dmabuf->lock);
-+	if (dmabuf->name)
-+		seq_printf(m, "name:\t%s\n", dmabuf->name);
-+	mutex_unlock(&dmabuf->lock);
-+}
-+
- static const struct file_operations dma_buf_fops = {
- 	.release	= dma_buf_release,
- 	.mmap		= dma_buf_mmap_internal,
-@@ -390,6 +404,7 @@ static const struct file_operations dma_buf_fops = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= dma_buf_ioctl,
- #endif
-+	.show_fdinfo	= dma_buf_show_fdinfo,
- };
- 
- /*
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  arch/x86/kernel/acpi/wakeup_64.S | 31 ++++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+> index 510fa12aab73..e080e943e295 100644
+> --- a/arch/x86/kernel/acpi/wakeup_64.S
+> +++ b/arch/x86/kernel/acpi/wakeup_64.S
+> @@ -14,7 +14,7 @@
+>  	 * Hooray, we are in Long 64-bit mode (but still running in low memory)
+>  	 */
+>  ENTRY(wakeup_long64)
+> -	movq	saved_magic, %rax
+> +	movq	saved_magic(%rip), %rax
+>  	movq	$0x123456789abcdef0, %rdx
+>  	cmpq	%rdx, %rax
+>  	jne	bogus_64_magic
+> @@ -25,14 +25,14 @@ ENTRY(wakeup_long64)
+>  	movw	%ax, %es
+>  	movw	%ax, %fs
+>  	movw	%ax, %gs
+> -	movq	saved_rsp, %rsp
+> +	movq	saved_rsp(%rip), %rsp
+>  
+> -	movq	saved_rbx, %rbx
+> -	movq	saved_rdi, %rdi
+> -	movq	saved_rsi, %rsi
+> -	movq	saved_rbp, %rbp
+> +	movq	saved_rbx(%rip), %rbx
+> +	movq	saved_rdi(%rip), %rdi
+> +	movq	saved_rsi(%rip), %rsi
+> +	movq	saved_rbp(%rip), %rbp
+>  
+> -	movq	saved_rip, %rax
+> +	movq	saved_rip(%rip), %rax
+>  	jmp	*%rax
+>  ENDPROC(wakeup_long64)
+>  
+> @@ -45,7 +45,7 @@ ENTRY(do_suspend_lowlevel)
+>  	xorl	%eax, %eax
+>  	call	save_processor_state
+>  
+> -	movq	$saved_context, %rax
+> +	leaq	saved_context(%rip), %rax
+>  	movq	%rsp, pt_regs_sp(%rax)
+>  	movq	%rbp, pt_regs_bp(%rax)
+>  	movq	%rsi, pt_regs_si(%rax)
+> @@ -64,13 +64,14 @@ ENTRY(do_suspend_lowlevel)
+>  	pushfq
+>  	popq	pt_regs_flags(%rax)
+>  
+> -	movq	$.Lresume_point, saved_rip(%rip)
+> +	leaq	.Lresume_point(%rip), %rax
+> +	movq	%rax, saved_rip(%rip)
+>  
+> -	movq	%rsp, saved_rsp
+> -	movq	%rbp, saved_rbp
+> -	movq	%rbx, saved_rbx
+> -	movq	%rdi, saved_rdi
+> -	movq	%rsi, saved_rsi
+> +	movq	%rsp, saved_rsp(%rip)
+> +	movq	%rbp, saved_rbp(%rip)
+> +	movq	%rbx, saved_rbx(%rip)
+> +	movq	%rdi, saved_rdi(%rip)
+> +	movq	%rsi, saved_rsi(%rip)
+>  
+>  	addq	$8, %rsp
+>  	movl	$3, %edi
+> @@ -82,7 +83,7 @@ ENTRY(do_suspend_lowlevel)
+>  	.align 4
+>  .Lresume_point:
+>  	/* We don't restore %rax, it must be 0 anyway */
+> -	movq	$saved_context, %rax
+> +	leaq	saved_context(%rip), %rax
+>  	movq	saved_context_cr4(%rax), %rbx
+>  	movq	%rbx, %cr4
+>  	movq	saved_context_cr3(%rax), %rbx
+> -- 
+> 2.21.0.1020.gf2820cf01a-goog
+> 
+
 -- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
-
+Kees Cook
