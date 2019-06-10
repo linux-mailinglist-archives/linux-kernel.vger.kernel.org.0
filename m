@@ -2,179 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B81703AF18
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 08:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B5B53AF1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 08:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387845AbfFJGoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 02:44:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45449 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387829AbfFJGoe (ORCPT
+        id S2387870AbfFJGpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 02:45:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52422 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387810AbfFJGp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 02:44:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f9so7887501wre.12
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 23:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=6v285XyrONVGX85JZPN2vEBoOamuC/TCwUgIuT1MYVI=;
-        b=JUO0jDnbhpEfAJfOIn/mmbA+BYvZwYR3dpEtmWpv9PZIPu+703QoKa9lYvNN7XE01N
-         AVuskQ8lgqYi+ReRHmxOrXd+3ZIitSv/af+yb//VqjPkALpRfqUZdL/uGfKplsJoFcGw
-         dz7tWj7T0RpYSYQNTTZ1dnCBTeRYE4/Ss6EQ2RS+ITbVhrViYs2H0KPJims9t1QepBn6
-         fae6961ZZ0d1mcM/cSiHvZVl4tLZgujzYzWG9ouCPAuwDM1CzhtchbqGQkSuZ7/q8F20
-         tbp9aLC0U4YJItjQdYRh9Y8lOaSRcOuO4hKmsKR1J6jdVcvCG0XFPTTX4C383DwnePsf
-         sP/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6v285XyrONVGX85JZPN2vEBoOamuC/TCwUgIuT1MYVI=;
-        b=S+0srizbl8dCBGh6AzqWHndmug8ALTD3vYAQUMYsIzBySilvisTTrH2aVqbPWekJIb
-         EpyjZWjMZ8q3TbrSfWl8TtU9DWHiFa0yLQq6hUUwYvopyBySBxDbP8mcTxA4qL56h+Ku
-         ktiT2jgvtXwD8RxanXnsWJ60yRfdoTNC+lLsskjYZSgJ+lbiQAWxwhnjAJjD/wyc2c/T
-         J6XFqkGjAYTlM7oLm7FTwl13AqL5sqBpJwqiPwPnGpJ6PxrxHU+cuuw/2e3gRPziWLth
-         HWEQq80zqgUAzBn98nq9g0l7RLvBAV8abLHOeHYAet7b14krmZRRrzTxaECTw2BhRZoq
-         kK7A==
-X-Gm-Message-State: APjAAAVm8q0V5ahPhII6ilAG81bLvKq4r+ik75aJDXmLbx2pao94I3yF
-        J1O1P7NFD033K+iAtbFwEjCNHQ==
-X-Google-Smtp-Source: APXvYqy45tNcTtpg/c94lrABKtUPI2IloeMt1vo9EvaBBcW/D4raRflIRHWeOa3AYFf8Fefw5c/jrg==
-X-Received: by 2002:adf:a11d:: with SMTP id o29mr14522807wro.262.1560149071686;
-        Sun, 09 Jun 2019 23:44:31 -0700 (PDT)
-Received: from dell ([2.31.167.229])
-        by smtp.gmail.com with ESMTPSA id a2sm5038333wmj.9.2019.06.09.23.44.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 09 Jun 2019 23:44:30 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 07:44:28 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        wsa+renesas@sang-engineering.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, balbi@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Jeffrey Hugo <jlhugo@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/8] i2c: i2c-qcom-geni: Provide support for ACPI
-Message-ID: <20190610064428.GF4797@dell>
-References: <20190607082901.6491-1-lee.jones@linaro.org>
- <CAKv+Gu_SP7qBggCrVkF41BimV3PnCQXb5OUKyCsE0bBxa68RZA@mail.gmail.com>
+        Mon, 10 Jun 2019 02:45:29 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5A6fvUo092868
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:45:27 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t1gc14c6e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:45:27 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <anju@linux.vnet.ibm.com>;
+        Mon, 10 Jun 2019 07:45:25 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 10 Jun 2019 07:45:22 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5A6jEeC28508438
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Jun 2019 06:45:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4D85D52059;
+        Mon, 10 Jun 2019 06:45:21 +0000 (GMT)
+Received: from localhost.in.ibm.com (unknown [9.124.35.72])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 742C15204E;
+        Mon, 10 Jun 2019 06:45:19 +0000 (GMT)
+From:   Anju T Sudhakar <anju@linux.vnet.ibm.com>
+To:     mpe@ellerman.id.au, acme@kernel.org, jolsa@redhat.com
+Cc:     namhyung@kernel.org, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com,
+        anju@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com
+Subject: [PATCH RESEND 1/2] tools/perf: Add arch neutral function to choose event for perf kvm record
+Date:   Mon, 10 Jun 2019 12:15:17 +0530
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKv+Gu_SP7qBggCrVkF41BimV3PnCQXb5OUKyCsE0bBxa68RZA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+x-cbid: 19061006-0028-0000-0000-00000378DAC2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061006-0029-0000-0000-00002438C425
+Message-Id: <20190610064518.949-1-anju@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-10_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906100047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 07 Jun 2019, Ard Biesheuvel wrote:
+'perf kvm record' uses 'cycles'(if the user did not specify any event) as
+the default event to profile the guest.
+This will not provide any proper samples from the guest incase of
+powerpc architecture, since in powerpc the PMUs are controlled by
+the guest rather than the host.
 
-> On Fri, 7 Jun 2019 at 10:29, Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > Add a match table to allow automatic probing of ACPI device
-> > QCOM0220.  Ignore clock attainment errors.  Set default clock
-> > frequency value.
-> >
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/i2c/busses/i2c-qcom-geni.c | 19 +++++++++++++++++--
-> >  1 file changed, 17 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> > index db075bc0d952..0fa93b448e8d 100644
-> > --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> > @@ -1,6 +1,7 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-> >
-> > +#include <linux/acpi.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/dma-mapping.h>
-> >  #include <linux/err.h>
-> > @@ -483,6 +484,12 @@ static const struct i2c_algorithm geni_i2c_algo = {
-> >         .functionality  = geni_i2c_func,
-> >  };
-> >
-> > +static const struct acpi_device_id geni_i2c_acpi_match[] = {
-> > +       { "QCOM0220"},
-> > +       { },
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, geni_i2c_acpi_match);
-> > +
-> 
-> We usually put #ifdef CONFIG_ACPI/#endif around these, otherwise you
-> end up with acpi:XXXX modaliases even though ACPI is not compiled in.
+Patch adds a function to pick an arch specific event for 'perf kvm record',
+instead of selecting 'cycles' as a default event for all architectures.
 
-No problem.
+For powerpc this function checks for any user specified event, and if there
+isn't any it returns invalid instead of proceeding with 'cycles' event.
 
-> >  static int geni_i2c_probe(struct platform_device *pdev)
-> >  {
-> >         struct geni_i2c_dev *gi2c;
-> > @@ -502,7 +509,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
-> >                 return PTR_ERR(gi2c->se.base);
-> >
-> >         gi2c->se.clk = devm_clk_get(&pdev->dev, "se");
-> 
-> Can we avoid this call altogether in ACPI mode? Also, please use
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+---
+ tools/perf/arch/powerpc/util/kvm-stat.c | 37 +++++++++++++++++++++++++
+ tools/perf/builtin-kvm.c                | 12 +++++++-
+ tools/perf/util/kvm-stat.h              |  2 +-
+ 3 files changed, 49 insertions(+), 2 deletions(-)
 
-I'm trying not to place all non-ACPI specific callers into if ()
-statements.  The tabbing becomes ridiculous in some places.  A great
-deal of these calls are requesting optional resources too, so it's
-better to simply ignore the returning error in the cases where
-non-optional resources (such as this one) are requested, since it has
-the least impact on the existing code.
-
-> 'has_acpi_companion()' to test whether we are probing via ACPI.
-
-Sure.
-
-> > -       if (IS_ERR(gi2c->se.clk)) {
-> > +       if (IS_ERR(gi2c->se.clk) && !ACPI_HANDLE(&pdev->dev)) {
-> 
-> 
-> >                 ret = PTR_ERR(gi2c->se.clk);
-> >                 dev_err(&pdev->dev, "Err getting SE Core clk %d\n", ret);
-> >                 return ret;
-> > @@ -510,12 +517,19 @@ static int geni_i2c_probe(struct platform_device *pdev)
-> >
-> >         ret = device_property_read_u32(&pdev->dev, "clock-frequency",
-> >                                                         &gi2c->clk_freq_out);
-> > -       if (ret) {
-> > +       if (ret && !ACPI_HANDLE(&pdev->dev)) {
-> >                 dev_info(&pdev->dev,
-> >                         "Bus frequency not specified, default to 100kHz.\n");
-> >                 gi2c->clk_freq_out = KHZ(100);
-> >         }
-> >
-> > +       if (ACPI_HANDLE(&pdev->dev)) {
-> > +               ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(&pdev->dev));
-> > +
-> > +               /* Using default, same as the !ACPI case above */
-> > +               gi2c->clk_freq_out = KHZ(100);
-> > +       }
-> > +
-> 
-> You are overriding the speed to 100 kHz even if the ACPI device has a
-> "clock-frequency" property.
-
-Will look at this.
-
-Thanks Ard.
-
+diff --git a/tools/perf/arch/powerpc/util/kvm-stat.c b/tools/perf/arch/powerpc/util/kvm-stat.c
+index f9db341c47b6..66f8fe500945 100644
+--- a/tools/perf/arch/powerpc/util/kvm-stat.c
++++ b/tools/perf/arch/powerpc/util/kvm-stat.c
+@@ -8,6 +8,7 @@
+ 
+ #include "book3s_hv_exits.h"
+ #include "book3s_hcalls.h"
++#include <subcmd/parse-options.h>
+ 
+ #define NR_TPS 4
+ 
+@@ -172,3 +173,39 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_unused)
+ 
+ 	return ret;
+ }
++
++/*
++ * Incase of powerpc architecture, pmu registers are programmable
++ * by guest kernel. So monitoring guest via host may not provide
++ * valid samples. It is better to fail the "perf kvm record"
++ * with default "cycles" event to monitor guest in powerpc.
++ *
++ * Function to parse the arguments and return appropriate values.
++ */
++int kvm_add_default_arch_event(int *argc, const char **argv)
++{
++	const char **tmp;
++	bool event = false;
++	int i, j = *argc;
++
++	const struct option event_options[] = {
++		OPT_BOOLEAN('e', "event", &event, NULL),
++		OPT_END()
++	};
++
++	tmp = calloc(j + 1, sizeof(char *));
++	if (!tmp)
++		return -EINVAL;
++
++	for (i = 0; i < j; i++)
++		tmp[i] = argv[i];
++
++	parse_options(j, tmp, event_options, NULL, 0);
++	if (!event) {
++		free(tmp);
++		return -EINVAL;
++	}
++
++	free(tmp);
++	return 0;
++}
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index dbb6f737a3e2..fe33b3ec55c9 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -1510,11 +1510,21 @@ static int kvm_cmd_stat(const char *file_name, int argc, const char **argv)
+ }
+ #endif /* HAVE_KVM_STAT_SUPPORT */
+ 
++int __weak kvm_add_default_arch_event(int *argc __maybe_unused,
++					const char **argv __maybe_unused)
++{
++	return 0;
++}
++
+ static int __cmd_record(const char *file_name, int argc, const char **argv)
+ {
+-	int rec_argc, i = 0, j;
++	int rec_argc, i = 0, j, ret;
+ 	const char **rec_argv;
+ 
++	ret = kvm_add_default_arch_event(&argc, argv);
++	if (ret)
++		return -EINVAL;
++
+ 	rec_argc = argc + 2;
+ 	rec_argv = calloc(rec_argc + 1, sizeof(char *));
+ 	rec_argv[i++] = strdup("record");
+diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
+index 1403dec189b4..da38b56c46cb 100644
+--- a/tools/perf/util/kvm-stat.h
++++ b/tools/perf/util/kvm-stat.h
+@@ -144,5 +144,5 @@ extern const int decode_str_len;
+ extern const char *kvm_exit_reason;
+ extern const char *kvm_entry_trace;
+ extern const char *kvm_exit_trace;
+-
++extern int kvm_add_default_arch_event(int *argc, const char **argv);
+ #endif /* __PERF_KVM_STAT_H */
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.2
+
