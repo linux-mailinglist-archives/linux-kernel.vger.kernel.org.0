@@ -2,178 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E85843BA92
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BE373BA50
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388196AbfFJRMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:12:20 -0400
-Received: from mga04.intel.com ([192.55.52.120]:25138 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387415AbfFJRMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:12:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 10:12:19 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga003.jf.intel.com with ESMTP; 10 Jun 2019 10:12:18 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "H Peter Anvin" <hpa@zytor.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16 instructions
-Date:   Mon, 10 Jun 2019 10:02:38 -0700
-Message-Id: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
+        id S2387548AbfFJRFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:05:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37479 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727815AbfFJRFc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:05:32 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 22so100846wmg.2;
+        Mon, 10 Jun 2019 10:05:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rENeVCC5cAGvDhSsiTHSwL+Tw4CvTJUoSSgkeM2wKFI=;
+        b=FGnu5b+Cmn1dA25AU2+t/lKcrrY/mj5nVFhMwx6nbj0wowtNKZWn8NkDy/nseq+VIH
+         1+YW9nwo6oZNNVcwf8ufaDRMM14assVwuOIw4fROzoiNgWffycrNsZhYszVASQ6u4eqI
+         jUlygjcCpwmAePYFRgci7TeiCsrFkDpDM7WHx/U/fszcyqnHtt0N15m6jxYzdyo0aVpA
+         890hYNteq4iJR3uaxLVlWg0xrgvXL6BSlDU3EaOF5WXaA/yLjUV1UW34xgWTCUqCLxaS
+         A6m3Rjw41U88+i49JNqug57dERrjh32MX2SUF9mIfxoLoS0lVebBRjoHBbmqh4a1ieSB
+         mR1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rENeVCC5cAGvDhSsiTHSwL+Tw4CvTJUoSSgkeM2wKFI=;
+        b=AUWpJG1YynT2mspwG96sRK8klklWo/+gAXQegijWvkpNH5f2rm6eTHkDbhxkVeAlPB
+         0gldf4uo3BXnORFZZap2wacHBt/jxiZvwh0pFPoKpkx5q+rzEW1pRtMHkOtSt9Tnajcu
+         hG73OzcDc7PhYynexFEpUOfNu8T2rXopFwetLHbPNj1GyIwzUSEGtIaxmd3GGRjflr/L
+         FBr1mA2/e/6sSlf12cP9IlfGOYE2yzQGwM/fxbdc8ZelwRPwKC/ohZdPOXwKDoq9BoyL
+         piILXEqxecO6Skmf0ht4B3nsC5E2455C75tPY7qXnK6Y0+CI1gN2j/X3l5xhY3IaLPQX
+         aMtA==
+X-Gm-Message-State: APjAAAWn5Wkcq/txWkIr4FLXocw8KB7pLoglikBSnu1apET+OGUeGtuA
+        POWJbuWXXeni4FYEOuJ62xY=
+X-Google-Smtp-Source: APXvYqyL2okbFPMeS1nyHEzROCsvbp3TzFYastzmh7qB+Sth1M0M0yTK+uZiH5kd858rGTTpU1BWsQ==
+X-Received: by 2002:a1c:48c5:: with SMTP id v188mr13796863wma.175.1560186329325;
+        Mon, 10 Jun 2019 10:05:29 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300F133DDA40000C4C39937FBD289.dip0.t-ipconnect.de. [2003:f1:33dd:a400:c4:c399:37fb:d289])
+        by smtp.googlemail.com with ESMTPSA id r5sm21558160wrg.10.2019.06.10.10.05.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 10:05:28 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org
+Cc:     andrew@lunn.ch, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/1] gpio: of: prepare for switching stmmac to GPIO descriptors
+Date:   Mon, 10 Jun 2019 19:05:22 +0200
+Message-Id: <20190610170523.26554-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AVX512 Vector Neural Network Instructions (VNNI) in Intel Deep Learning
-Boost support bfloat16 format (BF16). BF16 is a short version of FP32 and
-has several advantages over FP16. BF16 offers more than enough range for
-deep learning training tasks and doesn't need to handle hardware exception
-as this is a performance optimization. FP32 accumulation after the
-multiply is essential to achieve sufficient numerical behavior on an
-application level. 
+This is a preparation patch which is needed before we can switch stmmac
+to GPIO descriptors. stmmac has a custom "snps,reset-active-low"
+property because it has ignored the GPIO flags including the polarity.
 
-AVX512 bfloat16 instructions can be enumerated by:
-	CPUID.(EAX=7,ECX=1):EAX[bit 5] AVX512_BF16
-    
-Detailed information of the CPUID bit and AVX512 bfloat16 instructions
-can be found in the latest Intel Architecture Instruction Set Extensions
-and Future Features Programming Reference.
+Add the parsing to gpiolib-of so we can port stmmac over to GPIO
+descriptors.
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
+This patch is split from my series at [0].
 
-Since split lock feature (to-be-upstreamed) occupies the last bit 
-of word 7, need to create a new word 19 to host AVX512_BF16 and other
-future features.
+Linus W.: please create an immutable branch as discussed so I can send
+the stmmac patches to the net-next tree (which will then have to pull
+in your immutable branch).
 
- arch/x86/include/asm/cpufeature.h        | 7 +++++--
- arch/x86/include/asm/cpufeatures.h       | 8 +++++++-
- arch/x86/include/asm/disabled-features.h | 3 ++-
- arch/x86/include/asm/required-features.h | 3 ++-
- arch/x86/kernel/cpu/cpuid-deps.c         | 1 +
- arch/x86/kernel/cpu/scattered.c          | 1 +
- 6 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 0e56ff7e4848..cfb7d765ed86 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -30,6 +30,7 @@ enum cpuid_leafs
- 	CPUID_7_ECX,
- 	CPUID_8000_0007_EBX,
- 	CPUID_7_EDX,
-+	CPUID_LNX_4,
- };
- 
- #ifdef CONFIG_X86_FEATURE_NAMES
-@@ -81,8 +82,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
-+	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
- 	   REQUIRED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
-+	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
- 
- #define DISABLED_MASK_BIT_SET(feature_bit)				\
- 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
-@@ -104,8 +106,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
-+	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
- 	   DISABLED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
-+	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
- 
- #define cpu_has(c, bit)							\
- 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 981ff9479648..7d76393ce916 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -13,7 +13,7 @@
- /*
-  * Defines x86 CPU feature bits
-  */
--#define NCAPINTS			19	   /* N 32-bit words worth of info */
-+#define NCAPINTS			20	   /* N 32-bit words worth of info */
- #define NBUGINTS			1	   /* N 32-bit bug flags */
- 
- /*
-@@ -352,6 +352,12 @@
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
- 
-+/*
-+ * Extended auxiliary flags: Linux defined - For features scattered in various
-+ * CPUID levels and sub-leaves like CPUID level 7 and sub-leaf 1, etc, word 19.
-+ */
-+#define X86_FEATURE_AVX512_BF16		(19*32+ 0) /* BFLOAT16 instructions */
-+
- /*
-  * BUG word(s)
-  */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index a5ea841cc6d2..f0f935f8d917 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -84,6 +84,7 @@
- #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-+#define DISABLED_MASK19	0
-+#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
- 
- #endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-index 6847d85400a8..fa5700097f64 100644
---- a/arch/x86/include/asm/required-features.h
-+++ b/arch/x86/include/asm/required-features.h
-@@ -101,6 +101,7 @@
- #define REQUIRED_MASK16	0
- #define REQUIRED_MASK17	0
- #define REQUIRED_MASK18	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-+#define REQUIRED_MASK19	0
-+#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
- 
- #endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index 2c0bd38a44ab..65d3e0c47a25 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -59,6 +59,7 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_AVX512_4VNNIW,	X86_FEATURE_AVX512F   },
- 	{ X86_FEATURE_AVX512_4FMAPS,	X86_FEATURE_AVX512F   },
- 	{ X86_FEATURE_AVX512_VPOPCNTDQ, X86_FEATURE_AVX512F   },
-+	{ X86_FEATURE_AVX512_BF16,	X86_FEATURE_AVX512VL  },
- 	{}
- };
- 
-diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-index 94aa1c72ca98..59d7a85db621 100644
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -26,6 +26,7 @@ struct cpuid_bit {
- static const struct cpuid_bit cpuid_bits[] = {
- 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
- 	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
-+	{ X86_FEATURE_AVX512_BF16,	CPUID_EAX,  5, 0x00000007, 1 },
- 	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
- 	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
- 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
+[0] https://patchwork.kernel.org/cover/10983801/
+
+
+Martin Blumenstingl (1):
+  gpio: of: parse stmmac PHY reset line specific active-low property
+
+ drivers/gpio/gpiolib-of.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
 -- 
-2.19.1
+2.22.0
 
