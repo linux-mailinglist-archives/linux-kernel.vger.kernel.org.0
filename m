@@ -2,105 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C290D3B019
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B27A53B020
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbfFJH6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 03:58:38 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32945 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388261AbfFJH6h (ORCPT
+        id S2388348AbfFJH72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 03:59:28 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4982 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387781AbfFJH71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 03:58:37 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h19so8411303wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 00:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oWEp6Smq9HgtNsDGiPy/kfOisBvfFm/zGIpQCU//1j8=;
-        b=tPWiMoaZTxIg+ivBcwmlElm+0vlw8VlzRSFGWWqzkumTqJVKQsfEOfm4gUr1SwSF4+
-         OP6lP+PGVF+WPm9/NMLY3dhw+o06UaurpHiLVOdtsWiVqxgvC6izd2jyAZXigWlBH7D5
-         aiQ9L60OxHqg653nyvjbBDHArg4rxY2cmyzHOyqVkcdRI+GnVp9aSJJS0pAbNcwqNHiU
-         OrA1dT4U4CBGfefIWHO4/9CkV2/7kWUSxPpF9CGt0MM5rCeDLxtD2pfNh+pPZI1RHDIG
-         +qwtX7CpV6YIO/dPqxetlnA9ur6JWfBFz9JWzKi+MWKLQZnKSMkgLGd6uL6uGf/s2TtR
-         dHOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oWEp6Smq9HgtNsDGiPy/kfOisBvfFm/zGIpQCU//1j8=;
-        b=aia1uDNqq2hD8ukGvk1IHhH+ZLz180WWJDUhcWyyoQaC9OxqtBgH2LohAeniVR24B8
-         z+MusK8JyeqH/g+u7cTWzOPjJRz4h2eONAjKHcEm9MY7OUqkFrEkNdyRmFZJMWiXRsiQ
-         7h914DLkSCY3izwYMz0Rb7dQAbwRq+TGW/elJKLlbM2xjmIszVSbqRgstGmbeVf4wQR/
-         TvaDapINjs6FWkEzBLFHeNDL13uPnI1zhWJTi7fVOIeLAthkrEDW2Vxys1HVZ3TiTOtF
-         gNnlsOF/aqKSgf2DxsYBbPY5lT19hQBfzis1OwB3b3WCWAgfp0OAgvcSDlDWdj4xePY3
-         bxzA==
-X-Gm-Message-State: APjAAAXfyL2fIQoIze0Ms64g5GVq/V6scUlaMbreoJMB91g0EoULhagK
-        oucQTk/ifkDsnIjWeQAC41y86FArC1jfWQ==
-X-Google-Smtp-Source: APXvYqxX6qNDmm5mRKIsfaOwn9+hQG/rSiP3wiBkr0VL16rtdRvuL/PwPrcJmQD4xKROrWwqko4fcw==
-X-Received: by 2002:a1c:3b45:: with SMTP id i66mr11106276wma.48.1560153515330;
-        Mon, 10 Jun 2019 00:58:35 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id a81sm4227375wmh.3.2019.06.10.00.58.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 00:58:34 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/6] ASoC: core: add support to
- snd_soc_dai_get_sdw_stream()
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     broonie@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, pierre-louis.bossart@linux.intel.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20190607085643.932-1-srinivas.kandagatla@linaro.org>
- <20190607085643.932-2-srinivas.kandagatla@linaro.org>
- <20190610043432.GI9160@vkoul-mobl.Dlink>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <689065b2-9d5c-68b4-d72f-1e971b903df2@linaro.org>
-Date:   Mon, 10 Jun 2019 08:58:33 +0100
+        Mon, 10 Jun 2019 03:59:27 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cfe0dde0000>; Mon, 10 Jun 2019 00:59:26 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 10 Jun 2019 00:59:25 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 10 Jun 2019 00:59:25 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Jun
+ 2019 07:59:22 +0000
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+CC:     <dan.j.williams@intel.com>, <tiwai@suse.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <mkumard@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+ <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+ <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
+ <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
+ <d0db90e3-3d05-dfba-8768-28511d9ee3ac@ti.com>
+ <5208a50a-9ca0-8f24-9ad0-d7503ec53f1c@nvidia.com>
+ <ba845a19-5dfb-a891-719f-43821b2dd412@nvidia.com>
+ <e67a2d7c-5bd1-93ad-fe75-afcab38bc17c@ti.com>
+ <a65f2b07-4a3a-7f83-e21f-8b374844a4b9@nvidia.com>
+ <56aa6f45-cfd8-7f1e-9392-628ceb58093f@ti.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d11e3e5e-e99e-868f-a2e5-7e1f82a02e0f@nvidia.com>
+Date:   Mon, 10 Jun 2019 08:59:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190610043432.GI9160@vkoul-mobl.Dlink>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <56aa6f45-cfd8-7f1e-9392-628ceb58093f@ti.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560153566; bh=JcATbT2l7rEBL58Wu0smiooiH2B1lY4Spxl1zeqk/aw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=FVvmuguvwlhcn8Cq++i3XakmXucxFPX17+1d1IRnD/96IYpte5Xh++bIY1ocbD0st
+         IoTu/ZtQf2Dh8zQySP0CNTl4ulU/YDFLsNYKK0p9iEj157I8SxEVnzU0MLzXBdKnjF
+         x59PwXh3Nl2y5PQyebs/DZjrEY3+EIl3fX4Uq14RWvLFZFgdKk8IEYprx+AttHlY5f
+         tWybs5s4Fil9NOnkEUbfR/Wzjgs/AgTwiutTktKo2IhamRC4D/KVnqBSYse6wSgB5g
+         VJG3CywhmM2R5ZSvqjkOCgWZXdtVb/HyOddXf1cI3XyfH1pnn8nMlXHyFvCZG86lL1
+         TiVb+ohxqR05Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 10/06/2019 05:34, Vinod Koul wrote:
-> On 07-06-19, 09:56, Srinivas Kandagatla wrote:
->> On platforms which have smart speaker amplifiers connected via
->> soundwire and modeled as aux devices in ASoC, in such usecases machine
->> driver should be able to get sdw master stream from dai so that it can
->> use the runtime stream to setup slave streams.
->>
->> soundwire already as a set function, get function would provide more
->> flexibility to above configurations.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   include/sound/soc-dai.h | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
->> index f5d70041108f..9f90b936fd9a 100644
->> --- a/include/sound/soc-dai.h
->> +++ b/include/sound/soc-dai.h
->> @@ -177,6 +177,7 @@ struct snd_soc_dai_ops {
->>   
->>   	int (*set_sdw_stream)(struct snd_soc_dai *dai,
->>   			void *stream, int direction);
->> +	void *(*get_sdw_stream)(struct snd_soc_dai *dai, int direction);
+On 07/06/2019 14:35, Peter Ujfalusi wrote:
 > 
-> So who would be calling this API? Machine or someone else?
-
- From Machine driver in my case where smart speaker amplifiers are 
-modeled as aux device which is also dai less.
-
---srini
 > 
+> On 07/06/2019 15.58, Jon Hunter wrote:
+>>> Imho if you can explain it without using 'HACK' in the sentences it
+>>> might be OK, but it does not feel right.
+>>
+>> I don't perceive this as a hack. Although from looking at the
+>> description of the src/dst_maxburst these are burst size with regard to
+>> the device, so maybe it is a stretch.
+>>
+>>> However since your ADMA and ADMIF is highly coupled and it does needs
+>>> special maxburst information (burst and allocated FIFO depth) I would
+>>> rather use src_maxburst/dst_maxburst alone for DEV_TO_MEM/MEM_TO_DEV:
+>>>
+>>> ADMA_BURST_SIZE(maxburst)	((maxburst) & 0xff)
+>>> ADMA_FIFO_SIZE(maxburst)	(((maxburst) >> 8) & 0xffffff)
+>>>
+>>> So lower 1 byte is the burst value you want from ADMA
+>>> the other 3 bytes are the allocated FIFO size for the given ADMAIF channel.
+>>>
+>>> Sure, you need a header for this to make sure there is no
+>>> misunderstanding between the two sides.
+>>
+>> I don't like this because as I mentioned to Dmitry, the ADMA can perform
+>> memory-to-memory transfers where such encoding would not be applicable.
+> 
+> mem2mem does not really use dma_slave_config, it is for used by
+> is_slave_direction() == true type of transfers.
+> 
+> But true, if you use ADMA against anything other than ADMAIF then this
+> might be not right for non cyclic transfers.
+> 
+>> That does not align with the description in the
+>> include/linux/dmaengine.h either.
+> 
+> True.
+> 
+>>> Or pass the allocated FIFO size via maxburst and then the ADMA driver
+>>> will pick a 'good/safe' burst value for it.
+>>>
+>>> Or new member, but do you need two of them for src/dst? Probably
+>>> fifo_depth is better word for it, or allocated_fifo_depth.
+>>
+>> Right, so looking at the struct dma_slave_config we have ...
+>>
+>> u32 src_maxburst;
+>> u32 dst_maxburst;
+>> u32 src_port_window_size;
+>> u32 dst_port_window_size;
+>>
+>> Now if we could make these window sizes a union like the following this
+>> could work ...
+>>
+>> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+>> index 8fcdee1c0cf9..851251263527 100644
+>> --- a/include/linux/dmaengine.h
+>> +++ b/include/linux/dmaengine.h
+>> @@ -360,8 +360,14 @@ struct dma_slave_config {
+>>         enum dma_slave_buswidth dst_addr_width;
+>>         u32 src_maxburst;
+>>         u32 dst_maxburst;
+>> -       u32 src_port_window_size;
+>> -       u32 dst_port_window_size;
+>> +       union {
+>> +               u32 port_window_size;
+>> +               u32 port_fifo_size;
+>> +       } src;
+>> +       union {
+>> +               u32 port_window_size;
+>> +               u32 port_fifo_size;
+>> +       } dst;
+> 
+> What if in the future someone will have a setup where they would need both?
+
+I think if you look at the description for the port_window_size you will
+see that this is not applicable for FIFOs and so these would be mutually
+exclusive AFAICT. However, if there was an even weirder DMA out there in
+the future it could always be patched :-)
+
+> So not sure. Your problems are coming from a split DMA setup where the
+> two are highly coupled, but sits in a different place and need to be
+> configured as one device.
+> 
+> I think xilinx_dma is facing with similar issues and they have a custom
+> API to set parameters which does not fit or is peripheral specific:
+> include/linux/dma/xilinx_dma.h
+> 
+> Not sure if that is an acceptable solution.
+
+I am not a fan of that but it could work.
+
+Cheers
+Jon
+
+-- 
+nvpublic
