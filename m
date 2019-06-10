@@ -2,81 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB3683B7A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAAAE3B7A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390029AbfFJOnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 10:43:15 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38075 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389317AbfFJOnP (ORCPT
+        id S2390937AbfFJOn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 10:43:57 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42211 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389075AbfFJOn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 10:43:15 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v11so5159136pgl.5;
-        Mon, 10 Jun 2019 07:43:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0jZ5l4R0gOuzDEE92f4hnQ6KUg3Ndgb03svKQhwL6tI=;
-        b=csR8vQek0KDNcCVN+FFM51FUFiHIadSzyyr1k91KQt+E1zLclXY7xF0xuMU5rOQMju
-         zWtMvDhQ8GCbThKxTioPeaLvELI6ASYeLJjGAHDRoRTWIjMdHpuBSoUezpjarRqLiDTN
-         yjBFvCWCnwlSZ6GImJbAXks2z5UwZ9CnZ0kuYQgrXfr2MHQfTNV81blu+tD5PJKQZH9h
-         3yinxo8C2kMrbLFdMabbLhwJ3vtNRS8S3V6ZfEYff5qxooBnDBdTrl3OONoHTPATogKn
-         jroLs9J1JrzSAys+t/2LEEPFVPdKv8jbVgAnWKmXEuO+83JHO+yvRiBpcbN/4gR4X8Mn
-         ZEMg==
+        Mon, 10 Jun 2019 10:43:56 -0400
+Received: by mail-vs1-f68.google.com with SMTP id 190so1863612vsf.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 07:43:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0jZ5l4R0gOuzDEE92f4hnQ6KUg3Ndgb03svKQhwL6tI=;
-        b=cF7tVgk7fMwd4JZGUbsw1h1AHkEBk7+iiHJw9cmRIBa1qF/Dz57kQJhZ6t/G3pKk2l
-         csXPnFzCOe9KALA4CDuNyiyo/IkmMtQSdgSeBsZKk0ZmDdWHuPu114ckVOoB+kepzGiK
-         rTdJEyYr6k/UOs/JqXn2184AvBdF7QXUW4zqJcKCVPraFoWmq4/X847zc+IfxWO96fd2
-         MfKlB92vBF1jk0hMY450Cfhp7tj8vlKXo4Ivervu1m+TWrDxg5ZtX5NpxQ38DKRRSm2y
-         3VhNOMDm7k5BdYIG08FUo12gBvEN6h8WwKCaU23fztroGoZBPObx9VHdUGBiEzWSz0Jv
-         CCgw==
-X-Gm-Message-State: APjAAAX5pCwqGn6xpZyBQJUn5ipjOZn+Co6rIsWGS2JlEU93KRjyTrIv
-        xhyRMgupS6tr7uH1+LT8KTY=
-X-Google-Smtp-Source: APXvYqz9TyCmfSnsl09pBj2+kp4Xw1uh3XHfcv++Y9uuJLI8pbEwkKnk4xOokxgJislQfompIQmffw==
-X-Received: by 2002:a17:90a:2228:: with SMTP id c37mr21961431pje.9.1560177794573;
-        Mon, 10 Jun 2019 07:43:14 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p15sm12184509pgj.61.2019.06.10.07.43.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 07:43:14 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 07:43:13 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/35] 4.14.125-stable review
-Message-ID: <20190610144313.GC7705@roeck-us.net>
-References: <20190609164125.377368385@linuxfoundation.org>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=rzTYIiPqSMbaB247OwcvP22Dn5ctSBRMkQLSP6g63TE=;
+        b=SJtb1wy/Row31R2fyWz4/64ltn+79CBmUH7O6fyuyrazBXix902JVnY0wC2fE5+uhj
+         xmhwNoTKbAFrvXxiZaIT6CDwjRa+f6I5l1cMXoAGg98mcrE0cE0WJyo8g2HlFKUumMJX
+         IrEVY9XvYTYn9Ad8XxtKQIxs66yDfDufMEcWz3aJ+O/+4FA2jNkTr65pquWjU+MfOui9
+         uSgWEr4Z/jG84+vNScbEMZIYOUoY5U0Eo2CZm0hBFKlHYGtggUWfAse68Jv0aXVlb+gS
+         r3pewzPhqZsFdxi72A8MTRQHj3RkYlAtcz0L4DymsxFqTyvbLT+IrPageUclHlbOKY6q
+         En/A==
+X-Gm-Message-State: APjAAAW+9g3R/ZMU7X/a+7IQqXUEHFBldryyM/+/0jxf8MpKn8pMBN8B
+        LTyFfIL8uCGyUyk0fgSwZZ7q6w==
+X-Google-Smtp-Source: APXvYqzj3JGOnWo66BHBaY1lDSf86H5ulmKxbipFqXHDa+gBq4fz7JnKtO1dzGP3noNi8L0rfXRlQw==
+X-Received: by 2002:a67:ed04:: with SMTP id l4mr17840852vsp.179.1560177835906;
+        Mon, 10 Jun 2019 07:43:55 -0700 (PDT)
+Received: from [192.168.8.101] ([67.69.69.230])
+        by smtp.gmail.com with ESMTPSA id a123sm3187094vka.22.2019.06.10.07.43.51
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 07:43:54 -0700 (PDT)
+Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup and
+ thread creation (v10)
+To:     Florian Weimer <fweimer@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com>
+ <140718133.18261.1559144710554.JavaMail.zimbra@efficios.com>
+ <2022553041.20966.1559249801435.JavaMail.zimbra@efficios.com>
+ <875zprm4jo.fsf@oldenburg2.str.redhat.com>
+ <732661684.21584.1559314109886.JavaMail.zimbra@efficios.com>
+ <87muj2k4ov.fsf@oldenburg2.str.redhat.com>
+ <1528929896.22217.1559326257155.JavaMail.zimbra@efficios.com>
+ <87o93d4lqb.fsf@oldenburg2.str.redhat.com>
+ <117220011.27079.1559663870037.JavaMail.zimbra@efficios.com>
+ <87wohzorj0.fsf@oldenburg2.str.redhat.com>
+From:   Carlos O'Donell <carlos@redhat.com>
+Organization: Red Hat
+Message-ID: <c16c9785-7f8c-430b-a4df-a53e47bf1600@redhat.com>
+Date:   Mon, 10 Jun 2019 10:43:50 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190609164125.377368385@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87wohzorj0.fsf@oldenburg2.str.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 09, 2019 at 06:42:06PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.125 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 11 Jun 2019 04:40:01 PM UTC.
-> Anything received after that time might be too late.
-> 
-Build results:
-	total: 172 pass: 172 fail: 0
-Qemu test results:
-	total: 335 pass: 335 fail: 0
+On 6/6/19 7:57 AM, Florian Weimer wrote:
+> Let me ask the key question again: Does it matter if code observes the
+> rseq area first without kernel support, and then with kernel support?
+> If we don't expect any problems immediately, we do not need to worry
+> much about the constructor ordering right now.  I expect that over time,
+> fixing this properly will become easier.
 
-Guenter
+I just wanted to chime in and say that splitting this into:
+
+* Ownership (__rseq_handled)
+
+* Initialization (__rseq_abi)
+
+Makes sense to me.
+
+I agree we need an answer to this question of ownership but not yet
+initialized, to owned and initialized.
+
+I like the idea of having __rseq_handled in ld.so.
+
+-- 
+Cheers,
+Carlos.
