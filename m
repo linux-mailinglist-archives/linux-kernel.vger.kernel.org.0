@@ -2,195 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5E833BA2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E85843BA92
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387603AbfFJQ6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 12:58:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43543 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbfFJQ6A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 12:58:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f25so5343307pgv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 09:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=02QlD+dQyEGO4EEKFz1uYHazBVRik/r7SAjjSQVxSs4=;
-        b=r9/fS6LliK6b9sWK/JXRrCplVnHPfXh2dJwY828nS9aFx1N6M2Rh2OrZ45pBoNUz+6
-         63L0i4B6ANOoEgH5b0WSX0iqrBjWAHbZOq071SW5w1UWdAcvPXt8VxuhGzrk9if+tGIw
-         5e0WH98Og+FomJIfAkK0vKnnVblD2abzMxb3oRzmZqihkkCJlgErDdnomlw+kS7CB9rh
-         KiEOeKyJ1maFp146hlz1gTOSHRt60wGOBfmBrhdO+UzW/IohTj3wiStbyB3w5WbpbkZ/
-         BoK0X0O4fERQ6zcUNNdpuyGYzyUku+AaJdj4AYDSfNeBBQ9PVARyBxt+cyEqOth/ycO4
-         viIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=02QlD+dQyEGO4EEKFz1uYHazBVRik/r7SAjjSQVxSs4=;
-        b=UU2hThG1JuzYA5Rf9SVhQv3OapNj4G7dlf3nlAQIlTmDyvUjz5mVBpdVR2BVdt706N
-         YG7MGi8J95h+5sKeNnWT76bULL5vZDx0ZcA+JNhXSrIjxqLLOripYeXx99DSpfNN445u
-         il0w90/Gji2Ax5X5XpGkzd+NrNYCVT85oCFa4M74sf6xiE8otgGHAO+0KqWkWfuRubJL
-         W87Y51RMTEzR22BXz44gMadQeR9hZaZicqEXb8opqBLoFT3Wcc0yAHLb0y47D684UA+s
-         GprOMxmthFyKc4fnfGml3HaH/5qM+ZrMV91cFl0oj0mKpM97wX1Bel4ebxvc876rwybS
-         ZeXQ==
-X-Gm-Message-State: APjAAAVzoyZgWeWI/bj90OqjpEl+TXYcBaQ3F8830jXvgdbwffcT1+jy
-        6wLLSxX4aah329pzINf4EHUdkQ==
-X-Google-Smtp-Source: APXvYqzVfNPgK3styQsjXZr91PyrqVn2vP6x01Abxia0xpHcW5BIME9JyPDGk9UbFVDoMQ6TMxihtQ==
-X-Received: by 2002:a63:8841:: with SMTP id l62mr14744140pgd.246.1560185879548;
-        Mon, 10 Jun 2019 09:57:59 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a192sm470040pfa.84.2019.06.10.09.57.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 09:57:58 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 09:58:43 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     robh+dt@kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linus.walleij@linaro.org, agross@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/6] clk: qcom: Add ipq6018 Global Clock Controller
- support
-Message-ID: <20190610165843.GC22737@tuxbook-pro>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
- <1559754961-26783-5-git-send-email-sricharan@codeaurora.org>
- <20190608033229.GE24059@builder>
- <6583f576-acf4-a71b-d691-bce548e2c008@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6583f576-acf4-a71b-d691-bce548e2c008@codeaurora.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S2388196AbfFJRMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:12:20 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25138 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387415AbfFJRMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:12:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 10:12:19 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga003.jf.intel.com with ESMTP; 10 Jun 2019 10:12:18 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "H Peter Anvin" <hpa@zytor.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
+Subject: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16 instructions
+Date:   Mon, 10 Jun 2019 10:02:38 -0700
+Message-Id: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10 Jun 04:47 PDT 2019, Sricharan R wrote:
+AVX512 Vector Neural Network Instructions (VNNI) in Intel Deep Learning
+Boost support bfloat16 format (BF16). BF16 is a short version of FP32 and
+has several advantages over FP16. BF16 offers more than enough range for
+deep learning training tasks and doesn't need to handle hardware exception
+as this is a performance optimization. FP32 accumulation after the
+multiply is essential to achieve sufficient numerical behavior on an
+application level. 
 
-> Hi Bjorn,
-> 
-> On 6/8/2019 9:02 AM, Bjorn Andersson wrote:
-> > On Wed 05 Jun 10:15 PDT 2019, Sricharan R wrote:
-> > 
-> >> This patch adds support for the global clock controller found on
-> >> the ipq6018 based devices.
-> >>
-> >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >> Signed-off-by: anusha <anusharao@codeaurora.org>
-> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> > 
-> > Please fix your s-o-b chain, as described in my reply to 1/8..
-> > 
-> 
->  ok.
-> 
-> >> ---
-> >>  drivers/clk/qcom/Kconfig       |    9 +
-> >>  drivers/clk/qcom/Makefile      |    1 +
-> >>  drivers/clk/qcom/gcc-ipq6018.c | 5267 ++++++++++++++++++++++++++++++++++++++++
-> >>  3 files changed, 5277 insertions(+)
-> >>  create mode 100644 drivers/clk/qcom/gcc-ipq6018.c
-> >>
-> >> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> >> index e1ff83c..e5fb091 100644
-> >> --- a/drivers/clk/qcom/Kconfig
-> >> +++ b/drivers/clk/qcom/Kconfig
-> >> @@ -120,6 +120,15 @@ config IPQ_GCC_8074
-> >>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
-> >>  	  of ipq8074.
-> >>  
-> >> +config IPQ_GCC_6018
-> > 
-> > Please maintain sort order.
-> > 
-> 
->  ok.
-> 
-> >> +	tristate "IPQ6018 Global Clock Controller"
-> >> +	depends on COMMON_CLK_QCOM
-> >> +	help
-> >> +	  Support for global clock controller on ipq6018 devices.
-> >> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> >> +	  i2c, USB, SD/eMMC, etc. Select this for the root clock
-> >> +	  of ipq6018.
-> >> +
-> >>  config MSM_GCC_8660
-> >>  	tristate "MSM8660 Global Clock Controller"
-> >>  	help
-> >> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> >> index f0768fb..025137d 100644
-> >> --- a/drivers/clk/qcom/Makefile
-> >> +++ b/drivers/clk/qcom/Makefile
-> >> @@ -22,6 +22,7 @@ obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
-> >>  obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
-> >>  obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
-> >>  obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
-> >> +obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
-> > 
-> > Ditto.
-> > 
-> 
->  ok.
-> 
-> >>  obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
-> >>  obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
-> >>  obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
-> >> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-> > [..]
-> >> +static int gcc_ipq6018_probe(struct platform_device *pdev)
-> >> +{
-> >> +	return qcom_cc_probe(pdev, &gcc_ipq6018_desc);
-> >> +}
-> >> +
-> >> +static int gcc_ipq6018_remove(struct platform_device *pdev)
-> >> +{
-> >> +	return 0;
-> > 
-> > Just omit .remove from the gcc_ipq6018_driver instead of providing a
-> > dummy function.
-> > 
-> 
->  ok.
-> 
-> >> +}
-> >> +
-> >> +static struct platform_driver gcc_ipq6018_driver = {
-> >> +	.probe = gcc_ipq6018_probe,
-> >> +	.remove = gcc_ipq6018_remove,
-> >> +	.driver = {
-> >> +		.name   = "qcom,gcc-ipq6018",
-> >> +		.owner  = THIS_MODULE,
-> > 
-> > Don't specify .owner in platform drivers.
-> > 
-> 
->  ok.
-> 
-> > [..]
-> >> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. GCC IPQ6018 Driver");
-> >> +MODULE_LICENSE("GPL v2");
-> >> +MODULE_ALIAS("platform:gcc-ipq6018");
-> > 
-> > This modalias won't be used.
-> >
-> 
->  ok. But it looks to be there in other clk drivers as well.
->  
+AVX512 bfloat16 instructions can be enumerated by:
+	CPUID.(EAX=7,ECX=1):EAX[bit 5] AVX512_BF16
+    
+Detailed information of the CPUID bit and AVX512 bfloat16 instructions
+can be found in the latest Intel Architecture Instruction Set Extensions
+and Future Features Programming Reference.
 
-It serves the purpose that the driver will be automatically modprobed if
-someone calls:
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
 
-  platform_device_register*(...,  "gcc-ipq6018", ...);
+Since split lock feature (to-be-upstreamed) occupies the last bit 
+of word 7, need to create a new word 19 to host AVX512_BF16 and other
+future features.
 
-So for everything that is only going be probed from DT (or ACPI) this
-does not add any value. As such there are several other places where
-these aliases should be dropped.
+ arch/x86/include/asm/cpufeature.h        | 7 +++++--
+ arch/x86/include/asm/cpufeatures.h       | 8 +++++++-
+ arch/x86/include/asm/disabled-features.h | 3 ++-
+ arch/x86/include/asm/required-features.h | 3 ++-
+ arch/x86/kernel/cpu/cpuid-deps.c         | 1 +
+ arch/x86/kernel/cpu/scattered.c          | 1 +
+ 6 files changed, 18 insertions(+), 5 deletions(-)
 
-Regards,
-Bjorn
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 0e56ff7e4848..cfb7d765ed86 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -30,6 +30,7 @@ enum cpuid_leafs
+ 	CPUID_7_ECX,
+ 	CPUID_8000_0007_EBX,
+ 	CPUID_7_EDX,
++	CPUID_LNX_4,
+ };
+ 
+ #ifdef CONFIG_X86_FEATURE_NAMES
+@@ -81,8 +82,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
++	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
+ 	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
+ 
+ #define DISABLED_MASK_BIT_SET(feature_bit)				\
+ 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+@@ -104,8 +106,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
++	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
+ 	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
++	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
+ 
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 981ff9479648..7d76393ce916 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -13,7 +13,7 @@
+ /*
+  * Defines x86 CPU feature bits
+  */
+-#define NCAPINTS			19	   /* N 32-bit words worth of info */
++#define NCAPINTS			20	   /* N 32-bit words worth of info */
+ #define NBUGINTS			1	   /* N 32-bit bug flags */
+ 
+ /*
+@@ -352,6 +352,12 @@
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+ #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+ 
++/*
++ * Extended auxiliary flags: Linux defined - For features scattered in various
++ * CPUID levels and sub-leaves like CPUID level 7 and sub-leaf 1, etc, word 19.
++ */
++#define X86_FEATURE_AVX512_BF16		(19*32+ 0) /* BFLOAT16 instructions */
++
+ /*
+  * BUG word(s)
+  */
+diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+index a5ea841cc6d2..f0f935f8d917 100644
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -84,6 +84,7 @@
+ #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
+ #define DISABLED_MASK17	0
+ #define DISABLED_MASK18	0
+-#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
++#define DISABLED_MASK19	0
++#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
+ 
+ #endif /* _ASM_X86_DISABLED_FEATURES_H */
+diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
+index 6847d85400a8..fa5700097f64 100644
+--- a/arch/x86/include/asm/required-features.h
++++ b/arch/x86/include/asm/required-features.h
+@@ -101,6 +101,7 @@
+ #define REQUIRED_MASK16	0
+ #define REQUIRED_MASK17	0
+ #define REQUIRED_MASK18	0
+-#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
++#define REQUIRED_MASK19	0
++#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
+ 
+ #endif /* _ASM_X86_REQUIRED_FEATURES_H */
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index 2c0bd38a44ab..65d3e0c47a25 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -59,6 +59,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_AVX512_4VNNIW,	X86_FEATURE_AVX512F   },
+ 	{ X86_FEATURE_AVX512_4FMAPS,	X86_FEATURE_AVX512F   },
+ 	{ X86_FEATURE_AVX512_VPOPCNTDQ, X86_FEATURE_AVX512F   },
++	{ X86_FEATURE_AVX512_BF16,	X86_FEATURE_AVX512VL  },
+ 	{}
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index 94aa1c72ca98..59d7a85db621 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -26,6 +26,7 @@ struct cpuid_bit {
+ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
+ 	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
++	{ X86_FEATURE_AVX512_BF16,	CPUID_EAX,  5, 0x00000007, 1 },
+ 	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
+ 	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
+ 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
+-- 
+2.19.1
+
