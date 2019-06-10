@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AAE33BB4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B07E43BB53
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388628AbfFJRrz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 13:47:55 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49726 "EHLO mga11.intel.com"
+        id S2388684AbfFJRsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:48:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387643AbfFJRrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:47:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 10:47:54 -0700
-X-ExtLoop1: 1
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by orsmga005.jf.intel.com with ESMTP; 10 Jun 2019 10:47:53 -0700
-Received: from orsmsx160.amr.corp.intel.com (10.22.226.43) by
- ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 10 Jun 2019 10:47:53 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.166]) by
- ORSMSX160.amr.corp.intel.com ([169.254.13.69]) with mapi id 14.03.0415.000;
- Mon, 10 Jun 2019 10:47:53 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: RE: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
-Thread-Topic: [RFC PATCH v2 1/5] mm: Introduce vm_ops->may_mprotect()
-Thread-Index: AQHVHA01/2g2StwB+UmAXBpwpA92D6aVeUUAgAAN64D//6b7AA==
-Date:   Mon, 10 Jun 2019 17:47:52 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654FFD59@ORSMSX116.amr.corp.intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
- <20190606021145.12604-2-sean.j.christopherson@intel.com>
- <20190610150600.GA3752@linux.intel.com>
- <20190610155549.GB15995@linux.intel.com>
-In-Reply-To: <20190610155549.GB15995@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzM0YTFiOWItZTQxNy00N2YxLTg4NjEtNzdmZjc4ODE1N2EwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicWhaTjFJMVVqenc2R1JyZHdBTkplRTlsOFZQZWV6YkM5eGl0YXh4TmZcL1VnaVFVQlRcL005U1Jpa2ZaVEh6XC9PTyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S2388137AbfFJRsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:48:38 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06F382082E;
+        Mon, 10 Jun 2019 17:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560188917;
+        bh=JCYtr578JZHDpZDNNeR6oaJuu0zaAN8vx7GBh/2uwDs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OCtSbOGJJdsJVtrRQic15syeuz/CIQssKTnv1lIGTU+xmmTbiBHry4ebqKYPZhsTD
+         fTiDmvJAimgk6+vtSXUmyQqn4MGqYJ5Xti6wN4yb/f0jrcONCQ77ig5Ki7vOg+jvEv
+         skCS43g9oOaIilC9DIV05MC7Tb7Y7kWLUXJwfizY=
+Date:   Mon, 10 Jun 2019 19:48:35 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] firmware: Add support for loading compressed files
+Message-ID: <20190610174835.GA11472@kroah.com>
+References: <20190520092647.8622-1-tiwai@suse.de>
+ <20190610172130.GA28902@kroah.com>
+ <s5h1s01ic08.wl-tiwai@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5h1s01ic08.wl-tiwai@suse.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Christopherson, Sean J
-> Sent: Monday, June 10, 2019 8:56 AM
+On Mon, Jun 10, 2019 at 07:30:31PM +0200, Takashi Iwai wrote:
+> On Mon, 10 Jun 2019 19:21:30 +0200,
+> Greg Kroah-Hartman wrote:
+> > 
+> > On Mon, May 20, 2019 at 11:26:42AM +0200, Takashi Iwai wrote:
+> > > Hi,
+> > > 
+> > > this is a patch set to add the support for loading compressed firmware
+> > > files.
+> > > 
+> > > The primary motivation is to reduce the storage size; e.g. currently
+> > > the amount of /lib/firmware on my machine counts up to 419MB, and this
+> > > can be reduced to 130MB file compression.  No bad deal.
+> > > 
+> > > The feature adds only fallback to the compressed file, so it should
+> > > work as it was as long as the normal firmware file is present.  The
+> > > f/w loader decompresses the content, so that there is no change needed
+> > > in the caller side.
+> > > 
+> > > Currently only XZ format is supported.  A caveat is that the kernel XZ
+> > > helper code supports only CRC32 (or none) integrity check type, so
+> > > you'll have to compress the files via xz -C crc32 option.
+> > > 
+> > > The patch set begins with a few other improvements and refactoring,
+> > > followed by the compression support.
+> > > 
+> > > In addition to this, dracut needs a small fix to deal with the *.xz
+> > > files.
+> > > 
+> > > Also, the latest patchset is found in topic/fw-decompress branch of my
+> > > sound.git tree:
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+> > 
+> > I've applied the first 3 patches to my tree, as they were sane and good
+> > cleanups.
 > 
-> > > As a result, LSM policies cannot be meaningfully applied, e.g. an
-> > > LSM can deny access to the EPC as a whole, but can't deny PROT_EXEC
-> > > on page that originated in a non-EXECUTE file (which is long gone by
-> > > the time
-> > > mprotect() is called).
-> >
-> > I have hard time following what is paragraph is trying to say.
-> >
-> > > By hooking mprotect(), SGX can make explicit LSM upcalls while an
-> > > enclave is being built, i.e. when the kernel has a handle to origin
-> > > of each enclave page, and enforce the result of the LSM policy
-> > > whenever userspace maps the enclave page in the future.
-> >
-> > "LSM policy whenever calls mprotect()"? I'm no sure why you mean by
-> > mapping here and if there is any need to talk about future. Isn't this
-> > needed now?
+> Great, thanks!
 > 
-> Future is referring to the timeline of a running kernel, not the future
-> of the kernel code.
+> > I'll wait for a test-case and a resend of the second two before taking
+> > them {hint} :)
 > 
-> Rather than trying to explain all of the above with words, I'll provide
-> code examples to show how ->may_protect() will be used by SGX and why it
-> is the preferred solution.
+> The patch for test_firmware was already sent, and it includes the test
+> of the compressed firmware file.  In anyway, I'm going to resubmit the
+> rest tomorrow.
 
-The LSM concept is to separate security policy enforcement from the rest of the kernel. For modules, the "official" way is to use VM_MAY* flags to limit allowable permissions, while LSM uses security_file_mprotect(). I guess that's why we didn't have .may_mprotect() in the first place. What you are doing is enforcing some security policy outside of LSM, which is dirty from architecture perspective.
+Ah, sorry, I seem to have missed that.  A new series would be best,
+thanks!
+
+greg k-h
