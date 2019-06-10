@@ -2,52 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF6BA3B47E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A26FB3B48F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389834AbfFJMSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 08:18:48 -0400
-Received: from muru.com ([72.249.23.125]:52548 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388833AbfFJMSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 08:18:47 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id DB2EB80CD;
-        Mon, 10 Jun 2019 12:19:07 +0000 (UTC)
-Date:   Mon, 10 Jun 2019 05:18:43 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Yue Haibing <yuehaibing@huawei.com>
-Cc:     paul@pwsan.com, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH -next] ARM: OMAP2+: Make some variables static
-Message-ID: <20190610121843.GY5447@atomide.com>
-References: <20190413141744.34488-1-yuehaibing@huawei.com>
+        id S2389889AbfFJMTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 08:19:42 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40272 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388952AbfFJMTl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 08:19:41 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5ACJYvj051757;
+        Mon, 10 Jun 2019 07:19:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560169175;
+        bh=HRczlLLLa8fNcM5JaVoEwlEJRwamvX4hQ+KRQb/Fon8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=clRIYTQvxertq25F+Zqgjl+8PyIO0ND2jEZjKoYcU8Mn6OD+umX8Ti7bX9wO5Ak0v
+         +CnBk0v4nZRQ/MK6dzy/h/1yt93KX71Yexc5heunvy/+PfcAYzL0JIzRlReMtF4Agy
+         SXtCOX7X159pZzGAo+9swxcupT2mDJBLvaZUKSBQ=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5ACJYUs089592
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Jun 2019 07:19:34 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 10
+ Jun 2019 07:19:29 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 10 Jun 2019 07:19:29 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5ACJQGV122170;
+        Mon, 10 Jun 2019 07:19:27 -0500
+Subject: Re: [PATCH] firmware: ti_sci: Add support for processor control
+To:     <santosh.shilimkar@oracle.com>, Suman Anna <s-anna@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190605223334.30428-1-s-anna@ti.com>
+ <4302c224-9e50-6320-2585-60bfe0aa2a32@oracle.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <2174bc51-9e28-e519-b936-9e101e2a2a4e@ti.com>
+Date:   Mon, 10 Jun 2019 15:19:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190413141744.34488-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <4302c224-9e50-6320-2585-60bfe0aa2a32@oracle.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 08/06/2019 00:35, santosh.shilimkar@oracle.com wrote:
+> On 6/5/19 3:33 PM, Suman Anna wrote:
+>> Texas Instrument's System Control Interface (TI-SCI) Message Protocol
+>> is used in Texas Instrument's System on Chip (SoC) such as those
+>> in K3 family AM654 SoC to communicate between various compute
+>> processors with a central system controller entity.
+>>
+>> The system controller provides various services including the control
+>> of other compute processors within the SoC. Extend the TI-SCI protocol
+>> support to add various TI-SCI commands to invoke services associated
+>> with power and reset control, and boot vector management of the
+>> various compute processors from the Linux kernel.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> Hi Santosh, Nishanth, Tero,
+>>
+>> Appreciate it if this patch can be picked up for the 5.3 merge window.
+>> This is a dependency patch for my various remoteproc drivers on TI K3
+>> SoCs. Patch is on top of v5.2-rc1.
+>>
+> I will pick this up for 5.3.
 
-* Yue Haibing <yuehaibing@huawei.com> [190413 07:18]:
-> From: YueHaibing <yuehaibing@huawei.com>
-> 
-> Fix sparse warnings:
-> 
-> arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c:532:25: warning: symbol 'am33xx_gpio_hwmod_class' was not declared. Should it be static?
-> arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c:542:19: warning: symbol 'am33xx_gpio1_hwmod' was not declared. Should it be static?
-> arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c:562:19: warning: symbol 'am33xx_gpio2_hwmod' was not declared. Should it be static?
-> arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c:582:19: warning: symbol 'am33xx_gpio3_hwmod' was not declared. Should it be static?
+Santosh,
 
-I just noticed this is still pending, sorry for the delay. Applying into
-omap-for-v5.3/soc.
+There is a pile of drivers/firmware changes for ti-sci, which have cross 
+dependencies, and will cause merge conflicts also as they touch same file.
 
-Regards,
+Do you mind if I setup a pull-request for these all and send it to you? 
+They are going to be on top of the keystone clock pull-request I just 
+sent today though, otherwise it won't compile (the 32bit clock support 
+has dependency towards the clock driver.)
 
-Tony
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
