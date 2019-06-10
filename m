@@ -2,96 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E89813B782
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD623B77B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389918AbfFJOf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 10:35:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47282 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389575AbfFJOf6 (ORCPT
+        id S2403961AbfFJOem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 10:34:42 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45613 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403942AbfFJOel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 10:35:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5AETNbi096395;
-        Mon, 10 Jun 2019 14:35:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=AreI3Oi5t2BK9yZ9fvqJm8n0iuLc5FNcr71UXydQQ4A=;
- b=IQNJubjfwEeOewYwiDKlbW98yCxrRZxsg8eJ286mCQaJbD4mAofdKhmBiR4RhF2dZUEk
- TICkZvpOPCcleI+we1ow+JbbOmjINiMV2X5rCDRtnughpjq/kGhVUfQ8VqCpNs9oPOV4
- j21bGybX5KyQCvGZixli/KpymHd9vC0p2ODpdq7xyGTeHEKQ6sYGX6J+0J12afwOu6o4
- 1I/7I/mW7bnBv5+iw0Jp81ayCbnc5CU+FFtIchtPJ+e+IVzLNCdAyEyTSqAGrgIKu9Y6
- ia/0/7RqwpIM5FPH9/LBsEJuSPpQ+yu4RrPdXNU2Kx+D5TGNypsZ9vykvRXlU0sr95Ct zA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2t04etfaqc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 14:35:46 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5AEWjsM157789;
-        Mon, 10 Jun 2019 14:33:46 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2t1jpgwam6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 14:33:46 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5AEXiea023021;
-        Mon, 10 Jun 2019 14:33:44 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Jun 2019 07:33:43 -0700
-Date:   Mon, 10 Jun 2019 17:33:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     devel@driverdev.osuosl.org, valdis.kletnieks@vt.edu,
-        florian.c.schilhabel@googlemail.com, tiny.windzz@gmail.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        colin.king@canonical.com, larry.finger@lwfinger.net
-Subject: Re: [PATCH 1/2] staging: rtl8712: r8712_setdatarate_cmd(): Change
-Message-ID: <20190610143333.GA1915@kadam>
-References: <20190607140658.11932-1-nishkadg.linux@gmail.com>
- <20190607141548.GP31203@kadam>
- <98b587c9-df5b-0905-ab8f-69a4bae296b0@gmail.com>
+        Mon, 10 Jun 2019 10:34:41 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a14so12943113edv.12;
+        Mon, 10 Jun 2019 07:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MTGWsUBr2L+P8aBUG4WFSYpu/sxAUSElAPcxJpHZNu0=;
+        b=HKp914S4OkrsKUi0GgHD22923EyP+FFJGm6HKQ1iHKxNtx+/zxQaF9i1rbCrbHl5eb
+         0OHqNXMeYYGNlQtVmEEVUJof06bsfE9J6PcREobzGwzTAw2N30iVnWVifos0ssBpbzTt
+         x6PK9w3mSNENnFZ00RIt5m7CHsTewevwG6blysA42J5R8eH7Ub/HGdqSWiyP1T6kBKxg
+         QnDzaRXb7fJsWeFwLkRHq+R7xaXkK5sOQ3pguBCj7FnNH0j+4V2yhKjCgOyH5/sWZXSN
+         hawir52CgsvkCOghKcMb/aZgBjBiniBHMg5+Y7CDtkM1dr5YU/tjCG55jrKIjr2XC7ub
+         NMsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MTGWsUBr2L+P8aBUG4WFSYpu/sxAUSElAPcxJpHZNu0=;
+        b=ErlwVkrfmdGsjBacKBvy4fynH6ce9kxfzJGbeGidPTKaueZLFduJ+qaAl2s8M2axi2
+         7BGgrz3/1fi0h3S8iDEYMWPDHubqOdIUEuQ6Zl4FmW7T5LCv+Q3Cmt33ekn7wrRUiQoQ
+         WlL9EI6yk9V4S6W99U122Gva5tpZn+DrYjpCXwC9iQj+G6NlfQyjuqFfdOYIxMCFdax3
+         DUl3O9ztQOhim/Y+voHYbO8DBvH0BojTn/egqnGwKvqzAwYsePs9u6HSEu3y1nYTmasQ
+         o++msOmjr2YibnjRqysz7DQoxWakViYdZ0zRLvij8uja0idXXbcUNdKi1W6cH+JvNNJj
+         MP6A==
+X-Gm-Message-State: APjAAAWNGrDGX3dM3f8z7TjJL8B30O8owyj3j6P3BSbTeNiLww1gocWy
+        fjLix2FQ6oVgvShfvQBfsm0j38P+w1PMzW/Zju8=
+X-Google-Smtp-Source: APXvYqzG4pTXEWeYJu/98bKGKeUyLRBM6GfrMiLJSxD5yHuoJDChEYDidfgdt6pimDZUHUwcoAxyiqxSlc+gJJqdup8=
+X-Received: by 2002:a50:b1db:: with SMTP id n27mr28793697edd.62.1560177279272;
+ Mon, 10 Jun 2019 07:34:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98b587c9-df5b-0905-ab8f-69a4bae296b0@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=563
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906100101
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=611 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906100101
+References: <20190610115831.175710-1-maowenan@huawei.com> <CAF=yD-JOCZHt6q3ArCqY5PMW1vP5ZmNkYMKUB14TrgU-X30cSQ@mail.gmail.com>
+ <caf8d25f-60e2-a0c0-dc21-956ea32ee59a@huawei.com>
+In-Reply-To: <caf8d25f-60e2-a0c0-dc21-956ea32ee59a@huawei.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 10 Jun 2019 10:34:03 -0400
+Message-ID: <CAF=yD-+g1bSGOubFUE8veZNvGiPy1oYsf+dFDd=hqXYD+k4g_Q@mail.gmail.com>
+Subject: Re: [PATCH -next] packet: remove unused variable 'status' in __packet_lookup_frame_in_block
+To:     maowenan <maowenan@huawei.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 10:02:27AM +0530, Nishka Dasgupta wrote:
-> On 07/06/19 7:45 PM, Dan Carpenter wrote:
-> > Probably you sent this patch unintentionally.  The subject doesn't make
-> > any sort of sense.  :P
-> 
-> So the problem with the subject line is that git send-email and vim (as
-> configured on my laptop) tend to line-wrap even the subject line. Since I
-> have two patches that do the same thing for different functions, I felt I
-> should have the driver and the function name in the subject line (to avoid
-> confusion between the patches and to allow for easy searching later). But
-> that doesn't leave enough space in the subject line for "Change return
-> values/type" or any other descriptive message. What should I do?
-> 
+On Mon, Jun 10, 2019 at 10:03 AM maowenan <maowenan@huawei.com> wrote:
+>
+>
+>
+> On 2019/6/10 21:05, Willem de Bruijn wrote:
+> > On Mon, Jun 10, 2019 at 8:17 AM Mao Wenan <maowenan@huawei.com> wrote:
+> >>
+> >> The variable 'status' in  __packet_lookup_frame_in_block() is never used since
+> >> introduction in commit f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer
+> >> implementation."), we can remove it.
+> >> And when __packet_lookup_frame_in_block() calls prb_retire_current_block(),
+> >> it can pass macro TP_STATUS_KERNEL instead of 0.
+> >>
+> >> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> >> ---
 
-I don't really care.
+> >>         /* Ok, close the current block */
+> >> -       prb_retire_current_block(pkc, po, 0);
+> >> +       prb_retire_current_block(pkc, po, TP_STATUS_KERNEL);
+> >
+> > I don't think that 0 is intended to mean TP_STATUS_KERNEL here.
+> >
+> > prb_retire_current_block calls prb_close_block which sets status to
+> >
+> >   TP_STATUS_USER | stat
+> >
+> > where stat is 0 or TP_STATUS_BLK_TMO.
+>
+>
+> #define TP_STATUS_KERNEL                      0
+> #define TP_STATUS_BLK_TMO               (1 << 5)
+>
+> Actually, packet_current_rx_frame calls __packet_lookup_frame_in_block with status=TP_STATUS_KERNEL
+> in original code.
+>
+> __packet_lookup_frame_in_block in this function, first is to check whether the currently active block
+> has enough space for the packet, which means status of block should be TP_STATUS_KERNEL, then it calls
+> prb_retire_current_block to retire this block.
 
-[PATCH] staging: rtl8712: clean up r8712_setdatarate_cmd() return type
+I know. I mean that the status here is what is passed to userspace on
+block retire.
 
-regards,
-dan carpenter
+It is not intended to be TP_STATUS_USER | TP_STATUS_KERNEL. That makes no sense.
 
+> Since there needs some discussion about means of status, I can send v2 only removing the parameter status of
+> __packet_lookup_frame_in_block?
+
+Sounds good.
