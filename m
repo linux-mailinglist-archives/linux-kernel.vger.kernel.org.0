@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5431B3AFA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E773AFA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388096AbfFJH32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 03:29:28 -0400
+        id S2388112AbfFJH3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 03:29:32 -0400
 Received: from mga01.intel.com ([192.55.52.88]:14549 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388054AbfFJH30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 03:29:26 -0400
+        id S2388098AbfFJH33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 03:29:29 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 00:29:26 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 00:29:29 -0700
 X-ExtLoop1: 1
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by orsmga006.jf.intel.com with ESMTP; 10 Jun 2019 00:29:24 -0700
+  by orsmga006.jf.intel.com with ESMTP; 10 Jun 2019 00:29:26 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] perf intel-pt: Prepare to synthesize PEBS samples
-Date:   Mon, 10 Jun 2019 10:27:56 +0300
-Message-Id: <20190610072803.10456-5-adrian.hunter@intel.com>
+Subject: [PATCH 05/11] perf intel-pt: Factor out common sample preparation for re-use
+Date:   Mon, 10 Jun 2019 10:27:57 +0300
+Message-Id: <20190610072803.10456-6-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190610072803.10456-1-adrian.hunter@intel.com>
 References: <20190610072803.10456-1-adrian.hunter@intel.com>
@@ -33,57 +33,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add infrastructure to prepare for synthesizing PEBS samples but leave the
-actual synthesis to later patches.
+Factor out common sample preparation for re-use when synthesizing PEBS
+samples.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/intel-pt.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ tools/perf/util/intel-pt.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
 diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index f43d3ac2db8b..389ec4612f86 100644
+index 389ec4612f86..1f5520f964ab 100644
 --- a/tools/perf/util/intel-pt.c
 +++ b/tools/perf/util/intel-pt.c
-@@ -104,6 +104,9 @@ struct intel_pt {
- 	u64 pwrx_id;
- 	u64 cbr_id;
- 
-+	bool sample_pebs;
-+	struct perf_evsel *pebs_evsel;
-+
- 	u64 tsc_bit;
- 	u64 mtc_bit;
- 	u64 mtc_freq_bits;
-@@ -1431,6 +1434,11 @@ static int intel_pt_synth_pwrx_sample(struct intel_pt_queue *ptq)
- 					    pt->pwr_events_sample_type);
+@@ -1078,28 +1078,37 @@ static inline bool intel_pt_skip_event(struct intel_pt *pt)
+ 	       pt->num_events++ < pt->synth_opts.initial_skip;
  }
  
-+static int intel_pt_synth_pebs_sample(struct intel_pt_queue *ptq __maybe_unused)
++static void intel_pt_prep_a_sample(struct intel_pt_queue *ptq,
++				   union perf_event *event,
++				   struct perf_sample *sample)
 +{
-+	return 0;
++	event->sample.header.type = PERF_RECORD_SAMPLE;
++	event->sample.header.size = sizeof(struct perf_event_header);
++
++	sample->pid = ptq->pid;
++	sample->tid = ptq->tid;
++	sample->cpu = ptq->cpu;
++	sample->insn_len = ptq->insn_len;
++	memcpy(sample->insn, ptq->insn, INTEL_PT_INSN_BUF_SZ);
 +}
 +
- static int intel_pt_synth_error(struct intel_pt *pt, int code, int cpu,
- 				pid_t pid, pid_t tid, u64 ip, u64 timestamp)
+ static void intel_pt_prep_b_sample(struct intel_pt *pt,
+ 				   struct intel_pt_queue *ptq,
+ 				   union perf_event *event,
+ 				   struct perf_sample *sample)
  {
-@@ -1518,6 +1526,16 @@ static int intel_pt_sample(struct intel_pt_queue *ptq)
- 		ptq->ipc_cyc_cnt = ptq->state->tot_cyc_cnt;
- 	}
- 
-+	/*
-+	 * Do PEBS first to allow for the possibility that the PEBS timestamp
-+	 * precedes the current timestamp.
-+	 */
-+	if (pt->sample_pebs && state->type & INTEL_PT_BLK_ITEMS) {
-+		err = intel_pt_synth_pebs_sample(ptq);
-+		if (err)
-+			return err;
-+	}
++	intel_pt_prep_a_sample(ptq, event, sample);
 +
- 	if (pt->sample_pwr_events && (state->type & INTEL_PT_PWR_EVT)) {
- 		if (state->type & INTEL_PT_CBR_CHG) {
- 			err = intel_pt_synth_cbr_sample(ptq);
+ 	if (!pt->timeless_decoding)
+ 		sample->time = tsc_to_perf_time(ptq->timestamp, &pt->tc);
+ 
+ 	sample->ip = ptq->state->from_ip;
+ 	sample->cpumode = intel_pt_cpumode(pt, sample->ip);
+-	sample->pid = ptq->pid;
+-	sample->tid = ptq->tid;
+ 	sample->addr = ptq->state->to_ip;
+ 	sample->period = 1;
+-	sample->cpu = ptq->cpu;
+ 	sample->flags = ptq->flags;
+-	sample->insn_len = ptq->insn_len;
+-	memcpy(sample->insn, ptq->insn, INTEL_PT_INSN_BUF_SZ);
+ 
+-	event->sample.header.type = PERF_RECORD_SAMPLE;
+ 	event->sample.header.misc = sample->cpumode;
+-	event->sample.header.size = sizeof(struct perf_event_header);
+ }
+ 
+ static int intel_pt_inject_event(union perf_event *event,
 -- 
 2.17.1
 
