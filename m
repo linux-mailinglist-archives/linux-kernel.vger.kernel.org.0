@@ -2,78 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ECBD3B5F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:26:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9833B632
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390326AbfFJNZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 09:25:59 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:41360 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388848AbfFJNZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 09:25:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=YI80HFnKhwfC06RagYAUP7ThPG5kbxVc9JBgg7X0bw4=; b=GRCoQxzsfFqofI/UoDR47FyGeh
-        PXcWJC0FwW5udvg5zB6I1T1LiChU8rv8Jthx+vt8ENT0ibn9T3tlEYZ0FXRYnP3ryf1pXwTWnmJCv
-        gOtGl5LRYrKCfS6iAGy680Rc8vL0QfqpdtYcupc3fDaOQSXeQ3e+62boTKbSztAhwzmc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1haKJ0-0006kC-Nt; Mon, 10 Jun 2019 15:25:46 +0200
-Date:   Mon, 10 Jun 2019 15:25:46 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, devicetree@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC next v1 0/5] stmmac: honor the GPIO flags for the PHY reset
- GPIO
-Message-ID: <20190610132546.GE8247@lunn.ch>
-References: <20190609180621.7607-1-martin.blumenstingl@googlemail.com>
- <20190609204510.GB8247@lunn.ch>
- <20190610114700.tymqzzax334ahtz4@flea>
- <CAFBinCCs5pa1QmaV32Dk9rOADKGXXFpZsSK=LUk4CGWMrG5VUQ@mail.gmail.com>
+        id S2390430AbfFJNli convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 09:41:38 -0400
+Received: from elephants.elehost.com ([216.66.27.132]:11249 "EHLO
+        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390156AbfFJNlh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 09:41:37 -0400
+X-Greylist: delayed 820 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jun 2019 09:41:37 EDT
+X-Virus-Scanned: amavisd-new at elehost.com
+Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
+        (authenticated bits=0)
+        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x5ADRpeT017377
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 10 Jun 2019 09:27:51 -0400 (EDT)
+        (envelope-from rsbecker@nexbridge.com)
+From:   "Randall S. Becker" <rsbecker@nexbridge.com>
+To:     "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>
+Cc:     "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <xmqq36klozfu.fsf@gitster-ct.c.googlers.com>
+In-Reply-To: <xmqq36klozfu.fsf@gitster-ct.c.googlers.com>
+Subject: RE: [ANNOUNCE] Git v2.22.0
+Date:   Mon, 10 Jun 2019 09:27:45 -0400
+Message-ID: <018b01d51f90$4d394c10$e7abe430$@nexbridge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFBinCCs5pa1QmaV32Dk9rOADKGXXFpZsSK=LUk4CGWMrG5VUQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQF6jAlHAj4+VvQmlQVIepong1ytu6dKBuKg
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> if anyone else (just like me) doesn't know about it, there are generic
-> bindings defined here: [0]
-> 
-> I just tested this on my X96 Max by defining the following properties
-> inside the PHY node:
->   reset-delay-us = <10000>;
->   reset-assert-us = <10000>;
->   reset-deassert-us = <10000>;
->   reset-gpios = <&gpio GPIOZ_15 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
-> 
-> that means I don't need any stmmac patches which seems nice.
-> instead I can submit a patch to mark the snps,reset-gpio properties in
-> the dt-bindings deprecated (and refer to the generic bindings instead)
-> what do you think?
+On Friday, June 7, 2019 5:31 PM, Junio C Hamano wrote:
+> The latest feature release Git v2.22.0 is now available at the
+> usual places.  It is comprised of 745 non-merge commits since
+> v2.21.0, contributed by 74 people, 18 of which are new faces.
 
-Hi Martin
+Report from NonStop tests:
+t7519 subtest 25 still fails on first execution but not on second. 
+t9001 subtests 33, 82, 118, 119, 146 fail. We have no normal sendmail on platform.
+t9020, t9600, t9601, t9602 all fail - we have no SVN. I may be able to handle exclusions for the next release.
 
-I know Linus wants to replace all users of old GPIO numbers with gpio
-descriptors. So your patches have value, even if you don't need them.
+So essentially, no change from previous releases other than t7519 being wonky. This is a pass. Thanks for all hard work from the team.
 
-One other things to watch out for. We have generic code at two
-levels. Either the GPIO is per PHY, and the properties should be in
-the PHY node, or the reset is for all PHYs of an MDIO bus, and then
-the properties should be in the MDIO node.
+Regards,
+Randall
 
-    Andrew
+
