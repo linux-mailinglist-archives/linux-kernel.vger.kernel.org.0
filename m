@@ -2,182 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8900F3B000
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 384A83B00D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388074AbfFJHxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 03:53:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:37464 "EHLO foss.arm.com"
+        id S2388291AbfFJH5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 03:57:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387781AbfFJHxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 03:53:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D961344;
-        Mon, 10 Jun 2019 00:53:40 -0700 (PDT)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18E3A3F246;
-        Mon, 10 Jun 2019 00:53:37 -0700 (PDT)
-Subject: Re: [PATCH v3 6/8] arm64: irqflags: Introduce explicit debugging for
- IRQ priorities
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        yuzenghui@huawei.com, wanghaibin.wang@huawei.com,
-        james.morse@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        mark.rutland@arm.com, liwei391@huawei.com
-References: <1559813517-41540-1-git-send-email-julien.thierry@arm.com>
- <1559813517-41540-7-git-send-email-julien.thierry@arm.com>
- <acc8bb85-04cb-f8af-5162-79788a5cacbb@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <e26f0761-b682-ef42-b510-53654bed1f4b@arm.com>
-Date:   Mon, 10 Jun 2019 08:53:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S2388109AbfFJH5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 03:57:35 -0400
+Received: from localhost (unknown [122.178.227.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7206120859;
+        Mon, 10 Jun 2019 07:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560153455;
+        bh=0J5cz45KXdQEbC0zP9NDZ6yJHvqD3V+zR61spu7qeCg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aNmT+sq6h4g+GUszEkq0f7ULAAPg8TMdX+o7uMtCkkOHxR+2c17Jlkh/ieYVwB5/d
+         lFk6rRtWpg6OYkmoXBK+TnaHzF4BeeLKtiT1KS5d+GMAjULZMa7u4Nir4c9lSL4x2f
+         qV+4ummAhbKbok5tLKME4d8egrLfzuBKTqd8E7yU=
+Date:   Mon, 10 Jun 2019 13:24:27 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC] dmaengine: Create symlinks from DMA channels to
+ slaves
+Message-ID: <20190610075427.GP9160@vkoul-mobl.Dlink>
+References: <20190607113835.15376-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <acc8bb85-04cb-f8af-5162-79788a5cacbb@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607113835.15376-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/06/2019 17:31, Marc Zyngier wrote:
-> On 06/06/2019 10:31, Julien Thierry wrote:
->> Using IRQ priority masking to enable/disable interrupts is a bit
->> sensitive as it requires to deal with both ICC_PMR_EL1 and PSR.I.
->>
->> Introduce some validity checks to both highlight the states in which
->> functions dealing with IRQ enabling/disabling can (not) be called, and
->> bark a warning when called in an unexpected state.
->>
->> Since these checks are done on hotpaths, introduce a build option to
->> choose whether to do the checking.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>  arch/arm64/Kconfig                  | 11 +++++++++++
->>  arch/arm64/include/asm/cpufeature.h |  6 ++++++
->>  arch/arm64/include/asm/daifflags.h  |  7 +++++++
->>  arch/arm64/include/asm/irqflags.h   | 14 +++++++++++++-
->>  4 files changed, 37 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 697ea05..8acc40e 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -1436,6 +1436,17 @@ config ARM64_PSEUDO_NMI
->>
->>  	  If unsure, say N
->>
->> +if ARM64_PSEUDO_NMI
->> +config ARM64_DEBUG_PRIORITY_MASKING
->> +	bool "Debug interrupt priority masking"
->> +	help
->> +	  This adds runtime checks to functions enabling/disabling
->> +	  interrupts when using priority masking. The additional checks verify
->> +	  the validity of ICC_PMR_EL1 when calling concerned functions.
->> +
->> +	  If unsure, say N
->> +endif
->> +
->>  config RELOCATABLE
->>  	bool
->>  	help
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index bc895c8..693a086 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -617,6 +617,12 @@ static inline bool system_uses_irq_prio_masking(void)
->>  	       cpus_have_const_cap(ARM64_HAS_IRQ_PRIO_MASKING);
->>  }
->>
->> +static inline bool system_has_prio_mask_debugging(void)
->> +{
->> +	return IS_ENABLED(CONFIG_ARM64_DEBUG_PRIORITY_MASKING) &&
->> +	       system_uses_irq_prio_masking();
->> +}
->> +
->>  #define ARM64_SSBD_UNKNOWN		-1
->>  #define ARM64_SSBD_FORCE_DISABLE	0
->>  #define ARM64_SSBD_KERNEL		1
->> diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
->> index f93204f..eca5bee 100644
->> --- a/arch/arm64/include/asm/daifflags.h
->> +++ b/arch/arm64/include/asm/daifflags.h
->> @@ -28,6 +28,10 @@
->>  /* mask/save/unmask/restore all exceptions, including interrupts. */
->>  static inline void local_daif_mask(void)
->>  {
->> +	WARN_ON(system_has_prio_mask_debugging() &&
->> +		(read_sysreg_s(SYS_ICC_PMR_EL1) == (GIC_PRIO_IRQOFF |
->> +						    GIC_PRIO_PSR_I_SET)));
->> +
->>  	asm volatile(
->>  		"msr	daifset, #0xf		// local_daif_mask\n"
->>  		:
->> @@ -62,6 +66,9 @@ static inline void local_daif_restore(unsigned long flags)
->>  {
->>  	bool irq_disabled = flags & PSR_I_BIT;
->>
->> +	WARN_ON(system_has_prio_mask_debugging() &&
->> +		!(read_sysreg(daif) & PSR_I_BIT));
->> +
->>  	if (!irq_disabled) {
->>  		trace_hardirqs_on();
->>
->> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
->> index b6f757f..cac2d2a 100644
->> --- a/arch/arm64/include/asm/irqflags.h
->> +++ b/arch/arm64/include/asm/irqflags.h
->> @@ -40,6 +40,12 @@
->>   */
->>  static inline void arch_local_irq_enable(void)
->>  {
->> +	if (system_has_prio_mask_debugging()) {
->> +		u32 pmr = read_sysreg_s(SYS_ICC_PMR_EL1);
->> +
->> +		WARN_ON_ONCE(pmr != GIC_PRIO_IRQON && pmr != GIC_PRIO_IRQOFF);
->> +	}
->> +
->>  	asm volatile(ALTERNATIVE(
->>  		"msr	daifclr, #2		// arch_local_irq_enable\n"
->>  		"nop",
->> @@ -53,6 +59,12 @@ static inline void arch_local_irq_enable(void)
->>
->>  static inline void arch_local_irq_disable(void)
->>  {
->> +	if (system_has_prio_mask_debugging()) {
->> +		u32 pmr = read_sysreg_s(SYS_ICC_PMR_EL1);
->> +
->> +		WARN_ON_ONCE(pmr != GIC_PRIO_IRQON && pmr != GIC_PRIO_IRQOFF);
->> +	}
->> +
->>  	asm volatile(ALTERNATIVE(
->>  		"msr	daifset, #2		// arch_local_irq_disable",
->>  		__msr_s(SYS_ICC_PMR_EL1, "%0"),
->> @@ -86,7 +98,7 @@ static inline int arch_irqs_disabled_flags(unsigned long flags)
->>
->>  	asm volatile(ALTERNATIVE(
->>  		"and	%w0, %w1, #" __stringify(PSR_I_BIT),
->> -		"eor	%w0, %w1, #" __stringify(GIC_PRIO_IRQOFF),
->> +		"eor	%w0, %w1, #" __stringify(GIC_PRIO_IRQON),
+On 07-06-19, 13:38, Geert Uytterhoeven wrote:
+> Currently it is not easy to find out which DMA channels are in use, and
+> by which slave devices.
 > 
-> Err... Which version is the correct one? This one, or the previous one?
+> Fix this by creating in sysfs a "slave" symlink from the DMA channel to
+> the actual slave device when a channel is requested, and removing it
+> again when the channel is released.
 > 
+> For now this is limited to DT and ACPI.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Questions:
+>   1. Do you think this is useful?
 
-Argh, bad fixup of the patches. This one is the correct one (any state
-!= GIC_PRIO_IRQON means interrupts are disabled), but the correct value
-should already be in use in the previous patch.
+Yes for me at least :)
 
-Will fix that in the next posting.
+>   2. Should backlinks (e.g. "dma:<name>") be created from the slave
+>      device to the DMA channel?
+>      This requires storing the name in struct dma_chan, for later
+>      symlink removal.
 
-Thanks,
+that would certainly be more helpful
+
+>   3. Should this be extended to other ways of requesting channels?
+>      In many cases, no device pointer is available, so a device pointer
+>      parameter has to be added to all DMA channel request APIs that
+>      don't have it yet.
+
+I think that would need to be done.
+
+> ---
+>  drivers/dma/dmaengine.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> index 03ac4b96117cd8db..c11476f76fc96bcf 100644
+> --- a/drivers/dma/dmaengine.c
+> +++ b/drivers/dma/dmaengine.c
+> @@ -706,6 +706,10 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+>  
+>  	if (chan) {
+>  		/* Valid channel found or requester needs to be deferred */
+> +		if (!IS_ERR(chan) &&
+> +		     sysfs_create_link(&chan->dev->device.kobj, &dev->kobj,
+> +				       "slave"))
+> +			dev_err(dev, "Cannot create DMA slave symlink\n");
+>  		if (!IS_ERR(chan) || PTR_ERR(chan) == -EPROBE_DEFER)
+>  			return chan;
+>  	}
+> @@ -786,6 +790,7 @@ void dma_release_channel(struct dma_chan *chan)
+>  	/* drop PRIVATE cap enabled by __dma_request_channel() */
+>  	if (--chan->device->privatecnt == 0)
+>  		dma_cap_clear(DMA_PRIVATE, chan->device->cap_mask);
+> +	sysfs_remove_link(&chan->dev->device.kobj, "slave");
+>  	mutex_unlock(&dma_list_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(dma_release_channel);
+> -- 
+> 2.17.1
 
 -- 
-Julien Thierry
+~Vinod
