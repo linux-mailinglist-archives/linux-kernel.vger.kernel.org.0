@@ -2,239 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5ECA3B5D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D27643B5E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390239AbfFJNN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 09:13:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389762AbfFJNN7 (ORCPT
+        id S2390308AbfFJNVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 09:21:33 -0400
+Received: from rfout1.hes.trendmicro.com ([54.193.4.136]:44396 "EHLO
+        rfout1.hes.trendmicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388848AbfFJNVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 09:13:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B0D4160261; Mon, 10 Jun 2019 13:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560172438;
-        bh=LwAgGkchs/Fzdy3FLqNUXNaSYeJqLqml87Nmc/rgzcM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=K9jH0fpc+XRcZ9zuxXDIa339uRa0nRf5EhBK+/kmJVcRugToXwb1UqzFvoJcH4U3K
-         N5TDkchZacjwtbOwOP6QQu+un0FqniD977J/liGt+8x5TB7DZ01w52gvLQwbHPsWSv
-         QIa83N0giedoYvQp7sfy3S3/rIGD4cMTq6gnTLh0=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.204.79.142] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: gkohli@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 46AF260261;
-        Mon, 10 Jun 2019 13:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560172436;
-        bh=LwAgGkchs/Fzdy3FLqNUXNaSYeJqLqml87Nmc/rgzcM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LEjAjg0aQZqM1UUurRbp+XQjiq2Wm3NTju0vra1LPjDw7qNC3eS7qx//GRxamW0jM
-         dLtr1FOdSG8Jmk20uzL3WugAw+2j2A5vt144CEowkphY+ICsSveoVghM/7NX4eAXZ1
-         Io8d0WWgCM04TVwGUA/P0J/OEd+OLYXSNs0GqKxE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46AF260261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: [PATCH] block: fix a crash in do_task_dead()
-To:     Peter Zijlstra <peterz@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org, hch@lst.de,
-        oleg@redhat.com, mingo@redhat.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1559161526-618-1-git-send-email-cai@lca.pw>
- <20190530080358.GG2623@hirez.programming.kicks-ass.net>
- <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
- <20190603123705.GB3419@hirez.programming.kicks-ass.net>
- <ddf9ee34-cd97-a62b-6e91-6b4511586339@kernel.dk>
- <20190607133541.GJ3436@hirez.programming.kicks-ass.net>
- <20190607142332.GF3463@hirez.programming.kicks-ass.net>
-From:   Gaurav Kohli <gkohli@codeaurora.org>
-Message-ID: <16419960-3703-5988-e7ea-9d3a439f8b05@codeaurora.org>
-Date:   Mon, 10 Jun 2019 18:43:51 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190607142332.GF3463@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 10 Jun 2019 09:21:32 -0400
+X-Greylist: delayed 386 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jun 2019 09:21:31 EDT
+Received: from 0.0.0.0_hes.trendmicro.com (unknown [10.64.14.197])
+        by rfout1.hes.trendmicro.com (Postfix) with ESMTPS id CE233112609F;
+        Mon, 10 Jun 2019 13:15:04 +0000 (UTC)
+Received: from 0.0.0.0_hes.trendmicro.com (unknown [10.64.0.51])
+        by rout1.hes.trendmicro.com (Postfix) with SMTP id 1E2CDEFC06F;
+        Mon, 10 Jun 2019 13:15:04 +0000 (UTC)
+Received: from IND01-MA1-obe.outbound.protection.outlook.com (unknown [104.47.100.56])
+        by relay2.hes.trendmicro.com (TrendMicro Hosted Email Security) with ESMTPS id 60483C48017;
+        Mon, 10 Jun 2019 13:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=thinciit.onmicrosoft.com; s=selector2-thinciit-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUlhW0rBhrKggUM3MS9YoB8Wsmpj4X+v7j0BnYGUG/A=;
+ b=tI2pDUDlHaxr8eBFHHMNIF+LMYJTIUmbz3UVmVH62aC6gQmcr2Q3rc4OHGbLk4mEjaFdrd9vOIZBjBJ54/JY8JB0+7X9fKgLzXeZWV4pkd2/lPQ4vO0/A7Ar6UeYam9iP0eKKJXv/s6Af7tUvWGv/hndhuC7bjOGBSiWgzB0hcU=
+Received: from MA1PR01MB3963.INDPRD01.PROD.OUTLOOK.COM (20.179.239.80) by
+ MA1PR01MB2315.INDPRD01.PROD.OUTLOOK.COM (52.134.147.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.16; Mon, 10 Jun 2019 13:14:56 +0000
+Received: from MA1PR01MB3963.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::29f7:2b8f:2837:67e9]) by MA1PR01MB3963.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::29f7:2b8f:2837:67e9%7]) with mapi id 15.20.1965.017; Mon, 10 Jun 2019
+ 13:14:56 +0000
+From:   Matt Redfearn <matt.redfearn@thinci.com>
+To:     Anders Roxell <anders.roxell@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "marex@denx.de" <marex@denx.de>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "a.hajda@samsung.com" <a.hajda@samsung.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 5/8] drivers: media: coda: fix warning same module names
+Thread-Topic: [PATCH 5/8] drivers: media: coda: fix warning same module names
+Thread-Index: AQHVHEzmHmKZqQFlTU6BnaS1W6flKaaOaFGAgAZ4/ACAAAMNgA==
+Date:   Mon, 10 Jun 2019 13:14:56 +0000
+Message-ID: <c2ff2c77-5c14-4bc4-f59c-7012d272ec76@thinci.com>
+References: <20190606094722.23816-1-anders.roxell@linaro.org>
+ <d6b79ee0-07c6-ad81-16b0-8cf929cc214d@xs4all.nl>
+ <CADYN=9KY5=FzrkC7MKj9QnG-eM1NVuL00w8Xv4yU2r05rhr7WQ@mail.gmail.com>
+In-Reply-To: <CADYN=9KY5=FzrkC7MKj9QnG-eM1NVuL00w8Xv4yU2r05rhr7WQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0375.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::27) To MA1PR01MB3963.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:7f::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=matthew.redfearn@thinci.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [87.242.198.86]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3aa84816-6007-4985-26af-08d6eda5a209
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MA1PR01MB2315;
+x-ms-traffictypediagnostic: MA1PR01MB2315:
+x-microsoft-antispam-prvs: <MA1PR01MB2315ED05C410E7831765BA13F1130@MA1PR01MB2315.INDPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:1332;
+x-forefront-prvs: 0064B3273C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(39840400004)(366004)(396003)(189003)(199004)(6436002)(6486002)(31696002)(6246003)(6512007)(476003)(478600001)(66066001)(25786009)(486006)(4326008)(2616005)(7736002)(305945005)(54906003)(66556008)(66476007)(68736007)(31686004)(71200400001)(66446008)(71190400001)(446003)(73956011)(11346002)(110136005)(64756008)(66946007)(14454004)(53546011)(26005)(3846002)(7416002)(102836004)(81166006)(99286004)(6116002)(36756003)(229853002)(81156014)(5660300002)(186003)(6506007)(14444005)(52116002)(76176011)(53936002)(316002)(8936002)(386003)(256004)(8676002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MA1PR01MB2315;H:MA1PR01MB3963.INDPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: thinci.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Z9sH78Rn7KNwI7c6spiG/yFNBT+Z3/d+9DhzGdaXHj2cqaY0cbJuCBmh/+TuN6TjOI58kKkrq5M/l1/PrdJhqsBBIP8kHl9/qGI8gZ7cF/tZK/3aD5xR+doV0+PsE1lG8ECpNUpKqj8PJTLzY9zctjI+iriRObP2zcdS3D3yHMl3zWd5w43T+F1MSDK9Dd6HHWBTMVzRoB0QRmCVFg8t64Lc7VMCp05txqVUsVyYbK7tzPUwyUb2Ve1/l/HewE1HoZ/uV2kQopJeYphBLLssLeB1O9UtzHL4r+A6mnuSq6671upOM3Qb50ieSZIA50TGCqybOk2XQF3Rv+EN5X5adsWkyVjNSw0AzC8HxdlWLDGCXa6Pirz6qmKfq/DebGWY1/Zt0srS682cDthxCPPbwlbripAuO/k7/EkEolIHauA=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <83A8D730AC8F424FB5AD321EA46023BA@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: thinci.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3aa84816-6007-4985-26af-08d6eda5a209
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2019 13:14:56.6687
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: matthew.redfearn@thinci.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA1PR01MB2315
+X-TMASE-Version: StarCloud-1.3-8.2.1013-24666.000
+X-TMASE-Result: 10--9.674200-4.000000
+X-TMASE-MatchedRID: hls5oAVArl/c921WuZy4LvZvT2zYoYOwC/ExpXrHizzI13IEGi/Kk/Vl
+        5vsoSSsoekEtDmHYp/k8zgHmpLzZp1/8tX/1KHzF/03t7eXCTBt6i696PjRPiJe4rIe5ItN8tZX
+        KImxf+cFOgZA41QBeiY9CL1e45ag4w4mZjhdFeRXwoYkKJX7f8qbwyy5bAB/9T7zqZowzdpJsZN
+        KjFdGXFlcPm8xgT5ExjC970acVks94mxFNFWno5/VY7U3NX8Jg+LidURF+DB318H7gy96lDKPFj
+        JEFr+olUkOfGeXobzQ1NebtJxIilNLvsKjhs0ldVnRXm1iHN1bEQdG7H66TyF82MXkEdQ77AhDf
+        rKTIID2QgB2b2qMifk9om7U1Hgkv8tFXTrGjKwiQwDVygjlXpw==
+X-TM-Deliver-Signature: 6B5F4C92B27942A2C4992300E9399402
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/7/2019 7:53 PM, Peter Zijlstra wrote:
-> On Fri, Jun 07, 2019 at 03:35:41PM +0200, Peter Zijlstra wrote:
->> On Wed, Jun 05, 2019 at 09:04:02AM -0600, Jens Axboe wrote:
->>> How about the following plan - if folks are happy with this sched patch,
->>> we can queue it up for 5.3. Once that is in, I'll kill the block change
->>> that special cases the polled task wakeup. For 5.2, we go with Oleg's
->>> patch for the swap case.
->>
->> OK, works for me. I'll go write a proper patch.
-> 
-> I now have the below; I'll queue that after the long weekend and let
-> 0-day chew on it for a while and then push it out to tip or something.
-> 
-> 
-> ---
-> Subject: sched: Optimize try_to_wake_up() for local wakeups
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Fri Jun 7 15:39:49 CEST 2019
-> 
-> Jens reported that significant performance can be had on some block
-> workloads (XXX numbers?) by special casing local wakeups. That is,
-> wakeups on the current task before it schedules out. Given something
-> like the normal wait pattern:
-> 
-> 	for (;;) {
-> 		set_current_state(TASK_UNINTERRUPTIBLE);
-> 
-> 		if (cond)
-> 			break;
-> 
-> 		schedule();
-> 	}
-> 	__set_current_state(TASK_RUNNING);
-> 
-> Any wakeup (on this CPU) after set_current_state() and before
-> schedule() would benefit from this.
-> 
-> Normal wakeups take p->pi_lock, which serializes wakeups to the same
-> task. By eliding that we gain concurrency on:
-> 
->   - ttwu_stat(); we already had concurrency on rq stats, this now also
->     brings it to task stats. -ENOCARE
-> 
->   - tracepoints; it is now possible to get multiple instances of
->     trace_sched_waking() (and possibly trace_sched_wakeup()) for the
->     same task. Tracers will have to learn to cope.
-> 
-> Furthermore, p->pi_lock is used by set_special_state(), to order
-> against TASK_RUNNING stores from other CPUs. But since this is
-> strictly CPU local, we don't need the lock, and set_special_state()'s
-> disabling of IRQs is sufficient.
-> 
-> After the normal wakeup takes p->pi_lock it issues
-> smp_mb__after_spinlock(), in order to ensure the woken task must
-> observe prior stores before we observe the p->state. If this is CPU
-> local, this will be satisfied with a compiler barrier, and we rely on
-> try_to_wake_up() being a funcation call, which implies such.
-> 
-> Since, when 'p == current', 'p->on_rq' must be true, the normal wakeup
-> would continue into the ttwu_remote() branch, which normally is
-> concerned with exactly this wakeup scenario, except from a remote CPU.
-> IOW we're waking a task that is still running. In this case, we can
-> trivially avoid taking rq->lock, all that's left from this is to set
-> p->state.
-> 
-> This then yields an extremely simple and fast path for 'p == current'.
-> 
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: mingo@redhat.com
-> Cc: akpm@linux-foundation.org
-> Cc: hch@lst.de
-> Cc: gkohli@codeaurora.org
-> Cc: oleg@redhat.com
-> Reported-by: Jens Axboe <axboe@kernel.dk>
-> Tested-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->   kernel/sched/core.c |   33 ++++++++++++++++++++++++++++-----
->   1 file changed, 28 insertions(+), 5 deletions(-)
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1991,6 +1991,28 @@ try_to_wake_up(struct task_struct *p, un
->   	unsigned long flags;
->   	int cpu, success = 0;
->   
-> +	if (p == current) {
-> +		/*
-> +		 * We're waking current, this means 'p->on_rq' and 'task_cpu(p)
-> +		 * == smp_processor_id()'. Together this means we can special
-> +		 * case the whole 'p->on_rq && ttwu_remote()' case below
-> +		 * without taking any locks.
-> +		 *
-> +		 * In particular:
-> +		 *  - we rely on Program-Order guarantees for all the ordering,
-> +		 *  - we're serialized against set_special_state() by virtue of
-> +		 *    it disabling IRQs (this allows not taking ->pi_lock).
-> +		 */
-> +		if (!(p->state & state))
-> +			return false;
-> +
-
-Hi Peter, Jen,
-
-As we are not taking pi_lock here , is there possibility of same task 
-dead call comes as this point of time for current thread, bcoz of which 
-we have seen earlier issue after this commit 0619317ff8ba
-[T114538]  do_task_dead+0xf0/0xf8
-[T114538]  do_exit+0xd5c/0x10fc
-[T114538]  do_group_exit+0xf4/0x110
-[T114538]  get_signal+0x280/0xdd8
-[T114538]  do_notify_resume+0x720/0x968
-[T114538]  work_pending+0x8/0x10
-
-Is there a chance of TASK_DEAD set at this point of time?
-
-
-> +		success = 1;
-> +		trace_sched_waking(p);
-> +		p->state = TASK_RUNNING;
-> +		trace_sched_wakeup(p);
-> +		goto out;
-> +	}
-> +
->   	/*
->   	 * If we are going to wake up a thread waiting for CONDITION we
->   	 * need to ensure that CONDITION=1 done by the caller can not be
-> @@ -2000,7 +2022,7 @@ try_to_wake_up(struct task_struct *p, un
->   	raw_spin_lock_irqsave(&p->pi_lock, flags);
->   	smp_mb__after_spinlock();
->   	if (!(p->state & state))
-> -		goto out;
-> +		goto unlock;
->   
->   	trace_sched_waking(p);
->   
-> @@ -2030,7 +2052,7 @@ try_to_wake_up(struct task_struct *p, un
->   	 */
->   	smp_rmb();
->   	if (p->on_rq && ttwu_remote(p, wake_flags))
-> -		goto stat;
-> +		goto unlock;
->   
->   #ifdef CONFIG_SMP
->   	/*
-> @@ -2090,10 +2112,11 @@ try_to_wake_up(struct task_struct *p, un
->   #endif /* CONFIG_SMP */
->   
->   	ttwu_queue(p, cpu, wake_flags);
-> -stat:
-> -	ttwu_stat(p, cpu, wake_flags);
-> -out:
-> +unlock:
->   	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
-> +out:
-> +	if (success)
-> +		ttwu_stat(p, cpu, wake_flags);
->   
->   	return success;
->   }
-> 
-
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+DQoNCk9uIDEwLzA2LzIwMTkgMTQ6MDMsIEFuZGVycyBSb3hlbGwgd3JvdGU6DQo+IE9uIFRodSwg
+NiBKdW4gMjAxOSBhdCAxMjoxMywgSGFucyBWZXJrdWlsIDxodmVya3VpbEB4czRhbGwubmw+IHdy
+b3RlOg0KPj4NCj4+IE9uIDYvNi8xOSAxMTo0NyBBTSwgQW5kZXJzIFJveGVsbCB3cm90ZToNCj4+
+PiBXaGVuIGJ1aWxkaW5nIHdpdGggQ09ORklHX1ZJREVPX0NPREEgYW5kIENPTkZJR19DT0RBX0ZT
+IGVuYWJsZWQgYXMNCj4+PiBsb2FkYWJsZSBtb2R1bGVzLCB3ZSBzZWUgdGhlIGZvbGxvd2luZyB3
+YXJuaW5nOg0KPj4+DQo+Pj4gd2FybmluZzogc2FtZSBtb2R1bGUgbmFtZXMgZm91bmQ6DQo+Pj4g
+ICAgZnMvY29kYS9jb2RhLmtvDQo+Pj4gICAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9jb2RhL2Nv
+ZGEua28NCj4+Pg0KPj4+IFJld29yayBzbyBtZWRpYSBjb2RhIG1hdGNoZXMgdGhlIGNvbmZpZyBm
+cmFnbWVudC4gTGVhdmluZyBDT0RBX0ZTIGFzIGlzDQo+Pj4gc2luY2UgdGhhdHMgYSB3ZWxsIGtu
+b3duIG1vZHVsZS4NCj4+Pg0KPj4+IFNpZ25lZC1vZmYtYnk6IEFuZGVycyBSb3hlbGwgPGFuZGVy
+cy5yb3hlbGxAbGluYXJvLm9yZz4NCj4+PiAtLS0NCj4+PiAgIGRyaXZlcnMvbWVkaWEvcGxhdGZv
+cm0vY29kYS9NYWtlZmlsZSB8IDQgKystLQ0KPj4+ICAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0
+aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4+Pg0KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21l
+ZGlhL3BsYXRmb3JtL2NvZGEvTWFrZWZpbGUgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2NvZGEv
+TWFrZWZpbGUNCj4+PiBpbmRleCA1NGU5YTczYTkyYWIuLjU4OGU2YmY3YzE5MCAxMDA2NDQNCj4+
+PiAtLS0gYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2NvZGEvTWFrZWZpbGUNCj4+PiArKysgYi9k
+cml2ZXJzL21lZGlhL3BsYXRmb3JtL2NvZGEvTWFrZWZpbGUNCj4+PiBAQCAtMSw2ICsxLDYgQEAN
+Cj4+PiAgICMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb25seQ0KPj4+DQo+Pj4g
+LWNvZGEtb2JqcyA6PSBjb2RhLWNvbW1vbi5vIGNvZGEtYml0Lm8gY29kYS1nZGkubyBjb2RhLWgy
+NjQubyBjb2RhLW1wZWcyLm8gY29kYS1tcGVnNC5vIGNvZGEtanBlZy5vDQo+Pj4gK3ZpZGVvLWNv
+ZGEtb2JqcyA6PSBjb2RhLWNvbW1vbi5vIGNvZGEtYml0Lm8gY29kYS1nZGkubyBjb2RhLWgyNjQu
+byBjb2RhLW1wZWcyLm8gY29kYS1tcGVnNC5vIGNvZGEtanBlZy5vDQo+Pj4NCj4+PiAtb2JqLSQo
+Q09ORklHX1ZJREVPX0NPREEpICs9IGNvZGEubw0KPj4+ICtvYmotJChDT05GSUdfVklERU9fQ09E
+QSkgKz0gdmlkZW8tY29kYS5vDQo+Pg0KPj4gSG93IGFib3V0IGlteC1jb2RhPyB2aWRlby1jb2Rh
+IHN1Z2dlc3RzIGl0IGlzIHBhcnQgb2YgdGhlIHZpZGVvIHN1YnN5c3RlbSwNCj4+IHdoaWNoIGl0
+IGlzbid0Lg0KPiANCj4gSSdsbCByZXNlbmQgYSB2MiBzaG9ydGx5IHdpdGggaW14LWNvZGEgaW5z
+dGVhZC4NCg0KV2hhdCBhYm91dCBvdGhlciB2ZW5kb3IgU29DcyBpbXBsZW1lbnRpbmcgdGhlIENv
+ZGEgSVAgYmxvY2sgd2hpY2ggYXJlIA0Kbm90IGFuIGlteD8gSSdkIHByZWZlciBhIG1vcmUgZ2Vu
+ZXJpYyBuYW1lIC0gbWF5YmUgbWVkaWEtY29kYS4NCg0KVGhhbmtzLA0KTWF0dA0KDQo+IA0KPiAN
+Cj4gQ2hlZXJzLA0KPiBBbmRlcnMNCj4gDQo+Pg0KPj4gUmVnYXJkcywNCj4+DQo+PiAgICAgICAg
+ICBIYW5zDQo+Pg0KPj4+ICAgb2JqLSQoQ09ORklHX1ZJREVPX0lNWF9WRE9BKSArPSBpbXgtdmRv
+YS5vDQo+Pj4NCj4+DQo=
