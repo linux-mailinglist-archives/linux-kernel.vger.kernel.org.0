@@ -2,93 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F1A3BDFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15693BE0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389730AbfFJVFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:05:15 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43096 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388342AbfFJVFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:05:15 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w79so7303189oif.10
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oSQd/dSw9k2CrxkKH2qz7mRm8NK534f/ZzuWAbekOrY=;
-        b=LURtpcrReLRABUoMAIwSom5ga/OKgTe0xfdabX/kdRy9Rm7RCH5sAzwzDhmTkEKnH1
-         IUCzTbXO68bH57ix5kN28ABttmSEFv4JeZLTQnqkq/s8K2j5PQrtePsBpaN8KN8csrYK
-         RJR/syXc8cefiQ4U/QNL86rZLegUZ628MfkNe9PhFHuWcnLI+4oOFFxMLqwrrVmByY8K
-         MnU4gBRBR52HaQHUgomf8H5XrpVPDSZC1EhTLLCs63UVe9quEay6lPuwybaLuBAYETIb
-         xqS+39iZgiXEyEga76eFd4XzW8I6f4fHc4pBbPFaq4HYv6fXzAZW02avChLkdlf5FdZk
-         qmTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oSQd/dSw9k2CrxkKH2qz7mRm8NK534f/ZzuWAbekOrY=;
-        b=rHegYeWfB+JHwDkFbeXwWk8Jn/BL6AmNSdZIseu8ROMY0Ha95GDtvX1TU0OYvHqDwv
-         bE6FzmzuuzX1WKBqbeVDYf7vmOUuDtsdWccJyPwK7w8UaW8kDQN9mgDJObKEMAehjLdS
-         zXz25ADFDRb3hc7JFxitSxLQ9v1QZ9Ry7xrcA5s8NHeJQ0w9qLfCYNo/Jt3s7vDMIZz0
-         Jec6zofr+pyVxgzdbyu7kWNOwAg2iBTlFvC5/I2h0Y3immKf8FBQYklnd95yICM/URB6
-         kyuA58NocUULnAw5DLESM9wqxJCpujLAnLMft4AMgB2mNekWO8Gc6xbHFNyDy2YhKVNH
-         GWJw==
-X-Gm-Message-State: APjAAAW4PD8xS1Wv8ick3j2lofFSK9AilxyfIvOr8x8/dABwDj62IBlw
-        G0MfEPvj39NkjYljqgrMxY5yNw==
-X-Google-Smtp-Source: APXvYqzoUEQI9eCBkBS8xmW/CfZpKBfLzCJjJsS97rILi72k6uSNDleje2blyLFm/Je8nshzhc0rVA==
-X-Received: by 2002:aca:ec0f:: with SMTP id k15mr12966767oih.13.1560200714329;
-        Mon, 10 Jun 2019 14:05:14 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id d21sm4644203oih.21.2019.06.10.14.05.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 14:05:13 -0700 (PDT)
-Subject: Re: [PATCH 0/7] TTY Keyboard Status Request
-To:     Arseny Maslennikov <ar@cs.msu.ru>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-Cc:     "Vladimir D . Seleznev" <vseleznv@altlinux.org>
-References: <20190605081906.28938-1-ar@cs.msu.ru>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <0db56bba-96fd-ab99-aa54-360ab171b703@landley.net>
-Date:   Mon, 10 Jun 2019 16:06:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2389814AbfFJVIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:08:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388642AbfFJVIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 17:08:12 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E2F22146E;
+        Mon, 10 Jun 2019 21:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560200891;
+        bh=LM4DhDahgDAdAIFCtYW8OBEeB5PeHsxWNvc/AFAGCfs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=d/rNQR6pc7zQZH7+kgZM44zJLfnwtuBP1iONB9bdfZmnqqX4J6XF2Ss7nayt+Y/8P
+         2W8pkvQ6kan8YpRUYt3ppUluY7kjN5ya/enUvx5adykYpjBiFmNdx/T7ChtGg+BT13
+         xC1nudL8AEwyCLs57Bz1EeYXtoTKn/IFTVVYg9fM=
+Received: by mail-qt1-f169.google.com with SMTP id p15so4628609qtl.3;
+        Mon, 10 Jun 2019 14:08:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAU1rfCstL+6o0d6Snp20I9L+DPQ6Ic6IsocDJh3ImNAF9H7dIWJ
+        ZNksyzaIQRWX3uJQiX6Nz4puihKO2BgCvNH4ZA==
+X-Google-Smtp-Source: APXvYqwz/L1AgE45vjVGdFYDHPRFSfJzFEJO+IgYWTlh/1Y7CMKQaGOwIO8zOyf+9q46atFDDdRncexYa0hsFQNqGrE=
+X-Received: by 2002:a0c:acef:: with SMTP id n44mr1253179qvc.39.1560200890657;
+ Mon, 10 Jun 2019 14:08:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190605081906.28938-1-ar@cs.msu.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190604003218.241354-1-saravanak@google.com> <20190604003218.241354-2-saravanak@google.com>
+ <CAL_JsqLWfNUJm23x+doJDwyuMLOvqWAnLKGQYcgVct-AyWb9LQ@mail.gmail.com> <CAGETcx_Kb3+fFYHhBUdVbCSNTk4v5j1Ket=Et2ZQY0SHUgLLMw@mail.gmail.com>
+In-Reply-To: <CAGETcx_Kb3+fFYHhBUdVbCSNTk4v5j1Ket=Et2ZQY0SHUgLLMw@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 10 Jun 2019 15:07:59 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKDa7Nin8bU_LV-hqjJe2RNQwKA_zsKoug8=eHmX78QZQ@mail.gmail.com>
+Message-ID: <CAL_JsqKDa7Nin8bU_LV-hqjJe2RNQwKA_zsKoug8=eHmX78QZQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v1 1/5] of/platform: Speed up of_find_device_by_node()
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        David Collins <collinsd@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/5/19 3:18 AM, Arseny Maslennikov wrote:
-> This patch series introduces TTY keyboard status request, a feature of
-> the n_tty line discipline that reserves a character in struct termios
-> (^T by default) and reacts to it by printing a short informational line
-> to the terminal and sending a Unix signal to the tty's foreground
-> process group. The processes may, in response to the signal, output a
-> textual description of what they're doing.
+On Mon, Jun 10, 2019 at 1:15 PM Saravana Kannan <saravanak@google.com> wrote:
+>
+> I did. And I didn't get a response. Folks suggested this might be one of the preferred ways instead of sending "bump" emails.
 
-I had a long twitter thread about this with some BSD developers,
-https://twitter.com/landley/status/1127148250430152704
-asked on the toybox list for opinions,
-http://lists.landley.net/pipermail/toybox-landley.net/2019-May/010461.html
-and became aware of this patch set when the android bionic maintainer pointed me
-at news coverage of it
-http://lists.landley.net/pipermail/toybox-landley.net/2019-June/010536.html
-
-So there would appear to at least be interest in the concept.
-
-(The conclusion I came to looking at it last month is is it can't be done
-without kernel support, but if such support _does_ arrive I want to add it to
-toybox.)
+It's summer time and people go on vacation.
 
 Rob
