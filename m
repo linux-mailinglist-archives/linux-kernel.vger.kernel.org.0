@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C123BFCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 01:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB65E3BFCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 01:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390659AbfFJXQw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 19:16:52 -0400
-Received: from smtp1.ono.com ([62.42.230.162]:13372 "EHLO smtp1.ono.com"
+        id S2390643AbfFJXQu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 19:16:50 -0400
+Received: from smtp2.ono.com ([62.42.230.179]:62914 "EHLO smtp2.ono.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390537AbfFJXQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390536AbfFJXQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Jun 2019 19:16:49 -0400
 X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.10.224816:17:16.798,ip=62.42.230.134,rules=__HAS_MSGID,
  __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
@@ -26,10 +26,10 @@ X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.10.224816:17:16.798,ip=62
  __MIME_TEXT_P, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_2000_LESS,
  __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
  BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs04 (62.42.230.134) by smtp1.ono.com (9.0.019.09-1)
-        id 5C12554F092B232B; Tue, 11 Jun 2019 01:15:55 +0200
+Received: from resprs04 (62.42.230.134) by smtp2.ono.com (9.0.019.09-1)
+        id 5CAF0F5D02E93011; Tue, 11 Jun 2019 01:15:55 +0200
 Received: from (149.126.75.3) by webmailcpr04n.ono.com;  Tue, 11 Jun 2019 01:15:52 +0200
-Message-ID: <12498817.19711560208552301.JavaMail.defaultUser@defaultHost>
+Message-ID: <13480166.19691560208552285.JavaMail.defaultUser@defaultHost>
 Date:   Tue, 11 Jun 2019 01:15:52 +0200 (CEST)
 From:   "Mrs. Patrick Huang" <daniperez@ono.com>
 Reply-To: huangpatrick946@gmail.com
