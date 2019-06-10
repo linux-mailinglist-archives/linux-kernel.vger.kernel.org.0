@@ -2,77 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B621B3BB32
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B163BB37
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388296AbfFJRn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38326 "EHLO mail.kernel.org"
+        id S2388441AbfFJRp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:45:28 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38816 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387643AbfFJRn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:43:57 -0400
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61277212F5;
-        Mon, 10 Jun 2019 17:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560188636;
-        bh=AZlQL9E2ROhE9dNEWLxTzeKWJPg5GnszFYOvXmJbBg8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CrkXG5wzrMqurUflE6xs0eXDpspfh1CAZP1781AveldXZWZOfaRKic4GxAG0tqNPd
-         zh5oPa+/V/Kp6pLCYHJJyKZMrZ3Eqg6gBH2M4OqRThkgZ3hn+CODbDBqirClpMRH4H
-         F7A2m9ROQPEpCCNtsRiVUnRemEm5cXLnDw5LTiXs=
-Received: by mail-qt1-f173.google.com with SMTP id a15so11442870qtn.7;
-        Mon, 10 Jun 2019 10:43:56 -0700 (PDT)
-X-Gm-Message-State: APjAAAUg2K6unKsXNWSCcp11kmWeR2XbzYkkEmlouRSsmUmDMzLCc2O7
-        9FF5arv4OmHCSKkNfFjls8RTBr52ndtFsoCLMw==
-X-Google-Smtp-Source: APXvYqzDejCp888til0iSdGiqZLydQgb5LlMSykGZiQj0zmAnd1634cGl5crZnyD5/9LsdKeiuv6AfpNt6+njC+kFIU=
-X-Received: by 2002:aed:3fb0:: with SMTP id s45mr7491168qth.136.1560188635556;
- Mon, 10 Jun 2019 10:43:55 -0700 (PDT)
+        id S2388342AbfFJRp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:45:27 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 10:45:26 -0700
+X-ExtLoop1: 1
+Received: from cmargarx-wtg.ger.corp.intel.com (HELO localhost) ([10.249.34.77])
+  by orsmga007.jf.intel.com with ESMTP; 10 Jun 2019 10:45:13 -0700
+Date:   Mon, 10 Jun 2019 20:45:06 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
+ pages' protection bits
+Message-ID: <20190610174506.GB13732@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-3-sean.j.christopherson@intel.com>
+ <20190610152717.GB3752@linux.intel.com>
+ <20190610161532.GC15995@linux.intel.com>
 MIME-Version: 1.0
-References: <20190604131516.13596-1-kishon@ti.com> <20190604131516.13596-24-kishon@ti.com>
-In-Reply-To: <20190604131516.13596-24-kishon@ti.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 10 Jun 2019 11:43:44 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ5gsctd7L3VOhTO1JdUqmMmSJRpos1XQyfxzmGO7wauw@mail.gmail.com>
-Message-ID: <CAL_JsqJ5gsctd7L3VOhTO1JdUqmMmSJRpos1XQyfxzmGO7wauw@mail.gmail.com>
-Subject: Re: [RFC PATCH 23/30] of/platform: Export of_platform_device_create_pdata()
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Tom Joseph <tjoseph@cadence.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610161532.GC15995@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 7:19 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
-> Export of_platform_device_create_pdata() to be used by drivers to
-> create child devices with the given platform data. This can be used
-> by platform specific driver to send platform data core driver. For e.g.,
-> this will be used by TI's J721E SoC specific PCIe driver to send
-> ->start_link() ops and ->is_link_up() ops to Cadence core PCIe driver.
+On Mon, Jun 10, 2019 at 09:15:33AM -0700, Sean Christopherson wrote:
+> > 'flags' should would renamed as 'secinfo_flags_mask' even if the name is
+> > longish. It would use the same values as the SECINFO flags. The field in
+> > struct sgx_encl_page should have the same name. That would express
+> > exactly relation between SECINFO and the new field. I would have never
+> > asked on last iteration why SECINFO is not enough with a better naming.
+> 
+> No, these flags do not impact the EPCM protections in any way.  Userspace
+> can extend the EPCM protections without going through the kernel.  The
+> protection flags for an enclave page impact VMA/PTE protection bits.
+> 
+> IMO, it is best to treat the EPCM as being completely separate from the
+> kernel's EPC management.
 
-NAK
+It is a clumsy API if permissions are not taken in the same format for
+everything. There is no reason not to do it. The way mprotect() callback
+just interprets the field is as VMA permissions.
 
-of_platform_device_create_pdata() is purely for legacy handling of
-auxdata which is something I hope to get rid of someday. Or to put it
-another way, auxdata use is a sign of platforms not fully converted to
-DT.
+It would also be more future-proof just to have a mask covering all bits
+of the SECINFO flags field.
 
-Rob
+/Jarkko
