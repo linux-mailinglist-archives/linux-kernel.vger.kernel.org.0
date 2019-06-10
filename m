@@ -2,208 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265753BF8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 00:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 654343BF9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 00:49:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390352AbfFJWhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 18:37:02 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44255 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390073AbfFJWhC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 18:37:02 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t16so6098143pfe.11;
-        Mon, 10 Jun 2019 15:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=q8b2TKU6JOAJlj9dzQ91v3D4QaEKDBsjJpwMvzaCt2U=;
-        b=R+8DWMq4UluXl/AGTjShDwuS1OZP5R2Hp/hgySjl4KWPHXCG20d7K+w0TfhIqLVmx2
-         JJSg0tm7me4YzjGyU3OyABU3sF6+RFsNN2V2p2CR37ZlhHN7Z2kzpGsLUr/cc/FuQAS6
-         DZx+U3sMe4qiPTycpKOz8Olm/m3Kf+nlCNrLU3Vma9blPPxdcj6WI0ZZLoLSKscdHZGI
-         EdbNHqk3/l+IR0AdJ/YCTpu43yobSSG3VRqfvtXUrtXj+9EmXNh5sZNiqqTbO8xod0cc
-         9Fb8BwWvg5mUxrtk7rjOKgPWj7FT/yoYI8V5u6SvGemhQmJ2cIZnNEtkrpGBaa/zCo5P
-         Q7Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=q8b2TKU6JOAJlj9dzQ91v3D4QaEKDBsjJpwMvzaCt2U=;
-        b=gxi2Jb2Y/QvORr9ZHK5hYT7BrGZb7XA1C6J1MDI/5X28FxH3LciLbfoNaI2tydaGs+
-         fJEYrM/mV/7XIBm3zjWAV8HHk6ttlySu5MtQslUHdgr+9B4VLnLSjVrFxM6hZ+cPsqdc
-         Wtu9cZSQ7xk9rnh7Y4e89yCM1SnSFjDQLMLakyHc4TfA02hYcoq8aMz370FdbtnqH0A1
-         xv4O51dBpI+mnR4YScx2+lc1hj3FKOOCkXED7c4Jxp6DySefFoeeM0bD7PpVpxuaYkBN
-         S/Cwk/Umgv51yHS8KLTSpQU2XbQZbrIa6wbS/d+0kNkIKFybarVpshIdClul2kOdakR7
-         ziGA==
-X-Gm-Message-State: APjAAAUGayG2nqxaZ91uzf9Pl0UWy6L0uzqbW1qb72YWQWZ5k941eXCv
-        rdRHglSrq2hW3v/kg3+AVgk=
-X-Google-Smtp-Source: APXvYqwd8sGYxy89XzGWUIQvVTvKCqg+kl6oGItr0yMFIo7CpSE1iaXNvQGc/dpHKLVKDrZXk8JXJA==
-X-Received: by 2002:aa7:8ecb:: with SMTP id b11mr37159852pfr.220.1560206220888;
-        Mon, 10 Jun 2019 15:37:00 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id g17sm14465463pfb.56.2019.06.10.15.36.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 15:37:00 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 15:36:58 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc:     bleung@chromium.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, libusb-devel@lists.sourceforge.net
-Subject: [PATCH] USB: add usbfs ioctl to retrieve the connection parameters
-Message-ID: <20190610223658.GA162167@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2390474AbfFJWs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 18:48:59 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59984 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390340AbfFJWs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 18:48:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 15:48:56 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga005.fm.intel.com with ESMTP; 10 Jun 2019 15:48:56 -0700
+Message-ID: <1b961c71d30e31ecb22da2c5401b1a81cb802d86.camel@intel.com>
+Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
+ function
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Mon, 10 Jun 2019 15:40:49 -0700
+In-Reply-To: <92e56b28-0cd4-e3f4-867b-639d9b98b86c@intel.com>
+References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
+         <20190606200926.4029-4-yu-cheng.yu@intel.com>
+         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
+         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
+         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
+         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
+         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
+         <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
+         <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net>
+         <e26f7d09376740a5f7e8360fac4805488b2c0a4f.camel@intel.com>
+         <3f19582d-78b1-5849-ffd0-53e8ca747c0d@intel.com>
+         <5aa98999b1343f34828414b74261201886ec4591.camel@intel.com>
+         <0665416d-9999-b394-df17-f2a5e1408130@intel.com>
+         <5c8727dde9653402eea97bfdd030c479d1e8dd99.camel@intel.com>
+         <ac9a20a6-170a-694e-beeb-605a17195034@intel.com>
+         <328275c9b43c06809c9937c83d25126a6e3efcbd.camel@intel.com>
+         <92e56b28-0cd4-e3f4-867b-639d9b98b86c@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently usfbs gained availability to retrieve device speed, but there
-is sill no way to determine the bus number or list of ports the device
-is connected to when using usbfs. While this information can be obtained
-from sysfs, not all environments allow sysfs access. In a jailed
-environment a program might be simply given an opened file descriptor to
-usbfs device, and it is really important that all data can be gathered
-from said file descriptor.
+On Mon, 2019-06-10 at 15:02 -0700, Dave Hansen wrote:
+> On 6/10/19 1:58 PM, Yu-cheng Yu wrote:
+> > > > On each memory request, the kernel then must consider a percentage of
+> > > > allocated space in its calculation, and on systems with less memory
+> > > > this quickly becomes a problem.
+> > > 
+> > > I'm not sure what you're referring to here?  Are you referring to our
+> > > overcommit limits?
+> > 
+> > Yes.
+> 
+> My assumption has always been that these large, potentially sparse
+> hardware tables *must* be mmap()'d with MAP_NORESERVE specified.  That
+> should keep them from being problematic with respect to overcommit.
 
-This patch introduces a new ioctl, USBDEVFS_CONNINFO_EX, which return
-extended connection information for the device, including the bus
-number, address, port list and speed. The API allows kernel to extend
-amount of data returned by the ioctl and userspace has an option of
-adjusting the amount of data it is willing to consume. A new capability,
-USBDEVFS_CAP_CONNINFO_EX, is introduced to help userspace in determining
-whether the kernel supports this new ioctl.
+Ok, we will go back to do_mmap() with MAP_PRIVATE, MAP_NORESERVE and
+VM_DONTDUMP.  The bitmap will cover only 48-bit address space.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/usb/core/devio.c          | 42 ++++++++++++++++++++++++++++++-
- include/uapi/linux/usbdevice_fs.h | 26 +++++++++++++++++++
- 2 files changed, 67 insertions(+), 1 deletion(-)
+We then create PR_MARK_CODE_AS_LEGACY.  The kernel will set the bitmap, but it
+is going to be slow.
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index fa783531ee88..fb6a074e4f1d 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1308,6 +1308,39 @@ static int proc_connectinfo(struct usb_dev_state *ps, void __user *arg)
- 	return 0;
- }
- 
-+static int proc_conninfo_ex(struct usb_dev_state *ps,
-+			    void __user *arg, size_t size)
-+{
-+	struct usbdevfs_conninfo_ex ci;
-+	struct usb_device *udev = ps->dev;
-+
-+	if (size < sizeof(ci.size))
-+		return -EINVAL;
-+
-+	memset(&ci, 0, sizeof(ci));
-+	ci.size = sizeof(ci);
-+	ci.busnum = udev->bus->busnum;
-+	ci.devnum = udev->devnum;
-+	ci.speed = udev->speed;
-+
-+	while (udev && udev->portnum != 0) {
-+		if (++ci.num_ports <= ARRAY_SIZE(ci.ports))
-+			ci.ports[ARRAY_SIZE(ci.ports) - ci.num_ports] =
-+					udev->portnum;
-+		udev = udev->parent;
-+	}
-+
-+	if (ci.num_ports < ARRAY_SIZE(ci.ports))
-+		memmove(&ci.ports[0],
-+			&ci.ports[ARRAY_SIZE(ci.ports) - ci.num_ports],
-+			ci.num_ports);
-+
-+	if (copy_to_user(arg, &ci, min(sizeof(ci), size)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- static int proc_resetdevice(struct usb_dev_state *ps)
- {
- 	struct usb_host_config *actconfig = ps->dev->actconfig;
-@@ -2252,7 +2285,7 @@ static int proc_get_capabilities(struct usb_dev_state *ps, void __user *arg)
- 
- 	caps = USBDEVFS_CAP_ZERO_PACKET | USBDEVFS_CAP_NO_PACKET_SIZE_LIM |
- 			USBDEVFS_CAP_REAP_AFTER_DISCONNECT | USBDEVFS_CAP_MMAP |
--			USBDEVFS_CAP_DROP_PRIVILEGES;
-+			USBDEVFS_CAP_DROP_PRIVILEGES | USBDEVFS_CAP_CONNINFO_EX;
- 	if (!ps->dev->bus->no_stop_on_short)
- 		caps |= USBDEVFS_CAP_BULK_CONTINUATION;
- 	if (ps->dev->bus->sg_tablesize)
-@@ -2551,6 +2584,13 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 		break;
- 	}
- 
-+	/* Handle variable-length commands */
-+	switch (cmd & ~IOCSIZE_MASK) {
-+	case USBDEVFS_CONNINFO_EX(0):
-+		ret = proc_conninfo_ex(ps, p, _IOC_SIZE(cmd));
-+		break;
-+	}
-+
-  done:
- 	usb_unlock_device(dev);
- 	if (ret >= 0)
-diff --git a/include/uapi/linux/usbdevice_fs.h b/include/uapi/linux/usbdevice_fs.h
-index 964e87217be4..393a2de914e8 100644
---- a/include/uapi/linux/usbdevice_fs.h
-+++ b/include/uapi/linux/usbdevice_fs.h
-@@ -76,6 +76,26 @@ struct usbdevfs_connectinfo {
- 	unsigned char slow;
- };
- 
-+struct usbdevfs_conninfo_ex {
-+	__u32 size;		/* Size of the structure from the kernel's */
-+				/* point of view. Can be used by userspace */
-+				/* to determine how much data can be       */
-+				/* used/trusted.                           */
-+	__u32 busnum;           /* USB bus number, as enumerated by the    */
-+				/* kernel, the device is connected to.     */
-+	__u32 devnum;           /* Device address on the bus.              */
-+	__u32 speed;		/* USB_SPEED_* constants from ch9.h        */
-+	u8 num_ports;		/* Number of ports the device is connected */
-+				/* to on the way to the root hub. It may   */
-+				/* be bigger than size of 'ports' array so */
-+				/* userspace can detect overflows.         */
-+	u8 ports[7];		/* List of ports on the way from the root  */
-+				/* hub to the device. Current limit in     */
-+				/* USB specification is 7 tiers (root hub, */
-+				/* 5 intermediate hubs, device), which     */
-+				/* gives at most 6 port entries.           */
-+};
-+
- #define USBDEVFS_URB_SHORT_NOT_OK	0x01
- #define USBDEVFS_URB_ISO_ASAP		0x02
- #define USBDEVFS_URB_BULK_CONTINUATION	0x04
-@@ -137,6 +157,7 @@ struct usbdevfs_hub_portinfo {
- #define USBDEVFS_CAP_REAP_AFTER_DISCONNECT	0x10
- #define USBDEVFS_CAP_MMAP			0x20
- #define USBDEVFS_CAP_DROP_PRIVILEGES		0x40
-+#define USBDEVFS_CAP_CONNINFO_EX		0x80
- 
- /* USBDEVFS_DISCONNECT_CLAIM flags & struct */
- 
-@@ -197,5 +218,10 @@ struct usbdevfs_streams {
- #define USBDEVFS_FREE_STREAMS      _IOR('U', 29, struct usbdevfs_streams)
- #define USBDEVFS_DROP_PRIVILEGES   _IOW('U', 30, __u32)
- #define USBDEVFS_GET_SPEED         _IO('U', 31)
-+/*
-+ * Returns struct usbdevfs_conninfo_ex; length is variable to allow
-+ * extending size of the data returned.
-+ */
-+#define USBDEVFS_CONNINFO_EX(len)  _IOC(_IOC_READ, 'U', 32, len)
- 
- #endif /* _UAPI_LINUX_USBDEVICE_FS_H */
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
+Perhaps we still let the app fill the bitmap?
 
-
--- 
-Dmitry
+Yu-cheng
