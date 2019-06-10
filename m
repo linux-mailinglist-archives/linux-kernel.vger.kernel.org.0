@@ -2,100 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2213BDD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 22:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C773BDDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 22:53:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389763AbfFJUvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 16:51:41 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36714 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727588AbfFJUvk (ORCPT
+        id S1728610AbfFJUxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 16:53:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49115 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbfFJUxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 16:51:40 -0400
-Received: by mail-ed1-f67.google.com with SMTP id k21so13078726edq.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 13:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LwPRrFIFVpFh7windfuH8fQym2aENAjRfJxjWELiSBU=;
-        b=Zb5w8rP85WrEmAp+Zr/D+9qTV1RoeJ9+bGxf6ZGFaz//eje5o8iDyuC629FdHNoZHM
-         M6NOkiKW5X94YWAH/0ShGapQoZma0hlhSk6PpQEgi915CF1Dv1mhkO/conE2CVt3RObX
-         ksdmzpJiEaaT8Yjo9vuQP3/LNVzAO7x6LBf7L7PR+g89d/pcyU9i67wPGHBkQEiC2ISG
-         qdF9toeA0vtNzb1Fd88YeDnqmdHXoZrEQoob4+rUi/sJyLbrlfMfj4RPQBeM7Zhz4UQr
-         Rps++y3zxLadol/OIc8Cv+L+LUVb9gstJIM2XJOSfG/oNJXv+6ypGOgTjXRr43Utd7px
-         oGWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LwPRrFIFVpFh7windfuH8fQym2aENAjRfJxjWELiSBU=;
-        b=EDNOWKAP8LdVgISLq5KVPq+01dtoq1QAjexX9tGQNdVzPDIYrFb+yjKoxs1PowbyGG
-         T+1ZeWqwE8p6O0bB9IlnIdw/F6vqIWOt49Y7rvDnS1TPA+pms6+CCMcGE+RrcPPzx9Jf
-         Hkqdk2xgIQI1H7hjEvPCP4HQv2DMEbQzjDQZ/m/D0anrlVAoisZv4Vxwldd78bz+N5mu
-         RqrnUu0PgwP3ETozCcPQDcrRC5Qk4Xl1XjU80Ky2nCMaazphxAoyu1ntoQ3Q0Cn8INs8
-         CwAwWvtB82Vdz+PosOXYsoD6m1ItljM0r6fmqWpmLcHoG0DS+AJLnFdKQFaOQRkjgP/Q
-         Uk9w==
-X-Gm-Message-State: APjAAAXkT9zKzVJ+3K7Hrqzlx3Xx1jDZ/b3OYabzu/XbIDUiTBITe57w
-        UFeJGEz7SL+WgrhVKIa5l36haQ==
-X-Google-Smtp-Source: APXvYqwi/4K4O7p3F5fWVp5YvhiOxBsgwx+PVV7Ojw/tfOBJ/2puw1O0OPD6xnMpmS+Mb4sPcC1x7Q==
-X-Received: by 2002:a17:906:d7aa:: with SMTP id pk10mr1184294ejb.125.1560199899038;
-        Mon, 10 Jun 2019 13:51:39 -0700 (PDT)
-Received: from brauner.io ([2a02:8109:9cc0:6dac:cd8f:f6e9:1b84:bbb1])
-        by smtp.gmail.com with ESMTPSA id k9sm1976063eja.72.2019.06.10.13.51.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 13:51:38 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 22:51:36 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, tyhicks@canonical.com,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, roopa@cumulusnetworks.com,
-        nikolay@cumulusnetworks.com, linux-kernel@vger.kernel.org,
-        richardrose@google.com, vapier@chromium.org, bhthompson@google.com,
-        smbarber@chromium.org, joelhockey@chromium.org,
-        ueberall@themenzentrisch.de
-Subject: Re: [PATCH net-next v1 1/1] br_netfilter: namespace bridge netfilter
- sysctls
-Message-ID: <20190610205134.6wqparmtsdzbiutv@brauner.io>
-References: <20190609162304.3388-1-christian@brauner.io>
- <20190609162304.3388-2-christian@brauner.io>
- <20190610174136.p3fbcbn33en5bb7f@salvia>
+        Mon, 10 Jun 2019 16:53:09 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5AKqCGh4072505
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 10 Jun 2019 13:52:12 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5AKqCGh4072505
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560199933;
+        bh=A2cy2pnoZYAsn5lO0GtT00kfuwyKxTuvGLoBKtmJWzc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=dykvvYF603sp4czAtt0C0HKGWWJNg7X3pc3wSZFqbew+2HoehZOq+Z0QILr1W4vUr
+         70s0MsGotmzaDZPgX5EJfV8FU6ysZzgCDs6U3mvR8YyHVDIwjHPFk5VnN+XFu+UiRM
+         AgnoFx/shzYK7QphsBVvKVe74AMdtl7CNAzfhoThCcoVIFFfFjVfQmUKIzTNgCO/kI
+         kWELeZPpWHm/w99brAKD79wecYnC07XezNzC8Vzr5BcgnncGz2PZ/MRFXIY3o7mneu
+         N6Cwb/Lp0zJ89euoE/4brY/M6Qm/yQ1urPY8j1ZBKwi4mtpi8oqYkGvEcvN7xurDfg
+         tXbwD+06oH9yQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5AKqBJj4072502;
+        Mon, 10 Jun 2019 13:52:11 -0700
+Date:   Mon, 10 Jun 2019 13:52:11 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Uros Bizjak <tipbot@zytor.com>
+Message-ID: <tip-515f0453752e3daba7c47d37d9172a66509a56fd@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org,
+        bp@suse.de, reinette.chatre@intel.com, mingo@redhat.com,
+        ubizjak@gmail.com, tglx@linutronix.de, hpa@zytor.com,
+        fenghua.yu@intel.com
+Reply-To: fenghua.yu@intel.com, hpa@zytor.com, tglx@linutronix.de,
+          ubizjak@gmail.com, reinette.chatre@intel.com, mingo@redhat.com,
+          bp@suse.de, x86@kernel.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190606200044.5730-1-ubizjak@gmail.com>
+References: <20190606200044.5730-1-ubizjak@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/resctrl: Use _ASM_BX to avoid ifdeffery
+Git-Commit-ID: 515f0453752e3daba7c47d37d9172a66509a56fd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190610174136.p3fbcbn33en5bb7f@salvia>
-User-Agent: NeoMutt/20180716
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 07:41:36PM +0200, Pablo Neira Ayuso wrote:
-> Thanks for updating this patch to use struct brnf_net.
-> 
-> A few comments below.
-> 
-> On Sun, Jun 09, 2019 at 06:23:04PM +0200, Christian Brauner wrote:
-> [...]
-> > diff --git a/include/net/netfilter/br_netfilter.h b/include/net/netfilter/br_netfilter.h
-> > index 89808ce293c4..302fcd3aade2 100644
-> > --- a/include/net/netfilter/br_netfilter.h
-> > +++ b/include/net/netfilter/br_netfilter.h
-> > @@ -85,17 +82,42 @@ static inline __be16 vlan_proto(const struct sk_buff *skb)
-> >  		return 0;
-> >  }
-> >  
-> > -#define IS_VLAN_IP(skb) \
-> > -	(vlan_proto(skb) == htons(ETH_P_IP) && \
-> > -	 brnf_filter_vlan_tagged)
-> > +static inline bool is_vlan_ip(const struct sk_buff *skb, const struct net *net)
-> > +{
-> 
-> I like this conversion from macro to static inline a lot.
-> 
-> But if you let me ask for one more change, would you split this in two
-> patches? One to replace #defines by static inline.
+Commit-ID:  515f0453752e3daba7c47d37d9172a66509a56fd
+Gitweb:     https://git.kernel.org/tip/515f0453752e3daba7c47d37d9172a66509a56fd
+Author:     Uros Bizjak <ubizjak@gmail.com>
+AuthorDate: Thu, 6 Jun 2019 22:00:44 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 10 Jun 2019 22:36:38 +0200
 
-Sure.
+x86/resctrl: Use _ASM_BX to avoid ifdeffery
+
+Use the _ASM_BX macro which expands to either %rbx or %ebx, depending on
+the 32-bit or 64-bit config selected.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190606200044.5730-1-ubizjak@gmail.com
+---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index 604c0e3bcc83..09408794eab2 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -431,11 +431,7 @@ static int pseudo_lock_fn(void *_rdtgrp)
+ #else
+ 	register unsigned int line_size asm("esi");
+ 	register unsigned int size asm("edi");
+-#ifdef CONFIG_X86_64
+-	register void *mem_r asm("rbx");
+-#else
+-	register void *mem_r asm("ebx");
+-#endif /* CONFIG_X86_64 */
++	register void *mem_r asm(_ASM_BX);
+ #endif /* CONFIG_KASAN */
+ 
+ 	/*
