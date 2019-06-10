@@ -2,97 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E57BA3B60F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 15:32:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FB153B71E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390412AbfFJNb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 09:31:59 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36191 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390335AbfFJNb7 (ORCPT
+        id S2403803AbfFJOTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 10:19:40 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:35856 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390789AbfFJOTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 09:31:59 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k21so11217943edq.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 06:31:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:cc:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=zHz2UJxUdh3rVwhA5EFSYkJKTVOd6ZuZb4Wud/lpDSg=;
-        b=fWc2SKw1ytoddHPkJvvcSCWimEyww8DZXnR3w0ZQ06XS60Z1GigSyIoC+r1b647/HV
-         RkNhOyqIO8k6DbUPZLA/Ic9jVjtlqbRvCTTRKLDBhH1DdNp1KY/41IL57yxUk975TSmV
-         eqIiNIu0lukSKgHpUN/M7h03J+TSpCBk0GhgRizA1FCoemEX0+A25YqvoMFJB9Dd0DG1
-         yGciQhTTnfoyi7lj4Chtf8oMEHhc3MeYd7Ob0VtjhtdImUdaP55aRmY9h9GWazCWRZ4t
-         wjFpOU9FHEh3qV5Tji0LYfe1dTrcwCoc1kE/yLzho8ekU3meKYKxOx3rtLj/bVGvP3Rr
-         93Qg==
-X-Gm-Message-State: APjAAAUDfg+4DyoqSAImf45OftxrWpf4tO15UkMvagxwmu9F0lAVKybg
-        qezVyk78WCuHtakKWPQ/PE1tyRO7EIg=
-X-Google-Smtp-Source: APXvYqy7j6yOiZLfwFmeashZGQlsG1+Ytyj3AZ7oYct+ix5JgEUtL2nkKriE4NohbcrK4qFIe941ww==
-X-Received: by 2002:a50:94a2:: with SMTP id s31mr33340960eda.290.1560173516809;
-        Mon, 10 Jun 2019 06:31:56 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id f9sm1790236ejk.73.2019.06.10.06.31.55
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 06:31:56 -0700 (PDT)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marcel Holtmann <marcel@holtmann.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-bluetooth@vger.kernel.org, Jeremy Cline <jeremy@jcline.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Bluetooth regression breaking BT connection for all 2.0 and older
- devices in 5.0.15+, 5.1.x and master
-Message-ID: <af8cf6f4-4979-2f6f-68ed-e5b368b17ec7@redhat.com>
-Date:   Mon, 10 Jun 2019 15:31:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 10 Jun 2019 10:19:40 -0400
+X-Greylist: delayed 2771 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jun 2019 10:19:39 EDT
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x5ADWkmM029719;
+        Mon, 10 Jun 2019 16:32:46 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 5E7F361FCC; Mon, 10 Jun 2019 16:32:46 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     olof@lixom.net, gregkh@linuxfoundation.org, arnd@arndb.de,
+        robh+dt@kernel.org, mark.rutland@arm.com, avifishman70@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 0/2] soc: add NPCM LPC BPC driver support 
+Date:   Mon, 10 Jun 2019 16:32:43 +0300
+Message-Id: <20190610133245.306812-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+This patch set adds LPC BIOS Post code (BPC) support for the
+Nuvoton NPCM Baseboard Management Controller (BMC).
 
-First of all this is a known issue and it seems a fix is in the works,
-but what I do not understand is why the commit causing this has not
-simply been reverted until the fix is done, esp. for the 5.0.x
-stable series where this was introduced in 5.0.15.
+Nuvoton BMC NPCM LPC BIOS Post Code (BPC) monitoring two
+configurable I/O addresses written by the host on the
+Low Pin Count (LPC) bus, the capture data stored in 128-word FIFO.
 
-The problem I'm talking about is commit d5bb334a8e17 ("Bluetooth: Align
-minimum encryption key size for LE and BR/EDR connections"):
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d5bb334a8e171b262e48f378bd2096c0ea458265
-basically completely breaking all somewhat older (and some current cheap
-no-name) bluetooth devices:
+NPCM BPC can support capture double words.
 
-A revert of this was first proposed on May 22nd:
-https://lore.kernel.org/netdev/CA+E=qVfopSA90vG2Kkh+XzdYdNn=M-hJN_AptW=R+B5v3HB9eA@mail.gmail.com/T/
-We are 18 days further now and this problem still exists, including in the
-5.0.15+ and 5.1.x stable kernels.
+The NPCM7xx BPC driver tested on NPCM750 evaluation board.
 
-A solution has been suggested: https://lore.kernel.org/linux-bluetooth/20190522070540.48895-1-marcel@holtmann.org/T/#u
-and at least the Fedora 5.1.4+ kernels now carry this as a temporary fix,
-but as of today I do not see a fix nor a revert in Torvald's tree yet and
-neither does there seem to be any fix in the 5.0.x and 5.1.x stable series.
+NPCM BPC driver upstream process start few months ago on misc folder
+http://lkml.iu.edu/hypermail/linux/kernel/1904.2/00412.html
 
-In the mean time we are getting a lot of bug reports about this:
-https://bugzilla.kernel.org/show_bug.cgi?id=203643
-https://bugzilla.redhat.com/show_bug.cgi?id=1711468
-https://bugzilla.redhat.com/show_bug.cgi?id=1713871
-https://bugzilla.redhat.com/show_bug.cgi?id=1713980
+The NPCM LPC BPC is similar to Aspeed LPC snoop, last 
+kernel 5.0.2 Aspeed LPC snoop driver moved from misc folder to 
+soc folder, so it seems NPCM BPC dirver should upstream to soc 
+as well.
+https://lkml.org/lkml/2019/4/22/377
 
-And some reporters:
-https://bugzilla.redhat.com/show_bug.cgi?id=1713871#c4
-Are indicating that the Fedora kernels with the workaround included
-still do not work...
+I have created common lpc-snoop documentation for both 
+Nuvoton and Aspeed drivers as Andrew suggested.
+Andrew Jeffery: https://patchwork.kernel.org/patch/10506269/ 
 
-As such I would like to suggest that we just revert the troublesome
-commit for now and re-add it when we have a proper fix.
+I add Andrew and Rob reviewed signature because they already reviewed 
+and signed  the lpc-snoop documentation in the misc folder
+https://lkml.org/lkml/2019/4/29/998 
 
-Regards,
+Tomer Maimon (2):
+  dt-binding: soc: Add common LPC snoop documentation
+  soc: nuvoton: add NPCM LPC BPC driver
 
-Hans
+ .../devicetree/bindings/soc/lpc/lpc-snoop.txt |  27 ++
+ drivers/soc/Kconfig                           |   1 +
+ drivers/soc/Makefile                          |   1 +
+ drivers/soc/nuvoton/Kconfig                   |  16 +
+ drivers/soc/nuvoton/Makefile                  |   2 +
+ drivers/soc/nuvoton/npcm-lpc-bpc-snoop.c      | 387 ++++++++++++++++++
+ 6 files changed, 434 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/lpc/lpc-snoop.txt
+ create mode 100644 drivers/soc/nuvoton/Kconfig
+ create mode 100644 drivers/soc/nuvoton/Makefile
+ create mode 100644 drivers/soc/nuvoton/npcm-lpc-bpc-snoop.c
 
+-- 
+2.18.0
 
