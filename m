@@ -2,72 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3210A3B53D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C82713B544
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389724AbfFJMvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 08:51:23 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45013 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389075AbfFJMvW (ORCPT
+        id S2390068AbfFJMxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 08:53:55 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40862 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388373AbfFJMxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 08:51:22 -0400
-Received: by mail-ot1-f65.google.com with SMTP id b7so8120132otl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 05:51:22 -0700 (PDT)
+        Mon, 10 Jun 2019 08:53:55 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p11so9065486wre.7
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 05:53:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OGLWNA0OQOG5wWyxB9H8Hgmax5IuBsIxNtuEDQ1Ho3c=;
-        b=l7OQWdNRtoQUdMIL/J3aLdcLG7lwN1wQG3eVC8xnOnhEcL0e2LZzQQ9vk85dW/M4XI
-         QIUJNVgxJJse3crYXW4d4seEx+Piw6ZsqJgoGoM2XzXPkCgO/L2xCk/A+MRxS16nzjmz
-         rNsEDpVHpheCwZarHvmp4TlrTDIgnJILy+kJ02CeQINQhAuoCgiWEDJqHEYZf/ofC5qv
-         6po8XTmOjPEPsMfDM1oH7UkapXaxsR0j7t3ROLJnGsHlyzgKA9XWVAB1BK3Fr2fzwgis
-         eSRwKU0jHp21zpJv0zl8z8XzTkhdRw4V9bVf7cpo9gk40+LDq80YRiVW/O9dXJxVZQ1V
-         +dBQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8T69aUvAi+maIZ8yBvTWOJzaeXiOR3Dqg9+a+MoRXDA=;
+        b=n3Fu5kN6wdtGKh9YWexo8ZjfsnSBwADVRCC+C4XPOPSXHT5eKEAqT5i79KL9bKa4wd
+         c0hqIJpI7gTWCxibbx6XId2oyRuITeCfXqD/vuxY73kQof26ZidBERPABjLwlljWAlZv
+         /RaBmnpuINADHE0WgkCb9CXCUgwj4Yxvz2Ql+sdrVda1v3DhaMUlSuiQFVX9hxE2M59c
+         2v8lzULQ5grpGHh307iNtaYcW5R1JoPcHlI5ob+LjUqV8Yn8AMYEPWaBB5TBDRQZQhyb
+         tXVbYg6wQvy59GmMAsTdVK+sHPTjGUCBNjYtFOVx9d4p2BBvJ5leqMnY4TuY0XvTNUme
+         i8Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OGLWNA0OQOG5wWyxB9H8Hgmax5IuBsIxNtuEDQ1Ho3c=;
-        b=IUqEKgTtCvnKXhewM0pW0X4QXZZ5I6jpmyHOuFyUqmicIJPY6qPxE+rxh0Ez1o65Z0
-         RXLxq4tIpxGhMon+naJ8iJbzFz9YDIfyIbv6tPORDy2UrnOpKS0JrBH8uksjrfMBr/mz
-         dbIZj+ADzGe7eQamZ7514ADxSOpicZUNhd5WLGXeg0vIRHBDHaPD+8v9GL/cz+BjWtAH
-         UK6twoFlTPOmAOGiLiiKNrtE6d3aH6MqsgoP++NnnWdKPBHwklGzufL+YRjmjT11xir9
-         h+QC0VN0WAVVRa/pJ7BDfBrPEcMhmYnNR2LewgsWaQgjwjVXFKvTN1e9GJwS5gaH8YvF
-         FDNw==
-X-Gm-Message-State: APjAAAW5lz4DoXXtwN8fkZIpui2mhinNEX+AFJCXmVpYicLcHPzhjF18
-        3fpaBUFSxBfDuoIxQxCovfDHTUz3th6mv73+bMo=
-X-Google-Smtp-Source: APXvYqyQXjuj4lGYmy/SumwwBHmFKbZv9SJe8lb9ySDF6TAZi1e1lsa3INyyrtPsmejesuC5xQVc4uw+QcBtPppyHf8=
-X-Received: by 2002:a9d:3bb4:: with SMTP id k49mr29303369otc.332.1560171081876;
- Mon, 10 Jun 2019 05:51:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8T69aUvAi+maIZ8yBvTWOJzaeXiOR3Dqg9+a+MoRXDA=;
+        b=ULW72hJOkfd433s/WRbb8105P+Hko97CJ5Bji8dksxHhU5mUAc/VrFIZaKR5umfhBr
+         xqFT6zZYv3UOruVMfgUmeHT2ISpAYy8DNcx1n956rZ2XVPD7jGJXGSKXzs8YuKWPAbJ+
+         NNuQQyr+Ai49mLibQ8RYDdduA2rPsaueq3s82X3SYljk7w6pR9xwy+xI4G1rmPjDK1wN
+         fAhh2PFrPpeRzFP4GMRBQ/R18P84uQbWUeYfjibQ9ZBLNfqauyM3kNAT2jVLxmbACn5k
+         5nt1ZaWzwJ5NiTd1NhVKRw1Pi4GiyssCWjHz1lbkAk5n1TJ28PWQXb1vGE6mTgeMSRgt
+         2YOQ==
+X-Gm-Message-State: APjAAAUDV6i0Vf1vkQNXdj93rpT71ZPNeKXaOtD91dgpe7tXuExJjC0k
+        FX3nOm5+k4Wxj+H9EmnsKkRj+A==
+X-Google-Smtp-Source: APXvYqyF38CXjmJlFWQvmC/4HOPRMLGbV8IW7oGgE73werPfKioCG3d1XJdAyRcyyO0juNIRqqCB+Q==
+X-Received: by 2002:adf:9267:: with SMTP id 94mr22877356wrj.338.1560171233499;
+        Mon, 10 Jun 2019 05:53:53 -0700 (PDT)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id 135sm11871603wmb.28.2019.06.10.05.53.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 05:53:53 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH] ASoC: meson: axg-card: fix null pointer dereference in clean up
+Date:   Mon, 10 Jun 2019 14:53:44 +0200
+Message-Id: <20190610125344.18221-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAGngYiU=uFjJFEoiHFUr+ab73sJksaTBkfxvQwL1X6WJnhchqw@mail.gmail.com>
- <20190528142912.13224-1-yuehaibing@huawei.com> <CAGngYiW_hCDPRWao+389BfUH_2sP4S6pL+gteim=kDrnb9UDzQ@mail.gmail.com>
- <3f4c1d4c-656b-8266-38c4-3f7c36a2bd7e@huawei.com> <20190528155956.GA21964@kroah.com>
- <CAGngYiW8Y3jt9ikb5e9LtfSkquZquLgB5iSRVXyka9fUXLrqYQ@mail.gmail.com>
-In-Reply-To: <CAGngYiW8Y3jt9ikb5e9LtfSkquZquLgB5iSRVXyka9fUXLrqYQ@mail.gmail.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Mon, 10 Jun 2019 08:51:10 -0400
-Message-ID: <CAGngYiV9XsPL8Mk9_K9=0a-k6P6JN_waJvk5bDH+mDwGMAYbmw@mail.gmail.com>
-Subject: Re: [PATCH v2 -next] staging: fieldbus: Fix build error without CONFIG_REGMAP_MMIO
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>, devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg, just a friendly ping regarding this patch. It got my Reviewed-by tag
-two weeks ago, no further feedback from anyone. Is there anything you would
-like us to do before queuing this?
+When using modern dai_link style, we must first make sure the
+struct snd_soc_dai_link_component exists before accessing its members.
 
-Link to v2 that got the Reviewed-by:
-https://lkml.org/lkml/2019/5/28/609
+In case of early probe deferral, some of the '.cpus' or '.codecs' may not
+have been allocated yet. Check this before calling of_node_put() on the
+structure member.
 
-On Tue, May 28, 2019 at 1:31 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
-> For the v2 patch:
-> Reviewed-by: Sven Van Asbroeck <TheSven73@gmail.com>
->
+Fixes: c84836d7f650 ("ASoC: meson: axg-card: use modern dai_link style")
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/axg-card.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
+index fb03258d00ae..70bb0cbad233 100644
+--- a/sound/soc/meson/axg-card.c
++++ b/sound/soc/meson/axg-card.c
+@@ -115,9 +115,11 @@ static void axg_card_clean_references(struct axg_card *priv)
+ 
+ 	if (card->dai_link) {
+ 		for_each_card_prelinks(card, i, link) {
+-			of_node_put(link->cpus->of_node);
++			if (link->cpus)
++				of_node_put(link->cpus->of_node);
+ 			for_each_link_codecs(link, j, codec)
+-				of_node_put(codec->of_node);
++				if (codec)
++					of_node_put(codec->of_node);
+ 		}
+ 	}
+ 
+-- 
+2.20.1
+
