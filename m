@@ -2,104 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5468F3BB0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 018513BB13
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388281AbfFJRev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:34:51 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53022 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388170AbfFJRev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:34:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=jpIsnQKToLnfohGME7GlwGk9uxrjkhAPVWzXiTiDiLc=; b=wrdkbQAWqIyR
-        6HwbjH6zBnFBJ9bwyB/T71DJmGBVMBAuSfEcL8xQCREYWl1HoCkRxGO+bqQZEC9fIJ9uJ6pEhtp/w
-        z0tFevrdlr4v36b7vVug1wD8PvXA/ACah9KORB210WHjNdjs5h1PR0kBG4C8RgVzMloMWoUAyYyk9
-        0nMfI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1haOBy-0006G0-Jh; Mon, 10 Jun 2019 17:34:46 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 29048440046; Mon, 10 Jun 2019 18:34:46 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: max77802: Drop unused includes" to the regulator tree
-In-Reply-To: <20190609110513.29220-1-linus.walleij@linaro.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20190610173446.29048440046@finisterre.sirena.org.uk>
-Date:   Mon, 10 Jun 2019 18:34:46 +0100 (BST)
+        id S2388391AbfFJRfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:35:52 -0400
+Received: from ms.lwn.net ([45.79.88.28]:44930 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388346AbfFJRfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:35:52 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 9710F382;
+        Mon, 10 Jun 2019 17:35:51 +0000 (UTC)
+Date:   Mon, 10 Jun 2019 11:35:50 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH v3 13/33] docs: infiniband: convert docs to ReST and
+ rename to *.rst
+Message-ID: <20190610113550.250aad35@lwn.net>
+In-Reply-To: <20190610172712.GG18468@ziepe.ca>
+References: <cover.1560045490.git.mchehab+samsung@kernel.org>
+        <09036fdb89c4bec94cb92d25398c026afdb134e7.1560045490.git.mchehab+samsung@kernel.org>
+        <20190610172712.GG18468@ziepe.ca>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, 10 Jun 2019 14:27:12 -0300
+Jason Gunthorpe <jgg@ziepe.ca> wrote:
 
-   regulator: max77802: Drop unused includes
+> Looks OK to me, do you want to run these patches through the docs tree
+> or through RDMA?
+> 
+> Given that we've generally pushed doc updates through rdma, I think
+> I'd prefer the latter? Jonathan?
 
-has been applied to the regulator tree at
+Whichever works best for you is fine with me; go ahead and take them.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From d17adf7d3f5be74bdfda89ceed7bff3910ffb6d4 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 9 Jun 2019 13:05:13 +0200
-Subject: [PATCH] regulator: max77802: Drop unused includes
-
-This driver does not use any symbols from <linux/gpio.h>
-no <linux/gpio/consumer.h> so just drop the includes.
-
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/max77802-regulator.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/regulator/max77802-regulator.c b/drivers/regulator/max77802-regulator.c
-index ea7b50397300..7b8ec8c0bd15 100644
---- a/drivers/regulator/max77802-regulator.c
-+++ b/drivers/regulator/max77802-regulator.c
-@@ -14,9 +14,7 @@
- #include <linux/kernel.h>
- #include <linux/bug.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
- #include <linux/slab.h>
--#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
--- 
-2.20.1
-
+jon
