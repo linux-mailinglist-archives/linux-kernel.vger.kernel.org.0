@@ -2,73 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4398B3AD51
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 04:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 613A43AD37
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 04:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387577AbfFJCwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 22:52:42 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:7325 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387446AbfFJCwm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 22:52:42 -0400
-X-UUID: 010c608b2bbc4285b14cb454eebd3134-20190610
-X-UUID: 010c608b2bbc4285b14cb454eebd3134-20190610
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1863350215; Mon, 10 Jun 2019 10:52:33 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Jun 2019 10:52:31 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Jun 2019 10:52:31 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [next PATCH] Revert "usb: mtu3: fix up undefined reference to usb_debug_root"
-Date:   Mon, 10 Jun 2019 10:52:29 +0800
-Message-ID: <1560135149-9647-1-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1730386AbfFJCvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 22:51:40 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53068 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726566AbfFJCvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 22:51:39 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 191492006CC;
+        Mon, 10 Jun 2019 04:51:37 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1B551200186;
+        Mon, 10 Jun 2019 04:51:21 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C3EAA402C0;
+        Mon, 10 Jun 2019 10:51:07 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, aisheng.dong@nxp.com,
+        ulf.hansson@linaro.org, peng.fan@nxp.com,
+        mchehab+samsung@kernel.org, linux@roeck-us.net,
+        daniel.baluta@nxp.com, maxime.ripard@bootlin.com, olof@lixom.net,
+        jagan@amarulasolutions.com, horms+renesas@verge.net.au,
+        leonard.crestez@nxp.com, bjorn.andersson@linaro.org,
+        dinguyen@kernel.org, enric.balletbo@collabora.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V14 1/5] dt-bindings: fsl: scu: add thermal binding
+Date:   Mon, 10 Jun 2019 10:52:50 +0800
+Message-Id: <20190610025254.23940-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's not needed after [1] is applied, because usb_debug_root is created
-by usb common core but not usbcore now.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[1] 812086d362a1 ("USB: move usb debugfs directory creation to the usb common core")
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller, the system controller is in charge of system
+power, clock and thermal sensors etc. management, Linux kernel
+has to communicate with system controller via MU (message unit)
+IPC to get temperature from thermal sensors, this patch adds
+binding doc for i.MX system controller thermal driver.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/usb/mtu3/mtu3_debugfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+No change.
+---
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt        | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/usb/mtu3/mtu3_debugfs.c b/drivers/usb/mtu3/mtu3_debugfs.c
-index 3ed666f94dd9..c96e5dab0a48 100644
---- a/drivers/usb/mtu3/mtu3_debugfs.c
-+++ b/drivers/usb/mtu3/mtu3_debugfs.c
-@@ -528,7 +528,8 @@ void ssusb_dr_debugfs_init(struct ssusb_mtk *ssusb)
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index a575e42..fc3844e 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -155,6 +155,17 @@ Required properties:
+ Optional properties:
+ - timeout-sec: contains the watchdog timeout in seconds.
  
- void ssusb_debugfs_create_root(struct ssusb_mtk *ssusb)
- {
--	ssusb->dbgfs_root = debugfs_create_dir(dev_name(ssusb->dev), NULL);
-+	ssusb->dbgfs_root =
-+		debugfs_create_dir(dev_name(ssusb->dev), usb_debug_root);
- }
++Thermal bindings based on SCU Message Protocol
++------------------------------------------------------------
++
++Required properties:
++- compatible:			Should be :
++				  "fsl,imx8qxp-sc-thermal"
++				followed by "fsl,imx-sc-thermal";
++
++- #thermal-sensor-cells:	See Documentation/devicetree/bindings/thermal/thermal.txt
++				for a description.
++
+ Example (imx8qxp):
+ -------------
+ aliases {
+@@ -222,6 +233,11 @@ firmware {
+ 			compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
+ 			timeout-sec = <60>;
+ 		};
++
++		tsens: thermal-sensor {
++			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
++			#thermal-sensor-cells = <1>;
++		};
+ 	};
+ };
  
- void ssusb_debugfs_remove_root(struct ssusb_mtk *ssusb)
 -- 
-2.21.0
+2.7.4
 
