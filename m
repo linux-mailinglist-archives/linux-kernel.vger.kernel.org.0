@@ -2,133 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 116033BE28
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5343B96C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389935AbfFJVNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:13:17 -0400
-Received: from mx.kolabnow.com ([95.128.36.41]:9204 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbfFJVNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:13:17 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTP id B4F99844;
-        Mon, 10 Jun 2019 23:13:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received:received:received; s=dkim20160331; t=
-        1560201194; x=1562015595; bh=ARkpqDw6hh5K+0monDK5QS19Np6XwBxbJQx
-        bed0bnp0=; b=DNscEI5WOdOU5DBDL0y/wOTaHbSZ35U80+dkOcNWgqOc8N5oV+e
-        weGSxcGuvJ1g0S0GiDNMxDmoVtN/WSHgTkoWvhDzfzPLnBDey1CsxJH7h1jl7p+O
-        aMnUrztGihiusjsxMNuh47zI6p/1+/O2+o3yl5TPHns45w6lyVU46PeElDVuLXWF
-        zRVqvI/tHLR4Gkg4pli4+GHg/gkfMQv6LsWwBRV2dbPCGIPkwXlCqG+Idaa+oKoU
-        z7gTrCPRSjF0CTvUs7P2Tm5iPtlp9LVL6gDUKmSVE54pSH22NPuZYUtQcOKrx7Ga
-        LEwHOd7+ZTRnVOKKfK7N6c/982FTmjigQOyvFGt4GSFmTE2NTUBj4zQddDOASoS6
-        U3JMgL7StJuqdgEwSxb4sg2TySbwgtRi8Rd6rJTXonRXdfKaly05yKKYpp3qKh3r
-        6ggayiLNtfYY7ygRZZH624JRVeRO5+eULJM5psD1SgLCYAdR3sHO7BDSDH0zKcQf
-        4grQrVlHzupIxFnoEwFhRrzWUMdsIuSbDeRMMGunW5SyZ+ikMuqyqq8WsGLcOdMs
-        5Lxa5au4jfSpcO7A0RzMlD0Ehz034xV7/w4ewF4M6ysy0GpiaMi2PybK9M1XsxRG
-        mpjIi4RgMNGAu489QCg37P1XWOdoW3ivw7oniGbgnk8H3i2CzN0RKmGE=
-X-Virus-Scanned: amavisd-new at mykolab.com
-X-Spam-Flag: NO
-X-Spam-Score: -1.9
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 tagged_above=-10 required=5
-        tests=[BAYES_00=-1.9] autolearn=ham autolearn_force=no
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out002.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id M5isNbMaxBm5; Mon, 10 Jun 2019 23:13:14 +0200 (CEST)
-Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTPS id 346D111C;
-        Mon, 10 Jun 2019 23:13:14 +0200 (CEST)
-Received: from ext-subm003.mykolab.com (unknown [10.9.6.3])
-        by int-mx003.mykolab.com (Postfix) with ESMTPS id 1A3F82023;
-        Mon, 10 Jun 2019 18:26:39 +0200 (CEST)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 16/33] docs: locking: convert docs to ReST and rename to *.rst
-Date:   Mon, 10 Jun 2019 18:26:37 +0200
-Message-ID: <2479388.eidelHUoWk@harkonnen>
-In-Reply-To: <d5a915447d63fce96cbf463a512cce89423776c3.1560045490.git.mchehab+samsung@kernel.org>
-References: <cover.1560045490.git.mchehab+samsung@kernel.org> <d5a915447d63fce96cbf463a512cce89423776c3.1560045490.git.mchehab+samsung@kernel.org>
+        id S1727492AbfFJQ2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 12:28:16 -0400
+Received: from mail-pf1-f174.google.com ([209.85.210.174]:35183 "EHLO
+        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725270AbfFJQ2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 12:28:15 -0400
+Received: by mail-pf1-f174.google.com with SMTP id d126so5614409pfd.2;
+        Mon, 10 Jun 2019 09:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pzj2b7hhZ6YD/6WjtCfGTasSPRqjwrp/TQaWna9lfxQ=;
+        b=kXJKW/rTaV349rH2wd2kV6vNyJDRVZDsMUieB0amtC3z2MOtjzZbgDTCBZh5U5eSGS
+         UxkGP6xS31s2n9lrkS+hvcUCsyD6X8O+nYZSPIWF+A6d/moRShUOf73RMiZsQNi3uq6Y
+         bQtvKasAaLHPNTtI7oL1owlaJhtixBq1H3FOnMIye7VZDHUmKpBLD/IP7kvb8c9/yN7c
+         sut9J6cyeFklUe+8T0UqEpTVVkFyOC+XTxdq+j6asKfP4bJwAWsJnLDQIuDEy3MO31T0
+         ljyr4/C0QWt3Xe/J9v8peYKk2fSABVUaoMa2hTtvTRrQbO9tk3SUFEVLadOQgbFn1e7O
+         fnAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pzj2b7hhZ6YD/6WjtCfGTasSPRqjwrp/TQaWna9lfxQ=;
+        b=j550qcdFbMDxToU2Scem/MZzc8QP1LNhlmvZawdlLgetCieWZgmjg68niz4P9a8ZIe
+         aGYQaG/xyPAFLapTeMWK66m3LJfTMQUfoBOoNL7Usg/b/v/HyNn1AExRwQAxDbe7ljtp
+         KwIfhXWpJLifeDI5LQiLFI8b9kNVNxt0csMbZYknAF+km8Z5IhctjMA1VGLswGzrDcuh
+         8GVsPPdPvMHZrEgmyo40n3xuIyPALDOMzRGQjPJhgsLn8RhqRBCE2Zcr7d7qw/UEA8Nu
+         ik79VY877bNNCg9giwP/AyIxyfy9gGcsgq6uiUP+bHykLOwDm1IOaarTf3zesE7iMLqT
+         41dw==
+X-Gm-Message-State: APjAAAWDPtghtkvm/nrrQ1FFpdiYhTHuY6NxOm924uL7IMqI20EVol28
+        M2iPtPkPd77uhbZ5FvMaH0g=
+X-Google-Smtp-Source: APXvYqzTViCOZCWdvHqZEgftq3IgTD0jneFi/Mem0y2YPV1OcS6ucnGC/wdKzKKtq7K2fg6dqre64A==
+X-Received: by 2002:a63:5207:: with SMTP id g7mr15864200pgb.356.1560184094523;
+        Mon, 10 Jun 2019 09:28:14 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id m24sm13643054pgh.75.2019.06.10.09.28.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 09:28:13 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 09:28:11 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ken Sloat <KSloat@aampglobal.com>
+Cc:     "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+        "alexandre.belloni@free-electrons.com" 
+        <alexandre.belloni@free-electrons.com>,
+        "wim@iguana.be" <wim@iguana.be>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFE]: watchdog: atmel: atmel-sama5d4-wdt
+Message-ID: <20190610162811.GA11270@roeck-us.net>
+References: <BL0PR07MB41152EDB169FE9ED1AD3B4C9AD130@BL0PR07MB4115.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL0PR07MB41152EDB169FE9ED1AD3B4C9AD130@BL0PR07MB4115.namprd07.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In data Sunday, June 9, 2019 4:27:06 AM CEST, Mauro Carvalho Chehab ha 
-scritto:
-> Convert the locking documents to ReST and add them to the
-> kernel development book where it belongs.
+On Mon, Jun 10, 2019 at 03:51:52PM +0000, Ken Sloat wrote:
+> Hello Nicolas,
 > 
-> Most of the stuff here is just to make Sphinx to properly
-> parse the text file, as they're already in good shape,
-> not requiring massive changes in order to be parsed.
+> I wanted to open a discussion proposing new functionality to allow disabling of the watchdog timer upon entering 
+> suspend in the SAMA5D2/4.
 > 
-> The conversion is actually:
->   - add blank lines and identation in order to identify paragraphs;
->   - fix tables markups;
->   - add some lists markups;
->   - mark literal blocks;
->   - adjust title markups.
+> Typical use case of a hardware watchdog timer in the kernel is a userspace application opens the watchdog timer and
+> periodically "kicks" it. If the application hits a deadlock somewhere and is no longer able to kick it, then the watchdog
+> intervenes and often resets the processor. Such is the case for the Atmel driver (which also allows a watchdog interrupt
+> to be asserted in lieu of a system reset). In most use cases, upon entering a low power/suspend state, the application 
+> will no longer be able to "kick" the watchdog. If the watchdog is not disabled or kicked via another method, then it will
+> reset the system. This is the current behavior of the Atmel driver as of today.
 > 
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
+> The watchdog peripheral itself does have a "WDIDLEHLT" bit however, and this is enabled via the "atmel,idle-halt" dt
+> property. However, this is not very useful, as it literally only makes the watchdog count when the CPU is active. This 
+> results in non-deterministic triggering of the WDT and means that if a critical application were to crash, it may be
+> quite a long time before the WDT would ever trigger. Below is a similar statement made in the device-tree doc for this
+> peripheral:
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  Documentation/kernel-hacking/locking.rst      |   2 +-
->  Documentation/locking/index.rst               |  24 ++
->  ...{lockdep-design.txt => lockdep-design.rst} |  51 ++--
->  .../locking/{lockstat.txt => lockstat.rst}    | 221 ++++++++++--------
->  .../{locktorture.txt => locktorture.rst}      | 105 +++++----
->  .../{mutex-design.txt => mutex-design.rst}    |  26 ++-
->  ...t-mutex-design.txt => rt-mutex-design.rst} | 139 ++++++-----
->  .../locking/{rt-mutex.txt => rt-mutex.rst}    |  30 +--
->  .../locking/{spinlocks.txt => spinlocks.rst}  |  32 ++-
->  ...w-mutex-design.txt => ww-mutex-design.rst} |  82 ++++---
->  Documentation/pi-futex.txt                    |   2 +-
->  .../it_IT/kernel-hacking/locking.rst          |   2 +-
-
-Limited to translations/it_IT
-
-Acked-by: Federico Vaga <federico.vaga@vaga.pv.it>
-
->  drivers/gpu/drm/drm_modeset_lock.c            |   2 +-
->  include/linux/lockdep.h                       |   2 +-
->  include/linux/mutex.h                         |   2 +-
->  include/linux/rwsem.h                         |   2 +-
->  kernel/locking/mutex.c                        |   2 +-
->  kernel/locking/rtmutex.c                      |   2 +-
->  lib/Kconfig.debug                             |   4 +-
->  19 files changed, 428 insertions(+), 304 deletions(-)
->  create mode 100644 Documentation/locking/index.rst
->  rename Documentation/locking/{lockdep-design.txt => lockdep-design.rst}
-> (93%) rename Documentation/locking/{lockstat.txt => lockstat.rst} (41%)
-> rename Documentation/locking/{locktorture.txt => locktorture.rst} (57%)
-> rename Documentation/locking/{mutex-design.txt => mutex-design.rst} (94%)
-> rename Documentation/locking/{rt-mutex-design.txt => rt-mutex-design.rst}
-> (91%) rename Documentation/locking/{rt-mutex.txt => rt-mutex.rst} (71%)
-> rename Documentation/locking/{spinlocks.txt => spinlocks.rst} (89%) rename
-> Documentation/locking/{ww-mutex-design.txt => ww-mutex-design.rst} (93%)
+> - atmel,idle-halt: present if you want to stop the watchdog when the CPU is
+> 		   in idle state.
+> 	CAUTION: This property should be used with care, it actually makes the
+> 	watchdog not counting when the CPU is in idle state, therefore the
+> 	watchdog reset time depends on mean CPU usage and will not reset at all
+> 	if the CPU stop working while it is in idle state, which is probably
+> 	not what you want.
 > 
+> It seems to me, that it would be logical and useful to introduce a new property that would cause the Atmel WDT
+> to disable on suspend and re-enable on resume. It also appears that the WDT is re-initialized anyways upon
+> resume, so the only piece missing here would really be a dt flag and a call to disable.
+> 
+Wondering - why would this need a dt property ? That would be quite unusual. Is
+there a condition where one would _not_ want the watchdog to stop on suspend ?
 
+If anything I would suggest to drop atmel,idle-halt completely; it really looks
+like it would make the watchdog unreliable.
 
-
-
-
+Thanks,
+Guenter
