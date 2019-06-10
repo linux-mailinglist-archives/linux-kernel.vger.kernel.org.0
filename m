@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF22D3B11C
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD8A3B11B
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388578AbfFJIoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2388616AbfFJIoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 10 Jun 2019 04:44:55 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36840 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387992AbfFJIox (ORCPT
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38119 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388471AbfFJIox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Jun 2019 04:44:53 -0400
-Received: by mail-lj1-f194.google.com with SMTP id i21so7139836ljj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:44:51 -0700 (PDT)
+Received: by mail-lf1-f65.google.com with SMTP id b11so6023235lfa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:44:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0HrE3SWkxzOWZuyGJJRbueeV0IUbEbszue8wV9SG4eE=;
-        b=P+6xRp464OEsrDvQLaPAgcbhExhH/IEbRLI1cELg/Lj4ryaES0m2U4LUWy+RJC4Ox+
-         GA3gM1T7y4w5ZBR+B2NI7izXzfLWg84kWqDm9Fwq4IKBv73JPinCa2S+yJ2sjV+KaduA
-         MqMl7Z0bznMJOmNiwNX5r1XNSfwkOtMtPSNfLppmyNDbMF90at1QEZH+8QsM8aT7MBeJ
-         SESuaZRloNjlYHTPAkKgSGK0enk5GolaP6qVAoGQTRmCz7JVa3HK/SlrYcUB93mtD4nh
-         2OZ8q0HyWa7PuwgeagjbHefqeoYNsCIVxbn6KoiRnsjAFjhut1GbN58VBtZRRwFxykjd
-         4L6w==
+        bh=9pHoNwA6p3prwHBUsOArztRsZNohgEg95rwPndspSpc=;
+        b=vVKhK3Z/9oUDrWOnijqul3sgVLBAZtHkrf0+/0H58vpn8/4+XDVOD9r7rLBrsrE0nv
+         r348ZzWoLlWN1m4qW9vRFh8hi6LiUJde/q/6D14G3DJtxsfoeBSI+1Dh4gXUbVjLPnMR
+         GZpKqGDVT3nosshMJQmk6dNLGi8+YI3+fAVt9ae8V8ybQTLAYKt05uLFfauyPcN6Cg59
+         qqYWeOrREnbUV/pY/wAWzpUOj3GxSwL1MO/Mj5qa7PoMxfGKClkrMadKm7whQWfE/Dh7
+         oaezOSdJHK7xPeOjYE8PWg6HSL9317hdXm5MkQ0Q158lLdzNfJks+wR9uPLFi4AWo4d7
+         36fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0HrE3SWkxzOWZuyGJJRbueeV0IUbEbszue8wV9SG4eE=;
-        b=GpsePD9fDb2zTmlrG9NFqRBHJYTjiIUV0aE4rN5T/+dy1VFUAZ7ryYlWp/XjMpZ8vk
-         a/GIFxPHxpDXv1Bj76DL11nqJIKDEYzZZW1Gvua43n1iCoJDW8z8JhvQq5OjEPLCBWzu
-         KGwKn3JXPqyXGM5Kbt9sbP4S48MSUihZM5HQXfcRadcYRrRTsBpach7gV+S78v6WcsfP
-         EQ/2QZI5yLhBcRQjwGSU3qnBkXqRpna4ep5O8kyrCMQJwD/vf7Xi+bEcRyJv/DNzy2S3
-         fyL+jv43WAx+916hsWMd3pwvCZYyjCFXePzTEJQPKTWewQtg5lHucyaWKnDr+WLnyqYq
-         tEcQ==
-X-Gm-Message-State: APjAAAWry+me3FaCzQ2UTaf2dD1o+k2AjCDp4UoFpJCWJA8QBb+2s1Hb
-        /TurxHgm9RSa1EZDdHAijNC5dA==
-X-Google-Smtp-Source: APXvYqzeCmNNycATPb+tEdbrWfGa6chXRvAFad2FJo9x6rPYEHXQDOIVQj7kXBClqueQYNN1hd+jCg==
-X-Received: by 2002:a2e:2c07:: with SMTP id s7mr1934188ljs.44.1560156290949;
-        Mon, 10 Jun 2019 01:44:50 -0700 (PDT)
+        bh=9pHoNwA6p3prwHBUsOArztRsZNohgEg95rwPndspSpc=;
+        b=HN5EQTD0QFXszOTtq7MXTWXtItphRc5OTNS+lmKkwfEchcR97qd8O4zcvajm5+ni5M
+         qZpNSFJEoa1c3jPH3RzxSl1lAUrd2jVuKoukGahrxS10oAOSgi9SPYAGvgJcX3HgIN9f
+         bPc5E+oXMRRoSE7G059MoDLTn+XZp7gF+0pVfBJFfYjUQx1oh/jr+fjnzbeD8uPHGEvI
+         2d1LTqPEwaSmmUY+60J0DIvhgH1uUs+FlrPkYLi/gjwOi/rTR399tSoUhonQDvnrhbEz
+         TRsOOSiKlx2qXsR45poHAzjlLQkvSdVu1ua1KdQSG1VZ664+dMoB+stbG8D3pw0HZWii
+         QsVw==
+X-Gm-Message-State: APjAAAVu4a/M7Ulz+Y+1jgTz2GfjR2BLpjPQmgH3g7Jf8QjQwPhhZw5M
+        M3vtPHZKseTs+Dk003/m0AJD6Q==
+X-Google-Smtp-Source: APXvYqyAE/NrAnQ15xTIjzj6+th6UYKbDJ8+TOXJjiw6JXen5CJB050fGT04FuerdSbjsUHnoHrBWg==
+X-Received: by 2002:ac2:528e:: with SMTP id q14mr7036944lfm.17.1560156292107;
+        Mon, 10 Jun 2019 01:44:52 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id e26sm1826486ljl.33.2019.06.10.01.44.49
+        by smtp.gmail.com with ESMTPSA id e26sm1826486ljl.33.2019.06.10.01.44.50
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 01:44:50 -0700 (PDT)
+        Mon, 10 Jun 2019 01:44:51 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     =simon@nikanor.nu, jeremy@azazel.net, dan.carpenter@oracle.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-Subject: [PATCH 2/5] staging: kpc2000: remove unnecessary debug prints in core.c
-Date:   Mon, 10 Jun 2019 10:44:29 +0200
-Message-Id: <20190610084432.12597-3-simon@nikanor.nu>
+Subject: [PATCH 3/5] staging: kpc2000: remove unnecessary debug prints in dma.c
+Date:   Mon, 10 Jun 2019 10:44:30 +0200
+Message-Id: <20190610084432.12597-4-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190610084432.12597-1-simon@nikanor.nu>
 References: <20190610084432.12597-1-simon@nikanor.nu>
@@ -69,39 +69,30 @@ can be removed as ftrace can be used to get this information.
 
 Signed-off-by: Simon Sandström <simon@nikanor.nu>
 ---
- drivers/staging/kpc2000/kpc2000/core.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/kpc2000/kpc_dma/dma.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
-index 93e381198b45..9b9b29ac90c5 100644
---- a/drivers/staging/kpc2000/kpc2000/core.c
-+++ b/drivers/staging/kpc2000/kpc2000/core.c
-@@ -311,9 +311,6 @@ static int kp2000_pcie_probe(struct pci_dev *pdev,
- 	unsigned long dma_bar_phys_len;
- 	u16 regval;
+diff --git a/drivers/staging/kpc2000/kpc_dma/dma.c b/drivers/staging/kpc2000/kpc_dma/dma.c
+index 059932ab5907..8092d0cf4a4a 100644
+--- a/drivers/staging/kpc2000/kpc_dma/dma.c
++++ b/drivers/staging/kpc2000/kpc_dma/dma.c
+@@ -92,8 +92,6 @@ int  setup_dma_engine(struct kpc_dma_device *eng, u32 desc_cnt)
+ 	unsigned int i;
+ 	int rv;
  
--	dev_dbg(&pdev->dev, "%s(pdev = [%p], id = [%p])\n",
--		__func__, pdev, id);
+-	dev_dbg(&eng->pldev->dev, "Setting up DMA engine [%p]\n", eng);
 -
- 	/*
- 	 * Step 1: Allocate a struct for the pcard
- 	 */
-@@ -506,7 +503,6 @@ static int kp2000_pcie_probe(struct pci_dev *pdev,
- 	writel(KPC_DMA_CARD_IRQ_ENABLE | KPC_DMA_CARD_USER_INTERRUPT_MODE,
- 	       pcard->dma_common_regs);
+ 	caps = GetEngineCapabilities(eng);
  
--	dev_dbg(&pcard->pdev->dev, "%s() complete!\n", __func__);
- 	mutex_unlock(&pcard->sem);
- 	return 0;
- 
-@@ -540,8 +536,6 @@ static void kp2000_pcie_remove(struct pci_dev *pdev)
+ 	if (WARN(!(caps & ENG_CAP_PRESENT), "%s() called for DMA Engine at %p which isn't present in hardware!\n", __func__, eng))
+@@ -161,8 +159,6 @@ void  stop_dma_engine(struct kpc_dma_device *eng)
  {
- 	struct kp2000_device *pcard = pci_get_drvdata(pdev);
+ 	unsigned long timeout;
  
--	dev_dbg(&pdev->dev, "%s(pdev=%p)\n", __func__, pdev);
+-	dev_dbg(&eng->pldev->dev, "Destroying DMA engine [%p]\n", eng);
 -
- 	if (!pcard)
- 		return;
+ 	// Disable the descriptor engine
+ 	WriteEngineControl(eng, 0);
  
 -- 
 2.20.1
