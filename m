@@ -2,103 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E8D3B540
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2453BDD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 22:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390058AbfFJMwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 08:52:08 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:26243 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388373AbfFJMwH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 08:52:07 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Mon, 10 Jun 2019 05:51:59 -0700
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 6C6AE40E0B;
-        Mon, 10 Jun 2019 05:52:01 -0700 (PDT)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <aarcange@redhat.com>, <jannh@google.com>, <oleg@redhat.com>,
-        <peterx@redhat.com>, <rppt@linux.ibm.com>, <jgg@mellanox.com>,
-        <mhocko@suse.com>
-CC:     <yishaih@mellanox.com>, <dledford@redhat.com>,
-        <sean.hefty@intel.com>, <hal.rosenstock@gmail.com>,
-        <matanb@mellanox.com>, <leonro@mellanox.com>,
-        <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <akaher@vmware.com>,
-        <srivatsab@vmware.com>, <amakhalov@vmware.com>
-Subject: [PATCH] [v4.14.y] infiniband: fix race condition between infiniband mlx4, mlx5  driver and core dumping
-Date:   Tue, 11 Jun 2019 02:22:17 +0530
-Message-ID: <1560199937-23476-1-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
+        id S2389810AbfFJUwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 16:52:40 -0400
+Received: from mail-eopbgr800097.outbound.protection.outlook.com ([40.107.80.97]:62177
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389362AbfFJUwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 16:52:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=aampusa.onmicrosoft.com; s=selector2-aampusa-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jHHjKf6kuve4zZKO2RaUkh6/E14EwdUI1UTEoLj5Rs8=;
+ b=uQ856U5Plqo8Ml5tA784FOMTvh5Kx/bcsa4vh4L6pXg0tHePIbLxVTVOzykaQb/PBgPHQ7TWYmuPFeg7S1w1gAg33djS1CQALxVgzNK/R3hC2ElyYH3mi6NHxLHCz0Nyk8ciBUhbmlzZ3F5xvhbRI9z9e0caROKyENksnK2YALU=
+Received: from BL0PR07MB4115.namprd07.prod.outlook.com (52.132.10.149) by
+ BL0PR07MB4082.namprd07.prod.outlook.com (52.132.10.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.12; Mon, 10 Jun 2019 20:52:33 +0000
+Received: from BL0PR07MB4115.namprd07.prod.outlook.com
+ ([fe80::f064:5129:63c6:d3e]) by BL0PR07MB4115.namprd07.prod.outlook.com
+ ([fe80::f064:5129:63c6:d3e%6]) with mapi id 15.20.1965.017; Mon, 10 Jun 2019
+ 20:52:33 +0000
+From:   Ken Sloat <KSloat@aampglobal.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC:     "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+        "wim@iguana.be" <wim@iguana.be>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ken Sloat <KSloat@aampglobal.com>
+Subject: RE: [RFE]: watchdog: atmel: atmel-sama5d4-wdt
+Thread-Topic: [RFE]: watchdog: atmel: atmel-sama5d4-wdt
+Thread-Index: AdUfoOr5PB/8HxffRU28PtnqCbe4YAACJOOAAAfaK4AAAJMTAAAAjEEQ
+Date:   Mon, 10 Jun 2019 20:52:33 +0000
+Message-ID: <BL0PR07MB41151D49B58CDF5E4A34D5A8AD130@BL0PR07MB4115.namprd07.prod.outlook.com>
+References: <BL0PR07MB41152EDB169FE9ED1AD3B4C9AD130@BL0PR07MB4115.namprd07.prod.outlook.com>
+ <20190610162811.GA11270@roeck-us.net> <20190610201301.GH25472@piout.net>
+ <20190610202928.GB13191@roeck-us.net>
+In-Reply-To: <20190610202928.GB13191@roeck-us.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=KSloat@aampglobal.com; 
+x-originating-ip: [100.3.71.115]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 15b3f4a5-7171-4754-3b69-08d6ede58ff1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BL0PR07MB4082;
+x-ms-traffictypediagnostic: BL0PR07MB4082:
+x-microsoft-antispam-prvs: <BL0PR07MB40828AEBC6764A830720DCB4AD130@BL0PR07MB4082.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0064B3273C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(376002)(136003)(366004)(346002)(189003)(13464003)(199004)(6436002)(7696005)(99286004)(9686003)(68736007)(55016002)(66066001)(229853002)(5660300002)(14454004)(8676002)(72206003)(7736002)(305945005)(2906002)(71200400001)(81156014)(316002)(81166006)(8936002)(71190400001)(6116002)(3846002)(66946007)(478600001)(54906003)(25786009)(446003)(476003)(110136005)(186003)(11346002)(80792005)(486006)(73956011)(86362001)(64756008)(66446008)(107886003)(53936002)(66556008)(66476007)(6246003)(14444005)(76116006)(256004)(33656002)(74316002)(4326008)(6506007)(76176011)(53546011)(26005)(52536014)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR07MB4082;H:BL0PR07MB4115.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: aampglobal.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: l7F8jaeIMOqhl1eszf4gtmU3fVCUGOLZsdNffOjw9oksNGYBRZCyGDrtu9oDwgjQAoaF2NL4q79wnOvRARNPH38wchCInVXCC6pyLgzZlU+8Bb4fSTgL+FcoFvHteWmGhgSrqBA5Mr9veOfcdlNAyvscpM+F8TU86BLRmCIW504u1zgEfk6jcvJDQ2V84UijwL864VvqVGGmVzjDqzjXm81U0fe+Jqpt0i3Ij3IaDDFz0RuS4xLDWcdEfWA0T7g6BWrhVB4GSEqUnllfyrPpXDJGmDqpH7Z3BH2QQ8w3GYIYhhdFOxJ8P6df9XcA8TlXs5oO3UESDaiJlvdSvn9cwRsvH8iigKtW9lFFRTtJaeMf60WHE2bxkvlYy/bonc2f/gko0qchFWkA5GsQRBDLT2f3xx7IPNzqgcSidIKqMp8=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+X-OriginatorOrg: aampglobal.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15b3f4a5-7171-4754-3b69-08d6ede58ff1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2019 20:52:33.6589
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e20e3a66-8b9e-46e9-b859-cb654c1ec6ea
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ken.sloat@aampglobal.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR07MB4082
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+X-MS-Exchange-CrossPremises-AuthMechanism: 04
+X-MS-Exchange-CrossPremises-AuthSource: BL0PR07MB4115.namprd07.prod.outlook.com
+X-MS-Exchange-CrossPremises-TransportTrafficType: Email
+X-MS-Exchange-CrossPremises-TransportTrafficSubType: 
+X-MS-Exchange-CrossPremises-SCL: 1
+X-MS-Exchange-CrossPremises-messagesource: StoreDriver
+X-MS-Exchange-CrossPremises-BCC: 
+X-MS-Exchange-CrossPremises-originalclientipaddress: 100.3.71.115
+X-MS-Exchange-CrossPremises-transporttraffictype: Email
+X-MS-Exchange-CrossPremises-transporttrafficsubtype: 
+X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
+X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
+X-OrganizationHeadersPreserved: BL0PR07MB4082.namprd07.prod.outlook.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is the extension of following upstream commit to fix
-the race condition between get_task_mm() and core dumping
-for IB->mlx4 and IB->mlx5 drivers:
+> -----Original Message-----
+> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
+> Sent: Monday, June 10, 2019 4:29 PM
+> To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Cc: Ken Sloat <KSloat@aampglobal.com>; Nicolas.Ferre@microchip.com;
+> wim@iguana.be; linux-arm-kernel@lists.infradead.org; linux-
+> watchdog@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [RFE]: watchdog: atmel: atmel-sama5d4-wdt
+>=20
+> [This is an EXTERNAL EMAIL]
+> ________________________________
+>=20
+> On Mon, Jun 10, 2019 at 10:13:01PM +0200, Alexandre Belloni wrote:
+> > Hello,
+> >
+> > On 10/06/2019 09:28:11-0700, Guenter Roeck wrote:
+> > > On Mon, Jun 10, 2019 at 03:51:52PM +0000, Ken Sloat wrote:
+> > > > Hello Nicolas,
+> > > >
+> > > > I wanted to open a discussion proposing new functionality to allow
+> > > > disabling of the watchdog timer upon entering suspend in the
+> SAMA5D2/4.
+> > > >
+> > > > Typical use case of a hardware watchdog timer in the kernel is a
+> > > > userspace application opens the watchdog timer and periodically
+> > > > "kicks" it. If the application hits a deadlock somewhere and is no
+> > > > longer able to kick it, then the watchdog intervenes and often
+> > > > resets the processor. Such is the case for the Atmel driver (which
+> > > > also allows a watchdog interrupt to be asserted in lieu of a system
+> reset). In most use cases, upon entering a low power/suspend state, the
+> application will no longer be able to "kick" the watchdog. If the watchdo=
+g is
+> not disabled or kicked via another method, then it will reset the system.=
+ This
+> is the current behavior of the Atmel driver as of today.
+> > > >
+> > > > The watchdog peripheral itself does have a "WDIDLEHLT" bit
+> > > > however, and this is enabled via the "atmel,idle-halt" dt
+> > > > property. However, this is not very useful, as it literally only
+> > > > makes the watchdog count when the CPU is active. This results in
+> > > > non-deterministic triggering of the WDT and means that if a
+> > > > critical application were to crash, it may be quite a long time
+> > > > before the WDT would ever trigger. Below is a similar statement
+> > > > made in the device-tree doc for this
+> > > > peripheral:
+> > > >
+> > > > - atmel,idle-halt: present if you want to stop the watchdog when th=
+e
+> CPU is
+> > > >              in idle state.
+> > > >   CAUTION: This property should be used with care, it actually make=
+s
+> the
+> > > >   watchdog not counting when the CPU is in idle state, therefore th=
+e
+> > > >   watchdog reset time depends on mean CPU usage and will not reset =
+at
+> all
+> > > >   if the CPU stop working while it is in idle state, which is proba=
+bly
+> > > >   not what you want.
+> > > >
+> > > > It seems to me, that it would be logical and useful to introduce a
+> > > > new property that would cause the Atmel WDT to disable on suspend
+> > > > and re-enable on resume. It also appears that the WDT is re-initial=
+ized
+> anyways upon resume, so the only piece missing here would really be a dt
+> flag and a call to disable.
+> > > >
+> > > Wondering - why would this need a dt property ? That would be quite
+> > > unusual. Is there a condition where one would _not_ want the watchdog
+> to stop on suspend ?
+> > >
+> >
+> > There are customers that protects suspend/resume using the watchdog.
+> > They wake up their platform every 15s to ping the watchdog.
+> >
+>=20
+> Interesting use case.
+>=20
+> > Also, I don't see why the application deciding to go to suspend
+> > wouldn't be able to disable the watchdog before do so if this is the wa=
+nted
+> policy.
+> >
+>=20
+> Many watchdog drivers already implement suspend/resume support. Such a
+> platform specific functionality seems to be quite undesirable to me.
+>=20
+> Besides (and pretty much all watchdog drivers implementing
+> suspend/resume do that wrong), you'd likely want to disable the watchog
+> late during suspend and early during resume to reduce the risk of a hang.=
+ I
+> don't think you can do that from userspace.
+>=20
 
-commit 04f5866e41fb ("coredump: fix race condition between
-mmget_not_zero()/get_task_mm() and core dumping")'
+Agreed, there's also the risk if using something like wake_count where the=
+=20
+suspend process can be interrupted by the kernel. This just makes for more
+cases that the application has to try and handle, and what happens if the=20
+application hangs/crashes some time between disabling the wdt and suspend?
 
-Thanks to Jason for pointing this.
+Right now, what probably is a very common case of devices that enter low po=
+wer=20
+mode for longer than 16 seconds are precluded from using this WDT.
 
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
----
- drivers/infiniband/hw/mlx4/main.c | 4 +++-
- drivers/infiniband/hw/mlx5/main.c | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+> Thanks,
+> Guenter
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index e2beb18..0299c06 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -1197,6 +1197,8 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 	 * mlx4_ib_vma_close().
- 	 */
- 	down_write(&owning_mm->mmap_sem);
-+	if (!mmget_still_valid(owning_mm))
-+		goto skip_mm;
- 	for (i = 0; i < HW_BAR_COUNT; i++) {
- 		vma = context->hw_bar_info[i].vma;
- 		if (!vma)
-@@ -1215,7 +1217,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 		/* context going to be destroyed, should not access ops any more */
- 		context->hw_bar_info[i].vma->vm_ops = NULL;
- 	}
--
-+skip_mm:
- 	up_write(&owning_mm->mmap_sem);
- 	mmput(owning_mm);
- 	put_task_struct(owning_process);
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index 13a9206..3fbe396 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -1646,6 +1646,8 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 	 * mlx5_ib_vma_close.
- 	 */
- 	down_write(&owning_mm->mmap_sem);
-+	if (!mmget_still_valid(owning_mm))
-+		goto skip_mm;
- 	mutex_lock(&context->vma_private_list_mutex);
- 	list_for_each_entry_safe(vma_private, n, &context->vma_private_list,
- 				 list) {
-@@ -1662,6 +1664,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 		kfree(vma_private);
- 	}
- 	mutex_unlock(&context->vma_private_list_mutex);
-+skip_mm:
- 	up_write(&owning_mm->mmap_sem);
- 	mmput(owning_mm);
- 	put_task_struct(owning_process);
--- 
-2.7.4
-
+Thanks,
+Ken
