@@ -2,86 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5D523BE33
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642D33BE47
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389906AbfFJVQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:16:59 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45550 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbfFJVQ7 (ORCPT
+        id S2390019AbfFJVU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:20:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36830 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388642AbfFJVU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:16:59 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m206so7318531oib.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZIUfIIMLN3e/0Y4suKqQ9G4anQzSpQbmomczdVDiSH0=;
-        b=KkWwJFehPDBhr4NdUmIaYVpcbBtcY+sekuoJua+arEHgspzccbX9hGECT92v0fLHyH
-         ZYmpD21H+NYveVnwr6RO/nTlzy8f3FuBTKhJnILGYDXW5cztpw6pG0t90GBA6nFI5SAk
-         dAIPcmF6URlzecpoiE/Kvy5nbaa1/QnR1RT0ORTmnbT+jN7CerR2BOQH8j2j4z8Kx+kw
-         /odvr+b9/RX9x8kPTajNIuMboPxdvwZpetK0TxmopBw+ZTFvme6ySe4mr44XBdgq1609
-         wewfjMfmlIO5tfEHmWioYCOm1x1R0YE9V/8iqa0iXDmjIzpgU85UXKd0JmwByRm5iEuv
-         vijQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZIUfIIMLN3e/0Y4suKqQ9G4anQzSpQbmomczdVDiSH0=;
-        b=mNp7y/Kc8YbAW8OFeGCt+3VQDb3fOxtmBTv+D//Ne0Lipo8FCn43Z8B4rahULXwsiC
-         JZS+5xmPwc6a5LyIyo4TPXy+XU8A1+3nroxT7qHIM0vTflrufMN7Lg0xpgLKM19QmBq1
-         4/hOHucsqcvX/4CL40mx2ElLDUrHXyxggHNvAJz3m1/SXO/bIqmxWgokK2K9IlRG/BWJ
-         t/SLiNzTGdITuij3w5lcrIyiDQA0xwDfddP0ZqV850IvriZLvAANlUypIlLh1buBXDsR
-         /Nd0fj+CvrvI90AVXFDzPHKwAhpcggcDIKCSBNkaFLM6eGafgjaYNHYxzvYvVEV5EHeb
-         0o8A==
-X-Gm-Message-State: APjAAAVYXl9OCcWsSU8Gvh2uVK64eM4ZCk3j4WG4eRpJ+1klNISZzNrl
-        fZ8gheCr+HcQN4ejMuULG63k6ZA4WJs=
-X-Google-Smtp-Source: APXvYqzrQymgucgnl+z86o+ugZd1hdDPnQB2gmMuuW1BS1J+N2O8IQAMrfJxzBp9VL2vM3TkiEdeNA==
-X-Received: by 2002:aca:de04:: with SMTP id v4mr12968015oig.162.1560201418724;
-        Mon, 10 Jun 2019 14:16:58 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id h59sm1885798oth.30.2019.06.10.14.16.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 14:16:58 -0700 (PDT)
-Subject: Re: [PATCH 0/7] TTY Keyboard Status Request
-To:     Arseny Maslennikov <ar@cs.msu.ru>, Pavel Machek <pavel@denx.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        "Vladimir D . Seleznev" <vseleznv@altlinux.org>
-References: <20190605081906.28938-1-ar@cs.msu.ru>
- <20190609174139.GA11944@xo-6d-61-c0.localdomain>
- <20190609194013.GA3736@cello> <20190609195132.GA1430@amd>
- <20190609205610.GB3736@cello>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <97e43820-6143-2a84-7d0d-6f40c6c937a7@landley.net>
-Date:   Mon, 10 Jun 2019 16:18:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 10 Jun 2019 17:20:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Nh/TPzLyd2D7xuO2qHtr/D2CiJIUUJD9lCM4VYzisEs=; b=eAJui6quBB70YSHz33U6dln+E
+        5ZopmAmZ0LUX+89O5EWO60T2ed4ZVsO9+7k+C1oNGo6v18/rslKBR+fGndUcfA20GnX55ZajxomKV
+        L3Qc9AxWZYWJ98hkQ++0Doii7Ty0vYLZZnHqSV2WTQeAquMEHCw0X1Ng7zAMPlV0RTRpQZx8Re6Ba
+        AyFYuVnj8ncqIaT4Kr+tvklVCTVwiqKO3nMS+pO0sC9NV226e85Q6B4SJ/au7wg650MtJTUwsCRkO
+        75nr9/ggomY9oNmsoCZCtGk17tfoZWMh8Ji5aaKtZKpE3BiQx80Yj80miXkkPJ3fO1bpaqorfkWQ1
+        6aIXL/UOg==;
+Received: from 089144193064.atnat0002.highway.a1.net ([89.144.193.64] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1haRiD-0000JR-Vb; Mon, 10 Jun 2019 21:20:18 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: binfmt_flat cleanups and RISC-V support
+Date:   Mon, 10 Jun 2019 23:20:00 +0200
+Message-Id: <20190610212015.9157-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190609205610.GB3736@cello>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/9/19 3:56 PM, Arseny Maslennikov wrote:
-> This is similar to SIGWINCH, which is default-ignored as well: if the
-> terminal width/height changes (like when a terminal emulator window is
-> resized), its foreground pgrp gets a surprise signal as well, and the
-> processes that don't care about WINCH (and thus have default
-> disposition) do not get confused.
-> E.g. 'strace cat' demonstrates this quite clearly.
+Hi Greg,
 
-Once upon a time suspending pipelines with ctrl-z broke stuff all the time due
-to zero length reads being interpreted as EOF. These days I don't see that so
-much anymore, I think SA_RESTART is the default now?
-
-Rob
+below is a larger stash of cleanups for the binfmt_misc code,
+preparing for the last patch that now trivially adds RISC-V
+support, which will be used for the RISC-V nommu series I am
+about to post.
