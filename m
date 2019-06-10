@@ -2,109 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5343B96C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 156053B9A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:37:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfFJQ2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 12:28:16 -0400
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:35183 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725270AbfFJQ2P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 12:28:15 -0400
-Received: by mail-pf1-f174.google.com with SMTP id d126so5614409pfd.2;
-        Mon, 10 Jun 2019 09:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pzj2b7hhZ6YD/6WjtCfGTasSPRqjwrp/TQaWna9lfxQ=;
-        b=kXJKW/rTaV349rH2wd2kV6vNyJDRVZDsMUieB0amtC3z2MOtjzZbgDTCBZh5U5eSGS
-         UxkGP6xS31s2n9lrkS+hvcUCsyD6X8O+nYZSPIWF+A6d/moRShUOf73RMiZsQNi3uq6Y
-         bQtvKasAaLHPNTtI7oL1owlaJhtixBq1H3FOnMIye7VZDHUmKpBLD/IP7kvb8c9/yN7c
-         sut9J6cyeFklUe+8T0UqEpTVVkFyOC+XTxdq+j6asKfP4bJwAWsJnLDQIuDEy3MO31T0
-         ljyr4/C0QWt3Xe/J9v8peYKk2fSABVUaoMa2hTtvTRrQbO9tk3SUFEVLadOQgbFn1e7O
-         fnAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pzj2b7hhZ6YD/6WjtCfGTasSPRqjwrp/TQaWna9lfxQ=;
-        b=j550qcdFbMDxToU2Scem/MZzc8QP1LNhlmvZawdlLgetCieWZgmjg68niz4P9a8ZIe
-         aGYQaG/xyPAFLapTeMWK66m3LJfTMQUfoBOoNL7Usg/b/v/HyNn1AExRwQAxDbe7ljtp
-         KwIfhXWpJLifeDI5LQiLFI8b9kNVNxt0csMbZYknAF+km8Z5IhctjMA1VGLswGzrDcuh
-         8GVsPPdPvMHZrEgmyo40n3xuIyPALDOMzRGQjPJhgsLn8RhqRBCE2Zcr7d7qw/UEA8Nu
-         ik79VY877bNNCg9giwP/AyIxyfy9gGcsgq6uiUP+bHykLOwDm1IOaarTf3zesE7iMLqT
-         41dw==
-X-Gm-Message-State: APjAAAWDPtghtkvm/nrrQ1FFpdiYhTHuY6NxOm924uL7IMqI20EVol28
-        M2iPtPkPd77uhbZ5FvMaH0g=
-X-Google-Smtp-Source: APXvYqzTViCOZCWdvHqZEgftq3IgTD0jneFi/Mem0y2YPV1OcS6ucnGC/wdKzKKtq7K2fg6dqre64A==
-X-Received: by 2002:a63:5207:: with SMTP id g7mr15864200pgb.356.1560184094523;
-        Mon, 10 Jun 2019 09:28:14 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m24sm13643054pgh.75.2019.06.10.09.28.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 09:28:13 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 09:28:11 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ken Sloat <KSloat@aampglobal.com>
-Cc:     "Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
-        "alexandre.belloni@free-electrons.com" 
-        <alexandre.belloni@free-electrons.com>,
-        "wim@iguana.be" <wim@iguana.be>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFE]: watchdog: atmel: atmel-sama5d4-wdt
-Message-ID: <20190610162811.GA11270@roeck-us.net>
-References: <BL0PR07MB41152EDB169FE9ED1AD3B4C9AD130@BL0PR07MB4115.namprd07.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL0PR07MB41152EDB169FE9ED1AD3B4C9AD130@BL0PR07MB4115.namprd07.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S2387466AbfFJQhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 12:37:12 -0400
+Received: from mga07.intel.com ([134.134.136.100]:7055 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387407AbfFJQhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 12:37:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 09:37:11 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jun 2019 09:37:10 -0700
+Message-ID: <94b9c55b3b874825fda485af40ab2a6bc3dad171.camel@intel.com>
+Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
+ ELF file
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Mon, 10 Jun 2019 09:29:04 -0700
+In-Reply-To: <20190607180115.GJ28398@e103592.cambridge.arm.com>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+         <20190606200646.3951-23-yu-cheng.yu@intel.com>
+         <20190607180115.GJ28398@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 03:51:52PM +0000, Ken Sloat wrote:
-> Hello Nicolas,
+On Fri, 2019-06-07 at 19:01 +0100, Dave Martin wrote:
+> On Thu, Jun 06, 2019 at 01:06:41PM -0700, Yu-cheng Yu wrote:
+> > An ELF file's .note.gnu.property indicates features the executable file
+> > can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
+> > indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
+> > GNU_PROPERTY_X86_FEATURE_1_SHSTK.
+> > 
+> > With this patch, if an arch needs to setup features from ELF properties,
+> > it needs CONFIG_ARCH_USE_GNU_PROPERTY to be set, and a specific
+> > arch_setup_property().
+> > 
+> > For example, for X86_64:
+> > 
+> > int arch_setup_property(void *ehdr, void *phdr, struct file *f, bool inter)
+> > {
+> > 	int r;
+> > 	uint32_t property;
+> > 
+> > 	r = get_gnu_property(ehdr, phdr, f, GNU_PROPERTY_X86_FEATURE_1_AND,
+> > 			     &property);
+> > 	...
+> > }
 > 
-> I wanted to open a discussion proposing new functionality to allow disabling of the watchdog timer upon entering 
-> suspend in the SAMA5D2/4.
+> Although this code works for the simple case, I have some concerns about
+> some aspects of the implementation here.  There appear to be some bounds
+> checking / buffer overrun issues, and the code seems quite complex.
 > 
-> Typical use case of a hardware watchdog timer in the kernel is a userspace application opens the watchdog timer and
-> periodically "kicks" it. If the application hits a deadlock somewhere and is no longer able to kick it, then the watchdog
-> intervenes and often resets the processor. Such is the case for the Atmel driver (which also allows a watchdog interrupt
-> to be asserted in lieu of a system reset). In most use cases, upon entering a low power/suspend state, the application 
-> will no longer be able to "kick" the watchdog. If the watchdog is not disabled or kicked via another method, then it will
-> reset the system. This is the current behavior of the Atmel driver as of today.
-> 
-> The watchdog peripheral itself does have a "WDIDLEHLT" bit however, and this is enabled via the "atmel,idle-halt" dt
-> property. However, this is not very useful, as it literally only makes the watchdog count when the CPU is active. This 
-> results in non-deterministic triggering of the WDT and means that if a critical application were to crash, it may be
-> quite a long time before the WDT would ever trigger. Below is a similar statement made in the device-tree doc for this
-> peripheral:
-> 
-> - atmel,idle-halt: present if you want to stop the watchdog when the CPU is
-> 		   in idle state.
-> 	CAUTION: This property should be used with care, it actually makes the
-> 	watchdog not counting when the CPU is in idle state, therefore the
-> 	watchdog reset time depends on mean CPU usage and will not reset at all
-> 	if the CPU stop working while it is in idle state, which is probably
-> 	not what you want.
-> 
-> It seems to me, that it would be logical and useful to introduce a new property that would cause the Atmel WDT
-> to disable on suspend and re-enable on resume. It also appears that the WDT is re-initialized anyways upon
-> resume, so the only piece missing here would really be a dt flag and a call to disable.
-> 
-Wondering - why would this need a dt property ? That would be quite unusual. Is
-there a condition where one would _not_ want the watchdog to stop on suspend ?
+> Maybe this patch tries too hard to be compatible with toolchains that do
+> silly things such as embedding huge notes in an executable, or mixing
+> NT_GNU_PROPERTY_TYPE_0 in a single PT_NOTE with a load of junk not
+> relevant to the loader.  I wonder whether Linux can dictate what
+> interpretation(s) of the ELF specs it is prepared to support, rather than
+> trying to support absolutely anything.
 
-If anything I would suggest to drop atmel,idle-halt completely; it really looks
-like it would make the watchdog unreliable.
+To me, looking at PT_GNU_PROPERTY and not trying to support anything is a
+logical choice.  And it breaks only a limited set of toolchains.
 
-Thanks,
-Guenter
+I will simplify the parser and leave this patch as-is for anyone who wants to
+back-port.  Are there any objections or concerns?
+
+Yu-cheng
