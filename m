@@ -2,131 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F6E3B877
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF693B87C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391258AbfFJPrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:47:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:40554 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390445AbfFJPrS (ORCPT
+        id S2391281AbfFJPsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:48:11 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10168 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390335AbfFJPsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:47:18 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5AFdV6B161235;
-        Mon, 10 Jun 2019 15:44:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=On8N8xLx5bySBhtfklW/jVPpdxRw8n8hUrnegNsG56A=;
- b=p/11d3fZWqgw6ec6faSYbql5IRRZrISP+FormimufKnKfD4oejFLbQaz8rO+MPz90WQH
- CLna2EtuzO9psBaVjiz7fqDeAoQte4NQV1apg4hTTAxccnllpf8kDLezBCyH0kuMShXM
- kN60z3OLNhGI+exe51OHF9g5X2IV3InBDG5BW/zCx7hujEoEF0gDm4QKxhw3WEpDNtqi
- O7v4pnoNCyCrObAeKJUcHvgmJyZAkdqeM7l9QGwrznr2BR/mx3+iJ2r07o9ryWubXCez
- QCZHgwvQ3CCsCfHMWc041w0QAh5xkQI0QlN1YDqgujvEnkI+NMH0kRGezP2tywgLtLhE eQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2t04etfrau-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 15:44:33 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5AFgjd4157509;
-        Mon, 10 Jun 2019 15:44:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2t1jpgxjdy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 15:44:32 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5AFiUwV024636;
-        Mon, 10 Jun 2019 15:44:31 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Jun 2019 08:44:30 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id A93F86A00FC; Mon, 10 Jun 2019 11:45:53 -0400 (EDT)
-Date:   Mon, 10 Jun 2019 11:45:53 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/9] swiotlb: Zero out bounce buffer for untrusted
- device
-Message-ID: <20190610154553.GT28796@char.us.oracle.com>
-References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
- <20190603011620.31999-4-baolu.lu@linux.intel.com>
+        Mon, 10 Jun 2019 11:48:10 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5AFfYgf026022;
+        Mon, 10 Jun 2019 17:47:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=LgERwqK45s8WxfYNJ2p/eCQHczqBFZZAr61TGRo2H+4=;
+ b=gWnTJIR+98UCSxymsNwMRkgV+9V4yBZI5+4O8squ/S1WPag/BNss5IcSulDOH8T/qMqy
+ q5rRWgjZh1+axSfpm4jGFsbHUXiEKvFm5yX1fVKRlgcGeUpMJ1UiBH3GQvUc006KNBYZ
+ aaQBMZ5CoapQhFeAG4Xy6KLHH7l+oOyLUCEOe/V+gwEP4isq8+XLC7bW/5by5lGiK/x3
+ XouigYxflqzytqopMhVNGFhEgQPEP7iffCr4OeoYE1zREws/pzQJfakAvhXlF3eR6ezU
+ fzZSs6CeFFZkIWOMuauXgOa/ZhjVDilHLoY4vc8Z7eatw46qhvqsNEfDqCLJJMojWq9G AA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2t0256a973-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 10 Jun 2019 17:47:32 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B078D34;
+        Mon, 10 Jun 2019 15:47:30 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E94F4F1D;
+        Mon, 10 Jun 2019 15:47:30 +0000 (GMT)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Jun
+ 2019 17:47:30 +0200
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Mon, 10 Jun 2019 17:47:30 +0200
+From:   Erwan LE RAY <erwan.leray@st.com>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        "Kevin Hilman" <khilman@baylibre.com>
+CC:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Clement Peron <clement.peron@devialet.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Stefan Agner <stefan@agner.ch>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Gerald BAEZA" <gerald.baeza@st.com>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Bich HEMON <bich.hemon@st.com>,
+        "Fabrice GASNIER" <fabrice.gasnier@st.com>
+Subject: Re: [PATCH] ARM: debug: stm32: add UART early console configuration
+Thread-Topic: [PATCH] ARM: debug: stm32: add UART early console configuration
+Thread-Index: AQHU73OP100nvdfkikCtYg1KY+YHZqY1DV8AgC1naoCAMtJmgA==
+Date:   Mon, 10 Jun 2019 15:47:30 +0000
+Message-ID: <ff48768c-83e3-55dc-16a0-bd0af4133c7c@st.com>
+References: <1554883239-12051-1-git-send-email-erwan.leray@st.com>
+ <CAJiuCcd9884Kn2MAtLMzZpdSa-=xpCDKRLQSVC6NmRNC+YFtaA@mail.gmail.com>
+ <deebc332-277b-76b9-421f-7f67c6bdacc8@st.com>
+In-Reply-To: <deebc332-277b-76b9-421f-7f67c6bdacc8@st.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <70F78C8ABFDF92458A8685FA5F79E676@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603011620.31999-4-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906100107
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906100107
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-10_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 09:16:14AM +0800, Lu Baolu wrote:
-> This is necessary to avoid exposing valid kernel data to any
-> milicious device.
-
-malicious 
-
-> 
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  kernel/dma/swiotlb.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index f956f785645a..ed41eb7f6131 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -35,6 +35,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/mem_encrypt.h>
->  #include <linux/set_memory.h>
-> +#include <linux/pci.h>
->  #ifdef CONFIG_DEBUG_FS
->  #include <linux/debugfs.h>
->  #endif
-> @@ -560,6 +561,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
->  	 */
->  	for (i = 0; i < nslots; i++)
->  		io_tlb_orig_addr[index+i] = orig_addr + (i << IO_TLB_SHIFT);
-> +
-> +	/* Zero out the bounce buffer if the consumer is untrusted. */
-> +	if (dev_is_untrusted(hwdev))
-> +		memset(phys_to_virt(tlb_addr), 0, alloc_size);
-
-What if the alloc_size is less than a PAGE? Should this at least have ALIGN or such?
-
-> +
->  	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
->  	    (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL))
->  		swiotlb_bounce(orig_addr, tlb_addr, mapping_size, DMA_TO_DEVICE);
-> -- 
-> 2.17.1
-> 
+SGkgT2xvZiwgQXJuZCBhbmQgS2V2aW4sDQoNCkdlbnRsZSByZW1pbmRlciBvbiBteSBmZWVkYmFj
+ayByZXF1ZXN0Lg0KDQpCZXN0IHJlZ2FyZHMsIEVyd2FuLg0K
