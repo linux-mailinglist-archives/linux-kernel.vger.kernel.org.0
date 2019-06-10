@@ -2,213 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E8B3BD8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 22:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51A223BD96
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 22:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389754AbfFJUeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 16:34:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53706 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389714AbfFJUeW (ORCPT
+        id S2389782AbfFJUgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 16:36:07 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43341 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389331AbfFJUgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 16:34:22 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5AKWU2w063795
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 16:34:20 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t1uapy57n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 16:34:20 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Mon, 10 Jun 2019 21:34:15 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Jun 2019 21:34:11 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5AKYAnG48889920
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 20:34:10 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48AB111C04A;
-        Mon, 10 Jun 2019 20:34:10 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5753911C052;
-        Mon, 10 Jun 2019 20:34:08 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.139.99])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Jun 2019 20:34:08 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v3 3/3] powerpc: Add support to initialize ima policy rules
-Date:   Mon, 10 Jun 2019 16:33:57 -0400
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1560198837-18857-1-git-send-email-nayna@linux.ibm.com>
-References: <1560198837-18857-1-git-send-email-nayna@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19061020-0016-0000-0000-00000287D71C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061020-0017-0000-0000-000032E50167
-Message-Id: <1560198837-18857-4-git-send-email-nayna@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906100139
+        Mon, 10 Jun 2019 16:36:06 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f25so5625952pgv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 13:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QIiaElKbYG7X2iRY6VXsdeM4+31zgx4vPIFfu4hUJug=;
+        b=aypLgRrX0btLwkQ78UmSd30OW9UF0AUZJnAd3r2/5HqpTZB7t9pPjkr79taehwRSBe
+         Uf3LjKJsRGeyWW7niEs4BHLmd/27Tp++YcV8xUIXVrHXkWkhfr39ad2bGk73/2ccXpRd
+         Krrfs143htc/xGI+Ppm9VimNWGnjKhQyxh//k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QIiaElKbYG7X2iRY6VXsdeM4+31zgx4vPIFfu4hUJug=;
+        b=DEttQB6HF6YDbjNEvIaoHeWoGJHDLvdqlL1+HB1KM0Re63/odxXGv9SQkFCrUsSBCG
+         0XVVLC6J15LsPN18ml2ROMVd3EDHI6DHpknAJrsp3rOH0UeRE/znAa6FnczM+TKGvxXx
+         yg+OVcXwD+GoYVx8ID03wSMnVkjbnQrEym3HDni4rOw5WjsV6ID6HSKcPsx+QlEfUnTv
+         95CeH4WwndsiwwdyMlhuhXhtDvbFE1mYB7x4pSJj2e+Jy1NOFRe8JAMb8x/rJ+U+ftKr
+         TH8ludDfexhOGRd7gdun24UG5/Jw9olox8fcrQkJXCbSRart0sKEy0Kpp7ctGFzsiVlS
+         jeKg==
+X-Gm-Message-State: APjAAAU/dsDodaqlTtm6UxWJj9ENkyEKUcOmMs1JrvS2h5p3uGgflmWN
+        VTbwrQzEjQWoSRjFts4OAAsI1Q==
+X-Google-Smtp-Source: APXvYqz36v1zCKX0GRWb534Z9an9udGHI/NESxPlvuGqVOMCrwC97gsWY6mXQoFhLwcNndoWLde2ZA==
+X-Received: by 2002:a62:1b85:: with SMTP id b127mr76850297pfb.165.1560198965895;
+        Mon, 10 Jun 2019 13:36:05 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id k22sm11148457pfk.178.2019.06.10.13.36.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Jun 2019 13:36:04 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 13:36:04 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v16 02/16] arm64: untag user pointers in access_ok and
+ __uaccess_mask_ptr
+Message-ID: <201906101335.DF80D631@keescook>
+References: <cover.1559580831.git.andreyknvl@google.com>
+ <4327b260fb17c4776a1e3c844f388e4948cfb747.1559580831.git.andreyknvl@google.com>
+ <20190610175326.GC25803@arrakis.emea.arm.com>
+ <201906101106.3CA50745E3@keescook>
+ <20190610185329.xhjawzfy4uddrkrj@mbp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610185329.xhjawzfy4uddrkrj@mbp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PowerNV secure boot relies on the kernel IMA security subsystem to
-perform the OS kernel image signature verification. Since each secure
-boot mode has different IMA policy requirements, dynamic definition of
-the policy rules based on the runtime secure boot mode of the system is
-required. On systems that support secure boot, but have it disabled,
-only measurement policy rules of the kernel image and modules are
-defined.
+On Mon, Jun 10, 2019 at 07:53:30PM +0100, Catalin Marinas wrote:
+> On Mon, Jun 10, 2019 at 11:07:03AM -0700, Kees Cook wrote:
+> > On Mon, Jun 10, 2019 at 06:53:27PM +0100, Catalin Marinas wrote:
+> > > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> > > index 3767fb21a5b8..fd191c5b92aa 100644
+> > > --- a/arch/arm64/kernel/process.c
+> > > +++ b/arch/arm64/kernel/process.c
+> > > @@ -552,3 +552,18 @@ void arch_setup_new_exec(void)
+> > >  
+> > >  	ptrauth_thread_init_user(current);
+> > >  }
+> > > +
+> > > +/*
+> > > + * Enable the relaxed ABI allowing tagged user addresses into the kernel.
+> > > + */
+> > > +int untagged_uaddr_set_mode(unsigned long arg)
+> > > +{
+> > > +	if (is_compat_task())
+> > > +		return -ENOTSUPP;
+> > > +	if (arg)
+> > > +		return -EINVAL;
+> > > +
+> > > +	set_thread_flag(TIF_UNTAGGED_UADDR);
+> > > +
+> > > +	return 0;
+> > > +}
+> > 
+> > I think this should be paired with a flag clearing in copy_thread(),
+> > yes? (i.e. each binary needs to opt in)
+> 
+> It indeed needs clearing though not in copy_thread() as that's used on
+> clone/fork but rather in flush_thread(), called on the execve() path.
 
-This patch defines the arch-specific implementation to retrieve the
-secure boot mode of the system and accordingly configures the IMA policy
-rules.
+Ah! Yes, thanks.
 
-This patch provides arch-specific IMA policies if PPC_SECURE_BOOT
-config is enabled.
+> And a note to myself: I think PR_UNTAGGED_ADDR (not UADDR) looks better
+> in a uapi header, the user doesn't differentiate between uaddr and
+> kaddr.
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
----
- arch/powerpc/Kconfig           | 14 +++++++++
- arch/powerpc/kernel/Makefile   |  1 +
- arch/powerpc/kernel/ima_arch.c | 54 ++++++++++++++++++++++++++++++++++
- include/linux/ima.h            |  3 +-
- 4 files changed, 71 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/kernel/ima_arch.c
+Good point. I would agree. :)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8c1c636308c8..9de77bb14f54 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -902,6 +902,20 @@ config PPC_MEM_KEYS
- 
- 	  If unsure, say y.
- 
-+config PPC_SECURE_BOOT
-+	prompt "Enable PowerPC Secure Boot"
-+	bool
-+	default n
-+	depends on PPC64
-+	depends on OPAL_SECVAR
-+	depends on IMA
-+	depends on IMA_ARCH_POLICY
-+	help
-+	  Linux on POWER with firmware secure boot enabled needs to define
-+	  security policies to extend secure boot to the OS.This config
-+	  allows user to enable OS Secure Boot on PowerPC systems that
-+	  have firmware secure boot support.
-+
- endmenu
- 
- config ISA_DMA_API
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index 0ea6c4aa3a20..75c929b41341 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -131,6 +131,7 @@ ifdef CONFIG_IMA
- obj-y				+= ima_kexec.o
- endif
- endif
-+obj-$(CONFIG_PPC_SECURE_BOOT)	+= ima_arch.o
- 
- obj-$(CONFIG_AUDIT)		+= audit.o
- obj64-$(CONFIG_AUDIT)		+= compat_audit.o
-diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
-new file mode 100644
-index 000000000000..1767bf6e6550
---- /dev/null
-+++ b/arch/powerpc/kernel/ima_arch.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 IBM Corporation
-+ * Author: Nayna Jain <nayna@linux.ibm.com>
-+ *
-+ * ima_arch.c
-+ *      - initialize ima policies for PowerPC Secure Boot
-+ */
-+
-+#include <linux/ima.h>
-+#include <asm/secboot.h>
-+
-+bool arch_ima_get_secureboot(void)
-+{
-+	bool sb_mode;
-+
-+	sb_mode = get_powerpc_sb_mode();
-+	if (sb_mode)
-+		return true;
-+	else
-+		return false;
-+}
-+
-+/*
-+ * File signature verification is not needed, include only measurements
-+ */
-+static const char *const default_arch_rules[] = {
-+	"measure func=KEXEC_KERNEL_CHECK template=ima-modsig",
-+	"measure func=MODULE_CHECK template=ima-modsig",
-+	NULL
-+};
-+
-+/* Both file signature verification and measurements are needed */
-+static const char *const sb_arch_rules[] = {
-+	"measure func=KEXEC_KERNEL_CHECK template=ima-modsig",
-+	"measure func=MODULE_CHECK template=ima-modsig",
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig template=ima-modsig",
-+#if !IS_ENABLED(CONFIG_MODULE_SIG)
-+	"appraise func=MODULE_CHECK appraise_type=imasig|modsig template=ima-modsig",
-+#endif
-+	NULL
-+};
-+
-+/*
-+ * On PowerPC, file measurements are to be added to the IMA measurement list
-+ * irrespective of the secure boot state of the system. Signature verification
-+ * is conditionally enabled based on the secure boot state.
-+ */
-+const char *const *arch_get_ima_policy(void)
-+{
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-+		return sb_arch_rules;
-+	return default_arch_rules;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index fd9f7cf4cdf5..a01df076ecae 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -31,7 +31,8 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
--#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390)
-+#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390) \
-+	|| defined(CONFIG_PPC_SECURE_BOOT)
- extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
 -- 
-2.20.1
-
+Kees Cook
