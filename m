@@ -2,100 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4DF3BADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D19163BAE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387908AbfFJRXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:23:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45209 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbfFJRXO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:23:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f9so9986194wre.12
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 10:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hE4cR11QUq+RsE+T2OXtTk5Fiz8rk9hoeeEatdOHPQM=;
-        b=DYCkAdiUnfostkm8Hivw7VIDgB6ztRtb5vpXxRVM8Gy7u2qzeKbULe2FAkpkmxsGuC
-         e8dFxmka3vVJmQtR0L+lKeCuI5rECXgOeNiuiqkohPLon3Zu/J6pIJGpDH6sAnVNBRdy
-         iYj0cmRtJLOZIRfdYpm5c+25f1k1lOIQ9se8RXYe2kigfn9PjhP/jMhsnV4/FWwA8LMe
-         vZ1pMlKVQDJHiSjjNr7yYS8h0bO1PSPX8pdEk1bbuu6UeNB+/3RqzTrG0tOSEYGNUQu0
-         XM6/RHV4jttnLWJzsGRkz+OgNKuLBkLRBKKRjzkOgNcrw86Cci352k8OrtwaNR0g+ul9
-         PiEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hE4cR11QUq+RsE+T2OXtTk5Fiz8rk9hoeeEatdOHPQM=;
-        b=ESPqflg7+PG++jCd8+kTCrp0ah9T1KUseappg4zYCP/9eJ/qNnZGi5GwSxtAI+Enuq
-         fnMn8PyW/NnhHzEIigAd2QUK4Co/lXVCFv3Nqb3+oN1Dv4G8uk/SSmOiPFYZ2sWkpdBC
-         zEdhlITR9csDsX1NLDeOR8mNX/P7sq7gMND7xeJFPZfbjuxR5JeRJI7CHx46Zxkxg14Q
-         cBCSPMm7Qxxf7phLTd1Sa3rS3XRVAQ/hmcWnsc1K5e7Ao3eTsQTb5RlN9oAxJSu7WQ68
-         N0pjUDq6EUCSxuVWh/9QpyXpVZqRtatShTVB1gxrnyfGFqe4TiFpmFbBNl8/uX+fbKcQ
-         0wjQ==
-X-Gm-Message-State: APjAAAWZ0+oEUefuT5FD1QO5uZEILRG+mBIHfb87rSjYW3VIFmPbo3me
-        sQSpBPXppzHPEJvfCGjAtt/6wg==
-X-Google-Smtp-Source: APXvYqyoZES/st9Q7kYb+Li6V2PdFuszQXBxanwuOTUOBVBPdGObPs4cF7PE4Wf0IvDmw5hHlnnD1g==
-X-Received: by 2002:a5d:4489:: with SMTP id j9mr656490wrq.15.1560187393072;
-        Mon, 10 Jun 2019 10:23:13 -0700 (PDT)
-Received: from localhost.localdomain (233.red-79-146-84.dynamicip.rima-tde.net. [79.146.84.233])
-        by smtp.gmail.com with ESMTPSA id f2sm19853686wrq.48.2019.06.10.10.23.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 10 Jun 2019 10:23:12 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, gregkh@linuxfoundation.org,
-        agross@kernel.org, david.brown@linaro.org, jslaby@suse.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khasim.mohammed@linaro.org,
-        bjorn.andersson@linaro.org
-Subject: [PATCH v3] tty: serial: msm_serial: avoid system lockup condition
-Date:   Mon, 10 Jun 2019 19:23:08 +0200
-Message-Id: <20190610172308.21129-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        id S1728478AbfFJRYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:24:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727835AbfFJRYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:24:43 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DA873001459;
+        Mon, 10 Jun 2019 17:24:38 +0000 (UTC)
+Received: from treble (ovpn-121-189.rdu2.redhat.com [10.10.121.189])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0CA2A5B685;
+        Mon, 10 Jun 2019 17:24:29 +0000 (UTC)
+Date:   Mon, 10 Jun 2019 12:24:28 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 14/15] static_call: Simple self-test module
+Message-ID: <20190610172428.3t6laheazlz2y3br@treble>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.373256296@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190605131945.373256296@infradead.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 10 Jun 2019 17:24:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function msm_wait_for_xmitr can be taken with interrupts
-disabled. In order to avoid a potential system lockup - demonstrated
-under stress testing conditions on SoC QCS404/5 - make sure we wait
-for a bounded amount of time.
+On Wed, Jun 05, 2019 at 03:08:07PM +0200, Peter Zijlstra wrote:
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  lib/Kconfig.debug      |    8 ++++++++
+>  lib/Makefile           |    1 +
+>  lib/test_static_call.c |   41 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 50 insertions(+)
+> 
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1955,6 +1955,14 @@ config TEST_STATIC_KEYS
+>  
+>  	  If unsure, say N.
+>  
+> +config TEST_STATIC_CALL
+> +	tristate "Test static call"
+> +	depends on m
+> +	help
+> +	  Test the static call interfaces.
+> +
+> +	  If unsure, say N.
+> +
 
-Tested on SoC QCS404.
+Any reason why we wouldn't just make this a built-in boot time test?
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- v2: fix exit condition (timeout --> !timeout)
- v3: add these clarification messages
- 
- drivers/tty/serial/msm_serial.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-index 23833ad952ba..3657a24913fc 100644
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -383,10 +383,14 @@ static void msm_request_rx_dma(struct msm_port *msm_port, resource_size_t base)
- 
- static inline void msm_wait_for_xmitr(struct uart_port *port)
- {
-+	unsigned int timeout = 500000;
-+
- 	while (!(msm_read(port, UART_SR) & UART_SR_TX_EMPTY)) {
- 		if (msm_read(port, UART_ISR) & UART_ISR_TX_READY)
- 			break;
- 		udelay(1);
-+		if (!timeout--)
-+			break;
- 	}
- 	msm_write(port, UART_CR_CMD_RESET_TX_READY, UART_CR);
- }
 -- 
-2.21.0
-
+Josh
