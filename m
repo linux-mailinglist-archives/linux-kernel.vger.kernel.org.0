@@ -2,122 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FDF3B122
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30CE3B124
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388721AbfFJIpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 04:45:08 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38832 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbfFJIpF (ORCPT
+        id S2388729AbfFJIp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 04:45:28 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43881 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388041AbfFJIp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 04:45:05 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s15so4849031wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:45:04 -0700 (PDT)
+        Mon, 10 Jun 2019 04:45:27 -0400
+Received: by mail-qk1-f193.google.com with SMTP id m14so5045841qka.10;
+        Mon, 10 Jun 2019 01:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=M+cP6C7+VK3jw1r29YjrDx6Ndjlh7cgtx3v4K/NgDeo=;
-        b=skNfvRf9d+s4BJ3piPlivoHWyDhAwaIRmipuCtcV3u2KR+vFbN4F+TJuRmtQ8/lnvF
-         1gtZAsGOd56DCCnP1pmwBnX2m2YQLDATKu4pUkOmahNnAPJ/MNrjJSfW7MSY7+j21xPI
-         Mhr9hj0SmaCObOLnsXZTJRZ5thrzaXG3syQQBNPB/FJkoXl4UC7/pALnd/1O1tjvkixy
-         DCIbarfpgzpMXJO4PPUWxqzowa49YG/LWIkMjAQpoMn9oZPrX4iN9MGm7n8+SYn9p9kd
-         BUAKc/S+myiWbw7/p1Nd/QWCDET3wxjz3eijq8BQ3AVmtbcO5Kcn3gKl1ToUub+WIZ10
-         4Gww==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mg3aSfJBuVduU4VNPluxDXCyjmsixqOgJYW+XgD2lXY=;
+        b=bRZsnI/y5+a24CCyEpHu5g85JrLnk+kCQ4csaKYuDD7NjNGXJQ4RYET471WVVRsWLr
+         KpYKWOJgJN2lDFoNg6eLa2OFmx9gIujjclUYuTWPLDiT34u1HBr6tV5NYwltlf3s6Buk
+         fhsLiGivPOQjpGY+/mcGsKuhM/fKEAGXT3y6MGbiZkbryYw/+R5XOnsOq7WW7ouRkia5
+         KqA6n9IpuzZQTiKOPqNeXckHSY1X7CW2EWRedosL/YXvu4g2Eo2ZML7R0YCHzw4ea3xv
+         5jGwYUju2d3e/4/41/Vu34qCW88ne5PMxYpi0cmom7wgfSCMFCX+WnkyxTDBUP0XQm4m
+         pnhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references;
-        bh=M+cP6C7+VK3jw1r29YjrDx6Ndjlh7cgtx3v4K/NgDeo=;
-        b=pzC2XGBsOjh+KehzYnnp9nf/zsgPspdm6cDt+zVlBkktdeG/x4Qq286He1iJLwM+Xs
-         Om73kSsdw+W9cjUvJoCh6dbSlwL+XZTQn6wUtARtT9RxU8w33OLF1a94rLjPwqwItdDA
-         Zci0qDgN+Fxq8WCPEnj9Y25GSEOWui3//Ei54jGAtEG11GQiEu2lBARtO0yQYRLooZcY
-         sAYxZ7ytA76ikQpRl2DNfctI9PT4VzgjJCrN4L+II0zhV8KMQ4ebuU1GFWow5Nh5c6c/
-         Z6qUrUjY6UUlY+wdiubD0YTMbX7CLI2iUhw0ZIFKPfocDbNvhmSGGKvwNiVxRbCnFHgr
-         bLfA==
-X-Gm-Message-State: APjAAAUcv8mCheHhT+/jEI8QKjy4xOdxIKWAHdftm4qaMNs10QR9pOGp
-        0/MYtVF/hOH4h9ci26O4Nn8w8vccMuTfbA==
-X-Google-Smtp-Source: APXvYqyqoIr6fU1KzvLY8lEPM3s5B6qJXzVnTwekyShtxIqDrTxMhdNjfJPY9GeTEpwMm2XWi5yoPg==
-X-Received: by 2002:a1c:750d:: with SMTP id o13mr12156994wmc.35.1560156303497;
-        Mon, 10 Jun 2019 01:45:03 -0700 (PDT)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id w23sm7629173wmi.45.2019.06.10.01.45.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Jun 2019 01:45:03 -0700 (PDT)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        michal.simek@xilinx.com, johan@kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] serial: uartps: Use the same dynamin major number for all ports
-Date:   Mon, 10 Jun 2019 10:44:56 +0200
-Message-Id: <381ea608440345a4424d24296666b2451b1a20ee.1560156294.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <c6753260caf8b20cc002b15fcbf22b759c91d760.1560156294.git.michal.simek@xilinx.com>
-References: <c6753260caf8b20cc002b15fcbf22b759c91d760.1560156294.git.michal.simek@xilinx.com>
-In-Reply-To: <c6753260caf8b20cc002b15fcbf22b759c91d760.1560156294.git.michal.simek@xilinx.com>
-References: <c6753260caf8b20cc002b15fcbf22b759c91d760.1560156294.git.michal.simek@xilinx.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mg3aSfJBuVduU4VNPluxDXCyjmsixqOgJYW+XgD2lXY=;
+        b=BrFERDPKL/1CzFtMXVKPcxTbSIEGxr9touXPeZ5PBX/6jRqtgAp6hAXaT1aJgV3dts
+         u2XfFiyFIZyknRJFiD8VYVcfQTQt8Vu8stOda8pQ9Ca8bJRjCJqg45Wkd+c10piD9p1j
+         d5fmXAwTtSIyCC/DZ9U8daESOEP8HVjRTxBqj60ghSg+AfhhBEyIHXK5tHn+U8ICHwYX
+         Y32PojMb3FkQO6q/uY+0Vk9LRUMd72+MlxaJ2whesq9hSMfEn0AZZv0w0a6xSuiC/yHe
+         fMVqG8PaH2kPTKI8JENT7LZqu/Ly0uWiebpOM4fauAX93GVm1N2u5c5Fx5MEjzXMOFdO
+         EDCg==
+X-Gm-Message-State: APjAAAUEWeJsYTp2Kjv51A6KyFQyb6bKR0w2kVBkzMRDu4aPfnXcFF3D
+        XwGpiIZTiTyoxwZbxavTff5ucjpfXtC9eYSYpw0=
+X-Google-Smtp-Source: APXvYqwOdQ8P2Ew3Mk3oGOxjm0eqXygeSpRp3gbJMPVswit25JDiJQ7ZHeMuJkIf6k835tU672Pnazl1f0Z1doVdvP0=
+X-Received: by 2002:a37:5fc2:: with SMTP id t185mr12884844qkb.206.1560156326605;
+ Mon, 10 Jun 2019 01:45:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190603183401.151408-1-gwendal@chromium.org> <20190604055908.GA4797@dell>
+ <CAFqH_51gMu81f=VFQaF4u9-tAWDMocGAwM_fOPT3Cctv6KWniw@mail.gmail.com> <20190610082012.GK4797@dell>
+In-Reply-To: <20190610082012.GK4797@dell>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 10 Jun 2019 10:45:15 +0200
+Message-ID: <CAFqH_50J1wqdhWw5nW+D=crfg=JjUrSh2it=JORx5Wn8LfNTQg@mail.gmail.com>
+Subject: Re: [GIT PULL] Immutable branch between MFD and Cros due for the v5.3
+ merge window
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Gwendal Grignou <gwendal@chromium.org>,
+        alsa-devel@alsa-project.org, linux-iio@vger.kernel.org,
+        fabien.lahoudere@collabora.com, Takashi Iwai <tiwai@suse.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Hi,
 
-Let kernel to find out major number dynamically for the first device and
-then reuse it for other instances.
-This fixes the issue that each uart is registered with a
-different major number.
+Thanks for the ib Lee.
 
-After the patch:
-crw-------    1 root     root      253,   0 Jun 10 08:31 /dev/ttyPS0
-crw--w----    1 root     root      253,   1 Jan  1  1970 /dev/ttyPS1
+Doing my Monday rebase I just noticed we will have a trivial conflict
+for the merge window.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+Missatge de Lee Jones <lee.jones@linaro.org> del dia dl., 10 de juny
+2019 a les 10:20:
+>
+> As requested.
+>
+> Enjoy!
+>
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0eb=
+d9:
+>
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-cros-v=
+5.3
+>
+> for you to fetch changes up to 3aa6be30da899619c44aa654313ba66eb44e7291:
+>
+>   mfd: cros_ec: Update I2S API (2019-06-10 09:15:08 +0100)
+>
+> ----------------------------------------------------------------
+> Immutable branch between MFD and Cros due for the v5.3 merge window
+>
+> ----------------------------------------------------------------
+> Gwendal Grignou (30):
+>       mfd: cros_ec: Update license term
 
- drivers/tty/serial/xilinx_uartps.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+That's the commit will have problems due
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 6af2886f5ba7..a0b51c60faeb 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -29,12 +29,12 @@
- 
- #define CDNS_UART_TTY_NAME	"ttyPS"
- #define CDNS_UART_NAME		"xuartps"
--#define CDNS_UART_MAJOR		0	/* use dynamic node allocation */
- #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
- #define CDNS_UART_REGISTER_SPACE	0x1000
- 
- /* Rx Trigger level */
- static int rx_trigger_level = 56;
-+static int uartps_major;
- module_param(rx_trigger_level, uint, 0444);
- MODULE_PARM_DESC(rx_trigger_level, "Rx trigger level, 1-63 bytes");
- 
-@@ -1516,7 +1516,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	cdns_uart_uart_driver->owner = THIS_MODULE;
- 	cdns_uart_uart_driver->driver_name = driver_name;
- 	cdns_uart_uart_driver->dev_name	= CDNS_UART_TTY_NAME;
--	cdns_uart_uart_driver->major = CDNS_UART_MAJOR;
-+	cdns_uart_uart_driver->major = uartps_major;
- 	cdns_uart_uart_driver->minor = cdns_uart_data->id;
- 	cdns_uart_uart_driver->nr = 1;
- 
-@@ -1545,6 +1545,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 		goto err_out_id;
- 	}
- 
-+	uartps_major = cdns_uart_uart_driver->tty_driver->major;
- 	cdns_uart_data->cdns_uart_driver = cdns_uart_uart_driver;
- 
- 	/*
--- 
-2.17.1
+commit 9c92ab61914157664a2fbdf926df0eb937838e45
+Author: Thomas Gleixner <tglx@linutronix.de>
+Date:   Wed May 29 07:17:56 2019 -0700
 
+    treewide: Replace GPLv2 boilerplate/reference with SPDX - rule 282
+
+That was introduced in v5.2-rc4
+
+Just to let you know.
+ Enric
+
+>       mfd: cros_ec: Zero BUILD_ macro
+>       mfd: cros_ec: set comments properly
+>       mfd: cros_ec: add ec_align macros
+>       mfd: cros_ec: Define commands as 4-digit UPPER CASE hex values
+>       mfd: cros_ec: use BIT macro
+>       mfd: cros_ec: Update ACPI interface definition
+>       mfd: cros_ec: move HDMI CEC API definition
+>       mfd: cros_ec: Remove zero-size structs
+>       mfd: cros_ec: Add Flash V2 commands API
+>       mfd: cros_ec: Add PWM_SET_DUTY API
+>       mfd: cros_ec: Add lightbar v2 API
+>       mfd: cros_ec: Expand hash API
+>       mfd: cros_ec: Add EC transport protocol v4
+>       mfd: cros_ec: Complete MEMS sensor API
+>       mfd: cros_ec: Fix event processing API
+>       mfd: cros_ec: Add fingerprint API
+>       mfd: cros_ec: Fix temperature API
+>       mfd: cros_ec: Complete Power and USB PD API
+>       mfd: cros_ec: Add API for keyboard testing
+>       mfd: cros_ec: Add Hibernate API
+>       mfd: cros_ec: Add Smart Battery Firmware update API
+>       mfd: cros_ec: Add I2C passthru protection API
+>       mfd: cros_ec: Add API for EC-EC communication
+>       mfd: cros_ec: Add API for Touchpad support
+>       mfd: cros_ec: Add API for Fingerprint support
+>       mfd: cros_ec: Add API for rwsig
+>       mfd: cros_ec: Add SKU ID and Secure storage API
+>       mfd: cros_ec: Add Management API entry points
+>       mfd: cros_ec: Update I2S API
+>
+>  include/linux/mfd/cros_ec_commands.h | 3658 +++++++++++++++++++++++++++-=
+------
+>  sound/soc/codecs/cros_ec_codec.c     |    8 +-
+>  2 files changed, 2915 insertions(+), 751 deletions(-)
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
