@@ -2,144 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5CB3B856
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE0B3B83E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391222AbfFJPan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:30:43 -0400
-Received: from mga11.intel.com ([192.55.52.93]:40690 "EHLO mga11.intel.com"
+        id S2391189AbfFJPXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:23:44 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43726 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391204AbfFJPak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:30:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 08:30:39 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Jun 2019 08:30:39 -0700
-Message-ID: <e26f7d09376740a5f7e8360fac4805488b2c0a4f.camel@intel.com>
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
- function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Mon, 10 Jun 2019 08:22:33 -0700
-In-Reply-To: <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
-         <20190606200926.4029-4-yu-cheng.yu@intel.com>
-         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
-         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
-         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
-         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
-         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
-         <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
-         <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S2390494AbfFJPXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:23:44 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 71E802007F9;
+        Mon, 10 Jun 2019 17:23:41 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 64A762007F0;
+        Mon, 10 Jun 2019 17:23:41 +0200 (CEST)
+Received: from fsr-ub1864-014.ea.freescale.net (fsr-ub1864-014.ea.freescale.net [10.171.95.219])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 07A29205E4;
+        Mon, 10 Jun 2019 17:23:40 +0200 (CEST)
+From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: ls1028a: add crypto node
+Date:   Mon, 10 Jun 2019 18:23:31 +0300
+Message-Id: <20190610152331.10057-1-horia.geanta@nxp.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-07 at 13:43 -0700, Andy Lutomirski wrote:
-> > On Jun 7, 2019, at 12:49 PM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> > 
-> > On Fri, 2019-06-07 at 11:29 -0700, Andy Lutomirski wrote:
-> > > > On Jun 7, 2019, at 10:59 AM, Dave Hansen <dave.hansen@intel.com> wrote:
-> > > > 
-> > > > > On 6/7/19 10:43 AM, Peter Zijlstra wrote:
-> > > > > I've no idea what the kernel should do; since you failed to answer the
-> > > > > question what happens when you point this to garbage.
-> > > > > 
-> > > > > Does it then fault or what?
-> > > > 
-> > > > Yeah, I think you'll fault with a rather mysterious CR2 value since
-> > > > you'll go look at the instruction that faulted and not see any
-> > > > references to the CR2 value.
-> > > > 
-> > > > I think this new MSR probably needs to get included in oops output when
-> > > > CET is enabled.
-> > > 
-> > > This shouldn’t be able to OOPS because it only happens at CPL 3,
-> > > right?  We
-> > > should put it into core dumps, though.
-> > > 
-> > > > 
-> > > > Why don't we require that a VMA be in place for the entire bitmap?
-> > > > Don't we need a "get" prctl function too in case something like a JIT is
-> > > > running and needs to find the location of this bitmap to set bits
-> > > > itself?
-> > > > 
-> > > > Or, do we just go whole-hog and have the kernel manage the bitmap
-> > > > itself. Our interface here could be:
-> > > > 
-> > > >   prctl(PR_MARK_CODE_AS_LEGACY, start, size);
-> > > > 
-> > > > and then have the kernel allocate and set the bitmap for those code
-> > > > locations.
-> > > 
-> > > Given that the format depends on the VA size, this might be a good
-> > > idea.  I
-> > > bet we can reuse the special mapping infrastructure for this — the VMA
-> > > could
-> > > be a MAP_PRIVATE special mapping named [cet_legacy_bitmap] or similar, and
-> > > we
-> > > can even make special rules to core dump it intelligently if needed.  And
-> > > we
-> > > can make mremap() on it work correctly if anyone (CRIU?) cares.
-> > > 
-> > > Hmm.  Can we be creative and skip populating it with zeros?  The CPU
-> > > should
-> > > only ever touch a page if we miss an ENDBR on it, so, in normal operation,
-> > > we
-> > > don’t need anything to be there.  We could try to prevent anyone from
-> > > *reading* it outside of ENDBR tracking if we want to avoid people
-> > > accidentally
-> > > wasting lots of memory by forcing it to be fully populated when the read
-> > > it.
-> > > 
-> > > The one downside is this forces it to be per-mm, but that seems like a
-> > > generally reasonable model anyway.
-> > > 
-> > > This also gives us an excellent opportunity to make it read-only as seen
-> > > from
-> > > userspace to prevent exploits from just poking it full of ones before
-> > > redirecting execution.
-> > 
-> > GLIBC sets bits only for legacy code, and then makes the bitmap read-
-> > only.  That
-> > avoids most issues:
-> 
-> How does glibc know the linear address space size?  We don’t want LA64 to
-> break old binaries because the address calculation changed.
+LS1028A has a SEC v5.0 compatible security engine.
 
-When an application starts, its highest stack address is determined.
-It uses that as the maximum the bitmap needs to cover.
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+---
 
-Yu-cheng
+Tested with "arm-smmu.disable_bypass=0" kernel boot parameter,
+since ICID (Isolation Context ID, out of which ARM SMMU stream ID
+is derived) programming and DT fix-up support hasn't been added yet
+in U-boot.
+
+ .../boot/dts/freescale/fsl-ls1028a-qds.dts    |  1 +
+ .../boot/dts/freescale/fsl-ls1028a-rdb.dts    |  1 +
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 39 +++++++++++++++++++
+ 3 files changed, 41 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+index 4ed18287e077..c9765bb4bd7f 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+@@ -17,6 +17,7 @@
+ 	compatible = "fsl,ls1028a-qds", "fsl,ls1028a";
+ 
+ 	aliases {
++		crypto = &crypto;
+ 		gpio0 = &gpio1;
+ 		gpio1 = &gpio2;
+ 		gpio2 = &gpio3;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+index 4a203f7da598..745ec462bfae 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+@@ -16,6 +16,7 @@
+ 	compatible = "fsl,ls1028a-rdb", "fsl,ls1028a";
+ 
+ 	aliases {
++		crypto = &crypto;
+ 		serial0 = &duart0;
+ 		serial1 = &duart1;
+ 	};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index bb386dd1d1b1..0048c2610a09 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -388,6 +388,45 @@
+ 				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		crypto: crypto@8000000 {
++			compatible = "fsl,sec-v5.0", "fsl,sec-v4.0";
++			fsl,sec-era = <10>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0x0 0x00 0x8000000 0x100000>;
++			reg = <0x00 0x8000000 0x0 0x100000>;
++			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
++			dma-coherent;
++
++			sec_jr0: jr@10000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg	= <0x10000 0x10000>;
++				interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr1: jr@20000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg	= <0x20000 0x10000>;
++				interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr2: jr@30000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg	= <0x30000 0x10000>;
++				interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr3: jr@40000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg	= <0x40000 0x10000>;
++				interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
+ 		cluster1_core0_watchdog: watchdog@c000000 {
+ 			compatible = "arm,sp805", "arm,primecell";
+ 			reg = <0x0 0xc000000 0x0 0x1000>;
+-- 
+2.17.1
+
