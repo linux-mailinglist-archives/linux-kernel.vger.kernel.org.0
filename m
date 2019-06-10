@@ -2,81 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 600793B7A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8B43B7AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 16:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390042AbfFJOnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 10:43:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35909 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389075AbfFJOnx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 10:43:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u22so5448160pfm.3;
-        Mon, 10 Jun 2019 07:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=etJoHJ/BhhfupcyUUlxbBGwS8e+iknV/xMLkmpUR/fI=;
-        b=KRrXu+rcVNCDowUha1CJTApTE/HHAOn4tI+19tnePonRANPSyLGAuStfA2rOed9EpF
-         7i1uLRnQNhqb3D+yA6yApYJ+Uv+aukgCpa99NMHwjO6PBjBbwLmnuh6kKK8C1qSI6Klg
-         Vrqq27BrggpRxNCvKZ12iVEak1OMl8N/p9uvN+xqxC+1yFwNkL9EVDN84XxSqTIoP3U9
-         mF1FKwSskgJmsUXBR77ErJr660A3UJDFQzudh85l3Rugjzo8XC26gY/bES9Rx70NJsIb
-         F1JrWr8yOGBGHCvwwTXY4fXGNqIZJFYPAEmpWYTFpVWBVkjLyqSuzTp/D4V9RqhkWcqt
-         lYrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=etJoHJ/BhhfupcyUUlxbBGwS8e+iknV/xMLkmpUR/fI=;
-        b=bL1SMSewBnrv3B/kbuFSCx/leBtFraauN20MdVZEyBp0kw7fC/uFyk01bx8l6BjSsF
-         7hrjXM3L0ckBd+9hVQXOVUyXbXbbITYSCQYUKXIDO/IlTDtU0kkvbBsDtc25FL3ZlPOG
-         eWj9HtS936sJ5kfQBzKZw7JD9rLe7Clq8BMOqjIkL55J9SmkvTFlk3QaFVrIF78MzJtT
-         BhwzAGWU9r4ftkH0iWftcaKfzaE+Nwstsz08B/yc8kBskXxKE0Q6FxNnHViD4Nw+cfGl
-         5CdErpYsGdL8aLrYKPDi0dxIHYsQpIrtoC+eCej8Gx2q6cwX5JwzVfx0DsxX2YH22aeT
-         TK0A==
-X-Gm-Message-State: APjAAAWtmmOx8kNn6zCSq+/SaMyJV6ma6ylvypaUJmRTeUwL7KAjzJ9o
-        WfcEoY/R6MTO5WAUFbwWSvx6CDs9
-X-Google-Smtp-Source: APXvYqy7HCjTNaYApBGOMmpEQJk1fdobkI9ODGhvPInVWISQrm42nlQC38VgvN/zAcOee8mKr1cGJw==
-X-Received: by 2002:a63:4f5b:: with SMTP id p27mr8027284pgl.273.1560177832407;
-        Mon, 10 Jun 2019 07:43:52 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v138sm7885582pfc.15.2019.06.10.07.43.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 07:43:51 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 07:43:51 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/51] 4.19.50-stable review
-Message-ID: <20190610144351.GD7705@roeck-us.net>
-References: <20190609164127.123076536@linuxfoundation.org>
+        id S2390939AbfFJOo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 10:44:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389055AbfFJOo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 10:44:28 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA36820862;
+        Mon, 10 Jun 2019 14:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560177868;
+        bh=VLfM+wWmxpE5AULiFHFYRojFpTMl7cMl/hwlGcegjgQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jc2MaiVDg2758MmQoWZbjHHQJDc/Xa2e2UsmDtfUj/SenOvyC3fjdQIpnmFeOQ8qN
+         IHz38ARkQSI65W0TV3vjf1uuZp67HKX02i5VcaZwUdA8Fx0pGwXVGVy63MRSNGVqlJ
+         sEsvHguvSjm/gUXMZwT94Bp/Oc3PcxlFoxO6Z03o=
+Date:   Mon, 10 Jun 2019 16:44:25 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, johan@kernel.org,
+        Nava kishore Manne <nava.manne@xilinx.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] serial: xilinx_uartps: Fix warnings in the driver
+Message-ID: <20190610144425.GC31086@kroah.com>
+References: <c6753260caf8b20cc002b15fcbf22b759c91d760.1560156294.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190609164127.123076536@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <c6753260caf8b20cc002b15fcbf22b759c91d760.1560156294.git.michal.simek@xilinx.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 09, 2019 at 06:41:41PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.50 release.
-> There are 51 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Jun 10, 2019 at 10:44:55AM +0200, Michal Simek wrote:
+> From: Nava kishore Manne <nava.manne@xilinx.com>
 > 
-> Responses should be made by Tue 11 Jun 2019 04:40:08 PM UTC.
-> Anything received after that time might be too late.
+> This patch fixes the below warning
 > 
-Build results:
-	total: 156 pass: 156 fail: 0
-Qemu test results:
-	total: 351 pass: 351 fail: 0
+>         -->Symbolic permissions 'S_IRUGO' are not preferred.
+>            Consider using octal permissions '0444'.
+>         -->macros should not use a trailing semicolon.
+>         -->line over 80 characters.
+>         -->void function return statements are not generally useful.
+>         -->Prefer 'unsigned int' to bare use of 'unsigned'.
+> 
+> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+> Happy to split it if needed.
 
-Guenter
+Please split.  Do not do more than one "logical thing" per patch.
+
+And the subject is not correct, there are no general "warnings", these
+are all checkpatch warnings, not a build issue.
+
+thanks,
+
+greg k-h
