@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 981F93BE5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92FD3BE5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390394AbfFJVVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:21:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38774 "EHLO
+        id S2390350AbfFJVVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:21:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39062 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390184AbfFJVUz (ORCPT
+        with ESMTP id S2389942AbfFJVU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:20:55 -0400
+        Mon, 10 Jun 2019 17:20:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IfIvobHhliD7MEqdCKHlxMFprSvdnhezPdaASrVUoiA=; b=TZJSapzBw06TNQ4xs5DbJla2hU
-        +cKo6J9E6Bz8PsAduKmvq7yvziGEydc0eWhfFWF7Cv+F4pZhxeuNOoGlnQ5juEJQYuSGQ/oBMRmts
-        qTwijAzWQ3XGKiEPn2gENofBOwR9k1KtrINV8WXspsGcLJ/Jzkxr64pK3W0SuJhEjkJpC6wOWuA4s
-        2RY2Ypj/TyMwCZHF5oQHzNWZ2otu+X5KbEy39aq7uESdv12ErZIvYnh7NemzknnRKPkdRxX/8sh5p
-        vlq4flIQDxvUPbdr9feyljIzrzLZlOdCLwJ0KtRTWSgHYqF7e8Wd3pOPF9u5KZlDYJaaAkDj3ldbW
-        0sVSeXtw==;
+        bh=z0ABo4wszxqi3K39ZGQzfBfXvNYJFQBVr40MuiB/7Co=; b=kaB5DYj3zKrwZYQNWT3binWYEJ
+        XfO8tNdoueeFPse0xD0uWfFT9DeX+yTgFerm/xLo2LRtnkCOAodrrXwwivkvV/ilbhCcKY05AlPYZ
+        t+JUZuFNwrFXqiDanRldiJC5J8qeDD8oZTrnE0G4wRyXRQInG+uRVte0w7Fwy7RtmkBj6ApT1qcfH
+        Y5Auvd5y8JQm10baXxvXYgcoxKWR65mXW/bDO7Nw0dfROixalLqUeEKloqGT6Dn4c8Gdiu7Q4xTBM
+        KlM5qWP4cYE8QKJoUt9MeAqCD/Jd/5m84/DojVI+9yt7cCq78RjJXhbEdXKkpWSZeqyGIFxwt8peZ
+        PQjs5UhA==;
 Received: from 089144193064.atnat0002.highway.a1.net ([89.144.193.64] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1haRik-0000k2-Fb; Mon, 10 Jun 2019 21:20:51 +0000
+        id 1haRin-0000mW-9m; Mon, 10 Jun 2019 21:20:53 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Greg Ungerer <gerg@linux-m68k.org>
 Cc:     Michal Simek <monstr@monstr.eu>,
@@ -35,9 +35,9 @@ Cc:     Michal Simek <monstr@monstr.eu>,
         linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
         linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/15] binfmt_flat: remove the persistent argument from flat_get_addr_from_rp
-Date:   Mon, 10 Jun 2019 23:20:12 +0200
-Message-Id: <20190610212015.9157-13-hch@lst.de>
+Subject: [PATCH 13/15] binfmt_flat: move the MAX_SHARED_LIBS definition to binfmt_flat.c
+Date:   Mon, 10 Jun 2019 23:20:13 +0200
+Message-Id: <20190610212015.9157-14-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190610212015.9157-1-hch@lst.de>
 References: <20190610212015.9157-1-hch@lst.de>
@@ -49,119 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The argument is never used.
+MAX_SHARED_LIBS is an implementation detail of the kernel loader,
+and should be kept away from the file format definition.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/c6x/include/asm/flat.h        | 2 +-
- arch/h8300/include/asm/flat.h      | 2 +-
- arch/microblaze/include/asm/flat.h | 2 +-
- arch/sh/include/asm/flat.h         | 2 +-
- arch/xtensa/include/asm/flat.h     | 2 +-
- fs/binfmt_flat.c                   | 4 +---
- include/asm-generic/flat.h         | 2 +-
- 7 files changed, 7 insertions(+), 9 deletions(-)
+ fs/binfmt_flat.c     | 6 ++++++
+ include/linux/flat.h | 6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/c6x/include/asm/flat.h b/arch/c6x/include/asm/flat.h
-index 2d57a9204d21..9e6544b51386 100644
---- a/arch/c6x/include/asm/flat.h
-+++ b/arch/c6x/include/asm/flat.h
-@@ -5,7 +5,7 @@
- #include <asm/unaligned.h>
- 
- static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
--					u32 *addr, u32 *persistent)
-+					u32 *addr)
- {
- 	*addr = get_unaligned((__force u32 *)rp);
- 	return 0;
-diff --git a/arch/h8300/include/asm/flat.h b/arch/h8300/include/asm/flat.h
-index 4683146f0e9e..78070f924177 100644
---- a/arch/h8300/include/asm/flat.h
-+++ b/arch/h8300/include/asm/flat.h
-@@ -17,7 +17,7 @@
- 
- #define	flat_get_relocate_addr(rel)		(rel & ~0x00000001)
- static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
--					u32 *addr, u32 *persistent)
-+					u32 *addr)
- {
- 	u32 val = get_unaligned((__force u32 *)rp);
- 	if (!(flags & FLAT_FLAG_GOTPIC))
-diff --git a/arch/microblaze/include/asm/flat.h b/arch/microblaze/include/asm/flat.h
-index 9e3d8e01d294..1ab86770eaee 100644
---- a/arch/microblaze/include/asm/flat.h
-+++ b/arch/microblaze/include/asm/flat.h
-@@ -28,7 +28,7 @@
-  */
- 
- static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
--					u32 *addr, u32 *persistent)
-+					u32 *addr)
- {
- 	u32 *p = (__force u32 *)rp;
- 
-diff --git a/arch/sh/include/asm/flat.h b/arch/sh/include/asm/flat.h
-index 1002343dd84a..fee4f25555cb 100644
---- a/arch/sh/include/asm/flat.h
-+++ b/arch/sh/include/asm/flat.h
-@@ -12,7 +12,7 @@
- #include <asm/unaligned.h>
- 
- static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
--					u32 *addr, u32 *persistent)
-+					u32 *addr)
- {
- 	*addr = get_unaligned((__force u32 *)rp);
- 	return 0;
-diff --git a/arch/xtensa/include/asm/flat.h b/arch/xtensa/include/asm/flat.h
-index 3d357371b28b..ed5870c779f9 100644
---- a/arch/xtensa/include/asm/flat.h
-+++ b/arch/xtensa/include/asm/flat.h
-@@ -5,7 +5,7 @@
- #include <asm/unaligned.h>
- 
- static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
--					u32 *addr, u32 *persistent)
-+					u32 *addr)
- {
- 	*addr = get_unaligned((__force u32 *)rp);
- 	return 0;
 diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index ed7d969593d2..114ea225c5a5 100644
+index 114ea225c5a5..2c7f32d5435f 100644
 --- a/fs/binfmt_flat.c
 +++ b/fs/binfmt_flat.c
-@@ -794,7 +794,6 @@ static int load_flat_file(struct linux_binprm *bprm,
- 	 * __start to address 4 so that is okay).
- 	 */
- 	if (rev > OLD_FLAT_VERSION) {
--		u32 __maybe_unused persistent = 0;
- 		for (i = 0; i < relocs; i++) {
- 			u32 addr, relval;
- 			__be32 tmp;
-@@ -815,8 +814,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 			}
+@@ -68,6 +68,12 @@
+ #define RELOC_FAILED 0xff00ff01		/* Relocation incorrect somewhere */
+ #define UNLOADED_LIB 0x7ff000ff		/* Placeholder for unused library */
  
- 			/* Get the pointer's value.  */
--			ret = flat_get_addr_from_rp(rp, relval, flags,
--							&addr, &persistent);
-+			ret = flat_get_addr_from_rp(rp, relval, flags, &addr);
- 			if (unlikely(ret))
- 				goto err;
++#ifdef CONFIG_BINFMT_SHARED_FLAT
++#define	MAX_SHARED_LIBS			(4)
++#else
++#define	MAX_SHARED_LIBS			(1)
++#endif
++
+ struct lib_info {
+ 	struct {
+ 		unsigned long start_code;		/* Start of text segment */
+diff --git a/include/linux/flat.h b/include/linux/flat.h
+index 59e892d5fadb..a2232f1bd41b 100644
+--- a/include/linux/flat.h
++++ b/include/linux/flat.h
+@@ -12,12 +12,6 @@
  
-diff --git a/include/asm-generic/flat.h b/include/asm-generic/flat.h
-index fcd2b45c0735..1928a3596938 100644
---- a/include/asm-generic/flat.h
-+++ b/include/asm-generic/flat.h
-@@ -5,7 +5,7 @@
- #include <linux/uaccess.h>
+ #define	FLAT_VERSION			0x00000004L
  
- static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
--		u32 *addr, u32 *persistent)
-+		u32 *addr)
- {
- #ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	return copy_from_user(addr, rp, 4) ? -EFAULT : 0;
+-#ifdef CONFIG_BINFMT_SHARED_FLAT
+-#define	MAX_SHARED_LIBS			(4)
+-#else
+-#define	MAX_SHARED_LIBS			(1)
+-#endif
+-
+ /*
+  * To make everything easier to port and manage cross platform
+  * development,  all fields are in network byte order.
 -- 
 2.20.1
 
