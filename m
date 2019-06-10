@@ -2,88 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C893B91D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:13:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18B383B8EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391493AbfFJQNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 12:13:21 -0400
-Received: from mga09.intel.com ([134.134.136.24]:55102 "EHLO mga09.intel.com"
+        id S2403884AbfFJQF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 12:05:28 -0400
+Received: from mga12.intel.com ([192.55.52.136]:6422 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388850AbfFJQNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 12:13:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S2403847AbfFJQF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 12:05:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 09:13:20 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 09:05:26 -0700
 X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Jun 2019 09:13:19 -0700
-Message-ID: <5dc357f5858f8036cad5847cfe214401bb9138bf.camel@intel.com>
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
- function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
+Received: from cmargarx-wtg.ger.corp.intel.com (HELO localhost) ([10.249.34.77])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jun 2019 09:05:16 -0700
+Date:   Mon, 10 Jun 2019 19:05:16 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
         Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Mon, 10 Jun 2019 09:05:13 -0700
-In-Reply-To: <f6de9073-9939-a20d-2196-25fa223cf3fc@intel.com>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
-         <20190606200926.4029-4-yu-cheng.yu@intel.com>
-         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
-         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
-         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
-         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
-         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
-         <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
-         <4b448cde-ee4e-1c95-0f7f-4fe694be7db6@intel.com>
-         <0e505563f7dae3849b57fb327f578f41b760b6f7.camel@intel.com>
-         <f6de9073-9939-a20d-2196-25fa223cf3fc@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 4/5] LSM: x86/sgx: Introduce ->enclave_load() hook
+ for Intel SGX
+Message-ID: <20190610160423.GD3752@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-5-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606021145.12604-5-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-07 at 14:09 -0700, Dave Hansen wrote:
-> On 6/7/19 1:06 PM, Yu-cheng Yu wrote:
-> > > Huh, how does glibc know about all possible past and future legacy code
-> > > in the application?
-> > 
-> > When dlopen() gets a legacy binary and the policy allows that, it will
-> > manage
-> > the bitmap:
-> > 
-> >   If a bitmap has not been created, create one.
-> >   Set bits for the legacy code being loaded.
+On Wed, Jun 05, 2019 at 07:11:44PM -0700, Sean Christopherson wrote:
+> enclave_load() is roughly analogous to the existing file_mprotect().
 > 
-> I was thinking about code that doesn't go through GLIBC like JITs.
+> Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
+> VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
+> MAP_SHARED.  Furthermore, all enclaves need read, write and execute
+> VMAs.  As a result, the existing/standard call to file_mprotect() does
+> not provide any meaningful security for enclaves since an LSM can only
+> deny/grant access to the EPC as a whole.
+> 
+> security_enclave_load() is called when SGX is first loading an enclave
+> page, i.e. copying a page from normal memory into the EPC.  Although
+> the prototype for enclave_load() is similar to file_mprotect(), e.g.
+> SGX could theoretically use file_mprotect() and set reqprot=prot, a
+> separate hook is desirable as the semantics of an enclave's protection
+> bits are different than those of vmas, e.g. an enclave page tracks the
+> maximal set of protections, whereas file_mprotect() operates on the
+> actual protections being provided.  In other words, LSMs will likely
+> want to implement different policies for enclave page protections.
+> 
+> Note, extensive discussion yielded no sane alternative to some form of
+> SGX specific LSM hook[1].
+> 
+> [1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-If JIT manages the bitmap, it knows where it is.
-It can always read the bitmap again, right?
+4/5 and 5/5 should only be added after upstreaming SGX.
 
-Yu-cheng
+/Jarkko
