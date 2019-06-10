@@ -2,113 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A057A3B2A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 12:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8CC3B29E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 12:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389208AbfFJKBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 06:01:24 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56684 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389020AbfFJKBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 06:01:16 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7A1D1DF86D7B64D91357;
-        Mon, 10 Jun 2019 18:01:11 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 10 Jun 2019 18:00:52 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>, <tmricht@linux.ibm.com>,
-        <brueckner@linux.ibm.com>, <kan.liang@linux.intel.com>,
-        <ben@decadent.org.uk>, <mathieu.poirier@linaro.org>,
-        <mark.rutland@arm.com>, <will.deacon@arm.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <zhangshaokun@hisilicon.com>, <ak@linux.intel.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 5/5] perf jevents: Add support for Hisi hip08 L3C PMU aliasing
-Date:   Mon, 10 Jun 2019 17:59:32 +0800
-Message-ID: <1560160772-210844-6-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1560160772-210844-1-git-send-email-john.garry@huawei.com>
-References: <1560160772-210844-1-git-send-email-john.garry@huawei.com>
+        id S2388960AbfFJKAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 06:00:08 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56332 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388056AbfFJKAH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 06:00:07 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 7C75E279009
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+To:     Pavel Machek <pavel@ucw.cz>, Matthias Kaehlcke <mka@chromium.org>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Doug Anderson <dianders@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <819ecbcd-18e3-0f6b-6121-67cb363df440@collabora.com>
+Date:   Mon, 10 Jun 2019 12:00:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Hisi hip08 L3C PMU event aliasing.
+Hi Matthias,
 
-The kernel driver is in drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+On 8/6/19 23:02, Pavel Machek wrote:
+> Hi!
+> 
+>>> +	 * Note that this method is based on empirical testing on different
+>>> +	 * devices with PWM of 8 and 16 bits of resolution.
+>>> +	 */
+>>> +	n = period;
+>>> +	while (n) {
+>>> +		counter += n % 2;
+>>> +		n >>= 1;
+>>> +	}
+>>
+>> I don't quite follow the heuristics above. Are you sure the number of
+>> PWM bits can be infered from the period? What if the period value (in
+>> ns) doesn't directly correspond to a register value? And even if it
+>> did, counting the number of set bits (the above loops is a
+>> re-implementation of ffs()) doesn't really result in the dividers
+>> mentioned in the comment. E.g. a period of 32768 ns (0x8000) results
+>> in a divider of 1, i.e. 32768 brighness levels.
+>>
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- .../arm64/hisilicon/hip08/uncore-l3c.json     | 37 +++++++++++++++++++
- tools/perf/pmu-events/jevents.c               |  1 +
- 2 files changed, 38 insertions(+)
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
+Right, I think that only works on the cases that we only have one pwm cell, and
+looks like during my tests I did only tests on devices with one pwm cell :-(
 
-diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
-new file mode 100644
-index 000000000000..5bdc1a533d5e
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
-@@ -0,0 +1,37 @@
-+[
-+   {
-+	    "EventCode": "0x00",
-+	    "EventName": "uncore_hisi_sccl_l3c.rd_cpipe",
-+	    "BriefDescription": "Total read accesses",
-+	    "PublicDescription": "Total read accesses",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x01",
-+	    "EventName": "uncore_hisi_sccl_l3c.wr_cpipe",
-+	    "BriefDescription": "Total write accesses",
-+	    "PublicDescription": "Total write accesses",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x02",
-+	    "EventName": "uncore_hisi_sccl_l3c.rd_hit_cpipe",
-+	    "BriefDescription": "Total read hits",
-+	    "PublicDescription": "Total read hits",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x03",
-+	    "EventName": "uncore_hisi_sccl_l3c.wr_hit_cpipe",
-+	    "BriefDescription": "Total write hits",
-+	    "PublicDescription": "Total write hits",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+   {
-+	    "EventCode": "0x04",
-+	    "EventName": "uncore_hisi_sccl_l3c.victim_num",
-+	    "BriefDescription": "l3c precharge commands",
-+	    "PublicDescription": "l3c precharge commands",
-+	    "Unit": "hisi_sccl,l3c",
-+   },
-+]
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 909e53e3b5bd..7d241efd03de 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -238,6 +238,7 @@ static struct map {
- 	{ "UPI LL", "uncore_upi" },
- 	{ "hisi_sccl,ddrc", "hisi_sccl,ddrc" },
- 	{ "hisi_sccl,hha", "hisi_sccl,hha" },
-+	{ "hisi_sccl,l3c", "hisi_sccl,l3c" },
- 	{}
- };
- 
--- 
-2.17.1
+And as you point the code is broken for other cases (pwm-cells > 1)
 
+>> On veyron minnie the period is 1000000 ns, which results in 142858
+>> levels (1000000 / 7)!
+>>
+>> Not sure if there is a clean solution using heuristics, a DT property
+>> specifying the number of levels could be an alternative. This could
+>> also be useful to limit the number of (mostly) redundant levels, even
+>> the intended max of 4096 seems pretty high.
+>>
+
+Looking again looks like we _can not_ deduce the number of bits of a pwm, it is
+not exposed at all, so I think we will need to end adding a property to specify
+this. Something similar to what leds-pwm binding does, it has:
+
+max-brightness : Maximum brightness possible for the LED
+
+
+Enric
+
+>> Another (not directly related) observation is that on minnie the
+>> actual brightness at a nominal 50% is close to 0 (duty cycle ~3%). I
+>> haven't tested with other devices, but I wonder if it would make
+>> sense to have an option to drop the bottom N% of levels, since the
+>> near 0 brightness in the lower 50% probably isn't very useful in most
+>> use cases, but maybe it looks different on other devices.
+> 
+> Eye percieves logarithm(duty cycle), mostly, and I find very low brightness
+> levels quite useful when trying to use machine in dark room.
+> 
+> But yes, specifying if brightness is linear or exponential would be quite
+> useful.
+> 									Pavel
+> 
