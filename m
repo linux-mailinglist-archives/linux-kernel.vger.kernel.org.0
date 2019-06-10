@@ -2,97 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2BE3B999
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E83E3B9AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 18:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbfFJQfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 12:35:47 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:53906 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbfFJQfq (ORCPT
+        id S1728434AbfFJQh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 12:37:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44596 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbfFJQh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 12:35:46 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5AGZbqf048436;
-        Mon, 10 Jun 2019 11:35:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560184537;
-        bh=Pjc4DG4VaIY3HIjpSsdWHxC5fbapRyXHz4RqfmSktJs=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=yiQa/bzzV4Ah+D9TaXx7GW1nf6HYctpuXwQCaK5x3+0Clg2JcmlAaONu/zVgPlIqD
-         6vjQj/DN9DrQ1oTvkESU0ptXn+vkXnZDASZvVYVNpHcRpPqaHJYBP3v6ToxO2h10v7
-         gr7Ps6M6mne5N0QqsVBAudQbHCgQNLh/SKntXGo0=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5AGZbxG037980
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Jun 2019 11:35:37 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 10
- Jun 2019 11:35:36 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 10 Jun 2019 11:35:37 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5AGZa2p116934;
-        Mon, 10 Jun 2019 11:35:36 -0500
-Subject: Re: [PATCH v12 1/5] can: m_can: Create a m_can platform framework
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190509161109.10499-1-dmurphy@ti.com>
- <dbb7bdef-820d-5dcc-d7b5-a82bc1b076fb@ti.com>
- <a8e3f2d3-18c3-3bdb-1318-8964afc7e032@ti.com>
- <93530d94-ec65-de82-448e-f2460dd39fb9@ti.com>
-Message-ID: <0f6c41c8-0071-ed3a-9e65-caf02a0fbefe@ti.com>
-Date:   Mon, 10 Jun 2019 11:35:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 10 Jun 2019 12:37:57 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b17so9856297wrq.11;
+        Mon, 10 Jun 2019 09:37:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sh13vqQhVeUIp4ueCnaiflQcpY8w0hvllTIAtF32R/Y=;
+        b=c6QlcPSWKF3BsvTZ/GIitZ8/3RkBf+tAU+lNnFvq9R0cwY7ZSTiKjHM58uNS9AvEuL
+         8sykECWPbbVW0Po663W/EyEhlwwIZRkAmPC7YUl4tL+VGMSmScl+W18I7BYC5kCPXz1Y
+         35WDuuUcnqFmF2kH9d0/og7OAQbbBIFTdfyzP3jmbVgb1RRena6AxnKrtesKwdr3sqs6
+         33uVwN3IyoM8VTpXPN5emJgiwxo3HWFHTLyXiTX+TPGTJY4IBA7MB1WicpFOwY/pmDMb
+         EjP1W140eDFQ20VCtf6Byv0h7MwSkzqDV/00u81EHXq1iM/5aGRJi+3emTRpE1s8HDxb
+         mLWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sh13vqQhVeUIp4ueCnaiflQcpY8w0hvllTIAtF32R/Y=;
+        b=MMZZm3bB6ujKMlodsdGr85uCjltY6U9cqshYyYiFnJOLEm9fThXRFt7wziZH6bPyph
+         QHtFpG+oGN/NdEE9y02y1fJQHxULY31kXDnWS0On3zwQrHLMAxuOzPwOIHbLiywg4jqk
+         xMPORU9/wYnrLrHy06JKg2DixQpasR6wo6kMWRGPywgL+juEoMzOKeL8mB0zuL0Ar4vN
+         5PKL7/U3bWW8BB7FuyoZ1Xroi4Frwb6vDMLh9bJIGbV7U5XzaDhcFcERHV4xcBcdqZQg
+         9UX3bm7ybQTomWCJoa2ZKkBc/hZG1/jT4VLoIZ163iYKoZcv64Cee2Xmr/CaZhj2gcbC
+         n5yg==
+X-Gm-Message-State: APjAAAV/LFIwxXoK8LHd8DWv7q3fLiTJmLnOkA4VemsW+XMmN0oOLfoY
+        DKTSnqymoCzRQozv/dBqB/E=
+X-Google-Smtp-Source: APXvYqydlQA+PLFxW4LDdRVC2OqHQ48h8LCrH5vskDoOkpLzQroMIZP5WjRCaEJpvZm70zC3KggTFw==
+X-Received: by 2002:a5d:53ca:: with SMTP id a10mr32962184wrw.131.1560184675468;
+        Mon, 10 Jun 2019 09:37:55 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300F133DDA40000C4C39937FBD289.dip0.t-ipconnect.de. [2003:f1:33dd:a400:c4:c399:37fb:d289])
+        by smtp.googlemail.com with ESMTPSA id g5sm13900517wrp.29.2019.06.10.09.37.54
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 09:37:54 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linus.walleij@linaro.org, andrew@lunn.ch,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/4] Ethernet PHY reset GPIO updates for Amlogic SoCs
+Date:   Mon, 10 Jun 2019 18:37:32 +0200
+Message-Id: <20190610163736.6187-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <93530d94-ec65-de82-448e-f2460dd39fb9@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bump
+While trying to add the Ethernet PHY interrupt on the X96 Max I found
+that the current reset line definition is incorrect. Patch #1 fixes
+this.
 
-On 6/6/19 8:16 AM, Dan Murphy wrote:
-> Marc
->
-> Bump
->
-> On 5/31/19 6:51 AM, Dan Murphy wrote:
->> Marc
->>
->> On 5/15/19 3:54 PM, Dan Murphy wrote:
->>> Marc
->>>
->>> On 5/9/19 11:11 AM, Dan Murphy wrote:
->>>> Create a m_can platform framework that peripheral
->>>> devices can register to and use common code and register sets.
->>>> The peripheral devices may provide read/write and configuration
->>>> support of the IP.
->>>>
->>>> Acked-by: Wolfgang Grandegger <wg@grandegger.com>
->>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>> ---
->>>>
->>>> v12 - Update the m_can_read/write functions to create a backtrace 
->>>> if the callback
->>>> pointer is NULL. - https://lore.kernel.org/patchwork/patch/1052302/
->>>>
->>> Is this able to be merged now?
->>
->> ping
->>
->>
->>> Dan
->>>
->>> <snip>
+Since the fix requires moving from the deprecated "snps,reset-gpio"
+property to the generic Ethernet PHY reset bindings I decided to move
+all Amlogic boards over to the non-deprecated bindings. That's what
+patches #2 and #3 do.
+
+Finally I found that Odroid-N2 doesn't define the Ethernet PHY's reset
+GPIO yet. I don't have that board so I can't test whether it really
+works but based on the schematics it should. 
+
+This series is a partial successor to "stmmac: honor the GPIO flags
+for the PHY reset GPIO" from [0]. I decided not to take Linus W.'s
+Reviewed-by from patch #4 of that series because I had to change the
+wording and I want to be sure that he's happy with that now.
+
+One quick note regarding patches #1 and #4: I decided to violate the
+"max 80 characters per line" (by 4 characters) limit because I find
+that the result is easier to read then it would be if I split the
+line.
+
+
+[0] https://patchwork.kernel.org/cover/10983801/
+
+
+Martin Blumenstingl (4):
+  arm64: dts: meson: g12a: x96-max: fix the Ethernet PHY reset line
+  ARM: dts: meson: switch to the generic Ethernet PHY reset bindings
+  arm64: dts: meson: use the generic Ethernet PHY reset GPIO bindings
+  arm64: dts: meson: g12b: odroid-n2: add the Ethernet PHY reset line
+
+ arch/arm/boot/dts/meson8b-ec100.dts                   |  9 +++++----
+ arch/arm/boot/dts/meson8b-mxq.dts                     |  9 +++++----
+ arch/arm/boot/dts/meson8b-odroidc1.dts                |  9 +++++----
+ arch/arm/boot/dts/meson8m2-mxiii-plus.dts             |  8 ++++----
+ arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts    |  7 ++++---
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts  |  4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts  |  9 +++++----
+ .../arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts |  8 ++++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts   |  9 +++++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts       |  9 +++++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi  |  9 +++++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi     |  8 ++++----
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts  | 11 ++++++-----
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 10 +++++-----
+ arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts   |  8 ++++----
+ arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts        | 11 ++++++-----
+ arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts    |  8 ++++----
+ 17 files changed, 80 insertions(+), 66 deletions(-)
+
+-- 
+2.22.0
+
