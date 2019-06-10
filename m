@@ -2,62 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F15693BE0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A783BE20
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389814AbfFJVIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:08:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388642AbfFJVIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:08:12 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E2F22146E;
-        Mon, 10 Jun 2019 21:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560200891;
-        bh=LM4DhDahgDAdAIFCtYW8OBEeB5PeHsxWNvc/AFAGCfs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=d/rNQR6pc7zQZH7+kgZM44zJLfnwtuBP1iONB9bdfZmnqqX4J6XF2Ss7nayt+Y/8P
-         2W8pkvQ6kan8YpRUYt3ppUluY7kjN5ya/enUvx5adykYpjBiFmNdx/T7ChtGg+BT13
-         xC1nudL8AEwyCLs57Bz1EeYXtoTKn/IFTVVYg9fM=
-Received: by mail-qt1-f169.google.com with SMTP id p15so4628609qtl.3;
-        Mon, 10 Jun 2019 14:08:11 -0700 (PDT)
-X-Gm-Message-State: APjAAAU1rfCstL+6o0d6Snp20I9L+DPQ6Ic6IsocDJh3ImNAF9H7dIWJ
-        ZNksyzaIQRWX3uJQiX6Nz4puihKO2BgCvNH4ZA==
-X-Google-Smtp-Source: APXvYqwz/L1AgE45vjVGdFYDHPRFSfJzFEJO+IgYWTlh/1Y7CMKQaGOwIO8zOyf+9q46atFDDdRncexYa0hsFQNqGrE=
-X-Received: by 2002:a0c:acef:: with SMTP id n44mr1253179qvc.39.1560200890657;
- Mon, 10 Jun 2019 14:08:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190604003218.241354-1-saravanak@google.com> <20190604003218.241354-2-saravanak@google.com>
- <CAL_JsqLWfNUJm23x+doJDwyuMLOvqWAnLKGQYcgVct-AyWb9LQ@mail.gmail.com> <CAGETcx_Kb3+fFYHhBUdVbCSNTk4v5j1Ket=Et2ZQY0SHUgLLMw@mail.gmail.com>
-In-Reply-To: <CAGETcx_Kb3+fFYHhBUdVbCSNTk4v5j1Ket=Et2ZQY0SHUgLLMw@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 10 Jun 2019 15:07:59 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKDa7Nin8bU_LV-hqjJe2RNQwKA_zsKoug8=eHmX78QZQ@mail.gmail.com>
-Message-ID: <CAL_JsqKDa7Nin8bU_LV-hqjJe2RNQwKA_zsKoug8=eHmX78QZQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v1 1/5] of/platform: Speed up of_find_device_by_node()
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        David Collins <collinsd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S2389985AbfFJVJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:09:52 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:33663 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfFJVJw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 17:09:52 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x5AL9Tug023067;
+        Tue, 11 Jun 2019 06:09:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x5AL9Tug023067
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1560200970;
+        bh=gBHuB2VNJ5k6YmFjVqedIpm8iZuBjeT1LQUHDwfjGnA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QxjEJROhZTUj4Ngn88siuPtMJPW5B+uaonsOC3pKbYu1DQgOy8kC/YmI1fQBpbrBF
+         S2x3ROIR4K6XnyRKjAnY2wOK3B2WhFZ+bikXYoMVdhBL4XMn65NSffWqxWijegpvw2
+         mdCVcupWQWMhvfIOPr2AofH4L5kPPUnKkg6j5vMtGG11eFDL+8ecPQEgC4Pkk0JjBo
+         oDZgcoqtxaprFNkatHWXfh2Lnn7sjXj/uU/cEFDXpd8z8fpAvKh6+MDbHjFtMRVxcB
+         VDgaUa0V03VEUy3xx99FzDd1FqJf5rKqBLvKzESlZhf4NhIVA1AK3fs4J7rw/JOadr
+         lXMcApWEqtS0Q==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH v2] kobject: return -ENOSPC when add_uevent_var() fails
+Date:   Tue, 11 Jun 2019 06:09:24 +0900
+Message-Id: <20190610210924.9514-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 1:15 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> I did. And I didn't get a response. Folks suggested this might be one of the preferred ways instead of sending "bump" emails.
+This function never attempts to allocate memory, so returning -ENOMEM
+looks weird to me. The reason of the failure is there is no more space
+in the given kobj_uevent_env structure.
 
-It's summer time and people go on vacation.
+Let's change the error code to -ENOSPC.
 
-Rob
+This patch is safe since this function had never failed in reality.
+
+The callers of this function put a fixed number of small strings into
+the buffer.
+
+The buffer is defined to be large enough:
+
+  #define UEVENT_NUM_ENVP                 32      /* number of env pointers */
+  #define UEVENT_BUFFER_SIZE              2048    /* buffer for the variables */
+
+As you see WARN() in the error paths, any failure of this function is
+a software bug.
+
+If such a case had ever happened before, you would have already seen
+a noisy back-trace, then you would have increased UEVENT_NUM_ENVP or
+UEVENT_BUFFER_SIZE.
+
+Nobody has ever increased UEVENT_NUM_ENVP or UEVENT_BUFFER_SIZE since
+their addition, that is, this structure is always large enough.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2:
+  - Rephrase the commit log. No code change.
+
+ lib/kobject_uevent.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 7998affa45d4..5ffd44bf4aad 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -647,7 +647,7 @@ EXPORT_SYMBOL_GPL(kobject_uevent);
+  * @env: environment buffer structure
+  * @format: printf format for the key=value pair
+  *
+- * Returns 0 if environment variable was added successfully or -ENOMEM
++ * Returns 0 if environment variable was added successfully or -ENOSPC
+  * if no space was available.
+  */
+ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+@@ -657,7 +657,7 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+ 
+ 	if (env->envp_idx >= ARRAY_SIZE(env->envp)) {
+ 		WARN(1, KERN_ERR "add_uevent_var: too many keys\n");
+-		return -ENOMEM;
++		return -ENOSPC;
+ 	}
+ 
+ 	va_start(args, format);
+@@ -668,7 +668,7 @@ int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
+ 
+ 	if (len >= (sizeof(env->buf) - env->buflen)) {
+ 		WARN(1, KERN_ERR "add_uevent_var: buffer size too small\n");
+-		return -ENOMEM;
++		return -ENOSPC;
+ 	}
+ 
+ 	env->envp[env->envp_idx++] = &env->buf[env->buflen];
+-- 
+2.17.1
+
