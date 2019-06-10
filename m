@@ -2,153 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784AD3B473
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC603B468
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 14:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389816AbfFJMQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 08:16:01 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46491 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389793AbfFJMPy (ORCPT
+        id S2389764AbfFJMPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 08:15:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38128 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388866AbfFJMPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 08:15:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n4so8893168wrw.13;
-        Mon, 10 Jun 2019 05:15:53 -0700 (PDT)
+        Mon, 10 Jun 2019 08:15:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d18so8935076wrs.5;
+        Mon, 10 Jun 2019 05:15:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e1eMdBaB8RxDD++a+KcSae/AQyqka7jtAWZWQYYGlmA=;
-        b=iD65cA+l81B6SQXXC1LquMeeG4t3jBN2ZTecMSnVizkyQZIBk33FfTzsup4SeNCk86
-         bCGx7bTbD8rWa8ISAInF8uuVXN82Xom3amX3mPlMvKShbIOkjM4uMFSC38mz9528tD0d
-         bmzDll2SHNEEDTTf7IjaAU5qPKonEk7/PDnS4OEcUQsh0Lvrg8SixTaUoF/M0WgoQsQL
-         c2WyUBnwxdzveYhzvNSwYKF+NFj21t/wNz/0aBM0OPoMCU9QgJ5zLh8ASkahkX/BLrMz
-         yYjW8ZF1KAjbXSLUqsJIcLlKrBLg5PUasjXoIaJ2CzWtQXPHo1jh7RhN2AXdCogTa1Nl
-         mBiQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TNg7dffhdY0k328udTWVO2CXIL9HjzaUVHvDgf+GtK4=;
+        b=ZXLPQq+o6b0nHKPZK/M+Qxx+orok889VPYieNoCf6MJVzZ8VSDN1BzvcxpdKVntchY
+         C1/sw4NDZP0TUhAMPNkYtDw6AwrsqcnbUmdn4dXvq912jSdsDC+vSyAme9UkMRIga+J3
+         +GUHIdXkEjbWUNkxxNmHzZ3NCBqUeSEEeOtOsvnmfAsu23ey6WbVZSOhgpI+KOiGMzzn
+         fLpyI+p4nx5dS9N6aPzCZe0vE2r5t440mvO4FK7d60UbD6c8Eq2DPERRqehWbpfAeAHk
+         nt+1PpKw+OkF6i+jWmSEygcr4LEoAlH4aEdP/Oj15O7GQrB108NI0bjYSf9znu0e+Spn
+         ZWgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=e1eMdBaB8RxDD++a+KcSae/AQyqka7jtAWZWQYYGlmA=;
-        b=Qsn4HSTrPIBSNh3i6foILE+pdA9PNP7CjVND8qWGI1xzMC3duPujzOBNWo+zZa/etp
-         BUgcpUoSOAWmdY1NiD/DMnkuEZXFzR6CD0MzlELigubYt/Dh9I7U149+NQHWlK3nBieb
-         GecgPk+3LZr4noLUqZeUshkBU/xNueG3xSjACNbkqX5b37IZ2JODE1SUnnUY4r/OMZa8
-         fdtdnRkrJ8UgvpgqkmexcLIKEpk80EtxbSe2h5Nvm/QviLoE47H+3tYdQhNPZOsa0e8w
-         XGhFeEVbNTBRJX4OJIDXqLtJPxVGFQYNTZgnye84SImEuqyQ9SCdYIDzrD/7IDo2cs2P
-         cXhQ==
-X-Gm-Message-State: APjAAAUbOZjYdzPhaE6+ixVVGh6DMVFcKk+ZVAx1g17Z8HqZV3JqQbQv
-        81tS7cRKysENvevJwmEZlK8=
-X-Google-Smtp-Source: APXvYqw8UTMDX4DGV2nn8RWRrsw4aB8Av6boXCrEayOi6E9GJNBAUkqAeuq1Kqe99jhgPkgJ1HLfyg==
-X-Received: by 2002:adf:baca:: with SMTP id w10mr35660324wrg.230.1560168952744;
-        Mon, 10 Jun 2019 05:15:52 -0700 (PDT)
-Received: from ryzen.lan (5-12-114-167.residential.rdsnet.ro. [5.12.114.167])
-        by smtp.gmail.com with ESMTPSA id f21sm10385574wmb.2.2019.06.10.05.15.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Jun 2019 05:15:52 -0700 (PDT)
-From:   Abel Vesa <abelvesa@gmail.com>
-X-Google-Original-From: Abel Vesa <abel.vesa@nxp.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bai Ping <ping.bai@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Carlo Caione <ccaione@baylibre.com>
-Subject: [RFC 2/2] arm64: dts: imx8mq: Add idle states and gpcv2 wake_request broken property
-Date:   Mon, 10 Jun 2019 15:13:46 +0300
-Message-Id: <20190610121346.15779-3-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190610121346.15779-1-abel.vesa@nxp.com>
-References: <20190610121346.15779-1-abel.vesa@nxp.com>
+         :references:mime-version:content-transfer-encoding;
+        bh=TNg7dffhdY0k328udTWVO2CXIL9HjzaUVHvDgf+GtK4=;
+        b=EdEbb2wG/+eo/ARWsgwlLnxMZVRN2i3c9V+s8olaU3J+cJXNhC+TR+kqpIkSfP48Wf
+         blsoYc23qBzrmOTPgQ62fV8mUQSCbacvcS6vFYUycH7Gws6qPoYXb96xdVZOhwuYfRDK
+         YTpTB0UdrVeG4WjW6ibMuyg/cyv9yA+COxNDOhUsy1Cgws8qG2DipgW45ducDBC9nY5v
+         IuW0MlhVvKOMSAbHDCPOyOxOmmswLrLFGVaKFrofhqpXvPp2tjndaTuuNA5k2Dx7ddSF
+         EwVKz4c8aL07AQTk145K6lG5UPYwa1ZplrVlTGxap/o7Si+lj33YnQPdTh8QBs82en8s
+         MfGQ==
+X-Gm-Message-State: APjAAAVo3Z9TaYZLe84vnKOQe6Xa2QNWWBgcmWVByIoF5Q2s0a2ILaMv
+        xSBbT0YHUrb2Gj6lB1LsdQXdbzRD91s=
+X-Google-Smtp-Source: APXvYqzlQSAtl9/8yztiGR6lp/ce64UZfTWo4eBT3hz9ZP/qGRp2sOkCeft5kX5JxyJgCWLCirAzxQ==
+X-Received: by 2002:adf:fb0b:: with SMTP id c11mr4158638wrr.56.1560168930388;
+        Mon, 10 Jun 2019 05:15:30 -0700 (PDT)
+Received: from debian64.daheim (pD9E29896.dip0.t-ipconnect.de. [217.226.152.150])
+        by smtp.gmail.com with ESMTPSA id v67sm11434321wme.24.2019.06.10.05.15.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 05:15:29 -0700 (PDT)
+Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
+        by debian64.daheim with esmtp (Exim 4.92)
+        (envelope-from <chunkeey@gmail.com>)
+        id 1haJCy-0004Co-5N; Mon, 10 Jun 2019 14:15:28 +0200
+From:   Christian Lamparter <chunkeey@gmail.com>
+To:     Sricharan R <sricharan@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        =?utf-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+Date:   Mon, 10 Jun 2019 14:15:28 +0200
+Message-ID: <4056907.DrFocau5Ix@debian64>
+In-Reply-To: <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com> <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the cpu-sleep idle state with all the necessary parameters and also add
-the cpu-idle-states to the cpu nodes.
+On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
+> Hi Christian,
+> 
+> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
+> > On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
+> >>
+> >> Add initial device tree support for the Qualcomm IPQ6018 SoC and
+> >> CP01 evaluation board.
+> >>
+> >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> >>
+> >> +       clocks {
+> >> +               sleep_clk: sleep_clk {
+> >> +                       compatible = "fixed-clock";
+> >> +                       clock-frequency = <32000>;
+> >> +                       #clock-cells = <0>;
+> >> +               };
+> >> +
+> > Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
+> > on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
+> > From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
+> > declares them at 32000 Hz. Since you probably have access to the BOM and
+> > datasheets. Can you please confirm what's the real clock frequency for
+> > the IPQ6018.
+> > (And maybe also for the sleep_clk of the IPQ4018 as well?).
+> > 
+> 
+> What exactly is the issue that you faced ?
+> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
 
-The 'broken-wake-request-signals' property is used to let the irq-imx-gpcv2
-driver know that the wake request signals from GIC are not linked to the
-GPC at all and, therefore, the driver should  make use of the dedicated
-workaround to explicitly wake up the target core on every IPI.
+We need just a confirmation.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index d09b808..7217138 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -103,6 +103,7 @@
- 			#cooling-cells = <2>;
- 			nvmem-cells = <&cpu_speed_grade>;
- 			nvmem-cell-names = "speed_grade";
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		A53_1: cpu@1 {
-@@ -115,6 +116,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		A53_2: cpu@2 {
-@@ -127,6 +129,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		A53_3: cpu@3 {
-@@ -139,11 +142,27 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			#cooling-cells = <2>;
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		A53_L2: l2-cache0 {
- 			compatible = "cache";
- 		};
-+
-+		idle-states {
-+			entry-method = "psci";
-+
-+			CPU_SLEEP: cpu-sleep {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010033>;
-+				local-timer-stop;
-+				entry-latency-us = <1000>;
-+				exit-latency-us = <700>;
-+				min-residency-us = <2700>;
-+				wakeup-latency-us = <1500>;
-+			};
-+		};
-+
- 	};
- 
- 	a53_opp_table: opp-table {
-@@ -502,6 +521,7 @@
- 				reg = <0x303a0000 0x10000>;
- 				interrupt-parent = <&gic>;
- 				interrupt-controller;
-+				broken-wake-request-signals;
- 				#interrupt-cells = <3>;
- 
- 				pgc {
--- 
-2.7.4
+|		sleep_clk: sleep_clk {
+|			compatible = "fixed-clock";
+|			clock-frequency = <32768>;
+|			#clock-cells = <0>;
+|		};
+
+<https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
+
+Which makes sense, because all previous Qualcomm Atheros MIPS and the
+future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
+
+For example: The AR9344 derives the clock from the 25MHz/40MHz external
+oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
+Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
+depending whenever the external reference crystal has 40MHz or 25MHz.
+(1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
+in "10.19.11 Derived RTC Clock". 
+
+For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
+<http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
+"I was only able to verify for IPQ8072 that it had a 32.768 KHz
+sleep clock." 
+
+So this is pretty much "why there is an issue", it's confusing.
+Is possible can you please look if there are (fixed) divisors values
+listed in the documentation or the registers and bits that the values
+are stored in? Because then we could just calculate it. 
+
+Regards,
+Christian
+
 
