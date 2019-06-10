@@ -2,75 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 403FE3BFCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 01:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B08943BFD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 01:21:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390596AbfFJXQt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 19:16:49 -0400
-Received: from smtp2.ono.com ([62.42.230.179]:15285 "EHLO smtp2.ono.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390340AbfFJXQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 19:16:49 -0400
-X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.10.224816:17:16.798,ip=62.42.230.134,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, __SUBJ_ALPHA_END,
- __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __ANY_URI,
- __FRAUD_BODY_WEBMAIL, __URI_NO_WWW, __FRAUD_PAPERWORK, ECARD_WORD,
- __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __FRAUD_MONEY_BIG_COIN_EN,
- __FRAUD_MONEY_CURRENCY_DOLLAR, __INT_PROD_LOC, __LINES_OF_YELLING,
- __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_1000_1099,
- __MIME_TEXT_P1, __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10,
- __FRAUD_MONEY_CURRENCY, __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __FRAUD_COMMON,
- __MIME_TEXT_P, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_2000_LESS,
- __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
- BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs04 (62.42.230.134) by smtp2.ono.com (9.0.019.09-1)
-        id 5CAF0F5D02E93012; Tue, 11 Jun 2019 01:15:55 +0200
-Received: from (149.126.75.3) by webmailcpr04n.ono.com;  Tue, 11 Jun 2019 01:15:52 +0200
-Message-ID: <20199823.19771560208552320.JavaMail.defaultUser@defaultHost>
-Date:   Tue, 11 Jun 2019 01:15:52 +0200 (CEST)
-From:   "Mrs. Patrick Huang" <daniperez@ono.com>
-Reply-To: huangpatrick946@gmail.com
-Subject: Gooday To You
+        id S2390592AbfFJXVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 19:21:30 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45538 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390500AbfFJXV3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 19:21:29 -0400
+Received: by mail-oi1-f196.google.com with SMTP id m206so7523917oib.12;
+        Mon, 10 Jun 2019 16:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZaE9J9S5+4tokzmlUvtvROgLbYm6CbLOjAt2bzs6+ko=;
+        b=XQq46nLUk1w0so/Oo7f4Obzwh/o1q87LWsXwXUYuy18n6wtiBRK2ftGBmxm0auLw3C
+         2yYiVAkdcv6+/IVh7X6QrM0UoSGQyitdM1QDCifV12RE9hSZfSNyJQrEQfP2SMg4enWZ
+         9LDHi3uZQaqUAoUSQ0q3cxiPm+2hhlnnol/CR7tdZmeUtkO7SxOTVDda6RZ80MibiTWD
+         lnM9MHvgLA0qymLGPVIp3eSUnd1KmStoOEVcrMnZzpgJDMBk/K3h1H5rHaQxobmMSEsZ
+         7xq5E1OCNHUfIZU9DJSeMtA0aMcMep/1d7coTjVhV//p15VgmmRXrPIBHbhiOyr1iHtd
+         A5xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZaE9J9S5+4tokzmlUvtvROgLbYm6CbLOjAt2bzs6+ko=;
+        b=luuLNQQfplYtfLVJ44OyRDTbHQm4hNDi/FzsHr9LXKoIF9pnXXjIAqVgqxPfySUvMA
+         0Bf/4bgcxBFmzcKBOsI+57msF4o4SpbLQAk3zCIvY4Rbf0zaZ+wqrOJcivFFgcgFUg40
+         yZQwwxV2Ml/79TNGR11xnzdZ/VMyuWqV5B4NRC0FL1eGWmPlICp5bLn1U2PIW+OfWs1L
+         f3yOa6mJc6c/aGhfpVpNX3by1wzHOPw92R1habqATxfopdsUtjGynVJRLbTMGELrm5xH
+         w8nXC1Hu5a56FJTryL0XDmFD+rhonVJltjJzYmG9KWBPEzIGNFbc8EuEXautXYXX7wm6
+         i85A==
+X-Gm-Message-State: APjAAAWIt247kDgRRxUTz31YkXSUK5XnK/Jtk65KlFPO++agY00yH8BD
+        2i/LK1vRobbWYomsxQV0WAP59zHQQFEnFceNlZ0=
+X-Google-Smtp-Source: APXvYqzb5bNwl6WsntXoXRG9f925hb0b4zMvZ1roOsKlf05inct+tI9izH6k+IgRME05YsAxf20EyAgYGYpegeQTvhQ=
+X-Received: by 2002:aca:c508:: with SMTP id v8mr13855096oif.104.1560208888753;
+ Mon, 10 Jun 2019 16:21:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190606200926.4029-1-yu-cheng.yu@intel.com> <20190606200926.4029-4-yu-cheng.yu@intel.com>
+ <20190607080832.GT3419@hirez.programming.kicks-ass.net> <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
+ <20190607174336.GM3436@hirez.programming.kicks-ass.net> <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
+ <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net> <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
+ <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net> <e26f7d09376740a5f7e8360fac4805488b2c0a4f.camel@intel.com>
+ <3f19582d-78b1-5849-ffd0-53e8ca747c0d@intel.com> <5aa98999b1343f34828414b74261201886ec4591.camel@intel.com>
+ <0665416d-9999-b394-df17-f2a5e1408130@intel.com> <5c8727dde9653402eea97bfdd030c479d1e8dd99.camel@intel.com>
+ <ac9a20a6-170a-694e-beeb-605a17195034@intel.com> <328275c9b43c06809c9937c83d25126a6e3efcbd.camel@intel.com>
+ <92e56b28-0cd4-e3f4-867b-639d9b98b86c@intel.com> <1b961c71d30e31ecb22da2c5401b1a81cb802d86.camel@intel.com>
+ <ea5e333f-8cd6-8396-635f-a9dc580d5364@intel.com>
+In-Reply-To: <ea5e333f-8cd6-8396-635f-a9dc580d5364@intel.com>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Mon, 10 Jun 2019 16:20:52 -0700
+Message-ID: <CAMe9rOqLxNxE-gGX9ozX=emW9iQ+gOeUiS3ec5W4jmF6wk6cng@mail.gmail.com>
+Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup function
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is to officially inform you that ATM card number: 3774 2856 7847 
-9006 worth fifteen Million US dollars($15. Million US dollars.) has 
-been credited in your favor in bid to compensate you on your contract 
-payment since you are next on our inheritance file for the second part 
-of this fiscal Year 2017.The card centre will send you an ATM CARD 
-which you will use to withdraw your money in any ATM MACHINE in the 
-world.
+On Mon, Jun 10, 2019 at 3:59 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> > We then create PR_MARK_CODE_AS_LEGACY.  The kernel will set the bitmap, but it
+> > is going to be slow.
+>
+> Slow compared to what?  We're effectively adding one (quick) system call
+> to a path that, today, has at *least* half a dozen syscalls and probably
+> a bunch of page faults.  Heck, we can probably avoid the actual page
+> fault to populate the bitmap if we're careful.  That alone would put a
+> syscall on equal footing with any other approach.  If the bit setting
+> crossed a page boundary it would probably win.
+>
+> > Perhaps we still let the app fill the bitmap?
+>
+> I think I'd want to see some performance data on it first.
 
-Your personal identification is ATM- 7997. Contact the verification 
-officer 
-patrick huang (Mrs.) on: (huangpatrick946@gmail.com) with the following 
-for proper verification and claim processing: Call him immidiately for 
-confirmation.+233-248-931448
+Updating legacy bitmap in user space from kernel requires
 
+long q;
 
-NOTE:
-You are also required to send to the verification officer/agent a means 
-of Identification which should be a scan copy of your Driver’s License 
-or International Passport for proper verification and authentication.
+get_user(q, ...);
+q |= mask;
+put_user(q, ...);
 
-Regards
+instead of
 
-STATE INHERITANCE COMMITTEE
+*p |= mask;
 
+get_user + put_user was quite slow when we tried before.
 
-
-
-
-
-
-
+-- 
+H.J.
