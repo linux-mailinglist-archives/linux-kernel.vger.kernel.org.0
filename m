@@ -2,91 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D34D3BA73
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0821F3BAA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbfFJRLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:11:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34636 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfFJRLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:11:13 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D4E40C18B2DB;
-        Mon, 10 Jun 2019 17:11:12 +0000 (UTC)
-Received: from flask (unknown [10.43.2.83])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D77026061B;
-        Mon, 10 Jun 2019 17:11:10 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Mon, 10 Jun 2019 19:11:10 +0200
-Date:   Mon, 10 Jun 2019 19:11:10 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v2 1/3] KVM: LAPIC: Make lapic timer unpinned when timer
- is injected by posted-interrupt
-Message-ID: <20190610171110.GB8389@flask>
-References: <1559799086-13912-1-git-send-email-wanpengli@tencent.com>
- <1559799086-13912-2-git-send-email-wanpengli@tencent.com>
+        id S2388431AbfFJRMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:12:44 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41623 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388374AbfFJRMi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:12:38 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 107so9022485otj.8;
+        Mon, 10 Jun 2019 10:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3JnaLJmHCQcBLWJZGsxiSkHwMrFrHuZm5L/F2rfhVWU=;
+        b=pp0WsTPZ7OMTL/JJzGLjdzNV9I7yQgICLYWc/yOxPt9S7laf1uppD0WyctgGOvxrRz
+         gq/z/PStMuv8OB7T/+MfqM0s8pWMz6luGy3OZtC9GU1IKuXLcosNdY/rfx1OMVMu7e4i
+         oNz1VenR2sDfDASurROzhHyrYf5AFOiEvRM55CGFj8F9D3bQYguZQ/CB6s0hJT7lmLn+
+         rTJ8ddzV1TJctXFt00xr5SWlGD9rVweyUH28ytqFAuzVpuuKguGSfULoOJpSIzMYdNY9
+         W/U0VWyiy/FCEf52FVujCEo+nX3ucCFF9AnXAW1jjfTBzScc2rJND8azIIwaxBrV3gEU
+         +fZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3JnaLJmHCQcBLWJZGsxiSkHwMrFrHuZm5L/F2rfhVWU=;
+        b=G2BfV0xOOEpK8P8h0g3198HgkC/UgdkXaHMXoLbxvIV1SojUF1hZGYEtSbkwqudnXe
+         FWQKxE1peO0tf3LTrJR6CZskwXhS4rtR/zq6gBbr9Tv0PjEEsskYST6+TYQlMG2LaIvY
+         5WFyVGrXnUMLCDc/Y5THgGA6XgvrJ6hodQkaD/Lw7OV/Ov8acwoJ/EjMGqeUqnQZqLMu
+         5BR/8mosChPQK9byqFLxOVkEquZvmIBrmRQtmn77tNLJlmg5BuDvzGCy/FbSVYnNOcew
+         WGsIKYzrtZvo7JDSL9tfp0zFXR+NMp3Eh81hgygVnZjonoF+/C+OE85QxeIopSY6BhWu
+         XhsQ==
+X-Gm-Message-State: APjAAAV4lrXQGBosM9ds44gAIcwJBmMhAkXNH+b1D5Xd/i4rOGVT0lnK
+        LKynH73jlC7lUF9TaFWwvmlQQDO2LF1aYmBHsvs=
+X-Google-Smtp-Source: APXvYqzcpo4BpZAPqLLLpYSSE01zvU5EUgFlHr+Ht/clKAFUTErJOnLx9oCYmXCnhsHdXKqFqknUD8gL4WoFQP0RIMA=
+X-Received: by 2002:a9d:23ca:: with SMTP id t68mr29361498otb.98.1560186757760;
+ Mon, 10 Jun 2019 10:12:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1559799086-13912-2-git-send-email-wanpengli@tencent.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 10 Jun 2019 17:11:12 +0000 (UTC)
+References: <20190610163736.6187-1-martin.blumenstingl@googlemail.com>
+ <20190610163736.6187-4-martin.blumenstingl@googlemail.com> <8075d0ee-36fa-c4f3-f640-98cf54aba87b@arm.com>
+In-Reply-To: <8075d0ee-36fa-c4f3-f640-98cf54aba87b@arm.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 10 Jun 2019 19:12:26 +0200
+Message-ID: <CAFBinCC8wGZX2B7hc=U7qCHGwQEt9khdTwNinNVYhH=sZtFCZg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: meson: use the generic Ethernet PHY reset
+ GPIO bindings
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+        andrew@lunn.ch, netdev@vger.kernel.org, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-06-06 13:31+0800, Wanpeng Li:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Make lapic timer unpinned when timer is injected by posted-interrupt,
-> the emulated timer can be offload to the housekeeping cpus.
-> 
-> The host admin should fine tuned, e.g. dedicated instances scenario 
-> w/ nohz_full cover the pCPUs which vCPUs resident, several pCPUs 
-> surplus for housekeeping, disable mwait/hlt/pause vmexits to occupy 
-> the pCPUs, fortunately preemption timer is disabled after mwait is 
-> exposed to guest which makes emulated timer offload can be possible. 
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/lapic.c            | 20 ++++++++++++++++----
->  arch/x86/kvm/x86.c              |  5 +++++
->  arch/x86/kvm/x86.h              |  2 ++
->  include/linux/sched/isolation.h |  2 ++
->  kernel/sched/isolation.c        |  6 ++++++
->  5 files changed, 31 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index fcf42a3..09b7387 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -127,6 +127,12 @@ static inline u32 kvm_x2apic_id(struct kvm_lapic *apic)
->  	return apic->vcpu->vcpu_id;
->  }
->  
-> +static inline bool posted_interrupt_inject_timer_enabled(struct kvm_vcpu *vcpu)
-> +{
-> +	return pi_inject_timer && kvm_vcpu_apicv_active(vcpu) &&
-> +		kvm_mwait_in_guest(vcpu->kvm);
+Hi Robin,
 
-I'm torn about the mwait dependency.  It covers a lot of the targeted
-user base, but the relation is convoluted and not fitting perfectly.
+On Mon, Jun 10, 2019 at 6:54 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> Hi Martin,
+>
+> On 10/06/2019 17:37, Martin Blumenstingl wrote:
+> > The snps,reset-gpio bindings are deprecated in favour of the generic
+> > "Ethernet PHY reset" bindings.
+> >
+> > Replace snps,reset-gpio from the &ethmac node with reset-gpios in the
+> > ethernet-phy node. The old snps,reset-active-low property is now encoded
+> > directly as GPIO flag inside the reset-gpios property.
+> >
+> > snps,reset-delays-us is converted to reset-assert-us and
+> > reset-deassert-us. reset-assert-us is the second cell from
+> > snps,reset-delays-us while reset-deassert-us was the third cell.
+> >
+> > Instead of blindly copying the old values (which seems strange since
+> > they gave the PHY one second to come out of reset) over this also
+> > updates the delays based on the datasheets:
+> > - the Realtek RTL8211F PHY needs a 10ms delay (this applies to the
+> >    following boards: GXBB NanoPi K2, GXBB Odroid-C2, GXBB Vega S95
+> >    variants, GXBB Wetek variants, GXL P230, GXM Khadas VIM2, GXM Nexbox
+> >    A1, GXM Q200, GXM RBox Pro)
+>
+>  From the datasheets I've seen, RTL8211E/F specify an assert delay of
+> 10ms, but a deassert delay of 30ms.
+thank you for spotting this!
 
-What do you think about making posted_interrupt_inject_timer_enabled()
-just
+I don't have an RTL8211F datasheet, but I now see what you mean based
+on the RTL8211E datasheet.
 
-	pi_inject_timer && kvm_vcpu_apicv_active(vcpu)
+now that you pointed this out: it seems that I made a similar mistake
+with the IP101GR PHY
+The datasheet mentions: "Chip will be able to operate after 2.5ms
+delay of the rising edge of RESET_N"
+However, further down in the datasheet it states: "Set low to RESET_N
+pin, for at least 10ms ..."
 
-and disarming the vmx preemption timer when
-posted_interrupt_inject_timer_enabled(), just like we do with mwait now?
+I'll wait a few days for more comments and then send a fixed version
 
-Thanks.
+
+Martin
