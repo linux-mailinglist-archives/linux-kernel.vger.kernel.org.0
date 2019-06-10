@@ -2,93 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA353BD0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 21:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9844B3BD00
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 21:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389205AbfFJTqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 15:46:18 -0400
-Received: from mga04.intel.com ([192.55.52.120]:34046 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388901AbfFJTqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:46:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 12:46:17 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jun 2019 12:46:15 -0700
-Message-ID: <5aa98999b1343f34828414b74261201886ec4591.camel@intel.com>
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
- function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Mon, 10 Jun 2019 12:38:09 -0700
-In-Reply-To: <3f19582d-78b1-5849-ffd0-53e8ca747c0d@intel.com>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
-         <20190606200926.4029-4-yu-cheng.yu@intel.com>
-         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
-         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
-         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
-         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
-         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
-         <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
-         <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net>
-         <e26f7d09376740a5f7e8360fac4805488b2c0a4f.camel@intel.com>
-         <3f19582d-78b1-5849-ffd0-53e8ca747c0d@intel.com>
+        id S2389206AbfFJTj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 15:39:28 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40543 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388843AbfFJTj2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 15:39:28 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so1481660eds.7;
+        Mon, 10 Jun 2019 12:39:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IQPQvjuDv27sTzepAG4hWhvF4AgvvEXXIYtlZua8qVQ=;
+        b=h+NSyqIvUV+3LLYL3yPhITD/OHCKfeCqwo8Yu/73jT6TWZfN6Txmzu6Nc4NZFByIjF
+         0P+ii2f0WRPdG/Cf8IKWJfqFGtcalr0FEh3hl9uyFWA6xPT2nD5MlbmtWnYSE9FgRRaJ
+         C71Kq2gyZuDJDtLS/AKq553ko4BSYjF4oMqFifSGUeOefMQw1j1blTYnhl13BkdPeQGA
+         yS3jTGaKdasCCOQyoVkYupCk4y0QgSNxPHX5QpbjoblIZRYZCWspJaCrtirmYJf6o2vP
+         Vt9JWQXyD6rgTWJ6QM6TKn4CpthjHMTJk9y1Cg5mFzyTJV6zzWkbXD8jPLtGrsSlWizF
+         j6sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IQPQvjuDv27sTzepAG4hWhvF4AgvvEXXIYtlZua8qVQ=;
+        b=CbdzZXQNSqWiXTh8zE651XZZksbZHZq6i+SvLuI/LKtmcaABF+jpBGv5HAMYS+0PxB
+         JOuUvY5OuZX6RSgnsyUJ8dWmcMo0F/ex0xK78cV61E/Ov+4/ORpq6Fuko3ilVYVtAU1p
+         kmhKb0pR/6wVRVV/piROSIUIx75XmpgIicU+L8qXxh2lonv2l80sNtqCtwU263mhkiuG
+         A0/4cYOp3bJif/X7jWX49sLudhNInTuQSOAplFIjKBnXJtfXqg2xuGJZyjRGuqPs1OiU
+         1lSMMh715dSSMD1B8ZVEPckXrw7I+PE27/IS5ejRbIAwYgJ1OZZWYCPUiAJDKK1vNVWt
+         yYOQ==
+X-Gm-Message-State: APjAAAVKR7Zj6COPWlrWoekygAkxBdSqvcFOpxPB4gAPNzRJHSOUOwTR
+        4mtAMW4aNTSh5siZzWetsTcffbkNWbqxF+DMhbKE9A26
+X-Google-Smtp-Source: APXvYqz1kexxtSxSbC/mQomznP8lJlzG27uSLKICLaSKbIC97I6MgU7HMDNaWIJHB6w1kOBzjMPBX5pxlUqhvF4APOE=
+X-Received: by 2002:a17:906:604e:: with SMTP id p14mr16491664ejj.192.1560195565360;
+ Mon, 10 Jun 2019 12:39:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190610172308.21129-1-jorge.ramirez-ortiz@linaro.org>
+ <CAF6AEGuAPurGcRh42iRkt3paD=kWLJw-ic_LL1QGY=ws8_00XA@mail.gmail.com> <e656ddd3-f327-818d-3688-f24fddcb52c5@linaro.org>
+In-Reply-To: <e656ddd3-f327-818d-3688-f24fddcb52c5@linaro.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Mon, 10 Jun 2019 12:39:11 -0700
+Message-ID: <CAF6AEGt9=xND3TyJy5HDg3RbXB=dxzj6oqBxKX9MaC5O2=JYVQ@mail.gmail.com>
+Subject: Re: [PATCH v3] tty: serial: msm_serial: avoid system lockup condition
+To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, agross@kernel.org,
+        David Brown <david.brown@linaro.org>, jslaby@suse.com,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        khasim.mohammed@linaro.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-10 at 11:02 -0700, Dave Hansen wrote:
-> On 6/10/19 8:22 AM, Yu-cheng Yu wrote:
-> > > How does glibc know the linear address space size?  We don’t want LA64 to
-> > > break old binaries because the address calculation changed.
-> > 
-> > When an application starts, its highest stack address is determined.
-> > It uses that as the maximum the bitmap needs to cover.
-> 
-> Huh, I didn't think we ran code from the stack. ;)
-> 
-> Especially given the way that we implemented the new 5-level-paging
-> address space, I don't think that expecting code to be below the stack
-> is a good universal expectation.
+On Mon, Jun 10, 2019 at 12:11 PM Jorge Ramirez
+<jorge.ramirez-ortiz@linaro.org> wrote:
+>
+> On 6/10/19 19:53, Rob Clark wrote:
+> > On Mon, Jun 10, 2019 at 10:23 AM Jorge Ramirez-Ortiz
+> > <jorge.ramirez-ortiz@linaro.org> wrote:
+> >> The function msm_wait_for_xmitr can be taken with interrupts
+> >> disabled. In order to avoid a potential system lockup - demonstrated
+> >> under stress testing conditions on SoC QCS404/5 - make sure we wait
+> >> for a bounded amount of time.
+> >>
+> >> Tested on SoC QCS404.
+> >>
+> >> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> >
+> > I had observed that heavy UART traffic would lockup the system (on
+> > sdm845, but I guess same serial driver)?
+> >
+> > But a comment from the peanut gallary:  wouldn't this fix lead to TX
+> > corruption, ie. writing more into TX fifo before hw is ready?  I
+> > haven't looked closely at the driver, but a way to wait without irqs
+> > disabled would seem nicer..
+> >
+> > BR,
+> > -R
+> >
+>
+> I think sdm845 uses a different driver (qcom_geni_serial.c) but yes in
+> any case we need to determine the sequence leading to the lockup. In our
+> internal releases we are adding additional debug information to try to
+> capture this info.
 
-Yes, you make a good point.  However, allowing the application manage the bitmap
-is the most efficient and flexible.  If the loader finds a legacy lib is beyond
-the bitmap can cover, it can deal with the problem by moving the lib to a lower
-address; or re-allocate the bitmap.  If the loader cannot allocate a big bitmap
-to cover all 5-level address space (the bitmap will be large), it can put all
-legacy lib's at lower address.  We cannot do these easily in the kernel.
+ahh, ok.. perhaps qcom_geni_serial has a similar issue.. fwiw where I
+tend to hit it is debugging mesa, bugs that can trigger GPU lockups
+can tricker a lot of them, and a lot of dmesg spew.  Which in turn
+seems to freeze usb (? I think.. I'm using a usb-c ethernet adapter)
+making it hard to ctrl-c the thing that  is causing the GPU lockups in
+the first place.
 
-Yu-cheng
+> But also I dont think this means that the safety net should not be used
 
+yeah, probably not worse than the current state.. although a proper
+solution would be nice
+
+> btw, do you think that perhaps we should add a WARN_ONCE() on timeout?.
+
+not sure if backtrace adds much value here.. but perhaps a (very)
+ratelimited warning msg?  You don't want to make the underlying
+problem too much worse with too much debug msg but some hint about
+what is happening could be useful.
+
+BR,
+-R
