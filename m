@@ -2,129 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A153B259
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0CA53B25E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 11:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389017AbfFJJm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 05:42:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36254 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388033AbfFJJm3 (ORCPT
+        id S2389095AbfFJJn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 05:43:57 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59655 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387977AbfFJJn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 05:42:29 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u22so4977208pfm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:42:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fmMoFhGab8QQq+4ZFOGVd3lIsa5ObNxIXJORVfF0Hlw=;
-        b=DCWBITwFEZ/nZZHhoQiGgSKqY+Bg+p9DQpXFEzfeQPUR1owHIM6Jzu8KtMzqTp4JLd
-         SKNqnMWYYWBEmOYQaxgRpBF5krcBW5Lj7c/9g9SuNPHO9OFjMIrLYg8DJxdKeUciotSA
-         BcoCmu930A+/EJQAwoDqicVpodwgUviIWX3jKAcqtimR8jzCYQ2eUncu8G41rLOIjxdh
-         FZN4PhQNXYhuR9BaBpIY3lAytW8/PQiL8OplKLVIXHV2STSeVKw2VLz3oCKD2djfMVCy
-         BSlVkKTQeKwFFyevpLCzJsdcJPlFzYs8QK8tV14/amM0DZlPvcghTnnXSPJkFlqZReBj
-         sRZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fmMoFhGab8QQq+4ZFOGVd3lIsa5ObNxIXJORVfF0Hlw=;
-        b=pt+o+djq2LcBvfsgceIx+gLjJw3B93u/sEOPfzN+EET/4p5ssLIQ8X86OXx/3ZR0jv
-         KFp3+gQ6N9aHPZMiNACf2McJT7QWBN4q28czBHBFFqpMX335nnECxT6Fa+OcyBJMGTlA
-         ctidqWbw+IGDgwhIq0lmBCqnWQT/3+KJAQ5OAj8dHAxBxSBV4gWxWqU/EaSOaLuvrUwZ
-         ceudCduFY+pCioSOkRdtpx3IEKLCo2HTqwwvI7bpUwKR06pdoZxo2Kiu8eMWqoZp/mOo
-         HFwz0rWy0Wh+02lJ19cvmtoAdZ38rnhSysFPAjIjMcvRmxCXk16iNgpeGONux5i5HBHX
-         1m5A==
-X-Gm-Message-State: APjAAAW7TPIIdbSszdNsfUAQUuzjImkU6CbZnKkvzQRyU0Jogr2vTrQn
-        Gi5SQL1pk86a5TFL1MWPrdSf/cRt
-X-Google-Smtp-Source: APXvYqzLJdBS8O+tcgX/72R0zigsfon0cIQCkAY11GgyKWuOMosGl04CXHAjfRMr4sraVck30xrnnQ==
-X-Received: by 2002:a65:5302:: with SMTP id m2mr14789887pgq.369.1560159747932;
-        Mon, 10 Jun 2019 02:42:27 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id g71sm14625294pgc.41.2019.06.10.02.42.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 02:42:26 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 18:42:22 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@kernel.org,
-        Wu Fangsuo <fangsuowu@asrmicro.com>,
-        Pankaj Suryawanshi <pankaj.suryawanshi@einfochips.com>
-Subject: Re: [PATCH] mm: fix trying to reclaim unevicable LRU page
-Message-ID: <20190610094222.GA55602@google.com>
-References: <20190524071114.74202-1-minchan@kernel.org>
- <20190528151407.GE1658@dhcp22.suse.cz>
- <20190530024229.GF229459@google.com>
- <20190604122806.GH4669@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604122806.GH4669@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 10 Jun 2019 05:43:57 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190610094355euoutp02e82b30e75f5aa3fffdaae6fefad98898~mzRqpn9tS1954419544euoutp02E;
+        Mon, 10 Jun 2019 09:43:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190610094355euoutp02e82b30e75f5aa3fffdaae6fefad98898~mzRqpn9tS1954419544euoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1560159835;
+        bh=Y1ZXF7rmnfRbME/cb81cN8sIoD0cHKznAAQ0GsESofo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=fLO9wqfaXu3TP/r4Rw2Jh08kaqn0VaTctQtZyZPWjiSb94A+uwfR79bY9XxmZL2I8
+         4+/a7M63X+/kNYVNGWoBezHhcj+aolGr93ML3fEBPVFUiGn7vwnPHEJJvnbq6MjwuQ
+         xsyT8Buw4Q3swRZbv2TApXUgvifdSN+SemFJ20T4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190610094354eucas1p2d8b84ee3fb2055fc6cf64a85bfb76d20~mzRp0a9xd1188611886eucas1p2w;
+        Mon, 10 Jun 2019 09:43:54 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 7B.F3.04377.9562EFC5; Mon, 10
+        Jun 2019 10:43:54 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190610094353eucas1p29eb71e82aa621c1e387513571a78710b~mzRo9dhJj1925319253eucas1p2V;
+        Mon, 10 Jun 2019 09:43:53 +0000 (GMT)
+X-AuditID: cbfec7f4-113ff70000001119-aa-5cfe26597785
+Received: from eusync4.samsung.com ( [203.254.199.214]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4B.CD.04140.9562EFC5; Mon, 10
+        Jun 2019 10:43:53 +0100 (BST)
+Received: from amdc2143.DIGITAL.local ([106.120.51.59]) by
+        eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PSV00FBRN12MD10@eusync4.samsung.com>;
+        Mon, 10 Jun 2019 10:43:53 +0100 (BST)
+From:   Lukasz Pawelczyk <l.pawelczyk@samsung.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lukasz Pawelczyk <havner@gmail.com>,
+        Lukasz Pawelczyk <l.pawelczyk@samsung.com>
+Subject: [PATCH v4] extensions: libxt_owner: Add supplementary groups option
+Date:   Mon, 10 Jun 2019 11:42:38 +0200
+Message-id: <20190610094238.24904-1-l.pawelczyk@samsung.com>
+X-Mailer: git-send-email 2.20.1
+MIME-version: 1.0
+Content-transfer-encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsWy7djPc7pRav9iDDbvYLH4u7Od2WLO+RYW
+        i229qxkt/r/WsbjcN43Z4sykhUwWl3fNYbM4tkDMYsK6UywW099cZXbg8jjdtJHFY8vKm0we
+        O2fdZfd4+/sEk0ffllWMHoe+L2D1+LxJLoA9issmJTUnsyy1SN8ugSvjwZa5TAUnVCvmbr7L
+        2sDYLdfFyMEhIWAi8fClWhcjJ4eQwApGiWsTErsYuYDsz4wSD47dZAVJgNR87P3MApFYxijx
+        +NMzNgjnP6PE9nl7warYBAwkvl/YywySEBGYziSxpuEVI0iCWSBU4tyj9cwgtrCAj8S9pr/s
+        IDaLgKpE57MGNhCbV8BGYsnmncwQ6+QlzveuY4eIC0r8mHyPBWKOvMTBK8/BzpAQWMMmsffZ
+        Lqj7XCQeTVsD1SwjcXlyNwvEb9USJ89UQNR3MEpsfDGbEaLGWuLzpC3MEEP5JCZtm84MUc8r
+        0dEmBFHiITFpx0UWSLjESnxZc5xtAqPkLCQnzUJy0gJGplWM4qmlxbnpqcVGeanlesWJucWl
+        eel6yfm5mxiBsX363/EvOxh3/Uk6xCjAwajEw3vA/m+MEGtiWXFl7iFGCQ5mJRHeFVL/YoR4
+        UxIrq1KL8uOLSnNSiw8xSnOwKInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUwimyfmFe6o2lR
+        8i1Ddz3+OxyrllnP2do/zUVSbNK+cLcbNy/oWddfvdVgeXrXvqKYXzInZZtZf7kZxdgeOD9t
+        xcfXdz8sqFQSarywQ6yj9uzqk35O2op1Mx3Osu/d/VGNc87SjTfm3eHeP+t22Pxdt+JiNp70
+        71mxosODwdxXWKGO57KecF/neyWW4oxEQy3mouJEADSeGGTpAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t/xa7qRav9iDC7s47H4u7Od2WLO+RYW
+        i229qxkt/r/WsbjcN43Z4sykhUwWl3fNYbM4tkDMYsK6UywW099cZXbg8jjdtJHFY8vKm0we
+        O2fdZfd4+/sEk0ffllWMHoe+L2D1+LxJLoA9issmJTUnsyy1SN8ugSvjwZa5TAUnVCvmbr7L
+        2sDYLdfFyMkhIWAi8bH3M0sXIxeHkMASRombN+9COY1MEmfXN7OBVLEJGEh8v7CXGcQWEZjO
+        JPFnljCIzSwQKnFtxnSwuLCAj8S9pr/sIDaLgKpE57MGsF5eARuJJZt3MkNsk5c437uOHSIu
+        KPFj8j0WiDnyEgevPGeZwMgzC0lqFpLUAkamVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIGh
+        ue3Yzy07GLveBR9iFOBgVOLhPWD/N0aINbGsuDL3EKMEB7OSCO8KqX8xQrwpiZVVqUX58UWl
+        OanFhxilOViUxHk7BA7GCAmkJ5akZqemFqQWwWSZODilGhgPv7u6UT+8TdL30d1dYta7Ax7m
+        x0teKZJsivPcNGXTrS11zf3Tim7N8VFOvOn5XcGQYXfnAdGJYuHrqjYxr18izjlLuzuqn4fJ
+        880iW62p3u8jd5dOkFTj3vLg2AQbx31SFuWL3ydaVH35EWwb3tb6IrXW5OxU3Ykp7ncDvvjN
+        UrafJvv3GYMSS3FGoqEWc1FxIgDVVQ9iSQIAAA==
+X-CMS-MailID: 20190610094353eucas1p29eb71e82aa621c1e387513571a78710b
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190610094353eucas1p29eb71e82aa621c1e387513571a78710b
+References: <CGME20190610094353eucas1p29eb71e82aa621c1e387513571a78710b@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 02:28:06PM +0200, Michal Hocko wrote:
-> On Thu 30-05-19 11:42:29, Minchan Kim wrote:
-> > On Tue, May 28, 2019 at 05:14:07PM +0200, Michal Hocko wrote:
-> > > [Cc Pankaj Suryawanshi who has reported a similar problem
-> > > http://lkml.kernel.org/r/SG2PR02MB309806967AE91179CAFEC34BE84B0@SG2PR02MB3098.apcprd02.prod.outlook.com]
-> > > 
-> > > On Fri 24-05-19 16:11:14, Minchan Kim wrote:
-> > > > There was below bugreport from Wu Fangsuo.
-> > > > 
-> > > > 7200 [  680.491097] c4 7125 (syz-executor) page:ffffffbf02f33b40 count:86 mapcount:84 mapping:ffffffc08fa7a810 index:0x24
-> > > > 7201 [  680.531186] c4 7125 (syz-executor) flags: 0x19040c(referenced|uptodate|arch_1|mappedtodisk|unevictable|mlocked)
-> > > > 7202 [  680.544987] c0 7125 (syz-executor) raw: 000000000019040c ffffffc08fa7a810 0000000000000024 0000005600000053
-> > > > 7203 [  680.556162] c0 7125 (syz-executor) raw: ffffffc009b05b20 ffffffc009b05b20 0000000000000000 ffffffc09bf3ee80
-> > > > 7204 [  680.566860] c0 7125 (syz-executor) page dumped because: VM_BUG_ON_PAGE(PageLRU(page) || PageUnevictable(page))
-> > > > 7205 [  680.578038] c0 7125 (syz-executor) page->mem_cgroup:ffffffc09bf3ee80
-> > > > 7206 [  680.585467] c0 7125 (syz-executor) ------------[ cut here ]------------
-> > > > 7207 [  680.592466] c0 7125 (syz-executor) kernel BUG at /home/build/farmland/adroid9.0/kernel/linux/mm/vmscan.c:1350!
-> > > > 7223 [  680.603663] c0 7125 (syz-executor) Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-> > > > 7224 [  680.611436] c0 7125 (syz-executor) Modules linked in:
-> > > > 7225 [  680.616769] c0 7125 (syz-executor) CPU: 0 PID: 7125 Comm: syz-executor Tainted: G S              4.14.81 #3
-> > > > 7226 [  680.626826] c0 7125 (syz-executor) Hardware name: ASR AQUILAC EVB (DT)
-> > > > 7227 [  680.633623] c0 7125 (syz-executor) task: ffffffc00a54cd00 task.stack: ffffffc009b00000
-> > > > 7228 [  680.641917] c0 7125 (syz-executor) PC is at shrink_page_list+0x1998/0x3240
-> > > > 7229 [  680.649144] c0 7125 (syz-executor) LR is at shrink_page_list+0x1998/0x3240
-> > > > 7230 [  680.656303] c0 7125 (syz-executor) pc : [<ffffff90083a2158>] lr : [<ffffff90083a2158>] pstate: 60400045
-> > > > 7231 [  680.666086] c0 7125 (syz-executor) sp : ffffffc009b05940
-> > > > ..
-> > > > 7342 [  681.671308] c0 7125 (syz-executor) [<ffffff90083a2158>] shrink_page_list+0x1998/0x3240
-> > > > 7343 [  681.679567] c0 7125 (syz-executor) [<ffffff90083a3dc0>] reclaim_clean_pages_from_list+0x3c0/0x4f0
-> > > > 7344 [  681.688793] c0 7125 (syz-executor) [<ffffff900837ed64>] alloc_contig_range+0x3bc/0x650
-> > > > 7347 [  681.717421] c0 7125 (syz-executor) [<ffffff90084925cc>] cma_alloc+0x214/0x668
-> > > > 7348 [  681.724892] c0 7125 (syz-executor) [<ffffff90091e4d78>] ion_cma_allocate+0x98/0x1d8
-> > > > 7349 [  681.732872] c0 7125 (syz-executor) [<ffffff90091e0b20>] ion_alloc+0x200/0x7e0
-> > > > 7350 [  681.740302] c0 7125 (syz-executor) [<ffffff90091e154c>] ion_ioctl+0x18c/0x378
-> > > > 7351 [  681.747738] c0 7125 (syz-executor) [<ffffff90084c6824>] do_vfs_ioctl+0x17c/0x1780
-> > > > 7352 [  681.755514] c0 7125 (syz-executor) [<ffffff90084c7ed4>] SyS_ioctl+0xac/0xc0
-> > > > 
-> > > > Wu found it's due to [1]. Before that, unevictable page goes to cull_mlocked
-> > > > routine so that it couldn't reach the VM_BUG_ON_PAGE line.
-> > > > 
-> > > > To fix the issue, this patch filter out unevictable LRU pages
-> > > > from the reclaim_clean_pages_from_list in CMA.
-> > > 
-> > > The changelog is rather modest on details and I have to confess I have
-> > > little bit hard time to understand it. E.g. why do not we need to handle
-> > > the regular reclaim path?
-> > 
-> > No need to pass unevictable pages into regular reclaim patch if we are
-> > able to know in advance.
-> 
-> I am sorry to be dense here. So what is the difference in the CMA path?
-> Am I right that the pfn walk (CMA) rather than LRU isolation (reclaim)
-> is the key differentiator?
+The --suppl-groups option causes GIDs specified with --gid-owner to be
+also checked in the supplementary groups of a process.
 
-Yes.
-We could isolate unevictable LRU pages from the pfn waker to migrate and
-could discard clean file-backed pages to reduce migration latency in CMA
-path.
+Signed-off-by: Lukasz Pawelczyk <l.pawelczyk@samsung.com>
+---
+
+Changes from v3:
+ - removed XTOPT_INVERT from O_SUPPL_GROUPS,
+   it wasn't meant to be invertable
+    
+Changes from v2:
+ - XT_SUPPL_GROUPS -> XT_OWNER_SUPPL_GROUPS
+    
+Changes from v1:
+ - complementary -> supplementary
+ - manual (iptables-extensions)
+
+ extensions/libxt_owner.c           | 24 +++++++++++++++++-------
+ extensions/libxt_owner.man         |  4 ++++
+ include/linux/netfilter/xt_owner.h |  7 ++++---
+ 3 files changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/extensions/libxt_owner.c b/extensions/libxt_owner.c
+index 87e4df31..1702b478 100644
+--- a/extensions/libxt_owner.c
++++ b/extensions/libxt_owner.c
+@@ -56,6 +56,7 @@ enum {
+ 	O_PROCESS,
+ 	O_SESSION,
+ 	O_COMM,
++	O_SUPPL_GROUPS,
+ };
+ 
+ static void owner_mt_help_v0(void)
+@@ -87,7 +88,8 @@ static void owner_mt_help(void)
+ "owner match options:\n"
+ "[!] --uid-owner userid[-userid]      Match local UID\n"
+ "[!] --gid-owner groupid[-groupid]    Match local GID\n"
+-"[!] --socket-exists                  Match if socket exists\n");
++"[!] --socket-exists                  Match if socket exists\n"
++"    --suppl-groups                   Also match supplementary groups set with --gid-owner\n");
+ }
+ 
+ #define s struct ipt_owner_info
+@@ -131,6 +133,7 @@ static const struct xt_option_entry owner_mt_opts[] = {
+ 	 .flags = XTOPT_INVERT},
+ 	{.name = "socket-exists", .id = O_SOCK_EXISTS, .type = XTTYPE_NONE,
+ 	 .flags = XTOPT_INVERT},
++	{.name = "suppl-groups", .id = O_SUPPL_GROUPS, .type = XTTYPE_NONE},
+ 	XTOPT_TABLEEND,
+ };
+ 
+@@ -275,6 +278,11 @@ static void owner_mt_parse(struct xt_option_call *cb)
+ 			info->invert |= XT_OWNER_SOCKET;
+ 		info->match |= XT_OWNER_SOCKET;
+ 		break;
++	case O_SUPPL_GROUPS:
++		if (!(info->match & XT_OWNER_GID))
++			xtables_param_act(XTF_BAD_VALUE, "owner", "--suppl-groups", "you need to use --gid-owner first");
++		info->match |= XT_OWNER_SUPPL_GROUPS;
++		break;
+ 	}
+ }
+ 
+@@ -455,9 +463,10 @@ static void owner_mt_print(const void *ip, const struct xt_entry_match *match,
+ {
+ 	const struct xt_owner_match_info *info = (void *)match->data;
+ 
+-	owner_mt_print_item(info, "owner socket exists", XT_OWNER_SOCKET, numeric);
+-	owner_mt_print_item(info, "owner UID match",     XT_OWNER_UID,    numeric);
+-	owner_mt_print_item(info, "owner GID match",     XT_OWNER_GID,    numeric);
++	owner_mt_print_item(info, "owner socket exists", XT_OWNER_SOCKET,       numeric);
++	owner_mt_print_item(info, "owner UID match",     XT_OWNER_UID,          numeric);
++	owner_mt_print_item(info, "owner GID match",     XT_OWNER_GID,          numeric);
++	owner_mt_print_item(info, "incl. suppl. groups", XT_OWNER_SUPPL_GROUPS, numeric);
+ }
+ 
+ static void
+@@ -487,9 +496,10 @@ static void owner_mt_save(const void *ip, const struct xt_entry_match *match)
+ {
+ 	const struct xt_owner_match_info *info = (void *)match->data;
+ 
+-	owner_mt_print_item(info, "--socket-exists",  XT_OWNER_SOCKET, true);
+-	owner_mt_print_item(info, "--uid-owner",      XT_OWNER_UID,    true);
+-	owner_mt_print_item(info, "--gid-owner",      XT_OWNER_GID,    true);
++	owner_mt_print_item(info, "--socket-exists",  XT_OWNER_SOCKET,       true);
++	owner_mt_print_item(info, "--uid-owner",      XT_OWNER_UID,          true);
++	owner_mt_print_item(info, "--gid-owner",      XT_OWNER_GID,          true);
++	owner_mt_print_item(info, "--suppl-groups",   XT_OWNER_SUPPL_GROUPS, true);
+ }
+ 
+ static int
+diff --git a/extensions/libxt_owner.man b/extensions/libxt_owner.man
+index 49b58cee..e2479865 100644
+--- a/extensions/libxt_owner.man
++++ b/extensions/libxt_owner.man
+@@ -15,5 +15,9 @@ given user. You may also specify a numerical UID, or an UID range.
+ Matches if the packet socket's file structure is owned by the given group.
+ You may also specify a numerical GID, or a GID range.
+ .TP
++\fB\-\-suppl\-groups\fP
++Causes group(s) specified with \fB\-\-gid-owner\fP to be also checked in the
++supplementary groups of a process.
++.TP
+ [\fB!\fP] \fB\-\-socket\-exists\fP
+ Matches if the packet is associated with a socket.
+diff --git a/include/linux/netfilter/xt_owner.h b/include/linux/netfilter/xt_owner.h
+index 20817617..e7731dcc 100644
+--- a/include/linux/netfilter/xt_owner.h
++++ b/include/linux/netfilter/xt_owner.h
+@@ -4,9 +4,10 @@
+ #include <linux/types.h>
+ 
+ enum {
+-	XT_OWNER_UID    = 1 << 0,
+-	XT_OWNER_GID    = 1 << 1,
+-	XT_OWNER_SOCKET = 1 << 2,
++	XT_OWNER_UID          = 1 << 0,
++	XT_OWNER_GID          = 1 << 1,
++	XT_OWNER_SOCKET       = 1 << 2,
++	XT_OWNER_SUPPL_GROUPS = 1 << 3,
+ };
+ 
+ struct xt_owner_match_info {
+-- 
+2.20.1
 
