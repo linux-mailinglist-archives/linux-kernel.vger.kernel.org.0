@@ -2,106 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 103D33BE03
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CD43BDEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 22:59:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389826AbfFJVGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:06:11 -0400
-Received: from mga04.intel.com ([192.55.52.120]:38294 "EHLO mga04.intel.com"
+        id S2389596AbfFJU7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 16:59:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388342AbfFJVGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:06:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 14:06:10 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jun 2019 14:06:08 -0700
-Message-ID: <328275c9b43c06809c9937c83d25126a6e3efcbd.camel@intel.com>
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
- function
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Mon, 10 Jun 2019 13:58:01 -0700
-In-Reply-To: <ac9a20a6-170a-694e-beeb-605a17195034@intel.com>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
-         <20190606200926.4029-4-yu-cheng.yu@intel.com>
-         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
-         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
-         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
-         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
-         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
-         <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
-         <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net>
-         <e26f7d09376740a5f7e8360fac4805488b2c0a4f.camel@intel.com>
-         <3f19582d-78b1-5849-ffd0-53e8ca747c0d@intel.com>
-         <5aa98999b1343f34828414b74261201886ec4591.camel@intel.com>
-         <0665416d-9999-b394-df17-f2a5e1408130@intel.com>
-         <5c8727dde9653402eea97bfdd030c479d1e8dd99.camel@intel.com>
-         <ac9a20a6-170a-694e-beeb-605a17195034@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727588AbfFJU7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 16:59:34 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3A992089E;
+        Mon, 10 Jun 2019 20:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560200373;
+        bh=dI/BJlaJPgTAa6Ru+0W+XmCLy9W/37V7lpMtYMPQChQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gO9QfFjHvHrVSOAKsvu9mfDGBaAa1rC79LdbXnkz1abvtb3qBMPyV2lco9lpMDalF
+         XolaahQdB7U8De7j4soNdeVxOwHRXga4RaQIgNHyx25cv6uUW8GYXMg7vYUUFTcN9z
+         r6dKpDqQxK552Syj0bTXnRNbW8AiNH2xLagcZ2Ck=
+Date:   Mon, 10 Jun 2019 13:59:31 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Boris Pismenny <borisp@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Dave Watson <davejwatson@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     syzbot <syzbot+06537213db7ba2745c4a@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: [net/tls] Re: memory leak in create_ctx
+Message-ID: <20190610205929.GL63833@gmail.com>
+References: <000000000000a420af058ad4bca2@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000a420af058ad4bca2@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-10 at 13:43 -0700, Dave Hansen wrote:
-> On 6/10/19 1:27 PM, Yu-cheng Yu wrote:
-> > > > If the loader cannot allocate a big bitmap to cover all 5-level
-> > > > address space (the bitmap will be large), it can put all legacy lib's
-> > > > at lower address.  We cannot do these easily in the kernel.
-> > > 
-> > > This is actually an argument to do it in the kernel.  The kernel can
-> > > always allocate the virtual space however it wants, no matter how large.
-> > >  If we hide the bitmap behind a kernel API then we can put it at high
-> > > 5-level user addresses because we also don't have to worry about the
-> > > high bits confusing userspace.
-> > 
-> > We actually tried this.  The kernel needs to reserve the bitmap space in the
-> > beginning for every CET-enabled app, regardless of actual needs. 
-> 
-> I don't think this is a problem.  In fact, I think reserving the space
-> is actually the only sane behavior.  If you don't reserve it, you
-> fundamentally limit where future legacy instructions can go.
-> 
-> One idea is that we always size the bitmap for the 48-bit addressing
-> systems.  Legacy code probably doesn't _need_ to go in the new address
-> space, and if we do this we don't have to worry about the gigantic
-> 57-bit address space bitmap.
-> 
-> > On each memory request, the kernel then must consider a percentage of
-> > allocated space in its calculation, and on systems with less memory
-> > this quickly becomes a problem.
-> 
-> I'm not sure what you're referring to here?  Are you referring to our
-> overcommit limits?
+Looks like a TLS bug.  icsk->icsk_ulp_data isn't always freed.
 
-Yes.
+On Sat, Jun 08, 2019 at 12:13:06PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    79c3ba32 Merge tag 'drm-fixes-2019-06-07-1' of git://anong..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=170e0bfea00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d5c73825cbdc7326
+> dashboard link: https://syzkaller.appspot.com/bug?extid=06537213db7ba2745c4a
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10aa806aa00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+06537213db7ba2745c4a@syzkaller.appspotmail.com
+> 
+> IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
+> 2019/06/08 14:55:51 executed programs: 15
+> 2019/06/08 14:55:56 executed programs: 31
+> 2019/06/08 14:56:02 executed programs: 51
+> BUG: memory leak
+> unreferenced object 0xffff888117ceae00 (size 512):
+>   comm "syz-executor.3", pid 7233, jiffies 4294949016 (age 13.640s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000e6550967>] kmemleak_alloc_recursive
+> include/linux/kmemleak.h:55 [inline]
+>     [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
+>     [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+>     [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
+>     [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
+>     [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
+>     [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
+>     [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
+>     [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
+>     [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
+>     [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60
+> net/ipv4/tcp.c:2784
+>     [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
+>     [<00000000c840962c>] sock_common_setsockopt+0x38/0x50
+> net/core/sock.c:3124
+>     [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
+>     [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
+>     [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
+>     [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
+>     [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0
+> arch/x86/entry/common.c:301
+>     [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> BUG: memory leak
+> unreferenced object 0xffff88810965dc00 (size 512):
+>   comm "syz-executor.2", pid 7235, jiffies 4294949016 (age 13.640s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000e6550967>] kmemleak_alloc_recursive
+> include/linux/kmemleak.h:55 [inline]
+>     [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
+>     [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+>     [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
+>     [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
+>     [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
+>     [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
+>     [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
+>     [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
+>     [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
+>     [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60
+> net/ipv4/tcp.c:2784
+>     [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
+>     [<00000000c840962c>] sock_common_setsockopt+0x38/0x50
+> net/core/sock.c:3124
+>     [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
+>     [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
+>     [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
+>     [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
+>     [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0
+> arch/x86/entry/common.c:301
+>     [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> BUG: memory leak
+> unreferenced object 0xffff8881207d7600 (size 512):
+>   comm "syz-executor.5", pid 7244, jiffies 4294949019 (age 13.610s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000e6550967>] kmemleak_alloc_recursive
+> include/linux/kmemleak.h:55 [inline]
+>     [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
+>     [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+>     [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
+>     [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
+>     [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
+>     [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
+>     [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
+>     [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
+>     [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
+>     [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60
+> net/ipv4/tcp.c:2784
+>     [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
+>     [<00000000c840962c>] sock_common_setsockopt+0x38/0x50
+> net/core/sock.c:3124
+>     [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
+>     [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
+>     [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
+>     [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
+>     [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0
+> arch/x86/entry/common.c:301
+>     [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
