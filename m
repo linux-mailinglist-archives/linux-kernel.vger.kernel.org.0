@@ -2,90 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3ED3B847
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD31E3B861
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:35:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391153AbfFJP13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:27:29 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21589 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390177AbfFJP12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:27:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 08:27:28 -0700
-X-ExtLoop1: 1
-Received: from agusev-mobl.ger.corp.intel.com (HELO localhost) ([10.249.46.248])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Jun 2019 08:27:17 -0700
-Date:   Mon, 10 Jun 2019 18:27:17 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
- pages' protection bits
-Message-ID: <20190610152717.GB3752@linux.intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
- <20190606021145.12604-3-sean.j.christopherson@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606021145.12604-3-sean.j.christopherson@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2390560AbfFJPfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:35:54 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:37771 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390415AbfFJPfy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:35:54 -0400
+Received: by mail-ua1-f68.google.com with SMTP id z13so2929327uaa.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 08:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8uh6CdMohZorEgVN9vXbSY/UeOknex/E8iFCG0M5wD8=;
+        b=YF/qqa7RPVilOMXhPggTQ2tpP/u5TBkNMkf0tWkNDuY71XiWzKl9NLQvhH3Yc9YH26
+         VUKd1InO3NfUJHMKYkTx5o+qwWpdkk/hXfKrXve3eDM/0L4UKXbC8gw8CgPDQPZjt+I5
+         eSAHC5TD/9yiJ0Zg2UzHjyeSga9rve4ZZNGF8RnOjZBy9eTLyiIV4AEeNtXMcO4zrvIy
+         vYIf0XEmyd6tEuSgEH8yuYT2nTVOCICSlZXbE2Nhf615F+EqfYJFAWd1ZWD1Q62pqVdO
+         Q4jI4iwBEBNfvr2+p2FesRQtB57J+Jt/Y/O2qK4THXTbXH5xok4FtX3G7a81IggvA9ZG
+         QGpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8uh6CdMohZorEgVN9vXbSY/UeOknex/E8iFCG0M5wD8=;
+        b=rHurR7rLFr/4Ewb+n+pNq1tTkEzjhGaSg7GSa9YwVdH317J99Fqgn3rPHarcNWPAyH
+         wePaKWIiqQWXGJ5h7Z09+2z9i01RrB8oa0qKW7vUvw93i/DSljnFlPqmQWbIH6IJl1mP
+         bRH7FP/NftFUPmmG6yuyh1tD74kyakztcNdOD51b2kGbevrDTVyRP8MTC+l8CCEAsI/y
+         WQxLMoyrR9BM2vEwZLNTDZpFyYkhbmZWvOJLWUDlbIGYq7Cocnb8phRsg7l3niiSTnEJ
+         49qjOst5OmMhJ3N9dUPvGHAFk9DSAfHGbDzpa8JXne9k2psYdCBiT7Nt9MvNrsjtcvR2
+         36+w==
+X-Gm-Message-State: APjAAAVt4cuZztDIqWP0wyQF10e74YOp7geSzgcPy1GDHCxPh542AQx4
+        hZKJ/tGy3tLsdutOG2C+7xhZnQ==
+X-Google-Smtp-Source: APXvYqyW9RNpBmY0FT2Gai4VoQlPQfeHqIXLI3ebTPQFn1eeym5qId9EdeBiL1wmZFiH0a1CNyFiNw==
+X-Received: by 2002:ab0:6896:: with SMTP id t22mr25091588uar.127.1560180953301;
+        Mon, 10 Jun 2019 08:35:53 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id z21sm2809391vsk.30.2019.06.10.08.35.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 08:35:52 -0700 (PDT)
+Message-ID: <1560180947.6132.67.camel@lca.pw>
+Subject: Re: [PATCH] locking/lockdep: Fix lock IRQ usage initialization bug
+From:   Qian Cai <cai@lca.pw>
+To:     Yuyang Du <duyuyang@gmail.com>, peterz@infradead.org,
+        will.deacon@arm.com, mingo@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Mon, 10 Jun 2019 11:35:47 -0400
+In-Reply-To: <20190610055258.6424-1-duyuyang@gmail.com>
+References: <20190610055258.6424-1-duyuyang@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 07:11:42PM -0700, Sean Christopherson wrote:
-> [SNAP]
-
-Same general criticism as for the previous patch: try to say things as
-they are without anything extra.
-
-> A third alternative would be to pull the protection bits from the page's
-> SECINFO, i.e. make decisions based on the protections enforced by
-> hardware.  However, with SGX2, userspace can extend the hardware-
-> enforced protections via ENCLU[EMODPE], e.g. can add a page as RW and
-> later convert it to RX.  With SGX2, making a decision based on the
-> initial protections would either create a security hole or force SGX to
-> dynamically track "dirty" pages (see first alternative above).
+On Mon, 2019-06-10 at 13:52 +0800, Yuyang Du wrote:
+> The commit:
 > 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+>   091806515124b20 ("locking/lockdep: Consolidate lock usage bit
+> initialization")
+> 
+> misses marking LOCK_USED flag at IRQ usage initialization when
+> CONFIG_TRACE_IRQFLAGS
+> or CONFIG_PROVE_LOCKING is not defined. Fix it.
+> 
+> Reported-by: Qian Cai <cai@lca.pw>
+> Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 
-'flags' should would renamed as 'secinfo_flags_mask' even if the name is
-longish. It would use the same values as the SECINFO flags. The field in
-struct sgx_encl_page should have the same name. That would express
-exactly relation between SECINFO and the new field. I would have never
-asked on last iteration why SECINFO is not enough with a better naming.
-
-The same field can be also used to cage page type to a subset of values.
-
-/Jarkko
+It works fine.
