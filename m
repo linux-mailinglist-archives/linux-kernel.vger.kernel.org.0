@@ -2,178 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93613BCFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 21:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E80FE3BD05
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 21:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389129AbfFJTjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 15:39:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388843AbfFJTjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:39:22 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0130B207E0;
-        Mon, 10 Jun 2019 19:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560195561;
-        bh=Yc63F9HkWkaur2zmRzaHvYzUSbn6hzEs6D1ov72qWGw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O65CO/TcJ5/PiPp67uiEOxDsBdkHzwiB79Q7AqgvRHktKbX5e4y7ZNwY+W1cWBBpf
-         dA0eQQ8sqSpmU8TJEm5aSULsgHSz4gjh2h7m1XZ5Dz7gSpiksUYs43a9PvHRlJ5I4m
-         eXu3Bxe1cUhNpRURnt3PUZ441wh07BSCWL695nAg=
-Date:   Mon, 10 Jun 2019 12:39:19 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Andrei Vagin <avagin@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        deepa.kernel@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        syzbot <syzbot+0d602a1b0d8c95bdf299@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] signal/ptrace: Don't leak unitialized kernel memory with
- PTRACE_PEEK_SIGINFO
-Message-ID: <20190610193918.GJ63833@gmail.com>
-References: <000000000000410d500588adf637@google.com>
- <87woia5vq3.fsf@xmission.com>
- <20190528124746.ac703cd668ca9409bb79100b@linux-foundation.org>
- <87pno23vim.fsf_-_@xmission.com>
- <CANaxB-ztx3-3cfsbK4rTnGAAcODJmgKHyhHF_0oBe+qqyf5Leg@mail.gmail.com>
- <87tvd5m928.fsf@xmission.com>
+        id S2389265AbfFJTlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 15:41:12 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4037 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388843AbfFJTlM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 15:41:12 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cfeb2560000>; Mon, 10 Jun 2019 12:41:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Jun 2019 12:41:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Jun 2019 12:41:10 -0700
+Received: from [10.19.65.14] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Jun
+ 2019 19:41:07 +0000
+Subject: Re: [PATCH V4 6/6] i2c: tegra: remove BUG, BUG_ON
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>
+CC:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1560186515-30797-1-git-send-email-bbiswas@nvidia.com>
+ <1560186515-30797-6-git-send-email-bbiswas@nvidia.com>
+ <06ab30b6-bf79-c628-0a04-d0307511a06f@gmail.com>
+From:   Bitan Biswas <bbiswas@nvidia.com>
+Message-ID: <851d7837-5b98-228e-d8c9-3c41be1fb2e0@nvidia.com>
+Date:   Mon, 10 Jun 2019 12:41:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tvd5m928.fsf@xmission.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <06ab30b6-bf79-c628-0a04-d0307511a06f@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560195670; bh=JyK/p2hqLXboqisgBAqPIy3Mdy8LlNVYdBjpebqVJIY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=O2WBtoUyUH1swTwYr1h7CefLuJAxiWBgyeBLPVsr3jTC2AcNMgxWB3gMesP7s+f0N
+         fCpjGh1kuoth4PjvQ0BvOh4w2Et3IkhRMkzNrVIXHkQfF120onInDHXmPNGDBWBZIX
+         wdQsI40WJmpHjq8YAzZzOAra0CMDrYQ9IapOPm3uvFTVJewdGhc6Vn+CeSdnPKKYII
+         fAI9anU2BtlxsRJMXovQrh4On76+0ifQNTCg8BCEKPFsKNAteZsGrCesZEpQBEHbJc
+         aIeY6ky7RiJ6jBJjzDZ/8ALC2ImfCKqP61Z4IJ8Sj9atviSvOtYENquZ89n3YuuJ6U
+         F41YtYrSVkw5A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 02:42:23PM -0500, Eric W. Biederman wrote:
-> Andrei Vagin <avagin@gmail.com> writes:
-> 
-> > On Tue, May 28, 2019 at 6:22 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >>
-> >>
-> >> Recently syzbot in conjunction with KMSAN reported that
-> >> ptrace_peek_siginfo can copy an uninitialized siginfo to userspace.
-> >> Inspecting ptrace_peek_siginfo confirms this.
-> >>
-> >> The problem is that off when initialized from args.off can be
-> >> initialized to a negaive value.  At which point the "if (off >= 0)"
-> >> test to see if off became negative fails because off started off
-> >> negative.
-> >>
-> >> Prevent the core problem by adding a variable found that is only true
-> >> if a siginfo is found and copied to a temporary in preparation for
-> >> being copied to userspace.
-> >>
-> >> Prevent args.off from being truncated when being assigned to off by
-> >> testing that off is <= the maximum possible value of off.  Convert off
-> >> to an unsigned long so that we should not have to truncate args.off,
-> >> we have well defined overflow behavior so if we add another check we
-> >> won't risk fighting undefined compiler behavior, and so that we have a
-> >> type whose maximum value is easy to test for.
-> >>
-> >
-> > Hello Eric,
-> >
-> > Thank you for fixing this issue. Sorry for the late response.
-> > I thought it was fixed a few month ago, I remembered that we discussed it:
-> > https://lkml.org/lkml/2018/10/10/251
-> 
-> I was looking for that conversation, and I couldn't find it so I just
-> decided to write a test and fix it.
-> 
-> > Here are two inline comments.
-> >
-> >
-> >> Cc: Andrei Vagin <avagin@gmail.com>
-> >> Cc: stable@vger.kernel.org
-> >> Reported-by: syzbot+0d602a1b0d8c95bdf299@syzkaller.appspotmail.com
-> >> Fixes: 84c751bd4aeb ("ptrace: add ability to retrieve signals without removing from a queue (v4)")
-> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >> ---
-> >>
-> >> Comments?
-> >> Concerns?
-> >>
-> >> Otherwise I will queue this up and send it to Linus.
-> >>
-> >>  kernel/ptrace.c | 10 ++++++++--
-> >>  1 file changed, 8 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> >> index 6f357f4fc859..4c2b24a885d3 100644
-> >> --- a/kernel/ptrace.c
-> >> +++ b/kernel/ptrace.c
-> >> @@ -704,6 +704,10 @@ static int ptrace_peek_siginfo(struct task_struct *child,
-> >>         if (arg.nr < 0)
-> >>                 return -EINVAL;
-> >>
-> >> +       /* Ensure arg.off fits in an unsigned */
-> >> +       if (arg.off > ULONG_MAX)
-> >
-> > if (arg.off > ULONG_MAX - arg.nr)
-> >
-> 
-> The new variable found ensures that whatever we pass in we won't return
-> an invalid value.  All this test does is guarantee we don't return a
-> much lower entry in the queue.
-> 
-> We don't need to take arg.nr into account as we won't try
-> entries that high as the queue will never get that long.  The maximum
-> siqueue entries per user is about 2^24.
-> 
-> >> +               return 0;
-> >
-> > maybe we should return EINVAL in this case
-> 
-> But it is a huge request not an invalid request.  The request
-> makes perfect sense.   For smaller values whose offset is
-> greater than the length of the queue we just return 0 entries
-> found.  So I think it makes more sense to just return 0 entries
-> found in this case as well.
-> 
-> >> +
-> >>         if (arg.flags & PTRACE_PEEKSIGINFO_SHARED)
-> >>                 pending = &child->signal->shared_pending;
-> >>         else
-> >> @@ -711,18 +715,20 @@ static int ptrace_peek_siginfo(struct task_struct *child,
-> >>
-> >>         for (i = 0; i < arg.nr; ) {
-> >>                 kernel_siginfo_t info;
-> >> -               s32 off = arg.off + i;
-> >> +               unsigned long off = arg.off + i;
-> >> +               bool found = false;
-> >>
-> >>                 spin_lock_irq(&child->sighand->siglock);
-> >>                 list_for_each_entry(q, &pending->list, list) {
-> >>                         if (!off--) {
-> >> +                               found = true;
-> >>                                 copy_siginfo(&info, &q->info);
-> >>                                 break;
-> >>                         }
-> >>                 }
-> >>                 spin_unlock_irq(&child->sighand->siglock);
-> >>
-> >> -               if (off >= 0) /* beyond the end of the list */
-> >> +               if (!found) /* beyond the end of the list */
-> >>                         break;
-> >>
-> >>  #ifdef CONFIG_COMPAT
-> >> --
-> >> 2.21.0.dirty
-> >>
-> 
 
-This patch looks fine to me.  Are you planning to queue this up?
-It would be nice if we could fix this sort of bug in fewer than 8 months.
 
-- Eric
+On 6/10/19 11:12 AM, Dmitry Osipenko wrote:
+> 10.06.2019 20:08, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+>> as needed. Remove BUG() and make Rx and Tx case handling
+>> similar.
+>>
+>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 11 ++++++-----
+>>   1 file changed, 6 insertions(+), 5 deletions(-)
+>=20
+> Looks that this is still not correct. What if it transfer-complete flag
+> is set and buffer is full on RX? In this case the transfer will succeed
+> while it was a failure.
+>=20
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-teg=
+ra.c
+>> index 4dfb4c1..30619d6 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -515,7 +515,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_=
+dev *i2c_dev)
+>>   	 * prevent overwriting past the end of buf
+>>   	 */
+>>   	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+>> -		BUG_ON(buf_remaining > 3);
+>=20
+> Actually error should be returned here since out-of-bounds memory
+> accesses must be avoided, hence:
+>=20
+> 	if (WARN_ON_ONCE(buf_remaining > 3))
+> 		return -EINVAL;
+buf_remaining will be less than equal to 3 because of the expression=20
+earlier
+https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-teg=
+ra.c#L520
+
+>=20
+>>   		val =3D i2c_readl(i2c_dev, I2C_RX_FIFO);
+>>   		val =3D cpu_to_le32(val);
+>>   		memcpy(buf, &val, buf_remaining);
+>> @@ -523,7 +522,6 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_=
+dev *i2c_dev)
+>>   		rx_fifo_avail--;
+>>   	}
+>>  =20
+>> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+>=20
+> Better not to ignore this as well:
+>=20
+> 	if (WARN_ON_ONCE(rx_fifo_avail > 0 &&
+> 			 buf_remaining > 0))
+> 		return -EINVAL;
+>=20
+Please check below line.
+https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-teg=
+ra.c#L532=20
+
+
+It ensures that buf_remaining will be 0 and we never hit the BUG_ON as=20
+follows:
+
+ >> -	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+
+>>   	i2c_dev->msg_buf_remaining =3D buf_remaining;
+>>   	i2c_dev->msg_buf =3D buf;
+>>  =20
+>> @@ -581,7 +579,6 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_d=
+ev *i2c_dev)
+>>   	 * boundary and fault.
+>>   	 */
+>>   	if (tx_fifo_avail > 0 && buf_remaining > 0) {
+>> -		BUG_ON(buf_remaining > 3);
+>=20
+> And here, cause this will corrupt stack:
+>=20
+> 		if (WARN_ON_ONCE(buf_remaining > 3))
+> 			return -EINVAL;
+>=20
+Please check the line
+https://elixir.bootlin.com/linux/v5.2-rc4/source/drivers/i2c/busses/i2c-teg=
+ra.c#L576
+
+It ensures buf_remaining will be less or equal to 3.
+
+>>   		memcpy(&val, buf, buf_remaining);
+>>   		val =3D le32_to_cpu(val);
+>>  =20
+>> @@ -850,7 +847,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_=
+id)
+>>   			if (i2c_dev->msg_buf_remaining)
+>>   				tegra_i2c_empty_rx_fifo(i2c_dev);
+>>   			else
+>> -				BUG();
+>> +				tegra_i2c_mask_irq(i2c_dev,
+>> +						   I2C_INT_RX_FIFO_DATA_REQ);
+>=20
+> Then here:
+>=20
+> 	if (WARN_ON_ONCE(!i2c_dev->msg_buf_remaining) ||
+> 	    tegra_i2c_empty_rx_fifo(i2c_dev)) {
+> 		i2c_dev->msg_err |=3D I2C_ERR_UNKNOWN_INTERRUPT;
+> 		goto err;
+> 	}
+>=20
+Can you please elaborate why the condition needs to be as follows=20
+instead of " if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) " ?
+
+ > 	if (WARN_ON_ONCE(!i2c_dev->msg_buf_remaining) ||
+ > 	    tegra_i2c_empty_rx_fifo(i2c_dev)) {
+
+
+-regards,
+  Bitan
+
