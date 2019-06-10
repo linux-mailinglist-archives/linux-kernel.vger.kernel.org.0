@@ -2,95 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292863B0E1
+	by mail.lfdr.de (Postfix) with ESMTP id 91E103B0E2
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387879AbfFJIm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 04:42:28 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40116 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388430AbfFJImZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 04:42:25 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v19so7280444wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FalRLEADzMPtGyW8NIPAA0F5olxzxXGnPVoGFb+myak=;
-        b=ErpuCgIKx7tdIhXc0Vgq27YYh5IdzYS8ZROzqkhZo992Lvnn19vfhbIqZzxfQ10161
-         q/yb5S3UOlu7jVewR6gPOHtopPzH2mIm47P8H5DIDXJkkAvu/fVLeYL+XDHodIfbmI/Q
-         CKa9e4AABXjZuSQiUwSxAL/oBnskNHq1jEInWN4Q5Tp+sQdhRKsiH2TxkMt482GTBNR7
-         aY1rlYW3/QXDuFLndlbV2tpu9/XuFDuowc7j5gTlPoBAZBoUbY32p3JHHxZM6+39iUMi
-         I88QsPzhpoQOgqfRr4ELN1VJv09S0GcBFZHzKYKYqObfTb0uzFEHbnk2tmqKPOZqSUBm
-         gHPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FalRLEADzMPtGyW8NIPAA0F5olxzxXGnPVoGFb+myak=;
-        b=Ex6dGnHx1kiXkPhSYzjDklpUJYmlB8QBbofxqYVN7O/n5KAsNIKzNtTfXQgeNkCoFk
-         5UTrQER+6tOgWrXBqKGKWoTpV/JmuDVGn2g2JJNzcBpAAco93oJCS8gUgwyeu8d/2KEB
-         UCe1Hx8Wt2/y6429le1tQtTXy89WLbQWYtMtp0USXY0xtmwzA4u7dUFrLrcjdE2GqnLm
-         ZqmVSIRkJXyOrAFi7C5uxXfp2a46nFC5gpJrJHstFFz/FazPcCJj2sdH5J/cI/AmwFnq
-         kI/Y+Af12F1Qpu3C8/CRrVPAkqSUYw3qNGopJWOx2UCHKcyU98mYXFNhQhL2X5z6+caU
-         2sGg==
-X-Gm-Message-State: APjAAAVV9J9p7KsXZXQb+50A877uItfZQJOw6IwdDX1nT5r8Tjdbv7+d
-        aUo6td+wGMJtUymUYnvYMylB3g==
-X-Google-Smtp-Source: APXvYqyC2APpf/zAbitrU/BjHOuyVW/f2vbj2/AUhh+FVA31orPg+ghJwVZnl4+ZvUlYkGglrWpA1w==
-X-Received: by 2002:a1c:35c9:: with SMTP id c192mr12941297wma.147.1560156143556;
-        Mon, 10 Jun 2019 01:42:23 -0700 (PDT)
-Received: from localhost.localdomain ([2.31.167.229])
-        by smtp.gmail.com with ESMTPSA id a125sm9929670wmf.42.2019.06.10.01.42.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 01:42:23 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, andy.gross@linaro.org,
-        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org,
-        ard.biesheuvel@linaro.org, jlhugo@gmail.com,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v3 8/8] usb: dwc3: qcom: Improve error handling
-Date:   Mon, 10 Jun 2019 09:42:13 +0100
-Message-Id: <20190610084213.1052-8-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190610084213.1052-1-lee.jones@linaro.org>
-References: <20190610084213.1052-1-lee.jones@linaro.org>
+        id S2388618AbfFJIme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 04:42:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40860 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388267AbfFJImb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 04:42:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 97B14AF6A;
+        Mon, 10 Jun 2019 08:42:30 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id E447EE00E3; Mon, 10 Jun 2019 10:42:29 +0200 (CEST)
+Date:   Mon, 10 Jun 2019 10:42:29 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     stable@vger.kernel.org
+Cc:     Pavel Machek <pavel@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 4.19 01/51] ethtool: fix potential userspace buffer
+ overflow
+Message-ID: <20190610084229.GA31797@unicorn.suse.cz>
+References: <20190609164127.123076536@linuxfoundation.org>
+ <20190609164127.215699992@linuxfoundation.org>
+ <20190610082112.GA8783@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610082112.GA8783@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dwc3_qcom_clk_init() is called with of_count_phandle_with_args() as an
-argument.  If of_count_phandle_with_args() returns an error, the number
-of clocks will be a negative value and will lead to undefined behaviour.
+On Mon, Jun 10, 2019 at 10:21:12AM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > From: Vivien Didelot <vivien.didelot@gmail.com>
+> > 
+> > [ Upstream commit 0ee4e76937d69128a6a66861ba393ebdc2ffc8a2 ]
+> > 
+> > ethtool_get_regs() allocates a buffer of size ops->get_regs_len(),
+> > and pass it to the kernel driver via ops->get_regs() for filling.
+> > 
+> > There is no restriction about what the kernel drivers can or cannot do
+> > with the open ethtool_regs structure. They usually set regs->version
+> > and ignore regs->len or set it to the same size as ops->get_regs_len().
+> > 
+> > But if userspace allocates a smaller buffer for the registers dump,
+> > we would cause a userspace buffer overflow in the final copy_to_user()
+> > call, which uses the regs.len value potentially reset by the driver.
+> > 
+> > To fix this, make this case obvious and store regs.len before calling
+> > ops->get_regs(), to only copy as much data as requested by userspace,
+> > up to the value returned by ops->get_regs_len().
+> > 
+> > While at it, remove the redundant check for non-null regbuf.
+> 
+> Mainline differs from 4.19-stable here, and while the non-null check
+> is redundant in -mainline, it does not seem to be redundant in
+> -stable.
+> 
+> In stable, if get_regs_len() returns < 0, we'll pass it to vzalloc.
 
-Ensure we check for an error before attempting to blindly use the value.
+Right. :-(
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/usb/dwc3/dwc3-qcom.c | 3 +++
- 1 file changed, 3 insertions(+)
+I guess we should also pick commit f9fc54d313fa ("ethtool: check the
+return value of get_regs_len") to stable branches before 5.0.
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index 55ba04254e38..e4dac82abd7d 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -409,6 +409,9 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
- 	if (!np || !count)
- 		return 0;
- 
-+	if (count < 0)
-+		return count;
-+
- 	qcom->num_clocks = count;
- 
- 	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
--- 
-2.17.1
-
+Michal
