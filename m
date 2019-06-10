@@ -2,105 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 628EA3BEA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5449A3BEAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390176AbfFJV1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:27:35 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:58805 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389193AbfFJV1e (ORCPT
+        id S2389949AbfFJVb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:31:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46880 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389193AbfFJVb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:27:34 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1haRpD-0007Ex-Hn; Mon, 10 Jun 2019 15:27:31 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1haRpC-0006xo-Kg; Mon, 10 Jun 2019 15:27:31 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     syzbot <syzbot+f625baafb9a1c4bfc3f6@syzkaller.appspotmail.com>
-Cc:     aarcange@redhat.com, akpm@linux-foundation.org,
-        andrea.parri@amarulasolutions.com, ast@kernel.org,
-        avagin@gmail.com, daniel@iogearbox.net, dbueso@suse.de,
-        john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, oleg@redhat.com, prsood@codeaurora.org,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000c0d84e058ad677aa@google.com>
-Date:   Mon, 10 Jun 2019 16:27:15 -0500
-In-Reply-To: <000000000000c0d84e058ad677aa@google.com> (syzbot's message of
-        "Sat, 08 Jun 2019 14:17:00 -0700")
-Message-ID: <87ftoh6si4.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 10 Jun 2019 17:31:28 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n4so10621374wrw.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joaomoreno-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WYygYmLUCJpx89UgZYIubVgcxi/O7oESBshr0h9GFwM=;
+        b=X9hUjZWCqEp36sRvaqJzkhRPjeKs3MRssU6vUmo4T2p6lFXQee63bqb6iZCSHWAcRi
+         xl+e9tI6A/nTAPp8LWQh9yHCF+jay6anhkzpCW1IH4VGHXVNWv/zk8UcfwkFBPoEZJdr
+         Y7OwJUTap5LYQqZcXV1GqnEoaMe2AByVXxYwuvVnHY/+mlojc7/5lvo+s0YCQQihNOgz
+         QfIm7XCk5T1GYmQ38qdjVVd2DL/gJZhtZOkZZJ1PHX31ISsfXSd6loSDG6UyBBBrDzRJ
+         Fv4hSNiSdzj+i494EAqrfUPdNmc5eeP7n9hRzOJuaJ2S9Tn/vnwKVhz1F4oFLFJ3p4//
+         tTmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WYygYmLUCJpx89UgZYIubVgcxi/O7oESBshr0h9GFwM=;
+        b=KvL0pv5AJRQ4/aUm+TzOV0E0kH7NWqoBkfOpDyhcHmIdAwnbVTwMWNxhYbQ9RYSJJs
+         gtaRYwfuJ7FUxNR1kIjK0tkGhMHnL9r9IikdfcnE48pPAtz3r+k2lkC4scuzU6BhylCd
+         BPn8QNA03KrRkouVDuWl+1kkS3UiV+94kun08aiYptH52STm/gNFgaxmaWHwdnteF0aU
+         R76PHBpvKnrMsp26QAECCmIy6jcVTmdquZDfQ27J5tYiENvA7SmFxGvIzlj3GLX31AFQ
+         LcVY9usCC5vV58MnsrycyzG+gNOyVEmLaOeCNRTLX0trhwFinueS6w+HVp6+ZZcDgSZK
+         HsVQ==
+X-Gm-Message-State: APjAAAWa9M9sdfGb0g8JG7gjK+x65fr9Nx7SdCxYx+yuiFS1DmWtz+uI
+        0CYohEgo4E6iF9p7mQEe+78Xng==
+X-Google-Smtp-Source: APXvYqy/u5gu1vvb21uZAuHxmmcY7IPEbiNYULCHDQozGVkQaD+/0eGKVV54/qE3pIhq69sOQ5aQyQ==
+X-Received: by 2002:adf:8086:: with SMTP id 6mr39574637wrl.320.1560202286383;
+        Mon, 10 Jun 2019 14:31:26 -0700 (PDT)
+Received: from localhost.localdomain (212-51-143-162.fiber7.init7.net. [212.51.143.162])
+        by smtp.googlemail.com with ESMTPSA id y9sm1283877wma.1.2019.06.10.14.31.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 14:31:25 -0700 (PDT)
+From:   Joao Moreno <mail@joaomoreno.com>
+Cc:     Joao Moreno <mail@joaomoreno.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: apple: Fix stuck function keys when using FN
+Date:   Mon, 10 Jun 2019 23:31:06 +0200
+Message-Id: <20190610213106.19342-1-mail@joaomoreno.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1haRpC-0006xo-Kg;;;mid=<87ftoh6si4.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18S7yGkdj8GdsnV3+U9rf+Fa62sIZ/bY/0=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG,XMGappySubj_01
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4996]
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;syzbot <syzbot+f625baafb9a1c4bfc3f6@syzkaller.appspotmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 489 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 4.1 (0.8%), b_tie_ro: 3.1 (0.6%), parse: 1.02
-        (0.2%), extract_message_metadata: 17 (3.4%), get_uri_detail_list: 3.2
-        (0.7%), tests_pri_-1000: 11 (2.3%), tests_pri_-950: 1.45 (0.3%),
-        tests_pri_-900: 1.19 (0.2%), tests_pri_-90: 26 (5.2%), check_bayes: 24
-        (4.8%), b_tokenize: 5 (1.1%), b_tok_get_all: 8 (1.7%), b_comp_prob:
-        1.99 (0.4%), b_tok_touch_all: 5 (1.0%), b_finish: 0.90 (0.2%),
-        tests_pri_0: 416 (85.1%), check_dkim_signature: 0.60 (0.1%),
-        check_dkim_adsp: 3.4 (0.7%), poll_dns_idle: 0.19 (0.0%), tests_pri_10:
-        2.1 (0.4%), tests_pri_500: 6 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: general protection fault in mm_update_next_owner
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot <syzbot+f625baafb9a1c4bfc3f6@syzkaller.appspotmail.com> writes:
+This fixes an issue in which key down events for function keys would be
+repeatedly emitted even after the user has raised the physical key. For
+example, the driver fails to emit the F5 key up event when going through
+the following steps:
+- fnmode=1: hold FN, hold F5, release FN, release F5
+- fnmode=2: hold F5, hold FN, release F5, release FN
 
-> syzbot has bisected this bug to:
->
-> commit e9db4ef6bf4ca9894bb324c76e01b8f1a16b2650
-> Author: John Fastabend <john.fastabend@gmail.com>
-> Date:   Sat Jun 30 13:17:47 2018 +0000
->
->     bpf: sockhash fix omitted bucket lock in sock_close
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e978e1a00000
-> start commit:   38e406f6 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-> git tree:       net
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=17e978e1a00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13e978e1a00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=60564cb52ab29d5b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f625baafb9a1c4bfc3f6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1193d81ea00000
->
-> Reported-by: syzbot+f625baafb9a1c4bfc3f6@syzkaller.appspotmail.com
-> Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The repeated F5 key down events can be easily verified using xev.
 
-How is mm_update_next_owner connected to bpf?
+Signed-off-by: Joao Moreno <mail@joaomoreno.com>
+---
+ drivers/hid/hid-apple.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-Eric
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index 1cb41992aaa1..81867a6fa047 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -205,20 +205,21 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
+ 		trans = apple_find_translation (table, usage->code);
+ 
+ 		if (trans) {
+-			if (test_bit(usage->code, asc->pressed_fn))
+-				do_translate = 1;
+-			else if (trans->flags & APPLE_FLAG_FKEY)
+-				do_translate = (fnmode == 2 && asc->fn_on) ||
+-					(fnmode == 1 && !asc->fn_on);
++			int fn_on = value ? asc->fn_on :
++				test_bit(usage->code, asc->pressed_fn);
++
++			if (!value)
++				clear_bit(usage->code, asc->pressed_fn);
++			else if (asc->fn_on)
++				set_bit(usage->code, asc->pressed_fn);
++
++			if (trans->flags & APPLE_FLAG_FKEY)
++				do_translate = (fnmode == 2 && fn_on) ||
++					(fnmode == 1 && !fn_on);
+ 			else
+ 				do_translate = asc->fn_on;
+ 
+ 			if (do_translate) {
+-				if (value)
+-					set_bit(usage->code, asc->pressed_fn);
+-				else
+-					clear_bit(usage->code, asc->pressed_fn);
+-
+ 				input_event(input, usage->type, trans->to,
+ 						value);
+ 
+-- 
+2.19.1
+
