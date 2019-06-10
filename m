@@ -2,87 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D283BC40
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FCF23BC3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 20:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389034AbfFJSzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 14:55:11 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52597 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388491AbfFJSzK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 14:55:10 -0400
-Received: by mail-it1-f196.google.com with SMTP id l21so784915ita.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 11:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3OQiFS4mzZNpmchUtzhYv2GneN1IZGSv7wacJrf6EtE=;
-        b=hNHkuWRDqlR3Q3TDaxHRzI06RqOjj75TOm4O2BEcyfY0AOdiydlwK2wHdT4xm6B8iT
-         c2OTYhCNwn6/48JaeFcoPisRPJk2Ypw6FzF9hwTd17Lq9FURyXB6uxvutuGxuGi/aMDV
-         bBmb3wHsiLbhCsSUfuqYYVT6vmhgQccim0vyw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3OQiFS4mzZNpmchUtzhYv2GneN1IZGSv7wacJrf6EtE=;
-        b=Ug4/QZL8wJtqnHcyj6BVHU6sNaYAKuj0vXtLYVxYxgtD7wcZS6ipfUrCDL02vxWCqS
-         3ETo1orBqU8/UXhtwEbZL22QB5lb8+QL8/B6D9226tKhAz5a7tNwQNu8xKj0/eCrn9md
-         nh0d0Uh3BJaz1TnC1BQ0NlQzlRNVL++dbIwxHAxr/us0w+wDYRki1btCaccQLkL71HDw
-         4LcKUFp6WzTGNEoIZOYSBckjBdS9WxVUUJ+rd/VTE0tHIGXihvFBbA8/YMbfgjSMFkab
-         PefOiOv1mbGkui4e606tkENQwbLr40qMPjKewBTfVf6RZmMtFikKJYW1xbNLfe9vS55i
-         /slw==
-X-Gm-Message-State: APjAAAUEI37BiV8L6MEFW1xBur2ZgFVFC6uml0y3MHAFJM/v1nzbtXDn
-        f41X3L3I9gbuBQ/oAppDofulSg==
-X-Google-Smtp-Source: APXvYqwKv/qZm4110xGTzg1+th2td34sNn7y93waDnRsw7ju3/C0X2SG909IBDR3rPJdGyr5tvxhSA==
-X-Received: by 2002:a24:1dd5:: with SMTP id 204mr16517482itj.180.1560192909650;
-        Mon, 10 Jun 2019 11:55:09 -0700 (PDT)
-Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id d7sm3581954iob.67.2019.06.10.11.55.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 11:55:09 -0700 (PDT)
-From:   Raul E Rangel <rrangel@chromium.org>
-To:     linux-mmc@vger.kernel.org
-Cc:     ernest.zhang@bayhubtech.com, djkurtz@chromium.org,
-        Raul E Rangel <rrangel@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 3/3] mmc: sdhci: Fix indenting on SDHCI_CTRL_8BITBUS
-Date:   Mon, 10 Jun 2019 12:53:53 -0600
-Message-Id: <20190610185354.35310-3-rrangel@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-In-Reply-To: <20190610185354.35310-1-rrangel@chromium.org>
-References: <20190610185354.35310-1-rrangel@chromium.org>
+        id S2388948AbfFJSyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 14:54:52 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56918 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388491AbfFJSyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 14:54:52 -0400
+Received: from zn.tnic (p200300EC2F052B000C22B0A0C73B2F50.dip0.t-ipconnect.de [IPv6:2003:ec:2f05:2b00:c22:b0a0:c73b:2f50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D9C711EC0982;
+        Mon, 10 Jun 2019 20:54:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560192890;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=D/d9B+8ZEwQPPv8fSIn75evRhCraI+XhtzPfi8jLWFE=;
+        b=cJ3okDV4nOKvGnDYJodE+nHUyr56JbAZGKkYMe8i+1KN8BgeNg4ipKZEIoP95EXrz2C4vZ
+        84w0rgAXLvapRilvuDubUs5kKmrf8/aukE66ZaIG/VP0rgAeZOoGHGHb3s/Tq6qy0SkzFb
+        zYbLMThrM/FyNS8Amm/7rWB84Osh5Y4=
+Date:   Mon, 10 Jun 2019 20:54:44 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Marco Elver <elver@google.com>
+Cc:     "Luck, Tony" <tony.luck@intel.com>, jbaron@akamai.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: Re: [PATCH] EDAC, ie31200: Add Intel Coffee Lake CPU support
+Message-ID: <20190610185444.GG5488@zn.tnic>
+References: <20190609151613.195164-1-elver@google.com>
+ <20190610180121.GA22428@agluck-desk2.amr.corp.intel.com>
+ <CANpmjNOVjcgprWviex0uPCCAC4+qW=sh6d+BdYtZATNd-w_hbA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANpmjNOVjcgprWviex0uPCCAC4+qW=sh6d+BdYtZATNd-w_hbA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The value is referring to SDHCI_HOST_CONTROL, not SDHCI_CTRL_DMA_MASK.
+On Mon, Jun 10, 2019 at 08:37:01PM +0200, Marco Elver wrote:
+> Yes. Originally I had a version that added the new entries in the same
+> style as before, but failed check_patch.pl due to exceeding 80 chars.
 
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
----
+Don't trust checkpatch blindly, especially about this rule. It is
+perfectly fine to leave a block of code like that stick out and even
+make it more tight since it is very visible which column differs if you
+keep the macro arguments aligned vertically:
 
- drivers/mmc/host/sdhci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+static const struct pci_device_id ie31200_pci_tbl[] = { 
+        { PCI_VEND_DEV(INTEL, IE31200_HB_1), PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+        { PCI_VEND_DEV(INTEL, IE31200_HB_2), PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+        { PCI_VEND_DEV(INTEL, IE31200_HB_3), PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+        { PCI_VEND_DEV(INTEL, IE31200_HB_4), PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+	...
 
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 199712e7adbb3..89fd96596a1f7 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -89,7 +89,7 @@
- #define   SDHCI_CTRL_ADMA32	0x10
- #define   SDHCI_CTRL_ADMA64	0x18
- #define   SDHCI_CTRL_ADMA3	0x18
--#define   SDHCI_CTRL_8BITBUS	0x20
-+#define  SDHCI_CTRL_8BITBUS	0x20
- #define  SDHCI_CTRL_CDTEST_INS	0x40
- #define  SDHCI_CTRL_CDTEST_EN	0x80
- 
+your new additions would then need to do:
+
+	...
+        { PCI_VEND_DEV(INTEL, IE31200_HB_4),     PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+	{ PCI_VEND_DEV(INTEL, IE31200_HB_CFL_1), PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+	...
+
+to keep that vertical alignment.
+
+> I'll send v2 that reverts the formatting, but has to break line after
+> the 2nd PCI_ANY_ID for the new entries. I'd prefer not to introduce
+> another macro.
+
+Yes, but as Tony said, keep formatting changes separate from the patch
+adding the Coffee Lake support.
+
+Thx.
+
 -- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
