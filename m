@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1A33B2AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 12:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 361793B2A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 12:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389078AbfFJKBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 06:01:13 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56520 "EHLO huawei.com"
+        id S2389179AbfFJKBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 06:01:18 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56598 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387977AbfFJKBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388056AbfFJKBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 10 Jun 2019 06:01:13 -0400
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 14F7449E51D9192BF918;
+        by Forcepoint Email with ESMTP id 1ECBB6C34D3F6266CAEF;
         Mon, 10 Jun 2019 18:01:11 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 10 Jun 2019 18:00:51 +0800
+ 14.3.439.0; Mon, 10 Jun 2019 18:00:52 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
         <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
@@ -28,9 +28,9 @@ CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <zhangshaokun@hisilicon.com>, <ak@linux.intel.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH 1/5] perf pmu: Fix uncore PMU alias list for ARM64
-Date:   Mon, 10 Jun 2019 17:59:28 +0800
-Message-ID: <1560160772-210844-2-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 2/5] perf pmu: Support more complex PMU event aliasing
+Date:   Mon, 10 Jun 2019 17:59:29 +0800
+Message-ID: <1560160772-210844-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1560160772-210844-1-git-send-email-john.garry@huawei.com>
 References: <1560160772-210844-1-git-send-email-john.garry@huawei.com>
@@ -43,72 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform"),
-we fixed the issue of CPU events being aliased to uncore events.
+The jevent "Unit" field is used for uncore PMU alias definition.
 
-Fix this same issue for ARM64, since the said commit left the (broken)
-behaviour untouched for ARM64.
+The form uncore_pmu_example_X is supported, where "X" is a wildcard,
+to support multiple instances of the same PMU in a system.
+
+Unfortunately this format not suitable for all uncore PMUs; take the Hisi
+DDRC uncore PMU for example, where the name is in the form
+hisi_scclX_ddrcY.
+
+For the current jevent parsing, we would be required to hardcode an uncore
+alias translation for each possible value of X. This is not scalable.
+
+Instead, add support for "Unit" field in the form "hisi_sccl,ddrc", where
+we can match by hisi_scclX and ddrcY. Tokens in Unit field
+are delimited by ','.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- tools/perf/util/pmu.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ tools/perf/util/pmu.c | 45 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 40 insertions(+), 5 deletions(-)
 
 diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index e0429f4ef335..036047f56efa 100644
+index 036047f56efa..f00cae750086 100644
 --- a/tools/perf/util/pmu.c
 +++ b/tools/perf/util/pmu.c
-@@ -709,9 +709,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- {
- 	int i;
- 	struct pmu_events_map *map;
--	struct pmu_event *pe;
- 	const char *name = pmu->name;
--	const char *pname;
+@@ -700,6 +700,44 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
+ 	return map;
+ }
  
- 	map = perf_pmu__find_map(pmu);
- 	if (!map)
-@@ -722,28 +720,26 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- 	 */
- 	i = 0;
- 	while (1) {
-+		const char *cpu_name = is_arm_pmu_core(name) ? name : "cpu";
-+		struct pmu_event *pe =&map->table[i++];
-+		const char *pname = pe->pmu ? pe->pmu : cpu_name;
- 
--		pe = &map->table[i++];
- 		if (!pe->name) {
- 			if (pe->metric_group || pe->metric_name)
- 				continue;
++static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
++{
++	/*
++	 * uncore alias may be from different PMU
++	 * with common prefix
++	 */
++	if (!strncmp(pmu_name, name, strlen(pmu_name)))
++		return true;
++
++	/* match strings with delimiter, ',' */
++	while (1) {
++		const char *delimiter;
++		char token[256] = {};
++		const char *found_token;
++		int token_len;
++
++		delimiter = strchr(pmu_name, ',');
++		if (delimiter) {
++			token_len = delimiter - pmu_name;
++		} else {
++			token_len = strlen(pmu_name);
++		}
++
++		memcpy(token, pmu_name, token_len);
++
++		found_token = strstr(name, token);
++		if (!found_token)
++			return false;
++
++		/* No more delimiters, so we must be a match */
++		if (!delimiter)
++			return true;
++
++		pmu_name += token_len + 1;
++		name = found_token + token_len;
++	}
++}
++
+ /*
+  * From the pmu_events_map, find the table of PMU events that corresponds
+  * to the current running CPU. Then, add all PMU events from that table
+@@ -730,12 +768,9 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
  			break;
  		}
  
--		if (!is_arm_pmu_core(name)) {
--			pname = pe->pmu ? pe->pmu : "cpu";
--
--			/*
--			 * uncore alias may be from different PMU
--			 * with common prefix
--			 */
--			if (pmu_is_uncore(name) &&
--			    !strncmp(pname, name, strlen(pname)))
--				goto new_alias;
-+		/*
-+		 * uncore alias may be from different PMU
-+		 * with common prefix
-+		 */
-+		if (pmu_is_uncore(name) &&
-+		    !strncmp(pname, name, strlen(pname)))
-+			goto new_alias;
+-		/*
+-		 * uncore alias may be from different PMU
+-		 * with common prefix
+-		 */
++
+ 		if (pmu_is_uncore(name) &&
+-		    !strncmp(pname, name, strlen(pname)))
++		    pmu_uncore_alias_match(pname, name))
+ 			goto new_alias;
  
--			if (strcmp(pname, name))
--				continue;
--		}
-+		if (strcmp(pname, name))
-+			continue;
- 
- new_alias:
- 		/* need type casts to override 'const' */
+ 		if (strcmp(pname, name))
 -- 
 2.17.1
 
