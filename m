@@ -2,57 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D5C3BB44
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E743BB4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 19:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388545AbfFJRrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 13:47:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387643AbfFJRrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:47:21 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A4CD2356E8;
-        Mon, 10 Jun 2019 17:47:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-126.rdu2.redhat.com [10.10.120.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1951E60565;
-        Mon, 10 Jun 2019 17:47:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190610111110.72468326@lwn.net>
-References: <20190610111110.72468326@lwn.net> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <155991709983.15579.13232123365803197237.stgit@warthog.procyon.org.uk>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/13] keys: Add a notification facility [ver #4]
+        id S2388668AbfFJRr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 13:47:59 -0400
+Received: from mail.codeweavers.com ([50.203.203.244]:59114 "EHLO
+        mail.codeweavers.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387643AbfFJRr5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:47:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=codeweavers.com; s=6377696661; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B+NQK0qQzwriFdGQRKl3qnBuYxHERXIyxTc267JOpl0=; b=ddQy0EE+r/As82BHbGL2enMiF
+        +xSkrfjkaTQ0AJxemttV6by74YhcQ50DLiLC1sA3I03bUdF2mNxbHrY1p4ORkTzfe/rv/xfMgzol2
+        SI2MK+71N2dyNCMb6kZwrM5MZdJ8KNTla+ziNnIZzH+w52ZzB0PpDi3xi3X39ShZeK5/E=;
+Received: from merlot.physics.ox.ac.uk ([163.1.241.98] helo=merlot)
+        by mail.codeweavers.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <huw@codeweavers.com>)
+        id 1haOPC-0004C2-Gt; Mon, 10 Jun 2019 12:48:27 -0500
+Received: from daviesh by merlot with local (Exim 4.90_1)
+        (envelope-from <huw@codeweavers.com>)
+        id 1haOOY-0003Rh-VS; Mon, 10 Jun 2019 18:47:47 +0100
+Date:   Mon, 10 Jun 2019 18:47:46 +0100
+From:   Huw Davies <huw@codeweavers.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mips@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v6 01/19] kernel: Standardize vdso_datapage
+Message-ID: <20190610174746.GA13224@merlot.physics.ox.ac.uk>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <20190530141531.43462-2-vincenzo.frascino@arm.com>
+ <CAK8P3a3EnvkLND2RJdZtEY64PhK5g0sbbuytQro=f0cPur2g9g@mail.gmail.com>
+ <bb5253b2-623c-c927-27a2-1d3a2990d20f@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <10631.1560188831.1@warthog.procyon.org.uk>
-Date:   Mon, 10 Jun 2019 18:47:11 +0100
-Message-ID: <10632.1560188831@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 10 Jun 2019 17:47:21 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb5253b2-623c-c927-27a2-1d3a2990d20f@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Score: -106.0
+X-Spam-Report: Spam detection software, running on the system "mail.codeweavers.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  On Tue, Jun 04, 2019 at 01:05:40PM +0100, Vincenzo Frascino
+    wrote: > On 31/05/2019 09:16, Arnd Bergmann wrote: > > On Thu, May 30, 2019
+    at 4:15 PM Vincenzo Frascino > > <vincenzo.frascino@arm.com> wro [...] 
+ Content analysis details:   (-106.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -100 USER_IN_WHITELIST      From: address is in the user's white-list
+ -6.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jonathan Corbet <corbet@lwn.net> wrote:
-
-> > 	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+On Tue, Jun 04, 2019 at 01:05:40PM +0100, Vincenzo Frascino wrote:
+> On 31/05/2019 09:16, Arnd Bergmann wrote:
+> > On Thu, May 30, 2019 at 4:15 PM Vincenzo Frascino
+> > <vincenzo.frascino@arm.com> wrote:
+> > 
+> >> + * vdso_data will be accessed by 64 bit and compat code at the same time
+> >> + * so we should be careful before modifying this structure.
+> >> + */
+> >> +struct vdso_data {
+> >> +       u32                     seq;
+> >> +
+> >> +       s32                     clock_mode;
+> >> +       u64                     cycle_last;
+> >> +       u64                     mask;
+> >> +       u32                     mult;
+> >> +       u32                     shift;
+> >> +
+> >> +       struct vdso_timestamp   basetime[VDSO_BASES];
+> >> +
+> >> +       s32                     tz_minuteswest;
+> >> +       s32                     tz_dsttime;
+> >> +       u32                     hrtimer_res;
+> >> +};
+> > 
+> > The structure contains four padding bytes at the end, which is
+> > something we try to avoid, at least if this ends up being used as
+> > an ABI. Maybe add "u32 __unused" at the end?
+> > 
 > 
-> One little nit: it seems that keyctl_watch_key is actually spelled
-> keyctl(KEYCTL_WATCH_KEY, ...).
+> Agreed, I will fix this in v7.
 
-Yeah - but there'll be a wrapper for it in -lkeyutils.  The syscalls I added
-in other patches are, technically, referred to syscall(__NR_xxx, ...) at the
-moment too.
+Note that this is also necessary to ensure that CLOCK_MONOTONIC_RAW
+works in the 32-bit vDSO on x86_64 kernels.
 
-David
+Huw.
