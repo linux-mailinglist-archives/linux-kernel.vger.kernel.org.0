@@ -2,77 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DED43AD82
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 05:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 658383ADA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 05:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbfFJDTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 9 Jun 2019 23:19:42 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57188 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387595AbfFJDTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Jun 2019 23:19:38 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B1927200080;
-        Mon, 10 Jun 2019 05:19:36 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9088F2006C5;
-        Mon, 10 Jun 2019 05:19:32 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EC3774031E;
-        Mon, 10 Jun 2019 11:19:26 +0800 (SGT)
-From:   Yangbo Lu <yangbo.lu@nxp.com>
-To:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
+        id S2387510AbfFJDcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 9 Jun 2019 23:32:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55071 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387457AbfFJDcT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Jun 2019 23:32:19 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g135so7005996wme.4
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 20:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aB/CXMwsJOLPR4IkBpKLs3rzXiAB5Hq8Pmg82KTdnpc=;
+        b=Y4/jV4x/QxbzMXVAb5TMOW4WdmEW5sviWbYsTmRNFNlD69uTDhv6J8R+yhmkWCVyBN
+         LQZ/CFTN0p8CmCFVXPT9wvG8NPn2HZPdjK3T0gfr78v6nandp9hVA0mOohamnOS3xAic
+         5Zjn4PE8b2O3HGvcCHt8K8jeOmxLL99cpm5f8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aB/CXMwsJOLPR4IkBpKLs3rzXiAB5Hq8Pmg82KTdnpc=;
+        b=hKgMSm3sTDwqhM8mz3PRhwLmqNJ9kcExH6tWWaf1n8Ii0S5nCKQoa/WWwubDkUyDQz
+         dLZk+DwOkaOzcLiY/y4SX2Ws3pWoLfCJ7Sjn1BzcavMX2D6GDSWmfAjKmCsYDKcYiziK
+         3axn4VEkTpGn3EMkZIezYnpoqc3epOiM8JP1H93kX3mc7ppucW3x2y6AVmla+T39oM09
+         wJLL8A10jL50Fv/2c2kH9PIMUKLtmIa8luVso4dPHQ5rFfcxEn9cTPKH1iH3CKZeCWUR
+         uacdVYBOWDS2b1evxvvZugOT/tLcojUiqDehIMh/lDt6+KpybT+gSfosFMliYd+t9TEn
+         E1IQ==
+X-Gm-Message-State: APjAAAVRSc+d6tucfbfBRnrZe7Nf/cozu6sA5krc2+JErkp7wHNvwnCw
+        M8MttbyueWv3OKjMKOWmdvx47/L+SQTynOrt5DZz4A==
+X-Google-Smtp-Source: APXvYqxQJliHEcKaKIvUY9ONOqr7UkNdbKO1DVUr+ac8CojHhnvVRkYyq2OEzprCcxtZsq0ucGzSaD6jwh7YT2ESHRc=
+X-Received: by 2002:a1c:2bc7:: with SMTP id r190mr11435752wmr.174.1560137537307;
+ Sun, 09 Jun 2019 20:32:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <1559643115-15124-1-git-send-email-stu.hsieh@mediatek.com>
+ <1559643115-15124-2-git-send-email-stu.hsieh@mediatek.com> <1560134057.28527.5.camel@mtksdaap41>
+In-Reply-To: <1560134057.28527.5.camel@mtksdaap41>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 10 Jun 2019 12:32:06 +0900
+Message-ID: <CAHD77H=vuPi2Rj4Mw-CQ2=UYX7YnS8w8FpUk0QTVxNUVLWKbJg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/14] dt-bindings: Add binding for MT2712 MIPI-CSI2
+To:     CK Hu <ck.hu@mediatek.com>
+Cc:     Stu Hsieh <stu.hsieh@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [PATCH 6/6] MAINTAINERS: maintain DPAA2 PTP driver in QorIQ PTP entry
-Date:   Mon, 10 Jun 2019 11:21:08 +0800
-Message-Id: <20190610032108.5791-7-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190610032108.5791-1-yangbo.lu@nxp.com>
-References: <20190610032108.5791-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maintain DPAA2 PTP driver in QorIQ PTP entry.
+Hi CK, Stu,
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
- MAINTAINERS | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+On Mon, Jun 10, 2019 at 11:34 AM CK Hu <ck.hu@mediatek.com> wrote:
+>
+> Hi, Stu:
+>
+> "mediatek,mt2712-mipicsi" and "mediatek,mt2712-mipicsi-common" have many
+> common part with "mediatek,mt8183-seninf", and I've a discussion in [1],
+> so I would like these two to be merged together.
+>
+> [1] https://patchwork.kernel.org/patch/10979131/
+>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fcbd648..81762bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4910,13 +4910,6 @@ L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	drivers/staging/fsl-dpaa2/ethsw
- 
--DPAA2 PTP CLOCK DRIVER
--M:	Yangbo Lu <yangbo.lu@nxp.com>
--L:	netdev@vger.kernel.org
--S:	Maintained
--F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp*
--F:	drivers/net/ethernet/freescale/dpaa2/dprtc*
--
- DPT_I2O SCSI RAID DRIVER
- M:	Adaptec OEM Raid Solutions <aacraid@microsemi.com>
- L:	linux-scsi@vger.kernel.org
-@@ -6359,6 +6352,8 @@ FREESCALE QORIQ PTP CLOCK DRIVER
- M:	Yangbo Lu <yangbo.lu@nxp.com>
- L:	netdev@vger.kernel.org
- S:	Maintained
-+F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp*
-+F:	drivers/net/ethernet/freescale/dpaa2/dprtc*
- F:	drivers/net/ethernet/freescale/enetc/enetc_ptp.c
- F:	drivers/ptp/ptp_qoriq.c
- F:	drivers/ptp/ptp_qoriq_debugfs.c
--- 
-2.7.4
+Thanks CK for spotting this.
 
+I also noticed that the driver in fact handles two hardware blocks at
+the same time - SenInf and CamSV. Unless the architecture is very
+different from MT8183, I'd suggest splitting it.
+
+On a general note, the MT8183 SenInf driver has received several
+rounds of review comments already, but I couldn't find any comments
+posted for this one.
+
+Given the two aspects above and also based on my quick look at code
+added by this series, I'd recommend adding MT2712 support on top of
+the MT8183 series.
+
+Best regards,
+Tomasz
