@@ -2,112 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871573AF1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 08:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 599943AF1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 08:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387883AbfFJGpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 02:45:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52480 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387859AbfFJGpa (ORCPT
+        id S2387857AbfFJGp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 02:45:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44364 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387797AbfFJGp2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 02:45:30 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5A6ftsO092459
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:45:29 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t1gc14c6x-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 02:45:28 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <anju@linux.vnet.ibm.com>;
-        Mon, 10 Jun 2019 07:45:26 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Jun 2019 07:45:24 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5A6jN5848955402
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jun 2019 06:45:23 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5FD6F5204F;
-        Mon, 10 Jun 2019 06:45:23 +0000 (GMT)
-Received: from localhost.in.ibm.com (unknown [9.124.35.72])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 871345204E;
-        Mon, 10 Jun 2019 06:45:21 +0000 (GMT)
-From:   Anju T Sudhakar <anju@linux.vnet.ibm.com>
-To:     mpe@ellerman.id.au, acme@kernel.org, jolsa@redhat.com
-Cc:     namhyung@kernel.org, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com,
-        anju@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com
-Subject: [PATCH RESEND 2/2] tools/perf: Set 'trace_cycles' as defaultevent for perf kvm record in powerpc
-Date:   Mon, 10 Jun 2019 12:15:18 +0530
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190610064518.949-1-anju@linux.vnet.ibm.com>
-References: <20190610064518.949-1-anju@linux.vnet.ibm.com>
+        Mon, 10 Jun 2019 02:45:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so4681788pfe.11
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Jun 2019 23:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AXxwZFqkJLSKlo1AKtUaQ/ENUlkKBcpyhgleO3ow388=;
+        b=YiHkTJdx7yCQJW8EhCRhbAexTIwEPNmnltUScnOW70LR5R4M0zGWwRb1Azugg0mJKW
+         1NA30+nTtQdDYboc8TiR9TieUCKkKkTaYdMz7DS6OCELNzNdmg2HxnOUWymdQ3zfq85E
+         bfsgwfd/uS3RMxh83/W534VSOilBSyr0kmQ0X9Iq95QtCCWd1/4cB4VqWzK5Xwrj9Tc5
+         zmmhH9ZhZi2uBbk1EEE8Y5CCPprTI/kSMcOTWuTBghacpXttDiXPnnXt45grFnDt7MXu
+         VaDUVAbJ8ZgFLxsF4plIJ28cBfq2CMUFkbn8+Ho0M8O08U86avUP+fao+YizCgc2QqS5
+         DdHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AXxwZFqkJLSKlo1AKtUaQ/ENUlkKBcpyhgleO3ow388=;
+        b=tMgM2Tu3yVpHn+nt/1vw5W4FINxrAVgQ/d3Gl//GZwZSDt6yXK0pAup2XoCfg+38Cr
+         /UO37Zf2FOSUfNo18quhGs8YZ49tX6q8fUomGwhQAz/d0FwKp6BLYcQEhbWY0+EkybYw
+         I+MHJa2BymwCM8leD42T00xFjxE4m2HEXm05PfbKWixEJTU1u5YFVOLkEDDxjxpiIkjH
+         7UBiOdvM5J3qCcd+6XwhLFYucM/vY/sIu4c4rP6g+jbDjP6MuZkA+7U46QToI7s5FPME
+         0V/jkCeT4/W8w3m876JA2/HF84wX1idmVIar+xqasFhzf8vneLe3ziO+Ljb46OFYEqKr
+         79Zg==
+X-Gm-Message-State: APjAAAV8z9cayVell3Qa7CUc+b915k7VdgofknYs1uplpb3W/sWgpsvB
+        sl0CEEz164OIZVOhKbfp3JouOQHg4MsmnQ==
+X-Google-Smtp-Source: APXvYqw08rKgZJAkQBntaYmCPFTNxHfKWkcs3bOrEThz724Nqp1BmapHkmdPOiD5NJuFIDU1d/qeZg==
+X-Received: by 2002:a63:5207:: with SMTP id g7mr13953365pgb.356.1560149127632;
+        Sun, 09 Jun 2019 23:45:27 -0700 (PDT)
+Received: from ubuntu ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id s17sm8726251pfm.74.2019.06.09.23.45.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Jun 2019 23:45:27 -0700 (PDT)
+Date:   Sun, 9 Jun 2019 23:45:21 -0700
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Nicolas Pitre <nico@fluxnic.net>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, jslaby@suse.com,
+        kilobyte@angband.pl, textshell@uchuujin.de, mpatocka@redhat.com,
+        daniel.vetter@ffwll.ch, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] vt: Fix a missing-check bug in con_init()
+Message-ID: <20190610064519.GA3143@ubuntu>
+References: <20190528004529.GA12388@zhanggen-UX430UQ>
+ <20190608160138.GA3840@zhanggen-UX430UQ>
+ <20190608162219.GB11699@kroah.com>
+ <nycvar.YSQ.7.76.1906082010430.1558@knanqh.ubzr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061006-0016-0000-0000-00000287A1E7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061006-0017-0000-0000-000032E4C957
-Message-Id: <20190610064518.949-2-anju@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-10_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906100047
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YSQ.7.76.1906082010430.1558@knanqh.ubzr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use 'trace_imc/trace_cycles' as the default event for 'perf kvm record'
-in powerpc.
+On Sat, Jun 08, 2019 at 08:15:46PM -0400, Nicolas Pitre wrote:
+> On Sat, 8 Jun 2019, Greg KH wrote:
+> 
+> > On Sun, Jun 09, 2019 at 12:01:38AM +0800, Gen Zhang wrote:
+> > > On Tue, May 28, 2019 at 08:45:29AM +0800, Gen Zhang wrote:
+> > > > In function con_init(), the pointer variable vc_cons[currcons].d, vc and
+> > > > vc->vc_screenbuf is allocated by kzalloc(). And they are used in the 
+> > > > following codes. However, kzalloc() returns NULL when fails, and null 
+> > > > pointer dereference may happen. And it will cause the kernel to crash. 
+> > > > Therefore, we should check the return value and handle the error.
+> > > > 
+> > > > Further, since the allcoation is in a loop, we should free all the 
+> > > > allocated memory in a loop.
+> > > > 
+> > > > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> > > > Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
+> > > > ---
+> > > > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> > > > index fdd12f8..d50f68f 100644
+> > > > --- a/drivers/tty/vt/vt.c
+> > > > +++ b/drivers/tty/vt/vt.c
+> > > > @@ -3350,10 +3350,14 @@ static int __init con_init(void)
+> > > >  
+> > > >  	for (currcons = 0; currcons < MIN_NR_CONSOLES; currcons++) {
+> > > >  		vc_cons[currcons].d = vc = kzalloc(sizeof(struct vc_data), GFP_NOWAIT);
+> > > > +		if (!vc)
+> > > > +			goto fail1;
+> > > >  		INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
+> > > >  		tty_port_init(&vc->port);
+> > > >  		visual_init(vc, currcons, 1);
+> > > >  		vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_NOWAIT);
+> > > > +		if (!vc->vc_screenbuf)
+> > > > +			goto fail2;
+> > > >  		vc_init(vc, vc->vc_rows, vc->vc_cols,
+> > > >  			currcons || !vc->vc_sw->con_save_screen);
+> > > >  	}
+> > > > @@ -3375,6 +3379,16 @@ static int __init con_init(void)
+> > > >  	register_console(&vt_console_driver);
+> > > >  #endif
+> > > >  	return 0;
+> > > > +fail1:
+> > > > +	while (currcons > 0) {
+> > > > +		currcons--;
+> > > > +		kfree(vc_cons[currcons].d->vc_screenbuf);
+> > > > +fail2:
+> > > > +		kfree(vc_cons[currcons].d);
+> > > > +		vc_cons[currcons].d = NULL;
+> > > > +	}
+> > 
+> > Wait, will that even work?  You can jump into the middle of a while
+> > loop?
+> 
+> Absolutely.
+> 
+> > Ugh, that's beyond ugly.
+> 
+> That was me who suggested to do it like that. To me, this is nicer than 
+> the proposed alternatives. For an error path that is rather unlikely to 
+> happen, I think this is a very concise and eleguant way to do it.
+> 
+> > And please provide "real" names for the
+> > labels, "fail1" and "fail2" do not tell anything here.
+> 
+> That I agree with.
+> 
+> 
+> Nicolas
+Thanks for your comments. Then am I supposed to revise the patch and
+send a v4 version?
 
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
----
- tools/perf/arch/powerpc/util/kvm-stat.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/arch/powerpc/util/kvm-stat.c b/tools/perf/arch/powerpc/util/kvm-stat.c
-index 66f8fe500945..b552884263df 100644
---- a/tools/perf/arch/powerpc/util/kvm-stat.c
-+++ b/tools/perf/arch/powerpc/util/kvm-stat.c
-@@ -177,8 +177,9 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_unused)
- /*
-  * Incase of powerpc architecture, pmu registers are programmable
-  * by guest kernel. So monitoring guest via host may not provide
-- * valid samples. It is better to fail the "perf kvm record"
-- * with default "cycles" event to monitor guest in powerpc.
-+ * valid samples with default 'cycles' event. It is better to use
-+ * 'trace_imc/trace_cycles' event for guest profiling, since it
-+ * can track the guest instruction pointer in the trace-record.
-  *
-  * Function to parse the arguments and return appropriate values.
-  */
-@@ -202,8 +203,14 @@ int kvm_add_default_arch_event(int *argc, const char **argv)
- 
- 	parse_options(j, tmp, event_options, NULL, 0);
- 	if (!event) {
--		free(tmp);
--		return -EINVAL;
-+		if (pmu_have_event("trace_imc", "trace_cycles")) {
-+			argv[j++] = strdup("-e");
-+			argv[j++] = strdup("trace_imc/trace_cycles/");
-+			*argc += 2;
-+		} else {
-+			free(tmp);
-+			return -EINVAL;
-+		}
- 	}
- 
- 	free(tmp);
--- 
-2.17.2
-
+Thanks
+Gen
