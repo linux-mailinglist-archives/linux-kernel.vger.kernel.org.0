@@ -2,103 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AB013BE42
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D523BE33
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390041AbfFJVSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:18:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38030 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390027AbfFJVS3 (ORCPT
+        id S2389906AbfFJVQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:16:59 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45550 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728517AbfFJVQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:18:29 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f97so4139943plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:18:28 -0700 (PDT)
+        Mon, 10 Jun 2019 17:16:59 -0400
+Received: by mail-oi1-f196.google.com with SMTP id m206so7318531oib.12
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:16:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8nq9Im362lbv4azULZvOC9Ag2G2ZekGR7CCYDprgGF8=;
-        b=FCNlBwOefmxV9kPIPrpaBd9HyXv2yEenUtOaw++Q3b8DYUHSXihBeppW/SIaMfVj5X
-         jP4AxfQTg5gmZCoy5a/s/T7DlqJANXVakIx9E4W7j2FILbiSvu0yUKGMDBpgoqSfIRkG
-         8f4i+L37sKl82vKcRN0id86xV7zHPQ7j7xd8s=
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZIUfIIMLN3e/0Y4suKqQ9G4anQzSpQbmomczdVDiSH0=;
+        b=KkWwJFehPDBhr4NdUmIaYVpcbBtcY+sekuoJua+arEHgspzccbX9hGECT92v0fLHyH
+         ZYmpD21H+NYveVnwr6RO/nTlzy8f3FuBTKhJnILGYDXW5cztpw6pG0t90GBA6nFI5SAk
+         dAIPcmF6URlzecpoiE/Kvy5nbaa1/QnR1RT0ORTmnbT+jN7CerR2BOQH8j2j4z8Kx+kw
+         /odvr+b9/RX9x8kPTajNIuMboPxdvwZpetK0TxmopBw+ZTFvme6ySe4mr44XBdgq1609
+         wewfjMfmlIO5tfEHmWioYCOm1x1R0YE9V/8iqa0iXDmjIzpgU85UXKd0JmwByRm5iEuv
+         vijQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8nq9Im362lbv4azULZvOC9Ag2G2ZekGR7CCYDprgGF8=;
-        b=DZAfPr2SJGiUtwDfrHMAbJwnyt4TVHLkh0c0vQtWwWC0LNmndrml4r1mx+tvRsMxbZ
-         uKTrg1CBD33PKDybVpMuBrfCNm7locdwpHjeG4a8RQIaAEnun+jwZuMb1KUQOcYGAABH
-         iWWotPL8tGUjj/iQN/vRSzsQqQTGNbZseQ4ToF9J08tOXNWeqPmybF2C8IzrX4+Jxfdn
-         zLJcAC2jHpnNP+6rVX4VnCK0xEC1m/j40tdr/sq/xejOusPxUlzb8XTkMKCfGD63RxKL
-         VO1sHRU8gpnc4H9PdYrSHR/I7Y1XvA9iPmi9fZIDqVrktySLZb/74FE+9ymmLI1Za73G
-         03jQ==
-X-Gm-Message-State: APjAAAWazsJPoqzVkxCtBnSeqhah1y5M2POx26dtrDZMQJfUwV+s90/9
-        71CZvvyAeUM7i5NdPu6JA10NQQ==
-X-Google-Smtp-Source: APXvYqyMASM4YCvHQ5Ip2z9vUnGHsH6b1vlzz/iXUjTKHtkcitMyf7/FMV1pmortsoFPZ6YfD+n6Cw==
-X-Received: by 2002:a17:902:5c5:: with SMTP id f63mr72275000plf.176.1560201508490;
-        Mon, 10 Jun 2019 14:18:28 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:e9ae:bd45:1bd9:e60d])
-        by smtp.gmail.com with ESMTPSA id q20sm16377982pgq.66.2019.06.10.14.18.27
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZIUfIIMLN3e/0Y4suKqQ9G4anQzSpQbmomczdVDiSH0=;
+        b=mNp7y/Kc8YbAW8OFeGCt+3VQDb3fOxtmBTv+D//Ne0Lipo8FCn43Z8B4rahULXwsiC
+         JZS+5xmPwc6a5LyIyo4TPXy+XU8A1+3nroxT7qHIM0vTflrufMN7Lg0xpgLKM19QmBq1
+         4/hOHucsqcvX/4CL40mx2ElLDUrHXyxggHNvAJz3m1/SXO/bIqmxWgokK2K9IlRG/BWJ
+         t/SLiNzTGdITuij3w5lcrIyiDQA0xwDfddP0ZqV850IvriZLvAANlUypIlLh1buBXDsR
+         /Nd0fj+CvrvI90AVXFDzPHKwAhpcggcDIKCSBNkaFLM6eGafgjaYNHYxzvYvVEV5EHeb
+         0o8A==
+X-Gm-Message-State: APjAAAVYXl9OCcWsSU8Gvh2uVK64eM4ZCk3j4WG4eRpJ+1klNISZzNrl
+        fZ8gheCr+HcQN4ejMuULG63k6ZA4WJs=
+X-Google-Smtp-Source: APXvYqzrQymgucgnl+z86o+ugZd1hdDPnQB2gmMuuW1BS1J+N2O8IQAMrfJxzBp9VL2vM3TkiEdeNA==
+X-Received: by 2002:aca:de04:: with SMTP id v4mr12968015oig.162.1560201418724;
+        Mon, 10 Jun 2019 14:16:58 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id h59sm1885798oth.30.2019.06.10.14.16.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 14:18:27 -0700 (PDT)
-From:   davidriley@chromium.org
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org, David Riley <davidriley@chromium.org>
-Subject: [PATCH v2 4/4] drm/virtio: Add memory barriers for capset cache.
-Date:   Mon, 10 Jun 2019 14:18:10 -0700
-Message-Id: <20190610211810.253227-5-davidriley@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-In-Reply-To: <20190605234423.11348-1-davidriley@chromium.org>
-References: <20190605234423.11348-1-davidriley@chromium.org>
+        Mon, 10 Jun 2019 14:16:58 -0700 (PDT)
+Subject: Re: [PATCH 0/7] TTY Keyboard Status Request
+To:     Arseny Maslennikov <ar@cs.msu.ru>, Pavel Machek <pavel@denx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        "Vladimir D . Seleznev" <vseleznv@altlinux.org>
+References: <20190605081906.28938-1-ar@cs.msu.ru>
+ <20190609174139.GA11944@xo-6d-61-c0.localdomain>
+ <20190609194013.GA3736@cello> <20190609195132.GA1430@amd>
+ <20190609205610.GB3736@cello>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <97e43820-6143-2a84-7d0d-6f40c6c937a7@landley.net>
+Date:   Mon, 10 Jun 2019 16:18:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190609205610.GB3736@cello>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Riley <davidriley@chromium.org>
+On 6/9/19 3:56 PM, Arseny Maslennikov wrote:
+> This is similar to SIGWINCH, which is default-ignored as well: if the
+> terminal width/height changes (like when a terminal emulator window is
+> resized), its foreground pgrp gets a surprise signal as well, and the
+> processes that don't care about WINCH (and thus have default
+> disposition) do not get confused.
+> E.g. 'strace cat' demonstrates this quite clearly.
 
-After data is copied to the cache entry, atomic_set is used indicate
-that the data is the entry is valid without appropriate memory barriers.
-Similarly the read side was missing the corresponding memory barriers.
+Once upon a time suspending pipelines with ctrl-z broke stuff all the time due
+to zero length reads being interpreted as EOF. These days I don't see that so
+much anymore, I think SA_RESTART is the default now?
 
-Signed-off-by: David Riley <davidriley@chromium.org>
----
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 +++
- drivers/gpu/drm/virtio/virtgpu_vq.c    | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 88c1ed57a3c5..a50495083d6f 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -542,6 +542,9 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
- 	if (!ret)
- 		return -EBUSY;
- 
-+	/* is_valid check must proceed before copy of the cache entry. */
-+	smp_rmb();
-+
- 	ptr = cache_ent->caps_cache;
- 
- 	if (copy_to_user((void __user *)(unsigned long)args->addr, ptr, size))
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index dd5ead2541c2..c7a5ca027245 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -583,6 +583,8 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
- 		    cache_ent->id == le32_to_cpu(cmd->capset_id)) {
- 			memcpy(cache_ent->caps_cache, resp->capset_data,
- 			       cache_ent->size);
-+			/* Copy must occur before is_valid is signalled. */
-+			smp_wmb();
- 			atomic_set(&cache_ent->is_valid, 1);
- 			break;
- 		}
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
-
+Rob
