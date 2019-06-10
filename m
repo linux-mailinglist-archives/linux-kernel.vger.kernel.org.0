@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4173BE4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8716E3BE4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390124AbfFJVUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:20:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37444 "EHLO
+        id S2390153AbfFJVUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:20:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37654 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390074AbfFJVUf (ORCPT
+        with ESMTP id S2390074AbfFJVUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:20:35 -0400
+        Mon, 10 Jun 2019 17:20:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jzhuFJyutEd4Klc1zDqg9CjjQcxV5ZLJVdTWaw679qk=; b=UNNZsNuY3vULON92hzCaU4vaxl
-        ApjJ1BxYHasQ+8Z/Nof9zTZuRn70w7RiE+8a1+2hM6DGe/YolLpC25qG8PQx57rCWEVtEWxEpLp8Z
-        61J2c0DEZL1uAmvI8PJFeuR9io4VLTCzMqmulf6J8dWs5BZ50BPreLSz7P8udVdPdQWc0g4nSta20
-        qZ/4J/1LAJYxNyt/El+JnIJRzIOFI5It2uDxanozjtKDtM7eFhWq36ezNMmDMfmYOROZWC1sLC4wn
-        hftHpzyU/Dkr9MBnnG1iGhFATjfqa1gM9ycyOt589wjAMcCB6UGU1m/dXs39nWr5/P5w1xmGZUDaf
-        DeKuNkGg==;
+        bh=DbUlZjM3WkHKSRgWQVbEnv+zhYk/WrrKQ76XLW7eA94=; b=gLq0KCN0tsx25jqwSpHSOHvXbk
+        iIgIv3sKIis+PnGq8PDoXI9A6HDS/afT5feMl3R2b117Nd5ZHEnfqBcAOINuBjTS8n9BEB6c7szzi
+        lg8KUdPfxV58oCtBAQJlWIGXWEtMhfj3QYM+vhtoJAguDnByJxgKZdKc85uBjSYJ3Zjs84RhzLpW/
+        CsNqSmsy1cDoWNvFsusTE5LMkzieC+Kg2eCmD0cCiRL8xQLwmU2wfAzUnH0ZoHVl3Wsfc4r8exfiD
+        MWXZpg1D+4sRmKikBFPnwxE6sEll2nJaDHdWLlyXLzfJlUly9EvgR8Tp2rKN29x1NexEjahgmt+HC
+        SDX3QkKg==;
 Received: from 089144193064.atnat0002.highway.a1.net ([89.144.193.64] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1haRiO-0000PP-Co; Mon, 10 Jun 2019 21:20:29 +0000
+        id 1haRiR-0000SJ-AZ; Mon, 10 Jun 2019 21:20:31 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Greg Ungerer <gerg@linux-m68k.org>
 Cc:     Michal Simek <monstr@monstr.eu>,
@@ -35,9 +35,9 @@ Cc:     Michal Simek <monstr@monstr.eu>,
         linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
         linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 04/15] binfmt_flat: remove flat_old_ram_flag
-Date:   Mon, 10 Jun 2019 23:20:04 +0200
-Message-Id: <20190610212015.9157-5-hch@lst.de>
+Subject: [PATCH 05/15] binfmt_flat: replace flat_argvp_envp_on_stack with a Kconfig variable
+Date:   Mon, 10 Jun 2019 23:20:05 +0200
+Message-Id: <20190610212015.9157-6-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190610212015.9157-1-hch@lst.de>
 References: <20190610212015.9157-1-hch@lst.de>
@@ -49,146 +49,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead add a Kconfig variable that only h8300 selects.
+This will eventually allow us to kill the need for an <asm/flat.h> for
+many cases.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/arm/include/asm/flat.h        | 1 -
+ arch/arm/Kconfig                   | 1 +
+ arch/arm/include/asm/flat.h        | 2 --
  arch/c6x/include/asm/flat.h        | 1 -
  arch/h8300/Kconfig                 | 1 +
- arch/h8300/include/asm/flat.h      | 1 -
+ arch/h8300/include/asm/flat.h      | 2 --
+ arch/m68k/Kconfig                  | 1 +
  arch/m68k/include/asm/flat.h       | 1 -
- arch/microblaze/include/asm/flat.h | 1 -
+ arch/microblaze/include/asm/flat.h | 2 --
  arch/sh/include/asm/flat.h         | 1 -
  arch/xtensa/include/asm/flat.h     | 1 -
  fs/Kconfig.binfmt                  | 3 +++
- fs/binfmt_flat.c                   | 3 ++-
- 10 files changed, 6 insertions(+), 8 deletions(-)
+ fs/binfmt_flat.c                   | 5 +++--
+ 12 files changed, 9 insertions(+), 12 deletions(-)
 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 8869742a85df..b1b48c0bde76 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -30,6 +30,7 @@ config ARM
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+ 	select ARCH_WANT_IPC_PARSE_VERSION
++	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
+ 	select BUILDTIME_EXTABLE_SORT if MMU
+ 	select CLONE_BACKWARDS
+ 	select CPU_PM if SUSPEND || CPU_IDLE
 diff --git a/arch/arm/include/asm/flat.h b/arch/arm/include/asm/flat.h
-index a185fe023b60..acf162111ee2 100644
+index acf162111ee2..bbc27901446f 100644
 --- a/arch/arm/include/asm/flat.h
 +++ b/arch/arm/include/asm/flat.h
-@@ -9,7 +9,6 @@
+@@ -8,8 +8,6 @@
+ 
  #include <linux/uaccess.h>
  
- #define	flat_argvp_envp_on_stack()		1
--#define	flat_old_ram_flag(flags)		(flags)
- 
+-#define	flat_argvp_envp_on_stack()		1
+-
  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
  					u32 *addr, u32 *persistent)
+ {
 diff --git a/arch/c6x/include/asm/flat.h b/arch/c6x/include/asm/flat.h
-index c4d703b454c6..353e4d06e8c0 100644
+index 353e4d06e8c0..2d57a9204d21 100644
 --- a/arch/c6x/include/asm/flat.h
 +++ b/arch/c6x/include/asm/flat.h
-@@ -5,7 +5,6 @@
+@@ -4,7 +4,6 @@
+ 
  #include <asm/unaligned.h>
  
- #define flat_argvp_envp_on_stack()			0
--#define flat_old_ram_flag(flags)			(flags)
+-#define flat_argvp_envp_on_stack()			0
  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
  					u32 *addr, u32 *persistent)
  {
 diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
-index ecfc4b4b6373..d30e8727b02d 100644
+index d30e8727b02d..7457f190caaa 100644
 --- a/arch/h8300/Kconfig
 +++ b/arch/h8300/Kconfig
 @@ -2,6 +2,7 @@
  config H8300
          def_bool y
  	select ARCH_32BIT_OFF_T
-+	select BINFMT_FLAT_OLD_ALWAYS_RAM
++	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
+ 	select BINFMT_FLAT_OLD_ALWAYS_RAM
  	select GENERIC_ATOMIC64
  	select HAVE_UID16
- 	select VIRT_TO_BUS
 diff --git a/arch/h8300/include/asm/flat.h b/arch/h8300/include/asm/flat.h
-index 7ef7eefded3d..14cc928d5478 100644
+index 14cc928d5478..4683146f0e9e 100644
 --- a/arch/h8300/include/asm/flat.h
 +++ b/arch/h8300/include/asm/flat.h
-@@ -9,7 +9,6 @@
+@@ -8,8 +8,6 @@
+ 
  #include <asm/unaligned.h>
  
- #define	flat_argvp_envp_on_stack()		1
--#define	flat_old_ram_flag(flags)		1
- 
+-#define	flat_argvp_envp_on_stack()		1
+-
  /*
   * on the H8 a couple of the relocations have an instruction in the
+  * top byte.  As there can only be 24bits of address space,  we just
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index 218e037ef901..fd69ee5ad6ab 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -7,6 +7,7 @@ config M68K
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
+ 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
+ 	select ARCH_NO_PREEMPT if !COLDFIRE
++	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
+ 	select HAVE_IDE
+ 	select HAVE_AOUT if MMU
+ 	select HAVE_DEBUG_BUGVERBOSE
 diff --git a/arch/m68k/include/asm/flat.h b/arch/m68k/include/asm/flat.h
-index 217fa89c8e34..7b1fb5c2809e 100644
+index 7b1fb5c2809e..d7102fcd43eb 100644
 --- a/arch/m68k/include/asm/flat.h
 +++ b/arch/m68k/include/asm/flat.h
-@@ -9,7 +9,6 @@
+@@ -8,7 +8,6 @@
+ 
  #include <linux/uaccess.h>
  
- #define	flat_argvp_envp_on_stack()		1
--#define	flat_old_ram_flag(flags)		(flags)
+-#define	flat_argvp_envp_on_stack()		1
  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
  					u32 *addr, u32 *persistent)
  {
 diff --git a/arch/microblaze/include/asm/flat.h b/arch/microblaze/include/asm/flat.h
-index 846084fa7f04..1cd8d7f4cf12 100644
+index 1cd8d7f4cf12..9e3d8e01d294 100644
 --- a/arch/microblaze/include/asm/flat.h
 +++ b/arch/microblaze/include/asm/flat.h
-@@ -14,7 +14,6 @@
+@@ -13,8 +13,6 @@
+ 
  #include <asm/unaligned.h>
  
- #define	flat_argvp_envp_on_stack()	0
--#define	flat_old_ram_flag(flags)	(flags)
- 
+-#define	flat_argvp_envp_on_stack()	0
+-
  /*
   * Microblaze works a little differently from other arches, because
+  * of the MICROBLAZE_64 reloc type. Here, a 32 bit address is split
 diff --git a/arch/sh/include/asm/flat.h b/arch/sh/include/asm/flat.h
-index 0d520b4cc5ea..015678d7b771 100644
+index 015678d7b771..1002343dd84a 100644
 --- a/arch/sh/include/asm/flat.h
 +++ b/arch/sh/include/asm/flat.h
-@@ -12,7 +12,6 @@
+@@ -11,7 +11,6 @@
+ 
  #include <asm/unaligned.h>
  
- #define	flat_argvp_envp_on_stack()		0
--#define	flat_old_ram_flag(flags)		(flags)
+-#define	flat_argvp_envp_on_stack()		0
  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
  					u32 *addr, u32 *persistent)
  {
 diff --git a/arch/xtensa/include/asm/flat.h b/arch/xtensa/include/asm/flat.h
-index a1d88aa3ef8a..b215c1e66958 100644
+index b215c1e66958..3d357371b28b 100644
 --- a/arch/xtensa/include/asm/flat.h
 +++ b/arch/xtensa/include/asm/flat.h
-@@ -5,7 +5,6 @@
+@@ -4,7 +4,6 @@
+ 
  #include <asm/unaligned.h>
  
- #define flat_argvp_envp_on_stack()			0
--#define flat_old_ram_flag(flags)			(flags)
+-#define flat_argvp_envp_on_stack()			0
  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
  					u32 *addr, u32 *persistent)
  {
 diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index f87ddd1b6d72..5658e12ad944 100644
+index 5658e12ad944..82f7d7f234f3 100644
 --- a/fs/Kconfig.binfmt
 +++ b/fs/Kconfig.binfmt
 @@ -97,6 +97,9 @@ config BINFMT_FLAT
  	help
  	  Support uClinux FLAT format binaries.
  
-+config BINFMT_FLAT_OLD_ALWAYS_RAM
++config BINFMT_FLAT_ARGVP_ENVP_ON_STACK
 +	bool
 +
- config BINFMT_ZFLAT
- 	bool "Enable ZFLAT support"
- 	depends on BINFMT_FLAT
+ config BINFMT_FLAT_OLD_ALWAYS_RAM
+ 	bool
+ 
 diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index c0e4535dc1ec..18d82fd5f57c 100644
+index 18d82fd5f57c..c09651087eda 100644
 --- a/fs/binfmt_flat.c
 +++ b/fs/binfmt_flat.c
-@@ -488,7 +488,8 @@ static int load_flat_file(struct linux_binprm *bprm,
- 	 * fix up the flags for the older format,  there were all kinds
- 	 * of endian hacks,  this only works for the simple cases
- 	 */
--	if (rev == OLD_FLAT_VERSION && flat_old_ram_flag(flags))
-+	if (IS_ENABLED(CONFIG_BINFMT_FLAT_OLD_ALWAYS_RAM) &&
-+	    rev == OLD_FLAT_VERSION)
- 		flags = FLAT_FLAG_RAM;
+@@ -124,14 +124,15 @@ static int create_flat_tables(struct linux_binprm *bprm, unsigned long arg_start
  
- #ifndef CONFIG_BINFMT_ZFLAT
+ 	sp -= bprm->envc + 1;
+ 	sp -= bprm->argc + 1;
+-	sp -= flat_argvp_envp_on_stack() ? 2 : 0;
++	if (IS_ENABLED(CONFIG_BINFMT_FLAT_ARGVP_ENVP_ON_STACK))
++		sp -= 2; /* argvp + envp */
+ 	sp -= 1;  /* &argc */
+ 
+ 	current->mm->start_stack = (unsigned long)sp & -FLAT_STACK_ALIGN;
+ 	sp = (unsigned long __user *)current->mm->start_stack;
+ 
+ 	__put_user(bprm->argc, sp++);
+-	if (flat_argvp_envp_on_stack()) {
++	if (IS_ENABLED(CONFIG_BINFMT_FLAT_ARGVP_ENVP_ON_STACK)) {
+ 		unsigned long argv, envp;
+ 		argv = (unsigned long)(sp + 2);
+ 		envp = (unsigned long)(sp + 2 + bprm->argc + 1);
 -- 
 2.20.1
 
