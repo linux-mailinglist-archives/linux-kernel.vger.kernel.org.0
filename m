@@ -2,134 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E3B3AF9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72F0C3AFA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 09:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388012AbfFJH1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 03:27:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37315 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387967AbfFJH1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 03:27:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 22so7067483wmg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 00:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=R8PgIT96t8lGMUY7U97jmYq3MA+1zYAtYoGMOzqWwjw=;
-        b=V9FqMRghqvvhU4bVdsZmBVGvuywtbmkdlqojjApToLVMurUm0Ac5xclQFauZXhGmQ+
-         cxqPV/fxF/+w4N9u6EdWkjlf2CgFP5AoAj1i4+QPavOeAeQ6LWMM8zPfpxR7//jls1dx
-         9BEIU4xYhvD66eYnGgbuiyrbR9z1nQahZerefC/hgCw38oXKuFYclAQ5M/0enD+kc84P
-         C1kgIAllakzqbodhme6lfIPYOF9fLxS5jeiA7XRxrXNDQ7MFaMBc2u5uRH8r9UJcmMth
-         tx6U/t4Q68yV+Zzc4Oj1q/wAYipgQqitKhqh6X8qBmVLGQp8yOmO6P9zCcln5TZ5YbVq
-         9Oqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=R8PgIT96t8lGMUY7U97jmYq3MA+1zYAtYoGMOzqWwjw=;
-        b=YMfLd1d3jTkKNo/wYQSKqvlAVmhyAyyL/C8Vaj213K9knYTR6zylNR7xQX/coLEFWQ
-         yL0A4byf+C9dy52itrbNBEksTU/k/04SYbqYQ6b/lOWcdYAkvVXdu7VOQhzj6aig/eAy
-         gcJ3wEVOqc9+DyqLq13BWJIq3sW+lDVAY/lEwxPJ0Nai+79H5lh1nVLtDsWfE5TMd2Bf
-         8stjAzOTqr8r1dR3RWKSFo12iBpBwX/xGOhYzsviZWT29/7AzWHOx8qpD0Ei+0tJa+/t
-         rczCIAAaa84E1U304rAfv6v5DDSbAR/OCCWNl67VkA5R6faEYsuHrlrJHjXly3fzISDy
-         isRA==
-X-Gm-Message-State: APjAAAWSS4AcFs7Mydppp1ShBRGaNo1AEBc2rFfG3NrJiMz5/nTccEGY
-        2I+iZo0ldymjmnY0VkJkaEKXGg==
-X-Google-Smtp-Source: APXvYqyFRGUIZWa2M57OBy/15G5VEX914bVApwUgZ5leXz9nQsLPIZCRoroqFCE1iICmNdKegKxTZg==
-X-Received: by 2002:a1c:f70f:: with SMTP id v15mr12147273wmh.102.1560151637738;
-        Mon, 10 Jun 2019 00:27:17 -0700 (PDT)
-Received: from dell ([2.31.167.229])
-        by smtp.gmail.com with ESMTPSA id e9sm236071wrr.56.2019.06.10.00.27.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Jun 2019 00:27:16 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 08:27:14 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
-        Guido Kiener <guido@kiener-muenchen.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Jilayne Lovejoy <opensource@jilayne.com>
-Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
- device to talk with the EC
-Message-ID: <20190610072714.GG4797@dell>
-References: <20190604152019.16100-4-enric.balletbo@collabora.com>
- <20190604155228.GB9981@kroah.com>
- <beaf3554bb85974eb118d7722ca55f1823b1850c.camel@collabora.com>
- <20190604183527.GA20098@kroah.com>
- <CABXOdTfU9KaBDhQcwvBGWCmVfnd02_ZFmPGtJsCtGQ-iO9A3Qw@mail.gmail.com>
- <20190604185953.GA2061@kroah.com>
- <bda48bf80add26153e531912fbfca25071934c94.camel@collabora.com>
- <20190606145121.GA13048@kroah.com>
- <1cfc4bfab8d9d8a47e5dacaca88a7fe30ae83076.camel@collabora.com>
- <c577a7f8-b4d6-0574-bc0e-993637ced41f@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c577a7f8-b4d6-0574-bc0e-993637ced41f@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2388048AbfFJH3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 03:29:19 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14541 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387920AbfFJH3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 03:29:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 00:29:19 -0700
+X-ExtLoop1: 1
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
+  by orsmga006.jf.intel.com with ESMTP; 10 Jun 2019 00:29:17 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] perf intel-pt: Prepare for PEBS via PT
+Date:   Mon, 10 Jun 2019 10:27:52 +0300
+Message-Id: <20190610072803.10456-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 06 Jun 2019, Randy Dunlap wrote:
-> > On Thu, 2019-06-06 at 16:51 +0200, Greg Kroah-Hartman wrote:
-> >> Again, don't be noisy, it's not hard, and is how things have been
-> >> trending for many years now.
-> 
-> Ack that.
+Hi
 
-Not to say that this particular print is acceptable, but there are
-places where a low-level (dbg/info) print on successful probe is
-helpful.  Driver initialisation is important!
+PEBS via PT is a new feature that encodes PEBS events into the Intel PT trace.
+This patch series is preparation.  Alex has posted his kernel support:
 
-There's a big difference between drivers 'being noisy', spilling all
-sorts of information that may well be useful or interesting to a
-driver developer, but has little value to anyone else, and providing a
-single print to say that a device has been detected and successfully
-initialised/probed.
+    https://lkml.org/lkml/2019/5/2/323
 
-I recently fell victim to a silent, but fully functional device.
-Successful device initialisation should not be silent when debugging
-has been set to the highest level IMHO.
+This patch set adds the packet definitions and a new packet decoder test,
+followed by patches that enable synthesizing PEBS samples.
 
-And yes, of course turning on debugging for Driver Core works, but is
-not practical for all cases and is certainly not the first port of
-call when figuring out why initialisation seems to be failing for a
-single particular device.
+ 
+Adrian Hunter (11):
+      perf intel-pt: Add new packets for PEBS via PT
+      perf intel-pt: Add Intel PT packet decoder test
+      perf intel-pt: Add decoder support for PEBS via PT
+      perf intel-pt: Prepare to synthesize PEBS samples
+      perf intel-pt: Factor out common sample preparation for re-use
+      perf intel-pt: Synthesize PEBS sample basic information
+      perf intel-pt: Add gp registers to synthesized PEBS sample
+      perf intel-pt: Add xmm registers to synthesized PEBS sample
+      perf intel-pt: Add lbr information to synthesized PEBS sample
+      perf intel-pt: Add memory information to synthesized PEBS sample
+      perf intel-pt: Add callchain to synthesized PEBS sample
 
-Truly surplus churn should absolutely be removed from the boot log, or
-at the very least downgraded, leaving only truly useful information
-such as highlighting a newly detected device for example.  If the user
-wants an even more silent boot log, they should turn the log level
-down a notch.  That is why we have log levels after all.  Simply
-removing all useful prints regardless of log-level is not the way to
-go IMHO.
+ tools/perf/arch/x86/include/arch-tests.h           |   1 +
+ tools/perf/arch/x86/tests/Build                    |   2 +-
+ tools/perf/arch/x86/tests/arch-tests.c             |   4 +
+ .../arch/x86/tests/intel-pt-pkt-decoder-test.c     | 304 +++++++++++++++++++++
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.c  | 114 +++++++-
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.h  | 137 ++++++++++
+ .../util/intel-pt-decoder/intel-pt-pkt-decoder.c   | 140 +++++++++-
+ .../util/intel-pt-decoder/intel-pt-pkt-decoder.h   |  21 +-
+ tools/perf/util/intel-pt.c                         | 296 +++++++++++++++++++-
+ 9 files changed, 1002 insertions(+), 17 deletions(-)
+ create mode 100644 tools/perf/arch/x86/tests/intel-pt-pkt-decoder-test.c
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+
+Regards
+Adrian
+
