@@ -2,105 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F99C3BC77
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 21:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0E63BC7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 21:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfFJTLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 15:11:25 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44327 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388793AbfFJTLZ (ORCPT
+        id S2388933AbfFJTMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 15:12:48 -0400
+Received: from smtprelay0104.hostedemail.com ([216.40.44.104]:35034 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728132AbfFJTMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:11:25 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b17so10301832wrq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 12:11:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VxGrZIk0ilyARGeNNCgKhGQZa7EH/uMSHTcMGHhDQ9M=;
-        b=QMaQ4W4XXGQx0RuwZjmX5oQJYDawi3cbL6qNm1PK0Wyej+cgQNfVpDdaq7fey/MKcb
-         zOCdXr371bMnJRfUQTXs+tdQueXm/uqqzB9J/0KXwg8tlN2X+5nGePhB13smhK+2cw8C
-         JcRLFcqhAQlp4Jz5y4+0ULVZIjm7fGB/cfCFhNYCI4oMHzK/j/IxxZLYIvhEXRRoVC/8
-         uvocrR09DFwzwPzqRcNGkR1cPFPHqvMEBGObCisxro16CUwjov61326mO9IO0nizld2H
-         1V0uEl5ImOgXLQmSvZPoVDR50OE0azQpoVbPtbFy3vV53WLz2jBtb89I4BR0ek7vZfoK
-         vGMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VxGrZIk0ilyARGeNNCgKhGQZa7EH/uMSHTcMGHhDQ9M=;
-        b=psKIXkCfUErt4vJdCzOU+jdQQzMMN01s24UpAOdnxAubc2s0RZ/4p5AP9USIbgxTrQ
-         zDkHXF5Xg6jEalBTcsmEjTlJX7J57/ORKqVwXzlrQZN+T4/Jvj8HKrwwUO4He+mGnyQd
-         1v2PLH0Wf0F6+M7cGzRIgNY7KB/OCqnnOOHWF2X4l2P12mHUpyj3L4VTRXLxdYU2XnwD
-         JhLn1kRKHtVi82L6unnC8Kqt2nefpzleGlFsZAh4U4Z9z7tAAY12uqfZ0YFgQP8hSzFf
-         ypqsbyr5bEuvfBcvqi6YAflTAoMKXsU0bEWIcVR3TTJgSEnqNoKPeRYiMELYb/ViJCpc
-         sCFA==
-X-Gm-Message-State: APjAAAXjqxcUGX6OQERyjtWiGX02rTHunAel5ydXVKV+MsJocNDZFSbl
-        Vvhcx9Xgn4x+ZVuQZMXvlaw8pw==
-X-Google-Smtp-Source: APXvYqy5gdI/Dzp9A6lc41i4FU3NFeqmkX4ph+neuoWpmKseNBvFiu579ofTaiIrZ1zsU+GqKySYbw==
-X-Received: by 2002:a5d:6343:: with SMTP id b3mr13243554wrw.317.1560193883338;
-        Mon, 10 Jun 2019 12:11:23 -0700 (PDT)
-Received: from [192.168.1.6] (233.red-79-146-84.dynamicip.rima-tde.net. [79.146.84.233])
-        by smtp.gmail.com with ESMTPSA id b136sm670675wme.30.2019.06.10.12.11.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 12:11:22 -0700 (PDT)
-Subject: Re: [PATCH v3] tty: serial: msm_serial: avoid system lockup condition
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, agross@kernel.org,
-        David Brown <david.brown@linaro.org>, jslaby@suse.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        khasim.mohammed@linaro.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20190610172308.21129-1-jorge.ramirez-ortiz@linaro.org>
- <CAF6AEGuAPurGcRh42iRkt3paD=kWLJw-ic_LL1QGY=ws8_00XA@mail.gmail.com>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <e656ddd3-f327-818d-3688-f24fddcb52c5@linaro.org>
-Date:   Mon, 10 Jun 2019 21:11:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 10 Jun 2019 15:12:48 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 6460E100E86C2;
+        Mon, 10 Jun 2019 19:12:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:960:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3872:4321:5007:6117:7903:10004:10400:10848:11026:11232:11658:11914:12043:12048:12296:12438:12679:12740:12760:12895:13019:13069:13311:13357:13439:14659:14721:21080:21433:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: noise96_8c799a9dcb15d
+X-Filterd-Recvd-Size: 2203
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 10 Jun 2019 19:12:45 +0000 (UTC)
+Message-ID: <cd2fe2492251187acf62744a191cf6d76732f9e7.camel@perches.com>
+Subject: Re: [PATCH 3/5] random: Add and use pr_fmt()
+From:   Joe Perches <joe@perches.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>, tytso@mit.edu, arnd@arndb.de,
+        gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Mon, 10 Jun 2019 12:12:44 -0700
+In-Reply-To: <20190607182517.28266-3-tiny.windzz@gmail.com>
+References: <20190607182517.28266-1-tiny.windzz@gmail.com>
+         <20190607182517.28266-3-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <CAF6AEGuAPurGcRh42iRkt3paD=kWLJw-ic_LL1QGY=ws8_00XA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/10/19 19:53, Rob Clark wrote:
-> On Mon, Jun 10, 2019 at 10:23 AM Jorge Ramirez-Ortiz
-> <jorge.ramirez-ortiz@linaro.org> wrote:
->> The function msm_wait_for_xmitr can be taken with interrupts
->> disabled. In order to avoid a potential system lockup - demonstrated
->> under stress testing conditions on SoC QCS404/5 - make sure we wait
->> for a bounded amount of time.
->>
->> Tested on SoC QCS404.
->>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+On Fri, 2019-06-07 at 14:25 -0400, Yangtao Li wrote:
+> Prefix all printk/pr_<level> messages with "random: " to make the
+> logging a bit more consistent.
 > 
-> I had observed that heavy UART traffic would lockup the system (on
-> sdm845, but I guess same serial driver)?
+> Miscellanea:
 > 
-> But a comment from the peanut gallary:  wouldn't this fix lead to TX
-> corruption, ie. writing more into TX fifo before hw is ready?  I
-> haven't looked closely at the driver, but a way to wait without irqs
-> disabled would seem nicer..
-> 
-> BR,
-> -R
-> 
+> o Convert a printks to pr_notice
+> o Whitespace to align to open parentheses
+> o Remove embedded "random: " from pr_* as pr_fmt adds it
+[]
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+[]
+> @@ -1031,15 +1033,15 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
+>  		crng_init = 2;
+>  		process_random_ready_list();
+>  		wake_up_interruptible(&crng_init_wait);
+> -		pr_notice("random: crng init done\n");
+> +		pr_notice("crng init done\n");
+>  		if (unseeded_warning.missed) {
+> -			pr_notice("random: %d get_random_xx warning(s) missed "
+> +			pr_notice("%d get_random_xx warning(s) missed "
+>  				  "due to ratelimiting\n",
 
-I think sdm845 uses a different driver (qcom_geni_serial.c) but yes in
-any case we need to determine the sequence leading to the lockup. In our
-internal releases we are adding additional debug information to try to
-capture this info.
+Trivia:
 
-But also I dont think this means that the safety net should not be used
+It'd be nice to coalesce the format string fragments
+into a single line at the same time too.
 
-btw, do you think that perhaps we should add a WARN_ONCE() on timeout?.
+			pr_notice("%d get_random_xx warning(s) missed due to ratelimiting\n",
+ 				  unseeded_warning.missed);
+
+>  			unseeded_warning.missed = 0;
+>  		}
+>  		if (urandom_warning.missed) {
+> -			pr_notice("random: %d urandom warning(s) missed "
+> +			pr_notice("%d urandom warning(s) missed "
+>  				  "due to ratelimiting\n",
+
+etc...
+
+
+
