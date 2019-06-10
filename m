@@ -2,106 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BA733BE0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F1A3BDFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389864AbfFJVGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:06:36 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:28313 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388311AbfFJVGf (ORCPT
+        id S2389730AbfFJVFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:05:15 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43096 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388342AbfFJVFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:06:35 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id B17EAD64F
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 16:06:34 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id aRUwhcEecYTGMaRUwhZQNy; Mon, 10 Jun 2019 16:06:34 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.75.107] (port=48826 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1haRUd-003eSZ-CB; Mon, 10 Jun 2019 16:06:33 -0500
-Date:   Mon, 10 Jun 2019 16:06:13 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] libnvdimm, region: Use struct_size() in kzalloc()
-Message-ID: <20190610210613.GA21989@embeddedor>
+        Mon, 10 Jun 2019 17:05:15 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w79so7303189oif.10
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oSQd/dSw9k2CrxkKH2qz7mRm8NK534f/ZzuWAbekOrY=;
+        b=LURtpcrReLRABUoMAIwSom5ga/OKgTe0xfdabX/kdRy9Rm7RCH5sAzwzDhmTkEKnH1
+         IUCzTbXO68bH57ix5kN28ABttmSEFv4JeZLTQnqkq/s8K2j5PQrtePsBpaN8KN8csrYK
+         RJR/syXc8cefiQ4U/QNL86rZLegUZ628MfkNe9PhFHuWcnLI+4oOFFxMLqwrrVmByY8K
+         MnU4gBRBR52HaQHUgomf8H5XrpVPDSZC1EhTLLCs63UVe9quEay6lPuwybaLuBAYETIb
+         xqS+39iZgiXEyEga76eFd4XzW8I6f4fHc4pBbPFaq4HYv6fXzAZW02avChLkdlf5FdZk
+         qmTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oSQd/dSw9k2CrxkKH2qz7mRm8NK534f/ZzuWAbekOrY=;
+        b=rHegYeWfB+JHwDkFbeXwWk8Jn/BL6AmNSdZIseu8ROMY0Ha95GDtvX1TU0OYvHqDwv
+         bE6FzmzuuzX1WKBqbeVDYf7vmOUuDtsdWccJyPwK7w8UaW8kDQN9mgDJObKEMAehjLdS
+         zXz25ADFDRb3hc7JFxitSxLQ9v1QZ9Ry7xrcA5s8NHeJQ0w9qLfCYNo/Jt3s7vDMIZz0
+         Jec6zofr+pyVxgzdbyu7kWNOwAg2iBTlFvC5/I2h0Y3immKf8FBQYklnd95yICM/URB6
+         kyuA58NocUULnAw5DLESM9wqxJCpujLAnLMft4AMgB2mNekWO8Gc6xbHFNyDy2YhKVNH
+         GWJw==
+X-Gm-Message-State: APjAAAW4PD8xS1Wv8ick3j2lofFSK9AilxyfIvOr8x8/dABwDj62IBlw
+        G0MfEPvj39NkjYljqgrMxY5yNw==
+X-Google-Smtp-Source: APXvYqzoUEQI9eCBkBS8xmW/CfZpKBfLzCJjJsS97rILi72k6uSNDleje2blyLFm/Je8nshzhc0rVA==
+X-Received: by 2002:aca:ec0f:: with SMTP id k15mr12966767oih.13.1560200714329;
+        Mon, 10 Jun 2019 14:05:14 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id d21sm4644203oih.21.2019.06.10.14.05.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 14:05:13 -0700 (PDT)
+Subject: Re: [PATCH 0/7] TTY Keyboard Status Request
+To:     Arseny Maslennikov <ar@cs.msu.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     "Vladimir D . Seleznev" <vseleznv@altlinux.org>
+References: <20190605081906.28938-1-ar@cs.msu.ru>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <0db56bba-96fd-ab99-aa54-360ab171b703@landley.net>
+Date:   Mon, 10 Jun 2019 16:06:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.75.107
-X-Source-L: No
-X-Exim-ID: 1haRUd-003eSZ-CB
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.75.107]:48826
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190605081906.28938-1-ar@cs.msu.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On 6/5/19 3:18 AM, Arseny Maslennikov wrote:
+> This patch series introduces TTY keyboard status request, a feature of
+> the n_tty line discipline that reserves a character in struct termios
+> (^T by default) and reacts to it by printing a short informational line
+> to the terminal and sending a Unix signal to the tty's foreground
+> process group. The processes may, in response to the signal, output a
+> textual description of what they're doing.
 
-struct nd_region {
-	...
-        struct nd_mapping mapping[0];
-};
+I had a long twitter thread about this with some BSD developers,
+https://twitter.com/landley/status/1127148250430152704
+asked on the toybox list for opinions,
+http://lists.landley.net/pipermail/toybox-landley.net/2019-May/010461.html
+and became aware of this patch set when the android bionic maintainer pointed me
+at news coverage of it
+http://lists.landley.net/pipermail/toybox-landley.net/2019-June/010536.html
 
-instance = kzalloc(sizeof(struct nd_region) + sizeof(struct nd_mapping) *
-                          count, GFP_KERNEL);
+So there would appear to at least be interest in the concept.
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+(The conclusion I came to looking at it last month is is it can't be done
+without kernel support, but if such support _does_ arrive I want to add it to
+toybox.)
 
-instance = kzalloc(struct_size(instance, mapping, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/nvdimm/region_devs.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index b4ef7d9ff22e..88becc87e234 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -1027,10 +1027,9 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
- 		}
- 		region_buf = ndbr;
- 	} else {
--		nd_region = kzalloc(sizeof(struct nd_region)
--				+ sizeof(struct nd_mapping)
--				* ndr_desc->num_mappings,
--				GFP_KERNEL);
-+		nd_region = kzalloc(struct_size(nd_region, mapping,
-+						ndr_desc->num_mappings),
-+				    GFP_KERNEL);
- 		region_buf = nd_region;
- 	}
- 
--- 
-2.21.0
-
+Rob
