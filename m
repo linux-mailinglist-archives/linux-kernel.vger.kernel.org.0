@@ -2,145 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E01943B046
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18AED3B05D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387953AbfFJIOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 04:14:43 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35445 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387824AbfFJIOm (ORCPT
+        id S2388621AbfFJIRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 04:17:00 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37118 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388538AbfFJIQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 04:14:42 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m3so8194022wrv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:14:41 -0700 (PDT)
+        Mon, 10 Jun 2019 04:16:59 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bh12so3336979plb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 01:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FoeVTYzF5ZDi2tID72FryeJ/j+o8r81eaeVqgETUoko=;
-        b=itjfuEoXOvXwxbRwuF6HrhTmMzpt6ljGh0o24LPk+N83H/V44mafKAvoTtxvdP14KI
-         LJFlVdi880AiwQnNR9viKWtZQ/ad5i6A238QtGDRjDfySmXGFr6sRkq82+fKocOAZg5N
-         4FziCyWxT7dEY3/oADWNFmOvqND8lybwrvWtQqEOafXloTjd6s9k1YaLHjevxD08LR1U
-         kDfqayPy7cM7+IajIExVAVT7g1tOUDCkmPYDVnR1yGcu5rH0JH6gGpihkAiIv3xsatlv
-         isLSXUYnVtLdBH7SmW7QVjYbO/Md30vYrs7/2WQEtnGwzMYCg1yf40HuHbDIHbr5Q6Pu
-         IzoQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=JG4M70b7wkYOvds6yrOcmhpSN1jFaA/ndkV8z9PCnCg=;
+        b=dCx0r1Uln/Yq/cC2CsLHVjt9X38n83CZbzG8Trj8IEsLgdhg2knSgN0vXq6RLBywP8
+         5w9mNwVO99aKmGDflc7uUmWlPlg6OHS5xkLcxmM6PWRhou+8VEYtkqrMfbfaDE3xoxtX
+         f2n9PpI0BYpB9QiekvZhZ6crt54WxHOJK/iNV2251iglNoBa+hyEfV+ws4RGNiIsOCX4
+         kj2WhsrhRS7BQWCqJThiHTzAgvYQQWm/WyYhplbOJMfHkP0e03iap7aYx0hPedJmLSBU
+         ConuHjLcnhNCkY2ydX6ksbF7UuI5CK6JwdemVkxEJloT3Faf3vFWh2R/q29LNL+MIMGX
+         RDdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FoeVTYzF5ZDi2tID72FryeJ/j+o8r81eaeVqgETUoko=;
-        b=pyi7TRajwEijQ90t3K/F2fcgnrCVHp52S0IqDRUzzo0o1n12+gyHIM68raDVa4hmgK
-         s5SUT/6Xmd/22cvF0tnB3G7w8HYg4qoEiTgAZaxb1n5t3dMAdK0fwDE2QbZGB5sVlKG/
-         /7R1VXK1AG2aibpi1yG+8Rcn3z7nWmIl+KkRv3D18GlKK5uTS795zgTOZ4njtgAcxPlJ
-         UdHgdBphg1Ij77pmh2Q1G+/3SlYHskcoeGv1K2aXflrJMoVTbt2yxHhHlXVSFNo3iRIF
-         N++LafPg2qoPqvPxPWO2z5VMQ5tUbxApjfuhb3ecMqRKNuagGPBz6cAceNwo+axH3VZ6
-         NHLA==
-X-Gm-Message-State: APjAAAWAFn2HRg8jRTfZgOC8CVZj3CJlXxGnlon+ZumRx5Xi8GDzgr/j
-        /CAHWEXSrXYsZX3c2pXbw92YpdfHVlHz4g==
-X-Google-Smtp-Source: APXvYqy9NQENDTf7h9IM9Fr1WLtg2wN5q3OPNu/X/z7kY2UX4lC5AHdyFIKS7VcslrPFuacPBM++HA==
-X-Received: by 2002:adf:e2c3:: with SMTP id d3mr16647979wrj.314.1560154480327;
-        Mon, 10 Jun 2019 01:14:40 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id f2sm17310279wrq.48.2019.06.10.01.14.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 01:14:39 -0700 (PDT)
-Subject: Re: [RFC PATCH 5/6] dt-bindings: soundwire: add bindings for Qcom
- controller
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     broonie@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, pierre-louis.bossart@linux.intel.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20190607085643.932-1-srinivas.kandagatla@linaro.org>
- <20190607085643.932-6-srinivas.kandagatla@linaro.org>
- <20190610045150.GJ9160@vkoul-mobl.Dlink>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <f1e68207-caa2-02e0-19af-ac5763c86e41@linaro.org>
-Date:   Mon, 10 Jun 2019 09:14:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=JG4M70b7wkYOvds6yrOcmhpSN1jFaA/ndkV8z9PCnCg=;
+        b=RdDYHzpLHzINI0gJ+2R8bRqYM4WIvCt3ez416JzYyql0kwTVa/J4JHUF6+Yd4Irswb
+         nT7ti+kZlVIvEKMb2h+zMdDzEikqCsp/2x8+kevUM3MtnwkTWmxakkIfmzriqZhKyLoS
+         /mFlJs8nZi/usSneOtxB9yf0xacHIT7BzVnxEBXzMEFcQcemj6MtVh+9B/OlLfuSAser
+         t4Pz9HwWOUl81nTianFsKAsO9r1Zmm6dI4p2LbKRLczjpwl9BVJXF6/VeSe80VqYxsgk
+         EBXz+f1+RVfOa22zR2fdzLKMo6tlBxXYRXl2Svr3d9hGYU3z9dS+9pas75/A0R/Dwhle
+         BSNw==
+X-Gm-Message-State: APjAAAXlpkpQ0d0+/7wd+d4I1Orcsk7U6HZodMqnk3dFw3FNjKJS+vt0
+        RVtyY1OVa+0NwCO1gtn9lJw=
+X-Google-Smtp-Source: APXvYqw0QhU9CP3jm6emUo6eC0uPDlo82/SSJLXOeDE0wuBo8C1m7TMYge+dRuxUGgeZhREDNGOVPw==
+X-Received: by 2002:a17:902:934a:: with SMTP id g10mr58550853plp.18.1560154618382;
+        Mon, 10 Jun 2019 01:16:58 -0700 (PDT)
+Received: from localhost ([39.7.57.159])
+        by smtp.gmail.com with ESMTPSA id a13sm4104495pgh.6.2019.06.10.01.16.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 01:16:57 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 17:16:54 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     =?utf-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+Cc:     pmladek@suse.com, andriy.shevchenko@linux.intel.com,
+        sergey.senozhatsky@gmail.com, geert+renesas@glider.be,
+        rostedt@goodmis.org, me@tobin.cc, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vsprintf: fix data type of variable in string_nocheck()
+Message-ID: <20190610081654.GA11709@jagdpanzerIV>
+References: <CGME20190610074708epcas2p3dcbdc49d114c544c1de721666d574b43@epcas2p3.samsung.com>
+ <040301d51f60$b4959100$1dc0b300$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20190610045150.GJ9160@vkoul-mobl.Dlink>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <040301d51f60$b4959100$1dc0b300$@samsung.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (06/10/19 16:47), 남영민 wrote:
+> This patch fixes data type of precision with int.
+> The precision is declared as signed int in struct printf_spec.
+> 
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
 
+Looks OK to me.
 
-On 10/06/2019 05:51, Vinod Koul wrote:
-> On 07-06-19, 09:56, Srinivas Kandagatla wrote:
->> This patch adds bindings for Qualcomm soundwire controller.
->>
->> Qualcomm SoundWire Master controller is present in most Qualcomm SoCs
->> either integrated as part of WCD audio codecs via slimbus or
->> as part of SOC I/O.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   .../bindings/soundwire/qcom,swr.txt           | 62 +++++++++++++++++++
-> 
-> So I was expecting to see bus support patches for OF first. I think you
-> have missed those changes. Please do include those in v2 with bindings
-> and OF support for bus.
+FWIW
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-I was planning to post bus bindings along with soundwire slave bindings 
-of WSA881x driver!
-I will be sending this soon!
-
-> 
->>   1 file changed, 62 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/soundwire/qcom,swr.txt
->>
->> diff --git a/Documentation/devicetree/bindings/soundwire/qcom,swr.txt b/Documentation/devicetree/bindings/soundwire/qcom,swr.txt
->> new file mode 100644
->> index 000000000000..eb84d0f4f36f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soundwire/qcom,swr.txt
->> @@ -0,0 +1,62 @@
->> +Qualcomm SoundWire Controller
->> +
->> +This binding describes the Qualcomm SoundWire Controller Bindings.
->> +
->> +Required properties:
->> +
->> +- compatible:		Must be "qcom,soundwire-v<MAJOR>.<MINOR>.<STEP>",
->> +	 		example:
->> +			"qcom,soundwire-v1.3.0"
->> +			"qcom,soundwire-v1.5.0"
->> +			"qcom,soundwire-v1.6.0"
->> +- reg:			SoundWire controller address space.
->> +- interrupts:		SoundWire controller interrupt.
->> +- clock-names:		Must contain "iface".
->> +- clocks:		Interface clocks needed for controller.
->> +- #sound-dai-cells:	Must be 1 for digital audio interfaces on the controllers.
->> +- #address-cells:	Must be 1 for SoundWire devices;
->> +- #size-cells:		Must be <0> as SoundWire addresses have no size component.
->> +- qcom,dout-ports: 	Must be count of data out ports
->> +- qcom,din-ports: 	Must be count of data in ports
-> 
-> On these I think we should have specified dpn properties as specified in
-> DisCo, but then looking at spec we do not define that for master, but
-> bus seems to have it.
-> 
-> Pierre do you why master does not have dpn properties in DisCo?
-> 
->> +- qcom,ports-offset1:	Must be frame offset1 of each data port.
->> +			Out followed by In. Used for Block size calculation.
->> +- qcom,ports-offset2: 	Must be frame offset2 of each data port.
->> +			Out followed by In. Used for Block size calculation.
->> +- qcom,ports-sinterval-low: Must be sample interval low of each data port.
->> +			Out followed by In. Used for Sample Interval calculation.
-> 
-> These are software so do not belong here
-These are board-specfic properties w.r.t this controller ports 
-configuration.
-I don't see any other option to specify this?
-Do you have any alternative suggestions?
-
---srini
-> 
+	-ss
