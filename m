@@ -2,91 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF693B87C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B95CC3B8BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 17:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391281AbfFJPsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 11:48:11 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10168 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390335AbfFJPsK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 11:48:10 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5AFfYgf026022;
-        Mon, 10 Jun 2019 17:47:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=LgERwqK45s8WxfYNJ2p/eCQHczqBFZZAr61TGRo2H+4=;
- b=gWnTJIR+98UCSxymsNwMRkgV+9V4yBZI5+4O8squ/S1WPag/BNss5IcSulDOH8T/qMqy
- q5rRWgjZh1+axSfpm4jGFsbHUXiEKvFm5yX1fVKRlgcGeUpMJ1UiBH3GQvUc006KNBYZ
- aaQBMZ5CoapQhFeAG4Xy6KLHH7l+oOyLUCEOe/V+gwEP4isq8+XLC7bW/5by5lGiK/x3
- XouigYxflqzytqopMhVNGFhEgQPEP7iffCr4OeoYE1zREws/pzQJfakAvhXlF3eR6ezU
- fzZSs6CeFFZkIWOMuauXgOa/ZhjVDilHLoY4vc8Z7eatw46qhvqsNEfDqCLJJMojWq9G AA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t0256a973-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 10 Jun 2019 17:47:32 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B078D34;
-        Mon, 10 Jun 2019 15:47:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E94F4F1D;
-        Mon, 10 Jun 2019 15:47:30 +0000 (GMT)
-Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 10 Jun
- 2019 17:47:30 +0200
-Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
- SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
- 15.00.1347.000; Mon, 10 Jun 2019 17:47:30 +0200
-From:   Erwan LE RAY <erwan.leray@st.com>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        "Kevin Hilman" <khilman@baylibre.com>
-CC:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Clement Peron <clement.peron@devialet.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stefan Agner <stefan@agner.ch>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "Gerald BAEZA" <gerald.baeza@st.com>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Bich HEMON <bich.hemon@st.com>,
-        "Fabrice GASNIER" <fabrice.gasnier@st.com>
-Subject: Re: [PATCH] ARM: debug: stm32: add UART early console configuration
-Thread-Topic: [PATCH] ARM: debug: stm32: add UART early console configuration
-Thread-Index: AQHU73OP100nvdfkikCtYg1KY+YHZqY1DV8AgC1naoCAMtJmgA==
-Date:   Mon, 10 Jun 2019 15:47:30 +0000
-Message-ID: <ff48768c-83e3-55dc-16a0-bd0af4133c7c@st.com>
-References: <1554883239-12051-1-git-send-email-erwan.leray@st.com>
- <CAJiuCcd9884Kn2MAtLMzZpdSa-=xpCDKRLQSVC6NmRNC+YFtaA@mail.gmail.com>
- <deebc332-277b-76b9-421f-7f67c6bdacc8@st.com>
-In-Reply-To: <deebc332-277b-76b9-421f-7f67c6bdacc8@st.com>
-Accept-Language: en-US, fr-FR
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <70F78C8ABFDF92458A8685FA5F79E676@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-10_07:,,
- signatures=0
+        id S2404049AbfFJPzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 11:55:55 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5731 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403791AbfFJPzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 11:55:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 08:55:52 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by orsmga004.jf.intel.com with ESMTP; 10 Jun 2019 08:55:51 -0700
+Message-ID: <e1543e7beb0eb55d6febcd847ccab9b219e60338.camel@intel.com>
+Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
+ function
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>, Dave Hansen <dave.hansen@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Mon, 10 Jun 2019 08:47:45 -0700
+In-Reply-To: <20190608205218.GA2359@xo-6d-61-c0.localdomain>
+References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
+         <20190606200926.4029-4-yu-cheng.yu@intel.com>
+         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
+         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
+         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
+         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
+         <20190608205218.GA2359@xo-6d-61-c0.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgT2xvZiwgQXJuZCBhbmQgS2V2aW4sDQoNCkdlbnRsZSByZW1pbmRlciBvbiBteSBmZWVkYmFj
-ayByZXF1ZXN0Lg0KDQpCZXN0IHJlZ2FyZHMsIEVyd2FuLg0K
+On Sat, 2019-06-08 at 22:52 +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > > I've no idea what the kernel should do; since you failed to answer the
+> > > question what happens when you point this to garbage.
+> > > 
+> > > Does it then fault or what?
+> > 
+> > Yeah, I think you'll fault with a rather mysterious CR2 value since
+> > you'll go look at the instruction that faulted and not see any
+> > references to the CR2 value.
+> > 
+> > I think this new MSR probably needs to get included in oops output when
+> > CET is enabled.
+> > 
+> > Why don't we require that a VMA be in place for the entire bitmap?
+> > Don't we need a "get" prctl function too in case something like a JIT is
+> > running and needs to find the location of this bitmap to set bits itself?
+> > 
+> > Or, do we just go whole-hog and have the kernel manage the bitmap
+> > itself. Our interface here could be:
+> > 
+> > 	prctl(PR_MARK_CODE_AS_LEGACY, start, size);
+> > 
+> > and then have the kernel allocate and set the bitmap for those code
+> > locations.
+> 
+> For the record, that sounds like a better interface than userspace knowing
+> about the bitmap formats...
+> 									Pavel
+
+Initially we implemented the bitmap that way.  To manage the bitmap, every time
+the application issues a syscall for a .so it loads, and the kernel does
+copy_from_user() & copy_to_user() (or similar things).  If a system has a few
+legacy .so files and every application does the same, it can take a long time to
+boot up.
+
+Yu-cheng
+
