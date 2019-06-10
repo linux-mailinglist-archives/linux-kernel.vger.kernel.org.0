@@ -2,210 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 058173B34A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 12:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1B73B35D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 12:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389461AbfFJKgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 06:36:39 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58327 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388708AbfFJKgj (ORCPT
+        id S2389442AbfFJKij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 06:38:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46835 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389217AbfFJKij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 06:36:39 -0400
-X-UUID: e94ee55e12924c7ab24c280262a0d252-20190610
-X-UUID: e94ee55e12924c7ab24c280262a0d252-20190610
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <neal.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 334693022; Mon, 10 Jun 2019 18:36:35 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Jun 2019 18:36:33 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Jun 2019 18:36:33 +0800
-From:   Neal Liu <neal.liu@mediatek.com>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>
-CC:     Neal Liu <neal.liu@mediatek.com>, <linux-crypto@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-        Crystal Guo <Crystal.Guo@mediatek.com>
-Subject: [PATCH v3 3/3] hwrng: add mtk-sec-rng driver
-Date:   Mon, 10 Jun 2019 18:36:24 +0800
-Message-ID: <1560162984-26104-4-git-send-email-neal.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1560162984-26104-1-git-send-email-neal.liu@mediatek.com>
-References: <1560162984-26104-1-git-send-email-neal.liu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Mon, 10 Jun 2019 06:38:39 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 81so5047361pfy.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 03:38:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mpPScSwEUvGCrfFSzsPIPCGbvFV9XPrrj9L5Mq7ES2o=;
+        b=Tc6RBG0z7+LuK3uLgyEbinWPqfxyBMhm12dlPYzpTzHReHHdD3yLFL8h17hrzxueg7
+         qig4UDVs9F89wrRD8QEbjMnF3K16yUHWMDQHf8lTMWVzkAH2EIbQkzTNG/01cADfYMU0
+         8pjCY3miVG0yvYeljjpnEMrDD3nUzFno3PmZySlqzCh9E2FiK5blo+mREoPBF0EFUjX+
+         0IEC9UeEZoSBnS5b+lrqPLaTGw/hMqLlF93mq2YG5dcrIU3lGfJHIWq38HZHDgfVwatY
+         pY2KayHBUvlArMNcseVykmzuPqYiO/AnPT+bpjdaxXXvEANsbJ5KkD8UmAkEW28drvj/
+         KgUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mpPScSwEUvGCrfFSzsPIPCGbvFV9XPrrj9L5Mq7ES2o=;
+        b=uNIzp4QWi9cirUjWaWiIZj77ppByKpHsCX72tTE3tzq0BP043mxVVHbhVVJ2jCPLKk
+         Pcvu+laufVVoQRxj38B7gBv7cBYgPHKvo7lwf91To80oqSKCheNdwtdfT6hs1SlYxZsq
+         Xc938L4n++2UPJa+fxTs1fBCL37Ltv1xEefhQf9YZ+WMhFxrk8lJYrJ29eIu3DzMkzDm
+         s7J6KxiO0K95s1H4YKORI5Oc0iAHpu73v49tMXXwhvzVSnS5TWG7fVM1Re7hAw3L7fGC
+         MboLvC87nQBi3HIN0ZrpG1G1ZL40jvAQaq1qCrBmA5NUUncI9wK/lVpyl+rNizKZsocx
+         7g5A==
+X-Gm-Message-State: APjAAAV9jUenlDSdLoAFm0hTR2UHeS/VhvI7JEVsm0c8yaqXw09JQlbE
+        tPdLC69VsCwo7shjfmYqGs4=
+X-Google-Smtp-Source: APXvYqwoF8NxU5GFTcruRD63cj7AzF075nfcFx3++9Qc63hWP7Czfbgxm7vJEkvKcIx/BeaKiESjNQ==
+X-Received: by 2002:a17:90a:a593:: with SMTP id b19mr947374pjq.31.1560163118455;
+        Mon, 10 Jun 2019 03:38:38 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:2747:12e9:74e9:432c:7ca9:f9ed])
+        by smtp.gmail.com with ESMTPSA id q7sm9512883pfb.32.2019.06.10.03.38.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 03:38:38 -0700 (PDT)
+From:   Merwin Trever Ferrao <merwintf@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Merwin Trever Ferrao <Merwintf@gmail.com>,
+        Merwin Trever Ferrao <merwintf@gmail.com>
+Subject: [PATCH 16/16] Staging: wlan-ng: cfg80211: fixed alignment issue with open parenthesis                      line ending with (
+Date:   Mon, 10 Jun 2019 16:08:25 +0530
+Message-Id: <20190610103825.19364-1-merwintf@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For MediaTek SoCs on ARMv8 with TrustZone enabled, peripherals like
-entropy sources is not accessible from normal world (linux) and
-rather accessible from secure world (ATF/TEE) only. This driver aims
-to provide a generic interface to ATF rng service.
+From: Merwin Trever Ferrao <Merwintf@gmail.com>
 
-Signed-off-by: Neal Liu <neal.liu@mediatek.com>
+Fixed a coding style issue.
+
+Signed-off-by: Merwin Trever Ferrao <merwintf@gmail.com>
 ---
- drivers/char/hw_random/Kconfig       |   16 ++++++
- drivers/char/hw_random/Makefile      |    1 +
- drivers/char/hw_random/mtk-sec-rng.c |   97 ++++++++++++++++++++++++++++++++++
- 3 files changed, 114 insertions(+)
- create mode 100644 drivers/char/hw_random/mtk-sec-rng.c
+ drivers/staging/wlan-ng/cfg80211.c | 32 ++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 25a7d8f..6c82a3b 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -398,6 +398,22 @@ config HW_RANDOM_MTK
+diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
+index eee1998c4b18..5424e2682911 100644
+--- a/drivers/staging/wlan-ng/cfg80211.c
++++ b/drivers/staging/wlan-ng/cfg80211.c
+@@ -324,8 +324,7 @@ static int prism2_scan(struct wiphy *wiphy,
+ 		(i < request->n_channels) && i < ARRAY_SIZE(prism2_channels);
+ 		i++)
+ 		msg1.channellist.data.data[i] =
+-			ieee80211_frequency_to_channel(
+-				request->channels[i]->center_freq);
++			ieee80211_frequency_to_channel(request->channels[i]->center_freq);
+ 	msg1.channellist.data.len = request->n_channels;
  
- 	  If unsure, say Y.
+ 	msg1.maxchanneltime.data = 250;
+@@ -359,15 +358,15 @@ static int prism2_scan(struct wiphy *wiphy,
+ 		freq = ieee80211_channel_to_frequency(msg2.dschannel.data,
+ 						      NL80211_BAND_2GHZ);
+ 		bss = cfg80211_inform_bss(wiphy,
+-			ieee80211_get_channel(wiphy, freq),
+-			CFG80211_BSS_FTYPE_UNKNOWN,
+-			(const u8 *)&msg2.bssid.data.data,
+-			msg2.timestamp.data, msg2.capinfo.data,
+-			msg2.beaconperiod.data,
+-			ie_buf,
+-			ie_len,
+-			(msg2.signal.data - 65536) * 100, /* Conversion to signed type */
+-			GFP_KERNEL
++					  ieee80211_get_channel(wiphy, freq),
++					  CFG80211_BSS_FTYPE_UNKNOWN,
++					  (const u8 *)&msg2.bssid.data.data,
++					  msg2.timestamp.data, msg2.capinfo.data,
++					  msg2.beaconperiod.data,
++					  ie_buf,
++					  ie_len,
++					  (msg2.signal.data - 65536) * 100, /* Conversion to signed type */
++					  GFP_KERNEL
+ 		);
  
-+config HW_RANDOM_MTK_SEC
-+	tristate "MediaTek Security Random Number Generator support"
-+	depends on HW_RANDOM
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	default HW_RANDOM
-+	help
-+	  This driver provides kernel-side support for the Random Number
-+	  Generator hardware found on MediaTek SoCs. The difference with
-+	  mtk-rng is the Random Number Generator hardware is secure
-+	  access only.
-+
-+	  To compile this driver as a module, choose M here. the
-+	  module will be called mtk-sec-rng.
-+
-+	  If unsure, say Y.
-+
- config HW_RANDOM_S390
- 	tristate "S390 True Random Number Generator support"
- 	depends on S390
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 7c9ef4a..0ae4993 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_HW_RANDOM_PIC32) += pic32-rng.o
- obj-$(CONFIG_HW_RANDOM_MESON) += meson-rng.o
- obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
- obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
-+obj-$(CONFIG_HW_RANDOM_MTK_SEC) += mtk-sec-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
- obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
- obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-diff --git a/drivers/char/hw_random/mtk-sec-rng.c b/drivers/char/hw_random/mtk-sec-rng.c
-new file mode 100644
-index 0000000..ecd2e29
---- /dev/null
-+++ b/drivers/char/hw_random/mtk-sec-rng.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 MediaTek Inc.
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/hw_random.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/soc/mediatek/mtk_sip_svc.h>
-+
-+#define MT67XX_RNG_MAGIC	0x74726e67
-+#define SMC_RET_NUM		4
-+#define MTK_SEC_RND_SIZE	(sizeof(u32) * SMC_RET_NUM)
-+
-+struct mtk_sec_rng_priv {
-+	struct hwrng rng;
-+};
-+
-+static void mtk_sec_get_rnd(uint32_t *val)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_smc(MTK_SIP_KERNEL_GET_RND,
-+		      MT67XX_RNG_MAGIC, 0, 0, 0, 0, 0, 0, &res);
-+
-+	val[0] = res.a0;
-+	val[1] = res.a1;
-+	val[2] = res.a2;
-+	val[3] = res.a3;
-+}
-+
-+static int mtk_sec_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	u32 val[4] = {0};
-+	int retval = 0;
-+	int i;
-+
-+	while (max >= MTK_SEC_RND_SIZE) {
-+		mtk_sec_get_rnd(val);
-+
-+		for (i = 0; i < SMC_RET_NUM; i++) {
-+			*(u32 *)buf = val[i];
-+			buf += sizeof(u32);
-+		}
-+
-+		retval += MTK_SEC_RND_SIZE;
-+		max -= MTK_SEC_RND_SIZE;
-+	}
-+
-+	return retval;
-+}
-+
-+static int mtk_sec_rng_probe(struct platform_device *pdev)
-+{
-+	struct mtk_sec_rng_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->rng.name = pdev->name;
-+	priv->rng.read = mtk_sec_rng_read;
-+	priv->rng.priv = (unsigned long)&pdev->dev;
-+	priv->rng.quality = 900;
-+
-+	ret = devm_hwrng_register(&pdev->dev, &priv->rng);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register rng device: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mtk_sec_rng_match[] = {
-+	{ .compatible = "mediatek,mtk-sec-rng", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mtk_sec_rng_match);
-+
-+static struct platform_driver mtk_sec_rng_driver = {
-+	.probe = mtk_sec_rng_probe,
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+		.owner = THIS_MODULE,
-+		.of_match_table = mtk_sec_rng_match,
-+	},
-+};
-+
-+module_platform_driver(mtk_sec_rng_driver);
-+
-+MODULE_DESCRIPTION("MediaTek Security Random Number Generator Driver");
-+MODULE_AUTHOR("Neal Liu <neal.liu@mediatek.com>");
-+MODULE_LICENSE("GPL");
+ 		if (!bss) {
+@@ -475,14 +474,13 @@ static int prism2_connect(struct wiphy *wiphy, struct net_device *dev,
+ 			}
+ 
+ 			result = prism2_domibset_uint32(wlandev,
+-				DIDMIB_DOT11SMT_PRIVACYTABLE_WEPDEFAULTKEYID,
+-				sme->key_idx);
++							DIDMIB_DOT11SMT_PRIVACYTABLE_WEPDEFAULTKEYID,
++							sme->key_idx);
+ 			if (result)
+ 				goto exit;
+ 
+ 			/* send key to driver */
+-			did = didmib_dot11smt_wepdefaultkeystable_key(
+-					sme->key_idx + 1);
++			did = didmib_dot11smt_wepdefaultkeystable_key(sme->key_idx + 1);
+ 			result = prism2_domibset_pstr32(wlandev,
+ 							did, sme->key_len,
+ 							(u8 *)sme->key);
+@@ -588,8 +586,8 @@ static int prism2_set_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev,
+ 		data = MBM_TO_DBM(mbm);
+ 
+ 	result = prism2_domibset_uint32(wlandev,
+-		DIDMIB_DOT11PHY_TXPOWERTABLE_CURRENTTXPOWERLEVEL,
+-		data);
++					DIDMIB_DOT11PHY_TXPOWERTABLE_CURRENTTXPOWERLEVEL,
++					data);
+ 
+ 	if (result) {
+ 		err = -EFAULT;
 -- 
-1.7.9.5
+2.17.1
 
