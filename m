@@ -2,351 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A53133B0AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D9B83B09A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 10:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbfFJIWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 04:22:08 -0400
-Received: from relay.sw.ru ([185.231.240.75]:37478 "EHLO relay.sw.ru"
+        id S2388450AbfFJITT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 04:19:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:46121 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387825AbfFJIWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 04:22:08 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1haFYy-0001aZ-Pc; Mon, 10 Jun 2019 11:21:56 +0300
-Subject: Re: [PATCH 2/4] mm: thp: make deferred split shrinker memcg aware
-To:     Yang Shi <yang.shi@linux.alibaba.com>,
-        kirill.shutemov@linux.intel.com, hannes@cmpxchg.org,
-        mhocko@suse.com, hughd@google.com, shakeelb@google.com,
-        rientjes@google.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1559887659-23121-1-git-send-email-yang.shi@linux.alibaba.com>
- <1559887659-23121-3-git-send-email-yang.shi@linux.alibaba.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <b26a9a64-6f74-d2a0-121a-9cfccbe201d5@virtuozzo.com>
-Date:   Mon, 10 Jun 2019 11:21:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2387825AbfFJITT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 04:19:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 01:19:18 -0700
+X-ExtLoop1: 1
+Received: from xxx.igk.intel.com (HELO xxx) ([10.237.93.170])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jun 2019 01:19:15 -0700
+Date:   Mon, 10 Jun 2019 10:23:10 +0200
+From:   Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= 
+        <amadeuszx.slawinski@linux.intel.com>
+To:     Cezary Rojewski <cezary.rojewski@intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [alsa-devel] [PATCH 08/14] ASoC: Intel: Skylake: Properly
+ cleanup on component removal
+Message-ID: <20190610102310.572abe45@xxx>
+In-Reply-To: <36e24c2a-feb4-4c6f-7bc5-76b13ff625a3@intel.com>
+References: <20190605134556.10322-1-amadeuszx.slawinski@linux.intel.com>
+        <20190605134556.10322-9-amadeuszx.slawinski@linux.intel.com>
+        <36e24c2a-feb4-4c6f-7bc5-76b13ff625a3@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1559887659-23121-3-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Yang,
+On Mon, 10 Jun 2019 09:17:21 +0200
+Cezary Rojewski <cezary.rojewski@intel.com> wrote:
 
-On 07.06.2019 09:07, Yang Shi wrote:
-> Currently THP deferred split shrinker is not memcg aware, this may cause
-> premature OOM with some configuration. For example the below test would
-> run into premature OOM easily:
+> On 2019-06-05 15:45, Amadeusz Sławiński wrote:
+> > When we remove component we need to reverse things which were done
+> > on init, this consists of topology cleanup, lists cleanup and
+> > releasing firmware.
+> > 
+> > Currently cleanup handlers are put in wrong places or otherwise
+> > missing. So add proper component cleanup function and perform
+> > cleanups in it.
+> > 
+> > Signed-off-by: Amadeusz Sławiński
+> > <amadeuszx.slawinski@linux.intel.com> ---
+> >   sound/soc/intel/skylake/skl-pcm.c      |  8 ++++++--
+> >   sound/soc/intel/skylake/skl-topology.c | 15 +++++++++++++++
+> >   sound/soc/intel/skylake/skl-topology.h |  2 ++
+> >   sound/soc/intel/skylake/skl.c          |  2 --
+> >   4 files changed, 23 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/sound/soc/intel/skylake/skl-pcm.c
+> > b/sound/soc/intel/skylake/skl-pcm.c index
+> > 44062806fbed..7e8110c15258 100644 ---
+> > a/sound/soc/intel/skylake/skl-pcm.c +++
+> > b/sound/soc/intel/skylake/skl-pcm.c @@ -1459,8 +1459,12 @@ static
+> > int skl_platform_soc_probe(struct snd_soc_component *component) 
+> >   static void skl_pcm_remove(struct snd_soc_component *component)
+> >   {
+> > -	/* remove topology */
+> > -	snd_soc_tplg_component_remove(component,
+> > SND_SOC_TPLG_INDEX_ALL);
+> > +	struct hdac_bus *bus = dev_get_drvdata(component->dev);
+> > +	struct skl *skl = bus_to_skl(bus);
+> > +
+> > +	skl_tplg_exit(component, bus);
+> > +
+> > +	skl_debugfs_exit(skl);
+> >   }
+> >   
+> >   static const struct snd_soc_component_driver skl_component  = {
+> > diff --git a/sound/soc/intel/skylake/skl-topology.c
+> > b/sound/soc/intel/skylake/skl-topology.c index
+> > 44f3b29a7210..3964262109ac 100644 ---
+> > a/sound/soc/intel/skylake/skl-topology.c +++
+> > b/sound/soc/intel/skylake/skl-topology.c @@ -3748,3 +3748,18 @@ int
+> > skl_tplg_init(struct snd_soc_component *component, struct hdac_bus
+> > *bus) return 0;
+> >   }
+> > +
+> > +void skl_tplg_exit(struct snd_soc_component *component, struct
+> > hdac_bus *bus) +{
+> > +	struct skl *skl = bus_to_skl(bus);
+> > +	struct skl_pipeline *ppl, *tmp;
+> > +
+> > +	if (!list_empty(&skl->ppl_list))
+> > +		list_for_each_entry_safe(ppl, tmp, &skl->ppl_list,
+> > node)
+> > +			list_del(&ppl->node);
+> > +
+> > +	/* clean up topology */
+> > +	snd_soc_tplg_component_remove(component,
+> > SND_SOC_TPLG_INDEX_ALL); +
+> > +	release_firmware(skl->tplg);
+> > +}  
 > 
-> $ cgcreate -g memory:thp
-> $ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
-> $ cgexec -g memory:thp transhuge-stress 4000
+> In debugfs cleanup patch:
+> [PATCH 07/14] ASoC: Intel: Skylake: Add function to cleanup debugfs 
+> interface
 > 
-> transhuge-stress comes from kernel selftest.
+> you define skl_debugfs_exit separately - its usage is split and
+> present in this very patch instead. However, for tplg counterpart - 
+> skl_tplg_exit - you've decided to combine both together. Why not 
+> separate tplg cleanup too?
 > 
-> It is easy to hit OOM, but there are still a lot THP on the deferred
-> split queue, memcg direct reclaim can't touch them since the deferred
-> split shrinker is not memcg aware.
-> 
-> Convert deferred split shrinker memcg aware by introducing per memcg
-> deferred split queue.  The THP should be on either per node or per memcg
-> deferred split queue if it belongs to a memcg.  When the page is
-> immigrated to the other memcg, it will be immigrated to the target
-> memcg's deferred split queue too.
-> 
-> And, move deleting THP from deferred split queue in page free before
-> memcg uncharge so that the page's memcg information is available.
-> 
-> Reuse the second tail page's deferred_list for per memcg list since the
-> same THP can't be on multiple deferred split queues.
-> 
-> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  include/linux/huge_mm.h    | 15 ++++++++++
->  include/linux/memcontrol.h |  4 +++
->  include/linux/mm_types.h   |  1 +
->  mm/huge_memory.c           | 71 +++++++++++++++++++++++++++++++++-------------
->  mm/memcontrol.c            | 19 +++++++++++++
->  mm/swap.c                  |  4 +++
->  6 files changed, 94 insertions(+), 20 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 7cd5c15..8137c3a 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -250,6 +250,17 @@ static inline bool thp_migration_supported(void)
->  	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
->  }
->  
-> +static inline struct list_head *page_deferred_list(struct page *page)
-> +{
-> +	/*
-> +	 * Global or memcg deferred list in the second tail pages is
-> +	 * occupied by compound_head.
-> +	 */
-> +	return &page[2].deferred_list;
-> +}
-> +
-> +extern void del_thp_from_deferred_split_queue(struct page *);
-> +
->  #else /* CONFIG_TRANSPARENT_HUGEPAGE */
->  #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
->  #define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
-> @@ -368,6 +379,10 @@ static inline bool thp_migration_supported(void)
->  {
->  	return false;
->  }
-> +
-> +static inline void del_thp_from_deferred_split_queue(struct page *page)
-> +{
-> +}
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->  
->  #endif /* _LINUX_HUGE_MM_H */
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index bc74d6a..5d3c10c 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -316,6 +316,10 @@ struct mem_cgroup {
->  	struct list_head event_list;
->  	spinlock_t event_list_lock;
->  
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	struct deferred_split deferred_split_queue;
-> +#endif
-> +
->  	struct mem_cgroup_per_node *nodeinfo[0];
->  	/* WARNING: nodeinfo must be the last member here */
->  };
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 8ec38b1..4eabf80 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -139,6 +139,7 @@ struct page {
->  		struct {	/* Second tail page of compound page */
->  			unsigned long _compound_pad_1;	/* compound_head */
->  			unsigned long _compound_pad_2;
-> +			/* For both global and memcg */
->  			struct list_head deferred_list;
->  		};
->  		struct {	/* Page table pages */
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 81cf759..3307697 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -492,10 +492,15 @@ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
->  	return pmd;
->  }
->  
-> -static inline struct list_head *page_deferred_list(struct page *page)
-> +static inline struct deferred_split *get_deferred_split_queue(struct page *page)
->  {
-> -	/* ->lru in the tail pages is occupied by compound_head. */
-> -	return &page[2].deferred_list;
-> +	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
-> +	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
-> +
-> +	if (memcg)
-> +		return &memcg->deferred_split_queue;
-> +	else
-> +		return &pgdat->deferred_split_queue;
 
-memory_cgrp_subsys is not early initialized, so at the beginning of boot
-root_mem_cgroup is NULL, and pages will use &pgdat->deferred_split_queue
-list head. But after root_mem_cgroup is initialized, another list head
-will be used, won't it?! So there will be two different list heads used
-for same cgroup.
+This is done because skl_debugfs_exit() can be introduced standalone.
+However skl_tplg_exit() has code that is being moved from other places.
+If I introduced it in separate commit, other one would be adding call
+to this function while removing things that happen inside, losing part
+of information, about the fact that code is actually just being moved.
 
-This may be a reason of a problem (I won't say you, where the problem will
-occur).
+> > diff --git a/sound/soc/intel/skylake/skl-topology.h
+> > b/sound/soc/intel/skylake/skl-topology.h index
+> > 82282cac9751..7d32c61c73e7 100644 ---
+> > a/sound/soc/intel/skylake/skl-topology.h +++
+> > b/sound/soc/intel/skylake/skl-topology.h @@ -471,6 +471,8 @@ void
+> > skl_tplg_set_be_dmic_config(struct snd_soc_dai *dai, struct
+> > skl_pipe_params *params, int stream); int skl_tplg_init(struct
+> > snd_soc_component *component, struct hdac_bus *ebus);
+> > +void skl_tplg_exit(struct snd_soc_component *component,
+> > +				struct hdac_bus *bus);
+> >   struct skl_module_cfg *skl_tplg_fe_get_cpr_module(
+> >   		struct snd_soc_dai *dai, int stream);
+> >   int skl_tplg_update_pipe_params(struct device *dev,
+> > diff --git a/sound/soc/intel/skylake/skl.c
+> > b/sound/soc/intel/skylake/skl.c index 6d6401410250..e4881ff427ea
+> > 100644 --- a/sound/soc/intel/skylake/skl.c
+> > +++ b/sound/soc/intel/skylake/skl.c
+> > @@ -1119,14 +1119,12 @@ static void skl_remove(struct pci_dev *pci)
+> >   	struct skl *skl = bus_to_skl(bus);
+> >   
+> >   	cancel_work_sync(&skl->probe_work);
+> > -	release_firmware(skl->tplg);
+> >   
+> >   	pm_runtime_get_noresume(&pci->dev);
+> >   
+> >   	/* codec removal, invoke bus_device_remove */
+> >   	snd_hdac_ext_bus_device_remove(bus);
+> >   
+> > -	skl->debugfs = NULL;
+> >   	skl_platform_unregister(&pci->dev);
+> >   	skl_free_dsp(skl);
+> >   	skl_machine_device_unregister(skl);
+> >   
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
 
->  }
->  
->  void prep_transhuge_page(struct page *page)
-> @@ -2658,7 +2663,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
->  {
->  	struct page *head = compound_head(page);
->  	struct pglist_data *pgdata = NODE_DATA(page_to_nid(head));
-> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-> +	struct deferred_split *ds_queue = get_deferred_split_queue(page);
->  	struct anon_vma *anon_vma = NULL;
->  	struct address_space *mapping = NULL;
->  	int count, mapcount, extra_pins, ret;
-> @@ -2792,25 +2797,36 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
->  	return ret;
->  }
->  
-> -void free_transhuge_page(struct page *page)
-> +void del_thp_from_deferred_split_queue(struct page *page)
->  {
-> -	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
-> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> -	if (!list_empty(page_deferred_list(page))) {
-> -		ds_queue->split_queue_len--;
-> -		list_del(page_deferred_list(page));
-> +	/*
-> +	 * The THP may be not on LRU at this point, e.g. the old page of
-> +	 * NUMA migration.  And PageTransHuge is not enough to distinguish
-> +	 * with other compound page, e.g. skb, THP destructor is not used
-> +	 * anymore and will be removed, so the compound order sounds like
-> +	 * the only choice here.
-> +	 */
-> +	if (PageTransHuge(page) && compound_order(page) == HPAGE_PMD_ORDER) {
-> +		struct deferred_split *ds_queue = get_deferred_split_queue(page);
-> +		unsigned long flags;
-> +		spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> +			if (!list_empty(page_deferred_list(page))) {
-> +				ds_queue->split_queue_len--;
-> +				list_del(page_deferred_list(page));
-> +			}
-> +		spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  	}
-> -	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-> +}
-> +
-> +void free_transhuge_page(struct page *page)
-> +{
->  	free_compound_page(page);
->  }
->  
->  void deferred_split_huge_page(struct page *page)
->  {
-> -	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
-> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-> +	struct deferred_split *ds_queue = get_deferred_split_queue(page);
-> +	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
->  	unsigned long flags;
->  
->  	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
-> @@ -2820,6 +2836,9 @@ void deferred_split_huge_page(struct page *page)
->  		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
->  		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
->  		ds_queue->split_queue_len++;
-> +		if (memcg)
-> +			memcg_set_shrinker_bit(memcg, page_to_nid(page),
-> +					       deferred_split_shrinker.id);
->  	}
->  	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  }
-> @@ -2827,8 +2846,15 @@ void deferred_split_huge_page(struct page *page)
->  static unsigned long deferred_split_count(struct shrinker *shrink,
->  		struct shrink_control *sc)
->  {
-> -	struct pglist_data *pgdata = NODE_DATA(sc->nid);
-> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-> +	struct deferred_split *ds_queue;
-> +
-> +	if (!sc->memcg) {
-> +		struct pglist_data *pgdata = NODE_DATA(sc->nid);
-> +		ds_queue = &pgdata->deferred_split_queue;
-> +		return READ_ONCE(ds_queue->split_queue_len);
-> +	}
-> +
-> +	ds_queue = &sc->memcg->deferred_split_queue;
->  	return READ_ONCE(ds_queue->split_queue_len);
->  }
->  
-> @@ -2836,12 +2862,17 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->  		struct shrink_control *sc)
->  {
->  	struct pglist_data *pgdata = NODE_DATA(sc->nid);
-> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-> +	struct deferred_split *ds_queue;
->  	unsigned long flags;
->  	LIST_HEAD(list), *pos, *next;
->  	struct page *page;
->  	int split = 0;
->  
-> +	if (sc->memcg)
-> +		ds_queue = &sc->memcg->deferred_split_queue;
-> +	else
-> +		ds_queue = &pgdata->deferred_split_queue;
-> +
->  	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->  	/* Take pin on all head pages to avoid freeing them under us */
->  	list_for_each_safe(pos, next, &ds_queue->split_queue) {
-> @@ -2888,7 +2919,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->  	.count_objects = deferred_split_count,
->  	.scan_objects = deferred_split_scan,
->  	.seeks = DEFAULT_SEEKS,
-> -	.flags = SHRINKER_NUMA_AWARE,
-> +	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE,
->  };
->  
->  #ifdef CONFIG_DEBUG_FS
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e50a2db..fe7e544 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4579,6 +4579,11 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
->  #ifdef CONFIG_CGROUP_WRITEBACK
->  	INIT_LIST_HEAD(&memcg->cgwb_list);
->  #endif
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	spin_lock_init(&memcg->deferred_split_queue.split_queue_lock);
-> +	INIT_LIST_HEAD(&memcg->deferred_split_queue.split_queue);
-> +	memcg->deferred_split_queue.split_queue_len = 0;
-> +#endif
->  	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
->  	return memcg;
->  fail:
-> @@ -4949,6 +4954,20 @@ static int mem_cgroup_move_account(struct page *page,
->  		__mod_memcg_state(to, NR_WRITEBACK, nr_pages);
->  	}
->  
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	if (compound && !list_empty(page_deferred_list(page))) {
-> +		spin_lock(&from->deferred_split_queue.split_queue_lock);
-> +		list_del(page_deferred_list(page));
-> +		from->deferred_split_queue.split_queue_len--;
-> +		spin_unlock(&from->deferred_split_queue.split_queue_lock);
-
-Won't be better to assign
-
-page->mem_cgroup = to;
-
-after removing from one list and before linking to another list?
-There is possible no a problem, but another people writing code
-on top of this may not expect such the behavior.
-> +		spin_lock(&to->deferred_split_queue.split_queue_lock);
-> +		list_add_tail(page_deferred_list(page),
-> +			      &to->deferred_split_queue.split_queue);
-> +		to->deferred_split_queue.split_queue_len++;
-> +		spin_unlock(&to->deferred_split_queue.split_queue_lock);
-> +	}
-> +#endif
->  	/*
->  	 * It is safe to change page->mem_cgroup here because the page
->  	 * is referenced, charged, and isolated - we can't race with
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 3a75722..3348295 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -69,6 +69,10 @@ static void __page_cache_release(struct page *page)
->  		del_page_from_lru_list(page, lruvec, page_off_lru(page));
->  		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
->  	}
-> +
-> +	/* Delete THP from deferred split queue before memcg uncharge */
-> +	del_thp_from_deferred_split_queue(page);
-> +
->  	__ClearPageWaiters(page);
->  	mem_cgroup_uncharge(page);
->  }
