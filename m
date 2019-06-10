@@ -2,66 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E06B73BE2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DAE93BE3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Jun 2019 23:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389892AbfFJVPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 17:15:39 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:42940 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbfFJVPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 17:15:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=kOvoZ7UUXPPjS3T4n7Fk8hqSwFzI6Ebfl9pCSW6cL+U=; b=J3D/nqzeZzV1Sa+tPzjwVjYB9y
-        zN5/zbXSUI8DL3H5WZov4uMPwePt+tbWv232sfGP1gZXcZFqURQACVG65vKN4lE0U9iXIRmz4wmQK
-        R5+7zwafOcVxXa4Vv2+XEIvQXd2WILnODeH/GMyZ/M2IWac01+73EchMisz012M0Xnag=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1haRde-000217-DP; Mon, 10 Jun 2019 23:15:34 +0200
-Date:   Mon, 10 Jun 2019 23:15:34 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, ioana.ciornei@nxp.com, olteanv@gmail.com,
-        rmk+kernel@armlinux.org.uk,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: dsa: Deal with non-existing PHY/fixed-link
-Message-ID: <20190610211534.GD2191@lunn.ch>
-References: <20190610193150.22231-1-f.fainelli@gmail.com>
+        id S2389931AbfFJVSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 17:18:18 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46832 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728517AbfFJVSS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 17:18:18 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 81so5987229pfy.13
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 14:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=m0QdMbKNLVs0T8bKlIwsAC6CTJBWav9NlL0ckO7DwlA=;
+        b=aXsWgQ9MISu7GVEUvnuqIx+fsqGjVQgLb+MZC1mkE1EKEL+Yw+ZR7o/wgZr5NWOk4A
+         rFulQA7GH29PRBa/ecTRG3Ylp+faYI3nHqeOr5anX/cH/RqXZ+YLWjGA9z9XBIcv2mjy
+         W2vI8mfwM7dgPo9C1Xs9WYcMsCWOWMGOU8GJM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=m0QdMbKNLVs0T8bKlIwsAC6CTJBWav9NlL0ckO7DwlA=;
+        b=SfCiaHycdIXAg5/sxEqPBONv8JHMxkceAouYxDBcfJ4V6Gr6U6p5lC1zyd/4b3PqNu
+         H1de0rZBHnuWd98URbW8CedHMW6fA0a0//8TmjLwlevxRR2H1j4wTq4YQnWDJZHkFjg5
+         8cqD/Z8PDZM04hMEuJyJkUXcFNiqKKjPBHjTIRY2RlfFQeAHwagWvi+4YRnOODKXCJs1
+         z0ksSaABC1WBbOH0xTZZIvUUAlHjiLO8bk6ui5bbuxsW2EPL/rS2ou1U2n7DnbHndmzP
+         ZrfWZ/NbXdN4HoqaUofoXQHAyoupHXb8J6OG+GHiMG/UwUNh839U7d7ylc8QwOfcMR/E
+         uA1g==
+X-Gm-Message-State: APjAAAUELmdLFvmFaEgPuD0YF/wC9p5vH26U3Qn+XUS+be9sfLrcJAII
+        KdVNBRZjZKDjl/KdB2Fqts0n2w==
+X-Google-Smtp-Source: APXvYqwnWc4Rkv1HzFVoZjhnGWJK4oUgbCaO10e5+E+NJPsLfANZDbIWyiAzXN7RiRLG8EjciU0zmg==
+X-Received: by 2002:a62:5c84:: with SMTP id q126mr50065148pfb.247.1560201497375;
+        Mon, 10 Jun 2019 14:18:17 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:e9ae:bd45:1bd9:e60d])
+        by smtp.gmail.com with ESMTPSA id p43sm427645pjp.4.2019.06.10.14.18.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 14:18:16 -0700 (PDT)
+From:   davidriley@chromium.org
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org, David Riley <davidriley@chromium.org>
+Subject: [PATCH v2 0/4] drm/virtio: Ensure cached capset entries are valid before copying.
+Date:   Mon, 10 Jun 2019 14:18:06 -0700
+Message-Id: <20190610211810.253227-1-davidriley@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+In-Reply-To: <20190605234423.11348-1-davidriley@chromium.org>
+References: <20190605234423.11348-1-davidriley@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610193150.22231-1-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 12:31:49PM -0700, Florian Fainelli wrote:
-> We need to specifically deal with phylink_of_phy_connect() returning
-> -ENODEV, because this can happen when a CPU/DSA port does connect
-> neither to a PHY, nor has a fixed-link property. This is a valid use
-> case that is permitted by the binding and indicates to the switch:
-> auto-configure port with maximum capabilities.
-> 
-> Fixes: 0e27921816ad ("net: dsa: Use PHYLINK for the CPU/DSA ports")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+From: David Riley <davidriley@chromium.org>
 
-Hi Florian
 
-This fixes the regression.
+v2: Updated barriers.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+David Riley (4):
+  drm/virtio: Ensure cached capset entries are valid before copying.
+  drm/virtio: Wake up all waiters when capset response comes in.
+  drm/virtio: Fix cache entry creation race.
+  drm/virtio: Add memory barriers for capset cache.
 
-But i wonder if we want to add in
-(dsa_is_cpu_port(ds, port) || dsa_is_dsa_port(ds, port) i.e. force a
-user port to have some form of PHY?
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |  6 ++++--
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 26 ++++++++++++++++++++++++--
+ 2 files changed, 28 insertions(+), 4 deletions(-)
 
-     Andrew
+-- 
+2.22.0.rc2.383.gf4fbbf30c2-goog
+
