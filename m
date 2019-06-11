@@ -2,119 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3B573D76C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E00253D773
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406441AbfFKUCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 16:02:31 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42734 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405168AbfFKUCa (ORCPT
+        id S2405916AbfFKUEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 16:04:14 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40372 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405706AbfFKUEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:02:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x17so14358570wrl.9;
-        Tue, 11 Jun 2019 13:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jIebUp4XY7WW1bkNEqW8SSNqGZE7schYtfqUjB6l7k0=;
-        b=rjjq2BYL90EBCSL/toQeCzvvX7/mr3CT8wNVZ5RrUf9C4iHpBbLWDEbfYOZEJ8Pj4q
-         NNEdrItqug1NOkCSsrAgG3RaVp1IDaUsD0EY9yUcqX03AYR0uvQg3SEa/rIVUCmk79ik
-         AUaWNObvhnMKupRn+GrK6NbovbCK4c93D2eYGYLq2NMisxYK0gmviqStYYoaCInLvwoS
-         ik0rmfpNNqQwh1zguzJdUG/zHLIIJ0/L6Trutr9hHDGjdTk/wevjQxUE5vaWeo1qkqp4
-         l3sv1kswS2B88HLMkiLSc+8+51SEKiFcExDiVLbfATNMmV/gP5sCngr3zpwjKPHwn3nL
-         R5fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jIebUp4XY7WW1bkNEqW8SSNqGZE7schYtfqUjB6l7k0=;
-        b=TU8/9X8q45s9/pST0eKSUdFK3+9WU4fAih+5Q6S0D45/ZDXZ8cHp4vzCvuYTRc2abu
-         Oq6msR/rcm4SK2L2+Lcm9GCpKJODtT4TcFeiUra94oAlbClftJQPZ5Ae6VuZ4v5sT5Ii
-         xFdnhEov8SE0i/1jY+VwdiBsXbasERgUDiIWyB73wuCQj5C3UlxN4TEb8xmH/eCdjEfh
-         wtOW7tegqQX4rqgeFYFVRMHfWjleSladE5xu7RC/h4lfu5WOljyoLmUx7adXeNJwvsAa
-         rsEdX0nhyqXY0KG6c+9vy/0BQVkF+/vZW8T9p1H2IWSrZFKQPUZtfQKYWxzBgSgd4p7f
-         6f5g==
-X-Gm-Message-State: APjAAAVQZamUDF+ZZZjQXQTF4x7/rEzt8R1y6dMuBAtOwN5Of/B07Rk9
-        E7ijiwvC6wnSAW4GkBnnhUs=
-X-Google-Smtp-Source: APXvYqy69Nttw3VJy9kpldo/q2sr2jjcjp5IQcHqdojuXnECS/X413h3T3E/IrANMshlTYRLwEAwbA==
-X-Received: by 2002:adf:e60f:: with SMTP id p15mr5340510wrm.332.1560283348311;
-        Tue, 11 Jun 2019 13:02:28 -0700 (PDT)
-Received: from [192.168.1.17] (bgt97.neoplus.adsl.tpnet.pl. [83.28.83.97])
-        by smtp.gmail.com with ESMTPSA id t15sm6862774wrx.84.2019.06.11.13.02.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 13:02:27 -0700 (PDT)
-Subject: Re: [PATCH 1/2] dt-bindings: pwm-backlight: Add 'max-brightness'
- property
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-References: <20190610233739.29477-1-mka@chromium.org>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <00220cd7-ed4b-5250-d448-cf83ed4c2012@gmail.com>
-Date:   Tue, 11 Jun 2019 22:02:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 11 Jun 2019 16:04:13 -0400
+Received: from turingmachine.home (unknown [IPv6:2804:431:d719:d9b5:d711:794d:1c68:5ed3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tonyk)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 79C902854A0;
+        Tue, 11 Jun 2019 21:04:10 +0100 (BST)
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net, kernel@collabora.com,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH] sphinx.rst: Add note about code snippets embedded in the text
+Date:   Tue, 11 Jun 2019 17:03:16 -0300
+Message-Id: <20190611200316.30054-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190610233739.29477-1-mka@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+There's a paragraph that explains how to create fixed width text block,
+but it doesn't explains how to create fixed width text inline, although
+this feature is really used through the documentation. Fix that adding a
+quick note about it.
 
-On 6/11/19 1:37 AM, Matthias Kaehlcke wrote:
-> Add an optional 'max-brightness' property, which is used to specify
-> the number of brightness levels (max-brightness + 1) when the node
-> has no 'brightness-levels' table.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->   .../devicetree/bindings/leds/backlight/pwm-backlight.txt       | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> index 64fa2fbd98c9..98f4ba626054 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> @@ -27,6 +27,9 @@ Optional properties:
->                               resolution pwm duty cycle can be used without
->                               having to list out every possible value in the
->                               brightness-level array.
-> +  - max-brightness: Maximum brightness value. Used to specify the number of
-> +                    brightness levels (max-brightness + 1) when the node
-> +                    has no 'brightness-levels' table.
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+---
+ Documentation/doc-guide/sphinx.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In the LED subsystem we have led-max-microamp property which seems to
-better describe hardware capabilities. It says just: this is the current
-level the LED can withstand. max-brightness does not implicitly convey
-this kind of information.
-
-Why the need for the property at all? If for the reasons other than
-hardware capabilities than it should be more likely handled
-by userspace.
-
->   [0]: Documentation/devicetree/bindings/pwm/pwm.txt
->   [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-> 
-
+diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
+index c039224b404e..f48abc07f4c5 100644
+--- a/Documentation/doc-guide/sphinx.rst
++++ b/Documentation/doc-guide/sphinx.rst
+@@ -218,7 +218,7 @@ Here are some specific guidelines for the kernel documentation:
+   examples, etc.), use ``::`` for anything that doesn't really benefit
+   from syntax highlighting, especially short snippets. Use
+   ``.. code-block:: <language>`` for longer code blocks that benefit
+-  from highlighting.
++  from highlighting. For a short snippet of code embedded in the text, use \`\`.
+ 
+ 
+ the C domain
 -- 
-Best regards,
-Jacek Anaszewski
+2.22.0
+
