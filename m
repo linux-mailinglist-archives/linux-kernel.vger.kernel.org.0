@@ -2,131 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D8C5419F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:27:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C603D015
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406785AbfFLB1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:27:40 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18130 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406215AbfFLB1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:27:40 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7885718CA3B9CC4C27AE;
-        Wed, 12 Jun 2019 09:27:38 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
- 09:27:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jeyu@kernel.org>, <gregkh@linuxfoundation.org>, <mbenes@suse.cz>
-CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v4] kernel/module: Fix mem leak in module_add_modinfo_attrs
-Date:   Tue, 11 Jun 2019 23:00:07 +0800
-Message-ID: <20190611150007.21064-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190603144554.18168-1-yuehaibing@huawei.com>
-References: <20190603144554.18168-1-yuehaibing@huawei.com>
+        id S2390723AbfFKPAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 11:00:23 -0400
+Received: from mail-it1-f173.google.com ([209.85.166.173]:33967 "EHLO
+        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388492AbfFKPAW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 11:00:22 -0400
+Received: by mail-it1-f173.google.com with SMTP id k134so2392491ith.1;
+        Tue, 11 Jun 2019 08:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zHWTKx49Gq1WGZM8R0zxOjj/6L8rQ+XOzH7iCc71fLE=;
+        b=GtnPZ8PcYsev3bUJMl12/qtkurUekBfjoeQRssebXZOd1Vh/pi93n8ri1zQygQkkam
+         r8WTW+JTL9BiGEGRAzncEEGlp6DxU+Wf6C2V9i0WKb1evjiRaxPojQAHzyyH12bIRb2t
+         Kqu59JOKiBKPoa68P04YsCKCLt8DK68jqC194bjmO9/pYj3rNWjlZ/JvgANl1xHzMRFD
+         +AyoM1rc7HhX2brUw+Y+e1zOKJcSibWeh6QvI/zRhKNopr0dvUIYrKDu95u4TumCagdE
+         rhyAaksXKga9gX1cvnnYe9+KuF69gvZWgDu4ylj2/conJmU/v9a78ph3waARDlWflKST
+         7yZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zHWTKx49Gq1WGZM8R0zxOjj/6L8rQ+XOzH7iCc71fLE=;
+        b=Ke55J3ZCuftGF8rQBtcBvMQf2ctc2kADyYRSxAGRlUIIAI94vZTDnZUMcMaETn5RhF
+         mrl65xVDSwD+VVvGeziqQLzgeZo/Mm7nFNmfAut387AR2D+6Mvc1Ld/OBiZf4IwA8Vys
+         lYyzOp6bIKbgMxOKE79g7qCkgvbRgFMyOXraC0IjtUBsSBGdHMuo/ja2FHYixfFAE8BE
+         88Vn/S2180qt/sWLQdh0IjC8C7JmfXUD/Rgc67zfufH92cLq6RirpkqU8HL6+LNP7hvo
+         gq4nsUUmKqjnGvpQYcJTDjKKBaWhtts1+YmtlWyu3Jr4qz28ofdN0WVTW+k8wBScA5bs
+         RNcQ==
+X-Gm-Message-State: APjAAAXucaRCLfYOjUPg7qwJcS+eW7FvxFdjwqqCS7vhtiLO+Y9wkaEg
+        IlPmn7EnKK/G7TKfF+0q99iRX/tErIl5aDeB9ts=
+X-Google-Smtp-Source: APXvYqz+G5hLirRMGVEg5HuTJI/wTzc5Q/hRbQhchLTgb+mgXtZW3tfRHNTXgv1peMQpp3+2jscWcDy3pmgePdG/+34=
+X-Received: by 2002:a24:13d0:: with SMTP id 199mr1095523itz.33.1560265221431;
+ Tue, 11 Jun 2019 08:00:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190603170306.49099-1-nitesh@redhat.com> <20190603140304-mutt-send-email-mst@kernel.org>
+ <500506fd-7641-c628-533b-7aa178a37f18@redhat.com>
+In-Reply-To: <500506fd-7641-c628-533b-7aa178a37f18@redhat.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Tue, 11 Jun 2019 08:00:10 -0700
+Message-ID: <CAKgT0Uem4AJcowHDXPd9yEL8VzA_NciVtWoCiEfsD35q82LF3A@mail.gmail.com>
+Subject: Re: [RFC][Patch v10 0/2] mm: Support for page hinting
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>,
+        David Hildenbrand <david@redhat.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In module_add_modinfo_attrs if sysfs_create_file
-fails, we forget to free allocated modinfo_attrs
-and roll back the sysfs files.
+On Tue, Jun 11, 2019 at 5:19 AM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>
+>
+> On 6/3/19 2:04 PM, Michael S. Tsirkin wrote:
+> > On Mon, Jun 03, 2019 at 01:03:04PM -0400, Nitesh Narayan Lal wrote:
+> >> This patch series proposes an efficient mechanism for communicating free memory
+> >> from a guest to its hypervisor. It especially enables guests with no page cache
+> >> (e.g., nvdimm, virtio-pmem) or with small page caches (e.g., ram > disk) to
+> >> rapidly hand back free memory to the hypervisor.
+> >> This approach has a minimal impact on the existing core-mm infrastructure.
+> > Could you help us compare with Alex's series?
+> > What are the main differences?
+> Sorry for the late reply, but I haven't been feeling too well during the
+> last week.
+>
+> The main differences are that this series uses a bitmap to track pages
+> that should be hinted to the hypervisor, while Alexander's series tracks
+> it directly in core-mm. Also in order to prevent duplicate hints
+> Alexander's series uses a newly defined page flag whereas I have added
+> another argument to __free_one_page.
+> For these reasons, Alexander's series is relatively more core-mm
+> invasive, while this series is lightweight (e.g., LOC). We'll have to
+> see if there are real performance differences.
+>
+> I'm planning on doing some further investigations/review/testing/...
+> once I'm back on track.
 
-Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v4: call module_remove_modinfo_attrs only while i > 0
-v3: reuse module_remove_modinfo_attrs
-v2: free from '--i' instead of 'i--'
----
- kernel/module.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+BTW one thing I found is that I will likely need to add a new
+parameter like you did to __free_one_page as I need to defer setting
+the flag until after all of the merges have happened. Otherwise set
+the flag on a given page, and then after the merge that page may not
+be the one we ultimately add to the free list.
 
-diff --git a/kernel/module.c b/kernel/module.c
-index f954d72..3310a39 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1696,6 +1696,8 @@ static int add_usage_links(struct module *mod)
- 	return ret;
- }
- 
-+static void module_remove_modinfo_attrs(struct module *mod, int end);
-+
- static int module_add_modinfo_attrs(struct module *mod)
- {
- 	struct module_attribute *attr;
-@@ -1710,24 +1712,34 @@ static int module_add_modinfo_attrs(struct module *mod)
- 		return -ENOMEM;
- 
- 	temp_attr = mod->modinfo_attrs;
--	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
-+	for (i = 0; (attr = modinfo_attrs[i]); i++) {
- 		if (!attr->test || attr->test(mod)) {
- 			memcpy(temp_attr, attr, sizeof(*temp_attr));
- 			sysfs_attr_init(&temp_attr->attr);
- 			error = sysfs_create_file(&mod->mkobj.kobj,
- 					&temp_attr->attr);
-+			if (error)
-+				goto error_out;
- 			++temp_attr;
- 		}
- 	}
-+
-+	return 0;
-+
-+error_out:
-+	if (i > 0)
-+		module_remove_modinfo_attrs(mod, --i);
- 	return error;
- }
- 
--static void module_remove_modinfo_attrs(struct module *mod)
-+static void module_remove_modinfo_attrs(struct module *mod, int end)
- {
- 	struct module_attribute *attr;
- 	int i;
- 
- 	for (i = 0; (attr = &mod->modinfo_attrs[i]); i++) {
-+		if (end >= 0 && i > end)
-+			break;
- 		/* pick a field to test for end of list */
- 		if (!attr->attr.name)
- 			break;
-@@ -1815,7 +1827,7 @@ static int mod_sysfs_setup(struct module *mod,
- 	return 0;
- 
- out_unreg_modinfo_attrs:
--	module_remove_modinfo_attrs(mod);
-+	module_remove_modinfo_attrs(mod, -1);
- out_unreg_param:
- 	module_param_sysfs_remove(mod);
- out_unreg_holders:
-@@ -1851,7 +1863,7 @@ static void mod_sysfs_fini(struct module *mod)
- {
- }
- 
--static void module_remove_modinfo_attrs(struct module *mod)
-+static void module_remove_modinfo_attrs(struct module *mod, int end)
- {
- }
- 
-@@ -1867,7 +1879,7 @@ static void init_param_lock(struct module *mod)
- static void mod_sysfs_teardown(struct module *mod)
- {
- 	del_usage_links(mod);
--	module_remove_modinfo_attrs(mod);
-+	module_remove_modinfo_attrs(mod, -1);
- 	module_param_sysfs_remove(mod);
- 	kobject_put(mod->mkobj.drivers_dir);
- 	kobject_put(mod->holders_dir);
--- 
-2.7.4
+I'll try to have an update with all of my changes ready before the end
+of this week.
 
+Thanks.
 
+- Alex
