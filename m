@@ -2,94 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8E73C9A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B75D13C7FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:01:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388706AbfFKLC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 07:02:57 -0400
-Received: from twin.jikos.cz ([91.219.245.39]:58891 "EHLO twin.jikos.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388669AbfFKLC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 07:02:56 -0400
-X-Greylist: delayed 3594 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 07:02:55 EDT
-Received: from twin.jikos.cz (dave@[127.0.0.1])
-        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id x5BA1sTh019587
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 11 Jun 2019 12:01:55 +0200
-Received: (from dave@localhost)
-        by twin.jikos.cz (8.13.6/8.13.6/Submit) id x5BA1rtN019585;
-        Tue, 11 Jun 2019 12:01:53 +0200
-Date:   Tue, 11 Jun 2019 12:01:53 +0200
-From:   David Sterba <dave@jikos.cz>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: kernel BUG at fs/btrfs/volumes.c:LINE!
-Message-ID: <20190611100153.GD24160@twin.jikos.cz>
-Reply-To: dave@jikos.cz
-Mail-Followup-To: Eric Biggers <ebiggers@kernel.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <00000000000096009b056df92dc1@google.com>
- <70a3c2d1-3f53-d4c0-13b3-29f836ec46d9@oracle.com>
- <20180607153450.GF3215@twin.jikos.cz>
- <CACT4Y+arBwkwhD-kob9fg1pVBXiMepW6KBK2LkhwjQ9HnDcoqw@mail.gmail.com>
- <20180607165213.GI3215@twin.jikos.cz>
- <20190610231403.GZ63833@gmail.com>
+        id S2405130AbfFKKBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:01:42 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44356 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbfFKKBm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:01:42 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b7so11243163otl.11;
+        Tue, 11 Jun 2019 03:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cKHtlBUkMzjdH3r39CqknbOU+dh9l7ghGjhob+cHQvc=;
+        b=TAOJjUVoZBLoEepo69mKURKgJxIdic5W/v1b1jbZ9oRluEz6pU6mqurQzDLfzYlVp0
+         OlkC9Pun9ZN5ncordE+w5RYupYNJN4VTPzMIPBblgPLNHbQ4AeMjiz7TSfwfHdh/J2cW
+         D8RiYlRjEJi/1MKWS9oa9aGDXRBBlhCnSVOfSDwY4kT7XhWLgrjqwuMo7tdmKZTWjgn8
+         dUMI/UtDSOdnycaVhW6vWSaUhgCLUPISOIKvvZCwNx7VFXecEAreom7uT9QBIKRBydQr
+         pa3+ePq5te0zQ0iJqu6XPgGChiryPEpPHKwUZaJ+FgGIkdtUfOnLfHnr+gQM81s0nR/k
+         lgLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cKHtlBUkMzjdH3r39CqknbOU+dh9l7ghGjhob+cHQvc=;
+        b=Ri97DmgR/StqQxiFhlZHnXqFjqEHhimorLtXCTJGvFdTHc1CzBdKnMOBengv1Luu+B
+         TcG9ibURNAcYW2AcBDZjXZW93qJJJRNOIetcVq+onzcNSqD45HlMZfECXBM4vMpKHztw
+         wabfZQ7fXdengqLgX06o+c9RPt5zFmKqEPWjk4kB+6H9dd2x3GTW7Mwn3t8RQy0oLMU8
+         XQ1Yug1d01T5zfVqO5WVjB9wCJKtfSelwUH+R87M5htEMxv55aveQHIyNW893LVrDiuJ
+         M/tijse6G6uIYobT0R3V9l8UCs9O09jJjspDQ2kHiAoxUD3K++bOV4HNYGXK1Nz325/u
+         yXNg==
+X-Gm-Message-State: APjAAAWz4C2t6GJ//sJ+7Qcbqs4QpXA8QqTeFkGErKwoTkiIHQ0edfBe
+        /emedNeEIMdV3ama/BItvZ2LlPW7weOyB3u1QdU=
+X-Google-Smtp-Source: APXvYqxhkV+gvHla0N2YZgkW9d9FAdVI0LqmBRTy/1sioItcPZ602wJTcdJjOuPTo6CYxmRjnHa1uyPJuu56IMPtWxg=
+X-Received: by 2002:a9d:6959:: with SMTP id p25mr11883571oto.118.1560247301404;
+ Tue, 11 Jun 2019 03:01:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610231403.GZ63833@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <1559178307-6835-1-git-send-email-wanpengli@tencent.com>
+ <20190610143420.GA6594@flask> <20190611011100.GB24835@linux.intel.com>
+ <CANRm+Cwv5jqxBW=Ss5nkX7kZM3_Y-Ucs66yx5+wN09=W4pUdzA@mail.gmail.com> <F136E492-5350-49EE-A856-FBAEDB12FF99@gmail.com>
+In-Reply-To: <F136E492-5350-49EE-A856-FBAEDB12FF99@gmail.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Tue, 11 Jun 2019 18:02:25 +0800
+Message-ID: <CANRm+CyZcvuT80ixp9f0FNmjN+rTUtw8MshtBG0Uk4L1B1UjDw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] KVM: Yield to IPI target if necessary
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 04:14:04PM -0700, Eric Biggers wrote:
-> On Thu, Jun 07, 2018 at 06:52:13PM +0200, David Sterba wrote:
-> > On Thu, Jun 07, 2018 at 06:28:02PM +0200, Dmitry Vyukov wrote:
-> > > > Normally the GFP_NOFS allocations do not fail so I think the fuzzer
-> > > > environment is tuned to allow that, which is fine for coverage but does
-> > > > not happen in practice. This will be fixed eventually.
-> > > 
-> > > Isn't GFP_NOFS more restricted than normal allocations?  Are these
-> > > allocations accounted against memcg? It's easy to fail any allocation
-> > > within a memory container.
-> > 
-> > https://lwn.net/Articles/723317/ The 'too small to fail' and some
-> > unwritten semantics of GFP_NOFS but I think you're right about the
-> > memory controler that can fail any allocation though.
-> > 
-> > Error handling is being improved over time, the memory allocation
-> > failures are in some cases hard and this one would need to update some
-> > logic so it's not a oneliner.
-> > 
-> 
-> This bug is still there.  In btrfs_close_one_device():
-> 
-> 	if (device->name) {
-> 		name = rcu_string_strdup(device->name->str, GFP_NOFS);
-> 		BUG_ON(!name); /* -ENOMEM */
-> 		rcu_assign_pointer(new_device->name, name);
-> 	}
-> 
-> It assumes that the memory allocation succeeded.
-> 
-> See syzbot report from v5.2-rc3 here: https://syzkaller.appspot.com/text?tag=CrashReport&x=16c839c1a00000
-> 
-> Is there any plan to fix this?
+On Tue, 11 Jun 2019 at 09:48, Nadav Amit <nadav.amit@gmail.com> wrote:
+>
+> > On Jun 10, 2019, at 6:45 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
+> >
+> > On Tue, 11 Jun 2019 at 09:11, Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> >> On Mon, Jun 10, 2019 at 04:34:20PM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 =
+wrote:
+> >>> 2019-05-30 09:05+0800, Wanpeng Li:
+> >>>> The idea is from Xen, when sending a call-function IPI-many to vCPUs=
+,
+> >>>> yield if any of the IPI target vCPUs was preempted. 17% performance
+> >>>> increasement of ebizzy benchmark can be observed in an over-subscrib=
+e
+> >>>> environment. (w/ kvm-pv-tlb disabled, testing TLB flush call-functio=
+n
+> >>>> IPI-many since call-function is not easy to be trigged by userspace
+> >>>> workload).
+> >>>
+> >>> Have you checked if we could gain performance by having the yield as =
+an
+> >>> extension to our PV IPI call?
+> >>>
+> >>> It would allow us to skip the VM entry/exit overhead on the caller.
+> >>> (The benefit of that might be negligible and it also poses a
+> >>> complication when splitting the target mask into several PV IPI
+> >>> hypercalls.)
+> >>
+> >> Tangetially related to splitting PV IPI hypercalls, are there any majo=
+r
+> >> hurdles to supporting shorthand?  Not having to generate the mask for
+> >> ->send_IPI_allbutself and ->kvm_send_ipi_all seems like an easy to way
+> >> shave cycles for affected flows.
+> >
+> > Not sure why shorthand is not used for native x2apic mode.
+>
+> Why do you say so? native_send_call_func_ipi() checks if allbutself
+> shorthand should be used and does so (even though the check can be more
+> efficient - I=E2=80=99m looking at that code right now=E2=80=A6)
 
-Yes there is, to avoid allocations when closing the device and tracking
-the state in another way. As this has never been reported in practice
-the priority to fix it is rather low so I can't give you an ETA.
+Please continue to follow the apic/x2apic driver. Just apic_flat set
+APIC_DEST_ALLBUT/APIC_DEST_ALLINC to ICR.
+
+Regards,
+Wanpeng Li
