@@ -2,113 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DDE03C1E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 06:04:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B643C3C1EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 06:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbfFKEEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 00:04:09 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32820 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389620AbfFKEEC (ORCPT
+        id S1729037AbfFKEFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 00:05:08 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:59958 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbfFKEFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 00:04:02 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k187so5661517pga.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 21:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M8dK47yPhynvSehskkuhR0uoKpp2uUP0x/D6+OPbrUg=;
-        b=CcUYJwRYFPcbjY4eu0n/t203Kb6yWjUPmTkt3aooyO0UUZofpy4cpboC6TwF076Ios
-         ZWILIMTCOWl4KnH2TWGccw1JJqig6+YYtxMUTrG3nlZqucwadYAgNXi6pGreSG31TIXb
-         RJFX+AUwh7s4gdYWU+Ew7z54dQtjsrzL7NH6c=
+        Tue, 11 Jun 2019 00:05:08 -0400
+Received: by mail-it1-f200.google.com with SMTP id u127so1333883ith.9
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 21:05:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M8dK47yPhynvSehskkuhR0uoKpp2uUP0x/D6+OPbrUg=;
-        b=pAyoYoCfsVZb1Jxg6hgzCIoR5C+Q05h9wgCopkje6hO5KGxcZ2ABzgbZ1weHxXL5eN
-         QI6BekDWny3341NmvA16xNrvGKEWpDyStelJXyV2u5IMHWwvA3EHpvyn0rmpqL3E6hVK
-         ZmNj4SxSMlFySD28eDwXeBwn99YLlRLZtRVfv/fem7B/N34+G/Whq1MAe3aSxuSMqBho
-         jZNu2P44HflOIEyW4xHi4zX1VB/5YU3Zjc8aDxWxHt2vqmdDECCWBVYbHS/w8/xGbjBw
-         gZ7AWrT1ZrkSO2KKXZPOj3wxr/OF9fCDYaQXHWkJGwnbXJnfUCm0cvnVfAn3GkHNJijS
-         kuAA==
-X-Gm-Message-State: APjAAAWkg9/BPsFcmeaMmNAkg9c6ZcJeda+u2LdapntZbq6GDiWvJPA6
-        pmFdTm8SkK7dMc3vagtciSXVxLbwYNA=
-X-Google-Smtp-Source: APXvYqzfYIuckJzyOvuDvYV3JLxaoW5r0AK9O0deBBd8fMs6LODhYT7Aj2K7vKmQFzwpcjHKS1s46A==
-X-Received: by 2002:aa7:804c:: with SMTP id y12mr76278547pfm.94.1560225841344;
-        Mon, 10 Jun 2019 21:04:01 -0700 (PDT)
-Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
-        by smtp.gmail.com with ESMTPSA id y133sm13301185pfb.28.2019.06.10.21.04.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 21:04:00 -0700 (PDT)
-From:   Derek Basehore <dbasehore@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH 5/5] drm/mtk: add panel orientation property
-Date:   Mon, 10 Jun 2019 21:03:50 -0700
-Message-Id: <20190611040350.90064-6-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-In-Reply-To: <20190611040350.90064-1-dbasehore@chromium.org>
-References: <20190611040350.90064-1-dbasehore@chromium.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Z7rXbvY7aGPLANrpOsQTULXmMd0kTr3kjT2Kw5c860Y=;
+        b=kcIdO8sxLSso1wNbtkmP6hPHR3j6hkSGuRC74x0ba23ExBObDJ/9t4GJoJoXSWaG3q
+         La1MD+IASzjzc3PYdbjEGbes9K2VuKuNEQ1iSEYv+Jr+efO6g5RKSOsFbcQdc2XaZHHL
+         42DEi+a/aj2FeOPhgUh8mzOvVlLfvOUx2l0wgQ1CzlXChL0Kg3X3bteKUIBZITpdt0uS
+         qGNfKE+qUB8N55LzrsaakvEgi/c65tfPtC0eU0zGUnm3YCT/KgNxKcONtDQfRNlwczXF
+         oeRq7L6ImzYbVbWZY9NfF7DOSQegfReeTK/dpIxSr6atXXZyoT1f9nt8QY7e1BPThpny
+         BtXw==
+X-Gm-Message-State: APjAAAWp1/rEcvf6iRuzBMI7QHfIT6PaBzV0vF1P49XBAVbjvrpJKRXW
+        w3TTzHvMljV6NEyB6Bp6my1RAN7IfJROX+C6JYj0/3YbzQ0l
+X-Google-Smtp-Source: APXvYqx0Q527R1SywnUOVL2YQEPX7udOZxGbcfMLQoA8o9WhY8jM2l9/88LqSdHXMuuY6IIIc3TQhM+Qw0OBSNeav6qkpnd2gr7o
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a24:3dc1:: with SMTP id n184mr16083311itn.130.1560225906808;
+ Mon, 10 Jun 2019 21:05:06 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 21:05:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f1e431058b0466ab@google.com>
+Subject: KASAN: use-after-free Read in mntput
+From:   syzbot <syzbot+99de05d099a170867f22@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, axboe@kernel.dk, bp@alien8.de,
+        catalin.marinas@arm.com, christian@brauner.io, dhowells@redhat.com,
+        geert@linux-m68k.org, hare@suse.com, heiko.carstens@de.ibm.com,
+        hpa@zytor.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luto@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, viro@zeniv.linux.org.uk, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This inits the panel orientation property for the mediatek dsi driver
-if the panel orientation (connector.display_info.panel_orientation) is
-not DRM_MODE_PANEL_ORIENTATION_UNKNOWN.
+Hello,
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+syzbot found the following crash on:
+
+HEAD commit:    d1fdb6d8 Linux 5.2-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b30acaa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
+dashboard link: https://syzkaller.appspot.com/bug?extid=99de05d099a170867f22
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1114dc46a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17eade6aa00000
+
+The bug was bisected to:
+
+commit 9c8ad7a2ff0bfe58f019ec0abc1fb965114dde7d
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu May 16 11:52:27 2019 +0000
+
+     uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15c9f91ea00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=17c9f91ea00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c9f91ea00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+99de05d099a170867f22@syzkaller.appspotmail.com
+Fixes: 9c8ad7a2ff0b ("uapi, x86: Fix the syscall numbering of the mount API  
+syscalls [ver #2]")
+
+==================================================================
+BUG: KASAN: use-after-free in mntput+0x91/0xa0 fs/namespace.c:1207
+Read of size 4 at addr ffff88808f661124 by task syz-executor817/8955
+
+CPU: 1 PID: 8955 Comm: syz-executor817 Not tainted 5.2.0-rc4 #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
+  __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  kasan_report+0x12/0x20 mm/kasan/common.c:614
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+  mntput+0x91/0xa0 fs/namespace.c:1207
+  path_put+0x50/0x70 fs/namei.c:483
+  free_fs_struct+0x25/0x70 fs/fs_struct.c:91
+  exit_fs+0xf0/0x130 fs/fs_struct.c:108
+  do_exit+0x8e0/0x2fa0 kernel/exit.c:873
+  do_group_exit+0x135/0x370 kernel/exit.c:981
+  __do_sys_exit_group kernel/exit.c:992 [inline]
+  __se_sys_exit_group kernel/exit.c:990 [inline]
+  __ia32_sys_exit_group+0x44/0x50 kernel/exit.c:990
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f16849
+Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
+90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffe4f85c EFLAGS: 00000296 ORIG_RAX: 00000000000000fc
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000080ed2b8
+RDX: 0000000000000000 RSI: 00000000080d71fc RDI: 00000000080ed2c0
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 8955:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:497
+  slab_post_alloc_hook mm/slab.h:437 [inline]
+  slab_alloc mm/slab.c:3326 [inline]
+  kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3488
+  kmem_cache_zalloc include/linux/slab.h:732 [inline]
+  alloc_vfsmnt+0x28/0x780 fs/namespace.c:182
+  vfs_create_mount+0x96/0x500 fs/namespace.c:961
+  __do_sys_fsmount fs/namespace.c:3423 [inline]
+  __se_sys_fsmount fs/namespace.c:3340 [inline]
+  __ia32_sys_fsmount+0x584/0xc80 fs/namespace.c:3340
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+Freed by task 16:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+  __cache_free mm/slab.c:3432 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3698
+  free_vfsmnt+0x6f/0x90 fs/namespace.c:559
+  delayed_free_vfsmnt+0x16/0x20 fs/namespace.c:564
+  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2092 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2310 [inline]
+  rcu_core+0xba5/0x1500 kernel/rcu/tree.c:2291
+  __do_softirq+0x25c/0x94c kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff88808f661000
+  which belongs to the cache mnt_cache of size 432
+The buggy address is located 292 bytes inside of
+  432-byte region [ffff88808f661000, ffff88808f6611b0)
+The buggy address belongs to the page:
+page:ffffea00023d9840 refcount:1 mapcount:0 mapping:ffff8880aa594940  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea0002a35e08 ffffea00022a3f08 ffff8880aa594940
+raw: 0000000000000000 ffff88808f661000 0000000100000008 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88808f661000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808f661080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88808f661100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                ^
+  ffff88808f661180: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+  ffff88808f661200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/gpu/drm/mediatek/mtk_dsi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 4a0b9150a7bb..08ffdc7526dd 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -782,10 +782,18 @@ static int mtk_dsi_create_connector(struct drm_device *drm, struct mtk_dsi *dsi)
- 			DRM_ERROR("Failed to attach panel to drm\n");
- 			goto err_connector_cleanup;
- 		}
-+
-+		ret = drm_connector_init_panel_orientation_property(&dsi->conn);
-+		if (ret) {
-+			DRM_ERROR("Failed to init panel orientation\n");
-+			goto err_panel_detach;
-+		}
- 	}
- 
- 	return 0;
- 
-+err_panel_detach:
-+	drm_panel_detach(dsi->panel);
- err_connector_cleanup:
- 	drm_connector_cleanup(&dsi->conn);
- 	return ret;
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
