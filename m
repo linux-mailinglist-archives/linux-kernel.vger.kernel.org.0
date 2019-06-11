@@ -2,88 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A93363CA17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C4A3CA26
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389740AbfFKLe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 07:34:28 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46584 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389558AbfFKLe1 (ORCPT
+        id S2389823AbfFKLia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 07:38:30 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55262 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389649AbfFKLia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 07:34:27 -0400
-Received: by mail-oi1-f194.google.com with SMTP id 203so8651213oid.13;
-        Tue, 11 Jun 2019 04:34:27 -0700 (PDT)
+        Tue, 11 Jun 2019 07:38:30 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g135so2565690wme.4;
+        Tue, 11 Jun 2019 04:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x5rmiwyCLeKaoHJp17aHdkTJjyA6YPZC/WRbR5vMjpI=;
-        b=e87CA4x8A1PKtNjG2k6Scdr0xbId162DU6jQSXDhYLhWRm4Iqar9QhKyUwHijKDAPa
-         hAGpLYC2nBmYPzQAcLOtJJOitEd0IL/QiUD0/yZXIXdbg4X4hAAiMZdjjn8/dVPWZ2c8
-         3WvbMz8mdVQM0cj28sYVqPjUP0EdCA+AKQMV7PkL06zgSWyR5llbr0jmRou8JUuBrSto
-         gKGKS5UMF0Jaq/WT95feuerGdwNv+z5cDR1SHY7IO+2XKj0AoJ9VnhQZP/IQIankG28p
-         b9RmzdHEZAh3SjcEEmaO/murUhY7oYhyuMmT1eOUSBaqal/akF3K7HV9fBfhxuhrFw+X
-         l5bw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dFhw9Yzk7crkLa1zIM8G/hSEMNLmlVpm6QeraFAZi18=;
+        b=ThV4dkzZewzQjl2cU8wXTNnMo3cTTjOTeI94/XWcPyOWOSesuRadJpZbgCWNl6T25e
+         Oaiog6lCtikg6EoxZAYRCl1lhUrTj8Jsn3onA5NnWHmL2n22z5VPi+jk8KxmubukTc/F
+         5cnGa1TLdy4HkJ0cl2ch4YhC3KnwpEE/sWPw/Ee97YRp3Y74sPcgJBPPbR4cme34Pf1n
+         XVGz8sYh/s5jEBee/6njtaGY93bYcZcp5tdXaLTN+jJ/1+hqcjrRvSOiB7F2upt6yWMA
+         Vv8h8ejNzj3dlFbDaCwyHB98upmLkAYUDpcSfS9IdLExeuAHGhbMqJxUZjJmMpHLZ2UG
+         CCgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x5rmiwyCLeKaoHJp17aHdkTJjyA6YPZC/WRbR5vMjpI=;
-        b=KbL9f8vrvCAS5HSVnnMWicIDwL0TSJKTopDbVQr/9Y7LIrqUFjKbphDxvK/BaD+STQ
-         6KOs2+864D4A6Ki6dHFwY3uZw5cBv+QnPx+9DzCNdZntXiUc6lr/9NenLeqmx9UyUIGu
-         +cWgzeCaY/VkX0qMitWXHNspTwVCH7myob17EuQZynrCOUFUSHFxAYCvk1ZJL8AT/2IZ
-         ReOCZdI5rh4cO/mijCuWwPudVwx0KzTz3avE5Oz3FW3Y8NlaR1s3EnWcE4Gav1DDf7dZ
-         ZCOcPApK1zMGigyJbGFwSLyDqjZs3rNLHQtGMN+jIjZAyPEJbOMR9ZYihpQzizC6c0Yt
-         5ceg==
-X-Gm-Message-State: APjAAAXC6tye56qXqujLzfwU+QuOGL5N3aRjsat0ugK1R6RifTvEqqq1
-        1sw+A5WAcmWaFJzLj1zfVUD1TL3YZCBtd4oUZ9s=
-X-Google-Smtp-Source: APXvYqxti6kF49QbOqX5rYkaYjy9reVlZ+JZCnE9g2R9uYNvjXjUgNkqe5qb1ON4m0HKHX8Vy++ZkYYPCd0+zxB09I4=
-X-Received: by 2002:aca:544b:: with SMTP id i72mr15419354oib.174.1560252867275;
- Tue, 11 Jun 2019 04:34:27 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dFhw9Yzk7crkLa1zIM8G/hSEMNLmlVpm6QeraFAZi18=;
+        b=k8NiYVsDQDSryPtMLow9K6RQKjOtV4rZGr6cCOLReq/RTw/1fMyUTPKEDe1ZJVZlqz
+         GXsSHc8Cki8xRpGcU39LyGJCneEr/3dVHBVuUf44rtec89fPpKJh5XEyxu/PtcvoPOU9
+         55CpV44m6QdIsOn1JRfItiwYYN5Q8eQnLcwk0ofOkkiNREiLc2M11J+x9hG6+o36g+Mx
+         WT8MnLWSwWwKaUBvpgwFxZzciZTm37JOGfNQGjLw9EvYUl5DtoL1l9Dzw8UAx1lAI3J8
+         nESUT8MHKBQ7p8qfCGDPcQ8xCz2/yTNPUSnl3kAWv1ZSTIlfEnUkciRBLUGRmYoVf2DT
+         nvhA==
+X-Gm-Message-State: APjAAAXBSP5+0ekQWXUj4bZO4Upwa9yc8vkKRac4bXb/DOt28GU1mSq6
+        TFHd2+AcjF4z0vbRTA9yrhQXuOs+
+X-Google-Smtp-Source: APXvYqxrkozBv92s4+oeR1xFC9mhkvcY3me5bcK1gJVfy3VuWjnE+NcpPCCdXB/ihNBs0jPynsr+iA==
+X-Received: by 2002:a1c:7e08:: with SMTP id z8mr16475328wmc.36.1560253108218;
+        Tue, 11 Jun 2019 04:38:28 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id z14sm23916198wre.96.2019.06.11.04.38.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 04:38:27 -0700 (PDT)
+Subject: Re: [PATCH V5 7/7] i2c: tegra: remove BUG, BUG_ON
+To:     Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-7-git-send-email-bbiswas@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <745086cc-9470-a1af-7339-fbca35525479@gmail.com>
+Date:   Tue, 11 Jun 2019 14:38:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <1558418814-6822-1-git-send-email-wanpengli@tencent.com>
- <1558418814-6822-2-git-send-email-wanpengli@tencent.com> <627e4189-3709-1fb2-a9bc-f1a577712fe0@redhat.com>
- <CANRm+CyqH5ojNTcX3zfVjB8rayGHAW0Ex+fiGPnrO7bkmvr_4w@mail.gmail.com> <b30067df-2929-9ce9-221f-0f1a84dd1228@redhat.com>
-In-Reply-To: <b30067df-2929-9ce9-221f-0f1a84dd1228@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Tue, 11 Jun 2019 19:35:11 +0800
-Message-ID: <CANRm+Cy+BVHeXjfSPhPz=n7_Qg8oQEC8DdcpCzEV5v4qYXgJGw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] KVM: X86: Provide a capability to disable cstate
- msr read intercepts
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1560250274-18499-7-git-send-email-bbiswas@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019 at 19:09, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 11/06/19 09:38, Wanpeng Li wrote:
-> > MSR_CORE_C1_RES is unreadable except for ATOM platform, so I think we
-> > can avoid the complex logic to handle C1 now. :)
->
-> I disagree.  Linux uses it on all platforms is available, and virtual
-> machines that don't pass mwait through _only_ have C1, so it would be
-> less useful to have deep C-state residency MSRs and not C1 residency.
->
-> But turbostat can get the information from sysfs, so what are these MSRs
-> used for?
+11.06.2019 13:51, Bitan Biswas пишет:
+> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+> as needed. Remove BUG() and make Rx and Tx case handling
+> similar. Add WARN_ON_ONCE check for non-zero rx_fifo_avail
+> in tegra_i2c_empty_rx_fifo() and return new error
+> I2C_ERR_UNEXPECTED_STATUS.
+> 
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> ---
 
-The sysfs is not accurate, the time which is accumulated in the
-function cpuidle_enter_state() is the expected cstate we hope to enter
-instead of the real cstate we finally enter. For example, we found
-several SKX/CLX models can't enter deeper cstates in non-root mode,
-Intel hardware team has been working on this according to our report
-recently. The bare-metal cstate residency msrs don't increase in
-non-root mode, however, the time under
-/sys/devices/system/cpu/cpux/cpuidle/statex/ increase gradually in the
-guest.
+Please see my answer to v4.
 
-Regards,
-Wanpeng Li
