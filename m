@@ -2,144 +2,880 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED893D223
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A6C3D21F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405606AbfFKQXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 12:23:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46235 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403829AbfFKQXr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 12:23:47 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5BGMtBI279192
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 11 Jun 2019 09:22:55 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5BGMtBI279192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560270175;
-        bh=rt2bLxwFtIF8EjLn/YQ9s71qq3Li0G9Z8fIlpxOtgxQ=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Cxg3JkB075vbodttiPFzYRiO81AgUIxcG+bF0A4in96uex2v093F87L5blBSoa51P
-         vzJfKWOn5hMt7AiGA5rEA9q5WjfGhj3kge7m+x2qzVIjr/WX8hGbVlUHO6TUOB6gmy
-         qtDfHjbKUo1+1u4XAqA4+BMggyWQs2+I2+m1+if+bnHaUrgoL1JnfmNyWOw2iJ+T+2
-         SCMM00NuDMarccsKXwars17/aAmAk0zSPO6ZI0FSeurg9lrojKlLzpfeNeNrKFcYPP
-         ril6Etb1MtG/h8qq+LAJzYezjRgWNCd3qGgpM8yPMVmZfVrrd3D0L+4IJ7yCwGfdzy
-         gGZMeseh7ZWeA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5BGMsvl279189;
-        Tue, 11 Jun 2019 09:22:54 -0700
-Date:   Tue, 11 Jun 2019 09:22:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Yazen Ghannam <tipbot@zytor.com>
-Message-ID: <tip-95fdce6b24f3526c2bd1aad15978d238b79da6bd@git.kernel.org>
-Cc:     linux-edac@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        tony.luck@intel.com, mingo@redhat.com, tglx@linutronix.de,
-        x86@kernel.org, bp@suse.de, linux-kernel@vger.kernel.org,
-        yazen.ghannam@amd.com
-Reply-To: x86@kernel.org, bp@suse.de, linux-kernel@vger.kernel.org,
-          yazen.ghannam@amd.com, tglx@linutronix.de, mingo@redhat.com,
-          linux-edac@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-          tony.luck@intel.com
-In-Reply-To: <20190607201752.221446-2-Yazen.Ghannam@amd.com>
-References: <20190607201752.221446-2-Yazen.Ghannam@amd.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/MCE: Make struct mce_banks[] static
-Git-Commit-ID: 95fdce6b24f3526c2bd1aad15978d238b79da6bd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S2391895AbfFKQX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 12:23:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50250 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391562AbfFKQXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 12:23:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4176CA6DEF;
+        Tue, 11 Jun 2019 16:23:14 +0000 (UTC)
+Received: from [10.10.66.2] (ovpn-66-2.rdu2.redhat.com [10.10.66.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BB235B681;
+        Tue, 11 Jun 2019 16:23:12 +0000 (UTC)
+From:   "Benjamin Coddington" <bcodding@redhat.com>
+To:     syzbot <syzbot+7fe11b49c1cc30e3fce2@syzkaller.appspotmail.com>
+Cc:     anna.schumaker@netapp.com, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        trond.myklebust@hammerspace.com
+Subject: Re: memory leak in nfs_get_client
+Date:   Tue, 11 Jun 2019 12:23:12 -0400
+Message-ID: <223AB0C9-D93E-4D3C-BBBB-4AF40D8EA436@redhat.com>
+In-Reply-To: <000000000000f8a345058b046657@google.com>
+References: <000000000000f8a345058b046657@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain; format=flowed
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 11 Jun 2019 16:23:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  95fdce6b24f3526c2bd1aad15978d238b79da6bd
-Gitweb:     https://git.kernel.org/tip/95fdce6b24f3526c2bd1aad15978d238b79da6bd
-Author:     Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate: Fri, 7 Jun 2019 20:18:03 +0000
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 11 Jun 2019 15:13:51 +0200
+Ugh.. Now that you can cancel the wait, you have to also handle if "new" 
+was allocated.  I think this needs:
 
-x86/MCE: Make struct mce_banks[] static
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index d7e4f0848e28..4d90f5bf0b0a 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -406,10 +406,10 @@ struct nfs_client *nfs_get_client(const struct 
+nfs_client_initdata *cl_init)
+                 clp = nfs_match_client(cl_init);
+                 if (clp) {
+                         spin_unlock(&nn->nfs_client_lock);
+-                       if (IS_ERR(clp))
+-                               return clp;
+                         if (new)
+                                 new->rpc_ops->free_client(new);
++                       if (IS_ERR(clp))
++                               return clp;
+                         return nfs_found_client(cl_init, clp);
+                 }
+                 if (new) {
 
-The struct mce_banks[] array is only used in mce/core.c so move its
-definition there and make it static. Also, change the "init" field to
-bool type.
+I'll patch/test and send it along.
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: "x86@kernel.org" <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190607201752.221446-2-Yazen.Ghannam@amd.com
----
- arch/x86/kernel/cpu/mce/core.c     | 11 ++++++++++-
- arch/x86/kernel/cpu/mce/internal.h | 10 ----------
- 2 files changed, 10 insertions(+), 11 deletions(-)
+Ben
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 282916f3b8d8..55bdbedde0b8 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -65,7 +65,16 @@ static DEFINE_MUTEX(mce_sysfs_mutex);
- 
- DEFINE_PER_CPU(unsigned, mce_exception_count);
- 
--struct mce_bank *mce_banks __read_mostly;
-+#define ATTR_LEN               16
-+/* One object for each MCE bank, shared by all CPUs */
-+struct mce_bank {
-+	u64			ctl;			/* subevents to enable */
-+	bool			init;			/* initialise bank? */
-+	struct device_attribute	attr;			/* device attribute */
-+	char			attrname[ATTR_LEN];	/* attribute name */
-+};
-+
-+static struct mce_bank *mce_banks __read_mostly;
- struct mce_vendor_flags mce_flags __read_mostly;
- 
- struct mca_config mca_cfg __read_mostly = {
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
-index a34b55baa7aa..35b3e5c02c1c 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -22,17 +22,8 @@ enum severity_level {
- 
- extern struct blocking_notifier_head x86_mce_decoder_chain;
- 
--#define ATTR_LEN		16
- #define INITIAL_CHECK_INTERVAL	5 * 60 /* 5 minutes */
- 
--/* One object for each MCE bank, shared by all CPUs */
--struct mce_bank {
--	u64			ctl;			/* subevents to enable */
--	unsigned char init;				/* initialise bank? */
--	struct device_attribute attr;			/* device attribute */
--	char			attrname[ATTR_LEN];	/* attribute name */
--};
--
- struct mce_evt_llist {
- 	struct llist_node llnode;
- 	struct mce mce;
-@@ -47,7 +38,6 @@ struct llist_node *mce_gen_pool_prepare_records(void);
- extern int (*mce_severity)(struct mce *a, int tolerant, char **msg, bool is_excp);
- struct dentry *mce_get_debugfs_dir(void);
- 
--extern struct mce_bank *mce_banks;
- extern mce_banks_t mce_banks_ce_disabled;
- 
- #ifdef CONFIG_X86_MCE_INTEL
+
+On 11 Jun 2019, at 0:05, syzbot wrote:
+
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    d1fdb6d8 Linux 5.2-rc4
+> git tree:       upstream
+> console output: 
+> https://syzkaller.appspot.com/x/log.txt?x=117e0f71a00000
+> kernel config:  
+> https://syzkaller.appspot.com/x/.config?x=cb38d33cd06d8d48
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=7fe11b49c1cc30e3fce2
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      
+> https://syzkaller.appspot.com/x/repro.syz?x=15a46001a00000
+> C reproducer:   
+> https://syzkaller.appspot.com/x/repro.c?x=174b24d1a00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the 
+> commit:
+> Reported-by: syzbot+7fe11b49c1cc30e3fce2@syzkaller.appspotmail.com
+>
+>  fl=212 nc=0 na=0]
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 18.210s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 18.150s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 18.150s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 19.230s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 19.170s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 19.170s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 21.200s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 21.140s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 21.140s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 22.200s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 22.140s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 22.140s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 23.180s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 23.120s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 23.120s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 24.200s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 24.140s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 24.140s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888121b91400 (size 1024):
+>   comm "syz-executor400", pid 6969, jiffies 4294941900 (age 25.180s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff88811e758400 (size 1024):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 25.120s)
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000009c69e9c0>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000009c69e9c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000009c69e9c0>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000009c69e9c0>] kmem_cache_alloc_trace+0x13d/0x280 
+> mm/slab.c:3553
+>     [<000000007d1011ce>] kmalloc include/linux/slab.h:547 [inline]
+>     [<000000007d1011ce>] kzalloc include/linux/slab.h:742 [inline]
+>     [<000000007d1011ce>] nfs_alloc_client+0x2e/0x170 
+> fs/nfs/client.c:152
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> BUG: memory leak
+> unreferenced object 0xffff888118ef9360 (size 32):
+>   comm "syz-executor400", pid 6973, jiffies 4294941906 (age 25.120s)
+>   hex dump (first 32 bytes):
+>     00 71 54 04 00 ea ff ff c0 6e 9a 04 00 ea ff ff  .qT......n......
+>     c0 0b 81 04 00 ea ff ff c0 05 86 04 00 ea ff ff  ................
+>   backtrace:
+>     [<000000003e75bb46>] kmemleak_alloc_recursive 
+> include/linux/kmemleak.h:43 [inline]
+>     [<000000003e75bb46>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<000000003e75bb46>] slab_alloc mm/slab.c:3326 [inline]
+>     [<000000003e75bb46>] __do_kmalloc mm/slab.c:3658 [inline]
+>     [<000000003e75bb46>] __kmalloc_track_caller+0x15d/0x2c0 
+> mm/slab.c:3675
+>     [<0000000010f1326b>] kstrdup+0x3a/0x70 mm/util.c:52
+>     [<0000000070b2f357>] nfs_alloc_client+0xbd/0x170 
+> fs/nfs/client.c:169
+>     [<000000007f1bdfa5>] nfs_get_client+0x1cb/0x500 
+> fs/nfs/client.c:425
+>     [<000000004dc18603>] nfs_init_server+0xc6/0x450 
+> fs/nfs/client.c:671
+>     [<0000000072615bbf>] nfs_create_server+0x83/0x1f0 
+> fs/nfs/client.c:958
+>     [<00000000d12e9a98>] nfs_try_mount+0x5a/0x350 fs/nfs/super.c:1883
+>     [<00000000b2735769>] nfs_fs_mount+0x448/0xc52 fs/nfs/super.c:2719
+>     [<000000000b19c7d0>] legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+>     [<00000000d4887a5c>] vfs_get_tree+0x2e/0x120 fs/super.c:1476
+>     [<000000008eec78b0>] do_new_mount fs/namespace.c:2790 [inline]
+>     [<000000008eec78b0>] do_mount+0x932/0xc50 fs/namespace.c:3110
+>     [<00000000d0ad59a7>] ksys_mount+0xab/0x120 fs/namespace.c:3319
+>     [<0000000082fa14d6>] __do_sys_mount fs/namespace.c:3333 [inline]
+>     [<0000000082fa14d6>] __se_sys_mount fs/namespace.c:3330 [inline]
+>     [<0000000082fa14d6>] __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+>     [<00000000ce916bab>] do_syscall_64+0x76/0x1a0 
+> arch/x86/entry/common.c:301
+>     [<0000000070865558>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> executing program
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
