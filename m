@@ -2,142 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3B73C7FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8E73C9A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405161AbfFKKBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:01:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:57220 "EHLO foss.arm.com"
+        id S2388706AbfFKLC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 07:02:57 -0400
+Received: from twin.jikos.cz ([91.219.245.39]:58891 "EHLO twin.jikos.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404406AbfFKKBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:01:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA8BF337;
-        Tue, 11 Jun 2019 03:01:50 -0700 (PDT)
-Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C929B3F73C;
-        Tue, 11 Jun 2019 03:03:31 -0700 (PDT)
-Subject: Re: [PATCH 11/15] binfmt_flat: provide an asm-generic/flat.h
-To:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
-Cc:     uclinux-h8-devel@lists.sourceforge.jp,
-        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
-        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190610212015.9157-1-hch@lst.de>
- <20190610212015.9157-12-hch@lst.de>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <e6a00ae6-3359-0f20-138c-4469df598c3e@arm.com>
-Date:   Tue, 11 Jun 2019 11:01:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2388669AbfFKLC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 07:02:56 -0400
+X-Greylist: delayed 3594 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 07:02:55 EDT
+Received: from twin.jikos.cz (dave@[127.0.0.1])
+        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id x5BA1sTh019587
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 11 Jun 2019 12:01:55 +0200
+Received: (from dave@localhost)
+        by twin.jikos.cz (8.13.6/8.13.6/Submit) id x5BA1rtN019585;
+        Tue, 11 Jun 2019 12:01:53 +0200
+Date:   Tue, 11 Jun 2019 12:01:53 +0200
+From:   David Sterba <dave@jikos.cz>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: kernel BUG at fs/btrfs/volumes.c:LINE!
+Message-ID: <20190611100153.GD24160@twin.jikos.cz>
+Reply-To: dave@jikos.cz
+Mail-Followup-To: Eric Biggers <ebiggers@kernel.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <00000000000096009b056df92dc1@google.com>
+ <70a3c2d1-3f53-d4c0-13b3-29f836ec46d9@oracle.com>
+ <20180607153450.GF3215@twin.jikos.cz>
+ <CACT4Y+arBwkwhD-kob9fg1pVBXiMepW6KBK2LkhwjQ9HnDcoqw@mail.gmail.com>
+ <20180607165213.GI3215@twin.jikos.cz>
+ <20190610231403.GZ63833@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190610212015.9157-12-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610231403.GZ63833@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/10/19 10:20 PM, Christoph Hellwig wrote:
-> This file implements the flat get/put reloc helpers for architectures
-> that do not need to overload the relocs by simply using get_user/put_user.
+On Mon, Jun 10, 2019 at 04:14:04PM -0700, Eric Biggers wrote:
+> On Thu, Jun 07, 2018 at 06:52:13PM +0200, David Sterba wrote:
+> > On Thu, Jun 07, 2018 at 06:28:02PM +0200, Dmitry Vyukov wrote:
+> > > > Normally the GFP_NOFS allocations do not fail so I think the fuzzer
+> > > > environment is tuned to allow that, which is fine for coverage but does
+> > > > not happen in practice. This will be fixed eventually.
+> > > 
+> > > Isn't GFP_NOFS more restricted than normal allocations?  Are these
+> > > allocations accounted against memcg? It's easy to fail any allocation
+> > > within a memory container.
+> > 
+> > https://lwn.net/Articles/723317/ The 'too small to fail' and some
+> > unwritten semantics of GFP_NOFS but I think you're right about the
+> > memory controler that can fail any allocation though.
+> > 
+> > Error handling is being improved over time, the memory allocation
+> > failures are in some cases hard and this one would need to update some
+> > logic so it's not a oneliner.
+> > 
 > 
-> Note that many nommu architectures currently use {get,put}_unaligned, which
-> looks a little bogus and should probably later be switched over to this
-> version as well.
+> This bug is still there.  In btrfs_close_one_device():
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/arm/include/asm/Kbuild                   |  1 +
->  arch/m68k/include/asm/flat.h                  | 21 +------------------
->  .../asm => include/asm-generic}/flat.h        | 12 ++++-------
->  3 files changed, 6 insertions(+), 28 deletions(-)
->  rename {arch/arm/include/asm => include/asm-generic}/flat.h (73%)
-
-FWIW:
-
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
-
+> 	if (device->name) {
+> 		name = rcu_string_strdup(device->name->str, GFP_NOFS);
+> 		BUG_ON(!name); /* -ENOMEM */
+> 		rcu_assign_pointer(new_device->name, name);
+> 	}
 > 
-> diff --git a/arch/arm/include/asm/Kbuild b/arch/arm/include/asm/Kbuild
-> index a8f149ab45b8..6b2dc15b6dff 100644
-> --- a/arch/arm/include/asm/Kbuild
-> +++ b/arch/arm/include/asm/Kbuild
-> @@ -5,6 +5,7 @@ generic-y += early_ioremap.h
->  generic-y += emergency-restart.h
->  generic-y += exec.h
->  generic-y += extable.h
-> +generic-y += flat.h
->  generic-y += irq_regs.h
->  generic-y += kdebug.h
->  generic-y += local.h
-> diff --git a/arch/m68k/include/asm/flat.h b/arch/m68k/include/asm/flat.h
-> index d7102fcd43eb..46379e08cdd6 100644
-> --- a/arch/m68k/include/asm/flat.h
-> +++ b/arch/m68k/include/asm/flat.h
-> @@ -6,26 +6,7 @@
->  #ifndef __M68KNOMMU_FLAT_H__
->  #define __M68KNOMMU_FLAT_H__
->  
-> -#include <linux/uaccess.h>
-> -
-> -static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
-> -					u32 *addr, u32 *persistent)
-> -{
-> -#ifdef CONFIG_CPU_HAS_NO_UNALIGNED
-> -	return copy_from_user(addr, rp, 4) ? -EFAULT : 0;
-> -#else
-> -	return get_user(*addr, rp);
-> -#endif
-> -}
-> -
-> -static inline int flat_put_addr_at_rp(u32 __user *rp, u32 addr, u32 rel)
-> -{
-> -#ifdef CONFIG_CPU_HAS_NO_UNALIGNED
-> -	return copy_to_user(rp, &addr, 4) ? -EFAULT : 0;
-> -#else
-> -	return put_user(addr, rp);
-> -#endif
-> -}
-> +#include <asm-generic/flat.h>
->  
->  #define FLAT_PLAT_INIT(regs) \
->  	do { \
-> diff --git a/arch/arm/include/asm/flat.h b/include/asm-generic/flat.h
-> similarity index 73%
-> rename from arch/arm/include/asm/flat.h
-> rename to include/asm-generic/flat.h
-> index bbc27901446f..fcd2b45c0735 100644
-> --- a/arch/arm/include/asm/flat.h
-> +++ b/include/asm-generic/flat.h
-> @@ -1,15 +1,11 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> -/*
-> - * arch/arm/include/asm/flat.h -- uClinux flat-format executables
-> - */
-> -
-> -#ifndef __ARM_FLAT_H__
-> -#define __ARM_FLAT_H__
-> +#ifndef _ASM_GENERIC_FLAT_H
-> +#define _ASM_GENERIC_FLAT_H
->  
->  #include <linux/uaccess.h>
->  
->  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
-> -					u32 *addr, u32 *persistent)
-> +		u32 *addr, u32 *persistent)
->  {
->  #ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
->  	return copy_from_user(addr, rp, 4) ? -EFAULT : 0;
-> @@ -27,4 +23,4 @@ static inline int flat_put_addr_at_rp(u32 __user *rp, u32 addr, u32 rel)
->  #endif
->  }
->  
-> -#endif /* __ARM_FLAT_H__ */
-> +#endif /* _ASM_GENERIC_FLAT_H */
+> It assumes that the memory allocation succeeded.
 > 
+> See syzbot report from v5.2-rc3 here: https://syzkaller.appspot.com/text?tag=CrashReport&x=16c839c1a00000
+> 
+> Is there any plan to fix this?
 
+Yes there is, to avoid allocations when closing the device and tracking
+the state in another way. As this has never been reported in practice
+the priority to fix it is rather low so I can't give you an ETA.
