@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867A53CDFB
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7803CDFA
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391597AbfFKOFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:05:36 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:55721 "EHLO
+        id S2391591AbfFKOFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:05:33 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:55736 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389902AbfFKOFB (ORCPT
+        with ESMTP id S2390003AbfFKOFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:05:01 -0400
+        Tue, 11 Jun 2019 10:05:02 -0400
 Received: from [167.98.27.226] (helo=happy.office.codethink.co.uk)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hahOT-0003vU-LT; Tue, 11 Jun 2019 15:04:57 +0100
+        id 1hahOU-0003vU-5F; Tue, 11 Jun 2019 15:04:58 +0100
 From:   Michael Drake <michael.drake@codethink.co.uk>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -26,9 +26,9 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-kernel@lists.codethink.co.uk,
         Patrick Glaser <pglaser@tesla.com>, Nate Case <ncase@tesla.com>
-Subject: [PATCH v1 06/11] ti948: Reconfigure in the alive check when device returns
-Date:   Tue, 11 Jun 2019 15:04:07 +0100
-Message-Id: <20190611140412.32151-7-michael.drake@codethink.co.uk>
+Subject: [PATCH v1 07/11] ti948: Add sysfs node for alive attribute
+Date:   Tue, 11 Jun 2019 15:04:08 +0100
+Message-Id: <20190611140412.32151-8-michael.drake@codethink.co.uk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611140412.32151-1-michael.drake@codethink.co.uk>
 References: <20190611140412.32151-1-michael.drake@codethink.co.uk>
@@ -39,75 +39,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the alive check detects a transition to the alive state,
-the device configuration is rewritten.
+This may be used by userspace to determine the state
+of the device.
 
 Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
 Cc: Patrick Glaser <pglaser@tesla.com>
 Cc: Nate Case <ncase@tesla.com>
 ---
- drivers/gpu/drm/bridge/ti948.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/ti948.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/ti948.c b/drivers/gpu/drm/bridge/ti948.c
-index 86daa3701b91..b5c766711c4b 100644
+index b5c766711c4b..b624eaeabb43 100644
 --- a/drivers/gpu/drm/bridge/ti948.c
 +++ b/drivers/gpu/drm/bridge/ti948.c
-@@ -132,6 +132,8 @@ struct ti948_reg_val {
-  * @reg_names:   Array of regulator names, or NULL.
-  * @regs:        Array of regulators, or NULL.
-  * @reg_count:   Number of entries in reg_names and regs arrays.
-+ * @alive_check: Context for the alive checking work item.
-+ * @alive:       Whether the device is alive or not (alive_check).
-  */
- struct ti948_ctx {
- 	struct i2c_client *i2c;
-@@ -141,6 +143,8 @@ struct ti948_ctx {
- 	const char **reg_names;
- 	struct regulator **regs;
- 	size_t reg_count;
-+	struct delayed_work alive_check;
-+	bool alive;
- };
+@@ -412,6 +412,16 @@ static void ti948_alive_check(struct work_struct *work)
+ 	schedule_delayed_work(&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
+ }
  
- static bool ti948_readable_reg(struct device *dev, unsigned int reg)
-@@ -346,6 +350,8 @@ static int ti948_power_on(struct ti948_ctx *ti948)
- 	if (ret != 0)
- 		return ret;
- 
-+	ti948->alive = true;
++static ssize_t alive_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct ti948_ctx *ti948 = ti948_ctx_from_dev(dev);
 +
- 	msleep(500);
- 
- 	return 0;
-@@ -356,6 +362,8 @@ static int ti948_power_off(struct ti948_ctx *ti948)
- 	int i;
- 	int ret;
- 
-+	ti948->alive = false;
++	return scnprintf(buf, PAGE_SIZE, "%u\n", (unsigned int)ti948->alive);
++}
 +
- 	for (i = ti948->reg_count; i > 0; i--) {
- 		dev_info(&ti948->i2c->dev, "Disabling %s regulator\n",
- 				ti948->reg_names[i - 1]);
-@@ -388,8 +396,17 @@ static void ti948_alive_check(struct work_struct *work)
++static DEVICE_ATTR_RO(alive);
++
+ static int ti948_pm_resume(struct device *dev)
  {
- 	struct delayed_work *dwork = to_delayed_work(work);
- 	struct ti948_ctx *ti948 = delayed_work_to_ti948_ctx(dwork);
-+	int ret = ti948_device_check(ti948);
+ 	struct ti948_ctx *ti948 = ti948_ctx_from_dev(dev);
+@@ -614,17 +624,31 @@ static int ti948_probe(struct i2c_client *client,
  
--	dev_info(&ti948->i2c->dev, "%s Alive check!\n", __func__);
-+	if (ti948->alive == false && ret == 0) {
-+		dev_info(&ti948->i2c->dev, "Device has come back to life!\n");
-+		ti948_write_config_seq(ti948);
-+		ti948->alive = true;
+ 	i2c_set_clientdata(client, ti948);
+ 
++	ret = device_create_file(&client->dev, &dev_attr_alive);
++	if (ret) {
++		dev_err(&client->dev, "Could not create alive attr\n");
++		return ret;
++	}
 +
-+	} else if (ti948->alive == true && ret != 0) {
-+		dev_info(&ti948->i2c->dev, "Device has stopped responding\n");
-+		ti948->alive = false;
+ 	ret = ti948_pm_resume(&client->dev);
+-	if (ret != 0)
+-		return -EPROBE_DEFER;
++	if (ret != 0) {
++		ret = -EPROBE_DEFER;
++		goto error;
 +	}
  
- 	/* Reschedule ourself for the next check. */
- 	schedule_delayed_work(&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
+ 	dev_info(&ti948->i2c->dev, "End probe (addr: %x)\n", ti948->i2c->addr);
+ 
+ 	return 0;
++
++error:
++	device_remove_file(&client->dev, &dev_attr_alive);
++	return ret;
+ }
+ 
+ static int ti948_remove(struct i2c_client *client)
+ {
++	device_remove_file(&client->dev, &dev_attr_alive);
++
+ 	return ti948_pm_suspend(&client->dev);
+ }
+ 
 -- 
 2.20.1
 
