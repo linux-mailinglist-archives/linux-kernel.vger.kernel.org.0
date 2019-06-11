@@ -2,100 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91BC03D74B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E8B3D751
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:56:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406356AbfFKTzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404282AbfFKTzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:55:10 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41EE82173C;
-        Tue, 11 Jun 2019 19:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560282909;
-        bh=2jeSb/OUEFUwExRaSwm27O/BgcQGHGrpHx+20YxbtuM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WTgRZYFURDZsQb5+TwkIswCl5Zg+MioxluX+zL+ZzZWomQHLpkKCnGCZBynVvT1qo
-         IhlX7pJGYmtDRJgSbcHGZDxgB6fAqtkxiqBUXeZBjaaLoX/Byz2TW4otC/3mkYhXpw
-         65X0hL2dZitOE6NFf3oTd8sboqXvP/dDOSreRQBg=
-Received: by mail-qk1-f180.google.com with SMTP id m14so8466957qka.10;
-        Tue, 11 Jun 2019 12:55:09 -0700 (PDT)
-X-Gm-Message-State: APjAAAWtGlbF+oiyCNMLpRG50tYDM3e8ZC0c9vnLOXNr1iztlLJm/rg+
-        czWntOds4nHHjFQk/X07V0KvR2aB1AAHHvtbDQ==
-X-Google-Smtp-Source: APXvYqzDOaQFq9KRqVoTAyLrNcdmraacXiFjUvpNJC9DC1OsA19tDc1ngzzrggZx0+ae9yjZdwjNOgSx2r/OE2MEo4c=
-X-Received: by 2002:ae9:c208:: with SMTP id j8mr61663393qkg.264.1560282908475;
- Tue, 11 Jun 2019 12:55:08 -0700 (PDT)
+        id S2406382AbfFKTzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:55:53 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46721 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405886AbfFKTzx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 15:55:53 -0400
+Received: by mail-pl1-f194.google.com with SMTP id e5so5552178pls.13;
+        Tue, 11 Jun 2019 12:55:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AwCIOFChcpLV9jmax1ImmjMnCxcc76+OXa2FfkpzRbI=;
+        b=M9Z4LDyf9SZZLX+d8CLiaU1622gjvuImt3hgOgTYF2aM+GSl0AKsuxaM4G0Of4fQYH
+         bV1tH5bOuSISTn6BvaZWTPMZ61j8tdlblPxANEmHu4dHb+K2/Nb8rXPQXf+d0yj/iA4G
+         zdZXb+Tavk9kH5/1IApep03ogPUtZ3a8dntz14yOU4tABUdlci1Etq2OELbaeHGQxhdt
+         0AhAsXZHBu3i5/EHAds23Y5tIy86tRFCy7esVxwHdzhzrZ1+5l8/WwVhL1qdEe/mOG5r
+         8olwrJbO9oO1VXfufZSI7X/eJtOdsyQWzv9g+iTH6uKOQHboVP4PlxGpynBp/2YzJ1ek
+         2GmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AwCIOFChcpLV9jmax1ImmjMnCxcc76+OXa2FfkpzRbI=;
+        b=Mf6PaulCnbbOiHu5+WaYQhY2wQYSAtj7KSTjELAcHqgevoZs6aT+j80fVurZHsesp7
+         URcOtUzqXaURgmdqmSq30dz+0Cy34qDIWXxQnF4mhhO++n2bzeQGpO0Bct6hfObiX61B
+         4axBuqaUncJRDHO2uDubTDuwO1u7cbWHdajl1thqI8RC7VZCwmbaGQfbA/n7ThpMROtg
+         TGCA4BJYY2wbtVTgpm7/2KdG/xZFY1ilg9jnZb3r0+GYo2M4qhX04MPAQ5cYAc2yif6z
+         h40aOMHZqhSxOrAckx8quvRhofkzs9hvah8WWJEjwOVhukvlqsB5THhzbryXtS57otwO
+         sABg==
+X-Gm-Message-State: APjAAAXfzz8+ilo3hUIksbYp6Ml8GVR6T7a2vJf8z5ivNiqhq6s/ZpKL
+        MSBBW5/BeYT+52zQWb7BRbU=
+X-Google-Smtp-Source: APXvYqzSML6oqxdWG8320UlbIzvjIXhb8GAWGH3LMdkVr7d+A1ePWy4coBXTLSk4rXZK+TEhlifpgQ==
+X-Received: by 2002:a17:902:54f:: with SMTP id 73mr76300723plf.246.1560282952464;
+        Tue, 11 Jun 2019 12:55:52 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:1677])
+        by smtp.gmail.com with ESMTPSA id d19sm2990693pjs.22.2019.06.11.12.55.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 12:55:51 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 12:55:49 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     hannes@cmpxchg.org, jiangshanlai@gmail.com, lizefan@huawei.com,
+        bsd@redhat.com, dan.j.williams@intel.com, dave.hansen@intel.com,
+        juri.lelli@redhat.com, mhocko@kernel.org, peterz@infradead.org,
+        steven.sistare@oracle.com, tglx@linutronix.de,
+        tom.hromatka@oracle.com, vdavydov.dev@gmail.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, shakeelb@google.com
+Subject: Re: [RFC v2 0/5] cgroup-aware unbound workqueues
+Message-ID: <20190611195549.GL3341036@devbig004.ftw2.facebook.com>
+References: <20190605133650.28545-1-daniel.m.jordan@oracle.com>
+ <20190605135319.GK374014@devbig004.ftw2.facebook.com>
+ <20190605153229.nvxr6j7tdzffwkgj@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
-References: <20190514005033.15593-1-robh@kernel.org> <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
- <20190527064146.5rlm2audk6uojdxn@vireshk-i7>
-In-Reply-To: <20190527064146.5rlm2audk6uojdxn@vireshk-i7>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 11 Jun 2019 13:54:57 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK3iS+Tv+0HYMApL6C6WQeVsf9hXgvpLpuR+dbDuygQdg@mail.gmail.com>
-Message-ID: <CAL_JsqK3iS+Tv+0HYMApL6C6WQeVsf9hXgvpLpuR+dbDuygQdg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: Convert Arm PL061 to json-schema
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605153229.nvxr6j7tdzffwkgj@ca-dmjordan1.us.oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 12:41 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 24-05-19, 13:38, Linus Walleij wrote:
-> > On Tue, May 14, 2019 at 2:50 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > > Convert the Arm PL061 GPIO controller binding to json-schema format.
-> > >
-> > > As I'm the author for all but the gpio-ranges line, make the schema dual
-> > > GPL/BSD license.
-> > >
-> > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > Cc: linux-gpio@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> >
-> > Patch applied. As you know I am already a big fan of this scheme.
-> >
-> > > This warns on a few platforms missing clocks, interrupt-controller
-> > > and/or #interrupt-cells. We could not make those required, but really
-> > > they should be IMO. OTOH, it's platforms like Spear and Calxeda which
-> > > aren't too active, so I don't know that we want to fix them.
-> >
-> > What works for you works for me.
-> >
-> > We could add dummy fixed clocks in the DTS files if
-> > we wanted I suppose. The #interrupt-cells and interrupt-controller
-> > things we can just fix, but I wonder what the maintainers of these
-> > platforms are up to? Isn't Calxeda yours, and could Viresh fix
-> > up the SPEAr?
+Hello, Daniel.
 
-I was hoping to delete Calxeda rather than fix. I'm pretty sure none
-of the distros are using the systems anymore and they were the main
-users for a while. Otherwise, I would have converted all the bindings
-it uses.
+On Wed, Jun 05, 2019 at 11:32:29AM -0400, Daniel Jordan wrote:
+> Sure, quoting from the last ktask post:
+> 
+>   A single CPU can spend an excessive amount of time in the kernel operating
+>   on large amounts of data.  Often these situations arise during initialization-
+>   and destruction-related tasks, where the data involved scales with system size.
+>   These long-running jobs can slow startup and shutdown of applications and the
+>   system itself while extra CPUs sit idle.
+>       
+>   To ensure that applications and the kernel continue to perform well as core
+>   counts and memory sizes increase, harness these idle CPUs to complete such jobs
+>   more quickly.
+>       
+>   ktask is a generic framework for parallelizing CPU-intensive work in the
+>   kernel.  The API is generic enough to add concurrency to many different kinds
+>   of tasks--for example, zeroing a range of pages or evicting a list of
+>   inodes--and aims to save its clients the trouble of splitting up the work,
+>   choosing the number of threads to use, maintaining an efficient concurrency
+>   level, starting these threads, and load balancing the work between them.
 
-> I checked SPEAr and it is missing interrupt-controller at few places and clocks
-> everywhere. Missing clocks should be fine as SPEAr doesn't get clocks from DT.
+Yeah, that rings a bell.
 
-Clocks not from DT was supposed to be a transitional thing...
+> > For memory and io, we're generally going for remote charging, where a
+> > kthread explicitly says who the specific io or allocation is for,
+> > combined with selective back-charging, where the resource is charged
+> > and consumed unconditionally even if that would put the usage above
+> > the current limits temporarily.  From what I've been seeing recently,
+> > combination of the two give us really good control quality without
+> > being too invasive across the stack.
+> 
+> Yes, for memory I actually use remote charging.  In patch 3 the worker's
+> current->active_memcg field is changed to match that of the cgroup associated
+> with the work.
 
->
-> And interrupt-controller can be just added, I don't think there would be any
-> platform dependent side-affects ?
+I see.
 
-There shouldn't be.
+> > CPU doesn't have a backcharging mechanism yet and depending on the use
+> > case, we *might* need to put kthreads in different cgroups.  However,
+> > such use cases might not be that abundant and there may be gotaches
+> > which require them to be force-executed and back-charged (e.g. fs
+> > compression from global reclaim).
+> 
+> The CPU-intensiveness of these works is one of the reasons for actually putting
+> the workers through the migration path.  I don't know of a way to get the
+> workers to respect the cpu controller (and even cpuset for that matter) without
+> doing that.
 
-Rob
+So, I still think it'd likely be better to go back-charging route than
+actually putting kworkers in non-root cgroups.  That's gonna be way
+cheaper, simpler and makes avoiding inadvertent priority inversions
+trivial.
+
+Thanks.
+
+-- 
+tejun
