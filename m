@@ -2,221 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C8F4171D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 23:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A0141725
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 23:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436600AbfFKVsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 17:48:21 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38695 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436583AbfFKVsT (ORCPT
+        id S2436631AbfFKVtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 17:49:10 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46700 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405081AbfFKVtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 17:48:19 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n11so14323743qtl.5;
-        Tue, 11 Jun 2019 14:48:18 -0700 (PDT)
+        Tue, 11 Jun 2019 17:49:10 -0400
+Received: by mail-lf1-f66.google.com with SMTP id z15so7754969lfh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 14:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RBVgvFzzSTm72lnZLapEOcWtFT+j5+sMeOCdH7fyGU4=;
-        b=fis3hSrdsn8VVdjKnam7hSZs13ZUL6ht9pAxYn0pEGm7nEqFhK1EpOZOmd/fUblXCX
-         YEBE3UKwbVU4mZa4GsTx1uNgoA/x121cTJx2l7HDH7lJddvoByQ5KZ0EfLkMr+smfPm/
-         Q8sZr3k67CNm073/qnxdocmVllNXGY+62Jbq8w/uxKGh2YOehtZLolmz13vT2gCvMAqd
-         Hdkm8xhpklpGZWiW8ouFruE8VWw5vYPgcRAYXW5yMi+U15Ju178z/1+DRGOMPvC8i/RI
-         RZDZYIlVlekYxBDW5seEyMOVhmwUYnOoxDH1r5uY9RatwH0UiVqom0NGpnAjB864FTJp
-         LJ1Q==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=i6GhLaflHxtAwL6Ad6Dr/C5ELNhP+vqOwXCPihJeLM8=;
+        b=mF/ELEtx8NPOPG3GZNMj3xXssQs8CPSw6r9xXfmVWR6vI50hpVCFF8E++nxCQxBQty
+         w1mqcgctM/qAYXwueTcmLS9XTrg9obZ0X9Z327VRyQK40aEuuqUysUhpRYW8PawxNHNy
+         fzt9hcqJPCgMwkqup/JcNPCQt5Kq9clL6C7j6HhdRs+oH8OV2VgTQBC5eTjbGd/WN/tq
+         vjw2gTYLwvqmwZDH6qYhRzUcNvSHLV7aRINd+jsgUmp2DSI0V6XgOwjNKJ+rdsrTc/jQ
+         kLHDaBT3/z1E41YMfT7XPfdK57pKtlKK/9UsVkmWZgW0DRN9UIY4dQf5zKQv93moT2ZT
+         vAfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RBVgvFzzSTm72lnZLapEOcWtFT+j5+sMeOCdH7fyGU4=;
-        b=ZIXjll8V+JYuxwuXNRI3jYBjFSAuoX2KqAfboIbmj1mebIyFsC3xR2ms7SntVYw+F6
-         mSJNjW4U/LtqDSLg0G1kNmSRlHoSRhBRf3L+iepiNewSrCVy0d0DP0d2YhfoUV/znPZ/
-         trPNhxkhigrX5gdbbUGVIx/wyYindVaMSMvjfazIx42QqB7A1HsLBPrgklEB75a4c07b
-         Xzi4A7m03oQYUFqfxsr15rYgG6ta2p2rmP4/hlp6R1c8ZzUudHUyX6boJnc2M0mcxPpc
-         lbYUPJfrYyzvzVRcR/KjBQtr4VV4Az2fbTVyc8p3n7UygQawyBW6645UBOom4KKrK/+i
-         nuuw==
-X-Gm-Message-State: APjAAAUxwgNuMedzq+lM7JnS0TX1P9pAYDIA3vUTZujaKTxHAle4NYKy
-        lOVx8yc27IDbPJI7oIdTiOiM/TI71Cc=
-X-Google-Smtp-Source: APXvYqxbxxYh0r8jHcYbBsaPmgDXAaRX6lQfj0pyzT4LPViY4bw+HNG+pIBadPt/w8kE9RwlLhQMlg==
-X-Received: by 2002:ac8:264a:: with SMTP id v10mr34839035qtv.255.1560289697650;
-        Tue, 11 Jun 2019 14:48:17 -0700 (PDT)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id n124sm7253217qkf.31.2019.06.11.14.48.16
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=i6GhLaflHxtAwL6Ad6Dr/C5ELNhP+vqOwXCPihJeLM8=;
+        b=jOuf3z8FuEJLf69aNZgqGJAVmV46G92ET2PEPXZFaj0KoS/w75tcnH5Fz/PsfX17xF
+         wG9jtsRMce1qfaxbQ2rkQJMMhNJHvRyMPjT9365sAMSirQ+ILGJ4ksdwm7M/lQqpvGp/
+         T9V7kt1PzAvRT9I6NCQZc/2Y6VQ+4OqZ7iaY81qt0Qb2BwixED/LTMz0dRDX48OqLo4j
+         anvFQSUL2GjUG42ZAZamsiKHjmAdWOXsymLvPhBb6nVl9QZI9BtEKiaKoc2T2boOh4o9
+         sJ/Be2DYRDPgvHEQ1m+IMYnrJLrpGlj8ILcqVa622Pat7kZ/leEL/xZEYPUjxBb8OgBX
+         1m1g==
+X-Gm-Message-State: APjAAAW2K00LqHlPQhsKu/z6vd1DyuyO1e4HtPNO36mIEUKCHq/R+ds+
+        CTgfI/eG8IHCj6Md801dP89U5g==
+X-Google-Smtp-Source: APXvYqw+qg4jwlO0JzvRQuQMV9ByejZJE+uZatTs0aps96wZ6LLBeiY1URuP4dn41RtClXDZDIa/dw==
+X-Received: by 2002:ac2:514b:: with SMTP id q11mr5226108lfd.33.1560289748726;
+        Tue, 11 Jun 2019 14:49:08 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id e26sm2787342ljl.33.2019.06.11.14.49.07
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 14:48:17 -0700 (PDT)
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, f.fainelli@gmail.com,
-        andrew@lunn.ch
-Subject: [PATCH net-next 4/4] net: dsa: use switchdev handle helpers
-Date:   Tue, 11 Jun 2019 17:47:47 -0400
-Message-Id: <20190611214747.22285-5-vivien.didelot@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190611214747.22285-1-vivien.didelot@gmail.com>
-References: <20190611214747.22285-1-vivien.didelot@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Jun 2019 14:49:08 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next] net: ethernet: ti: cpsw: use cpsw as drv data
+Date:   Wed, 12 Jun 2019 00:49:03 +0300
+Message-Id: <20190611214903.32146-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get rid of the dsa_slave_switchdev_port_{attr_set,obj}_event functions
-in favor of the switchdev_handle_port_{attr_set,obj_add,obj_del}
-helpers which recurse into the lower devices of the target interface.
+No need to set ndev for drvdata when mainly cpsw reference is needed,
+so correct this legacy decision.
 
-This has the benefit of being aware of the operations made on the
-bridge device itself, where orig_dev is the bridge, and dev is the
-slave. This can be used later to configure bridge-wide attributes on
-the hardware switches.
-
-Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- net/dsa/slave.c | 77 +++++++++++++++++++++----------------------------
- 1 file changed, 33 insertions(+), 44 deletions(-)
 
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index cb436a05c9a8..915dd43873f9 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -283,6 +283,9 @@ static int dsa_slave_port_attr_set(struct net_device *dev,
- 	struct dsa_port *dp = dsa_slave_to_port(dev);
- 	int ret;
+Based on net-next/master
+
+ drivers/net/ethernet/ti/cpsw.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 6d3f1f3f90cb..3430503e1053 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -2265,8 +2265,7 @@ static int cpsw_probe_dt(struct cpsw_platform_data *data,
  
-+	if (attr->orig_dev != dev)
-+		return -EOPNOTSUPP;
-+
- 	switch (attr->id) {
- 	case SWITCHDEV_ATTR_ID_PORT_STP_STATE:
- 		ret = dsa_port_set_state(dp, attr->u.stp_state, trans);
-@@ -311,11 +314,15 @@ static int dsa_slave_port_attr_set(struct net_device *dev,
- 
- static int dsa_slave_port_obj_add(struct net_device *dev,
- 				  const struct switchdev_obj *obj,
--				  struct switchdev_trans *trans)
-+				  struct switchdev_trans *trans,
-+				  struct netlink_ext_ack *extack)
+ static void cpsw_remove_dt(struct platform_device *pdev)
  {
- 	struct dsa_port *dp = dsa_slave_to_port(dev);
- 	int err;
- 
-+	if (obj->orig_dev != dev)
-+		return -EOPNOTSUPP;
-+
- 	/* For the prepare phase, ensure the full set of changes is feasable in
- 	 * one go in order to signal a failure properly. If an operation is not
- 	 * supported, return -EOPNOTSUPP.
-@@ -350,6 +357,9 @@ static int dsa_slave_port_obj_del(struct net_device *dev,
- 	struct dsa_port *dp = dsa_slave_to_port(dev);
- 	int err;
- 
-+	if (obj->orig_dev != dev)
-+		return -EOPNOTSUPP;
-+
- 	switch (obj->id) {
- 	case SWITCHDEV_OBJ_ID_PORT_MDB:
- 		err = dsa_port_mdb_del(dp, SWITCHDEV_OBJ_PORT_MDB(obj));
-@@ -1479,19 +1489,6 @@ static int dsa_slave_netdevice_event(struct notifier_block *nb,
- 	return NOTIFY_DONE;
- }
- 
--static int
--dsa_slave_switchdev_port_attr_set_event(struct net_device *netdev,
--		struct switchdev_notifier_port_attr_info *port_attr_info)
--{
--	int err;
--
--	err = dsa_slave_port_attr_set(netdev, port_attr_info->attr,
--				      port_attr_info->trans);
--
--	port_attr_info->handled = true;
--	return notifier_from_errno(err);
--}
--
- struct dsa_switchdev_event_work {
- 	struct work_struct work;
- 	struct switchdev_notifier_fdb_info fdb_info;
-@@ -1566,13 +1563,18 @@ static int dsa_slave_switchdev_event(struct notifier_block *unused,
- {
- 	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
- 	struct dsa_switchdev_event_work *switchdev_work;
-+	int err;
-+
-+	if (event == SWITCHDEV_PORT_ATTR_SET) {
-+		err = switchdev_handle_port_attr_set(dev, ptr,
-+						     dsa_slave_dev_check,
-+						     dsa_slave_port_attr_set);
-+		return notifier_from_errno(err);
-+	}
- 
- 	if (!dsa_slave_dev_check(dev))
- 		return NOTIFY_DONE;
- 
--	if (event == SWITCHDEV_PORT_ATTR_SET)
--		return dsa_slave_switchdev_port_attr_set_event(dev, ptr);
--
- 	switchdev_work = kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
- 	if (!switchdev_work)
- 		return NOTIFY_BAD;
-@@ -1602,41 +1604,28 @@ static int dsa_slave_switchdev_event(struct notifier_block *unused,
- 	return NOTIFY_BAD;
- }
- 
--static int
--dsa_slave_switchdev_port_obj_event(unsigned long event,
--			struct net_device *netdev,
--			struct switchdev_notifier_port_obj_info *port_obj_info)
--{
--	int err = -EOPNOTSUPP;
--
--	switch (event) {
--	case SWITCHDEV_PORT_OBJ_ADD:
--		err = dsa_slave_port_obj_add(netdev, port_obj_info->obj,
--					     port_obj_info->trans);
--		break;
--	case SWITCHDEV_PORT_OBJ_DEL:
--		err = dsa_slave_port_obj_del(netdev, port_obj_info->obj);
--		break;
--	}
--
--	port_obj_info->handled = true;
--	return notifier_from_errno(err);
--}
--
- static int dsa_slave_switchdev_blocking_event(struct notifier_block *unused,
- 					      unsigned long event, void *ptr)
- {
- 	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
--
--	if (!dsa_slave_dev_check(dev))
--		return NOTIFY_DONE;
-+	int err;
- 
- 	switch (event) {
--	case SWITCHDEV_PORT_OBJ_ADD: /* fall through */
-+	case SWITCHDEV_PORT_OBJ_ADD:
-+		err = switchdev_handle_port_obj_add(dev, ptr,
-+						    dsa_slave_dev_check,
-+						    dsa_slave_port_obj_add);
-+		return notifier_from_errno(err);
- 	case SWITCHDEV_PORT_OBJ_DEL:
--		return dsa_slave_switchdev_port_obj_event(event, dev, ptr);
-+		err = switchdev_handle_port_obj_del(dev, ptr,
-+						    dsa_slave_dev_check,
-+						    dsa_slave_port_obj_del);
-+		return notifier_from_errno(err);
- 	case SWITCHDEV_PORT_ATTR_SET:
--		return dsa_slave_switchdev_port_attr_set_event(dev, ptr);
-+		err = switchdev_handle_port_attr_set(dev, ptr,
-+						     dsa_slave_dev_check,
-+						     dsa_slave_port_attr_set);
-+		return notifier_from_errno(err);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
+-	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
++	struct cpsw_common *cpsw = platform_get_drvdata(pdev);
+ 	struct cpsw_platform_data *data = &cpsw->data;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *slave_node;
+@@ -2477,7 +2476,7 @@ static int cpsw_probe(struct platform_device *pdev)
+ 		goto clean_cpts;
  	}
  
- 	return NOTIFY_DONE;
+-	platform_set_drvdata(pdev, ndev);
++	platform_set_drvdata(pdev, cpsw);
+ 	priv = netdev_priv(ndev);
+ 	priv->cpsw = cpsw;
+ 	priv->ndev = ndev;
+@@ -2570,9 +2569,8 @@ static int cpsw_probe(struct platform_device *pdev)
+ 
+ static int cpsw_remove(struct platform_device *pdev)
+ {
+-	struct net_device *ndev = platform_get_drvdata(pdev);
+-	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
+-	int ret;
++	struct cpsw_common *cpsw = platform_get_drvdata(pdev);
++	int i, ret;
+ 
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+ 	if (ret < 0) {
+@@ -2580,9 +2578,9 @@ static int cpsw_remove(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	if (cpsw->data.dual_emac)
+-		unregister_netdev(cpsw->slaves[1].ndev);
+-	unregister_netdev(ndev);
++	for (i = 0; i < cpsw->data.slaves; i++)
++		if (cpsw->slaves[i].ndev)
++			unregister_netdev(cpsw->slaves[i].ndev);
+ 
+ 	cpts_release(cpsw->cpts);
+ 	cpdma_ctlr_destroy(cpsw->dma);
 -- 
-2.21.0
+2.17.1
 
