@@ -2,111 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D39963D30F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884943D316
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391456AbfFKQzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 12:55:45 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42147 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390815AbfFKQzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 12:55:45 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t28so12338812lje.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 09:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xh2IY7LpPfFuCqJ10WrTcz/y2fuRKJsYuYIzkRCHPGA=;
-        b=vVUnEDJygjVhekQktjlLFhfyt/TULR2B1WfScNaOoGloNtpx2vfSiB+G/CX3eORLjT
-         G7uF00KbXWKOgLrCKFt2ElbyKKBj7UGNgE3qSHyMqY1a5Pa6JO/asgQ3eA4cH2tjTbLT
-         OnpX7Y6Nw5edKDsZjSnlBYS1OHSqLontrnYzE63pocD3JELJy7J5TX9sG+rAYqz6B7nH
-         o31JpQJKjJ3i6cU94KGEX+LHAhEnu1SQbIJRdRL3AFvCLg6Fs9JqU3ncjsO/6Wj/3JJs
-         8NebdMponYEqEN0JgIaeIZuEAsJNMsc0V5wQwraKtCbq1vonKbi6AjJIAE2oeW3Lo5OZ
-         /Ajg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xh2IY7LpPfFuCqJ10WrTcz/y2fuRKJsYuYIzkRCHPGA=;
-        b=LzKqZsTgzBLf/KcLV0DSZDD6nnvv0nj7kyELp2apLB6gfBi08k7vG8YOkXLlUNm9Mu
-         mZHY4mzZ4wlnqmB19bQmfh0sHLLqqYc6oewiEDGSF14N/ieRLtAZd3zTjSVDa2HeLDqg
-         JwdPvQ8gWqKBcV/IBswV9ahcu7cj0RiR/rFUxWCSwcz71g2DS4Obx1L9/R3ThIuInAAJ
-         nnoojFwvCSj2w9SSqGa32ergkGHbfVRa3QZbfVs+3FQB96CXiMyEuw3DzAh9qZY5IxrA
-         xT1KFLbsJA56M1cs1/isMOsCKaNfizUpwn3T88eW96EhTPek4gA/9w3r2rZHxhNDFyzY
-         e0UQ==
-X-Gm-Message-State: APjAAAVlfbefRmbs7RRby8aGXskS5+DXphon+vaRim10ghEr9aKnGWp+
-        c0nrmuViLsYMXiNqqE0TM/0OWvI6ahBYOnVIaojVdQ==
-X-Google-Smtp-Source: APXvYqw34lPSRZEgkGFHqW2B5EX/1BVK1usgV7bVySIzKQ01HlDt6hTtvz7UkvAtJxHIArPRYUa8+lvbvTxpux61U8A=
-X-Received: by 2002:a2e:2411:: with SMTP id k17mr11738029ljk.136.1560272142410;
- Tue, 11 Jun 2019 09:55:42 -0700 (PDT)
+        id S2405515AbfFKQ4z convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 11 Jun 2019 12:56:55 -0400
+Received: from smtp1.ono.com ([62.42.230.162]:43197 "EHLO smtp1.ono.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405434AbfFKQ4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 12:56:51 -0400
+X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.11.154516:17:16.798,ip=62.42.230.144,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, __MIME_VERSION,
+ __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __ANY_URI,
+ __FRAUD_BODY_WEBMAIL, __URI_NO_WWW, __FRAUD_PAPERWORK, ECARD_WORD,
+ __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __FRAUD_MONEY_BIG_COIN_EN,
+ __FRAUD_MONEY_CURRENCY_DOLLAR, __INT_PROD_LOC, __LINES_OF_YELLING,
+ __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_1000_1099,
+ __MIME_TEXT_P1, __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10,
+ __FRAUD_MONEY_CURRENCY, __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE,
+ __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
+ WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __FRAUD_COMMON,
+ __MIME_TEXT_P, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_2000_LESS,
+ __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
+ BODY_SIZE_7000_LESS, TO_MALFORMED
+Received: from resprs05 (62.42.230.144) by smtp1.ono.com (9.0.019.09-1)
+        id 5C12554F093E4AEB; Tue, 11 Jun 2019 18:56:32 +0200
+Received: from (149.126.75.9) by webmailcpr05n.ono.com;  Tue, 11 Jun 2019 18:56:29 +0200
+Message-ID: <11821780.392871560272189968.JavaMail.defaultUser@defaultHost>
+Date:   Tue, 11 Jun 2019 18:56:29 +0200 (CEST)
+From:   "Mrs. Patrick Huang" <daniperez@ono.com>
+Reply-To: huangpatrick946@gmail.com
+Subject: Gooday To You,
 MIME-Version: 1.0
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com> <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain> <20190610205233.GB137143@google.com>
- <20190611104913.egsbwcedshjdy3m5@holly.lan>
-In-Reply-To: <20190611104913.egsbwcedshjdy3m5@holly.lan>
-From:   Brian Norris <briannorris@google.com>
-Date:   Tue, 11 Jun 2019 09:55:30 -0700
-Message-ID: <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>, Pavel Machek <pavel@ucw.cz>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Doug Anderson <dianders@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Guenter Roeck <groeck@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
-> This is a long standing flaw in the backlight interfaces. AFAIK generic
-> userspaces end up with a (flawed) heuristic.
+This is to officially inform you that ATM card number: 3774 2856 7847 
+9006 worth fifteen Million US dollars($15. Million US dollars.) has 
+been credited in your favor in bid to compensate you on your contract 
+payment since you are next on our inheritance file for the second part 
+of this fiscal Year 2017.The card centre will send you an ATM CARD 
+which you will use to withdraw your money in any ATM MACHINE in the 
+world.
 
-Bingo! Would be nice if we could start to fix this long-standing flaw.
+Your personal identification is ATM- 7997. Contact the verification 
+officer 
+patrick huang (Mrs.) on: (huangpatrick946@gmail.com) with the 
+following 
+for proper verification and claim processing: Call him immidiately for 
+confirmation.+233-248-931448
 
-> Basically devices with a narrow range of choices can be assumed to be
-> logarithmic
 
-That's (almost, see below) exactly what we have.
+NOTE:
+You are also required to send to the verification officer/agent a 
+means 
+of Identification which should be a scan copy of your Driver’s License 
+or International Passport for proper verification and authentication.
 
-(And this is what Matthias is fighting against, now that we're
-implementing both "large number of data points" and "pre-curved" at
-the same time. We will have to either adapt the heuristic, or else
-adapt our device trees to fit the heuristic.)
+Regards
 
-> Systems are coming along that allow us to animate the change of
-> brightness (part of the reason for interpolated tables is to
-> permit smooth animation rather than because the user explicitly wants
-> to set the brightness to exactly 1117).
+STATE INHERITANCE COMMITTEE
 
-Chrome OS has done this for a long time. So "coming along" is a bit late ;)
 
-Also, I believe Chrome OS will do animation/smoothing for all tables
-(small or large) where it can: even for the small tables.
 
-> These systems are often
-> logarithmic but with a wide range of values.
-
-NB: Chrome OS happens to use a polynomial formula (exponent = 2 or
-0.5, depending on how you look at it), not logarithmic. You can see it
-in all its (non)glory here:
-
-https://chromium.googlesource.com/chromiumos/platform2/+/ee015853b227cf265491bd80ccf096b188490529/power_manager/powerd/policy/internal_backlight_controller.cc#451
-
-Regards,
-Brian
