@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1973D5FE
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4573D5FF
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:01:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405035AbfFKS71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:59:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36174 "EHLO mail.kernel.org"
+        id S2392206AbfFKS7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:59:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392179AbfFKS7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:59:25 -0400
+        id S2392181AbfFKS73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 14:59:29 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0C172183E;
-        Tue, 11 Jun 2019 18:59:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDE4A2183F;
+        Tue, 11 Jun 2019 18:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560279565;
-        bh=c2PSAm9/6AEmzZrUKDXDvImOpyg/KiK8HasmE/vfCog=;
+        s=default; t=1560279569;
+        bh=8BLznbtLGYo5pMqNA3GbvXQfhGN9I9dfdgaPNqzsS5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yoGZZn09Nkf1z5AF5MVQQM9DMDVkrAQdEQ2i6cypDJ0Gyjm1gJOyt/4ANxRs5ICYF
-         F+/dFAfXnFWh+Jn2gxsMyFjR9tcKTwHGrQBJlGtyQ1Kzwu/3T1STuPEqHczRcCYBjZ
-         YegA5Z3sWljmUxKfpRK6Bk1p1dfkh0qFoE9qMhZ0=
+        b=RAmP3a1vNTXuD8fZhWfYqpWSPinFi0BfruSlS2FdAzLSGQo/mTERRXiVSCtQ5Mgs+
+         XbkXA+5vNkaGT3PcpQw7GQtTBqnVnbiMosMG0JWu0ds1Wqj3qqF8+ZMbxcwXIOpui7
+         NYmXNpmTPbkXl8aDKrhMg7ZpLCgMolmjLRjiA07c=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 01/85] perf data: Add description of header HEADER_BPF_PROG_INFO and HEADER_BPF_BTF
-Date:   Tue, 11 Jun 2019 15:57:47 -0300
-Message-Id: <20190611185911.11645-2-acme@kernel.org>
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Chong Jiang <chongjiang@chromium.org>,
+        Simon Que <sque@chromium.org>
+Subject: [PATCH 02/85] perf data: Document memory topology header: HEADER_MEM_TOPOLOGY
+Date:   Tue, 11 Jun 2019 15:57:48 -0300
+Message-Id: <20190611185911.11645-3-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611185911.11645-1-acme@kernel.org>
 References: <20190611185911.11645-1-acme@kernel.org>
@@ -45,49 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-This patch addes description of HEADER_BPF_PROG_INFO and HEADER_BPF_BTF to
-perf.data-file-format.txt.
+We forgot to update the perf.data file format document for the
+HEADER_MEM_TOPOLOGY header, do it now from comments in the patch
+introducing it.
 
-Requested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Chong Jiang <chongjiang@chromium.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 606f972b1361 ("perf bpf: Save bpf_prog_info information as headers to perf.data")
-Link: http://lkml.kernel.org/r/20190521064406.2498925-1-songliubraving@fb.com
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Simon Que <sque@chromium.org>
+Fixes: e2091cedd51b ("perf tools: Add MEM_TOPOLOGY feature to perf data file")
+Link: https://lkml.kernel.org/n/tip-h5lcm1nbe9ztxwm61gmadd56@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../perf/Documentation/perf.data-file-format.txt | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ .../Documentation/perf.data-file-format.txt   | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index 6967e9b02be5..022bb8b1c84a 100644
+index 022bb8b1c84a..99733751695b 100644
 --- a/tools/perf/Documentation/perf.data-file-format.txt
 +++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -272,6 +272,22 @@ struct {
+@@ -272,6 +272,30 @@ struct {
  
  Two uint64_t for the time of first sample and the time of last sample.
  
-+        HEADER_BPF_PROG_INFO = 25,
++	HEADER_SAMPLE_TOPOLOGY = 22,
 +
-+struct bpf_prog_info_linear, which contains detailed information about
-+a BPF program, including type, id, tag, jited/xlated instructions, etc.
++Physical memory map and its node assignments.
 +
-+        HEADER_BPF_BTF = 26,
++The format of data in MEM_TOPOLOGY is as follows:
 +
-+Contains BPF Type Format (BTF). For more information about BTF, please
-+refer to Documentation/bpf/btf.rst.
++   0 - version          | for future changes
++   8 - block_size_bytes | /sys/devices/system/memory/block_size_bytes
++  16 - count            | number of nodes
 +
-+struct {
-+	u32	id;
-+	u32	data_size;
-+	char	data[];
-+};
++For each node we store map of physical indexes:
 +
-         HEADER_COMPRESSED = 27,
++  32 - node id          | node index
++  40 - size             | size of bitmap
++  48 - bitmap           | bitmap of memory indexes that belongs to node
++                        | /sys/devices/system/node/node<NODE>/memory<INDEX>
++
++The MEM_TOPOLOGY can be displayed with following command:
++
++$ perf report --header-only -I
++...
++# memory nodes (nr 1, block size 0x8000000):
++#    0 [7G]: 0-23,32-69
++
+         HEADER_BPF_PROG_INFO = 25,
  
- struct {
+ struct bpf_prog_info_linear, which contains detailed information about
 -- 
 2.20.1
 
