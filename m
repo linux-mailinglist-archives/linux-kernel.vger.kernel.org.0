@@ -2,255 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66FEB3C544
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 216B43C55A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:46:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404442AbfFKHh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:37:57 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36336 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404009AbfFKHh4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:37:56 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w7so8211120oic.3;
-        Tue, 11 Jun 2019 00:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uyWNTU55JT9GK2aN646mLXTRkgWwGnf383ImPAHfNpc=;
-        b=NNch+St/7hAl3ovYZbYCVbvfTDW9aaAdG3YFRwtyjwKjabESyVU20yJQkrnKixD3V/
-         MoQhUTsGszn5tB3sqV40NutooZumVOOm53GRxEuKgaiDULicGCieRRvk7R5bj/uoQa02
-         ZcPZNO38kFAJy/g9yETKVRDRXYZLLc6KGC1ouRVEKOAMX/wrHNeyluk2fPksMft1XpGV
-         XGPrYHRVJCCTdzOYbSokuPBI43FsdrG+exejkRj1mJqxgRrLLhO3DvzjPBDmriC5mzoi
-         Am+ztDUZIWoZrvOT3pXdFwClzI9uq6Ltf0K6ph2Bp0y52xWs23mGDCwtR0vMYsk/8S9I
-         sNQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uyWNTU55JT9GK2aN646mLXTRkgWwGnf383ImPAHfNpc=;
-        b=jcANhyl9a0lLMLyucPCpFaBiYgG4dFvLQ8HSk2o5Yo5jpgUTXHVh7xqk3QqUa1VWKt
-         o/MqIKytkcGnzRxHWEl9hf/so1rC3OMtK6GYbYANV/nWYtjn+ZfZ5kvVahzqBOcOxdRE
-         vDXqSJfE88AdQlQV5WUmpdxtGGxQiXmTDBPo/Uc1xklaXHYnqMhQQfFZ/eMGh4DX7PCB
-         VJSMQZ2SOUtlX1vStOys5CYKtPmK3mZHKgQQ7CT7DRxpT95MDGccCLlgjwyXoJ3Web/h
-         4X87bsauwfGoWbgYwcbdWnFexPVpfC1aJEiBQql1niFlboJ0TnPo8i3usFbg37UE+57h
-         jKHQ==
-X-Gm-Message-State: APjAAAX1V3szujy6jUA7FdUqZpcldCXzEI7zshSpl8TaYJ9nja3wGkJM
-        h1ZjU2FpZWOo+H75UkzpdCE1EjEa8XLTACuZ8rQ=
-X-Google-Smtp-Source: APXvYqw+OUl8lt7EinVIXV0dyYFcWVFGvEUraTxANWi0wvDXljmpbDt7OmvSt0YYFLlgqxH/x4HFS/kwFzsk6v9ZG5M=
-X-Received: by 2002:aca:3305:: with SMTP id z5mr12567515oiz.141.1560238675747;
- Tue, 11 Jun 2019 00:37:55 -0700 (PDT)
+        id S2404467AbfFKHqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:46:18 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59256 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404300AbfFKHqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:46:18 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BBE85C45B3B1CCCB6600;
+        Tue, 11 Jun 2019 15:46:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
+ 2019 15:46:05 +0800
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: add a rw_sem to cover quota flag
+ changes
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190530033115.16853-1-jaegeuk@kernel.org>
+ <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
+ <20190604183619.GA8507@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2afe0416-fe2d-8ba8-7625-0246aca9eba6@huawei.com>
+Date:   Tue, 11 Jun 2019 15:46:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1558418814-6822-1-git-send-email-wanpengli@tencent.com>
- <1558418814-6822-2-git-send-email-wanpengli@tencent.com> <627e4189-3709-1fb2-a9bc-f1a577712fe0@redhat.com>
-In-Reply-To: <627e4189-3709-1fb2-a9bc-f1a577712fe0@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Tue, 11 Jun 2019 15:38:40 +0800
-Message-ID: <CANRm+CyqH5ojNTcX3zfVjB8rayGHAW0Ex+fiGPnrO7bkmvr_4w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] KVM: X86: Provide a capability to disable cstate
- msr read intercepts
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190604183619.GA8507@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Jun 2019 at 00:53, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 21/05/19 08:06, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Allow guest reads CORE cstate when exposing host CPU power management c=
-apabilities
-> > to the guest. PKG cstate is restricted to avoid a guest to get the whol=
-e package
-> > information in multi-tenant scenario.
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Cc: Liran Alon <liran.alon@oracle.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> > v1 -> v2:
-> >  * use a separate bit for KVM_CAP_X86_DISABLE_EXITS
-> >
-> >  Documentation/virtual/kvm/api.txt | 1 +
-> >  arch/x86/include/asm/kvm_host.h   | 1 +
-> >  arch/x86/kvm/vmx/vmx.c            | 6 ++++++
-> >  arch/x86/kvm/x86.c                | 5 ++++-
-> >  arch/x86/kvm/x86.h                | 5 +++++
-> >  include/uapi/linux/kvm.h          | 4 +++-
-> >  tools/include/uapi/linux/kvm.h    | 4 +++-
-> >  7 files changed, 23 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/=
-kvm/api.txt
-> > index 33cd92d..91fd86f 100644
-> > --- a/Documentation/virtual/kvm/api.txt
-> > +++ b/Documentation/virtual/kvm/api.txt
-> > @@ -4894,6 +4894,7 @@ Valid bits in args[0] are
-> >  #define KVM_X86_DISABLE_EXITS_MWAIT            (1 << 0)
-> >  #define KVM_X86_DISABLE_EXITS_HLT              (1 << 1)
-> >  #define KVM_X86_DISABLE_EXITS_PAUSE            (1 << 2)
-> > +#define KVM_X86_DISABLE_EXITS_CSTATE           (1 << 3)
-> >
-> >  Enabling this capability on a VM provides userspace with a way to no
-> >  longer intercept some instructions for improved latency in some
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm=
-_host.h
-> > index d5457c7..1ce8289 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -882,6 +882,7 @@ struct kvm_arch {
-> >       bool mwait_in_guest;
-> >       bool hlt_in_guest;
-> >       bool pause_in_guest;
-> > +     bool cstate_in_guest;
-> >
-> >       unsigned long irq_sources_bitmap;
-> >       s64 kvmclock_offset;
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 0861c71..da24f18 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -6637,6 +6637,12 @@ static struct kvm_vcpu *vmx_create_vcpu(struct k=
-vm *kvm, unsigned int id)
-> >       vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, M=
-SR_TYPE_RW);
-> >       vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, =
-MSR_TYPE_RW);
-> >       vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, =
-MSR_TYPE_RW);
-> > +     if (kvm_cstate_in_guest(kvm)) {
-> > +             vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES=
-, MSR_TYPE_R);
-> > +             vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RES=
-IDENCY, MSR_TYPE_R);
-> > +             vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RES=
-IDENCY, MSR_TYPE_R);
-> > +             vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RES=
-IDENCY, MSR_TYPE_R);
->
-> I think I have changed my mind on the implementation of this, sorry.
->
-> 1) We should emulate these MSRs always, otherwise the guest API changes
-> between different values of KVM_CAP_X86_DISABLE_EXITS which is not
-> intended.  Also, KVM_CAP_X86_DISABLE_EXITS does not prevent live
-> migration, so it should be possible to set the MSRs in the host to
-> change the delta between the host and guest values.
->
-> 2) If both KVM_X86_DISABLE_EXITS_HLT and KVM_X86_DISABLE_EXITS_MWAIT are
-> disabled (i.e. exit happens), the MSRs will be purely emulated.
-> C3/C6/C7 residency will never increase (it will remain the value that is
-> set by the host).  When the VM executes an hlt vmexit, it should save
-> the current TSC.  When it comes back, the C1 residency MSR should be
-> increased by the time that has passed.
->
-> 3) If KVM_X86_DISABLE_EXITS_HLT is enabled but
-> KVM_X86_DISABLE_EXITS_MWAIT is disabled (i.e. mait exits happen),
-> C3/C6/C7 residency will also never increase, but the C1 residency value
-> should be read using rdmsr from the host, with a delta added from the
-> host value.
->
-> 4) If KVM_X86_DISABLE_EXITS_HLT and KVM_X86_DISABLE_EXITS_MWAIT are both
-> disabled (i.e. mwait exits do not happen), all four residency values
-> should be read using rdmsr from the host, with a delta added from the
-> host value.
->
-> 5) If KVM_X86_DISABLE_EXITS_HLT is disabled and
-> KVM_X86_DISABLE_EXITS_MWAIT is enabled, the configuration makes no sense
-> so it's okay not to be very optimized.  In this case, the residency
-> value should be read as in (4), but hlt vmexits will be accounted as in
-> (2) so we need to be careful not to double-count the residency during
-> hlt.  This means doing four rdmsr before the beginning of the hlt vmexit
-> and four at the end of the hlt vmexit.
+On 2019/6/5 2:36, Jaegeuk Kim wrote:
+> Two paths to update quota and f2fs_lock_op:
+> 
+> 1.
+>  - lock_op
+>  |  - quota_update
+>  `- unlock_op
+> 
+> 2.
+>  - quota_update
+>  - lock_op
+>  `- unlock_op
+> 
+> But, we need to make a transaction on quota_update + lock_op in #2 case.
+> So, this patch introduces:
+> 1. lock_op
+> 2. down_write
+> 3. check __need_flush
+> 4. up_write
+> 5. if there is dirty quota entries, flush them
+> 6. otherwise, good to go
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> 
+> v3 from v2:
+>  - refactor to fix quota corruption issue
+>   : it seems that the previous scenario is not real and no deadlock case was
+>     encountered.
 
-MSR_CORE_C1_RES is unreadable except for ATOM platform, so I think we
-can avoid the complex logic to handle C1 now. :)
+- f2fs_dquot_commit
+ - down_read(&sbi->quota_sem)
+					- block_operation
+					 - f2fs_lock_all
+					  - need_flush_quota
+					   - down_write(&sbi->quota_sem)
+  - f2fs_quota_write
+   - f2fs_lock_op
 
-Regards,
-Wanpeng Li
+Why can't this happen?
 
->
-> Therefore the data structure should be something like
->
-> struct kvm_residency_msr {
->         u64 value;
->         bool delta_from_host;
->         bool count_with_host;
-> }
->
-> u64 kvm_residency_read_host(struct kvm_residency_msr *msr)
-> {
->         u64 unscaled_value =3D rdmsrl(msr->index);
->         // apply TSC scaling...
->         return ...
-> }
->
-> u64 kvm_residency_read(struct kvm_residency_msr *msr)
-> {
->         return msr->value +
->                 (msr->delta_from_host ? kvm_residency_read_host(msr) : 0)=
-;
-> }
->
-> void kvm_residency_write(struct kvm_residency_msr *msr,
->                          u64 value)
-> {
->         msr->value =3D value -
->                 (msr->delta_from_host ? kvm_residency_read_host(msr) : 0)=
-;
-> }
->
-> // count_with_host is true for C1 iff any of KVM_CAP_DISABLE_EXITS_HLT
-> // or KVM_CAP_DISABLE_EXITS_MWAIT is set
-> // count_with_host is true for C3/C6/C7 iff KVM_CAP_DISABLE_EXITS_MWAIT
-> is set
-> void kvm_residency_setup(struct kvm_residency_msr *msr, u16 index,
->                          bool count_with_host)
-> {
->         /* Preserve value on calls after the first */
->         u64 value =3D msr->index ? kvm_residency_read(msr) : 0;
->         msr->delta_from_host =3D msr->count_with_host =3D count_with_host=
-;
->         msr->index =3D index;
->         kvm_residency_write(msr, value);
-> }
->
-> // The following functions are called from hlt vmexits.
->
-> void kvm_residency_start_hlt(struct kvm_residency_msr *msr)
-> {
->         if (msr->count_with_host) {
->                 WARN_ON(msr->delta_from_host);
->                 msr->value +=3D kvm_residency_read_host(msr);
->                 msr->delta_from_host =3D false;
->         }
-> }
->
-> // host_tsc_waited is 0 except for MSR_CORE_C1_RES
-> void kvm_residency_end_hlt(struct kvm_residency_msr *msr,
->                            u64 host_tsc_waited)
-> {
->         if (msr->count_with_host) {
->                 WARN_ON(!msr->delta_from_host);
->                 msr->value -=3D kvm_residency_read_host(msr);
->                 msr->delta_from_host =3D true;
->         }
->         if (host_tsc_waited) {
->                 // ... apply TSC scaling to host_tsc_waited ...
->                 msr->value +=3D ...;
->         }
-> }
->
-> Thanks,
->
-> Paolo
+Once more question, should we hold quota_sem during checkpoint to avoid further
+quota update? f2fs_lock_op can do this job as well?
+
+Thanks,
+
+> 
+>  fs/f2fs/checkpoint.c | 41 +++++++++++++++++++----------------------
+>  fs/f2fs/f2fs.h       |  1 +
+>  fs/f2fs/super.c      | 26 +++++++++++++++++++++-----
+>  3 files changed, 41 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 89825261d474..43f65f0962e5 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1131,17 +1131,24 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
+>  
+>  static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+>  {
+> +	bool ret = false;
+> +
+>  	if (!is_journalled_quota(sbi))
+>  		return false;
+> -	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> -		return false;
+> -	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> -		return false;
+> -	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+> -		return true;
+> -	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+> -		return true;
+> -	return false;
+> +
+> +	down_write(&sbi->quota_sem);
+> +	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH)) {
+> +		ret = false;
+> +	} else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR)) {
+> +		ret = false;
+> +	} else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH)) {
+> +		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> +		ret = true;
+> +	} else if (get_pages(sbi, F2FS_DIRTY_QDATA)) {
+> +		ret = true;
+> +	}
+> +	up_write(&sbi->quota_sem);
+> +	return ret;
+>  }
+>  
+>  /*
+> @@ -1160,26 +1167,22 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  	blk_start_plug(&plug);
+>  
+>  retry_flush_quotas:
+> +	f2fs_lock_all(sbi);
+>  	if (__need_flush_quota(sbi)) {
+>  		int locked;
+>  
+>  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
+>  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+> -			f2fs_lock_all(sbi);
+> +			set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>  			goto retry_flush_dents;
+>  		}
+> -		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> +		f2fs_unlock_all(sbi);
+>  
+>  		/* only failed during mount/umount/freeze/quotactl */
+>  		locked = down_read_trylock(&sbi->sb->s_umount);
+>  		f2fs_quota_sync(sbi->sb, -1);
+>  		if (locked)
+>  			up_read(&sbi->sb->s_umount);
+> -	}
+> -
+> -	f2fs_lock_all(sbi);
+> -	if (__need_flush_quota(sbi)) {
+> -		f2fs_unlock_all(sbi);
+>  		cond_resched();
+>  		goto retry_flush_quotas;
+>  	}
+> @@ -1201,12 +1204,6 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  	 */
+>  	down_write(&sbi->node_change);
+>  
+> -	if (__need_flush_quota(sbi)) {
+> -		up_write(&sbi->node_change);
+> -		f2fs_unlock_all(sbi);
+> -		goto retry_flush_quotas;
+> -	}
+> -
+>  	if (get_pages(sbi, F2FS_DIRTY_IMETA)) {
+>  		up_write(&sbi->node_change);
+>  		f2fs_unlock_all(sbi);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9674a85154b2..9bd2bf0f559b 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1253,6 +1253,7 @@ struct f2fs_sb_info {
+>  	block_t unusable_block_count;		/* # of blocks saved by last cp */
+>  
+>  	unsigned int nquota_files;		/* # of quota sysfile */
+> +	struct rw_semaphore quota_sem;		/* blocking cp for flags */
+>  
+>  	/* # of pages, see count_type */
+>  	atomic_t nr_pages[NR_COUNT_TYPE];
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 15d7e30bfc72..5a318399a2fa 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1964,6 +1964,7 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+>  	int cnt;
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_writeback_dquots(sb, type);
+>  	if (ret)
+>  		goto out;
+> @@ -2001,6 +2002,7 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+>  out:
+>  	if (ret)
+>  		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+> @@ -2094,32 +2096,40 @@ static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
+>  
+>  static int f2fs_dquot_commit(struct dquot *dquot)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_commit(dquot);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+>  static int f2fs_dquot_acquire(struct dquot *dquot)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_acquire(dquot);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+> -
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+>  static int f2fs_dquot_release(struct dquot *dquot)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_release(dquot);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+> @@ -2129,22 +2139,27 @@ static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_mark_dquot_dirty(dquot);
+>  
+>  	/* if we are using journalled quota */
+>  	if (is_journalled_quota(sbi))
+>  		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>  
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+>  static int f2fs_dquot_commit_info(struct super_block *sb, int type)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_commit_info(sb, type);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+> @@ -3253,6 +3268,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	}
+>  
+>  	init_rwsem(&sbi->cp_rwsem);
+> +	init_rwsem(&sbi->quota_sem);
+>  	init_waitqueue_head(&sbi->cp_wait);
+>  	init_sb_info(sbi);
+>  
+> 
