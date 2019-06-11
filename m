@@ -2,77 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A47F94165E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1048241662
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406733AbfFKUrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 16:47:12 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59664 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406018AbfFKUrM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:47:12 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hanfU-0005Ew-Ja; Tue, 11 Jun 2019 22:46:56 +0200
-Date:   Tue, 11 Jun 2019 22:46:55 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v4 2/5] x86/umwait: Initialize umwait control values
-In-Reply-To: <20190610041343.GC162238@romley-ivt3.sc.intel.com>
-Message-ID: <alpine.DEB.2.21.1906112242410.2214@nanos.tec.linutronix.de>
-References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com> <1559944837-149589-3-git-send-email-fenghua.yu@intel.com> <CALCETrWtmrwqjThkMKU9YpTDK4o95V4HBb2_yQF2tvx5JZ9Ukw@mail.gmail.com> <20190610041343.GC162238@romley-ivt3.sc.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
+        id S2406843AbfFKUse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 16:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405881AbfFKUse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 16:48:34 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE6320684;
+        Tue, 11 Jun 2019 20:48:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560286113;
+        bh=y33lrlkQja7eoIovWsePDjdEdIHZ/RJoRj29PafhqOI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UgyruavCsSZLLvbVGn/8Url9hdMFqD/vc6cS2xvCxVAaLGSpqRyO7wgSl3uYSlnrC
+         3+fJjYU9x+kvkKn62ONAnZk5QMPYKtIt9RU5V2bIySebdJX4pNazzbre4oO5OlK2mG
+         81xtH5C+HAjNqK8Itw5roVmiKtRcfGnYRZlw+kVk=
+Date:   Tue, 11 Jun 2019 13:48:31 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Shyam Saini <shyam.saini@amarulasolutions.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        netdev@vger.kernel.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-sctp@vger.kernel.org, bpf@vger.kernel.org,
+        kvm@vger.kernel.org, mayhs11saini@gmail.com,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: [PATCH V2] include: linux: Regularise the use of FIELD_SIZEOF
+ macro
+Message-Id: <20190611134831.a60c11f4b691d14d04a87e29@linux-foundation.org>
+In-Reply-To: <20190611193836.2772-1-shyam.saini@amarulasolutions.com>
+References: <20190611193836.2772-1-shyam.saini@amarulasolutions.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Jun 2019, Fenghua Yu wrote:
+On Wed, 12 Jun 2019 01:08:36 +0530 Shyam Saini <shyam.saini@amarulasolutions.com> wrote:
 
-> On Sat, Jun 08, 2019 at 03:52:42PM -0700, Andy Lutomirski wrote:
-> > On Fri, Jun 7, 2019 at 3:10 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> > >
-> > > umwait or tpause allows processor to enter a light-weight
-> > > power/performance optimized state (C0.1 state) or an improved
-> > > power/performance optimized state (C0.2 state) for a period
-> > > specified by the instruction or until the system time limit or until
-> > > a store to the monitored address range in umwait.
-> > >
-> > > IA32_UMWAIT_CONTROL MSR register allows kernel to enable/disable C0.2
-> > > on the processor and set maximum time the processor can reside in
-> > > C0.1 or C0.2.
-> > >
-> > > By default C0.2 is enabled so the user wait instructions can enter the
-> > > C0.2 state to save more power with slower wakeup time.
-> > 
-> > Sounds good, but:
-> > 
-> > > +#define MSR_IA32_UMWAIT_CONTROL_C02            BIT(0)
-> > 
-> > > +static u32 umwait_control_cached = 100000;
-> > 
-> > The code seems to disagree.
+> Currently, there are 3 different macros, namely sizeof_field, SIZEOF_FIELD
+> and FIELD_SIZEOF which are used to calculate the size of a member of
+> structure, so to bring uniformity in entire kernel source tree lets use
+> FIELD_SIZEOF and replace all occurrences of other two macros with this.
 > 
-> The definition of bit[0] is: C0.2 is disabled when bit[0]=1. So
-> 100000 means C0.2 is enabled (and max time is 100000).
+> For this purpose, redefine FIELD_SIZEOF in include/linux/stddef.h and
+> tools/testing/selftests/bpf/bpf_util.h and remove its defination from
+> include/linux/kernel.h
+> 
+> In favour of FIELD_SIZEOF, this patch also deprecates other two similar
+> macros sizeof_field and SIZEOF_FIELD.
+> 
+> For code compatibility reason, retain sizeof_field macro as a wrapper macro
+> to FIELD_SIZEOF
 
-which is totally non obvious. If you have to encode the control bit, then
-please make it explicit, i.e. mask out the disable bit in the initializer.
+As Alexey has pointed out, C structs and unions don't have fields -
+they have members.  So this is an opportunity to switch everything to
+a new member_sizeof().
 
-Thanks,
-
-	tglx
+What do people think of that and how does this impact the patch footprint?
