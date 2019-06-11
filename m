@@ -2,72 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD943C9A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5813C953
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbfFKLDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 07:03:07 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:47512 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387899AbfFKLDG (ORCPT
+        id S1728766AbfFKKsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:48:21 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42835 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbfFKKsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 07:03:06 -0400
-X-Greylist: delayed 1180 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 07:03:06 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:To:Cc:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QCeifO9zUtS8lYIt9Z5aMEE1UvJc3aqVFQ5sSYZy3wY=; b=bWAl55VNpppr1nSo99UKErndpK
-        HtURPpZZCzodH4vv5P6FsZPU8B+Y6Z/6IAmv4pPwx7gJzAHD/FQxJzaTZt6vCXFKun6A2PYR7LBeI
-        VkI7/h1SzUFiNGScDR/jsW/ZDn8uE0HvTAN4nwIeYvzWfApRqR6NRVualXRKKYQ4hAdw=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:38780 helo=[10.97.34.6])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1haeFO-0001Qx-Nx; Tue, 11 Jun 2019 12:43:22 +0200
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-To:     Kirill Smelkov <kirr@nexedi.com>,
-        Miklos Szeredi <mszeredi@redhat.com>, gluster-devel@gluster.org
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Subject: Linux 5.2-RC regression bisected, mounting glusterfs volumes fails
- after commit: fuse: require /dev/fuse reads to have enough buffer capacity
-Message-ID: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
-Date:   Tue, 11 Jun 2019 12:46:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 11 Jun 2019 06:48:21 -0400
+Received: by mail-qk1-f193.google.com with SMTP id b18so7288157qkc.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 03:48:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DRCwbC43b8I/kW8dfdjp5o7aL26cGS0PPjZPEn74b+o=;
+        b=kJgS3WccPNx8fpoGAyKzKW/Z4qbUbx404t+Bgr8VUpU6tTJXp6tIfUWNgcwDcIYVAZ
+         vUpOq4egRrK1NgEu1FjFz1SkKHclUGvpSKg+T6z9NdDxfn6zoC+cA6yEx7TVQBAtin8M
+         7DdK6+aFFTOuiytnpPOXrPvytJJtu4/iiUfaRRGno9y7hkO35zIG+HRtYVWDM0ahxz3D
+         1Va5EH/u2CpVJ3JVFP+hje8PVaNzlakhTtLJrdS+XMR5g+g3hYsyIII5Sej6tnYx0jfQ
+         dSqNP7uQVGQREsxGSV2oEJ778arEAOHs/fVTw4OYh1vQ62K7VxMqBLGCOYM61x+KdpXB
+         w+rg==
+X-Gm-Message-State: APjAAAU1A3fRC7NXla6TCQNDApaiKBL8SfGkkCvXGevml1pAY4bzzW+y
+        PePdUwg4P3sH41PU53e0VtgjtqhUFS/gL9SRog+yZg==
+X-Google-Smtp-Source: APXvYqy/IzAdxwn2OQKKaBdRM9ltVhzXM8al+4wQK97WeEXh27E1i5y+HzDhxM5f6rsIk6EKPCWgqFec84r4T3B1PJU=
+X-Received: by 2002:a37:8847:: with SMTP id k68mr59858881qkd.278.1560250100550;
+ Tue, 11 Jun 2019 03:48:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190525140908.2804-1-yuehaibing@huawei.com> <50800f5e-867d-ded9-235c-b9c2db1c41ef@huawei.com>
+In-Reply-To: <50800f5e-867d-ded9-235c-b9c2db1c41ef@huawei.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 11 Jun 2019 12:48:09 +0200
+Message-ID: <CAO-hwJJYWGjp=gNs7X5fsg0tf18hpVA0cn63LxAme+LQnp+wrQ@mail.gmail.com>
+Subject: Re: [PATCH -next] HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices
+To:     Yuehaibing <yuehaibing@huawei.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>, jkosina@suse.cz,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-L.S.,
+On Tue, Jun 11, 2019 at 5:01 AM Yuehaibing <yuehaibing@huawei.com> wrote:
+>
+> Hi all,
+>
+> Friendly ping...
 
-While testing a linux 5.2 kernel I noticed it fails to mount my glusterfs volumes.
+Applied to for-5.3/logitech
 
-It repeatedly fails with:
-   [2019-06-11 09:15:27.106946] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-   [2019-06-11 09:15:27.106955] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-   [2019-06-11 09:15:27.106963] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-   [2019-06-11 09:15:27.106971] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-   etc. 
-   etc.
+Thanks!
 
-Bisecting turned up as culprit:
-    commit d4b13963f217dd947da5c0cabd1569e914d21699: fuse: require /dev/fuse reads to have enough buffer capacity
+Cheers,
+Benjamin
 
-The glusterfs version i'm using is from Debian stable:
-    ii  glusterfs-client                3.8.8-1                      amd64        clustered file-system (client package)
-    ii  glusterfs-common                3.8.8-1                      amd64        GlusterFS common libraries and translator modules
-
-
-A 5.1.* kernel works fine, as does a 5.2-rc4 kernel with said commit reverted.
-
---
-Sander
+>
+> On 2019/5/25 22:09, YueHaibing wrote:
+> > We should return 'retval' as the correct return value
+> > instead of always zero.
+> >
+> > Fixes: 74808f9115ce ("HID: logitech-dj: add support for non unifying receivers")
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  drivers/hid/hid-logitech-dj.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+> > index 41baa4dbbfcc..7f8db602eec0 100644
+> > --- a/drivers/hid/hid-logitech-dj.c
+> > +++ b/drivers/hid/hid-logitech-dj.c
+> > @@ -1133,7 +1133,7 @@ static int logi_dj_recv_query_hidpp_devices(struct dj_receiver_dev *djrcv_dev)
+> >                                   HID_REQ_SET_REPORT);
+> >
+> >       kfree(hidpp_report);
+> > -     return 0;
+> > +     return retval;
+> >  }
+> >
+> >  static int logi_dj_recv_query_paired_devices(struct dj_receiver_dev *djrcv_dev)
+> >
+>
