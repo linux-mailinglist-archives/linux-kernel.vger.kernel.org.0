@@ -2,70 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556253C451
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 08:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0006B3C46E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 08:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404234AbfFKGcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 02:32:03 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:42962 "EHLO inva020.nxp.com"
+        id S2403972AbfFKGqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 02:46:22 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23142 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403786AbfFKGb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 02:31:59 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C75BD1A0EF1;
-        Tue, 11 Jun 2019 08:31:57 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 932A21A0177;
-        Tue, 11 Jun 2019 08:31:50 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 74AA7402FB;
-        Tue, 11 Jun 2019 14:31:41 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        aisheng.dong@nxp.com, ulf.hansson@linaro.org, peng.fan@nxp.com,
-        daniel.baluta@nxp.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rtc@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] arm64: dts: imx8qxp: Add fallback compatible string for RTC node
-Date:   Tue, 11 Jun 2019 14:33:33 +0800
-Message-Id: <20190611063333.48501-3-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190611063333.48501-1-Anson.Huang@nxp.com>
-References: <20190611063333.48501-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2390485AbfFKGqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 02:46:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 23:46:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,578,1557212400"; 
+   d="scan'208";a="183696202"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
+  by fmsmga002.fm.intel.com with ESMTP; 10 Jun 2019 23:46:19 -0700
+Subject: Re: [PATCH] perf script/intel-pt: set synth_opts.callchain for
+ use_browser > 0
+To:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, davidca@fb.com,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20190610234216.2849236-1-songliubraving@fb.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <def87b9f-a4fa-37ff-722a-9f14b14b2c7b@intel.com>
+Date:   Tue, 11 Jun 2019 09:45:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190610234216.2849236-1-songliubraving@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On 11/06/19 2:42 AM, Song Liu wrote:
+> Currently, intel_pt_process_auxtrace_info() sets synth_opts.callchain for
+> use_browser != -1, which is not accurate after we set use_browser to 0 in
+> cmd_script(). As a result, the following commands sees a lot more errors
+> like:
+> 
+>   perf record -e intel_pt//u -C 10 -- sleep 3
+>   perf script
+> 
+>   ...
+>   instruction trace error type 1 time ...
+>   ...
+> 
+> This patch fixes this by checking use_browser > 0 instead.
+> 
+> Fixes: c1c9b9695cc8 ("perf script: Allow extended console debug output")
+> Reported-by: David Carrillo Cisneros <davidca@fb.com>
+> Cc: Milian Wolff <milian.wolff@kdab.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  tools/perf/util/intel-pt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> index 6d288237887b..15692c104ca8 100644
+> --- a/tools/perf/util/intel-pt.c
+> +++ b/tools/perf/util/intel-pt.c
+> @@ -2588,7 +2588,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+>  	} else {
+>  		itrace_synth_opts__set_default(&pt->synth_opts,
+>  				session->itrace_synth_opts->default_no_sample);
+> -		if (use_browser != -1) {
+> +		if (use_browser > 0) {
 
-The i.MX system controller RTC driver uses generic compatible
-string to support all i.MX SoCs with system controller inside,
-this patch adds the generic system controller RTC compatible
-string as fallback compatible string accordingly.
+That code has changed recently.  Refer:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=perf/core&id=26f19c2eb7e54
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-index 12044be..40811a2 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -162,7 +162,7 @@
- 		};
- 
- 		rtc: rtc {
--			compatible = "fsl,imx8qxp-sc-rtc";
-+			compatible = "fsl,imx8qxp-sc-rtc", "fsl,imx-sc-rtc";
- 		};
- 
- 		watchdog {
--- 
-2.7.4
+
+>  			pt->synth_opts.branches = false;
+>  			pt->synth_opts.callchain = true;
+>  		}
+> 
 
