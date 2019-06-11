@@ -2,139 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F083CDCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7205C3CDD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391586AbfFKN6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:58:47 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38229 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387966AbfFKN6q (ORCPT
+        id S2389341AbfFKOAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:00:08 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45227 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387447AbfFKOAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:58:46 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so3059243wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 06:58:44 -0700 (PDT)
+        Tue, 11 Jun 2019 10:00:08 -0400
+Received: by mail-qt1-f194.google.com with SMTP id j19so14575716qtr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 07:00:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vKGIIEZ1EWhF8d9VHamuiFuthqcJ8PCoZC+PlSBmz6w=;
-        b=EzeY2hPjuYcKKephwbA2K1k8wINtGW9iU2baby+Xliqe1XCNSRPc1BDCV0c7P2Cfyq
-         fiswGap6+7EHJyYD4nFTEmjDAndmmuLpxkj0z6N8Si5dC3jZyenH1cLi8DdmoDNfj4ba
-         ARQ8YUjx20+dGQtgThBUX9sUMXH4R3nlFlzRiYIEV3Zey05eBOYBfJFFwmCPkmO9Gn1a
-         uOoUwOPFvWqAhOOAmKWhhM2wZ98IENtfIHlORA/cK+Qf8dR8LC/pGpZmW1ELLdhHk+Pq
-         ydAqAkXyQU1W/SahLXNTTwrpSDtKRdWPjj0lKnHPvnDVgef+NAYipXlO8rplYVr932Yj
-         fiwA==
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iH+zv2NyAQjL/cetbGgHsTzopn+UouK4esOdVcCu/XI=;
+        b=bhgTz0iZHBzC141cQuSxSqaQ6tDQrIVqrdGGE0dsBQadX/i+4Srh9EvKSjvHWfQ96D
+         y2/cwNUfbWYskuiT226QmbdLGzCBH8hWz9FWoA4qjTsZTIh79U8wHlWpwNLnNQ+8JvH4
+         zF4Uzn/c5bbpMhM/SmrCJSY0O+LNAhxKJJW/VLPUMF9Lqhzmc+SGBK3bs8/gKSezBo7D
+         LEgR6ItfMPm9Bhlj+vAqpHPpKifwv5kI1a1Jb8xOOt/cLRvUH6CbcGDZuCZwcmca9f5X
+         +Fi4AbP1s9Hf4l4QzWm9wqogQWYEIKC8tAw5SxUcMoFLWmIgXfp0wg2aRDcoXfX6HsSH
+         drcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vKGIIEZ1EWhF8d9VHamuiFuthqcJ8PCoZC+PlSBmz6w=;
-        b=G0jt2wcbb6Wu98LhU8hE1JrWTtII3425gngA5hWBCQM4JCtyWaLD5kxWK1LsxX1aA0
-         ddCoUygMCJWdPIhI/qcj2vd+8nYjGYWAE0EBTvxcjjBPtbke2aviTgjvZCp7trcDU9gS
-         FOaKp/2CWg5jS7sWQZS1iArllIgXoH1D0tUA9Z19jzRImQ4x+F62yYtqNxzmAS8GiGYC
-         FWWV09HISXBn1BOvUtEWtYJETI2Fhp9l6pmPJIXnDFw0Gb1Fyx4hQDRqo4C9ytFFR1Dd
-         35DlI+b1xAzn/MY5W/xYwtmLHLa7iuB4hQFylHweRJRwL/2wwNB2M5IRv3dLWeG17XYy
-         dBVA==
-X-Gm-Message-State: APjAAAXuI+llcnCImSFuenUMf/OUQOe9EG64gM8lGjpZcqgjLQlOB2fZ
-        CBmSqSL1cI+kSraTlcBPzeIEOA==
-X-Google-Smtp-Source: APXvYqzt0u8aL8eNXkVgF2OmeqrddaS2cdZwbIEkydNhWGlivtGsTJEGph122kdnU4rK2V5IkAeWDw==
-X-Received: by 2002:a05:600c:389:: with SMTP id w9mr17129874wmd.139.1560261523914;
-        Tue, 11 Jun 2019 06:58:43 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c16sm12317446wrr.53.2019.06.11.06.58.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Jun 2019 06:58:43 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     balbi@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc3: meson-g12a: Add support for IRQ based OTG switching
-Date:   Tue, 11 Jun 2019 15:58:42 +0200
-Message-Id: <20190611135842.8396-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iH+zv2NyAQjL/cetbGgHsTzopn+UouK4esOdVcCu/XI=;
+        b=VKZxg88JixTtbhS1dT6aYKtfAGilrHOp1CkVNh5nVnw5t0ROyDHi14XcYbxRNnD8cf
+         phnc4mQlBWe5nEXXNYUVoWqgtseClFAGGYtnx7qjYZ8sP3/grH2cpxSWe2+ZiJUXpdkr
+         6+B6dVd7vqZSThvPR3q0DXfP5sOPCnhY7WGRg5c7J3K8U5324oGvQWlsDfjz93nbdQW+
+         nYLzgczmGBcuUm6n54flLsEW/obHoGKzx3G4azHHeVQu/T1sOHiVUxsJHxSnVYfFE+bL
+         qxt72khFLaaKLG/L9sUpTzk77iQXhCdQBVQKax1XmMMSKt4t/CxqJ8D50tGsbekF1cdS
+         AJSQ==
+X-Gm-Message-State: APjAAAVnswus40ZfHkwx9H86oG6R7Yn0kT5LTde4/UgqzgdqaQie8I5t
+        LEn7KzWj34ltjHsjAhp3cQeztw==
+X-Google-Smtp-Source: APXvYqwvcMDBx+2FFUxbbsHqiUbAKE+XOonBFHNUuVkdEbObgeEeNT+erbNtoXX9y+IO9kDx1s/nVQ==
+X-Received: by 2002:a0c:b084:: with SMTP id o4mr35367656qvc.227.1560261607009;
+        Tue, 11 Jun 2019 07:00:07 -0700 (PDT)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id g53sm3000938qtk.65.2019.06.11.07.00.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 07:00:06 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: "iommu/vt-d: Delegate DMA domain to generic iommu" series breaks
+ megaraid_sas
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <2ff8404d-7103-a96d-2749-ac707ce74563@linux.intel.com>
+Date:   Tue, 11 Jun 2019 10:00:02 -0400
+Cc:     James Sewart <jamessewart@arista.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        iommu@lists.linux-foundation.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AB191BD9-239D-4962-AED3-52AABED5C7C0@lca.pw>
+References: <1559941717.6132.63.camel@lca.pw>
+ <1e4f0642-e4e1-7602-3f50-37edc84ced50@linux.intel.com>
+ <1560174264.6132.65.camel@lca.pw> <1560178459.6132.66.camel@lca.pw>
+ <2ff8404d-7103-a96d-2749-ac707ce74563@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the OTG ID change interrupt to switch between Host
-and Device mode.
 
-Tested on the Hardkernel Odroid-N2 board.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/usb/dwc3/dwc3-meson-g12a.c | 32 ++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+> On Jun 10, 2019, at 9:41 PM, Lu Baolu <baolu.lu@linux.intel.com> =
+wrote:
+>=20
+> Ah, good catch!
+>=20
+> The device failed to be attached by a DMA domain. Can you please try =
+the
+> attached fix patch?
 
-diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
-index 2aec31a2eacb..e5c5ad0d529e 100644
---- a/drivers/usb/dwc3/dwc3-meson-g12a.c
-+++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
-@@ -348,6 +348,22 @@ static enum usb_role dwc3_meson_g12a_role_get(struct device *dev)
- 		USB_ROLE_HOST : USB_ROLE_DEVICE;
- }
- 
-+static irqreturn_t dwc3_meson_g12a_irq_thread(int irq, void *data)
-+{
-+	struct dwc3_meson_g12a *priv = data;
-+	enum phy_mode otg_id;
-+
-+	otg_id = dwc3_meson_g12a_get_id(priv);
-+	if (otg_id != priv->otg_phy_mode) {
-+		if (dwc3_meson_g12a_otg_mode_set(priv, otg_id))
-+			dev_warn(priv->dev, "Failed to switch OTG mode\n");
-+	}
-+
-+	regmap_update_bits(priv->regmap, USB_R5, USB_R5_ID_DIG_IRQ, 0);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static struct device *dwc3_meson_g12_find_child(struct device *dev,
- 						const char *compatible)
- {
-@@ -374,7 +390,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	struct resource *res;
- 	enum phy_mode otg_id;
--	int ret, i;
-+	int ret, i, irq;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -436,6 +452,19 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
- 	/* Get dr_mode */
- 	priv->otg_mode = usb_get_dr_mode(dev);
- 
-+	if (priv->otg_mode == USB_DR_MODE_OTG) {
-+		/* Ack irq before registering */
-+		regmap_update_bits(priv->regmap, USB_R5,
-+				   USB_R5_ID_DIG_IRQ, 0);
-+
-+		irq = platform_get_irq(pdev, 0);
-+		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-+						dwc3_meson_g12a_irq_thread,
-+						IRQF_ONESHOT, pdev->name, priv);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	dwc3_meson_g12a_usb_init(priv);
- 
- 	/* Init PHYs */
-@@ -460,7 +489,6 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
- 
- 	/* Setup OTG mode corresponding to the ID pin */
- 	if (priv->otg_mode == USB_DR_MODE_OTG) {
--		/* TOFIX Handle ID mode toggling via IRQ */
- 		otg_id = dwc3_meson_g12a_get_id(priv);
- 		if (otg_id != priv->otg_phy_mode) {
- 			if (dwc3_meson_g12a_otg_mode_set(priv, otg_id))
--- 
-2.21.0
+It works fine.
+
+>=20
+> [  101.885468] pci 0000:06:00.0: DMAR: Device is ineligible for IOMMU
+> domain attach due to platform RMRR requirement.  Contact your platform
+> vendor.
+> [  101.900801] pci 0000:06:00.0: Failed to add to iommu group 23: -1
+>=20
+> Best regards,
+> Baolu
+>=20
+> On 6/10/19 10:54 PM, Qian Cai wrote:
+>> On Mon, 2019-06-10 at 09:44 -0400, Qian Cai wrote:
+>>> On Sun, 2019-06-09 at 10:43 +0800, Lu Baolu wrote:
+>>>> Hi Qian,
+>>>>=20
+>>>> I just posted some fix patches. I cc'ed them in your email inbox as
+>>>> well. Can you please check whether they happen to fix your issue?
+>>>> If not, do you mind posting more debug messages?
+>>>=20
+>>> Unfortunately, it does not work. Here is the dmesg.
+>>>=20
+>>> =
+https://raw.githubusercontent.com/cailca/tmp/master/dmesg?token=3DAMC35QKP=
+IZBYUM
+>>> FUQKLW4ZC47ZPIK
+>> This one should be good to view.
+>> https://cailca.github.io/files/dmesg.txt
+> <0001-iommu-vt-d-Allow-DMA-domain-attaching-to-rmrr-locked.patch>
 
