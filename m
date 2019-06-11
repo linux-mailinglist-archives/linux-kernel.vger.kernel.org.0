@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2D63C4E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C096D3C4EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404346AbfFKHUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:20:37 -0400
-Received: from shell.v3.sk ([90.176.6.54]:60852 "EHLO shell.v3.sk"
+        id S2404371AbfFKHUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:20:46 -0400
+Received: from shell.v3.sk ([90.176.6.54]:60873 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404319AbfFKHUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:20:33 -0400
+        id S2404186AbfFKHUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:20:44 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B6A85104F7E;
-        Tue, 11 Jun 2019 09:20:31 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3142B104F74;
+        Tue, 11 Jun 2019 09:20:42 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id u2YoUcM1_rmB; Tue, 11 Jun 2019 09:20:12 +0200 (CEST)
+        with ESMTP id FvvXSs4m1zKn; Tue, 11 Jun 2019 09:20:19 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 56CC8104F75;
-        Tue, 11 Jun 2019 09:20:11 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 45134104F78;
+        Tue, 11 Jun 2019 09:20:18 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id TwDhlqFSGqW1; Tue, 11 Jun 2019 09:20:09 +0200 (CEST)
+        with ESMTP id rRDIVzG3U7MD; Tue, 11 Jun 2019 09:20:14 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D1A02104F6E;
-        Tue, 11 Jun 2019 09:20:08 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2749B104F6E;
+        Tue, 11 Jun 2019 09:20:14 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     John Crispin <john@phrozen.org>, linux-gpio@vger.kernel.org,
+To:     Wei Xu <xuwei5@hisilicon.com>
+Cc:     Pengcheng Li <lipengcheng8@huawei.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] pinctrl: lantiq: Switch to SPDX header
-Date:   Tue, 11 Jun 2019 09:20:04 +0200
-Message-Id: <20190611072004.2978373-1-lkundrak@v3.sk>
+Subject: [PATCH] arm64: dts: hisilicon: Switch to SPDX header
+Date:   Tue, 11 Jun 2019 09:20:09 +0200
+Message-Id: <20190611072009.2978447-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,46 +50,150 @@ to SPDX instead of fixing the wording.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/pinctrl/pinctrl-lantiq.c | 5 +----
- drivers/pinctrl/pinctrl-lantiq.h | 5 +----
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi | 5 +----
+ arch/arm64/boot/dts/hisilicon/hip05-d02.dts         | 5 +----
+ arch/arm64/boot/dts/hisilicon/hip05.dtsi            | 5 +----
+ arch/arm64/boot/dts/hisilicon/hip06-d03.dts         | 5 +----
+ arch/arm64/boot/dts/hisilicon/hip06.dtsi            | 5 +----
+ arch/arm64/boot/dts/hisilicon/hip07-d05.dts         | 5 +----
+ arch/arm64/boot/dts/hisilicon/hip07.dtsi            | 5 +----
+ 7 files changed, 7 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-lantiq.c b/drivers/pinctrl/pinctrl-l=
-antiq.c
-index 22e80613e269..029e0aecb8d8 100644
---- a/drivers/pinctrl/pinctrl-lantiq.c
-+++ b/drivers/pinctrl/pinctrl-lantiq.c
-@@ -1,11 +1,8 @@
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi b/arch/a=
+rm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+index 68c52f1149be..f9662a9f17b8 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+@@ -1,3 +1,4 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  *  linux/drivers/pinctrl/pinctrl-lantiq.c
-  *  based on linux/drivers/pinctrl/pinctrl-pxa3xx.c
+  * dtsi file for Hisilicon Hi6220 coresight
   *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License version 2 as
-- *  publishhed by the Free Software Foundation.
+@@ -6,10 +7,6 @@
+  * Author: Pengcheng Li <lipengcheng8@huawei.com>
+  *         Leo Yan <leo.yan@linaro.org>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
 - *
-  *  Copyright (C) 2012 John Crispin <john@phrozen.org>
   */
 =20
-diff --git a/drivers/pinctrl/pinctrl-lantiq.h b/drivers/pinctrl/pinctrl-l=
-antiq.h
-index 0e4308b8f235..d6530838fca8 100644
---- a/drivers/pinctrl/pinctrl-lantiq.h
-+++ b/drivers/pinctrl/pinctrl-lantiq.h
-@@ -1,11 +1,8 @@
+ / {
+diff --git a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts b/arch/arm64/boo=
+t/dts/hisilicon/hip05-d02.dts
+index 3bbd017f088f..154c25d1d50d 100644
+--- a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
++++ b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
+@@ -1,12 +1,9 @@
 +// SPDX-License-Identifier: GPL-2.0
- /*
-  *  linux/drivers/pinctrl/pinctrl-lantiq.h
-  *  based on linux/drivers/pinctrl/pinctrl-pxa3xx.h
+ /**
+  * dts file for Hisilicon D02 Development Board
   *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License version 2 as
-- *  publishhed by the Free Software Foundation.
+  * Copyright (C) 2014,2015 Hisilicon Ltd.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
 - *
-  *  Copyright (C) 2012 John Crispin <john@phrozen.org>
   */
 =20
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/d=
+ts/hisilicon/hip05.dtsi
+index d321edc09c3f..a2ffaee686b0 100644
+--- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /**
+  * dts file for Hisilicon D02 Development Board
+  *
+  * Copyright (C) 2014,2015 Hisilicon Ltd.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
+- *
+  */
+=20
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts b/arch/arm64/boo=
+t/dts/hisilicon/hip06-d03.dts
+index a95c6f5619bf..46616215969d 100644
+--- a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
++++ b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /**
+  * dts file for Hisilicon D03 Development Board
+  *
+  * Copyright (C) 2016 Hisilicon Ltd.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
+- *
+  */
+=20
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/d=
+ts/hisilicon/hip06.dtsi
+index 56625587b6de..00baee6d399c 100644
+--- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /**
+  * dts file for Hisilicon D03 Development Board
+  *
+  * Copyright (C) 2016 Hisilicon Ltd.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
+- *
+  */
+=20
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts b/arch/arm64/boo=
+t/dts/hisilicon/hip07-d05.dts
+index 21147e8e3f94..d0cd986ab3a0 100644
+--- a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
++++ b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /**
+  * dts file for Hisilicon D05 Development Board
+  *
+  * Copyright (C) 2016 Hisilicon Ltd.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
+- *
+  */
+=20
+ /dts-v1/;
+diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/d=
+ts/hisilicon/hip07.dtsi
+index 28bd4389441f..abfa416613e5 100644
+--- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /**
+  * dts file for Hisilicon D05 Development Board
+  *
+  * Copyright (C) 2016 Hisilicon Ltd.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * publishhed by the Free Software Foundation.
+- *
+  */
+=20
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
 --=20
 2.21.0
 
