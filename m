@@ -2,72 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB4B3D5F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A19243D656
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392175AbfFKS7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:59:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53186 "EHLO mx1.redhat.com"
+        id S2405420AbfFKTE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:04:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388630AbfFKS7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:59:08 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2405412AbfFKTE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 15:04:26 -0400
+Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C78430872EC;
-        Tue, 11 Jun 2019 18:59:08 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (ovpn-204-114.brq.redhat.com [10.40.204.114])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B9B596064B;
-        Tue, 11 Jun 2019 18:59:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 11 Jun 2019 20:59:05 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 20:58:58 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
-        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        linux-arch@vger.kernel.org
-Subject: Re: [RFC PATCH 0/5]: Removing saved_sigmask
-Message-ID: <20190611185857.GB31214@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com>
- <87k1dxaxcl.fsf_-_@xmission.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 97619217D6;
+        Tue, 11 Jun 2019 19:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560279865;
+        bh=cWC9WCKFBYymiaKR3AELIx9hhdgcgSHePxydWkn6sFA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M8ZuWSEZEJxn3Mve4rtB66btPCn4pIvEMz9/LN7MlfN1pHbhGz/rgMd+gjbQVCIcK
+         Z5N+SnmagnWLoEqJmqZDzGk4rVkU5WzQM0K3dZq2npbh83Fu8sR0hU7GC69GqoYKT8
+         cwpxWSK5sT90kfy6x2JlicWKpcpU+Nz15mXFW7ms=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 72/85] perf intel-pt: Add support for lookahead
+Date:   Tue, 11 Jun 2019 15:58:58 -0300
+Message-Id: <20190611185911.11645-73-acme@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190611185911.11645-1-acme@kernel.org>
+References: <20190611185911.11645-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1dxaxcl.fsf_-_@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 11 Jun 2019 18:59:08 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07, Eric W. Biederman wrote:
->
-> Eric W. Biederman (5):
->       signal: Teach sigsuspend to use set_user_sigmask
->       signal/kvm:  Stop using sigprocmask in kvm_sigset_(activate|deactivate)
->       signal: Always keep real_blocked in sync with blocked
->       signal: Remove saved_sigmask
->       signal: Remove the unnecessary restore_sigmask flag
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Implement the lookahead callback to let the decoder access subsequent
+buffers. intel_pt_lookahead() manages the buffer lifetime and calls the
+decoder for each buffer until the decoder returns a non-zero value.
 
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20190604130017.31207-11-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/intel-pt.c | 59 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 58 insertions(+), 1 deletion(-)
 
-
-I guess this should be routed via -mm tree? This depends on
-signal-simplify-set_user_sigmask-restore_user_sigmask.patch
-
-Oleg.
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 4a61c73c9711..3e3a01318b76 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -278,7 +278,63 @@ static int intel_pt_get_buffer(struct intel_pt_queue *ptq,
+ 	return 0;
+ }
+ 
+-/* This function assumes data is processed sequentially only */
++/* Do not drop buffers with references - refer intel_pt_get_trace() */
++static void intel_pt_lookahead_drop_buffer(struct intel_pt_queue *ptq,
++					   struct auxtrace_buffer *buffer)
++{
++	if (!buffer || buffer == ptq->buffer || buffer == ptq->old_buffer)
++		return;
++
++	auxtrace_buffer__drop_data(buffer);
++}
++
++/* Must be serialized with respect to intel_pt_get_trace() */
++static int intel_pt_lookahead(void *data, intel_pt_lookahead_cb_t cb,
++			      void *cb_data)
++{
++	struct intel_pt_queue *ptq = data;
++	struct auxtrace_buffer *buffer = ptq->buffer;
++	struct auxtrace_buffer *old_buffer = ptq->old_buffer;
++	struct auxtrace_queue *queue;
++	int err = 0;
++
++	queue = &ptq->pt->queues.queue_array[ptq->queue_nr];
++
++	while (1) {
++		struct intel_pt_buffer b = { .len = 0 };
++
++		buffer = auxtrace_buffer__next(queue, buffer);
++		if (!buffer)
++			break;
++
++		err = intel_pt_get_buffer(ptq, buffer, old_buffer, &b);
++		if (err)
++			break;
++
++		if (b.len) {
++			intel_pt_lookahead_drop_buffer(ptq, old_buffer);
++			old_buffer = buffer;
++		} else {
++			intel_pt_lookahead_drop_buffer(ptq, buffer);
++			continue;
++		}
++
++		err = cb(&b, cb_data);
++		if (err)
++			break;
++	}
++
++	if (buffer != old_buffer)
++		intel_pt_lookahead_drop_buffer(ptq, buffer);
++	intel_pt_lookahead_drop_buffer(ptq, old_buffer);
++
++	return err;
++}
++
++/*
++ * This function assumes data is processed sequentially only.
++ * Must be serialized with respect to intel_pt_lookahead()
++ */
+ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
+ {
+ 	struct intel_pt_queue *ptq = data;
+@@ -827,6 +883,7 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
+ 
+ 	params.get_trace = intel_pt_get_trace;
+ 	params.walk_insn = intel_pt_walk_next_insn;
++	params.lookahead = intel_pt_lookahead;
+ 	params.data = ptq;
+ 	params.return_compression = intel_pt_return_compression(pt);
+ 	params.branch_enable = intel_pt_branch_enable(pt);
+-- 
+2.20.1
 
