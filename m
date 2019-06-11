@@ -2,59 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A55383C480
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 08:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D39313C490
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 08:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404120AbfFKGvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 02:51:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391233AbfFKGvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 02:51:07 -0400
-Received: from [10.44.0.22] (unknown [103.48.210.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C20920896;
-        Tue, 11 Jun 2019 06:51:04 +0000 (UTC)
-Subject: Re: binfmt_flat cleanups and RISC-V support
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-References: <20190610212015.9157-1-hch@lst.de>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <6e5fb7db-1d6f-7d49-553c-edc18f14f641@linux-m68k.org>
-Date:   Tue, 11 Jun 2019 16:51:02 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2404161AbfFKG5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 02:57:25 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56619 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404056AbfFKG5Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 02:57:25 -0400
+X-Originating-IP: 90.88.159.246
+Received: from bootlin.com (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 54C48C0004;
+        Tue, 11 Jun 2019 06:57:18 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 08:57:24 +0200
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, mw@semihalf.com,
+        yuric@marvell.com
+Subject: Re: [PATCH net 1/2] net: mvpp2: prs: Fix parser range for VID
+ filtering
+Message-ID: <20190611085724.715cbfc7@bootlin.com>
+In-Reply-To: <20190610.092300.1686623862696326754.davem@davemloft.net>
+References: <20190610135008.8077-1-maxime.chevallier@bootlin.com>
+        <20190610.092300.1686623862696326754.davem@davemloft.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190610212015.9157-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+Hello David,
 
-On 11/6/19 7:20 am, Christoph Hellwig wrote:
-> below is a larger stash of cleanups for the binfmt_misc code,
-> preparing for the last patch that now trivially adds RISC-V
-> support, which will be used for the RISC-V nommu series I am
-> about to post.
+On Mon, 10 Jun 2019 09:23:00 -0700 (PDT)
+David Miller <davem@davemloft.net> wrote:
 
-Whole series looks pretty good. Just the one comment I made.
+>Please start providing proper header postings with each and every patch
+>series, explaining at a high level what the patch series is doing, how
+>it is doing it, and why it is doing it that way.
 
-I normally take these through the m68knommu git tree,
-if you have no problem with that I'll push it in there.
-It will hit linux-next from there.
+Sure, I'll resend with a proper cover-letter, sorry about that.
 
-Thanks
-Greg
+Thanks,
 
-
+Maxime
