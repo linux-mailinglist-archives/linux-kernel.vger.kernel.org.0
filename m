@@ -2,248 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FA13D28D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39B0C3D2AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404811AbfFKQkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 12:40:12 -0400
-Received: from mail-eopbgr140071.outbound.protection.outlook.com ([40.107.14.71]:39793
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388531AbfFKQkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 12:40:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
- s=selector1-cern-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iqoINAHvWhuMJ7IcYNQ1pzujMCi9HKTuXGVzKIm0Epg=;
- b=Y27SOox56yUaUx+7aolfCR4zpGjWjcpA+sWw4EGHjX1NxgYIyanC0MPRFsRVT8ph+mZf0HyXOMTaSbLI8Qpu3kG58VJ3y5lycmg2hnA2VBEzpXt8jOgzbcAB8tHqW9tkeD/sFchnic/P9USGdkJAhn2m7ENEpVLd+8R8rA6Rsjo=
-Received: from VI1PR0601CA0039.eurprd06.prod.outlook.com
- (2603:10a6:800:1e::49) by AM6PR0602MB3749.eurprd06.prod.outlook.com
- (2603:10a6:209:1e::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1987.11; Tue, 11 Jun
- 2019 16:40:08 +0000
-Received: from VE1EUR02FT004.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e06::200) by VI1PR0601CA0039.outlook.office365.com
- (2603:10a6:800:1e::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.14 via Frontend
- Transport; Tue, 11 Jun 2019 16:40:07 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.50)
- smtp.mailfrom=cern.ch; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=bestguesspass action=none
- header.from=cern.ch;
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
- VE1EUR02FT004.mail.protection.outlook.com (10.152.12.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1965.12 via Frontend Transport; Tue, 11 Jun 2019 16:40:07 +0000
-Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
- (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
- 2019 18:40:06 +0200
-Received: from harkonnen.localnet (62.203.14.162) by smtp.cern.ch
- (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
- 2019 18:40:05 +0200
-From:   Federico Vaga <federico.vaga@cern.ch>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, Pat Riehecky <riehecky@fnal.gov>,
-        Alessandro Rubini <rubini@gnudd.com>
-Subject: Re: [PATCH] fmc: Delete the FMC subsystem
-Date:   Tue, 11 Jun 2019 18:40:05 +0200
-Message-ID: <4878106.TDPaGnYU28@harkonnen>
-Organization: CERN
-In-Reply-To: <20190610141809.17542-1-linus.walleij@linaro.org>
-References: <20190610141809.17542-1-linus.walleij@linaro.org>
+        id S2405111AbfFKQmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 12:42:09 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41784 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391961AbfFKQmH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 12:42:07 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 136so9819072lfa.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 09:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vh/p30irgSD9xffiE9oewWj7mUanYFsIl2djx+XobXY=;
+        b=HC8AWtBBddfq3ja6eieAy2clA5L9ShGX6GyMrlQqv6G8p7YcQh6KXu6TZKJ6loUu8e
+         uebZxIXw7Eer6dDh/YOVEkNczX7wjuQP390PWjZ4DtdMN3fZufuQO2zlu3FCWh0C6xQy
+         zpr6YKhTIPYo6vBOPhE+ioXDgmlj5Uoh5PTtyaD8qNpHNLFMCJX/xSqGih3W7hjfGGWB
+         oZu60TB9cXE61ntew4y5uKq8HyXYeXeJa+lQu+YFnHp3McpHYA8VbNB2rW0YwOxKfu60
+         5BNOW9NXWkoFP4lqNwXOKu7APUdh+YsQJ1IJ0anWyS+KbTDPiO9KBTYuoCENpwZkD5/Y
+         UEtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vh/p30irgSD9xffiE9oewWj7mUanYFsIl2djx+XobXY=;
+        b=CzME8GPL6gKpOEJzBs1InMm55NLQ2lhUnUO+hi43LyqfIPiFVuKFUaaBHqFrr4hfkv
+         hod/Ql6co+2VSjM0lXYZx8qU37GYo2P79zbbpDBZmpHQrwShIY3MMcJ0BgJOvGPluCIe
+         25P9syMCLIZz567FtXNOGlQJKPc599zHqcy0Sp8fNW8NW10pbgAeSKALGrfZZqNv4J3E
+         NSIb1SIOPJmRzSzS7yoPcsTCq5wWAkqD70jou8jDl8ghPMc8HQFyVDT/Beq+jL6oAeMI
+         BAAp69zJu+SHEHs70TglDNRuvU+FY/uD2ua7DmHsbJZbaNR757IdNQFTYQE2I6OdQ3gW
+         RHjA==
+X-Gm-Message-State: APjAAAWmKR1dc5wge7D5dRZP9VUxNeCM9iv6Tv95I5x99kgLHN+eRd+G
+        g3di1S33CoSNjfjb5HfWlAc6Kw==
+X-Google-Smtp-Source: APXvYqwxOIBJiSaoAZMSvSTjGBejLmme0GxMq3dDw3qX0/Zrv2BRLPzn5wPLhEGH5OEVByUqEgvSbg==
+X-Received: by 2002:ac2:43cf:: with SMTP id u15mr37488341lfl.188.1560271325298;
+        Tue, 11 Jun 2019 09:42:05 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id r14sm2616772lff.44.2019.06.11.09.42.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 11 Jun 2019 09:42:04 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     robh+dt@kernel.org, bjorn.andersson@linaro.org, agross@kernel.org,
+        georgi.djakov@linaro.org
+Cc:     vkoul@kernel.org, evgreen@chromium.org, daidavid1@codeaurora.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH v3 0/5] Add QCS404 interconnect provider driver
+Date:   Tue, 11 Jun 2019 19:41:52 +0300
+Message-Id: <20190611164157.24656-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Originating-IP: [62.203.14.162]
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(39860400002)(2980300002)(189003)(199004)(956004)(70586007)(336012)(33716001)(186003)(486006)(426003)(476003)(53546011)(9576002)(16526019)(11346002)(446003)(9686003)(6306002)(229853002)(126002)(5660300002)(356004)(230700001)(26005)(36916002)(14444005)(6916009)(66066001)(23726003)(70206006)(76176011)(47776003)(6116002)(3846002)(44832011)(2906002)(106002)(6246003)(4326008)(54906003)(966005)(316002)(97756001)(305945005)(7636002)(7736002)(86362001)(246002)(478600001)(46406003)(8936002)(8676002)(74482002)(50466002)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0602MB3749;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dc5b6f5e-4ed1-486e-8d45-08d6ee8b76a6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328)(7193020);SRVR:AM6PR0602MB3749;
-X-MS-TrafficTypeDiagnostic: AM6PR0602MB3749:
-X-MS-Exchange-PUrlCount: 1
-X-Microsoft-Antispam-PRVS: <AM6PR0602MB3749BAEB193A414628483783EFED0@AM6PR0602MB3749.eurprd06.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-Forefront-PRVS: 006546F32A
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: ioq/WZJOT56m28XGrG5fBhbAABunzeIlVeYONSDln2d5jEYPuYCrfIncvwgRefNv672CNeYwS1FrA+O+Nuj9yyTx47pvdkDKDT+b/vmyZvAkkJr/mo0mZFJCP1rAy0DEUMV/18lJU7EHpDWmbadrUcyl07qruKJwmQmSlpU4wxpTcLWimH/5wmO/z+CyEi6zUhaZ14zeo4tUkKug8UTy874eclowljAPQ88WwdVcSL2YC+aVgagQ+oW1cRL3B2SyLUaCNqsBE18lJYZDQxj9AwWAoUvZnhAs/petE1TwGbpB2dmj+EDwSqznEEvK5LpYvc4fS4mh0VqKT8vRZmsSK5MVkE0gAl4W7Kf6nExC7Dwy8STOXzpNwmD8YDSmo3oi6rR7LYmKYUAFgERJZSW4GiHOp3tVH0gfTYolMGp/PsI=
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2019 16:40:07.5423
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc5b6f5e-4ed1-486e-8d45-08d6ee8b76a6
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0602MB3749
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Well I do not know if it make sense to make it stronger with:
+Add drivers to support scaling of the on-chip interconnects on QCS404-based
+platforms. Also add the necessary device-tree nodes, so that the driver for
+each NoC can probe and register as interconnect-provider.
 
-Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+v3:
+- Drop the patch introducing the qcom,qos DT property.
+- Add two new patches to create an interconnect proxy device. This device is
+  part of the RPM hardware and handles the communication of the bus bandwidth
+  requests.
+- Add a DT reg property and move the interconnect nodes under the "soc" node.
 
-As you want
+v2: https://lore.kernel.org/lkml/20190415104357.5305-1-georgi.djakov@linaro.org/
+- Use the clk_bulk API. (Bjorn)
+- Move the port IDs into the provider file. (Bjorn)
+- Use ARRAY_SIZE in the macro to automagically count the num_links. (Bjorn)
+- Improve code readability. (Bjorn)
+- Add patch [4/4] introducing a qcom,qos DT property to represent the link to
+  the MMIO QoS registers HW block.
 
-On Monday, June 10, 2019 4:18:09 PM CEST Linus Walleij wrote:
-> The FMC subsystem was created in 2012 with the ambition to
-> drive development of drivers for this hardware upstream.
-> 
-> The current implementation has architectural flaws and would
-> need to be revamped using real hardware to something that can
-> reuse existing kernel abstractions in the subsystems for e.g.
-> I2C, FPGA and GPIO.
-> 
-> We have concluded that for the mainline kernel it will be
-> better to delete the subsystem and start over with a clean
-> slate when/if an active maintainer steps up.
-> 
-> For details see:
-> https://lkml.org/lkml/2018/10/29/534
-> 
-> Suggested-by: Federico Vaga <federico.vaga@cern.ch>
-> Cc: Federico Vaga <federico.vaga@cern.ch>
-> Cc: Pat Riehecky <riehecky@fnal.gov>
-> Cc: Alessandro Rubini <rubini@gnudd.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> If people are happy with this, I will queue the removal
-> in the GPIO kernel tree.
-> ---
->  Documentation/fmc/API.txt              |  47 ---
->  Documentation/fmc/FMC-and-SDB.txt      |  88 ------
->  Documentation/fmc/carrier.txt          | 311 --------------------
->  Documentation/fmc/fmc-chardev.txt      |  64 ----
->  Documentation/fmc/fmc-fakedev.txt      |  36 ---
->  Documentation/fmc/fmc-trivial.txt      |  17 --
->  Documentation/fmc/fmc-write-eeprom.txt |  98 -------
->  Documentation/fmc/identifiers.txt      | 168 -----------
->  Documentation/fmc/mezzanine.txt        | 123 --------
->  Documentation/fmc/parameters.txt       |  56 ----
->  drivers/fmc/Kconfig                    |  51 ----
->  drivers/fmc/Makefile                   |  15 -
->  drivers/fmc/fmc-chardev.c              | 200 -------------
->  drivers/fmc/fmc-core.c                 | 389 -------------------------
->  drivers/fmc/fmc-debug.c                | 173 -----------
->  drivers/fmc/fmc-dump.c                 |  59 ----
->  drivers/fmc/fmc-fakedev.c              | 355 ----------------------
->  drivers/fmc/fmc-match.c                | 114 --------
->  drivers/fmc/fmc-private.h              |   9 -
->  drivers/fmc/fmc-sdb.c                  | 220 --------------
->  drivers/fmc/fmc-trivial.c              | 102 -------
->  drivers/fmc/fmc-write-eeprom.c         | 176 -----------
->  drivers/fmc/fru-parse.c                |  81 -----
->  include/linux/fmc-sdb.h                |  39 ---
->  include/linux/fmc.h                    | 272 -----------------
->  25 files changed, 3263 deletions(-)
->  delete mode 100644 Documentation/fmc/API.txt
->  delete mode 100644 Documentation/fmc/FMC-and-SDB.txt
->  delete mode 100644 Documentation/fmc/carrier.txt
->  delete mode 100644 Documentation/fmc/fmc-chardev.txt
->  delete mode 100644 Documentation/fmc/fmc-fakedev.txt
->  delete mode 100644 Documentation/fmc/fmc-trivial.txt
->  delete mode 100644 Documentation/fmc/fmc-write-eeprom.txt
->  delete mode 100644 Documentation/fmc/identifiers.txt
->  delete mode 100644 Documentation/fmc/mezzanine.txt
->  delete mode 100644 Documentation/fmc/parameters.txt
->  delete mode 100644 drivers/fmc/Kconfig
->  delete mode 100644 drivers/fmc/Makefile
->  delete mode 100644 drivers/fmc/fmc-chardev.c
->  delete mode 100644 drivers/fmc/fmc-core.c
->  delete mode 100644 drivers/fmc/fmc-debug.c
->  delete mode 100644 drivers/fmc/fmc-dump.c
->  delete mode 100644 drivers/fmc/fmc-fakedev.c
->  delete mode 100644 drivers/fmc/fmc-match.c
->  delete mode 100644 drivers/fmc/fmc-private.h
->  delete mode 100644 drivers/fmc/fmc-sdb.c
->  delete mode 100644 drivers/fmc/fmc-trivial.c
->  delete mode 100644 drivers/fmc/fmc-write-eeprom.c
->  delete mode 100644 drivers/fmc/fru-parse.c
->  delete mode 100644 include/linux/fmc-sdb.h
->  delete mode 100644 include/linux/fmc.h
-> 
-> diff --git a/Documentation/fmc/API.txt b/Documentation/fmc/API.txt
-> deleted file mode 100644
-> index 06b06b92c794..000000000000
-> diff --git a/Documentation/fmc/FMC-and-SDB.txt
-> b/Documentation/fmc/FMC-and-SDB.txt deleted file mode 100644
-> index fa14e0b24521..000000000000
-> diff --git a/Documentation/fmc/carrier.txt b/Documentation/fmc/carrier.txt
-> deleted file mode 100644
-> index 5e4f1dd3e98b..000000000000
-> diff --git a/Documentation/fmc/fmc-chardev.txt
-> b/Documentation/fmc/fmc-chardev.txt deleted file mode 100644
-> index d9ccb278e597..000000000000
-> diff --git a/Documentation/fmc/fmc-fakedev.txt
-> b/Documentation/fmc/fmc-fakedev.txt deleted file mode 100644
-> index e85b74a4ae30..000000000000
-> diff --git a/Documentation/fmc/fmc-trivial.txt
-> b/Documentation/fmc/fmc-trivial.txt deleted file mode 100644
-> index d1910bc67159..000000000000
-> diff --git a/Documentation/fmc/fmc-write-eeprom.txt
-> b/Documentation/fmc/fmc-write-eeprom.txt deleted file mode 100644
-> index e0a9712156aa..000000000000
-> diff --git a/Documentation/fmc/identifiers.txt
-> b/Documentation/fmc/identifiers.txt deleted file mode 100644
-> index 3bb577ff0d52..000000000000
-> diff --git a/Documentation/fmc/mezzanine.txt
-> b/Documentation/fmc/mezzanine.txt deleted file mode 100644
-> index 87910dbfc91e..000000000000
-> diff --git a/Documentation/fmc/parameters.txt
-> b/Documentation/fmc/parameters.txt deleted file mode 100644
-> index 59edf088e3a4..000000000000
-> diff --git a/drivers/fmc/Kconfig b/drivers/fmc/Kconfig
-> deleted file mode 100644
-> index 3a75f4256d08..000000000000
-> diff --git a/drivers/fmc/Makefile b/drivers/fmc/Makefile
-> deleted file mode 100644
-> index e3da6192cf39..000000000000
-> diff --git a/drivers/fmc/fmc-chardev.c b/drivers/fmc/fmc-chardev.c
-> deleted file mode 100644
-> index 5ecf4090a610..000000000000
-> diff --git a/drivers/fmc/fmc-core.c b/drivers/fmc/fmc-core.c
-> deleted file mode 100644
-> index bbcb505d1522..000000000000
-> diff --git a/drivers/fmc/fmc-debug.c b/drivers/fmc/fmc-debug.c
-> deleted file mode 100644
-> index 32930722770c..000000000000
-> diff --git a/drivers/fmc/fmc-dump.c b/drivers/fmc/fmc-dump.c
-> deleted file mode 100644
-> index cd1df475b254..000000000000
-> diff --git a/drivers/fmc/fmc-fakedev.c b/drivers/fmc/fmc-fakedev.c
-> deleted file mode 100644
-> index 941d0930969a..000000000000
-> diff --git a/drivers/fmc/fmc-match.c b/drivers/fmc/fmc-match.c
-> deleted file mode 100644
-> index a0956d1f7550..000000000000
-> diff --git a/drivers/fmc/fmc-private.h b/drivers/fmc/fmc-private.h
-> deleted file mode 100644
-> index 1e5136643bdc..000000000000
-> diff --git a/drivers/fmc/fmc-sdb.c b/drivers/fmc/fmc-sdb.c
-> deleted file mode 100644
-> index d0e65b86dc22..000000000000
-> diff --git a/drivers/fmc/fmc-trivial.c b/drivers/fmc/fmc-trivial.c
-> deleted file mode 100644
-> index b99dbc7ee203..000000000000
-> diff --git a/drivers/fmc/fmc-write-eeprom.c b/drivers/fmc/fmc-write-eeprom.c
-> deleted file mode 100644
-> index 3eb81bb1f1fc..000000000000
-> diff --git a/drivers/fmc/fru-parse.c b/drivers/fmc/fru-parse.c
-> deleted file mode 100644
-> index eb21480d399f..000000000000
-> diff --git a/include/linux/fmc-sdb.h b/include/linux/fmc-sdb.h
-> deleted file mode 100644
-> index bec899f0867c..000000000000
-> diff --git a/include/linux/fmc.h b/include/linux/fmc.h
-> deleted file mode 100644
-> index f0d482d29df7..000000000000
+v1: https://lore.kernel.org/lkml/20190405035446.31886-1-georgi.djakov@linaro.org/
 
+Bjorn Andersson (1):
+  interconnect: qcom: Add QCS404 interconnect provider driver
 
--- 
-Federico Vaga [CERN BE-CO-HT]
+Georgi Djakov (4):
+  dt-bindings: interconnect: Add Qualcomm QCS404 DT bindings
+  soc: qcom: smd-rpm: Create RPM interconnect proxy child device
+  interconnect: qcom: Add interconnect SMD over SMD driver
+  arm64: dts: qcs404: Add interconnect provider DT nodes
 
+ .../bindings/interconnect/qcom,qcs404.txt     |  46 ++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  28 +
+ drivers/interconnect/qcom/Kconfig             |  17 +
+ drivers/interconnect/qcom/Makefile            |   4 +
+ drivers/interconnect/qcom/qcs404.c            | 539 ++++++++++++++++++
+ drivers/interconnect/qcom/smd-rpm.c           |  72 +++
+ drivers/interconnect/qcom/smd-rpm.h           |  15 +
+ drivers/soc/qcom/smd-rpm.c                    |  17 +-
+ .../dt-bindings/interconnect/qcom,qcs404.h    |  88 +++
+ 9 files changed, 825 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+ create mode 100644 drivers/interconnect/qcom/qcs404.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,qcs404.h
 
