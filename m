@@ -2,103 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85CA63C542
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 678423C54B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404363AbfFKHhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:37:25 -0400
-Received: from muru.com ([72.249.23.125]:52734 "EHLO muru.com"
+        id S2404490AbfFKHia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:38:30 -0400
+Received: from verein.lst.de ([213.95.11.211]:48858 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404009AbfFKHhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:37:25 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 23EA580C0;
-        Tue, 11 Jun 2019 07:37:45 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 00:37:20 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Russell King <rmk@arm.linux.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH-next 00/20]  gpio: gpio-omap: set of fixes and big
- clean-up
-Message-ID: <20190611073720.GB5447@atomide.com>
-References: <20190610171103.30903-1-grygorii.strashko@ti.com>
+        id S2403920AbfFKHia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:38:30 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 829D868B02; Tue, 11 Jun 2019 09:38:02 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 09:38:02 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Michal Simek <monstr@monstr.eu>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: binfmt_flat cleanups and RISC-V support
+Message-ID: <20190611073802.GB21522@lst.de>
+References: <20190610212015.9157-1-hch@lst.de> <6e5fb7db-1d6f-7d49-553c-edc18f14f641@linux-m68k.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610171103.30903-1-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <6e5fb7db-1d6f-7d49-553c-edc18f14f641@linux-m68k.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jun 11, 2019 at 04:51:02PM +1000, Greg Ungerer wrote:
+> Hi Christoph,
+>
+> On 11/6/19 7:20 am, Christoph Hellwig wrote:
+>> below is a larger stash of cleanups for the binfmt_misc code,
+>> preparing for the last patch that now trivially adds RISC-V
+>> support, which will be used for the RISC-V nommu series I am
+>> about to post.
+>
+> Whole series looks pretty good. Just the one comment I made.
+>
+> I normally take these through the m68knommu git tree,
+> if you have no problem with that I'll push it in there.
+> It will hit linux-next from there.
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [190610 10:11]:
-> Hi Linus, Russell, Tony, All,
-> 
-> This series contains set of patches from Russell King which were circulated
-> internally for quite some time already and I fill it's reasonable to move
-> future discussion upstream (and also avoid rebasing).
-> Fisrt two patches are fixes and the rest are big, great clean up
-> from Russell King.
-> 
-> Personally, I like this clean up and refactoring very much and don't want
-> it to be lost.
+Yes, that's fine.  We'll need it to bring up riscv nommu support,
+but there is no actual dependency on the patches for it to compile,
+just for it to actually be useful.
 
-Adding Aaro to Cc too hopefully for more testing. Yes this is very nice
-and behaves for my idle test cases. I've also boot tested omap1 osk and
-it still works just fine for NFSroot.
-
-FYI, after this series, the only issue I'm aware of still remaining
-is the lost edge wake-up interrupts for L4 PER idle that I posted a WIP
-fix as "[PATCH] gpio: gpio-omap: Fix lost edge wake-up interrupts".
-But that one still needs a bit more work and is a separate fix from this
-series.
-
-So for this whole series, please feel free to add:
-
-Tested-by: Tony Lindgren <tony@atomide.com>
-
-
-
-> Code can be found at:
->  git@git.ti.com:~gragst/ti-linux-kernel/gragsts-ti-linux-kernel.git
-> branch:
->  lkml-next-gpio-clean-up
-> 
-> Russell King (20):
->   gpio: gpio-omap: ensure irq is enabled before wakeup
->   gpio: gpio-omap: fix lack of irqstatus_raw0 for OMAP4
->   gpio: gpio-omap: remove remainder of list management
->   gpio: gpio-omap: clean up edge interrupt handling
->   gpio: gpio-omap: remove irq_ack method
->   gpio: gpio-omap: move omap_gpio_request() and omap_gpio_free()
->   gpio: gpio-omap: simplify omap_gpio_get_direction()
->   gpio: gpio-omap: simplify get() method
->   gpio: gpio-omap: simplify get_multiple()
->   gpio: gpio-omap: simplify set_multiple()
->   gpio: gpio-omap: simplify bank->level_mask
->   gpio: gpio-omap: simplify read-modify-write
->   gpio: gpio-omap: simplify omap_toggle_gpio_edge_triggering()
->   gpio: gpio-omap: simplify omap_set_gpio_irqenable()
->   gpio: gpio-omap: remove dataout variation in context handling
->   gpio: gpio-omap: clean up omap_gpio_restore_context()
->   gpio: gpio-omap: constify register tables
->   gpio: gpio-omap: clean up wakeup handling
->   gpio: gpio-omap: irq_startup() must not return error codes
->   gpio: gpio-omap: clean up register access in omap2_set_gpio_debounce()
-> 
->  drivers/gpio/gpio-omap.c                | 497 ++++++++----------------
->  include/linux/platform_data/gpio-omap.h |   2 +-
->  2 files changed, 161 insertions(+), 338 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+Btw, it seems like the uclinux-dev list is dead, is there a replacement
+for it?
