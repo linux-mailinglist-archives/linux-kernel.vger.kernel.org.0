@@ -2,280 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2A3416FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 23:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1181441709
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 23:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436576AbfFKVgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 17:36:55 -0400
-Received: from mga17.intel.com ([192.55.52.151]:36483 "EHLO mga17.intel.com"
+        id S2404732AbfFKVky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 17:40:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37744 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403793AbfFKVgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 17:36:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 14:36:54 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Jun 2019 14:36:53 -0700
-Date:   Tue, 11 Jun 2019 14:38:13 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 02/10] fs/locks: Export F_LAYOUT lease to user space
-Message-ID: <20190611213812.GC14336@iweiny-DESK2.sc.intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606014544.8339-3-ira.weiny@intel.com>
- <4e5eb31a41b91a28fbc83c65195a2c75a59cfa24.camel@kernel.org>
+        id S2404005AbfFKVky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 17:40:54 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7E495308A946;
+        Tue, 11 Jun 2019 21:40:48 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8737D5D705;
+        Tue, 11 Jun 2019 21:40:46 +0000 (UTC)
+Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, clemens@ladisch.de,
+        Sultan Alsawaf <sultan@kerneltoast.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
+ <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <fe48fc73-5b42-cbd3-7c73-8b0a2bd90164@redhat.com>
+Date:   Tue, 11 Jun 2019 17:40:46 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e5eb31a41b91a28fbc83c65195a2c75a59cfa24.camel@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 11 Jun 2019 21:40:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 09, 2019 at 09:00:24AM -0400, Jeff Layton wrote:
-> On Wed, 2019-06-05 at 18:45 -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > GUP longterm pins of non-pagecache file system pages (eg FS DAX) are
-> > currently disallowed because they are unsafe.
-> > 
-> > The danger for pinning these pages comes from the fact that hole punch
-> > and/or truncate of those files results in the pages being mapped and
-> > pinned by a user space process while DAX has potentially allocated those
-> > pages to other processes.
-> > 
-> > Most (All) users who are mapping FS DAX pages for long term pin purposes
-> > (such as RDMA) are not going to want to deallocate these pages while
-> > those pages are in use.  To do so would mean the application would lose
-> > data.  So the use case for allowing truncate operations of such pages
-> > is limited.
-> > 
-> > However, the kernel must protect itself and users from potential
-> > mistakes and/or malicious user space code.  Rather than disabling long
-> > term pins as is done now.   Allow for users who know they are going to
-> > be pinning this memory to alert the file system of this intention.
-> > Furthermore, allow users to be alerted such that they can react if a
-> > truncate operation occurs for some reason.
-> > 
-> > Example user space pseudocode for a user using RDMA and wanting to allow
-> > a truncate would look like this:
-> > 
-> > lease_break_sigio_handler() {
-> > ...
-> > 	if (sigio.fd == rdma_fd) {
-> > 		complete_rdma_operations(...);
-> > 		ibv_dereg_mr(mr);
-> > 		close(rdma_fd);
-> > 		fcntl(rdma_fd, F_SETLEASE, F_UNLCK);
-> > 	}
-> > }
-> > 
-> > setup_rdma_to_dax_file() {
-> > ...
-> > 	rdma_fd = open(...)
-> > 	fcntl(rdma_fd, F_SETLEASE, F_LAYOUT);
-> 
-> I'm not crazy about this interface. F_LAYOUT doesn't seem to be in the
-> same category as F_RDLCK/F_WRLCK/F_UNLCK.
-> 
-> Maybe instead of F_SETLEASE, this should use new
-> F_SETLAYOUT/F_GETLAYOUT cmd values? There is nothing that would prevent
-> you from setting both a lease and a layout on a file, and indeed knfsd
-> can set both.
-> 
-> This interface seems to conflate the two.
+On 6/11/19 5:09 PM, Thomas Gleixner wrote:
+> Jason,
+>
+> On Fri, 7 Jun 2019, Jason A. Donenfeld wrote:
+>
+> Adding a few more people on cc and keeping full context.
+>
+>> Hey Thomas,
+>>
+>> After some discussions here prior about the different clocks
+>> available, WireGuard uses ktime_get_boot_fast_ns() pretty extensively.
+>> The requirement is for a quasi-accurate monotonic counter that takes
+>> into account sleep time, and this seems to fit the bill pretty well.
+>> Sultan (CC'd) reported to me a non-reproducible bug he encountered in
+>> 4.19.47 (arch's linux-lts package), where the CPU was hung in
+>> read_hpet.
+>>
+>> CPU: 1 PID: 7927 Comm: kworker/1:3 Tainted: G           OE     4.19.47-1-lts #1
+>> Hardware name: Dell Inc. XPS 15 9570/02MJVY, BIOS 1.10.1 04/26/2019
+>> Workqueue: wg-crypt-interface wg_packet_tx_worker [wireguard]
+>> RIP: 0010:read_hpet+0x67/0xc0
+>> Code: c0 75 11 ba 01 00 00 00 f0 0f b1 15 a3 3d 1a 01 85 c0 74 37 48
+>> 89 cf 57 9d 0f 1f 44 00 00 48 c1 ee 20 eb 04 85 c9 74 12 f3 90 <49> 8b
+>> 08 48 89 ca 48 c1 ea 20 89 d0 39 f2 74 ea c3 48 8b 05 89 56
+>> RSP: 0018:ffffb8d382533e18 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
+>> RAX: 0000000018a4c89e RBX: 0000000000000000 RCX: 18a4c89e00000001
+>> RDX: 0000000018a4c89e RSI: 0000000018a4c89e RDI: ffffffffb8227980
+>> RBP: 000006c1c3f602a2 R08: ffffffffb8205040 R09: 0000000000000000
+>> R10: 000001d58fd28efc R11: 0000000000000000 R12: ffffffffb8259a80
+>> R13: 00000000ffffffff R14: 0000000518a0d8c4 R15: 000000000010fa5a
+>> FS:  0000000000000000(0000) GS:ffff9b90ac240000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00003663b14d9ce8 CR3: 000000030f20a006 CR4: 00000000003606e0
+>> Call Trace:
+>>  ktime_get_mono_fast_ns+0x53/0xa0
+>>  ktime_get_boot_fast_ns+0x5/0x10
+>>  wg_packet_tx_worker+0x183/0x220 [wireguard]
+>>  process_one_work+0x1f4/0x3e0
+>>  worker_thread+0x2d/0x3e0
+>>  ? process_one_work+0x3e0/0x3e0
+>>  kthread+0x112/0x130
+>>  ? kthread_park+0x80/0x80
+>>  ret_from_fork+0x35/0x40
+>> watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [kworker/1:3:7927]
+>>
+>> It looks like RIP is spinning in this loop in read_hpet:
+>>
+>> do {
+>>     cpu_relax();
+>>     new.lockval = READ_ONCE(hpet.lockval);
+>> } while ((new.value == old.value) && arch_spin_is_locked(&new.lock));
 
-I've been feeling the same way.  This is why I was leaning toward a new lease
-type.  I called it "F_LONGTERM" but the name is not important.
+The hang shouldn't happen unless the hpet_lock structure is somehow
+corrupted by another unrelated task. If someone inadvertently change the
+content of the lock word, live lock will happen.
 
-I think the concept of adding "exclusive" to the layout lease can fix this
-because the NFS lease is non-exclusive where the user space one (for the
-purpose of GUP pinning) would need to be.
+>> I imagine this could be a bug in the hpet code, or a failure of the
+>> hpet hardware. But I thought it'd be most prudent to check, first,
+>> whether there are actually very particular conditions on when and
+>> where ktime_get_boot_fast_ns and friends can be called. In other
+>> words, maybe the bug is actually in my code. I was under the
+>> impression that invoking it from anywhere was fine, given the
+>> documentation says "NMI safe", but maybe there are still some
+>> requirements I should keep in mind?
+> I think your code is fine. Just 'fast' is relative with the HPET selected
+> as clocksource (it's actually aweful slow).
+>
+> It probably livelocks in the HPET optimization Waiman did for large
+> machines. I'm having a dejavu with that spinlock livelock we debugged last
+> year. Peter?
+>
+> Can you please ask the reporter to try the hack below?
+>
+> Thanks,
+>
+> 	tglx
+>
+> 8<---------------
+> diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+> index a0573f2e7763..0c9044698489 100644
+> --- a/arch/x86/kernel/hpet.c
+> +++ b/arch/x86/kernel/hpet.c
+> @@ -795,8 +795,7 @@ static u64 read_hpet(struct clocksource *cs)
+>  	/*
+>  	 * Read HPET directly if in NMI.
+>  	 */
+> -	if (in_nmi())
+> -		return (u64)hpet_readl(HPET_COUNTER);
 
-FWIW I have not worked out exactly what this new "exclusive" code will look
-like.  Jan said:
+While at it, add:
 
-	"There actually is support for locks that are not broken after given
-	timeout so there shouldn't be too many changes need."
++    WARN_ON(arch_spin_is_locked(&hpet.lock));
 
-But I'm not seeing that for Lease code.  So I'm working on something for the
-lease code now.
+> +	return (u64)hpet_readl(HPET_COUNTER);
+>  
+>  	/*
+>  	 * Read the current state of the lock and HPET value atomically.
 
-Ira
+Cheers,
+Longman
 
-> 
-> > 	sigaction(SIGIO, ...  lease_break ...);
-> > 	ptr = mmap(rdma_fd, ...);
-> > 	mr = ibv_reg_mr(ptr, ...);
-> > 	do_rdma_stuff(...);
-> > }
-> > 
-> > Follow on patches implement the notification of the lease holder on
-> > truncate as well as failing the truncate if the GUP pin is not released.
-> > 
-> > This first patch exports the F_LAYOUT lease type and allows the user to set
-> > and get it.
-> > 
-> > After the complete series:
-> > 
-> > 1) Failure to obtain a F_LAYOUT lease on an open FS DAX file will result
-> >    in a failure to GUP pin any pages in that file.  An example of a call
-> >    which results in GUP pin is ibv_reg_mr().
-> > 2) While the GUP pin is in place (eg MR is in use) truncates of the
-> >    affected pages will fail.
-> > 3) If the user registers a sigaction they will be notified of the
-> >    truncate so they can react.  Failure to react will result in the
-> >    lease being revoked after <sysfs>/lease-break-time seconds.  After
-> >    this time new GUP pins will fail without a new lease being taken.
-> > 4) A truncate will work if the pages being truncated are not actively
-> >    pinned at the time of truncate.  Attempts to pin these pages after
-> >    will result in a failure.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  fs/locks.c                       | 36 +++++++++++++++++++++++++++-----
-> >  include/linux/fs.h               |  2 +-
-> >  include/uapi/asm-generic/fcntl.h |  3 +++
-> >  3 files changed, 35 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index 0cc2b9f30e22..de9761c068de 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -191,6 +191,8 @@ static int target_leasetype(struct file_lock *fl)
-> >  		return F_UNLCK;
-> >  	if (fl->fl_flags & FL_DOWNGRADE_PENDING)
-> >  		return F_RDLCK;
-> > +	if (fl->fl_flags & FL_LAYOUT)
-> > +		return F_LAYOUT;
-> >  	return fl->fl_type;
-> >  }
-> >  
-> > @@ -611,7 +613,8 @@ static const struct lock_manager_operations lease_manager_ops = {
-> >  /*
-> >   * Initialize a lease, use the default lock manager operations
-> >   */
-> > -static int lease_init(struct file *filp, long type, struct file_lock *fl)
-> > +static int lease_init(struct file *filp, long type, unsigned int flags,
-> > +		      struct file_lock *fl)
-> >  {
-> >  	if (assign_type(fl, type) != 0)
-> >  		return -EINVAL;
-> > @@ -621,6 +624,8 @@ static int lease_init(struct file *filp, long type, struct file_lock *fl)
-> >  
-> >  	fl->fl_file = filp;
-> >  	fl->fl_flags = FL_LEASE;
-> > +	if (flags & FL_LAYOUT)
-> > +		fl->fl_flags |= FL_LAYOUT;
-> >  	fl->fl_start = 0;
-> >  	fl->fl_end = OFFSET_MAX;
-> >  	fl->fl_ops = NULL;
-> > @@ -629,7 +634,8 @@ static int lease_init(struct file *filp, long type, struct file_lock *fl)
-> >  }
-> >  
-> >  /* Allocate a file_lock initialised to this type of lease */
-> > -static struct file_lock *lease_alloc(struct file *filp, long type)
-> > +static struct file_lock *lease_alloc(struct file *filp, long type,
-> > +				     unsigned int flags)
-> >  {
-> >  	struct file_lock *fl = locks_alloc_lock();
-> >  	int error = -ENOMEM;
-> > @@ -637,7 +643,7 @@ static struct file_lock *lease_alloc(struct file *filp, long type)
-> >  	if (fl == NULL)
-> >  		return ERR_PTR(error);
-> >  
-> > -	error = lease_init(filp, type, fl);
-> > +	error = lease_init(filp, type, flags, fl);
-> >  	if (error) {
-> >  		locks_free_lock(fl);
-> >  		return ERR_PTR(error);
-> > @@ -1588,7 +1594,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> >  	int want_write = (mode & O_ACCMODE) != O_RDONLY;
-> >  	LIST_HEAD(dispose);
-> >  
-> > -	new_fl = lease_alloc(NULL, want_write ? F_WRLCK : F_RDLCK);
-> > +	new_fl = lease_alloc(NULL, want_write ? F_WRLCK : F_RDLCK, 0);
-> >  	if (IS_ERR(new_fl))
-> >  		return PTR_ERR(new_fl);
-> >  	new_fl->fl_flags = type;
-> > @@ -1725,6 +1731,8 @@ EXPORT_SYMBOL(lease_get_mtime);
-> >   *
-> >   *	%F_UNLCK to indicate no lease is held.
-> >   *
-> > + *	%F_LAYOUT to indicate a layout lease is held.
-> > + *
-> >   *	(if a lease break is pending):
-> >   *
-> >   *	%F_RDLCK to indicate an exclusive lease needs to be
-> > @@ -2015,8 +2023,26 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, long arg)
-> >  	struct file_lock *fl;
-> >  	struct fasync_struct *new;
-> >  	int error;
-> > +	unsigned int flags = 0;
-> > +
-> > +	/*
-> > +	 * NOTE on F_LAYOUT lease
-> > +	 *
-> > +	 * LAYOUT lease types are taken on files which the user knows that
-> > +	 * they will be pinning in memory for some indeterminate amount of
-> > +	 * time.  Such as for use with RDMA.  While we don't know what user
-> > +	 * space is going to do with the file we still use a F_RDLOCK level of
-> > +	 * lease.  This ensures that there are no conflicts between
-> > +	 * 2 users.  The conflict should only come from the File system wanting
-> > +	 * to revoke the lease in break_layout()  And this is done by using
-> > +	 * F_WRLCK in the break code.
-> > +	 */
-> > +	if (arg == F_LAYOUT) {
-> > +		arg = F_RDLCK;
-> > +		flags = FL_LAYOUT;
-> > +	}
-> >  
-> > -	fl = lease_alloc(filp, arg);
-> > +	fl = lease_alloc(filp, arg, flags);
-> >  	if (IS_ERR(fl))
-> >  		return PTR_ERR(fl);
-> >  
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index f7fdfe93e25d..9e9d8d35ee93 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -998,7 +998,7 @@ static inline struct file *get_file(struct file *f)
-> >  #define FL_DOWNGRADE_PENDING	256 /* Lease is being downgraded */
-> >  #define FL_UNLOCK_PENDING	512 /* Lease is being broken */
-> >  #define FL_OFDLCK	1024	/* lock is "owned" by struct file */
-> > -#define FL_LAYOUT	2048	/* outstanding pNFS layout */
-> > +#define FL_LAYOUT	2048	/* outstanding pNFS layout or user held pin */
-> >  
-> >  #define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
-> >  
-> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-> > index 9dc0bf0c5a6e..baddd54f3031 100644
-> > --- a/include/uapi/asm-generic/fcntl.h
-> > +++ b/include/uapi/asm-generic/fcntl.h
-> > @@ -174,6 +174,9 @@ struct f_owner_ex {
-> >  #define F_SHLCK		8	/* or 4 */
-> >  #endif
-> >  
-> > +#define F_LAYOUT	16      /* layout lease to allow longterm pins such as
-> > +				   RDMA */
-> > +
-> >  /* operations for bsd flock(), also used by the kernel implementation */
-> >  #define LOCK_SH		1	/* shared lock */
-> >  #define LOCK_EX		2	/* exclusive lock */
-> 
