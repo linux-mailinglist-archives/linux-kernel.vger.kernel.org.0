@@ -2,134 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C594189D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7F5418A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407914AbfFKXIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:08:06 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42653 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404124AbfFKXIF (ORCPT
+        id S2407940AbfFKXIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:08:24 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35788 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404669AbfFKXIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:08:05 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x17so14763433wrl.9;
-        Tue, 11 Jun 2019 16:08:03 -0700 (PDT)
+        Tue, 11 Jun 2019 19:08:22 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d126so8383879pfd.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PDwkS5w8XnSRr2NNwvXLf41knR3AK04AXOssqTiuVS4=;
-        b=vXlm/osrd3a7VCTjv7GJajbJLDU9K282bO0mR3z/FnLVLg1QY+GZAAHWIEZgNDC2th
-         XoPUkdAaFI5Jr8dRMrYH8ID8lpuBfODpY64CiQW3VXjKgPphI7LpkzhqwytQwGRspjSb
-         EH0CNK7nCmfCok6ARUi4t0NiYVy981ILzYkPvujoL+/lVmCrBWt7mrHly3Eh/zRoQSHG
-         zbBoz0KNLhgdyWvXHuNMzXh71Ms0P212MutwcddBP0P/+cyPFCEfflcNfwe+GmNUB427
-         gAQzlKxTz/vmUXBiWEmtxPLtNttL+18VvFyZ62fFzeFSsQzGTggRIqxV79oVIeZ7pRat
-         8H5A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vjl9Ns8qTRMKP0J+iO0hKqMC3min1EiwS3qQ6sVNS1c=;
+        b=YN/UgLNkyeTM1qoFucU0AJFUxeziYWrhUCibHWCA/qlMUN6spFPO8C0Kvv+zJFiWDC
+         zXLmuybO9JFifvUo0mmqfj9igpjzb8fqlzcAz4+Yx47Sy3EhpPa2HK9x8iDXoDHBOzRw
+         wBVo3r4//Gkv25xlprDkXizA7UxjgB+dzDQWPxtn0DwKTAGgkmLq2+RiOvUfT6vva2B1
+         WjN23HAl91P5GutP+gJ9ynAWNtTOWJm11MBQHdpYh4QY6CW5KrXtCKBLV1zqh2z6R21S
+         ++xN7LRProkA12fmgeIpexQ9SL27ncDFGksdFy/T+a3GvZ8I33Ej4FpjvxShMCxflUdd
+         7GpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PDwkS5w8XnSRr2NNwvXLf41knR3AK04AXOssqTiuVS4=;
-        b=B9DvSW1MUpbjEPSFvB/JLcVlggaoats3Dl36ZEG0K5tNae2W95DsaMZZNL/f05KGyT
-         yGiNrr5QQPG5Som0HYTUBYC5/5XQMwTkRQOOIE9JktfU+4bIb4URU5wBF2C7PNlUZd8C
-         nYB/2as2yAq9YuiTy748VMryJpN3MhH9L1Hh6Gjf9ARAfaTGyUZdrnknEtDnOO27aTmJ
-         BaqtZWIlasz9bB+R6+/SBT5d37XUtmm8tizOm0kxRzx26ZfA7R8eKBk/B+tN4LS8mzIZ
-         CY1QBpPjQvl3Wx3wqjCpyeZtPMzgy5IiWUOX9tXRFWrgprXPPXMnNSdlK0WaPwBO+kUR
-         wyeg==
-X-Gm-Message-State: APjAAAUxzWA5oVRnAVZQcXtd+rSsbn+etnxiZOTjqPmQxsnuPDdgyxgM
-        5R6m4G1Z89hkDYSSr6ZJCQs=
-X-Google-Smtp-Source: APXvYqyUPbZYcwCKrwsjNVVXCL64M+C9kHufhhO2g0JASzN36wAMfX6dCKePebxRbt4gO+Dc7T9znA==
-X-Received: by 2002:a5d:6ccc:: with SMTP id c12mr27574190wrc.57.1560294483153;
-        Tue, 11 Jun 2019 16:08:03 -0700 (PDT)
-Received: from [10.67.49.123] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 32sm35493600wra.35.2019.06.11.16.08.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 16:08:02 -0700 (PDT)
-Subject: Re: [PATCH net-next 3/4] net: dsa: make dsa_slave_dev_check use const
-To:     Vivien Didelot <vivien.didelot@gmail.com>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, andrew@lunn.ch
-References: <20190611214747.22285-1-vivien.didelot@gmail.com>
- <20190611214747.22285-4-vivien.didelot@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <ea0b4ef4-acbd-8dc1-b679-35aa93e11033@gmail.com>
-Date:   Tue, 11 Jun 2019 16:07:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vjl9Ns8qTRMKP0J+iO0hKqMC3min1EiwS3qQ6sVNS1c=;
+        b=Fn0msEfxLzJgjE0CcJF1Xyv8ux6I+r1JlGwp071ARc2Ji3rmk9WowvKeGTnd1VtbeX
+         joulbCBOi8iOxMl11bVnw3yhtwAvNjjYnz/PaunvEPy6mw97QVC/7/9Uw0KBobKdC9uB
+         K43kkamadYunK7zyW2NwDFxhuoNwQBVJpOxV2702rVnzbRpFL6uxy5W4cd8KIhx05CMT
+         f+PoL3vD+bii0Pc1v/BAj8HuC7+fmXhvV+GgyRUqCkBGBwUla8/1zVQKlc2RSvu5Vkbo
+         qQgznniKKVsXC/VdBBiXFCRQfUJUYUodjBhyDJeyzy6yShh+1DkxphMo6wWzDJZcVDQ6
+         8m+Q==
+X-Gm-Message-State: APjAAAU2v3/IVVOV/YhTaVytGOLgrYXCaL9dIv7GjygnvnaHl7aC8zSh
+        Ou32mXJGL9v7RzHwFHUoHvpbwA==
+X-Google-Smtp-Source: APXvYqynsWTp0wdQaNa3lyxkx2tbF0tlUWrRe3v1z2Eum8yVKB/bjwEiZ8XB8FqYlwWcOT8gSLV1Jg==
+X-Received: by 2002:a17:90a:25e6:: with SMTP id k93mr8367124pje.100.1560294501786;
+        Tue, 11 Jun 2019 16:08:21 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c129sm29717844pfa.106.2019.06.11.16.08.20
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 16:08:20 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 16:08:18 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     robh+dt@kernel.org, agross@kernel.org, vkoul@kernel.org,
+        evgreen@chromium.org, daidavid1@codeaurora.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: interconnect: Add Qualcomm QCS404 DT
+ bindings
+Message-ID: <20190611230818.GT4814@minitux>
+References: <20190611164157.24656-1-georgi.djakov@linaro.org>
+ <20190611164157.24656-2-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190611214747.22285-4-vivien.didelot@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611164157.24656-2-georgi.djakov@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/19 2:47 PM, Vivien Didelot wrote:
-> The switchdev handle helpers make use of a device checking helper
-> requiring a const net_device. Make dsa_slave_dev_check compliant
-> to this.
-> 
-> Signed-off-by: Vivien Didelot <vivien.didelot@gmail.com>
+On Tue 11 Jun 09:41 PDT 2019, Georgi Djakov wrote:
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+> The Qualcomm QCS404 platform has several buses that could be controlled
+> and tuned according to the bandwidth demand.
+> 
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+> 
+> v3:
+> - Add a reg property and move the interconnect nodes under the "soc" node.
+> 
+> v2:
+> - No changes.
+> 
+>  .../bindings/interconnect/qcom,qcs404.txt     | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt b/Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+> new file mode 100644
+> index 000000000000..14a827268dda
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+> @@ -0,0 +1,46 @@
+> +Qualcomm QCS404 Network-On-Chip interconnect driver binding
+> +-----------------------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +			"qcom,qcs404-bimc"
+> +			"qcom,qcs404-pcnoc"
+> +			"qcom,qcs404-snoc"
+> +- #interconnect-cells : should contain 1
+> +
+> +Optional properties :
+> +reg : specifies the physical base address and size of registers
+> +clocks : list of phandles and specifiers to all interconnect bus clocks
+> +clock-names : clock names should include both "bus_clk" and "bus_a_clk"
+> +
+> +Example:
+> +
+> +soc {
+> +	...
+> +	bimc: interconnect@400000 {
+> +		reg = <0x00400000 0x80000>;
+> +		compatible = "qcom,qcs404-bimc";
+> +		#interconnect-cells = <1>;
+> +		clock-names = "bus_clk", "bus_a_clk";
+> +		clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
+> +			<&rpmcc RPM_SMD_BIMC_A_CLK>;
+> +	};
+> +
+> +	pnoc: interconnect@500000 {
+> +		reg = <0x00500000 0x15080>;
+> +		compatible = "qcom,qcs404-pcnoc";
+> +		#interconnect-cells = <1>;
+> +		clock-names = "bus_clk", "bus_a_clk";
+> +		clocks = <&rpmcc RPM_SMD_PNOC_CLK>,
+> +			<&rpmcc RPM_SMD_PNOC_A_CLK>;
+> +	};
+> +
+> +	snoc: interconnect@580000 {
+> +		reg = <0x00580000 0x23080>;
+> +		compatible = "qcom,qcs404-snoc";
+> +		#interconnect-cells = <1>;
+> +		clock-names = "bus_clk", "bus_a_clk";
+> +		clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+> +			<&rpmcc RPM_SMD_SNOC_A_CLK>;
+> +	};
+> +};
