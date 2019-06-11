@@ -2,234 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2683CDF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6A5A3CDE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390774AbfFKOFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:05:21 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:55776 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390065AbfFKOFE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:05:04 -0400
-Received: from [167.98.27.226] (helo=happy.office.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hahOW-0003vU-6D; Tue, 11 Jun 2019 15:05:00 +0100
-From:   Michael Drake <michael.drake@codethink.co.uk>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Drake <michael.drake@codethink.co.uk>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@lists.codethink.co.uk,
-        Patrick Glaser <pglaser@tesla.com>, Nate Case <ncase@tesla.com>
-Subject: [PATCH v1 11/11] ti949: Add support for configuration via device properties
-Date:   Tue, 11 Jun 2019 15:04:12 +0100
-Message-Id: <20190611140412.32151-12-michael.drake@codethink.co.uk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190611140412.32151-1-michael.drake@codethink.co.uk>
-References: <20190611140412.32151-1-michael.drake@codethink.co.uk>
+        id S2389779AbfFKOE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:04:27 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:12504 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfFKOE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:04:26 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45NWvp6z72z9v0F4;
+        Tue, 11 Jun 2019 16:04:22 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=WnDvxfK7; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id eCIThnGPA5aS; Tue, 11 Jun 2019 16:04:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45NWvp5vKxz9v0F1;
+        Tue, 11 Jun 2019 16:04:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560261862; bh=cGzgpxbRFlxcK7aezB5YmRNBHzKIp4lffWmjax6sgQQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WnDvxfK7qGDC5nYHUZHAeW++MRre0DOZm+yuvmuDl/P2IoU6/KuJAQhcgGcYuoS7N
+         4MeefWV1hW8ekZlvU298lOyL/M5/hJ4e+O20Mqwcn/b2O9dJzp7ZXbUtJUydV06agi
+         FzRUO1pqSJrLK7eCfM8hHv5yPSO6KudmKabLhTJY=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 485F98B7F4;
+        Tue, 11 Jun 2019 16:04:24 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id z-vV47D7T_jZ; Tue, 11 Jun 2019 16:04:24 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 934918B75B;
+        Tue, 11 Jun 2019 16:04:23 +0200 (CEST)
+Subject: Re: [PATCH v1 1/5] crypto: talitos - fix ECB and CBC algs ivsize
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <cover.1559819372.git.christophe.leroy@c-s.fr>
+ <c8b988faeea463b89e7d9485c9328dc65a909e8e.1559819372.git.christophe.leroy@c-s.fr>
+ <VI1PR0402MB3485627276325DEF9CC6F58798ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <bf4d6713-66a6-4d48-8b1a-32b88a3be540@c-s.fr>
+Date:   Tue, 11 Jun 2019 16:04:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <VI1PR0402MB3485627276325DEF9CC6F58798ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows the device to be configured for the board in
-device tree, or in ACPI tables.  The device node properties
-can provide an array of register addresses and values to be
-written to configure the device for the board.
 
-The config is written to the device on probe and on PM resume.
 
-Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
-Cc: Patrick Glaser <pglaser@tesla.com>
-Cc: Nate Case <ncase@tesla.com>
----
- drivers/gpu/drm/bridge/ti949.c | 120 +++++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
+Le 11/06/2019 à 13:52, Horia Geanta a écrit :
+> On 6/6/2019 2:31 PM, Christophe Leroy wrote:
+>> commit d84cc9c9524e ("crypto: talitos - fix ECB algs ivsize")
+>> wrongly modified CBC algs ivsize instead of ECB aggs ivsize.
+>>
+>> This restore the CBC algs original ivsize of removes ECB's ones.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Fixes: d84cc9c9524e ("crypto: talitos - fix ECB algs ivsize")
+> Initial patch is correct:
+> 
+> $ git show -U10 d84cc9c9524e
+> [...]
+> @@ -2802,21 +2802,20 @@ static struct talitos_alg_template driver_algs[] = {
+>          {       .type = CRYPTO_ALG_TYPE_ABLKCIPHER,
+>                  .alg.crypto = {
+>                          .cra_name = "ecb(aes)",
+>                          .cra_driver_name = "ecb-aes-talitos",
+>                          .cra_blocksize = AES_BLOCK_SIZE,
+>                          .cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER |
+>                                       CRYPTO_ALG_ASYNC,
+>                          .cra_ablkcipher = {
+>                                  .min_keysize = AES_MIN_KEY_SIZE,
+>                                  .max_keysize = AES_MAX_KEY_SIZE,
+> -                               .ivsize = AES_BLOCK_SIZE,
+>                                  .setkey = ablkcipher_aes_setkey,
+>                          }
+>                  },
+> [...]
+> 
+> and similar for ecb(des), ecb(des3_ede).
+> 
+> Current patch is incorrect: it adds ivsize for ecb and removes it from cbc.
 
-diff --git a/drivers/gpu/drm/bridge/ti949.c b/drivers/gpu/drm/bridge/ti949.c
-index 04618ca5f25e..57dcecd10ace 100644
---- a/drivers/gpu/drm/bridge/ti949.c
-+++ b/drivers/gpu/drm/bridge/ti949.c
-@@ -19,6 +19,7 @@
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/delay.h>
-+#include <linux/slab.h>
- #include <linux/i2c.h>
- 
- /* Number of times to try checking for device on bringup. */
-@@ -127,10 +128,22 @@ enum ti949_reg {
- 	TI949_REG_TX_ID_5                               = 0xF5,
- };
- 
-+/**
-+ * struct ti949_reg_val - ti949 register value
-+ * @addr:     The address of the register
-+ * @value:    The initial value of the register
-+ */
-+struct ti949_reg_val {
-+	u8 addr;
-+	u8 value;
-+};
-+
- /**
-  * struct ti949_ctx - ti949 driver context
-  * @i2c:         Handle for the device's i2c client.
-  * @regmap:      Handle for the device's regmap.
-+ * @config:      Array of register values loaded from device properties.
-+ * @config_len:  Number of entries in config.
-  * @reg_names:   Array of regulator names, or NULL.
-  * @regs:        Array of regulators, or NULL.
-  * @reg_count:   Number of entries in reg_names and regs arrays.
-@@ -138,6 +151,8 @@ enum ti949_reg {
- struct ti949_ctx {
- 	struct i2c_client *i2c;
- 	struct regmap *regmap;
-+	struct ti949_reg_val *config;
-+	size_t config_len;
- 	const char **reg_names;
- 	struct regulator **regs;
- 	size_t reg_count;
-@@ -214,6 +229,42 @@ static const struct regmap_config ti949_regmap_config = {
- 	.writeable_reg = ti949_writeable_reg,
- };
- 
-+static int ti949_write_sequence(
-+		struct ti949_ctx *ti949,
-+		const struct ti949_reg_val *sequence,
-+		u32 entries)
-+{
-+	int i;
-+
-+	for (i = 0; i < entries; i++) {
-+		const struct ti949_reg_val *r = sequence + i;
-+		int ret = regmap_write(ti949->regmap, r->addr, r->value);
-+
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ti949_write_config_seq(struct ti949_ctx *ti949)
-+{
-+	int ret;
-+
-+	if (ti949->config == NULL) {
-+		dev_info(&ti949->i2c->dev, "No config for ti949 device\n");
-+		return 0;
-+	}
-+
-+	ret = ti949_write_sequence(ti949, ti949->config, ti949->config_len);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_info(&ti949->i2c->dev, "Successfully configured ti949\n");
-+
-+	return ret;
-+}
-+
- static inline u8 ti949_device_address(struct ti949_ctx *ti949)
- {
- 	return ti949->i2c->addr;
-@@ -347,6 +398,12 @@ static int ti949_pm_resume(struct device *dev)
- 	if (ret != 0)
- 		return ret;
- 
-+	ret = ti949_write_config_seq(ti949);
-+	if (ret != 0)
-+		return ret;
-+
-+	/* Extend 200ms after ti949 init for display HW tolerance. */
-+	msleep(200);
- 	return 0;
- }
- 
-@@ -436,6 +493,65 @@ static int ti949_get_regulators(struct ti949_ctx *ti949)
- 	return 0;
- }
- 
-+static int ti949_get_config(struct ti949_ctx *ti949)
-+{
-+	int i;
-+	int ret;
-+	u8 *config;
-+	size_t config_len;
-+
-+	ret = device_property_read_u8_array(&ti949->i2c->dev,
-+			"config", NULL, 0);
-+	if (ret == -EINVAL ||
-+	    ret == -ENODATA ||
-+	    ret == 0) {
-+		/* "config" property was either:
-+		 *   - unset
-+		 *   - valueless
-+		 *   - set to empty list
-+		 * Not an error; continue without config.
-+		 */
-+		dev_info(&ti949->i2c->dev, "No config defined for device.\n");
-+		return 0;
-+
-+	} else if (ret < 0) {
-+		return ret;
-+	} else if (ret & 0x1) {
-+		dev_err(&ti949->i2c->dev,
-+			"Device property 'config' needs even entry count.\n");
-+		return -EINVAL;
-+	}
-+
-+	config_len = ret;
-+
-+	config = kmalloc_array(config_len, sizeof(*config), GFP_KERNEL);
-+	if (!config)
-+		return -ENOMEM;
-+
-+	ret = device_property_read_u8_array(&ti949->i2c->dev, "config",
-+			config, config_len);
-+	if (ret < 0) {
-+		kfree(config);
-+		return ret;
-+	}
-+
-+	ti949->config = devm_kmalloc_array(&ti949->i2c->dev,
-+			config_len / 2, sizeof(*ti949->config), GFP_KERNEL);
-+	if (!ti949->config) {
-+		kfree(config);
-+		return -ENOMEM;
-+	}
-+
-+	ti949->config_len = config_len / 2;
-+	for (i = 0; i < config_len; i += 2) {
-+		ti949->config[i / 2].addr = config[i];
-+		ti949->config[i / 2].value = config[i + 1];
-+	}
-+	kfree(config);
-+
-+	return 0;
-+}
-+
- static int ti949_probe(struct i2c_client *client,
- 		const struct i2c_device_id *id)
- {
-@@ -458,6 +574,10 @@ static int ti949_probe(struct i2c_client *client,
- 	if (ret != 0)
- 		return ret;
- 
-+	ret = ti949_get_config(ti949);
-+	if (ret != 0)
-+		return ret;
-+
- 	i2c_set_clientdata(client, ti949);
- 
- 	ret = ti949_pm_resume(&client->dev);
--- 
-2.20.1
+Very strange. Looks like there has been some rebase weirdness which have 
+applied the patch on the wrong block at some point on my side, probably 
+due to the fact that both blocks have the two previous and following 
+lines identical.
 
+I've now rebased my serie on cryptodev/master and have the same 
+behaviour as you. I'll resend the series without this patch.
+
+Christophe
+
+
+> 
+> Horia
+> 
