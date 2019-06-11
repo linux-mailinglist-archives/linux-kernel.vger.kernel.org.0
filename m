@@ -2,128 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C12D03D37C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E8CC3D381
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:07:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405844AbfFKRHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:07:12 -0400
-Received: from mail-pf1-f181.google.com ([209.85.210.181]:40926 "EHLO
-        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405356AbfFKRHL (ORCPT
+        id S2405865AbfFKRHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:07:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37496 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405345AbfFKRHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:07:11 -0400
-Received: by mail-pf1-f181.google.com with SMTP id p184so4524503pfp.7;
-        Tue, 11 Jun 2019 10:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=7aH25v3Hx1NMUvytzU1QVg/6VVIQIlEQHF1pCamcBQ4=;
-        b=fskelMiufq6DZGC/0bzKmWAptQbp84iH3H4HUD90gku5UFv2OXuClzXAubyulmk3OK
-         zpBUsRzGZJ4tVK2S6Zql/amqp/jPm/5fKlH7isLRQtPlzTFsn2EYexvgcK4qabMwRMAv
-         BpeEuZowx1MGgmfW5vN4VfQw5rcWyhdC5A7UTL/VkrML8sw5N0c3X41Y8qdCuhBjWtqL
-         zBjcI0nGSCgOtk7GoIisdh1fAqG206JRwtIsbL0vvAGg8+yJSJnRZfxCb6C1vCpBI4Cw
-         xz4C7gSRhyHWpmOQgwEpCO3YQmG3f8nEheKxIOZOlSJmxIdscCabcHRwyj1HbsmBYbtG
-         gQdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=7aH25v3Hx1NMUvytzU1QVg/6VVIQIlEQHF1pCamcBQ4=;
-        b=r/tQGVvMLVsdeIbib5VYUhLEQ7TIPw2YV7CC+UcbFr0UyTwpx0dTq6RZrqi++diH95
-         jpoo3hw+aL5IyBK6uanNiPapkda9qVG6hTyTADhSZiiPCXv7W3lPUlwZPCM4Oh6jhUCs
-         ZZA9dq6GwSJQGQ82gwrwmzD8N6MLe2ce77pJQ+UGteWup88lfxVRJ8u/GAz3vd3uOzU/
-         79sit1iov6TkMO/NY0rO9VjqOJf5jSAzX0kf4DxPQomnQEiRYOs64E0SzxeCHH+MYOpi
-         EnoKc0iIPwhARubeRh6ghECOi9fS3gc6oNe65YVuWtn26dcPiXCrytDmHkYJo3XwRkww
-         xt5w==
-X-Gm-Message-State: APjAAAU4ztIx9nvLra6QQuwybqWk2sxaz+vdF71rFBwwNse2qT1VEv+k
-        MAmA2Vk4DDEwi2dh0rt1RnE=
-X-Google-Smtp-Source: APXvYqy3IZi/0Vi/+Hd0kW/KCxwTD6uwyywKfxJdkYbA4xRHvlC8p306bmDTO+3NDrKeTCh8nKFIpQ==
-X-Received: by 2002:a63:2a06:: with SMTP id q6mr21027443pgq.290.1560272830202;
-        Tue, 11 Jun 2019 10:07:10 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id t26sm2787341pgu.43.2019.06.11.10.07.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 10:07:09 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 10:07:07 -0700
-From:   "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Hui Wang <hui.wang@canonical.com>,
-        Xiaoxiao Liu <xiaoxiao.liu-1@cn.alps.com>,
-        XiaoXiao Liu <sliuuxiaonxiao@gmail.com>,
-        "peter.hutterer@who-t.net" <peter.hutterer@who-t.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Xiaojian Cao <xiaojian.cao@cn.alps.com>,
-        "zhangfp1@lenovo.com" <zhangfp1@lenovo.com>,
-        Naoki Saito <naoki.saito@alpsalpine.com>,
-        Hideo Kawase <hideo.kawase@alpsalpine.com>
-Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
- =?utf-8?B?5aSNOiBbUEFUQ0g=?= =?utf-8?Q?=5D?= input: alps-fix the issue alps
- cs19 trackstick do not work.
-Message-ID: <20190611170707.GA143729@dtor-ws>
-References: <OSBPR01MB4855F61AE28B883CDD87F781DA1E0@OSBPR01MB4855.jpnprd01.prod.outlook.com>
- <20190528071824.jimhixhtsynzwixe@pali>
- <OSBPR01MB48556FD88D7F7D5F91CB5579DA1E0@OSBPR01MB4855.jpnprd01.prod.outlook.com>
- <OSBPR01MB4855707AC8ABB7CFBE5BBBD5DA130@OSBPR01MB4855.jpnprd01.prod.outlook.com>
- <OSBPR01MB4855A2A30A4F5E6BDCFE715FDA130@OSBPR01MB4855.jpnprd01.prod.outlook.com>
- <20190610104310.qa5snt7jpcljodfv@pali>
- <OSBPR01MB485504868362073ED434F82FDAED0@OSBPR01MB4855.jpnprd01.prod.outlook.com>
- <ed65f8af-fefb-3c40-e7b1-dde3605f30e3@canonical.com>
- <5587ddb9-fb5f-03db-ac11-a696c85c5f2f@canonical.com>
- <20190611072333.nd4va4q2m5epmukc@pali>
+        Tue, 11 Jun 2019 13:07:48 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BH2gqf131275
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 13:07:46 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t2enadnst-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 13:07:46 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Tue, 11 Jun 2019 18:07:45 +0100
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 11 Jun 2019 18:07:42 +0100
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5BH7fKg12583310
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jun 2019 17:07:41 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E9902805A;
+        Tue, 11 Jun 2019 17:07:41 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6639C28059;
+        Tue, 11 Jun 2019 17:07:40 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.80.199.191])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Jun 2019 17:07:40 +0000 (GMT)
+Subject: Re: [PATCH v3 3/3] powerpc: Add support to initialize ima policy
+ rules
+To:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Paul Mackerras <paulus@samba.org>, Jeremy Kerr <jk@ozlabs.org>
+References: <1560198837-18857-1-git-send-email-nayna@linux.ibm.com>
+ <1560198837-18857-4-git-send-email-nayna@linux.ibm.com>
+ <20190611051943.GA7516@sathnaga86.in.ibm.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Date:   Tue, 11 Jun 2019 13:07:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20190611051943.GA7516@sathnaga86.in.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190611072333.nd4va4q2m5epmukc@pali>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19061117-0052-0000-0000-000003CE8E55
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011247; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01216515; UDB=6.00639636; IPR=6.00997614;
+ MB=3.00027265; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-11 17:07:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061117-0053-0000-0000-00006148D898
+Message-Id: <d596d03f-7aaf-d0af-ee45-92a990292ad0@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-11_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906110109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 09:23:33AM +0200, Pali Rohár wrote:
-> On Tuesday 11 June 2019 12:32:33 Hui Wang wrote:
-> > On 2019/6/11 上午11:23, Hui Wang wrote:
-> > > On 2019/6/11 上午11:05, Xiaoxiao Liu wrote:
-> > > > Hi Pali,
-> > > > 
-> > > > I discussed with our FW team about this problem.
-> > > > We think the V8 method means a touchpad feature  and does not fit
-> > > > the CS19 trackpoint device.
-> > > > CS19 TrackPoint needn't  use any Absolute (Raw) mode and is usually
-> > > > use standard mouse data.
-> > > > CS19 TrackPoint device is a completely different device with
-> > > > DualPoint device of Dell/HP.
-> > > > CS19 TrackPoint device is independent  of Touchpad. (Touchpad is
-> > > > connecting by I2C, TrackPoint is directly connecting with PS2 port.)
-> > > > And it has completely another FW.
-> > > > 
-> > > > So we think it is better to use the mouse mode for CS19 trackpoint.
-> > > 
-> > > Maybe here is some mis-understanding,  the mouse mode here doesn't mean
-> > > we use psmouse-base.c for cs19 (bare ps/2 mouse), we plan to use
-> > > trackpoint.c to drive this HW, so this trackpoint has all features a
-> > > trackpoint should have.
-> > > 
-> > And I sent a patch one month ago to let the the trackpoint.c to drive this
-> > HW: https://www.spinics.net/lists/linux-input/msg61341.html, maybe that
-> > patch is reference.
-> 
-> So instead of creating blacklist, you should check for TP_VARIANT_ALPS
-> in alps.c and disallow its usage.
-> 
-> Or maybe better, move trackpoint.c detect code before alsp.c detect code
-> in psmouse-base. And no changes in alps.c are needed.
 
-I'd be very cautions of moving around the protocol detection. It is very
-fragile, so if we can detect trackpoint-only case in alps.c and skip on
-to trackpoint I would prefer it.
 
-Thanks.
+On 06/11/2019 01:19 AM, Satheesh Rajendran wrote:
+> On Mon, Jun 10, 2019 at 04:33:57PM -0400, Nayna Jain wrote:
+>> PowerNV secure boot relies on the kernel IMA security subsystem to
+>> perform the OS kernel image signature verification. Since each secure
+>> boot mode has different IMA policy requirements, dynamic definition of
+>> the policy rules based on the runtime secure boot mode of the system is
+>> required. On systems that support secure boot, but have it disabled,
+>> only measurement policy rules of the kernel image and modules are
+>> defined.
+>>
+>> This patch defines the arch-specific implementation to retrieve the
+>> secure boot mode of the system and accordingly configures the IMA policy
+>> rules.
+>>
+>> This patch provides arch-specific IMA policies if PPC_SECURE_BOOT
+>> config is enabled.
+>>
+>> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+>> ---
+>>   arch/powerpc/Kconfig           | 14 +++++++++
+>>   arch/powerpc/kernel/Makefile   |  1 +
+>>   arch/powerpc/kernel/ima_arch.c | 54 ++++++++++++++++++++++++++++++++++
+>>   include/linux/ima.h            |  3 +-
+>>   4 files changed, 71 insertions(+), 1 deletion(-)
+>>   create mode 100644 arch/powerpc/kernel/ima_arch.c
+> Hi,
+>
+> This series failed to build against linuxppc/merge tree with `ppc64le_defconfig`,
+>
+> arch/powerpc/platforms/powernv/secboot.c:14:6: error: redefinition of 'get_powerpc_sb_mode'
+>     14 | bool get_powerpc_sb_mode(void)
+>        |      ^~~~~~~~~~~~~~~~~~~
+> In file included from arch/powerpc/platforms/powernv/secboot.c:11:
+> ./arch/powerpc/include/asm/secboot.h:15:20: note: previous definition of 'get_powerpc_sb_mode' was here
+>     15 | static inline bool get_powerpc_sb_mode(void)
+>        |                    ^~~~~~~~~~~~~~~~~~~
+> make[3]: *** [scripts/Makefile.build:278: arch/powerpc/platforms/powernv/secboot.o] Error 1
+> make[3]: *** Waiting for unfinished jobs....
+> make[2]: *** [scripts/Makefile.build:489: arch/powerpc/platforms/powernv] Error 2
+> make[1]: *** [scripts/Makefile.build:489: arch/powerpc/platforms] Error 2
+> make: *** [Makefile:1071: arch/powerpc] Error 2
+> make: *** Waiting for unfinished jobs....
 
--- 
-Dmitry
+
+Thanks for reporting. I have fixed it and reposted as v4.
+
+Please retry.
+
+Thanks & Regards,
+      - Nayna
+
+
