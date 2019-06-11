@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71AB33C51F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 176FF3C515
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404455AbfFKHaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:30:06 -0400
-Received: from shell.v3.sk ([90.176.6.54]:60999 "EHLO shell.v3.sk"
+        id S2404378AbfFKH3r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:29:47 -0400
+Received: from shell.v3.sk ([90.176.6.54]:60988 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404353AbfFKH3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:29:45 -0400
+        id S2403815AbfFKH3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:29:44 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C34D9104F73;
-        Tue, 11 Jun 2019 09:29:42 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id E4B1D104F8A;
+        Tue, 11 Jun 2019 09:29:40 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id UQ0Bb_68C3u1; Tue, 11 Jun 2019 09:29:27 +0200 (CEST)
+        with ESMTP id H9bUyAD6xQxw; Tue, 11 Jun 2019 09:29:27 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 32A5F104F88;
-        Tue, 11 Jun 2019 09:29:26 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 079DC104F74;
+        Tue, 11 Jun 2019 09:29:27 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id C7D_2HtN1agj; Tue, 11 Jun 2019 09:29:24 +0200 (CEST)
+        with ESMTP id w_OpdEUor2aH; Tue, 11 Jun 2019 09:29:24 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id E8414104F74;
-        Tue, 11 Jun 2019 09:29:23 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 33BCE104F77;
+        Tue, 11 Jun 2019 09:29:24 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Wei Xu <xuwei5@hisilicon.com>, Daniel Mack <daniel@zonque.org>,
@@ -35,9 +35,9 @@ Cc:     Wei Xu <xuwei5@hisilicon.com>, Daniel Mack <daniel@zonque.org>,
         Patrice Chotard <patrice.chotard@st.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 1/6] ARM: dts: STi: Switch to SPDX header
-Date:   Tue, 11 Jun 2019 09:29:16 +0200
-Message-Id: <20190611072921.2979446-2-lkundrak@v3.sk>
+Subject: [PATCH 2/6] ARM: dts: pxa: Switch to SPDX header
+Date:   Tue, 11 Jun 2019 09:29:17 +0200
+Message-Id: <20190611072921.2979446-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190611072921.2979446-1-lkundrak@v3.sk>
 References: <20190611072921.2979446-1-lkundrak@v3.sk>
@@ -54,116 +54,80 @@ to SPDX instead of fixing the wording.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/boot/dts/stih407-family.dtsi  | 5 +----
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 5 +----
- arch/arm/boot/dts/stih407.dtsi         | 5 +----
- arch/arm/boot/dts/stih410-pinctrl.dtsi | 5 +----
- arch/arm/boot/dts/stih410.dtsi         | 5 +----
- arch/arm/boot/dts/stih418.dtsi         | 5 +----
- 6 files changed, 6 insertions(+), 24 deletions(-)
+ arch/arm/boot/dts/pxa168-aspenite.dts | 5 +----
+ arch/arm/boot/dts/pxa168.dtsi         | 5 +----
+ arch/arm/boot/dts/pxa910-dkb.dts      | 5 +----
+ arch/arm/boot/dts/pxa910.dtsi         | 5 +----
+ 4 files changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/st=
-ih407-family.dtsi
-index 9e29a4499938..2ff2542bf335 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
+diff --git a/arch/arm/boot/dts/pxa168-aspenite.dts b/arch/arm/boot/dts/px=
+a168-aspenite.dts
+index 0a988b3fb248..4928a109557d 100644
+--- a/arch/arm/boot/dts/pxa168-aspenite.dts
++++ b/arch/arm/boot/dts/pxa168-aspenite.dts
 @@ -1,10 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (C) 2014 STMicroelectronics Limited.
-  * Author: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+  *  Copyright (C) 2012 Marvell Technology Group Ltd.
+  *  Author: Haojian Zhuang <haojian.zhuang@marvell.com>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * publishhed by the Free Software Foundation.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License version 2 as
+- *  publishhed by the Free Software Foundation.
   */
- #include "stih407-pinctrl.dtsi"
- #include <dt-bindings/mfd/st-lpc.h>
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/s=
-tih407-pinctrl.dtsi
-index e393519fb84c..db174019626f 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+=20
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/pxa168.dtsi b/arch/arm/boot/dts/pxa168.dts=
+i
+index 7137f3550183..ad6f428a33ea 100644
+--- a/arch/arm/boot/dts/pxa168.dtsi
++++ b/arch/arm/boot/dts/pxa168.dtsi
 @@ -1,10 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (C) 2014 STMicroelectronics Limited.
-  * Author: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+  *  Copyright (C) 2012 Marvell Technology Group Ltd.
+  *  Author: Haojian Zhuang <haojian.zhuang@marvell.com>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * publishhed by the Free Software Foundation.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License version 2 as
+- *  publishhed by the Free Software Foundation.
   */
- #include "st-pincfg.h"
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-diff --git a/arch/arm/boot/dts/stih407.dtsi b/arch/arm/boot/dts/stih407.d=
-tsi
-index 5b7951ffc350..242ac72e4d4a 100644
---- a/arch/arm/boot/dts/stih407.dtsi
-+++ b/arch/arm/boot/dts/stih407.dtsi
+=20
+ #include <dt-bindings/clock/marvell,pxa168.h>
+diff --git a/arch/arm/boot/dts/pxa910-dkb.dts b/arch/arm/boot/dts/pxa910-=
+dkb.dts
+index c82f2810ec73..a43a51d2ae81 100644
+--- a/arch/arm/boot/dts/pxa910-dkb.dts
++++ b/arch/arm/boot/dts/pxa910-dkb.dts
 @@ -1,10 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (C) 2015 STMicroelectronics Limited.
-  * Author: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+  *  Copyright (C) 2012 Marvell Technology Group Ltd.
+  *  Author: Haojian Zhuang <haojian.zhuang@marvell.com>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * publishhed by the Free Software Foundation.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License version 2 as
+- *  publishhed by the Free Software Foundation.
   */
- #include "stih407-clock.dtsi"
- #include "stih407-family.dtsi"
-diff --git a/arch/arm/boot/dts/stih410-pinctrl.dtsi b/arch/arm/boot/dts/s=
-tih410-pinctrl.dtsi
-index 5ae1fd66c0b8..8532ae3f61e8 100644
---- a/arch/arm/boot/dts/stih410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih410-pinctrl.dtsi
+=20
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/pxa910.dtsi b/arch/arm/boot/dts/pxa910.dts=
+i
+index c88553a8ee29..69d152c2d52c 100644
+--- a/arch/arm/boot/dts/pxa910.dtsi
++++ b/arch/arm/boot/dts/pxa910.dtsi
 @@ -1,10 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (C) 2014 STMicroelectronics Limited.
-  * Author: Peter Griffin <peter.griffin@linaro.org>
+  *  Copyright (C) 2012 Marvell Technology Group Ltd.
+  *  Author: Haojian Zhuang <haojian.zhuang@marvell.com>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * publishhed by the Free Software Foundation.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License version 2 as
+- *  publishhed by the Free Software Foundation.
   */
- #include "st-pincfg.h"
- / {
-diff --git a/arch/arm/boot/dts/stih410.dtsi b/arch/arm/boot/dts/stih410.d=
-tsi
-index 888548ea9b5c..23b494a13c47 100644
---- a/arch/arm/boot/dts/stih410.dtsi
-+++ b/arch/arm/boot/dts/stih410.dtsi
-@@ -1,10 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2014 STMicroelectronics Limited.
-  * Author: Peter Griffin <peter.griffin@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * publishhed by the Free Software Foundation.
-  */
- #include "stih410-clock.dtsi"
- #include "stih407-family.dtsi"
-diff --git a/arch/arm/boot/dts/stih418.dtsi b/arch/arm/boot/dts/stih418.d=
-tsi
-index 0efb3cd6a86e..f3f0a0e0f23c 100644
---- a/arch/arm/boot/dts/stih418.dtsi
-+++ b/arch/arm/boot/dts/stih418.dtsi
-@@ -1,10 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2014 STMicroelectronics Limited.
-  * Author: Peter Griffin <peter.griffin@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * publishhed by the Free Software Foundation.
-  */
- #include "stih418-clock.dtsi"
- #include "stih407-family.dtsi"
+=20
+ #include <dt-bindings/clock/marvell,pxa910.h>
 --=20
 2.21.0
 
