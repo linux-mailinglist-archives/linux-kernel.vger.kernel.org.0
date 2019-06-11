@@ -2,273 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84E403D778
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537E93DBA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:08:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406446AbfFKUGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 16:06:18 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44489 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405706AbfFKUGR (ORCPT
+        id S2406460AbfFKUIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 16:08:36 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37582 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406095AbfFKUIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:06:17 -0400
-Received: by mail-qt1-f196.google.com with SMTP id x47so16078404qtk.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 13:06:17 -0700 (PDT)
+        Tue, 11 Jun 2019 16:08:35 -0400
+Received: by mail-ot1-f65.google.com with SMTP id r10so13173523otd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 13:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VZ0ytceJgXCqr5ilqOVqFNo1qlLNdSpZYSsN3gN7kIc=;
-        b=RvqQx6p83R88V5tFQjTLtqa3DG6UAYYrxP6i8VC1Zyf2zpg72pHTPqmRWrO6SCAYEL
-         qNpk4k/sofTESFdtr2A6Ghk8KYkqqe/d+00jNYyZAG+q7Rz8m82yXoA8xTE42XE0I0zb
-         yWlR7Jd925GSsiU6u7E9V2ICjcMG77Fvq2q4WLCZabCu0Rfi7Y5rXEt1uEGhHRVV6Z+3
-         +c2oKfrz9iDUC3Rt6viQqTdMnfkqakb/2tV0LVPRLcUrbRKn2FXS5ulZ0crf+kqOUlyN
-         L86SHTeNJbg6fKnIxohrZSvaTYWYAMO8dkzCWuA+vpluBz7vIzLwxFQc3ep257QuWJN7
-         0x0Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wu5V06JjvlYtLTYwOjXCUcwHA/ZXRKacudSVXc/qyLM=;
+        b=t6COAwWiGhiE/0DvQedmgVW+ApWldYJ1b0mFdPv1RNHG9589h2kf28P4YxhTpyX6tN
+         C55kpbk5rtDosu6tmN6tUUkuDn+dWAobmudYFI/CZbvT1Wybtn3R54j4oSleCx6fozlb
+         ZC4PozSCM4+3sO02nef3OkrqCeqO6DE7dzoY8m5ufccwJDU5G6Gg2Hzj5b++YjTlkqHc
+         MuO0O4fho0IL4bmgoA+/suPDF7F7/0zrpS5PQ4oyyWzijQpDxCfSPHVF41iaLYdC3F6W
+         HhMCi4VVLujvvZ3pl15SgVvcf7C9fEu4pkaJ96T2ZMV7nFQ8XOOp4lyzwvyBD8K+HvDd
+         HPGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VZ0ytceJgXCqr5ilqOVqFNo1qlLNdSpZYSsN3gN7kIc=;
-        b=QKe52w05EVauNNhnzhAlqfNfWfdF60dSO7cWcK3nkOPl6UwIlNVl7CSngXW1J3Ca7r
-         Ta5yMXpqBOby0RDR/0ZWNRhvNxms8qaKGvB7qhN9LQn4gYrHy04zeY+LSiJhTqjVQdHQ
-         rqxb8mUodcwEPIQz6dUVZ6YHIpDtONd/LkNHzAcyWP7OmQ6FeD0ixXdjNW+4a7jz3k3Q
-         IlS0oFIdUnUpgI5ylS8kjcmNKIlMb0JV6kcwRp3zL+cvhlUUWnvhwHQvzE4gnUrL6nY/
-         x7WCwofzCdXUKKCLkPRcy+IUgGqbOsuf+ZagSIa/sBAd1/mvUvqKggg6qn7dXy17QDAl
-         hDiQ==
-X-Gm-Message-State: APjAAAUg29kjVEhTj229WLRXppPnXb4dLQFxnisrk64rd+gALmFGXr/d
-        BaFY5AHohmqhs4A0ZTdbjCZldw==
-X-Google-Smtp-Source: APXvYqxoorb+UFLKFxWkPFFB9tPlAi8vUYk8yEv7z4SR3RxkKXlvY+Q+LOr3rEjpd+RT7hNpZpC1cA==
-X-Received: by 2002:a0c:d91b:: with SMTP id p27mr47091576qvj.236.1560283576299;
-        Tue, 11 Jun 2019 13:06:16 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id d31sm2824197qta.39.2019.06.11.13.06.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 13:06:15 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 16:06:14 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 2/2] drm/rockchip: dw_hdmi: Handle suspend/resume
-Message-ID: <20190611200614.GC179831@art_vandelay>
-References: <20190604204207.168085-1-dianders@chromium.org>
- <20190604204207.168085-2-dianders@chromium.org>
- <20190606164221.GI17077@art_vandelay>
- <CAD=FV=Xt6Oad9yQHZz+nwANV1MCvGc6XCgOf8HawimVQtwWsEg@mail.gmail.com>
- <CAMavQKLgBBceO3m8-ff0-79Ks_tD_xDY=N1kOuJya2USthTARg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wu5V06JjvlYtLTYwOjXCUcwHA/ZXRKacudSVXc/qyLM=;
+        b=ajaznEF8yrgpH+GtFugluYhE/rB2p1ujPX40Xvdur7kJmeAy5bDi/1eoZlOexIkgNj
+         N3M7FXmApIGYWOV3G2yXC9YO8tl3EHjqpfuXPxYMLHZ2rnZnc7Gp4dk4vpgvxh/2UPZk
+         uYgr+VVt20q9rJkwwA/ZjsNzeWoFZv2oqHlNAGixzSkMH62bzBIwQ3TPHDta1Qdk5916
+         TyvhuAZRjMKFJA6wsvbLpM9NhtXcBIpGVwAiMUnGP7/T1wvas8aU4U/YMWLyan997o7a
+         1ldj4d8EkgnFquKh2PzA9fOlwvfv9flzV4opq+oJS5scYrF/0gcoXT2WP6XjtbsXR9Uk
+         Ob6g==
+X-Gm-Message-State: APjAAAUiIgLVi0JHHzkRmO9djmej5fihCjubzSNfOoJwmSEgvtbqSnXH
+        AVJUnh5JNLgxglXfnAtu0W4UUGWGjcEmAhFYZyHdMA==
+X-Google-Smtp-Source: APXvYqzbL4YJmh4Q4/UloaiwtpLeN2icmCmXUWR5ClxF0zqslixM+AcMA26mq5D9qUJsInSzM1xRnVR8dZbsRi8BSeI=
+X-Received: by 2002:a9d:6d06:: with SMTP id o6mr35503170otp.225.1560283714379;
+ Tue, 11 Jun 2019 13:08:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMavQKLgBBceO3m8-ff0-79Ks_tD_xDY=N1kOuJya2USthTARg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190524010117.225219-1-saravanak@google.com> <20190524010117.225219-2-saravanak@google.com>
+ <6f4ca588-106f-93d1-8579-9e8d32c8031d@gmail.com> <CAGETcx9zgMs5ne3jPa+6xR+EHR=+QuF7XfRb1gpenh-3ZQwV+w@mail.gmail.com>
+ <b3a88f46-5c3b-0e33-e08f-e0d9b5df2864@gmail.com> <b272ae7b-dcc6-acda-78b2-92eace0b6978@gmail.com>
+In-Reply-To: <b272ae7b-dcc6-acda-78b2-92eace0b6978@gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 11 Jun 2019 13:07:58 -0700
+Message-ID: <CAGETcx9nP8OUV1qX43UwfeJV=95cKrHgCm7wjQ96KHouDKm-Mg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] of/platform: Speed up of_find_device_by_node()
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 02:06:03PM -0400, Sean Paul wrote:
-> On Thu, Jun 06, 2019 at 03:58:21PM -0700, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Thu, Jun 6, 2019 at 9:42 AM Sean Paul <sean@poorly.run> wrote:
-> > >
-> > > On Tue, Jun 04, 2019 at 01:42:07PM -0700, Douglas Anderson wrote:
-> > > > On Rockchip rk3288-based Chromebooks when you do a suspend/resume
-> > > > cycle:
-> > > >
-> > > > 1. You lose the ability to detect an HDMI device being plugged in.
-> > > >
-> > > > 2. If you're using the i2c bus built in to dw_hdmi then it stops
-> > > > working.
-> > > >
-> > > > Let's call the core dw-hdmi's suspend/resume functions to restore
-> > > > things.
-> > > >
-> > > > NOTE: in downstream Chrome OS (based on kernel 3.14) we used the
-> > > > "late/early" versions of suspend/resume because we found that the VOP
-> > > > was sometimes resuming before dw_hdmi and then calling into us before
-> > > > we were fully resumed.  For now I have gone back to the normal
-> > > > suspend/resume because I can't reproduce the problems.
-> > > >
-> > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > > ---
-> > > >
-> > > > Changes in v3:
-> > > > - dw_hdmi_resume() is now a void function (Laurent)
-> > > >
-> > > > Changes in v2:
-> > > > - Add forgotten static (Laurent)
-> > > > - No empty stub for suspend (Laurent)
-> > > >
-> > > >  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 14 ++++++++++++++
-> > > >  1 file changed, 14 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> > > > index 4cdc9f86c2e5..7bb0f922b303 100644
-> > > > --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> > > > +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> > > > @@ -542,11 +542,25 @@ static int dw_hdmi_rockchip_remove(struct platform_device *pdev)
-> > > >       return 0;
-> > > >  }
-> > > >
-> > > > +static int __maybe_unused dw_hdmi_rockchip_resume(struct device *dev)
-> > > > +{
-> > > > +     struct rockchip_hdmi *hdmi = dev_get_drvdata(dev);
-> > > > +
-> > > > +     dw_hdmi_resume(hdmi->hdmi);
-> > >
-> > > The rockchip driver is already using the atomic suspend/resume helpers (via the
-> > > modeset helpers). Would you be able to accomplish the same thing by just moving
-> > > this call into the encoder enable callback?
-> > >
-> > > .enable is called on resume via the atomic commit framework, so everything is
-> > > ordered properly. Of course, this would reset the dw_hdmi bridge on each enable,
-> > > but I don't think that would be a problem?
-> >
-> > I tried and it sorta kinda half worked, but...
-> >
-> > 1. One of the problems solved by this patch is making "hot plug
-> > detect" work after suspend / resume.  AKA: if you have nothing plugged
-> > in to the HDMI port and then suspend/resume you need to be able to
-> > detect when something is plugged in.  When nothing is plugged in then
-> > the ".enable" isn't called at resume time.
-> >
-> 
-> Ahh, ok. So we've hit this with other bridges/dongles as well, and yeah the
-> solution is to keep the bridge powered up enough to detect hotplug, so you would
-> need to do some work in .resume
-> 
-> Usually there's a second stage of enable where you power things on more fully
-> and that is done in .enable
-> 
-> > 2. I'm not so convinced about the whole ordering being correct.
-> > Unfortunately on my system (Chrome OS running the chromeos-4.19
-> > kernel) we end up getting an i2c transfer before the ".enable" is
-> > called.  I put a dump_stack() in the i2c transfer:
-> >
-> > [   42.212516] CPU: 0 PID: 1479 Comm: DrmThread Tainted: G         C
-> >      4.19.47 #60
-> > [   42.221182] Hardware name: Rockchip (Device Tree)
-> > [   42.226449] [<c0211a64>] (unwind_backtrace) from [<c020cf0c>]
-> > (show_stack+0x20/0x24)
-> > [   42.235114] [<c020cf0c>] (show_stack) from [<c0a1b8d4>]
-> > (dump_stack+0x84/0xa4)
-> > [   42.243195] [<c0a1b8d4>] (dump_stack) from [<c067d7c4>]
-> > (dw_hdmi_i2c_wait+0x6c/0xa8)
-> > [   42.251858] [<c067d7c4>] (dw_hdmi_i2c_wait) from [<c067d9a8>]
-> > (dw_hdmi_i2c_xfer+0x1a8/0x30c)
-> > [   42.261298] [<c067d9a8>] (dw_hdmi_i2c_xfer) from [<c0798704>]
-> > (__i2c_transfer+0x3a8/0x5d8)
-> > [   42.270543] [<c0798704>] (__i2c_transfer) from [<c07989c8>]
-> > (i2c_transfer+0x94/0xc4)
-> > [   42.279204] [<c07989c8>] (i2c_transfer) from [<c064e6b0>]
-> > (drm_do_probe_ddc_edid+0xbc/0x11c)
-> > [   42.288642] [<c064e6b0>] (drm_do_probe_ddc_edid) from [<c064e744>]
-> > (drm_probe_ddc+0x34/0x5c)
-> > [   42.298081] [<c064e744>] (drm_probe_ddc) from [<c0651b98>]
-> > (drm_get_edid+0x60/0x2e0)
-> > [   42.306743] [<c0651b98>] (drm_get_edid) from [<c067d710>]
-> > (dw_hdmi_connector_get_modes+0x30/0x78)
-> > [   42.316669] [<c067d710>] (dw_hdmi_connector_get_modes) from
-> > [<c0634f38>] (drm_helper_probe_single_connector_modes+0x218/0x5c0)
-> > [   42.329413] [<c0634f38>] (drm_helper_probe_single_connector_modes)
-> > from [<c065b38c>] (drm_mode_getconnector+0x144/0x418)
-> > [   42.341573] [<c065b38c>] (drm_mode_getconnector) from [<c0646844>]
-> > (drm_ioctl_kernel+0xa0/0xf0)
-> > [   42.351303] [<c0646844>] (drm_ioctl_kernel) from [<c0646d34>]
-> > (drm_ioctl+0x32c/0x3c0)
-> > [   42.360063] [<c0646d34>] (drm_ioctl) from [<c03ed0cc>] (vfs_ioctl+0x28/0x44)
-> > [   42.367946] [<c03ed0cc>] (vfs_ioctl) from [<c03edee8>]
-> > (do_vfs_ioctl+0x718/0x8b0)
-> > [   42.376315] [<c03edee8>] (do_vfs_ioctl) from [<c03ee0dc>]
-> > (ksys_ioctl+0x5c/0x84)
-> > [   42.384587] [<c03ee0dc>] (ksys_ioctl) from [<c03ee11c>] (sys_ioctl+0x18/0x1c)
-> > [   42.392570] [<c03ee11c>] (sys_ioctl) from [<c02011d4>]
-> > (__sys_trace_return+0x0/0x10)
-> >
-> > ...I see several transfers fail and then finally a few seconds later
-> > finally see the .enable call:
-> 
-> This is usually solved by wrapping the code in detect() with an enable/disable
-> pair to turn on enough circuitry to do the i2c writes for edid read.
-> 
-> >
-> > [   44.021501] DOUG: dw_hdmi_rockchip_encoder_enable start
-> > [   44.027792] DOUG: dw_hdmi_rockchip_encoder_enable end
-> >
-> > I can gather more info if it's useful.
-> >
-> > ===
-> >
-> > ...any chance we can keep the patch as-is, or do you have ideas of how
-> > to solve the above problems?
-> 
-> Yeah, given the context I think this is Ok to apply as-is. Maybe we could
-> shave out some of the work done in resume and move it to a helper called in
-> enable/detect, but I don't think it's necessary to hold up getting things
-> working.
-> 
-> Thanks for the detailed explanation (as always :)
-> 
-> Reviewed-by: Sean Paul <sean@poorly.run>
+On Tue, Jun 11, 2019 at 7:51 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> Hi Saravana,
+>
+> (I notice that I never seem to spell your name correctly.  Apologies for that,
+> both past and future).
 
-Applied both patches to drm-misc-next, thank you!
+Thanks for noticing :) One trick that might help with remembering my
+name is that every other letter is an "a" :)
 
-Sean
+>
+> This email was never answered.
 
-> 
-> 
-> >
-> >
-> > Thanks!
-> >
-> > -Doug
-> 
-> -- 
-> Sean Paul, Software Engineer, Google / Chromium OS
-> > [   42.351303] [<c0646844>] (drm_ioctl_kernel) from [<c0646d34>]
-> > (drm_ioctl+0x32c/0x3c0)
-> > [   42.360063] [<c0646d34>] (drm_ioctl) from [<c03ed0cc>] (vfs_ioctl+0x28/0x44)
-> > [   42.367946] [<c03ed0cc>] (vfs_ioctl) from [<c03edee8>]
-> > (do_vfs_ioctl+0x718/0x8b0)
-> > [   42.376315] [<c03edee8>] (do_vfs_ioctl) from [<c03ee0dc>]
-> > (ksys_ioctl+0x5c/0x84)
-> > [   42.384587] [<c03ee0dc>] (ksys_ioctl) from [<c03ee11c>] (sys_ioctl+0x18/0x1c)
-> > [   42.392570] [<c03ee11c>] (sys_ioctl) from [<c02011d4>]
-> > (__sys_trace_return+0x0/0x10)
-> >
-> > ...I see several transfers fail and then finally a few seconds later
-> > finally see the .enable call:
-> >
-> > [   44.021501] DOUG: dw_hdmi_rockchip_encoder_enable start
-> > [   44.027792] DOUG: dw_hdmi_rockchip_encoder_enable end
-> >
-> > I can gather more info if it's useful.
-> >
-> > ===
-> >
-> > ...any chance we can keep the patch as-is, or do you have ideas of how
-> > to solve the above problems?
-> >
-> >
-> > Thanks!
-> >
-> > -Doug
-> 
-> -- 
-> Sean Paul, Software Engineer, Google / Chromium OS
+Yeah, because this patch wasn't central to the functionality. At worse
+case, I drop the patch and modules would still work. While waiting for
+responses for the other emails -- I was working on measuring the speed
+up.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+If I just took the clock bindings (in a final solution we'll have to
+look up clocks, resets, regulators, interrupts, etc) in a SDM845 and
+made them into device links, that resulted in ~500+ searches for
+devices by their nodes.
+
+Looking at all 500+ of the lookups:
+
+Total time:
+With patch, : 2 milliseconds
+Without patch: 12 milliseconds
+
+Worst case single look up:
+With patch: 39 microseconds
+Without patch: 250 microseconds
+
+Median of lookup times:
+With patch: 208 nanoseconds
+Without patch: 23 microseconds
+
+Even if I assume there are 1000 device nodes, the increase in memory
+from one additional pointer this patch adds is ~8KB.
+2GB is the low ball on the amount of memory available in a typical
+SDM845 device.
+Boot time to userspace on the device Iooked at is: 1149 ms
+So total boot time reduction is 0.8%
+Total memory increase is 0.00038%
+
+Once more device links are added I expect the boot time impact to be
+larger. I think a 1% reduction in boot time for 0.00038% increase in
+memory usage is a good trade off.
+
+That 1% faster boot time can also be approximated to 1% reduction in
+boot up power usage. That scaled to a million or billion devices
+that'll run an Android or some form of ARM Linux kernel is still a
+good chunk of energy savings for a small memory increase.
+
+I still stand by the usefulness of this patch, but this is not the
+hill I'm going to die on (so if dropping this patch is what it takes
+to get modules working, I'll drop it for now).
+
+-Saravana
+
+>
+> -Frank
+>
+>
+> On 5/24/19 5:12 PM, Frank Rowand wrote:
+> > On 5/24/19 11:21 AM, Saravana Kannan wrote:
+> >> On Fri, May 24, 2019 at 10:56 AM Frank Rowand <frowand.list@gmail.com> wrote:
+> >>>
+> >>> Hi Sarvana,
+> >>>
+> >>> I'm not reviewing patches 1-5 in any detail, given my reply to patch 0.
+> >>>
+> >>> But I had already skimmed through this patch before I received the
+> >>> email for patch 0, so I want to make one generic comment below,
+> >>> to give some feedback as you continue thinking through possible
+> >>> implementations to solve the underlying problems.
+> >>
+> >> Appreciate the feedback Frank!
+> >>
+> >>>
+> >>>
+> >>> On 5/23/19 6:01 PM, Saravana Kannan wrote:
+> >>>> Add a pointer from device tree node to the device created from it.
+> >>>> This allows us to find the device corresponding to a device tree node
+> >>>> without having to loop through all the platform devices.
+> >>>>
+> >>>> However, fallback to looping through the platform devices to handle
+> >>>> any devices that might set their own of_node.
+> >>>>
+> >>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >>>> ---
+> >>>>  drivers/of/platform.c | 20 +++++++++++++++++++-
+> >>>>  include/linux/of.h    |  3 +++
+> >>>>  2 files changed, 22 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> >>>> index 04ad312fd85b..1115a8d80a33 100644
+> >>>> --- a/drivers/of/platform.c
+> >>>> +++ b/drivers/of/platform.c
+> >>>> @@ -42,6 +42,8 @@ static int of_dev_node_match(struct device *dev, void *data)
+> >>>>       return dev->of_node == data;
+> >>>>  }
+> >>>>
+> >>>> +static DEFINE_SPINLOCK(of_dev_lock);
+> >>>> +
+> >>>>  /**
+> >>>>   * of_find_device_by_node - Find the platform_device associated with a node
+> >>>>   * @np: Pointer to device tree node
+> >>>> @@ -55,7 +57,18 @@ struct platform_device *of_find_device_by_node(struct device_node *np)
+> >>>>  {
+> >>>>       struct device *dev;
+> >>>>
+> >>>> -     dev = bus_find_device(&platform_bus_type, NULL, np, of_dev_node_match);
+> >>>> +     /*
+> >>>> +      * Spinlock needed to make sure np->dev doesn't get freed between NULL
+> >>>> +      * check inside and kref count increment inside get_device(). This is
+> >>>> +      * achieved by grabbing the spinlock before setting np->dev = NULL in
+> >>>> +      * of_platform_device_destroy().
+> >>>> +      */
+> >>>> +     spin_lock(&of_dev_lock);
+> >>>> +     dev = get_device(np->dev);
+> >>>> +     spin_unlock(&of_dev_lock);
+> >>>> +     if (!dev)
+> >>>> +             dev = bus_find_device(&platform_bus_type, NULL, np,
+> >>>> +                                   of_dev_node_match);
+> >>>>       return dev ? to_platform_device(dev) : NULL;
+> >>>>  }
+> >>>>  EXPORT_SYMBOL(of_find_device_by_node);
+> >>>> @@ -196,6 +209,7 @@ static struct platform_device *of_platform_device_create_pdata(
+> >>>>               platform_device_put(dev);
+> >>>>               goto err_clear_flag;
+> >>>>       }
+> >>>> +     np->dev = &dev->dev;
+> >>>>
+> >>>>       return dev;
+> >>>>
+> >>>> @@ -556,6 +570,10 @@ int of_platform_device_destroy(struct device *dev, void *data)
+> >>>>       if (of_node_check_flag(dev->of_node, OF_POPULATED_BUS))
+> >>>>               device_for_each_child(dev, NULL, of_platform_device_destroy);
+> >>>>
+> >>>> +     /* Spinlock is needed for of_find_device_by_node() to work */
+> >>>> +     spin_lock(&of_dev_lock);
+> >>>> +     dev->of_node->dev = NULL;
+> >>>> +     spin_unlock(&of_dev_lock);
+> >>>>       of_node_clear_flag(dev->of_node, OF_POPULATED);
+> >>>>       of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
+> >>>>
+> >>>> diff --git a/include/linux/of.h b/include/linux/of.h
+> >>>> index 0cf857012f11..f2b4912cbca1 100644
+> >>>> --- a/include/linux/of.h
+> >>>> +++ b/include/linux/of.h
+> >>>> @@ -48,6 +48,8 @@ struct property {
+> >>>>  struct of_irq_controller;
+> >>>>  #endif
+> >>>>
+> >>>> +struct device;
+> >>>> +
+> >>>>  struct device_node {
+> >>>>       const char *name;
+> >>>>       phandle phandle;
+> >>>> @@ -68,6 +70,7 @@ struct device_node {
+> >>>>       unsigned int unique_id;
+> >>>>       struct of_irq_controller *irq_trans;
+> >>>>  #endif
+> >>>> +     struct device *dev;             /* Device created from this node */
+> >>>
+> >>> We have actively been working on shrinking the size of struct device_node,
+> >>> as part of reducing the devicetree memory usage.  As such, we need strong
+> >>> justification for adding anything to this struct.  For example, proof that
+> >>> there is a performance problem that can only be solved by increasing the
+> >>> memory usage.
+> >>
+> >> I didn't mean for people to focus on the deferred probe optimization.
+> >
+> > I was speaking specifically of the of_find_device_by_node() optimization.
+> > I did not chase any further back in the call chain to see how that would
+> > impact anything else.  My comments stand, whether this patch is meant
+> > to optimize deferred probe optimization or to optimize something else.
+> >
+> >
+> >> In reality that was just a added side benefit of this series. The main
+> >> problem to solve is that of suppliers having to know when all their
+> >> consumers are up and managing the resources actively, especially in a
+> >> system with loadable modules where we can't depend on the driver to
+> >> notify the supplier because the consumer driver module might not be
+> >> available or loaded until much later.
+> >>
+> >> Having said that, I'm not saying we should go around and waste space
+> >> willy-nilly. But, isn't the memory usage going to increase based on
+> >> the number of DT nodes present in DT? I'd think as the number of DT
+> >> nodes increase it's more likely for those devices have more memory? So
+> >> at least in this specific case I think adding the field is justified.
+> >
+> > Struct device_node is the nodes of the in kernel devicetree data.  This
+> > patch adds a field to every single node of the devicetree.
+> >
+> > The patch series is also adding a new property, of varying size, to
+> > some nodes.  This also results in additional memory usage by
+> > devicetree.
+> >
+> > Arguing that a more complex system is likely to have more memory is
+> > likely true, but beside the point.  Minimizing devicetree memory
+> > used on less complex systems is also one of our goals.
+> >
+> >
+> >> Also, right now the look up is O(n) complexity and if we are trying to
+> >> add device links to most of the devices, that whole process becomes
+> >> O(n^2). Having this field makes the look up a O(1) and the entire
+> >> linking process a O(n) process. I think the memory usage increase is
+> >> worth the efficiency improvement.
+> >
+> > Hand waving about O(n) and O(1) and O(n2) is not sufficient.  We require
+> > actual measurements that show O(n2) (when the existing algorithm is such)
+> > is a performance problem and that the proposed change to the algorithm
+> > results in a specific change in the performance.
+> >
+> > The devicetree maintainers have decided that memory use is important and
+> > to be minimized, and the burden of proof that performance is an issue
+> > lies on the submitter of a patch that improves performance at the cost
+> > of memory.
+> >
+> > Most devicetree boot time cpu overhead only affects the boot event.
+> > Added memory use persists for the entire booted lifetime of the system.
+> >
+> > That is not to say that we never increase memory use to improve boot
+> > performance.  We have done so when the measured performance issue and
+> > measured performance improvement justified the change.
+> >
+> >>
+> >> And if people are still strongly against it, we could make this a config option.
+> >>
+> >> -Saravana
+> >>
+> >
+> >
+>
