@@ -2,232 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6013CB60
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BF483CB75
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390752AbfFKM0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:26:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48298 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390603AbfFKM0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:26:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 06CE1B030;
-        Tue, 11 Jun 2019 12:26:36 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v2.5 3/3] selftests: firmware: Add compressed firmware tests
-Date:   Tue, 11 Jun 2019 14:26:26 +0200
-Message-Id: <20190611122626.28059-4-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190611122626.28059-1-tiwai@suse.de>
-References: <20190611122626.28059-1-tiwai@suse.de>
+        id S1728758AbfFKM24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:28:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37584 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727727AbfFKM2z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 08:28:55 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C1223285914;
+        Tue, 11 Jun 2019 13:28:52 +0100 (BST)
+Date:   Tue, 11 Jun 2019 14:28:49 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Qii Wang <qii.wang@mediatek.com>
+Cc:     <bbrezillon@kernel.org>, <devicetree@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
+        <gregkh@linuxfoundation.org>, <xinping.qian@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <liguo.zhang@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <linux-i3c@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/2] i3c: master: Add driver for MediaTek IP
+Message-ID: <20190611142849.43f6d1e4@collabora.com>
+In-Reply-To: <1560255922.12217.3.camel@mhfsdcap03>
+References: <1559533863-10292-1-git-send-email-qii.wang@mediatek.com>
+        <1559533863-10292-3-git-send-email-qii.wang@mediatek.com>
+        <20190604095858.38ed9a28@collabora.com>
+        <1559651200.5871.2.camel@mhfsdcap03>
+        <1560255922.12217.3.camel@mhfsdcap03>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the test cases for checking compressed firmware load.
-Two more cases are added to fw_filesystem.sh:
-- Both a plain file and an xz file are present, and load the former
-- Only an xz file is present, and load without '.xz' suffix
+On Tue, 11 Jun 2019 20:25:22 +0800
+Qii Wang <qii.wang@mediatek.com> wrote:
 
-The tests are enabled only when CONFIG_FW_LOADER_COMPRESS is enabled
-and xz program is installed.
+> On Tue, 2019-06-04 at 20:26 +0800, Qii Wang wrote:
+> > On Tue, 2019-06-04 at 09:58 +0200, Boris Brezillon wrote:  
+> > > On Mon, 3 Jun 2019 11:51:03 +0800
+> > > Qii Wang <qii.wang@mediatek.com> wrote:
+> > > 
+> > >   
+> > > > +static int mtk_i3c_master_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +	struct device *dev = &pdev->dev;
+> > > > +	struct mtk_i3c_master *master;
+> > > > +	struct resource *res;
+> > > > +	int ret, irqnr;
+> > > > +
+> > > > +	master = devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
+> > > > +	if (!master)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "main");
+> > > > +	master->regs = devm_ioremap_resource(dev, res);
+> > > > +	if (IS_ERR(master->regs))
+> > > > +		return PTR_ERR(master->regs);
+> > > > +
+> > > > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma");
+> > > > +	master->dma_regs = devm_ioremap_resource(dev, res);
+> > > > +	if (IS_ERR(master->dma_regs))
+> > > > +		return PTR_ERR(master->dma_regs);
+> > > > +
+> > > > +	irqnr = platform_get_irq(pdev, 0);
+> > > > +	if (irqnr < 0)
+> > > > +		return irqnr;
+> > > > +
+> > > > +	ret = devm_request_irq(dev, irqnr, mtk_i3c_master_irq,
+> > > > +			       IRQF_TRIGGER_NONE, DRV_NAME, master);
+> > > > +	if (ret < 0) {
+> > > > +		dev_err(dev, "Request I3C IRQ %d fail\n", irqnr);
+> > > > +		return ret;
+> > > > +	}
+> > > > +
+> > > > +	ret = of_property_read_u32(pdev->dev.of_node, "clock-div",
+> > > > +				   &master->clk_src_div);  
+> > > 
+> > > You say in one comment that this clock divider is fixed in HW but might
+> > > change on a per-SoC basis. If that's the case, you should get rid of
+> > > this clock-div prop and attach the divider to the compatible (using an
+> > > mtk_i3c_master_variant struct that contains a divider field).
+> > >   
+> > 
+> > ok, I will attach the divider to the compatible.
+> >   
+> I have rechecked your comment, maybe I have misunderstood what you mean.
+> "clock-div" changes according to i2c source clock, different project may
+> change i2c source clock, The previous dt-binding may be misleading, I
+> will modify it.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- tools/testing/selftests/firmware/fw_filesystem.sh | 73 +++++++++++++++++++----
- tools/testing/selftests/firmware/fw_lib.sh        |  7 +++
- tools/testing/selftests/firmware/fw_run_tests.sh  |  1 +
- 3 files changed, 71 insertions(+), 10 deletions(-)
-
-diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
-index a4320c4b44dc..f901076aa2ea 100755
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -153,13 +153,18 @@ config_set_read_fw_idx()
- 
- read_firmwares()
- {
-+	if [ "$1" = "xzonly" ]; then
-+		fwfile="${FW}-orig"
-+	else
-+		fwfile="$FW"
-+	fi
- 	for i in $(seq 0 3); do
- 		config_set_read_fw_idx $i
- 		# Verify the contents are what we expect.
- 		# -Z required for now -- check for yourself, md5sum
- 		# on $FW and DIR/read_firmware will yield the same. Even
- 		# cmp agrees, so something is off.
--		if ! diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
-+		if ! diff -q -Z "$fwfile" $DIR/read_firmware 2>/dev/null ; then
- 			echo "request #$i: firmware was not loaded" >&2
- 			exit 1
- 		fi
-@@ -246,17 +251,17 @@ test_request_firmware_nowait_custom_nofile()
- 
- test_batched_request_firmware()
- {
--	echo -n "Batched request_firmware() try #$1: "
-+	echo -n "Batched request_firmware() $2 try #$1: "
- 	config_reset
- 	config_trigger_sync
--	read_firmwares
-+	read_firmwares $2
- 	release_all_firmware
- 	echo "OK"
- }
- 
- test_batched_request_firmware_direct()
- {
--	echo -n "Batched request_firmware_direct() try #$1: "
-+	echo -n "Batched request_firmware_direct() $2 try #$1: "
- 	config_reset
- 	config_set_sync_direct
- 	config_trigger_sync
-@@ -266,7 +271,7 @@ test_batched_request_firmware_direct()
- 
- test_request_firmware_nowait_uevent()
- {
--	echo -n "Batched request_firmware_nowait(uevent=true) try #$1: "
-+	echo -n "Batched request_firmware_nowait(uevent=true) $2 try #$1: "
- 	config_reset
- 	config_trigger_async
- 	release_all_firmware
-@@ -275,11 +280,16 @@ test_request_firmware_nowait_uevent()
- 
- test_request_firmware_nowait_custom()
- {
--	echo -n "Batched request_firmware_nowait(uevent=false) try #$1: "
-+	echo -n "Batched request_firmware_nowait(uevent=false) $2 try #$1: "
- 	config_reset
- 	config_unset_uevent
- 	RANDOM_FILE_PATH=$(setup_random_file)
- 	RANDOM_FILE="$(basename $RANDOM_FILE_PATH)"
-+	if [ "$2" = "both" ]; then
-+		xz -9 -C crc32 -k $RANDOM_FILE_PATH
-+	elif [ "$2" = "xzonly" ]; then
-+		xz -9 -C crc32 $RANDOM_FILE_PATH
-+	fi
- 	config_set_name $RANDOM_FILE
- 	config_trigger_async
- 	release_all_firmware
-@@ -294,19 +304,19 @@ test_config_present
- echo
- echo "Testing with the file present..."
- for i in $(seq 1 5); do
--	test_batched_request_firmware $i
-+	test_batched_request_firmware $i normal
- done
- 
- for i in $(seq 1 5); do
--	test_batched_request_firmware_direct $i
-+	test_batched_request_firmware_direct $i normal
- done
- 
- for i in $(seq 1 5); do
--	test_request_firmware_nowait_uevent $i
-+	test_request_firmware_nowait_uevent $i normal
- done
- 
- for i in $(seq 1 5); do
--	test_request_firmware_nowait_custom $i
-+	test_request_firmware_nowait_custom $i normal
- done
- 
- # Test for file not found, errors are expected, the failure would be
-@@ -329,4 +339,47 @@ for i in $(seq 1 5); do
- 	test_request_firmware_nowait_custom_nofile $i
- done
- 
-+test "$HAS_FW_LOADER_COMPRESS" != "yes" && exit 0
-+
-+# test with both files present
-+xz -9 -C crc32 -k $FW
-+config_set_name $NAME
-+echo
-+echo "Testing with both plain and xz files present..."
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware $i both
-+done
-+
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware_direct $i both
-+done
-+
-+for i in $(seq 1 5); do
-+	test_request_firmware_nowait_uevent $i both
-+done
-+
-+for i in $(seq 1 5); do
-+	test_request_firmware_nowait_custom $i both
-+done
-+
-+# test with only xz file present
-+mv "$FW" "${FW}-orig"
-+echo
-+echo "Testing with only xz file present..."
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware $i xzonly
-+done
-+
-+for i in $(seq 1 5); do
-+	test_batched_request_firmware_direct $i xzonly
-+done
-+
-+for i in $(seq 1 5); do
-+	test_request_firmware_nowait_uevent $i xzonly
-+done
-+
-+for i in $(seq 1 5); do
-+	test_request_firmware_nowait_custom $i xzonly
-+done
-+
- exit 0
-diff --git a/tools/testing/selftests/firmware/fw_lib.sh b/tools/testing/selftests/firmware/fw_lib.sh
-index 1cbb12e284a6..f236cc295450 100755
---- a/tools/testing/selftests/firmware/fw_lib.sh
-+++ b/tools/testing/selftests/firmware/fw_lib.sh
-@@ -50,6 +50,7 @@ check_setup()
- {
- 	HAS_FW_LOADER_USER_HELPER="$(kconfig_has CONFIG_FW_LOADER_USER_HELPER=y)"
- 	HAS_FW_LOADER_USER_HELPER_FALLBACK="$(kconfig_has CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y)"
-+	HAS_FW_LOADER_COMPRESS="$(kconfig_has CONFIG_FW_LOADER_COMPRESS=y)"
- 	PROC_FW_IGNORE_SYSFS_FALLBACK="0"
- 	PROC_FW_FORCE_SYSFS_FALLBACK="0"
- 
-@@ -84,6 +85,12 @@ check_setup()
- 	fi
- 
- 	OLD_FWPATH="$(cat /sys/module/firmware_class/parameters/path)"
-+
-+	if [ "$HAS_FW_LOADER_COMPRESS" = "yes" ]; then
-+		if ! which xz 2> /dev/null > /dev/null; then
-+			HAS_FW_LOADER_COMPRESS=""
-+		fi
-+	fi
- }
- 
- verify_reqs()
-diff --git a/tools/testing/selftests/firmware/fw_run_tests.sh b/tools/testing/selftests/firmware/fw_run_tests.sh
-index cffdd4eb0a57..8e14d555c197 100755
---- a/tools/testing/selftests/firmware/fw_run_tests.sh
-+++ b/tools/testing/selftests/firmware/fw_run_tests.sh
-@@ -11,6 +11,7 @@ source $TEST_DIR/fw_lib.sh
- 
- export HAS_FW_LOADER_USER_HELPER=""
- export HAS_FW_LOADER_USER_HELPER_FALLBACK=""
-+export HAS_FW_LOADER_COMPRESS=""
- 
- run_tests()
- {
--- 
-2.16.4
-
+Is it fixed or configurable? Maybe it should be modeled as a clk
+driver. What's for sure is that we shouldn't have this divider defined
+in the DT.
