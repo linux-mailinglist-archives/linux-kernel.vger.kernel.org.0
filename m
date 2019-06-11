@@ -2,169 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1783416D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 23:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37729416E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 23:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407651AbfFKV2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 17:28:05 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39407 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391636AbfFKV2E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 17:28:04 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 196so7671492pgc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 14:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=kHOmEXm44ofEStTL89clw86zKCfMK7pxZweKkVj60zc=;
-        b=BNyH/I0aTFapdWvAUe1tA6vh4V7SGGnKW9i2iryYsCgfyNFoPcnfrRh6ENitI8pQJy
-         ceJmUE14+hVNBM9WC+xAjbbK0ncjBtDNhZsREXS8wFJSFtJTAC+2kp/Gx/2pDb6cUMf8
-         JpUjBxKEfOQvrL9m9kMePR3M4fWdfHCrRVaSTbbHZtX1SELIRUg9HXb/1sKatJNSwuF+
-         QO1DomLI907tfm1bq218gSHTCncrOyxsRkBkmStrHKSsQYkjWyIsW3ZSK9J+lpNXxDiR
-         oojDQ9O14TWNGl2rGOpuLibgYG5bNECymjz1Ygn5Bb6fBc1ArnndD5ref2xpl4j3WuJU
-         Jxfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=kHOmEXm44ofEStTL89clw86zKCfMK7pxZweKkVj60zc=;
-        b=P3cE9rm2PJ8yre1IixmO5+KAuzjNCoUGhr1x3JuDZ9m1Ac+HuFLjb3qPj+VROQYnRX
-         wdkgpWfrnItwxLs/VZ+NQFUqShfnkMPELYk2ZbrHq3ZMLo+jwAkKrewhtRw+8JPKKCLH
-         3G2sPzF7dhkyElX+D0WC9YSfi24+ftC6WdwKw0Jmvqgai2+9OqU7pyvpwc1+vvxis2v3
-         +j3xhZSfIJed4jvIEkdbUwPmDqwK5vmb1X0ahxHkcRaL675zSZiHid85avLh+FZHf5uh
-         nCnRr16bCdu8TChihxf1WaJOcTwGsiL2Ve2+m3Rcsyy+CZrow7SAop64ZjP9zlCMX1i1
-         ORMg==
-X-Gm-Message-State: APjAAAVifvoweVu4Zy8gHHE6a9jH31pfhUSxufULebtSH6pw1Rqav6Mt
-        tP5Lf4aLLsA0/eXWWRfKlcxWoQ==
-X-Google-Smtp-Source: APXvYqx8fSWzb0HB5KPULCR4fAdvphiu+yCLRaPJ3mwALDMWZWEo99vzBDgf+T6A9kZ8B2J2ELLLxQ==
-X-Received: by 2002:a17:90a:a505:: with SMTP id a5mr29364827pjq.27.1560288483342;
-        Tue, 11 Jun 2019 14:28:03 -0700 (PDT)
-Received: from cabot.adilger.ext (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id a192sm6068716pfa.84.2019.06.11.14.28.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 14:28:02 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <315FEA4D-41B1-4C5B-89AA-7ABA93D66E0A@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_5B427BF6-3A60-46C7-A8F9-EE572E3F0487";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH V2] include: linux: Regularise the use of FIELD_SIZEOF
- macro
-Date:   Tue, 11 Jun 2019 15:28:00 -0600
-In-Reply-To: <20190611140907.899bebb12a3d731da24a9ad1@linux-foundation.org>
-Cc:     Shyam Saini <shyam.saini@amarulasolutions.com>,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>,
-        devel@lists.orangefs.org, linux-mm@kvack.org,
-        linux-sctp@vger.kernel.org, bpf@vger.kernel.org,
-        kvm@vger.kernel.org, mayhs11saini@gmail.com,
-        Alexey Dobriyan <adobriyan@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-References: <20190611193836.2772-1-shyam.saini@amarulasolutions.com>
- <20190611134831.a60c11f4b691d14d04a87e29@linux-foundation.org>
- <6DCAE4F8-3BEC-45F2-A733-F4D15850B7F3@dilger.ca>
- <20190611140907.899bebb12a3d731da24a9ad1@linux-foundation.org>
-X-Mailer: Apple Mail (2.3273)
+        id S2391777AbfFKV3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 17:29:51 -0400
+Received: from ozlabs.org ([203.11.71.1]:46325 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387804AbfFKV3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 17:29:51 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Njnl73ddz9s6w;
+        Wed, 12 Jun 2019 07:29:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560288588;
+        bh=tj1WwZ7rdEKsUT9uwOStMxcrABMexqXGFXrGRdTjnxI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=lJFKSnjUtgoYc42G7sa5G5kdsP8yWtJFs+v3E0E4ax66x+0FIFBJfvvJ2Qb8rNU59
+         mNz5GORFxVWzh7x3aSbxAQbLKSfVZoG52HMGTZcBZUNGFhJ/2rv8moGhxfWvAqJjNz
+         HIU4XRebwracr/VI48m40yy4EfDFUDfVYoQ6bQoS9F5x+GlPbVguLYz+9nKOz4bsy8
+         iXnawTsxqQ0GlSZvQxIpXDUmv6/YPpkLuhaNxRKeWkwvdxGnxo7/PF0KWEfc6X96uL
+         D6bcb+m20fHXwx9kPI+RvyEXeC5ivWEXUXaAkrLRCOCCwE1vxnkNR8zpRGpGP0KZTc
+         u/KbEB1zyKOMQ==
+Date:   Wed, 12 Jun 2019 07:29:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Volodymyr Babchuk <volodymyr_babchuk@epam.com>
+Subject: linux-next: Fixes tag needs some work in the scmi tree
+Message-ID: <20190612072946.15403676@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lhGhTEZ0nnpLPVQgCDBtZid"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Apple-Mail=_5B427BF6-3A60-46C7-A8F9-EE572E3F0487
+--Sig_/lhGhTEZ0nnpLPVQgCDBtZid
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
 
-On Jun 11, 2019, at 3:09 PM, Andrew Morton <akpm@linux-foundation.org> =
-wrote:
->=20
-> On Tue, 11 Jun 2019 15:00:10 -0600 Andreas Dilger <adilger@dilger.ca> =
-wrote:
->=20
->>>> to FIELD_SIZEOF
->>>=20
->>> As Alexey has pointed out, C structs and unions don't have fields -
->>> they have members.  So this is an opportunity to switch everything =
-to
->>> a new member_sizeof().
->>>=20
->>> What do people think of that and how does this impact the patch =
-footprint?
->>=20
->> I did a check, and FIELD_SIZEOF() is used about 350x, while =
-sizeof_field()
->> is about 30x, and SIZEOF_FIELD() is only about 5x.
->=20
-> Erk.  Sorry, I should have grepped.
->=20
->> That said, I'm much more in favour of "sizeof_field()" or =
-"sizeof_member()"
->> than FIELD_SIZEOF().  Not only does that better match "offsetof()", =
-with
->> which it is closely related, but is also closer to the original =
-"sizeof()".
->>=20
->> Since this is a rather trivial change, it can be split into a number =
-of
->> patches to get approval/landing via subsystem maintainers, and there =
-is no
->> huge urgency to remove the original macros until the users are gone.  =
-It
->> would make sense to remove SIZEOF_FIELD() and sizeof_field() quickly =
-so
->> they don't gain more users, and the remaining FIELD_SIZEOF() users =
-can be
->> whittled away as the patches come through the maintainer trees.
->=20
-> In that case I'd say let's live with FIELD_SIZEOF() and remove
-> sizeof_field() and SIZEOF_FIELD().
+Hi Sudeep,
 
-The real question is whether we want to live with a sub-standard macro =
-for
-the next 20 years rather than taking the opportunity to clean it up now?
+In commit
 
-> I'm a bit surprised that the FIELD_SIZEOF() definition ends up in
-> stddef.h rather than in kernel.h where such things are normally
-> defined.  Why is that?
+  e322dcbd75e8 ("dt-bindings: arm: fix the document ID for SCMI protocol do=
+cumentation")
 
-Cheers, Andreas
+Fixes tag
 
+  Fixes: fe7be8b297b2 ("dt-bindings: arm: add support for ARM System Control
 
+has these problem(s):
 
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
 
+Please do not split Fixes tags over more than one line (it is ok for
+that to be a long line).
 
+--=20
+Cheers,
+Stephen Rothwell
 
---Apple-Mail=_5B427BF6-3A60-46C7-A8F9-EE572E3F0487
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+--Sig_/lhGhTEZ0nnpLPVQgCDBtZid
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl0AHOAACgkQcqXauRfM
-H+BPvRAAvxlKWQUZz2tRSIBu/vtfIKMWVyY8fctru8Y1oH+Slx4hWvJ/xxYWjMIa
-LJJgybj3MjwTd30FmSWmmQmKDyjo5oWGelOeLzVfueI8blZIaDcUYT1rrM9h7F4G
-RD22ST6XCWjj5oAmVBW/XHxRIFD6uHtwOnby9a4LgkFOehdkDBhopfAMduEZrW7P
-qNa2T0M660SXtmt8dy89Ynb+sge7iinnRyPKkxNaweIXYGVtZzoScRFNK0vSZjbm
-TgVIKwFyLDbdX1bJFQHZDWnfchCRqQrrmHyIl+wAGTccpfen4bGhDqW0wU1+rQpv
-G2RL1z+N2WiWwKx/TmdPatglD2Hqr73jKfvi7X+DzkJ0nJdYMKnNRpe3S2rZwFjf
-MHpmP35Ql2/96bDulYuirHOVvSrrXF/RXZLUp6MuTu2rGankXETXgiP0lkKcmOZW
-gvA0pFTKFD8YaGf0NU9jS/OUOjYpqhMkBSK2C3d0UdRMCQzRWAudLzM9quRH7vCm
-SfRD6QWHQfOELlKMenRptxYEi8IM3+3R4G1g3VmR7YCegpayslXiSKpgnBAqw4W0
-Z4q6nJ/YOwNTjwzs9ndgCZfGpW6JxKYY0DuQe7ld+ngnXNdVrH1X5pZz9ASV9Wli
-CowwSgwFlqOSkmcy52L7pRGDGSI/yWwzl6QHtjT8o0e30S27eCs=
-=UFIV
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0AHUoACgkQAVBC80lX
+0Gzb+Qf/SAWsIn3RJhxT2hzg5GR3bIcBGOEgprhz6TGt0vO5sSzcQ2LAI5xCjJBQ
+FZKq2418HGwHW/YkKbi53hEAcaGQXpq0DapaTWZl2LdegVFLy3aZTrZo7olzET4l
+MtbAHEIIAMqWAQ3oM9U648neshZytLzL04Qek6O6hYUq0zNlpbeHIkasharddsPA
+JNmCvCCmQ4NFCQzMKZmLB62EIBmFChn5AV5+DF/964bA8Y08HPBe512txh1z2cUm
+RwrI6Lt+5GadEAc1BkHrjxekRC0m5UlioET40t5hfVTV2qWg0+vKAOkOZDPFjA++
+04K/0xtPbKiNW6dJizUsmtX2uG/Qhg==
+=Wb3x
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_5B427BF6-3A60-46C7-A8F9-EE572E3F0487--
+--Sig_/lhGhTEZ0nnpLPVQgCDBtZid--
