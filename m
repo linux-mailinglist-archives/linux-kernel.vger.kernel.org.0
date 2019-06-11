@@ -2,73 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F41963CE0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 374B23CE0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390986AbfFKOIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:08:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46058 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725811AbfFKOIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:08:15 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E9B0B3591BC58F871261;
-        Tue, 11 Jun 2019 22:08:12 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Jun 2019
- 22:08:04 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <aelior@marvell.com>,
-        <GR-everest-linux-l2@marvell.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] qede: Make two functions static
-Date:   Tue, 11 Jun 2019 22:07:09 +0800
-Message-ID: <20190611140709.24452-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2389579AbfFKOH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:07:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40148 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387683AbfFKOH2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:07:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jwVSRVYpHoI+ZWo4MBq+1xKy3s947GP/tfP5zSWOihQ=; b=tZm05BCtFnROyHuy+UdTBO27s
+        nwZqB51QgVq3veDuwxxZ9RsTyvV9tu+goRJlRmvlfU7fBlfyJA0IfHb1sGIEw5Guo4RCLQeheW2Ng
+        +PmQXJ+uxE2ES1zCbmkTRCGNfA92g4nNmxQRcm+zI8DnUb3KD0nxOVHoUkdMMjWKhO8Krsf1h+u1m
+        L6cjG+1OygWSiNapaKwuyx3JRNNuv6zj+YG4WfqA11TD1sZvd6Im5yni3ST5F8tAEjpMdTzQ0dClU
+        wpxlbo2kBABvvoVl6XhSkKflygsn2wOz7Z780aeGhgDRi2OAEXZ3fpPnmmO7kIfI3WCpXJrtSE3/P
+        JSD/8VaIA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hahQr-0000sf-1G; Tue, 11 Jun 2019 14:07:25 +0000
+Date:   Tue, 11 Jun 2019 07:07:25 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     linuxppc-dev@ozlabs.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Subject: Re: Question - check in runtime which architecture am I running on
+Message-ID: <20190611140725.GA28902@infradead.org>
+References: <CAFCwf11EM9+NDML9hQmk9-rPzSmDmAyVLW+qOfs6h62dGK6H9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFCwf11EM9+NDML9hQmk9-rPzSmDmAyVLW+qOfs6h62dGK6H9A@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+On Tue, Jun 11, 2019 at 03:30:08PM +0300, Oded Gabbay wrote:
+> Hello POWER developers,
+> 
+> I'm trying to find out if there is an internal kernel API so that a
+> PCI driver can call it to check if its PCI device is running inside a
+> POWER9 machine. Alternatively, if that's not available, if it is
+> running on a machine with powerpc architecture.
 
-drivers/net/ethernet/qlogic/qede/qede_main.c:963:6:
- warning: symbol 'qede_lock' was not declared. Should it be static?
-drivers/net/ethernet/qlogic/qede/qede_main.c:969:6:
- warning: symbol 'qede_unlock' was not declared. Should it be static?
+Your driver has absolutely not business knowing this.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/qlogic/qede/qede_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> I need this information as my device (Goya AI accelerator)
+> unfortunately needs a slightly different configuration of its PCIe
+> controller in case of POWER9 (need to set bit 59 to be 1 in all
+> outbound transactions).
 
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_main.c b/drivers/net/ethernet/qlogic/qede/qede_main.c
-index 741377b..d4a2966 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_main.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
-@@ -960,13 +960,13 @@ void __qede_unlock(struct qede_dev *edev)
- /* This version of the lock should be used when acquiring the RTNL lock is also
-  * needed in addition to the internal qede lock.
-  */
--void qede_lock(struct qede_dev *edev)
-+static void qede_lock(struct qede_dev *edev)
- {
- 	rtnl_lock();
- 	__qede_lock(edev);
- }
- 
--void qede_unlock(struct qede_dev *edev)
-+static void qede_unlock(struct qede_dev *edev)
- {
- 	__qede_unlock(edev);
- 	rtnl_unlock();
--- 
-2.7.4
-
-
+No, it doesn't.  You can query the output from dma_get_required_mask
+to optimize for the DMA addresses you get, and otherwise you simply
+set the maximum dma mask you support.  That is about the control you
+get, and nothing else is a drivers business.
