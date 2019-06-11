@@ -2,260 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F27EB41810
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 00:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1308441807
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 00:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436907AbfFKWW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 18:22:28 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29014 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2436852AbfFKWWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 18:22:22 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 11 Jun 2019 15:22:17 -0700
-Received: from rlwimi.localdomain (unknown [10.129.220.121])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 3514041BAB;
-        Tue, 11 Jun 2019 15:22:20 -0700 (PDT)
-From:   Matt Helsley <mhelsley@vmware.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Matt Helsley <mhelsley@vmware.com>
-Subject: [PATCH v2 13/13] objtool: recordmcount: Convert do_func() relhdrs
-Date:   Tue, 11 Jun 2019 15:21:55 -0700
-Message-ID: <3625811a23dca605bace1dd48946f49c7166dceb.1560285597.git.mhelsley@vmware.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1560285597.git.mhelsley@vmware.com>
-References: <cover.1560285597.git.mhelsley@vmware.com>
+        id S2436781AbfFKWWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 18:22:07 -0400
+Received: from mail-eopbgr790124.outbound.protection.outlook.com ([40.107.79.124]:46880
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388875AbfFKWWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 18:22:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavesemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jEF0/6YRrQuQVDsC/LUq3vTX4iCJP/zqnEoMtQr5dtU=;
+ b=Z4u6UOoXVojazErlg7umafdQlfL3avZaAs6dNZjRU8EKciQvzQgS/k25/UoE3UtAvJ/Bb7smyxrIurDZvJysaHPI8HqnFYDBZIBCf9fDDI6i52BJE5EYpS7Ml7JWkTCQDO1JpenXmQ3MYZVl8ql/NhQ7sqQ27ZIq2gqWwny/P2M=
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.214.23) by
+ CY4PR2201MB1367.namprd22.prod.outlook.com (10.171.217.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.14; Tue, 11 Jun 2019 22:22:03 +0000
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::d571:f49f:6a5c:4962]) by CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::d571:f49f:6a5c:4962%7]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
+ 22:22:03 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        James Hogan <jhogan@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "od@zcrc.me" <od@zcrc.me>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: lb60: Fix pin mappings
+Thread-Topic: [PATCH] MIPS: lb60: Fix pin mappings
+Thread-Index: AQHVGvNR1qZ4gQD8hE2mZTClh06Tw6aXEkgA
+Date:   Tue, 11 Jun 2019 22:22:03 +0000
+Message-ID: <CY4PR2201MB1272B762656C4EFB45D0D026C1ED0@CY4PR2201MB1272.namprd22.prod.outlook.com>
+References: <20190604163311.19059-1-paul@crapouillou.net>
+In-Reply-To: <20190604163311.19059-1-paul@crapouillou.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR11CA0068.namprd11.prod.outlook.com
+ (2603:10b6:a03:80::45) To CY4PR2201MB1272.namprd22.prod.outlook.com
+ (2603:10b6:910:6e::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.94.197.246]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ce5b07b3-7861-42d3-2dc1-08d6eebb3ab1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR2201MB1367;
+x-ms-traffictypediagnostic: CY4PR2201MB1367:
+x-microsoft-antispam-prvs: <CY4PR2201MB13675059F4E2458D78285E72C1ED0@CY4PR2201MB1367.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 006546F32A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39850400004)(376002)(346002)(396003)(366004)(199004)(189003)(81156014)(446003)(2906002)(8676002)(81166006)(486006)(305945005)(7736002)(4744005)(6916009)(478600001)(476003)(11346002)(14454004)(44832011)(66446008)(5660300002)(66556008)(64756008)(66476007)(66946007)(68736007)(52536014)(8936002)(73956011)(6116002)(3846002)(74316002)(256004)(42882007)(71200400001)(71190400001)(26005)(9686003)(6246003)(4326008)(102836004)(99286004)(55016002)(25786009)(54906003)(52116002)(6436002)(53936002)(7696005)(316002)(186003)(76176011)(6506007)(386003)(229853002)(66066001)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1367;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4n9VVHNEk1u3ZLYYxQXW4Whr+OJtjUtzS0NtuVzTasCOjsh8ENXb93u8E2Nsdr7YCk4bElROKsTEo+ehVTbydlQbejE8ECyxROVu+1kszYUjPt8kamJp6DwXnT7rcoOLqsf5wO11GQZdkrV5P7n4K1nRnY59ynh9K42E6Trnj140WpzBj6R+TBkS9uLK8nkiBfEx4cpzun49QahUm30XGZtKoa3wHmTm19whkdKn0UqgaTbB75OtpUSJuIvEWVs8iowscYaumYnRCtQDB7PYnPmcPjzSiOn5rohqaoI1iPo/ihM5I13aj9t5jyp6+h2IN1zjPgq+XgH6ZXBfz26cjUfDzFh+fzEfpHvTtR3FCDzO0lM/r0gDK1NKxBq5FAF9NLB6PjJv58cF7gWvptLCImuGmXSV408DEE/ejap7t44=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: mhelsley@vmware.com does not
- designate permitted sender hosts)
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce5b07b3-7861-42d3-2dc1-08d6eebb3ab1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 22:22:03.3991
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1367
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use objtool's ELF data structures to visit the relocation
-sections in the top-level ELF file walking function, do_func().
-This means we can pass pointers to the relocation header structures
-into nested functions and avoid the indexing patterns for them.
-
-These conversions don't use libelf/objtool to change the ELF
-file -- it only changes the way we walk the ELF sections and
-touch pages for memory mapping made by the old recordmcount code.
-
-Signed-off-by: Matt Helsley <mhelsley@vmware.com>
----
- tools/objtool/recordmcount.h | 70 ++++++++++++++++++------------------
- 1 file changed, 36 insertions(+), 34 deletions(-)
-
-diff --git a/tools/objtool/recordmcount.h b/tools/objtool/recordmcount.h
-index 03643c68486b..89688648c7cd 100644
---- a/tools/objtool/recordmcount.h
-+++ b/tools/objtool/recordmcount.h
-@@ -288,7 +288,7 @@ static unsigned get_mcountsym(Elf_Sym const *const sym0,
- 	return mcountsym;
- }
- 
--static void get_sym_str_and_relp(Elf_Shdr const *const relhdr,
-+static void get_sym_str_and_relp(GElf_Shdr const *const relhdr,
- 				 Elf_Ehdr const *const ehdr,
- 				 Elf_Sym const **sym0,
- 				 char const **str0,
-@@ -296,10 +296,10 @@ static void get_sym_str_and_relp(Elf_Shdr const *const relhdr,
- {
- 	Elf_Shdr *const shdr0 = (Elf_Shdr *)(_w(ehdr->e_shoff)
- 		+ (void *)ehdr);
--	unsigned const symsec_sh_link = w(relhdr->sh_link);
-+	unsigned const symsec_sh_link = relhdr->sh_link;
- 	Elf_Shdr const *const symsec = &shdr0[symsec_sh_link];
--	Elf_Shdr const *const strsec = &shdr0[w(symsec->sh_link)];
--	Elf_Rel const *const rel0 = (Elf_Rel const *)(_w(relhdr->sh_offset)
-+	Elf_Shdr const *const strsec = &shdr0[symsec->sh_link];
-+	Elf_Rel const *const rel0 = (Elf_Rel const *)(relhdr->sh_offset
- 		+ (void *)ehdr);
- 
- 	*sym0 = (Elf_Sym const *)(_w(symsec->sh_offset)
-@@ -319,9 +319,9 @@ static void get_sym_str_and_relp(Elf_Shdr const *const relhdr,
- static uint_t *sift_rel_mcount(uint_t *mlocp,
- 			       unsigned const offbase,
- 			       Elf_Rel **const mrelpp,
--			       Elf_Shdr const *const relhdr,
-+			       GElf_Shdr const *const relhdr,
- 			       Elf_Ehdr const *const ehdr,
--			       unsigned const recsym,
-+			       unsigned const recsym_index,
- 			       uint_t const recval,
- 			       unsigned const reltype)
- {
-@@ -330,8 +330,8 @@ static uint_t *sift_rel_mcount(uint_t *mlocp,
- 	Elf_Sym const *sym0;
- 	char const *str0;
- 	Elf_Rel const *relp;
--	unsigned rel_entsize = _w(relhdr->sh_entsize);
--	unsigned const nrel = _w(relhdr->sh_size) / rel_entsize;
-+	unsigned int rel_entsize = relhdr->sh_entsize;
-+	unsigned const nrel = relhdr->sh_size / rel_entsize;
- 	unsigned mcountsym = 0;
- 	unsigned t;
- 
-@@ -346,7 +346,7 @@ static uint_t *sift_rel_mcount(uint_t *mlocp,
- 				_w(_w(relp->r_offset) - recval + mcount_adjust);
- 			mrelp->r_offset = _w(offbase
- 				+ ((void *)mlocp - (void *)mloc0));
--			Elf_r_info(mrelp, recsym, reltype);
-+			Elf_r_info(mrelp, recsym_index, reltype);
- 			if (rel_entsize == sizeof(Elf_Rela)) {
- 				((Elf_Rela *)mrelp)->r_addend = addend;
- 				*mlocp++ = 0;
-@@ -366,7 +366,7 @@ static uint_t *sift_rel_mcount(uint_t *mlocp,
-  * that are not going to be traced. The mcount calls here will be converted
-  * into nops.
-  */
--static int nop_mcount(Elf_Shdr const *const relhdr,
-+static int nop_mcount(GElf_Shdr const *const relhdr,
- 		      Elf_Ehdr const *const ehdr,
- 		      const char *const txtname)
- {
-@@ -375,9 +375,9 @@ static int nop_mcount(Elf_Shdr const *const relhdr,
- 	Elf_Sym const *sym0;
- 	char const *str0;
- 	Elf_Rel const *relp;
--	Elf_Shdr const *const shdr = &shdr0[w(relhdr->sh_info)];
--	unsigned rel_entsize = _w(relhdr->sh_entsize);
--	unsigned const nrel = _w(relhdr->sh_size) / rel_entsize;
-+	Elf_Shdr const *const shdr = &shdr0[relhdr->sh_info];
-+	unsigned int rel_entsize = relhdr->sh_entsize;
-+	unsigned const nrel = relhdr->sh_size / rel_entsize;
- 	unsigned mcountsym = 0;
- 	unsigned t;
- 	int once = 0;
-@@ -469,13 +469,13 @@ static unsigned find_secsym_ndx(unsigned const txtndx,
- }
- 
- /* Evade ISO C restriction: no declaration after statement in has_rel_mcount. */
--static char const * __has_rel_mcount(Elf_Shdr const *const relhdr, /* reltype */
-+static char const * __has_rel_mcount(GElf_Shdr const *const relhdr, /* reltype */
- 				     Elf_Shdr const *const shdr0,
- 				     char const *const shstrtab,
- 				     char const *const fname)
- {
- 	/* .sh_info depends on .sh_type == SHT_REL[,A] */
--	Elf_Shdr const *const txthdr = &shdr0[w(relhdr->sh_info)];
-+	Elf_Shdr const *const txthdr = &shdr0[relhdr->sh_info];
- 	char const *const txtname = &shstrtab[w(txthdr->sh_name)];
- 
- 	if (w(txthdr->sh_type) != SHT_PROGBITS ||
-@@ -484,30 +484,29 @@ static char const * __has_rel_mcount(Elf_Shdr const *const relhdr, /* reltype */
- 	return txtname;
- }
- 
--static char const *has_rel_mcount(Elf_Shdr const *const relhdr,
-+static char const *has_rel_mcount(GElf_Shdr const *const relhdr,
- 				  Elf_Shdr const *const shdr0,
- 				  char const *const shstrtab,
- 				  char const *const fname)
- {
--	if (w(relhdr->sh_type) != SHT_REL && w(relhdr->sh_type) != SHT_RELA)
-+	if (relhdr->sh_type != SHT_REL && relhdr->sh_type != SHT_RELA)
- 		return NULL;
- 	return __has_rel_mcount(relhdr, shdr0, shstrtab, fname);
- }
- 
- 
- static unsigned tot_relsize(Elf_Shdr const *const shdr0,
--			    unsigned nhdr,
- 			    const char *const shstrtab,
- 			    const char *const fname)
- {
-+	struct section *sec;
- 	unsigned totrelsz = 0;
--	Elf_Shdr const *shdrp = shdr0;
- 	char const *txtname;
- 
--	for (; nhdr; --nhdr, ++shdrp) {
--		txtname = has_rel_mcount(shdrp, shdr0, shstrtab, fname);
-+	list_for_each_entry(sec, &lf->sections, list) {
-+		txtname = has_rel_mcount(&sec->sh, shdr0, shstrtab, fname);
- 		if (txtname && is_mcounted_section_name(txtname))
--			totrelsz += _w(shdrp->sh_size);
-+			totrelsz += sec->sh.sh_size;
- 	}
- 	return totrelsz;
- }
-@@ -519,13 +518,11 @@ static int do_func(Elf_Ehdr *const ehdr, char const *const fname,
- {
- 	Elf_Shdr *const shdr0 = (Elf_Shdr *)(_w(ehdr->e_shoff)
- 		+ (void *)ehdr);
--	unsigned const nhdr = w2(ehdr->e_shnum);
- 	Elf_Shdr *const shstr = &shdr0[w2(ehdr->e_shstrndx)];
- 	char const *const shstrtab = (char const *)(_w(shstr->sh_offset)
- 		+ (void *)ehdr);
- 
--	Elf_Shdr const *relhdr;
--	unsigned k;
-+	GElf_Shdr const *relhdr;
- 
- 	/* Upper bound on space: assume all relevant relocs are for mcount. */
- 	unsigned       totrelsz;
-@@ -539,12 +536,14 @@ static int do_func(Elf_Ehdr *const ehdr, char const *const fname,
- 	unsigned rel_entsize = 0;
- 	unsigned symsec_sh_link = 0;
- 
-+	struct section *sec;
-+
- 	int result = 0;
- 
- 	if (find_section_by_name(lf, "__mcount_loc") != NULL)
- 		return 0;
- 
--	totrelsz = tot_relsize(shdr0, nhdr, shstrtab, fname);
-+	totrelsz = tot_relsize(shdr0, shstrtab, fname);
- 	if (totrelsz == 0)
- 		return 0;
- 	mrel0 = umalloc(totrelsz);
-@@ -560,24 +559,27 @@ static int do_func(Elf_Ehdr *const ehdr, char const *const fname,
- 		return -1;
- 	}
- 
--	for (relhdr = shdr0, k = nhdr; k; --k, ++relhdr) {
--		char const *const txtname = has_rel_mcount(relhdr, shdr0,
-+	list_for_each_entry(sec, &lf->sections, list) {
-+		char const *txtname;
-+
-+		relhdr = &sec->sh;
-+		txtname = has_rel_mcount(relhdr, shdr0,
- 			shstrtab, fname);
- 		if (txtname && is_mcounted_section_name(txtname)) {
- 			uint_t recval = 0;
--			unsigned const int recsym = find_secsym_ndx(
--				w(relhdr->sh_info), txtname, &recval,
--				&shdr0[symsec_sh_link = w(relhdr->sh_link)],
-+			unsigned const int recsym_index = find_secsym_ndx(
-+				relhdr->sh_info, txtname, &recval,
-+				&shdr0[symsec_sh_link = relhdr->sh_link],
- 				ehdr);
--			if (recsym == missing_sym) {
-+			if (recsym_index == missing_sym) {
- 				result = -1;
- 				goto out;
- 			}
- 
--			rel_entsize = _w(relhdr->sh_entsize);
-+			rel_entsize = relhdr->sh_entsize;
- 			mlocp = sift_rel_mcount(mlocp,
- 				(void *)mlocp - (void *)mloc0, &mrelp,
--				relhdr, ehdr, recsym, recval, reltype);
-+				relhdr, ehdr, recsym_index, recval, reltype);
- 		} else if (txtname && (warn_on_notrace_sect || make_nop)) {
- 			/*
- 			 * This section is ignored by ftrace, but still
--- 
-2.20.1
-
+SGVsbG8sDQoNClBhdWwgQ2VyY3VlaWwgd3JvdGU6DQo+IFRoZSBwaW4gbWFwcGluZ3MgaW50cm9k
+dWNlZCBpbiBjb21taXQgNjM2ZjhiYTY3ZmI2DQo+ICgiTUlQUzogSlo0NzQwOiBRaSBMQjYwOiBB
+ZGQgcGluY3RybCBjb25maWd1cmF0aW9uIGZvciBzZXZlcmFsIGRyaXZlcnMiKQ0KPiBhcmUgY29t
+cGxldGVseSB3cm9uZy4gVGhlIHBpbmN0cmwgZHJpdmVyIG5hbWUgaXMgaW5jb3JyZWN0LCBhbmQg
+dGhlDQo+IGZ1bmN0aW9uIGFuZCBncm91cCBmaWVsZHMgYXJlIHN3YXBwZWQuDQo+IA0KPiBGaXhl
+czogNjM2ZjhiYTY3ZmI2ICgiTUlQUzogSlo0NzQwOiBRaSBMQjYwOiBBZGQgcGluY3RybCBjb25m
+aWd1cmF0aW9uIGZvciBzZXZlcmFsIGRyaXZlcnMiKQ0KPiBDYzogPHN0YWJsZUB2Z2VyLmtlcm5l
+bC5vcmc+DQo+IFNpZ25lZC1vZmYtYnk6IFBhdWwgQ2VyY3VlaWwgPHBhdWxAY3JhcG91aWxsb3Uu
+bmV0Pg0KPiBSZXZpZXdlZC1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8u
+b3JnPg0KDQpBcHBsaWVkIHRvIG1pcHMtbmV4dC4NCg0KVGhhbmtzLA0KICAgIFBhdWwNCg0KWyBU
+aGlzIG1lc3NhZ2Ugd2FzIGF1dG8tZ2VuZXJhdGVkOyBpZiB5b3UgYmVsaWV2ZSBhbnl0aGluZyBp
+cyBpbmNvcnJlY3QNCiAgdGhlbiBwbGVhc2UgZW1haWwgcGF1bC5idXJ0b25AbWlwcy5jb20gdG8g
+cmVwb3J0IGl0LiBdDQo=
