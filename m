@@ -2,56 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C423CCC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A472A3CCDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390697AbfFKNRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:17:45 -0400
-Received: from sonic316-20.consmr.mail.ne1.yahoo.com ([66.163.187.146]:38184
-        "EHLO sonic316-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388837AbfFKNRo (ORCPT
+        id S2390760AbfFKNZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:25:42 -0400
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:37081 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387578AbfFKNZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:17:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560259063; bh=YR8wGsHZxrVLbZLbTkExH+WvaqI93EK8wnfiRBAnvNY=; h=Date:From:Reply-To:Subject:References:From:Subject; b=k5lIoQVwpZXTHqWCil8IQvmH0gnCRmjC170h8DBKftjDqH3yXrHlpVeuCPyx6jUCHU7MX/8GQLymncIn7SBCP1N06DykL1E8NZCJs2YVYGsgy418E+XwqV3t55Ajea8M1pGXlDbwqet2nWdRpi3MhUX3yFGCQYWDAZSsSoBbRt/Szgz9nc2JuMKpQuxXrwTwpfEGRoY6zIDclwbFz2LGKpSmGbkmmpprWQ3DKyvdjL7XharpVzotPFsUvcvkczAhgmGivyno+fJqQT9xFzKE0aaayocc/3mALwxcffuv4RZq2/7lGk5nfmmZNJ1zn/SQVJ4SBpJVwey0ELkr580Axw==
-X-YMail-OSG: wyzuOYIVM1mTwAKarG5v4oYzdTn9hLH9hV7G10xdh_YD6vmN3wwcnyjpPLmJQUN
- urdCqtwgXiDQLcoTQcScWWwiqZ_rl20ujYJvDHpqjWYy7b_uakTf99dQyKcggwCAVJrmnlL9n.N7
- POaVjY9hfmQNJddv7ksiR1T7M_IXYdZkDDWKFM27T4gx0BK.AYHy3c2dm2AHMrAakbxyvdPGXdFy
- zBrPP92NEYGqeqxBmf88U_.wblVKiR2DGGZSIYMa07_MvwwS1_iBVhEB3aUI0ZcnLd5OO3C3G17E
- eWUxH01WG5vZu__nsMYQWHXZ6tCaq8fsXioIcfXTn6Tflp9Y54zpi.C21NdnUMWAArP1Sj2hHkO4
- 3ZU.uW304YSlaak.Gi91aUfVaoosX3jPmmtwUX4ySyOuiFu8vyOGnGJ46nZoPhOnrbbTm2LzZlJw
- Uxv6.Xkw0_9YvXIMb3ZnJzGjWrBfOYHN.j.ZB5_kSKp8gkcVhcI5wncYV3PBCJ4OGcfVQotDaEmB
- 78QJm.QhcwFEqI53VejgXieVctBmlWStf3RttdXeUheW.0Va1sl9YDEs1_xgl9ZYrsnfX9ioyHS2
- x5upzSBYFsVYeOXwBvBxrlE7NjToatOTgZCdFCM9bZewOz1XZ604GblzynQZ5B1NMepNAJYjl8fm
- 1Fg7Y_xG949l3qQew406CsUxELi4eqFDrnLdxPak1K9ROgitUMW9is1n6wGPt0tDP_Mty5iq7qpH
- XLOpl5eCKaIrqLyrHFrxkRJ5U8II.zQnsXEWtK9y94eLqOlP9_hwD8GfuTzwswd0IPUbf1FVBC6Q
- ybAWMREy.C7P2uGabJMZAbMpAi3nPMBaSqq2Fw90tl6JIiXrSyaeiMlzeineKdNU5lu28Ua8gDFe
- Wd1mpnpPADOXC4pDx6c66P9LS.UfLKidxAAmxrCMsLz3Pv2Ee_.emKxcNyiExtCw7.VTVaiuv2B4
- rNEbZ1sUb02JnLsB6Uhi.xIEZ2Lm.ldYRgQexnlieCdHp6heXvU37uYxtcH8ueKVYGMgAteZS6Gt
- 3X7PvxnunocsvTiDbizD0PVbWxHFVDUMxy9Q5ULjIxxM79hSeggVr1CLZZcrxuFVd.vYv_eyxh6F
- AJjUxhVf1ynNlKgFuJ0.4GC2BYywoo64CsPC7SdX5oEbpdDDD9rRGndt4wywz7St56Lnf6LEEMj.
- BlZsu56RcbcjzJbtOSVK2gFRGIN1IWe8cBA7gXajyWyAe46SkjpZaDa5c0eY-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Jun 2019 13:17:43 +0000
-Date:   Tue, 11 Jun 2019 13:17:42 +0000 (UTC)
-From:   "Mrs. Maria Johnson" <mrsmariiajohnson03@gmail.com>
-Reply-To: "Mrs. Maria Johnson" <mrsmariiajohnson03@gmail.com>
-Message-ID: <2136358213.1351287.1560259062307@mail.yahoo.com>
-Subject: From Mrs Maria Jornson
+        Tue, 11 Jun 2019 09:25:42 -0400
+Received: by mail-pg1-f181.google.com with SMTP id 20so6988825pgr.4;
+        Tue, 11 Jun 2019 06:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z3SVKPRw9ZtZpo81aZhS+cQGKdAzxZJguviRIBAK0b4=;
+        b=hkx2GURtFLnpgApzKLSXJXyEaJj/ziUqazQEkyPie9Mnwpy4xHumI5UUcVe5mQza0b
+         lKH388U00jEmGYS0jIwaGGYpjrprh72VY+OnyINgSvTUXaYlPdxS3mj1Vjren5hcpCiD
+         3j69a1dFIzq97phFF0iX9sgjkxwfs7m0o4FGmtMxhv+XGKm8J33kSmuSDw+sq+oH1w6s
+         SMmnaIOnv18Yq9M2kVkkdawBKUmOD5mewX4Wtlupss724qP3FdnyRFlv27hqw6Ws5qRv
+         VnLC7hoeVOXhKmqAII4wOKn1Kn7GOHXop+dfFC0bDzxYLkV4InOdMxh3fhEFg8UmkxZf
+         /ITA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z3SVKPRw9ZtZpo81aZhS+cQGKdAzxZJguviRIBAK0b4=;
+        b=OJ3gGoZNcxQgaUxgsVjSnVuMShJlMa9JxQwoyvmxz+s/Pd3TGThETHAHlvuZeNrdkP
+         J3CA0HdDCIHOsOoFMSKPFnkVj6CBOO2oNGDVcoAE9ftI/6k0affsEE0dQhEJlj7qHjCr
+         wbXZUc82nr5D5/E/aNG6k5PcjTVmOSP7lODVi4cC/wI4Z1xcimNSQXcR9nfX/TaRPSzL
+         HLmnjR7YLtRLddxyjWBAirF4EnLzVIi1bCbr4GkgLAeWVXP/7T6ReqGD50/JEjh5wsPj
+         VcMnD/9VRyt7U9actKN134Gx4L2lOXgnAuv0+P6jlqBUCu5B6efX2FL5WXnmuqOaO65E
+         932Q==
+X-Gm-Message-State: APjAAAUKm9WWRriF2FePqCHCMjcNAzVABaxF22jKQOhwql/ap8HtkIAx
+        XV/r8esiGPcuWGooWEuE0bo=
+X-Google-Smtp-Source: APXvYqzfHAwVPoBeu6L7A6Wles5wPTy689onnibJXlJpjtnK/lBBERnuRNp3cG0NgCtiqlq1Zmqwgg==
+X-Received: by 2002:a17:90a:b94c:: with SMTP id f12mr26529322pjw.64.1560259541181;
+        Tue, 11 Jun 2019 06:25:41 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:1677])
+        by smtp.gmail.com with ESMTPSA id o6sm14173077pfo.164.2019.06.11.06.25.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 06:25:40 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 06:25:36 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     lizefan@huawei.com, hannes@cmpxchg.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        sfr@canb.auug.org.au
+Subject: Re: -next-20190607 kernel: oopses on bootup or shutdown
+Message-ID: <20190611132536.GE3341036@devbig004.ftw2.facebook.com>
+References: <20190611085753.GA12364@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <2136358213.1351287.1560259062307.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13634 YahooMailBasic Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611085753.GA12364@amd>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend.
+On Tue, Jun 11, 2019 at 10:57:53AM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> It failed to boot three times; now it booted but failed on shutdown.
+> 
+> Hardware is thinkpad X60 (32bit x86), and I'm copying oops by hand.
 
-I am Mrs Maria Johnson an Active Banker, I saw your email address while browsing through the bank DTC Screen in my office yesterday, so i decided to use this very chance to know you more I have deal of ($10.5 million Dollars) to transfer into your account, if you are interested get back to me for more details.
+Can you please try next-20190611?  It should be fixed now.
 
-Thanks for your co-operation.
+Thanks.
 
-Your faithfully
-Mrs Maria Johnson
+-- 
+tejun
