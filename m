@@ -2,81 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD6043CE5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2893CE90
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388484AbfFKOTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:19:11 -0400
-Received: from verein.lst.de ([213.95.11.211]:51618 "EHLO newverein.lst.de"
+        id S2391455AbfFKOVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:21:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:22932 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387551AbfFKOTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:19:11 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 3E91868B02; Tue, 11 Jun 2019 16:18:42 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 16:18:41 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Vladimir Murzin <vladimir.murzin@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, uclinux-dev@uclinux.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/17] mm: stub out all of swapops.h for !CONFIG_MMU
-Message-ID: <20190611141841.GA29151@lst.de>
-References: <20190610221621.10938-1-hch@lst.de> <20190610221621.10938-3-hch@lst.de> <516c8def-22db-027c-873d-a943454e33af@arm.com>
+        id S2387767AbfFKOVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:21:19 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E922308218D;
+        Tue, 11 Jun 2019 14:21:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-126.rdu2.redhat.com [10.10.120.126])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D9956611AA;
+        Tue, 11 Jun 2019 14:21:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: What do LSMs *actually* need for checks on notifications?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <516c8def-22db-027c-873d-a943454e33af@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31008.1560262869.1@warthog.procyon.org.uk>
+Date:   Tue, 11 Jun 2019 15:21:09 +0100
+Message-ID: <31009.1560262869@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 11 Jun 2019 14:21:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 11:15:44AM +0100, Vladimir Murzin wrote:
-> On 6/10/19 11:16 PM, Christoph Hellwig wrote:
-> > The whole header file deals with swap entries and PTEs, none of which
-> > can exist for nommu builds.
-> 
-> Although I agree with the patch, I'm wondering how you get into it?
+To see if we can try and make progress on this, can we try and come at this
+from another angle: what do LSMs *actually* need to do this?  And I grant that
+each LSM might require different things.
 
-Without that the RISC-V nommu blows up like this:
+-~-
+
+[A] There are a bunch of things available, some of which may be coincident,
+depending on the context:
+
+ (1) The creds of the process that created a watch_queue (ie. opened
+     /dev/watch_queue).
+
+ (2) The creds of the process that set a watch (ie. called watch_sb,
+     KEYCTL_NOTIFY, ...);
+
+ (3) The creds of the process that tripped the event (which might be the
+     system).
+
+ (4) The security attributes of the object on which the watch was set (uid,
+     gid, mode, labels).
+
+ (5) The security attributes of the object on which the event was tripped.
+
+ (6) The security attributes of all the objects between the object in (5) and
+     the object in (4), assuming we work from (5) towards (4) if the two
+     aren't coincident (WATCH_INFO_RECURSIVE).
+
+At the moment, when post_one_notification() wants to write a notification into
+a queue, it calls security_post_notification() to ask if it should be allowed
+to do so.  This is passed (1) and (3) above plus the notification record.
 
 
-In file included from mm/vmscan.c:58:
-./include/linux/swapops.h: In function ‘pte_to_swp_entry’:
-./include/linux/swapops.h:71:15: error: implicit declaration of function ‘__pte_to_swp_entry’; did you mean ‘pte_to_swp_entry’? [-Werror=implicit-function-declaration]
-  arch_entry = __pte_to_swp_entry(pte);
-               ^~~~~~~~~~~~~~~~~~
-               pte_to_swp_entry
-./include/linux/swapops.h:71:13: error: incompatible types when assigning to type ‘swp_entry_t’ {aka ‘struct <anonymous>’} from type ‘int’
-  arch_entry = __pte_to_swp_entry(pte);
-             ^
-./include/linux/swapops.h:72:19: error: implicit declaration of function ‘__swp_type’; did you mean ‘swp_type’? [-Werror=implicit-function-declaration]
-  return swp_entry(__swp_type(arch_entry), __swp_offset(arch_entry));
-                   ^~~~~~~~~~
-                   swp_type
-./include/linux/swapops.h:72:43: error: implicit declaration of function ‘__swp_offset’; did you mean ‘swp_offset’? [-Werror=implicit-function-declaration]
-  return swp_entry(__swp_type(arch_entry), __swp_offset(arch_entry));
-                                           ^~~~~~~~~~~~
-                                           swp_offset
-./include/linux/swapops.h: In function ‘swp_entry_to_pte’:
-./include/linux/swapops.h:83:15: error: implicit declaration of function ‘__swp_entry’; did you mean ‘swp_entry’? [-Werror=implicit-function-declaration]
-  arch_entry = __swp_entry(swp_type(entry), swp_offset(entry));
-               ^~~~~~~~~~~
-               swp_entry
-./include/linux/swapops.h:83:13: error: incompatible types when assigning to type ‘swp_entry_t’ {aka ‘struct <anonymous>’} from type ‘int’
-  arch_entry = __swp_entry(swp_type(entry), swp_offset(entry));
-             ^
-./include/linux/swapops.h:84:9: error: implicit declaration of function ‘__swp_entry_to_pte’; did you mean ‘swp_entry_to_pte’? [-Werror=implicit-function-declaration]
-  return __swp_entry_to_pte(arch_entry);
-         ^~~~~~~~~~~~~~~~~~
-         swp_entry_to_pte
-./include/linux/swapops.h:84:9: error: incompatible types when returning type ‘int’ but ‘pte_t’ {aka ‘struct <anonymous>’} was expected
-  return __swp_entry_to_pte(arch_entry);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[1]: *** [scripts/Makefile.build:278: mm/vmscan.o] Error 1
-make: *** [Makefile:1071: mm] Error 2
-make: *** Waiting for unfinished jobs....
+[B] There are a number of places I can usefully potentially add hooks:
+
+ (a) The point at which a watch queue is created (ie. /dev/watch_queue is
+     opened).
+
+ (b) The point at which a watch is set (ie. watch_sb).
+
+ (c) The point at which a notification is generated (ie. an automount point is
+     tripped).
+
+ (d) The point at which a notification is delivered (ie. we write the message
+     into the queue).
+
+ (e) All the points at which we walk over an object in a chain from (c) to
+     find the watch on which we can effect (d) (eg. we walk rootwards from a
+     mountpoint to find watches on a branch in the mount topology).
+
+
+[C] Problems that need to be resolved:
+
+ (x) Do I need to put a security pointer in struct watch for the active LSM to
+     fill in?  If so, I presume this would need passing to
+     security_post_notification().
+
+ (y) What checks should be done on object destruction after final put and what
+     contexts need to be supplied?
+
+     This one is made all the harder because the creds that are in force when
+     close(), exit(), exec(), dup2(), etc. close a file descriptor might need
+     to be propagated to deferred-fput, which must in turn propagate them to
+     af_unix-cleanup, and thence back to deferred-fput and thence to implicit
+     unmount (dissolve_on_fput()[*]).
+
+     [*] Though it should be noted that if this happens, the subtree cannot be
+     	 attached to the root of a namespace.
+
+     Further, if several processes are sharing a file object, it's not
+     predictable as to which process the final notification will come from.
+
+ (z) Do intermediate objects, say in a mount topology notification, actually
+     need to be checked against the watcher's creds?  For a mount topology
+     notification, would this require calling inode_permission() for each
+     intervening directory?
+
+     Doing that might be impractical as it would probably have to be done
+     outside of of the RCU read lock and the filesystem ->permission() hooks
+     might want to sleep (to touch disk or talk to a server).
+
+David
