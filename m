@@ -2,105 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9C4D3C39F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2661F3C380
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403910AbfFKFuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 01:50:55 -0400
-Received: from mga06.intel.com ([134.134.136.31]:38117 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403879AbfFKFux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:50:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 22:50:51 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 10 Jun 2019 22:50:49 -0700
-Cc:     baolu.lu@linux.intel.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>, "cai@lca.pw" <cai@lca.pw>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>
-Subject: Re: [PATCH 5/6] iommu/vt-d: Cleanup after delegating DMA domain to
- generic iommu
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-References: <20190609023803.23832-1-baolu.lu@linux.intel.com>
- <20190609023803.23832-6-baolu.lu@linux.intel.com>
- <1560192412.27481.12.camel@intel.com>
- <dbd8a4dcc9de6e7b3232c6c90597939a794860b9.camel@intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <e7e4af38-97ab-9f15-4072-654f704c9f31@linux.intel.com>
-Date:   Tue, 11 Jun 2019 13:43:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <dbd8a4dcc9de6e7b3232c6c90597939a794860b9.camel@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2391285AbfFKFpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 01:45:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44556 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391271AbfFKFpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 01:45:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n2so6276869pgp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=AC7Q5AeoR3PoVwY63Fs/Bbr4OkIe7mdwRdwoih2xQXM=;
+        b=d1SfvDdSO5LW24x4Uqc4ksCtu++Q8Xe8tw9gXshryTCJiPoZz0s2ehJGCuxbtZc+Vc
+         r6bsQsx2OSum0krPWyUeMBF08aV5qMqV7CH5WYpZGKgU3egCYZ2nlkeWIuUEDScBt/xi
+         yRikO4Lzu99FnXADtjH0CcY+k0YvtqIljAmC/BkxMNHA3BKUWQXAvueoRX+3vZPDl60X
+         rwkil8iODmJ5O7viS3hwpEJKtVaxMzrCV6V3jfWxa21L+giD5wlK4eFdU0k9VV3/7xhl
+         LpxWSib2rl0GSWmdXAxh+5cchiGRFjAGBkjBjoas/JZJ4e0WeGeaWRM2msuax0+vpcw4
+         un3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AC7Q5AeoR3PoVwY63Fs/Bbr4OkIe7mdwRdwoih2xQXM=;
+        b=ns8kMQvCJqgfXA4qBFQV5/ARk4whRcvURts26ar7sndB4aw0qOknzInXGXmSS+mdic
+         nAknkc/LWOkwYqNiZL/danUJvM/hKwYgALB2FyoHle+6OrjOjdzS0L6kZTYKuO5Q9vTz
+         0Me8Bros0LG6lw2XgIFKAVZq9MzEMAq1KziTRCg105wIcZiQANEU6ui+gK9Ty0R8C9iC
+         7gR2DubliJdveSPsww5u6V/aDjkD+sz2yrFfOSNA/rtG6J2wne1gZ8JNk8o7kOOu7yRg
+         BTzDw1JG6QepBR7ytqqmusnm3CUGLSL8PmBRxlq4XP1YUhQJmmAUB8rKxgipLUHVsODE
+         rZaw==
+X-Gm-Message-State: APjAAAXrE5FPdOSAuTi4tWkRlTgtbcVsl+0COBB3pPuI38VtJ4M5xGrZ
+        nZynAmO5jCIUApG+GPD2Uw/rPA==
+X-Google-Smtp-Source: APXvYqwBOvCQnw3NQjALS8zfnVm+kEy+W4gCD/woV1b1tFEZz2+HFTLQGa7knvwNAaCponAWXJ7SvQ==
+X-Received: by 2002:a63:8049:: with SMTP id j70mr16231374pgd.63.1560231909490;
+        Mon, 10 Jun 2019 22:45:09 -0700 (PDT)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id d35sm11609228pgm.31.2019.06.10.22.45.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 10 Jun 2019 22:45:08 -0700 (PDT)
+From:   Yash Shah <yash.shah@sifive.com>
+To:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, u.kleine-koenig@pengutronix.de
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, palmer@sifive.com,
+        paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
+        sachin.ghadi@sifive.com, Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH v13 0/2] PWM support for HiFive Unleashed
+Date:   Tue, 11 Jun 2019 11:14:42 +0530
+Message-Id: <1560231884-15694-1-git-send-email-yash.shah@sifive.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch series adds a PWM driver and DT documentation
+for HiFive Unleashed board. The patches are mostly based on
+Wesley's patch.
 
-On 6/11/19 3:25 AM, Sai Praneeth Prakhya wrote:
-> On Mon, 2019-06-10 at 11:45 -0700, Mehta, Sohil wrote:
->> On Sun, 2019-06-09 at 10:38 +0800, Lu Baolu wrote:
->>>   static int __init si_domain_init(int hw)
->>> @@ -3306,14 +3252,13 @@ static int __init init_dmars(void)
->>>                  if (pasid_supported(iommu))
->>>                          intel_svm_init(iommu);
->>>   #endif
->>> -       }
->>>   
->>> -       /*
->>> -        * Now that qi is enabled on all iommus, set the root entry
->>> and flush
->>> -        * caches. This is required on some Intel X58 chipsets,
->>> otherwise the
->>> -        * flush_context function will loop forever and the boot
->>> hangs.
->>> -        */
->>> -       for_each_active_iommu(iommu, drhd) {
->>> +               /*
->>> +                * Now that qi is enabled on all iommus, set the root
->>> entry and
->>> +                * flush caches. This is required on some Intel X58
->>> chipsets,
->>> +                * otherwise the flush_context function will loop
->>> forever and
->>> +                * the boot hangs.
->>> +                */
->>>                  iommu_flush_write_buffer(iommu);
->>>                  iommu_set_root_entry(iommu);
->>>                  iommu->flush.flush_context(iommu, 0, 0, 0,
->>> DMA_CCMD_GLOBAL_INVL);
->>
->> This changes the intent of the original code. As the comment says
->> enable QI on all IOMMUs, then flush the caches and set the root entry.
->> The order of setting the root entries has changed now.
->>
->> Refer:
->> Commit a4c34ff1c029 ('iommu/vt-d: Enable QI on all IOMMUs before
->> setting root entry')
-> 
-> Thanks Sohil! for catching the bug.
-> Will send a V2 to Lu Baolu fixing this.
+This patchset is based on Linux v5.2-rc1 and tested on HiFive Unleashed
+board with additional board related patches needed for testing can be
+found at dev/yashs/pwm_v13 branch of:
+https://github.com/yashshah7/riscv-linux.git
 
-Okay, I will submit a v2 of this series later.
+v13
+- Rebased onto Mainline v5.2-rc1
+- Correct the order of pwmchip_remove() after clk_disable() in .remove()
 
-> 
-> Regards,
-> Sai
+v12
+- Rebased onto Mainline v5.1
 
-Best regards,
-Baolu
+v11
+- Change naming convention for pwm_device and pwm_sifive_ddata pointers
+- Assign of_pwm_xlate_with_flag() to of_xlate func ptr since this driver
+  use three pwm-cells (Issue reported by Andreas Schwab <schwab@suse.de>
+- Other minor fixes
+
+v10
+- Use DIV_ROUND_CLOSEST_ULL instead of div_u64_round
+- Change 'num' defination to u64 bit (in pwm_sifive_apply).
+- Remove the usage of pwm_get_state()
+
+v9
+- Use appropriate bitfield macros
+- Add approx_period in pwm_sifive_ddata struct and related changes
+- Correct the eqn for calculation of frac (in pwm_sifive_apply)
+- Other minor fixes
+
+v8
+- Typo corrections
+- Remove active_user and related code
+- Do not clear PWM_SIFIVE_PWMCFG_EN_ALWAYS
+- Other minor fixes
+
+v7
+- Modify description of compatible property in DT documentation
+- Use mutex locks at appropriate places
+- Fix all bad line breaks
+- Allow enabling/disabling PWM only when the user is the only active user
+- Remove Deglitch logic
+- Other minor fixes
+
+v6
+- Remove the global property 'sifive,period-ns'
+- Implement free and request callbacks to maintain user counts.
+- Add user_count member to struct pwm_sifive_ddata
+- Allow period change only if user_count is one
+- Add pwm_sifive_enable function to enable/disable PWM
+- Change calculation logic of frac (in pwm_sifive_apply)
+- Remove state correction
+- Remove pwm_sifive_xlate function
+- Clock to be enabled only when PWM is enabled
+- Other minor fixes
+
+v5
+- Correct the order of compatible string properties
+- PWM state correction to be done always
+- Other minor fixes based upon feedback on v4
+
+v4
+- Rename macros with appropriate names
+- Remove unused macros
+- Rename struct sifive_pwm_device to struct pwm_sifive_ddata
+- Rename function prefix as per driver name
+- Other minor fixes based upon feedback on v3
+
+v3
+- Add a link to the reference manaul
+- Use appropriate apis for division operation
+- Add check for polarity
+- Enable clk before calling clk_get_rate
+- Other minor fixes based upon feedback on v2
+
+V2 changed from V1:
+- Remove inclusion of dt-bindings/pwm/pwm.h
+- Remove artificial alignments
+- Replace ioread32/iowrite32 with readl/writel
+- Remove camelcase
+- Change dev_info to dev_dbg for unnecessary log
+- Correct typo in driver name
+- Remove use of of_match_ptr macro
+- Update the DT compatible strings and Add reference to a common
+  versioning document
+
+Yash Shah (2):
+  pwm: sifive: Add DT documentation for SiFive PWM Controller
+  pwm: sifive: Add a driver for SiFive SoC PWM
+
+ .../devicetree/bindings/pwm/pwm-sifive.txt         |  33 ++
+ drivers/pwm/Kconfig                                |  11 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-sifive.c                           | 339 +++++++++++++++++++++
+ 4 files changed, 384 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+ create mode 100644 drivers/pwm/pwm-sifive.c
+
+-- 
+1.9.1
+
