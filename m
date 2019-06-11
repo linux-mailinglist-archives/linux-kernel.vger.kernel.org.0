@@ -2,72 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 136FB3D317
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F283D319
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:58:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405550AbfFKQ45 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 11 Jun 2019 12:56:57 -0400
-Received: from smtp2.ono.com ([62.42.230.179]:54831 "EHLO smtp2.ono.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405445AbfFKQ4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 12:56:51 -0400
-X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.11.154516:17:16.798,ip=62.42.230.144,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, __MIME_VERSION,
- __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __ANY_URI,
- __FRAUD_BODY_WEBMAIL, __URI_NO_WWW, __FRAUD_PAPERWORK, ECARD_WORD,
- __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __FRAUD_MONEY_BIG_COIN_EN,
- __FRAUD_MONEY_CURRENCY_DOLLAR, __INT_PROD_LOC, __LINES_OF_YELLING,
- __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_1000_1099,
- __MIME_TEXT_P1, __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10,
- __FRAUD_MONEY_CURRENCY, __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __FRAUD_COMMON,
- __MIME_TEXT_P, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_2000_LESS,
- __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
- BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs05 (62.42.230.144) by smtp2.ono.com (9.0.019.09-1)
-        id 5CAF0F5D02FC4D80; Tue, 11 Jun 2019 18:56:39 +0200
-Received: from (149.126.75.9) by webmailcpr05n.ono.com;  Tue, 11 Jun 2019 18:56:29 +0200
-Message-ID: <4381757.392811560272189912.JavaMail.defaultUser@defaultHost>
-Date:   Tue, 11 Jun 2019 18:56:29 +0200 (CEST)
-From:   "Mrs. Patrick Huang" <daniperez@ono.com>
-Reply-To: huangpatrick946@gmail.com
-Subject: Gooday To You,
-MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-To:     unlisted-recipients:; (no To-header on input)
+        id S2405583AbfFKQ5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 12:57:42 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33819 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404099AbfFKQ5l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 12:57:41 -0400
+Received: by mail-pl1-f196.google.com with SMTP id i2so5374925plt.1;
+        Tue, 11 Jun 2019 09:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LRf7jr0/HLf72a+GCXiXIigk1cbBqM+c/XCEYVEbVfg=;
+        b=eRXbtH0f1kXlU/cWfbn2hNQ0rQG8fc8+TxdPwtiZfqj/7Okr/zjWiIo1pjc5NtrpGS
+         qroG2rFEMyH02ZhC+Mllt9e351NOylIugvL3xEybuCPelPlWQ+IagF9emLex4b2Tj+Zp
+         9NOFE66x219JcSYURURWOPD3Ec5nwdvLh3U5u3HxiSsXKd0KbP0ELQuu6Lf9r9Bc2VHe
+         UGqoZQm5kDnvTjiqglU8e3f/XlZ6Sz82MA14d6HIZgnTFZFXDwy2Pi+323YkZW3RBY4X
+         toZRcrKRW1evx4JP7mAuiZyiYsuo/erougOEJoxqfv1HYkEMMnqRIjl/goKTkIT8p5B6
+         sRmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LRf7jr0/HLf72a+GCXiXIigk1cbBqM+c/XCEYVEbVfg=;
+        b=H9GXAObt9aUT/9hKsleHNKiA2uxh0zpM0h6t06uwo46sZiwdQG5H/qdH90qzvrnBe2
+         cKFSzV9RFD4aKpF+VcQ2fTJOVkXje1tC93AsrguFiI3S4NclCU0gRxu1rQhDZoS6pWxZ
+         ySPKDA0qlQ4Jsoy1Gv2sA2KK7RR+av7TLebBjGyBrZ5JpHl1iQ32+VpwRSOXeIBkEvYZ
+         3BS1kJQYGAdNu+EI4obJc7FL8WB+SDIAZl88sw1DIuXGKhAyw4DwSUcPExWyARuE33nb
+         33hz0rV2iS/0/reZBPBfVGw9nBZJOfBVHHnaNYyAF2FLTRBMryDUEUTtoHuyZMVRQ3Nr
+         htNg==
+X-Gm-Message-State: APjAAAWI4tE2jorl+ioUyd9USDozHDbGzJs2s86zEfoLabXLeO+9ZwaN
+        WcS/ase+hJyiG1RKasxqmJQ=
+X-Google-Smtp-Source: APXvYqzWMsD88MKj9it03NOFc2BtSLO1KcHll6YadGFk1Xj33L6yRvIe8cG87oclg6m35xQDh+5Dag==
+X-Received: by 2002:a17:902:8d92:: with SMTP id v18mr53873863plo.211.1560272260451;
+        Tue, 11 Jun 2019 09:57:40 -0700 (PDT)
+Received: from [10.2.189.129] ([66.170.99.2])
+        by smtp.gmail.com with ESMTPSA id c11sm5644951pgg.2.2019.06.11.09.57.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 09:57:39 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH v3 0/3] KVM: Yield to IPI target if necessary
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <CANRm+CyZcvuT80ixp9f0FNmjN+rTUtw8MshtBG0Uk4L1B1UjDw@mail.gmail.com>
+Date:   Tue, 11 Jun 2019 09:57:36 -0700
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <153047ED-75E2-4E70-BC33-C5FF27C08638@gmail.com>
+References: <1559178307-6835-1-git-send-email-wanpengli@tencent.com>
+ <20190610143420.GA6594@flask> <20190611011100.GB24835@linux.intel.com>
+ <CANRm+Cwv5jqxBW=Ss5nkX7kZM3_Y-Ucs66yx5+wN09=W4pUdzA@mail.gmail.com>
+ <F136E492-5350-49EE-A856-FBAEDB12FF99@gmail.com>
+ <CANRm+CyZcvuT80ixp9f0FNmjN+rTUtw8MshtBG0Uk4L1B1UjDw@mail.gmail.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is to officially inform you that ATM card number: 3774 2856 7847 
-9006 worth fifteen Million US dollars($15. Million US dollars.) has 
-been credited in your favor in bid to compensate you on your contract 
-payment since you are next on our inheritance file for the second part 
-of this fiscal Year 2017.The card centre will send you an ATM CARD 
-which you will use to withdraw your money in any ATM MACHINE in the 
-world.
+> On Jun 11, 2019, at 3:02 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>=20
+> On Tue, 11 Jun 2019 at 09:48, Nadav Amit <nadav.amit@gmail.com> wrote:
+>>> On Jun 10, 2019, at 6:45 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>>>=20
+>>> On Tue, 11 Jun 2019 at 09:11, Sean Christopherson
+>>> <sean.j.christopherson@intel.com> wrote:
+>>>> On Mon, Jun 10, 2019 at 04:34:20PM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99=
+ wrote:
+>>>>> 2019-05-30 09:05+0800, Wanpeng Li:
+>>>>>> The idea is from Xen, when sending a call-function IPI-many to =
+vCPUs,
+>>>>>> yield if any of the IPI target vCPUs was preempted. 17% =
+performance
+>>>>>> increasement of ebizzy benchmark can be observed in an =
+over-subscribe
+>>>>>> environment. (w/ kvm-pv-tlb disabled, testing TLB flush =
+call-function
+>>>>>> IPI-many since call-function is not easy to be trigged by =
+userspace
+>>>>>> workload).
+>>>>>=20
+>>>>> Have you checked if we could gain performance by having the yield =
+as an
+>>>>> extension to our PV IPI call?
+>>>>>=20
+>>>>> It would allow us to skip the VM entry/exit overhead on the =
+caller.
+>>>>> (The benefit of that might be negligible and it also poses a
+>>>>> complication when splitting the target mask into several PV IPI
+>>>>> hypercalls.)
+>>>>=20
+>>>> Tangetially related to splitting PV IPI hypercalls, are there any =
+major
+>>>> hurdles to supporting shorthand?  Not having to generate the mask =
+for
+>>>> ->send_IPI_allbutself and ->kvm_send_ipi_all seems like an easy to =
+way
+>>>> shave cycles for affected flows.
+>>>=20
+>>> Not sure why shorthand is not used for native x2apic mode.
+>>=20
+>> Why do you say so? native_send_call_func_ipi() checks if allbutself
+>> shorthand should be used and does so (even though the check can be =
+more
+>> efficient - I=E2=80=99m looking at that code right now=E2=80=A6)
+>=20
+> Please continue to follow the apic/x2apic driver. Just apic_flat set
+> APIC_DEST_ALLBUT/APIC_DEST_ALLINC to ICR.
 
-Your personal identification is ATM- 7997. Contact the verification 
-officer 
-patrick huang (Mrs.) on: (huangpatrick946@gmail.com) with the 
-following 
-for proper verification and claim processing: Call him immidiately for 
-confirmation.+233-248-931448
+Indeed - I was sure by the name that it does it correctly. That=E2=80=99s =
+stupid.
 
-
-NOTE:
-You are also required to send to the verification officer/agent a 
-means 
-of Identification which should be a scan copy of your Driver’s License 
-or International Passport for proper verification and authentication.
-
-Regards
-
-STATE INHERITANCE COMMITTEE
-
-
+I=E2=80=99ll add it to the patch-set I am working on (TLB shootdown =
+improvements),
+if you don=E2=80=99t mind.
 
