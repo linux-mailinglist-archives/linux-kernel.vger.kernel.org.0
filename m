@@ -2,67 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C266C3D410
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6B13D433
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406099AbfFKR2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:28:36 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:56302 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405786AbfFKR2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:28:36 -0400
-Received: from zn.tnic (p200300EC2F0A6800C91F6799EDF090E8.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:6800:c91f:6799:edf0:90e8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 16E6A1EC0467;
-        Tue, 11 Jun 2019 19:28:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560274115;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JHsL/2yRGNcuM0XgJZbs2DYkjnFPBd4EyIzkvA+Etl4=;
-        b=et0qxBvOaNc/WQ8z/JDCOwW8xWD3nv96heNnSEsEtSs4xw4YNXdeiF/K8q7pHsfZ65TRDQ
-        vjO/hunutbIc6ZDYkepwTVe0PkQ0qfXBdVg8hVuCnwlVO0eqjrDokCthOojfbouF2Dz5z2
-        dw0RlbZ7LYeGyJj+2YO+BQEH62W6V9w=
-Date:   Tue, 11 Jun 2019 19:28:30 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 02/21] EDAC: Fixes to use put_device() after device_add()
- errors
-Message-ID: <20190611172830.GI31772@zn.tnic>
-References: <20190529084344.28562-1-rrichter@marvell.com>
- <20190529084344.28562-3-rrichter@marvell.com>
+        id S2406300AbfFKRau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:30:50 -0400
+Received: from mail-eopbgr750077.outbound.protection.outlook.com ([40.107.75.77]:51168
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405786AbfFKR34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 13:29:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1DqP+Z9XGiyJYY/FubOBjc7rK1Xg2and/BaFlgFZYcA=;
+ b=BP/JzHHSUCJpCcwn2vztfEfuQ/OVqSYPidXFCjA9qV3Nks/5TSNUEqxhNC9uI0whFSyloLLP0h/UJyMFZA1WhFPiTyy3hf3JKhJaZHJeC/DTAoxJAXVOpwqTfkuxzP2flOiFQgu2C2m/taECWuhbvejsOG/kAlQuz5wcjq1bcuk=
+Received: from BN6PR02CA0089.namprd02.prod.outlook.com (2603:10b6:405:60::30)
+ by DM6PR02MB4937.namprd02.prod.outlook.com (2603:10b6:5:11::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.14; Tue, 11 Jun
+ 2019 17:29:53 +0000
+Received: from BL2NAM02FT035.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::200) by BN6PR02CA0089.outlook.office365.com
+ (2603:10b6:405:60::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1965.12 via Frontend
+ Transport; Tue, 11 Jun 2019 17:29:52 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.80.198)
+ smtp.mailfrom=xilinx.com; arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.80.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.80.198; helo=xir-pvapexch02.xlnx.xilinx.com;
+Received: from xir-pvapexch02.xlnx.xilinx.com (149.199.80.198) by
+ BL2NAM02FT035.mail.protection.outlook.com (10.152.77.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.20.1965.12 via Frontend Transport; Tue, 11 Jun 2019 17:29:52 +0000
+Received: from xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) by
+ xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1531.3; Tue, 11 Jun 2019 18:29:48 +0100
+Received: from smtp.xilinx.com (172.21.105.198) by
+ xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server id
+ 15.1.1531.3 via Frontend Transport; Tue, 11 Jun 2019 18:29:48 +0100
+Envelope-to: arnd@arndb.de,
+ gregkh@linuxfoundation.org,
+ michal.simek@xilinx.com,
+ linux-arm-kernel@lists.infradead.org,
+ robh+dt@kernel.org,
+ mark.rutland@arm.com,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ dragan.cvetic@xilinx.com,
+ derek.kiernan@xilinx.com
+Received: from [149.199.110.15] (port=50346 helo=xirdraganc40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <dragan.cvetic@xilinx.com>)
+        id 1hakai-0002MF-KF; Tue, 11 Jun 2019 18:29:48 +0100
+From:   Dragan Cvetic <dragan.cvetic@xilinx.com>
+To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <michal.simek@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Dragan Cvetic <dragan.cvetic@xilinx.com>,
+        Derek Kiernan <derek.kiernan@xilinx.com>
+Subject: [PATCH V7 00/11] misc: xilinx sd-fec drive
+Date:   Tue, 11 Jun 2019 18:29:34 +0100
+Message-ID: <1560274185-264438-1-git-send-email-dragan.cvetic@xilinx.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190529084344.28562-3-rrichter@marvell.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.80.198;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(396003)(39860400002)(2980300002)(199004)(189003)(54534003)(8676002)(305945005)(246002)(356004)(50466002)(76130400001)(478600001)(36906005)(14444005)(106002)(126002)(316002)(110136005)(54906003)(956004)(28376004)(16586007)(486006)(2906002)(47776003)(2201001)(71366001)(107886003)(2616005)(476003)(44832011)(60926002)(4326008)(186003)(426003)(966005)(70586007)(336012)(6666004)(26005)(8936002)(70206006)(26826003)(36756003)(48376002)(7696005)(6306002)(51416003)(50226002)(7636002)(9786002)(5660300002)(102446001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4937;H:xir-pvapexch02.xlnx.xilinx.com;FPR:;SPF:Pass;LANG:en;PTR:unknown-80-198.xilinx.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 537b90fe-5ed4-4146-ca51-08d6ee9269a9
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:DM6PR02MB4937;
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4937:
+X-MS-Exchange-PUrlCount: 7
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <DM6PR02MB4937991249DA04555CDCFBE1CBED0@DM6PR02MB4937.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2276;
+X-Forefront-PRVS: 006546F32A
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 4IB/cFTabnBDxwCgjV7vMhVs1InEwxOSQhVG1bqMqEj+d9TcOmTh1CSgzROHsP5qq1XKYzglMYAExtnQs0vQM6+rGO0++BqDfAfkkcsO9W9z8FC8KJmidqlJqRNZSWaUOVWz37lBhCBy3NiHcol8EpLyf5Uv9e50VL5gvFamJnwv5qoToIraBzVXm+Q1MSRlB75TlURQWmkG9oq0wyib8XP0w1ygV/Rlfe5Mgle5giAG7kvYnwPs1vAVRS+gDmsIAtmp7zqwf7+4wBYXYcXGw2Ivy80wGFoQ3yQRqDPALds9on6ufkNcPxDna8zjwq/JbTGNLpjmEVuSjd68bhijrrgnA2MevbUXF8l0+YaHWsyPgz68KmhKXmS+X4S5f4xIkB4/JW5c6ZA2v+rf+cA27gWRMrV9ATDA8zhau1C9ndw=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2019 17:29:52.3263
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 537b90fe-5ed4-4146-ca51-08d6ee9269a9
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4937
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 08:44:05AM +0000, Robert Richter wrote:
-> Always use put_device() after device_add() failed.
-> 
-> Signed-off-by: Robert Richter <rrichter@marvell.com>
-> ---
->  drivers/edac/edac_mc_sysfs.c | 36 +++++++++++++++++++-----------------
->  1 file changed, 19 insertions(+), 17 deletions(-)
+This patchset is adding the full Soft Decision Forward Error
+Correction (SD-FEC) driver implementation, driver DT binding and
+driver documentation.
 
-I already have a partial fix for that, you can send me the rest ontop:
+Forward Error Correction (FEC) codes such as Low Density Parity
+Check (LDPC) and turbo codes provide a means to control errors in
+data transmissions over unreliable or noisy communication
+channels. The SD-FEC Integrated Block is an optimized block for
+soft-decision decoding of these codes. Fixed turbo codes are
+supported directly, whereas custom and standardized LDPC codes
+are supported through the ability to specify the parity check
+matrix through an AXI4-Lite bus or using the optional programmable
+(PL)-based support logic. For the further information see
+https://www.xilinx.com/support/documentation/ip_documentation/
+sd_fec/v1_1/pg256-sdfec-integrated-block.pdf
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/commit/?h=for-next&id=f5d59da9663d115b9cf62cce75a33382c880b560
+This driver is a platform device driver which supports SDFEC16
+(16nm) IP. SD-FEC driver supports LDPC decoding and encoding and
+Turbo code decoding. LDPC codes can be specified on
+a codeword-by-codeword basis, also a custom LDPC code can be used.
 
-Thx.
+The SD-FEC driver exposes a char device interface and supports
+file operations: open(), close(), poll() and ioctl(). The driver
+allows only one usage of the device, open() limits the number of
+driver instances. The driver also utilize Common Clock Framework
+(CCF).
+
+The control and monitoring is supported over ioctl system call.
+The features supported by ioctl():
+- enable or disable data pipes to/from device
+- configure the FEC algorithm parameters
+- set the order of data
+- provide a control of a SDFEC bypass option
+- activates/deactivates SD-FEC
+- collect and provide statistical data
+- enable/disable interrupt mode
+
+Poll can be utilized to detect errors on IRQ trigger rather than
+using looping status and stats ioctl's.
+
+Tested-by: Santhosh Dyavanapally <SDYAVANA@xilinx.com>
+Tested by: Punnaiah Choudary Kalluri <punnaia@xilinx.com>
+Tested-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
+Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+
+Changes V1 -> V2:
+- Removed unnecesary comenting from the commit messages.
+- Removed error log messages which can be triggered from user space.
+- Corrected the SDFEC table end addresses.
+- Removed casting between user pointer and kernel pointer.
+- Corrected definition of ioctl command code, used a corect type for
+size parameters.
+- Changes to declarations of IOCTL that pass structures, i.e. do not
+use pointers for sizeof as prevents compile time checks
+- IOCTL size fix, using a paging to manage a memory. Implemented a big
+tables transfer from user to kernel with get_user_pages_fast().
+- Removed unnecessary check after container_of.
+- Removed not needed ioctl code checkes inside ioctl handler.
+- Implemented compat_ioctl.
+- Updated reviewer and tester lists.
+- Updated documentation, added Limitation chapter related to fork()
+and dup().
+
+Link to V1 patch series:
+https://lore.kernel.org/lkml/1552997064-432700-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V2 -> V3:
+- Corrected a licence in xilinx_sdfec.h changed to uapi licence format.
+- Corrected driver variable data types into user space data types.
+
+Link to V2 patch series:
+https://lore.kernel.org/lkml/1554804414-206099-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V3 -> V4:
+- Migrate to simplier misc driver
+- Fix DT example
+- Remove helper function
+- Remove unused open_count variable
+- Remove some logs
+- Change log level to dev_dbg in the most logs
+- Change spin lock to spin_lock_irqsave/spin_lock_irqrestore
+- Correct a licence date in xilinx_sdfec.c
+- Add PTR_ERR in clock handling
+
+Link to V3 patch series:
+https://lore.kernel.org/lkml/1556402706-176271-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V4 -> V5:
+- change atomic variables to c type variables
+- align spinlock name to better description
+- correct a logicla error in LDPC algorithm
+- remove log messages
+- remove useless if statements
+- remove not needed fec_id variable
+- squash commit 4 with 6
+
+Link to V4 patch series:
+https://lore.kernel.org/lkml/1558784245-108751-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V5 -> V6:
+- the kernle/user space variables convert enums to __u32
+- put device ID under IDR
+
+Link to V5 patch series:
+https://lore.kernel.org/lkml/1560038656-380620-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Changes V6 -> V7:
+- Fix maintainers list
+
+Link to V6 patch series:
+https://lore.kernel.org/lkml/1560174314-124649-1-git-send-email-dragan.cvetic@xilinx.com/
+
+Dragan Cvetic (11):
+  dt-bindings: xilinx-sdfec: Add SDFEC binding
+  misc: xilinx-sdfec: add core driver
+  misc: xilinx_sdfec: Add CCF support
+  misc: xilinx_sdfec: Store driver config and state
+  misc: xilinx_sdfec: Add ability to configure turbo
+  misc: xilinx_sdfec: Add ability to configure LDPC
+  misc: xilinx_sdfec: Add ability to get/set config
+  misc: xilinx_sdfec: Support poll file operation
+  misc: xilinx_sdfec: Add stats & status ioctls
+  Docs: misc: xilinx_sdfec: Add documentation
+  MAINTAINERS: add maintainer for SD-FEC
+
+ .../devicetree/bindings/misc/xlnx,sd-fec.txt       |   58 +
+ Documentation/misc-devices/index.rst               |    1 +
+ Documentation/misc-devices/xilinx_sdfec.rst        |  291 ++++
+ MAINTAINERS                                        |    9 +
+ drivers/misc/Kconfig                               |   12 +
+ drivers/misc/Makefile                              |    1 +
+ drivers/misc/xilinx_sdfec.c                        | 1516 ++++++++++++++++++++
+ include/uapi/misc/xilinx_sdfec.h                   |  448 ++++++
+ 8 files changed, 2336 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/xlnx,sd-fec.txt
+ create mode 100644 Documentation/misc-devices/xilinx_sdfec.rst
+ create mode 100644 drivers/misc/xilinx_sdfec.c
+ create mode 100644 include/uapi/misc/xilinx_sdfec.h
 
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
