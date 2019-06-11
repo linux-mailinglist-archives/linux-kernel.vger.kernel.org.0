@@ -2,238 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 520CA3D4B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A46E33D4C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406725AbfFKR6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:58:38 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36554 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406525AbfFKR6i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:58:38 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d21so5440035plr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 10:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ezWWyHmFr3D52R1hMjM3lFqjTF5qDUt/Gz8+w6Ybeeg=;
-        b=NXabX8VKhqlLINuoMQHbinmJIUbVH0BN+gV3EBZfeU2WCiSZGaL5z1BBk/58lNpSLk
-         6OZS/QBr9Xcqp8FLP0aoFzarQalnNz5o/W4LmU3plkkiz8px1w/b14QGZtx/LpELMViT
-         Cq0zGOdkG0bUXDxO/omwJpd2ykSJkUq6SnLNsOdyke4UAJxvvy6sJ2KCrvAjbWxYUAfv
-         mNi2NE/pq7hdDfUErhLVHQrN935jeqQID0v5d+Q6AZHeXiOFfmRa4pwDvFIRPShgom9k
-         +iiaBa56wRxxqOBXtYUg69RYV0vztcjvfpfAUcRMjGUqaocx9uX+ixG798K/4fglHZBe
-         neug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ezWWyHmFr3D52R1hMjM3lFqjTF5qDUt/Gz8+w6Ybeeg=;
-        b=SlNOOdR/nfDa0A90420rNx16bYUPH8oB/retIgqt0TR3+hFSyTt2eHdVrrr8tGhYAA
-         Nnv9rLbpYhV038MDNaqxDAEXIQB9zIoxWf5wvUiHEbSm7czEDMwrdxuEU040d3YnTFHd
-         mSJ2UHJ0Dz/2WqtUWmSLIWzkmA59N2K0ebGyJN7PKmtN+5Y7WERmIxwbb8DvT43AFj+A
-         7DOge4nDbYan9Xufuua3G4gf5/tRdOdTl0BFzapJM8RMeasoH0gP45GohPHkXtPFUBZm
-         0hMTcCNaKmhDWEyCMYpDTlxCSx4kU3G8ItM4VaHVdq/xGCfnsjgq54kj4W8gqQRYEfM7
-         4ZAQ==
-X-Gm-Message-State: APjAAAWSSCcSS3XCoZIo8ZLD1/yPuGQrjnNFBLr0/SwZ92OmfOx5FJd2
-        +DcRDHULB3Uwo63joxHCqJgnpw==
-X-Google-Smtp-Source: APXvYqxLhXRMoy3niXLUf+3yjcR+oYOqDZdO4IrAaXbVjtaTgohrWX6P7B3Tnf00xa75XTTIUTknBA==
-X-Received: by 2002:a17:902:3341:: with SMTP id a59mr47725400plc.186.1560275916197;
-        Tue, 11 Jun 2019 10:58:36 -0700 (PDT)
-Received: from google.com ([2620:15c:2cd:2:d714:29b4:a56b:b23b])
-        by smtp.gmail.com with ESMTPSA id s64sm13222982pfb.160.2019.06.11.10.58.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 10:58:35 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 10:58:30 -0700
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Iurii Zaikin <yzaikin@google.com>, frowand.list@gmail.com,
-        gregkh@linuxfoundation.org, jpoimboe@redhat.com,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, peterz@infradead.org, robh@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com
-Subject: Re: [PATCH v4 17/18] kernel/sysctl-test: Add null pointer test for
- sysctl.c:proc_dointvec()
-Message-ID: <20190611175830.GA236872@google.com>
-References: <20190514221711.248228-1-brendanhiggins@google.com>
- <20190514221711.248228-18-brendanhiggins@google.com>
- <20190517182254.548EA20815@mail.kernel.org>
- <CAAXuY3p4qhKVsSpQ44_kQeGDMfg7OuFLgFyxhcFWS3yf-5A_7g@mail.gmail.com>
- <20190607190047.C3E7A20868@mail.kernel.org>
+        id S2406697AbfFKR66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:58:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59802 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2406765AbfFKR6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 13:58:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9685EABE1;
+        Tue, 11 Jun 2019 17:58:50 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     stefan.wahren@i2se.com, linux-kernel@vger.kernel.org
+Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        sboyd@kernel.org, eric@anholt.net, f.fainelli@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
+        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, linux-pm@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: [PATCH v3 0/7] cpufreq support for Raspberry Pi
+Date:   Tue, 11 Jun 2019 19:58:32 +0200
+Message-Id: <20190611175839.28351-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607190047.C3E7A20868@mail.kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 12:00:47PM -0700, Stephen Boyd wrote:
-> Quoting Iurii Zaikin (2019-06-05 18:29:42)
-> > On Fri, May 17, 2019 at 11:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Brendan Higgins (2019-05-14 15:17:10)
-> > > > diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
-> > > > new file mode 100644
-> > > > index 0000000000000..fe0f2bae66085
-> > > > --- /dev/null
-> > > > +++ b/kernel/sysctl-test.c
-> > > > +
-> > > > +
-> > > > +static void sysctl_test_dointvec_happy_single_negative(struct kunit *test)
-> > > > +{
-> > > > +       struct ctl_table table = {
-> > > > +               .procname = "foo",
-> > > > +               .data           = &test_data.int_0001,
-> > > > +               .maxlen         = sizeof(int),
-> > > > +               .mode           = 0644,
-> > > > +               .proc_handler   = proc_dointvec,
-> > > > +               .extra1         = &i_zero,
-> > > > +               .extra2         = &i_one_hundred,
-> > > > +       };
-> > > > +       char input[] = "-9";
-> > > > +       size_t len = sizeof(input) - 1;
-> > > > +       loff_t pos = 0;
-> > > > +
-> > > > +       table.data = kunit_kzalloc(test, sizeof(int), GFP_USER);
-> > > > +       KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, input, &len, &pos));
-> > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, len);
-> > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, pos);
-> > > > +       KUNIT_EXPECT_EQ(test, -9, *(int *)table.data);
-> > >
-> > > Is the casting necessary? Or can the macro do a type coercion of the
-> > > second parameter based on the first type?
-> >  Data field is defined as void* so I believe casting is necessary to
-> > dereference it as a pointer to an array of ints. I don't think the
-> > macro should do any type coercion that == operator wouldn't do.
-> >  I did change the cast to make it more clear that it's a pointer to an
-> > array of ints being dereferenced.
-> 
-> Ok, I still wonder if we should make KUNIT_EXPECT_EQ check the types on
-> both sides and cause a build warning/error if the types aren't the same.
-> This would be similar to our min/max macros that complain about
-> mismatched types in the comparisons. Then if a test developer needs to
-> convert one type or the other they could do so with a
-> KUNIT_EXPECT_EQ_T() macro that lists the types to coerce both sides to
-> explicitly.
+Hi all,
+this aims at adding cpufreq support to the Raspberry Pi family of
+boards.
 
-Do you think it would be better to do a phony compare similar to how
-min/max used to work prior to 4.17, or to use the new __typecheck(...)
-macro? This might seem like a dumb question (and maybe it is), but Iurii
-and I thought the former created an error message that was a bit easier
-to understand, whereas __typecheck is obviously superior in terms of
-code reuse.
+The series first factors out 'pllb' from clk-bcm2385 and creates a new
+clk driver that operates it over RPi's firmware interface[1]. We are
+forced to do so as the firmware 'owns' the pll and we're not allowed to
+change through the register interface directly as we might race with the
+over-temperature and under-voltage protections provided by the firmware.
 
-This is what we are thinking right now; if you don't have any complaints
-I will squash it into the relevant commits on the next revision:
+Next it creates a minimal cpufreq driver that populates the CPU's opp
+table, and registers cpufreq-dt. Which is needed as the firmware
+controls the max and min frequencies available.
+
+This was tested on a RPi3b+ and RPI2b, both using multi_v7_defconfig and
+arm64's defconfig.
+
+That's all,
+kind regards,
+Nicolas
+
+[1] https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+
 ---
-From: Iurii Zaikin <yzaikin@google.com>
 
-Adds a warning message when comparing values of different types similar
-to what min() / max() macros do.
+Changes since v2:
+  - Fixed configs to match Stefan's comments
+  - Round OPP frequencies
+  - Rebase onto linux-next
+  - Minor cleanups & checkpatch.pl
 
-Signed-off-by: Iurii Zaikin <yzaikin@google.com>
----
- include/kunit/test.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Changes since v1:
+  - Enabled by default on the whole family of devices
+  - Added/Fixed module support
+  - clk device now registered by firmware driver
+  - raspberrypi-cpufreq device now registered by clk driver
+  - Reimplemented clk rounding unsing determine_rate()
+  - Enabled in configs for arm and arm64
 
-diff --git a/include/kunit/test.h b/include/kunit/test.h
-index 511c9e85401a6..791e22fba5620 100644
---- a/include/kunit/test.h
-+++ b/include/kunit/test.h
-@@ -335,6 +335,13 @@ void __printf(3, 4) kunit_printk(const char *level,
- #define kunit_err(test, fmt, ...) \
- 		kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
- 
-+/*
-+ * 'Unnecessary' cast serves to generate a compile-time warning in case
-+ * of comparing incompatible types. Inspired by include/linux/kernel.h
-+ */
-+#define __kunit_typecheck(lhs, rhs) \
-+	((void) (&(lhs) == &(rhs)))
-+
- static inline struct kunit_stream *kunit_expect_start(struct kunit *test,
- 						      const char *file,
- 						      const char *line)
-@@ -514,6 +521,7 @@ static inline void kunit_expect_ptr_binary(struct kunit *test,
- #define KUNIT_EXPECT_BINARY(test, left, condition, right) do {		       \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_expect_binary(test,					       \
- 			    (long long) __left, #left,			       \
- 			    (long long) __right, #right,		       \
-@@ -524,6 +532,7 @@ static inline void kunit_expect_ptr_binary(struct kunit *test,
- #define KUNIT_EXPECT_BINARY_MSG(test, left, condition, right, fmt, ...) do {   \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_expect_binary_msg(test,					       \
- 				(long long) __left, #left,		       \
- 				(long long) __right, #right,		       \
-@@ -538,6 +547,7 @@ static inline void kunit_expect_ptr_binary(struct kunit *test,
- #define KUNIT_EXPECT_PTR_BINARY(test, left, condition, right) do {	       \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_expect_ptr_binary(test,					       \
- 			    (void *) __left, #left,			       \
- 			    (void *) __right, #right,			       \
-@@ -553,6 +563,7 @@ static inline void kunit_expect_ptr_binary(struct kunit *test,
- 				    ...) do {				       \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_expect_ptr_binary_msg(test,				       \
- 				    (void *) __left, #left,		       \
- 				    (void *) __right, #right,		       \
-@@ -1013,6 +1024,7 @@ static inline void kunit_assert_ptr_binary(struct kunit *test,
- #define KUNIT_ASSERT_BINARY(test, left, condition, right) do {		       \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_assert_binary(test,					       \
- 			    (long long) __left, #left,			       \
- 			    (long long) __right, #right,		       \
-@@ -1023,6 +1035,7 @@ static inline void kunit_assert_ptr_binary(struct kunit *test,
- #define KUNIT_ASSERT_BINARY_MSG(test, left, condition, right, fmt, ...) do {   \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_assert_binary_msg(test,					       \
- 				(long long) __left, #left,		       \
- 				(long long) __right, #right,		       \
-@@ -1037,6 +1050,7 @@ static inline void kunit_assert_ptr_binary(struct kunit *test,
- #define KUNIT_ASSERT_PTR_BINARY(test, left, condition, right) do {	       \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_assert_ptr_binary(test,					       \
- 				(void *) __left, #left,			       \
- 				(void *) __right, #right,		       \
-@@ -1051,6 +1065,7 @@ static inline void kunit_assert_ptr_binary(struct kunit *test,
- 				    fmt, ...) do {			       \
- 	typeof(left) __left = (left);					       \
- 	typeof(right) __right = (right);				       \
-+	__kunit_typecheck(__left, __right);				       \
- 	kunit_assert_ptr_binary_msg(test,				       \
- 				    (void *) __left, #left,		       \
- 				    (void *) __right, #right,		       \
+Changes since RFC:
+  - Move firmware clk device into own driver
+
+Nicolas Saenz Julienne (7):
+  clk: bcm2835: remove pllb
+  clk: bcm283x: add driver interfacing with Raspberry Pi's firmware
+  firmware: raspberrypi: register clk device
+  cpufreq: add driver for Raspbery Pi
+  clk: raspberrypi: register platform device for raspberrypi-cpufreq
+  ARM: defconfig: enable cpufreq driver for RPi
+  arm64: defconfig: enable cpufreq support for RPi3
+
+ arch/arm/configs/bcm2835_defconfig    |   9 +
+ arch/arm/configs/multi_v7_defconfig   |   2 +
+ arch/arm64/configs/defconfig          |   2 +
+ drivers/clk/bcm/Kconfig               |   7 +
+ drivers/clk/bcm/Makefile              |   1 +
+ drivers/clk/bcm/clk-bcm2835.c         |  28 +--
+ drivers/clk/bcm/clk-raspberrypi.c     | 315 ++++++++++++++++++++++++++
+ drivers/cpufreq/Kconfig.arm           |   8 +
+ drivers/cpufreq/Makefile              |   1 +
+ drivers/cpufreq/raspberrypi-cpufreq.c |  97 ++++++++
+ drivers/firmware/raspberrypi.c        |  10 +
+ 11 files changed, 456 insertions(+), 24 deletions(-)
+ create mode 100644 drivers/clk/bcm/clk-raspberrypi.c
+ create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+
 -- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
+2.21.0
 
