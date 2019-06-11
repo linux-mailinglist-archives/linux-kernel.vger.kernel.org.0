@@ -2,43 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB1243C5A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:11:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0DC13C5A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404638AbfFKILp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:11:45 -0400
-Received: from verein.lst.de ([213.95.11.211]:49067 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404272AbfFKILp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:11:45 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id A40C568B02; Tue, 11 Jun 2019 10:11:17 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 10:11:17 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Vladimir Murzin <vladimir.murzin@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
-        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: binfmt_flat cleanups and RISC-V support
-Message-ID: <20190611081117.GA22110@lst.de>
-References: <20190610212015.9157-1-hch@lst.de> <4f000219-4baf-b03e-9003-26482640d3de@arm.com>
+        id S2404651AbfFKIMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:12:55 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:51889 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2404430AbfFKIMz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 04:12:55 -0400
+X-UUID: c4c1be297c0a4e678b00a52c1ae170f5-20190611
+X-UUID: c4c1be297c0a4e678b00a52c1ae170f5-20190611
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <qii.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1298865717; Tue, 11 Jun 2019 16:12:48 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 11 Jun 2019 16:12:47 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 11 Jun 2019 16:12:46 +0800
+From:   Qii Wang <qii.wang@mediatek.com>
+To:     <wsa@the-dreams.de>
+CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
+        <qii.wang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <robh+dt@kernel.org>
+Subject: [PATCH 0/2] Add support for AC timing adjustment
+Date:   Tue, 11 Jun 2019 16:11:53 +0800
+Message-ID: <1560240715-22595-1-git-send-email-qii.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f000219-4baf-b03e-9003-26482640d3de@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 09:05:45AM +0100, Vladimir Murzin wrote:
-> I'm wondering if you have a branch with these changes so I can give
-> it a try on ARM NOMMU platforms?
+This series are based on 5.2-rc1, we provide two patches to
+support AC timing adjustment.
 
+Qii Wang (2):
+  dt-bindings: i2c: Add MediaTek i2c AC timing binding
+  i2c: mediatek: Add i2c AC timing adjust support
 
-    git://git.infradead.org/users/hch/riscv.git riscv-flat
+ .../devicetree/bindings/i2c/i2c-mt65xx.txt         |   11 +++
+ drivers/i2c/busses/i2c-mt65xx.c                    |   94 +++++++++++++++++---
+ 2 files changed, 93 insertions(+), 12 deletions(-)
+
+-- 
+1.7.9.5
