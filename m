@@ -2,122 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F0C43C666
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF2863C683
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403899AbfFKIsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:48:14 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36070 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391273AbfFKIsO (ORCPT
+        id S2404336AbfFKIuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:50:17 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30278 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391273AbfFKIuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:48:14 -0400
-Received: by mail-vs1-f68.google.com with SMTP id l20so7399088vsp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 01:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IhGjZy3FShlMVj6urlTA25d/osBk/AQ2ZtSq05JHNew=;
-        b=jDIsOCVMKmx1/mxpnKvXtAk8R3OIiSZIUqpirx/7epmu850GAkJpg0O1RlND0iRN1K
-         DTE1UXMoIP5kX1xb4fWo02MnFI7OALqb3Awmi4lhnNdtxHbLTa/Y7GtBdFURMhf5CcZn
-         5Sc81izUhzgdwFs10HjqeOVBvVKz1Ad6eCbPUDJRup+suBIzC+HWgavP1Tynr/+8sMvf
-         vePOrTFZV/bB/ABoGD2YzB/QTG+B64Dod145cyfLC2Vopyi8NjvWhG6L6OKMuxZ2lJ0d
-         HsDtjNx7ILhZEDca2YFgEpJLqlmFpU9Ib16peJZlRoXbaGDsZ24UmgGsjKu0IPWir73s
-         nr+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IhGjZy3FShlMVj6urlTA25d/osBk/AQ2ZtSq05JHNew=;
-        b=nslroeRNtIVF/t4tpN+G0IPTAKn+fmQOiZ+i3h6I6a9Z5Zen2Y5A0GMGzbV/omHCpv
-         tTFv7WKCValGuQS7veeXv0bSdW2NcVQI6+TNJenoqfpateuRefrwkQVqd9jA1oifXlfl
-         5EJ96lfIx+orYYUtM7zx+HgI4PaKICCC/WbwJb92hv1dxKuEajF4Aqwg+xdd3wHuIcuP
-         5bMcOw2mAFiR9EaPwmw8cyiPvP5a+51akXZjO+IJuJ9HtNqhNZSiHceotxIFLfXxipti
-         S6p7JPsjcaDCDHnw4/AQpBhub8LiTmGByC9COobwiy/X6YpnQZ4CzWX+L9zBytW08kk6
-         E4Xg==
-X-Gm-Message-State: APjAAAUc0TWV3q+L+letZIPnX79Rytm9RsBw0seXWaws+1V3xlOebxRQ
-        DiQb2Cjn+gfsw+m4ePiMAGu6TXJOwAEZx81PlB8vYK0f
-X-Google-Smtp-Source: APXvYqzErwxz0QH5HGzLwRxK3WgciFx3M+VKPW3e7a8OIhyLNapMDEJcbfRDj6Cv4b085/enYmXb7FJN6/+3T6WYwJE=
-X-Received: by 2002:a67:dd81:: with SMTP id i1mr6201015vsk.236.1560242893139;
- Tue, 11 Jun 2019 01:48:13 -0700 (PDT)
+        Tue, 11 Jun 2019 04:50:16 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5B8fZfj022277;
+        Tue, 11 Jun 2019 10:49:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=nHME65uYxFVg15qvo2dJiyv0ZUF80ZuF4ZZhe7U0Mxs=;
+ b=sjDAbRKT3dlO+wWszcQjeQoFndfDI35xkO/U9asiiFOgvImSjg0cY6bNcZbrto1qeLNY
+ r7t+ve5d3BjDUStLBw96srQ7VNExqoME54xG5SbknB/ujQFf1MEUuChWCyYZNkxRs42O
+ zuGpoTuEieGbTig4/bmOndh4oRyzgAkVHDMiZv2rTk5oSN2MmVku0aBKWGPAYo15dsy3
+ sc+SgdELwzM/He3QiIKUaHMOHuMQi7pEi5Okr63yuyEoJCddLShxgJ53FqbZS3h62Q2I
+ cBQxWbFVCnnUqj/JTVnxaL+HgA/upvUl9hkJoJJvMQ5KvixVSyIdJerXEqAEIlJg5idj 3Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2t26rjrtja-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 11 Jun 2019 10:49:01 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F293438;
+        Tue, 11 Jun 2019 08:48:59 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7A3372482;
+        Tue, 11 Jun 2019 08:48:59 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
+ 2019 10:48:59 +0200
+Received: from localhost (10.201.23.19) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun 2019 10:48:55
+ +0200
+From:   Hugues Fruchet <hugues.fruchet@st.com>
+To:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        "Hugues Fruchet" <hugues.fruchet@st.com>,
+        Mickael GUENE <mickael.guene@st.com>
+Subject: [PATCH v2 0/3] DCMI bridge support
+Date:   Tue, 11 Jun 2019 10:48:29 +0200
+Message-ID: <1560242912-17138-1-git-send-email-hugues.fruchet@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190611055045.15945-1-oded.gabbay@gmail.com> <20190611055045.15945-9-oded.gabbay@gmail.com>
- <20190611075933.GB13408@kroah.com> <CAFCwf12GRn6ePeH1cLuC_-C9pyQJJSZ9RaGdMUz6MkGrtR=Lvg@mail.gmail.com>
-In-Reply-To: <CAFCwf12GRn6ePeH1cLuC_-C9pyQJJSZ9RaGdMUz6MkGrtR=Lvg@mail.gmail.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Tue, 11 Jun 2019 11:47:47 +0300
-Message-ID: <CAFCwf123XC_SM3-P-Va4YO707ghSuqahtbFqpkWs+cTmkPvnEg@mail.gmail.com>
-Subject: Re: [PATCH 8/8] habanalabs: enable 64-bit DMA mask in POWER9
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.19]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-11_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 11:08 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
->
-> On Tue, Jun 11, 2019 at 10:59 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Jun 11, 2019 at 08:50:45AM +0300, Oded Gabbay wrote:
-> > > --- a/drivers/misc/habanalabs/habanalabs_drv.c
-> > > +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-> > > @@ -28,6 +28,7 @@ static DEFINE_MUTEX(hl_devs_idr_lock);
-> > >
-> > >  static int timeout_locked = 5;
-> > >  static int reset_on_lockup = 1;
-> > > +static int power9_64bit_dma_enable;
-> > >
-> > >  module_param(timeout_locked, int, 0444);
-> > >  MODULE_PARM_DESC(timeout_locked,
-> > > @@ -37,6 +38,10 @@ module_param(reset_on_lockup, int, 0444);
-> > >  MODULE_PARM_DESC(reset_on_lockup,
-> > >       "Do device reset on lockup (0 = no, 1 = yes, default yes)");
-> > >
-> > > +module_param(power9_64bit_dma_enable, int, 0444);
-> > > +MODULE_PARM_DESC(power9_64bit_dma_enable,
-> > > +     "Enable 64-bit DMA mask. Should be set only in POWER9 machine (0 = no, 1 = yes, default no)");
-> > > +
-> > >  #define PCI_VENDOR_ID_HABANALABS     0x1da3
-> > >
-> > >  #define PCI_IDS_GOYA                 0x0001
-> >
-> >
-> > This is not the 1990's, please do not use module parameters.  Yeah, you
-> > have a bunch of them already, but do not add additional ones that can be
-> > easily determined at runtime, like this one.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> Hi Greg,
-> I would love to do this in runtime and that was my intent all along
-> until I hit a wall on *how* to find out it in runtime if I'm running
-> on POWER9 with PHB4 or not.
-> I did a search in the kernel code, consulted with a couple of people
-> but I didn't get any way of doing this in runtime.
-> If you have some way, please share it with me because I hit a wall
-> with this issue.
->
-> The fact of the matter is, I have two different configurations of *my*
-> device's PCIe controller. One is only suitable to POWER9 with PHB4 and
-> the other one suits all the rest architectures/systems (that we have
-> tested so far). So I have to know which system I'm running on and as I
-> said, I didn't find a kernel API which can help me do that.
->
-> Thanks,
-> Oded
+This patch serie allows to connect non-parallel camera sensor to
+DCMI thanks to a bridge connected in between such as STMIPID02 [1].
 
-btw, even the powernv code determines the PHB model by reading the
-device-tree file. They don't even read it from the controller.
+Media controller support is introduced first, then support of
+several sub-devices within pipeline with dynamic linking
+between them.
+In order to keep backward compatibility with applications
+relying on V4L2 interface only, format set on video node
+is propagated to all sub-devices connected to camera interface.
 
-Having said that, it occurred to me that I may be able to determine
-this by the PCI ID of the parent bus of my device. It has a unique PCI
-ID so hopefully that will be enough.
-I will check and update here.
+[1] https://www.spinics.net/lists/devicetree/msg278002.html
 
-Thanks,
-Oded
+===========
+= history =
+===========
+version 2:
+  - Fix bus_info not consistent between media and V4L:
+    https://www.spinics.net/lists/arm-kernel/msg717676.html
+  - Propagation of format set on video node to the sub-devices
+    chain connected on camera interface
+
+version 1:
+  - Initial submission
+
+Hugues Fruchet (3):
+  media: stm32-dcmi: improve sensor subdev naming
+  media: stm32-dcmi: add media controller support
+  media: stm32-dcmi: add support of several sub-devices
+
+ drivers/media/platform/Kconfig            |   2 +-
+ drivers/media/platform/stm32/stm32-dcmi.c | 317 +++++++++++++++++++++++++-----
+ 2 files changed, 266 insertions(+), 53 deletions(-)
+
+-- 
+2.7.4
+
