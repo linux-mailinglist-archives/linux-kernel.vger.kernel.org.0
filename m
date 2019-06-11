@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E47F33C923
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF86B3C926
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbfFKKlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:41:06 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39175 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387593AbfFKKlD (ORCPT
+        id S2387741AbfFKKlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:41:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34957 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387631AbfFKKlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:41:03 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z23so2336064wma.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 03:41:02 -0700 (PDT)
+        Tue, 11 Jun 2019 06:41:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m3so12462371wrv.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 03:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IyhckBm8THgO1AcZvtqNCZU3xMQ1j3cGrqaXKQ6WbdI=;
-        b=OQg8KvQSnrphvOofdMTtzsvKGujUIWuYj1y2jJhYsUUJnfc5YvjQgj63rr2m+LiIt0
-         3imTNZNG8Lci6WAr050UBiTC4xMuRbvBbLj+OzRZF+ZVxes6Rnd6qJSqEi47ylZsZNTz
-         1bnnmMNh2VzawyKTFMnAQlX0NUbhTQvCyHYk+rrbOLjynzdhyjYgGudPPu2b5peh6e/W
-         WIsWRIui9pT1KXuRPLflunZh5bFKClaFLv7JiUcjVXlhis1ALkbflrNmW51Y/e651F1L
-         xhPAnH8+HBGsLGLVOsysHnb4om4QXPLAeLhS+oCmug5bI2VDO5u19U0uMJotsJxch5ak
-         Ej/w==
+        bh=XkV4oZs6ZiC2qzQJvCHYzSVuaz5P2YoXcRt/ldJXf5U=;
+        b=QUoqo2jm13Ah8FKoW9ZQffD7RxI2rPxaShyjImH5esJ3XGLFgOOSuXXn6Q6zUEWzve
+         FoGVpsrmEoizOPupYvUMsyq0S/ncIbTuVNUAnkQPXp7Dr2a57Fcm/08o3KYvLJbbrUGG
+         aYWjHG0lr7QZip82Nshzyn3AI0/D5ePUw//y/Fjys1hV+qhmCIN2Kr1I/v5Z/pXOjaOM
+         3Zpr3NpZZft4km8qUpT7fcVj4DamJ0Xe9ab7TqEuIy/5P5lSO1gbHrOvAi/iZQ9jLZsF
+         BMPpv01TZvuS2Z28DIBp1qlY1IkuclNetRMIcNmjjxJj2j4QxbLUVdbPFMv5KwQyVgUp
+         UJ1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IyhckBm8THgO1AcZvtqNCZU3xMQ1j3cGrqaXKQ6WbdI=;
-        b=G9L8GREwrbl/1chjdwZS1DJgT3lOZYT2eEPqzzYURae+STUMCmk5CB+fFKuFtqTITl
-         pidL/WZtkH58A6vyGQ58MOwCV8ITFp8hS0EY5dW4rXP4NI6o1OdSAMc20+3Xp82L4C7B
-         C7T6ALoVbIA1rXAMlkNvdI/fCBeNYiAEmqctNYcgvv/NKb0ANfPZTtf6KG1rwgYGf1R/
-         YaNbze1dtDS5afyF/wVExYPPrj3orjqeG3DKojdABXEkXoSyX769D4eKrerNshEacRUG
-         kutX0RiYro3Eg+w6upvsUJwzf0s9ODmwkbM5AOy6Bs7D4SF8DMdnQAzpfxiOyfM1pzPP
-         BE+A==
-X-Gm-Message-State: APjAAAXo1pYhiplSeK0bSODubfHutnsyI4xyw9hjwv/zDwJ8loN1pxl1
-        14vTnKaL5aFunImCOpohjL2PLw==
-X-Google-Smtp-Source: APXvYqw7U0OrxR281JBKNtGwW3T/tVCMLH0nKEqT8RKrvVAJtAC3Jt3/37FtCPWSnQMDlSVb6GPB5Q==
-X-Received: by 2002:a1c:6242:: with SMTP id w63mr18506760wmb.161.1560249661813;
-        Tue, 11 Jun 2019 03:41:01 -0700 (PDT)
+        bh=XkV4oZs6ZiC2qzQJvCHYzSVuaz5P2YoXcRt/ldJXf5U=;
+        b=Y3lwwKmrogC4tAiM0LDrjTWkYEG3RxAJkeRRI7Kxl+j5VWhUvFoiLYFRaJKo64mu+V
+         qUHXaS2RMWC9pvIeyjkdSi9ot9aQJRXF3WYnKGlpnRai9AC2t9ztu2AROifhoLfRJuTG
+         8y3+yJCAvg99DLmJfY8nBR+M6FLFKfgWADubZ6TAjX3rMyb+XAg62bxFQR3CukH2JJP7
+         RV3knJPkrMDUXvcNT0dwCkgdhdkaVk6ROflLwnHdGWTghjBFQM4e5G/vDlA8pS10G5CZ
+         SHoABkYgie+zl7HZy2QYyb5rt9hDIlWAca80dvTIsfzrANpNsIQwR96hgwXsU5ajWRmc
+         6LcQ==
+X-Gm-Message-State: APjAAAWVCuHJviubd1MkD/pjCxyae0Rn+DiEjXi97RF7Vt7uH0n8Tn5i
+        2RHvMYWLUOxV/GZLNCvvm1/mvg==
+X-Google-Smtp-Source: APXvYqwfFkBFylnzRecASi8Zz0rbC6zl7wEOF2/dyq1l7Bhc83VPv5YNjRcpF6qSsCV/HdegblZWcQ==
+X-Received: by 2002:adf:e2c7:: with SMTP id d7mr28417773wrj.272.1560249662909;
+        Tue, 11 Jun 2019 03:41:02 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id c65sm2359614wma.44.2019.06.11.03.41.00
+        by smtp.gmail.com with ESMTPSA id c65sm2359614wma.44.2019.06.11.03.41.01
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 03:41:01 -0700 (PDT)
+        Tue, 11 Jun 2019 03:41:02 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, vkoul@kernel.org
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         bgoswami@quicinc.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RFC PATCH 3/5] soundwire: add module_sdw_driver helper macro
-Date:   Tue, 11 Jun 2019 11:40:41 +0100
-Message-Id: <20190611104043.22181-4-srinivas.kandagatla@linaro.org>
+Subject: [RFC PATCH 4/5] dt-bindings: ASoC: Add WSA881x bindings
+Date:   Tue, 11 Jun 2019 11:40:42 +0100
+Message-Id: <20190611104043.22181-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190611104043.22181-1-srinivas.kandagatla@linaro.org>
 References: <20190611104043.22181-1-srinivas.kandagatla@linaro.org>
@@ -65,35 +65,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This Helper macro is for SoundWire drivers which do not do anything special in
-module init/exit. This eliminates a lot of boilerplate. Each module may only
-use this macro once, and calling it replaces module_init() and module_exit()
+This patch adds bindings for WSA8810/WSA8815 Class-D Smart Speaker
+Amplifier. This Amplifier also has a simple thermal sensor for
+over temperature and speaker protection.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- include/linux/soundwire/sdw_type.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../bindings/sound/qcom,wsa881x.txt           | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x.txt
 
-diff --git a/include/linux/soundwire/sdw_type.h b/include/linux/soundwire/sdw_type.h
-index 9c756b5a0dfe..aaa7f4267c14 100644
---- a/include/linux/soundwire/sdw_type.h
-+++ b/include/linux/soundwire/sdw_type.h
-@@ -16,4 +16,15 @@ void sdw_unregister_driver(struct sdw_driver *drv);
- 
- int sdw_slave_modalias(const struct sdw_slave *slave, char *buf, size_t size);
- 
-+/**
-+ * module_sdw_driver() - Helper macro for registering a Soundwire driver
-+ * @__sdw_driver: soundwire slave driver struct
-+ *
-+ * Helper macro for Soundwire drivers which do not do anything special in
-+ * module init/exit. This eliminates a lot of boilerplate. Each module may only
-+ * use this macro once, and calling it replaces module_init() and module_exit()
-+ */
-+#define module_sdw_driver(__sdw_driver) \
-+	module_driver(__sdw_driver, sdw_register_driver, \
-+			sdw_unregister_driver)
- #endif /* __SOUNDWIRE_TYPES_H */
+diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x.txt b/Documentation/devicetree/bindings/sound/qcom,wsa881x.txt
+new file mode 100644
+index 000000000000..582db402a482
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x.txt
+@@ -0,0 +1,27 @@
++Bindings for Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier
++
++WSA8810 is a class-D smart speaker amplifier and WSA8815 is a high-output
++power class-D smart speaker amplifier. This amplifier uses SoundWire
++digital audio as primary interface.
++
++Required properties with SoundWire Interface:
++
++- compatible:		Should be textual representation of SoundWire Enumeration
++			address.
++			Refer to soundwire/bus.txt for details.
++			Should be "sdw10,0217,2010,0" for WSA8810
++- sdw-instance-id:	Should be ('Instance ID') from SoundWire Enumeration
++		    	address.
++			Refer to soundwire/bus.txt for details.
++- pd-gpios: 		Should be phandle and gpio pair for
++			Powerdown/Shutdown pin.
++- #thermal-sensor-cells: Should be 0 
++
++Example:
++
++spkr_left:wsa8810-left{
++	compatible = "sdw10,0217,2010,0";
++	sdw-instance-id = <1>;
++	#thermal-sensor-cells = <0>;
++	...
++};
 -- 
 2.21.0
 
