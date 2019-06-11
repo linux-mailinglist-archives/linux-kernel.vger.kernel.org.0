@@ -2,93 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1EA3CDCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B3E33CDA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:53:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391569AbfFKN5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:57:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18550 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387835AbfFKN5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:57:33 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EE158C4322C7E5AD3117;
-        Tue, 11 Jun 2019 21:57:30 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Jun 2019
- 21:57:20 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <sfrench@samba.org>, <lsahlber@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <samba-technical@lists.samba.org>,
-        <linux-cifs@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] cifs: remove set but not used variable 'ioctl_buf' and 'cifsi'
-Date:   Tue, 11 Jun 2019 21:53:15 +0800
-Message-ID: <20190611135315.20012-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2391389AbfFKNxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:53:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35798 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387770AbfFKNxb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 09:53:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6Z1K0pqSzBttttrMPRvxIs3/iBm85Id+JwYvBIOcrVU=; b=m64294M5AeaXMyuBlgeH2OCIX
+        6orjCajVoCCCVhB7Y8H4jM4Z2CtlCiAwV4eKdSr9Ui97b+cR4FGuaWpoZOzd8X24W3W2M8Ge1MIRW
+        8dX48CbINHs/H13f4WQQ3uh2A3h0eQ4MCczBl6k9C6dUZq+jABSL6ZInEVpqjHZNe3FQqqj94mecO
+        DYpfu8ZPWqvgcKTiapHwdagULaIBAxmT/a3TzWSjEtsPUQoL+/MKZuWwVpODPcg2xd3uewE3FhHad
+        NgkrYFTY2P9qzrY3dRz2jHlgCpdd5cZ3klHlQD93vG2qkQoFEXC9iSnT0o3qfy3l8fs79pjjYOz6q
+        hfuKSKPGw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hahDL-0003N7-RU; Tue, 11 Jun 2019 13:53:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C477B20236A42; Tue, 11 Jun 2019 15:53:25 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 15:53:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     bsegall@google.com
+Cc:     linux-kernel@vger.kernel.org,
+        Xunlei Pang <xlpang@linux.alibaba.com>,
+        Ingo Molnar <mingo@redhat.com>, Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH v2] sched/fair: don't push cfs_bandwith slack timers
+ forward
+Message-ID: <20190611135325.GY3436@hirez.programming.kicks-ass.net>
+References: <xm26ef47yeyh.fsf@bsegall-linux.svl.corp.google.com>
+ <eafe846f-d83c-b2f3-4458-45e3ae6e5823@linux.alibaba.com>
+ <xm26a7euy6iq.fsf_-_@bsegall-linux.svl.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xm26a7euy6iq.fsf_-_@bsegall-linux.svl.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warnings:
+On Thu, Jun 06, 2019 at 10:21:01AM -0700, bsegall@google.com wrote:
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index efa686eeff26..60219acda94b 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -356,6 +356,7 @@ struct cfs_bandwidth {
+>  	u64			throttled_time;
+>  
+>  	bool                    distribute_running;
+> +	bool                    slack_started;
+>  #endif
+>  };
 
-fs/cifs/smb2ops.c: In function smb2_query_symlink:
-fs/cifs/smb2ops.c:2417:8: warning: variable ioctl_buf set but not used [-Wunused-but-set-variable]
-fs/cifs/smb2ops.c: In function smb3_punch_hole:
-fs/cifs/smb2ops.c:2799:24: warning: variable cifsi set but not used [-Wunused-but-set-variable]
+I'm thinking we can this instead? afaict both idle and period_active are
+already effecitively booleans and don't need the full 16 bits.
 
-'ioctl_buf' is never used since introduction in commit ebaf546a5584 ("SMB3:
-Clean up query symlink when reparse point")
-
-'cifsi' is never used since introduction in commit 31742c5a3317 ("enable
-fallocate punch hole ("fallocate -p") for SMB3")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/cifs/smb2ops.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index e921e65..e8dfa34 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2414,7 +2414,6 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
- 	struct kvec close_iov[1];
- 	struct smb2_create_rsp *create_rsp;
- 	struct smb2_ioctl_rsp *ioctl_rsp;
--	char *ioctl_buf;
- 	u32 plen;
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -338,8 +338,10 @@ struct cfs_bandwidth {
+ 	u64			runtime_expires;
+ 	int			expires_seq;
  
- 	cifs_dbg(FYI, "%s: path: %s\n", __func__, full_path);
-@@ -2496,7 +2495,6 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
- 	if ((rc == 0) && (is_reparse_point)) {
- 		/* See MS-FSCC 2.3.23 */
+-	short			idle;
+-	short			period_active;
++	u8			idle;
++	u8			period_active;
++	u8			distribute_running;
++	u8			slack_started;
+ 	struct hrtimer		period_timer;
+ 	struct hrtimer		slack_timer;
+ 	struct list_head	throttled_cfs_rq;
+@@ -348,9 +350,6 @@ struct cfs_bandwidth {
+ 	int			nr_periods;
+ 	int			nr_throttled;
+ 	u64			throttled_time;
+-
+-	bool                    distribute_running;
+-	bool                    slack_started;
+ #endif
+ };
  
--		ioctl_buf = (char *)ioctl_rsp + le32_to_cpu(ioctl_rsp->OutputOffset);
- 		plen = le32_to_cpu(ioctl_rsp->OutputCount);
- 
- 		if (plen + le32_to_cpu(ioctl_rsp->OutputOffset) >
-@@ -2796,7 +2794,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 			    loff_t offset, loff_t len)
- {
- 	struct inode *inode;
--	struct cifsInodeInfo *cifsi;
- 	struct cifsFileInfo *cfile = file->private_data;
- 	struct file_zero_data_information fsctl_buf;
- 	long rc;
-@@ -2806,7 +2803,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
- 	xid = get_xid();
- 
- 	inode = d_inode(cfile->dentry);
--	cifsi = CIFS_I(inode);
- 
- 	/* Need to make file sparse, if not already, before freeing range. */
- 	/* Consider adding equivalent for compressed since it could also work */
--- 
-2.7.4
-
-
