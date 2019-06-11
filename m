@@ -2,117 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480EB3D6FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 668853D707
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407477AbfFKTjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:39:17 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40140 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404788AbfFKTjR (ORCPT
+        id S2405681AbfFKTkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:40:53 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41216 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391080AbfFKTkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:39:17 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w196so9880727oie.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 12:39:16 -0700 (PDT)
+        Tue, 11 Jun 2019 15:40:53 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 83so7522458pgg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 12:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=St/sap2qBv8Hsq63+0Q5syfF0d0aWy8Ds6OuEFtVAXU=;
-        b=BN7CXuFGuD00uiYGfneiP10UMR/4kb+NYdIMor783WtxbNUDdhf56ynR61aFXzwEBr
-         P2VSfjHgsSok7ATwjpTgeT7GB7SFC98yaLc1hrQrArVYg8JqIF1q0vPbCpgAFHoTsFMP
-         LJGIM0jkX7Dfqs0o3t8YUP1nQnCZHqGncNP4Y=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2Tl9Z0NsfgrApufoe2WUbK2OeIisauNIixsAGf/fSmk=;
+        b=vsAEGERkAaoThhFQXBii705fmbt72E/99Uu7FZajp8SUf8GTc9LlYBfAC9HjBDp5sL
+         4EKL6GI9Rp7rOn2WJp0TItbwY1VpF5bcED6xmFO6HO1yjnxBmgJQRVff+Szsd7nDo52k
+         o1KbxC6jfKkSBlesArxZfIgVWHOPkeVNKjzoOo2dLBfe0tMVlsJMNhicCRnqqzah4M1p
+         nQ+X+wveo4NUY1wN8RdZqJ6VXO8ZpGZsQhfe115nX9JanaBCN6VcbYPC8c0LrFdvg90V
+         DNFLgkX/ED/WENER8nOIEnsilSeYqIY4TNFJg1PXRtIJq4SgPMjABUQl+T2ZO2lY8t8G
+         +ndA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=St/sap2qBv8Hsq63+0Q5syfF0d0aWy8Ds6OuEFtVAXU=;
-        b=pmxGHmuuvApSQlTWlg00sL4iXiAZB5n34Kun9gepkBm4F3GGeFoPyyPzsKIqMu1iUf
-         69OTVb+A2q7hAe8UMuI2EzeIrY7TYbxGJX0tVMoo/vFXiGwd8oPbRNZWbuvMgl9vFJGu
-         Ogv9nH2w5bqG1kyEfDNZa4hiayH/zD45KK40i+twZhg7D+1CQ17JRpJNGGB9nWiVQqYk
-         JEgKy4BkKxnfw5MGGQ1u8TQb6hAIzXdHGOEJ2/aheYKtUHIqGe3EXDYcuNxMGZD6ETy/
-         cmHWUVnbi5WAWsapSNBix0dVcqAdZqa1UhNaQrfr2hxeUEFY8HzzJjZGUtJP8tJGLgab
-         5RDQ==
-X-Gm-Message-State: APjAAAWh5cuxO3ANUk3/LP0tK2vN5ZMfjcudOq4S+qDzUUTLXdnSGNjL
-        t7bQ7xeA8EMMD8xolL2gwsGzR0YPzzsPS2WqCcTYNQ==
-X-Google-Smtp-Source: APXvYqzFyhua/G0TG83q68hxIDjw3pEsY0N6defylPtbJFObhBAHHNNUILV9io7UDphgfrJUvIMjcZGuXtEd/sdRVoc=
-X-Received: by 2002:aca:62c2:: with SMTP id w185mr17508454oib.110.1560281956544;
- Tue, 11 Jun 2019 12:39:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2Tl9Z0NsfgrApufoe2WUbK2OeIisauNIixsAGf/fSmk=;
+        b=UONft3txat0VxlsNcME3YBdr3igBziNbK1Ohiq4i8/04tBUikXizQZtXI1C34mVOim
+         QwMl6T3BvooTkM7eW+GJqSYMuWDCcJu3/R65Q3DjBd3yGx9D15QHK/y53JlLwPaWvS9+
+         NuGJbMhJKXKVLRy8lsqE+mzIj/Zbt42r+SVsIocGuutNvAiM41XwvAVb50qDqZ/Cw7x+
+         nMjxObHzTrTCbybC3vmRHNWswHzeuJZuL81uY25eArgwS0vQO5CeJF3MNGiktXsP9Q7P
+         0J2BIjwPqRsmVJ7KiNbWu7ot3j8MvDYp3y2jhqc5+cxxdCK0YOds9L4c6uO7gxfX5kYt
+         gnFg==
+X-Gm-Message-State: APjAAAXdvAOr1klwc6La8uklcMsBsRqejZQ7gHEif0Xt4H8Cmj40Xi/E
+        dHnffqzRVoO29T/vBYZk+ccf3Q==
+X-Google-Smtp-Source: APXvYqzXVcc6fXXOJJq5bogayd4145zzm/qfoD7KDrsL3o2QfDRsySAjhmLpJFJJtPni27dVTOe/2Q==
+X-Received: by 2002:a62:2a0a:: with SMTP id q10mr77972329pfq.79.1560282051640;
+        Tue, 11 Jun 2019 12:40:51 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c133sm18710319pfb.111.2019.06.11.12.40.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 12:40:51 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 12:40:48 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     alokc@codeaurora.org, andy.gross@linaro.org,
+        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
+        linus.walleij@linaro.org, balbi@kernel.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] i2c: i2c-qcom-geni: Signify successful driver
+ probe
+Message-ID: <20190611194048.GR4814@minitux>
+References: <20190610084213.1052-1-lee.jones@linaro.org>
+ <20190610084213.1052-2-lee.jones@linaro.org>
 MIME-Version: 1.0
-References: <87k1dsjkdo.fsf@turtle.gmx.de> <20190611153656.GA5084@kroah.com>
- <CAKMK7uH_3P3pYkJ9Ua4hOFno5UiQ4p-rdWu9tPO75MxGCbyXSA@mail.gmail.com> <20190611174006.GB31662@kroah.com>
-In-Reply-To: <20190611174006.GB31662@kroah.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Tue, 11 Jun 2019 21:39:05 +0200
-Message-ID: <CAKMK7uGzBD4LzoOTrDoBNaqpPbaWkQ=_h0Q+uqJAsoeDbTnuWA@mail.gmail.com>
-Subject: Re: Linux 5.1.9 build failure with CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT=n
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sven Joachim <svenjoac@gmx.de>, stable <stable@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Airlie <airlied@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610084213.1052-2-lee.jones@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 7:40 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Jun 11, 2019 at 07:33:16PM +0200, Daniel Vetter wrote:
-> > On Tue, Jun 11, 2019 at 5:37 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > On Tue, Jun 11, 2019 at 03:56:35PM +0200, Sven Joachim wrote:
-> > > > Commit 1e07d63749 ("drm/nouveau: add kconfig option to turn off nouveau
-> > > > legacy contexts. (v3)") has caused a build failure for me when I
-> > > > actually tried that option (CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT=n):
-> > > >
-> > > > ,----
-> > > > | Kernel: arch/x86/boot/bzImage is ready  (#1)
-> > > > |   Building modules, stage 2.
-> > > > |   MODPOST 290 modules
-> > > > | ERROR: "drm_legacy_mmap" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> > > > | scripts/Makefile.modpost:91: recipe for target '__modpost' failed
-> > > > `----
-> >
-> > Calling drm_legacy_mmap is definitely not a great idea. I think either
-> > we need a custom patch to remove that out on older kernels, or maybe
-> > even #ifdef if you want to be super paranoid about breaking stuff ...
-> >
-> > > > Upstream does not have that problem, as commit bed2dd8421 ("drm/ttm:
-> > > > Quick-test mmap offset in ttm_bo_mmap()") has removed the use of
-> > > > drm_legacy_mmap from nouveau_ttm.c.  Unfortunately that commit does not
-> > > > apply in 5.1.9.
-> > > >
-> > > > Most likely 4.19.50 and 4.14.125 are also affected, I haven't tested
-> > > > them yet.
-> > >
-> > > They probably are.
-> > >
-> > > Should I just revert this patch in the stable tree, or add some other
-> > > patch (like the one pointed out here, which seems an odd patch for
-> > > stable...)
-> >
-> > ... or backport the above patch, that should be save to do too. Not
-> > sure what stable folks prefer?
->
-> The above patch does not apply to all of the stable branches, so how
-> about I just revert this?  People can live with this option not able to
-> turn off for now, and if they really want it, they can use a newer
-> kernel, right?
+On Mon 10 Jun 01:42 PDT 2019, Lee Jones wrote:
 
-Lots of people can live with root holes in their kernels, it's still
-not a great idea :-) Plan B would be to fix all the legacy ioctls and
-close all the exploits in there, which absolutely no one wants to
-spend time on. This way the only people who'll suffer are the ones
-with horribly outdated userspace (and at that point who cares about a
-few more exploits).
+> The Qualcomm Geni I2C driver currently probes silently which can be
+> confusing when debugging potential issues.  Add a low level (INFO)
+> print when each I2C controller is successfully initially set-up.
+> 
 
-We should maybe update the help text to tell people they really
-shouldn't enable this, the default y is really just to avoid
-regression reports :-)
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 9e3b8a98688d..a89bfce5388e 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -596,6 +596,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	dev_dbg(&pdev->dev, "Geni-I2C adaptor successfully added\n");
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.17.1
+> 
