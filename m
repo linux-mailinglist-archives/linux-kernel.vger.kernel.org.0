@@ -2,71 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58BC93CDA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1EA3CDCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:59:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391369AbfFKNxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:53:05 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:35686 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729011AbfFKNxE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:53:04 -0400
-Received: (qmail 1733 invoked by uid 2102); 11 Jun 2019 09:53:03 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 11 Jun 2019 09:53:03 -0400
-Date:   Tue, 11 Jun 2019 09:53:03 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>
-cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Howells <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>,
-        <linux-usb@vger.kernel.org>, <raven@themaw.net>,
-        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
-In-Reply-To: <875zpcfxfk.fsf@linux.intel.com>
-Message-ID: <Pine.LNX.4.44L0.1906110950440.1535-100000@iolanthe.rowland.org>
+        id S2391569AbfFKN5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:57:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18550 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387835AbfFKN5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 09:57:33 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EE158C4322C7E5AD3117;
+        Tue, 11 Jun 2019 21:57:30 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Jun 2019
+ 21:57:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <sfrench@samba.org>, <lsahlber@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <samba-technical@lists.samba.org>,
+        <linux-cifs@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] cifs: remove set but not used variable 'ioctl_buf' and 'cifsi'
+Date:   Tue, 11 Jun 2019 21:53:15 +0800
+Message-ID: <20190611135315.20012-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019, Felipe Balbi wrote:
+Fixes gcc '-Wunused-but-set-variable' warnings:
 
-> >> >> > So for "severe" issues, yes, we should do this, but perhaps not for all
-> >> >> > of the "normal" things we see when a device is yanked out of the system
-> >> >> > and the like.
-> >> >> 
-> >> >> Then what counts as a "severe" issue?  Anything besides enumeration 
-> >> >> failure?
-> >> >
-> >> > Not that I can think of at the moment, other than the other recently
-> >> > added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
-> >> > in the USB stack that people will want exposed over time.
-> >> 
-> >> From an XHCI standpoint, Transaction Errors might be one thing. They
-> >> happen rarely and are a strong indication that the bus itself is
-> >> bad. Either bad cable, misbehaving PHYs, improper power management, etc.
-> >
-> > Don't you also get transaction errors if the user unplugs a device in 
-> > the middle of a transfer?  That's not the sort of thing we want to sent 
-> > notifications about.
-> 
-> Mathias, do we get Transaction Error if user removes cable during a
-> transfer? I thought we would just get Port Status Change with CC bit
-> cleared, no?
+fs/cifs/smb2ops.c: In function smb2_query_symlink:
+fs/cifs/smb2ops.c:2417:8: warning: variable ioctl_buf set but not used [-Wunused-but-set-variable]
+fs/cifs/smb2ops.c: In function smb3_punch_hole:
+fs/cifs/smb2ops.c:2799:24: warning: variable cifsi set but not used [-Wunused-but-set-variable]
 
-Even if xHCI doesn't give Transaction Errors when a cable is unplugged 
-during a transfer, other host controllers do.  Sometimes quite a lot -- 
-they continue to occur until the kernel polls the parent hub's 
-interrupt ep and learns that the port is disconnected, which can take 
-up to 250 ms.
+'ioctl_buf' is never used since introduction in commit ebaf546a5584 ("SMB3:
+Clean up query symlink when reparse point")
 
-Alan Stern
+'cifsi' is never used since introduction in commit 31742c5a3317 ("enable
+fallocate punch hole ("fallocate -p") for SMB3")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/cifs/smb2ops.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index e921e65..e8dfa34 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2414,7 +2414,6 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
+ 	struct kvec close_iov[1];
+ 	struct smb2_create_rsp *create_rsp;
+ 	struct smb2_ioctl_rsp *ioctl_rsp;
+-	char *ioctl_buf;
+ 	u32 plen;
+ 
+ 	cifs_dbg(FYI, "%s: path: %s\n", __func__, full_path);
+@@ -2496,7 +2495,6 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
+ 	if ((rc == 0) && (is_reparse_point)) {
+ 		/* See MS-FSCC 2.3.23 */
+ 
+-		ioctl_buf = (char *)ioctl_rsp + le32_to_cpu(ioctl_rsp->OutputOffset);
+ 		plen = le32_to_cpu(ioctl_rsp->OutputCount);
+ 
+ 		if (plen + le32_to_cpu(ioctl_rsp->OutputOffset) >
+@@ -2796,7 +2794,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 			    loff_t offset, loff_t len)
+ {
+ 	struct inode *inode;
+-	struct cifsInodeInfo *cifsi;
+ 	struct cifsFileInfo *cfile = file->private_data;
+ 	struct file_zero_data_information fsctl_buf;
+ 	long rc;
+@@ -2806,7 +2803,6 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 	xid = get_xid();
+ 
+ 	inode = d_inode(cfile->dentry);
+-	cifsi = CIFS_I(inode);
+ 
+ 	/* Need to make file sparse, if not already, before freeing range. */
+ 	/* Consider adding equivalent for compressed since it could also work */
+-- 
+2.7.4
+
 
