@@ -2,152 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCE73D66B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADE653D632
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407432AbfFKTFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:05:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405965AbfFKTFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:05:13 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1915021850;
-        Tue, 11 Jun 2019 19:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560279912;
-        bh=8eLk1T62RvfbkjDTgH2weNUcQeTmuO21UyDdivJsmwM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=whIz5SzzyYEqDh2zUXwVFVd8PXhSek7aSOpZL57/UiNipcy4XgtctLxtYpdKNdfF5
-         vWV2lJglYYNA9CFSaQbgxIcSOJjkhu9D9zRkm3BwWBAdZ+a13X1594bRGY7IIDdnOr
-         7rDy6xr3WBzh1y+UuRxW+MBQWuQeCHN/m72Sjj0A=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jiri Olsa <jolsa@redhat.com>, Martin KaFai Lau <kafai@fb.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Song Liu <songliubraving@fb.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Yonghong Song <yhs@fb.com>
-Subject: [PATCH 85/85] perf trace: Skip unknown syscalls when expanding strace like syscall groups
-Date:   Tue, 11 Jun 2019 15:59:11 -0300
-Message-Id: <20190611185911.11645-86-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190611185911.11645-1-acme@kernel.org>
-References: <20190611185911.11645-1-acme@kernel.org>
+        id S2392451AbfFKTDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:03:03 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:56843 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391474AbfFKTDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 15:03:01 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ham2s-0005xM-Q6; Tue, 11 Jun 2019 13:02:58 -0600
+Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1ham2r-0005Le-Qx; Tue, 11 Jun 2019 13:02:58 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
+        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        omar.kilani@gmail.com, tglx@linutronix.de,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        linux-arch@vger.kernel.org
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+        <20190529161157.GA27659@redhat.com>
+        <20190604134117.GA29963@redhat.com>
+        <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
+        <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
+        <87lfy96sta.fsf@xmission.com> <20190611185548.GA31214@redhat.com>
+Date:   Tue, 11 Jun 2019 14:02:41 -0500
+In-Reply-To: <20190611185548.GA31214@redhat.com> (Oleg Nesterov's message of
+        "Tue, 11 Jun 2019 20:55:49 +0200")
+Message-ID: <87zhmo54j2.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1ham2r-0005Le-Qx;;;mid=<87zhmo54j2.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX193lKbFzPtguYOlnucG7slA3C7KufMmyGY=
+X-SA-Exim-Connect-IP: 72.206.97.68
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 580 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.6 (0.5%), b_tie_ro: 1.72 (0.3%), parse: 1.61
+        (0.3%), extract_message_metadata: 4.3 (0.7%), get_uri_detail_list:
+        1.13 (0.2%), tests_pri_-1000: 7 (1.3%), tests_pri_-950: 2.2 (0.4%),
+        tests_pri_-900: 1.75 (0.3%), tests_pri_-90: 30 (5.2%), check_bayes: 27
+        (4.7%), b_tokenize: 11 (1.9%), b_tok_get_all: 6 (1.1%), b_comp_prob:
+        3.8 (0.7%), b_tok_touch_all: 2.7 (0.5%), b_finish: 0.73 (0.1%),
+        tests_pri_0: 505 (87.2%), check_dkim_signature: 0.84 (0.1%),
+        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 0.22 (0.0%), tests_pri_10:
+        2.3 (0.4%), tests_pri_500: 10 (1.7%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Oleg Nesterov <oleg@redhat.com> writes:
 
-We have $INSTALL_DIR/share/perf-core/strace/groups/string files with
-syscalls that should be selected when 'string' is used, meaning, in this
-case, syscalls that receive as one of its arguments a string, like a
-pathname.
+> On 06/10, Eric W. Biederman wrote:
+>>
+>> Personally I don't think anyone sane would intentionally depend on this
+>> and I don't think there is a sufficiently reliable way to depend on this
+>> by accident that people would actually be depending on it.
+>
+> Agreed.
+>
+> As I said I like these changes and I see nothing wrong. To me they fix the
+> current behaviour, or at least make it more consistent.
+>
+> But perhaps this should be documented in the changelog? To make it clear
+> that this change was intentional.
 
-But those were first selected and tested on x86_64, and end up failing
-in architectures where some of those syscalls are not available, like
-the 'access' syscall on arm64, which makes using 'perf trace -e string'
-in such archs to fail.
+Good point.  I had not documented it because I thought I was only
+disabling an optimization.
 
-Since this the routine doing the validation is used only when reading
-such files, do not fail when some syscall is not found in the
-syscalltbl, instead just use pr_debug() to register that in case people
-are suspicious of problems.
-
-Now using 'perf trace -e string' should work on arm64, selecting only
-the syscalls that have a string and are available on that architecture.
-
-Reported-by: Leo Yan <leo.yan@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/r/20190610184754.GU21245@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 1a2a605cf068..eb70a4b71755 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1529,6 +1529,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
- static int trace__validate_ev_qualifier(struct trace *trace)
- {
- 	int err = 0, i;
-+	bool printed_invalid_prefix = false;
- 	size_t nr_allocated;
- 	struct str_node *pos;
- 
-@@ -1555,14 +1556,15 @@ static int trace__validate_ev_qualifier(struct trace *trace)
- 			if (id >= 0)
- 				goto matches;
- 
--			if (err == 0) {
--				fputs("Error:\tInvalid syscall ", trace->output);
--				err = -EINVAL;
-+			if (!printed_invalid_prefix) {
-+				pr_debug("Skipping unknown syscalls: ");
-+				printed_invalid_prefix = true;
- 			} else {
--				fputs(", ", trace->output);
-+				pr_debug(", ");
- 			}
- 
--			fputs(sc, trace->output);
-+			pr_debug("%s", sc);
-+			continue;
- 		}
- matches:
- 		trace->ev_qualifier_ids.entries[i++] = id;
-@@ -1591,15 +1593,14 @@ static int trace__validate_ev_qualifier(struct trace *trace)
- 		}
- 	}
- 
--	if (err < 0) {
--		fputs("\nHint:\ttry 'perf list syscalls:sys_enter_*'"
--		      "\nHint:\tand: 'man syscalls'\n", trace->output);
--out_free:
--		zfree(&trace->ev_qualifier_ids.entries);
--		trace->ev_qualifier_ids.nr = 0;
--	}
- out:
-+	if (printed_invalid_prefix)
-+		pr_debug("\n");
- 	return err;
-+out_free:
-+	zfree(&trace->ev_qualifier_ids.entries);
-+	trace->ev_qualifier_ids.nr = 0;
-+	goto out;
- }
- 
- /*
--- 
-2.20.1
-
+Eric
