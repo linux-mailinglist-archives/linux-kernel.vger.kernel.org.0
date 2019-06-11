@@ -2,47 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B643C3C1EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 06:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21ECB3C1F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 06:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbfFKEFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 00:05:08 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:59958 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbfFKEFI (ORCPT
+        id S1729086AbfFKEFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 00:05:18 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:56091 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729003AbfFKEFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Jun 2019 00:05:08 -0400
-Received: by mail-it1-f200.google.com with SMTP id u127so1333883ith.9
+Received: by mail-io1-f72.google.com with SMTP id f22so9020055ioh.22
         for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 21:05:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Z7rXbvY7aGPLANrpOsQTULXmMd0kTr3kjT2Kw5c860Y=;
-        b=kcIdO8sxLSso1wNbtkmP6hPHR3j6hkSGuRC74x0ba23ExBObDJ/9t4GJoJoXSWaG3q
-         La1MD+IASzjzc3PYdbjEGbes9K2VuKuNEQ1iSEYv+Jr+efO6g5RKSOsFbcQdc2XaZHHL
-         42DEi+a/aj2FeOPhgUh8mzOvVlLfvOUx2l0wgQ1CzlXChL0Kg3X3bteKUIBZITpdt0uS
-         qGNfKE+qUB8N55LzrsaakvEgi/c65tfPtC0eU0zGUnm3YCT/KgNxKcONtDQfRNlwczXF
-         oeRq7L6ImzYbVbWZY9NfF7DOSQegfReeTK/dpIxSr6atXXZyoT1f9nt8QY7e1BPThpny
-         BtXw==
-X-Gm-Message-State: APjAAAWp1/rEcvf6iRuzBMI7QHfIT6PaBzV0vF1P49XBAVbjvrpJKRXW
-        w3TTzHvMljV6NEyB6Bp6my1RAN7IfJROX+C6JYj0/3YbzQ0l
-X-Google-Smtp-Source: APXvYqx0Q527R1SywnUOVL2YQEPX7udOZxGbcfMLQoA8o9WhY8jM2l9/88LqSdHXMuuY6IIIc3TQhM+Qw0OBSNeav6qkpnd2gr7o
+        bh=wz9dGOd1R+1s59ciDwYkBRQA92joaEufJIfItrANXuU=;
+        b=dHAr83bWK9reGOM8YCM0Ha6jiJfR8iIJRyGRp+Vu/pdRDvsYTTlLzS695w5DWhPMfq
+         iAf5DIt2XNFY6atQlX67t/+cv4NZ5GBJItInrBsqFOgfazEogt1d6SBWEHRFoQ2Nol3B
+         kpTFqB/lLiBiKbYmWwfUtnKhlaRhmr7H07FvcXgEIMIa+fSiJb4xRwIE5xxZkaZNX4Mk
+         2UIHDjkndHO7Zk5W8f6tYHkyoayhWj8rTabDwj9YXDsES+35hDgE/31xn9tbLuJmfHjq
+         CdbJki/CyMnR+zHjoNtbUXetqORwZ95dytdMBLkkJIoHJn8NOGpvtUPaqi3gGoFR0UIE
+         ljog==
+X-Gm-Message-State: APjAAAUH+MZqzmeP4pAB8jM1U8Lm5ZifDO/5byjSyYVGqVhtJfIZ6/+E
+        HpSOUl9Nrx5lesggiYKoGMX3gMjtLvjipmHooqNuHXmkPc8c
+X-Google-Smtp-Source: APXvYqwfnhvk1cHusdRiYNrHSd2S00tjyNN9b3K58HpaG3Rjp45MMI96ym3XdOKmtfLlcA4UDNnJPBg2PJ0G3v+dQFFGpnAPMDb6
 MIME-Version: 1.0
-X-Received: by 2002:a24:3dc1:: with SMTP id n184mr16083311itn.130.1560225906808;
- Mon, 10 Jun 2019 21:05:06 -0700 (PDT)
-Date:   Mon, 10 Jun 2019 21:05:06 -0700
+X-Received: by 2002:a24:7f82:: with SMTP id r124mr13507017itc.135.1560225907490;
+ Mon, 10 Jun 2019 21:05:07 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 21:05:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f1e431058b0466ab@google.com>
-Subject: KASAN: use-after-free Read in mntput
-From:   syzbot <syzbot+99de05d099a170867f22@syzkaller.appspotmail.com>
-To:     arnd@arndb.de, axboe@kernel.dk, bp@alien8.de,
-        catalin.marinas@arm.com, christian@brauner.io, dhowells@redhat.com,
-        geert@linux-m68k.org, hare@suse.com, heiko.carstens@de.ibm.com,
-        hpa@zytor.com, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luto@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, viro@zeniv.linux.org.uk, x86@kernel.org
+Message-ID: <000000000000fc4a7b058b04669e@google.com>
+Subject: WARNING in blk_mq_sched_free_requests
+From:   syzbot <syzbot+b9d0d56867048c7bcfde@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,122 +50,80 @@ syzbot found the following crash on:
 
 HEAD commit:    d1fdb6d8 Linux 5.2-rc4
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b30acaa00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=105ade6aa00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
-dashboard link: https://syzkaller.appspot.com/bug?extid=99de05d099a170867f22
+dashboard link: https://syzkaller.appspot.com/bug?extid=b9d0d56867048c7bcfde
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1114dc46a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17eade6aa00000
-
-The bug was bisected to:
-
-commit 9c8ad7a2ff0bfe58f019ec0abc1fb965114dde7d
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu May 16 11:52:27 2019 +0000
-
-     uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15c9f91ea00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=17c9f91ea00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c9f91ea00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c67dd2a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154be66aa00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+99de05d099a170867f22@syzkaller.appspotmail.com
-Fixes: 9c8ad7a2ff0b ("uapi, x86: Fix the syscall numbering of the mount API  
-syscalls [ver #2]")
+Reported-by: syzbot+b9d0d56867048c7bcfde@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: use-after-free in mntput+0x91/0xa0 fs/namespace.c:1207
-Read of size 4 at addr ffff88808f661124 by task syz-executor817/8955
-
-CPU: 1 PID: 8955 Comm: syz-executor817 Not tainted 5.2.0-rc4 #18
+Code: e8 bc b5 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f735bcf2d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dbc38 RCX: 00000000004466e9
+RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 0000000000000003
+RBP: 00000000006dbc30 R08: 0000000000000002 R09: 0000000000003034
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc3c
+R13: 00007f735bcf2d90 R14: 0000000000000004 R15: 20c49ba5e353f7cf
+WARNING: CPU: 0 PID: 9739 at block/blk-mq-sched.c:558  
+blk_mq_sched_free_requests+0x207/0x290 block/blk-mq-sched.c:558
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 9739 Comm: syz-executor118 Not tainted 5.2.0-rc4 #25
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
-  __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  kasan_report+0x12/0x20 mm/kasan/common.c:614
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
-  mntput+0x91/0xa0 fs/namespace.c:1207
-  path_put+0x50/0x70 fs/namei.c:483
-  free_fs_struct+0x25/0x70 fs/fs_struct.c:91
-  exit_fs+0xf0/0x130 fs/fs_struct.c:108
-  do_exit+0x8e0/0x2fa0 kernel/exit.c:873
-  do_group_exit+0x135/0x370 kernel/exit.c:981
-  __do_sys_exit_group kernel/exit.c:992 [inline]
-  __se_sys_exit_group kernel/exit.c:990 [inline]
-  __ia32_sys_exit_group+0x44/0x50 kernel/exit.c:990
-  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
-  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f16849
-Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
-90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000ffe4f85c EFLAGS: 00000296 ORIG_RAX: 00000000000000fc
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000080ed2b8
-RDX: 0000000000000000 RSI: 00000000080d71fc RDI: 00000000080ed2c0
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 8955:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_kmalloc mm/kasan/common.c:489 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:497
-  slab_post_alloc_hook mm/slab.h:437 [inline]
-  slab_alloc mm/slab.c:3326 [inline]
-  kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3488
-  kmem_cache_zalloc include/linux/slab.h:732 [inline]
-  alloc_vfsmnt+0x28/0x780 fs/namespace.c:182
-  vfs_create_mount+0x96/0x500 fs/namespace.c:961
-  __do_sys_fsmount fs/namespace.c:3423 [inline]
-  __se_sys_fsmount fs/namespace.c:3340 [inline]
-  __ia32_sys_fsmount+0x584/0xc80 fs/namespace.c:3340
-  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
-  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-Freed by task 16:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
-  __cache_free mm/slab.c:3432 [inline]
-  kmem_cache_free+0x86/0x260 mm/slab.c:3698
-  free_vfsmnt+0x6f/0x90 fs/namespace.c:559
-  delayed_free_vfsmnt+0x16/0x20 fs/namespace.c:564
-  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2092 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2310 [inline]
-  rcu_core+0xba5/0x1500 kernel/rcu/tree.c:2291
-  __do_softirq+0x25c/0x94c kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff88808f661000
-  which belongs to the cache mnt_cache of size 432
-The buggy address is located 292 bytes inside of
-  432-byte region [ffff88808f661000, ffff88808f6611b0)
-The buggy address belongs to the page:
-page:ffffea00023d9840 refcount:1 mapcount:0 mapping:ffff8880aa594940  
-index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea0002a35e08 ffffea00022a3f08 ffff8880aa594940
-raw: 0000000000000000 ffff88808f661000 0000000100000008 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88808f661000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88808f661080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88808f661100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                ^
-  ffff88808f661180: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
-  ffff88808f661200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+  panic+0x2cb/0x744 kernel/panic.c:219
+  __warn.cold+0x20/0x4d kernel/panic.c:576
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
+RIP: 0010:blk_mq_sched_free_requests+0x207/0x290 block/blk-mq-sched.c:558
+Code: ff e8 6d bf 30 fe 31 ff 89 c3 89 c6 e8 32 ac 4a fe 85 db 0f 85 68 fe  
+ff ff e8 a5 aa 4a fe 0f 0b e9 5c fe ff ff e8 99 aa 4a fe <0f> 0b e9 7f fe  
+ff ff 48 c7 c7 b4 e5 80 89 e8 b6 48 83 fe e9 28 fe
+RSP: 0018:ffff88808ab9fa60 EFLAGS: 00010293
+RAX: ffff88808c9f6340 RBX: 0000000000000001 RCX: ffffffff8326000e
+RDX: 0000000000000000 RSI: ffffffff83260027 RDI: ffff88809f27b020
+RBP: ffff88808ab9fab0 R08: ffff88808c9f6340 R09: ffffed1015d06be0
+R10: ffffed1015d06bdf R11: ffff8880ae835efb R12: 00000000fffffff4
+R13: ffff88809f27b008 R14: ffff88809ec4e658 R15: ffff88809f27b008
+  blk_mq_init_sched+0x32c/0x770 block/blk-mq-sched.c:542
+  elevator_init_mq+0xcd/0x160 block/elevator.c:622
+  blk_mq_init_allocated_queue+0x10e2/0x15b0 block/blk-mq.c:2921
+  blk_mq_init_queue+0x62/0xb0 block/blk-mq.c:2705
+  loop_add+0x2dd/0x8d0 drivers/block/loop.c:2004
+  loop_control_ioctl drivers/block/loop.c:2157 [inline]
+  loop_control_ioctl+0x165/0x360 drivers/block/loop.c:2139
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4466e9
+Code: e8 bc b5 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f735bcf2d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dbc38 RCX: 00000000004466e9
+RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 0000000000000003
+RBP: 00000000006dbc30 R08: 0000000000000002 R09: 0000000000003034
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc3c
+R13: 00007f735bcf2d90 R14: 0000000000000004 R15: 20c49ba5e353f7cf
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -180,6 +133,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
