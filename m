@@ -2,100 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6090418FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BDA41921
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408179AbfFKXfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:35:01 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37055 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405380AbfFKXfA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:35:00 -0400
-Received: by mail-it1-f193.google.com with SMTP id x22so7703874itl.2;
-        Tue, 11 Jun 2019 16:35:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m12BEF6aoD8sKKRDjXmfbkhom6wFfuNMaUfEfaPontI=;
-        b=XY0rO2QwWDGXv8VVnDhHhvdSjjvbZijD/ov9NKzOKMub0OeJJCX9/bSZuY9+/qN6/y
-         TqtZX8bPgOv25p0uXyW6mlEgXwgB8BpRHkwp5Gq3ec1PJwgj0sGgCfX7cKNtTUNMqDMb
-         th742GGwBdnUr9TbLgmXe7asWtUE+TnrEG5Ay9ukVxO+qtGhQakkOMFB9SRVccxxz1T4
-         3zytVj7MQ+pT34uh7iZhocD8fv8yLPyK4k87ADndWLalQvC/8Kh9wXTbtrbKIN91ZvU+
-         yMkfUu41g/Tj78vV/EriqJMDQ0OIJ2fge5WNFDwguOSeWH014BXACcNIrnObrKToMo1X
-         71cw==
-X-Gm-Message-State: APjAAAVtZURezix/FJ+P86mISyFSyjY6SfeM+pKGBNWS/lK3Qy82dtJm
-        RE/3DJz5DWIbqRqWwzY39A==
-X-Google-Smtp-Source: APXvYqye7O0X80ue+IvTi1olrle0IaMnhZvFUdN3Pu38l2XXIz46k5UuwXpGJfD3KkSIfO+KTcA/TQ==
-X-Received: by 2002:a24:4754:: with SMTP id t81mr21499151itb.106.1560296099482;
-        Tue, 11 Jun 2019 16:34:59 -0700 (PDT)
-Received: from localhost (ip-174-149-252-64.englco.spcsdns.net. [174.149.252.64])
-        by smtp.gmail.com with ESMTPSA id q79sm2082456itb.15.2019.06.11.16.34.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 16:34:58 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 17:34:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH v5 2/3] fdt: add support for rng-seed
-Message-ID: <20190611233453.GA14130@bogus>
-References: <20190527043336.112854-1-hsinyi@chromium.org>
- <20190527043336.112854-2-hsinyi@chromium.org>
- <5ced598d.1c69fb81.dabd8.339d@mx.google.com>
- <CAJMQK-i0z1EHCMK3eTya+SmK6GD_C4Ljvb7BHvsaMWLDxxmwMg@mail.gmail.com>
+        id S2392146AbfFKXrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:47:22 -0400
+Received: from mga11.intel.com ([192.55.52.93]:22035 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387864AbfFKXrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 19:47:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 16:47:21 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 16:47:19 -0700
+Cc:     baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        sai.praneeth.prakhya@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] iommu/vt-d: Fixes and cleanups for linux-next
+To:     Qian Cai <cai@lca.pw>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20190609023803.23832-1-baolu.lu@linux.intel.com>
+ <1560272102.5154.1.camel@lca.pw>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <28f728af-9bc8-d8ce-00b5-59bcfdceacf0@linux.intel.com>
+Date:   Wed, 12 Jun 2019 07:40:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJMQK-i0z1EHCMK3eTya+SmK6GD_C4Ljvb7BHvsaMWLDxxmwMg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1560272102.5154.1.camel@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 06:59:11PM +0800, Hsin-Yi Wang wrote:
-> On Tue, May 28, 2019 at 11:53 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Hsin-Yi Wang (2019-05-26 21:33:35)
-> > > Introducing a chosen node, rng-seed, which is an entropy that can be
-> > > passed to kernel called very early to increase initial device
-> > > randomness. Bootloader should provide this entropy and the value is
-> > > read from /chosen/rng-seed in DT.
-> > >
-> > > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> > > ---
-> >
-> > Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> >
-> 
-> Hi Rob,
-> 
-> Is this series accepted? Or is there any other related concern?
-> 
-> If it's fine, I also have sent a patch for updating
-> schemas/chosen.yaml document.
+Hi,
 
-The kernel change is fine, but please put the documentation change into 
-the schema doc (in github.com/devicetree-org/dt-schema) and don't modify 
-chosen.txt.
+This is supposed to be fixed by this patch
 
-Rob
+https://lkml.org/lkml/2019/6/3/115
+
+which is part of several RMRR related fixes and enhancements.
+
+Best regards,
+Baolu
+
+On 6/12/19 12:55 AM, Qian Cai wrote:
+> On Sun, 2019-06-09 at 10:37 +0800, Lu Baolu wrote:
+>> Hi Joerg,
+>>
+>> This series includes several fixes and cleanups after delegating
+>> DMA domain to generic iommu. Please review and consider them for
+>> linux-next.
+>>
+>> Best regards,
+>> Baolu
+>>
+>> Lu Baolu (5):
+>>    iommu/vt-d: Don't return error when device gets right domain
+>>    iommu/vt-d: Set domain type for a private domain
+>>    iommu/vt-d: Don't enable iommu's which have been ignored
+>>    iommu/vt-d: Fix suspicious RCU usage in probe_acpi_namespace_devices()
+>>    iommu/vt-d: Consolidate domain_init() to avoid duplication
+>>
+>> Sai Praneeth Prakhya (1):
+>>    iommu/vt-d: Cleanup after delegating DMA domain to generic iommu
+>>
+>>   drivers/iommu/intel-iommu.c | 210 +++++++++---------------------------
+>>   1 file changed, 53 insertions(+), 157 deletions(-)
+>>
+> 
+> BTW, the linux-next commit "iommu/vt-d: Expose ISA direct mapping region via
+> iommu_get_resv_regions" [1] also introduced a memory leak below, as it forgets
+> to ask intel_iommu_put_resv_regions() to call kfree() when
+> CONFIG_INTEL_IOMMU_FLOPPY_WA=y.
+> 
+> [1] https://lore.kernel.org/patchwork/patch/1078963/
+> 
+> unreferenced object 0xffff88912ef789c8 (size 64):
+>    comm "swapper/0", pid 1, jiffies 4294946232 (age 5399.530s)
+>    hex dump (first 32 bytes):
+>      48 83 f7 2e 91 88 ff ff 30 fa e3 00 82 88 ff ff  H.......0.......
+>      00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00  ................
+>    backtrace:
+>      [<00000000d267f4be>] kmem_cache_alloc_trace+0x266/0x380
+>      [<00000000d383d15b>] iommu_alloc_resv_region+0x40/0xb0
+>      [<00000000db8be31b>] intel_iommu_get_resv_regions+0x25e/0x2d0
+>      [<0000000021fbc6c3>] iommu_group_create_direct_mappings+0x159/0x3d0
+>      [<0000000022259268>] iommu_group_add_device+0x17b/0x4f0
+>      [<0000000028b91093>] iommu_group_get_for_dev+0x153/0x460
+>      [<00000000577c33b4>] intel_iommu_add_device+0xc4/0x210
+>      [<00000000587b7492>] iommu_probe_device+0x63/0x80
+>      [<000000004aa997d1>] add_iommu_group+0xe/0x20
+>      [<00000000c93a9cd6>] bus_for_each_dev+0xf0/0x150
+>      [<00000000a2e5f0cb>] bus_set_iommu+0xc6/0x100
+>      [<00000000dbad5db0>] intel_iommu_init+0x682/0xb0a
+>      [<00000000226f7444>] pci_iommu_init+0x26/0x62
+>      [<000000002d8694f5>] do_one_initcall+0xe5/0x3ea
+>      [<000000004bc60101>] kernel_init_freeable+0x5ad/0x640
+>      [<0000000091b0bad6>] kernel_init+0x11/0x138
+> 
+> 
