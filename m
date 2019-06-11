@@ -2,73 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C11C13C815
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3BE13C820
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405149AbfFKKHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:07:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:57354 "EHLO foss.arm.com"
+        id S2405190AbfFKKIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:08:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:57390 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404406AbfFKKHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:07:48 -0400
+        id S2405169AbfFKKIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:08:14 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7D65337;
-        Tue, 11 Jun 2019 03:07:47 -0700 (PDT)
-Received: from redmoon (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0681F3F557;
-        Tue, 11 Jun 2019 03:09:28 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 11:07:42 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Alan Mikhak <alan.mikhak@sifive.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com, linux-riscv@lists.infradead.org, palmer@sifive.com,
-        paul.walmsley@sifive.com
-Subject: Re: [PATCH v2] PCI: endpoint: Set endpoint controller pointer to null
-Message-ID: <20190611100742.GA29976@redmoon>
-References: <1558647944-13816-1-git-send-email-alan.mikhak@sifive.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66884337;
+        Tue, 11 Jun 2019 03:08:13 -0700 (PDT)
+Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5692A3F557;
+        Tue, 11 Jun 2019 03:09:54 -0700 (PDT)
+Subject: Re: binfmt_flat cleanups and RISC-V support
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Greg Ungerer <gerg@linux-m68k.org>,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
+        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190610212015.9157-1-hch@lst.de>
+ <4f000219-4baf-b03e-9003-26482640d3de@arm.com>
+ <20190611081117.GA22110@lst.de>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <d41f1077-936f-ce5b-2121-5a5ade521a98@arm.com>
+Date:   Tue, 11 Jun 2019 11:08:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1558647944-13816-1-git-send-email-alan.mikhak@sifive.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190611081117.GA22110@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 02:45:44PM -0700, Alan Mikhak wrote:
-> Set endpoint controller pointer to null in pci_epc_remove_epf()
-> to avoid -EBUSY on subsequent call to pci_epc_add_epf().
+On 6/11/19 9:11 AM, Christoph Hellwig wrote:
+> On Tue, Jun 11, 2019 at 09:05:45AM +0100, Vladimir Murzin wrote:
+>> I'm wondering if you have a branch with these changes so I can give
+>> it a try on ARM NOMMU platforms?
 > 
-> Requires checking for null endpoint function pointer.
 > 
-> Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
-> ---
->  drivers/pci/endpoint/pci-epc-core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-
-Applied to pci/endpoint for v5.3, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index e4712a0f249c..2091508c1620 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -519,11 +519,12 @@ void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf)
->  {
->  	unsigned long flags;
->  
-> -	if (!epc || IS_ERR(epc))
-> +	if (!epc || IS_ERR(epc) || !epf)
->  		return;
->  
->  	spin_lock_irqsave(&epc->lock, flags);
->  	list_del(&epf->list);
-> +	epf->epc = NULL;
->  	spin_unlock_irqrestore(&epc->lock, flags);
->  }
->  EXPORT_SYMBOL_GPL(pci_epc_remove_epf);
-> -- 
-> 2.7.4
+>     git://git.infradead.org/users/hch/riscv.git riscv-flat
 > 
+
+Thanks! I gave it a go and provided my tags for relevant patches.
+
+Cheers
+Vladimir
