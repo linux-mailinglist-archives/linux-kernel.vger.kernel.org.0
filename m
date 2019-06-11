@@ -2,105 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12633D646
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDE643D649
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392589AbfFKTDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:03:39 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44563 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392561AbfFKTDh (ORCPT
+        id S2405397AbfFKTDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:03:48 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33398 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405041AbfFKTDr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:03:37 -0400
-Received: by mail-pf1-f196.google.com with SMTP id t16so7999645pfe.11;
-        Tue, 11 Jun 2019 12:03:37 -0700 (PDT)
+        Tue, 11 Jun 2019 15:03:47 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g21so5530879plq.0;
+        Tue, 11 Jun 2019 12:03:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=TINH5Zv9sdfI5yGkKfukd7zEs5gc5SFmFE6Rm33jogw=;
-        b=sTbvzg1IBs2bb8cjreY5cBasSaH+2pFI5pjQ35wagL+18kPnXLznCC9TyL/tH+M4hP
-         q8EzAGJHmuFs3cTKR1D9zefrPRRKJAU8/AOrhIRoejq49CWhnsGswe/IoyW+3pLcVrZA
-         idoBHD6D/SGQjCHVkxMcAuSa0qZ0UYf6PuryCCl6KxGiUpZO9zLoZB/vD1r7/EDrA+xH
-         AVkmXuIzCTP0+FrXVOmES1ohd6KLAjLFxCArXYNa/4QqLSZCec9i31IIvqj3lneR3rck
-         uR0BMYPVVBv3BGDTkrSUVMI/X2O/9KCPcGFl11pf9di+5Ug8qf/qOIO7Nn2RveaTofno
-         9dig==
+        bh=+QbRljIgJwWBCzWz9e7i8YONsVM1yUd4G7aQc2LYOeY=;
+        b=KA9NWr5iz/A4jsEJ5AhARMgh4T+UpkqjqJScqAcDG8v7nBlWcBgURc6KT+/PgUSCnZ
+         M2a6GpogN88X5FwqHoYdH/ayMg2/+yQxwR+MRIPai5lz8UNvM1Y/BZGKN/tLk9H9e8OX
+         YUhgcFrLj1rraz7ESB6QInR7wgqKpLFp/kThW4h70qzOIV3tQk4PTXQuPmR71/ZB1IrV
+         06ZymkBmp2BF49v1bzsA7TsmnF/1rriUiO8GUAzIeCO2guljtlJ0VpLyiX33aSxPGaZX
+         AvD9Ee3LWAVYHx7bwyHIsBazojz5xrlBLd8htP6r5OuvQBh97wSr3WoHAvUsZ0zzkCbT
+         mw0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TINH5Zv9sdfI5yGkKfukd7zEs5gc5SFmFE6Rm33jogw=;
-        b=kJdY8QEZIURUZo4HI1IMAJ31YHhLhQOT0JyIu/z4oYMmnbIh1Ilp/5D9gBJ2+bbLqB
-         5Q22m9UZxg/2wjx18KoAlemA0HzDVaq3nVT+9VyDgdSYq1SK5N7ebdKeg+Rt1lMZzobi
-         hGcB+RMX6DktW7sarEbF71v5XQAxCVDAH8yz5fQK69APpzVbgkbK/ZA1O6BNM9zoRs6+
-         0hcoCcEr1vSsYC71cLuW5tIRcPV5oDbmICNsHFaZ0bez9YuMImM5ODYQz4uKJyzSb+ag
-         r5jSLR6nG3BjIJuDbVMpdpvVAzkhAyUntQu9wtLj+V1Fh3ZBp5SWZ7sANUrMk91gklD7
-         gzrA==
-X-Gm-Message-State: APjAAAVS0gNjm+B+VuYHMOfqp2tgCNkDmwHjfOTQ+qEzcxJQyzMSOBVO
-        WBXvuDv6lyEDMAXDFqdXWXg=
-X-Google-Smtp-Source: APXvYqyurkJYg+ONU24NoQH+aOpKIHaCcBkqNsSi7eK6I99H2KHZq5aZwOzTKoSX9JiYUzkROPsUWw==
-X-Received: by 2002:a62:6d47:: with SMTP id i68mr82880905pfc.189.1560279816496;
-        Tue, 11 Jun 2019 12:03:36 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:1677])
-        by smtp.gmail.com with ESMTPSA id y22sm12843821pgj.38.2019.06.11.12.03.35
+        bh=+QbRljIgJwWBCzWz9e7i8YONsVM1yUd4G7aQc2LYOeY=;
+        b=qYB39Mx7x+pQrB5sihDrsdfpUpBgkgAWSldyUbLW40FxJtq6ghAnQ5vjM9ld6q4J5M
+         7P2px2BTTdN2nXIxjxTfu0hWWZEeoSmT6dxaUYOOA+wM51AtRlQaJQ8PpGpJM8IbZh+h
+         d7Ky9NcZxov+9IARgW++VBitCpEnL8azwrzAjuWCjkKuoIiINfjeLB7GonjvzTuROn8m
+         GXVrXnfLJ5hybuUK1MBSRspP1+bPn0umgY6xR6KG8Z7oRLI3wGOG1dvTyPXZmauJ47Z2
+         QFo2gj2d1R25qGJLq6tG178ZbWtvgFAzUeoJp9y49Z1tnz2OL2pDQHNxCrxW4mxp02xN
+         S1bw==
+X-Gm-Message-State: APjAAAU8gHbnPYcrjOpXkosqUur941nBLXNRWudKISoAIbYIyVtwW5P5
+        YlreT3CJE4JdWtrEk3pPbo4=
+X-Google-Smtp-Source: APXvYqxh+O8fngACzCZvf/EiUwldMGLtMTvUx+/ODjcXz0khddZweOpl0aIOTJZal4YiWoFsmIKA3A==
+X-Received: by 2002:a17:902:d701:: with SMTP id w1mr71539969ply.12.1560279826423;
+        Tue, 11 Jun 2019 12:03:46 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j14sm16520690pfe.10.2019.06.11.12.03.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 12:03:35 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 12:03:32 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 05/33] docs: cgroup-v1: convert docs to ReST and
- rename to *.rst
-Message-ID: <20190611190332.GI3341036@devbig004.ftw2.facebook.com>
-References: <cover.1560045490.git.mchehab+samsung@kernel.org>
- <79865a4248ce5b042106e5ec69bb493292a8d392.1560045490.git.mchehab+samsung@kernel.org>
+        Tue, 11 Jun 2019 12:03:44 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 12:03:43 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Fredrik Noring <noring@nocrew.org>
+Cc:     laurentiu.tudor@nxp.com, hch@lst.de, stern@rowland.harvard.edu,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        marex@denx.de, leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com, JuergenUrban@gmx.de
+Subject: Re: [PATCH v7 3/5] usb: host: ohci-sm501: init genalloc for local
+ memory
+Message-ID: <20190611190343.GA18459@roeck-us.net>
+References: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
+ <20190529102843.13174-4-laurentiu.tudor@nxp.com>
+ <20190605214622.GA22254@roeck-us.net>
+ <20190611133223.GA30054@roeck-us.net>
+ <20190611172654.GA2602@sx9>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79865a4248ce5b042106e5ec69bb493292a8d392.1560045490.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190611172654.GA2602@sx9>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 11:26:55PM -0300, Mauro Carvalho Chehab wrote:
-> Convert the cgroup-v1 files to ReST format, in order to
-> allow a later addition to the admin-guide.
+On Tue, Jun 11, 2019 at 07:26:54PM +0200, Fredrik Noring wrote:
+> Hi Guenter,
 > 
-> The conversion is actually:
->   - add blank lines and identation in order to identify paragraphs;
->   - fix tables markups;
->   - add some lists markups;
->   - mark literal blocks;
->   - adjust title markups.
+> > > This patch results in usb access failures when trying to boot from the
+> > > sm501-usb controller on sh4 with qemu.
+> > > 
+> > > usb 1-2.1: reset full-speed USB device number 4 using sm501-usb
+> > > sd 1:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x03 driverbyte=0x00
+> > > sd 1:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 00 08 7c 00 00 f0 00
+> > > print_req_error: I/O error, dev sda, sector 2172 flags 80700
+> > > usb 1-2.1: reset full-speed USB device number 4 using sm501-usb
+> > > sd 1:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x03 driverbyte=0x00
+> > > sd 1:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 00 01 da 00 00 f0 00
+> > > print_req_error: I/O error, dev sda, sector 474 flags 84700
+> > > usb 1-2.1: reset full-speed USB device number 4 using sm501-usb
+> > > sd 1:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x03 driverbyte=0x00
+> > > sd 1:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 00 02 da 00 00 f0 00
+> > > print_req_error: I/O error, dev sda, sector 730 flags 84700
+> > > usb 1-2.1: reset full-speed USB device number 4 using sm501-usb
+> > > sd 1:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x03 driverbyte=0x00
+> > > sd 1:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 00 0b 50 00 00 f0 00
+> > > print_req_error: I/O error, dev sda, sector 2896 flags 84700
+> > > 
+> > > Qemu command line is:
+> > > 
+> > > The qemu command line is:
+> > > 
+> > > qemu-system-sh4 -M r2d \
+> > >         -kernel ./arch/sh/boot/zImage \
+> > > 	-snapshot \
+> > > 	-usb -device usb-storage,drive=d0 \
+> > > 	-drive file=rootfs.ext2,if=none,id=d0,format=raw \
+> > > 	-append 'panic=-1 slub_debug=FZPUA root=/dev/sda rootwait console=ttySC1,115200 earlycon=scif,mmio16,0xffe80000 noiotrap' \
+> > > 	-serial null -serial stdio \
+> > > 	-net nic,model=rtl8139 -net user -nographic -monitor null
+> > > 
+> > > Reverting this patch as well as "USB: drop HCD_LOCAL_MEM flag" fixes the
+> > > problem. Reverting "USB: drop HCD_LOCAL_MEM flag" alone does not help.
+> > > 
+> > 
+> > This problem is still seen in next-20190611.
+> > Has anyone actually tested this code ?
 > 
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
+> I tested patches 1, 2 and 5 with v5.0.19. Perhaps yet another part of the
+> OHCI subsystem allocates memory from the wrong pool? With some luck it is
+> relatively easy to trace backwards from the error messages to the point
+> where the memory is being allocated. One way to establish this is to
+> sprinkle printk around if-statements. There may be 10-20 levels of calls
+> including one or two indirect calls via pointers. Would you be able to do
+> that?
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Acked-by: Tejun Heo <tj@kernel.org>
+I don't think I'll have time to do that anytime soon. Not that I know what
+exactly to look for in the first place.
 
-Please feel free to route with the rest of the series.  If you want
-the patch to be routed through the cgroup tree, please let me know.
+Can you do that debugging yourself ? All you would need is a cross-compiler
+(eg from kernel.org), qemu, and a working configuration (the root file
+system doesn't really matter since the code doesn't get to the point of
+loading it, but you can use [1]). For the configuration file, you can use
+rts7751r2dplus_defconfig with CONFIG_CMDLINE and CONFIG_CMDLINE_OVERWRITE
+removed.
 
-Thanks.
+Thanks,
+Guenter
 
--- 
-tejun
+---
+[1] https://github.com/groeck/linux-build-test/blob/master/rootfs/sh/rootfs.ext2.gz
+
