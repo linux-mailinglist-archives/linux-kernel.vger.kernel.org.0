@@ -2,75 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 442C23C5F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D81673C5F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404755AbfFKI2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:28:40 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:35293 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404559AbfFKI2k (ORCPT
+        id S2404771AbfFKIaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:30:14 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51766 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404559AbfFKIaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:28:40 -0400
-X-Originating-IP: 90.88.159.246
-Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id AE35CC001B;
-        Tue, 11 Jun 2019 08:28:32 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 10:28:32 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] arm64: defconfig: enable Allwinner DMA drivers
-Message-ID: <20190611082832.lu45xaxyuftmc3et@flea>
-References: <20190527201459.20130-1-peron.clem@gmail.com>
- <20190527201459.20130-8-peron.clem@gmail.com>
+        Tue, 11 Jun 2019 04:30:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RBovmzIRHW1UWAnEqODhD/BnFZE9/ZwqhAOszC2dC+4=; b=KVlCLhBwIS/ACIowb+e8rlUuR
+        deH+r5o0G7QQnmi+cnMUQWPNZelOfqwzshQppQXYl7SWMk2h4o9U94XD7b1l7BD14hhD9jTJ+rtDf
+        0t8uTzymsMUCdPf4pZ3soOES0HNO8riOVJAunLDmX+ZVnpeiEJLCPdjvXTnkBQ4jxlOJfMLf1f2OC
+        rWnRsVWFEOhaZB9OJOB2ozkbwIZz/tJSEAK3aZfWKvaIBP0UIlGwGX6nIz3FpAiLvrAlSWpD/wd+q
+        OI6RvLq3S2KR4q4RxiZxV0BL81tRAh1eGqGPw/kwBoXzYzMOYFZoIghvmus4DHQJpTfqHPfcuvpdu
+        oa6Kbk3xw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hac9s-0003S5-Dy; Tue, 11 Jun 2019 08:29:32 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 307C0202173E1; Tue, 11 Jun 2019 10:29:31 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 10:29:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 14/15] static_call: Simple self-test module
+Message-ID: <20190611082931.GR3436@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.373256296@infradead.org>
+ <20190610172428.3t6laheazlz2y3br@treble>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pmlkumyvjoeoxyoi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190527201459.20130-8-peron.clem@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190610172428.3t6laheazlz2y3br@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 10, 2019 at 12:24:28PM -0500, Josh Poimboeuf wrote:
+> On Wed, Jun 05, 2019 at 03:08:07PM +0200, Peter Zijlstra wrote:
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  lib/Kconfig.debug      |    8 ++++++++
+> >  lib/Makefile           |    1 +
+> >  lib/test_static_call.c |   41 +++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 50 insertions(+)
+> > 
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -1955,6 +1955,14 @@ config TEST_STATIC_KEYS
+> >  
+> >  	  If unsure, say N.
+> >  
+> > +config TEST_STATIC_CALL
+> > +	tristate "Test static call"
+> > +	depends on m
+> > +	help
+> > +	  Test the static call interfaces.
+> > +
+> > +	  If unsure, say N.
+> > +
+> 
+> Any reason why we wouldn't just make this a built-in boot time test?
 
---pmlkumyvjoeoxyoi
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 27, 2019 at 10:14:59PM +0200, Cl=E9ment P=E9ron wrote:
-> Allwinner sun6i DMA drivers is used on A64 and H6 boards.
->
-> Enable it as a module.
->
-> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
-
-Applied, thanks
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---pmlkumyvjoeoxyoi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXP9mMAAKCRDj7w1vZxhR
-xbJ1AQDeFPEci2+C/F9JAKMPMRxCGb1crqPrOBHlGm5cOPU5mgD/XrVy7lKljnD3
-kRiygPovjYI/8EQCelT+QrOFbBXtSAs=
-=2p9T
------END PGP SIGNATURE-----
-
---pmlkumyvjoeoxyoi--
+None what so ever; but I did copy paste from the static_key stuff and
+that has it for some rasin.
