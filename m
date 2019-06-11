@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C1603CDE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 867A53CDFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390015AbfFKOFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:05:00 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:55679 "EHLO
+        id S2391597AbfFKOFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:05:36 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:55721 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387704AbfFKOFA (ORCPT
+        with ESMTP id S2389902AbfFKOFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:05:00 -0400
+        Tue, 11 Jun 2019 10:05:01 -0400
 Received: from [167.98.27.226] (helo=happy.office.codethink.co.uk)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hahOT-0003vU-5W; Tue, 11 Jun 2019 15:04:57 +0100
+        id 1hahOT-0003vU-LT; Tue, 11 Jun 2019 15:04:57 +0100
 From:   Michael Drake <michael.drake@codethink.co.uk>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -26,9 +26,9 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-kernel@lists.codethink.co.uk,
         Patrick Glaser <pglaser@tesla.com>, Nate Case <ncase@tesla.com>
-Subject: [PATCH v1 05/11] ti948: Add alive check function using schedule_delayed_work()
-Date:   Tue, 11 Jun 2019 15:04:06 +0100
-Message-Id: <20190611140412.32151-6-michael.drake@codethink.co.uk>
+Subject: [PATCH v1 06/11] ti948: Reconfigure in the alive check when device returns
+Date:   Tue, 11 Jun 2019 15:04:07 +0100
+Message-Id: <20190611140412.32151-7-michael.drake@codethink.co.uk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611140412.32151-1-michael.drake@codethink.co.uk>
 References: <20190611140412.32151-1-michael.drake@codethink.co.uk>
@@ -39,97 +39,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This simply runs the function once every 5 seconds, while the
-device is supposed to be active.  The alive check function is
-currently simply a stub, that logs it has been called, and
-re-inserts itself into the work queue.
+If the alive check detects a transition to the alive state,
+the device configuration is rewritten.
 
 Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
 Cc: Patrick Glaser <pglaser@tesla.com>
 Cc: Nate Case <ncase@tesla.com>
 ---
- drivers/gpu/drm/bridge/ti948.c | 37 +++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/ti948.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/ti948.c b/drivers/gpu/drm/bridge/ti948.c
-index 9cb37215f049..86daa3701b91 100644
+index 86daa3701b91..b5c766711c4b 100644
 --- a/drivers/gpu/drm/bridge/ti948.c
 +++ b/drivers/gpu/drm/bridge/ti948.c
-@@ -16,6 +16,7 @@
+@@ -132,6 +132,8 @@ struct ti948_reg_val {
+  * @reg_names:   Array of regulator names, or NULL.
+  * @regs:        Array of regulators, or NULL.
+  * @reg_count:   Number of entries in reg_names and regs arrays.
++ * @alive_check: Context for the alive checking work item.
++ * @alive:       Whether the device is alive or not (alive_check).
+  */
+ struct ti948_ctx {
+ 	struct i2c_client *i2c;
+@@ -141,6 +143,8 @@ struct ti948_ctx {
+ 	const char **reg_names;
+ 	struct regulator **regs;
+ 	size_t reg_count;
++	struct delayed_work alive_check;
++	bool alive;
+ };
  
- #include <linux/regulator/consumer.h>
- #include <linux/of_device.h>
-+#include <linux/workqueue.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/delay.h>
-@@ -25,6 +26,9 @@
- /* Number of times to try checking for device on bringup. */
- #define TI948_DEVICE_ID_TRIES 10
- 
-+/* Alive check every 5 seconds. */
-+#define TI948_ALIVE_CHECK_DELAY (5 * HZ)
-+
- /**
-  * enum ti948_reg - TI948 registers.
-  *
-@@ -374,9 +378,27 @@ static inline struct ti948_ctx *ti948_ctx_from_dev(struct device *dev)
- 	return i2c_get_clientdata(client);
- }
- 
-+static inline struct ti948_ctx *delayed_work_to_ti948_ctx(
-+		struct delayed_work *dwork)
-+{
-+	return container_of(dwork, struct ti948_ctx, alive_check);
-+}
-+
-+static void ti948_alive_check(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct ti948_ctx *ti948 = delayed_work_to_ti948_ctx(dwork);
-+
-+	dev_info(&ti948->i2c->dev, "%s Alive check!\n", __func__);
-+
-+	/* Reschedule ourself for the next check. */
-+	schedule_delayed_work(&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
-+}
-+
- static int ti948_pm_resume(struct device *dev)
- {
- 	struct ti948_ctx *ti948 = ti948_ctx_from_dev(dev);
-+	bool scheduled;
- 	int ret;
- 
- 	if (ti948 == NULL)
-@@ -386,7 +408,18 @@ static int ti948_pm_resume(struct device *dev)
+ static bool ti948_readable_reg(struct device *dev, unsigned int reg)
+@@ -346,6 +350,8 @@ static int ti948_power_on(struct ti948_ctx *ti948)
  	if (ret != 0)
  		return ret;
  
--	return ti948_write_config_seq(ti948);
-+	ret = ti948_write_config_seq(ti948);
-+	if (ret != 0)
-+		return ret;
++	ti948->alive = true;
 +
-+	INIT_DELAYED_WORK(&ti948->alive_check, ti948_alive_check);
-+
-+	scheduled = schedule_delayed_work(
-+			&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
-+	if (!scheduled)
-+		dev_warn(&ti948->i2c->dev, "Alive check already scheduled\n");
-+
-+	return 0;
- }
+ 	msleep(500);
  
- static int ti948_pm_suspend(struct device *dev)
-@@ -396,6 +429,8 @@ static int ti948_pm_suspend(struct device *dev)
- 	if (ti948 == NULL)
- 		return 0;
+ 	return 0;
+@@ -356,6 +362,8 @@ static int ti948_power_off(struct ti948_ctx *ti948)
+ 	int i;
+ 	int ret;
  
-+	cancel_delayed_work_sync(&ti948->alive_check);
++	ti948->alive = false;
 +
- 	return ti948_power_off(ti948);
- }
+ 	for (i = ti948->reg_count; i > 0; i--) {
+ 		dev_info(&ti948->i2c->dev, "Disabling %s regulator\n",
+ 				ti948->reg_names[i - 1]);
+@@ -388,8 +396,17 @@ static void ti948_alive_check(struct work_struct *work)
+ {
+ 	struct delayed_work *dwork = to_delayed_work(work);
+ 	struct ti948_ctx *ti948 = delayed_work_to_ti948_ctx(dwork);
++	int ret = ti948_device_check(ti948);
  
+-	dev_info(&ti948->i2c->dev, "%s Alive check!\n", __func__);
++	if (ti948->alive == false && ret == 0) {
++		dev_info(&ti948->i2c->dev, "Device has come back to life!\n");
++		ti948_write_config_seq(ti948);
++		ti948->alive = true;
++
++	} else if (ti948->alive == true && ret != 0) {
++		dev_info(&ti948->i2c->dev, "Device has stopped responding\n");
++		ti948->alive = false;
++	}
+ 
+ 	/* Reschedule ourself for the next check. */
+ 	schedule_delayed_work(&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
 -- 
 2.20.1
 
