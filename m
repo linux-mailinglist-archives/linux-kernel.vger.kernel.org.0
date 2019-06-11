@@ -2,66 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7473CD9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BC93CDA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390540AbfFKNwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:52:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35734 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728344AbfFKNwT (ORCPT
+        id S2391369AbfFKNxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:53:05 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:35686 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729011AbfFKNxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:52:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IWz7rmxRuciLtbVGhKXAvWnIWoY/90SUiu16s3M1vAk=; b=MrxNbxywR2iqrcOnj6vuLsTEy
-        tWldvXIf6cyAQENNln9VVSR4c4dc4mq9iq0ZiBlYqT+NEXj/xa2UBqMPcPTLee2+C1rZtOmresAMd
-        9gGkT6gOur2Qc6RC+Oxa6POW7rdb4t5F07I3FrP1nk6PNjviQYoLtMO4pfbJnHjbndylgNxjBNurw
-        AW8ZdUfhyZCpgV3/X7hjLOpVeYJql4oqa8e7bCRgEFkzPOA1gkLqJbkH4EBK9DX3TjF+x/y7s3Wq6
-        UklaPdSaF7ZwsqIR9r/B9v1l2jotkzYTvPMQ9ns3I4dTNnupm+/2zKFMW5t3SNRyWF4o8pIOBGPYF
-        lu39j1wOQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hahC8-0003JG-TH; Tue, 11 Jun 2019 13:52:12 +0000
-Date:   Tue, 11 Jun 2019 06:52:12 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ira Weiny <ira.weiny@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3 1/2] mm/gup: fix omission of check on FOLL_LONGTERM in
- get_user_pages_fast()
-Message-ID: <20190611135212.GA4591@infradead.org>
-References: <1559725820-26138-1-git-send-email-kernelfans@gmail.com>
- <20190605144912.f0059d4bd13c563ddb37877e@linux-foundation.org>
- <CAFgQCTur5ReVHm6NHdbD3wWM5WOiAzhfEXdLnBGRdZtf7q1HFw@mail.gmail.com>
- <2b0a65ec-4fb0-430e-3e6a-b713fb5bb28f@nvidia.com>
- <CAFgQCTtS7qOByXBnGzCW-Rm9fiNsVmhQTgqmNU920m77XyAwZQ@mail.gmail.com>
- <20190611122935.GA9919@dhcp-128-55.nay.redhat.com>
+        Tue, 11 Jun 2019 09:53:04 -0400
+Received: (qmail 1733 invoked by uid 2102); 11 Jun 2019 09:53:03 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 11 Jun 2019 09:53:03 -0400
+Date:   Tue, 11 Jun 2019 09:53:03 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>
+cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>,
+        <linux-usb@vger.kernel.org>, <raven@themaw.net>,
+        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
+In-Reply-To: <875zpcfxfk.fsf@linux.intel.com>
+Message-ID: <Pine.LNX.4.44L0.1906110950440.1535-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611122935.GA9919@dhcp-128-55.nay.redhat.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 08:29:35PM +0800, Pingfan Liu wrote:
-> Unable to get a NVME device to have a test. And when testing fio on the
+On Tue, 11 Jun 2019, Felipe Balbi wrote:
 
-How would a nvme test help?  FOLL_LONGTERM isn't used by any performance
-critical path to start with, so I don't see how this patch could be
-a problem.
+> >> >> > So for "severe" issues, yes, we should do this, but perhaps not for all
+> >> >> > of the "normal" things we see when a device is yanked out of the system
+> >> >> > and the like.
+> >> >> 
+> >> >> Then what counts as a "severe" issue?  Anything besides enumeration 
+> >> >> failure?
+> >> >
+> >> > Not that I can think of at the moment, other than the other recently
+> >> > added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
+> >> > in the USB stack that people will want exposed over time.
+> >> 
+> >> From an XHCI standpoint, Transaction Errors might be one thing. They
+> >> happen rarely and are a strong indication that the bus itself is
+> >> bad. Either bad cable, misbehaving PHYs, improper power management, etc.
+> >
+> > Don't you also get transaction errors if the user unplugs a device in 
+> > the middle of a transfer?  That's not the sort of thing we want to sent 
+> > notifications about.
+> 
+> Mathias, do we get Transaction Error if user removes cable during a
+> transfer? I thought we would just get Port Status Change with CC bit
+> cleared, no?
+
+Even if xHCI doesn't give Transaction Errors when a cable is unplugged 
+during a transfer, other host controllers do.  Sometimes quite a lot -- 
+they continue to occur until the kernel polls the parent hub's 
+interrupt ep and learns that the port is disconnected, which can take 
+up to 250 ms.
+
+Alan Stern
+
