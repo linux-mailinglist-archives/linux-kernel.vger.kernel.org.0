@@ -2,118 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A94C3D435
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 145113D442
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406310AbfFKRbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:31:22 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37296 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405786AbfFKRbW (ORCPT
+        id S2406216AbfFKRcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:32:32 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:37057 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406020AbfFKRcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:31:22 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5BHVIg2080041;
-        Tue, 11 Jun 2019 12:31:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560274278;
-        bh=1RmvW+AZ9FteTp3r96qSO0PelKVyqe7ED4AJeEZJgPM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=leILpbnQMLwVrBDDDmI4QvLvPFV/ZSJVE1jkZFENg6NcTx20XqpF38FNIjqyXEYN+
-         5lJvMtgyyw+s7pWxUn0E9lVdyQ4DL2TqZeN9ilWPFhp8tla3DxuZunYtxOoBNGOh/+
-         Tf7N3GzyDgbLO9U2J/8iVfANsSiEi20J/iuzZaT0=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5BHVIU1078820
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Jun 2019 12:31:18 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 11
- Jun 2019 12:31:17 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 11 Jun 2019 12:31:17 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5BHVG9t054946;
-        Tue, 11 Jun 2019 12:31:16 -0500
-Subject: Re: [PATCH v2] firmware: ti_sci: Always request response from
- firmware
-To:     "Andrew F. Davis" <afd@ti.com>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190528155510.373-1-afd@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <034a2922-1ee2-53b8-04ed-a05a66fda066@ti.com>
-Date:   Tue, 11 Jun 2019 20:31:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 11 Jun 2019 13:32:32 -0400
+Received: by mail-pf1-f169.google.com with SMTP id 19so7022326pfa.4;
+        Tue, 11 Jun 2019 10:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=LdNek+APXMhQxGgX0MguFd69wGyOuhCblzXrvmRZCos=;
+        b=YMRYA3VRKjSCw7WuIs4loHfaTNq/EkdqBxzCZW8lO0l5/TpUkkuHmyrveObkjJd/FN
+         7D+8m7nLrnGxl1dhn1DRvS7DwMJSoKaZ5Gj2aH4xr2mR7x19bundu0YaF9WMzUfQrok2
+         DLi1AM0KWVU3+38AWUMHa7uNGdjAOGzLu2x4W0KkTEcEdL5q8NriBOvIHgBK3lbpixKx
+         pdqJvv2M8ZfZoR22oBkGA0jhMMCOnj+GwYi2rs4PqL+hnTdeytQCIRHbKJJnU8HmnFR4
+         S/sCW3h728Lc/CYCo2CDszu+ScCW/fUhj5UY17HAQ51Kf6qZImjneOvV1VxjkIlOwQs3
+         T5fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=LdNek+APXMhQxGgX0MguFd69wGyOuhCblzXrvmRZCos=;
+        b=EVMyLMrpvAwm2mtzC82kSYlGEM4/uZRWTSjquXqVBH4OoRuZIntnMrxroKutdsKWEO
+         DQl18Um2V6rwAvV2rHaNRY3qiW0mkdcLl0ALP3BgUGFp+4qoJXpX1Nq0LwhiL6gAToyS
+         rxCyl/t3moM6Fc1a7GhA5DEpfVa7rQAWRiYII43R2Q4AhnqMKXh9zFi4fKhBk1jqaBBi
+         tEt86XFjgLuyNedX5umZ0PgTQyRmc5d5H0g4rElpDTzl1KLUloVdS8EVh3Iq4Py/I0sF
+         kA3jbSlePahRomNPVY4vc8fc7G3Jl82/UIiGh/M/msHljYziGpfORVvXzv9ag55dCl0f
+         X+zg==
+X-Gm-Message-State: APjAAAWIftFt1O+Ll7cTFfZ9TfE0yf6ApkYclzfPLY1HtS18ULG8EzuS
+        Kc5gQolyrsBMyPC+IWOTfh2LvRv51kQ=
+X-Google-Smtp-Source: APXvYqzUV4n559KLHREKXiOWj9aNpTjayPMRLtpmaie/lolGJxTYizAR61u29Ck5OfgOYKxsgGUQOQ==
+X-Received: by 2002:a63:68c5:: with SMTP id d188mr21618397pgc.429.1560274350901;
+        Tue, 11 Jun 2019 10:32:30 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id d123sm28189279pfc.144.2019.06.11.10.32.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 10:32:30 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 10:32:28 -0700
+From:   "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Hui Wang <hui.wang@canonical.com>,
+        Xiaoxiao Liu <xiaoxiao.liu-1@cn.alps.com>,
+        XiaoXiao Liu <sliuuxiaonxiao@gmail.com>,
+        "peter.hutterer@who-t.net" <peter.hutterer@who-t.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xiaojian Cao <xiaojian.cao@cn.alps.com>,
+        "zhangfp1@lenovo.com" <zhangfp1@lenovo.com>,
+        Naoki Saito <naoki.saito@alpsalpine.com>,
+        Hideo Kawase <hideo.kawase@alpsalpine.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
+ =?utf-8?B?5aSNOiBbUEFUQ0g=?= =?utf-8?Q?=5D?= input: alps-fix the issue alps
+ cs19 trackstick do not work.
+Message-ID: <20190611173228.GD143729@dtor-ws>
+References: <OSBPR01MB48556FD88D7F7D5F91CB5579DA1E0@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <OSBPR01MB4855707AC8ABB7CFBE5BBBD5DA130@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <OSBPR01MB4855A2A30A4F5E6BDCFE715FDA130@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <20190610104310.qa5snt7jpcljodfv@pali>
+ <OSBPR01MB485504868362073ED434F82FDAED0@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <ed65f8af-fefb-3c40-e7b1-dde3605f30e3@canonical.com>
+ <5587ddb9-fb5f-03db-ac11-a696c85c5f2f@canonical.com>
+ <20190611072333.nd4va4q2m5epmukc@pali>
+ <20190611170707.GA143729@dtor-ws>
+ <20190611171707.tydk7rsmtzmjohky@pali>
 MIME-Version: 1.0
-In-Reply-To: <20190528155510.373-1-afd@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190611171707.tydk7rsmtzmjohky@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/05/2019 18:55, Andrew F. Davis wrote:
-> TI-SCI firmware will only respond to messages when the
-> TI_SCI_FLAG_REQ_ACK_ON_PROCESSED flag is set. Most messages already do
-> this, set this for the ones that do not.
+On Tue, Jun 11, 2019 at 07:17:07PM +0200, Pali Rohár wrote:
+> On Tuesday 11 June 2019 10:07:07 dmitry.torokhov@gmail.com wrote:
+> > On Tue, Jun 11, 2019 at 09:23:33AM +0200, Pali Rohár wrote:
+> > > On Tuesday 11 June 2019 12:32:33 Hui Wang wrote:
+> > > > On 2019/6/11 上午11:23, Hui Wang wrote:
+> > > > > On 2019/6/11 上午11:05, Xiaoxiao Liu wrote:
+> > > > > > Hi Pali,
+> > > > > > 
+> > > > > > I discussed with our FW team about this problem.
+> > > > > > We think the V8 method means a touchpad feature  and does not fit
+> > > > > > the CS19 trackpoint device.
+> > > > > > CS19 TrackPoint needn't  use any Absolute (Raw) mode and is usually
+> > > > > > use standard mouse data.
+> > > > > > CS19 TrackPoint device is a completely different device with
+> > > > > > DualPoint device of Dell/HP.
+> > > > > > CS19 TrackPoint device is independent  of Touchpad. (Touchpad is
+> > > > > > connecting by I2C, TrackPoint is directly connecting with PS2 port.)
+> > > > > > And it has completely another FW.
+> > > > > > 
+> > > > > > So we think it is better to use the mouse mode for CS19 trackpoint.
+> > > > > 
+> > > > > Maybe here is some mis-understanding,  the mouse mode here doesn't mean
+> > > > > we use psmouse-base.c for cs19 (bare ps/2 mouse), we plan to use
+> > > > > trackpoint.c to drive this HW, so this trackpoint has all features a
+> > > > > trackpoint should have.
+> > > > > 
+> > > > And I sent a patch one month ago to let the the trackpoint.c to drive this
+> > > > HW: https://www.spinics.net/lists/linux-input/msg61341.html, maybe that
+> > > > patch is reference.
+> > > 
+> > > So instead of creating blacklist, you should check for TP_VARIANT_ALPS
+> > > in alps.c and disallow its usage.
+> > > 
+> > > Or maybe better, move trackpoint.c detect code before alsp.c detect code
+> > > in psmouse-base. And no changes in alps.c are needed.
+> > 
+> > I'd be very cautions of moving around the protocol detection. It is very
+> > fragile, so if we can detect trackpoint-only case in alps.c and skip on
+> > to trackpoint I would prefer it.
 > 
-> This will be enforced in future firmware that better match the TI-SCI
-> specifications, this patch will not break users of existing firmware.
+> The main problem is that proposed trackpoint-only check in alps.c is
+> basically what trackpoint.c is doing for checking if device is
+> trackpoint (via function trackpoint_start_protocol()).
 > 
-> Fixes: aa276781a64a ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> Acked-by: Nishanth Menon <nm@ti.com>
-> Tested-by: Alejandro Hernandez <ajhernandez@ti.com>
-> ---
-> 
-> Changes from v1:
->   - Rebased on v5.2-rc2
+> So I'm not sure now what is the best solution...
 
-Thanks, queuing up for 5.3.
+Unfortunately currently trackpoint is being probed only after we tried
+Elan, Genius, and Logitech PS2++ protocols, and I am not sure if moving
+trackpoint around will disturb them or not.
 
--Tero
+I do not think there is much code duplication by pulling limited version
+of trackpoint detection code into alps.c and then have it bail out when
+it sees trackpoint-only device so trackpoint.c can handle it properly.
 
-> 
->   drivers/firmware/ti_sci.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index ef93406ace1b..36ce11a67235 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -466,9 +466,9 @@ static int ti_sci_cmd_get_revision(struct ti_sci_info *info)
->   	struct ti_sci_xfer *xfer;
->   	int ret;
->   
-> -	/* No need to setup flags since it is expected to respond */
->   	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_VERSION,
-> -				   0x0, sizeof(struct ti_sci_msg_hdr),
-> +				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
-> +				   sizeof(struct ti_sci_msg_hdr),
->   				   sizeof(*rev_info));
->   	if (IS_ERR(xfer)) {
->   		ret = PTR_ERR(xfer);
-> @@ -596,9 +596,9 @@ static int ti_sci_get_device_state(const struct ti_sci_handle *handle,
->   	info = handle_to_ti_sci_info(handle);
->   	dev = info->dev;
->   
-> -	/* Response is expected, so need of any flags */
->   	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_GET_DEVICE_STATE,
-> -				   0, sizeof(*req), sizeof(*resp));
-> +				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
-> +				   sizeof(*req), sizeof(*resp));
->   	if (IS_ERR(xfer)) {
->   		ret = PTR_ERR(xfer);
->   		dev_err(dev, "Message alloc failed(%d)\n", ret);
-> 
+Thanks.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-- 
+Dmitry
