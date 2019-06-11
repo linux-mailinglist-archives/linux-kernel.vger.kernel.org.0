@@ -2,79 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D544D3C822
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A61EE3C83E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405202AbfFKKIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:08:17 -0400
-Received: from foss.arm.com ([217.140.110.172]:57408 "EHLO foss.arm.com"
+        id S2405223AbfFKKLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:11:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405185AbfFKKIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:08:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E075D346;
-        Tue, 11 Jun 2019 03:08:14 -0700 (PDT)
-Received: from redmoon (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FAB53F557;
-        Tue, 11 Jun 2019 03:09:56 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 11:08:11 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Alan Mikhak <alan.mikhak@sifive.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com, linux-riscv@lists.infradead.org, palmer@sifive.com,
-        paul.walmsley@sifive.com
-Subject: Re: [PATCH v2] PCI: endpoint: Allocate enough space for fixed size
- BAR
-Message-ID: <20190611100811.GB29976@redmoon>
-References: <1558648079-13893-1-git-send-email-alan.mikhak@sifive.com>
+        id S2404572AbfFKKLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:11:24 -0400
+Received: from localhost (unknown [171.76.113.157])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EEE82089E;
+        Tue, 11 Jun 2019 10:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560247884;
+        bh=+ZDyPqWTovVVGCJsjzfmYX4FIQawCX/JqLFetsqmSfg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sgXAMefrK5tfJhn0TOTRwbPA3aPeRGKpC8Os+Rlcj+vtaJfBtA8lKezFqTP0zXHUX
+         Ojr8Ehpv20U2ow20OElGsDZjlzZCcO16+7l8cyh9GMcNG5PK0X6dNgaNg/0oaZxqVi
+         ppDUpsAnIv+BySPEPbCZ8YttALi0guNheJRr9KuI=
+Date:   Tue, 11 Jun 2019 15:38:15 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: linux-next: manual merge of the slave-dma tree with Linus' tree
+Message-ID: <20190611100815.GX9160@vkoul-mobl.Dlink>
+References: <20190611163246.6f90fba6@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1558648079-13893-1-git-send-email-alan.mikhak@sifive.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190611163246.6f90fba6@canb.auug.org.au>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 02:47:59PM -0700, Alan Mikhak wrote:
-> PCI endpoint test function code should honor the .bar_fixed_size parameter
-> from underlying endpoint controller drivers or results may be unexpected.
+On 11-06-19, 16:32, Stephen Rothwell wrote:
+> Hi all,
 > 
-> In pci_epf_test_alloc_space(), check if BAR being used for test register
-> space is a fixed size BAR. If so, allocate the required fixed size.
+> Today's linux-next merge of the slave-dma tree got a conflict in:
 > 
-> Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
-> ---
->  drivers/pci/endpoint/functions/pci-epf-test.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>   include/linux/sudmac.h
+> 
+> between commit:
+> 
+>   49833cbeafa4 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - rule 311")
+> 
+> from Linus' tree and commit:
+> 
+>   9a0f780958bb ("dmaengine: sudmac: remove unused driver")
+> 
+> from the slave-dma tree.
+> 
+> I fixed it up (I removed the file) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
 
-Applied to pci/endpoint for v5.3, thanks.
+Thanks Stephen,
 
-Lorenzo
+I will keep this in mind before I send this to Linus
 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 27806987e93b..7d41e6684b87 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -434,10 +434,16 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
->  	int bar;
->  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
->  	const struct pci_epc_features *epc_features;
-> +	size_t test_reg_size;
->  
->  	epc_features = epf_test->epc_features;
->  
-> -	base = pci_epf_alloc_space(epf, sizeof(struct pci_epf_test_reg),
-> +	if (epc_features->bar_fixed_size[test_reg_bar])
-> +		test_reg_size = bar_size[test_reg_bar];
-> +	else
-> +		test_reg_size = sizeof(struct pci_epf_test_reg);
-> +
-> +	base = pci_epf_alloc_space(epf, test_reg_size,
->  				   test_reg_bar, epc_features->align);
->  	if (!base) {
->  		dev_err(dev, "Failed to allocated register space\n");
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+> 
 > -- 
-> 2.7.4
-> 
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+~Vinod
