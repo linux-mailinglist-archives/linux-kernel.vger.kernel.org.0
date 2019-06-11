@@ -2,52 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A29DA3C100
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 03:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2333C116
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 03:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390818AbfFKBlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 21:41:23 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18543 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389168AbfFKBlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 21:41:23 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2BAAF7B73AFA17A6A68B;
-        Tue, 11 Jun 2019 09:41:21 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
- 2019 09:41:13 +0800
-Subject: Re: [PATCH] staging: erofs: make use of DBG_BUGON
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190608094918.GA11605@hari-Inspiron-1545>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <f35ac2bf-14e2-2fff-cb89-caca4f790298@huawei.com>
-Date:   Tue, 11 Jun 2019 09:41:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2390865AbfFKBs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 21:48:28 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21662 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726532AbfFKBs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 21:48:28 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 18:48:27 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga004.jf.intel.com with ESMTP; 10 Jun 2019 18:48:25 -0700
+Cc:     baolu.lu@linux.intel.com, James Sewart <jamessewart@arista.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        iommu@lists.linux-foundation.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Subject: Re: "iommu/vt-d: Delegate DMA domain to generic iommu" series breaks
+ megaraid_sas
+To:     Qian Cai <cai@lca.pw>
+References: <1559941717.6132.63.camel@lca.pw>
+ <1e4f0642-e4e1-7602-3f50-37edc84ced50@linux.intel.com>
+ <1560174264.6132.65.camel@lca.pw> <1560178459.6132.66.camel@lca.pw>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <2ff8404d-7103-a96d-2749-ac707ce74563@linux.intel.com>
+Date:   Tue, 11 Jun 2019 09:41:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190608094918.GA11605@hari-Inspiron-1545>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <1560178459.6132.66.camel@lca.pw>
+Content-Type: multipart/mixed;
+ boundary="------------4796EFDAD3CE19C641E50EC9"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/6/8 17:49, Hariprasad Kelam wrote:
-> DBG_BUGON is introduced and it could only crash when EROFS_FS_DEBUG
-> (EROFS developping feature) is on.
-> replace BUG_ON with DBG_BUGON.
+This is a multi-part message in MIME format.
+--------------4796EFDAD3CE19C641E50EC9
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Ah, good catch!
+
+The device failed to be attached by a DMA domain. Can you please try the
+attached fix patch?
+
+[  101.885468] pci 0000:06:00.0: DMAR: Device is ineligible for IOMMU
+domain attach due to platform RMRR requirement.  Contact your platform
+vendor.
+[  101.900801] pci 0000:06:00.0: Failed to add to iommu group 23: -1
+
+Best regards,
+Baolu
+
+On 6/10/19 10:54 PM, Qian Cai wrote:
+> On Mon, 2019-06-10 at 09:44 -0400, Qian Cai wrote:
+>> On Sun, 2019-06-09 at 10:43 +0800, Lu Baolu wrote:
+>>> Hi Qian,
+>>>
+>>> I just posted some fix patches. I cc'ed them in your email inbox as
+>>> well. Can you please check whether they happen to fix your issue?
+>>> If not, do you mind posting more debug messages?
+>>
+>> Unfortunately, it does not work. Here is the dmesg.
+>>
+>> https://raw.githubusercontent.com/cailca/tmp/master/dmesg?token=AMC35QKPIZBYUM
+>> FUQKLW4ZC47ZPIK
 > 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> This one should be good to view.
+> 
+> https://cailca.github.io/files/dmesg.txt
+> 
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+--------------4796EFDAD3CE19C641E50EC9
+Content-Type: text/x-patch;
+ name="0001-iommu-vt-d-Allow-DMA-domain-attaching-to-rmrr-locked.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-iommu-vt-d-Allow-DMA-domain-attaching-to-rmrr-locked.pa";
+ filename*1="tch"
 
-Thanks,
+From ff0b1ae0d8fde0655392fde3a1090b03a7a35394 Mon Sep 17 00:00:00 2001
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Date: Tue, 11 Jun 2019 09:29:16 +0800
+Subject: [PATCH 1/1] iommu/vt-d: Allow DMA domain attaching to rmrr locked
+ device
+
+We don't allow a device to be assigned to user level when it is locked
+by any RMRR's. Hence, intel_iommu_attach_device() will return error if
+a domain of type IOMMU_DOMAIN_UNMANAGED is about to attach to a device
+locked by rmrr. But this doesn't apply to a domain of type other than
+IOMMU_DOMAIN_UNMANAGED. This adds a check to fix this.
+
+Fixes: fa954e6831789 ("iommu/vt-d: Delegate the dma domain to upper layer")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-iommu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 1dcb6365ddc4..38232220f6ff 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5281,7 +5281,8 @@ static int intel_iommu_attach_device(struct iommu_domain *domain,
+ {
+ 	int ret;
+ 
+-	if (device_is_rmrr_locked(dev)) {
++	if (domain->type == IOMMU_DOMAIN_UNMANAGED &&
++	    device_is_rmrr_locked(dev)) {
+ 		dev_warn(dev, "Device is ineligible for IOMMU domain attach due to platform RMRR requirement.  Contact your platform vendor.\n");
+ 		return -EPERM;
+ 	}
+-- 
+2.17.1
+
+
+--------------4796EFDAD3CE19C641E50EC9--
