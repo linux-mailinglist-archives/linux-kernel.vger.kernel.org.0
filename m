@@ -2,126 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08BAF3CAE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6525F3CAF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:18:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbfFKMRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:17:16 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:60314 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbfFKMRQ (ORCPT
+        id S2390408AbfFKMSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:18:10 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42468 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387780AbfFKMSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:17:16 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5BCHBRn079570;
-        Tue, 11 Jun 2019 07:17:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560255431;
-        bh=Ei7/kusf0DKtFGr5yCgtc2sRG6+/0j75KPNwiUUozVs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=wYreh9jMavyAXrUj81MzhvXZhlNCzekJOtu1ss7PfKYQ7WiUKyVQ1b+Frc/MHGJwc
-         8lrCHJagrSPoVq4JDawlMYpg+Idt2qBJ43RB/sJLQ+OzHJd6TDsb2bR9kDwBG1gHoQ
-         S9HHJoPw0c6VqlEnELOGuz8tWXrjvYJyhKh8lFio=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5BCHBK1042554
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Jun 2019 07:17:11 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 11
- Jun 2019 07:17:11 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 11 Jun 2019 07:17:11 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5BCHALV102129;
-        Tue, 11 Jun 2019 07:17:10 -0500
-Subject: Re: [PATCH v6 0/5] LM36274 Introduction
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>
-CC:     <lee.jones@linaro.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190605125634.7042-1-dmurphy@ti.com>
- <cb41fea8-4cc6-bf0d-8006-6441ba8f2213@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <d6f3a1d9-5198-917c-8313-ef2036472ce9@ti.com>
-Date:   Tue, 11 Jun 2019 07:17:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 11 Jun 2019 08:18:09 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s184so8746199oie.9;
+        Tue, 11 Jun 2019 05:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0EMixU0L4b0ZCFegtw+unlifhiqds/4ljlhVrZwVzq4=;
+        b=olo+i1fvsbiRzte8WBg6b/XYI4OTLZjRNtelDmZCpC/ugvjSPtaGA+OROyLdIZ5XAM
+         Y7hYZmkUaNvH7Cn+fvA2T5mlNSF5V78Pkr654NIle8cn2fGYYCBZb4AWad4pPeSixZdl
+         nYiGEpF7V5RfHsZoS4OgCr3mgC9v1Z5l4YctKKRGjiN4ZCo9+XJKOLDPwNK79ybWW0z1
+         Uwgy+lI71VenOlzdOQ6uuH+RXpsRj86i9DVcb1nrwUBCujtYWDoeXigFQ3faJrli4T7s
+         cV+i6iAKkri1gJHGSGgedONa98GFXZuw8TLVYZF9o29WUrp4oLWj4o9LKEqPA9fSXe0z
+         Ygpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0EMixU0L4b0ZCFegtw+unlifhiqds/4ljlhVrZwVzq4=;
+        b=PPj06HsKUVDVHoa9K6oN6WKWbIUBwMT1366IH6BGHMg6XlLMk8DRpaAYf5m3kqMBIB
+         e3ei8goisdg8JiQy4/zTgW33oW9IvA4sWt97As5QhBTJ6yzlPAJ4D239/2xEVTP6I0J+
+         UozIshstniS9HFbFXwaGsacKRcMlDjHmMHtuylAXA4I0U2wCCvLhn8NAeNne8KhRQ4q9
+         v0fOu2/50Wmo0XX785D3YLGAjhXgLaLNx47Ps7J+ahhXrvpmYjNs1/WAF+L6KZBcKofR
+         7g1rGiCgVn2fofsp926FlagbxUI+cxXrdpLbC1gRRaBeAcTt676XlnMfZFslHn3+KVvw
+         k4qQ==
+X-Gm-Message-State: APjAAAWruYSVFpwop6SfTQnZTwHPH6gfc+zelLIw80y7ndmyLaZz0ez3
+        XqKHJr242/5V90udMfbQz6qMFo6jCnsK+I/6pS4=
+X-Google-Smtp-Source: APXvYqwhX1Fh6qevzYmBcohucTwsr0U7S/n5WBCtBR3Xup9JGDJ09uPKIozcmODtjO9rtlvHTEfxvxZKtWGmkV16udM=
+X-Received: by 2002:aca:e0d6:: with SMTP id x205mr14784719oig.47.1560255489254;
+ Tue, 11 Jun 2019 05:18:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cb41fea8-4cc6-bf0d-8006-6441ba8f2213@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1559799086-13912-1-git-send-email-wanpengli@tencent.com>
+ <1559799086-13912-3-git-send-email-wanpengli@tencent.com> <c5530947-d48d-e3da-3056-ed64f7fa9a9d@redhat.com>
+In-Reply-To: <c5530947-d48d-e3da-3056-ed64f7fa9a9d@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Tue, 11 Jun 2019 20:18:53 +0800
+Message-ID: <CANRm+CzgLov6AYDVLYOFvZvo+bLS9AA+3J_qSis6PK3f9_2utw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] KVM: LAPIC: lapic timer interrupt is injected by
+ posted interrupt
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+On Tue, 11 Jun 2019 at 19:40, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 06/06/19 07:31, Wanpeng Li wrote:
+> > +static inline bool can_posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
+> > +{
+> > +     return posted_interrupt_inject_timer_enabled(vcpu) &&
+> > +             !vcpu_halt_in_guest(vcpu);
+> > +}
+> > +
+>
+> I agree with Radim, what you want here is just use kvm_hlt_in_guest.
 
-Reviewed and tested the updated branch.  Looks good to me.
+Do it in v3.
 
-Dan
+>
+> I'll post shortly a prerequisite patch to block APF artificial halt when
+> kvm_hlt_in_guest is true.
 
-On 6/5/19 2:31 PM, Jacek Anaszewski wrote:
-> Hi Dan,
->
-> Thank you for the v6.
->
-> Patches 4/5 and 5/5 don't contain amendments I made to
-> the respective patches on the ib-leds-mfd-regulator branch
-> (that address issues raised by Pavel), so I just kept those
-> unchanged. Besides that I updated the remaining ones.
->
-> Please check the ib-leds-mfd-regulator branch. I'll create a pull
-> request once I get a confirmation from you saying that everything
-> is as expected.
->
-> Best regards,
-> Jacek Anaszewski
->
-> On 6/5/19 2:56 PM, Dan Murphy wrote:
->> Hello
->>
->> The v5 patchset missed adding in the new validation code.
->> Patch 1 of the v5 series was squashed into patch 4 of the v5 series.
->> So this will reduce the patchset by 1.
->>
->> Sorry for the extra noise on the patchsets.  The change was lost when 
->> I converted
->> the patches from the mainline branch to the LED branch.
->>
->> This change was made on top of the branch
->>
->> repo: 
->> https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
->> branch: ti-lmu-led-drivers
->>
->>
->> Dan Murphy (5):
->>    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
->>    mfd: ti-lmu: Add LM36274 support to the ti-lmu
->>    regulator: lm363x: Add support for LM36274
->>    dt-bindings: leds: Add LED bindings for the LM36274
->>    leds: lm36274: Introduce the TI LM36274 LED driver
->>
->>   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
->>   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
->>   drivers/leds/Kconfig                          |   8 +
->>   drivers/leds/Makefile                         |   1 +
->>   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
->>   drivers/mfd/Kconfig                           |   5 +-
->>   drivers/mfd/ti-lmu.c                          |  14 ++
->>   drivers/regulator/Kconfig                     |   2 +-
->>   drivers/regulator/lm363x-regulator.c          |  78 +++++++-
->>   include/linux/mfd/ti-lmu-register.h           |  23 +++
->>   include/linux/mfd/ti-lmu.h                    |   4 +
->>   11 files changed, 437 insertions(+), 8 deletions(-)
->>   create mode 100644 
->> Documentation/devicetree/bindings/leds/leds-lm36274.txt
->>   create mode 100644 drivers/leds/leds-lm36274.c
->>
->
+Thanks Paolo!
+
+Regards,
+Wanpeng Li
