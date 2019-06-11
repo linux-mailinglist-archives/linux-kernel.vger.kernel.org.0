@@ -2,210 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C4D3D217
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 492583D21D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405591AbfFKQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 12:22:18 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56716 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405444AbfFKQWR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 12:22:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5A3MctuJ5/qP+9tFlCPEP959Ibp9Cmcma5nEMa8xYiM=; b=niyhNmW4fWVk/szQ+NJ+t2jhl
-        CT9Y6XDWlI5AcFEPAY4VTZ9E15ooxP7CE0ThQuy9uI/qJS/GGHlGPhFPGkIkdi9yu/5XWISHUgNzw
-        OcPBYNgPFMQfSw5O00YlCRohhRTGWM68SyOuD+6jqrCxxykHYjEMhtN0c0IERWD5xI91MNkOOaF+C
-        QGumBvtvmQfkpgRct8yGgTBwe40WBvDWu5daZzqlzvXnmvgxPedbjsq/1QYhnNBfRpgB6aJ87Ppo+
-        klx6CzLp2HRHfEF99kl+WcK9fA9YIezYqSjEhuV9+B9g0cOQp7af7a3Sg6bbaHHMkOvK+IXwdnplL
-        +6GSLWGTA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hajWd-0005u6-DJ; Tue, 11 Jun 2019 16:21:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8D27820098584; Tue, 11 Jun 2019 18:21:28 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 18:21:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-ID: <20190611162128.GK3463@hirez.programming.kicks-ass.net>
-References: <20190605130753.327195108@infradead.org>
- <20190605131945.005681046@infradead.org>
- <20190611111410.366f4ced@gandalf.local.home>
- <20190611155248.GA3436@hirez.programming.kicks-ass.net>
+        id S2391624AbfFKQXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 12:23:19 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58644 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391562AbfFKQXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 12:23:19 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3184D90254F032FD5765;
+        Wed, 12 Jun 2019 00:23:16 +0800 (CST)
+Received: from [127.0.0.1] (10.210.166.43) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
+ 00:22:44 +0800
+Subject: Re: [PATCH 2/5] perf pmu: Support more complex PMU event aliasing
+To:     Jiri Olsa <jolsa@redhat.com>
+References: <1560160772-210844-1-git-send-email-john.garry@huawei.com>
+ <1560160772-210844-3-git-send-email-john.garry@huawei.com>
+ <20190611161023.GD18242@krava>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
+        <tmricht@linux.ibm.com>, <brueckner@linux.ibm.com>,
+        <kan.liang@linux.intel.com>, <ben@decadent.org.uk>,
+        <mathieu.poirier@linaro.org>, <mark.rutland@arm.com>,
+        <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+        <zhangshaokun@hisilicon.com>, <ak@linux.intel.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <9c3ba12c-0621-0e28-ddeb-e1ebeb1674a5@huawei.com>
+Date:   Tue, 11 Jun 2019 17:22:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611155248.GA3436@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190611161023.GD18242@krava>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.210.166.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 05:52:48PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 11, 2019 at 11:14:10AM -0400, Steven Rostedt wrote:
-> > On Wed, 05 Jun 2019 15:08:01 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > -void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
-> > > +void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
-> > >  {
-> > >  	unsigned char int3 = 0xcc;
-> > >  
-> > > -	bp_int3_handler = handler;
-> > > +	bp_int3_opcode = emulate ?: opcode;
-> > >  	bp_int3_addr = (u8 *)addr + sizeof(int3);
-> > >  	bp_patching_in_progress = true;
-> > >  
-> > >  	lockdep_assert_held(&text_mutex);
-> > >  
-> > >  	/*
-> > > +	 * poke_int3_handler() relies on @opcode being a 5 byte instruction;
-> > > +	 * notably a JMP, CALL or NOP5_ATOMIC.
-> > > +	 */
-> > > +	BUG_ON(len != 5);
-> > 
-> > If we have a bug on here, why bother with passing in len at all? Just
-> > force it to be 5.
-> 
-> Masami said the same.
-> 
-> > We could make it a WARN_ON() and return without doing anything.
-> > 
-> > This also prevents us from ever changing two byte jmps.
-> 
-> It doesn't; that is, we'd need to add emulation for the 3 byte jump, but
-> that'd be pretty trivial.
+On 11/06/2019 17:10, Jiri Olsa wrote:
+> On Mon, Jun 10, 2019 at 05:59:29PM +0800, John Garry wrote:
+>> The jevent "Unit" field is used for uncore PMU alias definition.
+>>
+>> The form uncore_pmu_example_X is supported, where "X" is a wildcard,
+>> to support multiple instances of the same PMU in a system.
+>>
+>> Unfortunately this format not suitable for all uncore PMUs; take the Hisi
+>> DDRC uncore PMU for example, where the name is in the form
+>> hisi_scclX_ddrcY.
+>>
+>> For the current jevent parsing, we would be required to hardcode an uncore
+>> alias translation for each possible value of X. This is not scalable.
+>>
+>> Instead, add support for "Unit" field in the form "hisi_sccl,ddrc", where
+>> we can match by hisi_scclX and ddrcY. Tokens in Unit field
+>> are delimited by ','.
+>>
+>> Signed-off-by: John Garry <john.garry@huawei.com>
+>> ---
+>>  tools/perf/util/pmu.c | 45 ++++++++++++++++++++++++++++++++++++++-----
+>>  1 file changed, 40 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+>> index 036047f56efa..f00cae750086 100644
+>> --- a/tools/perf/util/pmu.c
+>> +++ b/tools/perf/util/pmu.c
+>> @@ -700,6 +700,44 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
+>>  	return map;
+>>  }
+>>
+>> +static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
+>> +{
+>> +	/*
+>> +	 * uncore alias may be from different PMU
+>> +	 * with common prefix
+>> +	 */
+>> +	if (!strncmp(pmu_name, name, strlen(pmu_name)))
+>> +		return true;
+>> +
+>> +	/* match strings with delimiter, ',' */
+>> +	while (1) {
+>> +		const char *delimiter;
+>> +		char token[256] = {};
+>> +		const char *found_token;
+>> +		int token_len;
+>> +
+>> +		delimiter = strchr(pmu_name, ',');
+>> +		if (delimiter) {
+>> +			token_len = delimiter - pmu_name;
+>> +		} else {
+>> +			token_len = strlen(pmu_name);
+>> +		}
+>> +
+>> +		memcpy(token, pmu_name, token_len);
+>> +
+>> +		found_token = strstr(name, token);
+>> +		if (!found_token)
+>> +			return false;
+>> +
+>> +		/* No more delimiters, so we must be a match */
+>> +		if (!delimiter)
+>> +			return true;
+>> +
+>> +		pmu_name += token_len + 1;
+>> +		name = found_token + token_len;
+>> +	}
+>
+> hum, would this be easier with strtok_r?
 
-I can't find a 3 byte jump on x86_64, I could only find a 2 byte one.
-But something like so should work I suppose, although at this point I'm
-thinking we should just used the instruction decode we have instead of
-playing iffy games with packed structures.
+Yes, I think so.
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index e1a4bb42eb92..abb9615dcb1d 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -57,6 +57,9 @@ static inline void int3_emulate_jmp(struct pt_regs *regs, unsigned long ip)
- #define JMP_INSN_SIZE		5
- #define JMP_INSN_OPCODE		0xE9
- 
-+#define JMP8_INSN_SIZE		2
-+#define JMP8_INSN_OPCODE	0xEB
-+
- static inline void int3_emulate_push(struct pt_regs *regs, unsigned long val)
- {
- 	/*
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 5d0123a8183b..5df6c74a0b08 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -924,13 +924,18 @@ static void do_sync_core(void *info)
- static bool bp_patching_in_progress;
- static const void *bp_int3_opcode, *bp_int3_addr;
- 
-+struct poke_insn {
-+	u8 opcode;
-+	union {
-+		s8 rel8;
-+		s32 rel32;
-+	};
-+} __packed;
-+
- int poke_int3_handler(struct pt_regs *regs)
- {
- 	long ip = regs->ip - INT3_INSN_SIZE + CALL_INSN_SIZE;
--	struct opcode {
--		u8 insn;
--		s32 rel;
--	} __packed opcode;
-+	struct poke_insn insn;
- 
- 	/*
- 	 * Having observed our INT3 instruction, we now must observe
-@@ -950,15 +955,19 @@ int poke_int3_handler(struct pt_regs *regs)
- 	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
- 		return 0;
- 
--	opcode = *(struct opcode *)bp_int3_opcode;
-+	insn = *(struct poke_insn *)bp_int3_opcode;
- 
--	switch (opcode.insn) {
-+	switch (insn.opcode) {
- 	case CALL_INSN_OPCODE:
--		int3_emulate_call(regs, ip + opcode.rel);
-+		int3_emulate_call(regs, ip + insn.rel32);
- 		break;
- 
- 	case JMP_INSN_OPCODE:
--		int3_emulate_jmp(regs, ip + opcode.rel);
-+		int3_emulate_jmp(regs, ip + insn.rel32);
-+		break;
-+
-+	case JMP8_INSN_OPCODE:
-+		int3_emulate_jmp(regs, ip + insn.rel8);
- 		break;
- 
- 	default: /* assume NOP */
-@@ -992,7 +1001,8 @@ NOKPROBE_SYMBOL(poke_int3_handler);
-  */
- void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
- {
--	unsigned char int3 = 0xcc;
-+	unsigned char int3 = INT3_INSN_OPCODE;
-+	unsigned char opcode;
- 
- 	bp_int3_opcode = emulate ?: opcode;
- 	bp_int3_addr = (u8 *)addr + sizeof(int3);
-@@ -1001,10 +1011,26 @@ void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulat
- 	lockdep_assert_held(&text_mutex);
- 
- 	/*
--	 * poke_int3_handler() relies on @opcode being a 5 byte instruction;
--	 * notably a JMP, CALL or NOP5_ATOMIC.
-+	 * Verify we support the actual instruction in poke_int3_handler().
- 	 */
--	BUG_ON(len != 5);
-+	opcode = *(unsigned char *)bp_int3_opcode;
-+	switch (opcode) {
-+	case CALL_INSN_OPCODE:
-+		BUG_ON(len != CALL_INSN_SIZE);
-+		break;
-+
-+	case JMP_INSN_OPCODE:
-+		BUG_ON(len != JMP_INSN_SIZE);
-+		break;
-+
-+	case JMP8_INSN_OPCODE:
-+		BUG_ON(len != JMP8_INSN_SIZE);
-+		break;
-+
-+	default: /* assume NOP5_ATOMIC */
-+		BUG_ON(len != 5);
-+		break;
-+	}
- 
- 	/*
- 	 * Corresponding read barrier in int3 notifier for making sure the
+Cheers,
+
+>
+> jirka
+>
+> .
+>
+
+
