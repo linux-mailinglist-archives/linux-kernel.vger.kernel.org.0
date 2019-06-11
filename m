@@ -2,94 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B883C391
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF2E43C396
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403838AbfFKFsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 01:48:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37418 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390539AbfFKFsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:48:00 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 449E63084021;
-        Tue, 11 Jun 2019 05:48:00 +0000 (UTC)
-Received: from localhost (ovpn-12-24.pek2.redhat.com [10.72.12.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 402675DD74;
-        Tue, 11 Jun 2019 05:47:57 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 13:47:54 +0800
-From:   Baoquan He <bhe@redhat.com>
+        id S2403766AbfFKFuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 01:50:50 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54603 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390485AbfFKFuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 01:50:50 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g135so1437698wme.4
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=luMUphPTUItEvu7Yvl1pymkCcMxfGlVnxTLaFSA/45U=;
+        b=lvi9/wHhpNt2n0xuCFni5c+8hs3SIwI5s8apvu43t5A2XIphAaR1l7Xlj8aTDow+vJ
+         ybe6B7WY2dK4tkBafd5vY+ErM3tCZrjYQeuKaYBb8O5IVYnW3xTUYWYqH81rq/ozH+9M
+         43QWxVlx1JzmFEzbJZmRG8xmEix0wz1YuGQIuk12gsAuhIVi4FNxJDmtOEFMu+5WbRKA
+         iCcb6FgsIY46FShYiEvXmGTm0TDM8YBlNLbWTH0H8Re51x2NCepRpWpoTZyQqSRbs5Ed
+         5YpvRY2id1DGllQkHgOLGtOCtCwYOHBvTPWp58RgW7XMvyQbNo9IYLVD1penIGbbJ749
+         gYUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=luMUphPTUItEvu7Yvl1pymkCcMxfGlVnxTLaFSA/45U=;
+        b=eTrVQcrWPpka10twjgGrLEZBsCfxuYDmRzhE+UKwlx1g+vFeeHs4WY6txZ/77vVaed
+         VkxZmsomr5Xq5wzTQ30kAaqo5phCBheEHDjh5SyALgWcV/6jbEb9nynlhfzLVRuWqW9j
+         68R7DvXcClyTKa7n09Zq29IH7XdFcvsYdSE5H9ePsAicswcVvoaesIJfi+UY/n0bKf5N
+         VRJbvV8rJUsxFJCE3RByOKx4WKkYApFASJADQITzUZrlrNfHJRqichRcm2cuRKHUPLTc
+         oWmBKFDeB5kOvHdQXY4c4kBgL4DxPIVmsus/fWnT5oMRoOO5JyZ+B7qsMhzX3BkiulF6
+         BfJg==
+X-Gm-Message-State: APjAAAUILVqB4X9nnqGsXTkQLCI/t9phGc2yCBYUsFCo8KZFsMXAwb88
+        FvkkuCyc9aSxi6/LGeXkOizr92NRwWA=
+X-Google-Smtp-Source: APXvYqzUKt6cJmco8x1nTJBAsKU0iK1prZvtfwvaLbGaWrGi2d5dX/NNXOlJuV6J9d1wh7Jc7bwxLg==
+X-Received: by 2002:a7b:c5cd:: with SMTP id n13mr16954524wmk.67.1560232248186;
+        Mon, 10 Jun 2019 22:50:48 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id j8sm11968056wrr.64.2019.06.10.22.50.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 10 Jun 2019 22:50:47 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org, dyoung@redhat.com
-Subject: Re: [PATCH v5 0/3] Add restrictions for kexec/kdump jumping between
- 5-level and 4-level kernel
-Message-ID: <20190611054754.GD26148@MiWiFi-R3L-srv>
-References: <20190524073810.24298-1-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524073810.24298-1-bhe@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 11 Jun 2019 05:48:00 +0000 (UTC)
+Cc:     gregkh@linuxfoundation.org
+Subject: [PATCH 0/8] Fixing DMA mask issues in habanalabs driver
+Date:   Tue, 11 Jun 2019 08:50:37 +0300
+Message-Id: <20190611055045.15945-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch-set changes the way the Goya internal CPU access memory on the
+Host machine. This is needed to prevent the non-standard way the driver
+used the PCI DMA set mask kernel API so far.
 
-On 05/24/19 at 03:38pm, Baoquan He wrote:
-> 
+The DMA set mask should be called only once at the start of the driver.
+This is because changing the DMA mask to a new value after allocations
+were made using a previous mask value, might cause the previous allocations
+to become unaccessible (usually if there is IOMMU present).
 
-Ping.
+The driver did that because of a limitation in Goya's internal CPU. The
+limitation was that the internal CPU can only access 40-bit addresses,
+while the entire ASIC can access 50-bit addresses. Therefore, the driver
+set the DMA mask to 39-bits, allocated memory for the internal CPU on the
+host and then changed the DMA mask to 48-bits.
 
-Can anyone help do further reviewing on this patchset? Or consider
-merging since people have ack-ed?
+This patch-set eliminates the double DMA set by using Goya's MMU to
+overcome the limitation. The driver now sets the DMA mask only once to
+48-bits and allocates a single DMA region of 2MB for the internal CPU. It
+then maps that region in Goya's MMU to a device virtual address under 40-bits.
 
-Thanks
-Baoquan
+In addition, this patch-set enables the use of 64-bit mask on POWER9
+systems. POWER9 DMA mask can be set ONLY to 32-bit or 64-bit. To use
+64-bit, the device must set bit 59 to 1 in all its outbound transactions. 
+This is achieved by setting a special configuration in Goya's PCIe
+controller. The configuration must be done only in POWER9 machines, as it
+will make the device non-functional on other architectures 
+(e.g. x86-64, ARM).
 
-> The v4 cover letter tells the background about this adding, paste the
-> link here for reference:
-> http://lkml.kernel.org/r/20190509013644.1246-1-bhe@redhat.com
-> 
-> Changelog:
-> v4->v5:
->   Tune code and log per Dave's comments, no functional change.
->   - In patch 2, change the printed erorr message; 
->   - In patch 3, add macro SZ_64T and use it in code, and remove the
->     obsolete code comment.
-> v3->v4:
->   No functional change.
->   - Rewrite log of patch 1/3 tell who the newly added bits are gonna be
->     used.
->   - Rewrite log of patch 2/3 per tglx's words.
->   - Add Kirill's Acked-by.
-> 
-> v2->v3:
->   Change the constant to match the notation for the rest of defines as
->   Kirill suggested;
-> v1->v2:
->   Correct the subject of patch 1 according to tglx's comment;
->   Add more information to cover-letter to address reviewers' concerns;
-> 
-> Baoquan He (3):
->   x86/boot: Add xloadflags bits for 5-level kernel checking
->   x86/kexec/64: Error out if try to jump to old 4-level kernel from
->     5-level kernel
->   x86/kdump/64: Change the upper limit of crashkernel reservation
-> 
->  arch/x86/boot/header.S                | 12 +++++++++++-
->  arch/x86/include/uapi/asm/bootparam.h |  2 ++
->  arch/x86/kernel/kexec-bzimage64.c     |  5 +++++
->  arch/x86/kernel/setup.c               | 15 ++++++++++++---
->  include/linux/sizes.h                 |  1 +
->  5 files changed, 31 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.17.2
-> 
+Thanks,
+Oded
+
+Oded Gabbay (8):
+  habanalabs: initialize device CPU queues after MMU init
+  habanalabs: de-couple MMU and VM module initialization
+  habanalabs: initialize MMU context for driver
+  habanalabs: add MMU mappings for Goya CPU
+  habanalabs: set Goya CPU to use ASIC MMU
+  habanalabs: remove DMA mask hack for Goya
+  habanalabs: add WARN in case of bad MMU mapping
+  habanalabs: enable 64-bit DMA mask in POWER9
+
+ drivers/misc/habanalabs/asid.c           |   2 +-
+ drivers/misc/habanalabs/context.c        |   7 +
+ drivers/misc/habanalabs/debugfs.c        |   7 +-
+ drivers/misc/habanalabs/device.c         |  45 +++--
+ drivers/misc/habanalabs/goya/goya.c      | 234 +++++++++++++++++------
+ drivers/misc/habanalabs/goya/goyaP.h     |  12 +-
+ drivers/misc/habanalabs/habanalabs.h     |   9 +-
+ drivers/misc/habanalabs/habanalabs_drv.c |   7 +
+ drivers/misc/habanalabs/memory.c         |  13 +-
+ drivers/misc/habanalabs/mmu.c            |  20 +-
+ drivers/misc/habanalabs/pci.c            |   7 +-
+ 11 files changed, 259 insertions(+), 104 deletions(-)
+
+-- 
+2.17.1
+
