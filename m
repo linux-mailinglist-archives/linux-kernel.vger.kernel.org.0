@@ -2,71 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF80A3D58F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4ADB3D591
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391661AbfFKSec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:34:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389037AbfFKSec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:34:32 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 034A82173C;
-        Tue, 11 Jun 2019 18:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560278071;
-        bh=EVm0g+HJArtjv6KFMQqUwctEz8i+FxE8A5GAg1pFPgs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lyPp9jISiAGa5J0ZiyDkwSWx/wOPJWS0KUGgijhUSjByqP21t87kJte4RnocGi1x5
-         etkQ89nF8AVIY3WhUrYQGzBqtE8rlRFPh8eUo0jCNUXxCrtG7+vNd3KmbByRRCyEcX
-         yR/yZnxoAPrWQYPB5xioKu5PfQbao7BcDSQSooE0=
-Date:   Tue, 11 Jun 2019 20:34:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tomas Winkler <tomas.winkler@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mei: no need to check return value of debugfs_create
- functions
-Message-ID: <20190611183429.GA32159@kroah.com>
-References: <20190611183357.GA32008@kroah.com>
+        id S2391789AbfFKSfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:35:03 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40957 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388207AbfFKSfC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 14:35:02 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so6903030eds.7;
+        Tue, 11 Jun 2019 11:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NtWdQJ9LEITnrhrHl26XNWq7Hb7t+LrK5A39rgpFt0s=;
+        b=jMowBwbsSVJmS3jexAjSfrwNoteJgOUFfp/90l7wVQ1JRLGnCmM/d0mVbkKEa7UbRA
+         0mqvDNg5i/f4rdZLtjXOPGZvAzLRElZQprG5GiHWhf8L2K2vY+47xzs4OP4ks4QDB+oB
+         hrrbrExvx6PfJAvzQJL58VjuyQNcEDR+nVFRwn4z7AoLEWeI4GKTqYUQLDDd4mzXEvwv
+         PjrhIMC+9t2n9ppYwLX3uvWbCHUgsVadNHAYCnr3vcORnmhgPm30Y9iFRNqaHuBaXKKB
+         jOcwDurtYVBHMTlPgFh1PsZeucPWDdhEMlqA5zw3k6SMTFxNOi9UbSEKVd58usgRep78
+         VFVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NtWdQJ9LEITnrhrHl26XNWq7Hb7t+LrK5A39rgpFt0s=;
+        b=DKEUgUis1PRjJO9+tpATXo5dywxK8Hj9WWJOCIp7kNbatI1FJUrHaham4aixacK6XA
+         Em3VWiIR566QUcMTrKcCWY5IN5pj5Zdsh5wD4on39tgkI4TI5hm+jfJmNtyvK/+EhfKM
+         zdf/q4JrirWimVbSwZOffcJhtUoqbDuCiuKFdhPbyLfvYDdkKkOazbLT9e8ABC4oDmPN
+         xpy99LzWO5H7JkybDVeVm05f+hHKKiQSaNGzC/+3sl6iNdFgLB3YEMv2FsLk5mxG48MY
+         vku6z7kxSOpH5kyLKz0sG8w86g+JDUm7p/qDhWMk/cNCjRNRIGuFakmElXV+C+x9g1i8
+         WwyQ==
+X-Gm-Message-State: APjAAAW/8kfNwruMwNYvTWlRq76ltkItobz1WmiBnRrBU8BJIUs+UCCE
+        /EXNQ8Zj3DHuGfqB66kuq0IjS+vfS/6EOL5CCJrOyQ==
+X-Google-Smtp-Source: APXvYqx0B2gl+9W10GKRrcOR9BLDHAADqb6X2KNcMm/rCC1BIz+gJMNGCJzv1jgg9DS8LnzHVwN6HIn3k7ZdzzL1KDs=
+X-Received: by 2002:a17:906:c459:: with SMTP id ck25mr23323206ejb.32.1560278100761;
+ Tue, 11 Jun 2019 11:35:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611183357.GA32008@kroah.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190611192432.1d8f11b2@canb.auug.org.au> <12e489ae-d3d9-0390-dee7-0da6301fdcf8@infradead.org>
+In-Reply-To: <12e489ae-d3d9-0390-dee7-0da6301fdcf8@infradead.org>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Tue, 11 Jun 2019 21:34:49 +0300
+Message-ID: <CA+h21hqw83c9ZHtQ7NwscGRZUNFwTA9RuUAafnjjkcY4FEGwAw@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jun 11 (net/dsa/tag_sja1105.c)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 08:33:57PM +0200, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Tomas Winkler <tomas.winkler@intel.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/misc/genwqe/card_base.c      |   5 -
->  drivers/misc/genwqe/card_base.h      |   2 +-
->  drivers/misc/genwqe/card_debugfs.c   | 165 +++++----------------------
->  drivers/misc/genwqe/card_dev.c       |   6 +-
->  drivers/misc/mei/debugfs.c           |  47 ++------
->  drivers/misc/mei/main.c              |   8 +-
->  drivers/misc/mei/mei_dev.h           |   7 +-
->  drivers/misc/mic/card/mic_debugfs.c  |  18 +--
->  drivers/misc/mic/cosm/cosm_debugfs.c |   4 -
->  drivers/misc/mic/host/mic_debugfs.c  |   4 -
->  drivers/misc/mic/scif/scif_debugfs.c |   5 -
->  drivers/misc/mic/vop/vop_debugfs.c   |   4 -
->  drivers/misc/ti-st/st_kim.c          |   4 -
->  drivers/misc/vmw_balloon.c           |  19 +--
->  14 files changed, 51 insertions(+), 247 deletions(-)
+On Tue, 11 Jun 2019 at 21:30, Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 6/11/19 2:24 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20190607:
+> >
+>
+> on i386:
+>
+> #
+> # Library routines
+> #
+> # CONFIG_PACKING is not set
+>
+> ld: net/dsa/tag_sja1105.o: in function `sja1105_rcv':
+> tag_sja1105.c:(.text+0x40b): undefined reference to `packing'
+> ld: tag_sja1105.c:(.text+0x423): undefined reference to `packing'
+> ld: tag_sja1105.c:(.text+0x43e): undefined reference to `packing'
+> ld: tag_sja1105.c:(.text+0x456): undefined reference to `packing'
+> ld: tag_sja1105.c:(.text+0x471): undefined reference to `packing'
+>
+>
+> Should this driver select PACKING?
+>
+>
+> --
+> ~Randy
 
-Ugh, nope, wrong patch, need to break this one up, sorry...
+Hi Randy,
 
-greg k-h
+Yes it should, thanks for pointing it out.
+Are you going to send a patch, or should I?
+
+Thanks!
+-Vladimir
