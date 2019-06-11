@@ -2,61 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D50B3CB1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD653CBB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389185AbfFKMYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:24:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46803 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389014AbfFKMYC (ORCPT
+        id S2389180AbfFKMct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:32:49 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:43400 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389004AbfFKMcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:24:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 81so7326786pfy.13;
-        Tue, 11 Jun 2019 05:24:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jpK78n7EuwzwuUYa9uLDGGpmavtbv1Fbssm0HIpkmiA=;
-        b=V4KwM3GLF7HCRFJQBiPn0U0u3Yoq3BpbibnG1fmmwO4ZjhuKm5myUMGG1TFMWlClpo
-         P8JMYHtkcGHvWtDoTgrA8Kyze2rcwUkcgE3vzogbTcBG9+oHJqZFcaQmEJ7mW4FgQLqU
-         UpQkPWnK75g4Wx7sM9bBlItGeVBxl9U8IdYU53ZGmkl9eONwB88AwrvJ+/DegmNS+vnB
-         z/zRVEO89+JJ4m1g4zo6hk779nyb1gWqbQ5OFGFoOR7NWRSSOAte30ANIc3H8yKJRKUu
-         LrlqSgV6ngJ1MA/VMMQob1JnseU5xbbz0gpHBksces9aOZ95CWmmk/tcJ/faHr5Jx1Be
-         ifeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jpK78n7EuwzwuUYa9uLDGGpmavtbv1Fbssm0HIpkmiA=;
-        b=Z2qePusxNFkeu+gTgoq9Eb61TpE94riAzM2OuKYgnAFSIU0MvtOtShFBUv+nk6hQQ3
-         x9kyZ9N3ORf2AFj3Lb5gLZHaA5WPl8VCAH/knYRcFBBy9Q3hOqm4U1Li9mjrezBwcwxa
-         XVZvz9SRYOQ8vysDPIqIgkqq3ImPpJdpEs+0NL0jmQBAnUM88Th6HNLw0IEbHg7DcWbb
-         eIOIlhujvwoNqwfCcrKJuD+sVh13jzaY5JU1m8RJeOqdIH1zhnrATuQ16sekmTYNf/F1
-         6gx1ClfsQmpQymtSbZtpZqtKsnjPSjipdh9p6lHkH/1AOtDOKCTGvP40rD49Dd22LtDe
-         gfuQ==
-X-Gm-Message-State: APjAAAWi/jNICoS/2S0i9jRfoYHoM06F4SD1SKT6m0t1GNuGRzcII/8x
-        iHEfPi6b2wOsw1be10KD2+X018/Q
-X-Google-Smtp-Source: APXvYqwUCQThZamEpHtqoJvNjZFPGs7bzsmpbp1MOs9ez3BVKjK/e0lKZvGo0G0RX7J3ChoivEUPkA==
-X-Received: by 2002:a65:4b88:: with SMTP id t8mr20722333pgq.374.1560255841015;
-        Tue, 11 Jun 2019 05:24:01 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id 127sm14832271pfc.159.2019.06.11.05.23.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Jun 2019 05:24:00 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v4 3/3] KVM: X86: Expose PV_SCHED_YIELD CPUID feature bit to guest
-Date:   Tue, 11 Jun 2019 20:23:50 +0800
-Message-Id: <1560255830-8656-4-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560255830-8656-1-git-send-email-wanpengli@tencent.com>
-References: <1560255830-8656-1-git-send-email-wanpengli@tencent.com>
+        Tue, 11 Jun 2019 08:32:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 497503F4C0;
+        Tue, 11 Jun 2019 14:25:23 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=vmwopensource.org header.i=@vmwopensource.org header.b=gMRzw4i4;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -3.1
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.1 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DKIM_SIGNED=0.1,
+        DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=vmwopensource.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Yb0vNCNrCl76; Tue, 11 Jun 2019 14:25:09 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 9CE893F5EC;
+        Tue, 11 Jun 2019 14:25:08 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id EB08D3619AA;
+        Tue, 11 Jun 2019 14:25:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=vmwopensource.org;
+        s=mail; t=1560255908;
+        bh=8SSMjg5S87UIXKzzTPf2fASPtyT5YDoyHJlCuHXj464=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gMRzw4i46y1oAfDZUJ2LywkUYfekmuoX6aqewJklfhU9nCUbA6MDcbNuaRtcft1Qc
+         tHI4tnrN0IyvR0CuFY7JKYiUdP13sYQdzDiSFEOcU3r2unZGMNjUCMuLEF44Gsr51R
+         CXXDFm6S1cPfQjHgAkRWT+8OCA+uRA2m0QJNJaGo=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thellstrom@vmwopensource.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-mm@kvack.org
+Subject: [PATCH v4 0/9] Emulated coherent graphics memory
+Date:   Tue, 11 Jun 2019 14:24:45 +0200
+Message-Id: <20190611122454.3075-1-thellstrom@vmwopensource.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -65,49 +74,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Planning to merge this through the drm/vmwgfx tree soon, so if there
+are any objections, please speak up.
 
-Expose PV_SCHED_YIELD feature bit to guest, the guest can check this
-feature bit before using paravirtualized sched yield.
+Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
+to provide coherent graphics memory, meaning that the GPU sees any
+content written to the coherent memory on the next GPU operation that
+touches that memory, and the CPU sees any content written by the GPU
+to that memory immediately after any fence object trailing the GPU
+operation has signaled.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- Documentation/virtual/kvm/cpuid.txt | 4 ++++
- arch/x86/kvm/cpuid.c                | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+Paravirtual drivers that otherwise require explicit synchronization
+needs to do this by hooking up dirty tracking to pagefault handlers
+and buffer object validation. This is a first attempt to do that for
+the vmwgfx driver.
 
-diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-index 97ca194..1c39683 100644
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -66,6 +66,10 @@ KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
-                                    ||       || before using paravirtualized
-                                    ||       || send IPIs.
- ------------------------------------------------------------------------------
-+KVM_FEATURE_PV_SHED_YIELD          ||    12 || guest checks this feature bit
-+                                   ||       || before using paravirtualized
-+                                   ||       || sched yield.
-+------------------------------------------------------------------------------
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-                                    ||       || per-cpu warps are expected in
-                                    ||       || kvmclock.
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 60f87ba..38fc653 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -653,7 +653,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			     (1 << KVM_FEATURE_PV_UNHALT) |
- 			     (1 << KVM_FEATURE_PV_TLB_FLUSH) |
- 			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
--			     (1 << KVM_FEATURE_PV_SEND_IPI);
-+			     (1 << KVM_FEATURE_PV_SEND_IPI) |
-+			     (1 << KVM_FEATURE_PV_SCHED_YIELD);
- 
- 		if (sched_info_on())
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
--- 
-2.7.4
+The mm patches has been out for RFC. I think I have addressed all the
+feedback I got, except a possible softdirty breakage. But although the
+dirty-tracking and softdirty may write-protect PTEs both care about,
+that shouldn't really cause any operation interference. In particular
+since we use the hardware dirty PTE bits and softdirty uses other PTE bits.
+
+For the TTM changes they are hopefully in line with the long-term
+strategy of making helpers out of what's left of TTM.
+
+The code has been tested and excercised by a tailored version of mesa
+where we disable all explicit synchronization and assume graphics memory
+is coherent. The performance loss varies of course; a typical number is
+around 5%.
+
+Changes v1-v2:
+- Addressed a number of typos and formatting issues.
+- Added a usage warning for apply_to_pfn_range() and apply_to_page_range()
+- Re-evaluated the decision to use apply_to_pfn_range() rather than
+  modifying the pagewalk.c. It still looks like generically handling the
+  transparent huge page cases requires the mmap_sem to be held at least
+  in read mode, so sticking with apply_to_pfn_range() for now.
+- The TTM page-fault helper vma copy argument was scratched in favour of
+  a pageprot_t argument.
+Changes v3:
+- Adapted to upstream API changes.
+Changes v4:
+- Adapted to upstream mmu_notifier changes. (Jerome?)
+- Fixed a couple of warnings on 32-bit x86
+- Fixed image offset computation on multisample images.
+  
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: linux-mm@kvack.org
 
