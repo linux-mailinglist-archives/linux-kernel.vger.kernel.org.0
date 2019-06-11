@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 540243C9F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DA83C9FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389408AbfFKL3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 07:29:31 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:1846 "EHLO
+        id S2389465AbfFKL33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 07:29:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29616 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389415AbfFKL33 (ORCPT
+        with ESMTP id S2389417AbfFKL33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Jun 2019 07:29:29 -0400
-X-UUID: c15b6bf4ca314ef0b2777e638b3cb723-20190611
-X-UUID: c15b6bf4ca314ef0b2777e638b3cb723-20190611
+X-UUID: 2b5fb79c25c14d7690da9ea599494b9b-20190611
+X-UUID: 2b5fb79c25c14d7690da9ea599494b9b-20190611
 Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <dehui.sun@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 195555823; Tue, 11 Jun 2019 19:29:20 +0800
+        with ESMTP id 307684010; Tue, 11 Jun 2019 19:29:21 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 11 Jun 2019 19:29:19 +0800
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 11 Jun 2019 19:29:20 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 11 Jun 2019 19:29:18 +0800
+ Transport; Tue, 11 Jun 2019 19:29:19 +0800
 From:   Dehui Sun <dehui.sun@mediatek.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -35,9 +35,9 @@ CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, <erin.lo@mediatek.com>,
         <weiyi.lu@mediatek.com>, <dehui.sun@mediatek.com>
-Subject: [PATCH v1 1/2] dt-bindings: mediatek: update bindings for MT8183 systimer
-Date:   Tue, 11 Jun 2019 19:28:53 +0800
-Message-ID: <1560252534-11412-2-git-send-email-dehui.sun@mediatek.com>
+Subject: [PATCH v1 2/2] arm64: dts: mt8183: add systimer0 device node
+Date:   Tue, 11 Jun 2019 19:28:54 +0800
+Message-ID: <1560252534-11412-3-git-send-email-dehui.sun@mediatek.com>
 X-Mailer: git-send-email 2.1.0
 In-Reply-To: <1560252534-11412-1-git-send-email-dehui.sun@mediatek.com>
 References: <1560252534-11412-1-git-send-email-dehui.sun@mediatek.com>
@@ -49,25 +49,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds mt8183 compatible node in mtk-timer binding document.
+Add systimer0 device node for MT8183.
 
 Signed-off-by: Dehui Sun <dehui.sun@mediatek.com>
 ---
- Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt | 1 +
- 1 file changed, 1 insertion(+)
+This patch is based on the following patches:
+https://patchwork.kernel.org/cover/10962385/
+https://patchwork.kernel.org/patch/10983939/
+---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-index 74c3ead..0d25648 100644
---- a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-@@ -21,6 +21,7 @@ Required properties:
- 	* "mediatek,mt6577-timer" for MT6577 and all above compatible timers (GPT)
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index c2749c4..ac3f87d 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -254,6 +254,15 @@
+ 			clock-names = "spi", "wrap";
+ 		};
  
- 	For those SoCs that use SYST
-+	* "mediatek,mt8183-timer" for MT8183 compatible timers (SYST)
- 	* "mediatek,mt7629-timer" for MT7629 compatible timers (SYST)
- 	* "mediatek,mt6765-timer" for MT6765 and all above compatible timers (SYST)
- 
++		systimer: systimer@10017000 {
++			compatible = "mediatek,mt8183-timer",
++				     "mediatek,mt6765-timer";
++			reg = <0 0x10017000 0 0x1000>;
++			interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&topckgen CLK_TOP_CLK13M>;
++			clock-names = "clk13m";
++		};
++
+ 		auxadc: auxadc@11001000 {
+ 			compatible = "mediatek,mt8183-auxadc",
+ 				     "mediatek,mt8173-auxadc";
 -- 
 2.1.0
 
