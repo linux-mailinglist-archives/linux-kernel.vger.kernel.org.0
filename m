@@ -2,272 +2,296 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFB23C3E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 08:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B12073C3F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 08:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403837AbfFKGTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 02:19:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391197AbfFKGTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 02:19:08 -0400
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A22E621721;
-        Tue, 11 Jun 2019 06:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560233947;
-        bh=zAg8BR5dmZHz0GhzDvxgmJ5z7bh7GV7MwQeYYOMSX8o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VENhbnFYbx/WXplXzFt6V2uVy6xWv2QvdsHchlMRUvn32aFmfEa/RTLFqgesbtn7a
-         5Vn2Pl8EMdrkfaVw3fIq0zfvUM0Q6FN5bAHhKFqUaH81Gaozj3UVn4jWpZz5GIRijB
-         AjncSa6k0Zf7WTR3+JgvIiX7XVVWsHhQgs7nZpTo=
-Received: by mail-lj1-f182.google.com with SMTP id s21so10340234lji.8;
-        Mon, 10 Jun 2019 23:19:06 -0700 (PDT)
-X-Gm-Message-State: APjAAAWRQUeKrQBFhSb5QpYQmXjbsKxp+A+rPa86YWrYD4KvDXSzutjh
-        zxt1519XhpNhh1R95M7tlfyG+tx7jiWwZpVCw9k=
-X-Google-Smtp-Source: APXvYqxCFe4p5zlRmaqB4z0m9SNAEZkRno1BZHx+dIcGSMw57gobxcdysDyFElC+91e5QK0Z6gFqPQzkY5U87LkuzcY=
-X-Received: by 2002:a2e:9e83:: with SMTP id f3mr16999335ljk.47.1560233944850;
- Mon, 10 Jun 2019 23:19:04 -0700 (PDT)
+        id S2403942AbfFKG3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 02:29:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728760AbfFKG3L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 02:29:11 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5B6RQ9E104260
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 02:29:10 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t25efbgcw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 02:29:09 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Tue, 11 Jun 2019 07:29:08 +0100
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 11 Jun 2019 07:29:02 +0100
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5B6T0l922610362
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jun 2019 06:29:00 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ABEE6C605D;
+        Tue, 11 Jun 2019 06:29:00 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1485C6055;
+        Tue, 11 Jun 2019 06:28:51 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.85.227.34])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Jun 2019 06:28:51 +0000 (GMT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v11 00/13] Appended signatures support for IMA appraisal
+Date:   Tue, 11 Jun 2019 03:28:04 -0300
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CGME20190607143531eucas1p11f6b3a63068d529dae8be16abaa60ed0@eucas1p1.samsung.com>
- <20190607143507.30286-1-l.luba@partner.samsung.com> <20190607143507.30286-9-l.luba@partner.samsung.com>
-In-Reply-To: <20190607143507.30286-9-l.luba@partner.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 11 Jun 2019 08:18:53 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
-Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
-Subject: Re: [PATCH v9 08/13] drivers: memory: add DMC driver for Exynos5422
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061106-0036-0000-0000-00000AC971EA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011245; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01216304; UDB=6.00639510; IPR=6.00997403;
+ MB=3.00027259; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-11 06:29:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061106-0037-0000-0000-00004C2DD766
+Message-Id: <20190611062817.18412-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906110044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Jun 2019 at 16:35, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> This patch adds driver for Exynos5422 Dynamic Memory Controller.
-> The driver provides support for dynamic frequency and voltage scaling for
-> DMC and DRAM. It supports changing timings of DRAM running with different
-> frequency. There is also an algorithm to calculate timigns based on
-> memory description provided in DT.
-> The patch also contains needed MAINTAINERS file update.
->
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  MAINTAINERS                             |    8 +
->  drivers/memory/samsung/Kconfig          |   17 +
->  drivers/memory/samsung/Makefile         |    1 +
->  drivers/memory/samsung/exynos5422-dmc.c | 1261 +++++++++++++++++++++++
->  4 files changed, 1287 insertions(+)
->  create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
+Hello,
 
-(...)
+Nothing big in this version. Noteworthy changes are:
 
-> +
-> +/**
-> + * exynos5_performance_counters_init() - Initializes performance DMC's counters
-> + * @dmc:       DMC for which it does the setup
-> + *
-> + * Initialization of performance counters in DMC for estimating usage.
-> + * The counter's values are used for calculation of a memory bandwidth and based
-> + * on that the governor changes the frequency.
-> + * The counters are not used when the governor is GOVERNOR_USERSPACE.
-> + */
-> +static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
-> +{
-> +       int counters_size;
-> +       int ret, i;
-> +
-> +       dmc->num_counters = devfreq_event_get_edev_count(dmc->dev);
-> +       if (dmc->num_counters < 0) {
-> +               dev_err(dmc->dev, "could not get devfreq-event counters\n");
-> +               return dmc->num_counters;
-> +       }
-> +
-> +       counters_size = sizeof(struct devfreq_event_dev) * dmc->num_counters;
-> +       dmc->counter = devm_kzalloc(dmc->dev, counters_size, GFP_KERNEL);
-> +       if (!dmc->counter)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < dmc->num_counters; i++) {
-> +               dmc->counter[i] =
-> +                       devfreq_event_get_edev_by_phandle(dmc->dev, i);
-> +               if (IS_ERR_OR_NULL(dmc->counter[i]))
-> +                       return -EPROBE_DEFER;
-> +       }
-> +
-> +       ret = exynos5_counters_enable_edev(dmc);
-> +       if (ret < 0) {
-> +               dev_err(dmc->dev, "could not enable event counter\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = exynos5_counters_set_event(dmc);
-> +       if (ret < 0) {
-> +               dev_err(dmc->dev, "counld not set event counter\n");
+1. Fixes for two bugs in ima_appraise_measurements() which were spotted and
+resolved by Mimi Zohar. The changelog points them out.
 
-Missing cleanup - edev counters disable.
+2. One bugfix in process_measurement() which would cause all files
+appraised with modsig to be measured as well, even if the policy didn't
+request it.
 
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * exynos5_dmc_set_pause_on_switching() - Controls a pause feature in DMC
-> + * @dmc:       device which is used for changing this feature
-> + * @set:       a boolean state passing enable/disable request
-> + *
-> + * There is a need of pausing DREX DMC when divider or MUX in clock tree
-> + * changes its configuration. In such situation access to the memory is blocked
-> + * in DMC automatically. This feature is used when clock frequency change
-> + * request appears and touches clock tree.
-> + */
-> +static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
-> +{
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret = regmap_read(dmc->clk_regmap, CDREX_PAUSE, &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       val |= 1UL;
-> +       regmap_write(dmc->clk_regmap, CDREX_PAUSE, val);
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * exynos5_dmc_probe() - Probe function for the DMC driver
-> + * @pdev:      platform device for which the driver is going to be initialized
-> + *
-> + * Initialize basic components: clocks, regulators, performance counters, etc.
-> + * Read out product version and based on the information setup
-> + * internal structures for the controller (frequency and voltage) and for DRAM
-> + * memory parameters: timings for each operating frequency.
-> + * Register new devfreq device for controlling DVFS of the DMC.
-> + */
-> +static int exynos5_dmc_probe(struct platform_device *pdev)
-> +{
-> +       int ret = 0;
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       struct exynos5_dmc *dmc;
-> +       struct resource *res;
-> +
-> +       dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
-> +       if (!dmc)
-> +               return -ENOMEM;
-> +
-> +       mutex_init(&dmc->lock);
-> +
-> +       dmc->dev = dev;
-> +       platform_set_drvdata(pdev, dmc);
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       dmc->base_drexi0 = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(dmc->base_drexi0))
-> +               return PTR_ERR(dmc->base_drexi0);
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +       dmc->base_drexi1 = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(dmc->base_drexi1))
-> +               return PTR_ERR(dmc->base_drexi1);
-> +
-> +       dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
-> +                               "samsung,syscon-clk");
-> +       if (IS_ERR(dmc->clk_regmap))
-> +               return PTR_ERR(dmc->clk_regmap);
-> +
-> +       ret = exynos5_init_freq_table(dmc, &exynos5_dmc_df_profile);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't initialize frequency settings\n");
-> +               return ret;
-> +       }
-> +
-> +       dmc->vdd_mif = devm_regulator_get(dev, "vdd");
-> +       if (IS_ERR(dmc->vdd_mif)) {
-> +               ret = PTR_ERR(dmc->vdd_mif);
-> +               return ret;
-> +       }
-> +
-> +       ret = exynos5_dmc_init_clks(dmc);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = of_get_dram_timings(dmc);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't initialize timings settings\n");
+3. Adapted to work with per policy rule template formats.
 
-goto remove_clocks;
+Plus small cosmetic changes in some places. The changelog has the details.
 
-> +               return ret;
-> +       }
-> +
-> +       ret = exynos5_performance_counters_init(dmc);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't probe performance counters\n");
-> +               goto remove_clocks;
-> +       }
-> +
-> +       ret = exynos5_dmc_set_pause_on_switching(dmc);
-> +       if (ret) {
-> +               dev_warn(dev, "couldn't get access to PAUSE register\n");
-> +               goto remove_clocks;
+This has been tested with signed modules and with signed kernels loaded via
+kexec_file_load().
 
-goto err_devfreq_add;
+Many thanks to Mimi Zohar for her help with the development of this patch
+series.
 
-Best regards,
-Krzysztof
+The patches apply on today's linux-integrity/next-queued-testing.
 
-> +       }
-> +
-> +       /*
-> +        * Setup default thresholds for the devfreq governor.
-> +        * The values are chosen based on experiments.
-> +        */
-> +       dmc->gov_data.upthreshold = 30;
-> +       dmc->gov_data.downdifferential = 5;
-> +
-> +       dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
-> +                                         DEVFREQ_GOV_USERSPACE,
-> +                                         &dmc->gov_data);
-> +
-> +       if (IS_ERR(dmc->df)) {
-> +               ret = PTR_ERR(dmc->df);
-> +               goto err_devfreq_add;
-> +       }
-> +
-> +       dev_info(dev, "DMC initialized\n");
-> +
-> +       return 0;
-> +
-> +err_devfreq_add:
-> +       exynos5_counters_disable_edev(dmc);
-> +remove_clocks:
-> +       clk_disable_unprepare(dmc->mout_bpll);
-> +       clk_disable_unprepare(dmc->fout_bpll);
-> +
-> +       return ret;
-> +}
-> +
->
+Original cover letter:
+
+On the OpenPOWER platform, secure boot and trusted boot are being
+implemented using IMA for taking measurements and verifying signatures.
+Since the kernel image on Power servers is an ELF binary, kernels are
+signed using the scripts/sign-file tool and thus use the same signature
+format as signed kernel modules.
+
+This patch series adds support in IMA for verifying those signatures.
+It adds flexibility to OpenPOWER secure boot, because it allows it to boot
+kernels with the signature appended to them as well as kernels where the
+signature is stored in the IMA extended attribute.
+
+Changes since v10:
+
+- Patch "MODSIGN: Export module signature definitions"
+  - Moved config MODULE_SIG_FORMAT definition before its use. Suggested by
+    Mimi Zohar.
+  - Added missing kerneldoc for @name parameter. Suggested by Mimi Zohar.
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Bugfix: don't check status variable when deciding whether to verify
+    modsig in ima_appraise_measurement(). Suggested by Mimi Zohar.
+  - Bugfix: verify the modsig in ima_appraise_measurement() if the xattr
+    contains a digest. Suggested by Mimi Zohar.
+
+- Patch "ima: Define ima-modsig template"
+  - Renamed ima_modsig_serialize() to ima_get_raw_modsig().
+  - Renamed check_current_template_modsig() to check_template_modsig().
+  - Fixed outdated comment in ima_eventmodsig_init(). Suggested by Mimi
+    Zohar.
+  - Check either the global or the per-rule template when an appraisal rule
+    allows modsig. Suggested by Mimi Zohar.
+
+- Patch "ima: Store the measurement again when appraising a modsig"
+  - Bugfix: Only re-measure file containing modsig if it was measured
+    before.
+  - Check for modsig-related fields in the template_desc obtained in
+    process_measurement() which can be a per-rule template. Suggested by Mimi
+    Zohar.
+
+- Patch "ima: Allow template= option for appraise rules as well"
+  - New patch. Suggested by Mimi Zohar.
+
+Changes since v9:
+
+- Patch "MODSIGN: Export module signature definitions"
+  - Moved mod_check_sig() to a new file so that CONFIG_IMA_APPRAISE_MODSIG
+    doesn't have to depend on CONFIG_MODULES.
+  - Changed scripts/Makefile to build sign-file if CONFIG_MODULE_SIG_FORMAT
+    is set.
+  - Removed Mimi's Reviewed-by because of the changes in this version.
+
+- Patch "PKCS#7: Refactor verify_pkcs7_signature()"
+  - Don't add function pkcs7_get_message_sig() anymore, since it's not
+    needed in the current version.
+
+- Patch "PKCS#7: Introduce pkcs7_get_digest()"
+  - Changed 'len' argument from 'u8 *' to 'u32 *'.
+  - Added 'hash_algo' argument to obtain the algo used for the digest.
+  - Don't check whether 'buf', 'len' and 'hash_algo' output arguments are NULL,
+    since the function's only caller always sets them.
+  - Removed Mimi's Reviewed-by because of the changes in this version.
+
+- Patch "integrity: Introduce asymmetric_sig_has_known_key()"
+  - Dropped.
+
+- Patch "integrity: Introduce integrity_keyring_from_id"
+  - Squashed into "ima: Implement support for module-style appended signatures"
+  - Changed integrity_keyring_from_id() to a static function (suggested by Mimi
+    Zohar).
+
+- Patch "ima: Introduce is_signed()"
+  - Dropped.
+
+- Patch "ima: Export func_tokens"
+  - Squashed into "ima: Implement support for module-style appended signatures"
+
+- Patch "ima: Use designated initializers for struct ima_event_data"
+  - New patch.
+
+- Patch "ima: Factor xattr_verify() out of ima_appraise_measurement()"
+  - New patch.
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Renamed 'struct modsig_hdr' to 'struct modsig'.
+  - Added integrity_modsig_verify() to integrity/digsig.c so that it's not
+    necessary to export integrity_keyring_from_id() (Suggested by Mimi Zohar).
+  - Don't add functions ima_xattr_sig_known_key() and
+    modsig_has_known_key() since they're not necessary anymore.
+  - Added modsig argument to ima_appraise_measurement().
+  - Verify modsig in a separate function called by ima_appraise_measurement().
+  - Renamed ima_read_collect_modsig() to ima_read_modsig(), with a separate
+    collect function added in patch "ima: Collect modsig" (suggested by Mimi
+    Zohar).
+  - In ima_read_modsig(), moved code saving of raw PKCS7 data to 'struct
+    modsig' to patch "ima: Collect modsig".
+  - In ima_read_modsig(), moved all parts related to the modsig hash to
+    patch "ima: Collect modsig".
+  - In ima_read_modsig(), don't check if the buf pointer is NULL since it's
+    never supposed to happen.
+  - Renamed ima_free_xattr_data() to ima_free_modsig().
+  - No need to check for modsig in ima_read_xattr() and
+    ima_inode_set_xattr() anymore.
+  - In ima_modsig_verify(), don't check if the modsig pointer is NULL since
+    it's not supposed to happen.
+  - Don't define IMA_MODSIG element in enum evm_ima_xattr_type.
+
+- Patch "ima: Collect modsig"
+  - New patch.
+
+- Patch "ima: Define ima-modsig template"
+  - Patch renamed from "ima: Add new "d-sig" template field"
+  - Renamed 'd-sig' template field to 'd-modsig'.
+  - Added 'modsig' template field.
+  - Added 'ima-modsig' defined template descriptor.
+  - Renamed ima_modsig_serialize_data() to ima_modsig_serialize().
+  - Renamed ima_get_modsig_hash() to ima_get_modsig_digest(). Also the
+    function is a lot simpler now since what it used to do is now done in
+    ima_collect_modsig() and pkcs7_get_digest().
+  - Added check for failed modsig collection in ima_eventdigest_modsig_init().
+  - Added modsig argument to ima_store_measurement().
+  - Added 'modsig' field to struct ima_event_data.
+  - Removed check for modsig == NULL in ima_get_modsig_digest() and in
+    ima_modsig_serialize_data() since their callers already performs that
+    check.
+  - Moved check_current_template_modsig() to this patch, previously was in
+    "ima: Store the measurement again when appraising a modsig".
+
+- Patch "ima: Store the measurement again when appraising a modsig"
+  - Renamed ima_template_has_sig() to ima_template_has_modsig().
+  - Added a change to ima_collect_measurement(), making it to call
+    ima_collect_modsig() even if IMA_COLLECT is set in iint->flags.
+  - Removed IMA_READ_MEASURE flag.
+  - Renamed template_has_sig global variable to template_has_modsig.
+  - Renamed find_sig_in_template() to find_modsig_in_template().
+
+
+Thiago Jung Bauermann (13):
+  MODSIGN: Export module signature definitions
+  PKCS#7: Refactor verify_pkcs7_signature()
+  PKCS#7: Introduce pkcs7_get_digest()
+  integrity: Introduce struct evm_xattr
+  integrity: Select CONFIG_KEYS instead of depending on it
+  ima: Use designated initializers for struct ima_event_data
+  ima: Add modsig appraise_type option for module-style appended
+    signatures
+  ima: Factor xattr_verify() out of ima_appraise_measurement()
+  ima: Implement support for module-style appended signatures
+  ima: Collect modsig
+  ima: Define ima-modsig template
+  ima: Store the measurement again when appraising a modsig
+  ima: Allow template= option for appraise rules as well
+
+ Documentation/ABI/testing/ima_policy      |   6 +-
+ Documentation/security/IMA-templates.rst  |   7 +-
+ certs/system_keyring.c                    |  61 +++++--
+ crypto/asymmetric_keys/pkcs7_verify.c     |  33 ++++
+ include/crypto/pkcs7.h                    |   4 +
+ include/linux/module.h                    |   3 -
+ include/linux/module_signature.h          |  44 +++++
+ include/linux/verification.h              |  10 ++
+ init/Kconfig                              |   6 +-
+ kernel/Makefile                           |   1 +
+ kernel/module.c                           |   1 +
+ kernel/module_signature.c                 |  46 +++++
+ kernel/module_signing.c                   |  56 +-----
+ scripts/Makefile                          |   2 +-
+ security/integrity/Kconfig                |   2 +-
+ security/integrity/digsig.c               |  43 ++++-
+ security/integrity/evm/evm_main.c         |   8 +-
+ security/integrity/ima/Kconfig            |  13 ++
+ security/integrity/ima/Makefile           |   1 +
+ security/integrity/ima/ima.h              |  60 ++++++-
+ security/integrity/ima/ima_api.c          |  34 +++-
+ security/integrity/ima/ima_appraise.c     | 199 ++++++++++++++--------
+ security/integrity/ima/ima_init.c         |   4 +-
+ security/integrity/ima/ima_main.c         |  24 ++-
+ security/integrity/ima/ima_modsig.c       | 169 ++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  68 +++++++-
+ security/integrity/ima/ima_template.c     |  26 ++-
+ security/integrity/ima/ima_template_lib.c |  60 ++++++-
+ security/integrity/ima/ima_template_lib.h |   4 +
+ security/integrity/integrity.h            |  26 +++
+ 30 files changed, 840 insertions(+), 181 deletions(-)
+ create mode 100644 include/linux/module_signature.h
+ create mode 100644 kernel/module_signature.c
+ create mode 100644 security/integrity/ima/ima_modsig.c
+
