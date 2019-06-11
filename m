@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD653CBB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09C0B3CBC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389180AbfFKMct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:32:49 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:43400 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389004AbfFKMcs (ORCPT
+        id S2389385AbfFKMed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:34:33 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:35959 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfFKMec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:32:48 -0400
+        Tue, 11 Jun 2019 08:34:32 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 497503F4C0;
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 2CC533F4E9;
         Tue, 11 Jun 2019 14:25:23 +0200 (CEST)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=vmwopensource.org header.i=@vmwopensource.org header.b=gMRzw4i4;
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=vmwopensource.org header.i=@vmwopensource.org header.b=HpZERFbf;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,30 +26,29 @@ X-Spam-Status: No, score=-3.1 tagged_above=-999 required=6.31
         tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DKIM_SIGNED=0.1,
         DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
         autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=vmwopensource.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Yb0vNCNrCl76; Tue, 11 Jun 2019 14:25:09 +0200 (CEST)
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5Yf27d0c83ds; Tue, 11 Jun 2019 14:25:09 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 9CE893F5EC;
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 7AA2B3F4D4;
         Tue, 11 Jun 2019 14:25:08 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id EB08D3619AA;
-        Tue, 11 Jun 2019 14:25:07 +0200 (CEST)
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 184593619C2;
+        Tue, 11 Jun 2019 14:25:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=vmwopensource.org;
         s=mail; t=1560255908;
-        bh=8SSMjg5S87UIXKzzTPf2fASPtyT5YDoyHJlCuHXj464=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gMRzw4i46y1oAfDZUJ2LywkUYfekmuoX6aqewJklfhU9nCUbA6MDcbNuaRtcft1Qc
-         tHI4tnrN0IyvR0CuFY7JKYiUdP13sYQdzDiSFEOcU3r2unZGMNjUCMuLEF44Gsr51R
-         CXXDFm6S1cPfQjHgAkRWT+8OCA+uRA2m0QJNJaGo=
+        bh=Yjmtl92sLAlEoB99F5XOnCklObajAbb4hpy0froOh7I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HpZERFbfctFUuY5BHsAZYFpqZOEK+RF4iSdbsPLxbQM3huaaTreM0SlaTqnbw9qkc
+         OhuLbs/xeGddT/D90s6VBlW7b6ICuwZpG+YTBb/kJw4eVsBTIrDhJ+6kfsWbHCfWEx
+         EYx9Koa+3No3QMUm+EmR+8Rwkdzmz9gfzQIfZV0s=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thellstrom@vmwopensource.org>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
         linux-kernel@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         Will Deacon <will.deacon@arm.com>,
@@ -60,12 +59,13 @@ Cc:     linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
         Huang Ying <ying.huang@intel.com>,
         Souptick Joarder <jrdr.linux@gmail.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        linux-mm@kvack.org
-Subject: [PATCH v4 0/9] Emulated coherent graphics memory
-Date:   Tue, 11 Jun 2019 14:24:45 +0200
-Message-Id: <20190611122454.3075-1-thellstrom@vmwopensource.org>
+        linux-mm@kvack.org, Ralph Campbell <rcampbell@nvidia.com>
+Subject: [PATCH v4 1/9] mm: Allow the [page|pfn]_mkwrite callbacks to drop the mmap_sem
+Date:   Tue, 11 Jun 2019 14:24:46 +0200
+Message-Id: <20190611122454.3075-2-thellstrom@vmwopensource.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190611122454.3075-1-thellstrom@vmwopensource.org>
+References: <20190611122454.3075-1-thellstrom@vmwopensource.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -74,51 +74,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Planning to merge this through the drm/vmwgfx tree soon, so if there
-are any objections, please speak up.
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
-to provide coherent graphics memory, meaning that the GPU sees any
-content written to the coherent memory on the next GPU operation that
-touches that memory, and the CPU sees any content written by the GPU
-to that memory immediately after any fence object trailing the GPU
-operation has signaled.
+Driver fault callbacks are allowed to drop the mmap_sem when expecting
+long hardware waits to avoid blocking other mm users. Allow the mkwrite
+callbacks to do the same by returning early on VM_FAULT_RETRY.
 
-Paravirtual drivers that otherwise require explicit synchronization
-needs to do this by hooking up dirty tracking to pagefault handlers
-and buffer object validation. This is a first attempt to do that for
-the vmwgfx driver.
+In particular we want to be able to drop the mmap_sem when waiting for
+a reservation object lock on a GPU buffer object. These locks may be
+held while waiting for the GPU.
 
-The mm patches has been out for RFC. I think I have addressed all the
-feedback I got, except a possible softdirty breakage. But although the
-dirty-tracking and softdirty may write-protect PTEs both care about,
-that shouldn't really cause any operation interference. In particular
-since we use the hardware dirty PTE bits and softdirty uses other PTE bits.
-
-For the TTM changes they are hopefully in line with the long-term
-strategy of making helpers out of what's left of TTM.
-
-The code has been tested and excercised by a tailored version of mesa
-where we disable all explicit synchronization and assume graphics memory
-is coherent. The performance loss varies of course; a typical number is
-around 5%.
-
-Changes v1-v2:
-- Addressed a number of typos and formatting issues.
-- Added a usage warning for apply_to_pfn_range() and apply_to_page_range()
-- Re-evaluated the decision to use apply_to_pfn_range() rather than
-  modifying the pagewalk.c. It still looks like generically handling the
-  transparent huge page cases requires the mmap_sem to be held at least
-  in read mode, so sticking with apply_to_pfn_range() for now.
-- The TTM page-fault helper vma copy argument was scratched in favour of
-  a pageprot_t argument.
-Changes v3:
-- Adapted to upstream API changes.
-Changes v4:
-- Adapted to upstream mmu_notifier changes. (Jerome?)
-- Fixed a couple of warnings on 32-bit x86
-- Fixed image offset computation on multisample images.
-  
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Will Deacon <will.deacon@arm.com>
@@ -129,6 +94,57 @@ Cc: Michal Hocko <mhocko@suse.com>
 Cc: Huang Ying <ying.huang@intel.com>
 Cc: Souptick Joarder <jrdr.linux@gmail.com>
 Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: "Christian König" <christian.koenig@amd.com>
 Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
+---
+ mm/memory.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index ddf20bd0c317..168f546af1ad 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2238,7 +2238,7 @@ static vm_fault_t do_page_mkwrite(struct vm_fault *vmf)
+ 	ret = vmf->vma->vm_ops->page_mkwrite(vmf);
+ 	/* Restore original flags so that caller is not surprised */
+ 	vmf->flags = old_flags;
+-	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))
++	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY)))
+ 		return ret;
+ 	if (unlikely(!(ret & VM_FAULT_LOCKED))) {
+ 		lock_page(page);
+@@ -2515,7 +2515,7 @@ static vm_fault_t wp_pfn_shared(struct vm_fault *vmf)
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		vmf->flags |= FAULT_FLAG_MKWRITE;
+ 		ret = vma->vm_ops->pfn_mkwrite(vmf);
+-		if (ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE))
++		if (ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY))
+ 			return ret;
+ 		return finish_mkwrite_fault(vmf);
+ 	}
+@@ -2536,7 +2536,8 @@ static vm_fault_t wp_page_shared(struct vm_fault *vmf)
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		tmp = do_page_mkwrite(vmf);
+ 		if (unlikely(!tmp || (tmp &
+-				      (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))) {
++				      (VM_FAULT_ERROR | VM_FAULT_NOPAGE |
++				       VM_FAULT_RETRY)))) {
+ 			put_page(vmf->page);
+ 			return tmp;
+ 		}
+@@ -3601,7 +3602,8 @@ static vm_fault_t do_shared_fault(struct vm_fault *vmf)
+ 		unlock_page(vmf->page);
+ 		tmp = do_page_mkwrite(vmf);
+ 		if (unlikely(!tmp ||
+-				(tmp & (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))) {
++				(tmp & (VM_FAULT_ERROR | VM_FAULT_NOPAGE |
++					VM_FAULT_RETRY)))) {
+ 			put_page(vmf->page);
+ 			return tmp;
+ 		}
+-- 
+2.20.1
 
