@@ -2,211 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E72513C58E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 959113C599
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404573AbfFKIFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:05:09 -0400
-Received: from mga02.intel.com ([134.134.136.20]:33802 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404389AbfFKIFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:05:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 01:05:08 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Jun 2019 01:05:02 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Derek Basehore <dbasehore@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Derek Basehore <dbasehore@chromium.org>,
-        Hans de Goede <j.w.r.degoede@gmail.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH 4/5] drm/connector: Split out orientation quirk detection
-In-Reply-To: <20190611040350.90064-5-dbasehore@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190611040350.90064-1-dbasehore@chromium.org> <20190611040350.90064-5-dbasehore@chromium.org>
-Date:   Tue, 11 Jun 2019 11:08:03 +0300
-Message-ID: <87zhmoy270.fsf@intel.com>
+        id S2404597AbfFKIJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:09:04 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:32934 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404401AbfFKIJE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 04:09:04 -0400
+Received: by mail-ua1-f66.google.com with SMTP id f20so4197936ual.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 01:09:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ymfUHuEw6a4KJ+dzAGtlZ28yY4L9Bb8N3OI1F30T1wg=;
+        b=OW+NuIEqcnugYX9K3R4rmbgs2X2r6DWluKygkZvcTQLs19tMCQFNPkHAvjSN5rMObn
+         pk4eJcpJ2NwFGTauF9Xsz+LqtXI5MtkC8Ipx04sXbSh+HVZre+W5Bt4P4cQv3LMwqPHH
+         76eOwLcG28yL9rMrK1Ds4H6UtEm/9jGTS1NOmIMZ2uqda+KgH5la/hvmcYaCQeSiB+2l
+         vVikavTSZnRMrQXmesDlb5gEx1/+8AjlT04IczhCNmoh7GsiG7QqVT2iG0in92z/JC3p
+         Bqy05Bgzuynl5FMwbCgj0dZ3fMm85MLvaEZUGyV5Mggx/Z0dtXdyzpQkw18utLRIH2PL
+         ny5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ymfUHuEw6a4KJ+dzAGtlZ28yY4L9Bb8N3OI1F30T1wg=;
+        b=DASLgcsSSxOOIVEgKc0WJeAdP8ifduOMttpQCFse1X/eiX0PCDDeQe5XOc+VXYvzvB
+         XumEkNJ4tyzyDuXXyRgqzuMgoDoK6hnhDnfuxLJiAwTYrbAoedxxHyt5q47G54QhbKLC
+         ArUpzoZo4R8gV3qZh9Myew0DGLBL5u3qQM0Lhf4OuMuWlvinJSKv5gUM3i4JX7G6FEti
+         7bYRZKxGewossAjhY3fyF3QsNjHvXBivC3DTSslEWi50W5Ry+E9hC1ZdhHpOj8ZTG4/5
+         zOl32YePOtUoEgAU0RxZVQyqynngSp9rpbmeFkwdZKQRH5MpISA++2KGQQ8tpuctNSMW
+         rJIg==
+X-Gm-Message-State: APjAAAVFxe1hi2LR6FhUGQyi0DM8lj9QJDNznNu3JtKOEQD8EKcM0+TQ
+        GA6FUO1y6IW5v7/Jw16LgDbdD4C61/s5ao5wnaE/8G0M
+X-Google-Smtp-Source: APXvYqzwg6CQ8roNT6YJv9aPGhM26Z7ZVhgpVH046rpFBxD0Sq2H3fw9DlvExU6AmCGbhbEqwrQVs8y6pEaUpD5gSJI=
+X-Received: by 2002:ab0:4a55:: with SMTP id r21mr19143398uae.133.1560240543093;
+ Tue, 11 Jun 2019 01:09:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190611055045.15945-1-oded.gabbay@gmail.com> <20190611055045.15945-9-oded.gabbay@gmail.com>
+ <20190611075933.GB13408@kroah.com>
+In-Reply-To: <20190611075933.GB13408@kroah.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 11 Jun 2019 11:08:37 +0300
+Message-ID: <CAFCwf12GRn6ePeH1cLuC_-C9pyQJJSZ9RaGdMUz6MkGrtR=Lvg@mail.gmail.com>
+Subject: Re: [PATCH 8/8] habanalabs: enable 64-bit DMA mask in POWER9
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Jun 2019, Derek Basehore <dbasehore@chromium.org> wrote:
-> This removes the orientation quirk detection from the code to add
-> an orientation property to a panel. This is used only for legacy x86
-> systems, yet we'd like to start using this on devicetree systems where
-> quirk detection like this is not needed.
-
-Not needed, but no harm done either, right?
-
-I guess I'll defer judgement on this to Hans and Ville (Cc'd).
-
-Side note, I'm about to apply some (minor) conflicting changes in our
--next as soon as I get CI results on it.
-
-
-BR,
-Jani.
-
-
+On Tue, Jun 11, 2019 at 10:59 AM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/gpu/drm/drm_connector.c | 16 ++++------------
->  drivers/gpu/drm/i915/intel_dp.c | 14 +++++++++++---
->  drivers/gpu/drm/i915/vlv_dsi.c  | 14 ++++++++++----
->  include/drm/drm_connector.h     |  2 +-
->  4 files changed, 26 insertions(+), 20 deletions(-)
+> On Tue, Jun 11, 2019 at 08:50:45AM +0300, Oded Gabbay wrote:
+> > --- a/drivers/misc/habanalabs/habanalabs_drv.c
+> > +++ b/drivers/misc/habanalabs/habanalabs_drv.c
+> > @@ -28,6 +28,7 @@ static DEFINE_MUTEX(hl_devs_idr_lock);
+> >
+> >  static int timeout_locked = 5;
+> >  static int reset_on_lockup = 1;
+> > +static int power9_64bit_dma_enable;
+> >
+> >  module_param(timeout_locked, int, 0444);
+> >  MODULE_PARM_DESC(timeout_locked,
+> > @@ -37,6 +38,10 @@ module_param(reset_on_lockup, int, 0444);
+> >  MODULE_PARM_DESC(reset_on_lockup,
+> >       "Do device reset on lockup (0 = no, 1 = yes, default yes)");
+> >
+> > +module_param(power9_64bit_dma_enable, int, 0444);
+> > +MODULE_PARM_DESC(power9_64bit_dma_enable,
+> > +     "Enable 64-bit DMA mask. Should be set only in POWER9 machine (0 = no, 1 = yes, default no)");
+> > +
+> >  #define PCI_VENDOR_ID_HABANALABS     0x1da3
+> >
+> >  #define PCI_IDS_GOYA                 0x0001
 >
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index e17586aaa80f..58a09b65028b 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -1894,31 +1894,23 @@ EXPORT_SYMBOL(drm_connector_set_vrr_capable_property);
->   * drm_connector_init_panel_orientation_property -
->   *	initialize the connecters panel_orientation property
->   * @connector: connector for which to init the panel-orientation property.
-> - * @width: width in pixels of the panel, used for panel quirk detection
-> - * @height: height in pixels of the panel, used for panel quirk detection
->   *
->   * This function should only be called for built-in panels, after setting
->   * connector->display_info.panel_orientation first (if known).
->   *
-> - * This function will check for platform specific (e.g. DMI based) quirks
-> - * overriding display_info.panel_orientation first, then if panel_orientation
-> - * is not DRM_MODE_PANEL_ORIENTATION_UNKNOWN it will attach the
-> - * "panel orientation" property to the connector.
-> + * This function will check if the panel_orientation is not
-> + * DRM_MODE_PANEL_ORIENTATION_UNKNOWN. If not, it will attach the "panel
-> + * orientation" property to the connector.
->   *
->   * Returns:
->   * Zero on success, negative errno on failure.
->   */
->  int drm_connector_init_panel_orientation_property(
-> -	struct drm_connector *connector, int width, int height)
-> +	struct drm_connector *connector)
->  {
->  	struct drm_device *dev = connector->dev;
->  	struct drm_display_info *info = &connector->display_info;
->  	struct drm_property *prop;
-> -	int orientation_quirk;
-> -
-> -	orientation_quirk = drm_get_panel_orientation_quirk(width, height);
-> -	if (orientation_quirk != DRM_MODE_PANEL_ORIENTATION_UNKNOWN)
-> -		info->panel_orientation = orientation_quirk;
->  
->  	if (info->panel_orientation == DRM_MODE_PANEL_ORIENTATION_UNKNOWN)
->  		return 0;
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index b099a9dc28fd..72ab090ea97a 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -40,6 +40,7 @@
->  #include <drm/drm_edid.h>
->  #include <drm/drm_hdcp.h>
->  #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_utils.h>
->  #include <drm/i915_drm.h>
->  
->  #include "i915_debugfs.h"
-> @@ -7281,9 +7282,16 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
->  	intel_connector->panel.backlight.power = intel_edp_backlight_power;
->  	intel_panel_setup_backlight(connector, pipe);
->  
-> -	if (fixed_mode)
-> -		drm_connector_init_panel_orientation_property(
-> -			connector, fixed_mode->hdisplay, fixed_mode->vdisplay);
-> +	if (fixed_mode) {
-> +		int orientation = drm_get_panel_orientation_quirk(
-> +				fixed_mode->hdisplay, fixed_mode->vdisplay);
-> +
-> +		if (orientation != DRM_MODE_PANEL_ORIENTATION_UNKNOWN)
-> +			connector->display_info.panel_orientation =
-> +				orientation;
-> +
-> +		drm_connector_init_panel_orientation_property(connector);
-> +	}
->  
->  	return true;
->  
-> diff --git a/drivers/gpu/drm/i915/vlv_dsi.c b/drivers/gpu/drm/i915/vlv_dsi.c
-> index bfe2891eac37..27f86a787f60 100644
-> --- a/drivers/gpu/drm/i915/vlv_dsi.c
-> +++ b/drivers/gpu/drm/i915/vlv_dsi.c
-> @@ -30,6 +30,7 @@
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_edid.h>
->  #include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_utils.h>
->  
->  #include "i915_drv.h"
->  #include "intel_atomic.h"
-> @@ -1650,6 +1651,7 @@ static void intel_dsi_add_properties(struct intel_connector *connector)
->  
->  	if (connector->panel.fixed_mode) {
->  		u32 allowed_scalers;
-> +		int orientation;
->  
->  		allowed_scalers = BIT(DRM_MODE_SCALE_ASPECT) | BIT(DRM_MODE_SCALE_FULLSCREEN);
->  		if (!HAS_GMCH(dev_priv))
-> @@ -1660,12 +1662,16 @@ static void intel_dsi_add_properties(struct intel_connector *connector)
->  
->  		connector->base.state->scaling_mode = DRM_MODE_SCALE_ASPECT;
->  
-> -		connector->base.display_info.panel_orientation =
-> -			vlv_dsi_get_panel_orientation(connector);
-> -		drm_connector_init_panel_orientation_property(
-> -				&connector->base,
-> +		orientation = drm_get_panel_orientation_quirk(
->  				connector->panel.fixed_mode->hdisplay,
->  				connector->panel.fixed_mode->vdisplay);
-> +		if (orientation != DRM_MODE_PANEL_ORIENTATION_UNKNOWN)
-> +			connector->base.display_info.panel_orientation = orientation;
-> +		else
-> +			connector->base.display_info.panel_orientation =
-> +				vlv_dsi_get_panel_orientation(connector);
-> +
-> +		drm_connector_init_panel_orientation_property(&connector->base);
->  	}
->  }
->  
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index 47e749b74e5f..c2992f7a0dd5 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -1370,7 +1370,7 @@ void drm_connector_set_link_status_property(struct drm_connector *connector,
->  void drm_connector_set_vrr_capable_property(
->  		struct drm_connector *connector, bool capable);
->  int drm_connector_init_panel_orientation_property(
-> -	struct drm_connector *connector, int width, int height);
-> +	struct drm_connector *connector);
->  int drm_connector_attach_max_bpc_property(struct drm_connector *connector,
->  					  int min, int max);
+>
+> This is not the 1990's, please do not use module parameters.  Yeah, you
+> have a bunch of them already, but do not add additional ones that can be
+> easily determined at runtime, like this one.
+>
+> thanks,
+>
+> greg k-h
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Hi Greg,
+I would love to do this in runtime and that was my intent all along
+until I hit a wall on *how* to find out it in runtime if I'm running
+on POWER9 with PHB4 or not.
+I did a search in the kernel code, consulted with a couple of people
+but I didn't get any way of doing this in runtime.
+If you have some way, please share it with me because I hit a wall
+with this issue.
+
+The fact of the matter is, I have two different configurations of *my*
+device's PCIe controller. One is only suitable to POWER9 with PHB4 and
+the other one suits all the rest architectures/systems (that we have
+tested so far). So I have to know which system I'm running on and as I
+said, I didn't find a kernel API which can help me do that.
+
+Thanks,
+Oded
