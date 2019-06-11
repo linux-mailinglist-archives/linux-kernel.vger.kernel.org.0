@@ -2,789 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 545313CF29
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD033CF56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:44:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391760AbfFKOmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:42:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37902 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391473AbfFKOmP (ORCPT
+        id S2404014AbfFKOmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:42:52 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45519 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403895AbfFKOmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:42:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eRYqrBdA83ELJwzehQp5ACnwy4+Ii18V3bNuC63QHNg=; b=gyjzOdFjX2Hc07Fw3ofnTYcH1V
-        4motr276Y/b+VWeq+PJMXx+r8fzS5ixUMH8KzPOTBCwRPmWWvyi52ti5GBX2fi5EAvr1apreGQjxn
-        gF2YXCRf/RJYs1iu0i28vAyitkrJPd3TGl5GmOX6bpzaMXee/5BOspGVUTsI63qNWTGuEX3DrIo02
-        KFBHJaCrQiVe1nxb+CkKluXla2IExJuZRuxtU+WvON5pJTvvjJojqE9/+MhkQC8ZKJv5UDK5EYwmU
-        Srstwn4NGlvjlOwDSPHxhZW7Hm2f+wGyT1yk20gBUnkms/ozNmJEKv5vcWFuLgm6cYJ24W/8srhis
-        AnP8HaGQ==;
-Received: from mpp-cp1-natpool-1-037.ethz.ch ([82.130.71.37] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hahyF-000665-83; Tue, 11 Jun 2019 14:41:55 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 16/16] mm: pass get_user_pages_fast iterator arguments in a structure
-Date:   Tue, 11 Jun 2019 16:41:02 +0200
-Message-Id: <20190611144102.8848-17-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190611144102.8848-1-hch@lst.de>
-References: <20190611144102.8848-1-hch@lst.de>
+        Tue, 11 Jun 2019 10:42:50 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j19so14778300qtr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 07:42:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ar4hb3yiBL9RLGyl8brQ12ttcv1qOaVZT7c8EOl9hRY=;
+        b=ndhqUAmJ4wQW6J4UKZWlxUoH+v3q48Im1bTV9uuLHEiwf+/VPGMLyLohWTOmNRu+HE
+         QcJXQdLtlQeoY5sWWOPSc7A1A18IMnWBL+mwtmjv5Mct46+tzpl1HEGzLyWKHfYrChfd
+         MwUxHdx2VoCSw3naFNqQHUhO+7QfPmi3EeQuiQkf26ltaw/D/iuDrV4fYxDbSElfHIev
+         WFmLhzmQQMK8hxezFLH9vbQnworZpwlMYe2U9h7FkTpFmuRd8KfxnpbAvV9aoFNeospH
+         VPDPxcyepKEypgCaHa4i3qv0rlBAD1itT1mm5Yg1qQsp+1TCVdy0ZC7/8HqdCBBexlV+
+         rJRQ==
+X-Gm-Message-State: APjAAAXStvJsKTOAnIPMBy4JgWcKOlq0mI0c0rva+m1QVz10KGD96quM
+        Y61HHmDyWSuCvI30SQdVhBiiWl75pvOUarUsOPjLRg==
+X-Google-Smtp-Source: APXvYqx+e0j+9TvMtZ1S6dn1CUFHTzijZXmMUOFHUJY7jKJ01Cg5Mu3nt3LdRprALCiQ/us3xKAiFbVRnd7QTMEtSiU=
+X-Received: by 2002:ac8:2998:: with SMTP id 24mr62504198qts.31.1560264169050;
+ Tue, 11 Jun 2019 07:42:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190611121320.30267-1-nsaenzjulienne@suse.de>
+In-Reply-To: <20190611121320.30267-1-nsaenzjulienne@suse.de>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 11 Jun 2019 16:42:37 +0200
+Message-ID: <CAO-hwJLAiC1o-kZ5epZHtO2GK+zc5x28pYbZH-XsY4yAuBmHWw@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: input: fix a4tech horizontal wheel custom usage
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>, wbauer@tmo.at,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of passing a set of always repeated arguments down the
-get_user_pages_fast iterators, create a struct gup_args to hold them and
-pass that by reference.  This leads to an over 100 byte .text size
-reduction for x86-64.
+On Tue, Jun 11, 2019 at 2:13 PM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> Some a4tech mice use the 'GenericDesktop.00b8' usage to inform whether
+> the previous wheel report was horizontal or vertical. Before
+> c01908a14bf73 ("HID: input: add mapping for "Toggle Display" key") this
+> usage was being mapped to 'Relative.Misc'. After the patch it's simply
+> ignored (usage->type == 0 & usage->code == 0). Which ultimately makes
+> hid-a4tech ignore the WHEEL/HWHEEL selection event, as it has no
+> usage->type.
+>
+> We shouldn't rely on a mapping for that usage as it's nonstandard and
+> doesn't really map to an input event. So we bypass the mapping and make
+> sure the custom event handling properly handles both reports.
+>
+> Fixes: c01908a14bf73 ("HID: input: add mapping for "Toggle Display" key")
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- mm/gup.c | 338 ++++++++++++++++++++++++++-----------------------------
- 1 file changed, 158 insertions(+), 180 deletions(-)
+Yep, I like this one much better.
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 8bcc042f933a..419a565fc998 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -24,6 +24,13 @@
- 
- #include "internal.h"
- 
-+struct gup_args {
-+	unsigned long		addr;
-+	unsigned int		flags;
-+	struct page		**pages;
-+	unsigned int		nr;
-+};
-+
- struct follow_page_context {
- 	struct dev_pagemap *pgmap;
- 	unsigned int page_mask;
-@@ -1786,10 +1793,10 @@ static inline pte_t gup_get_pte(pte_t *ptep)
- }
- #endif /* CONFIG_GUP_GET_PTE_LOW_HIGH */
- 
--static void undo_dev_pagemap(int *nr, int nr_start, struct page **pages)
-+static void undo_dev_pagemap(struct gup_args *args, int nr_start)
- {
--	while ((*nr) - nr_start) {
--		struct page *page = pages[--(*nr)];
-+	while (args->nr - nr_start) {
-+		struct page *page = args->pages[--args->nr];
- 
- 		ClearPageReferenced(page);
- 		put_page(page);
-@@ -1811,14 +1818,13 @@ static inline struct page *try_get_compound_head(struct page *page, int refs)
- }
- 
- #ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
--static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+static int gup_pte_range(struct gup_args *args, pmd_t pmd, unsigned long end)
- {
- 	struct dev_pagemap *pgmap = NULL;
--	int nr_start = *nr, ret = 0;
-+	int nr_start = args->nr, ret = 0;
- 	pte_t *ptep, *ptem;
- 
--	ptem = ptep = pte_offset_map(&pmd, addr);
-+	ptem = ptep = pte_offset_map(&pmd, args->addr);
- 	do {
- 		pte_t pte = gup_get_pte(ptep);
- 		struct page *head, *page;
-@@ -1830,16 +1836,16 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 		if (pte_protnone(pte))
- 			goto pte_unmap;
- 
--		if (!pte_access_permitted(pte, flags & FOLL_WRITE))
-+		if (!pte_access_permitted(pte, args->flags & FOLL_WRITE))
- 			goto pte_unmap;
- 
- 		if (pte_devmap(pte)) {
--			if (unlikely(flags & FOLL_LONGTERM))
-+			if (unlikely(args->flags & FOLL_LONGTERM))
- 				goto pte_unmap;
- 
- 			pgmap = get_dev_pagemap(pte_pfn(pte), pgmap);
- 			if (unlikely(!pgmap)) {
--				undo_dev_pagemap(nr, nr_start, pages);
-+				undo_dev_pagemap(args, nr_start);
- 				goto pte_unmap;
- 			}
- 		} else if (pte_special(pte))
-@@ -1860,10 +1866,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 		VM_BUG_ON_PAGE(compound_head(page) != head, page);
- 
- 		SetPageReferenced(page);
--		pages[*nr] = page;
--		(*nr)++;
--
--	} while (ptep++, addr += PAGE_SIZE, addr != end);
-+		args->pages[args->nr++] = page;
-+	} while (ptep++, args->addr += PAGE_SIZE, args->addr != end);
- 
- 	ret = 1;
- 
-@@ -1884,18 +1888,17 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
-  * __get_user_pages_fast implementation that can pin pages. Thus it's still
-  * useful to have gup_huge_pmd even if we can't operate on ptes.
-  */
--static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+static int gup_pte_range(struct gup_args *args, pmd_t pmd, unsigned long end)
- {
- 	return 0;
- }
- #endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
- 
- #if defined(__HAVE_ARCH_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
--static int __gup_device_huge(unsigned long pfn, unsigned long addr,
--		unsigned long end, struct page **pages, int *nr)
-+static int __gup_device_huge(struct gup_args *args, unsigned long pfn,
-+		unsigned long end)
- {
--	int nr_start = *nr;
-+	int nr_start = args->nr;
- 	struct dev_pagemap *pgmap = NULL;
- 
- 	do {
-@@ -1903,64 +1906,63 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
- 
- 		pgmap = get_dev_pagemap(pfn, pgmap);
- 		if (unlikely(!pgmap)) {
--			undo_dev_pagemap(nr, nr_start, pages);
-+			undo_dev_pagemap(args, nr_start);
- 			return 0;
- 		}
- 		SetPageReferenced(page);
--		pages[*nr] = page;
-+		args->pages[args->nr++] = page;
- 		get_page(page);
--		(*nr)++;
- 		pfn++;
--	} while (addr += PAGE_SIZE, addr != end);
-+	} while (args->addr += PAGE_SIZE, args->addr != end);
- 
- 	if (pgmap)
- 		put_dev_pagemap(pgmap);
- 	return 1;
- }
- 
--static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
--		unsigned long end, struct page **pages, int *nr)
-+static int __gup_device_huge_pmd(struct gup_args *args, pmd_t orig, pmd_t *pmdp,
-+		unsigned long end)
- {
- 	unsigned long fault_pfn;
--	int nr_start = *nr;
-+	int nr_start = args->nr;
- 
--	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
--	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-+	fault_pfn = pmd_pfn(orig) + ((args->addr & ~PMD_MASK) >> PAGE_SHIFT);
-+	if (!__gup_device_huge(args, fault_pfn, end))
- 		return 0;
- 
- 	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
--		undo_dev_pagemap(nr, nr_start, pages);
-+		undo_dev_pagemap(args, nr_start);
- 		return 0;
- 	}
- 	return 1;
- }
- 
--static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
--		unsigned long end, struct page **pages, int *nr)
-+static int __gup_device_huge_pud(struct gup_args *args, pud_t orig, pud_t *pudp,
-+		unsigned long end)
- {
- 	unsigned long fault_pfn;
--	int nr_start = *nr;
-+	int nr_start = args->nr;
- 
--	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-+	fault_pfn = pud_pfn(orig) + ((args->addr & ~PUD_MASK) >> PAGE_SHIFT);
-+	if (!__gup_device_huge(args, fault_pfn, end))
- 		return 0;
- 
- 	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
--		undo_dev_pagemap(nr, nr_start, pages);
-+		undo_dev_pagemap(args, nr_start);
- 		return 0;
- 	}
- 	return 1;
- }
- #else
--static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
--		unsigned long end, struct page **pages, int *nr)
-+static int __gup_device_huge_pmd(struct gup_args *args, pmd_t orig, pmd_t *pmdp,
-+		unsigned long end)
- {
- 	BUILD_BUG();
- 	return 0;
- }
- 
--static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
--		unsigned long end, struct page **pages, int *nr)
-+static int __gup_device_huge_pud(struct gup_args *args, pud_t pud, pud_t *pudp,
-+		unsigned long end)
- {
- 	BUILD_BUG();
- 	return 0;
-@@ -1975,21 +1977,21 @@ static unsigned long hugepte_addr_end(unsigned long addr, unsigned long end,
- 	return (__boundary - 1 < end - 1) ? __boundary : end;
- }
- 
--static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
--		       unsigned long end, int write, struct page **pages, int *nr)
-+static int gup_hugepte(struct gup_args *args, pte_t *ptep, unsigned long sz,
-+		unsigned long end)
- {
- 	unsigned long pte_end;
- 	struct page *head, *page;
- 	pte_t pte;
- 	int refs;
- 
--	pte_end = (addr + sz) & ~(sz-1);
-+	pte_end = (args->addr + sz) & ~(sz - 1);
- 	if (pte_end < end)
- 		end = pte_end;
- 
- 	pte = READ_ONCE(*ptep);
- 
--	if (!pte_access_permitted(pte, write))
-+	if (!pte_access_permitted(pte, args->flags & FOLL_WRITE))
- 		return 0;
- 
- 	/* hugepages are never "special" */
-@@ -1998,24 +2000,23 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
- 	refs = 0;
- 	head = pte_page(pte);
- 
--	page = head + ((addr & (sz-1)) >> PAGE_SHIFT);
-+	page = head + ((args->addr & (sz - 1)) >> PAGE_SHIFT);
- 	do {
- 		VM_BUG_ON(compound_head(page) != head);
--		pages[*nr] = page;
--		(*nr)++;
-+		args->pages[args->nr++] = page;
- 		page++;
- 		refs++;
--	} while (addr += PAGE_SIZE, addr != end);
-+	} while (args->addr += PAGE_SIZE, args->addr != end);
- 
- 	head = try_get_compound_head(head, refs);
- 	if (!head) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		return 0;
- 	}
- 
- 	if (unlikely(pte_val(pte) != pte_val(*ptep))) {
- 		/* Could be optimized better */
--		*nr -= refs;
-+		args->nr -= refs;
- 		while (refs--)
- 			put_page(head);
- 		return 0;
-@@ -2025,64 +2026,61 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
- 	return 1;
- }
- 
--static int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
--		unsigned int pdshift, unsigned long end, int write,
--		struct page **pages, int *nr)
-+static int gup_huge_pd(struct gup_args *args, hugepd_t hugepd, unsigned pdshift,
-+		unsigned long end)
- {
- 	pte_t *ptep;
- 	unsigned long sz = 1UL << hugepd_shift(hugepd);
- 	unsigned long next;
- 
--	ptep = hugepte_offset(hugepd, addr, pdshift);
-+	ptep = hugepte_offset(hugepd, args->addr, pdshift);
- 	do {
--		next = hugepte_addr_end(addr, end, sz);
--		if (!gup_hugepte(ptep, sz, addr, end, write, pages, nr))
-+		next = hugepte_addr_end(args->addr, end, sz);
-+		if (!gup_hugepte(args, ptep, sz, next))
- 			return 0;
--	} while (ptep++, addr = next, addr != end);
-+	} while (ptep++, args->addr != end);
- 
- 	return 1;
- }
- #else
--static inline int gup_huge_pd(hugepd_t hugepd, unsigned long addr,
--		unsigned pdshift, unsigned long end, int write,
--		struct page **pages, int *nr)
-+static inline int gup_huge_pd(struct gup_args *args, hugepd_t hugepd,
-+		unsigned pdshift, unsigned long end)
- {
- 	return 0;
- }
- #endif /* CONFIG_ARCH_HAS_HUGEPD */
- 
--static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
--		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-+static int gup_huge_pmd(struct gup_args *args, pmd_t orig, pmd_t *pmdp,
-+		unsigned long end)
- {
- 	struct page *head, *page;
- 	int refs;
- 
--	if (!pmd_access_permitted(orig, flags & FOLL_WRITE))
-+	if (!pmd_access_permitted(orig, args->flags & FOLL_WRITE))
- 		return 0;
- 
- 	if (pmd_devmap(orig)) {
--		if (unlikely(flags & FOLL_LONGTERM))
-+		if (unlikely(args->flags & FOLL_LONGTERM))
- 			return 0;
--		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
-+		return __gup_device_huge_pmd(args, orig, pmdp, end);
- 	}
- 
- 	refs = 0;
--	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-+	page = pmd_page(orig) + ((args->addr & ~PMD_MASK) >> PAGE_SHIFT);
- 	do {
--		pages[*nr] = page;
--		(*nr)++;
-+		args->pages[args->nr++] = page;
- 		page++;
- 		refs++;
--	} while (addr += PAGE_SIZE, addr != end);
-+	} while (args->addr += PAGE_SIZE, args->addr != end);
- 
- 	head = try_get_compound_head(pmd_page(orig), refs);
- 	if (!head) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		return 0;
- 	}
- 
- 	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		while (refs--)
- 			put_page(head);
- 		return 0;
-@@ -2092,38 +2090,37 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 	return 1;
- }
- 
--static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
--		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-+static int gup_huge_pud(struct gup_args *args, pud_t orig, pud_t *pudp,
-+		unsigned long end)
- {
- 	struct page *head, *page;
- 	int refs;
- 
--	if (!pud_access_permitted(orig, flags & FOLL_WRITE))
-+	if (!pud_access_permitted(orig, args->flags & FOLL_WRITE))
- 		return 0;
- 
- 	if (pud_devmap(orig)) {
--		if (unlikely(flags & FOLL_LONGTERM))
-+		if (unlikely(args->flags & FOLL_LONGTERM))
- 			return 0;
--		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
-+		return __gup_device_huge_pud(args, orig, pudp, end);
- 	}
- 
- 	refs = 0;
--	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-+	page = pud_page(orig) + ((args->addr & ~PUD_MASK) >> PAGE_SHIFT);
- 	do {
--		pages[*nr] = page;
--		(*nr)++;
-+		args->pages[args->nr++] = page;
- 		page++;
- 		refs++;
--	} while (addr += PAGE_SIZE, addr != end);
-+	} while (args->addr += PAGE_SIZE, args->addr != end);
- 
- 	head = try_get_compound_head(pud_page(orig), refs);
- 	if (!head) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		return 0;
- 	}
- 
- 	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		while (refs--)
- 			put_page(head);
- 		return 0;
-@@ -2133,34 +2130,32 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 	return 1;
- }
- 
--static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
--			unsigned long end, unsigned int flags,
--			struct page **pages, int *nr)
-+static int gup_huge_pgd(struct gup_args *args, pgd_t orig, pgd_t *pgdp,
-+		unsigned long end)
- {
--	int refs;
- 	struct page *head, *page;
-+	int refs;
- 
--	if (!pgd_access_permitted(orig, flags & FOLL_WRITE))
-+	if (!pgd_access_permitted(orig, args->flags & FOLL_WRITE))
- 		return 0;
- 
- 	BUILD_BUG_ON(pgd_devmap(orig));
- 	refs = 0;
--	page = pgd_page(orig) + ((addr & ~PGDIR_MASK) >> PAGE_SHIFT);
-+	page = pgd_page(orig) + ((args->addr & ~PGDIR_MASK) >> PAGE_SHIFT);
- 	do {
--		pages[*nr] = page;
--		(*nr)++;
-+		args->pages[args->nr++] = page;
- 		page++;
- 		refs++;
--	} while (addr += PAGE_SIZE, addr != end);
-+	} while (args->addr += PAGE_SIZE, args->addr != end);
- 
- 	head = try_get_compound_head(pgd_page(orig), refs);
- 	if (!head) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		return 0;
- 	}
- 
- 	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
--		*nr -= refs;
-+		args->nr -= refs;
- 		while (refs--)
- 			put_page(head);
- 		return 0;
-@@ -2170,17 +2165,16 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
- 	return 1;
- }
- 
--static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
--		unsigned int flags, struct page **pages, int *nr)
-+static int gup_pmd_range(struct gup_args *args, pud_t pud, unsigned long end)
- {
- 	unsigned long next;
- 	pmd_t *pmdp;
- 
--	pmdp = pmd_offset(&pud, addr);
-+	pmdp = pmd_offset(&pud, args->addr);
- 	do {
- 		pmd_t pmd = READ_ONCE(*pmdp);
- 
--		next = pmd_addr_end(addr, end);
-+		next = pmd_addr_end(args->addr, end);
- 		if (!pmd_present(pmd))
- 			return 0;
- 
-@@ -2194,8 +2188,7 @@ static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
- 			if (pmd_protnone(pmd))
- 				return 0;
- 
--			if (!gup_huge_pmd(pmd, pmdp, addr, next, flags,
--				pages, nr))
-+			if (!gup_huge_pmd(args, pmd, pmdp, next))
- 				return 0;
- 
- 		} else if (unlikely(is_hugepd(__hugepd(pmd_val(pmd))))) {
-@@ -2203,93 +2196,88 @@ static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
- 			 * architecture have different format for hugetlbfs
- 			 * pmd format and THP pmd format
- 			 */
--			if (!gup_huge_pd(__hugepd(pmd_val(pmd)), addr,
--					 PMD_SHIFT, next, flags, pages, nr))
-+			if (!gup_huge_pd(args, __hugepd(pmd_val(pmd)),
-+					PMD_SHIFT, next))
- 				return 0;
--		} else if (!gup_pte_range(pmd, addr, next, flags, pages, nr))
-+		} else if (!gup_pte_range(args, pmd, next))
- 			return 0;
--	} while (pmdp++, addr = next, addr != end);
-+	} while (pmdp++, args->addr != end);
- 
- 	return 1;
- }
- 
--static int gup_pud_range(p4d_t p4d, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+static int gup_pud_range(struct gup_args *args, p4d_t p4d, unsigned long end)
- {
- 	unsigned long next;
- 	pud_t *pudp;
- 
--	pudp = pud_offset(&p4d, addr);
-+	pudp = pud_offset(&p4d, args->addr);
- 	do {
- 		pud_t pud = READ_ONCE(*pudp);
- 
--		next = pud_addr_end(addr, end);
-+		next = pud_addr_end(args->addr, end);
- 		if (pud_none(pud))
- 			return 0;
- 		if (unlikely(pud_huge(pud))) {
--			if (!gup_huge_pud(pud, pudp, addr, next, flags,
--					  pages, nr))
-+			if (!gup_huge_pud(args, pud, pudp, next))
- 				return 0;
- 		} else if (unlikely(is_hugepd(__hugepd(pud_val(pud))))) {
--			if (!gup_huge_pd(__hugepd(pud_val(pud)), addr,
--					 PUD_SHIFT, next, flags, pages, nr))
-+			if (!gup_huge_pd(args, __hugepd(pud_val(pud)),
-+					PUD_SHIFT, next))
- 				return 0;
--		} else if (!gup_pmd_range(pud, addr, next, flags, pages, nr))
-+		} else if (!gup_pmd_range(args, pud, next))
- 			return 0;
--	} while (pudp++, addr = next, addr != end);
-+	} while (pudp++, args->addr != end);
- 
- 	return 1;
- }
- 
--static int gup_p4d_range(pgd_t pgd, unsigned long addr, unsigned long end,
--			 unsigned int flags, struct page **pages, int *nr)
-+static int gup_p4d_range(struct gup_args *args, pgd_t pgd, unsigned long end)
- {
- 	unsigned long next;
- 	p4d_t *p4dp;
- 
--	p4dp = p4d_offset(&pgd, addr);
-+	p4dp = p4d_offset(&pgd, args->addr);
- 	do {
- 		p4d_t p4d = READ_ONCE(*p4dp);
- 
--		next = p4d_addr_end(addr, end);
-+		next = p4d_addr_end(args->addr, end);
- 		if (p4d_none(p4d))
- 			return 0;
- 		BUILD_BUG_ON(p4d_huge(p4d));
- 		if (unlikely(is_hugepd(__hugepd(p4d_val(p4d))))) {
--			if (!gup_huge_pd(__hugepd(p4d_val(p4d)), addr,
--					 P4D_SHIFT, next, flags, pages, nr))
-+			if (!gup_huge_pd(args, __hugepd(p4d_val(p4d)),
-+					P4D_SHIFT, next))
- 				return 0;
--		} else if (!gup_pud_range(p4d, addr, next, flags, pages, nr))
-+		} else if (!gup_pud_range(args, p4d, next))
- 			return 0;
--	} while (p4dp++, addr = next, addr != end);
-+	} while (p4dp++, args->addr != end);
- 
- 	return 1;
- }
- 
--static void gup_pgd_range(unsigned long addr, unsigned long end,
--		unsigned int flags, struct page **pages, int *nr)
-+static void gup_pgd_range(struct gup_args *args, unsigned long end)
- {
- 	unsigned long next;
- 	pgd_t *pgdp;
- 
--	pgdp = pgd_offset(current->mm, addr);
-+	pgdp = pgd_offset(current->mm, args->addr);
- 	do {
- 		pgd_t pgd = READ_ONCE(*pgdp);
- 
--		next = pgd_addr_end(addr, end);
-+		next = pgd_addr_end(args->addr, end);
- 		if (pgd_none(pgd))
- 			return;
- 		if (unlikely(pgd_huge(pgd))) {
--			if (!gup_huge_pgd(pgd, pgdp, addr, next, flags,
--					  pages, nr))
-+			if (!gup_huge_pgd(args, pgd, pgdp, next))
- 				return;
- 		} else if (unlikely(is_hugepd(__hugepd(pgd_val(pgd))))) {
--			if (!gup_huge_pd(__hugepd(pgd_val(pgd)), addr,
--					 PGDIR_SHIFT, next, flags, pages, nr))
-+			if (!gup_huge_pd(args, __hugepd(pgd_val(pgd)),
-+					PGDIR_SHIFT, next))
- 				return;
--		} else if (!gup_p4d_range(pgd, addr, next, flags, pages, nr))
-+		} else if (!gup_p4d_range(args, pgd, next))
- 			return;
--	} while (pgdp++, addr = next, addr != end);
-+	} while (pgdp++, args->addr != end);
- }
- #else
- static inline void gup_pgd_range(unsigned long addr, unsigned long end,
-@@ -2321,17 +2309,18 @@ static bool gup_fast_permitted(unsigned long start, unsigned long end)
- int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 			  struct page **pages)
- {
--	unsigned long len, end;
-+	struct gup_args args = {
-+		.addr	= untagged_addr(start) & PAGE_MASK,
-+		.flags	= write ? FOLL_WRITE : 0,
-+		.pages	= pages,
-+	};
-+	unsigned long len = (unsigned long)nr_pages << PAGE_SHIFT;
-+	unsigned long end = args.addr + len;
- 	unsigned long flags;
--	int nr = 0;
--
--	start = untagged_addr(start) & PAGE_MASK;
--	len = (unsigned long) nr_pages << PAGE_SHIFT;
--	end = start + len;
- 
--	if (end <= start)
-+	if (end <= args.addr)
- 		return 0;
--	if (unlikely(!access_ok((void __user *)start, len)))
-+	if (unlikely(!access_ok((void __user *)args.addr, len)))
- 		return 0;
- 
- 	/*
-@@ -2345,38 +2334,42 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	 * We do not adopt an rcu_read_lock(.) here as we also want to
- 	 * block IPIs that come from THPs splitting.
- 	 */
--
--	if (gup_fast_permitted(start, end)) {
-+	if (gup_fast_permitted(args.addr, end)) {
- 		local_irq_save(flags);
--		gup_pgd_range(start, end, write ? FOLL_WRITE : 0, pages, &nr);
-+		gup_pgd_range(&args, end);
- 		local_irq_restore(flags);
- 	}
- 
--	return nr;
-+	return args.nr;
- }
- EXPORT_SYMBOL_GPL(__get_user_pages_fast);
- 
--static int __gup_longterm_unlocked(unsigned long start, int nr_pages,
--				   unsigned int gup_flags, struct page **pages)
-+static int get_user_pages_fallback(struct gup_args *args, int nr_pages)
- {
-+	struct page **pages = args->pages + args->nr;
- 	int ret;
- 
-+	nr_pages -= args->nr;
-+
- 	/*
- 	 * FIXME: FOLL_LONGTERM does not work with
- 	 * get_user_pages_unlocked() (see comments in that function)
- 	 */
--	if (gup_flags & FOLL_LONGTERM) {
-+	if (args->flags & FOLL_LONGTERM) {
- 		down_read(&current->mm->mmap_sem);
- 		ret = __gup_longterm_locked(current, current->mm,
--					    start, nr_pages,
--					    pages, NULL, gup_flags);
-+					    args->addr, nr_pages,
-+					    pages, NULL, args->flags);
- 		up_read(&current->mm->mmap_sem);
- 	} else {
--		ret = get_user_pages_unlocked(start, nr_pages,
--					      pages, gup_flags);
-+		ret = get_user_pages_unlocked(args->addr, nr_pages, pages,
-+					      args->flags);
- 	}
- 
--	return ret;
-+	/* Have to be a bit careful with return values */
-+	if (ret > 0)
-+		args->nr += ret;
-+	return args->nr ? args->nr : ret;
- }
- 
- /**
-@@ -2398,46 +2391,31 @@ static int __gup_longterm_unlocked(unsigned long start, int nr_pages,
- int get_user_pages_fast(unsigned long start, int nr_pages,
- 			unsigned int gup_flags, struct page **pages)
- {
--	unsigned long addr, len, end;
--	int nr = 0, ret = 0;
-+	struct gup_args args = {
-+		.addr	= untagged_addr(start) & PAGE_MASK,
-+		.flags	= gup_flags,
-+		.pages	= pages,
-+	};
-+	unsigned long len = (unsigned long)nr_pages << PAGE_SHIFT;
-+	unsigned long end = args.addr + len;
- 
- 	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM)))
- 		return -EINVAL;
- 
--	start = untagged_addr(start) & PAGE_MASK;
--	addr = start;
--	len = (unsigned long) nr_pages << PAGE_SHIFT;
--	end = start + len;
--
--	if (end <= start)
-+	if (end <= args.addr)
- 		return 0;
--	if (unlikely(!access_ok((void __user *)start, len)))
-+	if (unlikely(!access_ok((void __user *)args.addr, len)))
- 		return -EFAULT;
- 
--	if (gup_fast_permitted(start, end)) {
-+	if (gup_fast_permitted(args.addr, end)) {
- 		local_irq_disable();
--		gup_pgd_range(addr, end, gup_flags, pages, &nr);
-+		gup_pgd_range(&args, end);
- 		local_irq_enable();
--		ret = nr;
--	}
--
--	if (nr < nr_pages) {
--		/* Try to get the remaining pages with get_user_pages */
--		start += nr << PAGE_SHIFT;
--		pages += nr;
--
--		ret = __gup_longterm_unlocked(start, nr_pages - nr,
--					      gup_flags, pages);
--
--		/* Have to be a bit careful with return values */
--		if (nr > 0) {
--			if (ret < 0)
--				ret = nr;
--			else
--				ret += nr;
--		}
- 	}
- 
--	return ret;
-+	/* Try to get the remaining pages with get_user_pages */
-+	if (args.nr < nr_pages)
-+		return get_user_pages_fallback(&args, nr_pages);
-+	return args.nr;
- }
- EXPORT_SYMBOL_GPL(get_user_pages_fast);
--- 
-2.20.1
+>
+> NOTE: I CC'd Wolfgang as he's the one who can test this.
 
+I'll wait for Wolfram to confirm that the patch works before pushing then.
+
+>
+> Changes since v1:
+>   - new approach, moved fix into hid-a4tech
+>
+>  drivers/hid/hid-a4tech.c | 30 +++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c
+> index 98bf694626f7..3a8c4a5971f7 100644
+> --- a/drivers/hid/hid-a4tech.c
+> +++ b/drivers/hid/hid-a4tech.c
+> @@ -23,12 +23,36 @@
+>  #define A4_2WHEEL_MOUSE_HACK_7 0x01
+>  #define A4_2WHEEL_MOUSE_HACK_B8        0x02
+>
+> +#define A4_WHEEL_ORIENTATION   (HID_UP_GENDESK | 0x000000b8)
+> +
+>  struct a4tech_sc {
+>         unsigned long quirks;
+>         unsigned int hw_wheel;
+>         __s32 delayed_value;
+>  };
+>
+> +static int a4_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+> +                           struct hid_field *field, struct hid_usage *usage,
+> +                           unsigned long **bit, int *max)
+> +{
+> +       struct a4tech_sc *a4 = hid_get_drvdata(hdev);
+> +
+> +       if (a4->quirks & A4_2WHEEL_MOUSE_HACK_B8 &&
+> +           usage->hid == A4_WHEEL_ORIENTATION) {
+> +               /*
+> +                * We do not want to have this usage mapped to anything as it's
+> +                * nonstandard and doesn't really behave like an HID report.
+> +                * It's only selecting the orientation (vertical/horizontal) of
+> +                * the previous mouse wheel report. The input_events will be
+> +                * generated once both reports are recorded in a4_event().
+> +                */
+> +               return -1;
+
+You seem to be extra precocious here. This is basically what the
+current hid-input.c mapping does. But I think it is for the best,
+given that this time you are locking the behavior of this reserved
+usage.
+
+Cheers,
+Benjamin
+
+> +       }
+> +
+> +       return 0;
+> +
+> +}
+> +
+>  static int a4_input_mapped(struct hid_device *hdev, struct hid_input *hi,
+>                 struct hid_field *field, struct hid_usage *usage,
+>                 unsigned long **bit, int *max)
+> @@ -52,8 +76,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
+>         struct a4tech_sc *a4 = hid_get_drvdata(hdev);
+>         struct input_dev *input;
+>
+> -       if (!(hdev->claimed & HID_CLAIMED_INPUT) || !field->hidinput ||
+> -                       !usage->type)
+> +       if (!(hdev->claimed & HID_CLAIMED_INPUT) || !field->hidinput)
+>                 return 0;
+>
+>         input = field->hidinput->input;
+> @@ -64,7 +87,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
+>                         return 1;
+>                 }
+>
+> -               if (usage->hid == 0x000100b8) {
+> +               if (usage->hid == A4_WHEEL_ORIENTATION) {
+>                         input_event(input, EV_REL, value ? REL_HWHEEL :
+>                                         REL_WHEEL, a4->delayed_value);
+>                         input_event(input, EV_REL, value ? REL_HWHEEL_HI_RES :
+> @@ -131,6 +154,7 @@ MODULE_DEVICE_TABLE(hid, a4_devices);
+>  static struct hid_driver a4_driver = {
+>         .name = "a4tech",
+>         .id_table = a4_devices,
+> +       .input_mapping = a4_input_mapping,
+>         .input_mapped = a4_input_mapped,
+>         .event = a4_event,
+>         .probe = a4_probe,
+> --
+> 2.21.0
+>
