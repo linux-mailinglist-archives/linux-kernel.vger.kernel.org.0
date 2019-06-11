@@ -2,154 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 005833CB30
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1BBA3CB66
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389117AbfFKMZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:25:42 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:3077 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388122AbfFKMZl (ORCPT
+        id S2390821AbfFKM1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:27:01 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49093 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389325AbfFKM0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:25:41 -0400
-X-UUID: deb5e42142df401180b259bdee715534-20190611
-X-UUID: deb5e42142df401180b259bdee715534-20190611
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <qii.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1235210614; Tue, 11 Jun 2019 20:25:24 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 11 Jun
- 2019 20:25:23 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 11 Jun 2019 20:25:22 +0800
-Message-ID: <1560255922.12217.3.camel@mhfsdcap03>
-Subject: Re: [PATCH 2/2] i3c: master: Add driver for MediaTek IP
-From:   Qii Wang <qii.wang@mediatek.com>
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-CC:     <bbrezillon@kernel.org>, <devicetree@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
-        <gregkh@linuxfoundation.org>, <xinping.qian@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <liguo.zhang@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <linux-i3c@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 11 Jun 2019 20:25:22 +0800
-In-Reply-To: <1559651200.5871.2.camel@mhfsdcap03>
-References: <1559533863-10292-1-git-send-email-qii.wang@mediatek.com>
-         <1559533863-10292-3-git-send-email-qii.wang@mediatek.com>
-         <20190604095858.38ed9a28@collabora.com>
-         <1559651200.5871.2.camel@mhfsdcap03>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 11 Jun 2019 08:26:02 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BCPmiL026689;
+        Tue, 11 Jun 2019 14:25:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=Psif9qopZgVPe8dWo9XocFzMybtKO3gMouXdNYlMSBI=;
+ b=R7bSMphe5F7ioVle8OyoWIwgQ41esdzxVd5DveQWEPH5ED5EjP5eY82uxHp7rpkOOT5l
+ 7r5/oMMyr6Hp3c2qcGMnLqDVfjvQdWr0Uw9Lo+I2ZrFr5WCXZK7PiF5Be/QUviDSFheu
+ 6ihYgdzSkjy8T3d3nSN7DtLIIyVvG4TM/ExUuts+ymydjdLPSXqBSyQJA8wyy6rYlB40
+ 0rKeVifcFilL2511Ew4vBHGpdyOZ/kaadapV3DmWuD8Rk2l8ZanBlPsQx0qZKtixLZVQ
+ d/cEnYoPk8WkD38q5ubi38cDOndZN0iyccY4EMwmxJqxANmg3QtRm/DglZleM7So7ZFe xw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2t26rm9vbv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 11 Jun 2019 14:25:48 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 025DD3F;
+        Tue, 11 Jun 2019 12:25:43 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BD8B92A2C;
+        Tue, 11 Jun 2019 12:25:43 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
+ 2019 14:25:43 +0200
+Received: from localhost (10.201.23.31) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun 2019 14:25:42
+ +0200
+From:   Erwan Le Ray <erwan.leray@st.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>
+CC:     <linux-serial@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Erwan Le Ray <erwan.leray@st.com>,
+        "Fabrice Gasnier" <fabrice.gasnier@st.com>,
+        Bich Hemon <bich.hemon@st.com>
+Subject: [PATCH v2 02/10] dt-bindings: serial: add optional pinctrl states
+Date:   Tue, 11 Jun 2019 14:25:22 +0200
+Message-ID: <1560255930-22554-3-git-send-email-erwan.leray@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1560255930-22554-1-git-send-email-erwan.leray@st.com>
+References: <1560255930-22554-1-git-send-email-erwan.leray@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.31]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-11_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-04 at 20:26 +0800, Qii Wang wrote:
-> On Tue, 2019-06-04 at 09:58 +0200, Boris Brezillon wrote:
-> > On Mon, 3 Jun 2019 11:51:03 +0800
-> > Qii Wang <qii.wang@mediatek.com> wrote:
-> > 
-> > 
-> > > +static int mtk_i3c_master_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct device *dev = &pdev->dev;
-> > > +	struct mtk_i3c_master *master;
-> > > +	struct resource *res;
-> > > +	int ret, irqnr;
-> > > +
-> > > +	master = devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
-> > > +	if (!master)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "main");
-> > > +	master->regs = devm_ioremap_resource(dev, res);
-> > > +	if (IS_ERR(master->regs))
-> > > +		return PTR_ERR(master->regs);
-> > > +
-> > > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma");
-> > > +	master->dma_regs = devm_ioremap_resource(dev, res);
-> > > +	if (IS_ERR(master->dma_regs))
-> > > +		return PTR_ERR(master->dma_regs);
-> > > +
-> > > +	irqnr = platform_get_irq(pdev, 0);
-> > > +	if (irqnr < 0)
-> > > +		return irqnr;
-> > > +
-> > > +	ret = devm_request_irq(dev, irqnr, mtk_i3c_master_irq,
-> > > +			       IRQF_TRIGGER_NONE, DRV_NAME, master);
-> > > +	if (ret < 0) {
-> > > +		dev_err(dev, "Request I3C IRQ %d fail\n", irqnr);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret = of_property_read_u32(pdev->dev.of_node, "clock-div",
-> > > +				   &master->clk_src_div);
-> > 
-> > You say in one comment that this clock divider is fixed in HW but might
-> > change on a per-SoC basis. If that's the case, you should get rid of
-> > this clock-div prop and attach the divider to the compatible (using an
-> > mtk_i3c_master_variant struct that contains a divider field).
-> > 
-> 
-> ok, I will attach the divider to the compatible.
-> 
-I have rechecked your comment, maybe I have misunderstood what you mean.
-"clock-div" changes according to i2c source clock, different project may
-change i2c source clock, The previous dt-binding may be misleading, I
-will modify it.
+From: Bich Hemon <bich.hemon@st.com>
 
-> > > +	if (ret < 0)
-> > > +		return -EINVAL;
-> > > +
-> > > +	spin_lock_init(&master->xferqueue.lock);
-> > > +	INIT_LIST_HEAD(&master->xferqueue.list);
-> > > +
-> > > +	if (dma_set_mask(dev, DMA_BIT_MASK(33))) {
-> > > +		dev_err(dev, "dma_set_mask return error.\n");
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	master->clk_main = devm_clk_get(dev, "main");
-> > > +	if (IS_ERR(master->clk_main)) {
-> > > +		dev_err(dev, "cannot get main clock\n");
-> > > +		return PTR_ERR(master->clk_main);
-> > > +	}
-> > > +	master->clk_dma = devm_clk_get(dev, "dma");
-> > > +	if (IS_ERR(master->clk_dma)) {
-> > > +		dev_err(dev, "cannot get dma clock\n");
-> > > +		return PTR_ERR(master->clk_dma);
-> > > +	}
-> > > +
-> > > +	master->clk_arb = devm_clk_get_optional(dev, "arb");
-> > > +	if (IS_ERR(master->clk_arb))
-> > > +		return PTR_ERR(master->clk_arb);
-> > > +
-> > > +	ret = mtk_i3c_master_clock_enable(master);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "clock enable failed!\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	master->dev = dev;
-> > > +	platform_set_drvdata(pdev, master);
-> > > +
-> > > +	ret = i3c_master_register(&master->mas_ctrler, dev,
-> > > +				  &mtk_i3c_master_ops, false);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to add i3c bus to i3c core\n");
-> > > +		mtk_i3c_master_clock_disable(master);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> 
+Add options for pinctrl states:
+- "sleep" for low power
+- "idle" for low power and wakeup capabilities enabled
+- "no_console_suspend" for enabling console messages in low power
 
+Signed-off-by: Bich Hemon <bich.hemon@st.com>
+Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
+
+diff --git a/Documentation/devicetree/bindings/serial/st,stm32-usart.txt b/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+index 5ec80c1..64a5ea9 100644
+--- a/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
++++ b/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+@@ -13,7 +13,14 @@ Required properties:
+ - clocks: The input clock of the USART instance
+ 
+ Optional properties:
+-- pinctrl: The reference on the pins configuration
++- pinctrl-names: Set to "default". An additional "sleep" state can be defined
++  to set pins in sleep state when in low power. In case the device is used as
++  a wakeup source, "idle" state is defined in order to keep RX pin active.
++  For a console device, an optional state "no_console_suspend" can be defined
++  to enable console messages during suspend. Typically, "no_console_suspend" and
++  "default" states can refer to the same pin configuration.
++- pinctrl-n: Phandle(s) pointing to pin configuration nodes.
++  For Pinctrl properties see ../pinctrl/pinctrl-bindings.txt
+ - st,hw-flow-ctrl: bool flag to enable hardware flow control.
+ - rs485-rts-delay, rs485-rx-during-tx, rs485-rts-active-low,
+   linux,rs485-enabled-at-boot-time: see rs485.txt.
+@@ -31,8 +38,11 @@ usart4: serial@40004c00 {
+ 	reg = <0x40004c00 0x400>;
+ 	interrupts = <52>;
+ 	clocks = <&clk_pclk1>;
+-	pinctrl-names = "default";
++	pinctrl-names = "default", "sleep", "idle", "no_console_suspend";
+ 	pinctrl-0 = <&pinctrl_usart4>;
++	pinctrl-1 = <&pinctrl_usart4_sleep>;
++	pinctrl-2 = <&pinctrl_usart4_idle>;
++	pinctrl-3 = <&pinctrl_usart4>;
+ };
+ 
+ usart2: serial@40004400 {
+-- 
+1.9.1
 
