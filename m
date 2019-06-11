@@ -2,107 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF483CB75
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 390D33CB7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:29:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbfFKM24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:28:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37584 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbfFKM2z (ORCPT
+        id S1729247AbfFKM31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:29:27 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44984 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729050AbfFKM3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:28:55 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C1223285914;
-        Tue, 11 Jun 2019 13:28:52 +0100 (BST)
-Date:   Tue, 11 Jun 2019 14:28:49 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Qii Wang <qii.wang@mediatek.com>
-Cc:     <bbrezillon@kernel.org>, <devicetree@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
-        <gregkh@linuxfoundation.org>, <xinping.qian@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <liguo.zhang@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <linux-i3c@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] i3c: master: Add driver for MediaTek IP
-Message-ID: <20190611142849.43f6d1e4@collabora.com>
-In-Reply-To: <1560255922.12217.3.camel@mhfsdcap03>
-References: <1559533863-10292-1-git-send-email-qii.wang@mediatek.com>
-        <1559533863-10292-3-git-send-email-qii.wang@mediatek.com>
-        <20190604095858.38ed9a28@collabora.com>
-        <1559651200.5871.2.camel@mhfsdcap03>
-        <1560255922.12217.3.camel@mhfsdcap03>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 11 Jun 2019 08:29:25 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r15so9150838lfm.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 05:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7hMEiwXd0I+l76poKlKBlYMOg9hV5tc90xEAOH8Qg4A=;
+        b=Bq5cZhWK3NhjjFgVpZXKHOhN3Pt5hIisyG+AXacZhzt+7u5/hIc3q/u+CU2HPkm8z6
+         Tirujw8OBR3qtu+5gweLUBNk1/Ru0B1D6XZLVWsjZiQgNW1UpjnruGDHIsS3+q67BBMc
+         6oGwgINu3ltnroF7jFY7LOEk/RkmNPMxQGM95EKwOXvSYIj/lqTy6rqvPppun7nnd9UZ
+         MUqC4ld6G+PltinWkQW1I7zIOA/3pRnAMENnf9tA/WmPT03PEz/xEBmlvaZJJBDZBrQR
+         PSX7yUvURRApV1dtJFVhpa7Q6NCyqN6ykRXkPmhhl7azkMi2e08nYmm59S02IR6QNzB6
+         dWOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7hMEiwXd0I+l76poKlKBlYMOg9hV5tc90xEAOH8Qg4A=;
+        b=HmBLsJikRf/AQvys2kJR/eHvct1C+pNT+8s100dO506UuAoGYJoabz/l2HrI8uYcPE
+         835DhRyLDoO0NLNhcOMfofa4XIg7BJTJD8i+Qo5qL4SwPGHr79Wtq2E63Yfg0Y0P0uNd
+         kZkeb5oIAw8jLenQunBkhZo6hmChMSOV4s3lYBQe2CnIhcnOdSro41CzGFc/ss4YdgqO
+         8fpCb3We8KcUIpAO4X3vE9wJYXxfqwu0Gk1RcCzkOi/Cw5Hfr0L7oFSjXV+88DyYl7t9
+         wZTmF69US7rpT6d4atpZC+wOMUzuj3ucLXN4bhOGYTs3zB/BvX/Y4twyYT8b5EFGNf3v
+         3log==
+X-Gm-Message-State: APjAAAWMkvHr90crh8peCQvEHo7nm8dwthNVa0+VvFXmPw3tcmZ3DeQs
+        GjMe6H6f0XePCMxE4Ko6Ye4=
+X-Google-Smtp-Source: APXvYqwbNZHa2HJHF++370RhqSB8dOKgg0B6wzcPO6aNMhZzGnFRk0GI4NpVZC3HMeLuJNv2Vb5pYQ==
+X-Received: by 2002:ac2:44a4:: with SMTP id c4mr37165570lfm.116.1560256163486;
+        Tue, 11 Jun 2019 05:29:23 -0700 (PDT)
+Received: from localhost.localdomain ([178.127.187.52])
+        by smtp.gmail.com with ESMTPSA id 25sm2520719ljo.38.2019.06.11.05.29.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 05:29:22 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 1/1] sched: Deduplicate code with do-while
+Date:   Tue, 11 Jun 2019 15:29:07 +0300
+Message-Id: <43ffea6ee2152b90dedf962eac851609e4197218.1560256112.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019 20:25:22 +0800
-Qii Wang <qii.wang@mediatek.com> wrote:
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-> On Tue, 2019-06-04 at 20:26 +0800, Qii Wang wrote:
-> > On Tue, 2019-06-04 at 09:58 +0200, Boris Brezillon wrote:  
-> > > On Mon, 3 Jun 2019 11:51:03 +0800
-> > > Qii Wang <qii.wang@mediatek.com> wrote:
-> > > 
-> > >   
-> > > > +static int mtk_i3c_master_probe(struct platform_device *pdev)
-> > > > +{
-> > > > +	struct device *dev = &pdev->dev;
-> > > > +	struct mtk_i3c_master *master;
-> > > > +	struct resource *res;
-> > > > +	int ret, irqnr;
-> > > > +
-> > > > +	master = devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
-> > > > +	if (!master)
-> > > > +		return -ENOMEM;
-> > > > +
-> > > > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "main");
-> > > > +	master->regs = devm_ioremap_resource(dev, res);
-> > > > +	if (IS_ERR(master->regs))
-> > > > +		return PTR_ERR(master->regs);
-> > > > +
-> > > > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma");
-> > > > +	master->dma_regs = devm_ioremap_resource(dev, res);
-> > > > +	if (IS_ERR(master->dma_regs))
-> > > > +		return PTR_ERR(master->dma_regs);
-> > > > +
-> > > > +	irqnr = platform_get_irq(pdev, 0);
-> > > > +	if (irqnr < 0)
-> > > > +		return irqnr;
-> > > > +
-> > > > +	ret = devm_request_irq(dev, irqnr, mtk_i3c_master_irq,
-> > > > +			       IRQF_TRIGGER_NONE, DRV_NAME, master);
-> > > > +	if (ret < 0) {
-> > > > +		dev_err(dev, "Request I3C IRQ %d fail\n", irqnr);
-> > > > +		return ret;
-> > > > +	}
-> > > > +
-> > > > +	ret = of_property_read_u32(pdev->dev.of_node, "clock-div",
-> > > > +				   &master->clk_src_div);  
-> > > 
-> > > You say in one comment that this clock divider is fixed in HW but might
-> > > change on a per-SoC basis. If that's the case, you should get rid of
-> > > this clock-div prop and attach the divider to the compatible (using an
-> > > mtk_i3c_master_variant struct that contains a divider field).
-> > >   
-> > 
-> > ok, I will attach the divider to the compatible.
-> >   
-> I have rechecked your comment, maybe I have misunderstood what you mean.
-> "clock-div" changes according to i2c source clock, different project may
-> change i2c source clock, The previous dt-binding may be misleading, I
-> will modify it.
+Statements in the loop's body and before it are identical.
+Use do-while to not repeat it.
 
-Is it fixed or configurable? Maybe it should be modeled as a clk
-driver. What's for sure is that we shouldn't have this divider defined
-in the DT.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ kernel/sched/wait.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
+index fa0f9adfb752..c1e566a114ca 100644
+--- a/kernel/sched/wait.c
++++ b/kernel/sched/wait.c
+@@ -118,16 +118,12 @@ static void __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int
+ 	bookmark.func = NULL;
+ 	INIT_LIST_HEAD(&bookmark.entry);
+ 
+-	spin_lock_irqsave(&wq_head->lock, flags);
+-	nr_exclusive = __wake_up_common(wq_head, mode, nr_exclusive, wake_flags, key, &bookmark);
+-	spin_unlock_irqrestore(&wq_head->lock, flags);
+-
+-	while (bookmark.flags & WQ_FLAG_BOOKMARK) {
++	do {
+ 		spin_lock_irqsave(&wq_head->lock, flags);
+ 		nr_exclusive = __wake_up_common(wq_head, mode, nr_exclusive,
+ 						wake_flags, key, &bookmark);
+ 		spin_unlock_irqrestore(&wq_head->lock, flags);
+-	}
++	} while (bookmark.flags & WQ_FLAG_BOOKMARK);
+ }
+ 
+ /**
+-- 
+2.22.0
+
