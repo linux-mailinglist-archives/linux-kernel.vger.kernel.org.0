@@ -2,112 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 359D441849
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 00:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C854A41826
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 00:30:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407191AbfFKWhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 18:37:45 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32551 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405478AbfFKWho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 18:37:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 15:37:43 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Jun 2019 15:37:43 -0700
-Date:   Tue, 11 Jun 2019 15:28:22 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>, g@romley-ivt3.sc.intel.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16
- instructions
-Message-ID: <20190611222822.GD180343@romley-ivt3.sc.intel.com>
-References: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
- <20190610192026.GI5488@zn.tnic>
- <20190611181920.GC180343@romley-ivt3.sc.intel.com>
- <20190611194701.GJ31772@zn.tnic>
+        id S2392109AbfFKWaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 18:30:23 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35816 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392091AbfFKWaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 18:30:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s27so7751281pgl.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 15:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3nJbbRKlTPYM1woarvu6grRc9TzO5KmCP13nZ/PCJ6c=;
+        b=AkAgROt9atHwV3xoI9VjaZrzZaaO5howAWh2priY04W1eiUwPse4i9GNmq6QF62bfM
+         MjEIEYGjhwP96quM3HMtr3Th7Fkvo1GgNOmUIQgHXmbm147RCQC4UZxj1RlLETex3AUi
+         Ks7ioq3D9bjZkjE4COgReB+rkRk03RcrgiW1E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3nJbbRKlTPYM1woarvu6grRc9TzO5KmCP13nZ/PCJ6c=;
+        b=mIJY7zXEyv0ZIkDXXqr6N3PtaQ4M8N5e9B79EIWHOyco127h2nLq+cKqwIHG0m+0qc
+         HYomm2aY28/Qi7mHXX9EFEXkpRJ8k6bkx/ELzrd0CeC1NlUxO5xGpbSt2EGjSy/fhKOT
+         OboentJ41pSZ9cPRQVlx6uvf0fZqgYstPjBfklqiupI1qQS+Z4POWlv1Cy6828QfwPgE
+         Drj4ulYXIKdszVcTCV9gLY8DSSVS1T0QeOjkzqOIqQPcbDTVC8v1Xcm7as10mBBJKnWA
+         cqE4SmMNzgnsTjz4Jr0xzM3Jkjd8mXWUuHQ5HHqbp5EjKAyxxmmiJSVcYMhbLLFEATXS
+         rZ7w==
+X-Gm-Message-State: APjAAAW4tza4na3OBgu+PuISZuJ9qoqr90huJ83XRr5oEgg8soIw85ty
+        0gHIbGzc5DceQ17CjaS6HUd30A==
+X-Google-Smtp-Source: APXvYqzPGqvHJEEW8KGadINzmMV1t9wKDJZxZqs3Q4ilQ1+NwSxiG1GZwT6wk/dEzb5udw5jUepoxQ==
+X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr28582703pje.123.1560292222289;
+        Tue, 11 Jun 2019 15:30:22 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id a13sm8937301pgh.6.2019.06.11.15.30.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 15:30:20 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 15:30:19 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Brian Norris <briannorris@google.com>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Doug Anderson <dianders@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Guenter Roeck <groeck@google.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+Message-ID: <20190611223019.GH137143@google.com>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+ <20190610205233.GB137143@google.com>
+ <20190611104913.egsbwcedshjdy3m5@holly.lan>
+ <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190611194701.GJ31772@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 09:47:02PM +0200, Borislav Petkov wrote:
-> On Tue, Jun 11, 2019 at 11:19:20AM -0700, Fenghua Yu wrote:
-> > So can I re-organize word 11 and 12 as follows?
-> > 
-> > 1. Change word 11 to host scattered features.
-> > 2. Move the previos features in word 11 and word 12 to word 11:
-> > /*
-> >  * Extended auxiliary flags: Linux defined - For features scattered in various
-> >  * CPUID levels and sub-leaves like CPUID level 7 and sub-leaf 1, etc, word 19.
-> >  */
-> > #define X86_FEATURE_CQM_LLC             (11*32+ 0) /* LLC QoS if 1 */
-> > #define X86_FEATURE_CQM_OCCUP_LLC       (11*32+ 1) /* LLC occupancy monitoring */
-> > #define X86_FEATURE_CQM_MBM_TOTAL       (11*32+ 2) /* LLC Total MBM monitoring */
-> > #define X86_FEATURE_CQM_MBM_LOCAL       (11*32+ 3) /* LLC Local MBM monitoring */
+On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
+> On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+> > This is a long standing flaw in the backlight interfaces. AFAIK generic
+> > userspaces end up with a (flawed) heuristic.
 > 
-> Yap.
-> 
-> > 3. Change word 12 to host CPUID.(EAX=7,ECX=1):EAX:
-> > /* Intel-defined CPU features, CPUID level 0x7:1 (EAX), word 12 */
-> > #define X86_FEATURE_AVX512_BF16         (12*32+ 0) /* BFLOAT16 instructions */
-> 
-> This needs to be (12*32+ 5) if word 12 is going to map leaf
-> CPUID.(EAX=7,ECX=1):EAX.
-> 
-> At least judging from the arch extensions doc which lists EAX as:
-> 
-> Bits 04-00: Reserved.
-> Bit 05: AVX512_BF16. Vector Neural Network Instructions supporting BFLOAT16 inputs and conversion instructions from IEEE single precision.
-> Bits 31-06: Reserved.
+> Bingo! Would be nice if we could start to fix this long-standing flaw.
 
-Yes, you are absolutely right. I'll defint it as (12*32+ 5).
+Agreed!
 
-> 
-> > 4. Do other necessary changes to match the new word 11 and word 12.
-> 
-> But split in two patches: first does steps 1+2, second patch adds the
-> new leaf to word 12.
+How could a fix look like, a sysfs attribute? Would a boolean value
+like 'logarithmic_scale' or 'linear_scale' be enough or could more
+granularity be needed?
 
-There are two varialbes defined in cpuinfo_x86: x86_cache_max_rmid and
-x86_cache_occ_scale. c->x86_cache_max_rmid is read from CPUID.0xf.1:ECX
-and c->x86_cache_occ_scale is read from CPUID.0xf.1:EBX.
-
-After getting X86_FEATURE_CQM_* from scattered, the two variables need
-to be read from CPUID again. So the code of reading the two variables
-need to be moved from before init_scattered_cpuid_features(c) to after
-the function. This make the get_cpu_cap() code awkward.
-
-And the two variables are ONLY used in resctrl monitoring configuration.
-There is no need to store them in cpuinfo_x86 on each CPU.
-
-I'm thinking to simplify and clean this part of code:
-
-1. In patch #1:
-- remove the definitions of x86_cache_max_rmid and x86_cache_occ_scale
-from cpuinfo_x86
-- remove assignment of c->x86_cache_max_rmid and c->x86_cache_occ_scale
-from get_cpu_cap(c)
-- get r->mon_scale and r->num_rmid in rdt_get_mon_l3_config(r) directly
-from CPUID.0xf.1:EBX and CPUID.0xf.1:ECX.
-2. In patch #2: do steps 1+2 to recycle word 11. After patch #1, I can
-totally remove the code to get c->x86_cache_max_rmd and
-c->x86_cache_occ_scale in get_cpu_cap(c). And patch #2 is cleaner.
-3. In patch #3: add new word 12 to host CPUID.7.1:EAX
-
-Do you think the patch #1 is necessary and this is a right patch set?
-
-Thanks.
-
--Fenghua
+The new attribute could be optional (it only exists if explicitly
+specified by the driver) or be set to a default based on a heuristic
+if not specified and be 'fixed' on a case by case basis. The latter
+might violate "don't break userspace" though, so I'm not sure it's a
+good idea.
