@@ -2,243 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C033CE54
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78E9D3CE41
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388638AbfFKOQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:16:41 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33998 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387593AbfFKOQk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:16:40 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e16so13275441wrn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 07:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R0YZLFuV0RaYb6o6bXZ/cnhAHh94UytEXpdPz+Yf3c8=;
-        b=oDJUIsw9l0pX/II6DR7SV+FJvz1OxhmA8zB+vi7ZXNXdNhzrUdL+fFoMRtm3NDAx+u
-         /Vox1y2G+2W5ePrfQZUhhRTNhcQHf1xL70VRJoR6Rs/wAm7AOQ1XNKPaqN3axoQYBXCG
-         qZW9VDT0Dmh7SYlZYY3wK6EKBpZqwuXg8OJGiNja7sJOHCjOJeF2pW1dI5pRjM2rQOfG
-         duxaSAK1xj6we0iB7/1QCyPlLX/loOjpjWCRxcB5mFuiRyD4+1Qkkd+bl54Exvlj0al4
-         n2TBbY7/9gj3XYpcByhHDLIqEbP5haZb9/E/4ySZpcRTgx/TobjSTJWzV+zJRdkKSXP1
-         9XJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R0YZLFuV0RaYb6o6bXZ/cnhAHh94UytEXpdPz+Yf3c8=;
-        b=rvq62CfJkaoinCfGbupRmhBNi3T1DOxs7G5xrxvepPk3Zun5xnhVp05tJepPTLw8j9
-         Tkr7k12zdgWMiMk573rOLUR4ijWSLf1+tmX6q6DD/WbJzYBbvI3h0ed0Y01jzZRWFLJd
-         34mRXOoeC+kx6Vx0VLfNWxV20aizzQqasRyNes20Z+teJqxNjxWvgPUD4jE3VaV4Ve7x
-         p2xQeadRDLzVAiatdtW8qH+dXV6lJzlc1Y8wAeWUVnaK3kflacXVIFbk7zJA87BwEhH6
-         /5N6jP2lS6UoRwWQpsAuxZ2b0YeISdWroxIH/SCxly80LZvLH4LIB+DlF0FqFQgHQ3tQ
-         1pDw==
-X-Gm-Message-State: APjAAAW0eRMgJ599z7cfFDwVh40079vZZfj62VrAne8eC9E8ibA7vLKc
-        IcTMCFroWV442oYXEobdrHp+Eg==
-X-Google-Smtp-Source: APXvYqy+KtdbDSGNz5zvKixfWB2k+49bbw7fcDg2K7++BSZL8Ez/8CCq+i11NIz5j8DUyelxkPSVmA==
-X-Received: by 2002:adf:e50c:: with SMTP id j12mr634760wrm.117.1560262598393;
-        Tue, 11 Jun 2019 07:16:38 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id i188sm2886210wma.27.2019.06.11.07.16.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 07:16:37 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 15:16:35 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, lee.jones@linaro.org
-Subject: Re: [PATCH 00/33] fbcon notifier begone v3!
-Message-ID: <20190611141635.rowolr37vhalophr@holly.lan>
-References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
- <CGME20190606073852epcas2p27b586b93869a30e4658581c290960fee@epcas2p2.samsung.com>
- <CAKMK7uHneUFYPiRr10X9xfWTkGtaoQBB=niDMGkAgJ-fgo5=mA@mail.gmail.com>
- <f848b4de-abab-116f-ad68-23348f1a4b76@samsung.com>
+        id S2390059AbfFKOOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:14:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:12583 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfFKOOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:14:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 07:14:06 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Jun 2019 07:14:05 -0700
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     jani.nikula@intel.com
+Subject: [PATCH] module: add enum module parameter type to map names to values
+Date:   Tue, 11 Jun 2019 17:17:01 +0300
+Message-Id: <20190611141701.7432-1-jani.nikula@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f848b4de-abab-116f-ad68-23348f1a4b76@samsung.com>
-User-Agent: NeoMutt/20180716
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 12:07:55PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> 
-> On 6/6/19 9:38 AM, Daniel Vetter wrote:
-> > Hi Bart,
-> 
-> Hi Daniel,
-> 
-> > On Tue, May 28, 2019 at 11:02:31AM +0200, Daniel Vetter wrote:
-> >> Hi all,
-> >>
-> >> I think we're slowly getting there. Previous cover letters with more
-> >> context:
-> >>
-> >> https://lists.freedesktop.org/archives/dri-devel/2019-May/218362.html
-> >>
-> >> tldr; I have a multi-year plan to improve fbcon locking, because the
-> >> current thing is a bit a mess.
-> >>
-> >> Cover letter of this version, where I detail a bit more the details
-> >> fixed in this one here:
-> >>
-> >> https://lists.freedesktop.org/archives/dri-devel/2019-May/218984.html
-> >>
-> >> Note that the locking plan in this one is already outdated, I overlooked a
-> >> few fun issues around any printk() going back to console_lock.
-> >>
-> >> I think remaining bits:
-> >>
-> >> - Ack from Daniel Thompson for the backlight bits, he wanted to check the
-> >>   big picture.
-> > 
-> > I think Daniel is still on vacation until next week or so.
+Add enum module parameter type that's internally an int and externally
+maps names to values. This makes the userspace interface more intuitive
+to use and somewhat easier to document, while also limiting the allowed
+values set by userspace to the defined set.
 
-Thanks for spotting that. As it happens the e-mail asking for extra detail
-was just about the last thing I sent before going on holiday (exactly to
-try and avoid round trips this wee ;-) ).
+For example, given this code to define a "mode" in a fictional module
+"foobar":
 
+	struct keyval modes[] = {
+		{ "foo", 0 },
+		{ "bar", 1 },
+		{ "baz", -1 },
+	};
 
-> > 
-> >> - Hash out actual merge plan.
-> > 
-> > I'd like to stuff this into drm.git somehow, I guess topic branch works
-> > too.
-> 
-> I would like to have topic branch for this patchset.
+	int mode;
 
-From a backlight perspective its Lee Jones who hoovers up the patches
-and worries about hiding merge conflicts from Linus.
+	module_param_enum(mode, modes, 0600);
 
-I'll let him follow up if needed but I suspect he'd like an immutable
-branch to work from also.
+You can probe foobar with "foobar.mode=bar" in the kernel or modprobe
+command line to set the mode to 1.
 
+Similarly, you can use the sysfs with the names:
 
-Daniel.
+	# echo baz > /sys/module/foobar/parameters/mode
+	# cat /sys/module/foobar/parameters/mode
+	baz
 
+With checks:
 
-> 
-> > Long term I think we need to reconsider how we handle fbdev, at least the
-> > core/fbcon pieces. Since a few years all the work in that area has been
-> > motivated by drm, and pushed by drm contributors. Having that maintained
-> > in a separate tree that doesn't regularly integrate imo doesn't make much
-> > sense, and we ended up merging almost everything through some drm tree.
-> > That one time we didn't (for some panel rotation stuff) it resulted in
-> > some good suprises.
-> > 
-> > I think best solution is if we put the core and fbcon bits into drm-misc,
-> > as group maintained infrastructure piece. All the other gfx infra pieces
-> > are maintained in there already too. You'd obviously get commit rights.
-> > I think that would include
-> > - drivers/video/fbdev
-> > - drivers/video/*c
-> > - drivers/video/console
-> 
-> Sounds fine to me.
-> 
-> > I don't really care about what happens with the actual fbdev drivers
-> > (aside from the drm one in drm_fb_helper.c, but that's already maintained
-> > as part of drm). I guess we could also put those into drm-misc, or as a
-> > separate tree, depending what you want.
-> > 
-> > Thoughts?
-> 
-> I would like to handle fbdev changes for v5.3 merge window using fbdev
-> tree but after that everything (including changes to fbdev drivers) can go
-> through drm-misc tree.
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> > Cheers, Daniel
-> > 
-> > 
-> >>
-> >> I'm also cc'ing the entire pile to a lot more people on request.
-> >>
-> >> Thanks, Daniel
-> >>
-> >> Daniel Vetter (33):
-> >>   dummycon: Sprinkle locking checks
-> >>   fbdev: locking check for fb_set_suspend
-> >>   vt: might_sleep() annotation for do_blank_screen
-> >>   vt: More locking checks
-> >>   fbdev/sa1100fb: Remove dead code
-> >>   fbdev/cyber2000: Remove struct display
-> >>   fbdev/aty128fb: Remove dead code
-> >>   fbcon: s/struct display/struct fbcon_display/
-> >>   fbcon: Remove fbcon_has_exited
-> >>   fbcon: call fbcon_fb_(un)registered directly
-> >>   fbdev/sh_mobile: remove sh_mobile_lcdc_display_notify
-> >>   fbdev/omap: sysfs files can't disappear before the device is gone
-> >>   fbdev: sysfs files can't disappear before the device is gone
-> >>   staging/olpc: lock_fb_info can't fail
-> >>   fbdev/atyfb: lock_fb_info can't fail
-> >>   fbdev: lock_fb_info cannot fail
-> >>   fbcon: call fbcon_fb_bind directly
-> >>   fbdev: make unregister/unlink functions not fail
-> >>   fbdev: unify unlink_framebuffer paths
-> >>   fbdev/sh_mob: Remove fb notifier callback
-> >>   fbdev: directly call fbcon_suspended/resumed
-> >>   fbcon: Call fbcon_mode_deleted/new_modelist directly
-> >>   fbdev: Call fbcon_get_requirement directly
-> >>   Revert "backlight/fbcon: Add FB_EVENT_CONBLANK"
-> >>   fbmem: pull fbcon_fb_blanked out of fb_blank
-> >>   fbdev: remove FBINFO_MISC_USEREVENT around fb_blank
-> >>   fb: Flatten control flow in fb_set_var
-> >>   fbcon: replace FB_EVENT_MODE_CHANGE/_ALL with direct calls
-> >>   vgaswitcheroo: call fbcon_remap_all directly
-> >>   fbcon: Call con2fb_map functions directly
-> >>   fbcon: Document what I learned about fbcon locking
-> >>   staging/olpc_dcon: Add drm conversion to TODO
-> >>   backlight: simplify lcd notifier
-> >>
-> >>  arch/arm/mach-pxa/am200epd.c                  |  13 +-
-> >>  drivers/gpu/vga/vga_switcheroo.c              |  11 +-
-> >>  drivers/media/pci/ivtv/ivtvfb.c               |   6 +-
-> >>  drivers/staging/fbtft/fbtft-core.c            |   4 +-
-> >>  drivers/staging/olpc_dcon/TODO                |   7 +
-> >>  drivers/staging/olpc_dcon/olpc_dcon.c         |   6 +-
-> >>  drivers/tty/vt/vt.c                           |  18 +
-> >>  drivers/video/backlight/backlight.c           |   2 +-
-> >>  drivers/video/backlight/lcd.c                 |  12 -
-> >>  drivers/video/console/dummycon.c              |   6 +
-> >>  drivers/video/fbdev/aty/aty128fb.c            |  64 ---
-> >>  drivers/video/fbdev/aty/atyfb_base.c          |   3 +-
-> >>  drivers/video/fbdev/core/fbcmap.c             |   6 +-
-> >>  drivers/video/fbdev/core/fbcon.c              | 313 ++++++--------
-> >>  drivers/video/fbdev/core/fbcon.h              |   6 +-
-> >>  drivers/video/fbdev/core/fbmem.c              | 399 +++++++-----------
-> >>  drivers/video/fbdev/core/fbsysfs.c            |  20 +-
-> >>  drivers/video/fbdev/cyber2000fb.c             |   1 -
-> >>  drivers/video/fbdev/neofb.c                   |   9 +-
-> >>  .../video/fbdev/omap2/omapfb/omapfb-sysfs.c   |  21 +-
-> >>  drivers/video/fbdev/sa1100fb.c                |  25 --
-> >>  drivers/video/fbdev/savage/savagefb_driver.c  |   9 +-
-> >>  drivers/video/fbdev/sh_mobile_lcdcfb.c        | 132 +-----
-> >>  drivers/video/fbdev/sh_mobile_lcdcfb.h        |   5 -
-> >>  include/linux/console_struct.h                |   5 +-
-> >>  include/linux/fb.h                            |  45 +-
-> >>  include/linux/fbcon.h                         |  30 ++
-> >>  27 files changed, 396 insertions(+), 782 deletions(-)
-> >>
-> >> --
-> >> 2.20.1
-> >>
-> > 
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
+	# echo nope > /sys/module/foobar/parameters/mode
+	echo: write error: Invalid argument
+
+Of course, the kernel can still internally set the mode variable
+directly to a value that is not defined in the enumerations (obviously
+to be avoided), which will result in unknown key:
+
+	# cat /sys/module/foobar/parameters/mode
+	(unknown)
+
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+
+---
+
+I've had this lying around in a branch for a long time, but never really
+got around to contributing upstream. Don't have a user for it
+either. But here goes, might be useful for someone.
+
+BR,
+Jani.
+---
+ include/linux/moduleparam.h | 60 +++++++++++++++++++++++++++++++++++++
+ kernel/params.c             | 42 ++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+)
+
+diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
+index 5ba250d9172a..0fa341c201d6 100644
+--- a/include/linux/moduleparam.h
++++ b/include/linux/moduleparam.h
+@@ -77,6 +77,7 @@ struct kernel_param {
+ 		void *arg;
+ 		const struct kparam_string *str;
+ 		const struct kparam_array *arr;
++		const struct kparam_enum *enumeration;
+ 	};
+ };
+ 
+@@ -98,6 +99,19 @@ struct kparam_array
+ 	void *elem;
+ };
+ 
++/* Special ones for enums */
++struct keyval {
++	const char *key;
++	int val;
++};
++
++struct kparam_enum
++{
++	const struct keyval *enumerations;
++	unsigned int size;
++	int *value;
++};
++
+ /**
+  * module_param - typesafe helper for a module/cmdline parameter
+  * @value: the variable to alter, and exposed parameter name.
+@@ -405,6 +419,11 @@ extern int param_set_bint(const char *val, const struct kernel_param *kp);
+ #define param_get_bint param_get_int
+ #define param_check_bint param_check_int
+ 
++/* An enumeration */
++extern const struct kernel_param_ops param_ops_enum;
++extern int param_set_enum(const char *val, const struct kernel_param *kp);
++extern int param_get_enum(char *buffer, const struct kernel_param *kp);
++
+ /**
+  * module_param_array - a parameter which is an array of some type
+  * @name: the name of the array variable
+@@ -444,6 +463,47 @@ extern int param_set_bint(const char *val, const struct kernel_param *kp);
+ 			    perm, -1, 0);				\
+ 	__MODULE_PARM_TYPE(name, "array of " #type)
+ 
++/**
++ * module_param_enum - a parameter which is an enumeration
++ * @name: the variable to alter, and exposed parameter name
++ * @enumerations: pointer to array of struct keyval defining the enums
++ * @perm: visibility in sysfs
++ *
++ * The userspace input and output are based on the names defined in the
++ * @enumerations array, which maps the names to values stored in the int
++ * variable defined by @name.
++ *
++ * When initializing or changing the variable @name, ensure the value is defined
++ * in @enumerations. Otherwise, reading the parameter value via sysfs will
++ * output "(unknown)".
++ *
++ * ARRAY_SIZE(@enumerations) is used to determine the number of elements in the
++ * enumerations array, so the definition must be visible.
++ */
++
++#define module_param_enum(name, enumerations, perm)			\
++	module_param_enum_named(name, name, enumerations, perm)
++
++/**
++ * module_param_enum_named - a renamed parameter which is an enumeration
++ * @name: a valid C identifier which is the parameter name
++ * @value: the actual lvalue int variable to alter
++ * @enumerations: pointer to array of struct keyval defining the enums
++ * @perm: visibility in sysfs
++ *
++ * This exposes a different name than the actual variable name.  See
++ * module_param_named() for why this might be necessary.
++ */
++#define module_param_enum_named(name, value, enumerations, perm)	\
++	param_check_int(name, &(value));				\
++	static const struct kparam_enum __param_arr_##name		\
++	= { enumerations, ARRAY_SIZE(enumerations), &value };		\
++	__module_param_call(MODULE_PARAM_PREFIX, name,			\
++			    &param_ops_enum,				\
++			    .enumeration = &__param_arr_##name,		\
++			    perm, -1, 0);				\
++	__MODULE_PARM_TYPE(name, "enumeration")
++
+ enum hwparam_type {
+ 	hwparam_ioport,		/* Module parameter configures an I/O port */
+ 	hwparam_iomem,		/* Module parameter configures an I/O mem address */
+diff --git a/kernel/params.c b/kernel/params.c
+index cf448785d058..d6dc8bc38e43 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -506,6 +506,48 @@ const struct kernel_param_ops param_ops_string = {
+ };
+ EXPORT_SYMBOL(param_ops_string);
+ 
++int param_set_enum(const char *val, const struct kernel_param *kp)
++{
++	const struct kparam_enum *e = kp->enumeration;
++	unsigned int i;
++
++	for (i = 0; i < e->size; i++) {
++		if (sysfs_streq(val, e->enumerations[i].key)) {
++			*(e->value) = e->enumerations[i].val;
++			return 0;
++		}
++	}
++
++	pr_err("%s: unknown key %s to enum parameter\n", kp->name, val);
++
++	return -EINVAL;
++}
++EXPORT_SYMBOL(param_set_enum);
++
++int param_get_enum(char *buffer, const struct kernel_param *kp)
++{
++	const struct kparam_enum *e = kp->enumeration;
++	unsigned int i;
++
++	for (i = 0; i < e->size; i++) {
++		if (*(e->value) == e->enumerations[i].val)
++			return scnprintf(buffer, PAGE_SIZE, "%s\n",
++					 e->enumerations[i].key);
++	}
++
++	pr_err("%s: enum parameter set to unknown value %d\n",
++	       kp->name, *(e->value));
++
++	return scnprintf(buffer, PAGE_SIZE, "(unknown)\n");
++}
++EXPORT_SYMBOL(param_get_enum);
++
++const struct kernel_param_ops param_ops_enum = {
++	.set = param_set_enum,
++	.get = param_get_enum,
++};
++EXPORT_SYMBOL(param_ops_enum);
++
+ /* sysfs output in /sys/modules/XYZ/parameters/ */
+ #define to_module_attr(n) container_of(n, struct module_attribute, attr)
+ #define to_module_kobject(n) container_of(n, struct module_kobject, kobj)
+-- 
+2.20.1
+
