@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674A0418BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3C4418C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407989AbfFKXSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:18:24 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50578 "EHLO
+        id S2408050AbfFKXSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:18:35 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:51176 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2407975AbfFKXSY (ORCPT
+        by vger.kernel.org with ESMTP id S2407993AbfFKXS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:18:24 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BN8FOp026250
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:23 -0700
+        Tue, 11 Jun 2019 19:18:26 -0400
+Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BN98q8005907
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:26 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=y8x91J89Hsw0QdQlhcd3vnyvb98p4X6XpzkxVy4k5LU=;
- b=G2316pcBitLm0xhNSOGwtMs4VFS7W8LMn6B4d6jVQ00LyWUySjzJ/QnPAXtvLvPWzx14
- r1yxBZ7D8Ze0i4UT5VisczIizNG7xGiA54lkOCttqKQKUx7/R54ChtKV46AkQi4tj8NM
- /99uNAn0BTGWMUQUcWidfjy1DYIrMekUlxQ= 
+ content-type; s=facebook; bh=wvy1LTE78mhoSYH9KKkPh58hA9wYMnN4JWdHvONVtxM=;
+ b=LSsD9PMpW8fbsnC/E4xQtfhl4K7ThMyR8L2jfRX5XAtFIJOzguxeNNi20t8xHS9gi+AF
+ BoQ1bcDQMVcFdpTOHkadn/SrIM943nw0YShfdEIhZGgfvOY9IyTTPxkQGU+OqKGycW/M
+ WTHtfuR62ysJI/7iNO7NcLAL+qauqwy8VMk= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t2jma8q5t-2
+        by mx0a-00082601.pphosted.com with ESMTP id 2t2j2urupw-6
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:23 -0700
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:26 -0700
 Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 11 Jun 2019 16:18:21 -0700
+ 15.1.1713.5; Tue, 11 Jun 2019 16:18:22 -0700
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 2CD40130CBF69; Tue, 11 Jun 2019 16:18:20 -0700 (PDT)
+        id 30FC6130CBF6B; Tue, 11 Jun 2019 16:18:20 -0700 (PDT)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -41,9 +41,9 @@ CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
         Shakeel Butt <shakeelb@google.com>,
         Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v7 02/10] mm: rename slab delayed deactivation functions and fields
-Date:   Tue, 11 Jun 2019 16:18:05 -0700
-Message-ID: <20190611231813.3148843-3-guro@fb.com>
+Subject: [PATCH v7 03/10] mm: generalize postponed non-root kmem_cache deactivation
+Date:   Tue, 11 Jun 2019 16:18:06 -0700
+Message-ID: <20190611231813.3148843-4-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190611231813.3148843-1-guro@fb.com>
 References: <20190611231813.3148843-1-guro@fb.com>
@@ -63,147 +63,175 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The delayed work/rcu deactivation infrastructure of non-root
-kmem_caches can be also used for asynchronous release of these
-objects. Let's get rid of the word "deactivation" in corresponding
-names to make the code look better after generalization.
+Currently SLUB uses a work scheduled after an RCU grace period
+to deactivate a non-root kmem_cache. This mechanism can be reused
+for kmem_caches release, but requires generalization for SLAB
+case.
 
-It's easier to make the renaming first, so that the generalized
-code will look consistent from scratch.
+Introduce kmemcg_cache_deactivate() function, which calls
+allocator-specific __kmem_cache_deactivate() and schedules
+execution of __kmem_cache_deactivate_after_rcu() with all
+necessary locks in a worker context after an rcu grace period.
 
-Let's rename struct memcg_cache_params fields:
-  deact_fn -> work_fn
-  deact_rcu_head -> rcu_head
-  deact_work -> work
+Here is the new calling scheme:
+  kmemcg_cache_deactivate()
+    __kmemcg_cache_deactivate()                  SLAB/SLUB-specific
+    kmemcg_rcufn()                               rcu
+      kmemcg_workfn()                            work
+        __kmemcg_cache_deactivate_after_rcu()    SLAB/SLUB-specific
 
-And RCU/delayed work callbacks in slab common code:
-  kmemcg_deactivate_rcufn -> kmemcg_rcufn
-  kmemcg_deactivate_workfn -> kmemcg_workfn
+instead of:
+  __kmemcg_cache_deactivate()                    SLAB/SLUB-specific
+    slab_deactivate_memcg_cache_rcu_sched()      SLUB-only
+      kmemcg_rcufn()                             rcu
+        kmemcg_workfn()                          work
+          kmemcg_cache_deact_after_rcu()         SLUB-only
 
-This patch contains no functional changes, only renamings.
+For consistency, all allocator-specific functions start with "__".
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
 ---
- include/linux/slab.h |  6 +++---
- mm/slab.h            |  2 +-
- mm/slab_common.c     | 30 +++++++++++++++---------------
- 3 files changed, 19 insertions(+), 19 deletions(-)
+ mm/slab.c        |  4 ++++
+ mm/slab.h        |  3 +--
+ mm/slab_common.c | 27 ++++++++-------------------
+ mm/slub.c        |  8 +-------
+ 4 files changed, 14 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 9449b19c5f10..47923c173f30 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -642,10 +642,10 @@ struct memcg_cache_params {
- 			struct list_head children_node;
- 			struct list_head kmem_caches_node;
+diff --git a/mm/slab.c b/mm/slab.c
+index a4091f8b3655..4b865393ebb4 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -2252,6 +2252,10 @@ void __kmemcg_cache_deactivate(struct kmem_cache *cachep)
+ {
+ 	__kmem_cache_shrink(cachep);
+ }
++
++void __kmemcg_cache_deactivate_after_rcu(struct kmem_cache *s)
++{
++}
+ #endif
  
--			void (*deact_fn)(struct kmem_cache *);
-+			void (*work_fn)(struct kmem_cache *);
- 			union {
--				struct rcu_head deact_rcu_head;
--				struct work_struct deact_work;
-+				struct rcu_head rcu_head;
-+				struct work_struct work;
- 			};
- 		};
- 	};
+ int __kmem_cache_shutdown(struct kmem_cache *cachep)
 diff --git a/mm/slab.h b/mm/slab.h
-index 86f7ede21203..7ef695b91919 100644
+index 7ef695b91919..dc83583ee9dd 100644
 --- a/mm/slab.h
 +++ b/mm/slab.h
-@@ -291,7 +291,7 @@ static __always_inline void memcg_uncharge_slab(struct page *page, int order,
+@@ -172,6 +172,7 @@ int __kmem_cache_shutdown(struct kmem_cache *);
+ void __kmem_cache_release(struct kmem_cache *);
+ int __kmem_cache_shrink(struct kmem_cache *);
+ void __kmemcg_cache_deactivate(struct kmem_cache *s);
++void __kmemcg_cache_deactivate_after_rcu(struct kmem_cache *s);
+ void slab_kmem_cache_release(struct kmem_cache *);
+ 
+ struct seq_file;
+@@ -290,8 +291,6 @@ static __always_inline void memcg_uncharge_slab(struct page *page, int order,
+ 
  extern void slab_init_memcg_params(struct kmem_cache *);
  extern void memcg_link_cache(struct kmem_cache *s, struct mem_cgroup *memcg);
- extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
--				void (*deact_fn)(struct kmem_cache *));
-+				void (*work_fn)(struct kmem_cache *));
+-extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+-				void (*work_fn)(struct kmem_cache *));
  
  #else /* CONFIG_MEMCG_KMEM */
  
 diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 6e00bdf8618d..99489d82ba78 100644
+index 99489d82ba78..5e7638f495d1 100644
 --- a/mm/slab_common.c
 +++ b/mm/slab_common.c
-@@ -691,17 +691,17 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
+@@ -708,7 +708,7 @@ static void kmemcg_workfn(struct work_struct *work)
+ 	put_online_mems();
  	put_online_cpus();
- }
  
--static void kmemcg_deactivate_workfn(struct work_struct *work)
-+static void kmemcg_workfn(struct work_struct *work)
- {
- 	struct kmem_cache *s = container_of(work, struct kmem_cache,
--					    memcg_params.deact_work);
-+					    memcg_params.work);
- 
- 	get_online_cpus();
- 	get_online_mems();
- 
- 	mutex_lock(&slab_mutex);
- 
--	s->memcg_params.deact_fn(s);
-+	s->memcg_params.work_fn(s);
- 
- 	mutex_unlock(&slab_mutex);
- 
-@@ -712,36 +712,36 @@ static void kmemcg_deactivate_workfn(struct work_struct *work)
+-	/* done, put the ref from slab_deactivate_memcg_cache_rcu_sched() */
++	/* done, put the ref from kmemcg_cache_deactivate() */
  	css_put(&s->memcg_params.memcg->css);
  }
  
--static void kmemcg_deactivate_rcufn(struct rcu_head *head)
-+static void kmemcg_rcufn(struct rcu_head *head)
- {
- 	struct kmem_cache *s = container_of(head, struct kmem_cache,
--					    memcg_params.deact_rcu_head);
-+					    memcg_params.rcu_head);
- 
- 	/*
--	 * We need to grab blocking locks.  Bounce to ->deact_work.  The
-+	 * We need to grab blocking locks.  Bounce to ->work.  The
- 	 * work item shares the space with the RCU head and can't be
- 	 * initialized eariler.
- 	 */
--	INIT_WORK(&s->memcg_params.deact_work, kmemcg_deactivate_workfn);
--	queue_work(memcg_kmem_cache_wq, &s->memcg_params.deact_work);
-+	INIT_WORK(&s->memcg_params.work, kmemcg_workfn);
-+	queue_work(memcg_kmem_cache_wq, &s->memcg_params.work);
+@@ -726,31 +726,21 @@ static void kmemcg_rcufn(struct rcu_head *head)
+ 	queue_work(memcg_kmem_cache_wq, &s->memcg_params.work);
  }
  
- /**
-  * slab_deactivate_memcg_cache_rcu_sched - schedule deactivation after a
-  *					   sched RCU grace period
-  * @s: target kmem_cache
-- * @deact_fn: deactivation function to call
-+ * @work_fn: deactivation function to call
-  *
-- * Schedule @deact_fn to be invoked with online cpus, mems and slab_mutex
-+ * Schedule @work_fn to be invoked with online cpus, mems and slab_mutex
-  * held after a sched RCU grace period.  The slab is guaranteed to stay
-- * alive until @deact_fn is finished.  This is to be used from
-+ * alive until @work_fn is finished.  This is to be used from
-  * __kmemcg_cache_deactivate().
-  */
- void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
--					   void (*deact_fn)(struct kmem_cache *))
-+					   void (*work_fn)(struct kmem_cache *))
+-/**
+- * slab_deactivate_memcg_cache_rcu_sched - schedule deactivation after a
+- *					   sched RCU grace period
+- * @s: target kmem_cache
+- * @work_fn: deactivation function to call
+- *
+- * Schedule @work_fn to be invoked with online cpus, mems and slab_mutex
+- * held after a sched RCU grace period.  The slab is guaranteed to stay
+- * alive until @work_fn is finished.  This is to be used from
+- * __kmemcg_cache_deactivate().
+- */
+-void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+-					   void (*work_fn)(struct kmem_cache *))
++static void kmemcg_cache_deactivate(struct kmem_cache *s)
  {
  	if (WARN_ON_ONCE(is_root_cache(s)) ||
--	    WARN_ON_ONCE(s->memcg_params.deact_fn))
-+	    WARN_ON_ONCE(s->memcg_params.work_fn))
+ 	    WARN_ON_ONCE(s->memcg_params.work_fn))
  		return;
  
++	__kmemcg_cache_deactivate(s);
++
  	if (s->memcg_params.root_cache->memcg_params.dying)
-@@ -750,8 +750,8 @@ void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 		return;
+ 
  	/* pin memcg so that @s doesn't get destroyed in the middle */
  	css_get(&s->memcg_params.memcg->css);
  
--	s->memcg_params.deact_fn = deact_fn;
--	call_rcu(&s->memcg_params.deact_rcu_head, kmemcg_deactivate_rcufn);
-+	s->memcg_params.work_fn = work_fn;
-+	call_rcu(&s->memcg_params.rcu_head, kmemcg_rcufn);
+-	s->memcg_params.work_fn = work_fn;
++	s->memcg_params.work_fn = __kmemcg_cache_deactivate_after_rcu;
+ 	call_rcu(&s->memcg_params.rcu_head, kmemcg_rcufn);
  }
  
- void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
+@@ -773,7 +763,7 @@ void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
+ 		if (!c)
+ 			continue;
+ 
+-		__kmemcg_cache_deactivate(c);
++		kmemcg_cache_deactivate(c);
+ 		arr->entries[idx] = NULL;
+ 	}
+ 	mutex_unlock(&slab_mutex);
+@@ -866,11 +856,10 @@ static void flush_memcg_workqueue(struct kmem_cache *s)
+ 	mutex_unlock(&slab_mutex);
+ 
+ 	/*
+-	 * SLUB deactivates the kmem_caches through call_rcu. Make
++	 * SLAB and SLUB deactivate the kmem_caches through call_rcu. Make
+ 	 * sure all registered rcu callbacks have been invoked.
+ 	 */
+-	if (IS_ENABLED(CONFIG_SLUB))
+-		rcu_barrier();
++	rcu_barrier();
+ 
+ 	/*
+ 	 * SLAB and SLUB create memcg kmem_caches through workqueue and SLUB
+diff --git a/mm/slub.c b/mm/slub.c
+index 9cb2eef62a37..ae3b1e49ecec 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4022,7 +4022,7 @@ int __kmem_cache_shrink(struct kmem_cache *s)
+ }
+ 
+ #ifdef CONFIG_MEMCG
+-static void kmemcg_cache_deact_after_rcu(struct kmem_cache *s)
++void __kmemcg_cache_deactivate_after_rcu(struct kmem_cache *s)
+ {
+ 	/*
+ 	 * Called with all the locks held after a sched RCU grace period.
+@@ -4048,12 +4048,6 @@ void __kmemcg_cache_deactivate(struct kmem_cache *s)
+ 	 */
+ 	slub_set_cpu_partial(s, 0);
+ 	s->min_partial = 0;
+-
+-	/*
+-	 * s->cpu_partial is checked locklessly (see put_cpu_partial), so
+-	 * we have to make sure the change is visible before shrinking.
+-	 */
+-	slab_deactivate_memcg_cache_rcu_sched(s, kmemcg_cache_deact_after_rcu);
+ }
+ #endif	/* CONFIG_MEMCG */
+ 
 -- 
 2.21.0
 
