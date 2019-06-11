@@ -2,131 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63B03D6BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E45993D6DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404801AbfFKTXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:23:42 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:60484 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387563AbfFKTXl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:23:41 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5BJEZF2148131;
-        Tue, 11 Jun 2019 19:22:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=w76MFlwvNKhZqtHwJRAkKoCnG/0YMyc0k1SshiGhIFo=;
- b=lyKS8EPYtHVV69hKRhxbZ6v/wFBGKQdRKMFGV75IF5Ly8f4gx63IiVxb73DDl0+AbJmm
- CdJvjrw/0ON/ZIZZDVd35XGZGYcOr6YUm+1+c4fVLRIbczJKiRbuQsnnHiPmGT32HeMI
- yPgGH8BMtCJNcZGgeKqNc9zQymR1ehBB6hPaiWuv6zwujyXlG+0dhRPfn5KJWPXSEiiY
- 86sDUCAy3UJthE28Vd8oZg8tOUjk962pLYKGbyc4eo09yWsg8uiILcyco70X+7o/NVSy
- 0l1s88pzby/RchV3V0Lwt3GnLLHzR1ZcAlylaXvzBxfsoWFdW5Th0f/oeh7B7jYF2E0Y MQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 2t02heqdfr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 19:22:42 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5BJLICV095933;
-        Tue, 11 Jun 2019 19:22:41 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2t024uk1m7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 19:22:41 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5BJMawp024319;
-        Tue, 11 Jun 2019 19:22:36 GMT
-Received: from [10.154.187.61] (/10.154.187.61)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Jun 2019 12:22:36 -0700
-Subject: Re: [PATCH 01/16] mm: use untagged_addr() for get_user_pages_fast
- addresses
-To:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <20190611144102.8848-1-hch@lst.de>
- <20190611144102.8848-2-hch@lst.de>
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <9145f3f9-4e14-df6a-87f5-663ad197e96e@oracle.com>
-Date:   Tue, 11 Jun 2019 13:22:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190611144102.8848-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=920
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906110123
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=962 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906110123
+        id S2405565AbfFKTa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:30:59 -0400
+Received: from mga14.intel.com ([192.55.52.115]:2866 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404808AbfFKTa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 15:30:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 12:30:57 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by orsmga007.jf.intel.com with ESMTP; 11 Jun 2019 12:30:56 -0700
+Message-ID: <d3d027a903524729454efa235155e5db75216e66.camel@intel.com>
+Subject: Re: [PATCH v7 25/27] mm/mmap: Add Shadow stack pages to memory
+ accounting
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Tue, 11 Jun 2019 12:22:48 -0700
+In-Reply-To: <1cfc7396-ca90-1933-34ad-b3d43ae52e08@intel.com>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+         <20190606200646.3951-26-yu-cheng.yu@intel.com>
+         <1cfc7396-ca90-1933-34ad-b3d43ae52e08@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/19 8:40 AM, Christoph Hellwig wrote:
-> This will allow sparc64 to override its ADI tags for
-> get_user_pages and get_user_pages_fast.
->=20
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+On Tue, 2019-06-11 at 10:55 -0700, Dave Hansen wrote:
+> On 6/6/19 1:06 PM, Yu-cheng Yu wrote:
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -1703,6 +1703,9 @@ static inline int accountable_mapping(struct file
+> > *file, vm_flags_t vm_flags)
+> >  	if (file && is_file_hugepages(file))
+> >  		return 0;
+> >  
+> > +	if (arch_copy_pte_mapping(vm_flags))
+> > +		return 1;
+> > +
+> >  	return (vm_flags & (VM_NORESERVE | VM_SHARED | VM_WRITE)) ==
+> > VM_WRITE;
+> >  }
+> >  
+> > @@ -3319,6 +3322,8 @@ void vm_stat_account(struct mm_struct *mm, vm_flags_t
+> > flags, long npages)
+> >  		mm->stack_vm += npages;
+> >  	else if (is_data_mapping(flags))
+> >  		mm->data_vm += npages;
+> > +	else if (arch_copy_pte_mapping(flags))
+> > +		mm->data_vm += npages;
+> >  }
+> 
+> This classifies shadow stack as data instead of stack.  That seems a wee
+> bit counterintuitive.  Why did you make this choice?
 
-Commit message is sparc64 specific but the goal here is to allow any
-architecture with memory tagging to use this. So I would suggest
-rewording the commit log. Other than that:
+I don't recall the reason; I will change it to stack and test it out.
 
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-
->  mm/gup.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/mm/gup.c b/mm/gup.c
-> index ddde097cf9e4..6bb521db67ec 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2146,7 +2146,7 @@ int __get_user_pages_fast(unsigned long start, in=
-t nr_pages, int write,
->  	unsigned long flags;
->  	int nr =3D 0;
-> =20
-> -	start &=3D PAGE_MASK;
-> +	start =3D untagged_addr(start) & PAGE_MASK;
->  	len =3D (unsigned long) nr_pages << PAGE_SHIFT;
->  	end =3D start + len;
-> =20
-> @@ -2219,7 +2219,7 @@ int get_user_pages_fast(unsigned long start, int =
-nr_pages,
->  	unsigned long addr, len, end;
->  	int nr =3D 0, ret =3D 0;
-> =20
-> -	start &=3D PAGE_MASK;
-> +	start =3D untagged_addr(start) & PAGE_MASK;
->  	addr =3D start;
->  	len =3D (unsigned long) nr_pages << PAGE_SHIFT;
->  	end =3D start + len;
->=20
-
-
+Yu-cheng
