@@ -2,133 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2E33D51B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE713D52A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:08:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406909AbfFKSIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:08:21 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:60354 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406922AbfFKSIT (ORCPT
+        id S2406966AbfFKSIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:08:44 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35556 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406685AbfFKSIn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:08:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1560276492; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0viPHiuXiALagAuJTSTKg7DcwkXlKKizYTwevl9VkvY=;
-        b=OTwdAqC2vxPwXL7L28WXviP21bWFGV8y+cGYif32mwzSRT/BCSzKwjk+Q1ux7qa69HTLuA
-        NMsb+cpARFlcB6oDVxpRdkKf5ip8o5k64lSVX4AREDhS8/6/Lvkb5Mo2To3RRy5ez6iVzS
-        Xz7JVemZ00WM1JLCzB/0e01Vrd1ZMHs=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     od@zcrc.me, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 5/5] MIPS: Remove dead code
-Date:   Tue, 11 Jun 2019 20:07:57 +0200
-Message-Id: <20190611180757.32299-5-paul@crapouillou.net>
-In-Reply-To: <20190611180757.32299-1-paul@crapouillou.net>
-References: <20190611180757.32299-1-paul@crapouillou.net>
+        Tue, 11 Jun 2019 14:08:43 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j19so12824335otq.2;
+        Tue, 11 Jun 2019 11:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O89jlWqoEX7q/G6CiVxiDDmlI/FOM0sB6BHEXW+0fFM=;
+        b=cHdSLiwdTyZbPGVz/qYnZJJCYplwKEbE0QdVdYmjqez+GGasa8TA9GEaZeZf+/Q/yc
+         8TIaqOiIijHlpQPN+b0BBZvmxtMd47x/uYK7Vk5XPD8mYxbl+yUPaIuF7vI0M7QzRtm0
+         HNeafuVGHu/sa/BCqZcATKXmtS7Eag+BS6pOHP7N3/7dY0uWHKLKUSLT34TY6AzMuvGD
+         Nr42TPWl2pxEfX5qbCwSGwJadJSQJ9gNcRUKKGUG7vKQZCsm/m8sJ9YWSh2bYRWL5CwC
+         TqB5iiaGNo0Yp7KTmdwXVV/+fDhjaVwXeP064+XZo1StqFJ682mO7SEdwmnKHz22qWhC
+         eMcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O89jlWqoEX7q/G6CiVxiDDmlI/FOM0sB6BHEXW+0fFM=;
+        b=VaYzh+rozdbOrVD40m3Udl774Bu1PnUio0GMtKQJveIg/k7Fka3tIiD8hRng1TeFPV
+         G0fJcU4XvCbdqaItEhjSzfyNO5CMzL9OH7wreiX1baW6jMHNxN13OZiQ8pyJaD54AQ03
+         3CoK5KsXTPfXP6iYOyskBylqma3iV4qABmS6MaOcVCKN7lfQV9I+wwE77f1p+4Wuqb1T
+         pZgmnWbuwL627zCNGilzqKanShPo2jEKGF/YMU5gDpnOTx74PTvVLR7fM5xRx9euZrUs
+         h5UtxUPUfawn2YWyhri/3AzAYYyG+Z5RIwRax1RLYAoVPmSTdt770oB7Ha6Xmrra4wov
+         cDWw==
+X-Gm-Message-State: APjAAAUvq3/opwI7sGMhDp1iUQui+g/X70Ma5DTjVz0tN1PT1jRKMJaq
+        sRJaMxZdagKzWYxTE0N9RFHvorBT9CKV6Xa5ork=
+X-Google-Smtp-Source: APXvYqx6SoLuddvsSFbGwWXlHsKKnRFjZOzVnVqvxNNOkTK4cQ1P337c36bckWzk3tAMnUuN46R+aOyOVrxZcNZhBbc=
+X-Received: by 2002:a9d:32a6:: with SMTP id u35mr36300662otb.81.1560276522291;
+ Tue, 11 Jun 2019 11:08:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190611135842.8396-1-narmstrong@baylibre.com>
+In-Reply-To: <20190611135842.8396-1-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 11 Jun 2019 20:08:31 +0200
+Message-ID: <CAFBinCAkwjf9oDV6AGPi2PzzQ2KNTXXDHW6FTfN3kXpDT6cFpg@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc3: meson-g12a: Add support for IRQ based OTG switching
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     balbi@kernel.org, linux-amlogic@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused <asm/mach-jz4740/clock.h> include.
+Hi Neil,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+On Tue, Jun 11, 2019 at 3:58 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add support for the OTG ID change interrupt to switch between Host
+> and Device mode.
+>
+> Tested on the Hardkernel Odroid-N2 board.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+with the three questions/comments below answered/addressed:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Notes:
-    v2: Rebase on v5.2-rc4
+> ---
+>  drivers/usb/dwc3/dwc3-meson-g12a.c | 32 ++++++++++++++++++++++++++++--
+>  1 file changed, 30 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+> index 2aec31a2eacb..e5c5ad0d529e 100644
+> --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
+> +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+the comment block at the start of the driver file also contains a
+"TOFIX" which points to the missing IRQ handling
+can you please also drop that TOFIX comment in lines 15/16?
 
- arch/mips/include/asm/mach-jz4740/clock.h | 22 ----------------------
- arch/mips/jz4740/board-qi_lb60.c          |  2 --
- arch/mips/jz4740/platform.c               |  2 --
- arch/mips/jz4740/time.c                   |  3 ---
- 4 files changed, 29 deletions(-)
- delete mode 100644 arch/mips/include/asm/mach-jz4740/clock.h
+> @@ -348,6 +348,22 @@ static enum usb_role dwc3_meson_g12a_role_get(struct device *dev)
+>                 USB_ROLE_HOST : USB_ROLE_DEVICE;
+>  }
+>
+> +static irqreturn_t dwc3_meson_g12a_irq_thread(int irq, void *data)
+> +{
+> +       struct dwc3_meson_g12a *priv = data;
+> +       enum phy_mode otg_id;
+> +
+> +       otg_id = dwc3_meson_g12a_get_id(priv);
+> +       if (otg_id != priv->otg_phy_mode) {
+> +               if (dwc3_meson_g12a_otg_mode_set(priv, otg_id))
+> +                       dev_warn(priv->dev, "Failed to switch OTG mode\n");
+> +       }
+> +
+> +       regmap_update_bits(priv->regmap, USB_R5, USB_R5_ID_DIG_IRQ, 0);
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+>  static struct device *dwc3_meson_g12_find_child(struct device *dev,
+>                                                 const char *compatible)
+>  {
+> @@ -374,7 +390,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+>         void __iomem *base;
+>         struct resource *res;
+>         enum phy_mode otg_id;
+> -       int ret, i;
+> +       int ret, i, irq;
+>
+>         priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+> @@ -436,6 +452,19 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+>         /* Get dr_mode */
+>         priv->otg_mode = usb_get_dr_mode(dev);
+>
+> +       if (priv->otg_mode == USB_DR_MODE_OTG) {
+> +               /* Ack irq before registering */
+> +               regmap_update_bits(priv->regmap, USB_R5,
+> +                                  USB_R5_ID_DIG_IRQ, 0);
+I assume that either the IRQ line is:
+- always enabled
+- enabled when (USB_R5_ID_DIG_EN_0 | USB_R5_ID_DIG_EN_1 |
+USB_R5_ID_DIG_TH_MASK) are set (which we already do in
+dwc3_meson_g12a_usb_init)
 
-diff --git a/arch/mips/include/asm/mach-jz4740/clock.h b/arch/mips/include/asm/mach-jz4740/clock.h
-deleted file mode 100644
-index 600d5051691a..000000000000
---- a/arch/mips/include/asm/mach-jz4740/clock.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- *  Copyright (C) 2010, Lars-Peter Clausen <lars@metafoo.de>
-- */
--
--#ifndef __ASM_JZ4740_CLOCK_H__
--#define __ASM_JZ4740_CLOCK_H__
--
--enum jz4740_wait_mode {
--	JZ4740_WAIT_MODE_IDLE,
--	JZ4740_WAIT_MODE_SLEEP,
--};
--
--void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode);
--
--void jz4740_clock_suspend(void);
--void jz4740_clock_resume(void);
--
--void jz4740_clock_udc_enable_auto_suspend(void);
--void jz4740_clock_udc_disable_auto_suspend(void);
--
--#endif
-diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
-index 071e9d94eea7..d07ee418e5b0 100644
---- a/arch/mips/jz4740/board-qi_lb60.c
-+++ b/arch/mips/jz4740/board-qi_lb60.c
-@@ -37,8 +37,6 @@
- 
- #include <asm/mach-jz4740/platform.h>
- 
--#include "clock.h"
--
- /* GPIOs */
- #define QI_LB60_GPIO_KEYOUT(x)		(JZ_GPIO_PORTC(10) + (x))
- #define QI_LB60_GPIO_KEYIN(x)		(JZ_GPIO_PORTD(18) + (x))
-diff --git a/arch/mips/jz4740/platform.c b/arch/mips/jz4740/platform.c
-index 4b89abb17950..c74c99f5951d 100644
---- a/arch/mips/jz4740/platform.c
-+++ b/arch/mips/jz4740/platform.c
-@@ -21,8 +21,6 @@
- #include <linux/serial_core.h>
- #include <linux/serial_8250.h>
- 
--#include "clock.h"
--
- /* USB Device Controller */
- struct platform_device jz4740_udc_xceiv_device = {
- 	.name = "usb_phy_generic",
-diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
-index a3260c754e65..cb768e560d8b 100644
---- a/arch/mips/jz4740/time.c
-+++ b/arch/mips/jz4740/time.c
-@@ -13,13 +13,10 @@
- #include <linux/clockchips.h>
- #include <linux/sched_clock.h>
- 
--#include <asm/mach-jz4740/clock.h>
- #include <asm/mach-jz4740/irq.h>
- #include <asm/mach-jz4740/timer.h>
- #include <asm/time.h>
- 
--#include "clock.h"
--
- #define TIMER_CLOCKEVENT 0
- #define TIMER_CLOCKSOURCE 1
- 
--- 
-2.21.0.593.g511ec345e18
+> +               irq = platform_get_irq(pdev, 0);
+do we need to check the IRQ before trying to request it?
+drivers/gpu/drm/meson/meson_dw_hdmi.c and drivers/usb/dwc3/host.c for
+example error out if irq number is lower than 0
 
+(it's great to see that this only required a small patch to make it work :))
+
+
+Martin
