@@ -2,139 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF95941911
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 719684191D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:45:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408261AbfFKXkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:40:25 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44129 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408242AbfFKXkX (ORCPT
+        id S2406980AbfFKXpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:45:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36196 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404979AbfFKXpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:40:23 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t7so3165579plr.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:40:23 -0700 (PDT)
+        Tue, 11 Jun 2019 19:45:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r7so2540414pfl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:45:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vrcKiJncQCvJeYdovjwcGHLQkpFI9UFvyKLS0tgyyJA=;
-        b=fxr+p7sgq0hHqMWtLVWiiVUmwvCK2K9niwmP89I8eDAL9RbspWdO1Z1sQG60RUq0Jh
-         T2MZsogyjVAyLqkT3ee99gA8N013logxMHyCVkL7mI3YgQv2TKxq/hfKC0YKDOW0Tejm
-         rPOIm4epv87XbkFyGuS0bvymTWIYvDCh+1NrywAgLDi61i8nwyH0pvvPXN+tS0oTBppj
-         21RpX2SJBsR0PDumQJSP7tyvgCg+e7HUPC5gc46suhRZBioDhD1l7sO+GOgTaRyKmgCJ
-         5DYz2JA/jf2MVMgTV5F8Sm7cG6RQ5CQdljOJ1kjjHo3+2itX5/elS5w8RqMKPWEOBokX
-         zYSw==
+        bh=EE5fao1AUitHL11bqb8RzdJd171k3eMtm5FzLnxkzMU=;
+        b=D7fip/1V+5bW+B8dWrY7plbTkotwRxUvYjzMcfs/yAIf4igp83VQrrPfKXjepLI22P
+         E9k+82PdFR2nwcil8hYAmTIjZ6P6SEqn8wfklTSbnLRAhXcaJ2n20+R8erkT8PY7i6sI
+         2+qdr/vOBxAQ2qk5YyJ+KWgnMgaojGDTXLC4U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vrcKiJncQCvJeYdovjwcGHLQkpFI9UFvyKLS0tgyyJA=;
-        b=JVxkYXq/elM8sIbWNXqvOyjOqBxE8xE/63YHK1SglZul2+0rSRLlXJfrnQNP3BKtv1
-         0QaU4H9ZRHaH3nhzpqNQhHY2SS3+ZCfeaBjTOGScbTAKhCtJi1fXTk5sByk/z6b1pZvq
-         0mOhbL1CdnmTnXTgc9xfECP/sso6bURFfg4vk7TVy1IAE76FLlKgRsTTasR7PcOV3IOP
-         ulSrLeP1jIwFe++LF9aBYhYljDuqGUnMHicWn/ZuOhmkKyC/rlwF7eJBrBaFPZYVQthe
-         5Jsp7lVYHZJpmhbn14X9FS0FJYwANSwQyX1D425EvadPBE5vVduGftX0xMX4UaRWaEwB
-         9LuQ==
-X-Gm-Message-State: APjAAAUZbZTUXcX6siQQRxcsKqGavKS8n/edNsCk9XKAO/ob/xBTbwHF
-        JvN7T++Ic3gPalhzAdEC7RCRUg==
-X-Google-Smtp-Source: APXvYqwVvSeKZ9+8pgl/U+yQv0XwTRD+oXRVoAp/CkKUZM51Vh73fYHUpTMj6hpKkhxVYtdA9svC7A==
-X-Received: by 2002:a17:902:d915:: with SMTP id c21mr11863733plz.335.1560296422678;
-        Tue, 11 Jun 2019 16:40:22 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h11sm17090333pfn.170.2019.06.11.16.40.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 16:40:22 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 16:40:20 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     robh+dt@kernel.org, agross@kernel.org, vkoul@kernel.org,
-        evgreen@chromium.org, daidavid1@codeaurora.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcs404: Add interconnect provider DT
- nodes
-Message-ID: <20190611234020.GX4814@minitux>
-References: <20190611164157.24656-1-georgi.djakov@linaro.org>
- <20190611164157.24656-6-georgi.djakov@linaro.org>
+        bh=EE5fao1AUitHL11bqb8RzdJd171k3eMtm5FzLnxkzMU=;
+        b=s0d3LeLdJ/MFxzjzYFafbniWrtAFNpJXeXTWFpjqv6c+2yVUNaQTT3AhBJw/2z2ctQ
+         a2+yIx6wQvqzP55kW7PVyu0Y0QUk3ZivtizBCc5MXHlF10c2+AFO1rRRCcwPW5vxNOdU
+         pp8WFnvRPUpFqHQ2UnsXL16PBqRgxQYILbkS4ET6rlCWmnYMtlen3H+35TH1eKNv6u1z
+         emjtXXViunazsrZnJ1QdA58EZi8o7OFRKK+MpgWYNNXXWE5dvn1aya4whEbey4jaW0mq
+         zwafkPgeDyV9getWx0y7D3AEDv+Y1iDvJkYSL56WVEHvjUY0ApTURgDpxILxnKwM6OQi
+         9KnQ==
+X-Gm-Message-State: APjAAAUAGkEuKfNPQ6Qyjkrsh8Loo9O+/Z0Snjtv0l/lpuA+GL5Rx1Dm
+        AdR4NaHf8P2I7wF+Tq3HCkbN3Q==
+X-Google-Smtp-Source: APXvYqxcqR3WSelpvX3tCqTRattGgRgcJ2IJb5b+N+ksFZzMMp3sg9U/czcW6OvmAOE7+XoNWsiLwQ==
+X-Received: by 2002:a63:5c1a:: with SMTP id q26mr23389230pgb.260.1560296746374;
+        Tue, 11 Jun 2019 16:45:46 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id 16sm14711166pfo.65.2019.06.11.16.45.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 16:45:45 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 16:45:43 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Qais.Yousef@arm.com, juri.lelli@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 1/5] PM / QOS: Pass request type to
+ dev_pm_qos_{add|remove}_notifier()
+Message-ID: <20190611234543.GI137143@google.com>
+References: <cover.1560163748.git.viresh.kumar@linaro.org>
+ <c263629a53dba33f9e7190b82172a88cc79654d1.1560163748.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190611164157.24656-6-georgi.djakov@linaro.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <c263629a53dba33f9e7190b82172a88cc79654d1.1560163748.git.viresh.kumar@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 11 Jun 09:41 PDT 2019, Georgi Djakov wrote:
-
-> Add the DT nodes for the network-on-chip interconnect buses found
-> on qcs404-based platforms.
+On Mon, Jun 10, 2019 at 04:21:32PM +0530, Viresh Kumar wrote:
+> In order to use the same set of routines to register notifiers for
+> different request types, update the existing
+> dev_pm_qos_{add|remove}_notifier() routines with an additional
+> parameter: request-type.
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> For now, it only supports resume-latency request type.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
-> 
-> v3:
-> - Updated according to the new binding: added reg property and moved under the
->   "soc" node.
-> 
->  arch/arm64/boot/dts/qcom/qcs404.dtsi | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> index ffedf9640af7..07ff592233b6 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  // Copyright (c) 2018, Linaro Limited
->  
-> +#include <dt-bindings/interconnect/qcom,qcs404.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/qcom,gcc-qcs404.h>
->  #include <dt-bindings/clock/qcom,rpmcc.h>
-> @@ -411,6 +412,33 @@
->  			#interrupt-cells = <4>;
->  		};
->  
-> +		bimc: interconnect@400000 {
+>  Documentation/power/pm_qos_interface.txt | 10 ++++++----
+>  drivers/base/power/domain.c              |  8 +++++---
+>  drivers/base/power/qos.c                 | 14 ++++++++++++--
+>  include/linux/pm_qos.h                   | 12 ++++++++----
+>  4 files changed, 31 insertions(+), 13 deletions(-)
 
-Please maintain sort order of address, node name, label name. So this
-should go between rng@e3000 and remoteproc@b00000.
+My QoS background is nil, but this looks reasonable to me:
 
-Other than that:
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-> +			reg = <0x00400000 0x80000>;
-> +			compatible = "qcom,qcs404-bimc";
-> +			#interconnect-cells = <1>;
-> +			clock-names = "bus_clk", "bus_a_clk";
-> +			clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
-> +				<&rpmcc RPM_SMD_BIMC_A_CLK>;
-> +		};
-> +
-> +		pcnoc: interconnect@500000 {
-> +			reg = <0x00500000 0x15080>;
-> +			compatible = "qcom,qcs404-pcnoc";
-> +			#interconnect-cells = <1>;
-> +			clock-names = "bus_clk", "bus_a_clk";
-> +			clocks = <&rpmcc RPM_SMD_PNOC_CLK>,
-> +				<&rpmcc RPM_SMD_PNOC_A_CLK>;
-> +		};
-> +
-> +		snoc: interconnect@580000 {
-> +			reg = <0x00580000 0x23080>;
-> +			compatible = "qcom,qcs404-snoc";
-> +			#interconnect-cells = <1>;
-> +			clock-names = "bus_clk", "bus_a_clk";
-> +			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
-> +				<&rpmcc RPM_SMD_SNOC_A_CLK>;
-> +		};
-> +
->  		sdcc1: sdcc@7804000 {
->  			compatible = "qcom,sdhci-msm-v5";
->  			reg = <0x07804000 0x1000>, <0x7805000 0x1000>;
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
