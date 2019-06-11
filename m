@@ -2,85 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4394163A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7C841640
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:40:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406512AbfFKUjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 16:39:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33776 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406156AbfFKUjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:39:51 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2FE74883BA;
-        Tue, 11 Jun 2019 20:39:51 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-4.gru2.redhat.com [10.97.112.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DCDC91972D;
-        Tue, 11 Jun 2019 20:39:50 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 43525105163;
-        Tue, 11 Jun 2019 17:39:27 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x5BKdNTN013899;
-        Tue, 11 Jun 2019 17:39:23 -0300
-Date:   Tue, 11 Jun 2019 17:39:22 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v3 1/4] KVM: LAPIC: Make lapic timer unpinned when timer
- is injected by pi
-Message-ID: <20190611203919.GB7520@amt.cnet>
-References: <1560255429-7105-1-git-send-email-wanpengli@tencent.com>
- <1560255429-7105-2-git-send-email-wanpengli@tencent.com>
+        id S2406571AbfFKUkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 16:40:42 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:35535 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406545AbfFKUkl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 16:40:41 -0400
+Received: from [192.168.1.110] ([95.118.191.213]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MrQ2R-1iPHOT18lz-00oVWA; Tue, 11 Jun 2019 22:40:30 +0200
+Subject: Re: Coccinelle: api: add devm_platform_ioremap_resource script
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+References: <20190406061112.31620-1-himanshujha199640@gmail.com>
+ <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
+ <alpine.DEB.2.21.1906081925090.2543@hadrien>
+ <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
+Date:   Tue, 11 Jun 2019 22:40:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1560255429-7105-2-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 11 Jun 2019 20:39:51 +0000 (UTC)
+In-Reply-To: <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:f+Ht5hYFuUjeYvOKk6o2JFMqi39l5C6wxnnE8+7O0BKjk77Q6Gu
+ qW9aH+F0ZT8XX2DGUe0Sjk2ayDE4lx9wopAmDNfaFfijlhzOFpqsy8LoaCD8wFHpI0IZUel
+ ovAoUFC4eCcRwscNpmi84MD7qv7J/UNi3mwOZn58//9eJqryuQDpj3WsV2SpPl7aThOemU/
+ BtDuGhGNhqpfa9fFMTlTQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yXeVLoxn+9I=:RwY/bgJO0YPNmR9AYAPBeS
+ /+qzsjqiuP5IAgj2OapVuADyWvI6cWGzbmF3A6aE5gtJaRh2g2WierULflfOPPqEfdaplzAFA
+ yo/GMjqfiPMx++tBUZMbrDF7UeX8G8tAOTnX1MPCa+ToME7XY+iIpkCw+7cvN2Fa/Pv0R1bw9
+ 4cFL42FCsm+z5AID2Owml/OcPwE1KZmnEQ8jfzxuoBdiuiKaV5vvw4xV5Lz+uWTRyqKIOIbo2
+ yu2birfHdrv/orQpu7CQRHhAxwX0Zw5QGhWjbwIc1U7rzNsXpk7D2OmniUi46t7eIA/wHd/od
+ /MfCYikLODkOX66TcDDtgAswB+J6ko+0O7zOJH6xSAD9t517IfZQ1DH8S9oXl5vxRMDzAQ2pm
+ r9DkylZpbhuI0qTH7s778dPkaX0KSP2MvYf2VVfsI9ILSI8MjDiyRi31Yehmm3YPfLsKcI44o
+ MalWbbQurUYeI/DJj3Xh/jxYYlbtyfXn3BPIE4Z72CHa+3Xz31NLb02XLYQlXZpvYN2oiWW4k
+ aGTzHQUIvQzA7Y2nSLZkNtDaF0B74I7AlkzGshi5yCOEdjRU1R5gVruYCCif23N98W9UuB6TJ
+ 2IjfyxdJSIXsUtwC2oWD0Y4444cuHK+ThFlLQRj5FgW3rBhcK9lOV6wDPgD1KkpTx0R8+5znJ
+ pBnkvkZo8TA9DEHzXObMdjfIAFDrUbZRPZtLpjHYUqpVBRZwN0T6E7rsOEAPPPZxwQRH1wVcW
+ qbaQS5yN+aTEQmPw5QA13iLHpBYrEbWpvjePeWIqHUgX52/KeA8a1qe/NdY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 08:17:06PM +0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 09.06.19 10:55, Markus Elfring wrote:
+
+<snip>
+
+>> But there is not usually any interesting formatting on the left side of an
+>> assignment (ie typically no newlines or comments).
 > 
-> Make lapic timer unpinned when timer is injected by posted-interrupt,
-> the emulated timer can be offload to the housekeeping cpus.
+> Is there any need to trigger additional source code reformatting?
 > 
-> The host admin should fine tuned, e.g. dedicated instances scenario 
-> w/ nohz_full cover the pCPUs which vCPUs resident, several pCPUs 
-> surplus for housekeeping, disable mwait/hlt/pause vmexits to occupy 
-> the pCPUs, fortunately preemption timer is disabled after mwait is 
-> exposed to guest which makes emulated timer offload can be possible. 
+>> I can see no purpose to factorizing the right parenthesis.
+> 
+> These characters at the end of such a function call should be kept unchanged.
 
-Li,
+Agreed. OTOH, we all know that spatch results still need to be carefully
+checked. I suspect trying to teach it all the formatting rules of the
+kernel isn't an easy task.
 
-Nice!
+> The flag “IORESOURCE_MEM” is passed as the second parameter for the call
+> of the function “platform_get_resource” in this refactoring.
 
-I think you can drop the HRTIMER_MODE_ABS_PINNED and
-instead have 
+In that particular case, we maybe should consider separate inline
+helpers instead of passing this is a parameter.
 
-void kvm_set_pending_timer(struct kvm_vcpu *vcpu)
-{
-        kvm_make_request(KVM_REQ_PENDING_TIMER, vcpu);
-	kvm_vcpu_kick(vcpu);
-}
+Maybe it would even be more efficient to have completely separate
+versions of devm_platform_ioremap_resource(), so we don't even have
+to pass that parameter on stack.
 
-As an alternative to commit 61abdbe0bcc2b32745ab4479cc550f4c1f518ee2
-(as a first patch in your series).
 
-This will make the logic simpler (and timer migration, for
-nonhousekeeping case, ensures timer is migrated).
+--mtx
 
-Also, should make this work for non housekeeping case as well.
-(But that can be done later).
-
-Thanks.
-
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
