@@ -2,62 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30D3A3C75E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 473D23C75C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405034AbfFKJij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 05:38:39 -0400
-Received: from foss.arm.com ([217.140.110.172]:56400 "EHLO foss.arm.com"
+        id S2405011AbfFKJif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 05:38:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:56368 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405018AbfFKJig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 05:38:36 -0400
+        id S2404985AbfFKJib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 05:38:31 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24DAAFEC;
-        Tue, 11 Jun 2019 02:38:36 -0700 (PDT)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 85AEE3F77D;
-        Tue, 11 Jun 2019 02:38:34 -0700 (PDT)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        marc.zyngier@arm.com, yuzenghui@huawei.com,
-        wanghaibin.wang@huawei.com, james.morse@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
-        liwei391@huawei.com, Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v4 8/8] arm64: Allow selecting Pseudo-NMI again
-Date:   Tue, 11 Jun 2019 10:38:13 +0100
-Message-Id: <1560245893-46998-9-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560245893-46998-1-git-send-email-julien.thierry@arm.com>
-References: <1560245893-46998-1-git-send-email-julien.thierry@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD815EBD;
+        Tue, 11 Jun 2019 02:38:30 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF8543F77D;
+        Tue, 11 Jun 2019 02:38:29 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 10:38:23 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Yu Zhao <yuzhao@google.com>,
+        linux-mm@kvack.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH] mm: treewide: Clarify pgtable_page_{ctor,dtor}() naming
+Message-ID: <20190611093822.GA26409@lakrids.cambridge.arm.com>
+References: <20190610163354.24835-1-mark.rutland@arm.com>
+ <20190610130511.310e8d2cc8d6b02b2c3e238d@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610130511.310e8d2cc8d6b02b2c3e238d@linux-foundation.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that Pseudo-NMI are fixed, allow the use of that option again
+On Mon, Jun 10, 2019 at 01:05:11PM -0700, Andrew Morton wrote:
+> On Mon, 10 Jun 2019 17:33:54 +0100 Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > The naming of pgtable_page_{ctor,dtor}() seems to have confused a few
+> > people, and until recently arm64 used these erroneously/pointlessly for
+> > other levels of pagetable.
+> > 
+> > To make it incredibly clear that these only apply to the PTE level, and
+> > to align with the naming of pgtable_pmd_page_{ctor,dtor}(), let's rename
+> > them to pgtable_pte_page_{ctor,dtor}().
+> > 
+> > The bulk of this conversion was performed by the below Coccinelle
+> > semantic patch, with manual whitespace fixups applied within macros, and
+> > Documentation updated by hand.
+> 
+> eep.  I get a spectacular number of rejects thanks to Mike's series
+> 
+> asm-generic-x86-introduce-generic-pte_allocfree_one.patch
+> alpha-switch-to-generic-version-of-pte-allocation.patch
+> arm-switch-to-generic-version-of-pte-allocation.patch
+> arm64-switch-to-generic-version-of-pte-allocation.patch
+> csky-switch-to-generic-version-of-pte-allocation.patch
+> m68k-sun3-switch-to-generic-version-of-pte-allocation.patch
+> mips-switch-to-generic-version-of-pte-allocation.patch
+> nds32-switch-to-generic-version-of-pte-allocation.patch
+> nios2-switch-to-generic-version-of-pte-allocation.patch
+> parisc-switch-to-generic-version-of-pte-allocation.patch
+> riscv-switch-to-generic-version-of-pte-allocation.patch
+> um-switch-to-generic-version-of-pte-allocation.patch
+> unicore32-switch-to-generic-version-of-pte-allocation.patch
+> 
+> But at least they will make your patch smaller!
 
-This reverts commit 96a13f57b946be7a6c10405e4bd780c0b6b6fe63 ("arm64:
-Kconfig: Make ARM64_PSEUDO_NMI depend on BROKEN for now").
+Aha; thanks for the heads-up!
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Given this cleanup isn't urgent, I'll sit on it until the above has
+settled.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 8acc40e..a9dde24 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1423,7 +1423,6 @@ config ARM64_MODULE_PLTS
-
- config ARM64_PSEUDO_NMI
- 	bool "Support for NMI-like interrupts"
--	depends on BROKEN # 1556553607-46531-1-git-send-email-julien.thierry@arm.com
- 	select CONFIG_ARM_GIC_V3
- 	help
- 	  Adds support for mimicking Non-Maskable Interrupts through the use of
---
-1.9.1
+Mark.
