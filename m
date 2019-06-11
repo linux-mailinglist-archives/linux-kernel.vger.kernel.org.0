@@ -2,98 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D48C3D3E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B17E3D3EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406055AbfFKRWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:22:23 -0400
-Received: from mail-eopbgr740051.outbound.protection.outlook.com ([40.107.74.51]:38081
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405821AbfFKRWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:22:23 -0400
+        id S2406130AbfFKRXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:23:14 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:46837 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405821AbfFKRXK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 13:23:10 -0400
+Received: by mail-vk1-f193.google.com with SMTP id c200so1979240vke.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 10:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2qveEYYJpYp9alGa55/6JKsEiC6BHhb/niSVyfqBPKI=;
- b=X0hfOSxAiTBtKTF0gNDoFBXvk14mTbcuvVG5IaRixDoi8+kaPiJ0rPYf9Asyi69EOPSGPoT6HbWA9EY6jEThD8x7l0uJ3EQOE0BLj4KQ/rLWbWpDTKx0TwjfPZ7ULS7kQvErcMbHAMKNbXLV9BIqC7b9ygg7fEJSyMgKwkAC6FQ=
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
- DM6PR12MB3418.namprd12.prod.outlook.com (20.178.198.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.17; Tue, 11 Jun 2019 17:22:21 +0000
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::bcaf:86d4:677f:9555]) by DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::bcaf:86d4:677f:9555%6]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
- 17:22:21 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH] sched/topology: Improve load balancing on AMD EPYC
-Thread-Topic: [PATCH] sched/topology: Improve load balancing on AMD EPYC
-Thread-Index: AQHVG7eo9DadWxocuEyUuoulbDK/BaaNWbaAgAgVJQCAAU4lgA==
-Date:   Tue, 11 Jun 2019 17:22:21 +0000
-Message-ID: <18994abb-a2a8-47f4-9a35-515165c75942@amd.com>
-References: <20190605155922.17153-1-matt@codeblueprint.co.uk>
- <20190605180035.GA3402@hirez.programming.kicks-ass.net>
- <20190610212620.GA4772@codeblueprint.co.uk>
-In-Reply-To: <20190610212620.GA4772@codeblueprint.co.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR01CA0001.prod.exchangelabs.com (2603:10b6:805:b6::14)
- To DM6PR12MB3163.namprd12.prod.outlook.com (2603:10b6:5:182::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.84.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f30f4325-0528-415b-daf2-08d6ee915c81
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3418;
-x-ms-traffictypediagnostic: DM6PR12MB3418:
-x-microsoft-antispam-prvs: <DM6PR12MB3418F033CA9EE812E879EA33ECED0@DM6PR12MB3418.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 006546F32A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(136003)(376002)(366004)(199004)(189003)(102836004)(66476007)(2906002)(76176011)(386003)(305945005)(31686004)(66446008)(73956011)(64756008)(66556008)(53546011)(99286004)(316002)(7736002)(6436002)(36756003)(6506007)(25786009)(71190400001)(52116002)(71200400001)(110136005)(14444005)(54906003)(4744005)(5660300002)(66946007)(256004)(229853002)(66066001)(6116002)(8676002)(81156014)(14454004)(3846002)(6512007)(86362001)(8936002)(81166006)(6246003)(26005)(31696002)(186003)(11346002)(72206003)(476003)(2616005)(478600001)(68736007)(53936002)(6486002)(4326008)(486006)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3418;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: M0TG0kFdhopdj0seotlZ0X3we3FJhLEp/pv907HLKsEt+euvQgZcabsCx1ULaO0yHw944ldpPKJxcsnKHrptAxEbXDZHuBltkdPW4aylkRD3ah5xYN40bEMsNrwGtZ0Egk4/ur7AYW8QK34LkkkrM25Mefqr6zJe1X3Uu0kvLpKRqwNG/GbevWVExFPkJQmaQt2lurY2c8CMd1fqEDZe4g7rf8lOR5V+F1w3Yy1xpqXcGoozoSHKdREECh42m9dqwdg+teViHpP5hfloX/5l19/NwgVd47GpZiq1e0Gs5CEaUXAupyrCix1u1lmYR3Kq+Q2p1qbeABRw3mjtrpRhPcGJyFYDwc4AG0mli7hINL5ohcC4ZrHFsGTJzQVT8oORoq+YaOqRNUSHJfU/VC5LYzBNm5TWKheuY6UqiqFz5Ck=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <62720F147696C743911EA712811F493F@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6ekM0Tx58LmlXGIf4GqN0uasBwVkT/hH33CThSLb798=;
+        b=ohJRVMM6DIAFbA/yHTwIOxp/NmQU2VC/CmthiVlLnrkWgSho10GkDrhqCah71eaW4L
+         pernzBf4JqxXdqZfS4CbwMlSfwid12kU/yhewcP5016JDTcja6Cv316Yi9IEsSzfhvER
+         e2XLwY7IeFHpwXW5y6Zd8wTIbb1XoQ7BCLlKVLwM6G1rAvmtFXFc1smWvQFGL4C7mDbc
+         Xv9vzxbwf6+lHjLs0w8WtLtfZBpgRxqnj6T+qKUOzDmVjE3/bC+Fvx1F6CF1fhO0Y4KX
+         cKnVKdHZzwR9gJkxAU9mqdCZa4/YJyYKdzg+inaI4ZT6vFUKFfaZDhy9dPswGOX++3P1
+         Zj9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6ekM0Tx58LmlXGIf4GqN0uasBwVkT/hH33CThSLb798=;
+        b=iMne7xS2GADdqcM7v0m2PrhcnFocyHMgxrJdpykltXujpPM/4YXOIha6UVgqxEzLea
+         KAbcRkKj2QKQQqEci1HZZUfQ4UpuP4LLJTYdAgw+QSWExwqZmn3vVlFwHc19R/vqdQHe
+         wiRfetRbGNd8DEm7ezpgzMuyCI3IObVbXB06IHbmsserQ/53yOuDzeXkcYGxsXRAjqDA
+         GAJuLAW87RSeIoc6or7hFyWlS6I8msf6oeO+507H4TwPBCpJ9DHR1hhTGrgvN/0voHwl
+         ZKmlwtcZ0yilYDtSkwLvtQo+oc0+brTpvQMrRPxvWU7SUk+wFvvGNlvvqnkYs3UWfcpl
+         zwLw==
+X-Gm-Message-State: APjAAAUiYh7sfT1pAaDmR1GIch5izBp0fGXgbcNjfAUMxw4FgRxTP6yT
+        SDB2V17khcp4ZQKuZkTMh4SY/rskU9vO2xDsFpo=
+X-Google-Smtp-Source: APXvYqxOiH2kCkQzr82l3xFLUKSImtLMVMJRBIPliMpFOoL2sfq9Du4QEnQyXNMWrra3h3Fr8G0T6esyqjvidclqga0=
+X-Received: by 2002:a1f:c402:: with SMTP id u2mr16839124vkf.68.1560273789368;
+ Tue, 11 Jun 2019 10:23:09 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f30f4325-0528-415b-daf2-08d6ee915c81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 17:22:21.3034
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tlendack@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3418
+References: <20190611092144.11194-1-oded.gabbay@gmail.com> <20190611095857.GB24058@kroah.com>
+ <20190611151753.GA11404@infradead.org> <20190611152655.GA3972@kroah.com> <CAFCwf13A73AxKzaa7Dk3tU-1NDgTFs4+xCO2os7SuSyUHZ9Z3Q@mail.gmail.com>
+In-Reply-To: <CAFCwf13A73AxKzaa7Dk3tU-1NDgTFs4+xCO2os7SuSyUHZ9Z3Q@mail.gmail.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 11 Jun 2019 20:22:43 +0300
+Message-ID: <CAFCwf134nTD4FM_9Q+THQ7ZAZzGxhs15O6EheaRJMqM5wxi+aA@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] habanalabs: enable 64-bit DMA mask in POWER9
+To:     Greg KH <gregkh@linuxfoundation.org>, linuxppc-dev@ozlabs.org,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8xMC8xOSA0OjI2IFBNLCBNYXR0IEZsZW1pbmcgd3JvdGU6DQo+IE9uIFdlZCwgMDUgSnVu
-LCBhdCAwODowMDozNVBNLCBQZXRlciBaaWpsc3RyYSB3cm90ZToNCj4+DQo+PiBBbmQgdGhlbiB3
-ZSBoYWQgdHdvIG1hZ2ljIHZhbHVlcyA6Lw0KPj4NCj4+IFNob3VsZCB3ZSBub3QgJ2ZpeCcgUkVD
-TEFJTV9ESVNUQU5DRSBmb3IgRVBZQyBvciBzb21ldGhpbmc/IEJlY2F1c2UNCj4+IHN1cmVseSwg
-aWYgd2Ugd2FudCB0byBsb2FkLWJhbGFuY2UgYWdyZXNzaXZlbHkgb3ZlciAzMCwgdGhlbiBzbyB0
-b28NCj4+IHNob3VsZCB3ZSBkbyBub2RlX3JlY2xhaW0oKSBJJ20gdGhpa25pbmcuDQo+IA0KPiBZ
-ZWFoIHdlIGNhbiBmaXggaXQganVzdCBmb3IgRVBZQywgTWVsIHN1Z2dlc3RlZCB0aGF0IGFwcHJv
-YWNoIG9yaWdpbmFsbHkuDQo+IA0KPiBTdXJhdmVlLCBUb20sIHdoYXQncyB0aGUgYmVzdCB3YXkg
-dG8gZGV0ZWN0IHRoZXNlIEVQWUMgbWFjaGluZXMgdGhhdCBuZWVkIHRvDQo+IG92ZXJyaWRlIFJF
-Q0xBSU1fRElTVEFOQ0U/DQoNCllvdSBzaG91bGQgYmUgYWJsZSB0byBkbyBpdCBiYXNlZCBvbiB0
-aGUgZmFtaWx5LiBUaGVyZSdzIGFuIGluaXRfYW1kX3puKCkNCmZ1bmN0aW9uIGluIGFyY2gveDg2
-L2tlcm5lbC9jcHUvYW1kLmMuICBZb3UgY2FuIGFkZCBzb21ldGhpbmcgdGhlcmUgb3IsDQpzaW5j
-ZSBpbml0X2FtZF96bigpIHNldHMgWDg2X0ZFQVRVUkVfWkVOLCB5b3UgY291bGQgY2hlY2sgZm9y
-IHRoYXQgaWYgeW91DQpwcmVmZXIgcHV0dGluZyBpdCBpbiBhIGRpZmZlcmVudCBsb2NhdGlvbi4N
-Cg0KVGhhbmtzLA0KVG9tDQoNCj4gDQo=
+On Tue, Jun 11, 2019 at 8:03 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
+>
+> On Tue, Jun 11, 2019 at 6:26 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Jun 11, 2019 at 08:17:53AM -0700, Christoph Hellwig wrote:
+> > > On Tue, Jun 11, 2019 at 11:58:57AM +0200, Greg KH wrote:
+> > > > That feels like a big hack.  ppc doesn't have any "what arch am I
+> > > > running on?" runtime call?  Did you ask on the ppc64 mailing list?  I'm
+> > > > ok to take this for now, but odds are you need a better fix for this
+> > > > sometime...
+> > >
+> > > That isn't the worst part of it.  The whole idea of checking what I'm
+> > > running to set a dma mask just doesn't make any sense at all.
+> >
+> > Oded, I thought I asked if there was a dma call you should be making to
+> > keep this type of check from being needed.  What happened to that?  As
+> > Christoph points out, none of this should be needed, which is what I
+> > thought I originally said :)
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> I'm sorry, but it seems I can't explain what's my problem because you
+> and Christoph keep mentioning the pci_set_dma_mask() but it doesn't
+> help me.
+> I'll try again to explain.
+>
+> The main problem specifically for Goya device, is that I can't call
+> this function with *the same parameter* for POWER9 and x86-64, because
+> x86-64 supports dma mask of 48-bits while POWER9 supports only 32-bits
+> or 64-bits.
+>
+> The main limitation in my Goya device is that it can generate PCI
+> outbound transactions with addresses from 0 to (2^50 - 1).
+> That's why when we first integrated it in x86-64, we used a DMA mask
+> of 48-bits, by calling pci_set_dma_mask(pdev, 48). That way, the
+> kernel ensures me that all the DMA addresses are from 0 to (2^48 - 1),
+> and that address range is accessible by my device.
+>
+> If for some reason, the x86-64 machine doesn't support 48-bits, the
+> standard fallback code in ALL the drivers I have seen is to set the
+> DMA mask to 32-bits. And that's how my current driver's code is
+> written.
+>
+> Now, when I tried to integrate Goya into a POWER9 machine, I got a
+> reject from the call to pci_set_dma_mask(pdev, 48). The standard code,
+> as I wrote above, is to call the same function with 32-bits. That
+> works BUT it is not practical, as our applications require much more
+> memory mapped then 32-bits. In addition, once you add more cards which
+> are all mapped to the same range, it is simply not usable at all.
+>
+> Therefore, I consulted with POWER people and they told me I can call
+> to pci_set_dma_mask with the mask as 64, but I must make sure that ALL
+> outbound transactions from Goya will be with bit 59 set in the
+> address.
+> I can achieve that with a dedicated configuration I make in Goya's
+> PCIe controller. That's what I did and that works.
+>
+> So, to summarize:
+> If I call pci_set_dma_mask with 48, then it fails on POWER9. However,
+> in runtime, I don't know if its POWER9 or not, so upon failure I will
+> call it again with 32, which makes our device pretty much unusable.
+> If I call pci_set_dma_mask with 64, and do the dedicated configuration
+> in Goya's PCIe controller, then it won't work on x86-64, because bit
+> 59 will be set and the host won't like it (I checked it). In addition,
+> I might get addresses above 50 bits, which my device can't generate.
+>
+> I hope this makes things more clear. Now, please explain to me how I
+> can call pci_set_dma_mask without any regard to whether I run on
+> x86-64 or POWER9, considering what I wrote above ?
+>
+> Thanks,
+> Oded
+
+Adding ppc mailing list.
+
+Oded
