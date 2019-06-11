@@ -2,139 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE713D52A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F35553D53B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406966AbfFKSIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:08:44 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35556 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406685AbfFKSIn (ORCPT
+        id S2406908AbfFKSLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:11:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36342 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406685AbfFKSLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:08:43 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j19so12824335otq.2;
-        Tue, 11 Jun 2019 11:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O89jlWqoEX7q/G6CiVxiDDmlI/FOM0sB6BHEXW+0fFM=;
-        b=cHdSLiwdTyZbPGVz/qYnZJJCYplwKEbE0QdVdYmjqez+GGasa8TA9GEaZeZf+/Q/yc
-         8TIaqOiIijHlpQPN+b0BBZvmxtMd47x/uYK7Vk5XPD8mYxbl+yUPaIuF7vI0M7QzRtm0
-         HNeafuVGHu/sa/BCqZcATKXmtS7Eag+BS6pOHP7N3/7dY0uWHKLKUSLT34TY6AzMuvGD
-         Nr42TPWl2pxEfX5qbCwSGwJadJSQJ9gNcRUKKGUG7vKQZCsm/m8sJ9YWSh2bYRWL5CwC
-         TqB5iiaGNo0Yp7KTmdwXVV/+fDhjaVwXeP064+XZo1StqFJ682mO7SEdwmnKHz22qWhC
-         eMcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O89jlWqoEX7q/G6CiVxiDDmlI/FOM0sB6BHEXW+0fFM=;
-        b=VaYzh+rozdbOrVD40m3Udl774Bu1PnUio0GMtKQJveIg/k7Fka3tIiD8hRng1TeFPV
-         G0fJcU4XvCbdqaItEhjSzfyNO5CMzL9OH7wreiX1baW6jMHNxN13OZiQ8pyJaD54AQ03
-         3CoK5KsXTPfXP6iYOyskBylqma3iV4qABmS6MaOcVCKN7lfQV9I+wwE77f1p+4Wuqb1T
-         pZgmnWbuwL627zCNGilzqKanShPo2jEKGF/YMU5gDpnOTx74PTvVLR7fM5xRx9euZrUs
-         h5UtxUPUfawn2YWyhri/3AzAYYyG+Z5RIwRax1RLYAoVPmSTdt770oB7Ha6Xmrra4wov
-         cDWw==
-X-Gm-Message-State: APjAAAUvq3/opwI7sGMhDp1iUQui+g/X70Ma5DTjVz0tN1PT1jRKMJaq
-        sRJaMxZdagKzWYxTE0N9RFHvorBT9CKV6Xa5ork=
-X-Google-Smtp-Source: APXvYqx6SoLuddvsSFbGwWXlHsKKnRFjZOzVnVqvxNNOkTK4cQ1P337c36bckWzk3tAMnUuN46R+aOyOVrxZcNZhBbc=
-X-Received: by 2002:a9d:32a6:: with SMTP id u35mr36300662otb.81.1560276522291;
- Tue, 11 Jun 2019 11:08:42 -0700 (PDT)
+        Tue, 11 Jun 2019 14:11:04 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F070F1030;
+        Tue, 11 Jun 2019 20:11:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1560276662;
+        bh=X5ba4hPanC2AN4ceWEVuMDO4nnB5xvvl9LT4UMu+zYQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hcIOtR0SSyWGNef99sUwB28gGA+lFi/F/FphmQuvgI0MTjARriXxO/K1eUH5m6o9/
+         LVgI8p+IrMWyqRuwTIE0c1kXCNIGaSpiqrxgCPSkick5B2BaqeMqvBtiXBHLSSvnRZ
+         1xi8CWzBevXuv4WcwNseLfRvqjRiubK0dRO9dPyQ=
+Date:   Tue, 11 Jun 2019 21:10:46 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Michael Drake <michael.drake@codethink.co.uk>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@lists.codethink.co.uk,
+        Patrick Glaser <pglaser@tesla.com>, Nate Case <ncase@tesla.com>
+Subject: Re: [PATCH v1 06/11] ti948: Reconfigure in the alive check when
+ device returns
+Message-ID: <20190611181046.GU5016@pendragon.ideasonboard.com>
+References: <20190611140412.32151-1-michael.drake@codethink.co.uk>
+ <20190611140412.32151-7-michael.drake@codethink.co.uk>
 MIME-Version: 1.0
-References: <20190611135842.8396-1-narmstrong@baylibre.com>
-In-Reply-To: <20190611135842.8396-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 11 Jun 2019 20:08:31 +0200
-Message-ID: <CAFBinCAkwjf9oDV6AGPi2PzzQ2KNTXXDHW6FTfN3kXpDT6cFpg@mail.gmail.com>
-Subject: Re: [PATCH] usb: dwc3: meson-g12a: Add support for IRQ based OTG switching
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     balbi@kernel.org, linux-amlogic@lists.infradead.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190611140412.32151-7-michael.drake@codethink.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+Hi Michael,
 
-On Tue, Jun 11, 2019 at 3:58 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add support for the OTG ID change interrupt to switch between Host
-> and Device mode.
->
-> Tested on the Hardkernel Odroid-N2 board.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-with the three questions/comments below answered/addressed:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Thank you for the patch.
 
+On Tue, Jun 11, 2019 at 03:04:07PM +0100, Michael Drake wrote:
+> If the alive check detects a transition to the alive state,
+> the device configuration is rewritten.
+
+This seems like a big hack. You will have at the very least to explain
+why this is needed, and why you can't configure the device in response
+to drm_bridge operation calls.
+
+> Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
+> Cc: Patrick Glaser <pglaser@tesla.com>
+> Cc: Nate Case <ncase@tesla.com>
 > ---
->  drivers/usb/dwc3/dwc3-meson-g12a.c | 32 ++++++++++++++++++++++++++++--
->  1 file changed, 30 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
-> index 2aec31a2eacb..e5c5ad0d529e 100644
-> --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
-> +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
-the comment block at the start of the driver file also contains a
-"TOFIX" which points to the missing IRQ handling
-can you please also drop that TOFIX comment in lines 15/16?
-
-> @@ -348,6 +348,22 @@ static enum usb_role dwc3_meson_g12a_role_get(struct device *dev)
->                 USB_ROLE_HOST : USB_ROLE_DEVICE;
->  }
->
-> +static irqreturn_t dwc3_meson_g12a_irq_thread(int irq, void *data)
-> +{
-> +       struct dwc3_meson_g12a *priv = data;
-> +       enum phy_mode otg_id;
+>  drivers/gpu/drm/bridge/ti948.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ti948.c b/drivers/gpu/drm/bridge/ti948.c
+> index 86daa3701b91..b5c766711c4b 100644
+> --- a/drivers/gpu/drm/bridge/ti948.c
+> +++ b/drivers/gpu/drm/bridge/ti948.c
+> @@ -132,6 +132,8 @@ struct ti948_reg_val {
+>   * @reg_names:   Array of regulator names, or NULL.
+>   * @regs:        Array of regulators, or NULL.
+>   * @reg_count:   Number of entries in reg_names and regs arrays.
+> + * @alive_check: Context for the alive checking work item.
+> + * @alive:       Whether the device is alive or not (alive_check).
+>   */
+>  struct ti948_ctx {
+>  	struct i2c_client *i2c;
+> @@ -141,6 +143,8 @@ struct ti948_ctx {
+>  	const char **reg_names;
+>  	struct regulator **regs;
+>  	size_t reg_count;
+> +	struct delayed_work alive_check;
+> +	bool alive;
+>  };
+>  
+>  static bool ti948_readable_reg(struct device *dev, unsigned int reg)
+> @@ -346,6 +350,8 @@ static int ti948_power_on(struct ti948_ctx *ti948)
+>  	if (ret != 0)
+>  		return ret;
+>  
+> +	ti948->alive = true;
 > +
-> +       otg_id = dwc3_meson_g12a_get_id(priv);
-> +       if (otg_id != priv->otg_phy_mode) {
-> +               if (dwc3_meson_g12a_otg_mode_set(priv, otg_id))
-> +                       dev_warn(priv->dev, "Failed to switch OTG mode\n");
-> +       }
+>  	msleep(500);
+>  
+>  	return 0;
+> @@ -356,6 +362,8 @@ static int ti948_power_off(struct ti948_ctx *ti948)
+>  	int i;
+>  	int ret;
+>  
+> +	ti948->alive = false;
 > +
-> +       regmap_update_bits(priv->regmap, USB_R5, USB_R5_ID_DIG_IRQ, 0);
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +
->  static struct device *dwc3_meson_g12_find_child(struct device *dev,
->                                                 const char *compatible)
+>  	for (i = ti948->reg_count; i > 0; i--) {
+>  		dev_info(&ti948->i2c->dev, "Disabling %s regulator\n",
+>  				ti948->reg_names[i - 1]);
+> @@ -388,8 +396,17 @@ static void ti948_alive_check(struct work_struct *work)
 >  {
-> @@ -374,7 +390,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
->         void __iomem *base;
->         struct resource *res;
->         enum phy_mode otg_id;
-> -       int ret, i;
-> +       int ret, i, irq;
->
->         priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->         if (!priv)
-> @@ -436,6 +452,19 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
->         /* Get dr_mode */
->         priv->otg_mode = usb_get_dr_mode(dev);
->
-> +       if (priv->otg_mode == USB_DR_MODE_OTG) {
-> +               /* Ack irq before registering */
-> +               regmap_update_bits(priv->regmap, USB_R5,
-> +                                  USB_R5_ID_DIG_IRQ, 0);
-I assume that either the IRQ line is:
-- always enabled
-- enabled when (USB_R5_ID_DIG_EN_0 | USB_R5_ID_DIG_EN_1 |
-USB_R5_ID_DIG_TH_MASK) are set (which we already do in
-dwc3_meson_g12a_usb_init)
+>  	struct delayed_work *dwork = to_delayed_work(work);
+>  	struct ti948_ctx *ti948 = delayed_work_to_ti948_ctx(dwork);
+> +	int ret = ti948_device_check(ti948);
+>  
+> -	dev_info(&ti948->i2c->dev, "%s Alive check!\n", __func__);
+> +	if (ti948->alive == false && ret == 0) {
+> +		dev_info(&ti948->i2c->dev, "Device has come back to life!\n");
+> +		ti948_write_config_seq(ti948);
+> +		ti948->alive = true;
+> +
+> +	} else if (ti948->alive == true && ret != 0) {
+> +		dev_info(&ti948->i2c->dev, "Device has stopped responding\n");
+> +		ti948->alive = false;
+> +	}
+>  
+>  	/* Reschedule ourself for the next check. */
+>  	schedule_delayed_work(&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
 
-> +               irq = platform_get_irq(pdev, 0);
-do we need to check the IRQ before trying to request it?
-drivers/gpu/drm/meson/meson_dw_hdmi.c and drivers/usb/dwc3/host.c for
-example error out if irq number is lower than 0
+-- 
+Regards,
 
-(it's great to see that this only required a small patch to make it work :))
-
-
-Martin
+Laurent Pinchart
