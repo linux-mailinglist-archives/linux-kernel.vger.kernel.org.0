@@ -2,86 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C0AD3D3E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9333D3E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406067AbfFKRW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:22:27 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41397 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405821AbfFKRWZ (ORCPT
+        id S2406044AbfFKRWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:22:14 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:58254 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405821AbfFKRWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:22:25 -0400
-Received: by mail-vs1-f66.google.com with SMTP id g24so8438594vso.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 10:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ch5ySbq0FmSA2XajIVEvQlmmFhHNIePL/QuQTBUXjwE=;
-        b=BvxvNFt2CuRdvPDlu+YFPGTgJ0ILAjwFJunihoBUnffJQ6arR0U0poSOngu54e31oM
-         yX2FndF/g5urg4zuLG7xfVHMK42maMFVSTpmEbMgWWPBDBrmVUmTA7zoQc6XA6KtJD7b
-         n8AHQVrCvlKCojNGcjKziVI7e/dqruYe0fOczUG/4HftPDxxm9sg1Cc6hAHNDBep9imZ
-         XCmoUcmOESEHWXRd+aZ46Yxyf9fi+CP/DC+Vk++8ZJdGh3HyhS89+DeAk1SrYID7JOHQ
-         7KTqbEUqb16tINbU3onFOC6K4/NMO4O/bFKSJ7gt+vCiwepfkHdS+xDh7LuPaz3GJtgs
-         fFTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ch5ySbq0FmSA2XajIVEvQlmmFhHNIePL/QuQTBUXjwE=;
-        b=p55T8K+a6xpKD+C9bSzlHlf1oLIbovplcE2k0y67xjYVC63xFa8iI6Ot43f+B4ch73
-         wbq43Llq3epl0qW8NuV558I0o7IoK2ehw39FU20kCpDcjB2JRv11z0WQ71c6d/4c9IlE
-         0G2tbNYDBSOIaTEJNUznSLfbV1Yj7lbN5lYsmXV7MaNGrjiUNlNH37XJfw2Jro4tsLO+
-         6LF0p/dcnnDR44QSg/v9Ica+YKaFzhtEXD7J9Jl8Gu6oWyfUL1/+JhHlMOeJWS0ficzp
-         OmesXzFh3baOa++uiLWKPqZNssd1W1eO3g34/B5ZYhhUrTIC/1fj0rUbbNEDid4tddOE
-         oKOA==
-X-Gm-Message-State: APjAAAXzss9MDx1yC+Q9dWgNS3OJlPeNAyp9nJHK3HJQ958XgN8CBZTy
-        fN1stfHWXZk78VHmvmcPN3MfKHDDmm9vFbf2mbk=
-X-Google-Smtp-Source: APXvYqxxtk2fyTdB5HLiUpLv+cHy2F//+aDjWV45YDWLO4QWQ+SzCCmrZzf6DWcxyJaIog0QW8ScWSukBqD64YkZ1RE=
-X-Received: by 2002:a67:d410:: with SMTP id c16mr32239283vsj.61.1560273743742;
- Tue, 11 Jun 2019 10:22:23 -0700 (PDT)
+        Tue, 11 Jun 2019 13:22:14 -0400
+Received: from mailhost.synopsys.com (unknown [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B9498C016F;
+        Tue, 11 Jun 2019 17:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1560273733; bh=0vOMGLO1nb4/1qQXTnpKwZ5ss3VewMScaHY/JKElpRU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mEG+Kk+MU17YGXVVNiMP3HavxsIygpQwFuDgaPF+bHbluiugCJ2D5Lkt2ZBC/a1VI
+         bvvSqdTRwWuVbzoXESWnEJFYLswnqFnbtAEWIlrYI6Lj3u9hygj2hSQEm4TbCI0owS
+         8pXg1m1FIasnnAzp7MB4zTylHtWBBOYe/MMNLEa+EiN9/V5vN8i8se3hAQO6oKjmqV
+         1MBohj45Ky1pn1VzpuYrVSAUFuLti88i1VK4epQIeMFit7S/2PWEPflOPWZsfxDCYT
+         XzO+bvShRqhgABG5Rpgs4O9X4cyAhVF/Btm5YBc/9k48TL5eoI1xGOlQbjVh9mgGJB
+         rbuSCx9xXR6PA==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.58])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 97909A022E;
+        Tue, 11 Jun 2019 17:22:08 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     dri-devel@lists.freedesktop.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] drm/arcpgu: rework encoder search
+Date:   Tue, 11 Jun 2019 20:21:59 +0300
+Message-Id: <20190611172159.24048-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CAFCwf11EM9+NDML9hQmk9-rPzSmDmAyVLW+qOfs6h62dGK6H9A@mail.gmail.com>
- <20190611140725.GA28902@infradead.org>
-In-Reply-To: <20190611140725.GA28902@infradead.org>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Tue, 11 Jun 2019 20:21:58 +0300
-Message-ID: <CAFCwf13WgnbxHe2wpb3mnw2PLWCgor=136_VSSPQCVodu17uvA@mail.gmail.com>
-Subject: Re: Question - check in runtime which architecture am I running on
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linuxppc-dev@ozlabs.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 5:07 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Tue, Jun 11, 2019 at 03:30:08PM +0300, Oded Gabbay wrote:
-> > Hello POWER developers,
-> >
-> > I'm trying to find out if there is an internal kernel API so that a
-> > PCI driver can call it to check if its PCI device is running inside a
-> > POWER9 machine. Alternatively, if that's not available, if it is
-> > running on a machine with powerpc architecture.
->
-> Your driver has absolutely not business knowing this.
->
-> >
-> > I need this information as my device (Goya AI accelerator)
-> > unfortunately needs a slightly different configuration of its PCIe
-> > controller in case of POWER9 (need to set bit 59 to be 1 in all
-> > outbound transactions).
->
-> No, it doesn't.  You can query the output from dma_get_required_mask
-> to optimize for the DMA addresses you get, and otherwise you simply
-> set the maximum dma mask you support.  That is about the control you
-> get, and nothing else is a drivers business.
+Instead of using non-standard "encoder-slave" property to find
+encoder let's find it by associated endpoint.
 
-I don't want to conduct two discussions as I saw you answered on my patch.
-I'll add the ppc mailing list to my patch.
-Oded
+While I'm on it add corresponding log message if we don't find
+any encoder and we assume that we use virtual LCD on the
+simulation platform.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ drivers/gpu/drm/arc/arcpgu_drv.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
+index c9f78397d345..d08b9977f021 100644
+--- a/drivers/gpu/drm/arc/arcpgu_drv.c
++++ b/drivers/gpu/drm/arc/arcpgu_drv.c
+@@ -23,6 +23,7 @@
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_of.h>
+ #include <drm/drm_probe_helper.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/module.h>
+@@ -54,7 +55,7 @@ static int arcpgu_load(struct drm_device *drm)
+ {
+ 	struct platform_device *pdev = to_platform_device(drm->dev);
+ 	struct arcpgu_drm_private *arcpgu;
+-	struct device_node *encoder_node;
++	struct device_node *encoder_node = NULL, *endpoint_node = NULL;
+ 	struct resource *res;
+ 	int ret;
+ 
+@@ -89,14 +90,23 @@ static int arcpgu_load(struct drm_device *drm)
+ 	if (arc_pgu_setup_crtc(drm) < 0)
+ 		return -ENODEV;
+ 
+-	/* find the encoder node and initialize it */
+-	encoder_node = of_parse_phandle(drm->dev->of_node, "encoder-slave", 0);
++	/*
++	 * There is only one output port inside each device. It is linked with
++	 * encoder endpoint.
++	 */
++	endpoint_node = of_graph_get_next_endpoint(pdev->dev.of_node, NULL);
++	if (endpoint_node) {
++		encoder_node = of_graph_get_remote_port_parent(endpoint_node);
++		of_node_put(endpoint_node);
++	}
++
+ 	if (encoder_node) {
+ 		ret = arcpgu_drm_hdmi_init(drm, encoder_node);
+ 		of_node_put(encoder_node);
+ 		if (ret < 0)
+ 			return ret;
+ 	} else {
++		dev_info(drm->dev, "no encoder found. Assumed virtual LCD on simulation platform\n");
+ 		ret = arcpgu_drm_sim_init(drm, NULL);
+ 		if (ret < 0)
+ 			return ret;
+-- 
+2.21.0
+
