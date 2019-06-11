@@ -2,119 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B543C38F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36ECA3C394
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403825AbfFKFrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 01:47:06 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36397 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390485AbfFKFrF (ORCPT
+        id S2403869AbfFKFsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 01:48:04 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:62225 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390485AbfFKFsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:47:05 -0400
-Received: by mail-qt1-f194.google.com with SMTP id p15so5730351qtl.3;
-        Mon, 10 Jun 2019 22:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=A5wEeAyNDVZXiW6xkSMzpzOefP4LoMFNlikHzfFKkbA=;
-        b=MEjjALLPHdnWy5msWX3MwHLfjkl8sZtsl9HKWIhJrzZM6n6n7RND9/LRrdhnkLWZYH
-         bGgxrVSPjyLG+VaGT9Xfee2TCU4N2HhtqdQ+rMmV6v1oZe2s6spwrsyXx+5WQjuf7I8+
-         x1ugPkDN54ZiERf4RreN2BtDBYh16gtxL0l02ILc5ZtYGDAGmtmeuUkfkX58ckBknQs9
-         sMNmWz0FjAw9FXm0UCaFvzZ0OOfXNyxMIC4LRdH5TDrjPZSPkCr75dcZuH1jx2963hd3
-         e36Z8rcwEUMvUeWvBrK4czZouDeX2ZN35sw1nz2EDY4sD73pA9zzij7Ez+mHaYhpZ1Dk
-         obsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=A5wEeAyNDVZXiW6xkSMzpzOefP4LoMFNlikHzfFKkbA=;
-        b=Gp5jMIxSJQCBq+skH1VYNSsfLb5v4/8KJD8KolIWWhvH6XcRHqoza4JDUt8UHj94Yy
-         xrHXvBQCruxZiyBqH2DsYW0x/Q5Glq3kIJ7fAiruXl/lkKfaooGmCJFNEh2t6IWvehO/
-         ZzYBHIlJxWmez8cXujdrk62hUHIORgJR5SAUyumBdnbpcbd1gCoQtQS16/ZFAtSlylYQ
-         s0AhZFa7GWFMc1juWXau5vOxO8CXjIf2wkm/b/Vk0ZVEESj4Mu0KIJlRxtMZMDyFheMq
-         rvGC0SAbRvvgyF9WCN4rVJYbzdbdBaUNhIi5yzXrAYHdKJy4t96ppgbJUCq75DVbT7cV
-         USKw==
-X-Gm-Message-State: APjAAAUWJmC8+qttN8Z5tpUEKFOIKyotnGpz8wVCd55nRIK4e6PhlZOm
-        +kFnXqyOBi7729/wfsS+eCoebf1B3GaM6e3WRwA=
-X-Google-Smtp-Source: APXvYqwz0mZMk1bLFqIpFAmo4mB6Gt5pF/u2vMOVOWKu7V2PtslgKVLzTrmb5hNGsIJDrNDl1+aXHzIO5PBhVKihcZo=
-X-Received: by 2002:ac8:2d56:: with SMTP id o22mr12538069qta.171.1560232024706;
- Mon, 10 Jun 2019 22:47:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <29466.1559875167@turing-police>
-In-Reply-To: <29466.1559875167@turing-police>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 10 Jun 2019 22:46:53 -0700
-Message-ID: <CAEf4BzbN2DzQ2QuUwcQy1r8kc4dQv7PyufWLkbymsL8rPSC0UQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf/core.c - silence warning messages
-To:     =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Networking <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>
+        Tue, 11 Jun 2019 01:48:01 -0400
+X-UUID: 8dd45107285d4157a64b8222a8fbe719-20190611
+X-UUID: 8dd45107285d4157a64b8222a8fbe719-20190611
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1836222041; Tue, 11 Jun 2019 13:47:49 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 11 Jun
+ 2019 13:47:48 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 11 Jun 2019 13:47:46 +0800
+Message-ID: <1560232066.8487.119.camel@mhfsdcap03>
+Subject: Re: [PATCH v6 09/10] usb: roles: add USB Type-B GPIO connector
+ driver
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Li Jun <jun.li@nxp.com>,
+        "Badhri Jagan Sridharan" <badhri@google.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Min Guo <min.guo@mediatek.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        USB <linux-usb@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Yu Chen" <chenyu56@huawei.com>
+Date:   Tue, 11 Jun 2019 13:47:46 +0800
+In-Reply-To: <CAHp75VeWu+8H2=PRNud_MAoD9zozb2Ugh9b=9TCtYmGLVyCTpQ@mail.gmail.com>
+References: <1559115828-19146-1-git-send-email-chunfeng.yun@mediatek.com>
+         <1559115828-19146-10-git-send-email-chunfeng.yun@mediatek.com>
+         <CAHp75VcbZwd0e6r38C2x7HLEHLr4oR7TjwdDXnDxRPRs3anwgA@mail.gmail.com>
+         <1559789630.8487.111.camel@mhfsdcap03>
+         <CAHp75VeWu+8H2=PRNud_MAoD9zozb2Ugh9b=9TCtYmGLVyCTpQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 8:08 PM Valdis Kl=C4=93tnieks <valdis.kletnieks@vt.e=
-du> wrote:
->
-> Compiling kernel/bpf/core.c with W=3D1 causes a flood of warnings:
->
-> kernel/bpf/core.c:1198:65: warning: initialized field overwritten [-Wover=
-ride-init]
->  1198 | #define BPF_INSN_3_TBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] =3D=
- true
->       |                                                                 ^=
-~~~
-> kernel/bpf/core.c:1087:2: note: in expansion of macro 'BPF_INSN_3_TBL'
->  1087 |  INSN_3(ALU, ADD,  X),   \
->       |  ^~~~~~
-> kernel/bpf/core.c:1202:3: note: in expansion of macro 'BPF_INSN_MAP'
->  1202 |   BPF_INSN_MAP(BPF_INSN_2_TBL, BPF_INSN_3_TBL),
->       |   ^~~~~~~~~~~~
-> kernel/bpf/core.c:1198:65: note: (near initialization for 'public_insntab=
-le[12]')
->  1198 | #define BPF_INSN_3_TBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] =3D=
- true
->       |                                                                 ^=
-~~~
-> kernel/bpf/core.c:1087:2: note: in expansion of macro 'BPF_INSN_3_TBL'
->  1087 |  INSN_3(ALU, ADD,  X),   \
->       |  ^~~~~~
-> kernel/bpf/core.c:1202:3: note: in expansion of macro 'BPF_INSN_MAP'
->  1202 |   BPF_INSN_MAP(BPF_INSN_2_TBL, BPF_INSN_3_TBL),
->       |   ^~~~~~~~~~~~
->
-> 98 copies of the above.
->
-> The attached patch silences the warnings, because we *know* we're overwri=
-ting
-> the default initializer. That leaves bpf/core.c with only 6 other warning=
-s,
-> which become more visible in comparison.
->
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+On Thu, 2019-06-06 at 09:31 +0300, Andy Shevchenko wrote:
+> On Thu, Jun 6, 2019 at 5:53 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+> >
+> > On Wed, 2019-06-05 at 11:45 +0300, Andy Shevchenko wrote:
+> > > On Wed, May 29, 2019 at 10:44 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+> > > >
+> > > > Due to the requirement of usb-connector.txt binding, the old way
+> > > > using extcon to support USB Dual-Role switch is now deprecated
+> > > > when use Type-B connector.
+> > > > This patch introduces a driver of Type-B connector which typically
+> > > > uses an input GPIO to detect USB ID pin, and try to replace the
+> > > > function provided by extcon-usb-gpio driver
+> > >
+> > > > +static SIMPLE_DEV_PM_OPS(usb_conn_pm_ops,
+> > > > +                        usb_conn_suspend, usb_conn_resume);
+> > > > +
+> > > > +#define DEV_PMS_OPS (IS_ENABLED(CONFIG_PM_SLEEP) ? &usb_conn_pm_ops : NULL)
+> > >
+> > > Why this macro is needed?
+> > Want to set .pm as NULL when CONFIG_PM_SLEEP is not enabled.
+> 
+> Doesn't SIMPLE_DEV_PM_OPS do this for you?
+Yes, you are right, it provides an empty dev_pm_ops struct, I'll remove
+DEV_PMS_OPS, thanks a lot
 
-Thanks! Please include bpf-next in [PATCH] prefix in the future. I've
-also CC'ed bpf@vger.kernel.org list.
+> 
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
 
->
-> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-> index 4c2fa3ac56f6..2606665f2cb5 100644
-> --- a/kernel/bpf/Makefile
-> +++ b/kernel/bpf/Makefile
-> @@ -21,3 +21,4 @@ obj-$(CONFIG_CGROUP_BPF) +=3D cgroup.o
->  ifeq ($(CONFIG_INET),y)
->  obj-$(CONFIG_BPF_SYSCALL) +=3D reuseport_array.o
->  endif
-> +CFLAGS_core.o          +=3D $(call cc-disable-warning, override-init)
->
->
