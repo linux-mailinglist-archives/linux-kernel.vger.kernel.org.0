@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8994A3C891
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 490F13C89C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405554AbfFKKSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:18:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45908 "EHLO mail.kernel.org"
+        id S2405594AbfFKKSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:18:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405319AbfFKKRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2405317AbfFKKRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Jun 2019 06:17:24 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A855C2184D;
+        by mail.kernel.org (Postfix) with ESMTPSA id 827E2217D9;
         Tue, 11 Jun 2019 10:17:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1560248243;
-        bh=dLda/kXqRZG3yyV21KzJt3srZdyLAbhuKmtRC2etVzk=;
+        bh=Gs3AgomSubATACS4jWlB2DAJEOVJHDxnXjCX4Nxms6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1/lYTiPmg9uhLVmGXpxFY+zlvmZgzGHQm/BYW+73l9YwTRStYLS1BM7sQSe0RhIZr
-         Gs/LS+od80f5vehwnH5i982K/v7pLnCobHJwpnDCrTabo5zsBlhr3GqQqhB7LvUe84
-         V6auZW+rFwwSFeKu05pf14i3uEtjEZcmy/NHyfuk=
+        b=Ekw9hRoHorHFxSax/mYa15LpMvRtWkpPypYsqYlK8+VY9vlE7qT7S19rS8asA6Tmw
+         xrzWHYa8gEFOtFz//xBW/yZTsHWLLen2KdmHnbjjbDXJtjzpypg2buCXWPs3wT5wS8
+         ypKieVppo0a6sKrdKWaYl0s0gBonH4loCrBWKpqk=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 5CDEE60A11; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+        id 64A4860054; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -32,9 +32,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 13/25] clk: sunxi-ng: a23: Use local parent references for CLK_FIXED_FACTOR
-Date:   Tue, 11 Jun 2019 18:16:46 +0800
-Message-Id: <20190611101658.23855-14-wens@kernel.org>
+Subject: [PATCH v2 14/25] clk: sunxi-ng: a33: Use local parent references for CLK_FIXED_FACTOR
+Date:   Tue, 11 Jun 2019 18:16:47 +0800
+Message-Id: <20190611101658.23855-15-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
 References: <20190611101658.23855-1-wens@kernel.org>
@@ -58,14 +58,14 @@ external to the CCU.
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 34 ++++++++++++++++++----------
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 34 ++++++++++++++++++----------
  1 file changed, 22 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index a9c0c5406b85..de2f2962164e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -551,19 +551,29 @@ static struct ccu_common *sun8i_a23_ccu_clks[] = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 25bcf3fd2dfc..25a14548f39b 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -588,19 +588,29 @@ static struct ccu_common *sun8i_a33_ccu_clks[] = {
  	&ats_clk.common,
  };
  
@@ -105,7 +105,7 @@ index a9c0c5406b85..de2f2962164e 100644
 +			   &pll_video_clk.common.hw,
 +			   1, 2, 0);
  
- static struct clk_hw_onecell_data sun8i_a23_hw_clks = {
+ static struct clk_hw_onecell_data sun8i_a33_hw_clks = {
  	.hws	= {
 -- 
 2.20.1
