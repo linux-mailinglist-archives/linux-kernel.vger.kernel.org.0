@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 373D33C4EC
+	by mail.lfdr.de (Postfix) with ESMTP id A213C3C4ED
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404383AbfFKHUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:20:50 -0400
+        id S2404393AbfFKHUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:20:52 -0400
 Received: from shell.v3.sk ([90.176.6.54]:60887 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404370AbfFKHUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:20:47 -0400
+        id S2404186AbfFKHUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:20:48 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 08580104F71;
-        Tue, 11 Jun 2019 09:20:44 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 20379104F72;
+        Tue, 11 Jun 2019 09:20:47 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id h-TpdfOBHDGP; Tue, 11 Jun 2019 09:20:27 +0200 (CEST)
+        with ESMTP id c94Kwsjfvn8S; Tue, 11 Jun 2019 09:20:31 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 28B86104F7C;
-        Tue, 11 Jun 2019 09:20:27 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 2D4E0104F6F;
+        Tue, 11 Jun 2019 09:20:31 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id L3AopJJZki8D; Tue, 11 Jun 2019 09:20:24 +0200 (CEST)
+        with ESMTP id rt3DvtvimL0t; Tue, 11 Jun 2019 09:20:28 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 2C003104F7E;
-        Tue, 11 Jun 2019 09:20:23 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 4D31B104F7F;
+        Tue, 11 Jun 2019 09:20:27 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Eric Piel <eric.piel@tremplin-utc.net>
-Cc:     Daniel Mack <daniel@caiaq.de>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Cc:     Eric Miao <eric.miao@marvell.com>, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] misc: lis3lv02d: Switch to SPDX header
-Date:   Tue, 11 Jun 2019 09:20:18 +0200
-Message-Id: <20190611072018.2978605-1-lkundrak@v3.sk>
+Subject: [PATCH] backlight: tdo24m: Switch to SPDX header
+Date:   Tue, 11 Jun 2019 09:20:23 +0200
+Message-Id: <20190611072023.2978679-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,20 +50,21 @@ to SPDX instead of fixing the wording.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/misc/lis3lv02d/lis3lv02d_spi.c | 5 +----
+ drivers/video/backlight/tdo24m.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/misc/lis3lv02d/lis3lv02d_spi.c b/drivers/misc/lis3lv=
-02d/lis3lv02d_spi.c
-index e575475123c8..d7f17c59f3e7 100644
---- a/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-+++ b/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-@@ -1,11 +1,8 @@
+diff --git a/drivers/video/backlight/tdo24m.c b/drivers/video/backlight/t=
+do24m.c
+index e4bd63e9db6b..8c84f168d8d1 100644
+--- a/drivers/video/backlight/tdo24m.c
++++ b/drivers/video/backlight/tdo24m.c
+@@ -1,12 +1,9 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * lis3lv02d_spi - SPI glue layer for lis3lv02d
+  * tdo24m - SPI-based drivers for Toppoly TDO24M series LCD panels
   *
-  * Copyright (c) 2009 Daniel Mack <daniel@caiaq.de>
+  * Copyright (C) 2008 Marvell International Ltd.
+  *	Eric Miao <eric.miao@marvell.com>
 - *
 - *  This program is free software; you can redistribute it and/or modify
 - *  it under the terms of the GNU General Public License version 2 as
