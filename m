@@ -2,121 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29DB23C7F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3B73C7FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405028AbfFKKAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:00:41 -0400
-Received: from mail-eopbgr40073.outbound.protection.outlook.com ([40.107.4.73]:19353
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727726AbfFKKAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:00:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aKCs/l8ReRm7UvPlza56Cg9JjVoAdj9dZGcz0xpJ7D8=;
- b=fEkLdMkAnqv85SCNscXyrEcC4T1WusPf5l1aD2KER8YI9g7AZ+JkbH4d8Qn3l1OK4ghxPl9uKR9BgQ+RzHGk8rulZ7n6lbixmwxwiqwBkgL9+/mWABPExeu+i/Cs3YcxoYP8pkM4GAKLDKGgugaO/qDp6fEA87IJWcVVOdCdwpI=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB4689.eurprd04.prod.outlook.com (20.176.214.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.14; Tue, 11 Jun 2019 10:00:36 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::11e1:3bb9:156b:a3e4]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::11e1:3bb9:156b:a3e4%3]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
- 10:00:36 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 1/3] dt-bindings: imx: Add pinctrl binding doc for i.MX8MN
-Thread-Topic: [PATCH 1/3] dt-bindings: imx: Add pinctrl binding doc for
- i.MX8MN
-Thread-Index: AQHVFpRumCyIBeRsW0uQNvKpc4bmq6aQvAOAgAWFwOA=
-Date:   Tue, 11 Jun 2019 10:00:36 +0000
-Message-ID: <AM0PR04MB421171336B9206D02FF6514080ED0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190530030546.9224-1-Anson.Huang@nxp.com>
- <CACRpkdY-35o378Ka+4bgeSPjmq6P8DM872sgTxq2X3dDP9XZHQ@mail.gmail.com>
-In-Reply-To: <CACRpkdY-35o378Ka+4bgeSPjmq6P8DM872sgTxq2X3dDP9XZHQ@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7c088463-e407-42fa-55c7-08d6ee53a6b3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4689;
-x-ms-traffictypediagnostic: AM0PR04MB4689:
-x-microsoft-antispam-prvs: <AM0PR04MB4689D219E6146588739A2F3B80ED0@AM0PR04MB4689.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 006546F32A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(366004)(39860400002)(189003)(199004)(486006)(52536014)(71200400001)(71190400001)(68736007)(25786009)(446003)(6436002)(11346002)(476003)(229853002)(53936002)(316002)(55016002)(54906003)(9686003)(44832011)(110136005)(256004)(3846002)(5660300002)(6116002)(7416002)(26005)(478600001)(14454004)(4326008)(186003)(53546011)(33656002)(6506007)(6246003)(2906002)(305945005)(73956011)(66946007)(81156014)(8676002)(66476007)(64756008)(66446008)(8936002)(86362001)(66556008)(76116006)(74316002)(7696005)(66066001)(81166006)(76176011)(99286004)(102836004)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4689;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nmod2sVtLKZTvzkJB/cXomYqiaiDfhS2NSeqH+ZvQbuuEiwmu3W8IHUFaH/zt0wZcZpIEKF2l0ALwVrvFUEGTOgtvOo71vnZZLgt6wVeOW2AbtAGX/E//cWgHlXfAUr2izabkR7YW6BhOudK0gItqEt4p7bmwaIrRUv+vj6ja+ju3BOejnFYXl91KmExKPzLtFvHd47gUdzrebDzCBYJLCop+PhWiq/E5/5ZDCLr6INxcO0T3OonBftrsEKCTlwQhXMpvEPH2vcLtmC5odANpH+5tQ5T4x3VKULGlKQnrKfbc8S412gta4+OEMW55YF5MoLYtO8JxoyRUSvHHvXnjZCoKC1c8qgPeiXo03r3egDMwC71hLZ+z3OqIbimerM5pt/D4Ffm8o/8p6ZYICaI//cnD1FEQ+G/bxkdWnnFVEY=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2405161AbfFKKBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:01:52 -0400
+Received: from foss.arm.com ([217.140.110.172]:57220 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404406AbfFKKBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:01:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA8BF337;
+        Tue, 11 Jun 2019 03:01:50 -0700 (PDT)
+Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C929B3F73C;
+        Tue, 11 Jun 2019 03:03:31 -0700 (PDT)
+Subject: Re: [PATCH 11/15] binfmt_flat: provide an asm-generic/flat.h
+To:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
+Cc:     uclinux-h8-devel@lists.sourceforge.jp,
+        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
+        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190610212015.9157-1-hch@lst.de>
+ <20190610212015.9157-12-hch@lst.de>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <e6a00ae6-3359-0f20-138c-4469df598c3e@arm.com>
+Date:   Tue, 11 Jun 2019 11:01:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c088463-e407-42fa-55c7-08d6ee53a6b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 10:00:36.4311
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aisheng.dong@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4689
+In-Reply-To: <20190610212015.9157-12-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0K
-PiBTZW50OiBTYXR1cmRheSwgSnVuZSA4LCAyMDE5IDU6MDQgQU0NCj4gDQo+IE9uIFRodSwgTWF5
-IDMwLCAyMDE5IGF0IDU6MDQgQU0gPEFuc29uLkh1YW5nQG54cC5jb20+IHdyb3RlOg0KPiANCj4g
-PiBGcm9tOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPg0KPiA+IEFkZCBi
-aW5kaW5nIGRvYyBmb3IgaS5NWDhNTiBwaW5jdHJsIGRyaXZlci4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiANCj4gTG9va3MgbW9z
-dGx5IE9LIHRvIG1lLCBidXQgSSdkIGxpa2UgdGhlIG1haW50YWluZXJzIHRvIHJldmlldywgc28g
-RG9uZyBldCBhbA0KPiBwbGVhc2UgbG9vayBhdCB0aGlzIQ0KPiANCj4gPiArUmVxdWlyZWQgcHJv
-cGVydGllczoNCj4gPiArLSBjb21wYXRpYmxlOiAiZnNsLGlteDhtbi1pb211eGMiDQo+IA0KPiBT
-byBzaG91bGQgdGhpcyBub3QgYmUgIm54cCxpbXg4bW4taW9tdXhjIg0KPiBvciAibnhwLGZyZWVz
-Y2FsZS1pbXg4bW4taW9tdXhjIiBvciBzb21ldGhpbmcgdGhlc2UgZGF5cz8gVGhlIHZlbmRvciBu
-YW1lDQo+IGlzIG54cCBpcyBpdCBub3QuDQo+IA0KPiBJIHdhcyBjb21wbGFpbmluZyB0byB0aGUg
-RFQgbWFpbnRhaW5lcnMgYXQgb25lIHBvaW50IHRoYXQgdGhlc2UgY29tcGFuaWVzDQo+IHNlZW0g
-dG8gYnV5IGVhY2ggb3RoZXIgbGVmdCBhbmQgcmlnaHQgc28gdGhpcyB2ZW5kb3Igbm9tZW5jbGF0
-dXJlIGlzIGR1YmlvdXMsDQo+IGJ1dCBJIGd1ZXNzIGF0IGxlYXN0IGl0IHNob3VsZCByZWZsZWN0
-IHRoZSB2ZW5kb3IgdGhhdCBwcm9kdWNlZCB0aGUgY2hpcCBvcg0KPiBzb21ldGhpbmcuDQo+IA0K
-PiBJZiBldmVyeW9uZSBpcyBoYXBweSB3aXRoICJmc2wsKiIgSSB3aWxsIG5vdCBjb21wbGFpbiB0
-aG91Z2guDQo+IChpLmUuIGlmIHRoZSBtYWludGFpbmVycyBBQ0sgaXQuKQ0KDQpXZSBwcmVmZXJy
-ZWQgdG8ga2VlcCAiZnNsLCoiIGZvciBGcmVlc2NhbGUgaS5NWCBwcm9kdWN0IGxpbmUgYWNjb3Jk
-aW5nIHRvIGxhc3QgZGlzY3Vzc2lvbi4NCkFuZCB3ZSBhbHJlYWR5IGRpZCB0aGlzIHdheSBmb3Ig
-bW9zdCBpLk1YIGRldmljZXMuDQoNClNvOg0KQWNrZWQtYnk6IERvbmcgQWlzaGVuZyA8YWlzaGVu
-Zy5kb25nQG54cC5jb20+DQoNCihSb2IsIHBsZWFzZSBsZXQgdXMga25vdyBpZiB5b3UgaGF2ZSBk
-aWZmZXJlbnQgaWRlYSkNCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQoNCj4gDQo+IFlvdXJzLA0K
-PiBMaW51cyBXYWxsZWlqDQo=
+On 6/10/19 10:20 PM, Christoph Hellwig wrote:
+> This file implements the flat get/put reloc helpers for architectures
+> that do not need to overload the relocs by simply using get_user/put_user.
+> 
+> Note that many nommu architectures currently use {get,put}_unaligned, which
+> looks a little bogus and should probably later be switched over to this
+> version as well.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/arm/include/asm/Kbuild                   |  1 +
+>  arch/m68k/include/asm/flat.h                  | 21 +------------------
+>  .../asm => include/asm-generic}/flat.h        | 12 ++++-------
+>  3 files changed, 6 insertions(+), 28 deletions(-)
+>  rename {arch/arm/include/asm => include/asm-generic}/flat.h (73%)
+
+FWIW:
+
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+
+> 
+> diff --git a/arch/arm/include/asm/Kbuild b/arch/arm/include/asm/Kbuild
+> index a8f149ab45b8..6b2dc15b6dff 100644
+> --- a/arch/arm/include/asm/Kbuild
+> +++ b/arch/arm/include/asm/Kbuild
+> @@ -5,6 +5,7 @@ generic-y += early_ioremap.h
+>  generic-y += emergency-restart.h
+>  generic-y += exec.h
+>  generic-y += extable.h
+> +generic-y += flat.h
+>  generic-y += irq_regs.h
+>  generic-y += kdebug.h
+>  generic-y += local.h
+> diff --git a/arch/m68k/include/asm/flat.h b/arch/m68k/include/asm/flat.h
+> index d7102fcd43eb..46379e08cdd6 100644
+> --- a/arch/m68k/include/asm/flat.h
+> +++ b/arch/m68k/include/asm/flat.h
+> @@ -6,26 +6,7 @@
+>  #ifndef __M68KNOMMU_FLAT_H__
+>  #define __M68KNOMMU_FLAT_H__
+>  
+> -#include <linux/uaccess.h>
+> -
+> -static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
+> -					u32 *addr, u32 *persistent)
+> -{
+> -#ifdef CONFIG_CPU_HAS_NO_UNALIGNED
+> -	return copy_from_user(addr, rp, 4) ? -EFAULT : 0;
+> -#else
+> -	return get_user(*addr, rp);
+> -#endif
+> -}
+> -
+> -static inline int flat_put_addr_at_rp(u32 __user *rp, u32 addr, u32 rel)
+> -{
+> -#ifdef CONFIG_CPU_HAS_NO_UNALIGNED
+> -	return copy_to_user(rp, &addr, 4) ? -EFAULT : 0;
+> -#else
+> -	return put_user(addr, rp);
+> -#endif
+> -}
+> +#include <asm-generic/flat.h>
+>  
+>  #define FLAT_PLAT_INIT(regs) \
+>  	do { \
+> diff --git a/arch/arm/include/asm/flat.h b/include/asm-generic/flat.h
+> similarity index 73%
+> rename from arch/arm/include/asm/flat.h
+> rename to include/asm-generic/flat.h
+> index bbc27901446f..fcd2b45c0735 100644
+> --- a/arch/arm/include/asm/flat.h
+> +++ b/include/asm-generic/flat.h
+> @@ -1,15 +1,11 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> -/*
+> - * arch/arm/include/asm/flat.h -- uClinux flat-format executables
+> - */
+> -
+> -#ifndef __ARM_FLAT_H__
+> -#define __ARM_FLAT_H__
+> +#ifndef _ASM_GENERIC_FLAT_H
+> +#define _ASM_GENERIC_FLAT_H
+>  
+>  #include <linux/uaccess.h>
+>  
+>  static inline int flat_get_addr_from_rp(u32 __user *rp, u32 relval, u32 flags,
+> -					u32 *addr, u32 *persistent)
+> +		u32 *addr, u32 *persistent)
+>  {
+>  #ifndef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>  	return copy_from_user(addr, rp, 4) ? -EFAULT : 0;
+> @@ -27,4 +23,4 @@ static inline int flat_put_addr_at_rp(u32 __user *rp, u32 addr, u32 rel)
+>  #endif
+>  }
+>  
+> -#endif /* __ARM_FLAT_H__ */
+> +#endif /* _ASM_GENERIC_FLAT_H */
+> 
+
