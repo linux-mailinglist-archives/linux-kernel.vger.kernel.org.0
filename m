@@ -2,194 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F4A93DBCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:29:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55AE24013B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406515AbfFKU3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 16:29:14 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40019 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405476AbfFKU3N (ORCPT
+        id S2391821AbfFKUcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 16:32:17 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39998 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388533AbfFKUcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:29:13 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d30so7585253pgm.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 13:29:13 -0700 (PDT)
+        Tue, 11 Jun 2019 16:32:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a21so12982757ljh.7;
+        Tue, 11 Jun 2019 13:32:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dhnwSrdCPnvzoEVfuuVGqE83p7TnkQ5Modn2BNCoQD0=;
-        b=Pp0Hq+hd8QA6syECahlCWtYv82jhOxBm0sr+fZ9Dkk8nXtHe7nrSiSj+V8u0FaITQ7
-         84fXuzNXkrhzDQgkHPp26EjnsIzrDKXg48+xvOTrPv1gFdJxgRLOvcs0dwgoU2BGvzqE
-         Liz3+gL3rcT7wqBUJosubNY4aHZAru2eeUFG6CtPZ2mbKIzTjquHFKUIQcWXvVk4hMLI
-         7UB1amIr3aRGarnBUHse/35CwxBlRRF3qifo7BnhaOJV61RWbVqr0wA4GIowlDaA6gfT
-         pWINRb5VwbD/mtNfms9GrZfwha/4G8tSCCTtYnHFhjTrLaOGAdTroClIT1QeFCWuqloy
-         NJbA==
+        bh=HG+Jj5aLWSzQxxzhDq7lYfn2XSZ1Scwtl7BQOvyxWdg=;
+        b=iyDoFK5Fqv4+mMjPk1rfviS2aSrrgTJJme217/trpc2PivuZtugt8R0+H01Lf4OscE
+         4AGGya94adu38DxwHDJmsBPnZv/hSxxNFrZg8R1h60+fufDMbg/kElTC36aKEBsz9Xw2
+         1rX6ELf2EIp9aukcNxr1UZUoE1yu65sMae/DQW/goAGDngTUI4ZOrL1XYdNWWBD8Abcz
+         Ptp0JFep8n5KiQefxnuADK9plHczZZXubz+nC8B3oJyk7U6ASqVc1RDigsaSPNYxiDo8
+         kXngM1xwEoXmra5iphF95M8qrpxiGtMjGZ0MBb02pnxTp/QZpcHe3XPz4Q6KFnDCNlHh
+         L0xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dhnwSrdCPnvzoEVfuuVGqE83p7TnkQ5Modn2BNCoQD0=;
-        b=qwixqWuwuCUKlc+b6F7S33VNUReix5G3dLpiYvX8NfnLWGTLJ2RB0TxbuUKdLOSdqy
-         t8WNybndJ/4k6QD17Xq95PwUO8wNF5ZFK16P5PaHUeSTARAKLyaCBsTP1ZEqiPERSkQs
-         3O6EpBQquQaCBCP73AhJ4VzcSzRgqlR7kKnV751wOIu0980oK9Rlsw02rrtZ/I/VYB9a
-         svykxqvKUwYwiR3XhA3GWn8wB187BKF++T57sRWjlu4mG6dZis84v+1BN+bwKD0Arwgy
-         dFo6mzAMJy5eaJyB+WqDpSqx01CLykzaKy7t26l9CVoXR1NfOf+ex8UgOMLP7e8gjE8V
-         gbNQ==
-X-Gm-Message-State: APjAAAXmHv/XuL3YV+/XuL0h62yYE5TK83viwN3dBDmfBa1X3rK1QlZX
-        dH1X8lzAM/KL/Qu3CrmQXuyFcAaWLnlAbOE/aJRHdg==
-X-Google-Smtp-Source: APXvYqycBtJ32qbIn8pTyxMIAID5Xv7JTruAR7oTyIED4r622bu9rIlLgVdk0eekxjLa2OE4wVYL1Pw8y64Cqw0kRwU=
-X-Received: by 2002:a17:90a:2e89:: with SMTP id r9mr28553830pjd.117.1560284952085;
- Tue, 11 Jun 2019 13:29:12 -0700 (PDT)
+        bh=HG+Jj5aLWSzQxxzhDq7lYfn2XSZ1Scwtl7BQOvyxWdg=;
+        b=FoY+6D8J+8c6kOYAebaQrEIvEoSMaxQHsiyqn+tx2xEwvdvcV7PKczdf2z56JY3srq
+         OopRT2rVy5t8PLgrzjKx20TCzangc1OtpE8sp2nGmYIQBNMz1xnD4M8dEZm2Et3y2Rfp
+         Kn62kQLwT1EXdt/sQKFWpRZ4hqTImNMZj8COgcdBduZBgdRXZBFVAnlEklrWtgZzuvof
+         0QCdegAil9/hcmtYeIpWMAJf3J20SUM4UU8bB0h/Wt9+euyOfT7gcA/EFu9EA33okiE3
+         jkR9pggMV21UujDLhKZJ2ENT1sl8vgA7c0Ynp1OQJmo4OTKPO01BBOqoxfvdU2Il3GPc
+         Qq/A==
+X-Gm-Message-State: APjAAAX6RDAmGUKOCf/a+PkW2QDz6sxozMVMkLobVNJu9TUeF0BMUCs+
+        4kOXIrjjfb2SPT8gNW3ziwXBWRQ91hEfdIuFkeE=
+X-Google-Smtp-Source: APXvYqwH8mDirGvZFSQ++GGm3boVzKdaAPryfUMMKcxHOo7RgZUTNJsvQR5zKXzNZVh8HStluVu0VXpWSud2ZPpNp04=
+X-Received: by 2002:a2e:994:: with SMTP id 142mr11048542ljj.130.1560285134666;
+ Tue, 11 Jun 2019 13:32:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190514221711.248228-1-brendanhiggins@google.com>
- <20190514221711.248228-18-brendanhiggins@google.com> <20190517182254.548EA20815@mail.kernel.org>
- <CAAXuY3p4qhKVsSpQ44_kQeGDMfg7OuFLgFyxhcFWS3yf-5A_7g@mail.gmail.com>
- <20190607190047.C3E7A20868@mail.kernel.org> <20190611175830.GA236872@google.com>
- <20190611185018.2E1C021744@mail.kernel.org>
-In-Reply-To: <20190611185018.2E1C021744@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 11 Jun 2019 13:29:01 -0700
-Message-ID: <CAFd5g47dmcHOCX41cr2v9Kaj3xa_5-PoqUPX_1=AoQLUG90NkQ@mail.gmail.com>
-Subject: Re: [PATCH v4 17/18] kernel/sysctl-test: Add null pointer test for sysctl.c:proc_dointvec()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Iurii Zaikin <yzaikin@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+References: <20190611063333.48501-1-Anson.Huang@nxp.com> <20190611063333.48501-2-Anson.Huang@nxp.com>
+In-Reply-To: <20190611063333.48501-2-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 11 Jun 2019 17:32:13 -0300
+Message-ID: <CAOMZO5BCuBKHs1jXkm3qFD84_xcB=0NSwE3SLJHx9kq4Stbd_A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rtc: imx-sc: Make compatible string more generic
+To:     Yongcai Huang <Anson.Huang@nxp.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        alexandre.belloni@bootlin.com, Dong Aisheng <aisheng.dong@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 11:50 AM Stephen Boyd <sboyd@kernel.org> wrote:
+Hi Anson,
+
+On Tue, Jun 11, 2019 at 3:31 AM <Anson.Huang@nxp.com> wrote:
 >
-> Quoting Brendan Higgins (2019-06-11 10:58:30)
-> > On Fri, Jun 07, 2019 at 12:00:47PM -0700, Stephen Boyd wrote:
-> > > Quoting Iurii Zaikin (2019-06-05 18:29:42)
-> > > > On Fri, May 17, 2019 at 11:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > >
-> > > > > Quoting Brendan Higgins (2019-05-14 15:17:10)
-> > > > > > diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
-> > > > > > new file mode 100644
-> > > > > > index 0000000000000..fe0f2bae66085
-> > > > > > --- /dev/null
-> > > > > > +++ b/kernel/sysctl-test.c
-> > > > > > +
-> > > > > > +
-> > > > > > +static void sysctl_test_dointvec_happy_single_negative(struct kunit *test)
-> > > > > > +{
-> > > > > > +       struct ctl_table table = {
-> > > > > > +               .procname = "foo",
-> > > > > > +               .data           = &test_data.int_0001,
-> > > > > > +               .maxlen         = sizeof(int),
-> > > > > > +               .mode           = 0644,
-> > > > > > +               .proc_handler   = proc_dointvec,
-> > > > > > +               .extra1         = &i_zero,
-> > > > > > +               .extra2         = &i_one_hundred,
-> > > > > > +       };
-> > > > > > +       char input[] = "-9";
-> > > > > > +       size_t len = sizeof(input) - 1;
-> > > > > > +       loff_t pos = 0;
-> > > > > > +
-> > > > > > +       table.data = kunit_kzalloc(test, sizeof(int), GFP_USER);
-> > > > > > +       KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, input, &len, &pos));
-> > > > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, len);
-> > > > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, pos);
-> > > > > > +       KUNIT_EXPECT_EQ(test, -9, *(int *)table.data);
-> > > > >
-> > > > > Is the casting necessary? Or can the macro do a type coercion of the
-> > > > > second parameter based on the first type?
-> > > >  Data field is defined as void* so I believe casting is necessary to
-> > > > dereference it as a pointer to an array of ints. I don't think the
-> > > > macro should do any type coercion that == operator wouldn't do.
-> > > >  I did change the cast to make it more clear that it's a pointer to an
-> > > > array of ints being dereferenced.
-> > >
-> > > Ok, I still wonder if we should make KUNIT_EXPECT_EQ check the types on
-> > > both sides and cause a build warning/error if the types aren't the same.
-> > > This would be similar to our min/max macros that complain about
-> > > mismatched types in the comparisons. Then if a test developer needs to
-> > > convert one type or the other they could do so with a
-> > > KUNIT_EXPECT_EQ_T() macro that lists the types to coerce both sides to
-> > > explicitly.
-> >
-> > Do you think it would be better to do a phony compare similar to how
-> > min/max used to work prior to 4.17, or to use the new __typecheck(...)
-> > macro? This might seem like a dumb question (and maybe it is), but Iurii
-> > and I thought the former created an error message that was a bit easier
-> > to understand, whereas __typecheck is obviously superior in terms of
-> > code reuse.
-> >
-> > This is what we are thinking right now; if you don't have any complaints
-> > I will squash it into the relevant commits on the next revision:
+> From: Anson Huang <Anson.Huang@nxp.com>
 >
-> Can you provide the difference in error messages and describe that in
-> the commit text? The commit message is where you "sell" the patch, so
-> being able to compare the tradeoff of having another macro to do type
-> comparisons vs. reusing the one that's there in kernel.h would be useful
-> to allay concerns that we're duplicating logic for better error
-> messages.
-
-Oh sorry, I didn't think too hard about the commit message since I
-figured it would get split up and squashed into the existing commits.
-I just wanted to get it out sooner to discuss this before I post the
-next revision (probably later this week).
-
-> Honestly, I'd prefer we just use the macros that we've developed in
-> kernel.h to do comparisons here so that we can get code reuse, but more
-> importantly so that we don't trip over problems that caused those macros
-> to be created in the first place. If the error message is bad, perhaps
-> that can be fixed with some sort of compiler directive to make the error
-> message a little more useful, i.e. compiletime_warning() thrown into
-> __typecheck() or something.
-
-That's a good point. I have no qualms sticking with __typecheck(...)
-for now; if we later feel that it is causing problems, we can always
-fix it later by supplying our own warning in the manner you suggest.
-
-Iurii, do you have any additional thoughts on this?
-
+> i.MX system controller RTC driver can support all i.MX SoCs
+> with system controller inside, this patch makes the compatible
+> string more generic to support other i.MX SoCs with system
+> controller inside, such as i.MX8QM etc..
 >
-> > ---
-> > From: Iurii Zaikin <yzaikin@google.com>
-> >
-> > Adds a warning message when comparing values of different types similar
-> > to what min() / max() macros do.
-> >
-> > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/rtc/rtc-imx-sc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/rtc/rtc-imx-sc.c b/drivers/rtc/rtc-imx-sc.c
+> index c933045..38ef3ca 100644
+> --- a/drivers/rtc/rtc-imx-sc.c
+> +++ b/drivers/rtc/rtc-imx-sc.c
+> @@ -178,7 +178,7 @@ static int imx_sc_rtc_probe(struct platform_device *pdev)
+>  }
+>
+>  static const struct of_device_id imx_sc_dt_ids[] = {
+> -       { .compatible = "fsl,imx8qxp-sc-rtc", },
+> +       { .compatible = "fsl,imx-sc-rtc", },
+
+What is wrong with the current compatible string?
+
+If you want to support i.MX8QM just add in its dtsi:
+
+compatible = "fsl,imx8qm-sc-rtc", "fsl,imx8qxp-sc-rtc"
+
+and add a dt-bindings entry for "fsl,imx8qm-sc-rtc"
