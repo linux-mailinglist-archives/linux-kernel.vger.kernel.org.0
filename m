@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 720D33C87D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC94B3C86D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:17:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405465AbfFKKSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46174 "EHLO mail.kernel.org"
+        id S2405414AbfFKKRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:17:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405343AbfFKKR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:17:26 -0400
+        id S2404766AbfFKKR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:17:27 -0400
 Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FF02217D6;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D03C2183F;
         Tue, 11 Jun 2019 10:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1560248245;
-        bh=Kn3t/CWfkqyvKZFbLUZs5AfcXKZa2BYUNUsJyKA5Gz4=;
+        bh=QrCB9F6TrRnxcZhPbN8ur0QRjMk8IvRHyFauXr/wPw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ymAPliOd1nYzigdtr7cOMV+v9MT8eMmXKabPR70y5mCL4qj1cs47JlvfNUYtmgyOq
-         9ZShzsyUZy9VOg0hCDDc41T3QaLIZ32exlSgeLn3CVF1IC5dcIrjMgUNUGlNxearQA
-         D0VCr/+Uxx++DrF4nUwsN8j4WHQXRxbWyoQRowVg=
+        b=eu2CxCBP4khNbluILkaEj0j9ursd2BkEG49CrAI9+XYhAm/ZTd8r6mzQIUPWq/Qfs
+         6unYKWMlk2ra819Gf1YLQeHat2v9gjSYA8CtvAyCiYyOf6mx8U2jyfRgx15DLEJqld
+         mw74DYsIkvxUE4gmXKrjKEUqe3oMqDg+KAaSBbT8=
 Received: by wens.tw (Postfix, from userid 1000)
-        id 99DF660C93; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+        id A0A3360C95; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
 From:   Chen-Yu Tsai <wens@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -32,9 +32,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 22/25] clk: sunxi-ng: h6-r: Use local parent references for CLK_FIXED_FACTOR
-Date:   Tue, 11 Jun 2019 18:16:55 +0800
-Message-Id: <20190611101658.23855-23-wens@kernel.org>
+Subject: [PATCH v2 23/25] clk: sunxi-ng: gate: Add macros for referencing local clock parents
+Date:   Tue, 11 Jun 2019 18:16:56 +0800
+Message-Id: <20190611101658.23855-24-wens@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611101658.23855-1-wens@kernel.org>
 References: <20190611101658.23855-1-wens@kernel.org>
@@ -47,33 +47,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-With the new clk parenting code and CLK_FIXED_FACTOR_{HW,FW_NAME}
-macros, we can reference parents locally via pointers to struct clk_hw
-or DT clock-names.
+With the new clk parenting code, clk_init_data was expanded to include
+.parent_hws, for clk drivers to directly reference parents by clk_hw,
+and .parent_data, for clk drivers to specify parents using a combination
+of device tree clock-names, pointers to struct clk_hw, device tree clocks,
+and/or fallback global clock names.
 
-Convert existing CLK_FIXED_FACTOR definitions to either the _HW or
-_FW_NAME variant based on whether the parent clock is internal or
-external to the CCU.
+Add four new macros:
+
+  - SUNXI_CCU_GATE_HW, that can take a struct clk_hw pointer, instead
+    of a string, as its parent.
+
+  - SUNXI_CCU_GATE_FW that takes a string to match a clock-names entry
+    in the device tree to specify the clock parent.
+
+  - SUNXI_CCU_GATE_HWS that takes an array of struct clk_hw * as its
+    parent. This allows the array to be shared with other clk
+    declarations.
+
+  - SUNXI_CCU_GATE_DATA that takes an array of struct clk_parent_data *
+    as its parent. This allows the array to be shared with other clk
+    declarations.
 
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu_gate.h | 53 +++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-index 8d05d4f1f8a1..45a1ed3fe674 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-@@ -49,7 +49,7 @@ static struct ccu_div ar100_clk = {
- 	},
- };
+diff --git a/drivers/clk/sunxi-ng/ccu_gate.h b/drivers/clk/sunxi-ng/ccu_gate.h
+index 4466169bd2d7..613ddd03629e 100644
+--- a/drivers/clk/sunxi-ng/ccu_gate.h
++++ b/drivers/clk/sunxi-ng/ccu_gate.h
+@@ -36,6 +36,59 @@ struct ccu_gate {
+ 		}							\
+ 	}
  
--static CLK_FIXED_FACTOR(r_ahb_clk, "r-ahb", "ar100", 1, 1, 0);
-+static CLK_FIXED_FACTOR_HW(r_ahb_clk, "r-ahb", &ar100_clk.common.hw, 1, 1, 0);
- 
- static struct ccu_div r_apb1_clk = {
- 	.div		= _SUNXI_CCU_DIV(0, 2),
++#define SUNXI_CCU_GATE_HW(_struct, _name, _parent, _reg, _gate, _flags)	\
++	struct ccu_gate _struct = {					\
++		.enable	= _gate,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT_HW(_name,		\
++							 _parent,	\
++							 &ccu_gate_ops,	\
++							 _flags),	\
++		}							\
++	}
++
++#define SUNXI_CCU_GATE_FW(_struct, _name, _parent, _reg, _gate, _flags)	\
++	struct ccu_gate _struct = {					\
++		.enable	= _gate,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT_FW_NAME(_name,	\
++							      _parent,	\
++							      &ccu_gate_ops, \
++							      _flags),	\
++		}							\
++	}
++
++/*
++ * The following two macros allow the re-use of the data structure
++ * holding the parent info.
++ */
++#define SUNXI_CCU_GATE_HWS(_struct, _name, _parent, _reg, _gate, _flags) \
++	struct ccu_gate _struct = {					\
++		.enable	= _gate,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT_HWS(_name,	\
++							  _parent,	\
++							  &ccu_gate_ops, \
++							  _flags),	\
++		}							\
++	}
++
++#define SUNXI_CCU_GATE_DATA(_struct, _name, _data, _reg, _gate, _flags)	\
++	struct ccu_gate _struct = {					\
++		.enable	= _gate,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	=				\
++				CLK_HW_INIT_PARENTS_DATA(_name,		\
++							 _data,		\
++							 &ccu_gate_ops,	\
++							 _flags),	\
++		}							\
++	}
++
+ static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
+ {
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
 -- 
 2.20.1
 
