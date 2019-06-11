@@ -2,148 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFE33C955
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB2B23C977
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfFKKtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:49:18 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36585 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728827AbfFKKtR (ORCPT
+        id S2388323AbfFKK4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:56:12 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6304 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbfFKK4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:49:17 -0400
-Received: by mail-wm1-f67.google.com with SMTP id u8so2384069wmm.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 03:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Wke+zJP5dCswbWV/u/esh55NqtZ1D4txLFIezrnYzvc=;
-        b=PxrxDslAIz/rFntDtsnZky+pHhSb0tuqmviueUjKiknFy3QJVo2pNovpjuqynjBoGd
-         qtC0oufRU8IFFy4PaVjl3NH0rTHHabLnMJaUsqLuDXlAymNfwNtQPp3ihtWZHKluO7Xy
-         z9IfrFxDUpcndgECSycZq4t6Cy+HMu5B6Y/ptdeljIhskZk6C2LaFXn63jevymcITGtn
-         H0QyEVT1kKoirxc+XNQ1cZS21cx3Cgzfa5rPqgn/ZxFP7csu2xNhNH2yUGoQavy2XQBu
-         51QgvqpImw7EcwhPnRjvcJfA9xQkdPDiHY4WV+QUFC6GLuLPxqWrNlDE9XUAu1/W8PMc
-         uDiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Wke+zJP5dCswbWV/u/esh55NqtZ1D4txLFIezrnYzvc=;
-        b=WRSktaXr0eDLRdxyDtBZCovl8hKPHYNEdTP/wMoyyHCUMyleWXPQmhyClJkOsx2wJn
-         +udX90rf1fSlqv8FnZJ2hmXb7NvwFRZ4srAc7qqbh+aHo4dFIo9gU83z+YxKRMJHfTZs
-         K8lJ2iKeH7WZClPOACgKAJeEJmbcdwISCB4GyX8z+VVE5A6QxraFXRfdRYlPr8JLj+wM
-         rClwUJtHNay5grGZ6LeRbrUWg1Afu+Se6ZK8UDg4AW0bNPPidpjN5j6yZommQJH7X9hX
-         wiiUo9AL80/KrypDkViZ8WHKy94bWX8CeDWypXGAUJSuZfAB8/GWAq/FMCNuIhtF6xO5
-         yUbg==
-X-Gm-Message-State: APjAAAXmCsQQ2CX1+2g5Y1A6XjDPz6KEyyWaohzOtuOUSaoK+lWyw3ut
-        klX57LEla2xcAWsPzzeCAbcpZg==
-X-Google-Smtp-Source: APXvYqyVEdeJXtwm61rHWGiItQER4fYOS3J8J0oDLkfvh49Af3An58cPZ73GF11X36CTWlidhej42w==
-X-Received: by 2002:a1c:a7c6:: with SMTP id q189mr17676575wme.146.1560250156070;
-        Tue, 11 Jun 2019 03:49:16 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id s9sm2336429wmc.11.2019.06.11.03.49.14
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 03:49:15 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 11:49:13 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Doug Anderson <dianders@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Brian Norris <briannorris@google.com>,
-        Guenter Roeck <groeck@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Message-ID: <20190611104913.egsbwcedshjdy3m5@holly.lan>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com>
- <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain>
- <20190610205233.GB137143@google.com>
+        Tue, 11 Jun 2019 06:56:12 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cff88cc0000>; Tue, 11 Jun 2019 03:56:12 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 11 Jun 2019 03:56:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 11 Jun 2019 03:56:10 -0700
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Jun
+ 2019 10:51:20 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 11 Jun 2019 10:51:19 +0000
+Received: from dhcp-10-19-65-14.client.nvidia.com (Not Verified[10.19.65.14]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5cff87a50000>; Tue, 11 Jun 2019 03:51:19 -0700
+From:   Bitan Biswas <bbiswas@nvidia.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Dmitry Osipenko <digetx@gmail.com>
+CC:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>
+Subject: [PATCH V5 1/7] i2c: tegra: clean up macros
+Date:   Tue, 11 Jun 2019 03:51:08 -0700
+Message-ID: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610205233.GB137143@google.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560250572; bh=ottEE2XiiiPbfH/Skr0UtzLGEI1kOObrtR9qGE7imE4=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=L4gbdTex/r20AkmMr2mCNWPSLi2t6BZtg1pXS3fSDgtFMlWey7+Suwn9zEzrsnzLq
+         0/IWrjCoJi/nyGeHroRBFJXMLx6hDnJRAPDvrdJ5ybNgoG3poES3RnPHXE4fEOoB9Q
+         ottN1yf6xav1qtqUeKNIY1qlsQSYb4KcMNKu9UhRrKcx0NGFUpUQzIjeF6MitPtWfI
+         OzJM7F7WYyOzb8GEIajv4q4uZJuObhQP7Uh3OUr3Th0tbokAwm8Y8dX/92BtgfEWpG
+         ZhzFR6MGKBrq1KmiZLlRqHeujvC7W/N+GL3Ftd83mrWCBpEk9M8HDjtkyV/r4n4jEQ
+         XWHzOhmKm4Oyg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 01:52:33PM -0700, Matthias Kaehlcke wrote:
-> Hi Pavel,
-> 
-> On Sat, Jun 08, 2019 at 11:02:26PM +0200, Pavel Machek wrote:
-> > Hi!
-> > 
-> > > > +	 * Note that this method is based on empirical testing on different
-> > > > +	 * devices with PWM of 8 and 16 bits of resolution.
-> > > > +	 */
-> > > > +	n = period;
-> > > > +	while (n) {
-> > > > +		counter += n % 2;
-> > > > +		n >>= 1;
-> > > > +	}
-> > > 
-> > > I don't quite follow the heuristics above. Are you sure the number of
-> > > PWM bits can be infered from the period? What if the period value (in
-> > > ns) doesn't directly correspond to a register value? And even if it
-> > > did, counting the number of set bits (the above loops is a
-> > > re-implementation of ffs()) doesn't really result in the dividers
-> > > mentioned in the comment. E.g. a period of 32768 ns (0x8000) results
-> > > in a divider of 1, i.e. 32768 brighness levels.
-> > > 
-> > > On veyron minnie the period is 1000000 ns, which results in 142858
-> > > levels (1000000 / 7)!
-> > > 
-> > > Not sure if there is a clean solution using heuristics, a DT property
-> > > specifying the number of levels could be an alternative. This could
-> > > also be useful to limit the number of (mostly) redundant levels, even
-> > > the intended max of 4096 seems pretty high.
-> > > 
-> > > Another (not directly related) observation is that on minnie the
-> > > actual brightness at a nominal 50% is close to 0 (duty cycle ~3%). I
-> > > haven't tested with other devices, but I wonder if it would make
-> > > sense to have an option to drop the bottom N% of levels, since the
-> > > near 0 brightness in the lower 50% probably isn't very useful in most
-> > > use cases, but maybe it looks different on other devices.
-> > 
-> > Eye percieves logarithm(duty cycle), mostly, and I find very low brightness
-> > levels quite useful when trying to use machine in dark room.
-> 
-> I realized that the brightness level display on Chrome OS (= my test
-> device) is non-linear, and it isn't actually the lower 50% of levels
-> that is near 0 brightness, but 'only' about 20%.
-> 
-> > But yes, specifying if brightness is linear or exponential would be quite
-> > useful.
-> 
-> Agreed, this could help userspace with displaying a reasonable
-> brightness level.
+Clean up macros by:
+1) removing unused macros
+2) replace constants by macro BIT()
 
-This is a long standing flaw in the backlight interfaces. AFAIK generic
-userspaces end up with a (flawed) heuristic.
+Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-Basically devices with a narrow range of choices can be assumed to be
-logarithmic (since anything linear with a narrow range of choices is
-junk anyway and the slider will never feel right).
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 1dbba39..00692d8 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -54,20 +54,15 @@
+ #define I2C_INT_STATUS				0x068
+ #define I2C_INT_BUS_CLR_DONE			BIT(11)
+ #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+-#define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+-#define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+-#define I2C_INT_RX_FIFO_UNDERFLOW		BIT(4)
+ #define I2C_INT_NO_ACK				BIT(3)
+ #define I2C_INT_ARBITRATION_LOST		BIT(2)
+ #define I2C_INT_TX_FIFO_DATA_REQ		BIT(1)
+ #define I2C_INT_RX_FIFO_DATA_REQ		BIT(0)
+ #define I2C_CLK_DIVISOR				0x06c
+ #define I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT	16
+-#define I2C_CLK_MULTIPLIER_STD_FAST_MODE	8
+ 
+ #define DVC_CTRL_REG1				0x000
+ #define DVC_CTRL_REG1_INTR_EN			BIT(10)
+-#define DVC_CTRL_REG2				0x004
+ #define DVC_CTRL_REG3				0x008
+ #define DVC_CTRL_REG3_SW_PROG			BIT(26)
+ #define DVC_CTRL_REG3_I2C_DONE_INTR_EN		BIT(30)
+@@ -75,24 +70,21 @@
+ #define DVC_STATUS_I2C_DONE_INTR		BIT(30)
+ 
+ #define I2C_ERR_NONE				0x00
+-#define I2C_ERR_NO_ACK				0x01
+-#define I2C_ERR_ARBITRATION_LOST		0x02
+-#define I2C_ERR_UNKNOWN_INTERRUPT		0x04
++#define I2C_ERR_NO_ACK				BIT(0)
++#define I2C_ERR_ARBITRATION_LOST		BIT(1)
++#define I2C_ERR_UNKNOWN_INTERRUPT		BIT(2)
+ 
+ #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+ #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+ #define PACKET_HEADER0_CONT_ID_SHIFT		12
+ #define PACKET_HEADER0_PROTOCOL_I2C		BIT(4)
+ 
+-#define I2C_HEADER_HIGHSPEED_MODE		BIT(22)
+ #define I2C_HEADER_CONT_ON_NAK			BIT(21)
+-#define I2C_HEADER_SEND_START_BYTE		BIT(20)
+ #define I2C_HEADER_READ				BIT(19)
+ #define I2C_HEADER_10BIT_ADDR			BIT(18)
+ #define I2C_HEADER_IE_ENABLE			BIT(17)
+ #define I2C_HEADER_REPEAT_START			BIT(16)
+ #define I2C_HEADER_CONTINUE_XFER		BIT(15)
+-#define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+ 
+ #define I2C_BUS_CLEAR_CNFG			0x084
+@@ -106,8 +98,6 @@
+ 
+ #define I2C_CONFIG_LOAD				0x08C
+ #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+-#define I2C_SLV_CONFIG_LOAD			BIT(1)
+-#define I2C_TIMEOUT_CONFIG_LOAD			BIT(2)
+ 
+ #define I2C_CLKEN_OVERRIDE			0x090
+ #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
+@@ -133,7 +123,6 @@
+ #define I2C_STANDARD_MODE			100000
+ #define I2C_FAST_MODE				400000
+ #define I2C_FAST_PLUS_MODE			1000000
+-#define I2C_HS_MODE				3500000
+ 
+ /* Packet header size in bytes */
+ #define I2C_PACKET_HEADER_SIZE			12
+-- 
+2.7.4
 
-On the other side though we can only really make a guess.
-
-Systems are coming along that allow us to animate the change of
-brightness (part of the reason for interpolated tables is to
-permit smooth animation rather than because the user explicitly wants
-to set the brightness to exactly 1117). These systems are often
-logarithmic but with a wide range of values.
-
-
-Daniel.
