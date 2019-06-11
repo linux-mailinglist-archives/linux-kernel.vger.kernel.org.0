@@ -2,209 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF443C3A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7A03C3A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404046AbfFKFvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 01:51:36 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38649 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390485AbfFKFuw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:50:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d18so11448798wrs.5
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4zBKFHoIg15/9/uWxHB8RusJhUniU4+YU9+6RV52dnE=;
-        b=VyzgLG06PJguGa21NCzXgYbQZS5lQgbtdpZr17vF4Z4e6jaVbGYEM2z3BbkAlw/uzx
-         CFrWN0YNCfNjX8aZgUc491q2vb+uZYHnzzEHWOrz0wzenx/Q7EEN/EmHmF4UgZAPGSSG
-         tOVcL2cs2Iuf8WrgcM62quaIC0Cvsb5CG0TEUupNw5Si1nTKRiOGsbcCRA9P3UyK9DC1
-         fMoV4jpLKfciUCosmzs7B+nKy2OHptXBDJAMo1DvefsNlNXa7JK137QTCKZypyy891Qy
-         +mcdh0Ob8OUlBnP/LQelX/SUjrASuJxo8e9+METHjRyCupK3vfcVsa9A40e/I72bdyZ3
-         dRQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4zBKFHoIg15/9/uWxHB8RusJhUniU4+YU9+6RV52dnE=;
-        b=tHWZy+xJplESB+jVMcPpVqNp4Tu1CzqUYYxwr3JfYL94qvsbwK5rD07VEzxAip/0br
-         NO4ZzO/zI/3hP6hj4XiLnLvxUwgWd33PBiy1yZUCUfNrtLpkL28386y1//Wk9ai+TF2x
-         fUPYYRq67oi/bN7VTZ/fi0/uAHJUmXXHPtV+zTJYHLt+TmlreISZVGLNxEaCLS9KO3md
-         gRwlUU8QsidpdwuQXop8A3FHnYGEnmgP6RiuvUzt3/NujRvZEvzHtehgDNzkm0fKwZJC
-         eYHYv6Znj9qu+FcnNEw323OafRVgKW/5fWI96JNe7LP90qnEo31YweVkJFQ3pIZl2top
-         bEYg==
-X-Gm-Message-State: APjAAAVPu6CxZBdRKvK5t1rK3Mm2cZNyq55e97NH2rCsEuxAdH9DWlxx
-        hsQ7vqpLf4aiz2Q4TM/WD7TnvePhTRc=
-X-Google-Smtp-Source: APXvYqyVHCheapYM1kx4Q9Uwcj5Oq1IX8b/hA0zT+wSKZShSOJsilnQjRReQChBKwdlA7P8X/xQ8HA==
-X-Received: by 2002:a5d:4a90:: with SMTP id o16mr25238298wrq.13.1560232250436;
-        Mon, 10 Jun 2019 22:50:50 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j8sm11968056wrr.64.2019.06.10.22.50.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 22:50:49 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH 2/8] habanalabs: de-couple MMU and VM module initialization
-Date:   Tue, 11 Jun 2019 08:50:39 +0300
-Message-Id: <20190611055045.15945-3-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190611055045.15945-1-oded.gabbay@gmail.com>
-References: <20190611055045.15945-1-oded.gabbay@gmail.com>
+        id S2404022AbfFKFvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 01:51:13 -0400
+Received: from gate.crashing.org ([63.228.1.57]:36313 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403745AbfFKFvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 01:51:11 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x5B5oe0m029024;
+        Tue, 11 Jun 2019 00:50:41 -0500
+Message-ID: <1ae5e7a3464f9d8e16b112cd371957ea20472864.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     James Morse <james.morse@arm.com>,
+        "Hawa, Hanna" <hhhawa@amazon.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Shenhar, Talel" <talel@amazon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chocron, Jonathan" <jonnyc@amazon.com>,
+        "Krupnik, Ronen" <ronenk@amazon.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "Hanoch, Uri" <hanochu@amazon.com>
+Date:   Tue, 11 Jun 2019 15:50:40 +1000
+In-Reply-To: <20190608090556.GA32464@zn.tnic>
+References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
+         <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
+         <DB09EE2A-7397-4063-B925-66658D0105A5@alien8.de>
+         <bfbc12fb68eea9d8d4cc257c213393fd4e92c33a.camel@amazon.com>
+         <20190531051400.GA2275@cz.tnic>
+         <ce01a2bc-7973-5978-b033-a6bdc61b9d4b@amazon.com>
+         <32431fa2-2285-6c41-ce32-09630205bb54@arm.com>
+         <9a2aaf4a9545ed30568a0613e64bc3f57f047799.camel@kernel.crashing.org>
+         <20190608090556.GA32464@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch initializes the MMU S/W structures before the VM S/W
-structures, instead of doing that as part of the VM S/W initialization.
+On Sat, 2019-06-08 at 11:05 +0200, Borislav Petkov wrote:
+> On Sat, Jun 08, 2019 at 10:16:11AM +1000, Benjamin Herrenschmidt wrote:
+> > Those IP blocks don't need any SW coordination at runtime. The drivers
+> > don't share data nor communicate with each other. There is absolultely
+> > no reason to go down that path.
+> 
+> Let me set one thing straight: the EDAC "subsystem" if you will - or
+> that pile of code which does error counting and reporting - has its
+> limitations in supporting one EDAC driver per platform. And whenever we
+> have two drivers loadable on a platform, we have to do dirty hacks like
+> 
+>   301375e76432 ("EDAC: Add owner check to the x86 platform drivers")
+> 
+> What that means is, that if you need to call EDAC logging routines or
+> whatnot from two different drivers, there's no locking, no nothing. So
+> it might work or it might set your cat on fire.
 
-This is done because we need to configure some MMU mappings for the kernel
-context, before the VM is initialized. The VM initialization can't be
-moved earlier because it depends on the size of the DRAM, which is
-retrieved from the device CPU. Communication with the device CPU will
-require the MMU mappings to be configured and hence the de-coupling.
+Should we fix that then instead ? What are the big issues with adding
+some basic locking ? being called from NMIs ?
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/device.c | 23 ++++++++++++++++++++---
- drivers/misc/habanalabs/memory.c | 13 +------------
- drivers/misc/habanalabs/mmu.c    |  6 +-----
- 3 files changed, 22 insertions(+), 20 deletions(-)
+If the separate drivers operate on distinct counters I don't see a big
+problem there.
 
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 4df8ef88ce2d..0c4894dd9c02 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -745,6 +745,7 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
- 
- 	if (hard_reset) {
- 		hl_vm_fini(hdev);
-+		hl_mmu_fini(hdev);
- 		hl_eq_reset(hdev, &hdev->event_queue);
- 	}
- 
-@@ -772,6 +773,13 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
- 			goto out_err;
- 		}
- 
-+		rc = hl_mmu_init(hdev);
-+		if (rc) {
-+			dev_err(hdev->dev,
-+				"Failed to initialize MMU S/W after hard reset\n");
-+			goto out_err;
-+		}
-+
- 		/* Allocate the kernel context */
- 		hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx),
- 						GFP_KERNEL);
-@@ -943,11 +951,18 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		goto cq_fini;
- 	}
- 
-+	/* MMU S/W must be initialized before kernel context is created */
-+	rc = hl_mmu_init(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to initialize MMU S/W structures\n");
-+		goto eq_fini;
-+	}
-+
- 	/* Allocate the kernel context */
- 	hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
- 	if (!hdev->kernel_ctx) {
- 		rc = -ENOMEM;
--		goto eq_fini;
-+		goto mmu_fini;
- 	}
- 
- 	hdev->user_ctx = NULL;
-@@ -995,8 +1010,6 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		goto out_disabled;
- 	}
- 
--	/* After test_queues, KMD can start sending messages to device CPU */
--
- 	rc = device_late_init(hdev);
- 	if (rc) {
- 		dev_err(hdev->dev, "Failed late initialization\n");
-@@ -1042,6 +1055,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 			"kernel ctx is still alive on initialization failure\n");
- free_ctx:
- 	kfree(hdev->kernel_ctx);
-+mmu_fini:
-+	hl_mmu_fini(hdev);
- eq_fini:
- 	hl_eq_fini(hdev, &hdev->event_queue);
- cq_fini:
-@@ -1146,6 +1161,8 @@ void hl_device_fini(struct hl_device *hdev)
- 
- 	hl_vm_fini(hdev);
- 
-+	hl_mmu_fini(hdev);
-+
- 	hl_eq_fini(hdev, &hdev->event_queue);
- 
- 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
-diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-index 693877e37fd8..42d237cae1dc 100644
---- a/drivers/misc/habanalabs/memory.c
-+++ b/drivers/misc/habanalabs/memory.c
-@@ -1657,17 +1657,10 @@ int hl_vm_init(struct hl_device *hdev)
- 	struct hl_vm *vm = &hdev->vm;
- 	int rc;
- 
--	rc = hl_mmu_init(hdev);
--	if (rc) {
--		dev_err(hdev->dev, "Failed to init MMU\n");
--		return rc;
--	}
--
- 	vm->dram_pg_pool = gen_pool_create(__ffs(prop->dram_page_size), -1);
- 	if (!vm->dram_pg_pool) {
- 		dev_err(hdev->dev, "Failed to create dram page pool\n");
--		rc = -ENOMEM;
--		goto pool_create_err;
-+		return -ENOMEM;
- 	}
- 
- 	kref_init(&vm->dram_pg_pool_refcount);
-@@ -1693,8 +1686,6 @@ int hl_vm_init(struct hl_device *hdev)
- 
- pool_add_err:
- 	gen_pool_destroy(vm->dram_pg_pool);
--pool_create_err:
--	hl_mmu_fini(hdev);
- 
- 	return rc;
- }
-@@ -1724,7 +1715,5 @@ void hl_vm_fini(struct hl_device *hdev)
- 		dev_warn(hdev->dev, "dram_pg_pool was not destroyed on %s\n",
- 				__func__);
- 
--	hl_mmu_fini(hdev);
--
- 	vm->init_done = false;
- }
-diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
-index 10aee3141444..87968f32e718 100644
---- a/drivers/misc/habanalabs/mmu.c
-+++ b/drivers/misc/habanalabs/mmu.c
-@@ -385,12 +385,8 @@ static void dram_default_mapping_fini(struct hl_ctx *ctx)
-  * @hdev: habanalabs device structure.
-  *
-  * This function does the following:
-- * - Allocate max_asid zeroed hop0 pgts so no mapping is available.
-- * - Enable MMU in H/W.
-- * - Invalidate the MMU cache.
-  * - Create a pool of pages for pgt_infos.
-- *
-- * This function depends on DMA QMAN to be working!
-+ * - Create a shadow table for pgt
-  *
-  * Return: 0 for success, non-zero for failure.
-  */
--- 
-2.17.1
+> IOW, having multiple separate "drivers" or representations of RAS
+> functionality using EDAC facilities is something that hasn't been
+> done. Well, almost. highbank_mc_edac.c and highbank_l2_edac.c is one
+> example but they make sure they don't step on each other's toes by using
+> different EDAC pieces - a device vs a memory controller abstraction.
+
+That sounds like a reasonable requirement.
+
+> And now the moment all of a sudden you decide you want for those
+> separate "drivers" to synchronize on something, you need to do something
+> hacky like the amd_register_ecc_decoder() thing, for example, because we
+> need to call into the EDAC memory controller driver to decode a DRAM ECC
+> error properly, while the rest of the error types get decoded somewhere
+> else...
+> 
+> Then there comes the issue with code reuse - wouldn't it be great if a
+> memory controller driver can be shared between platform drivers instead of
+> copying it in both?
+> 
+> We already do that - see fsl_ddr_edac.c which gets shared between PPC
+> *and* ARM. drivers/edac/skx_common.c is another example for Intel chips.
+> 
+> Now, if you have a platform with 10 IP blocks which each have RAS
+> functionality, are you saying you'll do 10 different pieces called
+> 
+> <platform_name>_<ip_block#>_edac.c
+> 
+> ?
+> 
+> And if <next_platform> has an old IP block with the old RAS
+> functionality, you load <platform_name>_<ip_block>_edac.c on the new
+> platform too?
+
+I'n not sure why <platform_name> ...
+
+Anyway, let's get back to the specific case of our Amazon platform here
+since it's a concrete example.
+
+Hanna, can you give us a reasonably exhaustive list of how many such
+"drivers" we'll want in the EDAC subsystem and whether you envision any
+coordination requirement between them or not ?
+
+Cheers,
+Ben.
+
+
 
