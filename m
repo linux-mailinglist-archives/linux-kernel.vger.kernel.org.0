@@ -2,98 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3D73D403
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 178C83D480
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406098AbfFKR1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:27:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57638 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405718AbfFKR1b (ORCPT
+        id S2406520AbfFKRsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:48:20 -0400
+Received: from gateway36.websitewelcome.com ([50.116.127.2]:14111 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406187AbfFKRsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:27:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Dar/WM9H13xu/Hyi4BKbNrb4KMNdAL61gb8NhO+H5E8=; b=QfHg/jEZCM3KPVt89hxZScmxp0
-        i5wupjPy58t3ZNKCLb8DxCIRmec0fEnUZiWZ3TXn/Nt5zVCDh3qYQblmdXCSnFXIObGe8aII0S7Lc
-        oPkt8cCIumc7tFdvZtoK5IMBo9t3sV1zrFLEaqVIVj7yqiSXUL/mlVTmuZJA/UfG+naZVJ7AgLuph
-        iVa2eDr0c+VqzDBYWOWA4xKXKIpHpuHXLrXy+WlGiFMUaQf8Ct0iuGwciShDGdYb8mwu4MEXN3xjz
-        6doexOaudPHV29i+WeAhg0xVSgw9bsFUrdrLOJ3pJI3pWs8VKVAnFLdamKRkoweBnOt52vTaru5cS
-        NeVgQ4cQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hakYK-0006EZ-SR; Tue, 11 Jun 2019 17:27:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BEB712025A826; Tue, 11 Jun 2019 19:27:17 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 19:27:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait
- C0.2 state
-Message-ID: <20190611172717.GC3436@hirez.programming.kicks-ass.net>
-References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
- <1559944837-149589-4-git-send-email-fenghua.yu@intel.com>
- <20190611085410.GT3436@hirez.programming.kicks-ass.net>
- <0D67CEAC-9710-4ECB-9248-75B48542FF82@amacapital.net>
+        Tue, 11 Jun 2019 13:48:19 -0400
+X-Greylist: delayed 1241 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 13:48:18 EDT
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id AD447400C8A3C
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 11:48:50 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id akYahquLgYTGMakYahnwbi; Tue, 11 Jun 2019 12:27:36 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.75.107] (port=55782 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hakYZ-001B5Y-MS; Tue, 11 Jun 2019 12:27:35 -0500
+Subject: Re: [PATCH] bpf: verifier: avoid fall-through warnings
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Lawrence Brakmo <brakmo@fb.com>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20190611132811.GA27212@embeddedor>
+ <CAEf4BzaG=cQWAVNNj0hy4Ui7mHzXZgxs8J3rKbxjjVdEGdNkvA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <4acbc6b9-e2aa-02d3-0e99-f641b67a3da3@embeddedor.com>
+Date:   Tue, 11 Jun 2019 12:27:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <CAEf4BzaG=cQWAVNNj0hy4Ui7mHzXZgxs8J3rKbxjjVdEGdNkvA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0D67CEAC-9710-4ECB-9248-75B48542FF82@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.75.107
+X-Source-L: No
+X-Exim-ID: 1hakYZ-001B5Y-MS
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.75.107]:55782
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-(can you, perchance, look at a MUA that isn't 'broken' ?)
 
-On Tue, Jun 11, 2019 at 09:04:30AM -0700, Andy Lutomirski wrote:
+On 6/11/19 12:22 PM, Andrii Nakryiko wrote:
+> On Tue, Jun 11, 2019 at 7:05 AM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> In preparation to enabling -Wimplicit-fallthrough, this patch silences
+>> the following warning:
 > 
+> Your patch doesn't apply cleanly to neither bpf nor bpf-next tree.
+> Could you please rebase and re-submit? Please also include which tree
+> (probably bpf-next) you are designating this patch to in subject
+> prefix.
 > 
-> > On Jun 11, 2019, at 1:54 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> >> On Fri, Jun 07, 2019 at 03:00:35PM -0700, Fenghua Yu wrote:
-> >> C0.2 state in umwait and tpause instructions can be enabled or disabled
-> >> on a processor through IA32_UMWAIT_CONTROL MSR register.
-> >> 
-> >> By default, C0.2 is enabled and the user wait instructions result in
-> >> lower power consumption with slower wakeup time.
-> >> 
-> >> But in real time systems which require faster wakeup time although power
-> >> savings could be smaller, the administrator needs to disable C0.2 and all
-> >> C0.2 requests from user applications revert to C0.1.
-> >> 
-> >> A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c02" is
-> >> created to allow the administrator to control C0.2 state during run time.
-> > 
-> > We already have an interface for applications to convey their latency
-> > requirements (pm-qos). We do not need another magic sys variable.
-> 
-> I’m not sure I agree.  This isn’t an overall latency request, and
-> setting an absurdly low pm_qos will badly hurt idle power and turbo
-> performance.  Also, pm_qos isn’t exactly beautiful.
-> 
-> (I speak from some experience. I may be literally the only person to
-> write a driver that listens to dev_pm_qos latency requests. And, in my
-> production box, I directly disable c states instead of messing with
-> pm_qos.)
-> 
-> I do wonder whether anyone will ever use this particular control, though.
 
-I agree that pm-qos is pretty terrible; but that doesn't mean we should
-just add random control files all over the place.
+This patch applies cleanly to linux-next (tag next-20190611).
+
+--
+Gustavo
+
+>>
+>> kernel/bpf/verifier.c: In function ‘check_return_code’:
+>> kernel/bpf/verifier.c:5509:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>    if (env->prog->expected_attach_type == BPF_CGROUP_UDP4_RECVMSG ||
+>>       ^
+>> kernel/bpf/verifier.c:5512:2: note: here
+>>   case BPF_PROG_TYPE_CGROUP_SKB:
+>>   ^~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> Notice that it's much clearer to explicitly add breaks in each case
+>> (that actually contains some code), rather than letting the code to
+>> fall through.
+>>
+>> This patch is part of the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  kernel/bpf/verifier.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+>> index 1e9d10b32984..e9fc28991548 100644
+>> --- a/kernel/bpf/verifier.c
+>> +++ b/kernel/bpf/verifier.c
+>> @@ -5509,11 +5509,13 @@ static int check_return_code(struct bpf_verifier_env *env)
+>>                 if (env->prog->expected_attach_type == BPF_CGROUP_UDP4_RECVMSG ||
+>>                     env->prog->expected_attach_type == BPF_CGROUP_UDP6_RECVMSG)
+>>                         range = tnum_range(1, 1);
+>> +               break;
+>>         case BPF_PROG_TYPE_CGROUP_SKB:
+>>                 if (env->prog->expected_attach_type == BPF_CGROUP_INET_EGRESS) {
+>>                         range = tnum_range(0, 3);
+>>                         enforce_attach_type_range = tnum_range(2, 3);
+>>                 }
+>> +               break;
+>>         case BPF_PROG_TYPE_CGROUP_SOCK:
+>>         case BPF_PROG_TYPE_SOCK_OPS:
+>>         case BPF_PROG_TYPE_CGROUP_DEVICE:
+>> --
+>> 2.21.0
+>>
