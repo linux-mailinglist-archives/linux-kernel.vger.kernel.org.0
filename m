@@ -2,104 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AFA43C8B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5212A3C8CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405438AbfFKKUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:20:42 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:39179 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404766AbfFKKUl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:20:41 -0400
-Received: from 5HSWXM1 ([87.191.24.82]) by mrelayeu.kundenserver.de (mreue012
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1Mrwnt-1gmn4M05RN-00o00l; Tue, 11
- Jun 2019 12:20:23 +0200
-Date:   Tue, 11 Jun 2019 12:20:20 +0200 (CEST)
-From:   Rolf Evers-Fischer <embedded24@evers-fischer.de>
-X-X-Sender: rolf@5HSWXM1
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Rolf Evers-Fischer <embedded24@evers-fischer.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sh: dma: Add missing IS_ERR test
-In-Reply-To: <CAMuHMdVGhd3KfRq9F+-Qzc7q5kJyczG1RRQDpgs4FqJpPwK4QA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.99.1906111200560.3086@5HSWXM1>
-References: <20190607115404.4557-1-embedded24@evers-fischer.de> <CAMuHMdVGhd3KfRq9F+-Qzc7q5kJyczG1RRQDpgs4FqJpPwK4QA@mail.gmail.com>
-User-Agent: Alpine 2.21.99 (LNX 239 2017-12-04)
+        id S2405320AbfFKKYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:24:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405151AbfFKKYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:24:32 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E8A5331628E2;
+        Tue, 11 Jun 2019 10:24:31 +0000 (UTC)
+Received: from localhost (ovpn-12-24.pek2.redhat.com [10.72.12.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4FA1660BF1;
+        Tue, 11 Jun 2019 10:24:31 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 18:24:28 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     lijiang <lijiang@redhat.com>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: The current SME implementation fails kexec/kdump kernel booting.
+Message-ID: <20190611102428.GF26148@MiWiFi-R3L-srv>
+References: <20190604134952.GC26891@MiWiFi-R3L-srv>
+ <508c2853-dc4f-70a6-6fa8-97c950dc31c6@amd.com>
+ <20190605005600.GF26891@MiWiFi-R3L-srv>
+ <0d9fba9d-7bbe-a7c7-dfe4-696da0dfecc4@amd.com>
+ <2fe0e56c-9286-b71d-3d6d-c2a6fbcfba89@redhat.com>
+ <33b9237f-5e8c-fe49-4f55-220ce9a492fb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Provags-ID: V03:K1:whDOo69V0O8WmU3uuTAKRyDoVquQvT54J4HeBg/Yr3HgYZ3CjzP
- C2j7QukDFdAH9n8RV7T2iR6znt2fcKol4IU5omSqeRGKt5ixZNBO2hnXW2Iit4oNAXYorcy
- REDkx57sOeTSURGpgWmf4+fsUtFklgcaZzYcdrZ06vlS2DFGB8/R4mw30Vh+eHLzakgyIdt
- Nx/vyWWpFhQcWMDkLMj2w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:OGm9Xwwarbs=:TMek2VM/w38JcrExLRBLIp
- n1R5/VpcFsyhPxFjLjMKBBNVafoCaOcLYLBOFPgQTPdhqm6nASNpuIOB9X/6NjBIDsYDTUENK
- uadNwbKys6JjzXJUmUm1d3OJToEgd+IVLj7J90JqJpdi5o2nBAATIXiraDWetbtyj1YFy/Yn6
- IDZiIT+8AfgwIsm04wQaqAYzWmgh1yy792uxZ2w6EaI2yyMUl/9A9G8hqXiKmiTTO4sKwooO/
- PKA8l/C41eDaG/AT/fC6Mi8FOzA5Ffc9LSLu6hmAsKn0mRoqAw3uSOp+RsFCKrnxuCXsQxbZq
- Qsh094hFgF1KrRQnuOonlj7AvyJ7EOh8WNrrdBS+f2+T5dXYGVJz6+d5OPq/3bLPcTOY6j++l
- zXYfEoppNOepkKMm4QgBsQEvYzUCq6ByKigltSLxEmk0lTY4oZKyx23v8zxqTLKPMF4+TGd8i
- cxzBNDWIQOP16+1RViRIGGKCmZXJw52Jv7mbQFlqXaa8WBM3utngGHnDnXH/FxTEhmM8hEdyU
- yDvkZRjQDAZ1kDtzvXMOwZcKQbnV0t1q6SkD6MGLXbv0giGMw6xtdn0zHFT2eHuVteNKGO4K/
- b/d5hV9TBdcr7WGi84JNu0ZKX3y5Qz/HYQ0DfkFdHRfuVJNglW7q5yIZWNkLVIr+FEXL7vFdf
- 2k0OLWAK9jIWG86+omJ/JOnpRYAni40Q+YJLtV2ZWjCrOYmeruQ9sSAPVTfdcL6yyOAXVVnQh
- YvLB5VFqXJRYKdWfffEpq9sljfUBzKbGnTeTjTSOmr9f7mfIqLF37SWTcgcIvvlGncfW+IZQa
- gtmOIFj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33b9237f-5e8c-fe49-4f55-220ce9a492fb@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 11 Jun 2019 10:24:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tom,
 
-
-On Sat, 8 Jun 2019, Geert Uytterhoeven wrote:
-Hi Geert,
-
-thank you for your reply and your additional findings.
-
-> Hi Rolf,
+On 06/11/19 at 05:52pm, lijiang wrote:
+> After applied Tom's patch, i changed the reserved memory(for crash kernel) to the
+> above 256M(>256M), such as crashkernel=320M or 384M,512M..., the kdump kernel can
+> work and successfully dump the vmcore.
 > 
-> Thanks for your patch!
+> But the kdump kernel always happened the panic or could not boot successfully in
+> the 256M(<= 256M) case, and on HP machine, i noticed that it printed OOM, the kdump
+> kernel was too smaller memory. But i never see the OOM on speedway machine(probably
+> related to the earlyprintk, it doesn't work and it loses many logs).
 > 
-> On Fri, Jun 7, 2019 at 2:04 PM Rolf Evers-Fischer
-> <embedded24@evers-fischer.de> wrote:
-> > get_dma_channel may return ERR_PTR, so a check is added.
+> After removing the option 'CONFIG_DEBUG_INFO' from .config, i tested again, the kdump
+> kernel did not happen the panic in the 256M(crashkernel=256M), the kdump kernel can
+> work and succeed to dump the vmcore on HP machine or speedway machine.
 > 
-> It may also return NULL...
+> It seems that the small memory caused the previous failure in kdump kernel. I would
+> suggest to post this patch to upstream. What's your opinion? Tom, Baoquan and other
+> people. Or do you have any comment?
 
-Good catch. I must have missed this.
+As Lianbo said at above, the previous failure in kdump kernel is caused
+by OOM. Just the log on speedway is incomplete, I am not sure what
+happened. Now after investigation, your patch works to fix the issue.
+Could you post it for riviewing?
 
-> 
-> > --- a/arch/sh/drivers/dma/dma-api.c
-> > +++ b/arch/sh/drivers/dma/dma-api.c
-> > @@ -94,7 +94,7 @@ int get_dma_residue(unsigned int chan)
-> >         struct dma_info *info = get_dma_info(chan);
-> >         struct dma_channel *channel = get_dma_channel(chan);
-> >
-> > -       if (info->ops->get_residue)
-> > +       if (!IS_ERR(channel) && (info->ops->get_residue))
-> >                 return info->ops->get_residue(channel);
-> 
-> ... in which case .get_residue() may crash, as some implementations
-> dereference the passed channel pointer.
-> 
-> Hence !IS_ERR_OR_NULL()?
-
-Yes, in fact. IS_ERR_OR_NULL is the better choice here. 
-I will resend a reworked patch immediately.
-
-> 
-> I didn't check the other callers.
-
-Well, I did. And I found that none of the implementations checks the 
-passed pointer. However, no in-tree driver is using the .extend() op, but 
-as long as we don't know, if any out-of-tree drivers are using it without 
-any additional check, I would prefer to check for NULL or error in 
-dma_extend() as well.
-
-Kind regards,
- Rolf
+Thanks
+Baoquan
