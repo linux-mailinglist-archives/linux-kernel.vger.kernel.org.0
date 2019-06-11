@@ -2,101 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E155F3C7BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:56:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 599503C7C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391390AbfFKJ4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 05:56:45 -0400
-Received: from mail-eopbgr80077.outbound.protection.outlook.com ([40.107.8.77]:1856
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        id S2391466AbfFKJ5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 05:57:19 -0400
+Received: from mail-eopbgr700042.outbound.protection.outlook.com ([40.107.70.42]:46639
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727726AbfFKJ4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 05:56:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+        id S1727726AbfFKJ5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 05:57:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P2+iRFvcKX/B0Fgo8rl2Va9Wr5wecC2g8skImnvvOt4=;
- b=d6W435ilLK7PLGLjYDS65kjb9XWAWxAHO/05QG3z/K6WUnla3HS1p8YmhKuYy8XqN5MpO0Gr+vM5Y2JanNOk2Dy4OQeCdFLvKHPM+rTxjnlrHLgJ9SXaScnh2UB3g1OlVhFSOwLnO4mFFhE7olIqKc9A88WZ+jHZRm5uSIHz4Ik=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3677.eurprd04.prod.outlook.com (52.134.15.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Tue, 11 Jun 2019 09:56:41 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745%4]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
- 09:56:41 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] crypto: caam - do not initialise clocks on the
- i.MX8
-Thread-Topic: [PATCH v2 1/4] crypto: caam - do not initialise clocks on the
- i.MX8
-Thread-Index: AQHVHWwGsMxFSBPcUUWzlXHZD6TwyA==
-Date:   Tue, 11 Jun 2019 09:56:40 +0000
-Message-ID: <VI1PR0402MB34855AC8C617A3D7A584A1B798ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20190607200225.21419-1-andrew.smirnov@gmail.com>
- <20190607200225.21419-2-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1e8d4328-fb86-46c4-d806-08d6ee531a5d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3677;
-x-ms-traffictypediagnostic: VI1PR0402MB3677:
-x-microsoft-antispam-prvs: <VI1PR0402MB3677CB501F7CA9E8DBD6238098ED0@VI1PR0402MB3677.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 006546F32A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(39860400002)(346002)(396003)(136003)(189003)(199004)(4744005)(66066001)(3846002)(4326008)(52536014)(2906002)(74316002)(81156014)(6116002)(71200400001)(81166006)(71190400001)(8936002)(305945005)(55016002)(229853002)(7736002)(8676002)(478600001)(14454004)(2501003)(6436002)(66476007)(110136005)(66446008)(66556008)(476003)(53936002)(5660300002)(64756008)(316002)(102836004)(25786009)(54906003)(9686003)(76116006)(86362001)(66946007)(256004)(446003)(73956011)(53546011)(68736007)(76176011)(6246003)(33656002)(26005)(186003)(7696005)(6506007)(486006)(99286004)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3677;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4uFTjBb6zhrXMfmPlFhHOYmNtCiQlApNIOx70ctP1hwMNDQ67bZ+/atSKi20MNYngJ5dBvxqUUaQT4erMpdgwQN3I4kPZIMBXRcnQQY/El7bahjEJiTHxzyYHyHkQsJPlKn/5B8O/XDjaAejlQ1aHbIPF0v0mGPiYnsTz3L+PlK1YRW3kvXkQ9fnWubkTPlQ6i+tiRKelx+BghBpz+XD4dnbjIed2iVODQQ8bX4sWkP5bUyIYGD0cFAxQqHD00lhn79Ol3u2iSc0XPci6VS/7LevdcoZxoCFawBdJBHdOcN3vuQfqHSqTx3OiAtbQnDAta2739fWAolNnA0EECRO5PbzjkhGmqC71nruW33bw2Eou21L7eZfV79CFtfk4jg42DVw3olSD5pDLCBvSw4VZRpgR343ejwtvoVaLzGwDoE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=eLcWA04CHD2qmOu+HPhPVYXj9nIzTQB6VVpEU55mCI8=;
+ b=yZVQtlpDj4RxYkPEccJ2oc2bnFpgAFQnQbxn9Yg8W3jElte6NKfxk61hkMYwqCT8GyqxbKPip8pH7bl3Rpl5UEuCr4pFMugK2fUTTJ9dbnQRs+GC3gYTvl+n3iR+b4lPLp+TErikIUAOGtnbm/KQpraDHrpJW09KYhQzVb5Ie+c=
+Received: from BN6PR02CA0107.namprd02.prod.outlook.com (2603:10b6:405:60::48)
+ by MWHPR02MB2685.namprd02.prod.outlook.com (2603:10b6:300:108::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1987.11; Tue, 11 Jun
+ 2019 09:57:15 +0000
+Received: from BL2NAM02FT007.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::203) by BN6PR02CA0107.outlook.office365.com
+ (2603:10b6:405:60::48) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1965.14 via Frontend
+ Transport; Tue, 11 Jun 2019 09:57:15 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT007.mail.protection.outlook.com (10.152.77.46) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1965.12
+ via Frontend Transport; Tue, 11 Jun 2019 09:57:14 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:46260 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1hadWk-0006sr-2j; Tue, 11 Jun 2019 02:57:14 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1hadWe-0002WX-VB; Tue, 11 Jun 2019 02:57:09 -0700
+Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x5B9uxjD016569;
+        Tue, 11 Jun 2019 02:56:59 -0700
+Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <mnarani@xilinx.com>)
+        id 1hadWV-0002Qn-7z; Tue, 11 Jun 2019 02:56:59 -0700
+Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
+        id 6AD34121745; Tue, 11 Jun 2019 15:26:58 +0530 (IST)
+From:   Manish Narani <manish.narani@xilinx.com>
+To:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        michal.simek@xilinx.com, adrian.hunter@intel.com,
+        rajan.vaja@xilinx.com, jolly.shah@xilinx.com,
+        nava.manne@xilinx.com, manish.narani@xilinx.com, olof@lixom.net
+Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] Add ZynqMP SD Clock Tap Delays configuration support
+Date:   Tue, 11 Jun 2019 15:26:48 +0530
+Message-Id: <1560247011-26369-1-git-send-email-manish.narani@xilinx.com>
+X-Mailer: git-send-email 2.1.1
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(136003)(376002)(2980300002)(189003)(199004)(305945005)(316002)(16586007)(42186006)(44832011)(36756003)(72206003)(26005)(50466002)(4326008)(106002)(51416003)(48376002)(63266004)(186003)(36386004)(5660300002)(50226002)(70206006)(6666004)(70586007)(356004)(4744005)(2616005)(478600001)(426003)(8676002)(476003)(2906002)(103686004)(81156014)(486006)(336012)(126002)(52956003)(8936002)(47776003)(81166006)(6266002)(921003)(5001870100001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2685;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e8d4328-fb86-46c4-d806-08d6ee531a5d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 09:56:40.9638
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 942f9d8f-a48b-4113-a354-08d6ee532e6f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:MWHPR02MB2685;
+X-MS-TrafficTypeDiagnostic: MWHPR02MB2685:
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <MWHPR02MB2685836B6BB2FF205EE49EA9C1ED0@MWHPR02MB2685.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 006546F32A
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: yXyfAJoar2Ujdieo3yIc5V27CharP4vE3J06a+uF8aweiR3dMwtQ/XDZEroYTVY/e9ORgHsEsq8842lXbXZM3aY74QlBgyPnUDzAwMdhq3zP0tfiuU3GBVCQ3qmqhg78V9Aad+a1r4gJVFCf6nqppYl/j3TB+2bi93l7QkCz2LoCalb/kRLkgvATAYhig7vv8RBLAQQtTSSMGwGRbO4YDeQK26vfobAB+wS77L6xzMk2tbd3lS+d/QDeyyhuJMR7AI+AXgRjw6RbAeGb1c6JwZm3xhb/wd98p7ARkVU8VepqFi9J9rmmGx2Njis1AcWrK1pOkNHiD6C1vpOIDGQdFrH+hjht14BJ4XNqzjhTMVzS42q8DTCeVxa/tCUSff90aMX+IKYt7nFCzJDMIFLZ5SPhp1C1vF02ZYTmqbsSpuQ=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2019 09:57:14.6547
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3677
+X-MS-Exchange-CrossTenant-Network-Message-Id: 942f9d8f-a48b-4113-a354-08d6ee532e6f
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2685
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/7/2019 11:03 PM, Andrey Smirnov wrote:=0A=
-> From: Chris Spencer <christopher.spencer@sea.co.uk>=0A=
-> =0A=
-> There are no clocks that the CAAM driver needs to initialise on the=0A=
-> i.MX8.=0A=
-> =0A=
-RM lists 5 clocks for CAAM module (instance.clock): caam.aclk, caam.ipg_clk=
-,=0A=
-caam.ipg_clk_s, caam_exsc.aclk_exsc, caam_mem.clk=0A=
-				=0A=
-Wouldn't it be better to have these clocks in DT, instead of relying that t=
-heir=0A=
-root clocks (ccm_ahb_clk_root, ccm_ipg_clk_root) are critical / always on?=
-=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
-=0A=
+This patch series adds support to configure SD tap delays on ZynqMP platforms
+using Xilinx firmware driver and clock framework APIs.
+
+Manish Narani (3):
+  firmware: xilinx: Add SDIO Tap Delay API
+  dt-bindings: mmc: arasan: Document 'xlnx,zynqmp-8.9a' controller
+  mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
+
+ .../devicetree/bindings/mmc/arasan,sdhci.txt       |  32 ++++
+ drivers/firmware/xilinx/zynqmp.c                   |  32 ++++
+ drivers/mmc/host/sdhci-of-arasan.c                 | 173 ++++++++++++++++++++-
+ include/linux/firmware/xlnx-zynqmp.h               |  17 +-
+ 4 files changed, 252 insertions(+), 2 deletions(-)
+
+-- 
+2.1.1
+
