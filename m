@@ -2,110 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2BDA41921
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF95941911
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392146AbfFKXrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:47:22 -0400
-Received: from mga11.intel.com ([192.55.52.93]:22035 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387864AbfFKXrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:47:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 16:47:21 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 16:47:19 -0700
-Cc:     baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        sai.praneeth.prakhya@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] iommu/vt-d: Fixes and cleanups for linux-next
-To:     Qian Cai <cai@lca.pw>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20190609023803.23832-1-baolu.lu@linux.intel.com>
- <1560272102.5154.1.camel@lca.pw>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <28f728af-9bc8-d8ce-00b5-59bcfdceacf0@linux.intel.com>
-Date:   Wed, 12 Jun 2019 07:40:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2408261AbfFKXkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:40:25 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44129 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408242AbfFKXkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 19:40:23 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t7so3165579plr.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:40:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vrcKiJncQCvJeYdovjwcGHLQkpFI9UFvyKLS0tgyyJA=;
+        b=fxr+p7sgq0hHqMWtLVWiiVUmwvCK2K9niwmP89I8eDAL9RbspWdO1Z1sQG60RUq0Jh
+         T2MZsogyjVAyLqkT3ee99gA8N013logxMHyCVkL7mI3YgQv2TKxq/hfKC0YKDOW0Tejm
+         rPOIm4epv87XbkFyGuS0bvymTWIYvDCh+1NrywAgLDi61i8nwyH0pvvPXN+tS0oTBppj
+         21RpX2SJBsR0PDumQJSP7tyvgCg+e7HUPC5gc46suhRZBioDhD1l7sO+GOgTaRyKmgCJ
+         5DYz2JA/jf2MVMgTV5F8Sm7cG6RQ5CQdljOJ1kjjHo3+2itX5/elS5w8RqMKPWEOBokX
+         zYSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vrcKiJncQCvJeYdovjwcGHLQkpFI9UFvyKLS0tgyyJA=;
+        b=JVxkYXq/elM8sIbWNXqvOyjOqBxE8xE/63YHK1SglZul2+0rSRLlXJfrnQNP3BKtv1
+         0QaU4H9ZRHaH3nhzpqNQhHY2SS3+ZCfeaBjTOGScbTAKhCtJi1fXTk5sByk/z6b1pZvq
+         0mOhbL1CdnmTnXTgc9xfECP/sso6bURFfg4vk7TVy1IAE76FLlKgRsTTasR7PcOV3IOP
+         ulSrLeP1jIwFe++LF9aBYhYljDuqGUnMHicWn/ZuOhmkKyC/rlwF7eJBrBaFPZYVQthe
+         5Jsp7lVYHZJpmhbn14X9FS0FJYwANSwQyX1D425EvadPBE5vVduGftX0xMX4UaRWaEwB
+         9LuQ==
+X-Gm-Message-State: APjAAAUZbZTUXcX6siQQRxcsKqGavKS8n/edNsCk9XKAO/ob/xBTbwHF
+        JvN7T++Ic3gPalhzAdEC7RCRUg==
+X-Google-Smtp-Source: APXvYqwVvSeKZ9+8pgl/U+yQv0XwTRD+oXRVoAp/CkKUZM51Vh73fYHUpTMj6hpKkhxVYtdA9svC7A==
+X-Received: by 2002:a17:902:d915:: with SMTP id c21mr11863733plz.335.1560296422678;
+        Tue, 11 Jun 2019 16:40:22 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h11sm17090333pfn.170.2019.06.11.16.40.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 16:40:22 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 16:40:20 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     robh+dt@kernel.org, agross@kernel.org, vkoul@kernel.org,
+        evgreen@chromium.org, daidavid1@codeaurora.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] arm64: dts: qcs404: Add interconnect provider DT
+ nodes
+Message-ID: <20190611234020.GX4814@minitux>
+References: <20190611164157.24656-1-georgi.djakov@linaro.org>
+ <20190611164157.24656-6-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1560272102.5154.1.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611164157.24656-6-georgi.djakov@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue 11 Jun 09:41 PDT 2019, Georgi Djakov wrote:
 
-This is supposed to be fixed by this patch
+> Add the DT nodes for the network-on-chip interconnect buses found
+> on qcs404-based platforms.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+> 
+> v3:
+> - Updated according to the new binding: added reg property and moved under the
+>   "soc" node.
+> 
+>  arch/arm64/boot/dts/qcom/qcs404.dtsi | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> index ffedf9640af7..07ff592233b6 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2018, Linaro Limited
+>  
+> +#include <dt-bindings/interconnect/qcom,qcs404.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/qcom,gcc-qcs404.h>
+>  #include <dt-bindings/clock/qcom,rpmcc.h>
+> @@ -411,6 +412,33 @@
+>  			#interrupt-cells = <4>;
+>  		};
+>  
+> +		bimc: interconnect@400000 {
 
-https://lkml.org/lkml/2019/6/3/115
+Please maintain sort order of address, node name, label name. So this
+should go between rng@e3000 and remoteproc@b00000.
 
-which is part of several RMRR related fixes and enhancements.
+Other than that:
 
-Best regards,
-Baolu
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-On 6/12/19 12:55 AM, Qian Cai wrote:
-> On Sun, 2019-06-09 at 10:37 +0800, Lu Baolu wrote:
->> Hi Joerg,
->>
->> This series includes several fixes and cleanups after delegating
->> DMA domain to generic iommu. Please review and consider them for
->> linux-next.
->>
->> Best regards,
->> Baolu
->>
->> Lu Baolu (5):
->>    iommu/vt-d: Don't return error when device gets right domain
->>    iommu/vt-d: Set domain type for a private domain
->>    iommu/vt-d: Don't enable iommu's which have been ignored
->>    iommu/vt-d: Fix suspicious RCU usage in probe_acpi_namespace_devices()
->>    iommu/vt-d: Consolidate domain_init() to avoid duplication
->>
->> Sai Praneeth Prakhya (1):
->>    iommu/vt-d: Cleanup after delegating DMA domain to generic iommu
->>
->>   drivers/iommu/intel-iommu.c | 210 +++++++++---------------------------
->>   1 file changed, 53 insertions(+), 157 deletions(-)
->>
-> 
-> BTW, the linux-next commit "iommu/vt-d: Expose ISA direct mapping region via
-> iommu_get_resv_regions" [1] also introduced a memory leak below, as it forgets
-> to ask intel_iommu_put_resv_regions() to call kfree() when
-> CONFIG_INTEL_IOMMU_FLOPPY_WA=y.
-> 
-> [1] https://lore.kernel.org/patchwork/patch/1078963/
-> 
-> unreferenced object 0xffff88912ef789c8 (size 64):
->    comm "swapper/0", pid 1, jiffies 4294946232 (age 5399.530s)
->    hex dump (first 32 bytes):
->      48 83 f7 2e 91 88 ff ff 30 fa e3 00 82 88 ff ff  H.......0.......
->      00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00  ................
->    backtrace:
->      [<00000000d267f4be>] kmem_cache_alloc_trace+0x266/0x380
->      [<00000000d383d15b>] iommu_alloc_resv_region+0x40/0xb0
->      [<00000000db8be31b>] intel_iommu_get_resv_regions+0x25e/0x2d0
->      [<0000000021fbc6c3>] iommu_group_create_direct_mappings+0x159/0x3d0
->      [<0000000022259268>] iommu_group_add_device+0x17b/0x4f0
->      [<0000000028b91093>] iommu_group_get_for_dev+0x153/0x460
->      [<00000000577c33b4>] intel_iommu_add_device+0xc4/0x210
->      [<00000000587b7492>] iommu_probe_device+0x63/0x80
->      [<000000004aa997d1>] add_iommu_group+0xe/0x20
->      [<00000000c93a9cd6>] bus_for_each_dev+0xf0/0x150
->      [<00000000a2e5f0cb>] bus_set_iommu+0xc6/0x100
->      [<00000000dbad5db0>] intel_iommu_init+0x682/0xb0a
->      [<00000000226f7444>] pci_iommu_init+0x26/0x62
->      [<000000002d8694f5>] do_one_initcall+0xe5/0x3ea
->      [<000000004bc60101>] kernel_init_freeable+0x5ad/0x640
->      [<0000000091b0bad6>] kernel_init+0x11/0x138
-> 
-> 
+Regards,
+Bjorn
+> +			reg = <0x00400000 0x80000>;
+> +			compatible = "qcom,qcs404-bimc";
+> +			#interconnect-cells = <1>;
+> +			clock-names = "bus_clk", "bus_a_clk";
+> +			clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
+> +				<&rpmcc RPM_SMD_BIMC_A_CLK>;
+> +		};
+> +
+> +		pcnoc: interconnect@500000 {
+> +			reg = <0x00500000 0x15080>;
+> +			compatible = "qcom,qcs404-pcnoc";
+> +			#interconnect-cells = <1>;
+> +			clock-names = "bus_clk", "bus_a_clk";
+> +			clocks = <&rpmcc RPM_SMD_PNOC_CLK>,
+> +				<&rpmcc RPM_SMD_PNOC_A_CLK>;
+> +		};
+> +
+> +		snoc: interconnect@580000 {
+> +			reg = <0x00580000 0x23080>;
+> +			compatible = "qcom,qcs404-snoc";
+> +			#interconnect-cells = <1>;
+> +			clock-names = "bus_clk", "bus_a_clk";
+> +			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+> +				<&rpmcc RPM_SMD_SNOC_A_CLK>;
+> +		};
+> +
+>  		sdcc1: sdcc@7804000 {
+>  			compatible = "qcom,sdhci-msm-v5";
+>  			reg = <0x07804000 0x1000>, <0x7805000 0x1000>;
