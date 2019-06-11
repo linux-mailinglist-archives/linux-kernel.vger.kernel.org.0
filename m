@@ -2,182 +2,639 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0806C3CBC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7BA03CBCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389143AbfFKMei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:34:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44112 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388065AbfFKMeg (ORCPT
+        id S2389630AbfFKMfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:35:03 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36670 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388345AbfFKMfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:34:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6SfjPMJfJHXhFOuS4hHJtSok6+MviQggMxwQadR+ODU=; b=azxqKpBi8AYd3gOR0t53pd3PK
-        UtAqx2C9K1595CyeJjb9kEyprz6opDhF950FJt9Nk+l3xvKhjfcRGL95xm6PlOix1FhONm/BKalPZ
-        ElF/zWpYJ1J9Cs+nYI5MJIq1umjAtlYaXF0GYpE8qCm8oP3qkzpnZnaF84W9kds/be32yFaBj+eo8
-        QCkTJmDEyFWrbDLP3OXGvRKpjwzj4NMpLRQhUvJ88HIihRPf63MihorIHms60t8C9tyFllOoa42u2
-        2wIywudv8zZTiRSwwDp+vFCQd6T1a7NxdwThcxGYqkbLdR0jei+sOTS1NVxZ6hWPn+njM9u4DjQNE
-        YNI9bgsvQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hafyW-0000Ku-8z; Tue, 11 Jun 2019 12:34:04 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8A4BC202173E1; Tue, 11 Jun 2019 14:34:02 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 14:34:02 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-ID: <20190611123402.GH3463@hirez.programming.kicks-ass.net>
-References: <20190605130753.327195108@infradead.org>
- <20190605131945.005681046@infradead.org>
- <20190608004708.7646b287151cf613838ce05f@kernel.org>
- <20190607173427.GK3436@hirez.programming.kicks-ass.net>
- <3DA961AB-950B-4886-9656-C0D268D521F1@amacapital.net>
- <20190611080307.GN3436@hirez.programming.kicks-ass.net>
- <20190611120834.GG3463@hirez.programming.kicks-ass.net>
+        Tue, 11 Jun 2019 08:35:02 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k21so16509725edq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 05:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wv9ea3kHjJcEA5/XtR5OkO6T2tGIwfFOUhYzbpitJig=;
+        b=lMcsqsHd6/kunk+NL3dIByz+ijuTvG4HrjFhIxDdmcEBUyVprXBwdjcB/WQU7Wgyur
+         LupT464mVb8X+6AkUQnQ+v7kKcMPzRtp+e8U9bbdhfyPZfyAthrGHjaiO8MG7e+jX0np
+         y4ef9i2R7lGyedbfr9xnnLvjP+XFSb0C+Ojqg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Wv9ea3kHjJcEA5/XtR5OkO6T2tGIwfFOUhYzbpitJig=;
+        b=K3ROYE/DkpZz6VsoYYwFvFhV0ww6CKZMXzV93btjrkoo2I2QUmQ+vpS/1d9+/tRgDw
+         3T7nNw7m5zbDemt355DSMVKUzsFpx9arovM8n0nYJ9K4//gmyxATWjbkPFDRjkEm57UI
+         aFmJRIba/oNsVIxnmdPhhOVNP5soTiPxGoMcBVB464E5gTuZzjVmHA5ILu+4WNSWOEvW
+         jH75j3Bxut/bBRQnKMBwbK5YR96N4PaXx759PTZHwS3wbzOFqUmrya8s+aBQbiU+SDxA
+         palref1ZHr26zeMa4ODLAEjrqoTl33KMRG/GhePSu/+U4vB/BT9E6AWDNvSu2QTODS0V
+         0TQQ==
+X-Gm-Message-State: APjAAAUzv3OKSELqROZj07oZG2JRqEewKA1LAKztt/CSfLmzru/DYqIE
+        rb/zMTEidRDKvAGG92u7oxCV4A==
+X-Google-Smtp-Source: APXvYqy1NjR8fIJd9daXqPCAqSZQkpYHir9meKQZkHcnUZMfPQL5Fo2hXSl6J6EZ+NXWFH5WuqrBqA==
+X-Received: by 2002:a50:8d84:: with SMTP id r4mr81164068edh.48.1560256499249;
+        Tue, 11 Jun 2019 05:34:59 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id i2sm3658218edg.81.2019.06.11.05.34.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 05:34:58 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 14:34:55 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Cheng-yi Chiang <cychiang@chromium.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        linux-media@vger.kernel.org,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Dariusz Marcinkiewicz <darekm@google.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/7] video: add HDMI state notifier support
+Message-ID: <20190611123455.GD2458@phenom.ffwll.local>
+Mail-Followup-To: Cheng-yi Chiang <cychiang@chromium.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        linux-media@vger.kernel.org,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Dariusz Marcinkiewicz <darekm@google.com>
+References: <20190603043251.226549-1-cychiang@chromium.org>
+ <20190603043251.226549-2-cychiang@chromium.org>
+ <41e7052b-a58c-5a8c-5d94-37237e0c2070@xs4all.nl>
+ <20190603080931.GG21222@phenom.ffwll.local>
+ <CAFv8Nw+1sB8i1d87vLeKxRricZOi4gnXFSgOzW9k0sa_Tzybjg@mail.gmail.com>
+ <20190604072411.GP21222@phenom.ffwll.local>
+ <CAFv8NwKL9ZL=gNpDmdRV+R9eq22+Da_1kzuYBv8kMMyV3Hq14g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611120834.GG3463@hirez.programming.kicks-ass.net>
+In-Reply-To: <CAFv8NwKL9ZL=gNpDmdRV+R9eq22+Da_1kzuYBv8kMMyV3Hq14g@mail.gmail.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 02:08:34PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 11, 2019 at 10:03:07AM +0200, Peter Zijlstra wrote:
-> > On Fri, Jun 07, 2019 at 11:10:19AM -0700, Andy Lutomirski wrote:
+On Tue, Jun 11, 2019 at 08:10:38PM +0800, Cheng-yi Chiang wrote:
+> On Tue, Jun 4, 2019 at 3:24 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Tue, Jun 04, 2019 at 10:32:50AM +0800, Cheng-yi Chiang wrote:
+> > > On Mon, Jun 3, 2019 at 4:09 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > >
+> > > > On Mon, Jun 03, 2019 at 09:45:49AM +0200, Hans Verkuil wrote:
+> > > > > On 6/3/19 6:32 AM, Cheng-Yi Chiang wrote:
+> > > > > > From: Hans Verkuil <hans.verkuil@cisco.com>
+> > > > > >
+> > > > > > Add support for HDMI hotplug and EDID notifiers, which is used to convey
+> > > > > > information from HDMI drivers to their CEC and audio counterparts.
+> > > > > >
+> > > > > > Based on an earlier version from Russell King:
+> > > > > >
+> > > > > > https://patchwork.kernel.org/patch/9277043/
+> > > > > >
+> > > > > > The hdmi_notifier is a reference counted object containing the HDMI state
+> > > > > > of an HDMI device.
+> > > > > >
+> > > > > > When a new notifier is registered the current state will be reported to
+> > > > > > that notifier at registration time.
+> > > > > >
+> > > > > > Based on Hans Verkuil's patch:
+> > > > > >
+> > > > > > https://patchwork.kernel.org/patch/9472521/
+> > > > >
+> > > > > Erm, you are aware that this patch morphed into a CEC-specific notifier
+> > > > > found in drivers/media/cec/cec-notifier.c?
+> > > > >
+> > > > > I don't think it makes sense to have two notifier implementations in the kernel.
+> > > > > The original intention was to have the notifier deal with both CEC and ASoC
+> > > > > notifications, but there was not enough interest for the ASoC bits at the time
+> > > > > and it was dropped.
+> > > > >
+> > > > > I am planning changes to the cec-notifier API, I hope to work on that this
+> > > > > week. I'll CC you when I post those. Those might be a good starting point
+> > > > > to convert the cec-notifier to an hdmi-notifier as was originally intended.
+> > > > >
+> > > > > I've added your colleague Dariusz Marcinkiewicz to the CC list since he's been
+> > > > > working on some nice cec-notifier improvements as well.
+> > > >
+> > > > We also have some interfaces for drm/alsa interactions around hdmi
+> > > > already in drm/drm_audio_component.h, but it's not used by anything
+> > > > outside of i915. Imo we should extend that, not reinvent a new wheel.
+> > > >
+> > > Hi Daniel,
+> > > Thank you for the pointer. Looking at the ops, it seems that it is
+> > > specific to HDA.
+> > > I am not familiar with drm and HDA. I am not sure how applicable it
+> > > would be to report jack status to ASoC.
+> > > There is a use case in sound/soc/codecs/hdac_hdmi.c though so it
+> > > should be possible.
+> >
+> > Currently hda is the only user, but the idea was to make it more generic.
+> > Jack status in alsa is what drm calls connector status btw.
+> >
+> > So if we can take that as a baseline and extend it (probably needs some
+> > registration boilerplate and helpers to look up the right endpoint using
+> > of/dt for soc systems, we use component.c in i915/hda for this), that
+> > would be great I think.
+> >
+> > > > Another note: notifiers considered evil, imo. Gets the job done for one
+> > > > case, as soon as you have multiple devices and need to make sure you get
+> > > > the update for the right one it all comes crashing down. Please create an
+> > > > api which registers for updates from a specific device only, plus
+> > > > something that has real callbacks (like the drm_audio_component.h thing we
+> > > > started already).
+> > >
+> > > To clarify a bit, this hdmi-notifier indeed supports updating from a
+> > > specific device only.
+> > > hdmi_notifier_get takes a device and return the notifier.
+> >
+> > Hm I missed that, I thought it's global, so one of my usual notifier
+> > concerns addressed.
+> >
+> > > It seems that a major difference between drm_audio_components and
+> > > hdmi-notifier is that
+> > > drm_audio_components defines all supported ops in drm_audio_component_audio_ops.
+> > > On the other hand, hdmi-notifier passes different events using an enum
+> > > like HDMI_CONNECTED and let listener handle different events.
+> > > In this regard I agree with you that drm_audio_component is cleaner.
+> > > Anyway, I will look into it a bit more and see how it works.
+> >
+> > Yeah I think if we could combine the approach, i.e. notifier side for
+> > registration, some _ops structure for the actual notifications, then
+> > there's a solid interface. I just really don't like the opaque void *
+> > interface notifier provides, it encourages abuse way too much.
+> >
+> > Ofc the registration side would then no longer be based on the notifier
+> > datastructure, list_head (like cec-notifier.c) of registeres devices with
+> > their _ops structure should be enough.
+> > -Daniel
 > 
-> > > I am surely missing some kprobe context, but is it really safe to use
-> > > this mechanism to replace more than one instruction?
-> > 
-> > I'm not entirely up-to-scratch here, so Masami, please correct me if I'm
-> > wrong.
-> > 
-> > So what happens is that arch_prepare_optimized_kprobe() <-
-> > copy_optimized_instructions() copies however much of the instruction
-> > stream is required such that we can overwrite the instruction at @addr
-> > with a 5 byte jump.
-> > 
-> > arch_optimize_kprobe() then does the text_poke_bp() that replaces the
-> > instruction @addr with int3, copies the rel jump address and overwrites
-> > the int3 with jmp.
-> > 
-> > And I'm thinking the problem is with something like:
-> > 
-> > @addr: nop nop nop nop nop
-> > 
-> > We copy out the nops into the trampoline, overwrite the first nop with
-> > an INT3, overwrite the remaining nops with the rel addr, but oops,
-> > another CPU can still be executing one of those NOPs, right?
-> > 
-> > I'm thinking we could fix this by first writing INT3 into all relevant
-> > instructions, which is going to be messy, given the current code base.
+> Hi Daniel,
+> Yes, I agree the above statement that we should have a more solid interface.
 > 
-> Maybe not that bad; how's something like this?
+> Hi Hans,
+> I am not sure if I missed the patch.
+> Do you have a estimated timeline for new cec-notifier interface you
+> are working on?
+> It seems that your PoC patch needs Dariusz's patch to work.
+> I would like to seek your advice on whether I can proceed without your
+> patch and Dariusz's patch.
 > 
-> (completely untested)
+> I looked through the patch from Dariusz
 > 
-> ---
->  arch/x86/kernel/alternative.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
+> https://lkml.org/lkml/2019/5/21/389
 > 
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 0d57015114e7..8f643dabea72 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -24,6 +24,7 @@
->  #include <asm/tlbflush.h>
->  #include <asm/io.h>
->  #include <asm/fixmap.h>
-> +#include <asm/insn.h>
->  
->  int __read_mostly alternatives_patched;
->  
-> @@ -849,6 +850,7 @@ static void do_sync_core(void *info)
->  
->  static bool bp_patching_in_progress;
->  static void *bp_int3_handler, *bp_int3_addr;
-> +static unsigned int bp_int3_length;
->  
->  int poke_int3_handler(struct pt_regs *regs)
->  {
-> @@ -867,7 +869,11 @@ int poke_int3_handler(struct pt_regs *regs)
->  	if (likely(!bp_patching_in_progress))
->  		return 0;
->  
-> -	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
-> +	if (user_mode(regs))
-> +		return 0;
-> +
-> +	if (regs->ip < (unsigned long)bp_int3_addr ||
-> +	    regs->ip >= (unsigned long)bp_int3_addr + bp_int3_length)
->  		return 0;
+> , and saw that you were thinking whether we should use cec-notifier
+> for both HDMI and CEC.
+> 
+> https://lkml.org/lkml/2019/5/24/298
+> 
+> Could you please let me know your latest thought on whether we should
+> reuse cec-notifier?
 
-Bugger, this isn't right. It'll jump to the beginning of the trampoline,
-even if it is multiple instructions in, which would lead to executing
-instructions twice, which would be BAD.
+Nah, see later in that thread, I think cec and audio seem to be different
+use-cases.
 
-_maybe_, depending on what the slot looks like, we could do something
-like:
+But definitely a good idea to sync with Dariusz, I forgot to pull the two
+threads together. Thanks for doing that.
 
-	offset = regs->ip - (unsigned long)bp_int3_addr;
-	regs->ip = bp_int3_handler + offset;
+> I agree with you that I should not proceed with hdmi-notifier. Reasons include:
+> 1. Method like cec_notifier_parse_hdmi_phandle can be reused. It is
+> error prone to memory leak if it is implemented by user, like the
+> patch in hdmi-codec.c in this series did not handle the ref count.
+> 2. cec-notifier has a simpler implementation of register / unregister
+> because there is no call chain. I am not aware of the need for
+> hdmi-notifier to support a chain of callbacks. So I think that call
+> chain support can be removed.
+> 
+> If I go ahead and add a new interface to register ops to handle
+> connector status report from cec-notifer, based on current
+> cec-notifier, do you think that would work ?
+> I think it might work if I add another cec_notifier object inside
+> dw-hdmi.c, but only for HDMI jack reporting, not for CEC related
+> reporting.
+> 
+> And after some investigation, I realize that my requirement is even
+> simpler. I don't need hdmi_event_new_edid and hdmi_event_new_eld in my
+> use case.
 
-That is; jump into the slot at the same offset we hit the INT3, but this
-is quickly getting yuck.
+Yeah, connector status is how we started with the drm/alsa interface in
+i915 too, but later on had to extend it. I think eventually we'll need it
+all, that's why I suggested to use that as the interface between drm and
+alsa side, but augmented with some register/unregister and bind logic.
 
->  	/* set up the specified breakpoint handler */
-> @@ -900,9 +906,12 @@ NOKPROBE_SYMBOL(poke_int3_handler);
->  void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->  {
->  	unsigned char int3 = 0xcc;
-> +	void *kaddr = addr;
-> +	struct insn insn;
->  
->  	bp_int3_handler = handler;
->  	bp_int3_addr = (u8 *)addr + sizeof(int3);
-> +	bp_int3_length = len - sizeof(int3);
->  	bp_patching_in_progress = true;
->  
->  	lockdep_assert_held(&text_mutex);
-> @@ -913,7 +922,14 @@ void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->  	 */
->  	smp_wmb();
->  
-> -	text_poke(addr, &int3, sizeof(int3));
-> +	do {
-> +		kernel_insn_init(&insn, kaddr, MAX_INSN_SIZE);
-> +		insn_get_length(&insn);
-> +
-> +		text_poke(kaddr, &int3, sizeof(int3));
-> +
-> +		kaddr += insn.length;
-> +	} while (kaddr < addr + len);
->  
->  	on_each_cpu(do_sync_core, NULL, 1);
->  
+> I just need to report the connector status from synopsys/dw-hdmi.c to
+> codecs/hdmi-codec.c for codec driver to update the jack status.
+> Do you think I can proceed in this direction ? Or do you prefer I wait
+> for a while and work on it based on your new patch.
+
+I think most important part here is that we sync across all the different
+people pushing for better drm/alsa integration. What the solution looks
+like in the end doesn't matter much imo, as long as we don't end up with 3
+different things :-)
+
+Cheers, Daniel
+
+> 
+> Thanks a lot!
+> 
+> 
+> >
+> > >
+> > > Thanks again!
+> > >
+> > > > -Daniel
+> > > >
+> > > > >
+> > > > > Regards,
+> > > > >
+> > > > >       Hans
+> > > > >
+> > > > > >
+> > > > > > Modified by Cheng-Yi Chiang:
+> > > > > >  - Add a section in MAINTAINER.
+> > > > > >  - Changes connected and has_eld to bitfield of unsigned int.
+> > > > > >  - Other minor fixes to pass checkpatch.pl --strict checks.
+> > > > > >
+> > > > > > Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> > > > > > Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > > > > > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> > > > > > ---
+> > > > > > The original patch is at
+> > > > > > https://lore.kernel.org/linux-arm-kernel/20161213150813.37966-2-hverkuil@xs4all.nl
+> > > > > >
+> > > > > >  MAINTAINERS                   |   6 ++
+> > > > > >  drivers/video/Kconfig         |   3 +
+> > > > > >  drivers/video/Makefile        |   1 +
+> > > > > >  drivers/video/hdmi-notifier.c | 145 ++++++++++++++++++++++++++++++++++
+> > > > > >  include/linux/hdmi-notifier.h | 112 ++++++++++++++++++++++++++
+> > > > > >  5 files changed, 267 insertions(+)
+> > > > > >  create mode 100644 drivers/video/hdmi-notifier.c
+> > > > > >  create mode 100644 include/linux/hdmi-notifier.h
+> > > > > >
+> > > > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > > > index 5cfbea4ce575..ffb7376f9509 100644
+> > > > > > --- a/MAINTAINERS
+> > > > > > +++ b/MAINTAINERS
+> > > > > > @@ -16676,6 +16676,12 @@ W: https://linuxtv.org
+> > > > > >  S: Maintained
+> > > > > >  F: drivers/media/platform/vicodec/*
+> > > > > >
+> > > > > > +VIDEO FRAMEWORK
+> > > > > > +M: Hans Verkuil <hverkuil@xs4all.nl>
+> > > > > > +L: linux-media@vger.kernel.org
+> > > > > > +F: drivers/video/hdmi-notifier.*
+> > > > > > +S: Maintained
+> > > > > > +
+> > > > > >  VIDEO MULTIPLEXER DRIVER
+> > > > > >  M: Philipp Zabel <p.zabel@pengutronix.de>
+> > > > > >  L: linux-media@vger.kernel.org
+> > > > > > diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> > > > > > index 83d3d271ca15..000ba9bc0ae7 100644
+> > > > > > --- a/drivers/video/Kconfig
+> > > > > > +++ b/drivers/video/Kconfig
+> > > > > > @@ -34,6 +34,9 @@ config VIDEOMODE_HELPERS
+> > > > > >  config HDMI
+> > > > > >     bool
+> > > > > >
+> > > > > > +config HDMI_NOTIFIERS
+> > > > > > +   bool
+> > > > > > +
+> > > > > >  endif # HAS_IOMEM
+> > > > > >
+> > > > > >  if VT
+> > > > > > diff --git a/drivers/video/Makefile b/drivers/video/Makefile
+> > > > > > index df7650adede9..eff4736102ca 100644
+> > > > > > --- a/drivers/video/Makefile
+> > > > > > +++ b/drivers/video/Makefile
+> > > > > > @@ -1,6 +1,7 @@
+> > > > > >  # SPDX-License-Identifier: GPL-2.0
+> > > > > >  obj-$(CONFIG_VGASTATE)            += vgastate.o
+> > > > > >  obj-$(CONFIG_HDMI)                += hdmi.o
+> > > > > > +obj-$(CONFIG_HDMI_NOTIFIERS)      += hdmi-notifier.o
+> > > > > >
+> > > > > >  obj-$(CONFIG_VT)             += console/
+> > > > > >  obj-$(CONFIG_FB_STI)                 += console/
+> > > > > > diff --git a/drivers/video/hdmi-notifier.c b/drivers/video/hdmi-notifier.c
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..d1eedf661648
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/video/hdmi-notifier.c
+> > > > > > @@ -0,0 +1,145 @@
+> > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > +/* hdmi-notifier.c - notify interested parties of (dis)connect and EDID
+> > > > > > + * events
+> > > > > > + *
+> > > > > > + * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
+> > > > > > + * Copyright 2016 Cisco Systems, Inc. and/or its affiliates.
+> > > > > > + * All rights reserved.
+> > > > > > + */
+> > > > > > +
+> > > > > > +#include <linux/export.h>
+> > > > > > +#include <linux/hdmi-notifier.h>
+> > > > > > +#include <linux/string.h>
+> > > > > > +#include <linux/slab.h>
+> > > > > > +#include <linux/list.h>
+> > > > > > +
+> > > > > > +static LIST_HEAD(hdmi_notifiers);
+> > > > > > +static DEFINE_MUTEX(hdmi_notifiers_lock);
+> > > > > > +
+> > > > > > +struct hdmi_notifier *hdmi_notifier_get(struct device *dev)
+> > > > > > +{
+> > > > > > +   struct hdmi_notifier *n;
+> > > > > > +
+> > > > > > +   mutex_lock(&hdmi_notifiers_lock);
+> > > > > > +   list_for_each_entry(n, &hdmi_notifiers, head) {
+> > > > > > +           if (n->dev == dev) {
+> > > > > > +                   mutex_unlock(&hdmi_notifiers_lock);
+> > > > > > +                   kref_get(&n->kref);
+> > > > > > +                   return n;
+> > > > > > +           }
+> > > > > > +   }
+> > > > > > +   n = kzalloc(sizeof(*n), GFP_KERNEL);
+> > > > > > +   if (!n)
+> > > > > > +           goto unlock;
+> > > > > > +   n->dev = dev;
+> > > > > > +   mutex_init(&n->lock);
+> > > > > > +   BLOCKING_INIT_NOTIFIER_HEAD(&n->notifiers);
+> > > > > > +   kref_init(&n->kref);
+> > > > > > +   list_add_tail(&n->head, &hdmi_notifiers);
+> > > > > > +unlock:
+> > > > > > +   mutex_unlock(&hdmi_notifiers_lock);
+> > > > > > +   return n;
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_notifier_get);
+> > > > > > +
+> > > > > > +static void hdmi_notifier_release(struct kref *kref)
+> > > > > > +{
+> > > > > > +   struct hdmi_notifier *n =
+> > > > > > +           container_of(kref, struct hdmi_notifier, kref);
+> > > > > > +
+> > > > > > +   mutex_lock(&hdmi_notifiers_lock);
+> > > > > > +   list_del(&n->head);
+> > > > > > +   mutex_unlock(&hdmi_notifiers_lock);
+> > > > > > +   kfree(n->edid);
+> > > > > > +   kfree(n);
+> > > > > > +}
+> > > > > > +
+> > > > > > +void hdmi_notifier_put(struct hdmi_notifier *n)
+> > > > > > +{
+> > > > > > +   kref_put(&n->kref, hdmi_notifier_release);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_notifier_put);
+> > > > > > +
+> > > > > > +int hdmi_notifier_register(struct hdmi_notifier *n, struct notifier_block *nb)
+> > > > > > +{
+> > > > > > +   int ret = blocking_notifier_chain_register(&n->notifiers, nb);
+> > > > > > +
+> > > > > > +   if (ret)
+> > > > > > +           return ret;
+> > > > > > +   kref_get(&n->kref);
+> > > > > > +   mutex_lock(&n->lock);
+> > > > > > +   if (n->connected) {
+> > > > > > +           blocking_notifier_call_chain(&n->notifiers, HDMI_CONNECTED, n);
+> > > > > > +           if (n->edid_size)
+> > > > > > +                   blocking_notifier_call_chain(&n->notifiers,
+> > > > > > +                                                HDMI_NEW_EDID, n);
+> > > > > > +           if (n->has_eld)
+> > > > > > +                   blocking_notifier_call_chain(&n->notifiers,
+> > > > > > +                                                HDMI_NEW_ELD, n);
+> > > > > > +   }
+> > > > > > +   mutex_unlock(&n->lock);
+> > > > > > +   return 0;
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_notifier_register);
+> > > > > > +
+> > > > > > +int hdmi_notifier_unregister(struct hdmi_notifier *n, struct notifier_block *nb)
+> > > > > > +{
+> > > > > > +   int ret = blocking_notifier_chain_unregister(&n->notifiers, nb);
+> > > > > > +
+> > > > > > +   if (ret == 0)
+> > > > > > +           hdmi_notifier_put(n);
+> > > > > > +   return ret;
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_notifier_unregister);
+> > > > > > +
+> > > > > > +void hdmi_event_connect(struct hdmi_notifier *n)
+> > > > > > +{
+> > > > > > +   mutex_lock(&n->lock);
+> > > > > > +   n->connected = true;
+> > > > > > +   blocking_notifier_call_chain(&n->notifiers, HDMI_CONNECTED, n);
+> > > > > > +   mutex_unlock(&n->lock);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_event_connect);
+> > > > > > +
+> > > > > > +void hdmi_event_disconnect(struct hdmi_notifier *n)
+> > > > > > +{
+> > > > > > +   mutex_lock(&n->lock);
+> > > > > > +   n->connected = false;
+> > > > > > +   n->has_eld = false;
+> > > > > > +   n->edid_size = 0;
+> > > > > > +   blocking_notifier_call_chain(&n->notifiers, HDMI_DISCONNECTED, n);
+> > > > > > +   mutex_unlock(&n->lock);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_event_disconnect);
+> > > > > > +
+> > > > > > +int hdmi_event_new_edid(struct hdmi_notifier *n, const void *edid, size_t size)
+> > > > > > +{
+> > > > > > +   mutex_lock(&n->lock);
+> > > > > > +   if (n->edid_allocated_size < size) {
+> > > > > > +           void *p = kmalloc(size, GFP_KERNEL);
+> > > > > > +
+> > > > > > +           if (!p) {
+> > > > > > +                   mutex_unlock(&n->lock);
+> > > > > > +                   return -ENOMEM;
+> > > > > > +           }
+> > > > > > +           kfree(n->edid);
+> > > > > > +           n->edid = p;
+> > > > > > +           n->edid_allocated_size = size;
+> > > > > > +   }
+> > > > > > +   memcpy(n->edid, edid, size);
+> > > > > > +   n->edid_size = size;
+> > > > > > +   blocking_notifier_call_chain(&n->notifiers, HDMI_NEW_EDID, n);
+> > > > > > +   mutex_unlock(&n->lock);
+> > > > > > +   return 0;
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_event_new_edid);
+> > > > > > +
+> > > > > > +void hdmi_event_new_eld(struct hdmi_notifier *n, const u8 eld[128])
+> > > > > > +{
+> > > > > > +   mutex_lock(&n->lock);
+> > > > > > +   memcpy(n->eld, eld, sizeof(n->eld));
+> > > > > > +   n->has_eld = true;
+> > > > > > +   blocking_notifier_call_chain(&n->notifiers, HDMI_NEW_ELD, n);
+> > > > > > +   mutex_unlock(&n->lock);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL_GPL(hdmi_event_new_eld);
+> > > > > > diff --git a/include/linux/hdmi-notifier.h b/include/linux/hdmi-notifier.h
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..c8f35110e3e3
+> > > > > > --- /dev/null
+> > > > > > +++ b/include/linux/hdmi-notifier.h
+> > > > > > @@ -0,0 +1,112 @@
+> > > > > > +/* SPDX-License-Identifier: GPL-2.0
+> > > > > > + * hdmi-notifier.h - notify interested parties of (dis)connect and EDID
+> > > > > > + * events
+> > > > > > + *
+> > > > > > + * Copyright 2016 Russell King <rmk+kernel@arm.linux.org.uk>
+> > > > > > + * Copyright 2016 Cisco Systems, Inc. and/or its affiliates.
+> > > > > > + * All rights reserved.
+> > > > > > + */
+> > > > > > +
+> > > > > > +#ifndef LINUX_HDMI_NOTIFIER_H
+> > > > > > +#define LINUX_HDMI_NOTIFIER_H
+> > > > > > +
+> > > > > > +#include <linux/types.h>
+> > > > > > +#include <linux/notifier.h>
+> > > > > > +#include <linux/kref.h>
+> > > > > > +
+> > > > > > +enum {
+> > > > > > +   HDMI_CONNECTED,
+> > > > > > +   HDMI_DISCONNECTED,
+> > > > > > +   HDMI_NEW_EDID,
+> > > > > > +   HDMI_NEW_ELD,
+> > > > > > +};
+> > > > > > +
+> > > > > > +struct device;
+> > > > > > +
+> > > > > > +struct hdmi_notifier {
+> > > > > > +   /* Lock to protect callback registration and notification. */
+> > > > > > +   struct mutex lock;
+> > > > > > +   struct list_head head;
+> > > > > > +   struct kref kref;
+> > > > > > +   struct blocking_notifier_head notifiers;
+> > > > > > +   struct device *dev;
+> > > > > > +
+> > > > > > +   /* Current state */
+> > > > > > +   unsigned int connected : 1;
+> > > > > > +   unsigned int has_eld : 1;
+> > > > > > +   unsigned char eld[128];
+> > > > > > +   void *edid;
+> > > > > > +   size_t edid_size;
+> > > > > > +   size_t edid_allocated_size;
+> > > > > > +};
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_notifier_get - find or create a new hdmi_notifier for the given device.
+> > > > > > + * @dev: device that sends the events.
+> > > > > > + *
+> > > > > > + * If a notifier for device @dev already exists, then increase the refcount
+> > > > > > + * and return that notifier.
+> > > > > > + *
+> > > > > > + * If it doesn't exist, then allocate a new notifier struct and return a
+> > > > > > + * pointer to that new struct.
+> > > > > > + *
+> > > > > > + * Return NULL if the memory could not be allocated.
+> > > > > > + */
+> > > > > > +struct hdmi_notifier *hdmi_notifier_get(struct device *dev);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_notifier_put - decrease refcount and delete when the refcount reaches 0.
+> > > > > > + * @n: notifier
+> > > > > > + */
+> > > > > > +void hdmi_notifier_put(struct hdmi_notifier *n);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_notifier_register - register the notifier with the notifier_block.
+> > > > > > + * @n: the HDMI notifier
+> > > > > > + * @nb: the notifier_block
+> > > > > > + */
+> > > > > > +int hdmi_notifier_register(struct hdmi_notifier *n, struct notifier_block *nb);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_notifier_unregister - unregister the notifier with the notifier_block.
+> > > > > > + * @n: the HDMI notifier
+> > > > > > + * @nb: the notifier_block
+> > > > > > + */
+> > > > > > +int hdmi_notifier_unregister(struct hdmi_notifier *n,
+> > > > > > +                        struct notifier_block *nb);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_event_connect - send a connect event.
+> > > > > > + * @n: the HDMI notifier
+> > > > > > + *
+> > > > > > + * Send an HDMI_CONNECTED event to any registered parties.
+> > > > > > + */
+> > > > > > +void hdmi_event_connect(struct hdmi_notifier *n);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_event_disconnect - send a disconnect event.
+> > > > > > + * @n: the HDMI notifier
+> > > > > > + *
+> > > > > > + * Send an HDMI_DISCONNECTED event to any registered parties.
+> > > > > > + */
+> > > > > > +void hdmi_event_disconnect(struct hdmi_notifier *n);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_event_new_edid - send a new EDID event.
+> > > > > > + * @n: the HDMI notifier
+> > > > > > + *
+> > > > > > + * Send an HDMI_NEW_EDID event to any registered parties.
+> > > > > > + * This function will make a copy the EDID so it can return -ENOMEM if
+> > > > > > + * no memory could be allocated.
+> > > > > > + */
+> > > > > > +int hdmi_event_new_edid(struct hdmi_notifier *n, const void *edid, size_t size);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * hdmi_event_new_eld - send a new ELD event.
+> > > > > > + * @n: the HDMI notifier
+> > > > > > + *
+> > > > > > + * Send an HDMI_NEW_ELD event to any registered parties.
+> > > > > > + */
+> > > > > > +void hdmi_event_new_eld(struct hdmi_notifier *n, const u8 eld[128]);
+> > > > > > +
+> > > > > > +#endif
+> > > > > >
+> > > > >
+> > > >
+> > > > --
+> > > > Daniel Vetter
+> > > > Software Engineer, Intel Corporation
+> > > > http://blog.ffwll.ch
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
