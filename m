@@ -2,51 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B8273CD3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A233CD55
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404311AbfFKNoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:44:19 -0400
-Received: from enkargame.com ([185.76.77.74]:28670 "EHLO dbcdata.top"
+        id S2391271AbfFKNsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:48:39 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18549 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404158AbfFKNoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:44:19 -0400
-X-Greylist: delayed 20246 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 09:44:19 EDT
-To:     linux-kernel@vger.kernel.org
-From:   Martin Winkler <info@dbcdata.top>
-Subject: AW: Antwort
-Date:   Tue, 11 Jun 2019 15:44:19 +0200
-Message-ID: <20190611_134419_028751.info@dbcdata.top>
-X-Mailer: WEBMAIL
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Mime-Version: 1.0
+        id S2387866AbfFKNsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 09:48:38 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AF7B39DEFC9E36BF9118;
+        Tue, 11 Jun 2019 21:48:36 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Jun 2019
+ 21:48:29 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <serge@hallyn.com>, <jmorris@namei.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] security: Make capability_hooks static
+Date:   Tue, 11 Jun 2019 21:48:15 +0800
+Message-ID: <20190611134815.16612-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sehr geehrte Damen und Herren,
+Fix sparse warning:
 
-nach unserem Besuch Ihrer Homepage möchten wir Ihnen ein Angebot von Produkten vorstellen, das Ihnen ermöglichen wird, den Verkauf Ihrer Produkte sowie 
-Dienstleistungen deutlich zu erhöhen. 
+security/commoncap.c:1347:27: warning:
+ symbol 'capability_hooks' was not declared. Should it be static?
 
-Die Datenbanken der Firmen sind in für Sie interessante und relevante Zielgruppen untergliedert. 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ security/commoncap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Die Firmenangaben beinhalten: Name der Firma, Ansprechpartner, E-mail Adresse, Tel. + Fax-Nr., PLZ, Ort, Straße etc. 
+diff --git a/security/commoncap.c b/security/commoncap.c
+index c0b9664..3150bed 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1339,7 +1339,7 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
+ 
+ #ifdef CONFIG_SECURITY
+ 
+-struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
++static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(capable, cap_capable),
+ 	LSM_HOOK_INIT(settime, cap_settime),
+ 	LSM_HOOK_INIT(ptrace_access_check, cap_ptrace_access_check),
+-- 
+2.7.4
 
---
-1. Gesamtpaket 2019 DE 1 Mio. Firmenadressen ( 1 457 620 ) - 190 EUR ( bis zum 11.06.2019 ) 
-2. Gesamtpaket 2019 DE,AT,CH ( 1 747 921 ) - 240 EUR ( bis zum 11.06.2019 ) 
---
-
-Die Verwendungsmöglichkeiten der Datenbanken sind praktisch unbegrenzt und Sie können durch Verwendung der von uns entwickelten 
-Programme des personalisierten Versendens von Angeboten u.ä. mittels E-mailing bzw. Fax effektive und sichere Werbekampagnen damit durchführen. 
-
-Bitte informieren Sie sich über die weiteren Details einmal unverbindlich auf unseren Webseiten: 
-
-http://www.acdbmarketing.net/?p=1
-
-Mit freundlichen Grüßen
-Martin Winkler
 
