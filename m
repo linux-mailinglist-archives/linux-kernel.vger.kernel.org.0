@@ -2,146 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C097B3D4AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C42B3D4BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406710AbfFKR6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:58:11 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35352 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406628AbfFKR6L (ORCPT
+        id S2406740AbfFKR6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:58:46 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33185 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406663AbfFKR6p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:58:11 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j19so12789586otq.2;
-        Tue, 11 Jun 2019 10:58:10 -0700 (PDT)
+        Tue, 11 Jun 2019 13:58:45 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x15so7931631pfq.0;
+        Tue, 11 Jun 2019 10:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VCk8yXyDlU45xhcdQhx1a6hD5bkWPN082lBz8bnOkUY=;
-        b=P1UKhIYgxM+XqSIsgTb87emPKNlNd6xALypb/TZzyRb+jBUnC8i5Nd+y9bqj8zezw1
-         PVLkE5srBChxTYeKSTiG/xzCtE2O39FMElMr++lFqkDifYYzZHHXxNVa6ZAUbKOpMyhe
-         u6PlXZNboq4L0jgn7AkxtSd28W736ruhkywHshY+jyCzZvIMs1O56l0gflaBZ7UqhwQL
-         x2RQMfu1NCl93I1mh4SAyT5fO5WxjcRqNVi6NdN2yKWoaWkd3acM80QLStmQWoTnX1v5
-         7M1JBXsMpTxCe4p9R78MjJh5v33YPLvhehDsyfHgqx7cuL09xlhmcldE4dAYPb/FmdZm
-         6TOw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LBBPbHNbMLxHuXtvkfP18Wlm24ucalIiwEp6yuzKVrw=;
+        b=odYoI1GawxMsPF+9fsdFAGR5icuHDBePosT3W/x2jCUoF7YiA3NvqO/0TMdgOKiNMd
+         9pQImhSQIAWI/SEq5MILFDCvA3yxyb1vwWAJNh4mZ3knbs+4LTaXfst5TsPBAxtIL//G
+         a7Df57BSqIl1Sr7aHblVMhMLV5xC5iYxoYs/NIYzSbnGJTIQZeU9MVEohKjPyFtqkXlc
+         1yKYQm7+ESdtLGWMFEpqEDzXFHjqk7FqjqE53AZDzAnwxyj3i9TSnIHjqaS4xOHWMio0
+         GF6Adcru3dvscDEQiWac9qsA/uZ8gQ9jnGR7JAuQSkPqzoDGo4Vbm46b2M75srka9rIP
+         56Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VCk8yXyDlU45xhcdQhx1a6hD5bkWPN082lBz8bnOkUY=;
-        b=i/EzGORW0GxMPsExG4+Uf3MGJGPLozly2hDQmUlb7QlXqbBr9bHMimkOXiUWmTzs+I
-         MlWZpXJTaZ5crgPd86XGPRMVNUAHVY0yfrMdoxQjNe766jS+92s7GPqhgo5x4yLIqvyF
-         Q4bUn/wflq05F0JHlVYAATv61ADPQOm/QPk5fq/ei0UJDCQ4xPD2VFpaE8baTthSlYt9
-         gmIL42VlT111KUPMbgQB84r13PblhNPiahU55Cu0UsR4x/lT+A1kc7ZZDn6G28RILoGf
-         U+xXh6KSQ0nNWmZPHriK2a3UJPBRAD1Jqm7OQTfL6uZv0uYSfkHJS+qY8BCGJCWJTar5
-         yqXg==
-X-Gm-Message-State: APjAAAWbQO+dIhyb8K9qkj3zAC6EvvIgeQYD6JzH1tPmTaR6NSOismuv
-        Jz6jH+gQMWndJW6s/D/KAXlh/xAicr8KHpMHad4=
-X-Google-Smtp-Source: APXvYqzoPj3Xa4uMgvBC9zsIyKzC4P0HF+b5cZAVaQucBLGJZkMH7tOH6JRC+xDDYFPIUVm3dwteObyR0yuyPX59K5A=
-X-Received: by 2002:a9d:32a6:: with SMTP id u35mr36257313otb.81.1560275890132;
- Tue, 11 Jun 2019 10:58:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190604144714.2009-1-glaroque@baylibre.com> <20190604144714.2009-2-glaroque@baylibre.com>
- <CAFBinCBN4QC2tPDEQmTW_c+PP5yu2qoK5M1eSye=SmvpieKWQg@mail.gmail.com> <d68aae23-f877-1f65-94a4-79e909ae111a@baylibre.com>
-In-Reply-To: <d68aae23-f877-1f65-94a4-79e909ae111a@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 11 Jun 2019 19:57:59 +0200
-Message-ID: <CAFBinCBCUxZjnrRxFHApp4iwPUCQQ+PU54V6zJew8Sr8La3u7w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Documentation: dt-bindings: add the Amlogic Meson
- Temperature Sensor
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Guillaume La Roque <glaroque@baylibre.com>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        jic23@kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LBBPbHNbMLxHuXtvkfP18Wlm24ucalIiwEp6yuzKVrw=;
+        b=IalO44xRN4wXftC869WwwgHWEeToIGHc2uCJMA0XrPGHQ4+HCFnkoNrwg8Mc+N2ZOq
+         XSxE27H3OS4a0hekdTeZzCrEkLdr7brKylu46noC0ckugpNcZzOc83FFFGlqdUCp8kQ6
+         CjjeFWiQVooxkf8iRBEj7P7l2UUV58VJ2G/cbio1kcVffG0wf2lA3bDnshUnao4W2VDj
+         N9w4jht72r6aYiEEO5ZHse+X3nE1rqOAC+fJMNYf+J+eVD49t9KEsrTg4BXrmE2oppoQ
+         nK3DceZemp5XMuiCfV/5xOg4LTTo1zxThNiSXwVKEFzI2GPRI8PeGl0GgxqVDXVxTZnv
+         cmgQ==
+X-Gm-Message-State: APjAAAUKRyZiWahIYl3sWBOVsupO4ZZa0H+WSotc2eAiBqOj+4khmWNM
+        HXSCmULz4/CZkwuZrlFWdFwZH2jG
+X-Google-Smtp-Source: APXvYqyTpBNB7eZvWW9ncZHcnns11TIDIARcKZGd/45wmVobCvkg5guWjJ8EwPqyjaoefy2cKPJqDg==
+X-Received: by 2002:a63:295:: with SMTP id 143mr20557837pgc.279.1560275924507;
+        Tue, 11 Jun 2019 10:58:44 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id s24sm15991182pfh.133.2019.06.11.10.58.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 10:58:43 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        iommu@lists.linux-foundation.org (open list:DMA MAPPING HELPERS),
+        netdev@vger.kernel.org (open list:NETWORKING [GENERAL])
+Subject: [PATCH 0/2] swiotlb: Cleanup and consistency fix
+Date:   Tue, 11 Jun 2019 10:58:23 -0700
+Message-Id: <20190611175825.572-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+Hi Christoph,
 
-On Tue, Jun 11, 2019 at 1:01 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> On 06/06/2019 21:16, Martin Blumenstingl wrote:
-> > Hi Guillaume,
-> >
-> > thank you for working on this!
-> >
-> > On Tue, Jun 4, 2019 at 4:47 PM Guillaume La Roque <glaroque@baylibre.com> wrote:
-> >>
-> >> This adds the devicetree binding documentation for the Temperature
-> >> Sensor found in the Amlogic Meson G12 SoCs.
-> >> Currently only the G12A SoCs are supported.
-> > so G12B is not supported (yet)?
->
-> G12B is 95% similar as G12A, it will certainly use slighly different values.
-OK, thank you for clarifying this
-as far as I can tell Guillaume's code is already prepared for that (as
-there's a per-instance specific struct with settings for the specific
-instance) which is good to know
+Still with my contrived memory layout where there is no physical memory
+the kernel can use below 4GB, it was possible to fail swiotlb_init(),
+but still not hit swiotlb_map_single() since all peripherals have a
+DMA_BIT_MASK() that is within the remaining addressable physical memory.
 
-> >
-> >> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> >> ---
-> >>  .../iio/temperature/amlogic,meson-tsensor.txt | 31 +++++++++++++++++++
-> >>  1 file changed, 31 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/iio/temperature/amlogic,meson-tsensor.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/iio/temperature/amlogic,meson-tsensor.txt b/Documentation/devicetree/bindings/iio/temperature/amlogic,meson-tsensor.txt
-> >> new file mode 100644
-> >> index 000000000000..d064db0e9cac
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/iio/temperature/amlogic,meson-tsensor.txt
-> >> @@ -0,0 +1,31 @@
-> >> +* Amlogic Meson Temperature Sensor
-> >> +
-> >> +Required properties:
-> >> +- compatible:  depending on the SoC and the position of the sensor,
-> >> +               this should be one of:
-> >> +               - "amlogic,meson-g12a-cpu-tsensor" for the CPU G12A SoC sensor
-> >> +               - "amlogic,meson-g12a-ddr-tsensor" for the DDR G12A SoC sensor
-> >> +               followed by the common :
-> >> +               - "amlogic,meson-g12a-tsensor" for G12A SoC family
-> >> +- reg:         the physical base address and length of the registers
-> >> +- interrupts:  the interrupt indicating end of sampling
-> >> +- clocks:      phandle identifier for the reference clock of temperature sensor
-> >> +- #io-channel-cells: must be 1, see ../iio-bindings.txt
-> > have you considered using the thermal framework [0] instead of the iio
-> > framework (see below)?
->
-> Question: why thermal, and not hwmon ? what's the main difference ?
-this is what came to my mind why the thermal framework fits best (at
-least based on my current knowledge):
-a) the thermal-zones (see meson-gxm-khadas-vim2.dts for example) a
-"thermal-sensors" property. so for active (with a fan) or passive (by
-limiting the maximum frequency and thus the supply voltage) cooling we
-need a thermal device anyways
-b) the thermal bindings support multiple trip points. we can map them
-to one of the four interrupts which the IP block can generate
-c) defining a temperature where the chip will power off sounds like a
-use-case which may be implemented by other thermal IP blocks (in other
-words: maybe the thermal frameworks provides some generic property to
-replace the "amlogic,critical-temperature" property)
-d) as far as I know you can tell the thermal framework to create a
-hwmon device with only a couple (5?) lines of code
+The second path could be backported to stable, but for the same reasons
+as the one we had just discussed before, this requires a very contrived
+test case that is not necessarily realistic or would warrant a stable
+backport IMHO.
 
-as Guillaume has already shown we can implement c) with a custom
-property, but that's not limited to the underlying framework (IIO,
-hwmon, thermal, ...)
+Thanks!
 
-use-case d) is not a strong one because I'm using iio-hwmon to create
-a hwmon device on the 32-bit SoCs.
-however, together with case a) using an IIO driver is going to be more
-difficult because currently there's "only" a "generic-adc-thermal"
-binding (but not a "generic-iio-temperature-thermal" binding)
+Florian Fainelli (2):
+  swiotlb: Group identical cleanup in swiotlb_cleanup()
+  swiotlb: Return consistent SWIOTLB segments/nr_tbl
 
-the initial driver version doesn't have to support everything I listed above.
-however, I believe with the thermal framework we don't limit ourselves
-to one use-case and can extend the driver in the future
+ kernel/dma/swiotlb.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
+-- 
+2.17.1
 
-Martin
