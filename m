@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F873C7C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F5513C7E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391416AbfFKJ5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 05:57:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:56976 "EHLO foss.arm.com"
+        id S2405159AbfFKJ6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 05:58:05 -0400
+Received: from foss.arm.com ([217.140.110.172]:57064 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727726AbfFKJ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 05:57:03 -0400
+        id S2404989AbfFKJ6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 05:58:04 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 893EC337;
-        Tue, 11 Jun 2019 02:57:02 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 193BD337;
+        Tue, 11 Jun 2019 02:58:04 -0700 (PDT)
 Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 796C63F73C;
-        Tue, 11 Jun 2019 02:58:43 -0700 (PDT)
-Subject: Re: [PATCH 07/15] binfmt_flat: use __be32 for the on-disk format
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B4623F73C;
+        Tue, 11 Jun 2019 02:59:44 -0700 (PDT)
+Subject: Re: [PATCH 08/15] binfmt_flat: add endianess annotations
 To:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
 Cc:     uclinux-h8-devel@lists.sourceforge.jp,
         linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
@@ -26,14 +26,14 @@ Cc:     uclinux-h8-devel@lists.sourceforge.jp,
         linux-riscv@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
 References: <20190610212015.9157-1-hch@lst.de>
- <20190610212015.9157-8-hch@lst.de>
+ <20190610212015.9157-9-hch@lst.de>
 From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <462a7406-19df-7910-4499-8f0acd52bc82@arm.com>
-Date:   Tue, 11 Jun 2019 10:57:00 +0100
+Message-ID: <79a2f6d9-7161-b2c7-2eb0-6719daadca8b@arm.com>
+Date:   Tue, 11 Jun 2019 10:58:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190610212015.9157-8-hch@lst.de>
+In-Reply-To: <20190610212015.9157-9-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -43,110 +43,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 6/10/19 10:20 PM, Christoph Hellwig wrote:
-> So far binfmt_flat has onl been supported on 32-bit platforms, so the
-			^^^^
-			only
-> variable size of the fields didn't matter.  But the upcoming RISC-V
-> nommu port supports 64-bit CPUs, and we now have a conflict between
-> the elf2flt creation tool that always uses 32-bit fields and the kernel
-> that uses (unsigned) long field.  Switch to the userspace view as the
-> rest of the binfmt_flat format is completely architecture neutral,
-> and binfmt_flat isn't the right binary format for huge executables to
-> start with.
-> 
-> While we're at it also ensure these fields are using __be types as
-> they big endian and are byteswapped when loaded.
+> Most binfmt_flat on-disk fields are big endian.  Use the proper __be32
+> type where applicable.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> wip
-  ^^^
-Unintended?
-
 > ---
->  include/linux/flat.h | 48 ++++++++++++++++++++++----------------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
+>  fs/binfmt_flat.c | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
 
-
-With comment message fixed:
-
+Tested-by: Vladimir Murzin <vladimir.murzin@arm.com>
 Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
 
 > 
-> diff --git a/include/linux/flat.h b/include/linux/flat.h
-> index 21d901ba191b..59e892d5fadb 100644
-> --- a/include/linux/flat.h
-> +++ b/include/linux/flat.h
-> @@ -24,26 +24,26 @@
->   */
+> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+> index 6ae0f9af3fc9..6c1848dee724 100644
+> --- a/fs/binfmt_flat.c
+> +++ b/fs/binfmt_flat.c
+> @@ -421,7 +421,8 @@ static int load_flat_file(struct linux_binprm *bprm,
+>  	unsigned long textpos, datapos, realdatastart;
+>  	u32 text_len, data_len, bss_len, stack_len, full_data, flags;
+>  	unsigned long len, memp, memp_size, extra, rlim;
+> -	u32 __user *reloc, *rp;
+> +	__be32 __user *reloc;
+> +	u32 __user *rp;
+>  	struct inode *inode;
+>  	int i, rev, relocs;
+>  	loff_t fpos;
+> @@ -594,7 +595,7 @@ static int load_flat_file(struct linux_binprm *bprm,
+>  			goto err;
+>  		}
 >  
->  struct flat_hdr {
-> -	char magic[4];
-> -	unsigned long rev;          /* version (as above) */
-> -	unsigned long entry;        /* Offset of first executable instruction
-> -	                               with text segment from beginning of file */
-> -	unsigned long data_start;   /* Offset of data segment from beginning of
-> -	                               file */
-> -	unsigned long data_end;     /* Offset of end of data segment
-> -	                               from beginning of file */
-> -	unsigned long bss_end;      /* Offset of end of bss segment from beginning
-> -	                               of file */
-> +	char	magic[4];
-> +	__be32	rev;          /* version (as above) */
-> +	__be32	entry;        /* Offset of first executable instruction
-> +				 with text segment from beginning of file */
-> +	__be32	data_start;   /* Offset of data segment from beginning of
-> +				 file */
-> +	__be32	data_end;     /* Offset of end of data segment from beginning
-> +				 of file */
-> +	__be32	bss_end;      /* Offset of end of bss segment from beginning
-> +				 of file */
+> -		reloc = (u32 __user *)
+> +		reloc = (__be32 __user *)
+>  			(datapos + (ntohl(hdr->reloc_start) - text_len));
+>  		memp = realdatastart;
+>  		memp_size = len;
+> @@ -619,7 +620,7 @@ static int load_flat_file(struct linux_binprm *bprm,
+>  				MAX_SHARED_LIBS * sizeof(u32),
+>  				FLAT_DATA_ALIGN);
 >  
->  	/* (It is assumed that data_end through bss_end forms the bss segment.) */
+> -		reloc = (u32 __user *)
+> +		reloc = (__be32 __user *)
+>  			(datapos + (ntohl(hdr->reloc_start) - text_len));
+>  		memp = textpos;
+>  		memp_size = len;
+> @@ -785,15 +786,16 @@ static int load_flat_file(struct linux_binprm *bprm,
+>  		u32 __maybe_unused persistent = 0;
+>  		for (i = 0; i < relocs; i++) {
+>  			u32 addr, relval;
+> +			__be32 tmp;
 >  
-> -	unsigned long stack_size;   /* Size of stack, in bytes */
-> -	unsigned long reloc_start;  /* Offset of relocation records from
-> -	                               beginning of file */
-> -	unsigned long reloc_count;  /* Number of relocation records */
-> -	unsigned long flags;
-> -	unsigned long build_date;   /* When the program/library was built */
-> -	unsigned long filler[5];    /* Reservered, set to zero */
-> +	__be32	stack_size;   /* Size of stack, in bytes */
-> +	__be32	reloc_start;  /* Offset of relocation records from beginning of
-> +				 file */
-> +	__be32	reloc_count;  /* Number of relocation records */
-> +	__be32	flags;
-> +	__be32	build_date;   /* When the program/library was built */
-> +	__u32	filler[5];    /* Reservered, set to zero */
->  };
+>  			/*
+>  			 * Get the address of the pointer to be
+>  			 * relocated (of course, the address has to be
+>  			 * relocated first).
+>  			 */
+> -			if (get_user(relval, reloc + i))
+> +			if (get_user(tmp, reloc + i))
+>  				return -EFAULT;
+> -			relval = ntohl(relval);
+> +			relval = ntohl(tmp);
+>  			addr = flat_get_relocate_addr(relval);
+>  			rp = (u32 __user *)calc_reloc(addr, libinfo, id, 1);
+>  			if (rp == (u32 __user *)RELOC_FAILED) {
+> @@ -812,8 +814,13 @@ static int load_flat_file(struct linux_binprm *bprm,
+>  				 * Do the relocation.  PIC relocs in the data section are
+>  				 * already in target order
+>  				 */
+> -				if ((flags & FLAT_FLAG_GOTPIC) == 0)
+> -					addr = ntohl(addr);
+> +				if ((flags & FLAT_FLAG_GOTPIC) == 0) {
+> +					/*
+> +					 * Meh, the same value can have a different
+> +					 * byte order based on a flag..
+> +					 */
+> +					addr = ntohl((__force __be32)addr);
+> +				}
+>  				addr = calc_reloc(addr, libinfo, id, 0);
+>  				if (addr == RELOC_FAILED) {
+>  					ret = -ENOEXEC;
+> @@ -828,11 +835,10 @@ static int load_flat_file(struct linux_binprm *bprm,
+>  		}
+>  	} else {
+>  		for (i = 0; i < relocs; i++) {
+> -			u32 relval;
+> +			__be32 relval;
+>  			if (get_user(relval, reloc + i))
+>  				return -EFAULT;
+> -			relval = ntohl(relval);
+> -			old_reloc(relval);
+> +			old_reloc(ntohl(relval));
+>  		}
+>  	}
 >  
->  #define FLAT_FLAG_RAM    0x0001 /* load program entirely into RAM */
-> @@ -67,19 +67,19 @@ struct flat_hdr {
->  #define OLD_FLAT_RELOC_TYPE_BSS		2
->  
->  typedef union {
-> -	unsigned long	value;
-> +	u32		value;
->  	struct {
->  # if defined(mc68000) && !defined(CONFIG_COLDFIRE)
-> -		signed long offset : 30;
-> -		unsigned long type : 2;
-> +		s32	offset : 30;
-> +		u32	type : 2;
->  #   	define OLD_FLAT_FLAG_RAM    0x1 /* load program entirely into RAM */
->  # elif defined(__BIG_ENDIAN_BITFIELD)
-> -		unsigned long type : 2;
-> -		signed long offset : 30;
-> +		u32	type : 2;
-> +		s32	offset : 30;
->  #   	define OLD_FLAT_FLAG_RAM    0x1 /* load program entirely into RAM */
->  # elif defined(__LITTLE_ENDIAN_BITFIELD)
-> -		signed long offset : 30;
-> -		unsigned long type : 2;
-> +		s32	offset : 30;
-> +		u32	type : 2;
->  #   	define OLD_FLAT_FLAG_RAM    0x1 /* load program entirely into RAM */
->  # else
->  #   	error "Unknown bitfield order for flat files."
 > 
 
