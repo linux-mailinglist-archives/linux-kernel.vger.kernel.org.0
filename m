@@ -2,119 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 500BD3CBF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F15D3CBFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388459AbfFKMoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:44:18 -0400
-Received: from mga14.intel.com ([192.55.52.115]:38430 "EHLO mga14.intel.com"
+        id S2388917AbfFKMpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:45:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:60464 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfFKMoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:44:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 05:44:18 -0700
-X-ExtLoop1: 1
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga002.jf.intel.com with ESMTP; 11 Jun 2019 05:44:15 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hag8N-00059q-0l; Tue, 11 Jun 2019 15:44:15 +0300
-Date:   Tue, 11 Jun 2019 15:44:15 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stefan Roese <sr@denx.de>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2 v5] tty/serial/8250: use mctrl_gpio helpers
-Message-ID: <20190611124415.GT9224@smile.fi.intel.com>
-References: <20190611105603.4435-1-sr@denx.de>
- <20190611105603.4435-2-sr@denx.de>
+        id S2387596AbfFKMpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 08:45:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B350D344;
+        Tue, 11 Jun 2019 05:45:49 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 423343F557;
+        Tue, 11 Jun 2019 05:45:48 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 13:45:42 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org, marc.zyngier@arm.com, yuzenghui@huawei.com,
+        wanghaibin.wang@huawei.com, james.morse@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com, liwei391@huawei.com
+Subject: Re: [PATCH v4 1/8] arm64: Do not enable IRQs for ct_user_exit
+Message-ID: <20190611124542.GA29008@lakrids.cambridge.arm.com>
+References: <1560245893-46998-1-git-send-email-julien.thierry@arm.com>
+ <1560245893-46998-2-git-send-email-julien.thierry@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611105603.4435-2-sr@denx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1560245893-46998-2-git-send-email-julien.thierry@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 12:56:03PM +0200, Stefan Roese wrote:
-> From: Yegor Yefremov <yegorslists@googlemail.com>
+On Tue, Jun 11, 2019 at 10:38:06AM +0100, Julien Thierry wrote:
+> For el0_dbg and el0_error, DAIF bits get explicitly cleared before
+> calling ct_user_exit.
 > 
-> This patch permits the usage for GPIOs to control
-> the CTS/RTS/DTR/DSR/DCD/RI signals.
+> When context tracking is disabled, DAIF gets set (almost) immediately
+> after. When context tracking is enabled, among the first things done
+> is disabling IRQs.
+> 
+> What is actually needed is:
+> - PSR.D = 0 so the system can be debugged (should be already the case)
+> - PSR.A = 0 so async error can be handled during context tracking
+> 
+> Do not clear PSR.I in those two locations.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Reviewed-by: James Morse <james.morse@arm.com>
+> Cc:Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 
->  static inline void serial8250_out_MCR(struct uart_8250_port *up, int value)
->  {
->  	serial_out(up, UART_MCR, value);
-> +
-> +	if (up->gpios) {
-> +		int mctrl_gpio = 0;
-> +
-> +		if (value & UART_MCR_RTS)
-> +			mctrl_gpio |= TIOCM_RTS;
-> +		if (value & UART_MCR_DTR)
-> +			mctrl_gpio |= TIOCM_DTR;
-> +
-> +		mctrl_gpio_set(up->gpios, mctrl_gpio);
-> +	}
->  }
->  
->  static inline int serial8250_in_MCR(struct uart_8250_port *up)
->  {
-> -	return serial_in(up, UART_MCR);
-> +	int mctrl;
-> +
-> +	mctrl = serial_in(up, UART_MCR);
-> +
-> +	if (up->gpios) {
-> +		int mctrl_gpio = 0;
-> +
-> +		/* save current MCR values */
-> +		if (mctrl & UART_MCR_RTS)
-> +			mctrl_gpio |= TIOCM_RTS;
-> +		if (mctrl & UART_MCR_DTR)
-> +			mctrl_gpio |= TIOCM_DTR;
-> +
-> +		mctrl_gpio = mctrl_gpio_get_outputs(up->gpios, &mctrl_gpio);
-> +		if (mctrl_gpio & TIOCM_RTS)
-> +			mctrl |= UART_MCR_RTS;
-> +		else
-> +			mctrl &= ~UART_MCR_RTS;
-> +
-> +		if (mctrl_gpio & TIOCM_DTR)
-> +			mctrl |= UART_MCR_DTR;
-> +		else
-> +			mctrl &= ~UART_MCR_DTR;
-> +	}
-> +
-> +	return mctrl;
->  }
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-These are using OR logic with potentially volatile data. Shouldn't we mask
-unused bits in UART_MCR in case of up->gpios != NULL?
+Mark.
 
-> +	if (up->gpios == 0)
-
-This is type inconsistency with this check as far as I understand.
-I guess you have to do either (up->gpios == NULL), or (!up->gpios).
-
->  	ret = 0;
-
-+ Blank line.
-
-> +	if (up->gpios)
-> +		return mctrl_gpio_get(up->gpios, &ret);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> ---
+>  arch/arm64/kernel/entry.S | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index cd0c7af..89ab6bd 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -870,7 +870,7 @@ el0_dbg:
+>  	mov	x1, x25
+>  	mov	x2, sp
+>  	bl	do_debug_exception
+> -	enable_daif
+> +	enable_da_f
+>  	ct_user_exit
+>  	b	ret_to_user
+>  el0_inv:
+> @@ -922,7 +922,7 @@ el0_error_naked:
+>  	enable_dbg
+>  	mov	x0, sp
+>  	bl	do_serror
+> -	enable_daif
+> +	enable_da_f
+>  	ct_user_exit
+>  	b	ret_to_user
+>  ENDPROC(el0_error)
+> --
+> 1.9.1
