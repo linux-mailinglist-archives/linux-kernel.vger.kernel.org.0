@@ -2,90 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A4F3C862
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E6073C8A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405270AbfFKKPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:15:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:57630 "EHLO foss.arm.com"
+        id S2405612AbfFKKTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:19:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404521AbfFKKPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:15:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6714B337;
-        Tue, 11 Jun 2019 03:15:46 -0700 (PDT)
-Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C8DCD3F557;
-        Tue, 11 Jun 2019 03:17:27 -0700 (PDT)
-Subject: Re: [PATCH 02/17] mm: stub out all of swapops.h for !CONFIG_MMU
-To:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, uclinux-dev@uclinux.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20190610221621.10938-1-hch@lst.de>
- <20190610221621.10938-3-hch@lst.de>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <516c8def-22db-027c-873d-a943454e33af@arm.com>
-Date:   Tue, 11 Jun 2019 11:15:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2405104AbfFKKRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:17:22 -0400
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26ED72146E;
+        Tue, 11 Jun 2019 10:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560248241;
+        bh=ECxRPjnnyOauLHhaZ2dGgISLKOhjT/mVaqEpGjVMnh0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=K/6bUhwaYp9/MWjk2zZJtPZ8uEqONxLXgvGkOchuijFaSBSSr0b38F6VzmafLosY4
+         NNHC8feiwpsi1pFLMlGJ88Kcl37Ht2W+yGRhGa5L+yTDweHtJ5XH/kaH4QYEPtPRtY
+         e6C3Xo32z1ZqyJSL3c2n+7t2hiLliYvdYMQMjRVQ=
+Received: by wens.tw (Postfix, from userid 1000)
+        id 0A2275FBB7; Tue, 11 Jun 2019 18:17:18 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Chen-Yu Tsai <wens@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/25] clk: sunxi-ng: clk parent rewrite part 1
+Date:   Tue, 11 Jun 2019 18:16:33 +0800
+Message-Id: <20190611101658.23855-1-wens@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190610221621.10938-3-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/10/19 11:16 PM, Christoph Hellwig wrote:
-> The whole header file deals with swap entries and PTEs, none of which
-> can exist for nommu builds.
+From: Chen-Yu Tsai <wens@csie.org>
 
-Although I agree with the patch, I'm wondering how you get into it?
+Hi everyone,
 
-Cheers
-Vladimir
+This is v2 of the sunxi-ng clk parent rewrite part 1.
 
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/swapops.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-> index 4d961668e5fc..b02922556846 100644
-> --- a/include/linux/swapops.h
-> +++ b/include/linux/swapops.h
-> @@ -6,6 +6,8 @@
->  #include <linux/bug.h>
->  #include <linux/mm_types.h>
->  
-> +#ifdef CONFIG_MMU
-> +
->  /*
->   * swapcache pages are stored in the swapper_space radix tree.  We want to
->   * get good packing density in that tree, so the index should be dense in
-> @@ -50,13 +52,11 @@ static inline pgoff_t swp_offset(swp_entry_t entry)
->  	return entry.val & SWP_OFFSET_MASK;
->  }
->  
-> -#ifdef CONFIG_MMU
->  /* check whether a pte points to a swap entry */
->  static inline int is_swap_pte(pte_t pte)
->  {
->  	return !pte_none(pte) && !pte_present(pte);
->  }
-> -#endif
->  
->  /*
->   * Convert the arch-dependent pte representation of a swp_entry_t into an
-> @@ -375,4 +375,5 @@ static inline int non_swap_entry(swp_entry_t entry)
->  }
->  #endif
->  
-> +#endif /* CONFIG_MMU */
->  #endif /* _LINUX_SWAPOPS_H */
-> 
+Changes since v1:
+
+  - Collected Maxime's Acked-by for sunxi patches
+  - Expanded possible_parents_show() to cover most cases
+  - Added comment to CLK_HW_INIT_HWS detailing usage for sharing
+    compound literal
+
+As mentioned in my reply to the cover letter of v1, I can merge all the
+patches through the sunxi tree and send a combined (with other sunxi
+stuff) PR, or as an independent branch, whichever is preferred.
+
+Excerpt from original cover letter follows:
+
+This is series is the first part of a large series (I haven't done the
+rest) of patches to rewrite the clk parent relationship handling within
+the sunxi-ng clk driver. This is based on Stephen's recent work allowing
+clk drivers to specify clk parents using struct clk_hw * or parsing DT
+phandles in the clk node.
+
+This series can be split into a few major parts:
+
+1) The first patch is a small fix for clk debugfs representation. This
+   was done before commit 1a079560b145 ("clk: Cache core in 
+   clk_fetch_parent_index() without names") was posted, so it might or
+   might not be needed. Found this when checking my work using
+   clk_possible_parents.
+
+2) A bunch of CLK_HW_INIT_* helper macros are added. These cover the
+   situations I encountered, or assume I will encounter, such as single
+   internal (struct clk_hw *) parent, single DT (struct clk_parent_data
+   .fw_name), multiple internal parents, and multiple mixed (internal +
+   DT) parents. A special variant for just an internal single parent is
+   added, CLK_HW_INIT_HWS, which lets the driver share the singular
+   list, instead of having the compiler create a compound literal every
+   time. It might even make sense to only keep this variant.
+
+3) A bunch of CLK_FIXED_FACTOR_* helper macros are added. The rationale
+   is the same as the single parent CLK_HW_INIT_* helpers.
+
+4) Bulk conversion of CLK_FIXED_FACTOR to use local parent references,
+   either struct clk_hw * or DT .fw_name types, whichever the hardware
+   requires.
+
+5) The beginning of SUNXI_CCU_GATE conversion to local parent
+   references. This part is not done. They are included as justification
+   and examples for the shared list of clk parents case.
+
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (25):
+  clk: Fix debugfs clk_possible_parents for clks without parent string
+    names
+  clk: Add CLK_HW_INIT_* macros using .parent_hws
+  clk: Add CLK_HW_INIT_FW_NAME macro using .fw_name in .parent_data
+  clk: Add CLK_HW_INIT_PARENT_DATA macro using .parent_data
+  clk: fixed-factor: Add CLK_FIXED_FACTOR_HW which takes clk_hw pointer
+    as parent
+  clk: fixed-factor: Add CLK_FIXED_FACTOR_HWS which takes list of struct
+    clk_hw *
+  clk: fixed-factor: Add CLK_FIXED_FACTOR_FW_NAME for DT clock-names
+    parent
+  clk: sunxi-ng: switch to of_clk_hw_register() for registering clks
+  clk: sunxi-ng: sun8i-r: Use local parent references for CLK_HW_INIT_*
+  clk: sunxi-ng: a10: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: sun5i: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: a31: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: a23: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: a33: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: h3: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: r40: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: v3s: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: sun8i-r: Use local parent references for
+    CLK_FIXED_FACTOR
+  clk: sunxi-ng: f1c100s: Use local parent references for
+    CLK_FIXED_FACTOR
+  clk: sunxi-ng: a64: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: h6: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: h6-r: Use local parent references for CLK_FIXED_FACTOR
+  clk: sunxi-ng: gate: Add macros for referencing local clock parents
+  clk: sunxi-ng: a80-usb: Use local parent references for SUNXI_CCU_GATE
+  clk: sunxi-ng: sun8i-r: Use local parent references for SUNXI_CCU_GATE
+
+ drivers/clk/clk.c                        |  44 +++++++++-
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c     |  39 ++++++---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c    |  41 +++++----
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c     |  69 +++++++++------
+ drivers/clk/sunxi-ng/ccu-sun5i.c         |  34 +++++---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c     |  39 ++++++---
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c     |  34 +++++---
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c     |  34 +++++---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c      |  29 ++++---
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 104 +++++++++++------------
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c     |  46 ++++++----
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  29 ++++---
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c |  32 ++++---
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  29 ++++---
+ drivers/clk/sunxi-ng/ccu_common.c        |   2 +-
+ drivers/clk/sunxi-ng/ccu_gate.h          |  53 ++++++++++++
+ include/linux/clk-provider.h             |  89 +++++++++++++++++++
+ 18 files changed, 526 insertions(+), 223 deletions(-)
+
+-- 
+2.20.1
 
