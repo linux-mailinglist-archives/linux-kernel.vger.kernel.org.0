@@ -2,172 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FB741822
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 00:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 359D441849
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 00:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392088AbfFKW2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 18:28:01 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54502 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389575AbfFKW2B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 18:28:01 -0400
-Received: by mail-it1-f194.google.com with SMTP id m138so7654984ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 15:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+X9der8NXdhTZrpKs7ARdC9UNxvkpwzf4UU4Vx5Hsq4=;
-        b=e4Npqn3VAgKiaPp80W37qxc1orZz3dpQR7luq/0MoHQ9azCxskb/8ERBGSD4AmvRpK
-         6a3YkPRDfCcxHlcoecJV8zMLhO4Ak8zIp+jFb+snV7+LH4GbZWI6J4MAX7JGcmLpMj9v
-         mGyCh53uPjlxb2gyL203LHr7bZyRI2Zf7dX7c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+X9der8NXdhTZrpKs7ARdC9UNxvkpwzf4UU4Vx5Hsq4=;
-        b=pqEvEF+TGAaytSNSXV1ryPzYpqfOw3ChkYw+77d+uLzIgwDnXWHKPVr+gAMqs9irDk
-         +GkCSPvuPGhonTBY3RZo9hDSVshBz/Yb9Ksn3esK1yyMVJRuEh2jaYc/STg1ZHKlLHPb
-         UfwQSGOMh/PFZwler7xbIdmnflksp1K13h2lcNG7WN/POhyYtyxuQU/UXV6ZsHeKrYOK
-         6bzoFAdK39ppM0lm+rOdDWsnPAZY+/CBKOMFXgaXTcx1cd7BTUAGkpLqccjlVb8+K2RS
-         yeq19RRSju2lUGS+hI0TZoWzXvG0P20AYxJE1VwZorxa/Nmxk+y8m/GkFArodKmVHqlh
-         zSOw==
-X-Gm-Message-State: APjAAAV2B1ANUpKceB9ANxFtNGE/Rui0M22R65248epzEXUh0ppgaZJC
-        qInQh9IPj/BZGSaIu+9kP/MpwQ==
-X-Google-Smtp-Source: APXvYqzY62xsZhPwvlwvKnXn2UnexiJcXOMLbaA2+xsHl+lom4K3vDxJ8RyO06LXn/4Y8oTp0K7J3w==
-X-Received: by 2002:a02:1a86:: with SMTP id 128mr52536525jai.95.1560292080103;
-        Tue, 11 Jun 2019 15:28:00 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id e26sm4683086iod.10.2019.06.11.15.27.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 15:27:59 -0700 (PDT)
-Subject: Re: [PATCH 1/2] media: v4l2-core: Shifting signed 32-bit value by 31
- bits error
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com,
-        niklas.soderlund+renesas@ragnatech.se, ezequiel@collabora.com,
-        paul.kocialkowski@bootlin.com
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1559764506.git.skhan@linuxfoundation.org>
- <bac3ee3b10de409b6cdf7286e0e84737e63662ee.1559764506.git.skhan@linuxfoundation.org>
- <8cc03625-f41d-6009-d50c-823e5f498dca@infradead.org>
- <7819cae4-58e5-cbe1-ac9d-bca00d390066@xs4all.nl>
- <d5aea86a-b556-aae4-0b97-9add8878f99f@linuxfoundation.org>
- <6b4654b1-7cd5-8fea-8c08-472ade8f3ebb@xs4all.nl>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <9f925e72-4d55-0cfc-ace6-dfe69bbc6903@linuxfoundation.org>
-Date:   Tue, 11 Jun 2019 16:27:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2407191AbfFKWhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 18:37:45 -0400
+Received: from mga06.intel.com ([134.134.136.31]:32551 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405478AbfFKWho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 18:37:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 15:37:43 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga004.fm.intel.com with ESMTP; 11 Jun 2019 15:37:43 -0700
+Date:   Tue, 11 Jun 2019 15:28:22 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>, g@romley-ivt3.sc.intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16
+ instructions
+Message-ID: <20190611222822.GD180343@romley-ivt3.sc.intel.com>
+References: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
+ <20190610192026.GI5488@zn.tnic>
+ <20190611181920.GC180343@romley-ivt3.sc.intel.com>
+ <20190611194701.GJ31772@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <6b4654b1-7cd5-8fea-8c08-472ade8f3ebb@xs4all.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611194701.GJ31772@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/19 2:50 PM, Hans Verkuil wrote:
-> On 6/11/19 9:42 PM, Shuah Khan wrote:
->> On 6/6/19 12:33 AM, Hans Verkuil wrote:
->>> On 6/6/19 5:22 AM, Randy Dunlap wrote:
->>>> On 6/5/19 2:53 PM, Shuah Khan wrote:
->>>>> Fix the following cppcheck error:
->>>>>
->>>>> Checking drivers/media/v4l2-core/v4l2-ioctl.c ...
->>>>> [drivers/media/v4l2-core/v4l2-ioctl.c:1370]: (error) Shifting signed 32-bit value by 31 bits is undefined behaviour
->>>>>
->>>>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
->>>>> ---
->>>>>    drivers/media/v4l2-core/v4l2-ioctl.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->>>>> index 6859bdac86fe..333e387bafeb 100644
->>>>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->>>>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->>>>> @@ -1364,7 +1364,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>>>>    					(char)((fmt->pixelformat >> 8) & 0x7f),
->>>>>    					(char)((fmt->pixelformat >> 16) & 0x7f),
->>>>>    					(char)((fmt->pixelformat >> 24) & 0x7f),
->>>>> -					(fmt->pixelformat & (1 << 31)) ? "-BE" : "");
->>>>> +					(fmt->pixelformat & BIT(31)) ? "-BE" : "");
->>>>>    			break;
->>>>>    		}
->>>>>    	}
->>>>>
->>>>
->>>> If this builds, I guess #define BIT(x) got pulled in indirectly
->>>> since bits.h nor bitops.h is currently #included in that source file.
->>>>
->>
->> It does build. You are right that I should have included bitops.h
->>
->>>> Documentation/process/submit-checklist.rst rule #1 says:
->>>> 1) If you use a facility then #include the file that defines/declares
->>>>      that facility.  Don't depend on other header files pulling in ones
->>>>      that you use.
->>>>
->>>> Please add #include <linux/bits or bitops.h>
->>>>
->>>
->>> I'm not sure about this patch. '1 << 31' is used all over in the kernel,
->>> including in public headers (e.g. media.h, videodev2.h).
->>>
->>> It seems arbitrary to change it only here, but not anywhere else.
->>>
->>
->> Right. We have several places in the kernel that do that.
->>
->>> In this particular example for the fourcc handling I would prefer to just
->>> use '1U << 31', both in v4l2-ioctl.c and videodev2.h.
->>>
->>
->> If you would like to take the patch, I can send v2 fixing it using
->> 1U << 31 - This is simpler since it doesn't nee additional includes.
+On Tue, Jun 11, 2019 at 09:47:02PM +0200, Borislav Petkov wrote:
+> On Tue, Jun 11, 2019 at 11:19:20AM -0700, Fenghua Yu wrote:
+> > So can I re-organize word 11 and 12 as follows?
+> > 
+> > 1. Change word 11 to host scattered features.
+> > 2. Move the previos features in word 11 and word 12 to word 11:
+> > /*
+> >  * Extended auxiliary flags: Linux defined - For features scattered in various
+> >  * CPUID levels and sub-leaves like CPUID level 7 and sub-leaf 1, etc, word 19.
+> >  */
+> > #define X86_FEATURE_CQM_LLC             (11*32+ 0) /* LLC QoS if 1 */
+> > #define X86_FEATURE_CQM_OCCUP_LLC       (11*32+ 1) /* LLC occupancy monitoring */
+> > #define X86_FEATURE_CQM_MBM_TOTAL       (11*32+ 2) /* LLC Total MBM monitoring */
+> > #define X86_FEATURE_CQM_MBM_LOCAL       (11*32+ 3) /* LLC Local MBM monitoring */
 > 
-> I would like to have this cleaned up in the public media APIs. Those can be
-> used by other compilers as well and it makes sense to me not to have
-> undefined behavior in those headers.
+> Yap.
 > 
-
-Great. That is a good point. I will start looking at the public media
-APIs.
-
->>
->>> A separate patch doing the same for MEDIA_ENT_ID_FLAG_NEXT in media.h would
->>> probably be a good idea either: that way the public API at least will do
->>> the right thing.
->>>
-
-Sounds good.
-
->>
->> I should have explained it better. I wanted to start with one or two
->> places first to see if it is worth our time to fix these:
->>
->> The full kernel cppcheck log for "Shifting signed 32-bit value by 31
->> bits is undefined behaviour" can be found at:
->>
->> https://drive.google.com/file/d/19Xu7UqBGJ7BpzxEp92ZQYb6F8UPrk3z3/view
+> > 3. Change word 12 to host CPUID.(EAX=7,ECX=1):EAX:
+> > /* Intel-defined CPU features, CPUID level 0x7:1 (EAX), word 12 */
+> > #define X86_FEATURE_AVX512_BF16         (12*32+ 0) /* BFLOAT16 instructions */
 > 
-> I don't think it makes sense to fix this for drivers. If gcc would do this
-> wrong, we'd have noticed it ages ago.
+> This needs to be (12*32+ 5) if word 12 is going to map leaf
+> CPUID.(EAX=7,ECX=1):EAX.
+> 
+> At least judging from the arch extensions doc which lists EAX as:
+> 
+> Bits 04-00: Reserved.
+> Bit 05: AVX512_BF16. Vector Neural Network Instructions supporting BFLOAT16 inputs and conversion instructions from IEEE single precision.
+> Bits 31-06: Reserved.
 
-Agreed. I am not concerned about it being incorrect. More for silencing
-cppcheck. I do agree that it isn't of a great value to us.
+Yes, you are absolutely right. I'll defint it as (12*32+ 5).
 
 > 
-> But I think it makes sense to fix this in public headers.
+> > 4. Do other necessary changes to match the new word 11 and word 12.
 > 
+> But split in two patches: first does steps 1+2, second patch adds the
+> new leaf to word 12.
 
-Yes. This would definitely help.
+There are two varialbes defined in cpuinfo_x86: x86_cache_max_rmid and
+x86_cache_occ_scale. c->x86_cache_max_rmid is read from CPUID.0xf.1:ECX
+and c->x86_cache_occ_scale is read from CPUID.0xf.1:EBX.
 
-thanks,
--- Shuah
+After getting X86_FEATURE_CQM_* from scattered, the two variables need
+to be read from CPUID again. So the code of reading the two variables
+need to be moved from before init_scattered_cpuid_features(c) to after
+the function. This make the get_cpu_cap() code awkward.
+
+And the two variables are ONLY used in resctrl monitoring configuration.
+There is no need to store them in cpuinfo_x86 on each CPU.
+
+I'm thinking to simplify and clean this part of code:
+
+1. In patch #1:
+- remove the definitions of x86_cache_max_rmid and x86_cache_occ_scale
+from cpuinfo_x86
+- remove assignment of c->x86_cache_max_rmid and c->x86_cache_occ_scale
+from get_cpu_cap(c)
+- get r->mon_scale and r->num_rmid in rdt_get_mon_l3_config(r) directly
+from CPUID.0xf.1:EBX and CPUID.0xf.1:ECX.
+2. In patch #2: do steps 1+2 to recycle word 11. After patch #1, I can
+totally remove the code to get c->x86_cache_max_rmd and
+c->x86_cache_occ_scale in get_cpu_cap(c). And patch #2 is cleaner.
+3. In patch #3: add new word 12 to host CPUID.7.1:EAX
+
+Do you think the patch #1 is necessary and this is a right patch set?
+
+Thanks.
+
+-Fenghua
