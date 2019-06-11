@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FDC3D4E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C34193D50A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406803AbfFKSDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:03:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36220 "EHLO
+        id S2406852AbfFKSH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:07:28 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36296 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406723AbfFKSDd (ORCPT
+        with ESMTP id S2406739AbfFKSH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:03:33 -0400
+        Tue, 11 Jun 2019 14:07:28 -0400
 Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 28BD32AF;
-        Tue, 11 Jun 2019 20:03:31 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5AD0EFA6;
+        Tue, 11 Jun 2019 20:07:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1560276211;
-        bh=exWMQpzVUcVHbArclfchPQA20MY/zWqw3zj3LWT3EWw=;
+        s=mail; t=1560276445;
+        bh=U6cKsDlIYIUfJDEzJan9NNjl5MrieaoyWtyhjTAgz4k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EWcXliNyKKtOO/SjPheM3h6upHk9ZqRoe9SojrbSZElysefFhoOiKK5BZxyrCCuMe
-         rQ9suCr4VtdEkkjJ3d5hcTBZ7Z7FZW/rwIo1IzOpdQEjQGbw5HaA60UMBus69bF5gB
-         BB9xoqtbaPqC+Naa6cZlwUpaEucDEGxLJRs43PNI=
-Date:   Tue, 11 Jun 2019 21:03:16 +0300
+        b=Vo19II7zbYRl4pohD//ZsjLDurh4XnSv5I1Hy7ArCKvKqru7lg3u0uay0D89nhrMj
+         8YQJj5RCRoL+L2ITwNGolf5osznyh/2qk17MiL1clDQktwm+OcaLxdORHCHfeUrivV
+         e2rYFRwV3bT0NWBNdQ92AdePHJKImJuihtwF5Zdw=
+Date:   Tue, 11 Jun 2019 21:07:10 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Michael Drake <michael.drake@codethink.co.uk>
 Cc:     Andrzej Hajda <a.hajda@samsung.com>,
@@ -33,15 +33,15 @@ Cc:     Andrzej Hajda <a.hajda@samsung.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-kernel@lists.codethink.co.uk,
         Patrick Glaser <pglaser@tesla.com>, Nate Case <ncase@tesla.com>
-Subject: Re: [PATCH v1 01/11] dt-bindings: display/bridge: Add bindings for
- ti948
-Message-ID: <20190611180316.GS5016@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v1 03/11] dt-bindings: display/bridge: Add config
+ property for ti948
+Message-ID: <20190611180710.GT5016@pendragon.ideasonboard.com>
 References: <20190611140412.32151-1-michael.drake@codethink.co.uk>
- <20190611140412.32151-2-michael.drake@codethink.co.uk>
+ <20190611140412.32151-4-michael.drake@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190611140412.32151-2-michael.drake@codethink.co.uk>
+In-Reply-To: <20190611140412.32151-4-michael.drake@codethink.co.uk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,67 +52,60 @@ Hi Michael,
 
 Thank you for the patch.
 
-On Tue, Jun 11, 2019 at 03:04:02PM +0100, Michael Drake wrote:
-> Adds device tree bindings for:
-> 
->   TI DS90UB948-Q1 2K FPD-Link III to OpenLDI Deserializer
-> 
-> The device has the compatible string "ti,ds90ub948", and
-> and allows an arrray of strings to be provided as regulator
+On Tue, Jun 11, 2019 at 03:04:04PM +0100, Michael Drake wrote:
+> The config property can be used to provide an array of
+> register addresses and values to be written to configure
+> the device for the board.
 
-s/arrray/array/
+Please don't. DT describes the hardware (or more accurately the system),
+it's not meant to store arbitrary configuration data. All the registers
+specified below should instead be set by the driver based on a
+combination of hardware description and information obtained at runtime.
 
-> names to enable for operation of the device.
-> 
 > Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
 > Cc: Patrick Glaser <pglaser@tesla.com>
 > Cc: Nate Case <ncase@tesla.com>
 > ---
->  .../bindings/display/bridge/ti,ds90ub948.txt  | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90ub948.txt
+>  .../bindings/display/bridge/ti,ds90ub948.txt  | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
 > diff --git a/Documentation/devicetree/bindings/display/bridge/ti,ds90ub948.txt b/Documentation/devicetree/bindings/display/bridge/ti,ds90ub948.txt
-> new file mode 100644
-> index 000000000000..f9e86cb22900
-> --- /dev/null
+> index f9e86cb22900..1e7033b0f3b7 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/ti,ds90ub948.txt
 > +++ b/Documentation/devicetree/bindings/display/bridge/ti,ds90ub948.txt
-> @@ -0,0 +1,24 @@
-> +TI DS90UB948-Q1 2K FPD-Link III to OpenLDI Deserializer
-> +=======================================================
-> +
-> +This is the binding for Texas Instruments DS90UB948-Q1 bridge deserializer.
-> +
-> +This device supports I2C only.
-
-Then the DT node should be a child of its I2C controller, and have a reg
-property.
-
-> +
-> +Required properties:
-> +
-> +- compatible: "ti,ds90ub948"
-> +
-> +Optional properties:
-> +
-> +- regulators: List of regulator name strings to enable for operation of device.
-
-There's a standard binding for regulators, using *-supply properties.
-Please use them.
-
-You should also use the OF graph DT bindings to model the data
-connections.
-
-> +
-> +Example
-> +-------
-> +
-> +ti948: ds90ub948@0 {
-> +	compatible = "ti,ds90ub948";
-> +
-> +	regulators: "vcc",
-> +	            "vcc_disp";
-> +};
+> @@ -12,6 +12,8 @@ Required properties:
+>  Optional properties:
+>  
+>  - regulators: List of regulator name strings to enable for operation of device.
+> +- config: List of <register address>,<value> pairs to be set to configure
+> +  device on powerup.  The register addresses and values are 8bit.
+>  
+>  Example
+>  -------
+> @@ -21,4 +23,23 @@ ti948: ds90ub948@0 {
+>  
+>  	regulators: "vcc",
+>  	            "vcc_disp";
+> +	config:
+> +	        /* set error count to max */
+> +	        <0x41>, <0x1f>,
+> +	        /* sets output mode, no change noticed */
+> +	        <0x49>, <0xe0>,
+> +	        /* speed up I2C, 0xE is around 480KHz */
+> +	        <0x26>, <0x0e>,
+> +	        /* speed up I2C, 0xE is around 480KHz */
+> +	        <0x27>, <0x0e>,
+> +	        /* sets GPIO0 as an input */
+> +	        <0x1D>, <0x13>,
+> +	        /* set GPIO2 high, backlight PWM (set to 0x50 for normal use) */
+> +	        <0x1E>, <0x50>,
+> +	        /* sets GPIO3 as an output with remote control for touch XRES */
+> +	        <0x1F>, <0x05>,
+> +	        /* set GPIO5 high, backlight enable on new display */
+> +	        <0x20>, <0x09>,
+> +	        /* set GPIO7 and GPIO8 high to enable touch power and prox sense */
+> +	        <0x21>, <0x91>;
+>  };
 
 -- 
 Regards,
