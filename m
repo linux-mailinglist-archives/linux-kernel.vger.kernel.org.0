@@ -2,103 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7BF03D087
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B27723D0AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404589AbfFKPOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 11:14:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18128 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404557AbfFKPOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 11:14:18 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5B7A1785BD8CB804D325;
-        Tue, 11 Jun 2019 23:14:11 +0800 (CST)
-Received: from euler.huawei.com (10.175.104.193) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 11 Jun 2019 23:14:04 +0800
-From:   Wei Li <liwei391@huawei.com>
-To:     <mark.rutland@arm.com>, <marc.zyngier@arm.com>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
-CC:     <huawei.libin@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clocksource/arm_arch_timer: mark arch_timer_read_counter() as notrace to avoid deadloop
-Date:   Tue, 11 Jun 2019 23:21:35 +0800
-Message-ID: <20190611152135.44589-1-liwei391@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S2404842AbfFKPW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 11:22:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388810AbfFKPW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 11:22:58 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9937E2080A;
+        Tue, 11 Jun 2019 15:22:55 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 11:22:54 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
+ instructions
+Message-ID: <20190611112254.576226fe@gandalf.local.home>
+In-Reply-To: <20190611080307.GN3436@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+        <20190605131945.005681046@infradead.org>
+        <20190608004708.7646b287151cf613838ce05f@kernel.org>
+        <20190607173427.GK3436@hirez.programming.kicks-ass.net>
+        <3DA961AB-950B-4886-9656-C0D268D521F1@amacapital.net>
+        <20190611080307.GN3436@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.193]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to arch_counter_register(), mark arch_counter_get_*() what
-arch_timer_read_counter() can be as notrace to avoid deadloop when using
-function_graph tracer.
+On Tue, 11 Jun 2019 10:03:07 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
- 0xffff80028af23250 0xffff000010195e00 sched_clock+64
- 0xffff80028af23290 0xffff0000101e83ec trace_clock_local+12
- 0xffff80028af232a0 0xffff00001020e52c function_graph_enter+116
- 0xffff80028af23300 0xffff00001009af9c prepare_ftrace_return+44
- 0xffff80028af23320 0xffff00001009b0a8 ftrace_graph_caller+28
- 0xffff80028af23330 0xffff000010b01918 arch_counter_get_cntvct+16
- 0xffff80028af23340 0xffff000010195e00 sched_clock+64
- 0xffff80028af23380 0xffff0000101e83ec trace_clock_local+12
- 0xffff80028af23390 0xffff00001020e52c function_graph_enter+116
- 0xffff80028af233f0 0xffff00001009af9c prepare_ftrace_return+44
- 0xffff80028af23410 0xffff00001009b0a8 ftrace_graph_caller+28
- 0xffff80028af23420 0xffff000010b01918 arch_counter_get_cntvct+16
- ...
 
-Fixes: 0ea415390cd3 ("clocksource/arm_arch_timer: Use arch_timer_read_counter to access stable counters")
-Signed-off-by: Wei Li <liwei391@huawei.com>
----
- drivers/clocksource/arm_arch_timer.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> So what happens is that arch_prepare_optimized_kprobe() <-
+> copy_optimized_instructions() copies however much of the instruction
+> stream is required such that we can overwrite the instruction at @addr
+> with a 5 byte jump.
+> 
+> arch_optimize_kprobe() then does the text_poke_bp() that replaces the
+> instruction @addr with int3, copies the rel jump address and overwrites
+> the int3 with jmp.
+> 
+> And I'm thinking the problem is with something like:
+> 
+> @addr: nop nop nop nop nop
 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index b2a951a798e2..f4d5bd8fe906 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -149,22 +149,22 @@ u32 arch_timer_reg_read(int access, enum arch_timer_reg reg,
- 	return val;
- }
- 
--static u64 arch_counter_get_cntpct_stable(void)
-+static u64 notrace arch_counter_get_cntpct_stable(void)
- {
- 	return __arch_counter_get_cntpct_stable();
- }
- 
--static u64 arch_counter_get_cntpct(void)
-+static u64 notrace arch_counter_get_cntpct(void)
- {
- 	return __arch_counter_get_cntpct();
- }
- 
--static u64 arch_counter_get_cntvct_stable(void)
-+static u64 notrace arch_counter_get_cntvct_stable(void)
- {
- 	return __arch_counter_get_cntvct_stable();
- }
- 
--static u64 arch_counter_get_cntvct(void)
-+static u64 notrace arch_counter_get_cntvct(void)
- {
- 	return __arch_counter_get_cntvct();
- }
-@@ -947,7 +947,7 @@ bool arch_timer_evtstrm_available(void)
- 	return cpumask_test_cpu(raw_smp_processor_id(), &evtstrm_available);
- }
- 
--static u64 arch_counter_get_cntvct_mem(void)
-+static u64 notrace arch_counter_get_cntvct_mem(void)
- {
- 	u32 vct_lo, vct_hi, tmp_hi;
- 
--- 
-2.17.1
+What would work would be to:
+
+	add breakpoint to first opcode.
+
+	call synchronize_tasks();
+
+	/* All tasks now hitting breakpoint and jumping over affected
+	code */
+
+	update the rest of the instructions.
+
+	replace breakpoint with jmp.
+
+One caveat is that the replaced instructions must not be a call
+function. As if the call function calls schedule then it will
+circumvent the synchronize_tasks(). It would be OK if that call is the
+last of the instructions. But I doubt we modify anything more then a
+call size anyway, so this should still work for all current instances.
+
+-- Steve
+
+> 
+> We copy out the nops into the trampoline, overwrite the first nop with
+> an INT3, overwrite the remaining nops with the rel addr, but oops,
+> another CPU can still be executing one of those NOPs, right?
+> 
+> I'm thinking we could fix this by first writing INT3 into all relevant
+> instructions, which is going to be messy, given the current code base.
 
