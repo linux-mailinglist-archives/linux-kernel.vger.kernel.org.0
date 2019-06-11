@@ -2,82 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5963CE09
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41963CE0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389544AbfFKOGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:06:51 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:43186 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387637AbfFKOGv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:06:51 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 955F2C0F51;
-        Tue, 11 Jun 2019 14:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1560262007; bh=vMEPr50pYiB+tqjKzwXZ5iSJP43TFUpQmHn+ZkqTQqE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=LsKUwIpu89KGiUrigsB4YtoJon18DD8SBkwfVLIUfdzAap9VT3StDmzmHjsO4VKrE
-         OvXpH9yDo7xajpY4esqyciY2KEa3XXuilIa9T8MnP5ts6PWBjyk2xvFIJat57UsLPD
-         5s5AvGQacagSSWN5E6gszB4RYnLRdxOZz745GJrGxFqZdV/xentrxQ1M7dWmp9wWUk
-         apl3CLCy4UknQLYluQnxY+JAEJTS+YqJRzlByMgjgBi5gUUyDLBwPw07LQpHhQIBJK
-         DytAzaQilB0wT/ThR0wEQIYsu6UceCdbsHjTXr2rnc+id2yItCZKsBPGCBoroc+nCw
-         uVq6zczR0UYFQ==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 18F25A005C;
-        Tue, 11 Jun 2019 14:06:49 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id EBD213F594;
-        Tue, 11 Jun 2019 16:06:48 +0200 (CEST)
-From:   Vitor Soares <Vitor.Soares@synopsys.com>
-To:     linux-i3c@lists.infradead.org
-Cc:     Joao.Pinto@synopsys.com, Vitor Soares <Vitor.Soares@synopsys.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] i3c: dw: add limited bus mode support
-Date:   Tue, 11 Jun 2019 16:06:45 +0200
-Message-Id: <db0bc8a55c7d54d99e36226e34aefdb932c92515.1560261604.git.vitor.soares@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1560261604.git.vitor.soares@synopsys.com>
-References: <cover.1560261604.git.vitor.soares@synopsys.com>
-In-Reply-To: <cover.1560261604.git.vitor.soares@synopsys.com>
-References: <cover.1560261604.git.vitor.soares@synopsys.com>
+        id S2390986AbfFKOIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:08:16 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46058 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725811AbfFKOIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:08:15 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E9B0B3591BC58F871261;
+        Tue, 11 Jun 2019 22:08:12 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 11 Jun 2019
+ 22:08:04 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <aelior@marvell.com>,
+        <GR-everest-linux-l2@marvell.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] qede: Make two functions static
+Date:   Tue, 11 Jun 2019 22:07:09 +0800
+Message-ID: <20190611140709.24452-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add limited bus mode support for DesignWare i3c master
+Fix sparse warning:
 
-Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
+drivers/net/ethernet/qlogic/qede/qede_main.c:963:6:
+ warning: symbol 'qede_lock' was not declared. Should it be static?
+drivers/net/ethernet/qlogic/qede/qede_main.c:969:6:
+ warning: symbol 'qede_unlock' was not declared. Should it be static?
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
-Changes in v3:
-  None
+ drivers/net/ethernet/qlogic/qede/qede_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v2:
-  None
-
- drivers/i3c/master/dw-i3c-master.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 1d83c97..9612d93 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -599,6 +599,7 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_main.c b/drivers/net/ethernet/qlogic/qede/qede_main.c
+index 741377b..d4a2966 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_main.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
+@@ -960,13 +960,13 @@ void __qede_unlock(struct qede_dev *edev)
+ /* This version of the lock should be used when acquiring the RTNL lock is also
+  * needed in addition to the internal qede lock.
+  */
+-void qede_lock(struct qede_dev *edev)
++static void qede_lock(struct qede_dev *edev)
+ {
+ 	rtnl_lock();
+ 	__qede_lock(edev);
+ }
  
- 	switch (bus->mode) {
- 	case I3C_BUS_MODE_MIXED_FAST:
-+	case I3C_BUS_MODE_MIXED_LIMITED:
- 		ret = dw_i2c_clk_cfg(master);
- 		if (ret)
- 			return ret;
+-void qede_unlock(struct qede_dev *edev)
++static void qede_unlock(struct qede_dev *edev)
+ {
+ 	__qede_unlock(edev);
+ 	rtnl_unlock();
 -- 
 2.7.4
+
 
