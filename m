@@ -2,141 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 030183CDC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B0E73CE1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:11:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391555AbfFKN5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:57:19 -0400
-Received: from mga14.intel.com ([192.55.52.115]:42646 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387835AbfFKN5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:57:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 06:57:18 -0700
-X-ExtLoop1: 1
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by orsmga003.jf.intel.com with ESMTP; 11 Jun 2019 06:57:16 -0700
-Subject: Re: A potential broken at platform driver?
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Romain Izard <romain.izard.pro@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, dinguyen@kernel.org, atull@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sen.li@intel.com, Richard Gong <richard.gong@intel.com>
-References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
- <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
- <20190528232224.GA29225@kroah.com>
- <1e3b5447-b776-f929-bca6-306f90ac0856@linux.intel.com>
- <b608d657-9d8c-9307-9290-2f6b052a71a9@linux.intel.com>
- <20190603180255.GA18054@kroah.com> <20190604103241.GA4097@5WDYG62>
- <20190604142803.GA28355@kroah.com>
- <e3adbd00-e500-70af-1c27-e4c064486561@linux.intel.com>
- <20190604170310.GC14605@kroah.com>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <f484ce9f-a86e-ce33-686b-b42dc293beb8@linux.intel.com>
-Date:   Tue, 11 Jun 2019 09:10:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2388606AbfFKOLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:11:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37342 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387486AbfFKOLE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:11:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v14so13213874wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 07:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Ehi+H9kQbguCo+MlZDy+3obu3hiLkhqNmfQx4sj3WM4=;
+        b=r5ZTklkHYG460KgbQQD+kWiHw4TyH3ambLi83yX86jVz0K+x5wmcmK2hFHuvXFnkWT
+         5PuGQ+xHvgIzVgUajy06VFNH0Ri2Bw1TDCLio1r1pgjUCkwSs/vLaqxijYgB/ri89RnO
+         VrhnIiQBMGCe1UMMCIa4MgL0TTYrcNRtaAWitZrdeqI5QGOl5UmkUm3HS2cXEW1QF6Fb
+         qLU8l13gXROeQ01EUmiH0ubOD+QfOFuXedicQSpXRUP+NVCep8MYCDgcdbitHDOl2g4x
+         89tmPgjp4qstYErFICR/MRHgG3+gpRClZlg0oXXYvzSJiRxVZdIydfiSfWAUoZFvYzIF
+         lzog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Ehi+H9kQbguCo+MlZDy+3obu3hiLkhqNmfQx4sj3WM4=;
+        b=RW7iKdcc8So4zcfdcMRlgJgoR2UFPwLjWRnlr/4xyiF6WUYBdv7pEYccqW0DM5nmFj
+         nmBLbfydnUnGwlyLDk1A+yBZpqM1MnTBf2QbuSfKqoJUiDcrWDwElxS+LexdXgfbWfeg
+         4snsRAO7DKH/CJ7ovaTAKHsrEqJVl+kzM6m6CDTGpWqe2C4FPaAo/iyuY3U5FVMlWMAo
+         4w0lu2wvXe4zqZ2Hh4NYEDl8ijK1bgiH+DwbA8OP4Nf4CdmUOKALFIQ9kuPUDEB4QPym
+         vx6XynPuyDpnwdHWzLLYD/zy2jQMau7Re0TZkm+ZslfkYtmQ8bNnPZDfVpLag8SODq0I
+         iR9Q==
+X-Gm-Message-State: APjAAAUDZJaXp9jmTXqmH9FkxQSMfLCDOjOfDAklhmHzRGQMSDMNJ84W
+        vG7PHnga+I2IlWp36F2iJqO0cA==
+X-Google-Smtp-Source: APXvYqxDR8UvMEWereRNtTq+DUW79gf+2h83x/tnxgDqHPr0hpnt3G3XqW5C9XwtdrkSTIg5B3xIaA==
+X-Received: by 2002:adf:e40f:: with SMTP id g15mr5876041wrm.174.1560262262323;
+        Tue, 11 Jun 2019 07:11:02 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id k82sm1697009wma.15.2019.06.11.07.11.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 07:11:01 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 15:11:00 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Yisheng Xie <ysxie@foxmail.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Peter Rosin <peda@axentia.se>,
+        Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH 28/33] fbcon: replace FB_EVENT_MODE_CHANGE/_ALL with
+ direct calls
+Message-ID: <20190611141100.wdcnzvsxobvh5jxr@holly.lan>
+References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+ <20190528090304.9388-29-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <20190604170310.GC14605@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190528090304.9388-29-daniel.vetter@ffwll.ch>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Greg,
-
-On 6/4/19 12:03 PM, Greg KH wrote:
-> On Tue, Jun 04, 2019 at 11:13:02AM -0500, Richard Gong wrote:
->>
->> Hi Greg,
->>
->> On 6/4/19 9:28 AM, Greg KH wrote:
->>> On Tue, Jun 04, 2019 at 12:33:03PM +0200, Romain Izard wrote:
->>>> On Mon, Jun 03, 2019 at 08:02:55PM +0200, Greg KH wrote:
->>>>>> @@ -394,7 +432,7 @@ static struct platform_driver stratix10_rsu_driver = {
->>>>>>    	.remove = stratix10_rsu_remove,
->>>>>>    	.driver = {
->>>>>>    		.name = "stratix10-rsu",
->>>>>> -		.groups = rsu_groups,
->>>>>> +//		.groups = rsu_groups,
->>>>>
->>>>> Are you sure this is the correct pointer?  I think that might be
->>>>> pointing to the driver's attributes, not the device's attributes.
->>>>>
->>>>> If platform drivers do not have a way to register groups properly, then
->>>>> that really needs to be fixed, as trying to register it by yourself as
->>>>> you are doing, is ripe for racing with userspace.
->>>> This is a very common issue with platform drivers, and it seems to me that
->>>> it is not possible to add device attributes when binding a device to a
->>>> driver without entering the race condition.
->>>>
->>>> My understanding is the following one:
->>>>
->>>> The root cause is that the device has already been created and reported
->>>> to the userspace with a KOBJ_ADD uevent before the device and the driver
->>>> are bound together. On receiving this event, userspace will react, and
->>>> it will try to read the device's attributes. In parallel the kernel will
->>>> try to find a matching driver. If a driver is found, the kernel will
->>>> call the probe function from the driver with the device as a parameter,
->>>> and if successful a KOBJ_BIND uevent will be sent to userspace, but this
->>>> is a recent addition.
->>>>
->>>> Unfortunately, not all created devices will be bound to a driver, and the
->>>> existing udev code relies on KOBJ_ADD uevents rather than KOBJ_BIND uevents.
->>>> If new per-device attributes have been added to the device during the
->>>> binding stage userspace may or may not see them, depending on when userspace
->>>> tries to read the device's attributes.
->>>>
->>>> I have this possible workaround, but I do not know if it is a good solution:
->>>>
->>>> When binding the device and the driver together, create a new device as a
->>>> child to the current device, and fill its "groups" member to point to the
->>>> per-device attributes' group. As the device will be created with all the
->>>> attributes, it will not be affected by the race issues. The functions
->>>> handling the attributes will need to be modified to use the parents of their
->>>> "device" parameter, instead of the device itself. Additionnaly, the sysfs
->>>> location of the attributes will be different, as the child device will show
->>>> up in the sysfs path. But for a newly introduced device this will not be
->>>> a problem.
->>>>
->>>> Is this a good compromise ?
->>>
->>> Not really.  You just want the attributes on the platform device itself.
->>>
->>> Given the horrible hack that platform devices are today, what's one more
->>> hack!
->>>
->>> Here's a patch below of what should probably be done here.  Richard, can
->>> you change your code to use the new dev_groups pointer in the struct
->>> platform_driver and this patch and let me know if that works or not?
->>>
->>> Note, I've only compiled this code, not tested it...
->>>
->>
->> Your patch works.
->>
->> Many thanks for your help!
+On Tue, May 28, 2019 at 11:02:59AM +0200, Daniel Vetter wrote:
+> Create a new wrapper function for this, feels like there's some
+> refactoring room here between the two modes.
 > 
-> Nice!
+> v2: backlight notifier is also interested in the mode change event,
+> it calls lcd->set_mode, of which there are 3 implementations. Thanks
+> to Maarten for spotting this. So we keep that. We can ditch the differentiation
+> between mode change and all mode changes (because backlight notifier
+> doesn't care), and we can drop the FBINFO_MISC_USEREVENT stuff too,
+> because that's just to prevent recursion between fbmem.c and fbcon.c.
 > 
-> I guess I need to turn it into a real patch now.  Let me do that tonight
-> and see if I can convert some existing drivers to use it as well...
+> While at it flatten the control flow a bit.
 > 
-
-Sorry for asking.
-
-I haven't seen your patch, did you release that?
-
-Regards,
-Richard
-
-> thanks,
+> v3: Need to add a static inline to the dummy function.
 > 
-> greg k-h
+> v4: Add missing #include <fbcon.h> to sh_mob (Sam).
+> 
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Yisheng Xie <ysxie@foxmail.com>
+> Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: Mikulas Patocka <mpatocka@redhat.com>
+> Cc: linux-fbdev@vger.kernel.org
+
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+> ---
+>  drivers/video/backlight/lcd.c          |  1 -
+>  drivers/video/fbdev/core/fbcon.c       | 15 +++++++++------
+>  drivers/video/fbdev/core/fbmem.c       | 21 ++++++++++-----------
+>  drivers/video/fbdev/sh_mobile_lcdcfb.c | 12 ++----------
+>  include/linux/fb.h                     |  2 --
+>  include/linux/fbcon.h                  |  2 ++
+>  6 files changed, 23 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/lcd.c b/drivers/video/backlight/lcd.c
+> index 151b18776add..ecdda06989d0 100644
+> --- a/drivers/video/backlight/lcd.c
+> +++ b/drivers/video/backlight/lcd.c
+> @@ -34,7 +34,6 @@ static int fb_notifier_callback(struct notifier_block *self,
+>  	switch (event) {
+>  	case FB_EVENT_BLANK:
+>  	case FB_EVENT_MODE_CHANGE:
+> -	case FB_EVENT_MODE_CHANGE_ALL:
+>  	case FB_EARLY_EVENT_BLANK:
+>  	case FB_R_EARLY_EVENT_BLANK:
+>  		break;
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+> index b5ee89f16d6c..e98551f96138 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -3009,6 +3009,15 @@ static void fbcon_set_all_vcs(struct fb_info *info)
+>  		fbcon_modechanged(info);
+>  }
+>  
+> +
+> +void fbcon_update_vcs(struct fb_info *info, bool all)
+> +{
+> +	if (all)
+> +		fbcon_set_all_vcs(info);
+> +	else
+> +		fbcon_modechanged(info);
+> +}
+> +
+>  int fbcon_mode_deleted(struct fb_info *info,
+>  		       struct fb_videomode *mode)
+>  {
+> @@ -3318,12 +3327,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+>  	int idx, ret = 0;
+>  
+>  	switch(action) {
+> -	case FB_EVENT_MODE_CHANGE:
+> -		fbcon_modechanged(info);
+> -		break;
+> -	case FB_EVENT_MODE_CHANGE_ALL:
+> -		fbcon_set_all_vcs(info);
+> -		break;
+>  	case FB_EVENT_SET_CONSOLE_MAP:
+>  		/* called with console lock held */
+>  		con2fb = event->data;
+> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+> index 96805fe85332..dd1a708df1a7 100644
+> --- a/drivers/video/fbdev/core/fbmem.c
+> +++ b/drivers/video/fbdev/core/fbmem.c
+> @@ -957,6 +957,7 @@ fb_set_var(struct fb_info *info, struct fb_var_screeninfo *var)
+>  	u32 activate;
+>  	struct fb_var_screeninfo old_var;
+>  	struct fb_videomode mode;
+> +	struct fb_event event;
+>  
+>  	if (var->activate & FB_ACTIVATE_INV_MODE) {
+>  		struct fb_videomode mode1, mode2;
+> @@ -1039,19 +1040,17 @@ fb_set_var(struct fb_info *info, struct fb_var_screeninfo *var)
+>  	    !list_empty(&info->modelist))
+>  		ret = fb_add_videomode(&mode, &info->modelist);
+>  
+> -	if (!ret && (flags & FBINFO_MISC_USEREVENT)) {
+> -		struct fb_event event;
+> -		int evnt = (activate & FB_ACTIVATE_ALL) ?
+> -			FB_EVENT_MODE_CHANGE_ALL :
+> -			FB_EVENT_MODE_CHANGE;
+> +	if (ret)
+> +		return ret;
+>  
+> -		info->flags &= ~FBINFO_MISC_USEREVENT;
+> -		event.info = info;
+> -		event.data = &mode;
+> -		fb_notifier_call_chain(evnt, &event);
+> -	}
+> +	event.info = info;
+> +	event.data = &mode;
+> +	fb_notifier_call_chain(FB_EVENT_MODE_CHANGE, &event);
+>  
+> -	return ret;
+> +	if (flags & FBINFO_MISC_USEREVENT)
+> +		fbcon_update_vcs(info, activate & FB_ACTIVATE_ALL);
+> +
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(fb_set_var);
+>  
+> diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+> index 015a02a29d37..b8454424910d 100644
+> --- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
+> +++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/ctype.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/delay.h>
+> +#include <linux/fbcon.h>
+>  #include <linux/gpio.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+> @@ -1757,8 +1758,6 @@ static void sh_mobile_fb_reconfig(struct fb_info *info)
+>  	struct sh_mobile_lcdc_chan *ch = info->par;
+>  	struct fb_var_screeninfo var;
+>  	struct fb_videomode mode;
+> -	struct fb_event event;
+> -	int evnt = FB_EVENT_MODE_CHANGE_ALL;
+>  
+>  	if (ch->use_count > 1 || (ch->use_count == 1 && !info->fbcon_par))
+>  		/* More framebuffer users are active */
+> @@ -1780,14 +1779,7 @@ static void sh_mobile_fb_reconfig(struct fb_info *info)
+>  		/* Couldn't reconfigure, hopefully, can continue as before */
+>  		return;
+>  
+> -	/*
+> -	 * fb_set_var() calls the notifier change internally, only if
+> -	 * FBINFO_MISC_USEREVENT flag is set. Since we do not want to fake a
+> -	 * user event, we have to call the chain ourselves.
+> -	 */
+> -	event.info = info;
+> -	event.data = &ch->display.mode;
+> -	fb_notifier_call_chain(evnt, &event);
+> +	fbcon_update_vcs(info, true);
+>  }
+>  
+>  /*
+> diff --git a/include/linux/fb.h b/include/linux/fb.h
+> index 1e66fac3124f..f9c212f9b661 100644
+> --- a/include/linux/fb.h
+> +++ b/include/linux/fb.h
+> @@ -139,8 +139,6 @@ struct fb_cursor_user {
+>  #define FB_EVENT_SET_CONSOLE_MAP        0x08
+>  /*      A display blank is requested       */
+>  #define FB_EVENT_BLANK                  0x09
+> -/*      Private modelist is to be replaced */
+> -#define FB_EVENT_MODE_CHANGE_ALL	0x0B
+>  /*      CONSOLE-SPECIFIC: remap all consoles to new fb - for vga_switcheroo */
+>  #define FB_EVENT_REMAP_ALL_CONSOLE      0x0F
+>  /*      A hardware display blank early change occurred */
+> diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+> index d67d7ec51ef9..de31eeb22c97 100644
+> --- a/include/linux/fbcon.h
+> +++ b/include/linux/fbcon.h
+> @@ -15,6 +15,7 @@ void fbcon_new_modelist(struct fb_info *info);
+>  void fbcon_get_requirement(struct fb_info *info,
+>  			   struct fb_blit_caps *caps);
+>  void fbcon_fb_blanked(struct fb_info *info, int blank);
+> +void fbcon_update_vcs(struct fb_info *info, bool all);
+>  #else
+>  static inline void fb_console_init(void) {}
+>  static inline void fb_console_exit(void) {}
+> @@ -29,6 +30,7 @@ static inline void fbcon_new_modelist(struct fb_info *info) {}
+>  static inline void fbcon_get_requirement(struct fb_info *info,
+>  					 struct fb_blit_caps *caps) {}
+>  static inline void fbcon_fb_blanked(struct fb_info *info, int blank) {}
+> +static inline void fbcon_update_vcs(struct fb_info *info, bool all) {}
+>  #endif
+>  
+>  #endif /* _LINUX_FBCON_H */
+> -- 
+> 2.20.1
 > 
