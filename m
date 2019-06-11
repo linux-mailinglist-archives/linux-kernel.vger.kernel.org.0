@@ -2,96 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984633C5CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 720E33C5D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404720AbfFKIQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:16:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:54866 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404250AbfFKIQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:16:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4372B337;
-        Tue, 11 Jun 2019 01:16:47 -0700 (PDT)
-Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE1693F73C;
-        Tue, 11 Jun 2019 01:16:44 -0700 (PDT)
-Subject: Re: [PATCH 15/15] riscv: add binfmt_flat support
-To:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
-Cc:     uclinux-h8-devel@lists.sourceforge.jp,
-        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
-        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190610212015.9157-1-hch@lst.de>
- <20190610212015.9157-16-hch@lst.de>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <d8d81820-8f0d-d5d0-fa3d-3376ddcc5358@arm.com>
-Date:   Tue, 11 Jun 2019 09:16:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2404685AbfFKIRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:17:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47308 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404401AbfFKIRq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 04:17:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ud411InFe8GoOew3/skHmwEYBmhHWja4h4GlbxBRd9I=; b=WpEuz0f2bMQMpMS+SEsJoXQ0a
+        clPKhCoLgxEn3zA+5EICQ7tkNJxjlskObNKJzKhSooTVjtW++jQr13J9cnEE8Kewof8/YRDYYFiaK
+        2VMxA6jXB6SQjukBtOBmnCSEk5BbkosCYTUe7GApgABK7mfNPTyoi8TDsWfBpIzpP5spitDAnXFqJ
+        OJjFrbh+1mOEuzOHiTemufpqLhbQMrUQ/9pBtxC2LM0knnGwb2FS60JeAS/8RsjzwFu9JvfS/VJTh
+        o9OCx+PnGVpfpP2BIxz2a+1f8NAAb+Q0bMNB14tRackxSOLhHN4SOwEOhg1Sx/xqj81sotWLmm16w
+        ITWNCyIHg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1haby5-00077F-3q; Tue, 11 Jun 2019 08:17:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8077D202173E1; Tue, 11 Jun 2019 10:17:19 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 10:17:19 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 07/15] x86: Add int3_emulate_call() selftest
+Message-ID: <20190611081719.GQ3436@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131944.946978563@infradead.org>
+ <20190610165258.t7rcvggdjihtdrfz@treble>
+ <CALCETrVRuMP4vF+dN-tK_cw=guv6J5EqgD1H-PxMow+d=1DT4g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190610212015.9157-16-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVRuMP4vF+dN-tK_cw=guv6J5EqgD1H-PxMow+d=1DT4g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/10/19 10:20 PM, Christoph Hellwig wrote:
-> Use the generic support with arguments are on the stack.  Same as arm
-> and m68k.
-
-Out of curiosity, what is reason for keeping arguments on the stack?
-
-ARM port of uClibc has following comment around manipulating of argv/argc:
-
-        /*
-         * uClinux/arm stacks look a little different from normal
-         * MMU-full Linux/arm stacks (for no good reason)
-         */
-
-So I though it is kind of legacy.
-
-Thanks
-Vladimir
-
+On Mon, Jun 10, 2019 at 09:57:58AM -0700, Andy Lutomirski wrote:
+> On Mon, Jun 10, 2019 at 9:53 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Wed, Jun 05, 2019 at 03:08:00PM +0200, Peter Zijlstra wrote:
+> > > Given that the entry_*.S changes for this functionality are somewhat
+> > > tricky, make sure the paths are tested every boot, instead of on the
+> > > rare occasion when we trip an INT3 while rewriting text.
+> > >
+> > > Requested-by: Andy Lutomirski <luto@kernel.org>
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >
+> > Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> >
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/riscv/Kconfig            | 2 ++
->  arch/riscv/include/asm/Kbuild | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0c4b12205632..2e3b60cdeef4 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -17,7 +17,9 @@ config RISCV
->  	select OF
->  	select OF_EARLY_FLATTREE
->  	select OF_IRQ
-> +	select ARCH_HAS_BINFMT_FLAT
->  	select ARCH_WANT_FRAME_POINTERS
-> +	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
->  	select CLONE_BACKWARDS
->  	select COMMON_CLK
->  	select GENERIC_CLOCKEVENTS
-> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-> index 5ee646619cc3..1efaeddf1e4b 100644
-> --- a/arch/riscv/include/asm/Kbuild
-> +++ b/arch/riscv/include/asm/Kbuild
-> @@ -5,6 +5,7 @@ generic-y += compat.h
->  generic-y += device.h
->  generic-y += div64.h
->  generic-y += extable.h
-> +generic-y += flat.h
->  generic-y += dma.h
->  generic-y += dma-contiguous.h
->  generic-y += dma-mapping.h
-> 
+> Looks good to me, too,
 
+I'll translate that into an Acked-by from you, if you don't mind :-)
+
+> except that I seriously hate die notifiers that
+> return NOTIFY_STOP, and I eventually want to remove support for them.
+> This can wait, though.
+
+Yes, I share your hatred for notifiers in general. But since they are
+still here and I do think it is a waste to have an unconditional
+function call in do_int3() just for this, I figured I'd use them.
