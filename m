@@ -2,102 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C785D3C077
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 02:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A8E23C09B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 02:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390390AbfFKAZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 20:25:37 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:53843 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389362AbfFKAZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 20:25:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45N9l05HPNz9s4V;
-        Tue, 11 Jun 2019 10:25:32 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560212734;
-        bh=+pjp9tVwLHzqbgYi/uUfHPvnEWCcuFtRtQJA6NxxeN8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hse6MnlkUZ2KuXzFjV5185JJSPaPhPPaAgEa+BCb+a0KYtOWxrLyInOZFDDxJamvE
-         P7snWhty1w9s7cZICncoKbbrZ/JwxOtUKdgIMKoQHIfTtFbt6EKBODU3qDdqbDLaN2
-         zJP7PpALgSUEsNhOFAJHTdr2LFZiS7/OGdjhz3w6hZEVtwD+tjUxB1uV2sYRnPNGu1
-         QJ3dN40a9UKRZ8+sRUYe1KlN7r965VXxG/zYydFAPqcOmIk+fzp97m9ILreif5KBhP
-         5XMxYl4fyHHvV6nXYroGstu2JibYI+SOYK/7T5s49iw3djcpeAS7l5WowWZ4LuSQmH
-         wjWzPuju9tAhQ==
-Date:   Tue, 11 Jun 2019 10:25:28 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ruslan Babayev <ruslan@babayev.com>,
-        Andrew de Quincey <adq_dvb@lidskialf.net>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: linux-next: build warning after merge of the i2c tree
-Message-ID: <20190611102528.44ad5783@canb.auug.org.au>
+        id S1728833AbfFKAbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 20:31:38 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51983 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728645AbfFKAbi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 20:31:38 -0400
+Received: by mail-it1-f193.google.com with SMTP id m3so2079635itl.1;
+        Mon, 10 Jun 2019 17:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Q+q3Jj3P/wEz9k/LF4yrVB0MK2jEr9dEeFUcbQlT9GU=;
+        b=CM1dORqYQM2ipZY5oNybwUIL0KwgNjOfk3Kl9w/DhBKo+wCV0ASGN04Aldq+1SFYEZ
+         f7Z4ShsaN/iJWjjkk5Cl3KNdcEyHieX6OWgehxxLgNbB5pOywJze2bolQ2YNJE3LdaLb
+         PxlJqhya+6Gpxp31XcWLiPhkcZpqOPX6SFVoeGIwzINHyJJtFKXSnJCC7WyLMOjaIj5s
+         RpHe9ZUI8OK9VnFGNRhbf4KXQW8X5NUhdecDum9jGxDBZd8Hl6P5/hQeJHrO8KKTqVqf
+         7jGD4MOHYffF0q+VQy/peMbOSabL586+xGRU6Mm3I3xA2SbhnkN9uceHdeI2VKSxhfbS
+         cDFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Q+q3Jj3P/wEz9k/LF4yrVB0MK2jEr9dEeFUcbQlT9GU=;
+        b=IPxAK5Q0KQesn/zOzoUkTsFEC7wUfIpWgK+2JeiTR8wqtFCAtf/aUI+mBEqri5xa2g
+         sIoh344MxUmmVdU6kv+z5OuuAGSIXlgHqUdCqmzhafhMQLZKTXpJtSFnURv9XeliY7Xn
+         0Gvo7SqAq34uzZeZE0MxZG2GeZFkfVxf6Z2+8uMedzpfRWy5Dd1cmSM7A/i5D1EHGtOx
+         E6YlBGXd9Bb87iFH9IpQ6eX1Zryf3OmuZDJHTc8xk469AhWrKksHXd/HhO5B26pnZ4wr
+         voByfDdBshOfv7pCFecQkWdqjqg/8OQzTvYnkQ38WPfpPuabzj19NEb5lC0jfjpzTsAn
+         f5gA==
+X-Gm-Message-State: APjAAAVrZ8WWy0V+KCXobUpQ/9mEiTy7NnBQVs3R2P2qdXGd4gAsuSqV
+        mtm7eag/MQhKrGiR6qHNDLdl8FgcDvV7BjrSW48=
+X-Google-Smtp-Source: APXvYqxNggVVfpV5Krk5yzsxhZtB5DI+b0F9entbVHlyJw8x1NfRB+IUQrtXUmQsrDzcxija2zLnc+hUajb+QOgYt60=
+X-Received: by 2002:a02:8816:: with SMTP id r22mr30641561jai.60.1560213097226;
+ Mon, 10 Jun 2019 17:31:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rcpwq3iNIji=dyHbg3r+3Dg"; protocol="application/pgp-signature"
+References: <20190525181329.18657-1-tiny.windzz@gmail.com> <20190525181329.18657-2-tiny.windzz@gmail.com>
+ <CA+E=qVdh1E8Y7dZO0JSS4DJE2bo=98MuSKRt7nmeFg-td7Ua9Q@mail.gmail.com>
+In-Reply-To: <CA+E=qVdh1E8Y7dZO0JSS4DJE2bo=98MuSKRt7nmeFg-td7Ua9Q@mail.gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Tue, 11 Jun 2019 08:31:25 +0800
+Message-ID: <CAEExFWtjNridLsMXOnBe2mJOPhUOYJ6G3wGF3gx=0oQoQROOGg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] thermal: sun8i: add thermal driver for h6
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     rui.zhang@intel.com, Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        paulmck@linux.ibm.com, devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rcpwq3iNIji=dyHbg3r+3Dg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 11, 2019 at 7:29 AM Vasily Khoruzhick <anarsoul@gmail.com> wrot=
+e:
+>
+> On Sat, May 25, 2019 at 11:17 AM Yangtao Li <tiny.windzz@gmail.com> wrote=
+:
+> >
+> > This patch adds the support for allwinner thermal sensor, within
+> > allwinner SoC. It will register sensors for thermal framework
+> > and use device tree to bind cooling device.
+>
+> Hi Yangtao,
+>
+> Any plans on v4 of this series?
+>
 
-Hi Wolfram,
+I am waiting for comment from Maxime.
 
-After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+I=E2=80=99ll support both h3 and h6 in v4.
 
-drivers/media/dvb-frontends/tua6100.c: In function 'tua6100_set_params':
-drivers/media/dvb-frontends/tua6100.c:71: warning: "_P" redefined
- #define _P 32
-=20
-In file included from include/acpi/platform/aclinux.h:54,
-                 from include/acpi/platform/acenv.h:152,
-                 from include/acpi/acpi.h:22,
-                 from include/linux/acpi.h:21,
-                 from include/linux/i2c.h:17,
-                 from drivers/media/dvb-frontends/tua6100.h:22,
-                 from drivers/media/dvb-frontends/tua6100.c:24:
-include/linux/ctype.h:14: note: this is the location of the previous defini=
-tion
- #define _P 0x10 /* punct */
-
-Exposed by commit
-
-  5213d7efc8ec ("i2c: acpi: export i2c_acpi_find_adapter_by_handle")
-
-Since that included <linux/acpi.h> from <linux/i2c.h>
-
-Originally introduced by commit
-
-  00be2e7c6415 ("V4L/DVB (4606): Add driver for TUA6100")
-
-The _P in <linux/ctype.h> has existed since before git.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rcpwq3iNIji=dyHbg3r+3Dg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz+9PgACgkQAVBC80lX
-0GxZxQf7BUg/1oUdaJ2UcGAlyvb+0s7mMxJApFnoLBA9sC/ao2awXCbuyGy8BA7k
-Ff4AhQoHu5q/FOaUquOBftuRZ0JZVbhw6dVOY5ulmUXnUcdlNFFroKUfVD4UU3g1
-F8U9xYGeQ4ewGMzPsrMjPL5e9CAg7J0pfY7V7f/IjF48aJ/EFi4uA2rz4sCc2aoG
-Co2QQXHbsJ8fG/MrL6cyTYIWg8trHh5if6fukFHJeSS73DOH/2nDn9e6MquzCnSG
-daYXFeiJNyJDKOudw32+zbSQU4qH38p1hPvhUIpoKGKAHILAD20DK4gjd9It+nw9
-6c2JsRZSBau1PNnWSrAUHAgGrzTREQ==
-=u22Y
------END PGP SIGNATURE-----
-
---Sig_/rcpwq3iNIji=dyHbg3r+3Dg--
+Yangtao
