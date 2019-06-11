@@ -2,75 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6D023C0E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 03:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 550563C0EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 03:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390501AbfFKBYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 21:24:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48562 "EHLO huawei.com"
+        id S2390575AbfFKBh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 21:37:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18123 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388845AbfFKBYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 21:24:48 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 53BC6ABED0F103BEE140;
-        Tue, 11 Jun 2019 09:24:45 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 11 Jun 2019 09:24:34 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <willemdebruijn.kernel@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next v2] packet: remove unused variable 'status' in __packet_lookup_frame_in_block
-Date:   Tue, 11 Jun 2019 09:32:13 +0800
-Message-ID: <20190611013213.142745-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <CAF=yD-+g1bSGOubFUE8veZNvGiPy1oYsf+dFDd=hqXYD+k4g_Q@mail.gmail.com>
-References: <CAF=yD-+g1bSGOubFUE8veZNvGiPy1oYsf+dFDd=hqXYD+k4g_Q@mail.gmail.com>
+        id S2389168AbfFKBh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 21:37:28 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9C5ADD4619E6F16E261B;
+        Tue, 11 Jun 2019 09:37:25 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
+ 2019 09:37:18 +0800
+Subject: Re: [PATCH 1/2] staging: erofs: add requirements field in superblock
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, <stable@vger.kernel.org>
+References: <20190610093640.96705-1-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <f4fbd407-7f0d-bbe3-2283-f7291a29026a@huawei.com>
+Date:   Tue, 11 Jun 2019 09:37:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
+In-Reply-To: <20190610093640.96705-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable 'status' in  __packet_lookup_frame_in_block() is never used since
-introduction in commit f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer
-implementation."), we can remove it.
+On 2019/6/10 17:36, Gao Xiang wrote:
+> There are some backward incompatible optimizations pending
+> for months, mainly due to on-disk format expensions.
+> 
+> However, we should ensure that it cannot be mounted with
+> old kernels. Otherwise, it will causes unexpected behaviors.
+> 
+> Fixes: ba2b77a82022 ("staging: erofs: add super block operations")
+> Cc: <stable@vger.kernel.org> # 4.19+
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+>  drivers/staging/erofs/erofs_fs.h | 11 +++++++++--
+>  drivers/staging/erofs/super.c    |  8 ++++++++
+>  2 files changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
+> index fa52898df006..531821757845 100644
+> --- a/drivers/staging/erofs/erofs_fs.h
+> +++ b/drivers/staging/erofs/erofs_fs.h
+> @@ -17,10 +17,16 @@
+>  #define EROFS_SUPER_MAGIC_V1    0xE0F5E1E2
+>  #define EROFS_SUPER_OFFSET      1024
+>  
+> +/*
+> + * Any bits that aren't in EROFS_ALL_REQUIREMENTS should be
+> + * incompatible with this kernel version.
+> + */
+> +#define EROFS_ALL_REQUIREMENTS  0
+> +
+>  struct erofs_super_block {
+>  /*  0 */__le32 magic;           /* in the little endian */
+>  /*  4 */__le32 checksum;        /* crc32c(super_block) */
+> -/*  8 */__le32 features;
+> +/*  8 */__le32 features;        /* extra features for the image */
+>  /* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
+>  /* 13 */__u8 reserved;
+>  
+> @@ -34,8 +40,9 @@ struct erofs_super_block {
+>  /* 44 */__le32 xattr_blkaddr;
+>  /* 48 */__u8 uuid[16];          /* 128-bit uuid for volume */
+>  /* 64 */__u8 volume_name[16];   /* volume name */
+> +/* 80 */__le32 requirements;    /* all mandatory minimum requirements */
+>  
+> -/* 80 */__u8 reserved2[48];     /* 128 bytes */
+> +/* 84 */__u8 reserved2[44];     /* 128 bytes */
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v2: don't change parameter from 0 to TP_STATUS_KERNEL when calls 
- prb_retire_current_block(). 
----
- net/packet/af_packet.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Xiang,
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index a29d66da7394..7fa847dcea30 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -1003,7 +1003,6 @@ static void prb_fill_curr_block(char *curr,
- /* Assumes caller has the sk->rx_queue.lock */
- static void *__packet_lookup_frame_in_block(struct packet_sock *po,
- 					    struct sk_buff *skb,
--						int status,
- 					    unsigned int len
- 					    )
- {
-@@ -1075,7 +1074,7 @@ static void *packet_current_rx_frame(struct packet_sock *po,
- 					po->rx_ring.head, status);
- 		return curr;
- 	case TPACKET_V3:
--		return __packet_lookup_frame_in_block(po, skb, status, len);
-+		return __packet_lookup_frame_in_block(po, skb, len);
- 	default:
- 		WARN(1, "TPACKET version not supported\n");
- 		BUG();
--- 
-2.20.1
+It needs to update the comment behind reserved2, it's locating at 132 bytes.
 
+>  } __packed;
+>  
+>  /*
+> diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
+> index f580d4ef77a1..815e5825db59 100644
+> --- a/drivers/staging/erofs/super.c
+> +++ b/drivers/staging/erofs/super.c
+> @@ -104,6 +104,14 @@ static int superblock_read(struct super_block *sb)
+>  		goto out;
+>  	}
+>  
+> +	/* check if the kernel meets all mandatory requirements */
+> +	if (le32_to_cpu(layout->requirements) & (~EROFS_ALL_REQUIREMENTS)) {
+> +		errln("too old to meet minimum requirements: %x supported: %x",
+
+It will be better to give a suggestion to user to upgrade kernel version to
+match the image with new layout, otherwise it's just a little confused about
+above printed message.
+
+Thanks,
+
+> +		      le32_to_cpu(layout->requirements),
+> +		      EROFS_ALL_REQUIREMENTS);
+> +		goto out;
+> +	}
+> +
+>  	sbi->blocks = le32_to_cpu(layout->blocks);
+>  	sbi->meta_blkaddr = le32_to_cpu(layout->meta_blkaddr);
+>  #ifdef CONFIG_EROFS_FS_XATTR
+> 
