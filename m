@@ -2,85 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23F641892
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C1C418A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437026AbfFKXF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:05:59 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43210 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436837AbfFKXF6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:05:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i189so8360022pfg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:05:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=OBwSPzkDdi1CMoAJXu3fdSCyBq/M09/6VhI4AMk4Xd0=;
-        b=myQGfU/fQ9FotkLvkIP5napMe/OlFIpyYMu85C1/ME8ATNL3ykv9VzsgnRpn3SiXtB
-         oK2zfgP4tp0UvDA43Eb5BnXfH2n9vFTf5ttK+jxUOAKg64WPZlvO+qYjypkNRx7fOELh
-         +/kyBy9tyGhTsyAtSsjBgdhzvl7i8qU0vwi0bKaYntUUFQFSCK1PzG8coiWfRIHEs3F7
-         mZnu+yaiZIil39fibfqN1W7CTlDjWG1/6hcssnbsnUUyZ07qAhXeSB6EJNLM4XK++Dw+
-         hRmBU2Gnj+VniTueB2pa2vhiNaHtAg4oP5sZcjecADRWjA8Nh9VCSyaq5PBegpLoen9p
-         oYgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=OBwSPzkDdi1CMoAJXu3fdSCyBq/M09/6VhI4AMk4Xd0=;
-        b=JNpeQYGL7kdbJNBKJF4rzLS+F8bQT0Ye2VWn+/CEMDSx56elfkk7Nl+AtDTWEkchOG
-         THoLXMbGVbTLE8MNgEAadUA9w43fL5spfrkPP7QO81vpUfGVIR522nlKTd2NUN1ueT/j
-         9kMfAly+zakyWVojeEqVl1Hkw5sRc7qX+zyaWeA6hO2sv2kkw4r7+4+gDfrXImOVwZ1u
-         YVEzoa3Ss3PlwiM9M+FFhUAdzbgBxZg1QtRwe/x7wBxHJSeWfJApneqAaNSqN9nPjeUr
-         H34ApxuBZ0NZNeMlfUdn8OaMrWdG+0ga04kqcqFC5Znzte8DPNf17Z5Fkg28zS7XsKEG
-         p1pA==
-X-Gm-Message-State: APjAAAXJHC3n8HNShYt9j3owR8uFRyy2SBmLVE3xY3ASNLJSTBDJDVfA
-        NVa8HcqUtl1tH5yv1n+6YpV+oQ==
-X-Google-Smtp-Source: APXvYqxjdj5vYjUUy2sB0u9Tk6uxU+kfxuJmVI3vHyHL5GJvrsWFCoAFGf8gZgFCMu8WEUVcxUHFCg==
-X-Received: by 2002:a17:90a:ba94:: with SMTP id t20mr15629024pjr.116.1560294357844;
-        Tue, 11 Jun 2019 16:05:57 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id x5sm4327928pjp.21.2019.06.11.16.05.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Jun 2019 16:05:57 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64: dts: meson: sei510: add sound card
-In-Reply-To: <20190524140318.17608-1-jbrunet@baylibre.com>
-References: <20190524140318.17608-1-jbrunet@baylibre.com>
-Date:   Tue, 11 Jun 2019 16:05:56 -0700
-Message-ID: <7himtb4t9n.fsf@baylibre.com>
+        id S2407926AbfFKXIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:08:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:21783 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404124AbfFKXIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 19:08:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 16:08:17 -0700
+X-ExtLoop1: 1
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by fmsmga008.fm.intel.com with ESMTP; 11 Jun 2019 16:08:17 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com, mike.campin@intel.com
+Subject: [PATCH 1/1] PCI/IOV: Fix incorrect cfg_size for VF > 0
+Date:   Tue, 11 Jun 2019 16:06:04 -0700
+Message-Id: <20190611230604.122949-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-> This patchset adds the sound card of sei510 board.
->
-> Note #1:
-> The patchset (build) depends on the tohdmitx ASoC patch [0] for the dt
-> bindings of the tohdmitx glue. It also (run) depends on the mpll clock
-> series [1] to get a correct clock sources.
->
-> Note #2:
-> I would normaly prefer to use the HIFI pll dedicated to audio to provide
-> the base rate for the 48kHz audio family. HIFI pll rate precision is a
-> little bit better than the MPLL. However, the HIFI pll may sometimes,
-> rarely, take a long time to report a lock. I'm still debugging this.
-> In the mean time, let's use MPLL2 instead.
->
-> [0]: e35f5ad6a965 ("ASoC: meson: add tohdmitx DT bindings")
-> [1]: https://lkml.kernel.org/r/20190513123115.18145-1-jbrunet@baylibre.com
+Commit 975bb8b4dc93 ("PCI/IOV: Use VF0 cached config space size for
+other VFs") calculates and caches the cfg_size for VF0 device before
+initializing the pcie_cap of the device which results in using incorrect
+cfg_size for all VF devices > 0. So set pcie_cap of the device before
+calculatig the cfg_size of VF0 device.
 
-All dependencies are merged or queued for v5.3, so queuing this for v5.3
-also,
+Fixes: 975bb8b4dc93 ("PCI/IOV: Use VF0 cached config space size for
+other VFs")
+Cc: Ashok Raj <ashok.raj@intel.com>
+Suggested-by: Mike Campin <mike.campin@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ drivers/pci/iov.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Kevin
+diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+index 3aa115ed3a65..2869011c0e35 100644
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -160,6 +160,7 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+ 	virtfn->device = iov->vf_device;
+ 	virtfn->is_virtfn = 1;
+ 	virtfn->physfn = pci_dev_get(dev);
++	virtfn->pcie_cap = pci_find_capability(virtfn, PCI_CAP_ID_EXP);
+ 
+ 	if (id == 0)
+ 		pci_read_vf_config_common(virtfn);
+-- 
+2.21.0
+
