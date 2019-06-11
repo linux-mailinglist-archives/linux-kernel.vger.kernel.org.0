@@ -2,106 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE493CCC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09C423CCC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:17:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390638AbfFKNQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:16:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45126 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388792AbfFKNQK (ORCPT
+        id S2390697AbfFKNRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:17:45 -0400
+Received: from sonic316-20.consmr.mail.ne1.yahoo.com ([66.163.187.146]:38184
+        "EHLO sonic316-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388837AbfFKNRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:16:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id s11so7405481pfm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 06:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=erpJ/1HwU0IvLlhAmNIzQUp5KsGSfUKo8w8/Al+yjSk=;
-        b=Ec1UVKtKvBLJ0T9sJsPyd5alNTe1bKz12CZx8Gof7OI7rvWXJWj5zFkM3ELGh3YnZU
-         5CAuA549pdnNdT0Zobb0Gww6Kz0jhk4yciYsBVgsmcPC/OSIv8tzo8Vyofj4oSbAL35X
-         MmRkQg0R8YNiAUkhapYCNcke40MDw86Dw9XR27m4p2efnJORWFKHm66XLLU32TtBJVzD
-         sEMcq/V8QoN391vC86/fNyMRASsmpuUgmGIU01R1gH+V/46mAmddSlaW6mxm3UVdD/9h
-         5QVkOz7UHrWtQaHaAHPDn0P3YWAJQ7E7fbh8BIoH+nn9MsOIMu/DmI6MFYA09I23qTK2
-         bIVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=erpJ/1HwU0IvLlhAmNIzQUp5KsGSfUKo8w8/Al+yjSk=;
-        b=EVlwEgxusI440jhCEJMvHqHJB9OmXua1KU8tWfLsNUZ4358CXGV5O64qIbl2cvoNRT
-         eTONdZNgml221tqDuvxpCW6TP9fNbQ/ir1OS41DXkSNGpf5t0nzrgkg+EyvPiFnRJ4Ka
-         hkSW2z0W7bgUf/mibjMyRfKY4Fwl30KCH30G/gZ0KvDxwp/o4/bGOHUNPxneOFwLdE5j
-         GvY1qEqNYorJEBpeW6M2D6MmcFCUaxyUbKLjw5FKDvjOlG237u6knp2PodBlwEgeIDG7
-         r5GSbA41aFIyDR0ppjtpGXczsWQOuPZkx3u9bsPVxZXVe890NooHJceulU0vVGaMXyoY
-         a13w==
-X-Gm-Message-State: APjAAAUIUz3V0KECodbi6J7aoglCXCFKVWHy1c5S0GagvPOGruwHAWVm
-        pAyG1e0vb/wQeHuF/0dgdGyZ7tHJ9T0=
-X-Google-Smtp-Source: APXvYqyPtIUBJUiGs5CxZdOdOAe9jN/EmeYnquJXnTk6DouJ59ZQuBEv+ih+NRuThJNkl6RYB44pIg==
-X-Received: by 2002:aa7:8f24:: with SMTP id y4mr37343494pfr.36.1560258969435;
-        Tue, 11 Jun 2019 06:16:09 -0700 (PDT)
-Received: from tom-pc.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id q125sm21964880pfq.62.2019.06.11.06.16.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Jun 2019 06:16:08 -0700 (PDT)
-From:   Dianzhang Chen <dianzhangchen0@gmail.com>
-To:     tglx@linutronix.de
-Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dianzhang Chen <dianzhangchen0@gmail.com>
-Subject: [PATCH] x86: tls: fix possible spectre-v1 in do_get_thread_area()
-Date:   Tue, 11 Jun 2019 21:15:58 +0800
-Message-Id: <1560258958-19291-1-git-send-email-dianzhangchen0@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 11 Jun 2019 09:17:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560259063; bh=YR8wGsHZxrVLbZLbTkExH+WvaqI93EK8wnfiRBAnvNY=; h=Date:From:Reply-To:Subject:References:From:Subject; b=k5lIoQVwpZXTHqWCil8IQvmH0gnCRmjC170h8DBKftjDqH3yXrHlpVeuCPyx6jUCHU7MX/8GQLymncIn7SBCP1N06DykL1E8NZCJs2YVYGsgy418E+XwqV3t55Ajea8M1pGXlDbwqet2nWdRpi3MhUX3yFGCQYWDAZSsSoBbRt/Szgz9nc2JuMKpQuxXrwTwpfEGRoY6zIDclwbFz2LGKpSmGbkmmpprWQ3DKyvdjL7XharpVzotPFsUvcvkczAhgmGivyno+fJqQT9xFzKE0aaayocc/3mALwxcffuv4RZq2/7lGk5nfmmZNJ1zn/SQVJ4SBpJVwey0ELkr580Axw==
+X-YMail-OSG: wyzuOYIVM1mTwAKarG5v4oYzdTn9hLH9hV7G10xdh_YD6vmN3wwcnyjpPLmJQUN
+ urdCqtwgXiDQLcoTQcScWWwiqZ_rl20ujYJvDHpqjWYy7b_uakTf99dQyKcggwCAVJrmnlL9n.N7
+ POaVjY9hfmQNJddv7ksiR1T7M_IXYdZkDDWKFM27T4gx0BK.AYHy3c2dm2AHMrAakbxyvdPGXdFy
+ zBrPP92NEYGqeqxBmf88U_.wblVKiR2DGGZSIYMa07_MvwwS1_iBVhEB3aUI0ZcnLd5OO3C3G17E
+ eWUxH01WG5vZu__nsMYQWHXZ6tCaq8fsXioIcfXTn6Tflp9Y54zpi.C21NdnUMWAArP1Sj2hHkO4
+ 3ZU.uW304YSlaak.Gi91aUfVaoosX3jPmmtwUX4ySyOuiFu8vyOGnGJ46nZoPhOnrbbTm2LzZlJw
+ Uxv6.Xkw0_9YvXIMb3ZnJzGjWrBfOYHN.j.ZB5_kSKp8gkcVhcI5wncYV3PBCJ4OGcfVQotDaEmB
+ 78QJm.QhcwFEqI53VejgXieVctBmlWStf3RttdXeUheW.0Va1sl9YDEs1_xgl9ZYrsnfX9ioyHS2
+ x5upzSBYFsVYeOXwBvBxrlE7NjToatOTgZCdFCM9bZewOz1XZ604GblzynQZ5B1NMepNAJYjl8fm
+ 1Fg7Y_xG949l3qQew406CsUxELi4eqFDrnLdxPak1K9ROgitUMW9is1n6wGPt0tDP_Mty5iq7qpH
+ XLOpl5eCKaIrqLyrHFrxkRJ5U8II.zQnsXEWtK9y94eLqOlP9_hwD8GfuTzwswd0IPUbf1FVBC6Q
+ ybAWMREy.C7P2uGabJMZAbMpAi3nPMBaSqq2Fw90tl6JIiXrSyaeiMlzeineKdNU5lu28Ua8gDFe
+ Wd1mpnpPADOXC4pDx6c66P9LS.UfLKidxAAmxrCMsLz3Pv2Ee_.emKxcNyiExtCw7.VTVaiuv2B4
+ rNEbZ1sUb02JnLsB6Uhi.xIEZ2Lm.ldYRgQexnlieCdHp6heXvU37uYxtcH8ueKVYGMgAteZS6Gt
+ 3X7PvxnunocsvTiDbizD0PVbWxHFVDUMxy9Q5ULjIxxM79hSeggVr1CLZZcrxuFVd.vYv_eyxh6F
+ AJjUxhVf1ynNlKgFuJ0.4GC2BYywoo64CsPC7SdX5oEbpdDDD9rRGndt4wywz7St56Lnf6LEEMj.
+ BlZsu56RcbcjzJbtOSVK2gFRGIN1IWe8cBA7gXajyWyAe46SkjpZaDa5c0eY-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Jun 2019 13:17:43 +0000
+Date:   Tue, 11 Jun 2019 13:17:42 +0000 (UTC)
+From:   "Mrs. Maria Johnson" <mrsmariiajohnson03@gmail.com>
+Reply-To: "Mrs. Maria Johnson" <mrsmariiajohnson03@gmail.com>
+Message-ID: <2136358213.1351287.1560259062307@mail.yahoo.com>
+Subject: From Mrs Maria Jornson
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <2136358213.1351287.1560259062307.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13634 YahooMailBasic Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The idx in do_get_thread_area() is controlled by userspace
-via syscall: ptrace(defined in kernel/ptrace.c), hence
-leading to a potential exploitation of the Spectre variant 1 vulnerability.
-The idx can be controlled from:
-	ptrace -> arch_ptrace -> do_get_thread_area.
+Dear friend.
 
-Fix this by sanitizing idx before using it to index p->thread.tls_array.
+I am Mrs Maria Johnson an Active Banker, I saw your email address while browsing through the bank DTC Screen in my office yesterday, so i decided to use this very chance to know you more I have deal of ($10.5 million Dollars) to transfer into your account, if you are interested get back to me for more details.
 
-Signed-off-by: Dianzhang Chen <dianzhangchen0@gmail.com>
----
- arch/x86/kernel/tls.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Thanks for your co-operation.
 
-diff --git a/arch/x86/kernel/tls.c b/arch/x86/kernel/tls.c
-index a5b802a..4cd338c 100644
---- a/arch/x86/kernel/tls.c
-+++ b/arch/x86/kernel/tls.c
-@@ -5,6 +5,7 @@
- #include <linux/user.h>
- #include <linux/regset.h>
- #include <linux/syscalls.h>
-+#include <linux/nospec.h>
- 
- #include <linux/uaccess.h>
- #include <asm/desc.h>
-@@ -220,6 +221,7 @@ int do_get_thread_area(struct task_struct *p, int idx,
- 		       struct user_desc __user *u_info)
- {
- 	struct user_desc info;
-+	int index = idx - GDT_ENTRY_TLS_MIN;
- 
- 	if (idx == -1 && get_user(idx, &u_info->entry_number))
- 		return -EFAULT;
-@@ -227,8 +229,10 @@ int do_get_thread_area(struct task_struct *p, int idx,
- 	if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
- 		return -EINVAL;
- 
-+	index = array_index_nospec(index,
-+				GDT_ENTRY_TLS_MAX - GDT_ENTRY_TLS_MIN + 1);
- 	fill_user_desc(&info, idx,
--		       &p->thread.tls_array[idx - GDT_ENTRY_TLS_MIN]);
-+		       &p->thread.tls_array[index]);
- 
- 	if (copy_to_user(u_info, &info, sizeof(info)))
- 		return -EFAULT;
--- 
-2.7.4
-
+Your faithfully
+Mrs Maria Johnson
