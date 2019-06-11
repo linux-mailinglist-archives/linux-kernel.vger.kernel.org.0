@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAC043C522
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:31:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DEB83C52A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404469AbfFKHaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404353AbfFKHaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:30:08 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41BF821721;
-        Tue, 11 Jun 2019 07:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560238207;
-        bh=dSkXBR/OCEtFzFA8xUYw0p2FJxmWLSoWVqkK+1ttkkw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n0hiDa8n/fQqJYAnuExr8vtVgb4frORxcZEH5epOHkTE779ih7PtuEEhaEDEyH2m9
-         8fSFpiDJ4q3y5NiztDL7WTKzIP2SAGeamb8m+62LSpGvG1s3a0kr9QJdS0od3EmWmY
-         K8eRbXyF0EuDdBKj/sGCyFFYdM/8SD6i0WTa3ji0=
-Date:   Tue, 11 Jun 2019 09:30:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Eric Piel <eric.piel@tremplin-utc.net>,
-        Daniel Mack <daniel@caiaq.de>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: lis3lv02d: Switch to SPDX header
-Message-ID: <20190611073005.GA11407@kroah.com>
-References: <20190611072018.2978605-1-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611072018.2978605-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S2404085AbfFKHeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:34:22 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38471 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403920AbfFKHeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:34:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v11so6455268pgl.5;
+        Tue, 11 Jun 2019 00:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8fNYdcY99hechvTD8ARpttj/QvqTzgjVeORsIZWh0xs=;
+        b=vRgavvQpYLzwzD6d+h7wpnmye62IpW4iDT3LEq2Ecqz3KDn2NUpn3Sl6ITX/3j0Qqj
+         URdhE1sxJPBN0TnaNnOInjcu2+8U97kE1BvXWnE0KgGMFYsDeCX8rc8lTLeSXY/Niet2
+         wf3DqZeY1V25X4S2q0DQSNGSvXM0K+PmhO2HUc40i7owNDyTgqidcXBjTbSrarBku2Am
+         ysMXzcIb2n9dkD7Tq5ppCoUtDdDh5AFeSRrdrmOBMYxWdsby5U7TgmJ0D0IIKZAXvVEo
+         1YLCt++2fP7xuj+rCT8g8wKe+9l9pXoVhRnjhohsa067ziMP5DQ6pNZxIOCvTlZPOqpP
+         4uOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8fNYdcY99hechvTD8ARpttj/QvqTzgjVeORsIZWh0xs=;
+        b=jfZd+PeSnZqk8FgvmJqMIo3y1MUTQA/HETjnrwXdiW5vt0gOFBSuBwliq10nu98Bq1
+         IV8e/dYtPgEEIZileW943q8MD6ze6pLpDCEC00638M5jPYej5nbDS43neDtallB0pdww
+         SZo71lcIJ4ZzRHRM4KkvRhv2OXJW6kTCv6NxtR699CD+NKbQt0YNPvAZenwht8Sin3tT
+         Qxkjq9cIOipdPyu6QXp4p615VI7k88yNl01qPcoOBeZnGIBuq7dt85EjPe4hoJ6B1g+R
+         6bgfpLi7cZeT6YzAqJFPJgAOQPfpiYG995/s9hMhn5EtUDJVSe1KymYU7pSgKhypRsFc
+         qYOg==
+X-Gm-Message-State: APjAAAUUcAmjvJ9i8m9UjkZWkKFZbXMJkytAQKvpPaWeO0ckbpL6Wm0o
+        hSCPc2+/iDR7XlxD3glnraSowdqD
+X-Google-Smtp-Source: APXvYqyMVooA2mZ+u1WFP1NhPY/ZacqkzaKzAvWBK3iJ5lyO0pdgyP0A/0qpmFjwEfZP1u8pZ3ud1w==
+X-Received: by 2002:a63:dc56:: with SMTP id f22mr3381114pgj.305.1560238461658;
+        Tue, 11 Jun 2019 00:34:21 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id 14sm6860800pfj.36.2019.06.11.00.34.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 11 Jun 2019 00:34:20 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH v2 0/5] KVM: X86: Add virtual C-states residency msrs support
+Date:   Tue, 11 Jun 2019 15:34:06 +0800
+Message-Id: <1560238451-19495-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 09:20:18AM +0200, Lubomir Rintel wrote:
-> The original license text had a typo ("publishhed") which would be
-> likely to confuse automated licensing auditing tools. Let's just switch
-> to SPDX instead of fixing the wording.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/misc/lis3lv02d/lis3lv02d_spi.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/misc/lis3lv02d/lis3lv02d_spi.c b/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-> index e575475123c8..d7f17c59f3e7 100644
-> --- a/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-> +++ b/drivers/misc/lis3lv02d/lis3lv02d_spi.c
-> @@ -1,11 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * lis3lv02d_spi - SPI glue layer for lis3lv02d
->   *
->   * Copyright (c) 2009 Daniel Mack <daniel@caiaq.de>
-> - *
-> - *  This program is free software; you can redistribute it and/or modify
-> - *  it under the terms of the GNU General Public License version 2 as
-> - *  publishhed by the Free Software Foundation.
->   */
->  
->  #include <linux/module.h>
-> -- 
-> 2.21.0
-> 
+After exposing some host CPU power management capabilities to dedicated 
+instances, there is a requirement to consult current idle power-state 
+residency statistics by turbostat.
 
-Please always work with the latest kernel tree, this was fixed in
-5.2-rc4.
+This patchset adds virtual C-states residency msrs emulation. Allowing 
+guest reads CORE cstate when exposing host CPU power management capabilities 
+to the guest. PKG cstate is restricted currently to avoid a guest to get 
+the whole package information in multi-tenant scenario.
 
-thanks,
+v1 -> v2:
+ * add residency msrs emulation (base on Paolo's design)
 
-greg k-h
+Wanpeng Li (5):
+  KVM: X86: Dynamic allocate core residency msr state
+  KVM: X86: Introduce residency msrs read/write operations
+  KVM: X86: setup residency msrs during vCPU creation
+  KVM: VMX: Add get/set residency msrs logic
+  KVM: X86: Save/restore residency values when sched_out/sched_in
+
+ arch/arm/include/asm/kvm_host.h     |   1 +
+ arch/arm64/include/asm/kvm_host.h   |   1 +
+ arch/mips/include/asm/kvm_host.h    |   1 +
+ arch/powerpc/include/asm/kvm_host.h |   1 +
+ arch/s390/include/asm/kvm_host.h    |   1 +
+ arch/x86/include/asm/kvm_host.h     |  11 ++++
+ arch/x86/kvm/vmx/vmx.c              |  15 ++++++
+ arch/x86/kvm/x86.c                  | 104 ++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.h                  |   5 ++
+ include/linux/kvm_host.h            |   1 +
+ virt/kvm/kvm_main.c                 |   1 +
+ 11 files changed, 142 insertions(+)
+
+-- 
+2.7.4
+
