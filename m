@@ -2,108 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E76823D6A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D63B03D6BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407564AbfFKTVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:21:24 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33642 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407527AbfFKTVV (ORCPT
+        id S2404801AbfFKTXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:23:42 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:60484 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387563AbfFKTXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:21:21 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g21so5548523plq.0;
-        Tue, 11 Jun 2019 12:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=XL0AUogKv6Cxj1o55F+H/u/jeXLI0x8/C754Uw2qjM+DoJhR91Fi3mcEZ68gY4v+kq
-         NlInBqn0UHjxqmEKlFK3dYtwZQc+TKSPXvD0uOvoJ8iuNUQNCax008E5a0DXfzKHpxBN
-         pTDcvpwV5W0HCPMLiEwX33vLLaEIBiWx0rB16luo9rM2PPahYhMYGFFYiHP555AcOif/
-         0RH+eQDsztBx+jbLeCw5tJp+sdNXoRgX5KaUHqK60vPDIZ3JUAuED/Nqok7rmxI6DYht
-         dntc/LH7EsxfsFex9bPNJU3k1D7VAlhJHTlnN06/ZSnEIM5lB08KL4a0Xk6JixyQjdBi
-         6DFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
-        b=nuctAf7lyTp08CPfv9YwjxQdEBVyKOOCxpMINwk17kc7shZywA8ajT6DxBSJqlD9Fg
-         vJJt3C517PfaRdwqxnpGlRuHP8khXsy+L61YCE2tEsF5SUigMaS4f9YcryFTLBCS4yxn
-         /VAEU5SLsOIk0IG/kOHdw7krsIqjK40wxa/7v7dlMf78zxkg0hVweXt1JZznE6uNvF3N
-         Elhx1axGN227BGPYP/T+F4va8/tsbaRWV9QsBtSK1TtWliUst+NcYqMO+ya9fP1F6rJB
-         E+VyT4bC2uSq8GH3otlKp9dV01eLwvxUiy13iaNFgz0f++E69uKZsOfQ3YS43mrAmvgg
-         bjHA==
-X-Gm-Message-State: APjAAAUPJD7ScX0UtpmaftNjQXtK2EMc2DSBvhgwVzmHA6EDc71WLgcU
-        hc9RNfW7fFI3SVSnPUuQIvg=
-X-Google-Smtp-Source: APXvYqxM45D6ih9NPop4Jnwxqresrp36WK7FBsVW0XTK9ysiGJzlc2i43YN/D1Vc1OShKwnlvGlETg==
-X-Received: by 2002:a17:902:b58f:: with SMTP id a15mr76885535pls.201.1560280880449;
-        Tue, 11 Jun 2019 12:21:20 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id z32sm14669727pgk.25.2019.06.11.12.21.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 12:21:19 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, marc.w.gonzalez@free.fr,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: msm8998: Add gpucc node
-Date:   Tue, 11 Jun 2019 12:21:16 -0700
-Message-Id: <20190611192116.15009-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190611191949.14906-1-jeffrey.l.hugo@gmail.com>
-References: <20190611191949.14906-1-jeffrey.l.hugo@gmail.com>
+        Tue, 11 Jun 2019 15:23:41 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5BJEZF2148131;
+        Tue, 11 Jun 2019 19:22:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=w76MFlwvNKhZqtHwJRAkKoCnG/0YMyc0k1SshiGhIFo=;
+ b=lyKS8EPYtHVV69hKRhxbZ6v/wFBGKQdRKMFGV75IF5Ly8f4gx63IiVxb73DDl0+AbJmm
+ CdJvjrw/0ON/ZIZZDVd35XGZGYcOr6YUm+1+c4fVLRIbczJKiRbuQsnnHiPmGT32HeMI
+ yPgGH8BMtCJNcZGgeKqNc9zQymR1ehBB6hPaiWuv6zwujyXlG+0dhRPfn5KJWPXSEiiY
+ 86sDUCAy3UJthE28Vd8oZg8tOUjk962pLYKGbyc4eo09yWsg8uiILcyco70X+7o/NVSy
+ 0l1s88pzby/RchV3V0Lwt3GnLLHzR1ZcAlylaXvzBxfsoWFdW5Th0f/oeh7B7jYF2E0Y MQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 2t02heqdfr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jun 2019 19:22:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5BJLICV095933;
+        Tue, 11 Jun 2019 19:22:41 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2t024uk1m7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jun 2019 19:22:41 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5BJMawp024319;
+        Tue, 11 Jun 2019 19:22:36 GMT
+Received: from [10.154.187.61] (/10.154.187.61)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Jun 2019 12:22:36 -0700
+Subject: Re: [PATCH 01/16] mm: use untagged_addr() for get_user_pages_fast
+ addresses
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20190611144102.8848-1-hch@lst.de>
+ <20190611144102.8848-2-hch@lst.de>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <9145f3f9-4e14-df6a-87f5-663ad197e96e@oracle.com>
+Date:   Tue, 11 Jun 2019 13:22:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190611144102.8848-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=920
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906110123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=962 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906110123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MSM8998 GPU Clock Controller DT node.
+On 6/11/19 8:40 AM, Christoph Hellwig wrote:
+> This will allow sparc64 to override its ADI tags for
+> get_user_pages and get_user_pages_fast.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Commit message is sparc64 specific but the goal here is to allow any
+architecture with memory tagging to use this. So I would suggest
+rewording the commit log. Other than that:
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 574be78a936e..cf00bfeec6b3 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- 
-@@ -763,6 +764,20 @@
- 			reg = <0x1f40000 0x20000>;
- 		};
- 
-+		gpucc: clock-controller@5065000 {
-+			compatible = "qcom,gpucc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x05065000 0x9000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
-+
- 		apcs_glb: mailbox@9820000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
--- 
-2.17.1
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+
+>  mm/gup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/mm/gup.c b/mm/gup.c
+> index ddde097cf9e4..6bb521db67ec 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2146,7 +2146,7 @@ int __get_user_pages_fast(unsigned long start, in=
+t nr_pages, int write,
+>  	unsigned long flags;
+>  	int nr =3D 0;
+> =20
+> -	start &=3D PAGE_MASK;
+> +	start =3D untagged_addr(start) & PAGE_MASK;
+>  	len =3D (unsigned long) nr_pages << PAGE_SHIFT;
+>  	end =3D start + len;
+> =20
+> @@ -2219,7 +2219,7 @@ int get_user_pages_fast(unsigned long start, int =
+nr_pages,
+>  	unsigned long addr, len, end;
+>  	int nr =3D 0, ret =3D 0;
+> =20
+> -	start &=3D PAGE_MASK;
+> +	start =3D untagged_addr(start) & PAGE_MASK;
+>  	addr =3D start;
+>  	len =3D (unsigned long) nr_pages << PAGE_SHIFT;
+>  	end =3D start + len;
+>=20
+
 
