@@ -2,190 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705843CB7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9539E3CB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbfFKM3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:29:33 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48058 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbfFKM3W (ORCPT
+        id S1729220AbfFKMaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:30:35 -0400
+Received: from mail-vs1-f45.google.com ([209.85.217.45]:44376 "EHLO
+        mail-vs1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbfFKMaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:29:22 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5BCTHZt128314;
-        Tue, 11 Jun 2019 07:29:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560256157;
-        bh=11RvASRP5mCGKkGEtizEUSkyQYW8HPiSCQc8womaJwQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Qw8uP+eeB5XQO8+ZJcESs3JvHddmzqRRxipKHMid590PezUsOBkJM6Rh/28lqkatz
-         px7Jnq3Ke2zNneVOYdVOiUi5LrknjdxotjDLcuoEYPIH3IMTHeTOZRdadjZwUXrdlF
-         WxLwvqOMdfTthzD6iUsJ37H5ejLgzoFn7u56HnzE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5BCTHwK054673
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Jun 2019 07:29:17 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 11
- Jun 2019 07:29:16 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 11 Jun 2019 07:29:16 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5BCT9s8010308;
-        Tue, 11 Jun 2019 07:29:14 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>
-CC:     <alsa-devel@alsa-project.org>, <misael.lopez@ti.com>,
-        <jsarha@ti.com>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] ASoC: ti: davinci-mcasp: Support for auxclk-fs-ratio
-Date:   Tue, 11 Jun 2019 15:29:41 +0300
-Message-ID: <20190611122941.10708-3-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190611122941.10708-1-peter.ujfalusi@ti.com>
-References: <20190611122941.10708-1-peter.ujfalusi@ti.com>
+        Tue, 11 Jun 2019 08:30:35 -0400
+Received: by mail-vs1-f45.google.com with SMTP id v129so7751657vsb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 05:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=gz3HqulYPvDCNfbcUEJOb/UAkc1+ZcJON/gujaAEXD0=;
+        b=HmzY8iGWE4Yk2oQRLRu48hKTyF8RzCNOzW/P5czsYYSgeANwSG+7RB8x39I6COkeBo
+         JcYesfnyAib72/r4g5eWMnHv+ERjOr4XUa5xuSjLNx78fao7r2xHdDmnsZxIuFEU5Arb
+         hlpJV9tcKcmPHjXYIMHc4iaydhZtEr1B20FkFWf01CU4gLjCcj9VUtflJ4c4Gxq/DqK5
+         oNgFcgLIEiMItMiuy9SEFaUq8VgiJuEKYouU5HrZ7Jl48rY8yjRy/6j5MwUvDveR//R1
+         OT11uoUr7a1M6gPNxJpfetuKgW8J6TbkhZco124MfYsGGWu40AJjTfY+Apv5S7J4VB/d
+         5Q0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=gz3HqulYPvDCNfbcUEJOb/UAkc1+ZcJON/gujaAEXD0=;
+        b=RVKHSBicnIpKbKYxaTpd74rCCr5v95UWE2FC/Ar6dYtQfMHcvWyTeVZwAH1W+3Fh2p
+         ReVA4f3ReyR50yI4FKL+LSIRvBa7ngtceLz60PkrqF/kOXawNlTv4YbR8LdTOFwSgTTW
+         oOHwl/55d5Pcvfr8nfyR0N8JOxMRO0Q6CyLe1nBNwQac3FeJuS3A/S7iVzIc2Mv0x0nh
+         ySNl9WUb/I8eheE+m+2C/0Lr/9xSonnT6kjlVKAyU44cBw3yUKMiVQYwZ56nVEjAL7Yg
+         QOMw0ma2QHwl+CL3uZBBwigDYx3DPeykPlMtZp+pkzRvr9nSd/5Ku+asi3SmdK1/jb6X
+         t6Rw==
+X-Gm-Message-State: APjAAAXzzsEMO/J2TexrOPRDUfcob6b5VTi1OkQdcJhOv0ebYb55orkM
+        4diLgOk1nVEmNzxv6+dApSVv5C8K7iL4z3ZXpWCVN50e1XA=
+X-Google-Smtp-Source: APXvYqxI2htrUVQ9hXzBCZmaHeqhE6ujSVrkHU5bi67mzovbs8gfkWsrmJRj2Q+VZ4j3ipY/gTnP/L8YtSnmQPjiPuA=
+X-Received: by 2002:a67:eada:: with SMTP id s26mr24905937vso.163.1560256234020;
+ Tue, 11 Jun 2019 05:30:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 11 Jun 2019 15:30:08 +0300
+Message-ID: <CAFCwf11EM9+NDML9hQmk9-rPzSmDmAyVLW+qOfs6h62dGK6H9A@mail.gmail.com>
+Subject: Question - check in runtime which architecture am I running on
+To:     linuxppc-dev@ozlabs.org
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When McASP is bus master and it's AUXCLK clock is not static, but it is
-a multiple of the frame sync the constraint rules should take it account
-when validating possible stream formats.
+Hello POWER developers,
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- sound/soc/ti/davinci-mcasp.c | 52 ++++++++++++++++++++++++++++++------
- 1 file changed, 44 insertions(+), 8 deletions(-)
+I'm trying to find out if there is an internal kernel API so that a
+PCI driver can call it to check if its PCI device is running inside a
+POWER9 machine. Alternatively, if that's not available, if it is
+running on a machine with powerpc architecture.
 
-diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-index 9fbc759fdefe..a8378d223a9e 100644
---- a/sound/soc/ti/davinci-mcasp.c
-+++ b/sound/soc/ti/davinci-mcasp.c
-@@ -100,6 +100,7 @@ struct davinci_mcasp {
- 
- 	int	sysclk_freq;
- 	bool	bclk_master;
-+	u32	auxclk_fs_ratio;
- 
- 	unsigned long pdir; /* Pin direction bitfield */
- 
-@@ -1064,13 +1065,13 @@ static int mcasp_dit_hw_param(struct davinci_mcasp *mcasp,
- }
- 
- static int davinci_mcasp_calc_clk_div(struct davinci_mcasp *mcasp,
-+				      unsigned int sysclk_freq,
- 				      unsigned int bclk_freq, bool set)
- {
--	int error_ppm;
--	unsigned int sysclk_freq = mcasp->sysclk_freq;
- 	u32 reg = mcasp_get_reg(mcasp, DAVINCI_MCASP_AHCLKXCTL_REG);
- 	int div = sysclk_freq / bclk_freq;
- 	int rem = sysclk_freq % bclk_freq;
-+	int error_ppm;
- 	int aux_div = 1;
- 
- 	if (div > (ACLKXDIV_MASK + 1)) {
-@@ -1175,7 +1176,8 @@ static int davinci_mcasp_hw_params(struct snd_pcm_substream *substream,
- 		if (mcasp->slot_width)
- 			sbits = mcasp->slot_width;
- 
--		davinci_mcasp_calc_clk_div(mcasp, rate * sbits * slots, true);
-+		davinci_mcasp_calc_clk_div(mcasp, mcasp->sysclk_freq,
-+					   rate * sbits * slots, true);
- 	}
- 
- 	ret = mcasp_common_hw_param(mcasp, substream->stream,
-@@ -1282,12 +1284,19 @@ static int davinci_mcasp_hw_rule_rate(struct snd_pcm_hw_params *params,
- 
- 	for (i = 0; i < ARRAY_SIZE(davinci_mcasp_dai_rates); i++) {
- 		if (snd_interval_test(ri, davinci_mcasp_dai_rates[i])) {
--			uint bclk_freq = sbits*slots*
--				davinci_mcasp_dai_rates[i];
-+			uint bclk_freq = sbits * slots *
-+					 davinci_mcasp_dai_rates[i];
-+			unsigned int sysclk_freq;
- 			int ppm;
- 
--			ppm = davinci_mcasp_calc_clk_div(rd->mcasp, bclk_freq,
--							 false);
-+			if (rd->mcasp->auxclk_fs_ratio)
-+				sysclk_freq =  davinci_mcasp_dai_rates[i] *
-+					       rd->mcasp->auxclk_fs_ratio;
-+			else
-+				sysclk_freq = rd->mcasp->sysclk_freq;
-+
-+			ppm = davinci_mcasp_calc_clk_div(rd->mcasp, sysclk_freq,
-+							 bclk_freq, false);
- 			if (abs(ppm) < DAVINCI_MAX_RATE_ERROR_PPM) {
- 				if (range.empty) {
- 					range.min = davinci_mcasp_dai_rates[i];
-@@ -1321,12 +1330,19 @@ static int davinci_mcasp_hw_rule_format(struct snd_pcm_hw_params *params,
- 	for (i = 0; i <= SNDRV_PCM_FORMAT_LAST; i++) {
- 		if (snd_mask_test(fmt, i)) {
- 			uint sbits = snd_pcm_format_width(i);
-+			unsigned int sysclk_freq;
- 			int ppm;
- 
-+			if (rd->mcasp->auxclk_fs_ratio)
-+				sysclk_freq =  rate *
-+					       rd->mcasp->auxclk_fs_ratio;
-+			else
-+				sysclk_freq = rd->mcasp->sysclk_freq;
-+
- 			if (rd->mcasp->slot_width)
- 				sbits = rd->mcasp->slot_width;
- 
--			ppm = davinci_mcasp_calc_clk_div(rd->mcasp,
-+			ppm = davinci_mcasp_calc_clk_div(rd->mcasp, sysclk_freq,
- 							 sbits * slots * rate,
- 							 false);
- 			if (abs(ppm) < DAVINCI_MAX_RATE_ERROR_PPM) {
-@@ -1991,6 +2007,22 @@ static inline int davinci_mcasp_init_gpiochip(struct davinci_mcasp *mcasp)
- }
- #endif /* CONFIG_GPIOLIB */
- 
-+static int davinci_mcasp_get_dt_params(struct davinci_mcasp *mcasp)
-+{
-+	struct device_node *np = mcasp->dev->of_node;
-+	int ret;
-+	u32 val;
-+
-+	if (!np)
-+		return 0;
-+
-+	ret = of_property_read_u32(np, "auxclk-fs-ratio", &val);
-+	if (ret >= 0)
-+		mcasp->auxclk_fs_ratio = val;
-+
-+	return 0;
-+}
-+
- static int davinci_mcasp_probe(struct platform_device *pdev)
- {
- 	struct snd_dmaengine_dai_dma_data *dma_data;
-@@ -2224,6 +2256,10 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err;
- 
-+	ret = davinci_mcasp_get_dt_params(mcasp);
-+	if (ret)
-+		return -EINVAL;
-+
- 	ret = devm_snd_soc_register_component(&pdev->dev,
- 					&davinci_mcasp_component,
- 					&davinci_mcasp_dai[pdata->op_mode], 1);
--- 
-Peter
+I need this information as my device (Goya AI accelerator)
+unfortunately needs a slightly different configuration of its PCIe
+controller in case of POWER9 (need to set bit 59 to be 1 in all
+outbound transactions).
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Currently I'm reading the PCI vendor and device ID of the parent PCI
+bus device and checking if it is PHB4 but that is an ugly hack. (see
+this commit - https://github.com/HabanaAI/linux/commit/1efd75ad5c9779b99a9a38c899e4e25e227626bf)
 
+I dug through the code but didn't find anything that can help me so I
+thought of asking more experienced people.
+
+Thanks,
+Oded
