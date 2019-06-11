@@ -2,109 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5A43D08E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 130203D0A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404598AbfFKPRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 11:17:11 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37298 "EHLO
+        id S2404824AbfFKPTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 11:19:35 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40355 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbfFKPRL (ORCPT
+        with ESMTP id S2389418AbfFKPTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 11:17:11 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y57so14996576qtk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 08:17:10 -0700 (PDT)
+        Tue, 11 Jun 2019 11:19:34 -0400
+Received: by mail-qt1-f193.google.com with SMTP id a15so14972908qtn.7
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 08:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kg91m/sJcxPHqFT1g9clpn/F84Kg2JYsIXkgOrosMxA=;
+        b=UCGIgQFX7Ax5GANZnFSoE4A2CfOvsxLOhWTJ2CDXQ2pbqSLm68AYfyGIJseVxWV9fP
+         m+UafrwcE9+EI9vssGMAvJgOfEVy/4tmwZtBq27pKO9YfU086RV41KvXLS70xrDQLr42
+         OZDG1FoJoqyYVOpIPvTfZNzxUx/9/IEVUGbQRN2vH1EHk1fWJEwUfEdsl8U/7HDBG1O5
+         wuBdmG8H4Jv6hza0zx1zbtsYkpdi5nzL5zpmq1/nItFUp5c9VMRX+J3oz3eGKIaA5c17
+         IHpRc7ucS17TAQapqiJoSA2qLbCVYPApBZH57HJZisa5Q3PmAkOPE1kOZ/2L4k/2s8wd
+         HjJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P8EQNdlfEKMSd2en3pkgledmujjaJiojIo3h1kmvnOQ=;
-        b=ckIs0ZQT0ZQTyavRyAxo1zsbS8aSMUP6pda4+gSHZC7pv6edOFGv8rB1mPTeSovZPx
-         +3X3sHrMhro7Pb/LTaaag0dK95CohY6m4y52C43+GGxrcpNH66FlmaZK+KeQcIpB9Nju
-         29G0mDHn0OzOqjCE67invoF6pHTgkAyVRLJCYhCEHzE9lOXhi+yuFYIkzORZ6Gh/sBfh
-         zn+FeWKUSAofC7ycMQJhlbwQ4U+wGic2TniEqzOPHtVvMW2y/JkOS6b7qYkZK0YJvSGK
-         AP+eMmg8U5d+qfUaCB0T125XTNveyVYzx9++5Mgmv/XyK+fG6PxMTmsnN78haXGoYNvP
-         3ldQ==
-X-Gm-Message-State: APjAAAVwnANJg/I+OomvTUiHrmBzi4mE0m0u3c9EnZjvyi/R2YRphvIy
-        WB7IRWMqlnrvtiA87D/VeTrOYXvQ6+az80ftTr76WQ==
-X-Google-Smtp-Source: APXvYqxTwhCXjUiYOLjzsXDsnhv8C1o60LWTFhRLJ28dtwbw6MnKs2gpVUwymuiiAZ8b1O+X+RMvu9It7qiwHlxTQk8=
-X-Received: by 2002:ac8:2998:: with SMTP id 24mr62676416qts.31.1560266230100;
- Tue, 11 Jun 2019 08:17:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190611123101.25264-1-ckeepax@opensource.cirrus.com>
-In-Reply-To: <20190611123101.25264-1-ckeepax@opensource.cirrus.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 11 Jun 2019 17:16:58 +0200
-Message-ID: <CAO-hwJ+qSXwZ-5sAiZ55-r_PXp9pvnE1XEaE_v3SBnxzQQNH4g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] I2C IRQ Probe Improvements
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, mika.westerberg@linux.intel.com,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        linux-acpi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Jim Broadus <jbroadus@gmail.com>, patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kg91m/sJcxPHqFT1g9clpn/F84Kg2JYsIXkgOrosMxA=;
+        b=gh5s++YmnwYXctZm5D8F+uNb1cgu0jwOnF0IIJ4LneMD+saGilYMT1z8ghSx1UGMDl
+         Uar7Q4ZZXNw64Sz+nmucNeb/pwbwNP+N1gorKZYZ8g491tlc3n6uRayF0TEsF6k+Gg2O
+         8fsErvGoSftqd+INZ8WClHHGdD6EZzso0l6bfZzuDPvOQilQS/DvT4UdkGmLXU+zjdPI
+         I+q4oJ1rKSZ9KqO39I9IuiD/EIhw0m/tMYEntE7P1XGD3kPg++JWJN16GSAUqelEIx7H
+         ODGKfo/FWW4GllrimnYIEU8UHPIWFEQB+4A/XNGvI05jcz3MkkBs3W2TtDIGaoRi2cgl
+         iHBw==
+X-Gm-Message-State: APjAAAW6sBnwnDlq9TminAm7Xo5aR0pM+weBfkrDDQHmD56gAawkbWh+
+        vpLoBVX7xEasGvvTV/i9YQ==
+X-Google-Smtp-Source: APXvYqxqKUjZCNGzPTqqjaZAUIDyNVMNNbZ7yHVfjGNp9uMe9ANdgOsfpgtugQlDcZNWYCk5lSGQOg==
+X-Received: by 2002:ac8:3613:: with SMTP id m19mr63926870qtb.193.1560266374218;
+        Tue, 11 Jun 2019 08:19:34 -0700 (PDT)
+Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id z57sm6538533qta.62.2019.06.11.08.19.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 08:19:33 -0700 (PDT)
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org,
+        Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>,
+        Zhang Lei <zhang.lei@jp.fujitsu.com>
+Subject: [PATCH 0/2] Correct the cache line size warning
+Date:   Tue, 11 Jun 2019 11:17:29 -0400
+Message-Id: <20190611151731.6135-1-msys.mizuma@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 2:31 PM Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
->
-> This series attempts to align as much IRQ handling into the
-> probe path as possible. Note that I don't have a great setup
-> for testing these patches so they are mostly just build tested
-> and need careful review and testing before any of them are
-> merged.
->
-> The series brings the ACPI path inline with the way the device
-> tree path handles the IRQ entirely at probe time. However,
-> it still leaves any IRQ specified through the board_info as
-> being handled at device time. In that case we need to cache
-> something from the board_info until probe time, which leaves
-> any alternative solution with something basically the same as
-> the current handling although perhaps caching more stuff.
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-Hmm, I still haven't pinpointed the issue, but I wanted to give a test
-of the series and I have:
-[    5.511806] i2c_hid i2c-DLL075B:01: HID over i2c has not been
-provided an Int IRQ
-[    5.511825] i2c_hid: probe of i2c-DLL075B:01 failed with error -22
+If the cache line size is greater than ARCH_DMA_MINALIGN (128),
+the warning shows and it's tainted as TAINT_CPU_OUT_OF_SPEC.
 
-So it seems that there is something wrong happening when fetching the
-IRQ and providing it to i2c-hid.
+However, it's not good about two points.
+First, as discussed in the thread [1], the cpu cache line size will be
+problem only on non-coherent devices.
+Then, it should not be tainted as TAINT_CPU_OUT_OF_SPEC because
+according to the specification of CTR_EL0.CWG, the maximum cache
+writeback granule is 2048 byte (CWG == 0b1001).
 
-That was on a Dell XPS 9360.
+This patch series try to:
 
-Bisecting is starting.
+- Show the warning only if the device is non-coherent device and
+  ARCH_DMA_MINALIGN is smaller than the cpu cache size.
 
-Cheers,
-Benjamin
+- Show the warning and taints as TAINT_CPU_OUT_OF_SPEC if the cache line
+  size is greater than the maximum.
 
->
-> Thanks,
-> Charles
->
-> See previous discussions:
->  - https://lkml.org/lkml/2019/2/15/989
->  - https://www.spinics.net/lists/linux-i2c/msg39541.html
->
-> Charles Keepax (7):
->   i2c: core: Allow whole core to use i2c_dev_irq_from_resources
->   i2c: acpi: Use available IRQ helper functions
->   i2c: acpi: Factor out getting the IRQ from ACPI
->   i2c: core: Make i2c_acpi_get_irq available to the rest of the I2C core
->   i2c: core: Move ACPI IRQ handling to probe time
->   i2c: core: Move ACPI gpio IRQ handling into i2c_acpi_get_irq
->   i2c: core: Tidy up handling of init_irq
->
->  drivers/i2c/i2c-core-acpi.c | 58 ++++++++++++++++++++++++++++++++-------------
->  drivers/i2c/i2c-core-base.c | 11 +++++----
->  drivers/i2c/i2c-core.h      |  9 +++++++
->  3 files changed, 56 insertions(+), 22 deletions(-)
->
-> --
-> 2.11.0
->
+[1] https://lore.kernel.org/linux-arm-kernel/20180514145703.celnlobzn3uh5tc2@localhost/
+
+Masayoshi Mizuma (2):
+  arm64/mm: check cpu cache line size with non-coherent device
+  arm64/mm: show TAINT_CPU_OUT_OF_SPEC warning if the cache size is over
+    the spec.
+
+ arch/arm64/include/asm/cache.h | 2 ++
+ arch/arm64/mm/dma-mapping.c    | 9 +++++----
+ arch/arm64/mm/init.c           | 5 +++++
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+-- 
+2.20.1
+
