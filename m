@@ -2,108 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BECBC3CB98
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD33E3CBAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388148AbfFKMbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:31:43 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:32814 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727278AbfFKMb1 (ORCPT
+        id S2388897AbfFKMcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:32:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38008 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388708AbfFKMcU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:31:27 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BCTio1027564;
-        Tue, 11 Jun 2019 07:31:02 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2t09ep3xqg-1;
-        Tue, 11 Jun 2019 07:31:02 -0500
-Received: from EDIEX01.ad.cirrus.com (ediex01.ad.cirrus.com [198.61.84.80])
-        by mail4.cirrus.com (Postfix) with ESMTP id 14ABF611C8A7;
-        Tue, 11 Jun 2019 07:31:20 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 11 Jun
- 2019 13:31:01 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 11 Jun 2019 13:31:01 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id DE4582DA;
-        Tue, 11 Jun 2019 13:31:01 +0100 (BST)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <wsa@the-dreams.de>, <mika.westerberg@linux.intel.com>
-CC:     <jarkko.nikula@linux.intel.com>,
-        <andriy.shevchenko@linux.intel.com>, <linux-i2c@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.tissoires@redhat.com>, <jbroadus@gmail.com>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH v4 7/7] i2c: core: Tidy up handling of init_irq
-Date:   Tue, 11 Jun 2019 13:31:01 +0100
-Message-ID: <20190611123101.25264-8-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190611123101.25264-1-ckeepax@opensource.cirrus.com>
-References: <20190611123101.25264-1-ckeepax@opensource.cirrus.com>
+        Tue, 11 Jun 2019 08:32:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so12824249wrs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 05:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:date:in-reply-to:references:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=3yIHUZDu0AY3HhtkDpgrI22GPR5WLTd7gWKM7Uzr4Ug=;
+        b=gvKPd7tmPRGXoFs/ajGVvNj8YTgXy77rGXtDUalDkJl6wSn1MScUeWXLZH7CG1aN+h
+         mSK3RJUofxxJdHUP+Wrn78BZJXxzqhux8eHUTsb7+zx1X0JPktpjbgDXo3UZFThpd6zg
+         HKFf7XaNnojUVlMNVu/MGdKipmFUqdSMqoqL5pa+4VQEzN9zUU16X96+p7yqNWZLj90N
+         XZLPIRI+Rd2lVhHjWpqVYGgvz6QrBzu+i7XL4/W7cDVaneDtMFrRUogmLHxVtkmEx1du
+         FyLweWfV9i52fU3iFDIl/0kdHMVqo2xPkrbyP2ipt9FqjJB3c758Pxn8trzkppTiQFDW
+         tw3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=3yIHUZDu0AY3HhtkDpgrI22GPR5WLTd7gWKM7Uzr4Ug=;
+        b=ANoCdzewo6+qnMrMKDUQ4q2jzZFabVbI21VhGH/Opywssf5P6ZG9VsbZEgTjJWxCCR
+         S7j2771njWoSDgpezc3TNw2kBSZRmB+wZDZ4ZBybCMSfLcMlG5fyLETQTWC4z5kTEpcU
+         wrCcqUJW6BpWTpocYccf5tRhWVmGTtSWvfctwe3tKGAjanmdJSvQDZmGKSqr5rR/Qh9y
+         6OuYub0OpQau4H5cn9oPPg3FN2Cd0wad/zmFrNIWsp9YQ7Ar1iqaiDHxagyg7QdaqNQP
+         iHoxUxSPos1f5b6IwcZbMaaALEIfX66JgjF7R4kAc3rX1iaA2aGf7itpkdc5ZIwNsBJ9
+         q8/w==
+X-Gm-Message-State: APjAAAXjeb78xYVQ97uBnoaaG8eTXeTDhXyiI4UwPYFG3/WlQU8W+Lj0
+        uS1j6u3Y1kh8Yqb15oVWG4GFzA==
+X-Google-Smtp-Source: APXvYqzappoDNTggYkuaxQS1YeYjg3ShO+Vgo5CxgEMCr3D2ELz9OdCft3PQSOxBqySsiqmbTruqSQ==
+X-Received: by 2002:a5d:69ce:: with SMTP id s14mr1882971wrw.135.1560256338775;
+        Tue, 11 Jun 2019 05:32:18 -0700 (PDT)
+Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 32sm32865503wra.35.2019.06.11.05.32.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 05:32:18 -0700 (PDT)
+Message-ID: <c216003f9622d022d55ed9eb13458a10189797f2.camel@baylibre.com>
+Subject: Re: [PATCH v3 0/2] Add support of Temperature sensor Clock for G12
+ SoC
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Guillaume La Roque <glaroque@baylibre.com>,
+        narmstrong@baylibre.com, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Tue, 11 Jun 2019 14:32:17 +0200
+In-Reply-To: <20190412100221.26740-1-glaroque@baylibre.com>
+References: <20190412100221.26740-1-glaroque@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906110085
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only set init_irq during i2c_device_new and only handle client->irq on
-the probe/remove paths.
+On Fri, 2019-04-12 at 12:02 +0200, Guillaume La Roque wrote:
+> This patch series add support of Clock for temperature sensor
+> on Amlogic G12a SoC.
+> 
+> Guillaume
+> 
+> cahnges sinve v2:
+> - rebase on good branch
+> 
+> changes since v1:
+> - fix .width value
+> 
+> Guillaume La Roque (2):
+>   dt-bindings: clk: g12a-clkc: add Temperature Sensor clock ID
+>   clk: meson-g12a: Add Temperature Sensor clock
+> 
+>  drivers/clk/meson/g12a.c              | 31 +++++++++++++++++++++++++++
+>  drivers/clk/meson/g12a.h              |  3 ++-
+>  include/dt-bindings/clock/g12a-clkc.h |  1 +
+>  3 files changed, 34 insertions(+), 1 deletion(-)
+> 
 
-Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
-
-No change since v3.
-
-Thanks,
-Charles
-
- drivers/i2c/i2c-core-base.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 6be2e3a4784fa..9b52427dc7c94 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -314,6 +314,8 @@ static int i2c_device_probe(struct device *dev)
- 
- 	driver = to_i2c_driver(dev->driver);
- 
-+	client->irq = client->init_irq;
-+
- 	if (!client->irq && !driver->disable_i2c_core_irq_mapping) {
- 		int irq = -ENOENT;
- 
-@@ -424,7 +426,7 @@ static int i2c_device_remove(struct device *dev)
- 	dev_pm_clear_wake_irq(&client->dev);
- 	device_init_wakeup(&client->dev, false);
- 
--	client->irq = client->init_irq;
-+	client->irq = 0;
- 	if (client->flags & I2C_CLIENT_HOST_NOTIFY)
- 		pm_runtime_put(&client->adapter->dev);
- 
-@@ -741,7 +743,6 @@ i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *inf
- 	if (!client->init_irq)
- 		client->init_irq = i2c_dev_irq_from_resources(info->resources,
- 							 info->num_resources);
--	client->irq = client->init_irq;
- 
- 	strlcpy(client->name, info->type, sizeof(client->name));
- 
--- 
-2.11.0
+Fixed the commit messages as suggested by Martin and applied
+Thx
 
