@@ -2,106 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FEE418D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D8C41903
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407269AbfFKXYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:24:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45568 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405384AbfFKXYu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:24:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s11so8372117pfm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=pzZQijjYh2lq3MqwPAxsWI0diaePNWtLIjQJaO7lucU=;
-        b=caXhb4JrKoL25WULlmBoyErRhTzl+Qlefw5zmfGbW45Q82gCsvakwZwKbdppzTmYHq
-         wRtcEW9aBQjqtEnLBq7mdWutGGxaFThaxGaUrr6hxvw5WNwWKm/gOkg4F0fSjhpYU+jo
-         UhKHDTsgIbt5HjMWbJmawF8TeUU/Hy1WjGBhjBAXjssbkfrEeKUaiqm8lJEgEsRrAAIn
-         n4a6MQE9jdlTIiTsWxACww5EdRlH4vZyS8zy8itKUIjOB4AdOLbgdvxTVa0pYQqcCu6c
-         PPn5HgnY7WyNT70n8RmIMIC3HhTaR4x6iNx15v4683bc2S0IIr/nfO8ayq1TU8Ok6nse
-         kqXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=pzZQijjYh2lq3MqwPAxsWI0diaePNWtLIjQJaO7lucU=;
-        b=J/RX8eBU6zWD7W22OZe313nVLMJcLMfx3z9X+Y7vUSUMA1udyLAAs0rgMM9RcL/2gL
-         ZlOle7Vjq/yu8/e9L28RJfgZta4p+x5n+DnEdQaCxVMw2geHN7g0kuZvF+fPnP1jge+T
-         QQ6iWGZ6Ai8QftXkdkHwb0YStfXiVyIJhWp3k+RyrS2O+ZULXniI7hoXdlnPJkv1EB4Y
-         HUUxPAuXP/NLEsa8iOAHYeW63v9yhaSXhQaWWS2koDuGeu8dmx6SrU7mm9BuNo5RDM3q
-         n98w206c1C9H3HoPad/RbgdG1064RPxIQRtIacIhyMZzch95FLIQ1GXLJ5ZO5qqm5uOj
-         +YpA==
-X-Gm-Message-State: APjAAAVW1PH1y8j15PftPBeylE2S7tlWNMDSLLskRPbptOYIJ2I2v6+t
-        79PRVVptyR7Yiq31tBo7qg9BNYb582g=
-X-Google-Smtp-Source: APXvYqynJgfnRKT9jxHr/rkFxt5cW774++TFNZRQTm5JTkX+8RQKfGhmIHYDuLE+xibLa/Xh3lHYeQ==
-X-Received: by 2002:a65:514a:: with SMTP id g10mr22250270pgq.328.1560295489184;
-        Tue, 11 Jun 2019 16:24:49 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id y7sm8141090pja.26.2019.06.11.16.24.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Jun 2019 16:24:48 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-kernel@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Yannick =?utf-8?Q?Fertr=C3=A9?= <yannick.fertre@st.com>,
-        arm@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "moderated list\:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "open list\:ARM\/Amlogic Meson..." 
-        <linux-amlogic@lists.infradead.org>
-Subject: Re: [PATCH 1/2] ARM: multi_v7_defconfig: add Panfrost driver
-In-Reply-To: <71c929a0-d42e-7519-df43-100a474a63d4@baylibre.com>
-References: <20190604112003.31813-1-tomeu.vizoso@collabora.com> <71c929a0-d42e-7519-df43-100a474a63d4@baylibre.com>
-Date:   Tue, 11 Jun 2019 16:24:47 -0700
-Message-ID: <7h4l4v4se8.fsf@baylibre.com>
+        id S2408194AbfFKXkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:40:01 -0400
+Received: from mga17.intel.com ([192.55.52.151]:43209 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405380AbfFKXkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 19:40:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 16:40:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,363,1557212400"; 
+   d="scan'208";a="184035062"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga002.fm.intel.com with ESMTP; 11 Jun 2019 16:39:59 -0700
+Subject: [PATCH 0/6] libnvdimm: Fix async operations and locking
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jane Chu <jane.chu@oracle.com>, stable@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Erwin Tsaur <erwin.tsaur@oracle.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 11 Jun 2019 16:25:43 -0700
+Message-ID: <156029554317.419799.1324389595953183385.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+The libnvdimm subsystem uses async operations to parallelize device
+probing operations and to allow sysfs to trigger device_unregister() on
+deleted namepsaces. A multithreaded stress test of the libnvdimm sysfs
+interface uncovered a case where device_unregister() is triggered
+multiple times, and the subsequent investigation uncovered a broken
+locking scenario.
 
-> On 04/06/2019 13:20, Tomeu Vizoso wrote:
->> With the goal of making it easier for CI services such as KernelCI to
->> run tests for it.
->> 
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->> ---
->>  arch/arm/configs/multi_v7_defconfig | 1 +
->>  1 file changed, 1 insertion(+)
->> 
->> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
->> index 6b748f214eae..952dff9d39f2 100644
->> --- a/arch/arm/configs/multi_v7_defconfig
->> +++ b/arch/arm/configs/multi_v7_defconfig
->> @@ -656,6 +656,7 @@ CONFIG_DRM_VC4=m
->>  CONFIG_DRM_ETNAVIV=m
->>  CONFIG_DRM_MXSFB=m
->>  CONFIG_DRM_PL111=m
->> +CONFIG_DRM_PANFROST=m
->>  CONFIG_FB_EFI=y
->>  CONFIG_FB_WM8505=y
->>  CONFIG_FB_SH_MOBILE_LCDC=y
->> 
->
-> Hi Kevin,
->
-> Could you apply this changeset on the linux-amlogic tree ?
+The lack of lockdep coverage for device_lock() stymied the debug. That
+is, until patch6 "driver-core, libnvdimm: Let device subsystems add
+local lockdep coverage" solved that with a shadow lock, with lockdep
+coverage, to mirror device_lock() operations. Given the time saved with
+shadow-lock debug-hack, patch6 attempts to generalize device_lock()
+debug facility that might be able to be carried upstream. Patch6 is
+staged at the end of this fix series in case it is contentious and needs
+to be dropped.
 
-No, this needs to go via arm-soc (already cc'd)
+Patch1 "drivers/base: Introduce kill_device()" could be achieved with
+local libnvdimm infrastructure. However, the existing 'dead' flag in
+'struct device_private' aims to solve similar async register/unregister
+races so the fix in patch2 "libnvdimm/bus: Prevent duplicate
+device_unregister() calls" can be implemented with existing driver-core
+infrastructure.
 
-Kevin
+Patch3 is a rare lockdep warning that is intermittent based on
+namespaces racing ahead of the completion of probe of their parent
+region. It is not related to the other fixes, it just happened to
+trigger as a result of the async stress test.
+
+Patch4 and patch5 address an ABBA deadlock tripped by the stress test.
+
+These patches pass the failing stress test and the existing libnvdimm
+unit tests with CONFIG_PROVE_LOCKING=y and the new "dev->lockdep_mutex"
+shadow lock with no lockdep warnings.
+
+---
+
+Dan Williams (6):
+      drivers/base: Introduce kill_device()
+      libnvdimm/bus: Prevent duplicate device_unregister() calls
+      libnvdimm/region: Register badblocks before namespaces
+      libnvdimm/bus: Stop holding nvdimm_bus_list_mutex over __nd_ioctl()
+      libnvdimm/bus: Fix wait_nvdimm_bus_probe_idle() ABBA deadlock
+      driver-core, libnvdimm: Let device subsystems add local lockdep coverage
+
+
+ drivers/acpi/nfit/core.c        |   28 ++++---
+ drivers/acpi/nfit/nfit.h        |   24 ++++++
+ drivers/base/core.c             |   30 ++++++--
+ drivers/nvdimm/btt_devs.c       |   16 ++--
+ drivers/nvdimm/bus.c            |  154 +++++++++++++++++++++++++++------------
+ drivers/nvdimm/core.c           |   10 +--
+ drivers/nvdimm/dimm_devs.c      |    4 +
+ drivers/nvdimm/namespace_devs.c |   36 +++++----
+ drivers/nvdimm/nd-core.h        |   71 ++++++++++++++++++
+ drivers/nvdimm/pfn_devs.c       |   24 +++---
+ drivers/nvdimm/pmem.c           |    4 +
+ drivers/nvdimm/region.c         |   24 +++---
+ drivers/nvdimm/region_devs.c    |   12 ++-
+ include/linux/device.h          |    6 ++
+ 14 files changed, 308 insertions(+), 135 deletions(-)
