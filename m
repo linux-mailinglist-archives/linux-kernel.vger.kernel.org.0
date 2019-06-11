@@ -2,146 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC633C964
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 776CE3C975
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 12:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388039AbfFKKyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 06:54:37 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43828 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387978AbfFKKyh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 06:54:37 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f25so6754788pgv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 03:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IvQb/Ypyh9gRJDotT8x3V0sz3ecSdE5KFnzXB7OO8I8=;
-        b=JV9Xb4IMUkhC6FXUs6jMr31zgd5bbZUP53i9LQXtxqqKDsyOstCFNthzz9ysHVltrG
-         LQPzsJTYpuYoEjJUqF27NWTUxY00GzCfMVw2AwdBa/l+uVsVwIIfUvY/Na/9hqRyC4hm
-         qA8IVyqs6a3XSSW7Mbzi0CcMh3MoLKRWZYJ/M6fAEOrHH3ZNmuDxJz+TI/1yAMW9n4tL
-         g/utQBXLMp0f+tyzFpzt4ZdUlGRG6eDxQZo5tUvxsgYparDAbG+sfgL5NAnQWDFtiptC
-         +hcShtjhUExJXJrKOnj0jx3m/sCaDSZxE7ayO+ffbwGhcKmSTG2S7S3CsidSQ3kx0fQA
-         CJpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IvQb/Ypyh9gRJDotT8x3V0sz3ecSdE5KFnzXB7OO8I8=;
-        b=U4xAQ2XQkqIQK+Xh7odIircqDaCwP+DnEFfLLfbZr1P4n3cm4AwXdy6hFqyg2qxGM8
-         ocqFCGvz5lPYqshlpRTq8DV70ZsCc80yVTOhecAN1/Vhb1qtTNaLfFNmNxoRUVMULVSQ
-         NRA9HnOD1Ttw91ML5RUGRgInLh5dB4KYpjf7er8cLu987pX/J/NRDjOV8qj4i2kWcRL0
-         F5RTtkZODJKzfm51984/5HmSkZuiYVtlyuVUmsKNyfYDy3MpGmrr+F/PaF2fYcmQz2ta
-         MBkMkdpEqNqNVNh7RID/S40j/JyPF/KtGT/4wIdpLjMHyoNiGICfuTROvINh6jxWI9eZ
-         u/rA==
-X-Gm-Message-State: APjAAAVpswUztD4xunCK3t7UyTI3sIOUaGztElBZmqvu6ajOckvJ/DYM
-        ybjZIOp9NV9wPZE7SZoai6ySDg==
-X-Google-Smtp-Source: APXvYqzpXvOcmG+jSmbuKUuB+pvnFdrAODCioPv9t90lRkGIWZkV0igtmbVR7Z0PzCmHelNYhJaqfA==
-X-Received: by 2002:a62:bd11:: with SMTP id a17mr5606101pff.126.1560250476041;
-        Tue, 11 Jun 2019 03:54:36 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id j72sm2231266pje.12.2019.06.11.03.54.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 03:54:34 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 16:24:32 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     swboyd@chromium.org, Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-scsi@vger.kernel.org, ulf.hansson@linaro.org,
-        dianders@chromium.org, rafael@kernel.org
-Subject: Re: [RFC v2 01/11] OPP: Don't overwrite rounded clk rate
-Message-ID: <20190611105432.x3nzqiib35t6mvyg@vireshk-i7>
-References: <20190320094918.20234-1-rnayak@codeaurora.org>
- <20190320094918.20234-2-rnayak@codeaurora.org>
+        id S2388257AbfFKKzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 06:55:54 -0400
+Received: from mail-eopbgr80047.outbound.protection.outlook.com ([40.107.8.47]:2436
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387835AbfFKKzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 06:55:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9+eLv1MqCodrnc9uw9MzCjeYFa4wUZdIN2eUccXBQLQ=;
+ b=CvVZWzYxr/UqXC8MZD52q9t+MI3WhgP7Sk8CB/nGxlbfOy4JzMlqs2jGhaCPVpQ9lt9i07yJfXTQhHmUBNo0TvMBIcIsO1LHhxOr55u1WXEcMgKx7QCNPXRjJvR1q5NVF49yApMQ/AUjFk7T9zSe2z9K0T1jvYDyHcBtaiW8+QA=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB6625.eurprd04.prod.outlook.com (20.179.255.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Tue, 11 Jun 2019 10:55:49 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::11e1:3bb9:156b:a3e4]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::11e1:3bb9:156b:a3e4%3]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
+ 10:55:49 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 1/3] dt-bindings: fsl: scu: Update RTC compatible string
+Thread-Topic: [PATCH 1/3] dt-bindings: fsl: scu: Update RTC compatible string
+Thread-Index: AQHVIB9emd9i+B/IXEyVa1h4DVhJOaaWR97A
+Date:   Tue, 11 Jun 2019 10:55:49 +0000
+Message-ID: <AM0PR04MB421153DA043F88216155382D80ED0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190611063333.48501-1-Anson.Huang@nxp.com>
+In-Reply-To: <20190611063333.48501-1-Anson.Huang@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d2fefd1e-6239-4f36-2c02-08d6ee5b5d77
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6625;
+x-ms-traffictypediagnostic: AM0PR04MB6625:
+x-microsoft-antispam-prvs: <AM0PR04MB662521BDE07032EAB10A210480ED0@AM0PR04MB6625.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1332;
+x-forefront-prvs: 006546F32A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(376002)(136003)(396003)(189003)(199004)(76116006)(71200400001)(6246003)(73956011)(81156014)(7736002)(66946007)(66066001)(486006)(316002)(26005)(68736007)(476003)(2501003)(110136005)(33656002)(44832011)(14454004)(53936002)(229853002)(74316002)(55016002)(186003)(81166006)(6436002)(15650500001)(8676002)(102836004)(2906002)(76176011)(6116002)(5660300002)(7696005)(2201001)(305945005)(66556008)(66446008)(66476007)(71190400001)(52536014)(25786009)(7416002)(14444005)(8936002)(3846002)(9686003)(11346002)(4326008)(64756008)(99286004)(86362001)(6506007)(558084003)(478600001)(256004)(446003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6625;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YbzW/+84Tgdhrhz2McPjUbrqjVUkOHRraxrcflkoeKry6s5t0eZO+N4GSM9/ddKaWD9AY8OByFS51Wt98EF0OfQ1XAboA0upQ6KydFBrY9gzU6OWxxSmLgskhoAjeo8tcyg9lh9JRVtQMaspiSoHK/Xd+SW4lpVrxdoQMjNw8kB7Aat0OwRgsQSEOYslPypAN+f4RYCt44pIs9LfqfMzt8eEYdJSlQJSEG96meiL6+Ue5KgtgWlIzzSAEJNfopSrwocW+Sf4PY/i5Pa1/V+B/3rIWoqGM7nIDpLvbcwhUqdcm5hj9vC1GpdcHFKmxbb8JgyV0J+eXNTRDhM6VmrA+kRSb552z6zQbgAMbySyCcL2rzRvqU7hikbYc/6VfNSTJ38H+buXaSJ1I51FRRImhTWiS1AyLGlLK/8+5izSWkQ=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190320094918.20234-2-rnayak@codeaurora.org>
-User-Agent: NeoMutt/20180716-391-311a52
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2fefd1e-6239-4f36-2c02-08d6ee5b5d77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 10:55:49.6090
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aisheng.dong@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6625
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-03-19, 15:19, Rajendra Nayak wrote:
-> From: Stephen Boyd <swboyd@chromium.org>
-> 
-> Doing this allows us to call this API with any rate requested and have
-> it not need to match in the OPP table. Instead, we'll round the rate up
-> to the nearest OPP that we see so that we can get the voltage or level
-> that's required for that OPP. This supports users of OPP that want to
-> specify the 'fmax' tables of a device instead of every single frequency
-> that they need. And for devices that required the exact frequency, we
-> can rely on the clk framework to round the rate to the nearest supported
-> frequency instead of the OPP framework to do so.
-> 
-> Note that this may affect drivers that don't want the clk framework to
-> do rounding, but instead want the OPP table to do the rounding for them.
-> Do we have that case? Should we add some flag to the OPP table to
-> indicate this and then not have that flag set when there isn't an OPP
-> table for the device and also introduce a property like 'opp-use-clk' to
-> tell the table that it should use the clk APIs to round rates instead of
-> OPP?
-> 
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/opp/core.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 0420f7e8ad5b..bc9a7762dd4c 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -703,7 +703,7 @@ static int _set_required_opps(struct device *dev,
->  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
->  {
->  	struct opp_table *opp_table;
-> -	unsigned long freq, old_freq;
-> +	unsigned long freq, opp_freq, old_freq, old_opp_freq;
->  	struct dev_pm_opp *old_opp, *opp;
->  	struct clk *clk;
->  	int ret;
-> @@ -742,13 +742,15 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
->  		goto put_opp_table;
->  	}
->  
-> -	old_opp = _find_freq_ceil(opp_table, &old_freq);
-> +	old_opp_freq = old_freq;
-> +	old_opp = _find_freq_ceil(opp_table, &old_opp_freq);
->  	if (IS_ERR(old_opp)) {
->  		dev_err(dev, "%s: failed to find current OPP for freq %lu (%ld)\n",
->  			__func__, old_freq, PTR_ERR(old_opp));
->  	}
->  
-> -	opp = _find_freq_ceil(opp_table, &freq);
-> +	opp_freq = freq;
-> +	opp = _find_freq_ceil(opp_table, &opp_freq);
->  	if (IS_ERR(opp)) {
->  		ret = PTR_ERR(opp);
->  		dev_err(dev, "%s: failed to find OPP for freq %lu (%d)\n",
-
-I see a logical problem with this patch.
-
-Suppose the clock driver supports following frequencies: 500M, 800M,
-1G, 1.2G and the OPP table contains following list: 500M, 1G, 1.2G
-(i.e. missing 800M).
-
-Now 800M should never get programmed as it isn't part of the OPP
-table. But if you pass 600M to opp-set-rate, then it will end up
-selecting 800M as clock driver will round up to the closest value.
-
-Even if no one is doing this right now, it is a sensible usecase,
-specially during testing of patches and I don't think we should avoid
-it.
-
-What exactly is the use case for which we need this patch ? What kind
-of driver ? Some detail can be helpful to find another solution that
-fixes this problem.
-
--- 
-viresh
+PiBGcm9tOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gDQo+IFVwZGF0ZSBS
+VEMgY29tcGF0aWJsZSBzdHJpbmcgdG8gbWFrZSBzeXN0ZW0gY29udHJvbGxlciBSVEMgZHJpdmVy
+IG1vcmUNCj4gZ2VuZXJpYyBmb3IgYWxsIGkuTVggU29DcyB3aXRoIHN5c3RlbSBjb250cm9sbGVy
+IGluc2lkZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0Bu
+eHAuY29tPg0KDQpSZXZpZXdlZC1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNv
+bT4NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
