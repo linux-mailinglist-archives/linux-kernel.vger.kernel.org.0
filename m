@@ -2,86 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 603AE3D590
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B93EE3D595
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391726AbfFKSe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:34:56 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53158 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388207AbfFKSe4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:34:56 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5BIT9GW109277;
-        Tue, 11 Jun 2019 18:34:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=GCULdRc5X1PmYQ//RcEOPA5JPCIN5lCqVpVroF1nJ6M=;
- b=EdBRRNzOAku4uf7ui0GYlaOC8OwJiFony30fzOsnbyde57sMsR7uK4rMGDAExmmETZxc
- 3fx6Yc4G1zSYQQVtTNJPbSVB536gJbxzMKJ72pmQkEl73mPEcl9iiUOTR/ERRrN0gIfo
- XLSZ9jms5WduXGFlCUGFLucic/Ow8cDcedXHklQh9IdOgBa89Dn/CpoYyHyFBLmqQZW3
- lD/TXV+B16F9Y5PIHk3MQ9Ez8cpwBKnQP4iCuiRsvcPDm9H14nrJWitpraxM45jNp/E6
- PPrr2wKFQSWpZoVgam8OyDKKy0BMJD5LHcxd2FWH18nk2zAJc/jmXk1AImgGon0X6t0O BQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 2t02heq5su-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 18:34:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5BIYpuh062494;
-        Tue, 11 Jun 2019 18:34:52 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2t1jphkpn9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 18:34:52 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5BIYptj010470;
-        Tue, 11 Jun 2019 18:34:51 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Jun 2019 11:34:51 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id C11FD6A0116; Tue, 11 Jun 2019 14:36:09 -0400 (EDT)
-Date:   Tue, 11 Jun 2019 14:36:09 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [GIT PULL] (swiotlb) stable/for-linus-5.2
-Message-ID: <20190611183609.GA12859@char.us.oracle.com>
+        id S2391844AbfFKSiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:38:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388207AbfFKSiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 14:38:21 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 226E521743;
+        Tue, 11 Jun 2019 18:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560278299;
+        bh=op+unP1g+6aUGXSass0EO2pdGGP4Nq3gma2bxnFko7M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ly5kCkPTmC6TeT8l+bNynWgf3TWDMqnvP1eknwgLW7uAtDbNAowHDFBLz0B9qNPOQ
+         RFJb9anzu0k96SWyB9vx9S7QTWECzL5y+z61xdxYuf09TJgr0QyDAN8Cff8EIyp+lQ
+         dx7r2cIFusvTLn2NinOArGRBnwwlUfIQmY4AsKKk=
+Date:   Tue, 11 Jun 2019 20:38:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mei: no need to check return value of debugfs_create
+ functions
+Message-ID: <20190611183816.GA952@kroah.com>
+References: <20190611183357.GA32008@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=994
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906110118
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906110118
+In-Reply-To: <20190611183357.GA32008@kroah.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-Hey Linus,
+Cc: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v2: break the patch up properly
 
-Please git pull the following tiny fix:
+ drivers/misc/mei/debugfs.c | 47 +++++++++-----------------------------
+ drivers/misc/mei/main.c    |  8 +------
+ drivers/misc/mei/mei_dev.h |  7 ++----
+ 3 files changed, 14 insertions(+), 48 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git stable/for-linus-5.2
-
-which has one tiny fix for ARM64 where we could allocate the SWIOTLB
-twice.
-
-
- drivers/xen/swiotlb-xen.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-Stefano Stabellini (1):
-      xen/swiotlb: don't initialize swiotlb twice on arm64
+diff --git a/drivers/misc/mei/debugfs.c b/drivers/misc/mei/debugfs.c
+index 0970142bcace..df6bf8b81936 100644
+--- a/drivers/misc/mei/debugfs.c
++++ b/drivers/misc/mei/debugfs.c
+@@ -233,47 +233,22 @@ void mei_dbgfs_deregister(struct mei_device *dev)
+  *
+  * @dev: the mei device structure
+  * @name: the mei device name
+- *
+- * Return: 0 on success, <0 on failure.
+  */
+-int mei_dbgfs_register(struct mei_device *dev, const char *name)
++void mei_dbgfs_register(struct mei_device *dev, const char *name)
+ {
+-	struct dentry *dir, *f;
++	struct dentry *dir;
+ 
+ 	dir = debugfs_create_dir(name, NULL);
+-	if (!dir)
+-		return -ENOMEM;
+-
+ 	dev->dbgfs_dir = dir;
+ 
+-	f = debugfs_create_file("meclients", S_IRUSR, dir,
+-				dev, &mei_dbgfs_fops_meclients);
+-	if (!f) {
+-		dev_err(dev->dev, "meclients: registration failed\n");
+-		goto err;
+-	}
+-	f = debugfs_create_file("active", S_IRUSR, dir,
+-				dev, &mei_dbgfs_fops_active);
+-	if (!f) {
+-		dev_err(dev->dev, "active: registration failed\n");
+-		goto err;
+-	}
+-	f = debugfs_create_file("devstate", S_IRUSR, dir,
+-				dev, &mei_dbgfs_fops_devstate);
+-	if (!f) {
+-		dev_err(dev->dev, "devstate: registration failed\n");
+-		goto err;
+-	}
+-	f = debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
+-				&dev->allow_fixed_address,
+-				&mei_dbgfs_fops_allow_fa);
+-	if (!f) {
+-		dev_err(dev->dev, "allow_fixed_address: registration failed\n");
+-		goto err;
+-	}
+-	return 0;
+-err:
+-	mei_dbgfs_deregister(dev);
+-	return -ENODEV;
++	debugfs_create_file("meclients", S_IRUSR, dir, dev,
++			    &mei_dbgfs_fops_meclients);
++	debugfs_create_file("active", S_IRUSR, dir, dev,
++			    &mei_dbgfs_fops_active);
++	debugfs_create_file("devstate", S_IRUSR, dir, dev,
++			    &mei_dbgfs_fops_devstate);
++	debugfs_create_file("allow_fixed_address", S_IRUSR | S_IWUSR, dir,
++			    &dev->allow_fixed_address,
++			    &mei_dbgfs_fops_allow_fa);
+ }
+ 
+diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
+index ad02097d7fee..f894d1f8a53e 100644
+--- a/drivers/misc/mei/main.c
++++ b/drivers/misc/mei/main.c
+@@ -984,16 +984,10 @@ int mei_register(struct mei_device *dev, struct device *parent)
+ 		goto err_dev_create;
+ 	}
+ 
+-	ret = mei_dbgfs_register(dev, dev_name(clsdev));
+-	if (ret) {
+-		dev_err(clsdev, "cannot register debugfs ret = %d\n", ret);
+-		goto err_dev_dbgfs;
+-	}
++	mei_dbgfs_register(dev, dev_name(clsdev));
+ 
+ 	return 0;
+ 
+-err_dev_dbgfs:
+-	device_destroy(mei_class, devno);
+ err_dev_create:
+ 	cdev_del(&dev->cdev);
+ err_dev_add:
+diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
+index fca832fcac57..f71a023aed3c 100644
+--- a/drivers/misc/mei/mei_dev.h
++++ b/drivers/misc/mei/mei_dev.h
+@@ -718,13 +718,10 @@ bool mei_hbuf_acquire(struct mei_device *dev);
+ bool mei_write_is_idle(struct mei_device *dev);
+ 
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
+-int mei_dbgfs_register(struct mei_device *dev, const char *name);
++void mei_dbgfs_register(struct mei_device *dev, const char *name);
+ void mei_dbgfs_deregister(struct mei_device *dev);
+ #else
+-static inline int mei_dbgfs_register(struct mei_device *dev, const char *name)
+-{
+-	return 0;
+-}
++static inline void mei_dbgfs_register(struct mei_device *dev, const char *name) {}
+ static inline void mei_dbgfs_deregister(struct mei_device *dev) {}
+ #endif /* CONFIG_DEBUG_FS */
+ 
+-- 
+2.22.0
 
