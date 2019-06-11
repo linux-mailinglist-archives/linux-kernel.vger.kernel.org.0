@@ -2,308 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E883CA7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D1023CA86
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 13:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390048AbfFKL4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 07:56:25 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53845 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389499AbfFKL4Y (ORCPT
+        id S2404249AbfFKL5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 07:57:09 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45091 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403877AbfFKL5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 07:56:24 -0400
-Received: by mail-wm1-f68.google.com with SMTP id x15so2624854wmj.3;
-        Tue, 11 Jun 2019 04:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=/1MOR3QrJTEFCWZFdMC/DEmdNjlMHoHLCzjdZO2gpas=;
-        b=tcCqahQKRNFhSuKKuHrTgh9xgWvINKKr8cpRQhx4Hpyyd/GqIFYa8WYkfhryWCySGV
-         fXpSxyEUYa0GTYifC3QOrFgE7O2aykspKEIhLGjdVPQIxijuhkP5erdLaqg0/8T+3YTZ
-         SGcI0Wo0yFCpV9uhSmch6O1dUkBakEXXfc93hjViYyPp/68ElEYh+Oq2YXlcLCrvNHS/
-         Y5u6OoYTTKHrASe/hvFVEtRhPoEEmG2n1pFaH5x3wn1KIZcap5NdLvQHcez/Syl3bfX7
-         /D6Kq+S0ev02u9kU/fluZWdvIpLkDjqks1Fgytrdmh2b4HTuw82vc6JXlR/aEaIRr8fJ
-         1cIw==
+        Tue, 11 Jun 2019 07:57:08 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j19so14071085qtr.12;
+        Tue, 11 Jun 2019 04:57:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
-        bh=/1MOR3QrJTEFCWZFdMC/DEmdNjlMHoHLCzjdZO2gpas=;
-        b=W03zY5E6+J/Ci77uFCn1E2xYInGocIhOHS/XSlI9EoekFut5NOVht98cFV6oVunqnh
-         xcd5usnozjAckU7e6UElPhQXi2DfGVR3wMTSZKVAgPgu1C8xC1Y8DqJC2BbkzIJjafqo
-         Bxmu3OZPDaDAOPIhF4i5v4/hxRf+WQOAuZmglUT/X79NDRq8TDZgPFLNWlZdVKheWJ32
-         9r0gqjITJKMA3W/GEts8ZCX4cfX/F9clW68x6/tztmN+C0ebaZ5/eyr7u8Asyk4Mu4pH
-         k1TiXGNEqUsIIO6ZC9FJUHYC2h9teH/Wu0kqY95KFinsMUswjTJ8YyARugua4Vr9BKRI
-         J0+Q==
-X-Gm-Message-State: APjAAAU/3cx4Yr9g9w7/VLK58IO+ycUQmu8KygY+Dm0vECFCYlrYBXjg
-        V6PRWqvTCFvxjzAe3l9snSzoMQnaiYU=
-X-Google-Smtp-Source: APXvYqxKri0XmDaxau9DHr8vE7hTxWlAaPas+KdgSz6qoWEf0HDsPLpL8qzdgKkW6IuAvF6QL7KoxA==
-X-Received: by 2002:a1c:630a:: with SMTP id x10mr13608161wmb.113.1560254182345;
-        Tue, 11 Jun 2019 04:56:22 -0700 (PDT)
-Received: from arch-late (a109-49-46-234.cpe.netcabo.pt. [109.49.46.234])
-        by smtp.gmail.com with ESMTPSA id f10sm22568606wrg.24.2019.06.11.04.56.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 04:56:21 -0700 (PDT)
-References: <20190606153825.8183-1-sebastien.szymanski@armadeus.com> <20190606153825.8183-2-sebastien.szymanski@armadeus.com> <m34l4xpweh.fsf@gmail.com> <722336d1-c7f7-1796-95d5-7bba1fac7968@armadeus.com> <m3zhmo1mux.fsf@gmail.com> <df32fe2e-d9b1-8b09-686c-7f6970aa8e0c@armadeus.com>
-User-agent: mu4e 1.2.0; emacs 27.0.50
-From:   Rui Miguel Silva <rmfrfs@gmail.com>
-To:     =?utf-8?Q?S=C3=A9bastien?= Szymanski 
-        <sebastien.szymanski@armadeus.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 2/3] media: imx7-media-csi: add i.MX6UL support
-In-reply-to: <df32fe2e-d9b1-8b09-686c-7f6970aa8e0c@armadeus.com>
-Date:   Tue, 11 Jun 2019 12:56:19 +0100
-Message-ID: <m3wohs1gkc.fsf@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K3Sm1X+d2sov0ITQpzgk6HQiz/Phckwgb6KD7DQ+q/M=;
+        b=llBWdXc9ufcDn9VTjjDJIRoBqsPwIk2ZRp4tiC8CFA0r1N37TwKz0DFg1VJnA/Ci0B
+         AIASlCCnSBtNmD0vnnp9Uf8Qrb5Y+o4AF47XzKEutUSdM63zFJ6sKA5OrHss4YVf4a7h
+         Nw2X8po5gj7XsvO8TKbQJpe2LYtumG6dLw3D+6pqpxNCu1gcqnOVUzav05Swgq7CY4Re
+         Z259UXi3eEjCaQavakLv8mKadadS+rs9ZgYa0EqO1vuDjIYdtqAnoINY7gebx3jz3aZ0
+         7YkqT3ewCiyMiJSLN4m7sKToA0XWtCHNIuLUXjRoQ9x+I5hAM2PiDxlWb/+cocDsy0RH
+         xx8w==
+X-Gm-Message-State: APjAAAXawBW/+8+mShtA6q+NBSM8MbBcuyfjJIKiCURNabPQtNI3GDpM
+        f0hb4zwLS0EiIeGTBThBy0ITA0DQiPOsgsgs2PU=
+X-Google-Smtp-Source: APXvYqwirPrDDDsMco7I6kepiNjDwf87AqZbyPYaRT4gsoLYAygjHsKyh9v3e1zX7J05MHnONK4y+Dh0Ic32yh7e2fg=
+X-Received: by 2002:ac8:2dae:: with SMTP id p43mr45188807qta.304.1560254226737;
+ Tue, 11 Jun 2019 04:57:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org> <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+In-Reply-To: <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 11 Jun 2019 13:56:49 +0200
+Message-ID: <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Alex Elder <elder@linaro.org>, abhishek.esse@gmail.com,
+        Ben Chan <benchan@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
+        Dan Williams <dcbw@redhat.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        syadagir@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastien,
-On Tue 11 Jun 2019 at 11:03, S=C3=A9bastien Szymanski wrote:
-> On 6/11/19 11:40 AM, Rui Miguel Silva wrote:
->> Hi Sebastien,
->> On Tue 11 Jun 2019 at 09:16, S=C3=A9bastien Szymanski wrote:
->>> Hi Rui,
->>>
->>> thanks for the review!
->>>
->>> On 6/10/19 12:28 PM, Rui Miguel Silva wrote:
->>>> Hi Sebastien,
->>>> Thanks for the patch.
->>>>
->>>> On Thu 06 Jun 2019 at 16:38, S=C3=A9bastien Szymanski wrote:
->>>>> i.MX7 and i.MX6UL/L have the same CSI controller. So add i.MX6UL/L su=
-pport
->>>>> to imx7-media-csi driver.
->>>>>
->>>>> Signed-off-by: S=C3=A9bastien Szymanski <sebastien.szymanski@armadeus=
-.com>
->>>>> ---
->>>>>
->>>>> Changes for v2:
->>>>>  - rebase on top of linuxtv/master
->>>>>  - mention i.MX6UL/L in header and Kconfig help text
->>>>>  - rename csi_type to csi_soc_id
->>>>>
->>>>>  drivers/staging/media/imx/Kconfig          |  4 +-
->>>>>  drivers/staging/media/imx/imx7-media-csi.c | 62 ++++++++++++++++----=
---
->>>>>  2 files changed, 49 insertions(+), 17 deletions(-)
->>>>>
->>>>> diff --git a/drivers/staging/media/imx/Kconfig b/drivers/staging/medi=
-a/imx/Kconfig
->>>>> index ad3d7df6bb3c..8b6dc42c39e0 100644
->>>>> --- a/drivers/staging/media/imx/Kconfig
->>>>> +++ b/drivers/staging/media/imx/Kconfig
->>>>> @@ -22,11 +22,11 @@ config VIDEO_IMX_CSI
->>>>>  	  A video4linux camera sensor interface driver for i.MX5/6.
->>>>>
->>>>>  config VIDEO_IMX7_CSI
->>>>> -	tristate "i.MX7 Camera Sensor Interface driver"
->>>>> +	tristate "i.MX6UL/L / i.MX7 Camera Sensor Interface driver"
->>>>>  	depends on VIDEO_IMX_MEDIA && VIDEO_DEV && I2C
->>>>>  	default y
->>>>>  	help
->>>>>  	  Enable support for video4linux camera sensor interface driver for
->>>>> -	  i.MX7.
->>>>> +	  i.MX6UL/L or i.MX7.
->>>>>  endmenu
->>>>>  endif
->>>>> diff --git a/drivers/staging/media/imx/imx7-media-csi.c b/drivers/sta=
-ging/media/imx/imx7-media-csi.c
->>>>> index 9101566f3f67..902bdce594cf 100644
->>>>> --- a/drivers/staging/media/imx/imx7-media-csi.c
->>>>> +++ b/drivers/staging/media/imx/imx7-media-csi.c
->>>>> @@ -1,6 +1,6 @@
->>>>>  // SPDX-License-Identifier: GPL-2.0
->>>>>  /*
->>>>> - * V4L2 Capture CSI Subdev for Freescale i.MX7 SOC
->>>>> + * V4L2 Capture CSI Subdev for Freescale i.MX6UL/L / i.MX7 SOC
->>>>>   *
->>>>>   * Copyright (c) 2019 Linaro Ltd
->>>>>   *
->>>>> @@ -152,6 +152,11 @@
->>>>>  #define CSI_CSICR18		0x48
->>>>>  #define CSI_CSICR19		0x4c
->>>>>
->>>>> +enum csi_soc_id {
->>>>> +	IMX7,
->>>>> +	IMX6UL
->>>>> +};
->>>>> +
->>>>>  struct imx7_csi {
->>>>>  	struct device *dev;
->>>>>  	struct v4l2_subdev sd;
->>>>> @@ -191,6 +196,7 @@ struct imx7_csi {
->>>>>  	bool is_init;
->>>>>  	bool is_streaming;
->>>>>  	bool is_csi2;
->>>>> +	enum csi_soc_id soc_id;
->>>>>
->>>>>  	struct completion last_eof_completion;
->>>>>  };
->>>>> @@ -548,6 +554,14 @@ static int imx7_csi_pad_link_validate(struct v4l=
-2_subdev *sd,
->>>>>  	if (ret)
->>>>>  		return ret;
->>>>>
->>>>> +	if (csi->soc_id =3D=3D IMX6UL) {
->>>>> +		mutex_lock(&csi->lock);
->>>>> +		csi->is_csi2 =3D false;
->>>>> +		mutex_unlock(&csi->lock);
->>>>> +
->>>>> +		return 0;
->>>>> +	}
->>>>> +
->>>>>  	ret =3D imx7_csi_get_upstream_endpoint(csi, &upstream_ep, true);
->>>>>  	if (ret) {
->>>>>  		v4l2_err(&csi->sd, "failed to find upstream endpoint\n");
->>>>> @@ -757,6 +771,7 @@ static int imx7_csi_configure(struct imx7_csi *cs=
-i)
->>>>>  	struct v4l2_pix_format *out_pix =3D &vdev->fmt.fmt.pix;
->>>>>  	__u32 in_code =3D csi->format_mbus[IMX7_CSI_PAD_SINK].code;
->>>>>  	u32 cr1, cr18;
->>>>> +	int width =3D out_pix->width;
->>>>>
->>>>>  	if (out_pix->field =3D=3D V4L2_FIELD_INTERLACED) {
->>>>>  		imx7_csi_deinterlace_enable(csi, true);
->>>>> @@ -766,15 +781,27 @@ static int imx7_csi_configure(struct imx7_csi *=
-csi)
->>>>>  		imx7_csi_buf_stride_set(csi, 0);
->>>>>  	}
->>>>>
->>>>> -	imx7_csi_set_imagpara(csi, out_pix->width, out_pix->height);
->>>>> +	cr18 =3D imx7_csi_reg_read(csi, CSI_CSICR18);
->>>>> +
->>>>> +	if (!csi->is_csi2) {
->>>>> +		if (out_pix->pixelformat =3D=3D V4L2_PIX_FMT_UYVY ||
->>>>> +		    out_pix->pixelformat =3D=3D V4L2_PIX_FMT_YUYV)
->>>>> +			width *=3D 2;
->>>>> +
->>>>> +		imx7_csi_set_imagpara(csi, width, out_pix->height);
->>>>> +
->>>>> +		cr18 |=3D (BIT_BASEADDR_SWITCH_EN | BIT_BASEADDR_SWITCH_SEL |
->>>>> +			BIT_BASEADDR_CHG_ERR_EN);
->>>>> +		imx7_csi_reg_write(csi, cr18, CSI_CSICR18);
->>>>>
->>>>> -	if (!csi->is_csi2)
->>>>>  		return 0;
->>>>> +	}
->>>>> +
->>>>> +	imx7_csi_set_imagpara(csi, width, out_pix->height);
->>>>>
->>>>>  	cr1 =3D imx7_csi_reg_read(csi, CSI_CSICR1);
->>>>>  	cr1 &=3D ~BIT_GCLK_MODE;
->>>>>
->>>>> -	cr18 =3D imx7_csi_reg_read(csi, CSI_CSICR18);
->>>>>  	cr18 &=3D BIT_MIPI_DATA_FORMAT_MASK;
->>>>>  	cr18 |=3D BIT_DATA_FROM_MIPI;
->>>>>
->>>>> @@ -809,11 +836,9 @@ static void imx7_csi_enable(struct imx7_csi *csi)
->>>>>  {
->>>>>  	imx7_csi_sw_reset(csi);
->>>>>
->>>>> -	if (csi->is_csi2) {
->>>>> -		imx7_csi_dmareq_rff_enable(csi);
->>>>> -		imx7_csi_hw_enable_irq(csi);
->>>>> -		imx7_csi_hw_enable(csi);
->>>>> -	}
->>>>> +	imx7_csi_dmareq_rff_enable(csi);
->>>>> +	imx7_csi_hw_enable_irq(csi);
->>>>> +	imx7_csi_hw_enable(csi);
->>>>>  }
->>>>>
->>>>>  static void imx7_csi_disable(struct imx7_csi *csi)
->>>>> @@ -1166,19 +1191,32 @@ static int imx7_csi_parse_endpoint(struct dev=
-ice *dev,
->>>>>  	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
->>>>>  }
->>>>>
->>>>> +static const struct of_device_id imx7_csi_of_match[] =3D {
->>>>> +	{ .compatible =3D "fsl,imx7-csi", .data =3D (void *)IMX7 },
->>>>> +	{ .compatible =3D "fsl,imx6ul-csi", .data =3D (void *)IMX6UL },
->>>>
->>>> looking at this again I think we can do this is a different way.
->>>> Instead data being the soc_id, just set here if it is_csi2 or not.
->>>>
->>>> This would avoid to add a soc_id  to the struct that it really it
->>>> is used only to setup the is_csi2 var. I think this will make this
->>>> patch a lot simpler.
->>>
->>> Well, I have added this soc_id because imx7_csi_get_upstream_endpoint in
->>> imx7_csi_pad_link_validate fails:
->>>
->>> [  366.549768] csi: failed to find upstream endpoint
->>> [  366.556274] csi: pipeline start failed with -19
->>>
->>
->> I think this fails because you do not define any endpoint for the
->> csi in your board dts file. I see in patch 1/3 the setup of csi,
->> disabled, but not the endpoint connecting csi with the ov5640 in
->> your board file (see the connection between mipi imx7 and ov2680
->> in the imx7-warp.dts, or the ov5640.txt file).
->
-> I actually do, in the device tree of my board I have:
+On Tue, Jun 11, 2019 at 10:12 AM Johannes Berg
+<johannes@sipsolutions.net> wrote:
 
-Yeah, I thought you did this, because if not it did not work in
-the first place. I will take a look at why the fetch of the
-upstream endpoint is not working. it should :).
+> > As I've made clear before, my work on this has been focused on the IPA transport,
+> > and some of this higher-level LTE architecture is new to me.  But it
+> > seems pretty clear that an abstracted WWAN subsystem is a good plan,
+> > because these devices represent a superset of what a "normal" netdev
+> > implements.
+>
+> I'm not sure I'd actually call it a superset. By themselves, these
+> netdevs are actually completely useless to the network stack, AFAICT.
+> Therefore, the overlap with netdevs you can really use with the network
+> stack is pretty small?
 
-Thanks for the feedback. I will let you know.
+I think Alex meant the concept of having a type of netdev with a generic
+user space interface for wwan and similar to a wlan device, as I understood
+you had suggested as well, as opposed to a stacked device as in
+rmnet or those drivers it seems to be modeled after (vlan, ip tunnel, ...)/.
 
----
-Cheers,
-	Rui
+> > HOWEVER I disagree with your suggestion that the IPA code should
+> > not be committed until after that is all sorted out.  In part it's
+> > for selfish reasons, but I think there are legitimate reasons to
+> > commit IPA now *knowing* that it will need to be adapted to fit
+> > into the generic model that gets defined and developed.  Here
+> > are some reasons why.
+>
+> I can't really argue with those, though I would point out that the
+> converse also holds - if we commit to this now, then we will have to
+> actually keep the API offered by IPA/rmnet today, so we cannot actually
+> remove the netdev again, even if we do migrate it to offer support for a
+> WWAN framework in the future.
 
+Right. The interface to support rmnet might be simple enough to keep
+next to what becomes the generic interface, but it will always continue
+to be an annoyance.
+
+> > Second, the IPA code has been out for review recently, and has been
+> > the subject of some detailed discussion in the past few weeks.  Arnd
+> > especially has invested considerable time in review and discussion.
+> > Delaying things until after a better generic model is settled on
+> > (which I'm guessing might be on the order of months)
 >
-> &csi {
-> 	pinctrl-names =3D "default";
-> 	pinctrl-0 =3D <&pinctrl_csi>;
-> 	status =3D "okay";
 >
-> 	port {
-> 		csi_ep: endpoint {
-> 			remote-endpoint =3D <&ov5640_ep>;
-> 			bus-type =3D <5>; // V4L2_FWNODE_BUS_TYPE_PARALLEL
-> 		};
-> 	};
-> };
+> I dunno if it really has to be months. I think we can cobble something
+> together relatively quickly that addresses the needs of IPA more
+> specifically, and then extend later?
 >
-> and
+> But OTOH it may make sense to take a more paced approach and think
+> about the details more carefully than we have over in the other thread so far.
+
+I would hope that as soon as we can agree on a general approach, it
+would also be possible to merge a minimal implementation into the kernel
+along with IPA. Alex already mentioned that IPA in its current state does
+not actually support more than one data channel, so the necessary
+setup for it becomes even simpler.
+
+At the moment, the rmnet configuration in include/uapi/linux/if_link.h
+is almost trivial, with the three pieces of information needed being
+an IFLA_LINK to point to the real device (not needed if there is only
+one device per channel, instead of two), the IFLA_RMNET_MUX_ID
+setting the ID of the muxing channel (not needed if there is only
+one channel ?), a way to specify software bridging between channels
+(not useful if there is only one channel) and a few flags that I assume
+must match the remote end:
+
+#define RMNET_FLAGS_INGRESS_DEAGGREGATION         (1U << 0)
+#define RMNET_FLAGS_INGRESS_MAP_COMMANDS          (1U << 1)
+#define RMNET_FLAGS_INGRESS_MAP_CKSUMV4           (1U << 2)
+#define RMNET_FLAGS_EGRESS_MAP_CKSUMV4            (1U << 3)
+enum {
+        IFLA_RMNET_UNSPEC,
+        IFLA_RMNET_MUX_ID,
+        IFLA_RMNET_FLAGS,
+        __IFLA_RMNET_MAX,
+};
+#define IFLA_RMNET_MAX  (__IFLA_RMNET_MAX - 1)
+struct ifla_rmnet_flags {
+        __u32   flags;
+        __u32   mask;
+};
+
+> > Third, having the code upstream actually means the actual requirements
+> > for rmnet-over-IPA are clear and explicit.  This might not be a huge
+> > deal, but I think it's better to devise a generic WWAN scheme that
+> > can refer to actual code than to do so with assumptions about what
+> > will work with rmnet (and others).  As far as I know, the upstream
+> > rmnet has no other upstream back end; IPA will make it "real."
 >
-> &i2c2 {
-> ..
-> 	ov5640: camera@3c {
-> 		...
-> 		port {
->                         ov5640_ep: endpoint {
->                                 remote-endpoint =3D <&csi_ep>;
->                                 bus-width =3D <8>;
->                                 data-shift =3D <2>; /* lines 9:2 are used=
- */
->                                 hsync-active =3D <0>;
->                                 vsync-active =3D <1>;
->                                 pclk-sample =3D <0>;
->                         };
->                 };
-> 	};
-> };
+> Is that really true? I had previously been told that rmnet actually does
+> have use with a few existing drivers.
 >
-> Regards,
+>
+> If true though, then I think this would be the killer argument *in
+> favour* of *not* merging this - because that would mean we *don't* have
+> to actually keep the rmnet API around for all foreseeable future.
+
+I would agree with that. From the code I can see no other driver
+including the rmnet protocol header (see the discussion about moving
+the header to include/linux in order to merge ipa), and I don't see
+any other driver referencing ETH_P_MAP either. My understanding
+is that any driver used by rmnet would require both, but they are
+all out-of-tree at the moment.
+
+        Arnd
