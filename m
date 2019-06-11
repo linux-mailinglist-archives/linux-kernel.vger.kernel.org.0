@@ -2,191 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 845DA3D095
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CF63D099
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404629AbfFKPSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 11:18:45 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35596 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbfFKPSp (ORCPT
+        id S2404750AbfFKPTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 11:19:11 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:46130 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404658AbfFKPTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 11:18:45 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d126so7645994pfd.2;
-        Tue, 11 Jun 2019 08:18:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nWL90qXjUuK8w+rtJZaynRsIXMY+sEETNIVgozGcpYY=;
-        b=hvUUJzscbqBqMtPEpSRuAuTno/JL6vDZa4C3VZHRLut01wds25WxWaiXi0hBAIpkoW
-         jNcMfBqsrcp1KT/6fFkHImK4/emdBsRF+jFmEr6+pSE0WauLpXCwJpzIS5kG+A5VrGq/
-         W0eVkzBzeXBocol9+uzyekHrXBcENDbMtU/K5kDYtuza2TY+BCp1rEJ8s6XH4txjDOu4
-         yiUov03zBYKi5wZF5PIkOJqHM5skau1sl1KO2/H1KUszXuzVpHVsdnoGmCrkvTVpGqSD
-         vyn7IeTeti0gOcYDKUr3kCgRrVoSwZLFOR3mVzBfCkGxgMQVStXP26RRWD7KQ8Jizg2l
-         wCsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWL90qXjUuK8w+rtJZaynRsIXMY+sEETNIVgozGcpYY=;
-        b=BIY+Zi3KSfyGcWOvpfAlWP5tEeuSGMS59RORMBK4XIZKiAjm8yJApUGrIp9PxshBxL
-         avwveUi3Pod2/YURksznobG8IXJ4+HqE/6Pe1zDX20dJWtPcouflxWL5xOhI3t+xNhA0
-         KHxddx7ILU7VngS5suDe6A3mAsSrS0gGXp9gkjBiYivnDqmmTmxnhV1PbHUcYPYKTt92
-         2QeAEd6nJdeMArJOrdbyRj+QaqbvW6pQwGmqUqUpckfEDjAjJKTt4U89BFDnLBFz7b0L
-         1++565bxEZlRXPtcZ1ma4ytZ6uz2Ef/IQMP26MtrDYjBZVx0Yz9I1rYdLo7xsT1KATGt
-         vvLw==
-X-Gm-Message-State: APjAAAXT4/tfBxDgnNwv+GycPyQfw5CJlmPQbB1uM4pKIvtMC9supmjF
-        ZH+yuMZesMiaBv30arsMwyY=
-X-Google-Smtp-Source: APXvYqzqf8kgGYBTPaIZ1SBTEBOIIkVoUdOeKbbH7LVXNmxiy2I3a6qFL2H3o2/OGR3G+E5S/h5toA==
-X-Received: by 2002:a63:1657:: with SMTP id 23mr19568964pgw.98.1560266324025;
-        Tue, 11 Jun 2019 08:18:44 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id d6sm12660100pgv.4.2019.06.11.08.18.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 08:18:43 -0700 (PDT)
-Subject: Re: [RESEND PATCH v1 1/5] of/platform: Speed up
- of_find_device_by_node()
-To:     Rob Herring <robh+dt@kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Android Kernel Team <kernel-team@android.com>
-References: <20190604003218.241354-1-saravanak@google.com>
- <20190604003218.241354-2-saravanak@google.com>
- <CAL_JsqLWfNUJm23x+doJDwyuMLOvqWAnLKGQYcgVct-AyWb9LQ@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <570474f4-8749-50fd-5f72-36648ed44653@gmail.com>
-Date:   Tue, 11 Jun 2019 08:18:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLWfNUJm23x+doJDwyuMLOvqWAnLKGQYcgVct-AyWb9LQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 11 Jun 2019 11:19:03 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 1B5AEC1DC6;
+        Tue, 11 Jun 2019 15:18:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1560266339; bh=/OJYsOKYv50WQaAr6ltez4OEKGVWdpgD2R9RWLXhY0s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=I03fF/JSqbyzmgh3vBqDqvXqDG+E1lH1rutlIsrm4Kb04ywQ8XaH1CcWTqjbk8sO6
+         v8L3WxPbojMVL9NtXNtvov0w+dFwbdDPFN7zKLq0uugMZrJxPrzbtYd9DXWvEtM4KC
+         U1wfLTa+W2jR2swWQluLkUf6+gXL5RWsP/IpQS+p7F8OcRXUpodV1ixD9TwjEOSlBq
+         Ll+ez9irfLsbIu8IkkEJiwm2QaI6JFvMwv0cIvuVibb2c45V+RMYQ9K9lAky4eSQ8u
+         vwN2YrhTMQ3Nb11BDca4VasqRpa2lScq33TBeET0l2q7Tma8LTvL5ugPYC9sRVhPWT
+         RYw7R1dSKbSvg==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 2181FA0057;
+        Tue, 11 Jun 2019 15:18:58 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id E49E13FDB8;
+        Tue, 11 Jun 2019 17:18:57 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH net-next 0/3] net: stmmac: Convert to phylink
+Date:   Tue, 11 Jun 2019 17:18:44 +0200
+Message-Id: <cover.1560266175.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Saravana,
+[ Hope this diff looks better (generated with --minimal) ]
 
-On 6/10/19 10:36 AM, Rob Herring wrote:
-> Why are you resending this rather than replying to Frank's last
-> comments on the original?
+This converts stmmac to use phylink. Besides the code redution this will
+allow to gain more flexibility.
 
-Adding on a different aspect...  The independent replies from three different
-maintainers (Rob, Mark, myself) pointed out architectural issues with the
-patch series.  There were also some implementation issues brought out.
-(Although I refrained from bringing up most of my implementation issues
-as they are not relevant until architecture issues are resolved.)
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
 
-When three maintainers say the architecture has issues, you should step
-back and think hard.  (Not to say maintainers are always correct...)
+Jose Abreu (3):
+  net: stmmac: Prepare to convert to phylink
+  net: stmmac: Start adding phylink support
+  net: stmmac: Convert to phylink and remove phylib logic
 
-My suggestion at this point is that you need to go back to the drawing board
-and re-think how to address the use case.
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |   7 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  81 +---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 391 ++++++++----------
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |  21 +-
+ 5 files changed, 190 insertions(+), 313 deletions(-)
 
--Frank
-
-> 
-> On Mon, Jun 3, 2019 at 6:32 PM Saravana Kannan <saravanak@google.com> wrote:
->>
->> Add a pointer from device tree node to the device created from it.
->> This allows us to find the device corresponding to a device tree node
->> without having to loop through all the platform devices.
->>
->> However, fallback to looping through the platform devices to handle
->> any devices that might set their own of_node.
->>
->> Signed-off-by: Saravana Kannan <saravanak@google.com>
->> ---
->>  drivers/of/platform.c | 20 +++++++++++++++++++-
->>  include/linux/of.h    |  3 +++
->>  2 files changed, 22 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
->> index 04ad312fd85b..1115a8d80a33 100644
->> --- a/drivers/of/platform.c
->> +++ b/drivers/of/platform.c
->> @@ -42,6 +42,8 @@ static int of_dev_node_match(struct device *dev, void *data)
->>         return dev->of_node == data;
->>  }
->>
->> +static DEFINE_SPINLOCK(of_dev_lock);
->> +
->>  /**
->>   * of_find_device_by_node - Find the platform_device associated with a node
->>   * @np: Pointer to device tree node
->> @@ -55,7 +57,18 @@ struct platform_device *of_find_device_by_node(struct device_node *np)
->>  {
->>         struct device *dev;
->>
->> -       dev = bus_find_device(&platform_bus_type, NULL, np, of_dev_node_match);
->> +       /*
->> +        * Spinlock needed to make sure np->dev doesn't get freed between NULL
->> +        * check inside and kref count increment inside get_device(). This is
->> +        * achieved by grabbing the spinlock before setting np->dev = NULL in
->> +        * of_platform_device_destroy().
->> +        */
->> +       spin_lock(&of_dev_lock);
->> +       dev = get_device(np->dev);
->> +       spin_unlock(&of_dev_lock);
->> +       if (!dev)
->> +               dev = bus_find_device(&platform_bus_type, NULL, np,
->> +                                     of_dev_node_match);
->>         return dev ? to_platform_device(dev) : NULL;
->>  }
->>  EXPORT_SYMBOL(of_find_device_by_node);
->> @@ -196,6 +209,7 @@ static struct platform_device *of_platform_device_create_pdata(
->>                 platform_device_put(dev);
->>                 goto err_clear_flag;
->>         }
->> +       np->dev = &dev->dev;
->>
->>         return dev;
->>
->> @@ -556,6 +570,10 @@ int of_platform_device_destroy(struct device *dev, void *data)
->>         if (of_node_check_flag(dev->of_node, OF_POPULATED_BUS))
->>                 device_for_each_child(dev, NULL, of_platform_device_destroy);
->>
->> +       /* Spinlock is needed for of_find_device_by_node() to work */
->> +       spin_lock(&of_dev_lock);
->> +       dev->of_node->dev = NULL;
->> +       spin_unlock(&of_dev_lock);
->>         of_node_clear_flag(dev->of_node, OF_POPULATED);
->>         of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
->>
->> diff --git a/include/linux/of.h b/include/linux/of.h
->> index 0cf857012f11..f2b4912cbca1 100644
->> --- a/include/linux/of.h
->> +++ b/include/linux/of.h
->> @@ -48,6 +48,8 @@ struct property {
->>  struct of_irq_controller;
->>  #endif
->>
->> +struct device;
->> +
->>  struct device_node {
->>         const char *name;
->>         phandle phandle;
->> @@ -68,6 +70,7 @@ struct device_node {
->>         unsigned int unique_id;
->>         struct of_irq_controller *irq_trans;
->>  #endif
->> +       struct device *dev;             /* Device created from this node */
->>  };
->>
->>  #define MAX_PHANDLE_ARGS 16
->> --
->> 2.22.0.rc1.257.g3120a18244-goog
->>
-> .
-> 
+-- 
+2.21.0
 
