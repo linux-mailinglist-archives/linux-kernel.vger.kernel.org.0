@@ -2,90 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8893CCC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE493CCC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390589AbfFKNO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 09:14:59 -0400
-Received: from foss.arm.com ([217.140.110.172]:32966 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388792AbfFKNO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 09:14:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C901B344;
-        Tue, 11 Jun 2019 06:14:57 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CB4F3F557;
-        Tue, 11 Jun 2019 06:14:56 -0700 (PDT)
-Subject: Re: [PATCH HACK RFC] cpu: Prevent late-arriving interrupts from
- disrupting offline
-To:     paulmck@linux.ibm.com
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
-        mingo@kernel.org, jpoimboe@redhat.com, mojha@codeaurora.org,
-        linux-kernel@vger.kernel.org
-References: <20190602011253.GA6167@linux.ibm.com>
- <20190603083848.GB3436@hirez.programming.kicks-ass.net>
- <20190603114455.GA16119@lakrids.cambridge.arm.com>
- <ea4887fb-cc77-59d4-3ba7-a59f5237ca40@arm.com>
- <20190604074549.GP28207@linux.ibm.com>
- <6eb5d59f-37d0-0aab-1fc0-fcf48cc4164f@arm.com>
- <20190608164158.GK28207@linux.ibm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <16a424d1-0ab7-7e81-5c4f-93da23519b1d@arm.com>
-Date:   Tue, 11 Jun 2019 15:14:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190608164158.GK28207@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S2390638AbfFKNQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:16:10 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45126 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388792AbfFKNQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 09:16:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id s11so7405481pfm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 06:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=erpJ/1HwU0IvLlhAmNIzQUp5KsGSfUKo8w8/Al+yjSk=;
+        b=Ec1UVKtKvBLJ0T9sJsPyd5alNTe1bKz12CZx8Gof7OI7rvWXJWj5zFkM3ELGh3YnZU
+         5CAuA549pdnNdT0Zobb0Gww6Kz0jhk4yciYsBVgsmcPC/OSIv8tzo8Vyofj4oSbAL35X
+         MmRkQg0R8YNiAUkhapYCNcke40MDw86Dw9XR27m4p2efnJORWFKHm66XLLU32TtBJVzD
+         sEMcq/V8QoN391vC86/fNyMRASsmpuUgmGIU01R1gH+V/46mAmddSlaW6mxm3UVdD/9h
+         5QVkOz7UHrWtQaHaAHPDn0P3YWAJQ7E7fbh8BIoH+nn9MsOIMu/DmI6MFYA09I23qTK2
+         bIVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=erpJ/1HwU0IvLlhAmNIzQUp5KsGSfUKo8w8/Al+yjSk=;
+        b=EVlwEgxusI440jhCEJMvHqHJB9OmXua1KU8tWfLsNUZ4358CXGV5O64qIbl2cvoNRT
+         eTONdZNgml221tqDuvxpCW6TP9fNbQ/ir1OS41DXkSNGpf5t0nzrgkg+EyvPiFnRJ4Ka
+         hkSW2z0W7bgUf/mibjMyRfKY4Fwl30KCH30G/gZ0KvDxwp/o4/bGOHUNPxneOFwLdE5j
+         GvY1qEqNYorJEBpeW6M2D6MmcFCUaxyUbKLjw5FKDvjOlG237u6knp2PodBlwEgeIDG7
+         r5GSbA41aFIyDR0ppjtpGXczsWQOuPZkx3u9bsPVxZXVe890NooHJceulU0vVGaMXyoY
+         a13w==
+X-Gm-Message-State: APjAAAUIUz3V0KECodbi6J7aoglCXCFKVWHy1c5S0GagvPOGruwHAWVm
+        pAyG1e0vb/wQeHuF/0dgdGyZ7tHJ9T0=
+X-Google-Smtp-Source: APXvYqyPtIUBJUiGs5CxZdOdOAe9jN/EmeYnquJXnTk6DouJ59ZQuBEv+ih+NRuThJNkl6RYB44pIg==
+X-Received: by 2002:aa7:8f24:: with SMTP id y4mr37343494pfr.36.1560258969435;
+        Tue, 11 Jun 2019 06:16:09 -0700 (PDT)
+Received: from tom-pc.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id q125sm21964880pfq.62.2019.06.11.06.16.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 11 Jun 2019 06:16:08 -0700 (PDT)
+From:   Dianzhang Chen <dianzhangchen0@gmail.com>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dianzhang Chen <dianzhangchen0@gmail.com>
+Subject: [PATCH] x86: tls: fix possible spectre-v1 in do_get_thread_area()
+Date:   Tue, 11 Jun 2019 21:15:58 +0800
+Message-Id: <1560258958-19291-1-git-send-email-dianzhangchen0@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/8/19 6:41 PM, Paul E. McKenney wrote:
-> On Tue, Jun 04, 2019 at 03:29:32PM +0200, Dietmar Eggemann wrote:
->> On 6/4/19 9:45 AM, Paul E. McKenney wrote:
->>> On Mon, Jun 03, 2019 at 03:39:18PM +0200, Dietmar Eggemann wrote:
->>>> On 6/3/19 1:44 PM, Mark Rutland wrote:
->>>>> On Mon, Jun 03, 2019 at 10:38:48AM +0200, Peter Zijlstra wrote:
->>>>>> On Sat, Jun 01, 2019 at 06:12:53PM -0700, Paul E. McKenney wrote:
->>>>>>> Scheduling-clock interrupts can arrive late in the CPU-offline process,
+The idx in do_get_thread_area() is controlled by userspace
+via syscall: ptrace(defined in kernel/ptrace.c), hence
+leading to a potential exploitation of the Spectre variant 1 vulnerability.
+The idx can be controlled from:
+	ptrace -> arch_ptrace -> do_get_thread_area.
 
-[...]
+Fix this by sanitizing idx before using it to index p->thread.tls_array.
 
->>> And it looks like the reason I dropped it was that I didn't get any
->>> response from the maintainer.  I sent a message to this effect to
->>> linux-arm-kernel@lists.infradead.org and linux@arm.linux.org.uk on May
->>> 21, 2015.
->>>
->>> So here it is again.  ;-)
->>>
->>> I have queued this locally.  Left to myself, I add the two of you on its
->>> Cc: list and run it through my normal process.  But given the history,
->>> I would still want either an ack from the maintainer or, better, for
->>> the maintainer to take the patch.
->>>
->>> Or is there a better way for us to proceed on this?
->>
->> You could send this patch also to
->> linux-arm-kernel@lists.infradead.org and cc rmk to get his opinion
->> on the patch.
-> 
-> OK, please let me know how the testing goes.  My thought is to send the
-> patch as you suggest with your Tested-by.
+Signed-off-by: Dianzhang Chen <dianzhangchen0@gmail.com>
+---
+ arch/x86/kernel/tls.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Tested your patch on top of v5.2-rc4* on Arm TC2 (32bit) and CPU hotplug 
-stress test. W/o your patch, the test fails within seconds since CPUs 
-are not coming up again. W/ your patch, the test runs for hours just fine.
+diff --git a/arch/x86/kernel/tls.c b/arch/x86/kernel/tls.c
+index a5b802a..4cd338c 100644
+--- a/arch/x86/kernel/tls.c
++++ b/arch/x86/kernel/tls.c
+@@ -5,6 +5,7 @@
+ #include <linux/user.h>
+ #include <linux/regset.h>
+ #include <linux/syscalls.h>
++#include <linux/nospec.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/desc.h>
+@@ -220,6 +221,7 @@ int do_get_thread_area(struct task_struct *p, int idx,
+ 		       struct user_desc __user *u_info)
+ {
+ 	struct user_desc info;
++	int index = idx - GDT_ENTRY_TLS_MIN;
+ 
+ 	if (idx == -1 && get_user(idx, &u_info->entry_number))
+ 		return -EFAULT;
+@@ -227,8 +229,10 @@ int do_get_thread_area(struct task_struct *p, int idx,
+ 	if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
+ 		return -EINVAL;
+ 
++	index = array_index_nospec(index,
++				GDT_ENTRY_TLS_MAX - GDT_ENTRY_TLS_MIN + 1);
+ 	fill_user_desc(&info, idx,
+-		       &p->thread.tls_array[idx - GDT_ENTRY_TLS_MIN]);
++		       &p->thread.tls_array[index]);
+ 
+ 	if (copy_to_user(u_info, &info, sizeof(info)))
+ 		return -EFAULT;
+-- 
+2.7.4
 
-You can add my:
-
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-
-* just for the record: one additional unrelated patch (to disable the 
-NOR flash) is necessary on Arm TC2: 
-https://patchwork.kernel.org/patch/10968391 .
