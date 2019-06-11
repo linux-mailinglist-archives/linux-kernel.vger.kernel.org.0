@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7C03C4E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 373D33C4EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 09:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404359AbfFKHUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 03:20:41 -0400
-Received: from shell.v3.sk ([90.176.6.54]:60861 "EHLO shell.v3.sk"
+        id S2404383AbfFKHUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 03:20:50 -0400
+Received: from shell.v3.sk ([90.176.6.54]:60887 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404319AbfFKHUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:20:40 -0400
+        id S2404370AbfFKHUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:20:47 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CA435104F75;
-        Tue, 11 Jun 2019 09:20:38 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 08580104F71;
+        Tue, 11 Jun 2019 09:20:44 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 5c8MQUV4Q-ou; Tue, 11 Jun 2019 09:20:23 +0200 (CEST)
+        with ESMTP id h-TpdfOBHDGP; Tue, 11 Jun 2019 09:20:27 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CC91B104F6E;
-        Tue, 11 Jun 2019 09:20:22 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 28B86104F7C;
+        Tue, 11 Jun 2019 09:20:27 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SOVTM4UIXexu; Tue, 11 Jun 2019 09:20:18 +0200 (CEST)
+        with ESMTP id L3AopJJZki8D; Tue, 11 Jun 2019 09:20:24 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 10294104F71;
-        Tue, 11 Jun 2019 09:20:18 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2C003104F7E;
+        Tue, 11 Jun 2019 09:20:23 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Cc:     John Crispin <john@phrozen.org>, linux-mips@vger.kernel.org,
+To:     Eric Piel <eric.piel@tremplin-utc.net>
+Cc:     Daniel Mack <daniel@caiaq.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] MIPS: ralink: Switch pinmux.h to SPDX header
-Date:   Tue, 11 Jun 2019 09:20:14 +0200
-Message-Id: <20190611072014.2978530-1-lkundrak@v3.sk>
+Subject: [PATCH] misc: lis3lv02d: Switch to SPDX header
+Date:   Tue, 11 Jun 2019 09:20:18 +0200
+Message-Id: <20190611072018.2978605-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,24 +49,27 @@ to SPDX instead of fixing the wording.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/mips/include/asm/mach-ralink/pinmux.h | 5 +----
+ drivers/misc/lis3lv02d/lis3lv02d_spi.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/mips/include/asm/mach-ralink/pinmux.h b/arch/mips/inclu=
-de/asm/mach-ralink/pinmux.h
-index ba8ac331af0c..33647f796140 100644
---- a/arch/mips/include/asm/mach-ralink/pinmux.h
-+++ b/arch/mips/include/asm/mach-ralink/pinmux.h
-@@ -1,8 +1,5 @@
+diff --git a/drivers/misc/lis3lv02d/lis3lv02d_spi.c b/drivers/misc/lis3lv=
+02d/lis3lv02d_spi.c
+index e575475123c8..d7f17c59f3e7 100644
+--- a/drivers/misc/lis3lv02d/lis3lv02d_spi.c
++++ b/drivers/misc/lis3lv02d/lis3lv02d_spi.c
+@@ -1,11 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
+  * lis3lv02d_spi - SPI glue layer for lis3lv02d
+  *
+  * Copyright (c) 2009 Daniel Mack <daniel@caiaq.de>
+- *
 - *  This program is free software; you can redistribute it and/or modify
 - *  it under the terms of the GNU General Public License version 2 as
 - *  publishhed by the Free Software Foundation.
-- *
-  *  Copyright (C) 2012 John Crispin <john@phrozen.org>
   */
 =20
+ #include <linux/module.h>
 --=20
 2.21.0
 
