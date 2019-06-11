@@ -2,92 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BED713D692
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C9783D69B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404429AbfFKTTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:19:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39090 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404789AbfFKTTy (ORCPT
+        id S2407478AbfFKTVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:21:09 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:37574 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404789AbfFKTVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:19:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j2so8040531pfe.6;
-        Tue, 11 Jun 2019 12:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=J/xZLDiLprAi8z9dQ/9qJB5+wewmwploxA4je19QCGk=;
-        b=n0ptaN8NAlVFDirqrMfLJYeUXgSiyaLf29Dh9YaFfz7g7LBipHlM70KT57ZKMQPpGB
-         /AVpxACi089JSUlKgJqwp6/J4lJlVFgWtDYGHTBPkWFiHGA0n+qUrDygFp7eWRrkEims
-         adE34NmdTIEPBTiNBxrRA/iH5juB2l5ulbpISEm6mZdk1Hzqj4bA2w0yG8fjNnSS9PzN
-         y9nNEaQsLDwN4Uol7pGro41rMQKFhJxj9D//pVJCr/6OOUXLm7atYkw2K4KRnDo5ZTdf
-         M4FCoHxYPXIUmL4tSih6hJDaO2mL1GnygigO2ZZkU99bN2PfAiETtQPdnn7e+FU+u0Ka
-         MLdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=J/xZLDiLprAi8z9dQ/9qJB5+wewmwploxA4je19QCGk=;
-        b=cS3VDnQeukjMugEN3RkArfcihwRwyStJbP/zsGPmFXnHHO+l6oOVDOGWHjxqi7OABa
-         A7c+0vqWEvkF8lFrmyJHCMI9nDIXRoFlilv9UDBgjJInkJwBiNVzFtQnD7PIkArjDTZA
-         NFSdJ0fQKTZm6t+PInuk7ZwCxumcIjeDh36gDwruWF4r3aPho2udHXNeskh4x8U3y3AE
-         jBuoxGdGdxapqh11iC694sTkJwwdvWeDAVa4RbKgBjZ6nSbATjsh1/rVljPgk7LRDvUN
-         aemjNuIwpeIhuqJZJnEx9WKiRK8QpnP+uCqam4Xq/oHHGUF1+/yM1vHleJwTZCO2ZKwC
-         o0HA==
-X-Gm-Message-State: APjAAAXNcl3m1E42ghW3RMR3oyyU9+ae1zSeG4deCOUGfN+XqI72x0Jz
-        73/q4/ifrtdHQQOqfQq7xVQ=
-X-Google-Smtp-Source: APXvYqzmRn16DG7bbYc+884o1bq/aK/65WwHVB908fINU8aVL18oOFnbAE7r4ioRxEXGZBjLYZg55Q==
-X-Received: by 2002:a17:90a:9bca:: with SMTP id b10mr27672945pjw.90.1560280793850;
-        Tue, 11 Jun 2019 12:19:53 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 19sm3112635pjj.8.2019.06.11.12.19.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 12:19:53 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        marc.w.gonzalez@free.fr, jcrouse@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v3 0/2] MSM8998 GPUCC Support
-Date:   Tue, 11 Jun 2019 12:19:49 -0700
-Message-Id: <20190611191949.14906-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 11 Jun 2019 15:21:08 -0400
+Received: from mailhost.synopsys.com (unknown [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 320AFC014E;
+        Tue, 11 Jun 2019 19:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1560280868; bh=zJxgoewnRS3428npvD4zrvQ1ZwW2ket2Gxy5yCj5CDY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AtWq7JBO/dTeSnt7uLt6+IbErp++i5RJeKjnmz9D6o9nNZqwrT9LJMe6HxBB9MWw7
+         nHXSYY716giBXIKCfHNvVOfZ28YpCHNpd+TcY95dUn+uee5oO5h3CerYehQ9Ws9PEM
+         vm/RiVgtA1xblQCZp/CCEi7g9f3NNyqiiSnG09+sjWZEOagELY/Q+sw6N/bJ/Lfx8W
+         uPHV8GErKVZlL2ctI4BI/p8kVVmR8vDk06FJkdnRrNZZ9qWFL96LsBUAAPgWFwDsKw
+         BwQ1PbYFVadppsuRa+tllYgoy/M4A9McxAUkQYRaXNN9WjRp/Jlo2ARuLVHgvuX4I8
+         /0/0umjb/HPTQ==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 245F0A022F;
+        Tue, 11 Jun 2019 19:21:03 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id D16873F88F;
+        Tue, 11 Jun 2019 21:21:03 +0200 (CEST)
+From:   Luis Oliveira <Luis.Oliveira@synopsys.com>
+To:     mchehab@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        robh@kernel.org, nicolas.ferre@microchip.com,
+        paulmck@linux.ibm.com, mark.rutland@arm.com, kishon@ti.com,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Joao.Pinto@synopsys.com, Luis Oliveira <Luis.Oliveira@synopsys.com>
+Subject: [v4 0/6] platform: dwc: Adding DesignWare MIPI CSI-2 Host and D-PHY
+Date:   Tue, 11 Jun 2019 21:20:49 +0200
+Message-Id: <1560280855-18085-1-git-send-email-luis.oliveira@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Adreno GPU on MSM8998 has its own clock controller, which is a
-dependency for bringing up the GPU.  This series gets the gpucc all in
-place as another step on the road to getting the GPU enabled.
+This adds support for Synopsys MIPI CSI-2 Host and MIPI D-PHY.
+The patch series include support for initialization/configuration of the
+DW MIPI CSI-2 controller and the DW MIPI D-PHY and both include a reference
+platform driver and the option to use platform data. The optional sysfs
+interface is used to re-configure the controller and the phy for
+prototyping purposes.
 
-v3:
--drop accepted DT patch
--correct "avoid" typo
--expand comment on why XO is required
+This series also documents the dt-bindings needed for the platform drivers.
+This will enable future SoCs to use this standard approach to Synopsys
+DesignWare CSI-2 and D-PHY and hopefully create a more clean environment.
 
-v2:
--drop dead code
+This series are following an old series submitted on v4.19.rc1 and are
+result of all the feedback received, please check the changelog per patch.
 
-Jeffrey Hugo (3):
-  dt-bindings: clock: Document gpucc for msm8998
-  clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
-  arm64: dts: qcom: msm8998: Add gpucc node
+This was applied in: https://git.linuxtv.org/media_tree.git
 
- .../devicetree/bindings/clock/qcom,gpucc.txt  |   4 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi         |  15 +
- drivers/clk/qcom/Kconfig                      |   8 +
- drivers/clk/qcom/Makefile                     |   1 +
- drivers/clk/qcom/gpucc-msm8998.c              | 364 ++++++++++++++++++
- .../dt-bindings/clock/qcom,gpucc-msm8998.h    |  29 ++
- 6 files changed, 420 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/qcom/gpucc-msm8998.c
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-msm8998.h
+Luis Oliveira (6):
+  dt-bindings: media: Document bindings for DW MIPI CSI-2 Host
+  media: platform: dwc: Add MIPI CSI-2 controller driver
+  media: platform: dwc: Add MIPI CSI-2 platform data
+  dt-bindings: phy: Document the Synopsys MIPI DPHY Rx bindings
+  media: platform: dwc: Add DW MIPI DPHY Rx driver
+  media: platform: dwc: Add platform data support to D-Phy
+
+ .../devicetree/bindings/media/snps,dw-csi.txt      |  41 ++
+ .../devicetree/bindings/phy/snps,dw-dphy-rx.txt    |  29 +
+ MAINTAINERS                                        |  11 +
+ drivers/media/platform/Kconfig                     |   1 +
+ drivers/media/platform/Makefile                    |   2 +
+ drivers/media/platform/dwc/Kconfig                 |  41 ++
+ drivers/media/platform/dwc/Makefile                |  15 +
+ drivers/media/platform/dwc/dw-csi-plat.c           | 516 +++++++++++++++++
+ drivers/media/platform/dwc/dw-csi-plat.h           |  97 ++++
+ drivers/media/platform/dwc/dw-csi-sysfs.c          | 624 +++++++++++++++++++++
+ drivers/media/platform/dwc/dw-dphy-plat.c          | 224 ++++++++
+ drivers/media/platform/dwc/dw-dphy-rx.c            | 611 ++++++++++++++++++++
+ drivers/media/platform/dwc/dw-dphy-rx.h            | 212 +++++++
+ drivers/media/platform/dwc/dw-dphy-sysfs.c         | 232 ++++++++
+ drivers/media/platform/dwc/dw-mipi-csi.c           | 569 +++++++++++++++++++
+ drivers/media/platform/dwc/dw-mipi-csi.h           | 287 ++++++++++
+ include/media/dwc/dw-csi-data.h                    |  26 +
+ include/media/dwc/dw-dphy-data.h                   |  32 ++
+ include/media/dwc/dw-mipi-csi-pltfrm.h             | 104 ++++
+ 19 files changed, 3674 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/snps,dw-csi.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.txt
+ create mode 100644 drivers/media/platform/dwc/Kconfig
+ create mode 100644 drivers/media/platform/dwc/Makefile
+ create mode 100644 drivers/media/platform/dwc/dw-csi-plat.c
+ create mode 100644 drivers/media/platform/dwc/dw-csi-plat.h
+ create mode 100644 drivers/media/platform/dwc/dw-csi-sysfs.c
+ create mode 100644 drivers/media/platform/dwc/dw-dphy-plat.c
+ create mode 100644 drivers/media/platform/dwc/dw-dphy-rx.c
+ create mode 100644 drivers/media/platform/dwc/dw-dphy-rx.h
+ create mode 100644 drivers/media/platform/dwc/dw-dphy-sysfs.c
+ create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.c
+ create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.h
+ create mode 100644 include/media/dwc/dw-csi-data.h
+ create mode 100644 include/media/dwc/dw-dphy-data.h
+ create mode 100644 include/media/dwc/dw-mipi-csi-pltfrm.h
 
 -- 
-2.17.1
+2.7.4
 
