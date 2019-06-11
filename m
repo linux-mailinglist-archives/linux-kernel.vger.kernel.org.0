@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1FEF3D659
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 692123D65A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407315AbfFKTEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:04:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
+        id S2407328AbfFKTEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 15:04:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405902AbfFKTEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:04:36 -0400
+        id S2407312AbfFKTEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 15:04:39 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5140221850;
-        Tue, 11 Jun 2019 19:04:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BE1521872;
+        Tue, 11 Jun 2019 19:04:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560279876;
-        bh=9BttnztzZyPH3Ajfxw9EloCQj+0r0Zju1wjp86agW4k=;
+        s=default; t=1560279879;
+        bh=kKzgPGyp1rFRUoMeCAbqGywocjRtjiVE1tkm510zKkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=egOFc5AlwDqPOmNs+l3Z+WAfiD7Nf0g4IwLcvVCIk7yIix3wH/qJ6ldGLKJez6YOo
-         eJmZhI+dxk4DMwFz82JZc+qcP1WcTP5N5aBIExGU3P++8MmVaLQDIgjbd89ylQPV25
-         Re3bfzK79eBAThg3fPE8JnQVZyVUWLW+v5cJyjeQ=
+        b=Jc6EyRQ0aCx+K96v6C5S6lAnLRdisZNqrZwTnVzVh0qlljoLetRseYHt/joUk74rB
+         jT698RKvsg0wI7VaLQmtTULx/5C1M18copSjfdD/Wx6bMtfcf4B0ShAjXpI7/WkmJq
+         U/BeZ4aqTB8DhMQKnLq6m1q/kjPoSeHvOOUz25EY=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -33,9 +33,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Jin Yao <yao.jin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 75/85] perf time-utils: Factor out set_percent_time()
-Date:   Tue, 11 Jun 2019 15:59:01 -0300
-Message-Id: <20190611185911.11645-76-acme@kernel.org>
+Subject: [PATCH 76/85] perf time-utils: Prevent percentage time range overlap
+Date:   Tue, 11 Jun 2019 15:59:02 -0300
+Message-Id: <20190611185911.11645-77-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190611185911.11645-1-acme@kernel.org>
 References: <20190611185911.11645-1-acme@kernel.org>
@@ -48,93 +48,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Factor out set_percent_time() so it can be reused.
+Prevent percentage time range overlap. This is only a 1 nanosecond
+change but makes the results more logical e.g. a sample cannot be in
+both the first 10% and the second 20%.
+
+Note, there is a later patch that adds a test for time-utils.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20190604130017.31207-14-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20190604130017.31207-15-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/time-utils.c | 39 +++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+ tools/perf/util/time-utils.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/tools/perf/util/time-utils.c b/tools/perf/util/time-utils.c
-index 1d67cf1216c7..69441faab3d0 100644
+index 69441faab3d0..3e87c21c293c 100644
 --- a/tools/perf/util/time-utils.c
 +++ b/tools/perf/util/time-utils.c
-@@ -135,12 +135,27 @@ static int parse_percent(double *pcnt, char *str)
+@@ -148,6 +148,9 @@ static int set_percent_time(struct perf_time_interval *ptime, double start_pcnt,
+ 	ptime->start = start + round(start_pcnt * total);
+ 	ptime->end = start + round(end_pcnt * total);
+ 
++	if (ptime->end > ptime->start && ptime->end != end)
++		ptime->end -= 1;
++
  	return 0;
  }
  
-+static int set_percent_time(struct perf_time_interval *ptime, double start_pcnt,
-+			    double end_pcnt, u64 start, u64 end)
-+{
-+	u64 total = end - start;
-+
-+	if (start_pcnt < 0.0 || start_pcnt > 1.0 ||
-+	    end_pcnt < 0.0 || end_pcnt > 1.0) {
-+		return -1;
-+	}
-+
-+	ptime->start = start + round(start_pcnt * total);
-+	ptime->end = start + round(end_pcnt * total);
-+
-+	return 0;
-+}
-+
- static int percent_slash_split(char *str, struct perf_time_interval *ptime,
- 			       u64 start, u64 end)
- {
- 	char *p, *end_str;
- 	double pcnt, start_pcnt, end_pcnt;
--	u64 total = end - start;
- 	int i;
- 
- 	/*
-@@ -168,15 +183,7 @@ static int percent_slash_split(char *str, struct perf_time_interval *ptime,
- 	start_pcnt = pcnt * (i - 1);
- 	end_pcnt = pcnt * i;
- 
--	if (start_pcnt < 0.0 || start_pcnt > 1.0 ||
--	    end_pcnt < 0.0 || end_pcnt > 1.0) {
--		return -1;
--	}
--
--	ptime->start = start + round(start_pcnt * total);
--	ptime->end = start + round(end_pcnt * total);
--
--	return 0;
-+	return set_percent_time(ptime, start_pcnt, end_pcnt, start, end);
- }
- 
- static int percent_dash_split(char *str, struct perf_time_interval *ptime,
-@@ -184,7 +191,6 @@ static int percent_dash_split(char *str, struct perf_time_interval *ptime,
- {
- 	char *start_str = NULL, *end_str;
- 	double start_pcnt, end_pcnt;
--	u64 total = end - start;
- 	int ret;
- 
- 	/*
-@@ -203,16 +209,7 @@ static int percent_dash_split(char *str, struct perf_time_interval *ptime,
- 
- 	free(start_str);
- 
--	if (start_pcnt < 0.0 || start_pcnt > 1.0 ||
--	    end_pcnt < 0.0 || end_pcnt > 1.0 ||
--	    start_pcnt > end_pcnt) {
--		return -1;
--	}
--
--	ptime->start = start + round(start_pcnt * total);
--	ptime->end = start + round(end_pcnt * total);
--
--	return 0;
-+	return set_percent_time(ptime, start_pcnt, end_pcnt, start, end);
- }
- 
- typedef int (*time_pecent_split)(char *, struct perf_time_interval *,
 -- 
 2.20.1
 
