@@ -2,94 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 584303CE2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B023CE45
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:15:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389096AbfFKOMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:12:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35318 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387447AbfFKOMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:12:23 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C9FA4821CB;
-        Tue, 11 Jun 2019 14:12:22 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 23AC6600CD;
-        Tue, 11 Jun 2019 14:12:21 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 10:12:19 -0400
-From:   Phil Auld <pauld@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     bsegall@google.com, linux-kernel@vger.kernel.org,
-        Xunlei Pang <xlpang@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v2] sched/fair: don't push cfs_bandwith slack timers
- forward
-Message-ID: <20190611141219.GD15412@pauld.bos.csb>
-References: <xm26ef47yeyh.fsf@bsegall-linux.svl.corp.google.com>
- <eafe846f-d83c-b2f3-4458-45e3ae6e5823@linux.alibaba.com>
- <xm26a7euy6iq.fsf_-_@bsegall-linux.svl.corp.google.com>
- <20190611135325.GY3436@hirez.programming.kicks-ass.net>
+        id S2390154AbfFKOOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:14:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18551 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728264AbfFKOOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:14:15 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 50806A18E011A450749A;
+        Tue, 11 Jun 2019 22:14:12 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 11 Jun 2019 22:14:06 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>, <arnd@arndb.de>
+CC:     <linux-pci@vger.kernel.org>, <rjw@rjwysocki.net>,
+        <linux-arm-kernel@lists.infradead.org>, <will.deacon@arm.com>,
+        <wangkefeng.wang@huawei.com>, <linuxarm@huawei.com>,
+        <andriy.shevchenko@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, <catalin.marinas@arm.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH v4 0/3] Fix ARM64 crash for accessing unmapped IO port regions
+Date:   Tue, 11 Jun 2019 22:12:51 +0800
+Message-ID: <1560262374-67875-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611135325.GY3436@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 11 Jun 2019 14:12:23 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 03:53:25PM +0200 Peter Zijlstra wrote:
-> On Thu, Jun 06, 2019 at 10:21:01AM -0700, bsegall@google.com wrote:
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index efa686eeff26..60219acda94b 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -356,6 +356,7 @@ struct cfs_bandwidth {
-> >  	u64			throttled_time;
-> >  
-> >  	bool                    distribute_running;
-> > +	bool                    slack_started;
-> >  #endif
-> >  };
-> 
-> I'm thinking we can this instead? afaict both idle and period_active are
-> already effecitively booleans and don't need the full 16 bits.
-> 
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -338,8 +338,10 @@ struct cfs_bandwidth {
->  	u64			runtime_expires;
->  	int			expires_seq;
->  
-> -	short			idle;
-> -	short			period_active;
-> +	u8			idle;
-> +	u8			period_active;
-> +	u8			distribute_running;
-> +	u8			slack_started;
->  	struct hrtimer		period_timer;
->  	struct hrtimer		slack_timer;
->  	struct list_head	throttled_cfs_rq;
-> @@ -348,9 +350,6 @@ struct cfs_bandwidth {
->  	int			nr_periods;
->  	int			nr_throttled;
->  	u64			throttled_time;
-> -
-> -	bool                    distribute_running;
-> -	bool                    slack_started;
->  #endif
->  };
->  
+It was reported some time ago that arm64 systems will crash if a driver
+attempts to access IO port addresses when the PCI IO port region has not
+been mapped [1].
 
+More recently, a similar crash is where the system PCI host probe fails,
+and the IPMI driver crashes the system while attempting to do some IO port
+accesses [2].
 
-That looks reasonable to me. 
+This patchset attempts to keep the kernel alive in such situations by
+rejecting logical PIO access to PCI IO regions until PCI IO port regions
+have been mapped. Accesses to unmapped regions fail silently, mimicking
+x86 behaviour.
 
-Out of curiosity, why not bool? Is sizeof bool architecture dependent?
+The previous versions of this patchset also included a patch to reject IO
+port resource requests until PCI IO port regions have been mapped
+(in a pci_remap_iospace() call). However I decided to drop it since the
+validity of the patch was strongly in doubt - [3].
+
+1. https://lore.kernel.org/linux-pci/56F209A9.4040304@huawei.com
+2. https://lore.kernel.org/linux-arm-kernel/e6995b4a-184a-d8d4-f4d4-9ce75d8f47c0@huawei.com/
+3. https://lore.kernel.org/linux-pci/20190326224810.GY24180@google.com/
+
+Differences to v3 patchset:
+https://lkml.org/lkml/2019/4/4/1294
+- Drop patch to reject IO port requests
+- Make unmapped IO port accesses silent, mimicking x86
+
+Differences to v2 patchset:
+https://lkml.org/lkml/2019/3/20/788
+- Add a patch to use logical PIO accessors for !CONFIG_INDIRECT_PIO
+- Some tidy-up according to Andy's review
+
+Differences to v1 patchset:
+https://lkml.org/lkml/2019/3/14/630
+- Drop f71805f fix - it can be done in a separate patchset
+- Change implementation in resource.c patch to check if parent of region
+  is ioport_resource
+- Add patch to fix some logic_pio.c prints
+
+John Garry (3):
+  lib: logic_pio: Use logical PIO low-level accessors for
+    !CONFIG_INDIRECT_PIO
+  lib: logic_pio: Reject accesses to unregistered CPU MMIO regions
+  lib: logic_pio: Fix up a print
+
+ include/linux/logic_pio.h |   7 ++-
+ lib/logic_pio.c           | 116 ++++++++++++++++++++++++++++----------
+ 2 files changed, 90 insertions(+), 33 deletions(-)
 
 -- 
+2.17.1
+
