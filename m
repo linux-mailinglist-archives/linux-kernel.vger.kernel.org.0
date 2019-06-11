@@ -2,147 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 356893C630
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D72A3C658
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404179AbfFKIpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:45:30 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33567 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391273AbfFKIpY (ORCPT
+        id S2404580AbfFKIqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:46:32 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43273 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391351AbfFKIqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:45:24 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y17so8661254lfe.0;
-        Tue, 11 Jun 2019 01:45:22 -0700 (PDT)
+        Tue, 11 Jun 2019 04:46:31 -0400
+Received: by mail-ot1-f66.google.com with SMTP id i8so11078439oth.10;
+        Tue, 11 Jun 2019 01:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ijkPdrXeX6Fz/gKpBalT5IMu3KLaHyuDjWll/dYwskM=;
+        b=fB0y7JxUBu68bn1OlQLIjzj3t15wwwxRvu7xtdYcWM3dGPE4h4ru9X3vqTxVTM15uQ
+         ZAYRALcEXp1mdW52i9AkRhaavQhOU7ToYp5INXoDBxuuB+pEZfF/Av2lhcO1CpdUSP4p
+         7CV/k/CtOxT2/DpCkV2Wyep6H5TXnzSpQPrwogISHCqXkAnSskKzMXRSQ3gp56D//jSz
+         0Av/YhyW3n59pinJ3t2zqlW6YGnQt9punzHDeVx1dYsDIm0BqS3OSqhaYLRW4UYNuHOg
+         oek7a1Vt4N231WJhjjGwaHqBWFZscnfpUAZ8oWuD2yHQdikAv/6S00kh33PTQ2UZ0aVY
+         yihQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y57jG1hTaYr//V6rbS7pGOghJQuFRY1IGCsOl42VTtw=;
-        b=sG+5h+hDch9dcy+V7HourwlMxNveon6WvUpYb9Kv/I2kr37d5scsZ6MhMy8eWoUrjp
-         4IxDSIAJddwRMIHfRUz0wadw/0hU/evqUnsc07C/zgUQRntRAzhw/kok91gIBJIFwFBT
-         sA6WPnLEHNZgMOHjBYQZ6NXnZXZVzlnE8JgjBBvToRJOKX+YSoFEkzydmuz8bokE84jT
-         1WpmnR/ov9p6X1LfR+mjS1VTesuZ2HlcFulbukFLRjGhjigNcZ5pCRszabvvskXT+oMH
-         NA0Q1ufHt7o9u7VL4iA3CdAAgwVZTJIp/aG7dZKRaIf/1Igxr4f4ikf0TG8c9cGYOztZ
-         XTfQ==
-X-Gm-Message-State: APjAAAWvp3500zZ/iGjzHVwGvB13dnABjf7QV3waxNv7vszoTxREEzzU
-        Tx8EeJhNYUbp3/7avocksiKPS0rijwjeG7ZPSFA=
-X-Google-Smtp-Source: APXvYqxdEI+m9gpVR9aDf6TiX8mC2NIvGhVvINnkOeatfGs/HFjyi0AXbZ47oirabwL+5YNhqaUJ8bMV5DqFEmGW2bE=
-X-Received: by 2002:ac2:5467:: with SMTP id e7mr13628892lfn.23.1560242721494;
- Tue, 11 Jun 2019 01:45:21 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ijkPdrXeX6Fz/gKpBalT5IMu3KLaHyuDjWll/dYwskM=;
+        b=EReUB5UapjsZ9tRIRen1RbHyRc47JCW05su/4Wc4LH/ZiOsWCTZih+ocWoRyh0hYuM
+         kwMf7/krky1p+iByY5ISk9cfE7T7iNp6QYwn1S74L8AgQfgTLDIXFTSQaJt6PXkb6N7M
+         00lhtpw9xP9ddKMUl4C3oLJeTmyh/1iyqZpSahh7NDwBfrx4vqNRLmWpNgKhZm0c2vPr
+         0k7wyWvVHKS1u7EeDy4UM7r0alPZKbMPE4RNj+fsnnzylAbpYwUVFhOl/I/ISC4i5DlM
+         I/Wz+fx8oFpn2f+jjxkOe0A5m9GHyihciOErbgx7Ke2HbT4K2KNo+vuTawRfFKJS0ogG
+         2WEQ==
+X-Gm-Message-State: APjAAAUuJkZreEDQCtraPYWkEjAOvzoa7OTCohzoilYDsjpe4MAV59wH
+        /RlvDWsJ5D2u9wvKuNfgFr8dNfaxpV/OjJA+mzs=
+X-Google-Smtp-Source: APXvYqywuI6wFgrsQGHTLB1NysIvC+a8HIsD9HjKbcDFdKVzCuluDb4Lm+flneSL9irfE4h4TgHTZz1eHxxTFYXr4G8=
+X-Received: by 2002:a9d:2c47:: with SMTP id f65mr34287686otb.185.1560242790932;
+ Tue, 11 Jun 2019 01:46:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190607172958.20745-1-erosca@de.adit-jv.com> <87tvcxncuq.fsf@codeaurora.org>
- <20190610083012.GV5447@atomide.com>
-In-Reply-To: <20190610083012.GV5447@atomide.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 11 Jun 2019 10:45:08 +0200
-Message-ID: <CAMuHMdUOc17ocqmt=oNmyN1UT_K7_y=af1pwjwr5PTgQL2o2OQ@mail.gmail.com>
-Subject: Re: [PATCH] wlcore/wl18xx: Add invert-irq OF property for physically
- inverted IRQ
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        "George G . Davis" <george_davis@mentor.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>, eyalr@ti.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <Marc.Zyngier@arm.com>
+References: <1559178307-6835-1-git-send-email-wanpengli@tencent.com>
+ <1559178307-6835-3-git-send-email-wanpengli@tencent.com> <20190610141717.GA6604@flask>
+In-Reply-To: <20190610141717.GA6604@flask>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Tue, 11 Jun 2019 16:47:15 +0800
+Message-ID: <CANRm+CyGZiEfWb4KaXU2LG1AMcFq+jmb6kfjnPkKeyG-zOQPAA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] KVM: X86: Implement PV sched yield hypercall
+To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC irqchip
-
-Original thread at
-https://lore.kernel.org/lkml/20190607172958.20745-1-erosca@de.adit-jv.com/
-
-On Mon, Jun 10, 2019 at 10:30 AM Tony Lindgren <tony@atomide.com> wrote:
-> * Kalle Valo <kvalo@codeaurora.org> [190610 07:01]:
-> > Eugeniu Rosca <erosca@de.adit-jv.com> writes:
-> >
-> > > The wl1837mod datasheet [1] says about the WL_IRQ pin:
-> > >
-> > >  ---8<---
-> > > SDIO available, interrupt out. Active high. [..]
-> > > Set to rising edge (active high) on powerup.
-> > >  ---8<---
-> > >
-> > > That's the reason of seeing the interrupt configured as:
-> > >  - IRQ_TYPE_EDGE_RISING on HiKey 960/970
-> > >  - IRQ_TYPE_LEVEL_HIGH on a number of i.MX6 platforms
-> > >
-> > > We assert that all those platforms have the WL_IRQ pin connected
-> > > to the SoC _directly_ (confirmed on HiKey 970 [2]).
-> > >
-> > > That's not the case for R-Car Kingfisher extension target, which carries
-> > > a WL1837MODGIMOCT IC. There is an SN74LV1T04DBVR inverter present
-> > > between the WLAN_IRQ pin of the WL18* chip and the SoC, effectively
-> > > reversing the requirement quoted from [1]. IOW, in Kingfisher DTS
-> > > configuration we would need to use IRQ_TYPE_EDGE_FALLING or
-> > > IRQ_TYPE_LEVEL_LOW.
-> > >
-> > > Unfortunately, v4.2-rc1 commit bd763482c82ea2 ("wl18xx: wlan_irq:
-> > > support platform dependent interrupt types") made a special case out
-> > > of these interrupt types. After this commit, it is impossible to provide
-> > > an IRQ configuration via DTS which would describe an inverter present
-> > > between the WL18* chip and the SoC, generating the need for workarounds
-> > > like [3].
-> > >
-> > > Create a boolean OF property, called "invert-irq" to specify that
-> > > the WLAN_IRQ pin of WL18* is connected to the SoC via an inverter.
-> > >
-> > > This solution has been successfully tested on R-Car H3ULCB-KF-M06 using
-> > > the DTS configuration [4] combined with the "invert-irq" property.
-> > >
-> > > [1] http://www.ti.com/lit/ds/symlink/wl1837mod.pdf
-> > > [2] https://www.96boards.org/documentation/consumer/hikey/hikey970/hardware-docs/
-> > > [3] https://github.com/CogentEmbedded/meta-rcar/blob/289fbd4f8354/meta-rcar-gen3-adas/recipes-kernel/linux/linux-renesas/0024-wl18xx-do-not-invert-IRQ-on-WLxxxx-side.patch
-> > > [4] https://patchwork.kernel.org/patch/10895879/
-> > >     ("arm64: dts: ulcb-kf: Add support for TI WL1837")
-> > >
-> > > Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> >
-> > Tony&Eyal, do you agree with this?
+On Mon, 10 Jun 2019 at 22:17, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.c=
+om> wrote:
 >
-> Yeah if there's some hardware between the WLAN device and the SoC
-> inverting the interrupt, I don't think we have clear a way to deal
-> with it short of setting up a separate irqchip that does the
-> translation.
-
-Yeah, inverting the interrupt type in DT works only for simple devices,
-that don't need configuration.
-A simple irqchip driver that just inverts the type sounds like a good
-solution to me. Does something like that already exists?
-
-> But in some cases we also do not want to invert the interrupt, so
-> I think this property should take IRQ_TYPE_EDGE_RISING and
-> IRQ_TYPE_EDGE_RISING values to override the setting for
-> the WLAN end of the hardware?
+> 2019-05-30 09:05+0800, Wanpeng Li:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > The target vCPUs are in runnable state after vcpu_kick and suitable
+> > as a yield target. This patch implements the sched yield hypercall.
+> >
+> > 17% performance increasement of ebizzy benchmark can be observed in an
+> > over-subscribe environment. (w/ kvm-pv-tlb disabled, testing TLB flush
+> > call-function IPI-many since call-function is not easy to be trigged
+> > by userspace workload).
+> >
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > Cc: Liran Alon <liran.alon@oracle.com>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > @@ -7172,6 +7172,28 @@ void kvm_vcpu_deactivate_apicv(struct kvm_vcpu *=
+vcpu)
+> >       kvm_x86_ops->refresh_apicv_exec_ctrl(vcpu);
+> >  }
+> >
+> > +static void kvm_sched_yield(struct kvm *kvm, unsigned long dest_id)
+> > +{
+> > +     struct kvm_vcpu *target =3D NULL;
+> > +     struct kvm_apic_map *map =3D NULL;
+> > +
+> > +     rcu_read_lock();
+> > +     map =3D rcu_dereference(kvm->arch.apic_map);
+> > +
+> > +     if (unlikely(!map) || dest_id > map->max_apic_id)
+> > +             goto out;
+> > +
+> > +     if (map->phys_map[dest_id]->vcpu) {
 >
-> Let's wait a bit longer for comments from Eyal too.
+> This should check for map->phys_map[dest_id].
 
-Gr{oetje,eeting}s,
+Yeah, make a mistake here.
 
-                        Geert
+>
+> > +             target =3D map->phys_map[dest_id]->vcpu;
+> > +             rcu_read_unlock();
+> > +             kvm_vcpu_yield_to(target);
+> > +     }
+> > +
+> > +out:
+> > +     if (!target)
+> > +             rcu_read_unlock();
+>
+> Also, I find the following logic clearer
+>
+>   {
+>         struct kvm_vcpu *target =3D NULL;
+>         struct kvm_apic_map *map;
+>
+>         rcu_read_lock();
+>         map =3D rcu_dereference(kvm->arch.apic_map);
+>
+>         if (likely(map) && dest_id <=3D map->max_apic_id && map->phys_map=
+[dest_id])
+>                 target =3D map->phys_map[dest_id]->vcpu;
+>
+>         rcu_read_unlock();
+>
+>         if (target)
+>                 kvm_vcpu_yield_to(target);
+>   }
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+More better, thanks.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Wanpeng Li
