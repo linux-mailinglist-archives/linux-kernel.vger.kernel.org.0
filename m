@@ -2,98 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6A54191F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF18341924
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392128AbfFKXrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:47:11 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39406 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387864AbfFKXrK (ORCPT
+        id S2407206AbfFKXsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:48:07 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32826 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387864AbfFKXsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:47:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j2so8427359pfe.6;
-        Tue, 11 Jun 2019 16:47:10 -0700 (PDT)
+        Tue, 11 Jun 2019 19:48:06 -0400
+Received: by mail-pg1-f194.google.com with SMTP id k187so7338312pga.0;
+        Tue, 11 Jun 2019 16:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=0w5PyTbJcE+7PtxzV1JAmmnhaz4mbqsIEXxhrO8y/nc=;
-        b=awiuQUI9gAtnyBWDyPM2oiviNP96T4I/xvCOoYN8SvRkrI3hkL7yO40eUmXFWK9NXe
-         n25uEimbmgQMRIUwQDsK7uB9FzGqunzfIyhc9Jpja6faHqQNVtUUILNUmMz4VmvWRbcU
-         88M/QCEJG6n31wDtCi6remU5Gm015Z5iHY4lep5y2jXRhNQ2tHjYYf2RrT1Izv7cW7lD
-         zCjccDTXUo6rX3ThwVJzKbu5GhA9LE0PSUSLx7oW5AjqKRJTWrE3hXGOFuRkD/Sxa8Yy
-         a/sgSvbiRJU6W7/jOIq9kmxRuHZKgbQvDGHDqPeGBnYxPp1FDtXz8gSEjgLvy1OQygxU
-         7K9w==
+        bh=rQZeUVQ6RxiqAEW7WsFNWPKzRIxBC2e622V0NwiVfj8=;
+        b=JhOuZSIwFe0oFF53PYSrxKAUzLnKxYXF3enN5K3WkjEWNf5o+aXe08SIYrulbIEm6p
+         2LnH4OE/iXxG8SSqIT3JTjm8mUhsly1+F2TM+80en7Tu27EufyPEku/INQgwkNsGLAS8
+         L52ox5SXXIWN35Cnv41YbI/v0AKFWXmBzgJIu9D4bvdd4jOc7fw0OAhj4maK9UhmXi6G
+         xpbKcP4jF7f6eWuzyD4kbeoOPEOd/dMrgEryHTDwFtMrDGUhdPOCTIqzG239oezkIpPO
+         +RS5ERit+Kc+g5b26QU+lM8DKzSFvWKdiW72LNu1ii7xoBHTrKVkJHTIq71j93XyHAEZ
+         hV5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=0w5PyTbJcE+7PtxzV1JAmmnhaz4mbqsIEXxhrO8y/nc=;
-        b=ojhq0ImAOWHYNHMvv2yf4vIPSM3yGybHm25YLgg5PEDqV3HWW5t92V7kqInaM9AFPU
-         IFseO40qHFu1PfAsOBpZq1cTis8vZaEsHPdcmCl2yxPQ/gQsFBHVcLGCr/Z6A0OCX2o+
-         PrydeHt1QmwPxLxRiEO0LRyhIFENo54ZEoItKRFtPbp+/WpoEpuGuG9D9P4iWxDi6CfW
-         FlmVV5jIO7oVldSc9RvRg/eaxM/X9KnFG/Z1cuLV+lsBe2KfDX7waq+yi2vqEbbHL1mM
-         mwLPWmKNPcDlgbDu7OFBBeAUZJZ+0oBgTXAF6Fd45m+VTwZ36evFxBWThLa+Q79hk+SE
-         GQ4Q==
-X-Gm-Message-State: APjAAAVHGqmsT5bcbtbjUdEY96D3jXhzzoyIrc7JXYwtGigaIGDPCkYH
-        1QsmuB/ULpzu75l6YDpFH78AD4Ds
-X-Google-Smtp-Source: APXvYqzeIvJOr5WW9SHcd0aMEUsnXezqVeQDxfD8PoMhsBB0v0thKDyGBWGxNbX7Bc3gVOUf0GtrAg==
-X-Received: by 2002:a62:2e46:: with SMTP id u67mr82884329pfu.206.1560296830006;
-        Tue, 11 Jun 2019 16:47:10 -0700 (PDT)
+        bh=rQZeUVQ6RxiqAEW7WsFNWPKzRIxBC2e622V0NwiVfj8=;
+        b=KPMH2cBNrXPhr/gSnNq3CZ09wWA/LrAjOoXV2hbYb6uehGWvFugJaMYMILRUXOC9aj
+         o+gkDEKE9d83ecXIwvA2ZO9/QHBhLpMPc30CpX4TZa94IOgQZnis/4noMpCK8TssT0oI
+         Fv/cGYFWjOC8sOHVou76/tWK+joxJgEbau96Q9AB8hyWqfsZK1KxRKxIq5IS6SAaTs3o
+         PEyr1UoCdlx71+B/cfxZCayDy8ckNuLCyZrDgirbBUNgtpnTfS5TjNyOCjohT+XqnujI
+         haCVtSsFsZGN4nVK21R/LquLdYYe2YCNeyTcCC72F8AOB5LYyXX86FCkvFXGtZHe6TOn
+         eyhw==
+X-Gm-Message-State: APjAAAWp7CYKtBucQBMLP6q9HM7nZfkzvIJJUDDdNC+Ffq0WHRLCM+ut
+        FueOdU0uLlSI/oU7vew3HnNrDbjq
+X-Google-Smtp-Source: APXvYqxUx2Sy7+lan8lwCnaRlwtZHr6H574ZyeXVeqnyPritVWqcquM6Z4UosS7MBUDXGzLtdeF/2Q==
+X-Received: by 2002:a63:e250:: with SMTP id y16mr21858926pgj.392.1560296886103;
+        Tue, 11 Jun 2019 16:48:06 -0700 (PDT)
 Received: from ?IPv6:2001:df0:0:200c:cd5b:7c57:228c:7f0a? ([2001:df0:0:200c:cd5b:7c57:228c:7f0a])
-        by smtp.gmail.com with ESMTPSA id e4sm21818015pgi.80.2019.06.11.16.47.02
+        by smtp.gmail.com with ESMTPSA id i3sm15448121pfa.175.2019.06.11.16.47.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 16:47:08 -0700 (PDT)
-Subject: Re: [PATCH v2 2/7] scsi: NCR5380: Always re-enable reselection
- interrupt
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <cover.1560043151.git.fthain@telegraphics.com.au>
- <61f0c0f6aaf8fa96bf3dade5475615b2cfbc8846.1560043151.git.fthain@telegraphics.com.au>
- <58081aba-4e77-3c8e-847e-0698cf80e426@gmail.com>
- <alpine.LNX.2.21.1906111926330.25@nippy.intranet>
+        Tue, 11 Jun 2019 16:48:05 -0700 (PDT)
+Subject: Re: [PATCH] NCR5380: Support chained sg lists
+To:     Finn Thain <fthain@telegraphics.com.au>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <739c214bafcb9af3f6d5037cc03f57f692966675.1560223509.git.fthain@telegraphics.com.au>
 From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <9c61076b-81f7-dc7b-0103-1e2e56072453@gmail.com>
-Date:   Wed, 12 Jun 2019 11:46:59 +1200
+Message-ID: <a79e01ba-e47c-6b29-3625-29bfb7122ad8@gmail.com>
+Date:   Wed, 12 Jun 2019 11:47:56 +1200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1906111926330.25@nippy.intranet>
+In-Reply-To: <739c214bafcb9af3f6d5037cc03f57f692966675.1560223509.git.fthain@telegraphics.com.au>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+On 11/06/19 3:25 PM, Finn Thain wrote:
 
-On 11/06/19 9:33 PM, Finn Thain wrote:
-> On Tue, 11 Jun 2019, Michael Schmitz wrote:
+> My understanding is that support for chained scatterlists is to
+> become mandatory for LLDs.
 >
->> Hi Finn,
->>
->> IIRC I'd tested that change as well - didn't change broken target
->> behaviour but no regressions in other respects. Add my tested-by if
->> needed.
->>
-> Unfortunately I can't confirm that this is the same patch as the one you
-> tested as I no longer have that commit. But Stan did test a wide variety
-> of targets and I'm confident that the reselection code path was covered.
+> Cc: Michael Schmitz <schmitzmic@gmail.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Reviewed-by: Michael Schmitz <schmitzmic@gmail.com>
+> ---
+>   drivers/scsi/NCR5380.c | 41 ++++++++++++++++++-----------------------
+>   1 file changed, 18 insertions(+), 23 deletions(-)
 >
-No matter - patch applied cleanly to what I'm running on my Falcon, and 
-works just fine for now (stresstest will take a few hours to complete). 
-And that'll thoroughly exercise the reselection code path, from what 
-we've seen before.
-
-Cheers,
-
-     Michael
-
-
+> diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+> index d9fa9cf2fd8b..536426f25e86 100644
+> --- a/drivers/scsi/NCR5380.c
+> +++ b/drivers/scsi/NCR5380.c
+> @@ -149,12 +149,10 @@ static inline void initialize_SCp(struct scsi_cmnd *cmd)
+>   
+>   	if (scsi_bufflen(cmd)) {
+>   		cmd->SCp.buffer = scsi_sglist(cmd);
+> -		cmd->SCp.buffers_residual = scsi_sg_count(cmd) - 1;
+>   		cmd->SCp.ptr = sg_virt(cmd->SCp.buffer);
+>   		cmd->SCp.this_residual = cmd->SCp.buffer->length;
+>   	} else {
+>   		cmd->SCp.buffer = NULL;
+> -		cmd->SCp.buffers_residual = 0;
+>   		cmd->SCp.ptr = NULL;
+>   		cmd->SCp.this_residual = 0;
+>   	}
+> @@ -163,6 +161,17 @@ static inline void initialize_SCp(struct scsi_cmnd *cmd)
+>   	cmd->SCp.Message = 0;
+>   }
+>   
+> +static inline void advance_sg_buffer(struct scsi_cmnd *cmd)
+> +{
+> +	struct scatterlist *s = cmd->SCp.buffer;
+> +
+> +	if (!cmd->SCp.this_residual && s && !sg_is_last(s)) {
+> +		cmd->SCp.buffer = sg_next(s);
+> +		cmd->SCp.ptr = sg_virt(cmd->SCp.buffer);
+> +		cmd->SCp.this_residual = cmd->SCp.buffer->length;
+> +	}
+> +}
+> +
+>   /**
+>    * NCR5380_poll_politely2 - wait for two chip register values
+>    * @hostdata: host private data
+> @@ -1670,12 +1679,7 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
+>   			    sun3_dma_setup_done != cmd) {
+>   				int count;
+>   
+> -				if (!cmd->SCp.this_residual && cmd->SCp.buffers_residual) {
+> -					++cmd->SCp.buffer;
+> -					--cmd->SCp.buffers_residual;
+> -					cmd->SCp.this_residual = cmd->SCp.buffer->length;
+> -					cmd->SCp.ptr = sg_virt(cmd->SCp.buffer);
+> -				}
+> +				advance_sg_buffer(cmd);
+>   
+>   				count = sun3scsi_dma_xfer_len(hostdata, cmd);
+>   
+> @@ -1725,15 +1729,11 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
+>   				 * scatter-gather list, move onto the next one.
+>   				 */
+>   
+> -				if (!cmd->SCp.this_residual && cmd->SCp.buffers_residual) {
+> -					++cmd->SCp.buffer;
+> -					--cmd->SCp.buffers_residual;
+> -					cmd->SCp.this_residual = cmd->SCp.buffer->length;
+> -					cmd->SCp.ptr = sg_virt(cmd->SCp.buffer);
+> -					dsprintk(NDEBUG_INFORMATION, instance, "%d bytes and %d buffers left\n",
+> -					         cmd->SCp.this_residual,
+> -					         cmd->SCp.buffers_residual);
+> -				}
+> +				advance_sg_buffer(cmd);
+> +				dsprintk(NDEBUG_INFORMATION, instance,
+> +					"this residual %d, sg ents %d\n",
+> +					cmd->SCp.this_residual,
+> +					sg_nents(cmd->SCp.buffer));
+>   
+>   				/*
+>   				 * The preferred transfer method is going to be
+> @@ -2126,12 +2126,7 @@ static void NCR5380_reselect(struct Scsi_Host *instance)
+>   	if (sun3_dma_setup_done != tmp) {
+>   		int count;
+>   
+> -		if (!tmp->SCp.this_residual && tmp->SCp.buffers_residual) {
+> -			++tmp->SCp.buffer;
+> -			--tmp->SCp.buffers_residual;
+> -			tmp->SCp.this_residual = tmp->SCp.buffer->length;
+> -			tmp->SCp.ptr = sg_virt(tmp->SCp.buffer);
+> -		}
+> +		advance_sg_buffer(tmp);
+>   
+>   		count = sun3scsi_dma_xfer_len(hostdata, tmp);
+>   
