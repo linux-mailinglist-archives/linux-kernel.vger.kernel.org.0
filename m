@@ -2,84 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0956E3C7D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F873C7C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 11:57:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405147AbfFKJ5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 05:57:35 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:60623 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405130AbfFKJ5c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 05:57:32 -0400
-X-Originating-IP: 90.88.159.246
-Received: from dell-desktop.home (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: mylene.josserand@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 32F5240019;
-        Tue, 11 Jun 2019 09:57:29 +0000 (UTC)
-From:   =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To:     peda@axentia.se, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        mylene.josserand@bootlin.com
-Subject: [PATCH v1 3/3] dt-bindings: iio: afe: Add hwmon example
-Date:   Tue, 11 Jun 2019 11:56:59 +0200
-Message-Id: <20190611095659.29845-4-mylene.josserand@bootlin.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190611095659.29845-1-mylene.josserand@bootlin.com>
-References: <20190611095659.29845-1-mylene.josserand@bootlin.com>
+        id S2391416AbfFKJ5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 05:57:04 -0400
+Received: from foss.arm.com ([217.140.110.172]:56976 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727726AbfFKJ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 05:57:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 893EC337;
+        Tue, 11 Jun 2019 02:57:02 -0700 (PDT)
+Received: from [10.1.29.141] (e121487-lin.cambridge.arm.com [10.1.29.141])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 796C63F73C;
+        Tue, 11 Jun 2019 02:58:43 -0700 (PDT)
+Subject: Re: [PATCH 07/15] binfmt_flat: use __be32 for the on-disk format
+To:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
+Cc:     uclinux-h8-devel@lists.sourceforge.jp,
+        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
+        linux-c6x-dev@linux-c6x.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190610212015.9157-1-hch@lst.de>
+ <20190610212015.9157-8-hch@lst.de>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <462a7406-19df-7910-4499-8f0acd52bc82@arm.com>
+Date:   Tue, 11 Jun 2019 10:57:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190610212015.9157-8-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the support of CHAN_INFO_PROCESSED in voltage-divider,
-it is possible to read the processed values directly from iio's
-sysfs entries or by using iio-hwmon. Add an example for this last
-use case.
+On 6/10/19 10:20 PM, Christoph Hellwig wrote:
+> So far binfmt_flat has onl been supported on 32-bit platforms, so the
+			^^^^
+			only
+> variable size of the fields didn't matter.  But the upcoming RISC-V
+> nommu port supports 64-bit CPUs, and we now have a conflict between
+> the elf2flt creation tool that always uses 32-bit fields and the kernel
+> that uses (unsigned) long field.  Switch to the userspace view as the
+> rest of the binfmt_flat format is completely architecture neutral,
+> and binfmt_flat isn't the right binary format for huge executables to
+> start with.
+> 
+> While we're at it also ensure these fields are using __be types as
+> they big endian and are byteswapped when loaded.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> 
+> wip
+  ^^^
+Unintended?
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- .../bindings/iio/afe/voltage-divider.txt           | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> ---
+>  include/linux/flat.h | 48 ++++++++++++++++++++++----------------------
+>  1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt b/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-index b452a8406107..f7e1c7cb2744 100644
---- a/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-+++ b/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-@@ -51,3 +51,27 @@ sysv {
- 		spi-max-frequency = <1000000>;
- 	};
- };
-+
-+It is also possible to retrieve the processed values using hwmon node:
-+
-+div0: div0 {
-+	compatible = "voltage-divider";
-+	io-channels = <&adc0 0>; /* Channel 0 of the ADC */
-+	output-ohms = <47>; /* R2 */
-+	full-ohms = <73>; /* R1 (26) + R2 (47) */
-+	#io-channel-cells = <1>;
-+};
-+
-+div1: div1 {
-+	compatible = "voltage-divider";
-+	io-channels = <&adc0 1>; /* Channel 1 of the ADC */
-+	output-ohms = <47>; /* R2 */
-+	full-ohms = <115>; /* R1 (68) + R2 (47) */
-+	#io-channel-cells = <1>;
-+};
-+
-+iio-hwmon {
-+	compatible = "iio-hwmon";
-+	io-channels = <&div0 0>, <&div1 0>;
-+	io-channel-names = "3v3", "usb";
-+};
--- 
-2.11.0
+
+With comment message fixed:
+
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+
+> 
+> diff --git a/include/linux/flat.h b/include/linux/flat.h
+> index 21d901ba191b..59e892d5fadb 100644
+> --- a/include/linux/flat.h
+> +++ b/include/linux/flat.h
+> @@ -24,26 +24,26 @@
+>   */
+>  
+>  struct flat_hdr {
+> -	char magic[4];
+> -	unsigned long rev;          /* version (as above) */
+> -	unsigned long entry;        /* Offset of first executable instruction
+> -	                               with text segment from beginning of file */
+> -	unsigned long data_start;   /* Offset of data segment from beginning of
+> -	                               file */
+> -	unsigned long data_end;     /* Offset of end of data segment
+> -	                               from beginning of file */
+> -	unsigned long bss_end;      /* Offset of end of bss segment from beginning
+> -	                               of file */
+> +	char	magic[4];
+> +	__be32	rev;          /* version (as above) */
+> +	__be32	entry;        /* Offset of first executable instruction
+> +				 with text segment from beginning of file */
+> +	__be32	data_start;   /* Offset of data segment from beginning of
+> +				 file */
+> +	__be32	data_end;     /* Offset of end of data segment from beginning
+> +				 of file */
+> +	__be32	bss_end;      /* Offset of end of bss segment from beginning
+> +				 of file */
+>  
+>  	/* (It is assumed that data_end through bss_end forms the bss segment.) */
+>  
+> -	unsigned long stack_size;   /* Size of stack, in bytes */
+> -	unsigned long reloc_start;  /* Offset of relocation records from
+> -	                               beginning of file */
+> -	unsigned long reloc_count;  /* Number of relocation records */
+> -	unsigned long flags;
+> -	unsigned long build_date;   /* When the program/library was built */
+> -	unsigned long filler[5];    /* Reservered, set to zero */
+> +	__be32	stack_size;   /* Size of stack, in bytes */
+> +	__be32	reloc_start;  /* Offset of relocation records from beginning of
+> +				 file */
+> +	__be32	reloc_count;  /* Number of relocation records */
+> +	__be32	flags;
+> +	__be32	build_date;   /* When the program/library was built */
+> +	__u32	filler[5];    /* Reservered, set to zero */
+>  };
+>  
+>  #define FLAT_FLAG_RAM    0x0001 /* load program entirely into RAM */
+> @@ -67,19 +67,19 @@ struct flat_hdr {
+>  #define OLD_FLAT_RELOC_TYPE_BSS		2
+>  
+>  typedef union {
+> -	unsigned long	value;
+> +	u32		value;
+>  	struct {
+>  # if defined(mc68000) && !defined(CONFIG_COLDFIRE)
+> -		signed long offset : 30;
+> -		unsigned long type : 2;
+> +		s32	offset : 30;
+> +		u32	type : 2;
+>  #   	define OLD_FLAT_FLAG_RAM    0x1 /* load program entirely into RAM */
+>  # elif defined(__BIG_ENDIAN_BITFIELD)
+> -		unsigned long type : 2;
+> -		signed long offset : 30;
+> +		u32	type : 2;
+> +		s32	offset : 30;
+>  #   	define OLD_FLAT_FLAG_RAM    0x1 /* load program entirely into RAM */
+>  # elif defined(__LITTLE_ENDIAN_BITFIELD)
+> -		signed long offset : 30;
+> -		unsigned long type : 2;
+> +		s32	offset : 30;
+> +		u32	type : 2;
+>  #   	define OLD_FLAT_FLAG_RAM    0x1 /* load program entirely into RAM */
+>  # else
+>  #   	error "Unknown bitfield order for flat files."
+> 
 
