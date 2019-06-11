@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D362D3C398
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E343C399
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:51:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403959AbfFKFu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 01:50:58 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44587 "EHLO
+        id S2403974AbfFKFvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 01:51:00 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38660 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403879AbfFKFu4 (ORCPT
+        with ESMTP id S2403944AbfFKFu6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:50:56 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b17so11436604wrq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:50:56 -0700 (PDT)
+        Tue, 11 Jun 2019 01:50:58 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so11449023wrs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+6GBHNOHbeGRYajrC93YAmLrtPL2AX3V/NyRmPi/SNk=;
-        b=B5lNkx4P0Hv79AbXobUqSC2c8NkkWtBbLBXvJXoVAedcN0Sv6eF+sUnFlvpjWO55jN
-         nuPO0NK4VeqPqdszsikkfzRLgZHpoLgdqFdHM/xzcik7vmB6wXqX41Z/BflQPxu3P781
-         +vM+2P7ApQmWy1bx+QFtgU+5QXx+HjHwNOc6HDWrGinbL7W52/LP9Ceed+XcJZBasBDm
-         zSbO5PDaDpSVyw2grbkdgDMhwoLqxUtFp0MHkcqBThuzl6YRoO1J2Q3F6oTxMUEkS1nL
-         he1IUfMyB/u3IIwZZWIJ0wEi/PBT9B8DctbgWAqqVaJs18HqR4o1b6VbXOd5EWEdSM+c
-         Qu9g==
+        bh=kly7+Qt5xgnscUX+7DRt3V/f8ODrjOcAq6cJBlXMldk=;
+        b=GsMd+xEk9xuFFJKvlng5kASPD5wS0s6JqUyNIFvY+xjh5AE9ktjOkAbKDkS9QMVo+6
+         mqGgnYHMcPLJT+FGGyXSPqksrS5jutsqSOawzEeQBQkpRTCDDhjfBjwNjcJga7BIHsLh
+         Hhcrcvw/sBZSxP6gYvvMILAt/Z+HCGMMRCq3uOnfi6SHv8FbvX4KyZys4W5dLG+Nras4
+         pWBQlWPO1E4CfLT5+vbWjYqSv50EGVRU/4PvwM+vJaPGAvB5k/uq4r5J2OdzW2Te68ar
+         WTjhqqwmnVabP9rQ9px3+xTu1tS0500/yi0P7WJNeSIc7QAgvau0VdM20EAM4/06m8RP
+         hotQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+6GBHNOHbeGRYajrC93YAmLrtPL2AX3V/NyRmPi/SNk=;
-        b=BsebsRnfYf3yRhU29qTc2s9N7d2VRM0Rq9RZASVEuUVCtOU7Nmn9k1R5hbD8XhA6pG
-         dfHBGJ70aVwIakIjg1xrwD8CQNFx/JvcfZyLprWm9O32iezgiR7ulmSh3bqQebo9vjrS
-         ruJ708GICwVjoYCElMm0Bp6ZgiqHS+/PDi7S/uhNExekgA858F/l3CtRIUV1eBnZ8cTY
-         2O08zUEA4g69179xhTomhvHI4UBQMcZnw0uyPGhSfjUvDi0wWXLM5ynnR6NymOIwirgL
-         h/i8EPdmeqZpyFlHEsASJqBtdulTFm4enVE487Q09N15lHylha70I1VPyJLYrZE49juv
-         2lCA==
-X-Gm-Message-State: APjAAAW5PQait6k6QTu8izBys1khcnqbs1LQO+Ha6TS0wCUyim6/F6gS
-        LLhvQiGp04cgHTRG/cYmhSs+kSnnRtk=
-X-Google-Smtp-Source: APXvYqyOBVWE9QKXJinrI387fTdGjJ5aAQFBlNSjrH0u1aFHkVKXaDKQuE0j2/GDBZP3JD9auuPEvA==
-X-Received: by 2002:adf:e841:: with SMTP id d1mr48575981wrn.204.1560232255278;
-        Mon, 10 Jun 2019 22:50:55 -0700 (PDT)
+        bh=kly7+Qt5xgnscUX+7DRt3V/f8ODrjOcAq6cJBlXMldk=;
+        b=MW3hCOYGNQzc+pFelzbL5bPcBkOaXnBGUAfJMQV7ri3MS4LV5zOhDD4AVH2mva2RvI
+         13geK/27V3DhBk/T8+77DwfmhsPTokC/SYRd1pQPNi7sqM5ex0gBs5XRCZvIQRpc2soO
+         /MeAFKzBUncR0gzNW9MEGB+jmX4gQu/oGl094Wwa7NsKbordddWRdky7E42WytPwa2Hd
+         CcS9j+u7qd/UX2Lea4hnHgu1eQWXkAN2v1HbxiPNBWTjmNrV/h8EXkaJIhQ2IkM+sfMX
+         +s4L4LO5M003udw0DELMe++IDyf5Fya3ftNs+bqWRsZ+Xtb5XCOs2Zck090nY2HTpFm1
+         se3Q==
+X-Gm-Message-State: APjAAAXBblf63vX7QtGawI73AlmYCjh2YpiYudeomh0NTrk5NMjZemf5
+        D2IgMPPhlgAbrq1Dii+zc2RatvGtgz8=
+X-Google-Smtp-Source: APXvYqyaNrUR7aVYK6fNfEWgmwjwziSpGICMV7A18plmjNIIhvsUgH4dlbTYE9/KJ+8NYJt0tgCNwg==
+X-Received: by 2002:a5d:5607:: with SMTP id l7mr16865969wrv.228.1560232256289;
+        Mon, 10 Jun 2019 22:50:56 -0700 (PDT)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j8sm11968056wrr.64.2019.06.10.22.50.54
+        by smtp.gmail.com with ESMTPSA id j8sm11968056wrr.64.2019.06.10.22.50.55
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 22:50:54 -0700 (PDT)
+        Mon, 10 Jun 2019 22:50:55 -0700 (PDT)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH 6/8] habanalabs: remove DMA mask hack for Goya
-Date:   Tue, 11 Jun 2019 08:50:43 +0300
-Message-Id: <20190611055045.15945-7-oded.gabbay@gmail.com>
+Subject: [PATCH 7/8] habanalabs: add WARN in case of bad MMU mapping
+Date:   Tue, 11 Jun 2019 08:50:44 +0300
+Message-Id: <20190611055045.15945-8-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190611055045.15945-1-oded.gabbay@gmail.com>
 References: <20190611055045.15945-1-oded.gabbay@gmail.com>
@@ -58,70 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the non-standard DMA mask setting for Goya. Now that
-the device CPU goes through the MMU, we are not limited to allocating the
-CPU accessible memory area in the address space of under 39 bits.
-Therefore, we don't need to set the DMA masking twice during
-initialization, a practice that is not working on POWER architecture.
+This patch checks if an MMU mapping is erroneous in that the physical
+address that is being mapped is NOT divisible by the page size.
 
-The patch sets the DMA mask to 48 bits once during the initialization. The
-address of the CPU accessible memory area is configured to the MMU and the
-matching VA is given to the device CPU.
+If that thing happens, then the H/W will issue a transaction which will be
+translated to a wrong address, because part of the address will not be
+taken (the remainder of address/page size).
+
+Because the physical address is being handled by the driver, a WARN is
+suitable here as it implies a bug in the driver code itself and not a user
+bug.
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- drivers/misc/habanalabs/goya/goya.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ drivers/misc/habanalabs/mmu.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 9f1f47770afa..e8b3a31d211f 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -472,7 +472,7 @@ static int goya_early_init(struct hl_device *hdev)
- 
- 	prop->dram_pci_bar_size = pci_resource_len(pdev, DDR_BAR_ID);
- 
--	rc = hl_pci_init(hdev, 39);
-+	rc = hl_pci_init(hdev, 48);
- 	if (rc)
- 		return rc;
- 
-@@ -669,6 +669,9 @@ static int goya_sw_init(struct hl_device *hdev)
- 		goto free_dma_pool;
+diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
+index a80162c5c373..176c315836f1 100644
+--- a/drivers/misc/habanalabs/mmu.c
++++ b/drivers/misc/habanalabs/mmu.c
+@@ -913,6 +913,10 @@ int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size)
+ 		return -EFAULT;
  	}
  
-+	dev_dbg(hdev->dev, "cpu accessible memory at bus address 0x%llx\n",
-+		hdev->cpu_accessible_dma_address);
++	WARN_ONCE((phys_addr & (real_page_size - 1)),
++		"Mapping 0x%llx with page size of 0x%x is erroneous! Address must be divisible by page size",
++		phys_addr, real_page_size);
 +
- 	hdev->cpu_accessible_dma_pool = gen_pool_create(ilog2(32), -1);
- 	if (!hdev->cpu_accessible_dma_pool) {
- 		dev_err(hdev->dev,
-@@ -2481,25 +2484,11 @@ static int goya_hw_init(struct hl_device *hdev)
- 	if (rc)
- 		goto disable_queues;
- 
--	/*
--	 * Check if we managed to set the DMA mask to more then 32 bits. If so,
--	 * let's try to increase it again because in Goya we set the initial
--	 * dma mask to less then 39 bits so that the allocation of the memory
--	 * area for the device's cpu will be under 39 bits
--	 */
--	if (hdev->dma_mask > 32) {
--		rc = hl_pci_set_dma_mask(hdev, 48);
--		if (rc)
--			goto disable_msix;
--	}
--
- 	/* Perform read from the device to flush all MSI-X configuration */
- 	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
- 
- 	return 0;
- 
--disable_msix:
--	goya_disable_msix(hdev);
- disable_queues:
- 	goya_disable_internal_queues(hdev);
- 	goya_disable_external_queues(hdev);
+ 	npages = page_size / real_page_size;
+ 	real_virt_addr = virt_addr;
+ 	real_phys_addr = phys_addr;
 -- 
 2.17.1
 
