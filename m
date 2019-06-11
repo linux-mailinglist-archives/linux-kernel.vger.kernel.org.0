@@ -2,149 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3318D3C14F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 04:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35C7E3C159
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 04:49:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390847AbfFKCnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 22:43:17 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44130 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390244AbfFKCnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 22:43:17 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 813E8A03BFD95E363468;
-        Tue, 11 Jun 2019 10:43:15 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
- 2019 10:43:07 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 2/2] staging: erofs: rename data_mapping_mode to datamode
-Date:   Tue, 11 Jun 2019 10:42:20 +0800
-Message-ID: <20190611024220.86121-2-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190611024220.86121-1-gaoxiang25@huawei.com>
-References: <20190611024220.86121-1-gaoxiang25@huawei.com>
+        id S2390867AbfFKCtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 22:49:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59410 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390244AbfFKCtO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 22:49:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2717A6077A; Tue, 11 Jun 2019 02:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560221353;
+        bh=w8yBBlzJMcdsXVSM0jRBIZSjIf9XdVzNZYd6aoDCNoA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=d+4GGBd39eibRKM1sBEUZR+j3f5rdQlt46jo1eBDa9cy1mn1bnclpysBcKAS0wGMY
+         AWJRDq96UML+CG68PUHSYVOobtyBt4vGp7gVd7vYpFFGhzc6Nia4FloMju7Kx/3HN7
+         MDqOlX7WrWodGG2sbAt4X8UBIU51QW3QBEc2ET5o=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pkondeti@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E90DC607C6;
+        Tue, 11 Jun 2019 02:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560221352;
+        bh=w8yBBlzJMcdsXVSM0jRBIZSjIf9XdVzNZYd6aoDCNoA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PrtygVhsWRLs+CgjQ0oEXGUZVlwAwJsyk2ZMjT/VpXsqlPeCj1okGFUiTOHkouN1E
+         bpvoUzJP7mS9ubKn9+/3rv194g4QCmhzlZs/XDQ6kKJx9QV82AFTrWA/yvbrfQ6toB
+         LmmrpKJzPZKVX/Vut8wytc6wZNpOsLc48Hk9CtZk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E90DC607C6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Received: by mail-ed1-f44.google.com with SMTP id k21so14229948edq.3;
+        Mon, 10 Jun 2019 19:49:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAXOwtg0iRCB0itWEUx70CJgCnIzN4uBQCDBZcvM+6pCJR8QvHec
+        eDo0XTaDfNOXVFpREZH1WrRGBHp8xX3H4S4t9SU=
+X-Google-Smtp-Source: APXvYqxvPmnZwsBXrmtO8FQpzDanJon6A2pHK0HutU2cDmxEfYa0Q3JL20t0hmqIdlsI34/oPqzYKiIaSCXWVxcOHng=
+X-Received: by 2002:a17:906:2415:: with SMTP id z21mr44138407eja.211.1560221350698;
+ Mon, 10 Jun 2019 19:49:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+References: <1559536263-16472-1-git-send-email-pkondeti@codeaurora.org>
+In-Reply-To: <1559536263-16472-1-git-send-email-pkondeti@codeaurora.org>
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+Date:   Tue, 11 Jun 2019 08:18:58 +0530
+X-Gmail-Original-Message-ID: <CAEU1=Pk2HVHApjRkAtL0H1wa6GUejs4af3KodQ8TgJmJ6bh-Wg@mail.gmail.com>
+Message-ID: <CAEU1=Pk2HVHApjRkAtL0H1wa6GUejs4af3KodQ8TgJmJ6bh-Wg@mail.gmail.com>
+Subject: Re: [PATCH] cpu/hotplug: Abort disabling secondary CPUs if wakeup is pending
+To:     Pavankumar Kondeti <pkondeti@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        iri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>, linux-pm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-data_mapping_mode is too long as a member name of erofs_vnode,
-datamode is straight-forward enough.
+Hi Rafael/Thomas,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/inode.c    | 17 ++++++++---------
- drivers/staging/erofs/internal.h | 10 ++++------
- 2 files changed, 12 insertions(+), 15 deletions(-)
+On Mon, Jun 3, 2019 at 10:03 AM Pavankumar Kondeti
+<pkondeti@codeaurora.org> wrote:
+>
+> When "deep" suspend is enabled, all CPUs except the primary CPU
+> are hotplugged out. Since CPU hotplug is a costly operation,
+> check if we have to abort the suspend in between each CPU
+> hotplug. This would improve the system suspend abort latency
+> upon detecting a wakeup condition.
+>
 
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index 9520419f746c..e51348f7e838 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -22,11 +22,11 @@ static int read_inode(struct inode *inode, void *data)
- 	const unsigned int advise = le16_to_cpu(v1->i_advise);
- 	erofs_blk_t nblks = 0;
- 
--	vi->data_mapping_mode = __inode_data_mapping(advise);
-+	vi->datamode = __inode_data_mapping(advise);
- 
--	if (unlikely(vi->data_mapping_mode >= EROFS_INODE_LAYOUT_MAX)) {
--		errln("unknown data mapping mode %u of nid %llu",
--		      vi->data_mapping_mode, vi->nid);
-+	if (unlikely(vi->datamode >= EROFS_INODE_LAYOUT_MAX)) {
-+		errln("unsupported data mapping %u of nid %llu",
-+		      vi->datamode, vi->nid);
- 		DBG_BUGON(1);
- 		return -EIO;
- 	}
-@@ -63,7 +63,7 @@ static int read_inode(struct inode *inode, void *data)
- 		inode->i_size = le64_to_cpu(v2->i_size);
- 
- 		/* total blocks for compressed files */
--		if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+		if (is_inode_layout_compression(inode))
- 			nblks = le32_to_cpu(v2->i_u.compressed_blocks);
- 	} else if (__inode_version(advise) == EROFS_INODE_LAYOUT_V1) {
- 		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
-@@ -95,7 +95,7 @@ static int read_inode(struct inode *inode, void *data)
- 			sbi->build_time_nsec;
- 
- 		inode->i_size = le32_to_cpu(v1->i_size);
--		if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+		if (is_inode_layout_compression(inode))
- 			nblks = le32_to_cpu(v1->i_u.compressed_blocks);
- 	} else {
- 		errln("unsupported on-disk inode version %u of nid %llu",
-@@ -127,7 +127,7 @@ static int fill_inline_data(struct inode *inode, void *data,
- {
- 	struct erofs_vnode *vi = EROFS_V(inode);
- 	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
--	int mode = vi->data_mapping_mode;
-+	const int mode = vi->datamode;
- 
- 	DBG_BUGON(mode >= EROFS_INODE_LAYOUT_MAX);
- 
-@@ -299,9 +299,8 @@ int erofs_getattr(const struct path *path, struct kstat *stat,
- 		  u32 request_mask, unsigned int query_flags)
- {
- 	struct inode *const inode = d_inode(path->dentry);
--	struct erofs_vnode *const vi = EROFS_V(inode);
- 
--	if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+	if (is_inode_layout_compression(inode))
- 		stat->attributes |= STATX_ATTR_COMPRESSED;
- 
- 	stat->attributes |= STATX_ATTR_IMMUTABLE;
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 911333cdeef4..6a7eb04d29b4 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -347,8 +347,7 @@ struct erofs_vnode {
- 	/* atomic flags (including bitlocks) */
- 	unsigned long flags;
- 
--	unsigned char data_mapping_mode;
--	/* inline size in bytes */
-+	unsigned char datamode;
- 	unsigned char inode_isize;
- 	unsigned short xattr_isize;
- 
-@@ -383,18 +382,17 @@ static inline unsigned long inode_datablocks(struct inode *inode)
- 
- static inline bool is_inode_layout_plain(struct inode *inode)
- {
--	return EROFS_V(inode)->data_mapping_mode == EROFS_INODE_LAYOUT_PLAIN;
-+	return EROFS_V(inode)->datamode == EROFS_INODE_LAYOUT_PLAIN;
- }
- 
- static inline bool is_inode_layout_compression(struct inode *inode)
- {
--	return EROFS_V(inode)->data_mapping_mode ==
--					EROFS_INODE_LAYOUT_COMPRESSION;
-+	return EROFS_V(inode)->datamode == EROFS_INODE_LAYOUT_COMPRESSION;
- }
- 
- static inline bool is_inode_layout_inline(struct inode *inode)
- {
--	return EROFS_V(inode)->data_mapping_mode == EROFS_INODE_LAYOUT_INLINE;
-+	return EROFS_V(inode)->datamode == EROFS_INODE_LAYOUT_INLINE;
- }
- 
- extern const struct super_operations erofs_sops;
+Please let me know if you have any comments on this patch.
+
+Thanks,
+Pavan
+
 -- 
-2.17.1
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
+Linux Foundation Collaborative Project
