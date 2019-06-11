@@ -2,144 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F9E3D655
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB4B3D5F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:59:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406058AbfFKTEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 15:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40624 "EHLO mail.kernel.org"
+        id S2392175AbfFKS7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:59:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53186 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405412AbfFKTEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:04:23 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2388630AbfFKS7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 14:59:08 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77A8F2183E;
-        Tue, 11 Jun 2019 19:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560279862;
-        bh=QfqZ0TnqD8vNI0tAhe2tPnK9c3wp3Ua//Kews5Gurxw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhHhaARF7Xd+YIZihzFS7/bd02+eUb3TL/roCej9Q/K0GZjzYWjGY2taZbWzdCF4T
-         IboA1Q5aNCdIry+sJUUGuuggBiZnRDM1qpYi5yUwRi/33bnYmsREeAg5KMgs6Ju5dC
-         fHNlO/0kxn3Pc8p4WFy3Ij6RnNjOUfTbdsiGUzKg=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 71/85] perf intel-pt: Factor out intel_pt_get_buffer()
-Date:   Tue, 11 Jun 2019 15:58:57 -0300
-Message-Id: <20190611185911.11645-72-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190611185911.11645-1-acme@kernel.org>
-References: <20190611185911.11645-1-acme@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4C78430872EC;
+        Tue, 11 Jun 2019 18:59:08 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (ovpn-204-114.brq.redhat.com [10.40.204.114])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B9B596064B;
+        Tue, 11 Jun 2019 18:59:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 11 Jun 2019 20:59:05 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 20:58:58 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
+        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        linux-arch@vger.kernel.org
+Subject: Re: [RFC PATCH 0/5]: Removing saved_sigmask
+Message-ID: <20190611185857.GB31214@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com>
+ <87k1dxaxcl.fsf_-_@xmission.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1dxaxcl.fsf_-_@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 11 Jun 2019 18:59:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+On 06/07, Eric W. Biederman wrote:
+>
+> Eric W. Biederman (5):
+>       signal: Teach sigsuspend to use set_user_sigmask
+>       signal/kvm:  Stop using sigprocmask in kvm_sigset_(activate|deactivate)
+>       signal: Always keep real_blocked in sync with blocked
+>       signal: Remove saved_sigmask
+>       signal: Remove the unnecessary restore_sigmask flag
 
-Factor out intel_pt_get_buffer() so it can be reused.
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20190604130017.31207-10-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/intel-pt.c | 60 +++++++++++++++++++++++---------------
- 1 file changed, 37 insertions(+), 23 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 3cff8fe2eaa0..4a61c73c9711 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -239,32 +239,13 @@ static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *
- 	return 0;
- }
- 
--/* This function assumes data is processed sequentially only */
--static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
-+static int intel_pt_get_buffer(struct intel_pt_queue *ptq,
-+			       struct auxtrace_buffer *buffer,
-+			       struct auxtrace_buffer *old_buffer,
-+			       struct intel_pt_buffer *b)
- {
--	struct intel_pt_queue *ptq = data;
--	struct auxtrace_buffer *buffer = ptq->buffer;
--	struct auxtrace_buffer *old_buffer = ptq->old_buffer;
--	struct auxtrace_queue *queue;
- 	bool might_overlap;
- 
--	if (ptq->stop) {
--		b->len = 0;
--		return 0;
--	}
--
--	queue = &ptq->pt->queues.queue_array[ptq->queue_nr];
--
--	buffer = auxtrace_buffer__next(queue, buffer);
--	if (!buffer) {
--		if (old_buffer)
--			auxtrace_buffer__drop_data(old_buffer);
--		b->len = 0;
--		return 0;
--	}
--
--	ptq->buffer = buffer;
--
- 	if (!buffer->data) {
- 		int fd = perf_data__fd(ptq->pt->session->data);
- 
-@@ -294,6 +275,39 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 		b->consecutive = true;
- 	}
- 
-+	return 0;
-+}
-+
-+/* This function assumes data is processed sequentially only */
-+static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
-+{
-+	struct intel_pt_queue *ptq = data;
-+	struct auxtrace_buffer *buffer = ptq->buffer;
-+	struct auxtrace_buffer *old_buffer = ptq->old_buffer;
-+	struct auxtrace_queue *queue;
-+	int err;
-+
-+	if (ptq->stop) {
-+		b->len = 0;
-+		return 0;
-+	}
-+
-+	queue = &ptq->pt->queues.queue_array[ptq->queue_nr];
-+
-+	buffer = auxtrace_buffer__next(queue, buffer);
-+	if (!buffer) {
-+		if (old_buffer)
-+			auxtrace_buffer__drop_data(old_buffer);
-+		b->len = 0;
-+		return 0;
-+	}
-+
-+	ptq->buffer = buffer;
-+
-+	err = intel_pt_get_buffer(ptq, buffer, old_buffer, b);
-+	if (err)
-+		return err;
-+
- 	if (ptq->step_through_buffers)
- 		ptq->stop = true;
- 
--- 
-2.20.1
+
+I guess this should be routed via -mm tree? This depends on
+signal-simplify-set_user_sigmask-restore_user_sigmask.patch
+
+Oleg.
 
