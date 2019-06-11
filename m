@@ -2,354 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352043CB5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09CE23CB13
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 14:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390798AbfFKM0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 08:26:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48292 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390595AbfFKM0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:26:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EF9E1B02F;
-        Tue, 11 Jun 2019 12:26:35 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v2.5 2/3] firmware: Add support for loading compressed files
-Date:   Tue, 11 Jun 2019 14:26:25 +0200
-Message-Id: <20190611122626.28059-3-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190611122626.28059-1-tiwai@suse.de>
-References: <20190611122626.28059-1-tiwai@suse.de>
+        id S2388690AbfFKMXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 08:23:20 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52954 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388573AbfFKMXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 08:23:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 05:23:18 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 11 Jun 2019 05:23:18 -0700
+Date:   Tue, 11 Jun 2019 05:26:26 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     will.deacon@arm.com, joro@8bytes.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, robin.murphy@arm.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        eric.auger@redhat.com, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 1/8] iommu: Add I/O ASID allocator
+Message-ID: <20190611052626.20bed59a@jacob-builder>
+In-Reply-To: <20190610184714.6786-2-jean-philippe.brucker@arm.com>
+References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
+        <20190610184714.6786-2-jean-philippe.brucker@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the support for loading compressed firmware files.
-The primary motivation is to reduce the storage size; e.g. currently
-the files in /lib/firmware on my machine counts up to 419MB, while
-they can be reduced to 130MB by file compression.
+On Mon, 10 Jun 2019 19:47:07 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-The patch introduces a new kconfig option CONFIG_FW_LOADER_COMPRESS.
-Even with this option set, the firmware loader still tries to load the
-original firmware file as-is at first, but then falls back to the file
-with ".xz" extension when it's not found, and the decompressed file
-content is returned to the caller of request_firmware().  So, no
-change is needed for the rest.
+> Some devices might support multiple DMA address spaces, in particular
+> those that have the PCI PASID feature. PASID (Process Address Space
+> ID) allows to share process address spaces with devices (SVA),
+> partition a device into VM-assignable entities (VFIO mdev) or simply
+> provide multiple DMA address space to kernel drivers. Add a global
+> PASID allocator usable by different drivers at the same time. Name it
+> I/O ASID to avoid confusion with ASIDs allocated by arch code, which
+> are usually a separate ID space.
+> 
+> The IOASID space is global. Each device can have its own PASID space,
+> but by convention the IOMMU ended up having a global PASID space, so
+> that with SVA, each mm_struct is associated to a single PASID.
+> 
+> The allocator is primarily used by IOMMU subsystem but in rare
+> occasions drivers would like to allocate PASIDs for devices that
+> aren't managed by an IOMMU, using the same ID space as IOMMU.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> ---
+> The most recent discussion on this patch was at:
+> https://lkml.kernel.org/lkml/1556922737-76313-4-git-send-email-jacob.jun.pan@linux.intel.com/
+> I fixed it up a bit following comments in that series, and removed the
+> definitions for the custom allocator for now.
+> 
+> There also is a new version that includes the custom allocator into
+> this patch, but is currently missing the RCU fixes, at:
+> https://lore.kernel.org/lkml/1560087862-57608-13-git-send-email-jacob.jun.pan@linux.intel.com/
+> ---
+>  drivers/iommu/Kconfig  |   4 ++
+>  drivers/iommu/Makefile |   1 +
+>  drivers/iommu/ioasid.c | 150
+> +++++++++++++++++++++++++++++++++++++++++ include/linux/ioasid.h |
+> 49 ++++++++++++++ 4 files changed, 204 insertions(+)
+>  create mode 100644 drivers/iommu/ioasid.c
+>  create mode 100644 include/linux/ioasid.h
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 83664db5221d..9b45f70549a7 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -3,6 +3,10 @@
+>  config IOMMU_IOVA
+>  	tristate
+>  
+> +# The IOASID library may also be used by non-IOMMU_API users
+> +config IOASID
+> +	tristate
+> +
+>  # IOMMU_API always gets selected by whoever wants it.
+>  config IOMMU_API
+>  	bool
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 8c71a15e986b..0efac6f1ec73 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+>  obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+>  obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+>  obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
+> +obj-$(CONFIG_IOASID) += ioasid.o
+>  obj-$(CONFIG_IOMMU_IOVA) += iova.o
+>  obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
+>  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
+> diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
+> new file mode 100644
+> index 000000000000..bbb771214fa9
+> --- /dev/null
+> +++ b/drivers/iommu/ioasid.c
+> @@ -0,0 +1,150 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * I/O Address Space ID allocator. There is one global IOASID space,
+> split into
+> + * subsets. Users create a subset with DECLARE_IOASID_SET, then
+> allocate and
+> + * free IOASIDs with ioasid_alloc and ioasid_free.
+> + */
+> +#include <linux/ioasid.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/xarray.h>
+> +
+> +struct ioasid_data {
+> +	ioasid_t id;
+> +	struct ioasid_set *set;
+> +	void *private;
+> +	struct rcu_head rcu;
+> +};
+> +
+> +static DEFINE_XARRAY_ALLOC(ioasid_xa);
+> +
+> +/**
+> + * ioasid_set_data - Set private data for an allocated ioasid
+> + * @ioasid: the ID to set data
+> + * @data:   the private data
+> + *
+> + * For IOASID that is already allocated, private data can be set
+> + * via this API. Future lookup can be done via ioasid_find.
+> + */
+> +int ioasid_set_data(ioasid_t ioasid, void *data)
+> +{
+> +	struct ioasid_data *ioasid_data;
+> +	int ret = 0;
+> +
+> +	xa_lock(&ioasid_xa);
+Just wondering if this is necessary, since xa_load is under
+rcu_read_lock and we are not changing anything internal to xa. For
+custom allocator I still need to have the mutex against allocator
+removal.
+> +	ioasid_data = xa_load(&ioasid_xa, ioasid);
+> +	if (ioasid_data)
+> +		rcu_assign_pointer(ioasid_data->private, data);
+it is good to publish and have barrier here. But I just wonder even for
+weakly ordered machine, this pointer update is quite far away from its
+data update.
+> +	else
+> +		ret = -ENOENT;
+> +	xa_unlock(&ioasid_xa);
+> +
+> +	/*
+> +	 * Wait for readers to stop accessing the old private data,
+> so the
+> +	 * caller can free it.
+> +	 */
+> +	if (!ret)
+> +		synchronize_rcu();
+> +
+I will add that to my next version to check ret value.
 
-Currently only XZ format is supported.  A caveat is that the kernel XZ
-helper code supports only CRC32 (or none) integrity check type, so
-you'll have to compress the files via xz -C crc32 option.
+Thanks,
 
-Since we can't determine the expanded size immediately from an XZ
-file, the patch re-uses the paged buffer that was used for the
-user-mode fallback; it puts the decompressed content page, which are
-vmapped at the end.  The paged buffer code is conditionally built with
-a new Kconfig that is selected automatically.
+Jacob
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(ioasid_set_data);
+> +
+> +/**
+> + * ioasid_alloc - Allocate an IOASID
+> + * @set: the IOASID set
+> + * @min: the minimum ID (inclusive)
+> + * @max: the maximum ID (inclusive)
+> + * @private: data private to the caller
+> + *
+> + * Allocate an ID between @min and @max. The @private pointer is
+> stored
+> + * internally and can be retrieved with ioasid_find().
+> + *
+> + * Return: the allocated ID on success, or %INVALID_IOASID on
+> failure.
+> + */
+> +ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t
+> max,
+> +		      void *private)
+> +{
+> +	u32 id = INVALID_IOASID;
+> +	struct ioasid_data *data;
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return INVALID_IOASID;
+> +
+> +	data->set = set;
+> +	data->private = private;
+> +
+> +	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max),
+> GFP_KERNEL)) {
+> +		pr_err("Failed to alloc ioasid from %d to %d\n",
+> min, max);
+> +		goto exit_free;
+> +	}
+> +	data->id = id;
+> +
+> +exit_free:
+> +	if (id == INVALID_IOASID) {
+> +		kfree(data);
+> +		return INVALID_IOASID;
+> +	}
+> +	return id;
+> +}
+> +EXPORT_SYMBOL_GPL(ioasid_alloc);
+> +
+> +/**
+> + * ioasid_free - Free an IOASID
+> + * @ioasid: the ID to remove
+> + */
+> +void ioasid_free(ioasid_t ioasid)
+> +{
+> +	struct ioasid_data *ioasid_data;
+> +
+> +	ioasid_data = xa_erase(&ioasid_xa, ioasid);
+> +
+> +	kfree_rcu(ioasid_data, rcu);
+> +}
+> +EXPORT_SYMBOL_GPL(ioasid_free);
+> +
+> +/**
+> + * ioasid_find - Find IOASID data
+> + * @set: the IOASID set
+> + * @ioasid: the IOASID to find
+> + * @getter: function to call on the found object
+> + *
+> + * The optional getter function allows to take a reference to the
+> found object
+> + * under the rcu lock. The function can also check if the object is
+> still valid:
+> + * if @getter returns false, then the object is invalid and NULL is
+> returned.
+> + *
+> + * If the IOASID has been allocated for this set, return the private
+> pointer
+> + * passed to ioasid_alloc. Private data can be NULL if not set.
+> Return an error
+> + * if the IOASID is not found or does not belong to the set.
+> + */
+> +void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+> +		  bool (*getter)(void *))
+> +{
+> +	void *priv = NULL;
+> +	struct ioasid_data *ioasid_data;
+> +
+> +	rcu_read_lock();
+> +	ioasid_data = xa_load(&ioasid_xa, ioasid);
+> +	if (!ioasid_data) {
+> +		priv = ERR_PTR(-ENOENT);
+> +		goto unlock;
+> +	}
+> +	if (set && ioasid_data->set != set) {
+> +		/* data found but does not belong to the set */
+> +		priv = ERR_PTR(-EACCES);
+> +		goto unlock;
+> +	}
+> +	/* Now IOASID and its set is verified, we can return the
+> private data */
+> +	priv = rcu_dereference(ioasid_data->private);
+> +	if (getter && !getter(priv))
+> +		priv = NULL;
+> +unlock:
+> +	rcu_read_unlock();
+> +
+> +	return priv;
+> +}
+> +EXPORT_SYMBOL_GPL(ioasid_find);
+> +
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
+> new file mode 100644
+> index 000000000000..940212422b8f
+> --- /dev/null
+> +++ b/include/linux/ioasid.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __LINUX_IOASID_H
+> +#define __LINUX_IOASID_H
+> +
+> +#include <linux/types.h>
+> +
+> +#define INVALID_IOASID ((ioasid_t)-1)
+> +typedef unsigned int ioasid_t;
+> +
+> +struct ioasid_set {
+> +	int dummy;
+> +};
+> +
+> +#define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
+> +
+> +#if IS_ENABLED(CONFIG_IOASID)
+> +ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t
+> max,
+> +		      void *private);
+> +void ioasid_free(ioasid_t ioasid);
+> +
+> +void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+> +		  bool (*getter)(void *));
+> +
+> +int ioasid_set_data(ioasid_t ioasid, void *data);
+> +
+> +#else /* !CONFIG_IOASID */
+> +static inline ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t
+> min,
+> +				    ioasid_t max, void *private)
+> +{
+> +	return INVALID_IOASID;
+> +}
+> +
+> +static inline void ioasid_free(ioasid_t ioasid)
+> +{
+> +}
+> +
+> +static inline void *ioasid_find(struct ioasid_set *set, ioasid_t
+> ioasid,
+> +				bool (*getter)(void *))
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline int ioasid_set_data(ioasid_t ioasid, void *data)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +#endif /* CONFIG_IOASID */
+> +#endif /* __LINUX_IOASID_H */
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
-v1->v2.5: Slight code refactoring, no functional changes
-
- drivers/base/firmware_loader/Kconfig    |  18 ++++
- drivers/base/firmware_loader/firmware.h |   8 +-
- drivers/base/firmware_loader/main.c     | 147 ++++++++++++++++++++++++++++++--
- 3 files changed, 161 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
-index 38f2da6f5c2b..3f9e274e2ed3 100644
---- a/drivers/base/firmware_loader/Kconfig
-+++ b/drivers/base/firmware_loader/Kconfig
-@@ -26,6 +26,9 @@ config FW_LOADER
- 
- if FW_LOADER
- 
-+config FW_LOADER_PAGED_BUF
-+	bool
-+
- config EXTRA_FIRMWARE
- 	string "Build named firmware blobs into the kernel binary"
- 	help
-@@ -67,6 +70,7 @@ config EXTRA_FIRMWARE_DIR
- 
- config FW_LOADER_USER_HELPER
- 	bool "Enable the firmware sysfs fallback mechanism"
-+	select FW_LOADER_PAGED_BUF
- 	help
- 	  This option enables a sysfs loading facility to enable firmware
- 	  loading to the kernel through userspace as a fallback mechanism
-@@ -151,5 +155,19 @@ config FW_LOADER_USER_HELPER_FALLBACK
- 
- 	  If you are unsure about this, say N here.
- 
-+config FW_LOADER_COMPRESS
-+	bool "Enable compressed firmware support"
-+	select FW_LOADER_PAGED_BUF
-+	select XZ_DEC
-+	help
-+	  This option enables the support for loading compressed firmware
-+	  files. The caller of firmware API receives the decompressed file
-+	  content. The compressed file is loaded as a fallback, only after
-+	  loading the raw file failed at first.
-+
-+	  Currently only XZ-compressed files are supported, and they have to
-+	  be compressed with either none or crc32 integrity check type (pass
-+	  "-C crc32" option to xz command).
-+
- endif # FW_LOADER
- endmenu
-diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index 35f4e58b2d98..7048a41973ed 100644
---- a/drivers/base/firmware_loader/firmware.h
-+++ b/drivers/base/firmware_loader/firmware.h
-@@ -64,12 +64,14 @@ struct fw_priv {
- 	void *data;
- 	size_t size;
- 	size_t allocated_size;
--#ifdef CONFIG_FW_LOADER_USER_HELPER
-+#ifdef CONFIG_FW_LOADER_PAGED_BUF
- 	bool is_paged_buf;
--	bool need_uevent;
- 	struct page **pages;
- 	int nr_pages;
- 	int page_array_size;
-+#endif
-+#ifdef CONFIG_FW_LOADER_USER_HELPER
-+	bool need_uevent;
- 	struct list_head pending_list;
- #endif
- 	const char *fw_name;
-@@ -133,7 +135,7 @@ static inline void fw_state_done(struct fw_priv *fw_priv)
- int assign_fw(struct firmware *fw, struct device *device,
- 	      enum fw_opt opt_flags);
- 
--#ifdef CONFIG_FW_LOADER_USER_HELPER
-+#ifdef CONFIG_FW_LOADER_PAGED_BUF
- void fw_free_paged_buf(struct fw_priv *fw_priv);
- int fw_grow_paged_buf(struct fw_priv *fw_priv, int pages_needed);
- int fw_map_paged_buf(struct fw_priv *fw_priv);
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 7e12732f4705..bf44c79beae9 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -33,6 +33,7 @@
- #include <linux/syscore_ops.h>
- #include <linux/reboot.h>
- #include <linux/security.h>
-+#include <linux/xz.h>
- 
- #include <generated/utsrelease.h>
- 
-@@ -266,7 +267,7 @@ static void free_fw_priv(struct fw_priv *fw_priv)
- 		spin_unlock(&fwc->lock);
- }
- 
--#ifdef CONFIG_FW_LOADER_USER_HELPER
-+#ifdef CONFIG_FW_LOADER_PAGED_BUF
- void fw_free_paged_buf(struct fw_priv *fw_priv)
- {
- 	int i;
-@@ -335,6 +336,105 @@ int fw_map_paged_buf(struct fw_priv *fw_priv)
- }
- #endif
- 
-+/*
-+ * XZ-compressed firmware support
-+ */
-+#ifdef CONFIG_FW_LOADER_COMPRESS
-+/* show an error and return the standard error code */
-+static int fw_decompress_xz_error(struct device *dev, enum xz_ret xz_ret)
-+{
-+	if (xz_ret != XZ_STREAM_END) {
-+		dev_warn(dev, "xz decompression failed (xz_ret=%d)\n", xz_ret);
-+		return xz_ret == XZ_MEM_ERROR ? -ENOMEM : -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+/* single-shot decompression onto the pre-allocated buffer */
-+static int fw_decompress_xz_single(struct device *dev, struct fw_priv *fw_priv,
-+				   size_t in_size, const void *in_buffer)
-+{
-+	struct xz_dec *xz_dec;
-+	struct xz_buf xz_buf;
-+	enum xz_ret xz_ret;
-+
-+	xz_dec = xz_dec_init(XZ_SINGLE, (u32)-1);
-+	if (!xz_dec)
-+		return -ENOMEM;
-+
-+	xz_buf.in_size = in_size;
-+	xz_buf.in = in_buffer;
-+	xz_buf.in_pos = 0;
-+	xz_buf.out_size = fw_priv->allocated_size;
-+	xz_buf.out = fw_priv->data;
-+	xz_buf.out_pos = 0;
-+
-+	xz_ret = xz_dec_run(xz_dec, &xz_buf);
-+	xz_dec_end(xz_dec);
-+
-+	fw_priv->size = xz_buf.out_pos;
-+	return fw_decompress_xz_error(dev, xz_ret);
-+}
-+
-+/* decompression on paged buffer and map it */
-+static int fw_decompress_xz_pages(struct device *dev, struct fw_priv *fw_priv,
-+				  size_t in_size, const void *in_buffer)
-+{
-+	struct xz_dec *xz_dec;
-+	struct xz_buf xz_buf;
-+	enum xz_ret xz_ret;
-+	struct page *page;
-+	int err = 0;
-+
-+	xz_dec = xz_dec_init(XZ_DYNALLOC, (u32)-1);
-+	if (!xz_dec)
-+		return -ENOMEM;
-+
-+	xz_buf.in_size = in_size;
-+	xz_buf.in = in_buffer;
-+	xz_buf.in_pos = 0;
-+
-+	fw_priv->is_paged_buf = true;
-+	fw_priv->size = 0;
-+	do {
-+		if (fw_grow_paged_buf(fw_priv, fw_priv->nr_pages + 1)) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+
-+		/* decompress onto the new allocated page */
-+		page = fw_priv->pages[fw_priv->nr_pages - 1];
-+		xz_buf.out = kmap(page);
-+		xz_buf.out_pos = 0;
-+		xz_buf.out_size = PAGE_SIZE;
-+		xz_ret = xz_dec_run(xz_dec, &xz_buf);
-+		kunmap(page);
-+		fw_priv->size += xz_buf.out_pos;
-+		/* partial decompression means either end or error */
-+		if (xz_buf.out_pos != PAGE_SIZE)
-+			break;
-+	} while (xz_ret == XZ_OK);
-+
-+	err = fw_decompress_xz_error(dev, xz_ret);
-+	if (!err)
-+		err = fw_map_paged_buf(fw_priv);
-+
-+ out:
-+	xz_dec_end(xz_dec);
-+	return err;
-+}
-+
-+static int fw_decompress_xz(struct device *dev, struct fw_priv *fw_priv,
-+			    size_t in_size, const void *in_buffer)
-+{
-+	/* if the buffer is pre-allocated, we can perform in single-shot mode */
-+	if (fw_priv->data)
-+		return fw_decompress_xz_single(dev, fw_priv, in_size, in_buffer);
-+	else
-+		return fw_decompress_xz_pages(dev, fw_priv, in_size, in_buffer);
-+}
-+#endif /* CONFIG_FW_LOADER_COMPRESS */
-+
- /* direct firmware loading support */
- static char fw_path_para[256];
- static const char * const fw_path[] = {
-@@ -354,7 +454,12 @@ module_param_string(path, fw_path_para, sizeof(fw_path_para), 0644);
- MODULE_PARM_DESC(path, "customized firmware image search path with a higher priority than default path");
- 
- static int
--fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
-+fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
-+			   const char *suffix,
-+			   int (*decompress)(struct device *dev,
-+					     struct fw_priv *fw_priv,
-+					     size_t in_size,
-+					     const void *in_buffer))
- {
- 	loff_t size;
- 	int i, len;
-@@ -362,9 +467,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 	char *path;
- 	enum kernel_read_file_id id = READING_FIRMWARE;
- 	size_t msize = INT_MAX;
-+	void *buffer = NULL;
- 
- 	/* Already populated data member means we're loading into a buffer */
--	if (fw_priv->data) {
-+	if (!decompress && fw_priv->data) {
-+		buffer = fw_priv->data;
- 		id = READING_FIRMWARE_PREALLOC_BUFFER;
- 		msize = fw_priv->allocated_size;
- 	}
-@@ -378,15 +485,15 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 		if (!fw_path[i][0])
- 			continue;
- 
--		len = snprintf(path, PATH_MAX, "%s/%s",
--			       fw_path[i], fw_priv->fw_name);
-+		len = snprintf(path, PATH_MAX, "%s/%s%s",
-+			       fw_path[i], fw_priv->fw_name, suffix);
- 		if (len >= PATH_MAX) {
- 			rc = -ENAMETOOLONG;
- 			break;
- 		}
- 
- 		fw_priv->size = 0;
--		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
-+		rc = kernel_read_file_from_path(path, &buffer, &size,
- 						msize, id);
- 		if (rc) {
- 			if (rc != -ENOENT)
-@@ -397,8 +504,24 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 					 path);
- 			continue;
- 		}
--		dev_dbg(device, "direct-loading %s\n", fw_priv->fw_name);
--		fw_priv->size = size;
-+		if (decompress) {
-+			dev_dbg(device, "f/w decompressing %s\n",
-+				fw_priv->fw_name);
-+			rc = decompress(device, fw_priv, size, buffer);
-+			/* discard the superfluous original content */
-+			vfree(buffer);
-+			buffer = NULL;
-+			if (rc) {
-+				fw_free_paged_buf(fw_priv);
-+				continue;
-+			}
-+		} else {
-+			dev_dbg(device, "direct-loading %s\n",
-+				fw_priv->fw_name);
-+			if (!fw_priv->data)
-+				fw_priv->data = buffer;
-+			fw_priv->size = size;
-+		}
- 		fw_state_done(fw_priv);
- 		break;
- 	}
-@@ -645,7 +768,13 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 	if (ret <= 0) /* error or already assigned */
- 		goto out;
- 
--	ret = fw_get_filesystem_firmware(device, fw->priv);
-+	ret = fw_get_filesystem_firmware(device, fw->priv, "", NULL);
-+#ifdef CONFIG_FW_LOADER_COMPRESS
-+	if (ret == -ENOENT)
-+		ret = fw_get_filesystem_firmware(device, fw->priv, ".xz",
-+						 fw_decompress_xz);
-+#endif
-+
- 	if (ret) {
- 		if (!(opt_flags & FW_OPT_NO_WARN))
- 			dev_warn(device,
--- 
-2.16.4
-
+[Jacob Pan]
