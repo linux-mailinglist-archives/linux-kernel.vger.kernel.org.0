@@ -2,67 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374B23CE0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F1483CE11
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:09:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389579AbfFKOH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:07:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40148 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387683AbfFKOH2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:07:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jwVSRVYpHoI+ZWo4MBq+1xKy3s947GP/tfP5zSWOihQ=; b=tZm05BCtFnROyHuy+UdTBO27s
-        nwZqB51QgVq3veDuwxxZ9RsTyvV9tu+goRJlRmvlfU7fBlfyJA0IfHb1sGIEw5Guo4RCLQeheW2Ng
-        +PmQXJ+uxE2ES1zCbmkTRCGNfA92g4nNmxQRcm+zI8DnUb3KD0nxOVHoUkdMMjWKhO8Krsf1h+u1m
-        L6cjG+1OygWSiNapaKwuyx3JRNNuv6zj+YG4WfqA11TD1sZvd6Im5yni3ST5F8tAEjpMdTzQ0dClU
-        wpxlbo2kBABvvoVl6XhSkKflygsn2wOz7Z780aeGhgDRi2OAEXZ3fpPnmmO7kIfI3WCpXJrtSE3/P
-        JSD/8VaIA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hahQr-0000sf-1G; Tue, 11 Jun 2019 14:07:25 +0000
-Date:   Tue, 11 Jun 2019 07:07:25 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     linuxppc-dev@ozlabs.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Subject: Re: Question - check in runtime which architecture am I running on
-Message-ID: <20190611140725.GA28902@infradead.org>
-References: <CAFCwf11EM9+NDML9hQmk9-rPzSmDmAyVLW+qOfs6h62dGK6H9A@mail.gmail.com>
+        id S2389480AbfFKOJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 10:09:12 -0400
+Received: from foss.arm.com ([217.140.110.172]:33758 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfFKOJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:09:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7336344;
+        Tue, 11 Jun 2019 07:09:10 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C6E193F557;
+        Tue, 11 Jun 2019 07:09:09 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 15:09:07 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Raphael Gault <raphael.gault@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, acme@kernel.org
+Subject: Re: [PATCH 1/7] perf: arm64: Compile tests unconditionally
+Message-ID: <20190611140907.GF29008@lakrids.cambridge.arm.com>
+References: <20190611125315.18736-1-raphael.gault@arm.com>
+ <20190611125315.18736-2-raphael.gault@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFCwf11EM9+NDML9hQmk9-rPzSmDmAyVLW+qOfs6h62dGK6H9A@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190611125315.18736-2-raphael.gault@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 03:30:08PM +0300, Oded Gabbay wrote:
-> Hello POWER developers,
+On Tue, Jun 11, 2019 at 01:53:09PM +0100, Raphael Gault wrote:
+> In order to subsequently add more tests for the arm64 architecture
+> we compile the tests target for arm64 systematically.
+
+Given prior questions regarding this commit, it's probably worth
+spelling things out more explicitly, e.g.
+
+  Currently we only build the arm64/tests directory if
+  CONFIG_DWARF_UNWIND is selected, which is fine as the only test we
+  have is arm64/tests/dwarf-unwind.o.
+
+  So that we can add more tests to the test directory, let's
+  unconditionally build the directory, but conditionally build
+  dwarf-unwind.o depending on CONFIG_DWARF_UNWIND.
+
+  There should be no functional change as a result of this patch.
+
 > 
-> I'm trying to find out if there is an internal kernel API so that a
-> PCI driver can call it to check if its PCI device is running inside a
-> POWER9 machine. Alternatively, if that's not available, if it is
-> running on a machine with powerpc architecture.
+> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 
-Your driver has absolutely not business knowing this.
+Either way, the patch looks good to me:
 
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> ---
+>  tools/perf/arch/arm64/Build       | 2 +-
+>  tools/perf/arch/arm64/tests/Build | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> I need this information as my device (Goya AI accelerator)
-> unfortunately needs a slightly different configuration of its PCIe
-> controller in case of POWER9 (need to set bit 59 to be 1 in all
-> outbound transactions).
-
-No, it doesn't.  You can query the output from dma_get_required_mask
-to optimize for the DMA addresses you get, and otherwise you simply
-set the maximum dma mask you support.  That is about the control you
-get, and nothing else is a drivers business.
+> diff --git a/tools/perf/arch/arm64/Build b/tools/perf/arch/arm64/Build
+> index 36222e64bbf7..a7dd46a5b678 100644
+> --- a/tools/perf/arch/arm64/Build
+> +++ b/tools/perf/arch/arm64/Build
+> @@ -1,2 +1,2 @@
+>  perf-y += util/
+> -perf-$(CONFIG_DWARF_UNWIND) += tests/
+> +perf-y += tests/
+> diff --git a/tools/perf/arch/arm64/tests/Build b/tools/perf/arch/arm64/tests/Build
+> index 41707fea74b3..a61c06bdb757 100644
+> --- a/tools/perf/arch/arm64/tests/Build
+> +++ b/tools/perf/arch/arm64/tests/Build
+> @@ -1,4 +1,4 @@
+>  perf-y += regs_load.o
+> -perf-y += dwarf-unwind.o
+> +perf-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
+>  
+>  perf-y += arch-tests.o
+> -- 
+> 2.17.1
+> 
