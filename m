@@ -2,104 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 657C53D186
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A91603D18D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:57:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391856AbfFKPzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 11:55:36 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48875 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388958AbfFKPzg (ORCPT
+        id S2405485AbfFKP4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 11:56:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33226 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391859AbfFKP4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 11:55:36 -0400
-X-Originating-IP: 90.88.159.246
-Received: from mc-bl-xps13.lan (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 6B74B60016;
-        Tue, 11 Jun 2019 15:55:29 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH net] net: ethtool: Allow matching on vlan CFI bit
-Date:   Tue, 11 Jun 2019 17:54:56 +0200
-Message-Id: <20190611155456.15360-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 11 Jun 2019 11:56:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dYWF8dg5ZWwrOvlmpQU8/b1U7j2GS0cV9KF8ci48uQA=; b=UO4Up5c8sxzI2qusz/vGAYQOu
+        +QwryOTTYPx6psOLJBQIF4rNOo6mPv28IbkjmvcvaR6QPL8LzVVW9D7fCKgOw5o0P3F+2EHE2S3lV
+        feKBFI2c8bb8M2xx42ivpb/hRUsXPsVWHX5hYWDY1k/y7NP2G+hqyI8fe11VYhntf8EFYBidqSHou
+        MAz97neHt3+nmuK60pH2EyctnEi4CxcIKmNRf7Qj3OMuCK52uOT5vKlgO6GuG7jbvcl9dlgUzX7DU
+        WxuEzW3SPEJZK4FQVgW6m6QE/tM9hm/FJo+N9aQy/pSU/86ldKDldOIjUCrHd7K4KqdYC0c2m7OZF
+        5URSSNUUA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1haj7a-0008Fj-Sg; Tue, 11 Jun 2019 15:55:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5E6A42023E4A7; Tue, 11 Jun 2019 17:55:37 +0200 (CEST)
+Date:   Tue, 11 Jun 2019 17:55:37 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
+ instructions
+Message-ID: <20190611155537.GB3436@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.005681046@infradead.org>
+ <20190608004708.7646b287151cf613838ce05f@kernel.org>
+ <20190607173427.GK3436@hirez.programming.kicks-ass.net>
+ <3DA961AB-950B-4886-9656-C0D268D521F1@amacapital.net>
+ <20190611080307.GN3436@hirez.programming.kicks-ass.net>
+ <20190611112254.576226fe@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611112254.576226fe@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using ethtool, users can specify a classification action matching on the
-full vlan tag, which includes the CFI bit.
+On Tue, Jun 11, 2019 at 11:22:54AM -0400, Steven Rostedt wrote:
+> On Tue, 11 Jun 2019 10:03:07 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> 
+> > So what happens is that arch_prepare_optimized_kprobe() <-
+> > copy_optimized_instructions() copies however much of the instruction
+> > stream is required such that we can overwrite the instruction at @addr
+> > with a 5 byte jump.
+> > 
+> > arch_optimize_kprobe() then does the text_poke_bp() that replaces the
+> > instruction @addr with int3, copies the rel jump address and overwrites
+> > the int3 with jmp.
+> > 
+> > And I'm thinking the problem is with something like:
+> > 
+> > @addr: nop nop nop nop nop
+> 
+> What would work would be to:
+> 
+> 	add breakpoint to first opcode.
+> 
+> 	call synchronize_tasks();
+> 
+> 	/* All tasks now hitting breakpoint and jumping over affected
+> 	code */
+> 
+> 	update the rest of the instructions.
+> 
+> 	replace breakpoint with jmp.
+> 
+> One caveat is that the replaced instructions must not be a call
+> function. As if the call function calls schedule then it will
+> circumvent the synchronize_tasks(). It would be OK if that call is the
+> last of the instructions. But I doubt we modify anything more then a
+> call size anyway, so this should still work for all current instances.
 
-However, when converting the ethool_flow_spec to a flow_rule, we use
-dissector keys to represent the matching patterns.
+Right, something like this could work (although I cannot currently find
+synchronize_tasks), but it would make the optprobe stuff fairly slow
+(iirc this sync_tasks() thing could be pretty horrible).
 
-Since the vlan dissector key doesn't include the CFI bit, this
-information was silently discarded when translating the ethtool
-flow spec in to a flow_rule.
-
-This commit adds the CFI bit into the vlan dissector key, and allows
-propagating the information to the driver when parsing the ethtool flow
-spec.
-
-Fixes: eca4205f9ec3 ("ethtool: add ethtool_rx_flow_spec to flow_rule structure translator")
-Reported-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-Hi all,
-
-Although this prevents information to be silently discarded when parsing
-an ethtool_flow_spec, this information doesn't seem to be used by any
-driver that converts an ethtool_flow_spec to a flow_rule, hence I'm not
-sure this is suitable for -net.
-
-Thanks,
-
-Maxime
-
- include/net/flow_dissector.h | 1 +
- net/core/ethtool.c           | 5 +++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/include/net/flow_dissector.h b/include/net/flow_dissector.h
-index 7c5a8d9a8d2a..9d2e395c6568 100644
---- a/include/net/flow_dissector.h
-+++ b/include/net/flow_dissector.h
-@@ -46,6 +46,7 @@ struct flow_dissector_key_tags {
- 
- struct flow_dissector_key_vlan {
- 	u16	vlan_id:12,
-+		vlan_cfi:1,
- 		vlan_priority:3;
- 	__be16	vlan_tpid;
- };
-diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-index d08b1e19ce9c..43df34c1ebe1 100644
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -3020,6 +3020,11 @@ ethtool_rx_flow_rule_create(const struct ethtool_rx_flow_spec_input *input)
- 			match->mask.vlan.vlan_id =
- 				ntohs(ext_m_spec->vlan_tci) & 0x0fff;
- 
-+			match->key.vlan.vlan_cfi =
-+				!!(ntohs(ext_h_spec->vlan_tci) & 0x1000);
-+			match->mask.vlan.vlan_cfi =
-+				!!(ntohs(ext_m_spec->vlan_tci) & 0x1000);
-+
- 			match->key.vlan.vlan_priority =
- 				(ntohs(ext_h_spec->vlan_tci) & 0xe000) >> 13;
- 			match->mask.vlan.vlan_priority =
--- 
-2.20.1
 
