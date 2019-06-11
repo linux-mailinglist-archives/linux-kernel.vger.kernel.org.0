@@ -2,90 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E929B3C0BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 02:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E18BC3C0C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 03:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390200AbfFKA6d convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 10 Jun 2019 20:58:33 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:40203 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389168AbfFKA6d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 20:58:33 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x5B0wFYO024190
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Jun 2019 09:58:15 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5B0wFlq001013;
-        Tue, 11 Jun 2019 09:58:15 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5B0qXb2026225;
-        Tue, 11 Jun 2019 09:58:14 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-5834591; Tue, 11 Jun 2019 09:57:09 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Tue,
- 11 Jun 2019 09:57:09 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "Chen, Jerry T" <jerry.t.chen@intel.com>,
-        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
- set_hwpoison_free_buddy_page() fails
-Thread-Topic: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
- set_hwpoison_free_buddy_page() fails
-Thread-Index: AQHVH2UNBW9Lhf3e5UinMjf59GXrMKaVARSAgAAKeoA=
-Date:   Tue, 11 Jun 2019 00:57:08 +0000
-Message-ID: <20190611005715.GB5187@hori.linux.bs1.fc.nec.co.jp>
-References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <1560154686-18497-2-git-send-email-n-horiguchi@ah.jp.nec.com>
- <8e8e6afc-cddb-9e79-c8ae-c2814b73cbe9@oracle.com>
-In-Reply-To: <8e8e6afc-cddb-9e79-c8ae-c2814b73cbe9@oracle.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.96]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <FFF5B42DBE5DA8439EBBBA26EBB51176@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        id S2390168AbfFKBGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 21:06:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388845AbfFKBGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 21:06:17 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3ED120652;
+        Tue, 11 Jun 2019 01:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560215175;
+        bh=H0wYscaX4spAKhGwci+faRMeUtvVux/Cx2QS70lGKnE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rEyFSdOSUyrnB/z7NmdFYurOWXuJ7MHD7xEX757FtCUPczPNs+aDBKovF9B3zz15z
+         e19Evp6mG8ida9dvAJ97iPzj206qBUt7s3S0nFJbzq112/aUhMubeTZk92l6Wxh0+I
+         fyT18NKDuKkZS5mTQVTw65KE7HYmk3GV4pkFuRcQ=
+Date:   Mon, 10 Jun 2019 18:06:13 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+7e2e50c8adfccd2e5041@syzkaller.appspotmail.com>
+Cc:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        wensong@linux-vs.org
+Subject: Re: memory leak in start_sync_thread
+Message-ID: <20190611010612.GD220379@gmail.com>
+References: <0000000000006d7e520589f6d3a9@google.com>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000006d7e520589f6d3a9@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 05:19:45PM -0700, Mike Kravetz wrote:
-> On 6/10/19 1:18 AM, Naoya Horiguchi wrote:
-> > The pass/fail of soft offline should be judged by checking whether the
-> > raw error page was finally contained or not (i.e. the result of
-> > set_hwpoison_free_buddy_page()), but current code do not work like that.
-> > So this patch is suggesting to fix it.
-> > 
-> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Fixes: 6bc9b56433b76 ("mm: fix race on soft-offlining")
-> > Cc: <stable@vger.kernel.org> # v4.19+
+On Tue, May 28, 2019 at 11:28:05AM -0700, syzbot wrote:
+> Hello,
 > 
-> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-
-Thank you, Mike.
-
+> syzbot found the following crash on:
 > 
-> To follow-up on Andrew's comment/question about user visible effects.  Without
-> this fix, there are cases where madvise(MADV_SOFT_OFFLINE) may not offline the
-> original page and will not return an error.
+> HEAD commit:    cd6c84d8 Linux 5.2-rc2
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=132bd44aa00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=64479170dcaf0e11
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7e2e50c8adfccd2e5041
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114b1354a00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b7ad26a00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+7e2e50c8adfccd2e5041@syzkaller.appspotmail.com
+> 
+> d started: state = MASTER, mcast_ifn = syz_tun, syncid = 0, id = 0
+> BUG: memory leak
+> unreferenced object 0xffff8881206bf700 (size 32):
+>   comm "syz-executor761", pid 7268, jiffies 4294943441 (age 20.470s)
+>   hex dump (first 32 bytes):
+>     00 40 7c 09 81 88 ff ff 80 45 b8 21 81 88 ff ff  .@|......E.!....
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<0000000057619e23>] kmemleak_alloc_recursive
+> include/linux/kmemleak.h:55 [inline]
+>     [<0000000057619e23>] slab_post_alloc_hook mm/slab.h:439 [inline]
+>     [<0000000057619e23>] slab_alloc mm/slab.c:3326 [inline]
+>     [<0000000057619e23>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+>     [<0000000086ce5479>] kmalloc include/linux/slab.h:547 [inline]
+>     [<0000000086ce5479>] start_sync_thread+0x5d2/0xe10
+> net/netfilter/ipvs/ip_vs_sync.c:1862
+>     [<000000001a9229cc>] do_ip_vs_set_ctl+0x4c5/0x780
+> net/netfilter/ipvs/ip_vs_ctl.c:2402
+>     [<00000000ece457c8>] nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+>     [<00000000ece457c8>] nf_setsockopt+0x4c/0x80
+> net/netfilter/nf_sockopt.c:115
+>     [<00000000942f62d4>] ip_setsockopt net/ipv4/ip_sockglue.c:1258 [inline]
+>     [<00000000942f62d4>] ip_setsockopt+0x9b/0xb0 net/ipv4/ip_sockglue.c:1238
+>     [<00000000a56a8ffd>] udp_setsockopt+0x4e/0x90 net/ipv4/udp.c:2616
+>     [<00000000fa895401>] sock_common_setsockopt+0x38/0x50
+> net/core/sock.c:3130
+>     [<0000000095eef4cf>] __sys_setsockopt+0x98/0x120 net/socket.c:2078
+>     [<000000009747cf88>] __do_sys_setsockopt net/socket.c:2089 [inline]
+>     [<000000009747cf88>] __se_sys_setsockopt net/socket.c:2086 [inline]
+>     [<000000009747cf88>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2086
+>     [<00000000ded8ba80>] do_syscall_64+0x76/0x1a0
+> arch/x86/entry/common.c:301
+>     [<00000000893b4ac8>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
 
-Yes, that's right.
+The bug is that ownership of some memory is passed to a kthread started by
+kthread_run(), but the kthread can be stopped before it actually executes the
+threadfn.  See the code in kernel/kthread.c:
 
->  Are there any other visible
-> effects?
+        ret = -EINTR;
+        if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
+                cgroup_kthread_ready();
+                __kthread_parkme(self);
+                ret = threadfn(data);
+        }
 
-I can't think of other ones.
+So, apparently the thread parameters must always be owned by the owner of the
+kthread, not by the kthread itself.  It seems like this would be a common
+mistake in kernel code; I'm surprised this doesn't come up more...
 
-- Naoya
+- Eric
