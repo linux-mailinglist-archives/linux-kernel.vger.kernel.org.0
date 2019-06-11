@@ -2,15 +2,15 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 884943D316
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 001E23D313
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 18:57:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405515AbfFKQ4z convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 11 Jun 2019 12:56:55 -0400
+        id S2405239AbfFKQ4r convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 11 Jun 2019 12:56:47 -0400
 Received: from smtp1.ono.com ([62.42.230.162]:43197 "EHLO smtp1.ono.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405434AbfFKQ4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 12:56:51 -0400
+        id S2390961AbfFKQ4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 12:56:47 -0400
 X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.11.154516:17:16.798,ip=62.42.230.144,rules=__HAS_MSGID,
  __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
  FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, __MIME_VERSION,
@@ -27,9 +27,9 @@ X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.11.154516:17:16.798,ip=62
  __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
  BODY_SIZE_7000_LESS, TO_MALFORMED
 Received: from resprs05 (62.42.230.144) by smtp1.ono.com (9.0.019.09-1)
-        id 5C12554F093E4AEB; Tue, 11 Jun 2019 18:56:32 +0200
+        id 5C12554F093E4AEA; Tue, 11 Jun 2019 18:56:32 +0200
 Received: from (149.126.75.9) by webmailcpr05n.ono.com;  Tue, 11 Jun 2019 18:56:29 +0200
-Message-ID: <11821780.392871560272189968.JavaMail.defaultUser@defaultHost>
+Message-ID: <24162869.392831560272189962.JavaMail.defaultUser@defaultHost>
 Date:   Tue, 11 Jun 2019 18:56:29 +0200 (CEST)
 From:   "Mrs. Patrick Huang" <daniperez@ono.com>
 Reply-To: huangpatrick946@gmail.com
