@@ -2,101 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 154233C134
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 04:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CA333C138
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 04:22:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390801AbfFKCTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 10 Jun 2019 22:19:44 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:44257 "EHLO ozlabs.org"
+        id S2390812AbfFKCWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 10 Jun 2019 22:22:50 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18331 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390455AbfFKCTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Jun 2019 22:19:44 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NDGd2qLKz9sCJ;
-        Tue, 11 Jun 2019 12:19:37 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560219581;
-        bh=riCLNpOP44OBCwlLt1K2xxEy7XqqVkYwOn6mw2Or/+s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bEVS0WB23bwo1ka49nKFafHCSBvAdzzdIbYBwGClmezK6vJr/cnLI4J8YpEmlP/kU
-         wINTJKYSfBgg1+mER7f8TyTRVCsfH0BvUkudB7gRQ0lVz6wMq6selU6BXr5v7Iryp5
-         1daVSwJhZZTdGFofqIqQq5uPyS5uDKC6sEtimvGX2JYo1JYAcG4K5BDd5RsHr8iRtu
-         VanigzOBpT6VuM6WBGGye8QRHCbl6Cc75lDvRmnVFDId8IEKMoIon4jM60LpbzMdYL
-         zxHclboS+MP9+zrYEAJL0KiSda75Vf/wy3BzjK4mqBGZl0ft8MMmwRKvsB2k2wTTiM
-         IoJV9bSDSlMbQ==
-Date:   Tue, 11 Jun 2019 12:19:35 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Message-ID: <20190611121935.5c7807bd@canb.auug.org.au>
+        id S2390244AbfFKCWu (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 10 Jun 2019 22:22:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 19:22:49 -0700
+X-ExtLoop1: 1
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.109]) ([10.239.196.109])
+  by orsmga001.jf.intel.com with ESMTP; 10 Jun 2019 19:22:46 -0700
+Subject: Re: [PATCH v2 4/7] perf diff: Use hists to manage basic blocks per
+ symbol
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <1559572577-25436-1-git-send-email-yao.jin@linux.intel.com>
+ <1559572577-25436-5-git-send-email-yao.jin@linux.intel.com>
+ <20190605114417.GB5868@krava>
+ <4bbc5085-c8b0-5e36-419c-6ee754186027@linux.intel.com>
+Message-ID: <b6c07576-3ee1-487e-ad56-18d1f4eea140@linux.intel.com>
+Date:   Tue, 11 Jun 2019 10:22:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.HUYm0xNRyThX+AV/LktJUw"; protocol="application/pgp-signature"
+In-Reply-To: <4bbc5085-c8b0-5e36-419c-6ee754186027@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.HUYm0xNRyThX+AV/LktJUw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the drm tree got conflicts in:
+On 6/8/2019 7:41 PM, Jin, Yao wrote:
+> 
+> 
+> On 6/5/2019 7:44 PM, Jiri Olsa wrote:
+>> On Mon, Jun 03, 2019 at 10:36:14PM +0800, Jin Yao wrote:
+>>
+>> SNIP
+>>
+>>> diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+>>> index 43623fa..d1641da 100644
+>>> --- a/tools/perf/util/sort.h
+>>> +++ b/tools/perf/util/sort.h
+>>> @@ -79,6 +79,9 @@ struct hist_entry_diff {
+>>>           /* HISTC_WEIGHTED_DIFF */
+>>>           s64    wdiff;
+>>> +
+>>> +        /* PERF_HPP_DIFF__CYCLES */
+>>> +        s64    cycles;
+>>>       };
+>>>   };
+>>> @@ -143,6 +146,9 @@ struct hist_entry {
+>>>       struct branch_info    *branch_info;
+>>>       long            time;
+>>>       struct hists        *hists;
+>>> +    void            *block_hists;
+>>> +    int            block_idx;
+>>> +    int            block_num;
+>>>       struct mem_info        *mem_info;
+>>>       struct block_info    *block_info;
+>>
+>> could you please not add the new block* stuff in here,
+>> and instead use the "c2c model" and use yourr own struct
+>> on top of hist_entry? we are trying to librarize this
+>> stuff and keep only necessary things in here..
+>>
+>> you're already using hist_entry_ops, so should be easy
+>>
+>> something like:
+>>
+>>     struct block_hist_entry {
+>>         void            *block_hists;
+>>         int            block_idx;
+>>         int            block_num;
+>>         struct block_info    *block_info;
+>>
+>>         struct hist_entry    he;
+>>     };
+>>
+>>
+>>
+>> jirka
+>>
+> 
+> Hi Jiri,
+> 
+> After more considerations, maybe I can't move these stuffs from 
+> hist_entry to block_hist_entry.
+> 
+> Actually we use 2 kinds of hist_entry in this patch series. On kind of 
+> hist_entry is for symbol/function. The other kind of hist_entry is for 
+> basic block.
+> 
+> @@ -143,6 +146,9 @@ struct hist_entry {
+>        struct branch_info    *branch_info;
+>        long            time;
+>        struct hists        *hists;
+> +    void            *block_hists;
+> +    int            block_idx;
+> +    int            block_num;
+>        struct mem_info        *mem_info;
+>        struct block_info    *block_info;
+> 
+> The above hist_entry is actually for symbol/function. This patch series 
+> collects all basic blocks in a symbol/function, so it needs a hists in 
+> struct hist_entry (block_hists) to point to the hists of basic blocks.
+> 
+> Correct me if I'm wrong.
+> 
+> Thanks
+> Jin Yao
+> 
 
-  drivers/gpu/drm/cirrus/cirrus_drv.h
-  include/drm/gma_drm.h
+Hi Jiri,
 
-between commits:
+Either adding a new pointer 'priv' in 'struct map_symbol'?
 
-  a61127c21302 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 335")
-  c51669eafb45 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 377")
+struct map_symbol {
+	struct map	*map;
+	struct symbol	*sym;
++	void		*priv;
+};
 
-from Linus' tree and commits:
+We create a struct outside and assign the pointer to priv. Logically it 
+should make sense since the symbol/function may have private data for 
+processing.
 
-  d825c565304f ("drm/gma500: remove empty gma_drm.h header file")
-  0388f2f61bef ("drm/cirrus: remove leftover files")
+Any idea?
 
-from the drm tree.
+Thanks
+Jin Yao
 
-I fixed it up (I just removed te file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/.HUYm0xNRyThX+AV/LktJUw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz/D7cACgkQAVBC80lX
-0GxDewf/aYO+GE3bsUgYe3Pl3au9KebW2srvatsyblkIiqiQzkiuDhjHTM9qHof+
-mp8KesGMbmw6IUCV66A0kjT1Qb/FfTHULcJ8LQ3ptqJahvF7lUnAzs+LqwUBf5V2
-2kTKMGDy2MqS4lUmhaUDDd+LE1atUwdcdWa7Cqmg46PqZ91p6ncdpkudib+miesp
-5zx0eEDi28icTWUINqg06Xx4nwtnZ4V9eWofVoDVQapQEunWJt89/w0X2F63FvW4
-/RJ0Z2gumS8QAG22Yv9+twZfQtew3VPWDscsazgS3MEN7+4DuxRh7ceEt7K7V5Ty
-SZfqOakOm91+6MB3SwQmBlUpih2tCg==
-=7AzB
------END PGP SIGNATURE-----
-
---Sig_/.HUYm0xNRyThX+AV/LktJUw--
