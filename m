@@ -2,132 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F35553D53B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB21D3D54A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406908AbfFKSLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:11:04 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36342 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406685AbfFKSLE (ORCPT
+        id S2406974AbfFKSNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:13:05 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:56987 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406831AbfFKSNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:11:04 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F070F1030;
-        Tue, 11 Jun 2019 20:11:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1560276662;
-        bh=X5ba4hPanC2AN4ceWEVuMDO4nnB5xvvl9LT4UMu+zYQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hcIOtR0SSyWGNef99sUwB28gGA+lFi/F/FphmQuvgI0MTjARriXxO/K1eUH5m6o9/
-         LVgI8p+IrMWyqRuwTIE0c1kXCNIGaSpiqrxgCPSkick5B2BaqeMqvBtiXBHLSSvnRZ
-         1xi8CWzBevXuv4WcwNseLfRvqjRiubK0dRO9dPyQ=
-Date:   Tue, 11 Jun 2019 21:10:46 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Michael Drake <michael.drake@codethink.co.uk>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@lists.codethink.co.uk,
-        Patrick Glaser <pglaser@tesla.com>, Nate Case <ncase@tesla.com>
-Subject: Re: [PATCH v1 06/11] ti948: Reconfigure in the alive check when
- device returns
-Message-ID: <20190611181046.GU5016@pendragon.ideasonboard.com>
-References: <20190611140412.32151-1-michael.drake@codethink.co.uk>
- <20190611140412.32151-7-michael.drake@codethink.co.uk>
+        Tue, 11 Jun 2019 14:13:04 -0400
+Received: from [192.168.1.110] ([95.118.191.213]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MwQCb-1giNZA3N25-00sOvD; Tue, 11 Jun 2019 20:11:17 +0200
+Subject: Re: [PATCH resend] serial: 8250: Add support for using
+ platform_device resources
+To:     Esben Haabendal <esben@haabendal.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        He Zhe <zhe.he@windriver.com>, Marek Vasut <marex@denx.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+References: <20190430140416.4707-1-esben@geanix.com>
+ <20190521113426.16790-1-esben@geanix.com> <20190521131131.GA19685@kroah.com>
+ <878suzn9wx.fsf@haabendal.dk>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <ef125e69-3128-255d-483e-14b50036905f@metux.net>
+Date:   Tue, 11 Jun 2019 20:11:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <878suzn9wx.fsf@haabendal.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190611140412.32151-7-michael.drake@codethink.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:x93nJV3Bbkp8Z/g8aMYok3VV7GLXLxitWGsdzTWg68qpXr7r4Fx
+ CnQUJRVBah+Qe5WXAw0Uf3WyAiaLDgHZ5fgXiCikahMozhuantK5PAbqE9iGnDZdlVF9dNR
+ d2lo4627itDIdvvpfuzQPYBVTPJJFKaGRZbeO711zzd46UxLit8ZZaUUqHVMasW0ColbCJ/
+ qLVj844T5AL99/c/aphjA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TkpVOKfh1aw=:DF8vRhPwBU7XHqD5rSAaza
+ MRtAkq1iIi/YC6+Yy7yf8v17rcoi0Bx7RUZcgpUHcbJ0XxQtOFg2wwbD1v9Dzf0JKQUqjPR+S
+ E+uwcwznlRuUUFX8d3RoIkNokLhdOWCGPWGtFAcGW8XlLWuMOo0dfOWpBdUImOPbrNgRJfqeq
+ Io9JrP9pourQ8hmRJj5k56JCmxTP/RkXfM9473BsVW+B9hiuUznjr4I5usZUE6T9NLvvh68FA
+ G31ojb/S8252vCh5fPDhEanwnvqYUFoCjWq/m/LiYcHIxtAOlimuKhNSurxEfysZQotLZI9xi
+ 1yA5UPcQkOGNg7hI3G6MGBHW1XwsNlm5/r94lxZY7o3GbN5eGNvwZDg0dmIsbTLo641UMsxXR
+ ++Vlj6HkICH1tFnil2GF382YNkfGEdy/Rn7qk/Ao+cA9TqUgfEZ26X4K3C8hZXVcd5k5ymhIA
+ 9eBpLD7G38GwDPp1/RZkUtcweb2vl2FA4/lLaHFlO1zNXklWy3Qyl1YEvL+L7TlMKkS2NGRp/
+ 63jmgKpTX8+wJ1H5GN3Iw0ohwCZve4+zmkxZEeBjPAs4tSU5nnKCNeBUrxt8EDr1U3U8JiZf+
+ 38yl2snfj1JllqQZgwB85dQwhosj4HvLQNISweeY4llBrH4SqTgXfLmFG39ln9dzE58NsMZYE
+ bZ+judknO2OYW2bHalP5STZAdLTi2Aagbqd4NN2ra/h9e/ayqD1tF4Lk5JGfr4N4twb8v/nRL
+ l9TchayIw3q3YK3izxM7Vprz8SJLgdTqmV0SomaPewYuprExAKc9UHrUIgbB9v5wNC4kJBXpD
+ YgJr1Bw
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+On 21.05.19 16:45, Esben Haabendal wrote:
+> It sits here.  It is a rather big and clunky mfd driver, not ready for
+> upstreaming in its current form.  I hope to get around to clean it up.
+> But it is for a very specific hardware that is really available or
+> usable for anybody else.  Does it make sense to spend effort on
+> submitting such a driver?
 
-Thank you for the patch.
+Maybe you could post your queue w/ "RFC: " prefix and add a proper
+introduction, so everybody knows that isn't meant to be upstreamed,
+but instead a basis for discussions ?
 
-On Tue, Jun 11, 2019 at 03:04:07PM +0100, Michael Drake wrote:
-> If the alive check detects a transition to the alive state,
-> the device configuration is rewritten.
+Personally, I'd like to have a look at it and understand, what's the
+actual problem you'd like to solve.
 
-This seems like a big hack. You will have at the very least to explain
-why this is needed, and why you can't configure the device in response
-to drm_bridge operation calls.
 
-> Signed-off-by: Michael Drake <michael.drake@codethink.co.uk>
-> Cc: Patrick Glaser <pglaser@tesla.com>
-> Cc: Nate Case <ncase@tesla.com>
-> ---
->  drivers/gpu/drm/bridge/ti948.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ti948.c b/drivers/gpu/drm/bridge/ti948.c
-> index 86daa3701b91..b5c766711c4b 100644
-> --- a/drivers/gpu/drm/bridge/ti948.c
-> +++ b/drivers/gpu/drm/bridge/ti948.c
-> @@ -132,6 +132,8 @@ struct ti948_reg_val {
->   * @reg_names:   Array of regulator names, or NULL.
->   * @regs:        Array of regulators, or NULL.
->   * @reg_count:   Number of entries in reg_names and regs arrays.
-> + * @alive_check: Context for the alive checking work item.
-> + * @alive:       Whether the device is alive or not (alive_check).
->   */
->  struct ti948_ctx {
->  	struct i2c_client *i2c;
-> @@ -141,6 +143,8 @@ struct ti948_ctx {
->  	const char **reg_names;
->  	struct regulator **regs;
->  	size_t reg_count;
-> +	struct delayed_work alive_check;
-> +	bool alive;
->  };
->  
->  static bool ti948_readable_reg(struct device *dev, unsigned int reg)
-> @@ -346,6 +350,8 @@ static int ti948_power_on(struct ti948_ctx *ti948)
->  	if (ret != 0)
->  		return ret;
->  
-> +	ti948->alive = true;
-> +
->  	msleep(500);
->  
->  	return 0;
-> @@ -356,6 +362,8 @@ static int ti948_power_off(struct ti948_ctx *ti948)
->  	int i;
->  	int ret;
->  
-> +	ti948->alive = false;
-> +
->  	for (i = ti948->reg_count; i > 0; i--) {
->  		dev_info(&ti948->i2c->dev, "Disabling %s regulator\n",
->  				ti948->reg_names[i - 1]);
-> @@ -388,8 +396,17 @@ static void ti948_alive_check(struct work_struct *work)
->  {
->  	struct delayed_work *dwork = to_delayed_work(work);
->  	struct ti948_ctx *ti948 = delayed_work_to_ti948_ctx(dwork);
-> +	int ret = ti948_device_check(ti948);
->  
-> -	dev_info(&ti948->i2c->dev, "%s Alive check!\n", __func__);
-> +	if (ti948->alive == false && ret == 0) {
-> +		dev_info(&ti948->i2c->dev, "Device has come back to life!\n");
-> +		ti948_write_config_seq(ti948);
-> +		ti948->alive = true;
-> +
-> +	} else if (ti948->alive == true && ret != 0) {
-> +		dev_info(&ti948->i2c->dev, "Device has stopped responding\n");
-> +		ti948->alive = false;
-> +	}
->  
->  	/* Reschedule ourself for the next check. */
->  	schedule_delayed_work(&ti948->alive_check, TI948_ALIVE_CHECK_DELAY);
+--mtx
 
 -- 
-Regards,
-
-Laurent Pinchart
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
