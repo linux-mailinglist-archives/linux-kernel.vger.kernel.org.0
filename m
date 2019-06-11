@@ -2,64 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E04933D756
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 21:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B5A43D08E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 17:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406009AbfFKT6D convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 11 Jun 2019 15:58:03 -0400
-Received: from ip69-151.cbn.net.id ([202.158.69.151]:40772 "EHLO
-        mail.seinoindomobil.co.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405070AbfFKT6D (ORCPT
+        id S2404598AbfFKPRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 11:17:11 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37298 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbfFKPRL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 15:58:03 -0400
-X-Greylist: delayed 12894 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 15:58:02 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.seinoindomobil.co.id (Postfix) with ESMTP id 708EC6B13F0;
-        Tue, 11 Jun 2019 22:16:11 -0400 (EDT)
-Received: from mail.seinoindomobil.co.id ([127.0.0.1])
-        by localhost (mail.seinoindomobil.co.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id MLGpIpF7h-kW; Tue, 11 Jun 2019 22:16:11 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.seinoindomobil.co.id (Postfix) with ESMTP id CBC226B13F8;
-        Tue, 11 Jun 2019 22:16:09 -0400 (EDT)
-X-Virus-Scanned: amavisd-new at seinoindomobil.co.id
-Received: from mail.seinoindomobil.co.id ([127.0.0.1])
-        by localhost (mail.seinoindomobil.co.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id h9oOKsKITCGj; Tue, 11 Jun 2019 22:16:09 -0400 (EDT)
-Received: from [51.89.19.252] (ip252.ip-51-89-19.eu [51.89.19.252])
-        by mail.seinoindomobil.co.id (Postfix) with ESMTPA id 954CC6B13F4;
-        Tue, 11 Jun 2019 22:16:05 -0400 (EDT)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 11 Jun 2019 11:17:11 -0400
+Received: by mail-qt1-f193.google.com with SMTP id y57so14996576qtk.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 08:17:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P8EQNdlfEKMSd2en3pkgledmujjaJiojIo3h1kmvnOQ=;
+        b=ckIs0ZQT0ZQTyavRyAxo1zsbS8aSMUP6pda4+gSHZC7pv6edOFGv8rB1mPTeSovZPx
+         +3X3sHrMhro7Pb/LTaaag0dK95CohY6m4y52C43+GGxrcpNH66FlmaZK+KeQcIpB9Nju
+         29G0mDHn0OzOqjCE67invoF6pHTgkAyVRLJCYhCEHzE9lOXhi+yuFYIkzORZ6Gh/sBfh
+         zn+FeWKUSAofC7ycMQJhlbwQ4U+wGic2TniEqzOPHtVvMW2y/JkOS6b7qYkZK0YJvSGK
+         AP+eMmg8U5d+qfUaCB0T125XTNveyVYzx9++5Mgmv/XyK+fG6PxMTmsnN78haXGoYNvP
+         3ldQ==
+X-Gm-Message-State: APjAAAVwnANJg/I+OomvTUiHrmBzi4mE0m0u3c9EnZjvyi/R2YRphvIy
+        WB7IRWMqlnrvtiA87D/VeTrOYXvQ6+az80ftTr76WQ==
+X-Google-Smtp-Source: APXvYqxTwhCXjUiYOLjzsXDsnhv8C1o60LWTFhRLJ28dtwbw6MnKs2gpVUwymuiiAZ8b1O+X+RMvu9It7qiwHlxTQk8=
+X-Received: by 2002:ac8:2998:: with SMTP id 24mr62676416qts.31.1560266230100;
+ Tue, 11 Jun 2019 08:17:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Ihr_Rat_und_Interesse_wird_ben=C3=B6tigt?=
-To:     Recipients <admin@seinoindomobil.co.id>
-From:   "Mr.Mike Loung huang" <admin@seinoindomobil.co.id>
-Date:   Tue, 11 Jun 2019 08:16:27 -0700
-Reply-To: hansruedi.gschwind@gmail.com
-Message-Id: <20190612021605.954CC6B13F4@mail.seinoindomobil.co.id>
+References: <20190611123101.25264-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20190611123101.25264-1-ckeepax@opensource.cirrus.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 11 Jun 2019 17:16:58 +0200
+Message-ID: <CAO-hwJ+qSXwZ-5sAiZ55-r_PXp9pvnE1XEaE_v3SBnxzQQNH4g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] I2C IRQ Probe Improvements
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, mika.westerberg@linux.intel.com,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Jim Broadus <jbroadus@gmail.com>, patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo,
+On Tue, Jun 11, 2019 at 2:31 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+>
+> This series attempts to align as much IRQ handling into the
+> probe path as possible. Note that I don't have a great setup
+> for testing these patches so they are mostly just build tested
+> and need careful review and testing before any of them are
+> merged.
+>
+> The series brings the ACPI path inline with the way the device
+> tree path handles the IRQ entirely at probe time. However,
+> it still leaves any IRQ specified through the board_info as
+> being handled at device time. In that case we need to cache
+> something from the board_info until probe time, which leaves
+> any alternative solution with something basically the same as
+> the current handling although perhaps caching more stuff.
 
-Ich muss sagen, es tut mir wirklich leid, dass ich davon ausgehe, dass Sie meine Nachricht erhalten und sich dafür entschieden haben, nicht zu antworten; Ich habe eine erste E-Mail an Sie gesendet, in der Hoffnung, dass Sie bereit sind, durch Nominierung Empfänger / Eigentümer zu werden, und zwar auf 12,196 Mio. EUR. Ich muss dringend einen Verwandten / Begünstigten vorlegen, um Empfänger des oben genannten Fonds zu werden.
-Der Klient starb ohne schriftliches VERFÜGEN oder KODIZILL. Da wir keinen identifizierbaren Erben dieses Nachlasses haben, tun wir nichts Ungewöhnliches. Es ist eine Win-Win-Situation für Sie, da es kaum eine Chance gibt, dass Sie in irgendeiner Weise mit dem Kunden verbunden sind, aber selbst wenn Sie es nicht sind, haben wir mit den gesicherten Mitteln am Ende eine weitaus bessere Chance, den Empfänger oder Verwandten zu finden des verstorbenen Kunden.
-Normalerweise werden alle nicht beanspruchten Gelder nach einer Wartezeit dem Staat übergeben oder von den Bankdirektoren als Bonusüberschuss aufgeteilt. Dies sind Mittel, die für ein gewisses Maß an guter Arbeit eingesetzt werden können. Ich beabsichtige, damit fortzufahren. weil ich das größere Wohl und die Möglichkeit sehe, die Wünsche eines Menschen wirklich zu erfüllen. Dies ist eine Gelegenheit für mich und ich habe mich dafür entschieden, daran zu arbeiten. Aber ich muss wissen, ob ich mit Ihnen daran arbeite.
-Sollte dies nicht möglich sein, löschen Sie die E-Mail und beenden Sie die gesamte Kommunikation. Jedoch; Wenn Sie etwas erreichen möchten, indem Sie sicherstellen, dass die Gelder nicht in die Taschen einiger überbezahlter Ärzte und Direktoren gelangen, können Sie die folgenden Details bestätigen.
+Hmm, I still haven't pinpointed the issue, but I wanted to give a test
+of the series and I have:
+[    5.511806] i2c_hid i2c-DLL075B:01: HID over i2c has not been
+provided an Int IRQ
+[    5.511825] i2c_hid: probe of i2c-DLL075B:01 failed with error -22
 
-* Vollständiger Name und Postanschrift.
-* Telefon- und Faxnummer.
-* Nationalität / Beruf.
+So it seems that there is something wrong happening when fetching the
+IRQ and providing it to i2c-hid.
 
-Hinweis: Aus Sicherheitsgründen werde ich Ihnen die vollständigen Details mitteilen, sobald ich auf Sie zählen kann.
-Ich freue mich darauf, von Ihnen zu lesen.
-Vielen Dank für Ihre vorweggenommene Mitarbeit.
+That was on a Dell XPS 9360.
 
-Schöne Grüße,
+Bisecting is starting.
 
-Mike Loung huang 
-Email: mikelounghuang@yahoo.com
+Cheers,
+Benjamin
+
+>
+> Thanks,
+> Charles
+>
+> See previous discussions:
+>  - https://lkml.org/lkml/2019/2/15/989
+>  - https://www.spinics.net/lists/linux-i2c/msg39541.html
+>
+> Charles Keepax (7):
+>   i2c: core: Allow whole core to use i2c_dev_irq_from_resources
+>   i2c: acpi: Use available IRQ helper functions
+>   i2c: acpi: Factor out getting the IRQ from ACPI
+>   i2c: core: Make i2c_acpi_get_irq available to the rest of the I2C core
+>   i2c: core: Move ACPI IRQ handling to probe time
+>   i2c: core: Move ACPI gpio IRQ handling into i2c_acpi_get_irq
+>   i2c: core: Tidy up handling of init_irq
+>
+>  drivers/i2c/i2c-core-acpi.c | 58 ++++++++++++++++++++++++++++++++-------------
+>  drivers/i2c/i2c-core-base.c | 11 +++++----
+>  drivers/i2c/i2c-core.h      |  9 +++++++
+>  3 files changed, 56 insertions(+), 22 deletions(-)
+>
+> --
+> 2.11.0
+>
