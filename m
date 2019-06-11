@@ -2,132 +2,501 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB1C41673
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:51:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F37B41656
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 22:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406904AbfFKUvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 16:51:46 -0400
-Received: from us-smtp-delivery-168.mimecast.com ([63.128.21.168]:37486 "EHLO
-        us-smtp-delivery-168.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406215AbfFKUvp (ORCPT
+        id S2406683AbfFKUqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 16:46:37 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41727 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406248AbfFKUqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:51:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
-        s=mimecast20190405; t=1560286303;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tZJI8JGdaiRefhCxahVuZzeWNJpxVME+msCpQoaQ87U=;
-        b=EsPllGjfVGLilLLuZrN6tRKbPB/vhHc8ANG/KJcw8zwVMxABIFnjNzL2cKvW9p6vyePq6c
-        LylHxv4Y69YpahLvXkKnZJj1QumKKn/ap5PJQtwopAUIntZUbqCWbDradygFNw2duiYxd/
-        GynTsRVFbWTZJx2qeTnH6rNgv+4IZe8=
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com
- (mail-bl2nam02lp2056.outbound.protection.outlook.com [104.47.38.56]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- us-mta-250-bdqTYNRGMlySrZspClMRyw-1; Tue, 11 Jun 2019 16:45:35 -0400
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
- MWHPR0601MB3673.namprd06.prod.outlook.com (10.167.236.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Tue, 11 Jun 2019 20:45:31 +0000
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::88d1:40e0:d1be:1daf]) by MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::88d1:40e0:d1be:1daf%7]) with mapi id 15.20.1965.017; Tue, 11 Jun 2019
- 20:45:31 +0000
-From:   Trent Piepho <tpiepho@impinj.com>
-To:     "festevam@gmail.com" <festevam@gmail.com>,
-        "Anson.Huang@nxp.com" <Anson.Huang@nxp.com>
-CC:     "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Linux-imx@nxp.com" <Linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "peng.fan@nxp.com" <peng.fan@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "daniel.baluta@nxp.com" <daniel.baluta@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 2/3] rtc: imx-sc: Make compatible string more generic
-Thread-Topic: [PATCH 2/3] rtc: imx-sc: Make compatible string more generic
-Thread-Index: AQHVIB9pLfrzWsaWqUqp88lz3VFaBaaW6UGAgAADtgA=
-Date:   Tue, 11 Jun 2019 20:45:31 +0000
-Message-ID: <1560285930.2354.8.camel@impinj.com>
-References: <20190611063333.48501-1-Anson.Huang@nxp.com>
-         <20190611063333.48501-2-Anson.Huang@nxp.com>
-         <CAOMZO5BCuBKHs1jXkm3qFD84_xcB=0NSwE3SLJHx9kq4Stbd_A@mail.gmail.com>
-In-Reply-To: <CAOMZO5BCuBKHs1jXkm3qFD84_xcB=0NSwE3SLJHx9kq4Stbd_A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [216.207.205.253]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 53857865-7ec4-436d-3cd9-08d6eeadbecd
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR0601MB3673;
-x-ms-traffictypediagnostic: MWHPR0601MB3673:
-x-microsoft-antispam-prvs: <MWHPR0601MB367358AF176EFC206A27CFC8D3ED0@MWHPR0601MB3673.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 006546F32A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(396003)(366004)(39850400004)(376002)(136003)(346002)(189003)(199004)(86362001)(6506007)(53546011)(8676002)(81166006)(81156014)(102836004)(25786009)(478600001)(6486002)(26005)(68736007)(186003)(316002)(256004)(229853002)(99286004)(76176011)(14444005)(66066001)(6512007)(5660300002)(14454004)(8936002)(53936002)(54906003)(110136005)(6246003)(2906002)(6436002)(66946007)(76116006)(66556008)(64756008)(91956017)(66476007)(73956011)(66446008)(3846002)(6116002)(7416002)(446003)(4326008)(103116003)(476003)(486006)(2616005)(11346002)(71190400001)(2501003)(71200400001)(7736002)(36756003)(305945005)(41533002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3673;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nFppgJnFMfNsTzT7QOgDM8RaEWMgvIXCTUG7RUzqPPzP2/6BlOV9gkZOnGVrO7z35ws9LrMY/tOJyPt653iw83mK4uVLEw2VEDb/4Gr8m1jeiV49zS+gJjm10ScxrCoBioK1ejd8x2oaJjBEBRzyH/tsmKCpTOKc8k/h6ZAZaf7V5xsnGsqVD1DFbCqqCMFseK+pzzi44zb2EpeMZ2oZWWS37rhFJgyPzVCuzFFiAnu0+Reup6Irc7M6pvDGVo0Q+uvZGvk7F1LaGNeQLzLavPyKgmxTaUoU1p/vb6m7vemuoQ4eeREnmNEA1bx9pLGfjuQ3MaR9TbuHVjvtc4Q7ldlnLwIMQNvKJSrFDPaLC/9vsqBo6ko8//n9ClFiV+8hTSx0O4za5G4W1uWLWIjPxqvUaT26ZLqyvIpZJHO5XY8=
-Content-ID: <DC1328CED465FC4189CCE1BF075530CC@namprd06.prod.outlook.com>
+        Tue, 11 Jun 2019 16:46:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id m30so7652532pff.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 13:46:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8BCrEWxENFI652njZuyMg7oU6st6d90fR1m0hvbHelQ=;
+        b=VLItlOM/U0/csHcUVmJtFGAA/3ks5F+OEZrSeoslGcAAJmtSlj+iB0/ek7AEsZLbtT
+         DpfHa5NTqWHmT15WxBDcExNmkFz9PBSNokh4XujZvPfdj5vxckL3Qf2i4YdJAdYbwQLI
+         Lm9eq3+Z4l4jXm61ETvS4xKC3CSnt7fx8hw+c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8BCrEWxENFI652njZuyMg7oU6st6d90fR1m0hvbHelQ=;
+        b=ZFZtm7PfWgsYjuuS6eMKWHEYW+f/B5E0BaLGD424WLIpiDKEZ7amAVKl/fKC2vy4le
+         iUUdUskCsNcR/RvggZRyiSDX0G664mDNoEOOer8sOWnCZPV9m1xbsQqBYQf8NZZhgo8J
+         mcqpw7cXlwMe4hl8a7VG9N9qvmt2PLB6gPDx3VNoM1+A89zgfWWF6rcE63xhXAxbMiEX
+         aoNv9k0kollwuunBrQHcxWOYooq0l0oxP+SxPd8MUVzaLYgEqGUO3Sd3mQ7u9cBfm8ke
+         sSLPFjuKSoC++CeI90oDmJj0y4M7MOKsjUQ+tOpAKG81ysxwUDZcHnBHY3QjDaDNHYC+
+         5Ajg==
+X-Gm-Message-State: APjAAAVoIhzeTHvo2TrqNTvjomh17qANvbifaiXOMQAiQPZDjZfp/qsV
+        mBJCbiXhKvlz8XA7CFk7hRq9IA==
+X-Google-Smtp-Source: APXvYqxVmscktUxOjSNmw0CUlKoqQbpfH4xGysEDq5ymBOLXo2+kCSblhcFdRPP/wDhMPjZXRG2wfQ==
+X-Received: by 2002:a62:ae01:: with SMTP id q1mr27321750pff.219.1560285995689;
+        Tue, 11 Jun 2019 13:46:35 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d3sm17055548pfa.176.2019.06.11.13.46.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Jun 2019 13:46:34 -0700 (PDT)
+Date:   Tue, 11 Jun 2019 13:46:34 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Shyam Saini <shyam.saini@amarulasolutions.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        netdev@vger.kernel.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-sctp@vger.kernel.org, bpf@vger.kernel.org,
+        kvm@vger.kernel.org, mayhs11saini@gmail.com
+Subject: Re: [PATCH V2] include: linux: Regularise the use of FIELD_SIZEOF
+ macro
+Message-ID: <201906111345.74AA9311F5@keescook>
+References: <20190611193836.2772-1-shyam.saini@amarulasolutions.com>
 MIME-Version: 1.0
-X-OriginatorOrg: impinj.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53857865-7ec4-436d-3cd9-08d6eeadbecd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2019 20:45:31.4759
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tpiepho@impinj.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3673
-X-MC-Unique: bdqTYNRGMlySrZspClMRyw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611193836.2772-1-shyam.saini@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA2LTExIGF0IDE3OjMyIC0wMzAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
-PiBIaSBBbnNvbiwNCj4gDQo+IE9uIFR1ZSwgSnVuIDExLCAyMDE5IGF0IDM6MzEgQU0gPEFuc29u
-Lkh1YW5nQG54cC5jb20+IHdyb3RlOg0KPiA+IA0KPiA+IEZyb206IEFuc29uIEh1YW5nIDxBbnNv
-bi5IdWFuZ0BueHAuY29tPg0KPiA+IA0KPiA+IGkuTVggc3lzdGVtIGNvbnRyb2xsZXIgUlRDIGRy
-aXZlciBjYW4gc3VwcG9ydCBhbGwgaS5NWCBTb0NzDQo+ID4gd2l0aCBzeXN0ZW0gY29udHJvbGxl
-ciBpbnNpZGUsIHRoaXMgcGF0Y2ggbWFrZXMgdGhlIGNvbXBhdGlibGUNCj4gPiBzdHJpbmcgbW9y
-ZSBnZW5lcmljIHRvIHN1cHBvcnQgb3RoZXIgaS5NWCBTb0NzIHdpdGggc3lzdGVtDQo+ID4gY29u
-dHJvbGxlciBpbnNpZGUsIHN1Y2ggYXMgaS5NWDhRTSBldGMuLg0KPiA+IA0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+IC0tLQ0KPiA+ICBk
-cml2ZXJzL3J0Yy9ydGMtaW14LXNjLmMgfCAyICstDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L3J0Yy9ydGMtaW14LXNjLmMgYi9kcml2ZXJzL3J0Yy9ydGMtaW14LXNjLmMNCj4gPiBpbmRleCBj
-OTMzMDQ1Li4zOGVmM2NhIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcnRjL3J0Yy1pbXgtc2Mu
-Yw0KPiA+ICsrKyBiL2RyaXZlcnMvcnRjL3J0Yy1pbXgtc2MuYw0KPiA+IEBAIC0xNzgsNyArMTc4
-LDcgQEAgc3RhdGljIGludCBpbXhfc2NfcnRjX3Byb2JlKHN0cnVjdA0KPiA+IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gPiAgfQ0KPiA+IA0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rl
-dmljZV9pZCBpbXhfc2NfZHRfaWRzW10gPSB7DQo+ID4gLSAgICAgICB7IC5jb21wYXRpYmxlID0g
-ImZzbCxpbXg4cXhwLXNjLXJ0YyIsIH0sDQo+ID4gKyAgICAgICB7IC5jb21wYXRpYmxlID0gImZz
-bCxpbXgtc2MtcnRjIiwgfSwNCj4gDQo+IFdoYXQgaXMgd3Jvbmcgd2l0aCB0aGUgY3VycmVudCBj
-b21wYXRpYmxlIHN0cmluZz8NCj4gDQo+IElmIHlvdSB3YW50IHRvIHN1cHBvcnQgaS5NWDhRTSBq
-dXN0IGFkZCBpbiBpdHMgZHRzaToNCj4gDQo+IGNvbXBhdGlibGUgPSAiZnNsLGlteDhxbS1zYy1y
-dGMiLCAiZnNsLGlteDhxeHAtc2MtcnRjIg0KPiANCj4gYW5kIGFkZCBhIGR0LWJpbmRpbmdzIGVu
-dHJ5IGZvciAiZnNsLGlteDhxbS1zYy1ydGMiDQoNClllcywgSSB0aG91Z2h0IHRoaXMgaXMgKHdh
-cz8pIHRoZSByZWNvbW1lbmRlZCBwcmFjdGljZSBmb3IgSVAgYmxvY2tzIGluDQpTb0NzIHRoYXQg
-ZG9uJ3QgaGF2ZSB0aGVpciBvd24gdmVyc2lvbiAodnMgc29tZXRoaW5nIGxpa2UgYSBTeW5vcHNp
-cw0KYmxvY2sgdXNlZCBtYW55IHBsYWNlcyk6DQoNCiogVXNlIHRoZSBmaXJzdCBTb0MgdG8gaGF2
-ZSB0aGUgYmxvY2sgYXMgdGhlIGJhc2UgY29tcGF0aWJsZSBmb3IgdGhlDQpibG9jay4NCiogQWx3
-YXlzIGFkZCB0aGUgY3VycmVudCBTb0MsIGluIGFkZGl0aW9uYWwgdG8gdGhlIGJhc2UsIGluIHRo
-ZSBTb0Mncw0KZHRzJ3MgbGlzdCBvZiBjb21wYXRpYmxlcy4gIEV2ZW4gaWYgdW5uZWVkZWQgYXQg
-dGhlIHByZXNlbnQuDQoqIFRoZSBkcml2ZXIgd2lsbCBsaXN0IHRoZSBiYXNlIGNvbXBhdGlibGUg
-aW4gdGhlIG1hdGNoIHRhYmxlLCBhbmQgd2lsbA0KYWRkIG5ldyBvbmVzIGZvciBzcGVjaWZpYyBz
-b2NzIGlmL3doZW4gdGhlcmUgaXMgYSBuZWVkIGZvciBpdC4NCg==
+On Wed, Jun 12, 2019 at 01:08:36AM +0530, Shyam Saini wrote:
+> In favour of FIELD_SIZEOF, this patch also deprecates other two similar
+> macros sizeof_field and SIZEOF_FIELD.
+> 
+> For code compatibility reason, retain sizeof_field macro as a wrapper macro
+> to FIELD_SIZEOF
 
+Can you explain this part? First sentence says you want to remove
+sizeof_field, and the second says you're keeping it? I thought the point
+was to switch all of these to FIELD_SIZEOF()?
+
+-Kees
+
+> 
+> Signed-off-by: Shyam Saini <shyam.saini@amarulasolutions.com>
+> ---
+> Changelog:
+> 
+> V1->V2
+> - Consolidate previous patch 1 and 2 into single patch
+> - For code compatibility reason, retain sizeof_field macro as a
+>   wrapper macro to FIELD_SIZEOF
+>  
+>  arch/arm64/include/asm/processor.h                 | 10 +++++-----
+>  arch/mips/cavium-octeon/executive/cvmx-bootmem.c   |  9 +--------
+>  drivers/gpu/drm/i915/gvt/scheduler.c               |  2 +-
+>  drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c |  4 ++--
+>  fs/befs/linuxvfs.c                                 |  2 +-
+>  fs/ext2/super.c                                    |  2 +-
+>  fs/ext4/super.c                                    |  2 +-
+>  fs/freevxfs/vxfs_super.c                           |  2 +-
+>  fs/orangefs/super.c                                |  2 +-
+>  fs/ufs/super.c                                     |  2 +-
+>  include/linux/kernel.h                             |  9 ---------
+>  include/linux/slab.h                               |  2 +-
+>  include/linux/stddef.h                             | 17 ++++++++++++++---
+>  kernel/fork.c                                      |  2 +-
+>  kernel/utsname.c                                   |  2 +-
+>  net/caif/caif_socket.c                             |  2 +-
+>  net/core/skbuff.c                                  |  2 +-
+>  net/ipv4/raw.c                                     |  2 +-
+>  net/ipv6/raw.c                                     |  2 +-
+>  net/sctp/socket.c                                  |  4 ++--
+>  tools/testing/selftests/bpf/bpf_util.h             | 22 +++++++++++++++++++---
+>  virt/kvm/kvm_main.c                                |  2 +-
+>  22 files changed, 58 insertions(+), 47 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> index fcd0e691b1ea..ace906d887cc 100644
+> --- a/arch/arm64/include/asm/processor.h
+> +++ b/arch/arm64/include/asm/processor.h
+> @@ -164,13 +164,13 @@ static inline void arch_thread_struct_whitelist(unsigned long *offset,
+>  						unsigned long *size)
+>  {
+>  	/* Verify that there is no padding among the whitelisted fields: */
+> -	BUILD_BUG_ON(sizeof_field(struct thread_struct, uw) !=
+> -		     sizeof_field(struct thread_struct, uw.tp_value) +
+> -		     sizeof_field(struct thread_struct, uw.tp2_value) +
+> -		     sizeof_field(struct thread_struct, uw.fpsimd_state));
+> +	BUILD_BUG_ON(FIELD_SIZEOF(struct thread_struct, uw) !=
+> +		     FIELD_SIZEOF(struct thread_struct, uw.tp_value) +
+> +		     FIELD_SIZEOF(struct thread_struct, uw.tp2_value) +
+> +		     FIELD_SIZEOF(struct thread_struct, uw.fpsimd_state));
+>  
+>  	*offset = offsetof(struct thread_struct, uw);
+> -	*size = sizeof_field(struct thread_struct, uw);
+> +	*size = FIELD_SIZEOF(struct thread_struct, uw);
+>  }
+>  
+>  #ifdef CONFIG_COMPAT
+> diff --git a/arch/mips/cavium-octeon/executive/cvmx-bootmem.c b/arch/mips/cavium-octeon/executive/cvmx-bootmem.c
+> index ba8f82a29a81..44b506a14666 100644
+> --- a/arch/mips/cavium-octeon/executive/cvmx-bootmem.c
+> +++ b/arch/mips/cavium-octeon/executive/cvmx-bootmem.c
+> @@ -45,13 +45,6 @@ static struct cvmx_bootmem_desc *cvmx_bootmem_desc;
+>  /* See header file for descriptions of functions */
+>  
+>  /**
+> - * This macro returns the size of a member of a structure.
+> - * Logically it is the same as "sizeof(s::field)" in C++, but
+> - * C lacks the "::" operator.
+> - */
+> -#define SIZEOF_FIELD(s, field) sizeof(((s *)NULL)->field)
+> -
+> -/**
+>   * This macro returns a member of the
+>   * cvmx_bootmem_named_block_desc_t structure. These members can't
+>   * be directly addressed as they might be in memory not directly
+> @@ -65,7 +58,7 @@ static struct cvmx_bootmem_desc *cvmx_bootmem_desc;
+>  #define CVMX_BOOTMEM_NAMED_GET_FIELD(addr, field)			\
+>  	__cvmx_bootmem_desc_get(addr,					\
+>  		offsetof(struct cvmx_bootmem_named_block_desc, field),	\
+> -		SIZEOF_FIELD(struct cvmx_bootmem_named_block_desc, field))
+> +		FIELD_SIZEOF(struct cvmx_bootmem_named_block_desc, field))
+>  
+>  /**
+>   * This function is the implementation of the get macros defined
+> diff --git a/drivers/gpu/drm/i915/gvt/scheduler.c b/drivers/gpu/drm/i915/gvt/scheduler.c
+> index 0f919f0a43d4..820f95a52542 100644
+> --- a/drivers/gpu/drm/i915/gvt/scheduler.c
+> +++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+> @@ -1243,7 +1243,7 @@ int intel_vgpu_setup_submission(struct intel_vgpu *vgpu)
+>  						  sizeof(struct intel_vgpu_workload), 0,
+>  						  SLAB_HWCACHE_ALIGN,
+>  						  offsetof(struct intel_vgpu_workload, rb_tail),
+> -						  sizeof_field(struct intel_vgpu_workload, rb_tail),
+> +						  FIELD_SIZEOF(struct intel_vgpu_workload, rb_tail),
+>  						  NULL);
+>  
+>  	if (!s->workloads) {
+> diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
+> index 46baf3b44309..c0447bf07fbb 100644
+> --- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
+> +++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
+> @@ -49,13 +49,13 @@ struct mlxsw_sp_fid_8021d {
+>  };
+>  
+>  static const struct rhashtable_params mlxsw_sp_fid_ht_params = {
+> -	.key_len = sizeof_field(struct mlxsw_sp_fid, fid_index),
+> +	.key_len = FIELD_SIZEOF(struct mlxsw_sp_fid, fid_index),
+>  	.key_offset = offsetof(struct mlxsw_sp_fid, fid_index),
+>  	.head_offset = offsetof(struct mlxsw_sp_fid, ht_node),
+>  };
+>  
+>  static const struct rhashtable_params mlxsw_sp_fid_vni_ht_params = {
+> -	.key_len = sizeof_field(struct mlxsw_sp_fid, vni),
+> +	.key_len = FIELD_SIZEOF(struct mlxsw_sp_fid, vni),
+>  	.key_offset = offsetof(struct mlxsw_sp_fid, vni),
+>  	.head_offset = offsetof(struct mlxsw_sp_fid, vni_ht_node),
+>  };
+> diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
+> index 462d096ff3e9..06ffd4829e2e 100644
+> --- a/fs/befs/linuxvfs.c
+> +++ b/fs/befs/linuxvfs.c
+> @@ -438,7 +438,7 @@ befs_init_inodecache(void)
+>  					SLAB_ACCOUNT),
+>  				offsetof(struct befs_inode_info,
+>  					i_data.symlink),
+> -				sizeof_field(struct befs_inode_info,
+> +				FIELD_SIZEOF(struct befs_inode_info,
+>  					i_data.symlink),
+>  				init_once);
+>  	if (befs_inode_cachep == NULL)
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 1d7ab73b1014..d9a6c81f4a47 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -220,7 +220,7 @@ static int __init init_inodecache(void)
+>  				(SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD|
+>  					SLAB_ACCOUNT),
+>  				offsetof(struct ext2_inode_info, i_data),
+> -				sizeof_field(struct ext2_inode_info, i_data),
+> +				FIELD_SIZEOF(struct ext2_inode_info, i_data),
+>  				init_once);
+>  	if (ext2_inode_cachep == NULL)
+>  		return -ENOMEM;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 4079605d437a..b1b5856248bd 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1148,7 +1148,7 @@ static int __init init_inodecache(void)
+>  				(SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD|
+>  					SLAB_ACCOUNT),
+>  				offsetof(struct ext4_inode_info, i_data),
+> -				sizeof_field(struct ext4_inode_info, i_data),
+> +				FIELD_SIZEOF(struct ext4_inode_info, i_data),
+>  				init_once);
+>  	if (ext4_inode_cachep == NULL)
+>  		return -ENOMEM;
+> diff --git a/fs/freevxfs/vxfs_super.c b/fs/freevxfs/vxfs_super.c
+> index a89f68c3cbed..ffd22f85bbe0 100644
+> --- a/fs/freevxfs/vxfs_super.c
+> +++ b/fs/freevxfs/vxfs_super.c
+> @@ -329,7 +329,7 @@ vxfs_init(void)
+>  			sizeof(struct vxfs_inode_info), 0,
+>  			SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD,
+>  			offsetof(struct vxfs_inode_info, vii_immed.vi_immed),
+> -			sizeof_field(struct vxfs_inode_info,
+> +			FIELD_SIZEOF(struct vxfs_inode_info,
+>  				vii_immed.vi_immed),
+>  			NULL);
+>  	if (!vxfs_inode_cachep)
+> diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
+> index ee5efdc35cc1..30f625059ad9 100644
+> --- a/fs/orangefs/super.c
+> +++ b/fs/orangefs/super.c
+> @@ -646,7 +646,7 @@ int orangefs_inode_cache_initialize(void)
+>  					ORANGEFS_CACHE_CREATE_FLAGS,
+>  					offsetof(struct orangefs_inode_s,
+>  						link_target),
+> -					sizeof_field(struct orangefs_inode_s,
+> +					FIELD_SIZEOF(struct orangefs_inode_s,
+>  						link_target),
+>  					orangefs_inode_cache_ctor);
+>  
+> diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+> index 3d247c0d92aa..1e8bcd950f6d 100644
+> --- a/fs/ufs/super.c
+> +++ b/fs/ufs/super.c
+> @@ -1469,7 +1469,7 @@ static int __init init_inodecache(void)
+>  				(SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD|
+>  					SLAB_ACCOUNT),
+>  				offsetof(struct ufs_inode_info, i_u1.i_symlink),
+> -				sizeof_field(struct ufs_inode_info,
+> +				FIELD_SIZEOF(struct ufs_inode_info,
+>  					i_u1.i_symlink),
+>  				init_once);
+>  	if (ufs_inode_cachep == NULL)
+> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> index 74b1ee9027f5..4672391cdb5b 100644
+> --- a/include/linux/kernel.h
+> +++ b/include/linux/kernel.h
+> @@ -79,15 +79,6 @@
+>   */
+>  #define round_down(x, y) ((x) & ~__round_mask(x, y))
+>  
+> -/**
+> - * FIELD_SIZEOF - get the size of a struct's field
+> - * @t: the target struct
+> - * @f: the target struct's field
+> - * Return: the size of @f in the struct definition without having a
+> - * declared instance of @t.
+> - */
+> -#define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
+> -
+>  #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+>  
+>  #define DIV_ROUND_DOWN_ULL(ll, d) \
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 9449b19c5f10..8bdfdd389b37 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -175,7 +175,7 @@ void memcg_destroy_kmem_caches(struct mem_cgroup *);
+>  			sizeof(struct __struct),			\
+>  			__alignof__(struct __struct), (__flags),	\
+>  			offsetof(struct __struct, __field),		\
+> -			sizeof_field(struct __struct, __field), NULL)
+> +			FIELD_SIZEOF(struct __struct, __field), NULL)
+>  
+>  /*
+>   * Common kmalloc functions provided by all allocators
+> diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+> index 998a4ba28eba..a5960e2b4a8b 100644
+> --- a/include/linux/stddef.h
+> +++ b/include/linux/stddef.h
+> @@ -20,12 +20,23 @@ enum {
+>  #endif
+>  
+>  /**
+> - * sizeof_field(TYPE, MEMBER)
+> + * FIELD_SIZEOF - get the size of a struct's field
+> + * @t: the target struct
+> + * @f: the target struct's field
+> + * Return: the size of @f in the struct definition without having a
+> + * declared instance of @t.
+> + */
+> +#define FIELD_SIZEOF(t, f) (sizeof(((t *)0)->f))
+> +
+> +/*
+> + * For code compatibility
+>   *
+> + * sizeof_field(TYPE, MEMBER)
+>   * @TYPE: The structure containing the field of interest
+>   * @MEMBER: The field to return the size of
+>   */
+> -#define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+> +
+> +#define sizeof_field(TYPE, MEMBER) FIELD_SIZEOF(TYPE, MEMBER)
+>  
+>  /**
+>   * offsetofend(TYPE, MEMBER)
+> @@ -34,6 +45,6 @@ enum {
+>   * @MEMBER: The member within the structure to get the end offset of
+>   */
+>  #define offsetofend(TYPE, MEMBER) \
+> -	(offsetof(TYPE, MEMBER)	+ sizeof_field(TYPE, MEMBER))
+> +	(offsetof(TYPE, MEMBER)	+ FIELD_SIZEOF(TYPE, MEMBER))
+>  
+>  #endif
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 75675b9bf6df..ef40b95bf82c 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -2553,7 +2553,7 @@ void __init proc_caches_init(void)
+>  			mm_size, ARCH_MIN_MMSTRUCT_ALIGN,
+>  			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+>  			offsetof(struct mm_struct, saved_auxv),
+> -			sizeof_field(struct mm_struct, saved_auxv),
+> +			FIELD_SIZEOF(struct mm_struct, saved_auxv),
+>  			NULL);
+>  	vm_area_cachep = KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACCOUNT);
+>  	mmap_init();
+> diff --git a/kernel/utsname.c b/kernel/utsname.c
+> index f0e491193009..28257c571553 100644
+> --- a/kernel/utsname.c
+> +++ b/kernel/utsname.c
+> @@ -174,6 +174,6 @@ void __init uts_ns_init(void)
+>  			"uts_namespace", sizeof(struct uts_namespace), 0,
+>  			SLAB_PANIC|SLAB_ACCOUNT,
+>  			offsetof(struct uts_namespace, name),
+> -			sizeof_field(struct uts_namespace, name),
+> +			FIELD_SIZEOF(struct uts_namespace, name),
+>  			NULL);
+>  }
+> diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
+> index 13ea920600ae..3306bbed77eb 100644
+> --- a/net/caif/caif_socket.c
+> +++ b/net/caif/caif_socket.c
+> @@ -1033,7 +1033,7 @@ static int caif_create(struct net *net, struct socket *sock, int protocol,
+>  		.owner = THIS_MODULE,
+>  		.obj_size = sizeof(struct caifsock),
+>  		.useroffset = offsetof(struct caifsock, conn_req.param),
+> -		.usersize = sizeof_field(struct caifsock, conn_req.param)
+> +		.usersize = FIELD_SIZEOF(struct caifsock, conn_req.param)
+>  	};
+>  
+>  	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_NET_ADMIN))
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index 47c1aa9ee045..816bea0c4a8e 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -3983,7 +3983,7 @@ void __init skb_init(void)
+>  					      0,
+>  					      SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+>  					      offsetof(struct sk_buff, cb),
+> -					      sizeof_field(struct sk_buff, cb),
+> +					      FIELD_SIZEOF(struct sk_buff, cb),
+>  					      NULL);
+>  	skbuff_fclone_cache = kmem_cache_create("skbuff_fclone_cache",
+>  						sizeof(struct sk_buff_fclones),
+> diff --git a/net/ipv4/raw.c b/net/ipv4/raw.c
+> index 0b8e06ca75d6..efa4c745f7b9 100644
+> --- a/net/ipv4/raw.c
+> +++ b/net/ipv4/raw.c
+> @@ -977,7 +977,7 @@ struct proto raw_prot = {
+>  	.unhash		   = raw_unhash_sk,
+>  	.obj_size	   = sizeof(struct raw_sock),
+>  	.useroffset	   = offsetof(struct raw_sock, filter),
+> -	.usersize	   = sizeof_field(struct raw_sock, filter),
+> +	.usersize	   = FIELD_SIZEOF(struct raw_sock, filter),
+>  	.h.raw_hash	   = &raw_v4_hashinfo,
+>  #ifdef CONFIG_COMPAT
+>  	.compat_setsockopt = compat_raw_setsockopt,
+> diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
+> index 70693bc7ad9d..257c71e22d74 100644
+> --- a/net/ipv6/raw.c
+> +++ b/net/ipv6/raw.c
+> @@ -1292,7 +1292,7 @@ struct proto rawv6_prot = {
+>  	.unhash		   = raw_unhash_sk,
+>  	.obj_size	   = sizeof(struct raw6_sock),
+>  	.useroffset	   = offsetof(struct raw6_sock, filter),
+> -	.usersize	   = sizeof_field(struct raw6_sock, filter),
+> +	.usersize	   = FIELD_SIZEOF(struct raw6_sock, filter),
+>  	.h.raw_hash	   = &raw_v6_hashinfo,
+>  #ifdef CONFIG_COMPAT
+>  	.compat_setsockopt = compat_rawv6_setsockopt,
+> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> index 39ea0a37af09..6b648a6033b9 100644
+> --- a/net/sctp/socket.c
+> +++ b/net/sctp/socket.c
+> @@ -9377,7 +9377,7 @@ struct proto sctp_prot = {
+>  	.useroffset  =  offsetof(struct sctp_sock, subscribe),
+>  	.usersize    =  offsetof(struct sctp_sock, initmsg) -
+>  				offsetof(struct sctp_sock, subscribe) +
+> -				sizeof_field(struct sctp_sock, initmsg),
+> +				FIELD_SIZEOF(struct sctp_sock, initmsg),
+>  	.sysctl_mem  =  sysctl_sctp_mem,
+>  	.sysctl_rmem =  sysctl_sctp_rmem,
+>  	.sysctl_wmem =  sysctl_sctp_wmem,
+> @@ -9419,7 +9419,7 @@ struct proto sctpv6_prot = {
+>  	.useroffset	= offsetof(struct sctp6_sock, sctp.subscribe),
+>  	.usersize	= offsetof(struct sctp6_sock, sctp.initmsg) -
+>  				offsetof(struct sctp6_sock, sctp.subscribe) +
+> -				sizeof_field(struct sctp6_sock, sctp.initmsg),
+> +				FIELD_SIZEOF(struct sctp6_sock, sctp.initmsg),
+>  	.sysctl_mem	= sysctl_sctp_mem,
+>  	.sysctl_rmem	= sysctl_sctp_rmem,
+>  	.sysctl_wmem	= sysctl_sctp_wmem,
+> diff --git a/tools/testing/selftests/bpf/bpf_util.h b/tools/testing/selftests/bpf/bpf_util.h
+> index a29206ebbd13..571c35aac90f 100644
+> --- a/tools/testing/selftests/bpf/bpf_util.h
+> +++ b/tools/testing/selftests/bpf/bpf_util.h
+> @@ -58,13 +58,29 @@ static inline unsigned int bpf_num_possible_cpus(void)
+>  # define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+>  #endif
+>  
+> -#ifndef sizeof_field
+> -#define sizeof_field(TYPE, MEMBER) sizeof((((TYPE *)0)->MEMBER))
+> +/*
+> + * FIELD_SIZEOF - get the size of a struct's field
+> + * @t: the target struct
+> + * @f: the target struct's field
+> + * Return: the size of @f in the struct definition without having a
+> + * declared instance of @t.
+> + */
+> +#ifndef FIELD_SIZEOF
+> +#define FIELD_SIZEOF(t, f) (sizeof(((t *)0)->f))
+>  #endif
+>  
+> +/*
+> + * For code compatibility
+> + *
+> + * sizeof_field(TYPE, MEMBER)
+> + * @TYPE: The structure containing the field of interest
+> + * @MEMBER: The field to return the size of
+> + */
+> +#define sizeof_field(TYPE, MEMBER) FIELD_SIZEOF(TYPE, MEMBER)
+> +
+>  #ifndef offsetofend
+>  #define offsetofend(TYPE, MEMBER) \
+> -	(offsetof(TYPE, MEMBER)	+ sizeof_field(TYPE, MEMBER))
+> +	(offsetof(TYPE, MEMBER)	+ FIELD_SIZEOF(TYPE, MEMBER))
+>  #endif
+>  
+>  #endif /* __BPF_UTIL__ */
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index ca54b09adf5b..e43e3a26f6ab 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -4275,7 +4275,7 @@ int kvm_init(void *opaque, unsigned vcpu_size, unsigned vcpu_align,
+>  		kmem_cache_create_usercopy("kvm_vcpu", vcpu_size, vcpu_align,
+>  					   SLAB_ACCOUNT,
+>  					   offsetof(struct kvm_vcpu, arch),
+> -					   sizeof_field(struct kvm_vcpu, arch),
+> +					   FIELD_SIZEOF(struct kvm_vcpu, arch),
+>  					   NULL);
+>  	if (!kvm_vcpu_cache) {
+>  		r = -ENOMEM;
+> -- 
+> 2.11.0
+> 
+
+-- 
+Kees Cook
