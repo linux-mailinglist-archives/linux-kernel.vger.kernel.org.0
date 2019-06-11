@@ -2,121 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4544A3D459
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7593D47C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 19:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406234AbfFKRhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 13:37:22 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49722 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405681AbfFKRhW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 13:37:22 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5BHb5mD016474;
-        Tue, 11 Jun 2019 12:37:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560274625;
-        bh=iF6yw2xuGHxpTtPw7MooWyGH3TcrPgGgUGIlsmVqIw0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=e0i1aSjp/2BdZoqo2uP7dqVA7SBL664LNqOExKnCnTxV5t2TdbnByEkhlrh/ptZ7c
-         ZeNeVTS6lVO2cOsgS58rz9F7QvJltE2pECZkjZWfH/Rw8LBfPW/8A8oDQyr9wqJR1r
-         gQ5T4soOCWgMMfyvPY+L/s0IqAaPJM/GrZGQWaNo=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5BHb5EB033547
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Jun 2019 12:37:05 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 11
- Jun 2019 12:37:04 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 11 Jun 2019 12:37:04 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5BHb1S1064295;
-        Tue, 11 Jun 2019 12:37:03 -0500
-Subject: Re: [PATCH] firmware: ti_sci: Add support for processor control
-To:     <santosh.shilimkar@oracle.com>, Suman Anna <s-anna@ti.com>,
-        Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC:     Lokesh Vutla <lokeshvutla@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190605223334.30428-1-s-anna@ti.com>
- <4302c224-9e50-6320-2585-60bfe0aa2a32@oracle.com>
- <2174bc51-9e28-e519-b936-9e101e2a2a4e@ti.com>
- <ea3bf059-86b0-2d8c-c42d-44c08a6ec808@oracle.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <a3eba154-d47f-1b2f-a2c6-9cb7a0ee817a@ti.com>
-Date:   Tue, 11 Jun 2019 20:37:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2406191AbfFKRrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 13:47:10 -0400
+Received: from mga06.intel.com ([134.134.136.31]:15394 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405488AbfFKRrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 13:47:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 10:46:55 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga003.jf.intel.com with ESMTP; 11 Jun 2019 10:46:55 -0700
+Date:   Tue, 11 Jun 2019 10:37:34 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v4 0/5] x86/umwait: Enable user wait instructions
+Message-ID: <20190611173733.GB180343@romley-ivt3.sc.intel.com>
+References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
+ <20190611090145.GU3436@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <ea3bf059-86b0-2d8c-c42d-44c08a6ec808@oracle.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611090145.GU3436@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/06/2019 20:16, santosh.shilimkar@oracle.com wrote:
+On Tue, Jun 11, 2019 at 11:01:45AM +0200, Peter Zijlstra wrote:
+> On Fri, Jun 07, 2019 at 03:00:32PM -0700, Fenghua Yu wrote:
+> > Today, if an application needs to wait for a very short duration
+> > they have to have spinloops. Spinloops consume more power and continue
+> > to use execution resources that could hurt its thread siblings in a core
+> > with hyperthreads. New instructions umonitor, umwait and tpause allow
+> > a low power alternative waiting at the same time could improve the HT
+> > sibling perform while giving it any power headroom. These instructions
+> > can be used in both user space and kernel space.
+> > 
+> > A new MSR IA32_UMWAIT_CONTROL allows kernel to set a time limit in
+> > TSC-quanta that prevents user applications from waiting for a long time.
+> > This allows applications to yield the CPU and the user application
+> > should consider using other alternatives to wait.
 > 
-> 
-> On 6/10/19 5:19 AM, Tero Kristo wrote:
->> On 08/06/2019 00:35, santosh.shilimkar@oracle.com wrote:
->>> On 6/5/19 3:33 PM, Suman Anna wrote:
->>>> Texas Instrument's System Control Interface (TI-SCI) Message Protocol
->>>> is used in Texas Instrument's System on Chip (SoC) such as those
->>>> in K3 family AM654 SoC to communicate between various compute
->>>> processors with a central system controller entity.
->>>>
->>>> The system controller provides various services including the control
->>>> of other compute processors within the SoC. Extend the TI-SCI protocol
->>>> support to add various TI-SCI commands to invoke services associated
->>>> with power and reset control, and boot vector management of the
->>>> various compute processors from the Linux kernel.
->>>>
->>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>> ---
->>>> Hi Santosh, Nishanth, Tero,
->>>>
->>>> Appreciate it if this patch can be picked up for the 5.3 merge window.
->>>> This is a dependency patch for my various remoteproc drivers on TI K3
->>>> SoCs. Patch is on top of v5.2-rc1.
->>>>
->>> I will pick this up for 5.3.
->>
->> Santosh,
->>
->> There is a pile of drivers/firmware changes for ti-sci, which have 
->> cross dependencies, and will cause merge conflicts also as they touch 
->> same file.
->>
->> Do you mind if I setup a pull-request for these all and send it to 
->> you? They are going to be on top of the keystone clock pull-request I 
->> just sent today though, otherwise it won't compile (the 32bit clock 
->> support has dependency towards the clock driver.)
->>
-> That will be great Tero.
+> I'm confused on the purpose of this control; what do we win by limiting
+> this time?
 
-Ok doing that.
+In previous patches, there is no time limit (max time is 0 which means no
+time limit).
 
-For this patch, queuing up for 5.3, thanks.
+Andy Lutomirski proposed to set the time limit:
 
--Tero
+https://lkml.org/lkml/2019/2/26/735
+
+"So I propose setting the timeout to either 100 microseconds or 100k
+"cycles" by default.  In the event someone determines that they save
+materially more power or gets materially better performance with a
+longer timeout, we can revisit the value."
+
+Does it make sense?
 
 > 
-> Regards,
-> Santosh
+> >  .../ABI/testing/sysfs-devices-system-cpu      |  21 ++
+> >  arch/x86/include/asm/cpufeatures.h            |   1 +
+> >  arch/x86/include/asm/msr-index.h              |   4 +
+> >  arch/x86/power/Makefile                       |   1 +
+> >  arch/x86/power/umwait.c                       | 182 ++++++++++++++++++
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> You seem to miss the arch/x86/lib/delay.c change to use this fancy new
+> stuff for udelay(). I'm thinking that's exactly what TPAUSE is good for.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+There may be other places to use the instructions. But I think this
+patch set just first enables basic functionalities. We can focus on how to
+use the instructions in the future.
+
+Thanks.
+
+-Fenghua
