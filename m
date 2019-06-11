@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EDFB418CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD3B3418C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 01:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408093AbfFKXS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 19:18:59 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50214 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2407991AbfFKXS0 (ORCPT
+        id S2408014AbfFKXSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 19:18:30 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:32840 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2407982AbfFKXSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 19:18:26 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BNBnD3008431
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:25 -0700
+        Tue, 11 Jun 2019 19:18:25 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5BN8de5015010
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:24 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=nplAGvztvw22AKN56QTMhELHdT1v5h5cxoHCBLrrDqI=;
- b=nGjePryAVos7TNaTWm7Id2mKsFVe++WTr9Nx9tvWflQTJRXzdEZ7izOhgXCWOrU/hMd0
- 6nQ0ltd9AFZiFoYBID3dSUrtudltOGCtZ5QcdFLz1SG3Fb3izAuKX7H2AHxa0jysu9Yi
- M8M71Rx5vvpj7yVk3ONEglGL1MVrxKcR5iE= 
+ content-type; s=facebook; bh=Xx5Luiw4ossPD+e7sUfpgznJxtqNhDquLK7q4vM5gv8=;
+ b=A657KbJouvq/Ev7aTKFK7x7621+5wRCN625mZI/d0duLQMf3Y0bLvGhFDQTyvbDjFDij
+ I0L3vq6qbr2k/DGA8SpeLWInH4njDu4xksjnSt/AlX68oOG+nGwkwtx9ZsNp/0jmB2YT
+ ftJFna0Bi2j88VEk1lI8RiIdyVr5ebgANFU= 
 Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2t2dkmsy3b-9
+        by mx0a-00082601.pphosted.com with ESMTP id 2t2keaggcx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:25 -0700
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 16:18:23 -0700
 Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
  Tue, 11 Jun 2019 16:18:21 -0700
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 3ED11130CBF71; Tue, 11 Jun 2019 16:18:20 -0700 (PDT)
+        id 42C22130CBF73; Tue, 11 Jun 2019 16:18:20 -0700 (PDT)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -41,9 +41,9 @@ CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
         Shakeel Butt <shakeelb@google.com>,
         Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v7 06/10] mm: don't check the dying flag on kmem_cache creation
-Date:   Tue, 11 Jun 2019 16:18:09 -0700
-Message-ID: <20190611231813.3148843-7-guro@fb.com>
+Subject: [PATCH v7 07/10] mm: synchronize access to kmem_cache dying flag using a spinlock
+Date:   Tue, 11 Jun 2019 16:18:10 -0700
+Message-ID: <20190611231813.3148843-8-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190611231813.3148843-1-guro@fb.com>
 References: <20190611231813.3148843-1-guro@fb.com>
@@ -55,7 +55,7 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=780 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=737 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906110151
 X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,32 +63,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point in checking the root_cache->memcg_params.dying
-flag on kmem_cache creation path. New allocations shouldn't be
-performed using a dead root kmem_cache, so no new memcg kmem_cache
-creation can be scheduled after the flag is set. And if it was
-scheduled before, flush_memcg_workqueue() will wait for it anyway.
+Currently the memcg_params.dying flag and the corresponding
+workqueue used for the asynchronous deactivation of kmem_caches
+is synchronized using the slab_mutex.
 
-So let's drop this check to simplify the code.
+It makes impossible to check this flag from the irq context,
+which will be required in order to implement asynchronous release
+of kmem_caches.
+
+So let's switch over to the irq-save flavor of the spinlock-based
+synchronization.
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 ---
- mm/slab_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/slab_common.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 5e7638f495d1..9383104651cd 100644
+index 9383104651cd..1e5eaf84bf08 100644
 --- a/mm/slab_common.c
 +++ b/mm/slab_common.c
-@@ -640,7 +640,7 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
- 	 * The memory cgroup could have been offlined while the cache
- 	 * creation work was pending.
- 	 */
--	if (memcg->kmem_state != KMEM_ONLINE || root_cache->memcg_params.dying)
-+	if (memcg->kmem_state != KMEM_ONLINE)
- 		goto out_unlock;
+@@ -130,6 +130,7 @@ int __kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t nr,
+ #ifdef CONFIG_MEMCG_KMEM
  
- 	idx = memcg_cache_id(memcg);
+ LIST_HEAD(slab_root_caches);
++static DEFINE_SPINLOCK(memcg_kmem_wq_lock);
+ 
+ void slab_init_memcg_params(struct kmem_cache *s)
+ {
+@@ -734,14 +735,22 @@ static void kmemcg_cache_deactivate(struct kmem_cache *s)
+ 
+ 	__kmemcg_cache_deactivate(s);
+ 
++	/*
++	 * memcg_kmem_wq_lock is used to synchronize memcg_params.dying
++	 * flag and make sure that no new kmem_cache deactivation tasks
++	 * are queued (see flush_memcg_workqueue() ).
++	 */
++	spin_lock_irq(&memcg_kmem_wq_lock);
+ 	if (s->memcg_params.root_cache->memcg_params.dying)
+-		return;
++		goto unlock;
+ 
+ 	/* pin memcg so that @s doesn't get destroyed in the middle */
+ 	css_get(&s->memcg_params.memcg->css);
+ 
+ 	s->memcg_params.work_fn = __kmemcg_cache_deactivate_after_rcu;
+ 	call_rcu(&s->memcg_params.rcu_head, kmemcg_rcufn);
++unlock:
++	spin_unlock_irq(&memcg_kmem_wq_lock);
+ }
+ 
+ void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
+@@ -851,9 +860,9 @@ static int shutdown_memcg_caches(struct kmem_cache *s)
+ 
+ static void flush_memcg_workqueue(struct kmem_cache *s)
+ {
+-	mutex_lock(&slab_mutex);
++	spin_lock_irq(&memcg_kmem_wq_lock);
+ 	s->memcg_params.dying = true;
+-	mutex_unlock(&slab_mutex);
++	spin_unlock_irq(&memcg_kmem_wq_lock);
+ 
+ 	/*
+ 	 * SLAB and SLUB deactivate the kmem_caches through call_rcu. Make
 -- 
 2.21.0
 
