@@ -2,129 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E11783D56D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 803213D577
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 20:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407054AbfFKSXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 14:23:44 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45888 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405802AbfFKSXo (ORCPT
+        id S2407059AbfFKS1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 14:27:16 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:15842 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405802AbfFKS1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 14:23:44 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w34so7408384pga.12;
-        Tue, 11 Jun 2019 11:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RUaqGS6QUgdTDoLllogq970LN7Ava4NDdFpVFqXYY/M=;
-        b=GiGCJBrmLCcwdoXR/hfEWhxRxVXP0yUu9sUUZqvg4wVFwA5vVS81R3w7B/Hws02GBs
-         bQf5m5LzSY2evhzZIaPcrTxdlRnOKG6JcgzyoPlFQaOBfdx4zG/zxciv5YgK+lrLTrxM
-         cYO9J/gPwcAT2TpewnRYZ31E6KAMbCy2diEh13IEFyvzxVtxzxo7VvptCqzuA/hlCovh
-         ZjKXMOGRmPvdeF+5XJnjjjFZqUja5TFKSjRPTAWJT6DPCrYdGGCmiq3H5dJ2O/MfvLXb
-         zKyrSiVi+o3Z7jKpHKP2VcOUjPmBH9gPMgDgTzpANCDXfrsR2Ml+cEgzRas33f/OlAYk
-         2KbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RUaqGS6QUgdTDoLllogq970LN7Ava4NDdFpVFqXYY/M=;
-        b=a4rfAAxg0jllo/QKU8pgoIIbLO0XeL21wlXCWdXccyzINLgktHVvPeNPIAbYHo0NqZ
-         RMEkXkRKdmbad1TNtQ2+xis082vNVg/TEmpVUSYP+Md5a7ePy4KFbkvgfLg1D765cToC
-         o3g+b0ICuvopsCQ99//TegC2LRF1xdqNi3cHDQVI/1+nMaBkk7ZCM+A/EXVrRHGOTaaI
-         dMtTR9tywTiE0vlIEtdxKlV43poEuqAKUcXdowj8z12C5mHaK6UuAkYiUZIC5q2MbkxX
-         2uyM6hRswjexKiR8I0sYvqL0L52blMsEBfweHXHHQVA0Rh5j9Vx0B4ezxWeBYxeVusrp
-         zcSA==
-X-Gm-Message-State: APjAAAUf/AE30PGBwe+HkthjSMwyzaW2o8+0iRKG1/rV22F+mPPBCjJ9
-        0Oz71rQZz8u7wm1Vyb140WqPiUlYZ1L0EbQo0Hg=
-X-Google-Smtp-Source: APXvYqz0tqszhCDpzjSzH68sStNjjm2tLdRCgCOXbFIcDIoXYykPNvT0ZevAXzhMLOzrGgeFEbCuT5n6tl8XXCDe+dk=
-X-Received: by 2002:a17:90b:d8b:: with SMTP id bg11mr28168554pjb.30.1560277423232;
- Tue, 11 Jun 2019 11:23:43 -0700 (PDT)
+        Tue, 11 Jun 2019 14:27:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id B3A2940D6F;
+        Tue, 11 Jun 2019 20:27:07 +0200 (CEST)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=vmwopensource.org header.i=@vmwopensource.org header.b=vl6XdSWY;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -3.1
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.1 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DKIM_SIGNED=0.1,
+        DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id smfTGIN7o__R; Tue, 11 Jun 2019 20:26:58 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id B2F543F86C;
+        Tue, 11 Jun 2019 20:26:57 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 198C3361A96;
+        Tue, 11 Jun 2019 20:26:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=vmwopensource.org;
+        s=mail; t=1560277617;
+        bh=l3W/AqRf84wNp6P4sWXjTRud8TI0AhrSO/bC0PKM5fg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=vl6XdSWYGKdFQN7iy2I6478NTemupw3IjgYmmFrjGfarW9AUCkwCHczkOJHx4UA/2
+         L1Dz4hmwgBEYT3Z08isg+RMbIw9Oui5bwMskWFMMLeuhAIytZWixxGvFKerujCko3C
+         0o5dD+7XGLhFoCpoAA3Z0Lw4LMccKlNHHMGaNQt0=
+Subject: Re: [PATCH v4 3/9] mm: Add write-protect and clean utilities for
+ address space ranges
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-graphics-maintainer@vmware.com,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-mm@kvack.org, Ralph Campbell <rcampbell@nvidia.com>
+References: <20190611122454.3075-1-thellstrom@vmwopensource.org>
+ <20190611122454.3075-4-thellstrom@vmwopensource.org>
+ <1CDAE797-4686-4041-938F-DE0456FFF451@gmail.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thellstrom@vmwopensource.org>
+Organization: VMware Inc.
+Message-ID: <ac0b0ef5-8f76-5e55-2be2-f1860878841a@vmwopensource.org>
+Date:   Tue, 11 Jun 2019 20:26:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
- <0bea1c7c4fc06c7edabbf3185c0cbbc6e85eafd0.1559933665.git.mchehab+samsung@kernel.org>
- <CAHp75VfTNJOGZx-PoUXLRvzghqf6bVUdJ+yFjE9hNtDLCQ1=UA@mail.gmail.com> <20190611140501.11ba091b@coco.lan>
-In-Reply-To: <20190611140501.11ba091b@coco.lan>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 11 Jun 2019 21:23:32 +0300
-Message-ID: <CAHp75VcdMXHf=hz_m5ySZ-=fBU=qkFxry9Q-Dos9Jx0qoyHCXQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/20] docs: mark orphan documents as such
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Matan Ziv-Av <matan@svgalib.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        dri-devel@lists.freedesktop.org,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1CDAE797-4686-4041-938F-DE0456FFF451@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 8:05 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Em Tue, 11 Jun 2019 19:52:04 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> escreveu:
->
-> > On Fri, Jun 7, 2019 at 10:04 PM Mauro Carvalho Chehab
-> > <mchehab+samsung@kernel.org> wrote:
-> > > Sphinx doesn't like orphan documents:
-> >
-> > >     Documentation/laptops/lg-laptop.rst: WARNING: document isn't included in any toctree
-> >
-> > >  Documentation/laptops/lg-laptop.rst             | 2 ++
-> >
-> > > diff --git a/Documentation/laptops/lg-laptop.rst b/Documentation/laptops/lg-laptop.rst
-> > > index aa503ee9b3bc..f2c2ffe31101 100644
-> > > --- a/Documentation/laptops/lg-laptop.rst
-> > > +++ b/Documentation/laptops/lg-laptop.rst
-> > > @@ -1,5 +1,7 @@
-> > >  .. SPDX-License-Identifier: GPL-2.0+
-> > >
-> > > +:orphan:
-> > > +
-> > >  LG Gram laptop extra features
-> > >  =============================
-> > >
-> >
-> > Can we rather create a toc tree there?
-> > It was a first document in reST format in that folder.
->
-> Sure, but:
->
-> 1) I have a patch converting the other files on this dir to rst:
->
->         https://git.linuxtv.org/mchehab/experimental.git/commit/?h=convert_rst_renames_v4.1&id=abc13233035fdfdbc5ef2f2fbd3d127a1ab15530
->
-> 2) It probably makes sense to move the entire dir to
-> Documentation/admin-guide.
->
-> So, I would prefer to have the :orphan: here while (1) is not merged.
+Hi, Nadav,
 
-Fine to me as long as you will drop it by the mentioned effort.
+On 6/11/19 7:21 PM, Nadav Amit wrote:
+>> On Jun 11, 2019, at 5:24 AM, Thomas Hellström (VMware) <thellstrom@vmwopensource.org> wrote:
+>>
+>> From: Thomas Hellstrom <thellstrom@vmware.com>
+>>
+> [ snip ]
+>
+>> +/**
+>> + * apply_pt_wrprotect - Leaf pte callback to write-protect a pte
+>> + * @pte: Pointer to the pte
+>> + * @token: Page table token, see apply_to_pfn_range()
+>> + * @addr: The virtual page address
+>> + * @closure: Pointer to a struct pfn_range_apply embedded in a
+>> + * struct apply_as
+>> + *
+>> + * The function write-protects a pte and records the range in
+>> + * virtual address space of touched ptes for efficient range TLB flushes.
+>> + *
+>> + * Return: Always zero.
+>> + */
+>> +static int apply_pt_wrprotect(pte_t *pte, pgtable_t token,
+>> +			      unsigned long addr,
+>> +			      struct pfn_range_apply *closure)
+>> +{
+>> +	struct apply_as *aas = container_of(closure, typeof(*aas), base);
+>> +	pte_t ptent = *pte;
+>> +
+>> +	if (pte_write(ptent)) {
+>> +		pte_t old_pte = ptep_modify_prot_start(aas->vma, addr, pte);
+>> +
+>> +		ptent = pte_wrprotect(old_pte);
+>> +		ptep_modify_prot_commit(aas->vma, addr, pte, old_pte, ptent);
+>> +		aas->total++;
+>> +		aas->start = min(aas->start, addr);
+>> +		aas->end = max(aas->end, addr + PAGE_SIZE);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * struct apply_as_clean - Closure structure for apply_as_clean
+>> + * @base: struct apply_as we derive from
+>> + * @bitmap_pgoff: Address_space Page offset of the first bit in @bitmap
+>> + * @bitmap: Bitmap with one bit for each page offset in the address_space range
+>> + * covered.
+>> + * @start: Address_space page offset of first modified pte relative
+>> + * to @bitmap_pgoff
+>> + * @end: Address_space page offset of last modified pte relative
+>> + * to @bitmap_pgoff
+>> + */
+>> +struct apply_as_clean {
+>> +	struct apply_as base;
+>> +	pgoff_t bitmap_pgoff;
+>> +	unsigned long *bitmap;
+>> +	pgoff_t start;
+>> +	pgoff_t end;
+>> +};
+>> +
+>> +/**
+>> + * apply_pt_clean - Leaf pte callback to clean a pte
+>> + * @pte: Pointer to the pte
+>> + * @token: Page table token, see apply_to_pfn_range()
+>> + * @addr: The virtual page address
+>> + * @closure: Pointer to a struct pfn_range_apply embedded in a
+>> + * struct apply_as_clean
+>> + *
+>> + * The function cleans a pte and records the range in
+>> + * virtual address space of touched ptes for efficient TLB flushes.
+>> + * It also records dirty ptes in a bitmap representing page offsets
+>> + * in the address_space, as well as the first and last of the bits
+>> + * touched.
+>> + *
+>> + * Return: Always zero.
+>> + */
+>> +static int apply_pt_clean(pte_t *pte, pgtable_t token,
+>> +			  unsigned long addr,
+>> +			  struct pfn_range_apply *closure)
+>> +{
+>> +	struct apply_as *aas = container_of(closure, typeof(*aas), base);
+>> +	struct apply_as_clean *clean = container_of(aas, typeof(*clean), base);
+>> +	pte_t ptent = *pte;
+>> +
+>> +	if (pte_dirty(ptent)) {
+>> +		pgoff_t pgoff = ((addr - aas->vma->vm_start) >> PAGE_SHIFT) +
+>> +			aas->vma->vm_pgoff - clean->bitmap_pgoff;
+>> +		pte_t old_pte = ptep_modify_prot_start(aas->vma, addr, pte);
+>> +
+>> +		ptent = pte_mkclean(old_pte);
+>> +		ptep_modify_prot_commit(aas->vma, addr, pte, old_pte, ptent);
+>> +
+>> +		aas->total++;
+>> +		aas->start = min(aas->start, addr);
+>> +		aas->end = max(aas->end, addr + PAGE_SIZE);
+>> +
+>> +		__set_bit(pgoff, clean->bitmap);
+>> +		clean->start = min(clean->start, pgoff);
+>> +		clean->end = max(clean->end, pgoff + 1);
+>> +	}
+>> +
+>> +	return 0;
+> Usually, when a PTE is write-protected, or when a dirty-bit is cleared, the
+> TLB flush must be done while the page-table lock for that specific table is
+> taken (i.e., within apply_pt_clean() and apply_pt_wrprotect() in this case).
+>
+> Otherwise, in the case of apply_pt_clean() for example, another core might
+> shortly after (before the TLB flush) write to the same page whose PTE was
+> changed. The dirty-bit in such case might not be set, and the change get
+> lost.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Hmm. Let's assume that was the case, we have two possible situations:
+
+A: pt_clean
+
+1. That core's TLB entry is invalid. It will set the PTE dirty bit and 
+continue. The dirty bit will probably remain set after the TLB flush.
+2. That core's TLB entry is valid. It will just continue. The dirty bit 
+will remain clear after the TLB flush.
+
+But I fail to see how having the TLB flush within the page table lock 
+would help in this case. Since the writing core will never attempt to 
+take it? In any case, if such a race occurs, the corresponding bit in 
+the bitmap would have been set and we've recorded that the page is dirty.
+
+B: wrprotect situation, the situation is a bit different:
+
+1. That core's TLB entry is invalid. It will read the PTE, cause a fault 
+and block in mkwrite() on an external address space lock which is held 
+over this operation. (Is it this situation that is your main concern?)
+2. That core's TLB entry is valid. It will just continue regardless of 
+any locks.
+
+For both mkwrite() and dirty() if we act on the recorded pages *after* 
+the TLB flush, we're OK. The difference is that just after the TLB flush 
+there should be no write-enabled PTEs in the write-protect case, but 
+there may be dirty PTEs in the pt_clean case. Something that is 
+mentioned in the docs already.
+
+>
+> Does this function regards a certain use-case in which deferring the TLB
+> flushes is fine? If so, assertions and documentation of the related
+> assumption would be useful.
+
+If I understand your comment correctly, the page table lock is sometimes 
+used as the lock in B1, blocking a possible software fault until the TLB 
+flush has happened.  Here we assume an external address space lock taken 
+both around the wrprotect operation and in mkwrite(). Would it be OK if 
+I add comments about the necessity of an external lock to the doc? Ok 
+with a follow-up patch?
+
+Thanks,
+Thomas
+
+
