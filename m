@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA3E3C39E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF443C3A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 07:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403893AbfFKFux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 01:50:53 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41035 "EHLO
+        id S2404046AbfFKFvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 01:51:36 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38649 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390539AbfFKFuv (ORCPT
+        with ESMTP id S2390485AbfFKFuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 01:50:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c2so11444967wrm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:50:50 -0700 (PDT)
+        Tue, 11 Jun 2019 01:50:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d18so11448798wrs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Jun 2019 22:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MyJRGMad7Q+q5bdCcVkcqrpNdIFL1aRgxmT8M36cbcw=;
-        b=aXOwGXUFZVG0ymaKqmM/EVuPR9t7ED5qtz4UdL+hsjMWtY6BrkaltdTsQCCwkONGGq
-         vhLQaaHDjM5ElITNmGFlqxzRs/0U8VsN772CpSi1DpbrSLc5ISZVEmAiaqsUII1PqXRu
-         VHraZG61iRdYVw0jdI0VTtZGj9mMG8/RYCqY56vRh51Yvb2xEk5vRh65uMvsuSukZyAE
-         9B3Wyu/LNrqQ5EhjsaEQ6kE5etMGKLL70g1fxMnqYcyNMUGaf8ARARf01V500JJjGPnx
-         rNw/VBSAAIwGMcSG/ufHN1T6kPwM5pvoAqHwEN/GcT6FB0UlxnHe3XZJoZeXdgtGXjVe
-         aLSw==
+        bh=4zBKFHoIg15/9/uWxHB8RusJhUniU4+YU9+6RV52dnE=;
+        b=VyzgLG06PJguGa21NCzXgYbQZS5lQgbtdpZr17vF4Z4e6jaVbGYEM2z3BbkAlw/uzx
+         CFrWN0YNCfNjX8aZgUc491q2vb+uZYHnzzEHWOrz0wzenx/Q7EEN/EmHmF4UgZAPGSSG
+         tOVcL2cs2Iuf8WrgcM62quaIC0Cvsb5CG0TEUupNw5Si1nTKRiOGsbcCRA9P3UyK9DC1
+         fMoV4jpLKfciUCosmzs7B+nKy2OHptXBDJAMo1DvefsNlNXa7JK137QTCKZypyy891Qy
+         +mcdh0Ob8OUlBnP/LQelX/SUjrASuJxo8e9+METHjRyCupK3vfcVsa9A40e/I72bdyZ3
+         dRQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MyJRGMad7Q+q5bdCcVkcqrpNdIFL1aRgxmT8M36cbcw=;
-        b=B2E3/r8QMCtHbwtpbYNcU3EyregFackdKn68M7kZhe76EYmAvaUTrPosXjBgICdE//
-         EOu1sdpETit8/t1mNaK3A0mLmpw9IRNNui8G0A0O7bz98oCMZe8amRR9jadqm6oz8EN8
-         fN2Jbu58Q3DnG7n+uZ5JjxeGG20OJhdVmuNrx2ybHaFsIgeiprpXTv4JsegWxZpwalzm
-         Zrlv5mCB2wM4la5wH+tsByqh7JdHe893TwT5tGWwgcqJGGTPRbBRuvj9KDPEz0Pz7fb2
-         TxDCIawwb8FkNGeEmsYpIG09Tsk+dEBh23YJewWgK3KFUxsDFV7AIpmwMvbD2KfRMNVg
-         FwuA==
-X-Gm-Message-State: APjAAAWLvZ3s/hc1PDqKyW/Bxhm5Q+gW3P+vXT6neS+6oMMyzfceKPuL
-        2A7DGEg1saJpo4houNEq52p7w4hU4MU=
-X-Google-Smtp-Source: APXvYqzLL+4PmjjxJp+YbZgBOc9LjZI+BS11rVtWx1GPtnydvvUtoUhwcN2Mi90/BnY7hWe4Kya0CQ==
-X-Received: by 2002:adf:d4c1:: with SMTP id w1mr1816175wrk.229.1560232249189;
-        Mon, 10 Jun 2019 22:50:49 -0700 (PDT)
+        bh=4zBKFHoIg15/9/uWxHB8RusJhUniU4+YU9+6RV52dnE=;
+        b=tHWZy+xJplESB+jVMcPpVqNp4Tu1CzqUYYxwr3JfYL94qvsbwK5rD07VEzxAip/0br
+         NO4ZzO/zI/3hP6hj4XiLnLvxUwgWd33PBiy1yZUCUfNrtLpkL28386y1//Wk9ai+TF2x
+         fUPYYRq67oi/bN7VTZ/fi0/uAHJUmXXHPtV+zTJYHLt+TmlreISZVGLNxEaCLS9KO3md
+         gRwlUU8QsidpdwuQXop8A3FHnYGEnmgP6RiuvUzt3/NujRvZEvzHtehgDNzkm0fKwZJC
+         eYHYv6Znj9qu+FcnNEw323OafRVgKW/5fWI96JNe7LP90qnEo31YweVkJFQ3pIZl2top
+         bEYg==
+X-Gm-Message-State: APjAAAVPu6CxZBdRKvK5t1rK3Mm2cZNyq55e97NH2rCsEuxAdH9DWlxx
+        hsQ7vqpLf4aiz2Q4TM/WD7TnvePhTRc=
+X-Google-Smtp-Source: APXvYqyVHCheapYM1kx4Q9Uwcj5Oq1IX8b/hA0zT+wSKZShSOJsilnQjRReQChBKwdlA7P8X/xQ8HA==
+X-Received: by 2002:a5d:4a90:: with SMTP id o16mr25238298wrq.13.1560232250436;
+        Mon, 10 Jun 2019 22:50:50 -0700 (PDT)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j8sm11968056wrr.64.2019.06.10.22.50.48
+        by smtp.gmail.com with ESMTPSA id j8sm11968056wrr.64.2019.06.10.22.50.49
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 22:50:48 -0700 (PDT)
+        Mon, 10 Jun 2019 22:50:49 -0700 (PDT)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH 1/8] habanalabs: initialize device CPU queues after MMU init
-Date:   Tue, 11 Jun 2019 08:50:38 +0300
-Message-Id: <20190611055045.15945-2-oded.gabbay@gmail.com>
+Subject: [PATCH 2/8] habanalabs: de-couple MMU and VM module initialization
+Date:   Tue, 11 Jun 2019 08:50:39 +0300
+Message-Id: <20190611055045.15945-3-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190611055045.15945-1-oded.gabbay@gmail.com>
 References: <20190611055045.15945-1-oded.gabbay@gmail.com>
@@ -58,198 +58,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes the order of H/W IP initializations. The MMU needs to
-be initialized before the device CPU queues, because the CPU will go
-through the ASIC MMU in order to reach the host memory (where the queues
-are located).
+This patch initializes the MMU S/W structures before the VM S/W
+structures, instead of doing that as part of the VM S/W initialization.
+
+This is done because we need to configure some MMU mappings for the kernel
+context, before the VM is initialized. The VM initialization can't be
+moved earlier because it depends on the size of the DRAM, which is
+retrieved from the device CPU. Communication with the device CPU will
+require the MMU mappings to be configured and hence the de-coupling.
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- drivers/misc/habanalabs/asid.c      |  2 +-
- drivers/misc/habanalabs/device.c    | 22 +++++-----
- drivers/misc/habanalabs/goya/goya.c | 64 +++++++++++++----------------
- 3 files changed, 40 insertions(+), 48 deletions(-)
+ drivers/misc/habanalabs/device.c | 23 ++++++++++++++++++++---
+ drivers/misc/habanalabs/memory.c | 13 +------------
+ drivers/misc/habanalabs/mmu.c    |  6 +-----
+ 3 files changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/asid.c b/drivers/misc/habanalabs/asid.c
-index f54e7971a762..2c01461701a3 100644
---- a/drivers/misc/habanalabs/asid.c
-+++ b/drivers/misc/habanalabs/asid.c
-@@ -18,7 +18,7 @@ int hl_asid_init(struct hl_device *hdev)
- 
- 	mutex_init(&hdev->asid_mutex);
- 
--	/* ASID 0 is reserved for KMD */
-+	/* ASID 0 is reserved for KMD and device CPU */
- 	set_bit(0, hdev->asid_bitmap);
- 
- 	return 0;
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index cca4af29daf7..4df8ef88ce2d 100644
+index 4df8ef88ce2d..0c4894dd9c02 100644
 --- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -326,7 +326,15 @@ static int device_late_init(struct hl_device *hdev)
- {
- 	int rc;
+@@ -745,6 +745,7 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
  
--	INIT_DELAYED_WORK(&hdev->work_freq, set_freq_to_low_job);
-+	if (hdev->asic_funcs->late_init) {
-+		rc = hdev->asic_funcs->late_init(hdev);
+ 	if (hard_reset) {
+ 		hl_vm_fini(hdev);
++		hl_mmu_fini(hdev);
+ 		hl_eq_reset(hdev, &hdev->event_queue);
+ 	}
+ 
+@@ -772,6 +773,13 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 			goto out_err;
+ 		}
+ 
++		rc = hl_mmu_init(hdev);
 +		if (rc) {
 +			dev_err(hdev->dev,
-+				"failed late initialization for the H/W\n");
-+			return rc;
++				"Failed to initialize MMU S/W after hard reset\n");
++			goto out_err;
 +		}
++
+ 		/* Allocate the kernel context */
+ 		hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx),
+ 						GFP_KERNEL);
+@@ -943,11 +951,18 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto cq_fini;
+ 	}
+ 
++	/* MMU S/W must be initialized before kernel context is created */
++	rc = hl_mmu_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to initialize MMU S/W structures\n");
++		goto eq_fini;
 +	}
 +
- 	hdev->high_pll = hdev->asic_prop.high_pll;
+ 	/* Allocate the kernel context */
+ 	hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
+ 	if (!hdev->kernel_ctx) {
+ 		rc = -ENOMEM;
+-		goto eq_fini;
++		goto mmu_fini;
+ 	}
  
- 	/* force setting to low frequency */
-@@ -337,17 +345,9 @@ static int device_late_init(struct hl_device *hdev)
- 	else
- 		hdev->asic_funcs->set_pll_profile(hdev, PLL_LAST);
+ 	hdev->user_ctx = NULL;
+@@ -995,8 +1010,6 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto out_disabled;
+ 	}
  
--	if (hdev->asic_funcs->late_init) {
--		rc = hdev->asic_funcs->late_init(hdev);
--		if (rc) {
--			dev_err(hdev->dev,
--				"failed late initialization for the H/W\n");
--			return rc;
--		}
--	}
+-	/* After test_queues, KMD can start sending messages to device CPU */
 -
-+	INIT_DELAYED_WORK(&hdev->work_freq, set_freq_to_low_job);
- 	schedule_delayed_work(&hdev->work_freq,
--			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
-+	usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
+ 	rc = device_late_init(hdev);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "Failed late initialization\n");
+@@ -1042,6 +1055,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 			"kernel ctx is still alive on initialization failure\n");
+ free_ctx:
+ 	kfree(hdev->kernel_ctx);
++mmu_fini:
++	hl_mmu_fini(hdev);
+ eq_fini:
+ 	hl_eq_fini(hdev, &hdev->event_queue);
+ cq_fini:
+@@ -1146,6 +1161,8 @@ void hl_device_fini(struct hl_device *hdev)
  
- 	if (hdev->heartbeat) {
- 		INIT_DELAYED_WORK(&hdev->work_heartbeat, hl_device_heartbeat);
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 81c1d576783f..106074466dca 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -539,9 +539,32 @@ int goya_late_init(struct hl_device *hdev)
- 	struct asic_fixed_properties *prop = &hdev->asic_prop;
+ 	hl_vm_fini(hdev);
+ 
++	hl_mmu_fini(hdev);
++
+ 	hl_eq_fini(hdev, &hdev->event_queue);
+ 
+ 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index 693877e37fd8..42d237cae1dc 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -1657,17 +1657,10 @@ int hl_vm_init(struct hl_device *hdev)
+ 	struct hl_vm *vm = &hdev->vm;
  	int rc;
  
-+	goya_fetch_psoc_frequency(hdev);
-+
-+	rc = goya_mmu_clear_pgt_range(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to clear MMU page tables range %d\n", rc);
-+		return rc;
-+	}
-+
-+	rc = goya_mmu_set_dram_default_page(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to set DRAM default page %d\n", rc);
-+		return rc;
-+	}
-+
-+	rc = goya_init_cpu_queues(hdev);
-+	if (rc)
-+		return rc;
-+
-+	rc = goya_test_cpu_queue(hdev);
-+	if (rc)
-+		return rc;
-+
- 	rc = goya_armcp_info_get(hdev);
- 	if (rc) {
--		dev_err(hdev->dev, "Failed to get armcp info\n");
-+		dev_err(hdev->dev, "Failed to get armcp info %d\n", rc);
- 		return rc;
- 	}
- 
-@@ -553,33 +576,15 @@ int goya_late_init(struct hl_device *hdev)
- 
- 	rc = hl_fw_send_pci_access_msg(hdev, ARMCP_PACKET_ENABLE_PCI_ACCESS);
- 	if (rc) {
--		dev_err(hdev->dev, "Failed to enable PCI access from CPU\n");
-+		dev_err(hdev->dev,
-+			"Failed to enable PCI access from CPU %d\n", rc);
- 		return rc;
- 	}
- 
- 	WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
- 			GOYA_ASYNC_EVENT_ID_INTS_REGISTER);
- 
--	goya_fetch_psoc_frequency(hdev);
--
--	rc = goya_mmu_clear_pgt_range(hdev);
+-	rc = hl_mmu_init(hdev);
 -	if (rc) {
--		dev_err(hdev->dev, "Failed to clear MMU page tables range\n");
--		goto disable_pci_access;
+-		dev_err(hdev->dev, "Failed to init MMU\n");
+-		return rc;
 -	}
 -
--	rc = goya_mmu_set_dram_default_page(hdev);
--	if (rc) {
--		dev_err(hdev->dev, "Failed to set DRAM default page\n");
--		goto disable_pci_access;
--	}
--
- 	return 0;
--
--disable_pci_access:
--	hl_fw_send_pci_access_msg(hdev, ARMCP_PACKET_DISABLE_PCI_ACCESS);
--
--	return rc;
+ 	vm->dram_pg_pool = gen_pool_create(__ffs(prop->dram_page_size), -1);
+ 	if (!vm->dram_pg_pool) {
+ 		dev_err(hdev->dev, "Failed to create dram page pool\n");
+-		rc = -ENOMEM;
+-		goto pool_create_err;
++		return -ENOMEM;
+ 	}
+ 
+ 	kref_init(&vm->dram_pg_pool_refcount);
+@@ -1693,8 +1686,6 @@ int hl_vm_init(struct hl_device *hdev)
+ 
+ pool_add_err:
+ 	gen_pool_destroy(vm->dram_pg_pool);
+-pool_create_err:
+-	hl_mmu_fini(hdev);
+ 
+ 	return rc;
  }
+@@ -1724,7 +1715,5 @@ void hl_vm_fini(struct hl_device *hdev)
+ 		dev_warn(hdev->dev, "dram_pg_pool was not destroyed on %s\n",
+ 				__func__);
  
- /*
-@@ -1000,7 +1005,7 @@ int goya_init_cpu_queues(struct hl_device *hdev)
- 
- 	if (err) {
- 		dev_err(hdev->dev,
--			"Failed to communicate with ARM CPU (ArmCP timeout)\n");
-+			"Failed to setup communication with device CPU\n");
- 		return -EIO;
- 	}
- 
-@@ -2465,13 +2470,6 @@ static int goya_hw_init(struct hl_device *hdev)
- 	if (rc)
- 		goto disable_queues;
- 
--	rc = goya_init_cpu_queues(hdev);
--	if (rc) {
--		dev_err(hdev->dev, "failed to initialize CPU H/W queues %d\n",
--			rc);
--		goto disable_msix;
--	}
+-	hl_mmu_fini(hdev);
 -
- 	/*
- 	 * Check if we managed to set the DMA mask to more then 32 bits. If so,
- 	 * let's try to increase it again because in Goya we set the initial
-@@ -2481,7 +2479,7 @@ static int goya_hw_init(struct hl_device *hdev)
- 	if (hdev->dma_mask > 32) {
- 		rc = hl_pci_set_dma_mask(hdev, 48);
- 		if (rc)
--			goto disable_pci_access;
-+			goto disable_msix;
- 	}
- 
- 	/* Perform read from the device to flush all MSI-X configuration */
-@@ -2489,8 +2487,6 @@ static int goya_hw_init(struct hl_device *hdev)
- 
- 	return 0;
- 
--disable_pci_access:
--	hl_fw_send_pci_access_msg(hdev, ARMCP_PACKET_DISABLE_PCI_ACCESS);
- disable_msix:
- 	goya_disable_msix(hdev);
- disable_queues:
-@@ -2972,10 +2968,6 @@ int goya_test_queues(struct hl_device *hdev)
- 			ret_val = -EINVAL;
- 	}
- 
--	rc = goya_test_cpu_queue(hdev);
--	if (rc)
--		ret_val = -EINVAL;
--
- 	return ret_val;
+ 	vm->init_done = false;
  }
- 
+diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
+index 10aee3141444..87968f32e718 100644
+--- a/drivers/misc/habanalabs/mmu.c
++++ b/drivers/misc/habanalabs/mmu.c
+@@ -385,12 +385,8 @@ static void dram_default_mapping_fini(struct hl_ctx *ctx)
+  * @hdev: habanalabs device structure.
+  *
+  * This function does the following:
+- * - Allocate max_asid zeroed hop0 pgts so no mapping is available.
+- * - Enable MMU in H/W.
+- * - Invalidate the MMU cache.
+  * - Create a pool of pages for pgt_infos.
+- *
+- * This function depends on DMA QMAN to be working!
++ * - Create a shadow table for pgt
+  *
+  * Return: 0 for success, non-zero for failure.
+  */
 -- 
 2.17.1
 
