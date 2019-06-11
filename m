@@ -2,123 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04BE3C61A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BACCC3C5D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 10:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391423AbfFKIkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 04:40:25 -0400
-Received: from waikiki.ops.eusc.inter.net ([84.23.254.155]:39112 "EHLO
-        waikiki.ops.eusc.inter.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391272AbfFKIkY (ORCPT
+        id S2404643AbfFKIVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 04:21:33 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:38103 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403996AbfFKIVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:40:24 -0400
-X-Greylist: delayed 1181 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 04:40:23 EDT
-X-Trace: 507c73696d6f6e2e65686c656e7c38372e37392e39332e3134307c316861633142
-        2d3030304f70752d4c737c31353630323431323333
-Received: from waikiki.ops.eusc.inter.net ([10.155.10.22] helo=localhost)
-        by waikiki.ops.eusc.inter.net with esmtpsa (Exim 4.92) 
-        id 1hac1B-000Opu-Ls; Tue, 11 Jun 2019 10:20:33 +0200
-Received: from [10.16.35.209] (unknown [10.16.35.209])
-        by lola.ninela.de (Postfix) with ESMTPSA id 53E6F24C28C;
-        Tue, 11 Jun 2019 10:20:21 +0200 (CEST)
-From:   Simon Ehlen <simon.ehlen@koeln.de>
-Subject: Re: [PATCH 0/5] isdn: deprecate non-mISDN drivers
-References: <20190423151143.464992-1-arnd@arndb.de>
-To:     linux-netdev@vger.kernel.org, linux-driver-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Openpgp: preference=signencrypt
-Autocrypt: addr=simon.ehlen@koeln.de; prefer-encrypt=mutual; keydata=
- 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 0snB
-Message-ID: <9da847b0-9e32-ad4b-78d3-15398b0f8fe2@koeln.de>
-Date:   Tue, 11 Jun 2019 10:20:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 11 Jun 2019 04:21:32 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id ac1qhfdph41bFac1thCupM; Tue, 11 Jun 2019 10:21:30 +0200
+Subject: Re: [PATCH 5/8] drivers: media: coda: fix warning same module names
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Matt Redfearn <matt.redfearn@thinci.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "marex@denx.de" <marex@denx.de>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "a.hajda@samsung.com" <a.hajda@samsung.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+References: <20190606094722.23816-1-anders.roxell@linaro.org>
+ <d6b79ee0-07c6-ad81-16b0-8cf929cc214d@xs4all.nl>
+ <CADYN=9KY5=FzrkC7MKj9QnG-eM1NVuL00w8Xv4yU2r05rhr7WQ@mail.gmail.com>
+ <c2ff2c77-5c14-4bc4-f59c-7012d272ec76@thinci.com>
+ <1560240943.13886.1.camel@pengutronix.de>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <221c8ef8-7adc-4383-93c9-9031dca590f0@xs4all.nl>
+Date:   Tue, 11 Jun 2019 10:21:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190423151143.464992-1-arnd@arndb.de>
+In-Reply-To: <1560240943.13886.1.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 87.79.93.140
-X-SA-Exim-Mail-From: simon.ehlen@koeln.de
-X-SA-Exim-Scanned: No (on waikiki.ops.eusc.inter.net); SAEximRunCond expanded to false
+X-CMAE-Envelope: MS4wfF4l958gFcXbV6p95xz+ivCMsV6s4588moNOs9xu2Iu97gq8E8gpQpJUwHv+LkhfdxwpeLJQXiKUx1AlyFqxgT1gA/7wWLItAOSIJiLQdmwKpWc+fKFG
+ vgDVAUCC1cZ5stiYDkUqlh2EcAWqi7Md5RRcCmEXm+8tYSNg7ISwK4efXRTEoVW+I2hyFPVUagqURLbJjEHp7pP3NnPKy/31ZBETWX+oQtaxu1L/JuO7dgPf
+ HnNSYxRiWghAhGKyI62h1BpN1w42uc7cQ/oXIBCiaAgS1eJcxOPiu326GTdnuN9Kx92iuMp7/n6vKpnBQPtR/qLOg8JPRgUhpRSa0zqt4djY9V5mQS96lJKz
+ f2rH+YlTJL7CmaaSGOeTqdiUiT38QtxmsSL7i8X+kcrLMk/EcGT+tj0AQyDmDRjspjsgFZA1mSsLUsOkNUYiWkr+hdrd1GsXkgOz2PjXGTukYJzJeaQVoSqe
+ d60XFTDTbLgStGivDZdX7UNH8PzRRVaOtyLSAG3t3AO+qlhY4dy4sxkZ8G/NhLkDqsMh8B71+/zBo8rSUSrq5M8ZXkCdaii8SMkssCHGQ6+Vv2FAY2I6fbmx
+ Xid/liFV0KXCTUzeN7CzTYM4AAa46DnSAQ/0T1QT6pPbCpbK2gX/gZTvJ5cZgmWDrg8JOkBFjD+Pi1oWHQBsSHz6qibIVsZfsI/CgaK9NSRFtvTEp7ifwfAc
+ geBvs8P2gZmQHGj8Ju+w+QrHQ+R3mvF8yzEKjhUR9xrQS/1pD8MRZy4EUvBFJgjuxT6so14qzZAOm+JHvhULAxlG6OPFrvg2ZpHhoUY47YPJbEiIBYIsv/IE
+ teJbVQgtWRv9SBf2e6uP15ECcp65KaAsnUtq1UySLHJYiTXhfptY9WRsvCwbK5Ft3KwaiNCpmHGOE5Fhr8Y7ZrFIS081K3OeEhfJL6J0GJq9qc4QQKC02EFJ
+ KKueZgpH2AuUJhfG/GxasVo2z5POtJFu7M6QSx11WjThU8995eci5lvaMj4+QzckJISsRw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 6/11/19 10:15 AM, Philipp Zabel wrote:
+> Hi,
+> 
+> On Mon, 2019-06-10 at 13:14 +0000, Matt Redfearn wrote:
+>>
+>> On 10/06/2019 14:03, Anders Roxell wrote:
+>>> On Thu, 6 Jun 2019 at 12:13, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>>
+>>>> On 6/6/19 11:47 AM, Anders Roxell wrote:
+>>>>> When building with CONFIG_VIDEO_CODA and CONFIG_CODA_FS enabled as
+>>>>> loadable modules, we see the following warning:
+>>>>>
+>>>>> warning: same module names found:
+>>>>>    fs/coda/coda.ko
+>>>>>    drivers/media/platform/coda/coda.ko
+>>>>>
+>>>>> Rework so media coda matches the config fragment. Leaving CODA_FS as is
+>>>>> since thats a well known module.
+>>>>>
+>>>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>>>>> ---
+>>>>>   drivers/media/platform/coda/Makefile | 4 ++--
+>>>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/media/platform/coda/Makefile b/drivers/media/platform/coda/Makefile
+>>>>> index 54e9a73a92ab..588e6bf7c190 100644
+>>>>> --- a/drivers/media/platform/coda/Makefile
+>>>>> +++ b/drivers/media/platform/coda/Makefile
+>>>>> @@ -1,6 +1,6 @@
+>>>>>   # SPDX-License-Identifier: GPL-2.0-only
+>>>>>
+>>>>> -coda-objs := coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-mpeg2.o coda-mpeg4.o coda-jpeg.o
+>>>>> +video-coda-objs := coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-mpeg2.o coda-mpeg4.o coda-jpeg.o
+>>>>>
+>>>>> -obj-$(CONFIG_VIDEO_CODA) += coda.o
+>>>>> +obj-$(CONFIG_VIDEO_CODA) += video-coda.o
+>>>>
+>>>> How about imx-coda? video-coda suggests it is part of the video subsystem,
+>>>> which it isn't.
+>>>
+>>> I'll resend a v2 shortly with imx-coda instead.
+> 
+> I'd be in favor of calling it "coda-vpu" instead.
 
-Am 23.04.2019 um 17:11 schrieb Arnd Bergmann:
-> It turns out that the suggestion from Karsten Keil wa to remove I4L
-> in 2018 after the last public ISDN networks are shut down. This has
-> happened now (with a very small number of exceptions), so I guess it's
-> time to try again.
-There are still public ISDN networks available. My provider (NetCologne) is still serving native ISDN.
-> If anyone is still using isdn4linux and CAPI with modern kernels, please
-> speak up now.
-I'm using kernel isdn support in different ways.
-1. To connect (b1pci,capidrv) to the PSTN of my provider to use phone (capi, chan_capi), fax (capi4hylafax, hylafax) and answering machine (vbox) services.
-2. To build an internal ISDN network using hfc in NT mode.
+Fine by me!
 
-There are other users as well still making use of isdn support in the linux kernel. [1]
-As he pointed out, although public ISDN services are phasing out every AVM Fritz!Box is capable of providing VOIP services over it's internal S0 bus.
-In case my provider decides to shut down ISDN I would make use of the S0 bus to keep my services running.
+> 
+>> What about other vendor SoCs implementing the Coda IP block which are 
+>> not an imx? I'd prefer a more generic name - maybe media-coda.
+> 
+> Right, this driver can be used on other SoCs [1].
 
-So please refrain from removing ISDN/CAPI support of the linux kernel.
->       Arnd
-Kind regards,
-Simon
+Good point.
 
-[1] https://lkml.org/lkml/2019/6/9/168
+Regards,
 
+	Hans
+
+> 
+> [1] https://www.mail-archive.com/linux-media@vger.kernel.org/msg146498.html
+> 
+> regards
+> Philipp
+> 
 
