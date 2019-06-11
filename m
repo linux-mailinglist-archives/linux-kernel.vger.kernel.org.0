@@ -2,129 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD313CE69
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 16:21:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 030183CDC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Jun 2019 15:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390431AbfFKOTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 10:19:44 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:33444 "EHLO hermes.aosc.io"
+        id S2391555AbfFKN5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 09:57:19 -0400
+Received: from mga14.intel.com ([192.55.52.115]:42646 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388789AbfFKOTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:19:41 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id DB191822A7;
-        Tue, 11 Jun 2019 14:12:51 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 11/11] ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
-Date:   Tue, 11 Jun 2019 22:09:40 +0800
-Message-Id: <20190611140940.14357-12-icenowy@aosc.io>
-In-Reply-To: <20190611140940.14357-1-icenowy@aosc.io>
-References: <20190611140940.14357-1-icenowy@aosc.io>
+        id S2387835AbfFKN5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 09:57:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 06:57:18 -0700
+X-ExtLoop1: 1
+Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
+  by orsmga003.jf.intel.com with ESMTP; 11 Jun 2019 06:57:16 -0700
+Subject: Re: A potential broken at platform driver?
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Romain Izard <romain.izard.pro@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, dinguyen@kernel.org, atull@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sen.li@intel.com, Richard Gong <richard.gong@intel.com>
+References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
+ <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
+ <20190528232224.GA29225@kroah.com>
+ <1e3b5447-b776-f929-bca6-306f90ac0856@linux.intel.com>
+ <b608d657-9d8c-9307-9290-2f6b052a71a9@linux.intel.com>
+ <20190603180255.GA18054@kroah.com> <20190604103241.GA4097@5WDYG62>
+ <20190604142803.GA28355@kroah.com>
+ <e3adbd00-e500-70af-1c27-e4c064486561@linux.intel.com>
+ <20190604170310.GC14605@kroah.com>
+From:   Richard Gong <richard.gong@linux.intel.com>
+Message-ID: <f484ce9f-a86e-ce33-686b-b42dc293beb8@linux.intel.com>
+Date:   Tue, 11 Jun 2019 09:10:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190604170310.GC14605@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lichee zero plus is a core board made by Sipeed, which includes on-board
-TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
-header, a microUSB slot and a gold finger connector for expansion. It
-can use either Sochip S3 or Allwinner S3L SoC.
 
-Add the basic device tree for the core board, w/o optional onboard
-storage, and with S3 SoC.
+Hi Greg,
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-New patch in v2.
+On 6/4/19 12:03 PM, Greg KH wrote:
+> On Tue, Jun 04, 2019 at 11:13:02AM -0500, Richard Gong wrote:
+>>
+>> Hi Greg,
+>>
+>> On 6/4/19 9:28 AM, Greg KH wrote:
+>>> On Tue, Jun 04, 2019 at 12:33:03PM +0200, Romain Izard wrote:
+>>>> On Mon, Jun 03, 2019 at 08:02:55PM +0200, Greg KH wrote:
+>>>>>> @@ -394,7 +432,7 @@ static struct platform_driver stratix10_rsu_driver = {
+>>>>>>    	.remove = stratix10_rsu_remove,
+>>>>>>    	.driver = {
+>>>>>>    		.name = "stratix10-rsu",
+>>>>>> -		.groups = rsu_groups,
+>>>>>> +//		.groups = rsu_groups,
+>>>>>
+>>>>> Are you sure this is the correct pointer?  I think that might be
+>>>>> pointing to the driver's attributes, not the device's attributes.
+>>>>>
+>>>>> If platform drivers do not have a way to register groups properly, then
+>>>>> that really needs to be fixed, as trying to register it by yourself as
+>>>>> you are doing, is ripe for racing with userspace.
+>>>> This is a very common issue with platform drivers, and it seems to me that
+>>>> it is not possible to add device attributes when binding a device to a
+>>>> driver without entering the race condition.
+>>>>
+>>>> My understanding is the following one:
+>>>>
+>>>> The root cause is that the device has already been created and reported
+>>>> to the userspace with a KOBJ_ADD uevent before the device and the driver
+>>>> are bound together. On receiving this event, userspace will react, and
+>>>> it will try to read the device's attributes. In parallel the kernel will
+>>>> try to find a matching driver. If a driver is found, the kernel will
+>>>> call the probe function from the driver with the device as a parameter,
+>>>> and if successful a KOBJ_BIND uevent will be sent to userspace, but this
+>>>> is a recent addition.
+>>>>
+>>>> Unfortunately, not all created devices will be bound to a driver, and the
+>>>> existing udev code relies on KOBJ_ADD uevents rather than KOBJ_BIND uevents.
+>>>> If new per-device attributes have been added to the device during the
+>>>> binding stage userspace may or may not see them, depending on when userspace
+>>>> tries to read the device's attributes.
+>>>>
+>>>> I have this possible workaround, but I do not know if it is a good solution:
+>>>>
+>>>> When binding the device and the driver together, create a new device as a
+>>>> child to the current device, and fill its "groups" member to point to the
+>>>> per-device attributes' group. As the device will be created with all the
+>>>> attributes, it will not be affected by the race issues. The functions
+>>>> handling the attributes will need to be modified to use the parents of their
+>>>> "device" parameter, instead of the device itself. Additionnaly, the sysfs
+>>>> location of the attributes will be different, as the child device will show
+>>>> up in the sysfs path. But for a newly introduced device this will not be
+>>>> a problem.
+>>>>
+>>>> Is this a good compromise ?
+>>>
+>>> Not really.  You just want the attributes on the platform device itself.
+>>>
+>>> Given the horrible hack that platform devices are today, what's one more
+>>> hack!
+>>>
+>>> Here's a patch below of what should probably be done here.  Richard, can
+>>> you change your code to use the new dev_groups pointer in the struct
+>>> platform_driver and this patch and let me know if that works or not?
+>>>
+>>> Note, I've only compiled this code, not tested it...
+>>>
+>>
+>> Your patch works.
+>>
+>> Many thanks for your help!
+> 
+> Nice!
+> 
+> I guess I need to turn it into a real patch now.  Let me do that tonight
+> and see if I can convert some existing drivers to use it as well...
+> 
 
- arch/arm/boot/dts/Makefile                    |  1 +
- .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
- .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 39 +++++++++++++++++++
- 3 files changed, 48 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
- create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+Sorry for asking.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5559028b770e..2b5e6a1d20ff 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1110,6 +1110,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-r16-nintendo-super-nes-classic.dtb \
- 	sun8i-r16-parrot.dtb \
- 	sun8i-r40-bananapi-m2-ultra.dtb \
-+	sun8i-s3-lichee-zero-plus.dtb \
- 	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3s-licheepi-zero.dtb \
- 	sun8i-v3s-licheepi-zero-dock.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-new file mode 100644
-index 000000000000..7d2f6b145190
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-s3.dtsi"
-+#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
-diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-new file mode 100644
-index 000000000000..bb148e796df7
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+#include "sunxi-common-regulators.dtsi"
-+
-+/ {
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&mmc0 {
-+	broken-cd;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pb_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
--- 
-2.21.0
+I haven't seen your patch, did you release that?
 
+Regards,
+Richard
+
+> thanks,
+> 
+> greg k-h
+> 
