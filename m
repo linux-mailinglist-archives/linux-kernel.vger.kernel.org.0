@@ -2,131 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE42642888
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 472704288D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732451AbfFLONU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 10:13:20 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35873 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731247AbfFLONO (ORCPT
+        id S2437244AbfFLOPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:15:11 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:3175 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfFLOPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:13:14 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k21so22640442edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=essensium-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dnpQA/36f3puBoeFdufMNivJajWtYx7kIb4vLCA2A/8=;
-        b=P6WoLLKDEQq28OBHm7SuaGw4zqDlXJ0Z/hMhyJYWPEVHGF/7EksRN/sHsUHVbvBp5q
-         JFjOAVpKVtFvlan05c6wb9hjFWT4luqHxi8ZF/PLD1hTksqOzBgO+DUrrg36a6fFH+r+
-         NYynLU2AvvrKmT6HcQ43EjcwdxSNZciavMh8iRV9R5iXLPLVDMmJE0WVunA6b+y40cgy
-         yweJoXJnHuiODpzHMPGg0P++G+fXQQKzIaRYeSaMNDzCYne6jIuhvCgbC0wGtHPM5X9D
-         l2totDj2/6M2qX7IaYXIGjkDtuiKK8YGZEdSrTmeQhATqh7Yjku2qQusF6SnklYSdtje
-         6Bew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dnpQA/36f3puBoeFdufMNivJajWtYx7kIb4vLCA2A/8=;
-        b=rxPMFOD+eSsbnWByKysSaaNKcS1KLfLbtHl51xRG1ZvdtYcnRs7APrY0BuOIyAwDwM
-         5UbRMM0auFQmWEjQOdOcssyYQ6KBbnDnqkX0aiNa4byTOCLdvHmiVFRP6bMfRtgJHMPd
-         X5s+qOOG7EWhkv9YzW7OmXINRW7xC0Y3Tj3iIyuRT7us7D1K8CvN3hooUlClvgV0fxp6
-         JU6xmilNaF1gNh5yrdbfvlT+i3li6fbTl/EP671BTVNOrh1pgRqnSOxSoN45iElBb7L+
-         bu2yKYaPzn4hmL3LvnvwP+QwpJTQL6smkT/DWTpxqr+EJSE04E2z5VmUbzTHxZvM+rQ8
-         M5bQ==
-X-Gm-Message-State: APjAAAUPggfwPlxzKJH0gPtlVf0dow9vP9Zt40gt0XkXAJEUA+nDHKmv
-        YxjIlhbm7/y8MYwXLXXTEb7vGw==
-X-Google-Smtp-Source: APXvYqymIjFcPnsVOPoiLyGn8txfd6LD7DvUIFlcft2eqr0A4jj8n4R/d4pucI62iKtfjRDqzotuEg==
-X-Received: by 2002:a17:906:e204:: with SMTP id gf4mr29870786ejb.302.1560348793032;
-        Wed, 12 Jun 2019 07:13:13 -0700 (PDT)
-Received: from localhost.localdomain (ip-188-118-3-185.reverse.destiny.be. [188.118.3.185])
-        by smtp.gmail.com with ESMTPSA id g2sm7095eja.23.2019.06.12.07.13.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 07:13:12 -0700 (PDT)
-From:   Patrick Havelange <patrick.havelange@essensium.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiubo Li <Li.Xiubo@freescale.com>
-Cc:     Patrick Havelange <patrick.havelange@essensium.com>
-Subject: [PATCH 2/2] pwm: pwm-fsl-ftm: Use write protection for prescaler & polarity
-Date:   Wed, 12 Jun 2019 16:12:46 +0200
-Message-Id: <20190612141246.7366-2-patrick.havelange@essensium.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190612141246.7366-1-patrick.havelange@essensium.com>
-References: <20190612141246.7366-1-patrick.havelange@essensium.com>
+        Wed, 12 Jun 2019 10:15:10 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,366,1557212400"; 
+   d="scan'208";a="36650836"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Jun 2019 07:15:09 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 12 Jun 2019 07:14:56 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Wed, 12 Jun 2019 07:14:56 -0700
+Date:   Wed, 12 Jun 2019 16:13:56 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>
+CC:     Colin King <colin.king@canonical.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] video: fbdev: atmel_lcdfb: remove redundant
+ initialization to variable ret
+Message-ID: <20190612141356.riiesqub4zvxafh3@M43218.corp.atmel.com>
+Mail-Followup-To: Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
+        Colin King <colin.king@canonical.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190611170913.20913-1-colin.king@canonical.com>
+ <37ac8530-6601-a1a0-37e0-8c6d5d1702cd@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <37ac8530-6601-a1a0-37e0-8c6d5d1702cd@microchip.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modifying the prescaler or polarity value must be done with the
-write protection disabled. Currently this is working by chance as
-the write protection is in a disabled state by default.
-This patch makes sure that we enable/disable the write protection
-when needed.
+On Wed, Jun 12, 2019 at 09:55:30AM +0200, Nicolas Ferre - M43238 wrote:
+> On 11/06/2019 at 19:09, Colin King wrote:
+> > External E-Mail
+> > 
+> > 
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Currently variable ret is being initialized with -ENOENT however that
+> > value is never read and ret is being re-assigned later on. Hence this
+> > assignment is redundant and can be removed.
+> > 
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Indeed:
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
----
- drivers/pwm/pwm-fsl-ftm.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
 
-diff --git a/drivers/pwm/pwm-fsl-ftm.c b/drivers/pwm/pwm-fsl-ftm.c
-index cd5fe39ab95d..e955b1cdfd2f 100644
---- a/drivers/pwm/pwm-fsl-ftm.c
-+++ b/drivers/pwm/pwm-fsl-ftm.c
-@@ -59,6 +59,21 @@ static inline struct fsl_pwm_chip *to_fsl_chip(struct pwm_chip *chip)
- 	return container_of(chip, struct fsl_pwm_chip, chip);
- }
- 
-+static void ftm_clear_write_protection(struct fsl_pwm_chip *fpc)
-+{
-+	u32 val;
-+
-+	regmap_read(fpc->regmap, FTM_FMS, &val);
-+	if (val & FTM_FMS_WPEN)
-+		regmap_update_bits(fpc->regmap, FTM_MODE, FTM_MODE_WPDIS,
-+				   FTM_MODE_WPDIS);
-+}
-+
-+static void ftm_set_write_protection(struct fsl_pwm_chip *fpc)
-+{
-+	regmap_update_bits(fpc->regmap, FTM_FMS, FTM_FMS_WPEN, FTM_FMS_WPEN);
-+}
-+
- static bool fsl_pwm_periodcfg_are_equal(const struct fsl_pwm_periodcfg *a,
- 					const struct fsl_pwm_periodcfg *b)
- {
-@@ -253,6 +268,8 @@ static int fsl_pwm_apply_config(struct fsl_pwm_chip *fpc,
- 		do_write_period = true;
- 	}
- 
-+	ftm_clear_write_protection(fpc);
-+
- 	if (do_write_period) {
- 		regmap_update_bits(fpc->regmap, FTM_SC, FTM_SC_CLK_MASK,
- 				   FTM_SC_CLK(periodcfg.clk_select));
-@@ -279,6 +296,8 @@ static int fsl_pwm_apply_config(struct fsl_pwm_chip *fpc,
- 					       fpc->period.mod_period + 1);
- 	newstate->duty_cycle = fsl_pwm_ticks_to_ns(fpc, duty);
- 
-+	ftm_set_write_protection(fpc);
-+
- 	return 0;
- }
- 
-@@ -359,6 +378,8 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)
- static bool fsl_pwm_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case FTM_FMS:
-+	case FTM_MODE:
- 	case FTM_CNT:
- 		return true;
- 	}
--- 
-2.19.1
+Thanks
 
+> 
+> Thanks, best regards,
+>    Nicolas
+> 
+> 
+> > ---
+> >   drivers/video/fbdev/atmel_lcdfb.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+> > index fb117ccbeab3..930cc3f92e01 100644
+> > --- a/drivers/video/fbdev/atmel_lcdfb.c
+> > +++ b/drivers/video/fbdev/atmel_lcdfb.c
+> > @@ -950,7 +950,7 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+> >   	struct fb_videomode fb_vm;
+> >   	struct gpio_desc *gpiod;
+> >   	struct videomode vm;
+> > -	int ret = -ENOENT;
+> > +	int ret;
+> >   	int i;
+> >   
+> >   	sinfo->config = (struct atmel_lcdfb_config*)
+> > 
+> 
+> 
+> -- 
+> Nicolas Ferre
