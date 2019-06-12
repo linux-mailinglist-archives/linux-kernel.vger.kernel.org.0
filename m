@@ -2,108 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AADC944F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 00:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14CD74492C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbfFMWzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 18:55:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41628 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbfFMWzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 18:55:15 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 34C6985539;
-        Thu, 13 Jun 2019 22:55:15 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-4.gru2.redhat.com [10.97.112.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E498C52CF;
-        Thu, 13 Jun 2019 22:55:14 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 4C55D10517E;
-        Wed, 12 Jun 2019 18:51:28 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x5CLpOVJ028527;
-        Wed, 12 Jun 2019 18:51:24 -0300
-Date:   Wed, 12 Jun 2019 18:51:23 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v3 2/4] KVM: LAPIC: lapic timer interrupt is injected by
- posted interrupt
-Message-ID: <20190612215120.GA28417@amt.cnet>
-References: <1560255429-7105-1-git-send-email-wanpengli@tencent.com>
- <1560255429-7105-3-git-send-email-wanpengli@tencent.com>
- <20190611201849.GA7520@amt.cnet>
- <CANRm+CwrbMQpQ1d_KMp-EBMd-pXFVePQ8GV4Y4X0oy8-zGZCBQ@mail.gmail.com>
- <20190612152231.GA22785@flask>
+        id S2393616AbfFMRPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:15:03 -0400
+Received: from smtp.aristanetworks.com ([52.0.43.43]:48978 "EHLO
+        smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728800AbfFLVwV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 17:52:21 -0400
+Received: from smtp.aristanetworks.com (localhost [127.0.0.1])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id A816030DD5A8;
+        Wed, 12 Jun 2019 14:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1560376339;
+        bh=gZKRKJcuRQSwe2TyYVhO9ixqNktFM8piGcLI2AKiDUY=;
+        h=From:To:Cc:Subject:Date;
+        b=1ceR8VNQckqIlWxoGgGn9zbBtPmVs/5npYY8OjtyIbVGHiciJtQ0dQNe4lKERZPMu
+         6CixhkXs+XOyifhEnimauktjNu4j/0hBisAPV1usnGX4f2c7pT+Y2h8J0B2YdHfaSK
+         q8B+AScT1PhpDKlgQAs1bWqRZOTxY7t7YAS5QPuxKeNL+33t+KICul0yaoW561kE1N
+         h40tF1z2SrnXXl0oTL0gTm3N2v7XgMSJB9YHNeU2ojrjSalGGtf9Rw030hlJJ+HI7Q
+         i6LISs1BjX6+ye66fIAAXJ/kaEF/P4EUYC1B7IUB6AbX/iVD/BQIDK9Y3Yu77Ha2Wt
+         pIFLYmOZLBTYQ==
+Received: from chmeee (unknown [10.80.4.152])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 84CAB30DD5A5;
+        Wed, 12 Jun 2019 14:52:19 -0700 (PDT)
+Received: from kevmitch by chmeee with local (Exim 4.92)
+        (envelope-from <kevmitch@chmeee>)
+        id 1hbBAI-0003K5-UY; Wed, 12 Jun 2019 14:52:18 -0700
+From:   Kevin Mitchell <kevmitch@arista.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Kevin Mitchell <kevmitch@arista.com>
+Subject: [PATCH 0/3] handle init errors more gracefully in amd_iommu
+Date:   Wed, 12 Jun 2019 14:52:01 -0700
+Message-Id: <20190612215203.12711-1-kevmitch@arista.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190612152231.GA22785@flask>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Jun 2019 22:55:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 05:22:31PM +0200, Radim Krčmář wrote:
-> 2019-06-12 09:48+0800, Wanpeng Li:
-> > On Wed, 12 Jun 2019 at 04:39, Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> > > On Tue, Jun 11, 2019 at 08:17:07PM +0800, Wanpeng Li wrote:
-> > > > From: Wanpeng Li <wanpengli@tencent.com>
-> > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > > > @@ -133,6 +133,12 @@ inline bool posted_interrupt_inject_timer_enabled(struct kvm_vcpu *vcpu)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer_enabled);
-> > > >
-> > > > +static inline bool can_posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
-> > > > +{
-> > > > +     return posted_interrupt_inject_timer_enabled(vcpu) &&
-> > > > +             kvm_hlt_in_guest(vcpu->kvm);
-> > > > +}
-> > >
-> > > Hi Li,
-> > 
-> > Hi Marcelo,
-> > 
-> > >
-> > > Don't think its necessary to depend on kvm_hlt_in_guest: Can also use
-> > > exitless injection if the guest is running (think DPDK style workloads
-> > > that busy-spin on network card).
-> 
-> I agree.
-> 
-> > There are some discussions here.
-> > 
-> > https://lkml.org/lkml/2019/6/11/424
-> > https://lkml.org/lkml/2019/6/5/436
-> 
-> Paolo wants to disable the APF synthetic halt first, which I think is
-> unrelated to the timer implementation.
-> The synthetic halt happens when the VCPU cannot progress because the
-> host swapped out its memory and any asynchronous event should unhalt it,
-> because we assume that the interrupt path wasn't swapped out.
-> 
-> The posted interrupt does a swake_up_one (part of vcpu kick), which is
-> everything what the non-posted path does after setting a KVM request --
-> it's a bug if we later handle the PIR differently from the KVM request,
-> so the guest is going to be woken up on any halt blocking in KVM (even
-> synthetic APF halt).
-> 
-> Paolo, have I missed the point?
-> 
-> Thanks.
+This series makes error handling more robust in the amd_iommu init
+code. It was initially motivated by problematic firmware that does not
+set up the physical address of the iommu. This led to a NULL dereference
+panic when iommu_disable was called during cleanup.
 
-"Here you need to check kvm_halt_in_guest, not kvm_mwait_in_guest,
-because you need to go through kvm_apic_expired if the guest needs to be
-woken up from kvm_vcpu_block."
+While the first patch is sufficient to avoid the panic, the subsequent
+two move the cleanup closer to the actual error and avoid calling the
+cleanup code twice when amd_iommu=off is specified on the command line.
 
-Note: VMX preemption timer is disabled by Li's patch.
+I have tested this series on a variety of AMD CPUs with firmware
+exhibiting the issue. I have additionally tested on platforms where the
+firmware has been fixed. I tried both with and without amd_iommu=off. I
+have also tested on older CPUs where no IOMMU is detected and even one
+where the GART driver ends up running.
 
+Thanks,
+
+Kevin
+
+Kevin Mitchell (3):
+  iommu/amd: make iommu_disable safer
+  iommu/amd: move gart fallback to amd_iommu_init
+  iommu/amd: only free resources once on init error
+
+ drivers/iommu/amd_iommu_init.c | 45 ++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
+
+-- 
+2.20.1
 
