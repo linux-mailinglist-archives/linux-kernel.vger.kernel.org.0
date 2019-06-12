@@ -2,92 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EDC542BB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8075142BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440204AbfFLQCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 12:02:48 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40860 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406604AbfFLQCr (ORCPT
+        id S2408286AbfFLQHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 12:07:08 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38216 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406078AbfFLQHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 12:02:47 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p184so6634906pfp.7;
-        Wed, 12 Jun 2019 09:02:47 -0700 (PDT)
+        Wed, 12 Jun 2019 12:07:08 -0400
+Received: by mail-qt1-f196.google.com with SMTP id n11so16960819qtl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 09:07:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=digitalocean.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Q/SueBbtj7C5fFQ+1HnrwXXVgHlOaQMtNQZKJDih2vk=;
-        b=O2IfSoEdPeOtqvYc61BZ6k3//eUBsMkInNpkQAdhysvx5DQ3SdYRIa4kcfKFNZZiUf
-         gnZiXeSVkjhFpwuXlNh0ekQU9A13LIBL1boBvvOujQQdHY6GA0eSL5Gnqvg6nq8Nfeuc
-         3fp+jTtqUacUT5N2RJ51BAY8KHD3RLw3T0WANZ7Fdcv8ap6gs4icNXGB8NJwKRnjHgbx
-         5lD/T9jSf8m6NvX1y/agOfMFhQMjhe9A0JGL45PHag1/zVPKZOOpYu8c3TGhLn+7hxSO
-         UoCiIyN+Kca/fLHpXlP7m4CqcwCd5anviByK0K7OR9KQ3wgNCj125XtlSdLups1CYqYK
-         GJSA==
+        bh=Cu3Bb6FZyhJzR54vRUfsJH6eJeevJkiGlOgrBDKMJZY=;
+        b=D1PZYPLIOLDvCgCcePFLGP3Tt494J3J+QkMBkvlFMUiFQbQxxN/dXxIYTnB60YMySp
+         IJB2SmyDdC/Ir0cfoEFmyA2J3B2DkVd9MUTQUum5oigc6vHgApFEqPWKT+WxzFnZbWdP
+         uY1goooHNQAu5B1wnqc8WKNeDa1Z4B1dsa9bw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q/SueBbtj7C5fFQ+1HnrwXXVgHlOaQMtNQZKJDih2vk=;
-        b=QkZKCTJgO+CRCncQ+ZB0St41hMjdD9sz251zs0EQUzh5kXC8B/ntA3HOmjeNkoZACJ
-         HnmiDHOUuA4VyMexl+O9vUkCUGJcS9hbzCuZMJN5+UmGkpjLgQXGGJeC5MVeY02VFFYe
-         IcO1A1/QfT1zOD7zmcXGj1Ah5Qo74PyKYaEXmujEoF5rqrJ6XGwvTHqE0rwFHeRrd0SS
-         XwFPpNejsvqM+CqcVYlFnaJzttvm2ZPnBNoQk35qqxCWlKghdAlwSGMQ5FBm6YkuFmLU
-         U2Fyl4E9AJYn1wBWPcMuLQTfqOP0A37oaun5y2AXuXNgFueOPvvMio6qcHq7YTBTd7nw
-         mjqQ==
-X-Gm-Message-State: APjAAAWxjq5umXq+CbN6NO6YbCqSzin2dkEAKcC79EnPL+SJ9J5VxGbL
-        OtvJZGAXYQ8g8oKrzo3xY7o=
-X-Google-Smtp-Source: APXvYqxG8p2oJB3BYWG5XIejEtw3Ow6zJoP+BBfkx5+yZm7Z3tUHMhdrYVY2YkHPFCPijmjru4t8NA==
-X-Received: by 2002:a65:484d:: with SMTP id i13mr25259329pgs.27.1560355366687;
-        Wed, 12 Jun 2019 09:02:46 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::c431])
-        by smtp.gmail.com with ESMTPSA id d187sm14370pfa.38.2019.06.12.09.02.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Cu3Bb6FZyhJzR54vRUfsJH6eJeevJkiGlOgrBDKMJZY=;
+        b=KC9we60f7MIKWPbmgPOHmTrkzgs87Hx3O596rBQ68WMnRWtnwNxjDplMPcFPmSSZCN
+         k7+qt2s+SBFit/DDGrYHXnOVZj/1hdY3g6mEzjykOXxMiJJo1n19NiG9GDWVE28wgL3w
+         xqHtIJoKhoB4EL2nu5v4DnJr8ZOkwyCdw3mdlCBCV+mFk3m0ra3dOUCI1ZpOB5Wrkm+Q
+         77mswx6KUc9ntS9tsyJQrqnHx8/WVWHXih2L/IUoWe1jb4HZuFBx+j+F5D2hDYsgjEPz
+         uyXno8E//36qRBrLqdrEzdbFjbdvPXl2VpGF9ZvJmtt0zCVn7iqxncUzjIK9WJT8c2rf
+         /Bww==
+X-Gm-Message-State: APjAAAV0DETGvkYzFt5jU60qfVRxI5HJGZiPC8OUbzJizkWAn+87pvxB
+        ZoCY1254xO0fPwF8HM6bSF/3cw==
+X-Google-Smtp-Source: APXvYqxRSkiZtxZjXlKBCTnqbclLJYBUiQ+1RhoCZcqQLHfVO3aMRqt+tS2hnloafUf78lsB80eCJQ==
+X-Received: by 2002:ac8:2b01:: with SMTP id 1mr557959qtu.177.1560355627366;
+        Wed, 12 Jun 2019 09:07:07 -0700 (PDT)
+Received: from sinkpad (modemcable060.224-21-96.mc.videotron.ca. [96.21.224.60])
+        by smtp.gmail.com with ESMTPSA id 34sm133332qtq.59.2019.06.12.09.07.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 09:02:45 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 09:02:44 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Joel Savitz <jsavitz@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
-        Phil Auld <pauld@redhat.com>, Waiman Long <longman@redhat.com>,
-        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org
-Subject: Re: [RESEND PATCH v3] cpuset: restore sanity to
- cpuset_cpus_allowed_fallback()
-Message-ID: <20190612160244.GP3341036@devbig004.ftw2.facebook.com>
-References: <1560354648-23632-1-git-send-email-jsavitz@redhat.com>
+        Wed, 12 Jun 2019 09:07:06 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 12:06:58 -0400
+From:   Julien Desfossez <jdesfossez@digitalocean.com>
+To:     "Li, Aubrey" <aubrey.li@linux.intel.com>
+Cc:     Aaron Lu <aaron.lu@linux.alibaba.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+Message-ID: <20190612160658.GA26997@sinkpad>
+References: <cover.1559129225.git.vpillai@digitalocean.com>
+ <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com>
+ <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com>
+ <20190531210816.GA24027@sinkpad>
+ <20190606152637.GA5703@sinkpad>
+ <4bd9a132-bbdb-ec45-331f-829df07a7376@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560354648-23632-1-git-send-email-jsavitz@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <4bd9a132-bbdb-ec45-331f-829df07a7376@linux.intel.com>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 11:50:48AM -0400, Joel Savitz wrote:
-> In the case that a process is constrained by taskset(1) (i.e.
-> sched_setaffinity(2)) to a subset of available cpus, and all of those are
-> subsequently offlined, the scheduler will set tsk->cpus_allowed to
-> the current value of task_cs(tsk)->effective_cpus.
-> 
-> This is done via a call to do_set_cpus_allowed() in the context of 
-> cpuset_cpus_allowed_fallback() made by the scheduler when this case is
-> detected. This is the only call made to cpuset_cpus_allowed_fallback()
-> in the latest mainline kernel.
-> 
-> However, this is not sane behavior.
+> The data on my side looks good with CORESCHED_STALL_FIX = true.
 
-While not perfect (we'll need to stop updating task's cpumask from
-cpuset to make), this is still a signifcant improvement.
+Thank you for testing this fix, I'm glad it works for this use-case as
+well.
 
- Acked-by: Tejun Heo <tj@kernel.org>
+We will be posting another (simpler) version today, stay tuned :-)
 
-If there's no objection, I'll route it through the cgroup tree.
-
-Thanks.
-
--- 
-tejun
+Julien
