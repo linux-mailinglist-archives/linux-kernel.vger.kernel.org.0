@@ -2,74 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8403942506
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D771442533
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438599AbfFLMI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:08:26 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:54960 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436551AbfFLMIZ (ORCPT
+        id S1729962AbfFLMM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:12:57 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45552 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfFLMM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:08:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HMMzkEP4WbpPiU7OaAK4YYStnvL4huMRmKxIzkOsvO0=; b=YziB4QXQ1wZZTmpueJ7TbStAiC
-        2OB0T4AcHVrvcXFvdn+encKtRh++7eIctsFdZRN2IA428qb3nU1FiAGa68Q+vvyr6BL7ohsIraMK7
-        zJzAnpX/bMXKuE8eLl7Ued5Z8lCWfuCFrWtHbjg5lForaybVdp6y73fJa6pfzOXXUfBw=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:25793 helo=[10.97.34.6])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1hb23B-0004SJ-0E; Wed, 12 Jun 2019 14:08:21 +0200
-Subject: Re: [PATCH] fuse: require /dev/fuse reads to have enough buffer
- capacity (take 2)
-To:     Kirill Smelkov <kirr@nexedi.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, gluster-devel@gluster.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
- <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
- <20190611202738.GA22556@deco.navytux.spb.ru>
- <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
- <20190612112544.GA21465@deco.navytux.spb.ru>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <97c87eb3-5b95-c848-8c50-ed7b535220b0@eikelenboom.it>
-Date:   Wed, 12 Jun 2019 14:11:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 12 Jun 2019 08:12:57 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m23so14850318lje.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:12:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ELkeEswy3RryzFI9wP7fvpF8yJjPUXwtrgXJFfzoWvc=;
+        b=cs1gGg57RFwsFNBg5Wz1FxALZjEjnWdh36wZ2+m8aRNowiw+keszis1eGyPtUSycfJ
+         jw4fgGS36H0s7D12QWk4cu5sD72scRy++h1LTxCTbcVox4Xjha4j2VqTkBupv8Ta2Ui+
+         irn2QLfGeUryARGROwaNwQt9HbqFNSh55sS39e3e7IdSxoAb6RCUk7ubQQvb3BRpq9Qj
+         ysE9d/YnTN4UNmKzzslol++aPGqWB5P+7Mqsp3Uyxu59iZ4oIRaUFQbuwvNOAOUbDXwZ
+         tgQdhfyVIfSiIroPFqotYYUROmQXrYohGNecKnbB1jB+kRnxiMrUHi3i6HtA6P0t39dW
+         WtmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ELkeEswy3RryzFI9wP7fvpF8yJjPUXwtrgXJFfzoWvc=;
+        b=rhLWeV9zLiosiYNNfsSUgBmKAAPU1r+jHt67A0lCAkCc9o0RSvHQwWMB+dZzQBbxbo
+         12zYyPSvCdQtXmt9XTymr08tsb72Vyy3gCyloFuOP4J3LKE+Lgb87swJzZXUCOlCCyrH
+         WiVJXashFvfDBMw4XKS069J6mTPfjsutWxChJfTUW2u3QuKrkdAAnitVhcZP6JuE+4PV
+         C6XCBibGzcmDJwPmUOwR7OJ0TYRQNo3bbPxip61ZxUNc3VOwYvsclfkEJPd8qiQk60uX
+         SctnJKdGt2IrLvSCIHPU3SPYVrap80GFBSQzdv6HftKSvnZPM0IX548uwVYvfzZKhDj5
+         U5nQ==
+X-Gm-Message-State: APjAAAWPJv1Rr25jfEmvZAmMJGX4VXPhInxhK77M1Smca31F8bCBvUrx
+        zWnLrc6x5c7fg+MpboZQ69d542i0Q5G2e+mQBzXcNA==
+X-Google-Smtp-Source: APXvYqwX/cz4Ov/rw6ige4uWEBhHtZdC1FwFiYjZbazDExi8Yz+Hq0FkTVaZ7z4h+4ZcFlJnGyli0LLghmuu6GyC4p8=
+X-Received: by 2002:a2e:9753:: with SMTP id f19mr4505822ljj.113.1560341575429;
+ Wed, 12 Jun 2019 05:12:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612112544.GA21465@deco.navytux.spb.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190611140940.14357-1-icenowy@aosc.io> <20190611140940.14357-3-icenowy@aosc.io>
+In-Reply-To: <20190611140940.14357-3-icenowy@aosc.io>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 14:12:44 +0200
+Message-ID: <CACRpkdav8F0F=Kepa6YskZbFEC6vfGxRe89VpK+bw8o_+dgAdQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/11] dt-bindings: pinctrl: add compatible string for
+ Allwinner V3 pinctrl
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2019 13:25, Kirill Smelkov wrote:
-> On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
->> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
->>
->>> Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
->>> header room change be accepted?
->>
->> Yes, next cycle.   For 4.2 I'll just push the revert.
-> 
-> Thanks Miklos. Please consider queuing the following patch for 5.3.
-> Sander, could you please confirm that glusterfs is not broken with this
-> version of the check?
-> 
-> Thanks beforehand,
-> Kirill
+On Tue, Jun 11, 2019 at 4:11 PM Icenowy Zheng <icenowy@aosc.io> wrote:
 
-Sure will give it a spin this evening and report back.
+> The Allwinner V3 SoC, despite come with the same die with V3s, has more
+> GPIO pins than V3s, and a different compatible string for pinctrl is
+> needed.
+>
+> Add the compatible string for V3 pinctrl.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes in v2:
+> - Add the review tag by Rob.
 
---
-Sander
+Patch applied.
+
+Yours,
+Linus Walleij
