@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6D142ACB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A095442AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502030AbfFLPUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:20:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2501983AbfFLPUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:20:36 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8CDF21019;
-        Wed, 12 Jun 2019 15:20:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560352836;
-        bh=eSlOl/FrKZdWcnfDywclEUx75S0pbToZnLCx/u6+Wls=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QkEgIInAKRVyU04Dhe5elLte+yGBRK4tC0ARQqovcwqTqpenKCFxewQXFl2M4lVvv
-         Lpr68smrIZJCGDX6jZXy5NxQBw2BW8u5phnK3xG/e1/SUHO5KbNuSZpAVSpUQMRrY+
-         KhvvYmeE7qn3G2NW9Hzwn/aX/VZnQwmbt/7Jj06M=
-Date:   Wed, 12 Jun 2019 17:20:33 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] pstore: no need to check return value of debugfs_create
- functions
-Message-ID: <20190612152033.GA17290@kroah.com>
+        id S2408717AbfFLPVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:21:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44031 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbfFLPVR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:21:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id z24so5697902qtj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 08:21:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gMRaFc3/hEiSi70Ix5/f3einSpUu2nV4TVmJ7D/hed4=;
+        b=W053NTWS7vMSs6KTP5Y63k8NLCpN5bfjB1+FDyJwOgy0ggC1OwvsDGVWKPRgb1UgS0
+         jXvLpsdtv4XYMQrACQsVcqpZP5d6PDOgOK2xOLeFGyCrLuxieV5iax0SCll+E7GVdwbq
+         a5jQ8zVWdKb7zgsviHp2Do+vD4QBzGcMNZxXNhj2arCY5xCsG4yXQI27qoBRScF+8GB6
+         HJ8o19xKjuscyVz8Vf04Rda81kzO0WNg4TJ3YurTnffBx/U+O47SNE/0U6NFAMzAceI1
+         FNwEYGA1DHn40WvkM6/gWE9H/ChGe+LCkUGPQy5FHtS+goyaY8KMNErGxQs1h/sQDV83
+         mAQA==
+X-Gm-Message-State: APjAAAUyTJNjzXUa8GI/tq4873utMAMdtYiE3kw/Ro8ovd9ioaOt6a26
+        6gfp0dzEx+Pp2EBqDnmbsL04AGbOvou0xxLfCKNWJQ==
+X-Google-Smtp-Source: APXvYqxHbmq550GcVIRTXA5tocwW+ku4/cuYE4oFs0POCYRKMQzp1djocUEawn+SEa0+NCVlpuDhdB86iHxSww+zPq0=
+X-Received: by 2002:ac8:303c:: with SMTP id f57mr71183256qte.294.1560352876572;
+ Wed, 12 Jun 2019 08:21:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190606161055.47089-1-jeffrey.l.hugo@gmail.com>
+ <20190606161322.47192-1-jeffrey.l.hugo@gmail.com> <20190612003507.GG143729@dtor-ws>
+ <nycvar.YFH.7.76.1906121644160.27227@cbobk.fhfr.pm> <CAKdAkRQOxTX51rhodoFyYpwi85pk8apvWjCLLX5Sw6NTH=j1kA@mail.gmail.com>
+In-Reply-To: <CAKdAkRQOxTX51rhodoFyYpwi85pk8apvWjCLLX5Sw6NTH=j1kA@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 12 Jun 2019 17:21:04 +0200
+Message-ID: <CAO-hwJKDxu0Bxxjd9reAojHODQTnW1POmifBCVsnjt8+CT4rmw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] HID: quirks: Refactor ELAN 400 and 401 handling
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+On Wed, Jun 12, 2019 at 5:14 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Wed, Jun 12, 2019 at 7:45 AM Jiri Kosina <jikos@kernel.org> wrote:
+> >
+> > On Tue, 11 Jun 2019, Dmitry Torokhov wrote:
+> >
+> > > > +static const char *hid_elan_i2c_ignore[] = {
+> > >
+> > > If this is a copy of elan whitelist, then, if we do not want to bother
+> > > with sharing it in object form (as a elan-i2c-ids module), can we at
+> > > least move it into include/linux/input/elan-i2c-ids.h and consume from
+> > > hid-quirks.c?
+> >
+> > Let's just not duplicate it in both objects. Why not properly export it
+> > from hid_quirks?
+>
+> Strictly speaking Elan does not depend on HID; exporting it from
+> quirks would mean adding this dependency. This also mean that you
+> can't make Elan built-in while keeping HID as a module (I think this
+> at least used to be config on some Chromebooks).
+>
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Anton Vorontsov <anton@enomsg.org>
-Cc: Colin Cross <ccross@android.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/pstore/ftrace.c | 18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
+I also think it would me things cleaner to have the list of devices in elan_i2c.
+If we put the list of devices supported by elan_i2c in a header, and
+have HID read this .h file directly, there will be no runtime
+dependency.
 
-diff --git a/fs/pstore/ftrace.c b/fs/pstore/ftrace.c
-index b8a0931568f8..fd9468928bef 100644
---- a/fs/pstore/ftrace.c
-+++ b/fs/pstore/ftrace.c
-@@ -120,27 +120,13 @@ static struct dentry *pstore_ftrace_dir;
- 
- void pstore_register_ftrace(void)
- {
--	struct dentry *file;
--
- 	if (!psinfo->write)
- 		return;
- 
- 	pstore_ftrace_dir = debugfs_create_dir("pstore", NULL);
--	if (!pstore_ftrace_dir) {
--		pr_err("%s: unable to create pstore directory\n", __func__);
--		return;
--	}
--
--	file = debugfs_create_file("record_ftrace", 0600, pstore_ftrace_dir,
--				   NULL, &pstore_knob_fops);
--	if (!file) {
--		pr_err("%s: unable to create record_ftrace file\n", __func__);
--		goto err_file;
--	}
- 
--	return;
--err_file:
--	debugfs_remove(pstore_ftrace_dir);
-+	debugfs_create_file("record_ftrace", 0600, pstore_ftrace_dir, NULL,
-+			    &pstore_knob_fops);
- }
- 
- void pstore_unregister_ftrace(void)
--- 
-2.22.0
+I am sure we can work something out to remove Jeffrey's fears.
 
+Cheers,
+Benjamin
