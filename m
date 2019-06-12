@@ -2,80 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7465A41F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2437D41F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:44:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731716AbfFLIoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 04:44:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41260 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729662AbfFLIoD (ORCPT
+        id S1731746AbfFLIoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 04:44:20 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36168 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbfFLIoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:44:03 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s21so14372406lji.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 01:44:01 -0700 (PDT)
+        Wed, 12 Jun 2019 04:44:19 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d21so6349160plr.3;
+        Wed, 12 Jun 2019 01:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NXPy6kD2gFwlUuId8WEznhJ1Poa05ZMGVOTjoPChSP8=;
-        b=PvWCd5zJz+0mVVuAXjRL/ND/2lhYSSE9llh3OtEzsQ0B61njuSUX9TrFg106OnDYXv
-         7MJTusmyWZAvT3tTcp6Y6hcTDZ30ekWrycGxhiG+s3YnCnBc6TXMenolVMwNjtThWRwn
-         8QdZRgK1OLDdg0GEMsCK2G498LR8XVOSs20TuFYCiBb4fNzLZgh7AswQFGS5fQD6gkfb
-         fFqAY+B0v+cIxSZt0wQMb9c422nvUSpo36CRYOvLf4Xy4l8fl8BOoZkLDnyzgoCWqwuZ
-         8/VR0udQEUJdd/3r91eIImhpxBe68w83hYEQj6dOdA0kbG8WbihXERC5SUy/Vu9Ja7YD
-         EQLg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a71+4/xkYWo6AZpIBbpcYXBdHpYz0ec0WPHCFWRwGUc=;
+        b=P1p3QyL46oA1H0GNZkkdNrpCh2+8uaFsWYrqOK1uEQ3vt+HjBoNDctMEhhMIvoCrsB
+         J/PHypMSM8mghICRpC4mDZXTzvSpHu/SvqgVHGafhuntSi7gT1hj8uSm/In8DeZv9boC
+         L4+OfeFJJ4YDNsn6lipJWifDiMkOs2iHFLPB+NsLH2zEqOmlbazgDIhKQeYAY9cJK60b
+         Q32HfKMDt/5iZ4+d1mD4kWv0CeZG2ixMfS9PrdQs0o2xl2AXsQVHoawc6CBUX1sO1mFG
+         TLWspqUTsd9kXgMy5pV2GetKWmmORZPpafbdsREH3cW4t11RLKdb52klEOm/DZhNP+k9
+         vqBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NXPy6kD2gFwlUuId8WEznhJ1Poa05ZMGVOTjoPChSP8=;
-        b=cOrgHFzEovT9O7gOJvr1c2bLujOsZ85qO/S+Ii0GuK1LYUanUwIhDtoJZP7pcOU70i
-         zjGK0w1AoFH+8P8FTRLnbe8Z45ddyS9qor8OiIj4QTfItZ4jak0ieqLhrkY7+zToZBtE
-         JI1tS/Ae9tU326OS7ieE2lAIfxtHCCKtv3Sbyp3bs/ArHvmYRkO9TRtP9/nE3JhMi4lS
-         X0W2I2mjVHJh62uys+CWlZYVMnKx8rYaadSjdBlwINI07n+HzKy7xNPdpVe+i0gJHqIb
-         Zvwzg2eFUM8uVfTkgsi3xt2XlfktlkdkzQ1KJUccNTLN/hsu/B2emdzzb6cu7Lp6maU7
-         diuw==
-X-Gm-Message-State: APjAAAWhq7eVgnK0NEtGB49wZoVaA55ZjgGs4t5gPwA767MNDcqz5CxZ
-        3WjwtCd/iVcdNpC/uUOk1thWO7ZM8jnNEOz68jtptQ==
-X-Google-Smtp-Source: APXvYqwrPS8OsyBoY3vc54Mb2hWKOCvV7geC2RBav5pSRb1SLrflF9VirpQvaiOeoFCp8vBJ26VImCHonoZpxJ8bzlM=
-X-Received: by 2002:a2e:2f12:: with SMTP id v18mr42060237ljv.196.1560329040984;
- Wed, 12 Jun 2019 01:44:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a71+4/xkYWo6AZpIBbpcYXBdHpYz0ec0WPHCFWRwGUc=;
+        b=XaWRschaYtWpRsj3B0zECa99+mtCqZY99VcVrjyaKIpTwd3lt4PWT+9tNV+B9zDjcF
+         ZIMmmxaMeh7lDR+lavJR/ceDuHLDtJZwiGv/p+Vudv42ioL3quGYGBo8tiev4suEz+vj
+         JGoHaKmofuZ1udoaHfshfNLJxpXZLf27749pTPtWdO9/VBv3eVs5WOsdjYCufEzeaEcP
+         UgEvjPgwsbB2CMaHukTgTfmd3/iidjEJ6VLDT1qWC+l25p2ARe3Ggm27Ylh2h1rMoHza
+         /IbjKKNTZYLZJdF8++tr5GcnwmTCokqwnwC1nCB0ZMTh441nw5lzNjK+doPtFFCMPZQs
+         Uo1A==
+X-Gm-Message-State: APjAAAUoDYHLmMgNH/fE524Lxr2QPyx1JiIjGSHy3OiYoMV45lP8LPzk
+        kzClx6mRA7mWGsX3N3g8qD2G/osqKUY=
+X-Google-Smtp-Source: APXvYqyVB7egX4lmy8jSpM1deUJHXQ6lxQoGoMl5/BfQ4JV8ULZmZ7A6OFbuPOTfFr7OGnekby3mag==
+X-Received: by 2002:a17:902:7c04:: with SMTP id x4mr21552131pll.70.1560329057984;
+        Wed, 12 Jun 2019 01:44:17 -0700 (PDT)
+Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id v9sm16372124pfm.34.2019.06.12.01.44.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 01:44:17 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/1] HWMON compatibility layer for power supplies
+Date:   Wed, 12 Jun 2019 01:44:03 -0700
+Message-Id: <20190612084404.21685-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-7-grygorii.strashko@ti.com>
-In-Reply-To: <20190610171103.30903-7-grygorii.strashko@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 10:43:49 +0200
-Message-ID: <CACRpkdZy+j4bBV-0HPu4cdS3YppDxE6OAmqq9iTgcKOM1G9zSw@mail.gmail.com>
-Subject: Re: [PATCH-next 06/20] gpio: gpio-omap: move omap_gpio_request() and omap_gpio_free()
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Russell King <rmk@arm.linux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 7:12 PM Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+Everyone:
 
-> From: Russell King <rmk+kernel@armlinux.org.uk>
->
-> Move these two functions to live beside the rest of the gpio chip
-> implementation, rather than in the middle of the irq chip
-> implementation.
->
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+This small series contains the code I wrote to expose various power
+supply sensors via HWMON layer in order to be able to access all of
+the sensors in the system with libsensors.
 
-Patch applied.
+Changes since [v3]:
 
-Yours,
-Linus Walleij
+  - Patch converted to have HWMON be registered in
+    power_supply_register() and free'd in power_supply_unregister().
+
+  - Collected Tested-by from Chris
+
+Changes since [v2]:
+
+  - Added missing static specified to devm_power_supply_add_hwmon_sysfs()
+  
+  - Collected Reviewed-by from Guenter
+
+Changes since [v1]:
+
+  - All multiplications converted to use check_mul_overflow()
+
+  - All divisions converted to use DIV_ROUND_CLOSEST()
+
+  - Places that were ignoring errors now don't
+
+  - Alphabetized include list
+
+[v3] lkml.kernel.org/r/20190605072323.21990-1-andrew.smirnov@gmail.com
+[v2] lkml.kernel.org/r/20190531011620.9383-1-andrew.smirnov@gmail.com
+[v1] lkml.kernel.org/r/20190529071112.16849-1-andrew.smirnov@gmail.com
+
+Thanks,
+Andrey Smirnov
+
+Andrey Smirnov (1):
+  power: supply: Add HWMON compatibility layer
+
+ drivers/power/supply/Kconfig              |  14 +
+ drivers/power/supply/Makefile             |   1 +
+ drivers/power/supply/power_supply_core.c  |   7 +
+ drivers/power/supply/power_supply_hwmon.c | 355 ++++++++++++++++++++++
+ include/linux/power_supply.h              |  13 +
+ 5 files changed, 390 insertions(+)
+ create mode 100644 drivers/power/supply/power_supply_hwmon.c
+
+-- 
+2.21.0
+
