@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A61F42549
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 600FF42542
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438709AbfFLMNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:13:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53500 "EHLO mail.kernel.org"
+        id S1727716AbfFLMNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:13:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731398AbfFLMNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:13:19 -0400
+        id S1727584AbfFLMNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 08:13:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADCD121019;
-        Wed, 12 Jun 2019 12:13:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C286208CA;
+        Wed, 12 Jun 2019 12:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560341599;
-        bh=meMOfm/cp2ZdmdOTfHwzOUf3Ik63/BpInCj8Dv0OURk=;
+        s=default; t=1560341601;
+        bh=s7t54JWbBuNtEvtmX8/LDytHT2xfujJQNzLt26RSLK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bwxd+mORdOMEwy7oRUBVQ9NGUlquywuNXh1lFe/AvAVgSH1inkX1PrSyx8eWaqoFS
-         O1mdBM1EMzjnyxUwdVyLlgxdZLaSDJkz5ULfVpGAqKuTpJzAOiLQv/VV+xlUcvhU2H
-         bI5TP2yyMMQHPgVYww5iIsAA2Q+Dt63Q/FYxyJZE=
+        b=bpv41V0nZjIAJGFvc7NA4lGDoD2jotV0pKMKdLkbDoKvwAbdC+dDy7tx+ZGCwBmgg
+         SjZVtWp2xpmn2nrLHllnPjEcxhgXi6aHs7JFxBLdvxrjJjD8e2k4sD+cM9MOTqhme6
+         m2fDURwhnGvWvxPkDME2wqzoFREMV9jobEbkoj8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     dvhart@infradead.org, andy@infradead.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ike Panhc <ike.pan@canonical.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] platform: x86: ideapad-laptop: no need to check return value of debugfs_create functions
-Date:   Wed, 12 Jun 2019 14:12:54 +0200
-Message-Id: <20190612121258.19535-4-gregkh@linuxfoundation.org>
+Subject: [PATCH 5/8] platform: x86: samsung-laptop: no need to check return value of debugfs_create functions
+Date:   Wed, 12 Jun 2019 14:12:55 +0200
+Message-Id: <20190612121258.19535-5-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190612121258.19535-1-gregkh@linuxfoundation.org>
 References: <20190612121258.19535-1-gregkh@linuxfoundation.org>
@@ -45,80 +45,139 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Ike Panhc <ike.pan@canonical.com>
+Cc: Corentin Chary <corentin.chary@gmail.com>
 Cc: Darren Hart <dvhart@infradead.org>
 Cc: Andy Shevchenko <andy@infradead.org>
 Cc: platform-driver-x86@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/ideapad-laptop.c | 36 ++++++---------------------
- 1 file changed, 7 insertions(+), 29 deletions(-)
+ drivers/platform/x86/samsung-laptop.c | 89 +++++++--------------------
+ 1 file changed, 23 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 5fb9bfdf1019..7598cd46cf60 100644
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -316,34 +316,15 @@ static int debugfs_cfg_show(struct seq_file *s, void *data)
+diff --git a/drivers/platform/x86/samsung-laptop.c b/drivers/platform/x86/samsung-laptop.c
+index 7b160ee98115..e84f11398c1b 100644
+--- a/drivers/platform/x86/samsung-laptop.c
++++ b/drivers/platform/x86/samsung-laptop.c
+@@ -1280,15 +1280,12 @@ static void samsung_debugfs_exit(struct samsung_laptop *samsung)
+ 	debugfs_remove_recursive(samsung->debug.root);
  }
- DEFINE_SHOW_ATTRIBUTE(debugfs_cfg);
  
--static int ideapad_debugfs_init(struct ideapad_private *priv)
-+static void ideapad_debugfs_init(struct ideapad_private *priv)
+-static int samsung_debugfs_init(struct samsung_laptop *samsung)
++static void samsung_debugfs_init(struct samsung_laptop *samsung)
  {
--	struct dentry *node;
-+	struct dentry *dir;
+-	struct dentry *dent;
++	struct dentry *root;
  
--	priv->debug = debugfs_create_dir("ideapad", NULL);
--	if (priv->debug == NULL) {
+-	samsung->debug.root = debugfs_create_dir("samsung-laptop", NULL);
+-	if (!samsung->debug.root) {
 -		pr_err("failed to create debugfs directory");
--		goto errout;
+-		goto error_debugfs;
 -	}
++	root = debugfs_create_dir("samsung-laptop", NULL);
++	samsung->debug.root = root;
+ 
+ 	samsung->debug.f0000_wrapper.data = samsung->f0000_segment;
+ 	samsung->debug.f0000_wrapper.size = 0xffff;
+@@ -1299,60 +1296,24 @@ static int samsung_debugfs_init(struct samsung_laptop *samsung)
+ 	samsung->debug.sdiag_wrapper.data = samsung->sdiag;
+ 	samsung->debug.sdiag_wrapper.size = strlen(samsung->sdiag);
+ 
+-	dent = debugfs_create_u16("command", S_IRUGO | S_IWUSR,
+-				  samsung->debug.root, &samsung->debug.command);
+-	if (!dent)
+-		goto error_debugfs;
 -
--	node = debugfs_create_file("cfg", S_IRUGO, priv->debug, priv,
--				   &debugfs_cfg_fops);
--	if (!node) {
--		pr_err("failed to create cfg in debugfs");
--		goto errout;
--	}
+-	dent = debugfs_create_u32("d0", S_IRUGO | S_IWUSR, samsung->debug.root,
+-				  &samsung->debug.data.d0);
+-	if (!dent)
+-		goto error_debugfs;
 -
--	node = debugfs_create_file("status", S_IRUGO, priv->debug, priv,
--				   &debugfs_status_fops);
--	if (!node) {
--		pr_err("failed to create status in debugfs");
--		goto errout;
--	}
+-	dent = debugfs_create_u32("d1", S_IRUGO | S_IWUSR, samsung->debug.root,
+-				  &samsung->debug.data.d1);
+-	if (!dent)
+-		goto error_debugfs;
+-
+-	dent = debugfs_create_u16("d2", S_IRUGO | S_IWUSR, samsung->debug.root,
+-				  &samsung->debug.data.d2);
+-	if (!dent)
+-		goto error_debugfs;
+-
+-	dent = debugfs_create_u8("d3", S_IRUGO | S_IWUSR, samsung->debug.root,
+-				 &samsung->debug.data.d3);
+-	if (!dent)
+-		goto error_debugfs;
+-
+-	dent = debugfs_create_blob("data", S_IRUGO | S_IWUSR,
+-				   samsung->debug.root,
+-				   &samsung->debug.data_wrapper);
+-	if (!dent)
+-		goto error_debugfs;
+-
+-	dent = debugfs_create_blob("f0000_segment", S_IRUSR | S_IWUSR,
+-				   samsung->debug.root,
+-				   &samsung->debug.f0000_wrapper);
+-	if (!dent)
+-		goto error_debugfs;
+-
+-	dent = debugfs_create_file("call", S_IFREG | S_IRUGO,
+-				   samsung->debug.root, samsung,
+-				   &samsung_laptop_call_fops);
+-	if (!dent)
+-		goto error_debugfs;
+-
+-	dent = debugfs_create_blob("sdiag", S_IRUGO | S_IWUSR,
+-				   samsung->debug.root,
+-				   &samsung->debug.sdiag_wrapper);
+-	if (!dent)
+-		goto error_debugfs;
 -
 -	return 0;
-+	dir = debugfs_create_dir("ideapad", NULL);
-+	priv->debug = dir;
- 
--errout:
+-
+-error_debugfs:
+-	samsung_debugfs_exit(samsung);
 -	return -ENOMEM;
-+	debugfs_create_file("cfg", S_IRUGO, dir, priv, &debugfs_cfg_fops);
-+	debugfs_create_file("status", S_IRUGO, dir, priv, &debugfs_status_fops);
++	debugfs_create_u16("command", S_IRUGO | S_IWUSR, root,
++			   &samsung->debug.command);
++	debugfs_create_u32("d0", S_IRUGO | S_IWUSR, root,
++			   &samsung->debug.data.d0);
++	debugfs_create_u32("d1", S_IRUGO | S_IWUSR, root,
++			   &samsung->debug.data.d1);
++	debugfs_create_u16("d2", S_IRUGO | S_IWUSR, root,
++			   &samsung->debug.data.d2);
++	debugfs_create_u8("d3", S_IRUGO | S_IWUSR, root,
++			  &samsung->debug.data.d3);
++	debugfs_create_blob("data", S_IRUGO | S_IWUSR, root,
++			    &samsung->debug.data_wrapper);
++	debugfs_create_blob("f0000_segment", S_IRUSR | S_IWUSR, root,
++			    &samsung->debug.f0000_wrapper);
++	debugfs_create_file("call", S_IFREG | S_IRUGO, root, samsung,
++			    &samsung_laptop_call_fops);
++	debugfs_create_blob("sdiag", S_IRUGO | S_IWUSR, root,
++			    &samsung->debug.sdiag_wrapper);
  }
  
- static void ideapad_debugfs_exit(struct ideapad_private *priv)
-@@ -1012,9 +993,7 @@ static int ideapad_acpi_add(struct platform_device *pdev)
+ static void samsung_sabi_exit(struct samsung_laptop *samsung)
+@@ -1745,9 +1706,7 @@ static int __init samsung_init(void)
  	if (ret)
- 		return ret;
+ 		goto error_lid_handling;
  
--	ret = ideapad_debugfs_init(priv);
+-	ret = samsung_debugfs_init(samsung);
 -	if (ret)
--		goto debugfs_failed;
-+	ideapad_debugfs_init(priv);
+-		goto error_debugfs;
++	samsung_debugfs_init(samsung);
  
- 	ret = ideapad_input_init(priv);
- 	if (ret)
-@@ -1071,7 +1050,6 @@ static int ideapad_acpi_add(struct platform_device *pdev)
- 	ideapad_input_exit(priv);
- input_failed:
- 	ideapad_debugfs_exit(priv);
--debugfs_failed:
- 	ideapad_sysfs_exit(priv);
+ 	samsung->pm_nb.notifier_call = samsung_pm_notification;
+ 	register_pm_notifier(&samsung->pm_nb);
+@@ -1755,8 +1714,6 @@ static int __init samsung_init(void)
+ 	samsung_platform_device = samsung->platform_device;
  	return ret;
- }
+ 
+-error_debugfs:
+-	samsung_lid_handling_exit(samsung);
+ error_lid_handling:
+ 	samsung_leds_exit(samsung);
+ error_leds:
 -- 
 2.22.0
 
