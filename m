@@ -2,50 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E9742D29
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB2542D36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409498AbfFLRMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:12:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:14588 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409094AbfFLRMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:12:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 10:12:19 -0700
-X-ExtLoop1: 1
-Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.82.121]) ([10.252.82.121])
-  by orsmga008.jf.intel.com with ESMTP; 12 Jun 2019 10:12:14 -0700
-Subject: Re: [Patch v2] x86/cpu: Add Ice Lake NNPI to Intel family
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@suse.de,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux PM <linux-pm@vger.kernel.org>
-References: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
- <20190612095233.GE9224@smile.fi.intel.com>
- <73eb1ba5-dc29-53ee-487d-d22700b874a1@intel.com>
- <20190612162918.GP9224@smile.fi.intel.com>
- <414a8fe8-4c85-f323-d71c-16b231823ffe@intel.com>
- <20190612170848.GQ9224@smile.fi.intel.com>
-From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Message-ID: <1a59d0cc-32f5-c06b-c951-f05c64864f7f@linux.intel.com>
-Date:   Wed, 12 Jun 2019 22:42:13 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728974AbfFLROC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:14:02 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:42790 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726721AbfFLROB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:14:01 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TU.ZihY_1560359634;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TU.ZihY_1560359634)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 13 Jun 2019 01:13:57 +0800
+Subject: Re: [PATCH 2/4] mm: thp: make deferred split shrinker memcg aware
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
+        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
+        shakeelb@google.com, rientjes@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1559887659-23121-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1559887659-23121-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20190612024747.f5nsol7ntvubjckq@box>
+ <ace52062-e6be-a3f2-7ef1-d8612f3a76f9@linux.alibaba.com>
+ <20190612100906.xllp2bfgmadvbh2q@box>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <d2f6737c-6682-f985-0790-77483e95f298@linux.alibaba.com>
+Date:   Wed, 12 Jun 2019 10:13:51 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190612170848.GQ9224@smile.fi.intel.com>
+In-Reply-To: <20190612100906.xllp2bfgmadvbh2q@box>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -55,19 +44,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 12-Jun-19 10:38 PM, Andy Shevchenko wrote:
-> On Wed, Jun 12, 2019 at 09:33:30AM -0700, Dave Hansen wrote:
->> On 6/12/19 9:29 AM, Andy Shevchenko wrote:
->>> What I'm talking is a consistency among suffixes. If there is a real
->>> abbreviation (NNPI) which anybody can google,
->> There is and you can. :)
-> Good, I have no objections.
 
+On 6/12/19 3:09 AM, Kirill A. Shutemov wrote:
+> On Tue, Jun 11, 2019 at 10:06:36PM -0700, Yang Shi wrote:
+>>
+>> On 6/11/19 7:47 PM, Kirill A. Shutemov wrote:
+>>> On Fri, Jun 07, 2019 at 02:07:37PM +0800, Yang Shi wrote:
+>>>> +	/*
+>>>> +	 * The THP may be not on LRU at this point, e.g. the old page of
+>>>> +	 * NUMA migration.  And PageTransHuge is not enough to distinguish
+>>>> +	 * with other compound page, e.g. skb, THP destructor is not used
+>>>> +	 * anymore and will be removed, so the compound order sounds like
+>>>> +	 * the only choice here.
+>>>> +	 */
+>>>> +	if (PageTransHuge(page) && compound_order(page) == HPAGE_PMD_ORDER) {
+>>> What happens if the page is the same order as THP is not THP? Why removing
+>> It may corrupt the deferred split queue since it is never added into the
+>> list, but deleted here.
+>>
+>>> of destructor is required?
+>> Due to the change to free_transhuge_page() (extracted deferred split queue
+>> manipulation and moved before memcg uncharge since page->mem_cgroup is
+>> needed), it just calls free_compound_page(). So, it sounds pointless to
+>> still keep THP specific destructor.
+>>
+>> It looks there is not a good way to tell if the compound page is THP in
+>> free_page path or not, we may keep the destructor just for this?
+> Other option would be to move mem_cgroup_uncharge(page); from
+> __page_cache_release() to destructors. Destructors will be able to
+> call it as it fits.
 
-Great, thanks Andy and Dave for your valuable comments. I see that 
-Thomas has accepted this one, thanks a lot, Thomas!
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=61caa8621b9979a78b04e353ab2ee44a47ef7a62&anzwix=1 
-
+Yes, it is an option. Since __page_cache_release() is called by 
+__put_single_page() too, so mem_cgroup_uncharge() has to be called in 
+both __put_single_page() and the desctructor (free_compound_page() which 
+is called by both THP and other compound page except HugeTLB). But, it 
+sounds acceptable IMHO.
 
 >
+
