@@ -2,182 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055A141DA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 582DE41D3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:10:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731528AbfFLHZs convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 03:25:48 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:44758 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731450AbfFLHZm (ORCPT
+        id S2436544AbfFLHK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:10:26 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33329 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbfFLHK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:25:42 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x5C7PHkF003196
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Jun 2019 16:25:17 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7PHli001893;
-        Wed, 12 Jun 2019 16:25:17 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7N0Oo021490;
-        Wed, 12 Jun 2019 16:25:17 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-1234399; Wed, 12 Jun 2019 16:09:34 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0319.002; Wed,
- 12 Jun 2019 16:09:34 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "Chen, Jerry T" <jerry.t.chen@intel.com>,
-        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] mm: hugetlb: soft-offline:
- dissolve_free_huge_page() return zero on !PageHuge
-Thread-Topic: [PATCH v2 2/2] mm: hugetlb: soft-offline:
- dissolve_free_huge_page() return zero on !PageHuge
-Thread-Index: AQHVH2UOI3n3iV7mFEufJF8BQjmdkqaVoIYAgAFlaYA=
-Date:   Wed, 12 Jun 2019 07:09:32 +0000
-Message-ID: <20190612070939.GA25452@hori.linux.bs1.fc.nec.co.jp>
-References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <1560154686-18497-3-git-send-email-n-horiguchi@ah.jp.nec.com>
- <4a1ea5f4-d35d-f3a6-920c-c35520234aa3@arm.com>
-In-Reply-To: <4a1ea5f4-d35d-f3a6-920c-c35520234aa3@arm.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <1DD66F49A3CF854696A42373F9F2F2E2@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Jun 2019 03:10:26 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h10so8248290ljg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:10:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qDfqw9BoikhPY0Dh3SwCqBjJ8PAOLKi854XNqLlMVzk=;
+        b=yZXhYOCTOo7pIE/Y6X1tztbts791vhqKWYR9ND6YurUQHkPpLW0lfVsBIo/XypbEnJ
+         PS2MiMZWypqPhQOItzAZUtxqHZLXCMwwT3RmMqaQ4Ujfa7971kep0Py1s3AUrRMm7hBA
+         x4dXsg+lsTj25JteAUKoPkjL+O4V7sBmqTFA1e89ZWfCs6AR5p25o4wfjdhLGT9yEs3r
+         22YZt2zh107nLueurni6ZAuHPhGS+kexlKmmjfRqiZLpMu01BLEZVvI6dr6guYGaoMh5
+         CqVxay7fjTn4xgX0HvpF2eapSf2Kl6xnOiH403W2RJTmFp38UQJ6p+44uTdlOGAYLMk5
+         gj4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qDfqw9BoikhPY0Dh3SwCqBjJ8PAOLKi854XNqLlMVzk=;
+        b=aupIuSv4hbVXj5A5bCPxDxZjqREUV1jnTdNscSjPL1tNEcnYuHLnYgcXs7pBzgtUDJ
+         W4bhS8NQFr2KHC7NSXByz/cWH7AzUUqPLB3ztw8M1kbft+Vi3BCcaKr7h1GxoS7Z57+k
+         Z0IIh8VNwGJF1b48UGS/JD2IgDEPxfjW3MXqEoPxpS75XLqvXo/JFmJoHZE7SppwD2xh
+         nOCWb1x7c0nB66McQ2e7gYXJ3C5/t2c8Lk4HpVEuX/hab4qFls1hRxFUl5yo2cF9pORO
+         f54fzU98cY4Mgw+8b7HlrNEDm/sZuu+uhVp21CJ3w5XSI2VtNNgLO/f0wYRZSHDosvuB
+         l3Mg==
+X-Gm-Message-State: APjAAAXS1Vc260J6YIALbbjK/iLcWM0cTIIGuF1K65SL4kafH0yYAowW
+        6ZyxQN2pg//+zvmCwSYkZt/tHdFCitZI45d3l3+wKA==
+X-Google-Smtp-Source: APXvYqwNAOR28KWVsRSGhKRPpy6Cz1HQFUNpqvVydgFwWVjRazfmyZ2wGtlHtx3v5KLBIGZMOLibsHpRrNRfkw+PwWg=
+X-Received: by 2002:a2e:480a:: with SMTP id v10mr5288468lja.94.1560323424436;
+ Wed, 12 Jun 2019 00:10:24 -0700 (PDT)
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+References: <20190609145537.7953-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190609145537.7953-1-yamada.masahiro@socionext.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 09:10:12 +0200
+Message-ID: <CACRpkdZ1B2b3DLdFrtYLfZgJH2QWBYmnX-mBHtO3C=EPc=UC_w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: remove unneeded initializer for
+ list_for_each_entry() iterator
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 03:20:26PM +0530, Anshuman Khandual wrote:
-> 
-> On 06/10/2019 01:48 PM, Naoya Horiguchi wrote:
-> > madvise(MADV_SOFT_OFFLINE) often returns -EBUSY when calling soft offline
-> > for hugepages with overcommitting enabled. That was caused by the suboptimal
-> > code in current soft-offline code. See the following part:
-> > 
-> >     ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
-> >                             MIGRATE_SYNC, MR_MEMORY_FAILURE);
-> >     if (ret) {
-> >             ...
-> >     } else {
-> >             /*
-> >              * We set PG_hwpoison only when the migration source hugepage
-> >              * was successfully dissolved, because otherwise hwpoisoned
-> >              * hugepage remains on free hugepage list, then userspace will
-> >              * find it as SIGBUS by allocation failure. That's not expected
-> >              * in soft-offlining.
-> >              */
-> >             ret = dissolve_free_huge_page(page);
-> >             if (!ret) {
-> >                     if (set_hwpoison_free_buddy_page(page))
-> >                             num_poisoned_pages_inc();
-> >             }
-> >     }
-> >     return ret;
-> > 
-> > Here dissolve_free_huge_page() returns -EBUSY if the migration source page
-> > was freed into buddy in migrate_pages(), but even in that case we actually
-> 
-> Over committed source pages will be released into buddy and the normal ones
-> will not be ? dissolve_free_huge_page() returns -EBUSY because PageHuge()
-> return negative on already released pages ? 
+On Sun, Jun 9, 2019 at 4:55 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-The answers for both questions here are yes.
+> The iterator is initialized in list_for_each_entry().
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> How dissolve_free_huge_page()
-> will behave differently with over committed pages. I might be missing some
-> recent developments here.
+Patch applied.
 
-This dissolve_free_huge_page() should see a (free or reused) 4kB page when
-overcommitting, and should see a (free or reused) huge page for non
-overcommitting case.
-
-> 
-> > has a chance that set_hwpoison_free_buddy_page() succeeds. So that means
-> > current code gives up offlining too early now.
-> 
-> Hmm. It gives up early as the return value from dissolve_free_huge_page(EBUSY)
-> gets back as the return code for soft_offline_huge_page() without attempting
-> set_hwpoison_free_buddy_page() which still has a chance to succeed for freed
-> normal buddy pages.
-
-Exactly.
-
-> 
-> > 
-> > dissolve_free_huge_page() checks that a given hugepage is suitable for
-> > dissolving, where we should return success for !PageHuge() case because
-> > the given hugepage is considered as already dissolved.
-> 
-> Right. It should return 0 (as a success) for freed normal buddy pages. Should
-> not it then check explicitly for PageBuddy() as well ?
-
-in new semantics, dissolve_free_huge_page() returns:
-
-  0: successfully dissolved free hugepages or the page is already dissolved
-  EBUSY: failed to dissolved free hugepages or the hugepage is in-use.
-
-so for any types of non hugepages, the return value is 0.
-
-Thanks,
-- Naoya 
-
-> > 
-> > This change also affects other callers of dissolve_free_huge_page(),
-> > which are cleaned up together.
-> > 
-> > Reported-by: Chen, Jerry T <jerry.t.chen@intel.com>
-> > Tested-by: Chen, Jerry T <jerry.t.chen@intel.com>
-> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Fixes: 6bc9b56433b76 ("mm: fix race on soft-offlining")
-> > Cc: <stable@vger.kernel.org> # v4.19+
-> > ---
-> >  mm/hugetlb.c        | 15 +++++++++------
-> >  mm/memory-failure.c |  5 +----
-> >  2 files changed, 10 insertions(+), 10 deletions(-)
-> > 
-> > diff --git v5.2-rc3/mm/hugetlb.c v5.2-rc3_patched/mm/hugetlb.c
-> > index ac843d3..048d071 100644
-> > --- v5.2-rc3/mm/hugetlb.c
-> > +++ v5.2-rc3_patched/mm/hugetlb.c
-> > @@ -1519,7 +1519,12 @@ int dissolve_free_huge_page(struct page *page)
-> >  	int rc = -EBUSY;
-> >  
-> >  	spin_lock(&hugetlb_lock);
-> > -	if (PageHuge(page) && !page_count(page)) {
-> > +	if (!PageHuge(page)) {
-> > +		rc = 0;
-> > +		goto out;
-> > +	}
-> 
-> With this early bail out it maintains the functionality when called from
-> soft_offline_free_page() for normal pages. For huge page, it continues
-> on the previous path.
-> 
-> > +
-> > +	if (!page_count(page)) {
-> >  		struct page *head = compound_head(page);
-> >  		struct hstate *h = page_hstate(head);
-> >  		int nid = page_to_nid(head);
-> > @@ -1564,11 +1569,9 @@ int dissolve_free_huge_pages(unsigned long start_pfn, unsigned long end_pfn)
-> >  
-> >  	for (pfn = start_pfn; pfn < end_pfn; pfn += 1 << minimum_order) {
-> >  		page = pfn_to_page(pfn);
-> > -		if (PageHuge(page) && !page_count(page)) {
-> 
-> Right. These checks are now redundant.
-> 
+Yours,
+Linus Walleij
