@@ -2,144 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58CC43164
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 23:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE78D4497E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbfFLVPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 17:15:51 -0400
-Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:15478 "EHLO
-        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbfFLVPu (ORCPT
+        id S2393684AbfFMRRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:17:40 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:38705 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbfFLVSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 17:15:50 -0400
-Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: qpTySvPBGZIdyyjQBWwwFHNJyib2P+8ncoVcQLvKIwJjC/hMb+BHC+K4c8HdJ9/sPpFFPHJVPO
- 1+eY6BPDU86zxm9jzc82aWfz6qX4+jaumGp//24O79AfE8ZxORh/4/RjWUXn48nY9DhWuVN6Il
- SHpFSfGvVtYvtnEQS/JGq9rQCs+f1IBIa79ZwnSifG0Slx7g2dIsbPZ5ngBejymawwuoJIFcVK
- MzBkhKyg39dxnJowzO98ftFiub2m3s0wh4e6lzqS9F2NMOLHH81XOLGI3EqrxtUAFFk4VeEUP+
- x0A=
-X-SBRS: 2.7
-X-MesageID: 1660932
-X-Ironport-Server: esa2.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.63,367,1557201600"; 
-   d="scan'208";a="1660932"
-Subject: Re: [Xen-devel] [RFC PATCH 04/16] x86/xen: hypercall support for
- xenhost_t
-To:     Ankur Arora <ankur.a.arora@oracle.com>,
-        <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>
-CC:     <jgross@suse.com>, <sstabellini@kernel.org>,
-        <konrad.wilk@oracle.com>, <pbonzini@redhat.com>,
-        <boris.ostrovsky@oracle.com>, <joao.m.martins@oracle.com>
-References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
- <20190509172540.12398-5-ankur.a.arora@oracle.com>
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <11f8b620-11ac-7075-019a-30d6bad7583c@citrix.com>
-Date:   Wed, 12 Jun 2019 22:15:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 12 Jun 2019 17:18:16 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 187362001E;
+        Wed, 12 Jun 2019 23:18:09 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 23:18:07 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Derek Basehore <dbasehore@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/5] drm/panel: Add helper for reading DT rotation
+Message-ID: <20190612211807.GA13155@ravnborg.org>
+References: <20190611040350.90064-1-dbasehore@chromium.org>
+ <20190611040350.90064-2-dbasehore@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20190509172540.12398-5-ankur.a.arora@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611040350.90064-2-dbasehore@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cm27Pg_UAAAA:8
+        a=Ikd4Dj_1AAAA:8 a=t_KA93f0VNsUmkpjo_oA:9 a=CjuIK1q_8ugA:10
+        a=xmb-EsYY8bH0VWELuYED:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2019 18:25, Ankur Arora wrote:
-> Allow for different hypercall implementations for different xenhost types.
-> Nested xenhost, which has two underlying xenhosts, can use both
-> simultaneously.
->
-> The hypercall macros (HYPERVISOR_*) implicitly use the default xenhost.x
-> A new macro (hypervisor_*) takes xenhost_t * as a parameter and does the
-> right thing.
->
-> TODO:
->   - Multicalls for now assume the default xenhost
->   - xen_hypercall_* symbols are only generated for the default xenhost.
->
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+Hi Derek.
 
-Again, what is the hypervisor nesting and/or guest layout here?
+On Mon, Jun 10, 2019 at 09:03:46PM -0700, Derek Basehore wrote:
+> This adds a helper function for reading the rotation (panel
+> orientation) from the device tree.
+> 
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
+>  drivers/gpu/drm/drm_panel.c | 41 +++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_panel.h     |  7 +++++++
+>  2 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> index dbd5b873e8f2..3b689ce4a51a 100644
+> --- a/drivers/gpu/drm/drm_panel.c
+> +++ b/drivers/gpu/drm/drm_panel.c
+> @@ -172,6 +172,47 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
+>  	return ERR_PTR(-EPROBE_DEFER);
+>  }
+>  EXPORT_SYMBOL(of_drm_find_panel);
+> +
+> +/**
+> + * of_drm_get_panel_orientation - look up the rotation of the panel using a
+> + * device tree node
+> + * @np: device tree node of the panel
+> + * @orientation: orientation enum to be filled in
+The comment says "enum" but the type used is an int.
+Why not use enum drm_panel_orientation?
 
-I can't think of any case where a single piece of software can
-legitimately have two hypercall pages, because if it has one working
-one, it is by definition a guest, and therefore not privileged enough to
-use the outer one.
+> + *
+> + * Looks up the rotation of a panel in the device tree. The rotation in the
+> + * device tree is counter clockwise.
+> + *
+> + * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
+> + * rotation property doesn't exist. -EERROR otherwise.
+> + */
+Initially I read -EEROOR as a specific error code.
+But I gues the semantic is to say that a negative error code is returned
+if something was wrong.
+As we do not use the "-EERROR" syntax anywhere else in drm, please
+reword like we do in other places.
 
-~Andrew
+
+Also - it is worth to mention that the rotation returned is
+DRM_MODE_PANEL_ORIENTATION_UNKNOWN if the property is not specified.
+I wonder if this is correct, as no property could also been
+interpretated as DRM_MODE_PANEL_ORIENTATION_NORMAL.
+And in most cases the roation property is optional, so one could
+assume that no property equals 0 degree.
+
+
+	Sam
+
+> +int of_drm_get_panel_orientation(const struct device_node *np, int *orientation)
+> +{
+> +	int rotation, ret;
+> +
+> +	ret = of_property_read_u32(np, "rotation", &rotation);
+> +	if (ret == -EINVAL) {
+> +		/* Don't return an error if there's no rotation property. */
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
+> +		return 0;
+> +	}
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (rotation == 0)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
+> +	else if (rotation == 90)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
+> +	else if (rotation == 180)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
+> +	else if (rotation == 270)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
+> +	else
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(of_drm_get_panel_orientation);
+>  #endif
+>  
+>  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> index 8c738c0e6e9f..13631b2efbaa 100644
+> --- a/include/drm/drm_panel.h
+> +++ b/include/drm/drm_panel.h
+> @@ -197,11 +197,18 @@ int drm_panel_detach(struct drm_panel *panel);
+>  
+>  #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
+>  struct drm_panel *of_drm_find_panel(const struct device_node *np);
+> +int of_drm_get_panel_orientation(const struct device_node *np,
+> +				 int *orientation);
+>  #else
+>  static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
+>  {
+>  	return ERR_PTR(-ENODEV);
+>  }
+> +int of_drm_get_panel_orientation(const struct device_node *np,
+> +				 int *orientation)
+> +{
+> +	return -ENODEV;
+> +}
+>  #endif
+>  
+>  #endif
+> -- 
+> 2.22.0.rc2.383.gf4fbbf30c2-goog
