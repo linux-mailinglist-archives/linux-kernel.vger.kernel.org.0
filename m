@@ -2,86 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B9FE41A4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA3441A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:29:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408404AbfFLCTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 22:19:31 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44398 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405661AbfFLCTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 22:19:31 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e189so10511146oib.11;
-        Tue, 11 Jun 2019 19:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wQDTufhWXmTclfVcFNb1jQ6kdGaN6gyHA/mYmZL80sY=;
-        b=OkEWnRO7vl1Cn4QB1PZiP8eUmLStmLdSZZsd6x3jAtC+YTPd66WtvIhRvn52nZZswF
-         ItyuQ1El0/W5v5RoZZdtLMmyb7Y0S8LxZhPCDmx/cFrenjJq2hRxGw3VrwyB5CG50ZI7
-         YnEZGS5hjxqbuzbXimbtWxsWRY4LLkpn5tqWe1Bz6SpYydBMaxDVncSOWkOxaHeO3TDx
-         IZA4owuu0/Gd+5YLHzWgFue2PgJLLjscQ2TLKu89E3vNF29aC0tQIY1YRklpzXl6fZVf
-         7UYiq5jHvVDgK6DXqTvGhCXPh6EJYTfdfRLsZbaztk8pc3eeUZsfLvJJ9AecXaDFMcq2
-         D3rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wQDTufhWXmTclfVcFNb1jQ6kdGaN6gyHA/mYmZL80sY=;
-        b=ZIdoytIPkoVp/GBnWDEdnQR2epOOwzIrqpXnvVrVbZ7tgOWKAkWi6vXSyQ2qnMX1KW
-         sj9urc+jtzpOpjBC9CVknApN5RotQfnP/+6kzbbSQH1YgkAm02SrdpDi9TmldhwcAgpi
-         ox7nmuG/9IxIiM9pFH3Yr/Rk6VG3xX8w+Qq1uHf3uUvP1y0nb948sU9FVnRTEbEyNCDY
-         IS/FuQh2nWHEZ0M+F8yhSxqGndI9SihaHxi/JgdaCSpeu9M8fhulrtLlPeY70cmYS9HO
-         JPHc6SqS6ybbA4Aqjkx5yPugP6MiawTBxWvmYlmev0TtGtqeNUVsvJeWffVsOWJCkcEF
-         E80A==
-X-Gm-Message-State: APjAAAUuggm6N7LzQV1jSfo1ly9XRbvcS/DERZ9pB0skzoK0G5ENUEne
-        D2LQ/O9OO9PgebJfTIpz651iHE2t3s92YPN/R58=
-X-Google-Smtp-Source: APXvYqxznTpSOFSgXuguROa+bMFdeyJBBYOGNflyVzIW59pLuKjzNA4upjNYPseua6q5L9J9eqW6qtywuWpd0Dyslr0=
-X-Received: by 2002:aca:3305:: with SMTP id z5mr15437298oiz.141.1560305970797;
- Tue, 11 Jun 2019 19:19:30 -0700 (PDT)
+        id S2408417AbfFLC3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 22:29:48 -0400
+Received: from mga09.intel.com ([134.134.136.24]:57842 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405046AbfFLC3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 22:29:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 19:29:47 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 19:29:41 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 6/9] iommu/vt-d: Check whether device requires bounce
+ buffer
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
+ <20190603011620.31999-7-baolu.lu@linux.intel.com>
+ <20190610160802.GX28796@char.us.oracle.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <bf973966-d975-9100-475d-bf30dbb99bf6@linux.intel.com>
+Date:   Wed, 12 Jun 2019 10:22:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1558418814-6822-1-git-send-email-wanpengli@tencent.com>
- <1558418814-6822-2-git-send-email-wanpengli@tencent.com> <627e4189-3709-1fb2-a9bc-f1a577712fe0@redhat.com>
- <CANRm+CyqH5ojNTcX3zfVjB8rayGHAW0Ex+fiGPnrO7bkmvr_4w@mail.gmail.com> <b30067df-2929-9ce9-221f-0f1a84dd1228@redhat.com>
-In-Reply-To: <b30067df-2929-9ce9-221f-0f1a84dd1228@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 12 Jun 2019 10:20:14 +0800
-Message-ID: <CANRm+CyuQCrfOQAv0PNgyuL68u2Xn7fXRqZCYE79wBZVDxVXng@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] KVM: X86: Provide a capability to disable cstate
- msr read intercepts
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Liran Alon <liran.alon@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190610160802.GX28796@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019 at 19:09, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 11/06/19 09:38, Wanpeng Li wrote:
-> > MSR_CORE_C1_RES is unreadable except for ATOM platform, so I think we
-> > can avoid the complex logic to handle C1 now. :)
->
-> I disagree.  Linux uses it on all platforms is available, and virtual
-> machines that don't pass mwait through _only_ have C1, so it would be
-> less useful to have deep C-state residency MSRs and not C1 residency.
+Hi,
 
-Your design heavily depends on read host MSR_CORE_C1_RES for C1
-residency msr emulation, however, the host MSR_CORE_C1_RES is
-unreadable.
-#rdmsr 0x660
-rdmsr: CPU 0 cannot read MSR 0x00000660
+On 6/11/19 12:08 AM, Konrad Rzeszutek Wilk wrote:
+> On Mon, Jun 03, 2019 at 09:16:17AM +0800, Lu Baolu wrote:
+>> This adds a helper to check whether a device needs to use bounce
+>> buffer. It also provides a boot time option to disable the bounce
+>> buffer. Users can use this to prevent the iommu driver from using
+>> the bounce buffer for performance gain.
+>> 
+>> Cc: Ashok Raj <ashok.raj@intel.com> Cc: Jacob Pan
+>> <jacob.jun.pan@linux.intel.com> Cc: Kevin Tian
+>> <kevin.tian@intel.com> Signed-off-by: Lu Baolu
+>> <baolu.lu@linux.intel.com> Tested-by: Xu Pengfei
+>> <pengfei.xu@intel.com> Tested-by: Mika Westerberg
+>> <mika.westerberg@intel.com> --- 
+>> Documentation/admin-guide/kernel-parameters.txt | 5 +++++ 
+>> drivers/iommu/intel-iommu.c                     | 6 ++++++ 2 files
+>> changed, 11 insertions(+)
+>> 
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+>> b/Documentation/admin-guide/kernel-parameters.txt index
+>> 138f6664b2e2..65685c6e53e4 100644 ---
+>> a/Documentation/admin-guide/kernel-parameters.txt +++
+>> b/Documentation/admin-guide/kernel-parameters.txt @@ -1728,6
+>> +1728,11 @@ Note that using this option lowers the security 
+>> provided by tboot because it makes the system vulnerable to DMA
+>> attacks. +		nobounce [Default off] +			Do not use the bounce buffer
+>> for untrusted devices like +			the Thunderbolt devices. This will
+>> treat the untrusted
+> 
+> My brain has sometimes a hard time parsing 'Not' and 'un'. Could this
+> be:
+> 
+> Disable bounce buffer for unstrusted devices ..?
+> 
 
-Refer to turbostat codes,
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/power/x86/turbostat/turbostat.c#n1335
-C1 is derivated from other parameters. use_c1_residency_msr is true
-just for ATOM platform.
+Fair enough.
 
-Regards,
-Wanpeng Li
+> 
+> And perhaps call it 'noswiotlb' ? Not everyone knows that SWIOTLB =
+> bounce buffer.
+
+As I said in previous thread, swiotlb is not only used for BOUNCE_PAGE
+case, but also used by direct dma APIs. Will it cause confusion?
+
+Anyway, I have no strong feeling to use 'nobounce' or 'noswiotlb'. It's
+a driver specific switch for debugging purpose. People suggested that we
+should move this switch into pci module, but I heard that it's more
+helpful to implement per-device switch for "trusted' or "untrusted".
+So I kept this untouched in this version.
+
+> 
+>> +			devices as the trusted ones, hence might expose security +
+>> risks of DMA attacks.
+>> 
+>> intel_idle.max_cstate=	[KNL,HW,ACPI,X86] 0	disables intel_idle and
+>> fall back on acpi_idle. diff --git a/drivers/iommu/intel-iommu.c
+>> b/drivers/iommu/intel-iommu.c index 235837c50719..41439647f75d
+>> 100644 --- a/drivers/iommu/intel-iommu.c +++
+>> b/drivers/iommu/intel-iommu.c @@ -371,6 +371,7 @@ static int
+>> dmar_forcedac; static int intel_iommu_strict; static int
+>> intel_iommu_superpage = 1; static int iommu_identity_mapping; 
+>> +static int intel_no_bounce;
+> 
+> intel_swiotlb_on = 1 ?
+> 
+>> 
+>> #define IDENTMAP_ALL		1 #define IDENTMAP_GFX		2 @@ -384,6 +385,8 @@
+>> EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped); static
+>> DEFINE_SPINLOCK(device_domain_lock); static
+>> LIST_HEAD(device_domain_list);
+>> 
+>> +#define device_needs_bounce(d) (!intel_no_bounce &&
+>> dev_is_untrusted(d)) + /* * Iterate over elements in
+>> device_domain_list and call the specified * callback @fn against
+>> each element. @@ -466,6 +469,9 @@ static int __init
+>> intel_iommu_setup(char *str) printk(KERN_INFO "Intel-IOMMU: not
+>> forcing on after tboot. This could expose security risk for
+>> tboot\n"); intel_iommu_tboot_noforce = 1; +		} else if
+>> (!strncmp(str, "nobounce", 8)) { +			pr_info("Intel-IOMMU: No
+>> bounce buffer. This could expose security risks of DMA
+>> attacks\n");
+> 
+> Again, Intel-IOMMU: No SWIOTLB. T.. blah blah'
+> 
+> Asking for this as doing 'dmesg | grep SWIOTLB' will expose nicely
+> all the SWIOTLB invocations..
+
+Yes. Will refine this.
+
+Best regards,
+Baolu
