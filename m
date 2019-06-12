@@ -2,171 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7FBF447DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71149447CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfFMRCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:02:23 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36206 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729522AbfFLXOb (ORCPT
+        id S1729550AbfFMRBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:01:54 -0400
+Received: from mail-yw1-f74.google.com ([209.85.161.74]:37525 "EHLO
+        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729555AbfFLXZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 19:14:31 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d21so7244328plr.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 16:14:31 -0700 (PDT)
+        Wed, 12 Jun 2019 19:25:43 -0400
+Received: by mail-yw1-f74.google.com with SMTP id j68so19167108ywj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 16:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zENyOoOSgI8QfaggquPMfPbLKw7a6eUv2Qjm9NWJtcQ=;
-        b=EswV1nGCdvSMNN+Ssd1h7rS3RXzjTfEdTIdOLjAh5nTRd36k1bdXI6zWruRLqObK0d
-         gsC+6WcEPSp6FesMM+ciJCWrwUt+f3/TlPdj8OHr1gJIlaqypHatFu/fEtZyZqtTgxf/
-         7MmVJ24TsNjxF3L2qzae4mJRJIWKsdAgvTDM41obh31wU5DHCFOSTfiDeRVan1EyTWT2
-         FA4K03WJSZqhv2G4TPC4wR1Lyw2YYsUsmJ5/O926cAuclRrP4DGVaFyTWu7dvlXrp9UC
-         rWkAggs99lIDtQwUic825l/5MOVIb6hlsoo+MGQWZsaaKUU00iAbkzb0AD/J2zMhHB2K
-         je/Q==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=c4y2pZiaN2WhmN/OxTBjUr2bY3qKhiFt2vrnSnjnBeU=;
+        b=ZX6h/m/Ccz3D08OR8zobi4ldZ1jS6PwWzVR/t+WFD6v0/Fss+beVWhFf3zeZ82ESbD
+         JnDV0SUioVotRseLuOCQjBJLHc6Uk0pBrTXhoZGSLVaiSZdExpDDf2i2/rIyMYZlsF70
+         qFSP5TrwsByiyXtw3w02BWlG1wBzSWk/vy0A0IrFOW0FYgFOCrryf7dyHBTlBJtuaKKG
+         ERMoWPBQK1FwgW7tltk/GtzR+Be390NfVB6tt1uV6i3acZq1aasmD19TVthHF8qX8Rml
+         6a5JDLxHclFpku0vjZ4XD/CW1AMslRend4jJ1Ln+Ot1bhEXU2bNv+/yI4qPlSB866sPf
+         QLGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zENyOoOSgI8QfaggquPMfPbLKw7a6eUv2Qjm9NWJtcQ=;
-        b=i4v+iDeuIQBQMpszhfhuPpavb8UtffvJ8dGDlrii5++vm0c4h8ep7xXwZLFlNFGjVz
-         HBbB3PRwRoisbIihy7/xw1WhGZWTh/lMC56qL66mOqvY/+IYIyT6Nsj3gtJxc3y723gS
-         FfFtZlma/1trCo/2auTYk8/Zr0ZP/PtxCyS9ZwBhMA5e6HL6zK0etzShIsWEuSWHcj5A
-         s2pOOv9uQruo2kpGD3wtjyWp1x/jbEiMq3TdJqTtF2Fli4rgrYhq5Jda3q7bCP66KdqE
-         ub2sbkM5wEakEjaVgqMi46r3gJl46r3kmwVAOjPOrqLKc+X4topGXyhqif3F+tDnEn0d
-         bW/g==
-X-Gm-Message-State: APjAAAWXAaw0ge2wsR6GkOPv5MjOtzDl1Jj6E8QmUKZ/f4M7XozP6bxZ
-        xHmd+bkyBoa138R4lNo0I3Q=
-X-Google-Smtp-Source: APXvYqynFN1ludII3XFLYMfIONiHIRT3DEjMebyu/w5SXt66rSlQbatTCpNAcnVu5y6nlAVVC7h8BQ==
-X-Received: by 2002:a17:902:b70f:: with SMTP id d15mr3048117pls.318.1560381270418;
-        Wed, 12 Jun 2019 16:14:30 -0700 (PDT)
-Received: from gmail.com ([2a00:79e1:abc:1e04:de9a:68c:c1e8:7e8f])
-        by smtp.gmail.com with ESMTPSA id o26sm491338pgv.47.2019.06.12.16.14.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 16:14:29 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 16:14:28 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>
-Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for
- /proc/pid/map_files
-Message-ID: <20190612231426.GA3639@gmail.com>
-References: <156007465229.3335.10259979070641486905.stgit@buzz>
- <156007493995.3335.9595044802115356911.stgit@buzz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <156007493995.3335.9595044802115356911.stgit@buzz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=c4y2pZiaN2WhmN/OxTBjUr2bY3qKhiFt2vrnSnjnBeU=;
+        b=Rm/xTZcgR8tiK8Mx4+0zBqnRsDzz/OIhQPa+BTtO2PlJhjR0a/ec6GvV3zwOfrRlS4
+         IaRPbF/FNwyXEAtmDKhneqdbz1GrRi5B/nM4Ih9aril/ShRHAUUyMi7Idr7uoW5+mLSK
+         LmHl2uA9qQv1oJwsamq/FJKxCXx2wxMFKIcK89tqHIw01ysOMUyPju7HpdNV359IKbuS
+         MGE9g06bmy2Dx6ZQYyNp9E1zE8/8wxYOqEfySl5sTOV5/hn8FFJqY3IifR3tejj71mhc
+         5MAmL5c8wQnrlUQqlzk1dXWr990XHYAxxVhrMn7g93wZJpT4ifnBym/c8qQ7locy68T8
+         QIww==
+X-Gm-Message-State: APjAAAXzPVc5OLk9MGj9FD6nL/CksypizC/HiMZxN+5+JUY7HCRHNwQd
+        40t2qjR6vFcug/QGwppjHybAT8OPzw==
+X-Google-Smtp-Source: APXvYqzXnzX8wpDiqygjRAk3N1+TcIw2/ksV0H9K5MlzkDv4+dJxv87avsDznM1QwBlHmYu3EINw3LGE/A==
+X-Received: by 2002:a25:ef10:: with SMTP id g16mr40616532ybd.510.1560381942993;
+ Wed, 12 Jun 2019 16:25:42 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 16:25:02 -0700
+Message-Id: <20190612232502.256846-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+Subject: [PATCH] ASoC: tas571x: Fix -Wunused-const-variable
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     cernekee@chromium.org, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
-> Do not stuck forever if something wrong.
-> Killable lock allows to cleanup stuck tasks and simplifies investigation.
+Clang produces the following warning
 
-This patch breaks the CRIU project, because stat() returns EINTR instead
-of ENOENT:
+sound/soc/codecs/tas571x.c:666:38: warning: unused variable
+'tas5721_controls' [-Wunused-const-variable]
 
-[root@fc24 criu]# stat /proc/self/map_files/0-0
-stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
+In the chip struct definition tas5711_controls is used rather than
+tac5712_controls. Looks like a typo was made in the original commit.
 
-Here is one inline comment with the fix for this issue.
+Since tac5711_controls is identical to tas5721_controls we can just swap
+them
 
-> 
-> It seems ->d_revalidate() could return any error (except ECHILD) to
-> abort validation and pass error as result of lookup sequence.
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Reviewed-by: Roman Gushchin <guro@fb.com>
-> Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
-> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: clang-built-linux@googlegroups.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/522
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+---
+ sound/soc/codecs/tas571x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It was nice to see all four of you in one place :).
+diff --git a/sound/soc/codecs/tas571x.c b/sound/soc/codecs/tas571x.c
+index 20798fa2988a..1554631cb397 100644
+--- a/sound/soc/codecs/tas571x.c
++++ b/sound/soc/codecs/tas571x.c
+@@ -721,8 +721,8 @@ static const struct regmap_config tas5721_regmap_config = {
+ static const struct tas571x_chip tas5721_chip = {
+ 	.supply_names			= tas5721_supply_names,
+ 	.num_supply_names		= ARRAY_SIZE(tas5721_supply_names),
+-	.controls			= tas5711_controls,
+-	.num_controls			= ARRAY_SIZE(tas5711_controls),
++	.controls			= tas5721_controls,
++	.num_controls			= ARRAY_SIZE(tas5721_controls),
+ 	.regmap_config			= &tas5721_regmap_config,
+ 	.vol_reg_size			= 1,
+ };
+-- 
+2.22.0.rc2.383.gf4fbbf30c2-goog
 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
->  fs/proc/base.c |   27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 9c8ca6cd3ce4..515ab29c2adf 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1962,9 +1962,12 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
->  		goto out;
->  
->  	if (!dname_to_vma_addr(dentry, &vm_start, &vm_end)) {
-> -		down_read(&mm->mmap_sem);
-> -		exact_vma_exists = !!find_exact_vma(mm, vm_start, vm_end);
-> -		up_read(&mm->mmap_sem);
-> +		status = down_read_killable(&mm->mmap_sem);
-> +		if (!status) {
-> +			exact_vma_exists = !!find_exact_vma(mm, vm_start,
-> +							    vm_end);
-> +			up_read(&mm->mmap_sem);
-> +		}
->  	}
->  
->  	mmput(mm);
-> @@ -2010,8 +2013,11 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
->  	if (rc)
->  		goto out_mmput;
->  
-> +	rc = down_read_killable(&mm->mmap_sem);
-> +	if (rc)
-> +		goto out_mmput;
-> +
->  	rc = -ENOENT;
-> -	down_read(&mm->mmap_sem);
->  	vma = find_exact_vma(mm, vm_start, vm_end);
->  	if (vma && vma->vm_file) {
->  		*path = vma->vm_file->f_path;
-> @@ -2107,7 +2113,10 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
->  	if (!mm)
->  		goto out_put_task;
->  
-> -	down_read(&mm->mmap_sem);
-> +	result = ERR_PTR(-EINTR);
-> +	if (down_read_killable(&mm->mmap_sem))
-> +		goto out_put_mm;
-> +
-
-	result = ERR_PTR(-ENOENT);
-
->  	vma = find_exact_vma(mm, vm_start, vm_end);
->  	if (!vma)
->  		goto out_no_vma;
-> @@ -2118,6 +2127,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
->  
->  out_no_vma:
->  	up_read(&mm->mmap_sem);
-> +out_put_mm:
->  	mmput(mm);
->  out_put_task:
->  	put_task_struct(task);
-> @@ -2160,7 +2170,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
->  	mm = get_task_mm(task);
->  	if (!mm)
->  		goto out_put_task;
-> -	down_read(&mm->mmap_sem);
-> +
-> +	ret = down_read_killable(&mm->mmap_sem);
-> +	if (ret) {
-> +		mmput(mm);
-> +		goto out_put_task;
-> +	}
->  
->  	nr_files = 0;
->  
