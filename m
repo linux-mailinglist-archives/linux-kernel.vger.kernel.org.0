@@ -2,100 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EFDC42138
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE59642149
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437671AbfFLJlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:41:46 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46916 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406059AbfFLJlq (ORCPT
+        id S2437685AbfFLJqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:46:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2437379AbfFLJqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:41:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so16082750wrw.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 02:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=DjwvTNI/CdJpPRhUaL8QOE53B9cqUtgqTen6I5hJkuI=;
-        b=s4x/t4m1Bv3JIF78+tmkQNOT/deiMfzEpipdoQhG2GclFb+x8Xoyh2T5CTQ2shXxAA
-         OX1jQtq/3E/xHZrUUrIFX/AyZt9ztwKkZNKjQrl+7dxhwZ36m2Oo9n6zUMfzWkvQ2jio
-         14Grqt/yrRY90POB4j5SApoWtQHH+dKxcNAXYyo79iBFIBJZhRfKOdm4yEvRPacKkd0o
-         Jq4VXyv5BhfIxcaj43cAaIkDoJM3KdhafzzJrivIsZ84Tvy2IeLmUgmTY3Kg9ZRY1KH9
-         5KYUE7Pl0mpk6I/QCbZ07u5WGZzzWS+hzKI9P4t1gz8rhBEipSIaB3bkJEz9VJu5ASUN
-         VYqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=DjwvTNI/CdJpPRhUaL8QOE53B9cqUtgqTen6I5hJkuI=;
-        b=EzF+tK12aOsInEtbGle6KZmMtcehqGFlnmgE6kVWMUn0BGwoNhEXsVw22X3b27ZnU1
-         jltQTZo11ieHIqTpwvIBP58zjRrdmUJKfYhSMyEvN1T9onY4t2hcqw5MKhE9hYHEcVo6
-         6555LjBfk3FSyLIMS1yQBCcp2Nybf+ZoIFGZ8Pn1pjjFMY0dLtaHoj4WTPv42viZS2Hk
-         DoslCB/YxagXRGZkdSy2MEg4Uv66XQsEfic6VE45TffJshA3zY2JGXZwfWdVLh2ypzXa
-         rzjO5jQlHTD4PbPp1Rz41X6RaOH/7GvC3OUQVzkL8yZ629jtGJ/6lAHZbS1yHPDtf+I2
-         FZCQ==
-X-Gm-Message-State: APjAAAULbdgnAdum0Xr7Re8S0RSlisbZbBi0Ox9RU7iiUX5kyYjemlto
-        HzaXT5ZqgKY2jciLSwH8ZaqpybxF4xw=
-X-Google-Smtp-Source: APXvYqyjWINeFcR5hi2Rkm+lpyNCDo9ZFhr032AbmzqnGxorzE/fWtCRWvVLOcy4f592VJi86h87yw==
-X-Received: by 2002:a5d:63cb:: with SMTP id c11mr54141291wrw.65.1560332504489;
-        Wed, 12 Jun 2019 02:41:44 -0700 (PDT)
-Received: from dell ([185.80.132.160])
-        by smtp.gmail.com with ESMTPSA id 6sm17596767wrd.51.2019.06.12.02.41.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2019 02:41:44 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 10:41:42 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] mfd: rk808: Prepare rk805 for poweroff
-Message-ID: <20190612094142.GH4797@dell>
-References: <20190607124226.17694-1-stefan@olimex.com>
- <20190607124226.17694-3-stefan@olimex.com>
+        Wed, 12 Jun 2019 05:46:00 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5C9gHwQ063699
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:45:59 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t2xncs79v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:45:58 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 12 Jun 2019 10:45:57 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Jun 2019 10:45:53 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5C9jqEP39190948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 09:45:52 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B78B0AE045;
+        Wed, 12 Jun 2019 09:45:52 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 40B8AAE04D;
+        Wed, 12 Jun 2019 09:45:51 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.124.35.98])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Jun 2019 09:45:51 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 Q)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-mm@kvack.org, osalvador@suse.de
+Subject: Re: [PATCH v9 11/12] libnvdimm/pfn: Fix fsdax-mode namespace info-block zero-fields
+In-Reply-To: <155977193862.2443951.10284714500308539570.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com> <155977193862.2443951.10284714500308539570.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Wed, 12 Jun 2019 15:11:46 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190607124226.17694-3-stefan@olimex.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19061209-4275-0000-0000-000003419E4E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061209-4276-0000-0000-00003851B3FC
+Message-Id: <87r27zi1id.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906120067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 07 Jun 2019, Stefan Mavrodiev wrote:
+Dan Williams <dan.j.williams@intel.com> writes:
 
-> RK805 has SLEEP signal, which can put the device into SLEEP or OFF
-> mode. The default is SLEEP mode.
-> 
-> However, when the kernel performs power-off (actually the ATF) the
-> device will not go fully off and this will result in higher power
-> consumption and inability to wake the device with RTC alarm.
-> 
-> The solution is to enable pm_power_off_prepare function, which will
-> configure SLEEP pin for OFF function.
-> 
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> At namespace creation time there is the potential for the "expected to
+> be zero" fields of a 'pfn' info-block to be filled with indeterminate
+> data. While the kernel buffer is zeroed on allocation it is immediately
+> overwritten by nd_pfn_validate() filling it with the current contents of
+> the on-media info-block location. For fields like, 'flags' and the
+> 'padding' it potentially means that future implementations can not rely
+> on those fields being zero.
+>
+> In preparation to stop using the 'start_pad' and 'end_trunc' fields for
+> section alignment, arrange for fields that are not explicitly
+> initialized to be guaranteed zero. Bump the minor version to indicate it
+> is safe to assume the 'padding' and 'flags' are zero. Otherwise, this
+> corruption is expected to benign since all other critical fields are
+> explicitly initialized.
+>
+> Fixes: 32ab0a3f5170 ("libnvdimm, pmem: 'struct page' for pmem")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 > ---
-> Change for v3:
->  - Remove useless warning messages
->  - Change poweroff error messages
->  - Add explanation comments
-> Changes for v2:
->  - Move pm_pwroff_prep_fn to header
->  - Check pm_power_off_prepare before make it NULL
-> 
->  drivers/mfd/rk808.c       | 50 +++++++++++++++++++++++++++------------
->  include/linux/mfd/rk808.h |  1 +
->  2 files changed, 36 insertions(+), 15 deletions(-)
+>  drivers/nvdimm/dax_devs.c |    2 +-
+>  drivers/nvdimm/pfn.h      |    1 +
+>  drivers/nvdimm/pfn_devs.c |   18 +++++++++++++++---
+>  3 files changed, 17 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
+> index 0453f49dc708..326f02ffca81 100644
+> --- a/drivers/nvdimm/dax_devs.c
+> +++ b/drivers/nvdimm/dax_devs.c
+> @@ -126,7 +126,7 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
+>  	nvdimm_bus_unlock(&ndns->dev);
+>  	if (!dax_dev)
+>  		return -ENOMEM;
+> -	pfn_sb = devm_kzalloc(dev, sizeof(*pfn_sb), GFP_KERNEL);
+> +	pfn_sb = devm_kmalloc(dev, sizeof(*pfn_sb), GFP_KERNEL);
+>  	nd_pfn->pfn_sb = pfn_sb;
+>  	rc = nd_pfn_validate(nd_pfn, DAX_SIG);
+>  	dev_dbg(dev, "dax: %s\n", rc == 0 ? dev_name(dax_dev) : "<none>");
+> diff --git a/drivers/nvdimm/pfn.h b/drivers/nvdimm/pfn.h
+> index dde9853453d3..e901e3a3b04c 100644
+> --- a/drivers/nvdimm/pfn.h
+> +++ b/drivers/nvdimm/pfn.h
+> @@ -36,6 +36,7 @@ struct nd_pfn_sb {
+>  	__le32 end_trunc;
+>  	/* minor-version-2 record the base alignment of the mapping */
+>  	__le32 align;
+> +	/* minor-version-3 guarantee the padding and flags are zero */
+>  	u8 padding[4000];
+>  	__le64 checksum;
+>  };
+> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> index 01f40672507f..a2406253eb70 100644
+> --- a/drivers/nvdimm/pfn_devs.c
+> +++ b/drivers/nvdimm/pfn_devs.c
+> @@ -420,6 +420,15 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * nd_pfn_validate - read and validate info-block
+> + * @nd_pfn: fsdax namespace runtime state / properties
+> + * @sig: 'devdax' or 'fsdax' signature
+> + *
+> + * Upon return the info-block buffer contents (->pfn_sb) are
+> + * indeterminate when validation fails, and a coherent info-block
+> + * otherwise.
+> + */
+>  int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+>  {
+>  	u64 checksum, offset;
+> @@ -565,7 +574,7 @@ int nd_pfn_probe(struct device *dev, struct nd_namespace_common *ndns)
+>  	nvdimm_bus_unlock(&ndns->dev);
+>  	if (!pfn_dev)
+>  		return -ENOMEM;
+> -	pfn_sb = devm_kzalloc(dev, sizeof(*pfn_sb), GFP_KERNEL);
+> +	pfn_sb = devm_kmalloc(dev, sizeof(*pfn_sb), GFP_KERNEL);
+>  	nd_pfn = to_nd_pfn(pfn_dev);
+>  	nd_pfn->pfn_sb = pfn_sb;
+>  	rc = nd_pfn_validate(nd_pfn, PFN_SIG);
+> @@ -702,7 +711,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+>  	u64 checksum;
+>  	int rc;
+>  
+> -	pfn_sb = devm_kzalloc(&nd_pfn->dev, sizeof(*pfn_sb), GFP_KERNEL);
+> +	pfn_sb = devm_kmalloc(&nd_pfn->dev, sizeof(*pfn_sb), GFP_KERNEL);
+>  	if (!pfn_sb)
+>  		return -ENOMEM;
+>  
+> @@ -711,11 +720,14 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+>  		sig = DAX_SIG;
+>  	else
+>  		sig = PFN_SIG;
+> +
+>  	rc = nd_pfn_validate(nd_pfn, sig);
+>  	if (rc != -ENODEV)
+>  		return rc;
+>  
+>  	/* no info block, do init */;
+> +	memset(pfn_sb, 0, sizeof(*pfn_sb));
+> +
+>  	nd_region = to_nd_region(nd_pfn->dev.parent);
+>  	if (nd_region->ro) {
+>  		dev_info(&nd_pfn->dev,
+> @@ -768,7 +780,7 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+>  	memcpy(pfn_sb->uuid, nd_pfn->uuid, 16);
+>  	memcpy(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16);
+>  	pfn_sb->version_major = cpu_to_le16(1);
+> -	pfn_sb->version_minor = cpu_to_le16(2);
+> +	pfn_sb->version_minor = cpu_to_le16(3);
+>  	pfn_sb->start_pad = cpu_to_le32(start_pad);
+>  	pfn_sb->end_trunc = cpu_to_le32(end_trunc);
+>  	pfn_sb->align = cpu_to_le32(nd_pfn->align);
+>
 
-Applied, thanks.
+How will this minor version 3 be used? If we are not having
+start_pad/end_trunc updated in pfn_sb, how will the older kernel enable these namesapces?
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Do we need a patch like
+https://lore.kernel.org/linux-mm/20190604091357.32213-2-aneesh.kumar@linux.ibm.com
+
+-aneesh
+
