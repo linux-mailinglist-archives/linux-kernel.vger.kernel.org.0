@@ -2,103 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4346F42F3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84CB742F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:42:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfFLSnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:43:40 -0400
-Received: from mga05.intel.com ([192.55.52.43]:39216 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbfFLSnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:43:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 11:43:40 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2019 11:43:39 -0700
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id D014E5803E4;
-        Wed, 12 Jun 2019 11:43:39 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v2 1/1] PCI/IOV: Fix incorrect cfg_size for VF > 0
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
-        keith.busch@intel.com, mike.campin@intel.com
-References: <20190612170647.43220-1-sathyanarayanan.kuppuswamy@linux.intel.com>
- <20190612121910.231368e2@x1.home>
-From:   sathyanarayanan kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <0b21c76e-53f3-c35e-cebf-00719e451b11@linux.intel.com>
-Date:   Wed, 12 Jun 2019 11:41:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2387793AbfFLSmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:42:06 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38197 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbfFLSmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:42:05 -0400
+Received: by mail-oi1-f196.google.com with SMTP id v186so12458082oie.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 11:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tLkmphJnLjEku4wPa26GqmShS2e5likwCcmpQlFLS9E=;
+        b=zfGP+t+9ivTiw9crHzyoG37UKVT39+ZjMSRc6i4RLF5qzgoEzM0PJJFpTl3UpomLM/
+         kX7wxsRh/bfXL05Kn2SjQT8PDTQbpZvw2lUD2P17lgifKk9462SiGOzy9eolZxENP8tF
+         +j8h3CL4xbOvN0NcXJng0ZhfijbK4zlpWlo5g45OKeiNBbSWh4j6EO8XjD4uzxYBWXSc
+         XQXw6jfUAUrXoISJcc1nasZDsCw2vNnJrgvivK5m8U97df7yj+O0/KKRytyMUK2vV5wL
+         CVPInnibqz35AZHLe+QENPOC6d6PXPPLQ6FBHTljTMKMRhnltIiFojDH2RTb0H3+DeCQ
+         awHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tLkmphJnLjEku4wPa26GqmShS2e5likwCcmpQlFLS9E=;
+        b=llea5M1QAA9qbnelLuxh3yGl/8Pjw0K3nhgpHzq8iUeNDCkv6XsfYiWHCFpI/ZZK4N
+         TWwL+U/sVG3j1rOQJ03c1nbcl+zBLCco1qiIFq/pIyBGGuhyZX74S00GxCbCOKo4gRjc
+         vrG0kDoW0xk9WvDnO9CO/UPoC6gQcXG5U98fEesJc3h6ILjEOyhwOMqkZ2SU0F+zAHjr
+         ZFY87hqzuJ167XT+USrS+4BG9U6S8tj/pr08D2OSpLhHmMX28nj1F+p14oYpx+kqXT2x
+         2+btPCPWHo6GpjQhVM5e67GgCgOs3+6f42biMUbwXh2mDHgo61cp9IiDUB4xeZ38HRDG
+         GKOg==
+X-Gm-Message-State: APjAAAUr9ThTD8sSB5hGxPsyGSU680jf/t/GEa+6Ba03YKMYA0QVhPUS
+        urJ+hwwss4Pc3HRwVkylBcvlnTZKCgLiH/od+JGUVw==
+X-Google-Smtp-Source: APXvYqxw8Jxg8VjrdgkzfIw+Yn35hC16YxwrfmO4tE9KRMFgYTyKNK9pqaozSKJ82RqVYk9X5Uls8HWSSM7jkwOY/uo=
+X-Received: by 2002:aca:ed4c:: with SMTP id l73mr412323oih.149.1560364924898;
+ Wed, 12 Jun 2019 11:42:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612121910.231368e2@x1.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190606014544.8339-1-ira.weiny@intel.com> <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca> <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca> <20190612120907.GC14578@quack2.suse.cz>
+In-Reply-To: <20190612120907.GC14578@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 12 Jun 2019 11:41:53 -0700
+Message-ID: <CAPcyv4ikn219XUgHwsPdYp06vBNAJB9Rk-hjZA-fYT4GB3gi+w@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Ira Weiny <ira.weiny@intel.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 6/12/19 11:19 AM, Alex Williamson wrote:
-> On Wed, 12 Jun 2019 10:06:47 -0700
-> sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+On Wed, Jun 12, 2019 at 5:09 AM Jan Kara <jack@suse.cz> wrote:
 >
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> Commit 975bb8b4dc93 ("PCI/IOV: Use VF0 cached config space size for
->> other VFs") calculates and caches the cfg_size for VF0 device before
->> initializing the pcie_cap of the device which results in using incorrect
->> cfg_size for all VF devices > 0. So set pcie_cap of the device before
->> calculating the cfg_size of VF0 device.
->>
->> Fixes: 975bb8b4dc93 ("PCI/IOV: Use VF0 cached config space size for
->> other VFs")
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Suggested-by: Mike Campin <mike.campin@intel.com>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->> ---
->>
->> Changes since v1:
->>   * Fixed a typo in commit message.
->>
->>   drivers/pci/iov.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
->> index 3aa115ed3a65..2869011c0e35 100644
->> --- a/drivers/pci/iov.c
->> +++ b/drivers/pci/iov.c
->> @@ -160,6 +160,7 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
->>   	virtfn->device = iov->vf_device;
->>   	virtfn->is_virtfn = 1;
->>   	virtfn->physfn = pci_dev_get(dev);
->> +	virtfn->pcie_cap = pci_find_capability(virtfn, PCI_CAP_ID_EXP);
->>   
->>   	if (id == 0)
->>   		pci_read_vf_config_common(virtfn);
-> Why not re-order until after we've setup pcie_cap?
+> On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> >
+> > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > little HW can actually implement it, having the alternative still
+> > > > > require HW support doesn't seem like progress.
+> > > > >
+> > > > > I think we will eventually start seein some HW be able to do this
+> > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > on fire, I need to unplug it).
+> > > >
+> > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > with such an "invalidate".
+> > >
+> > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > everything that's going on... And I wanted similar behavior here.
+> >
+> > It aborts *everything* connected to that file descriptor. Destroying
+> > everything avoids creating inconsistencies that destroying a subset
+> > would create.
+> >
+> > What has been talked about for lease break is not destroying anything
+> > but very selectively saying that one memory region linked to the GUP
+> > is no longer functional.
 >
-> https://lore.kernel.org/linux-pci/20190604143617.0a226555@x1.home/T/#
+> OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> and closes the file with existing pins (and thus layout lease) we would
+> force it to abort everything. Yes, it is disruptive but then the app didn't
+> obey the rule that it has to maintain file lease while holding pins. Thus
+> such situation should never happen unless the app is malicious / buggy.
 
-pci_read_vf_config_common() also caches values for properties like 
-class, hdr_type, susbsystem_vendor/device. These values are read/used in 
-pci_setup_device(). So if we can use cached values in 
-pci_setup_device(), we don't have to read them from registers twice for 
-each device.
-
->
-> Thanks,
-> Alex
->
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
-
+When you say 'close' do you mean the final release of the fd? The vma
+keeps a reference to a 'struct file' live even after the fd is closed.
