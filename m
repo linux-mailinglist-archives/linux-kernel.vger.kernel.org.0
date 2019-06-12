@@ -2,234 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC16429A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29ACF429AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbfFLOnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 10:43:39 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38125 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727917AbfFLOnj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:43:39 -0400
-Received: by mail-ot1-f68.google.com with SMTP id d17so15648548oth.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:43:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u9tl7agUX8PHmzxevAoY1c85cGa1CD64Ig+RZa1dCBw=;
-        b=Hv8TgoCm9XsWIIy1dM5GKF7BGLp3MBxAoEkHX2+wYCS1rj2z8OH9JWJTgei2P9SlTZ
-         O5E1e2cMIAe8tB+Oa/eZNjBBWVNCoS6XkeW4GYs11XKchRDNMr/fTFOCnhMn6uylrKFn
-         zlQzDv5MO8mbeYuK7OG6/zP1ieM4dQKQtoqmt0JhSsZsk8t2EDIAuI3uIMz+TLjlQjsn
-         MOlamosxGzH3PaVCuwUW235refAjedOgkZu6eWIKabiuIK5z0szJZmUZHba88QH4O68W
-         ysYdujkB+J2D446ZLDzz3qcmLXzBkoQ9RwQduWEBQBzcLd3CaJc3CWGg0tdpUlzBVbNi
-         za4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u9tl7agUX8PHmzxevAoY1c85cGa1CD64Ig+RZa1dCBw=;
-        b=QCXQpJDAxfiJjnXxD6/F7FF6xnIq5R3G2qt50LiqGHWGCVg7oe8zIXA11PM/c6yHfP
-         35an/P2uvnsBlAODWNuHeSwXSqS6gA9MH3Oh/ZegIlgPJfnr8PyFNZKEcHH/PQEEG0pn
-         Pc/Oe+blYdZws1y+99rjwDq2DvfskYcPcDgJlR9zei5gCBVspJWDLEqLyJuF6Qg9Xev8
-         YKLekbiGulwKm/4pXDnlO3u4wK5WSpspneV+0NdsyM0VaCq26AroiL9pO8BBTSsYTbeO
-         KchLQqiHU4UYlid9oY99sIsvkA9NC4MFuf3uHIkmyvRLWtqx2t6pUtj8WH5aMn2ibYuY
-         ryBA==
-X-Gm-Message-State: APjAAAWlSNArnY1tBJDcs0a/NlvaX1sWuzwBomkD3xuZ8+HP8QeqjRnC
-        jIw1k1rkG3EdTzihUlWg5zazE43TaL+jkHn7w6yB+LxxMO8=
-X-Google-Smtp-Source: APXvYqzW+S+G564gDrL+10Ehj3IidoTdNSSRQmtjoKtKX/1ItY3A1Cf4VZL5QQjtRuXnaiaRUyVvCe318bhMpx3L7Ec=
-X-Received: by 2002:a05:6830:1319:: with SMTP id p25mr5907954otq.224.1560350618399;
- Wed, 12 Jun 2019 07:43:38 -0700 (PDT)
+        id S1731981AbfFLOoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:44:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727846AbfFLOoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 10:44:13 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4CD033087958;
+        Wed, 12 Jun 2019 14:44:07 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (unknown [10.36.118.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C4DF6061E;
+        Wed, 12 Jun 2019 14:43:59 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup and thread creation (v10)
+References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com>
+        <87muj2k4ov.fsf@oldenburg2.str.redhat.com>
+        <1528929896.22217.1559326257155.JavaMail.zimbra@efficios.com>
+        <87o93d4lqb.fsf@oldenburg2.str.redhat.com>
+        <117220011.27079.1559663870037.JavaMail.zimbra@efficios.com>
+        <87wohzorj0.fsf@oldenburg2.str.redhat.com>
+        <1329439108.43041.1560348962006.JavaMail.zimbra@efficios.com>
+        <87blz27uio.fsf@oldenburg2.str.redhat.com>
+        <512441263.43096.1560350163180.JavaMail.zimbra@efficios.com>
+Date:   Wed, 12 Jun 2019 16:43:58 +0200
+In-Reply-To: <512441263.43096.1560350163180.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Wed, 12 Jun 2019 10:36:03 -0400
+        (EDT)")
+Message-ID: <8736ke7tjl.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-References: <20190611000230.152670-1-fengc@google.com> <20190611000230.152670-3-fengc@google.com>
-In-Reply-To: <20190611000230.152670-3-fengc@google.com>
-From:   Sumit Semwal <sumit.semwal@linaro.org>
-Date:   Wed, 12 Jun 2019 20:13:26 +0530
-Message-ID: <CAO_48GHkU5aZby7835mx+od6g2BbgvWLKo=dFOxnmEtscArDkg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 2/3] dma-buf: add DMA_BUF_{GET,SET}_NAME ioctls
-To:     Chenbo Feng <fengc@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 14:44:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Chenbo,
+* Mathieu Desnoyers:
 
-Thanks very much for your patches. Other than a couple tiny nits
-below, I think these look good, and I will merge them before the end
-of this week.
-On Tue, 11 Jun 2019 at 05:32, Chenbo Feng <fengc@google.com> wrote:
+> ----- On Jun 12, 2019, at 4:22 PM, Florian Weimer fweimer@redhat.com wrote:
 >
-> From: Greg Hackmann <ghackmann@google.com>
+>> * Mathieu Desnoyers:
+>> 
+>>>> It's the registration from libc.so which needs some care.  In
+>>>> particular, we must not override an existing registration.
+>>>
+>>> OK, so it could check if __rseq_abi.cpu_id is -1, and only
+>>> perform registration if it is the case. Or do you have another
+>>> approach in mind ?
+>> 
+>> No, __rseq_abi will not be shared with the outer libc, so the inner libc
+>> will always see -1 there, even if the outer libc has performed
+>> registration.
+>> 
+>> libio/vtables.c has some example what you can do:
+>> 
+>>  /* In case this libc copy is in a non-default namespace, we always
+>>     need to accept foreign vtables because there is always a
+>>     possibility that FILE * objects are passed across the linking
+>>     boundary.  */
+>>  {
+>>    Dl_info di;
+>>    struct link_map *l;
+>>    if (!rtld_active ()
+>>        || (_dl_addr (_IO_vtable_check, &di, &l, NULL) != 0
+>>            && l->l_ns != LM_ID_BASE))
+>>      return;
+>>  }
+>> 
+>> _IO_vtable_check would have to be replaced with your own function; the
+>> actual function doesn't really matter.
+>> 
+>> The rtld_active check covers the static dlopen case, where
+>> rtld_active () is false in the inner libc.
 >
-> This patch adds complimentary DMA_BUF_SET_NAME and DMA_BUF_GET_NAME
-> ioctls, which lets userspace processes attach a free-form name to each
-> buffer.
-This should remove the _GET_NAME bit since it's not there anymore.
+> Then out of curiosity, would it also work if I check for
 >
-> This information can be extremely helpful for tracking and accounting
-> shared buffers.  For example, on Android, we know what each buffer will
-> be used for at allocation time: GL, multimedia, camera, etc.  The
-> userspace allocator can use DMA_BUF_SET_NAME to associate that
-> information with the buffer, so we can later give developers a
-> breakdown of how much memory they're allocating for graphics, camera,
-> etc.
+> if (!__libc_multiple_libcs)
 >
-> Signed-off-by: Greg Hackmann <ghackmann@google.com>
-> Signed-off-by: Chenbo Feng <fengc@google.com>
-> ---
->  drivers/dma-buf/dma-buf.c    | 49 +++++++++++++++++++++++++++++++++---
->  include/linux/dma-buf.h      |  5 +++-
->  include/uapi/linux/dma-buf.h |  3 +++
->  3 files changed, 53 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index ffd5a2ad7d6f..c1da5f9ce44d 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -48,8 +48,24 @@ struct dma_buf_list {
->
->  static struct dma_buf_list db_list;
->
-> +static char *dmabuffs_dname(struct dentry *dentry, char *buffer, int buflen)
-> +{
-> +       struct dma_buf *dmabuf;
-> +       char name[DMA_BUF_NAME_LEN];
-> +       size_t ret = 0;
-> +
-> +       dmabuf = dentry->d_fsdata;
-> +       mutex_lock(&dmabuf->lock);
-> +       if (dmabuf->name)
-> +               ret = strlcpy(name, dmabuf->name, DMA_BUF_NAME_LEN);
-> +       mutex_unlock(&dmabuf->lock);
-> +
-> +       return dynamic_dname(dentry, buffer, buflen, "/%s:%s",
-> +                            dentry->d_name.name, ret > 0 ? name : "");
-> +}
-> +
->  static const struct dentry_operations dma_buf_dentry_ops = {
-> -       .d_dname = simple_dname,
-> +       .d_dname = dmabuffs_dname,
->  };
->
->  static struct vfsmount *dma_buf_mnt;
-> @@ -297,6 +313,27 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
->         return events;
->  }
->
-> +static long dma_buf_set_name(struct dma_buf *dmabuf, const char __user *buf)
-> +{
-> +       char *name = strndup_user(buf, DMA_BUF_NAME_LEN);
-> +       long ret = 0;
-> +
-> +       if (IS_ERR(name))
-> +               return PTR_ERR(name);
-> +
-> +       mutex_lock(&dmabuf->lock);
-> +       if (!list_empty(&dmabuf->attachments)) {
-> +               ret = -EBUSY;
-> +               goto out_unlock;
-> +       }
-We might also want to document this better - that name change for a
-buffer is still allowed if it doesn't have any attached devices after
-its usage is done but before it is destroyed? (theoritically it could
-be reused with a different name?)
+> in LIBC_START_MAIN ?
 
-> +       kfree(dmabuf->name);
-> +       dmabuf->name = name;
-> +
-> +out_unlock:
-> +       mutex_unlock(&dmabuf->lock);
-> +       return ret;
-> +}
-> +
->  static long dma_buf_ioctl(struct file *file,
->                           unsigned int cmd, unsigned long arg)
->  {
-> @@ -335,6 +372,10 @@ static long dma_buf_ioctl(struct file *file,
->                         ret = dma_buf_begin_cpu_access(dmabuf, direction);
->
->                 return ret;
-> +
-> +       case DMA_BUF_SET_NAME:
-> +               return dma_buf_set_name(dmabuf, (const char __user *)arg);
-> +
->         default:
->                 return -ENOTTY;
->         }
-> @@ -376,6 +417,7 @@ static struct file *dma_buf_getfile(struct dma_buf *dmabuf, int flags)
->                 goto err_alloc_file;
->         file->f_flags = flags & (O_ACCMODE | O_NONBLOCK);
->         file->private_data = dmabuf;
-> +       file->f_path.dentry->d_fsdata = dmabuf;
->
->         return file;
->
-> @@ -1082,12 +1124,13 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
->                         continue;
->                 }
->
-> -               seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08lu\n",
-> +               seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08lu\t%s\n",
->                                 buf_obj->size,
->                                 buf_obj->file->f_flags, buf_obj->file->f_mode,
->                                 file_count(buf_obj->file),
->                                 buf_obj->exp_name,
-> -                               file_inode(buf_obj->file)->i_ino);
-> +                               file_inode(buf_obj->file)->i_ino,
-> +                               buf_obj->name ?: "");
->
->                 robj = buf_obj->resv;
->                 while (true) {
-> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> index 58725f890b5b..582998e19df6 100644
-> --- a/include/linux/dma-buf.h
-> +++ b/include/linux/dma-buf.h
-> @@ -255,10 +255,12 @@ struct dma_buf_ops {
->   * @file: file pointer used for sharing buffers across, and for refcounting.
->   * @attachments: list of dma_buf_attachment that denotes all devices attached.
->   * @ops: dma_buf_ops associated with this buffer object.
-> - * @lock: used internally to serialize list manipulation, attach/detach and vmap/unmap
-> + * @lock: used internally to serialize list manipulation, attach/detach and
-> + *        vmap/unmap, and accesses to name
->   * @vmapping_counter: used internally to refcnt the vmaps
->   * @vmap_ptr: the current vmap ptr if vmapping_counter > 0
->   * @exp_name: name of the exporter; useful for debugging.
-> + * @name: userspace-provided name; useful for accounting and debugging.
->   * @owner: pointer to exporter module; used for refcounting when exporter is a
->   *         kernel module.
->   * @list_node: node for dma_buf accounting and debugging.
-> @@ -286,6 +288,7 @@ struct dma_buf {
->         unsigned vmapping_counter;
->         void *vmap_ptr;
->         const char *exp_name;
-> +       const char *name;
->         struct module *owner;
->         struct list_head list_node;
->         void *priv;
-> diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
-> index d75df5210a4a..dbc7092e04b5 100644
-> --- a/include/uapi/linux/dma-buf.h
-> +++ b/include/uapi/linux/dma-buf.h
-> @@ -35,7 +35,10 @@ struct dma_buf_sync {
->  #define DMA_BUF_SYNC_VALID_FLAGS_MASK \
->         (DMA_BUF_SYNC_RW | DMA_BUF_SYNC_END)
->
-> +#define DMA_BUF_NAME_LEN       32
-> +
->  #define DMA_BUF_BASE           'b'
->  #define DMA_BUF_IOCTL_SYNC     _IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
-> +#define DMA_BUF_SET_NAME       _IOW(DMA_BUF_BASE, 1, const char *)
->
->  #endif
-> --
-> 2.22.0.rc2.383.gf4fbbf30c2-goog
->
+In my experience, __libc_multiple_libcs is not reliable.  I have not yet
+figured out why.
 
-Best,
-Sumit.
+Thanks,
+Florian
