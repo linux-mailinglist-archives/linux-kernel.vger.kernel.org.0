@@ -2,96 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94BB443149
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 22:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1172843168
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 23:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389876AbfFLU7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 16:59:19 -0400
-Received: from mail-lj1-f174.google.com ([209.85.208.174]:38351 "EHLO
-        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389390AbfFLU7T (ORCPT
+        id S1728643AbfFLVQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 17:16:33 -0400
+Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:20038 "EHLO
+        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbfFLVQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 16:59:19 -0400
-Received: by mail-lj1-f174.google.com with SMTP id o13so16381049lji.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 13:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=l3VEyWUIpz19ynNy/N2qHdEiDLqpzuYJDD7NorzZ7xc=;
-        b=N2HZ4/L5uWJ8QNMKDSq0FO7tTwa7rTy4QL45jcK35gfpeeQw2qQZq01cIdQtxhG41D
-         2568TNO1fhu46tbEeVx1JoKSvpG1NG9yKiBzsUnlaQvbSXsi6kG+f2qTAtU1drEbSEiF
-         xcRbsYkmZVCjE/j1Xzk7FxQ8fm+layLakyIpAGLaBKzo1aPTI036n5Lhdb+eYBvzyQl8
-         FxcUURBFsI0JNdOrhm5UA7otbbT2VU9ymTBIkZfejGahJUObQ6EIu5+7f0odQKDyGGJi
-         Odpv5uATkGYtakdyOZfZwZb1ly1DEEjcIt5Lkko583FlfQtaHO+57aosTnFqar5y8tky
-         2RdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=l3VEyWUIpz19ynNy/N2qHdEiDLqpzuYJDD7NorzZ7xc=;
-        b=PG6kRdp7KgF5a7p7amHJUtntmd1xKxtMdVePBoDUl+++GgIhArcU2rJwnQC8ZJ3Ek3
-         uimRasOMQ5j6ljifEDp95BfjRVkvtIAVYqvyzwev9RsQSqfNB6D3OZxgAHogDycvWRfi
-         Wf06O8x7Rt5ijkIU0+c3LhvvVWIAwxRRUiVYxHuPqG2CfqusXzTCeIzkn0kp2lmyB6pr
-         6VZluFZic73TrWyi7m+mDOtxG0wcAfI1UG9qljhSVIqnbGVrgqevOYPm43G0AGpjgRyW
-         GMhe7mi0HLM+WzZC3RzcQCwKZeEdVzFn1Eu8qC7NaFpiwaIyJSBaGkRmZ2Mbw3pm6Mlf
-         ZBxw==
-X-Gm-Message-State: APjAAAXvCfZN8hpWDgWCk0/uBEkIGLj6OQPpVVu7k2EyfUemLVXU+t2d
-        CnIoXH7JcWj7cdCUlB642bflWgtBbDxPb5Txk4HjbAr03Q==
-X-Google-Smtp-Source: APXvYqyQ9xRqxco6pzmg3Kllok/kjb/RUNCEP+XpYPOK05OKF32F7Ru4shBbfMW+WyLGgAMoWcG0oW76u5p69zhqhcw=
-X-Received: by 2002:a2e:9106:: with SMTP id m6mr31118354ljg.164.1560373156513;
- Wed, 12 Jun 2019 13:59:16 -0700 (PDT)
+        Wed, 12 Jun 2019 17:16:33 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jun 2019 17:16:32 EDT
+Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: QfRf9EeL1BNxpYwyX0nbaHzcrDo8wMEyclPRUDesaZsGVTKPMM7BppjUsiW+zRytvGtO/FSjZb
+ oA068Dc9XzZM67LDRU9TtehHKSnT8gSeH1KgeVyiwM2AxZnNBXwoXCFKA1CDSgmtf43B+jZmwU
+ M5PuivFzmR6df/orMp1GHDG+DC7OT5CAnyU+S5914GdYeeKqJtkqXMZD7/b2bNqA/z2zOXG7/I
+ O8CZ0wV88ckeDfFf9BK99d9UDsFNqSrKmnnyf3i2SNxPn4nFNZrEFE+ICv7158GopGVRrFHJyy
+ xBk=
+X-SBRS: 2.7
+X-MesageID: 1647832
+X-Ironport-Server: esa6.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.63,367,1557201600"; 
+   d="scan'208";a="1647832"
+Subject: Re: [Xen-devel] [RFC PATCH 02/16] x86/xen: cpuid support in xenhost_t
+To:     Ankur Arora <ankur.a.arora@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>
+CC:     <jgross@suse.com>, <sstabellini@kernel.org>,
+        <konrad.wilk@oracle.com>, <pbonzini@redhat.com>,
+        <boris.ostrovsky@oracle.com>, <joao.m.martins@oracle.com>
+References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
+ <20190509172540.12398-3-ankur.a.arora@oracle.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <2f5188ae-e542-57b5-ed12-83dd3cbbafbd@citrix.com>
+Date:   Wed, 12 Jun 2019 22:09:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 12 Jun 2019 16:59:05 -0400
-Message-ID: <CAHC9VhT8tYyUt_gtUR-jD-33LMW2RmzSXwP_OgPrh5ujQSiuUA@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v5.2 (#2)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190509172540.12398-3-ankur.a.arora@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 09/05/2019 18:25, Ankur Arora wrote:
+> xen_cpuid_base() is used to probe and setup features early in a
+> guest's lifetime.
+>
+> We want this to behave differently depending on xenhost->type: for
+> instance, local xenhosts cannot intercept the cpuid instruction at all.
+>
+> Add op (*cpuid_base)() in xenhost_ops_t.
+>
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-Three patches for v5.2; one fixes a problem where we weren't correctly
-logging raw SELinux labels, the other two fix problems where we
-weren't properly checking calls to kmemdup().  Please merge for the
-next v5.2-rc release.
+What is the real layout of hypervisor nesting here?
 
-Thanks,
--Paul
---
-The following changes since commit 05174c95b83f8aca0c47b87115abb7a6387aafa5:
+When Xen is at L0, all HVM guests get working CPUID faulting to combat
+this problem, because CPUID faulting can be fully emulated even on older
+Intel hardware, and AMD hardware.
 
- selinux: do not report error on connect(AF_UNSPEC) (2019-05-20 21:46:02 -0400)
+It is a far cleaner way of fixing the problem.
 
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190612
-
-for you to fetch changes up to fec6375320c6399c708fa9801f8cfbf950fee623:
-
- selinux: fix a missing-check bug in selinux_sb_eat_lsm_opts()
-   (2019-06-12 12:27:26 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.2 PR 20190612
-
-----------------------------------------------------------------
-Gen Zhang (2):
-     selinux: fix a missing-check bug in selinux_add_mnt_opt( )
-     selinux: fix a missing-check bug in selinux_sb_eat_lsm_opts()
-
-Ondrej Mosnacek (1):
-     selinux: log raw contexts as untrusted strings
-
-security/selinux/avc.c   | 10 ++++++++--
-security/selinux/hooks.c | 39 ++++++++++++++++++++++++++++-----------
-2 files changed, 36 insertions(+), 13 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
+~Andrew
