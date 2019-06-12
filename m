@@ -2,79 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABAC242714
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D5B4271C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:12:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439358AbfFLNK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 09:10:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:48586 "EHLO vps0.lunn.ch"
+        id S2439386AbfFLNLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:11:45 -0400
+Received: from 8bytes.org ([81.169.241.247]:43616 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439328AbfFLNK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:10:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Zzc6GI7lGEPaQXGvlamBcEyrm5Fho0Vz0zqRdDP5hq0=; b=QQ0PwDAeuICS/1pKrFIl9qqFCV
-        DVvk65aiWdgNZKve6NvZEweANaJXywqmPwYKrmAVNEvtvFwEVTj7E+J2FualB+Tb+98QSaZKGqZgO
-        pc0lw2PM0jUsWWW9P6hUqGY37Dc4KXe0Ps3dd4cQbhHZq5gx9+yKnAXHrTjlMkvVm/1o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hb31d-0004Fu-AP; Wed, 12 Jun 2019 15:10:49 +0200
-Date:   Wed, 12 Jun 2019 15:10:49 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     "Y.b. Lu" <yangbo.lu@nxp.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        id S2439360AbfFLNLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 09:11:45 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 9C2EF64D; Wed, 12 Jun 2019 15:11:43 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 15:11:43 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/6] ptp: add QorIQ PTP support for DPAA2
-Message-ID: <20190612131049.GC23615@lunn.ch>
-References: <20190610032108.5791-1-yangbo.lu@nxp.com>
- <20190610032108.5791-2-yangbo.lu@nxp.com>
- <20190610130601.GD8247@lunn.ch>
- <VI1PR0401MB2237247525AB5DB5B5F275A8F8EC0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>
+Subject: Re: [PATCH v2 0/4] iommu: Add device fault reporting API
+Message-ID: <20190612131143.GF21613@8bytes.org>
+References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
+ <20190612081944.GB17505@8bytes.org>
+ <0f21e1b2-837f-87ba-6cf3-f6490d9e2a57@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <VI1PR0401MB2237247525AB5DB5B5F275A8F8EC0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <0f21e1b2-837f-87ba-6cf3-f6490d9e2a57@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig index
-> > > 9b8fee5..b1b454f 100644
-> > > --- a/drivers/ptp/Kconfig
-> > > +++ b/drivers/ptp/Kconfig
-> > > @@ -44,7 +44,7 @@ config PTP_1588_CLOCK_DTE
-> > >
-> > >  config PTP_1588_CLOCK_QORIQ
-> > >  	tristate "Freescale QorIQ 1588 timer as PTP clock"
-> > > -	depends on GIANFAR || FSL_DPAA_ETH || FSL_ENETC || FSL_ENETC_VF
-> > > +	depends on GIANFAR || FSL_DPAA_ETH || FSL_DPAA2_ETH ||
-> > FSL_ENETC ||
-> > > +FSL_ENETC_VF
-> > >  	depends on PTP_1588_CLOCK
-> > 
-> > Hi Yangbo
-> > 
-> > Could COMPILE_TEST also be added?
-> 
-> [Y.b. Lu] COMPILE_TEST is usually for other ARCHs build coverage.
-> Do you want me to append it after these Ethernet driver dependencies?
+On Wed, Jun 12, 2019 at 12:54:51PM +0100, Jean-Philippe Brucker wrote:
+> Thanks! As discussed I think we need to add padding into the iommu_fault
+> structure before this reaches mainline, to make the UAPI easier to
+> extend in the future. It's already possible to extend but requires
+> introducing a new ABI version number and support two structures. Adding
+> some padding would only require introducing new flags. If there is no
+> objection I'll send a one-line patch bumping the structure size to 64
+> bytes (currently 48)
 
-Hii Y.b. Lu
+Sounds good, please submit the patch.
 
-Normally, drivers like this should be able to compile independent of
-the MAC driver. So you should be able to add COMPILE_TEST here.
+Regards,
 
-    Andrew
+	Joerg
