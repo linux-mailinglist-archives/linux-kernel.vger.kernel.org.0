@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C20FC421D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E76421D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437793AbfFLJ5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:57:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37364 "EHLO mx1.redhat.com"
+        id S2437837AbfFLJ5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:57:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731931AbfFLJ5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:57:48 -0400
+        id S1731931AbfFLJ5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:57:50 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D452331628F6;
-        Wed, 12 Jun 2019 09:57:46 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3E8822F8BFA;
+        Wed, 12 Jun 2019 09:57:50 +0000 (UTC)
 Received: from localhost.default (ovpn-116-101.phx2.redhat.com [10.3.116.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB19C614C4;
-        Wed, 12 Jun 2019 09:57:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26A822CFA7;
+        Wed, 12 Jun 2019 09:57:46 +0000 (UTC)
 From:   Daniel Bristot de Oliveira <bristot@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -34,23 +34,28 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
         Marcelo Tosatti <mtosatti@redhat.com>,
         Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: [PATCH V6 2/6] x86/jump_label: Add a __jump_label_set_jump_code() helper
-Date:   Wed, 12 Jun 2019 11:57:27 +0200
-Message-Id: <d2f52a0010ecd399cf9b02a65bcf5836571b9e52.1560325897.git.bristot@redhat.com>
+Subject: [PATCH V6 3/6] jump_label: Sort entries of the same key by the code
+Date:   Wed, 12 Jun 2019 11:57:28 +0200
+Message-Id: <f57ae83e0592418ba269866bb7ade570fc8632e0.1560325897.git.bristot@redhat.com>
 In-Reply-To: <cover.1560325897.git.bristot@redhat.com>
 References: <cover.1560325897.git.bristot@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 09:57:47 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 12 Jun 2019 09:57:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the definition of the code to be written from
-__jump_label_transform() to a specialized function. No functional
-change.
+In the batching mode, all the entries of a given key are updated at once.
+During the update of a key, a hit in the int3 handler will check if the
+hitting code address belongs to one of these keys.
+
+To optimize the search of a given code in the vector of entries being
+updated, a binary search is used. The binary search relies on the order
+of the entries of a key by its code. Hence the keys need to be sorted
+by the code too, so sort the entries of a given key by the code.
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -71,90 +76,38 @@ Cc: Clark Williams <williams@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/kernel/jump_label.c | 41 +++++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 15 deletions(-)
+ kernel/jump_label.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index e631c358f7f4..d3328062b8cf 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -35,19 +35,19 @@ static void bug_at(unsigned char *ip, int line)
- 	BUG();
- }
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 468ca421ad9a..2bd172e1e95f 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -37,12 +37,26 @@ static int jump_label_cmp(const void *a, const void *b)
+ 	const struct jump_entry *jea = a;
+ 	const struct jump_entry *jeb = b;
  
--static void __ref __jump_label_transform(struct jump_entry *entry,
--					 enum jump_label_type type,
--					 int init)
-+static void __jump_label_set_jump_code(struct jump_entry *entry,
-+				       enum jump_label_type type,
-+				       union jump_code_union *code,
-+				       int init)
- {
--	union jump_code_union jmp;
- 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
- 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
--	const void *expect, *code;
-+	const void *expect;
- 	int line;
++	/*
++	 * Entrires are sorted by key.
++	 */
+ 	if (jump_entry_key(jea) < jump_entry_key(jeb))
+ 		return -1;
  
--	jmp.jump = 0xe9;
--	jmp.offset = jump_entry_target(entry) -
--		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-+	code->jump = 0xe9;
-+	code->offset = jump_entry_target(entry) -
-+		       (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ 	if (jump_entry_key(jea) > jump_entry_key(jeb))
+ 		return 1;
  
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
-@@ -56,19 +56,30 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 			expect = ideal_nop; line = __LINE__;
- 		}
- 
--		code = &jmp.code;
-+		if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
-+			bug_at((void *)jump_entry_code(entry), line);
++	/*
++	 * In the batching mode, entries should also be sorted by the code
++	 * inside the already sorted list of entries, enabling a bsearch in
++	 * the vector.
++	 */
++	if (jump_entry_code(jea) < jump_entry_code(jeb))
++		return -1;
 +
- 	} else {
- 		if (init) {
- 			expect = default_nop; line = __LINE__;
- 		} else {
--			expect = &jmp.code; line = __LINE__;
-+			expect = code->code; line = __LINE__;
- 		}
- 
--		code = ideal_nop;
-+		if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
-+			bug_at((void *)jump_entry_code(entry), line);
++	if (jump_entry_code(jea) > jump_entry_code(jeb))
++		return 1;
 +
-+		memcpy(code, ideal_nop, JUMP_LABEL_NOP_SIZE);
- 	}
-+}
-+
-+static void __ref __jump_label_transform(struct jump_entry *entry,
-+					 enum jump_label_type type,
-+					 int init)
-+{
-+	union jump_code_union code;
- 
--	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
--		bug_at((void *)jump_entry_code(entry), line);
-+	__jump_label_set_jump_code(entry, type, &code, init);
- 
- 	/*
- 	 * As long as only a single processor is running and the code is still
-@@ -82,12 +93,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	 * always nop being the 'currently valid' instruction
- 	 */
- 	if (init || system_state == SYSTEM_BOOTING) {
--		text_poke_early((void *)jump_entry_code(entry), code,
-+		text_poke_early((void *)jump_entry_code(entry), &code,
- 				JUMP_LABEL_NOP_SIZE);
- 		return;
- 	}
- 
--	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
-+	text_poke_bp((void *)jump_entry_code(entry), &code, JUMP_LABEL_NOP_SIZE,
- 		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ 	return 0;
  }
  
 -- 
