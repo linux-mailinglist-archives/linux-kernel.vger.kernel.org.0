@@ -2,104 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B77423C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4D54423EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:22:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438351AbfFLLPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 07:15:05 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37505 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438323AbfFLLPA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:15:00 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 22so6101370wmg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 04:14:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=N7TfMirow0WLkJ8Qk5sTGDNuiXjkVvo5PhKfS+WN4/0=;
-        b=TvHkcos3aVvBmtDnRVLiF8pREYuprtIOehZYrLYdAyjZP7EdbPz6anRT6UL2bn+1lt
-         iRSNcVbOmYQ+kkQ3JbVs1+N1QXgzSkLX7YOg4L2t2XY70f8q+rjIVRsJ4twJwhJN5UVZ
-         5vJXv8Lim0Z9xob8xQk0ZvGfB+Z70kXkXVtj9Vo9sPNZX6nj6jRDgEYn1CZRGWviaBdS
-         8d2kZlRPWm/+iACF30dR/3uZm/5FVD9NxZ0mvNShAZQiO33Rxhr5EDslpWhYAWS2n20q
-         sZ86aP63QHnIW66uQRUQxsSNaaLrpUhja+T3uqyEQLfK6EbRGrP9SJ6Yvc6TpIiuxChN
-         7asQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references;
-        bh=N7TfMirow0WLkJ8Qk5sTGDNuiXjkVvo5PhKfS+WN4/0=;
-        b=lbx66+IBF18MNXv+HO546yLPF3O9R4MJ5W8WP1w4FLoXK6SUE2M5mXTFQ4sS5fGUa4
-         ZXa+Arr6VyQqFdjUzhVy+y3ppa4mKlo1lbjpBrAWO88J4i75EYzSpKJX2VMrS19Anjwp
-         6PAFb/z2WU1donvZnQ3YqKia1nkhZqou0aoh3xqznJY5HJsYcShqdtyWbO932F2ERbqw
-         onWvbiqbWTobQonh9UGR2I+q8fdZZl19Vb1HjIHKDWYNCurfx6Ika4IUVs+pMFtxiJRF
-         675WXlB95CY/Yz+rEGsCzAm2CH/mSBGJzNlYL3EhFDR04pGyCrc2pBTCDFET4wnkczZL
-         Yj8g==
-X-Gm-Message-State: APjAAAWIpLHL9WSsBaY6eGFa8dSemZCvkOJAbluOzdfSRg5RSG4a7Nba
-        /Edl4eVv8YYupdmdA8nVoOiCEQ==
-X-Google-Smtp-Source: APXvYqxDqteBduXIGovJOsGxQCU7BEXqUQmBQgzI25tvhIXaofsgXxbwQoEvBU7rTYV1bD0qZFpatw==
-X-Received: by 2002:a1c:1b81:: with SMTP id b123mr21041986wmb.144.1560338098580;
-        Wed, 12 Jun 2019 04:14:58 -0700 (PDT)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id g19sm6514083wmg.10.2019.06.12.04.14.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2019 04:14:58 -0700 (PDT)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        michal.simek@xilinx.com
-Cc:     Nava kishore Manne <nava.manne@xilinx.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 6/6] serial: uartps: Remove useless return from cdns_uart_poll_put_char
-Date:   Wed, 12 Jun 2019 13:14:43 +0200
-Message-Id: <19a9f67770e1896dde57d94b093273b503610eef.1560338079.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1560338079.git.michal.simek@xilinx.com>
-References: <cover.1560338079.git.michal.simek@xilinx.com>
-In-Reply-To: <cover.1560338079.git.michal.simek@xilinx.com>
-References: <cover.1560338079.git.michal.simek@xilinx.com>
+        id S1730563AbfFLLWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 07:22:16 -0400
+Received: from sym2.noone.org ([178.63.92.236]:57166 "EHLO sym2.noone.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725771AbfFLLWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 07:22:15 -0400
+X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jun 2019 07:22:15 EDT
+Received: by sym2.noone.org (Postfix, from userid 1002)
+        id 45P47J10YMzvjc1; Wed, 12 Jun 2019 13:16:11 +0200 (CEST)
+From:   Tobias Klauser <tklauser@distanz.ch>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] csky: remove unsued thread_saved_pc and *_segments functions/macros
+Date:   Wed, 12 Jun 2019 13:16:11 +0200
+Message-Id: <20190612111611.13058-1-tklauser@distanz.ch>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+These are used nowhere in the tree (except for some architectures which
+define them for their own use) and were already removed in:
 
-There is no reason to call return at the end of function which should
-return void.
+commit 6474924e2b5d ("arch: remove unused macro/function thread_saved_pc()")
+commit c17c02040bf0 ("arch: remove unused *_segments() macros/functions")
 
-The patch is also remove one checkpatch warning:
-WARNING: void function return statements are not generally useful
-+	return;
-+}
+Remove them from arch/csky as well.
 
-Fixes: 6ee04c6c5488 ("tty: xuartps: Add polled mode support for xuartps")
-Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
+ arch/csky/include/asm/processor.h |  6 ------
+ arch/csky/kernel/process.c        | 10 ----------
+ 2 files changed, 16 deletions(-)
 
-Changes in v2:
-- Split patch from v1
-- Add Fixes tag
-
- drivers/tty/serial/xilinx_uartps.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index d4c1ae2ffca6..bcef254fa03c 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1074,8 +1074,6 @@ static void cdns_uart_poll_put_char(struct uart_port *port, unsigned char c)
- 		cpu_relax();
+diff --git a/arch/csky/include/asm/processor.h b/arch/csky/include/asm/processor.h
+index 21e0bd5293dd..464575156f0f 100644
+--- a/arch/csky/include/asm/processor.h
++++ b/arch/csky/include/asm/processor.h
+@@ -83,12 +83,6 @@ static inline void release_thread(struct task_struct *dead_task)
  
- 	spin_unlock_irqrestore(&port->lock, flags);
+ extern int kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
+ 
+-#define copy_segments(tsk, mm)		do { } while (0)
+-#define release_segments(mm)		do { } while (0)
+-#define forget_segments()		do { } while (0)
 -
--	return;
- }
- #endif
+-extern unsigned long thread_saved_pc(struct task_struct *tsk);
+-
+ unsigned long get_wchan(struct task_struct *p);
  
+ #define KSTK_EIP(tsk)		(task_pt_regs(tsk)->pc)
+diff --git a/arch/csky/kernel/process.c b/arch/csky/kernel/process.c
+index e555740c0be5..adeb6b1bdb42 100644
+--- a/arch/csky/kernel/process.c
++++ b/arch/csky/kernel/process.c
+@@ -24,16 +24,6 @@ asmlinkage void ret_from_kernel_thread(void);
+  */
+ void flush_thread(void){}
+ 
+-/*
+- * Return saved PC from a blocked thread
+- */
+-unsigned long thread_saved_pc(struct task_struct *tsk)
+-{
+-	struct switch_stack *sw = (struct switch_stack *)tsk->thread.ksp;
+-
+-	return sw->r15;
+-}
+-
+ int copy_thread(unsigned long clone_flags,
+ 		unsigned long usp,
+ 		unsigned long kthread_arg,
 -- 
-2.17.1
+2.20.0
 
