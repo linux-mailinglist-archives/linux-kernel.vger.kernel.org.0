@@ -2,137 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E5D41C5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 08:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDE841C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 08:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405128AbfFLGmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 02:42:08 -0400
-Received: from mga03.intel.com ([134.134.136.65]:46990 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbfFLGmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 02:42:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 23:42:06 -0700
-X-ExtLoop1: 1
-Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.70])
-  by FMSMGA003.fm.intel.com with SMTP; 11 Jun 2019 23:42:04 -0700
-Received: by ubuntu (sSMTP sendmail emulation); Wed, 12 Jun 2019 14:42:02 +0800
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        lftan.linux@gmail.com, Ley Foon Tan <ley.foon.tan@intel.com>
-Subject: [PATCH v2] PCI: altera: Fix configuration type based on secondary number
-Date:   Wed, 12 Jun 2019 14:42:00 +0800
-Message-Id: <1560321720-4083-1-git-send-email-ley.foon.tan@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S2407310AbfFLGnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 02:43:22 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:7829 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406970AbfFLGnR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 02:43:17 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id A81053F4D4;
+        Wed, 12 Jun 2019 08:43:09 +0200 (CEST)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=vmwopensource.org header.i=@vmwopensource.org header.b=m3g04XUO;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -3.1
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.1 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DKIM_SIGNED=0.1,
+        DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GIepRt2s3xa6; Wed, 12 Jun 2019 08:42:56 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 5499A3F38D;
+        Wed, 12 Jun 2019 08:42:55 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id BA7783619AF;
+        Wed, 12 Jun 2019 08:42:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=vmwopensource.org;
+        s=mail; t=1560321774;
+        bh=WByRYt5aLCsI5/JRo0mK5a2KNL8fi1jYGttv4dC9TWM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m3g04XUOi3+wmlV5q5yPo/679JErYTahFbyb9/TgMh9mwskbT6O4oJ6p58+JNehNT
+         DCe+GRbQmmugO+pW/5d/5FgblMp3QWO8T4AmXg+D7na6lEtBx29/MmWP2kMlkRZM2O
+         1Z/0ncxWla/yhVHlhUA7Tf3GHqh0IGZx2PLpxBOQ=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thellstrom@vmwopensource.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-mm@kvack.org
+Subject: [PATCH v5 0/9] Emulated coherent graphics memory
+Date:   Wed, 12 Jun 2019 08:42:34 +0200
+Message-Id: <20190612064243.55340-1-thellstrom@vmwopensource.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fix issue when access config from PCIe switch.
+Planning to merge this through the drm/vmwgfx tree soon, so if there
+are any objections, please speak up.
 
-Stratix 10 PCIe controller does not support Type 1 to Type 0 conversion
-as previous version (V1) does.
+Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
+to provide coherent graphics memory, meaning that the GPU sees any
+content written to the coherent memory on the next GPU operation that
+touches that memory, and the CPU sees any content written by the GPU
+to that memory immediately after any fence object trailing the GPU
+operation has signaled.
 
-The PCIe controller need to send Type 0 config TLP if the targeting bus
-matches with the secondary bus number, which is when the TLP is targeting
-the immediate device on the link.
+Paravirtual drivers that otherwise require explicit synchronization
+needs to do this by hooking up dirty tracking to pagefault handlers
+and buffer object validation. This is a first attempt to do that for
+the vmwgfx driver.
 
-The PCIe controller send Type 1 config TLP if the targeting bus is
-larger than the secondary bus, which is when the TLP is targeting the
-device not immediate on the link.
+The mm patches has been out for RFC. I think I have addressed all the
+feedback I got, except a possible softdirty breakage. But although the
+dirty-tracking and softdirty may write-protect PTEs both care about,
+that shouldn't really cause any operation interference. In particular
+since we use the hardware dirty PTE bits and softdirty uses other PTE bits.
 
-Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
+For the TTM changes they are hopefully in line with the long-term
+strategy of making helpers out of what's left of TTM.
 
----
-v2:
-- Add get_tlp_header() function.
----
- drivers/pci/controller/pcie-altera.c | 41 ++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 14 deletions(-)
+The code has been tested and excercised by a tailored version of mesa
+where we disable all explicit synchronization and assume graphics memory
+is coherent. The performance loss varies of course; a typical number is
+around 5%.
 
-diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-index 27222071ace7..d2497ca43828 100644
---- a/drivers/pci/controller/pcie-altera.c
-+++ b/drivers/pci/controller/pcie-altera.c
-@@ -44,6 +44,8 @@
- #define S10_RP_RXCPL_STATUS		0x200C
- #define S10_RP_CFG_ADDR(pcie, reg)	\
- 	(((pcie)->hip_base) + (reg) + (1 << 20))
-+#define S10_RP_SECONDARY(pcie)		\
-+	readb(S10_RP_CFG_ADDR(pcie, PCI_SECONDARY_BUS))
- 
- /* TLP configuration type 0 and 1 */
- #define TLP_FMTTYPE_CFGRD0		0x04	/* Configuration Read Type 0 */
-@@ -55,14 +57,9 @@
- #define TLP_WRITE_TAG			0x10
- #define RP_DEVFN			0
- #define TLP_REQ_ID(bus, devfn)		(((bus) << 8) | (devfn))
--#define TLP_CFGRD_DW0(pcie, bus)					\
--	((((bus == pcie->root_bus_nr) ? pcie->pcie_data->cfgrd0		\
--				: pcie->pcie_data->cfgrd1) << 24) |	\
--				TLP_PAYLOAD_SIZE)
--#define TLP_CFGWR_DW0(pcie, bus)					\
--	((((bus == pcie->root_bus_nr) ? pcie->pcie_data->cfgwr0		\
--				: pcie->pcie_data->cfgwr1) << 24) |	\
--				TLP_PAYLOAD_SIZE)
-+#define TLP_CFG_DW0(pcie, cfg)		\
-+		(((cfg) << 24) |	\
-+		  TLP_PAYLOAD_SIZE)
- #define TLP_CFG_DW1(pcie, tag, be)	\
- 	(((TLP_REQ_ID(pcie->root_bus_nr,  RP_DEVFN)) << 16) | (tag << 8) | (be))
- #define TLP_CFG_DW2(bus, devfn, offset)	\
-@@ -322,14 +319,31 @@ static void s10_tlp_write_packet(struct altera_pcie *pcie, u32 *headers,
- 	s10_tlp_write_tx(pcie, data, RP_TX_EOP);
- }
- 
-+static void get_tlp_header(struct altera_pcie *pcie, u8 bus, u32 devfn,
-+			   int where, u8 byte_en, bool read, u32 *headers)
-+{
-+	u8 cfg;
-+	u8 cfg0 = read ? pcie->pcie_data->cfgrd0 : pcie->pcie_data->cfgwr0;
-+	u8 cfg1 = read ? pcie->pcie_data->cfgrd1 : pcie->pcie_data->cfgwr1;
-+	u8 tag = read ? TLP_READ_TAG : TLP_WRITE_TAG;
-+
-+	if (pcie->pcie_data->version == ALTERA_PCIE_V1)
-+		cfg = (bus == pcie->root_bus_nr) ? cfg0 : cfg1;
-+	else
-+		cfg = (bus > S10_RP_SECONDARY(pcie)) ? cfg0 : cfg1;
-+
-+	headers[0] = TLP_CFG_DW0(pcie, cfg);
-+	headers[1] = TLP_CFG_DW1(pcie, tag, byte_en);
-+	headers[2] = TLP_CFG_DW2(bus, devfn, where);
-+}
-+
- static int tlp_cfg_dword_read(struct altera_pcie *pcie, u8 bus, u32 devfn,
- 			      int where, u8 byte_en, u32 *value)
- {
- 	u32 headers[TLP_HDR_SIZE];
- 
--	headers[0] = TLP_CFGRD_DW0(pcie, bus);
--	headers[1] = TLP_CFG_DW1(pcie, TLP_READ_TAG, byte_en);
--	headers[2] = TLP_CFG_DW2(bus, devfn, where);
-+	get_tlp_header(pcie, bus, devfn, where, byte_en, true,
-+		       headers);
- 
- 	pcie->pcie_data->ops->tlp_write_pkt(pcie, headers, 0, false);
- 
-@@ -342,9 +356,8 @@ static int tlp_cfg_dword_write(struct altera_pcie *pcie, u8 bus, u32 devfn,
- 	u32 headers[TLP_HDR_SIZE];
- 	int ret;
- 
--	headers[0] = TLP_CFGWR_DW0(pcie, bus);
--	headers[1] = TLP_CFG_DW1(pcie, TLP_WRITE_TAG, byte_en);
--	headers[2] = TLP_CFG_DW2(bus, devfn, where);
-+	get_tlp_header(pcie, bus, devfn, where, byte_en, false,
-+		       headers);
- 
- 	/* check alignment to Qword */
- 	if ((where & 0x7) == 0)
--- 
-2.19.0
-
+Changes v1-v2:
+- Addressed a number of typos and formatting issues.
+- Added a usage warning for apply_to_pfn_range() and apply_to_page_range()
+- Re-evaluated the decision to use apply_to_pfn_range() rather than
+  modifying the pagewalk.c. It still looks like generically handling the
+  transparent huge page cases requires the mmap_sem to be held at least
+  in read mode, so sticking with apply_to_pfn_range() for now.
+- The TTM page-fault helper vma copy argument was scratched in favour of
+  a pageprot_t argument.
+Changes v3:
+- Adapted to upstream API changes.
+Changes v4:
+- Adapted to upstream mmu_notifier changes. (Jerome?)
+- Fixed a couple of warnings on 32-bit x86
+- Fixed image offset computation on multisample images.
+Changes v5:
+- Updated usage warning in patch 3/9 after review comments from Nadav Amit.
+  
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: linux-mm@kvack.org
