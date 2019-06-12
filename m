@@ -2,329 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 539C941C15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 08:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C074208D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731007AbfFLGRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 02:17:21 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38689 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730984AbfFLGRU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 02:17:20 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v11so8324069pgl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 23:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=XfFiCk2hi1loFtSR3ZjqlUfAHTiBWq39sAwp51Bhapc=;
-        b=PpN6PEFOS8qSJMctngFCBYS8DwxqTL8A0MvDrI8OYBi51IL1MooDjOSwr8kS/34Aa3
-         rgN5NL/7KMdG1BJZ7PFBMbNwGoGsLrsUS0ny07dPRed3UTCub5C2nJ6EWPzb/fOIZO3u
-         U0KW4ZAje8M3MAei0/BOJqOEndEpk3+NoTxvI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=XfFiCk2hi1loFtSR3ZjqlUfAHTiBWq39sAwp51Bhapc=;
-        b=mOF+5us/SjLwb4q7IUAg79H/Cbr0N5DT62KnOqUDqMYKleweGdzEuQ4FMYx690taCm
-         0Aigg1JAUjyfAF2ur5llYfCcotKCkfwmfB1zyKEHdIKCHDIeiBUmAGv7BzABVjYz6WSE
-         iMWasCAOvaCE1y8DFmHG+b2sacKoNkD3C/JTXxUYUHMdewFYBJcuiG5XicYJnaTvpBkU
-         fpIDOFYS2CkZv3L7b7g804rxTQSunaVXRquQmZunI8Y+uKj2U46FdNvux8cxo45tt1vg
-         et5IT1luJfCXI1orokyjhICeZTQynWdPqnM7N/URGbFlt2iYPYN8h5iEqOwh3zCozNLu
-         A9Yg==
-X-Gm-Message-State: APjAAAUKHcp2ykfMqdatzQ3mTjdzqghFKoqNo/mbC7BJm+SQESuf9pik
-        Y02ciF9LOY/uSu8GngcM6SOz5A==
-X-Google-Smtp-Source: APXvYqySJlPYC22TbdsrGitWsIlEDVh3N6b9eggOHerDOFQzVYMRWmAjE6cTAFrrhQFh7QhZKBhg4g==
-X-Received: by 2002:a17:90a:db42:: with SMTP id u2mr21939507pjx.48.1560320239501;
-        Tue, 11 Jun 2019 23:17:19 -0700 (PDT)
-Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
-        by smtp.gmail.com with ESMTPSA id x129sm18478568pfb.29.2019.06.11.23.17.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 23:17:18 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v3 1/3] powerpc/powernv: Add OPAL API interface to get secureboot state
-In-Reply-To: <1560198837-18857-2-git-send-email-nayna@linux.ibm.com>
-References: <1560198837-18857-1-git-send-email-nayna@linux.ibm.com> <1560198837-18857-2-git-send-email-nayna@linux.ibm.com>
-Date:   Wed, 12 Jun 2019 16:17:14 +1000
-Message-ID: <87ftofpbth.fsf@dja-thinkpad.axtens.net>
+        id S2408692AbfFLJUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:20:14 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:49861 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406714AbfFLJUO (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 12 Jun 2019 05:20:14 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 12 Jun 2019 11:20:11 +0200
+Received: from suselix (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Wed, 12 Jun 2019 07:17:35 +0100
+Date:   Wed, 12 Jun 2019 08:17:32 +0200
+From:   Andreas Herrmann <aherrmann@suse.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: [PATCH] blkio-controller.txt: Remove references to CFQ
+Message-ID: <20190612061732.GA3711@suselix>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nayna Jain <nayna@linux.ibm.com> writes:
+CFQ is gone. No need anymore to document its "proportional weight time
+based division of disk policy".
 
-> From: Claudio Carvalho <cclaudio@linux.ibm.com>
->
-> The X.509 certificates trusted by the platform and other information
-> required to secure boot the OS kernel are wrapped in secure variables,
-> which are controlled by OPAL.
->
-> This patch adds support to read OPAL secure variables through
-> OPAL_SECVAR_GET call. It returns the metadata and data for a given secure
-> variable based on the unique key.
->
-> Since OPAL can support different types of backend which can vary in the
-> variable interpretation, a new OPAL API call named OPAL_SECVAR_BACKEND, is
-> added to retrieve the supported backend version. This helps the consumer
-> to know how to interpret the variable.
->
+Signed-off-by: Andreas Herrmann <aherrmann@suse.com>
+---
+ Documentation/cgroup-v1/blkio-controller.txt | 96 ++--------------------------
+ 1 file changed, 7 insertions(+), 89 deletions(-)
 
-(Firstly, apologies that I haven't got around to asking about this yet!)
-
-Are pluggable/versioned backend a good idea?
-
-There are a few things that worry me about the idea:
-
- - It adds complexity in crypto (or crypto-adjacent) code, and that
-   increases the likelihood that we'll accidentally add a bug with bad
-   consequences.
-
- - Under what circumstances would would we change the kernel-visible
-   behaviour of skiboot? Are we expecting to change the behaviour,
-   content or names of the variables in future? Otherwise the only
-   relevant change I can think of is a change to hardware platforms, and
-   I'm not sure how a change in hardware would lead to change in
-   behaviour in the kernel. Wouldn't Skiboot hide h/w differences?
-
- - If we are worried about a long-term-future change to how secure-boot
-   works, would it be better to just add more get/set calls to opal at
-   the point at which we actually implement the new system?
-   
- - UEFI added EFI_VARIABLE_AUTHENTICATION_3 in a way that - as far
-   as I know - didn't break backwards compatibility. Is there a reason
-   we cannot add features that way instead? (It also dropped v1 of the
-   authentication header.)
-   
- - What is the correct fallback behaviour if a kernel receives a result
-   that it does not expect? If a kernel expecting BackendV1 is instead
-   informed that it is running on BackendV2, then the cannot access the
-   secure variable at all, so it cannot load keys that are potentially
-   required to successfully boot (e.g. to validate the module for
-   network card or graphics!)
-
-Kind regards,
-Daniel
-
-> This support can be enabled using CONFIG_OPAL_SECVAR
->
-> Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> ---
-> This patch depends on a new OPAL call that is being added to skiboot.
-> The patch set that implements the new call has been posted to
-> https://patchwork.ozlabs.org/project/skiboot/list/?series=112868
->
->  arch/powerpc/include/asm/opal-api.h          |  4 +-
->  arch/powerpc/include/asm/opal-secvar.h       | 23 ++++++
->  arch/powerpc/include/asm/opal.h              |  6 ++
->  arch/powerpc/platforms/powernv/Kconfig       |  6 ++
->  arch/powerpc/platforms/powernv/Makefile      |  1 +
->  arch/powerpc/platforms/powernv/opal-call.c   |  2 +
->  arch/powerpc/platforms/powernv/opal-secvar.c | 85 ++++++++++++++++++++
->  7 files changed, 126 insertions(+), 1 deletion(-)
->  create mode 100644 arch/powerpc/include/asm/opal-secvar.h
->  create mode 100644 arch/powerpc/platforms/powernv/opal-secvar.c
->
-> diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-> index e1577cfa7186..a505e669b4b6 100644
-> --- a/arch/powerpc/include/asm/opal-api.h
-> +++ b/arch/powerpc/include/asm/opal-api.h
-> @@ -212,7 +212,9 @@
->  #define OPAL_HANDLE_HMI2			166
->  #define	OPAL_NX_COPROC_INIT			167
->  #define OPAL_XIVE_GET_VP_STATE			170
-> -#define OPAL_LAST				170
-> +#define OPAL_SECVAR_GET                         173
-> +#define OPAL_SECVAR_BACKEND                     177
-> +#define OPAL_LAST				177
->  
->  #define QUIESCE_HOLD			1 /* Spin all calls at entry */
->  #define QUIESCE_REJECT			2 /* Fail all calls with OPAL_BUSY */
-> diff --git a/arch/powerpc/include/asm/opal-secvar.h b/arch/powerpc/include/asm/opal-secvar.h
-> new file mode 100644
-> index 000000000000..b677171a0368
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/opal-secvar.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * PowerNV definitions for secure variables OPAL API.
-> + *
-> + * Copyright (C) 2019 IBM Corporation
-> + * Author: Claudio Carvalho <cclaudio@linux.ibm.com>
-> + *
-> + */
-> +#ifndef OPAL_SECVAR_H
-> +#define OPAL_SECVAR_H
-> +
-> +enum {
-> +	BACKEND_NONE = 0,
-> +	BACKEND_TC_COMPAT_V1,
-> +};
-> +
-> +extern int opal_get_variable(u8 *key, unsigned long ksize,
-> +			     u8 *metadata, unsigned long *mdsize,
-> +			     u8 *data, unsigned long *dsize);
-> +
-> +extern int opal_variable_version(unsigned long *backend);
-> +
-> +#endif
-> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-> index 4cc37e708bc7..57d2c2356eda 100644
-> --- a/arch/powerpc/include/asm/opal.h
-> +++ b/arch/powerpc/include/asm/opal.h
-> @@ -394,6 +394,12 @@ void opal_powercap_init(void);
->  void opal_psr_init(void);
->  void opal_sensor_groups_init(void);
->  
-> +extern int opal_secvar_get(uint64_t k_key, uint64_t k_key_len,
-> +			   uint64_t k_metadata, uint64_t k_metadata_size,
-> +			   uint64_t k_data, uint64_t k_data_size);
-> +
-> +extern int opal_secvar_backend(uint64_t k_backend);
-> +
->  #endif /* __ASSEMBLY__ */
->  
->  #endif /* _ASM_POWERPC_OPAL_H */
-> diff --git a/arch/powerpc/platforms/powernv/Kconfig b/arch/powerpc/platforms/powernv/Kconfig
-> index 850eee860cf2..65b060539b5c 100644
-> --- a/arch/powerpc/platforms/powernv/Kconfig
-> +++ b/arch/powerpc/platforms/powernv/Kconfig
-> @@ -47,3 +47,9 @@ config PPC_VAS
->  	  VAS adapters are found in POWER9 based systems.
->  
->  	  If unsure, say N.
-> +
-> +config OPAL_SECVAR
-> +	bool "OPAL Secure Variables"
-> +	depends on PPC_POWERNV
-> +	help
-> +	  This enables the kernel to access OPAL secure variables.
-> diff --git a/arch/powerpc/platforms/powernv/Makefile b/arch/powerpc/platforms/powernv/Makefile
-> index da2e99efbd04..6651c742e530 100644
-> --- a/arch/powerpc/platforms/powernv/Makefile
-> +++ b/arch/powerpc/platforms/powernv/Makefile
-> @@ -16,3 +16,4 @@ obj-$(CONFIG_PERF_EVENTS) += opal-imc.o
->  obj-$(CONFIG_PPC_MEMTRACE)	+= memtrace.o
->  obj-$(CONFIG_PPC_VAS)	+= vas.o vas-window.o vas-debug.o
->  obj-$(CONFIG_OCXL_BASE)	+= ocxl.o
-> +obj-$(CONFIG_OPAL_SECVAR) += opal-secvar.o
-> diff --git a/arch/powerpc/platforms/powernv/opal-call.c b/arch/powerpc/platforms/powernv/opal-call.c
-> index 36c8fa3647a2..0445980f294f 100644
-> --- a/arch/powerpc/platforms/powernv/opal-call.c
-> +++ b/arch/powerpc/platforms/powernv/opal-call.c
-> @@ -288,3 +288,5 @@ OPAL_CALL(opal_pci_set_pbcq_tunnel_bar,		OPAL_PCI_SET_PBCQ_TUNNEL_BAR);
->  OPAL_CALL(opal_sensor_read_u64,			OPAL_SENSOR_READ_U64);
->  OPAL_CALL(opal_sensor_group_enable,		OPAL_SENSOR_GROUP_ENABLE);
->  OPAL_CALL(opal_nx_coproc_init,			OPAL_NX_COPROC_INIT);
-> +OPAL_CALL(opal_secvar_get,                      OPAL_SECVAR_GET);
-> +OPAL_CALL(opal_secvar_backend,                  OPAL_SECVAR_BACKEND);
-> diff --git a/arch/powerpc/platforms/powernv/opal-secvar.c b/arch/powerpc/platforms/powernv/opal-secvar.c
-> new file mode 100644
-> index 000000000000..dba441dd5af1
-> --- /dev/null
-> +++ b/arch/powerpc/platforms/powernv/opal-secvar.c
-> @@ -0,0 +1,85 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PowerNV code for secure variables
-> + *
-> + * Copyright (C) 2019 IBM Corporation
-> + * Author: Claudio Carvalho <cclaudio@linux.ibm.com>
-> + *
-> + */
-> +
-> +/*
-> + * The opal wrappers in this file treat the @name, @vendor, and @data
-> + * parameters as little endian blobs.
-> + * @name is a ucs2 string
-> + * @vendor is the vendor GUID. It is converted to LE in the kernel
-> + * @data variable data, which layout may be different for each variable
-> + */
-> +
-> +#define pr_fmt(fmt) "secvar: "fmt
-> +
-> +#include <linux/types.h>
-> +#include <asm/opal.h>
-> +#include <asm/opal-secvar.h>
-> +
-> +static bool is_opal_secvar_supported(void)
-> +{
-> +	static bool opal_secvar_supported;
-> +	static bool initialized;
-> +
-> +	if (initialized)
-> +		return opal_secvar_supported;
-> +
-> +	if (!opal_check_token(OPAL_SECVAR_GET)
-> +	    || !opal_check_token(OPAL_SECVAR_BACKEND)) {
-> +		pr_err("OPAL doesn't support secure variables\n");
-> +		opal_secvar_supported = false;
-> +	} else {
-> +		opal_secvar_supported = true;
-> +	}
-> +
-> +	initialized = true;
-> +
-> +	return opal_secvar_supported;
-> +}
-> +
-> +int opal_get_variable(u8 *key, unsigned long ksize, u8 *metadata,
-> +		      unsigned long *mdsize, u8 *data, unsigned long *dsize)
-> +{
-> +	int rc;
-> +
-> +	if (!is_opal_secvar_supported())
-> +		return OPAL_UNSUPPORTED;
-> +
-> +	if (mdsize)
-> +		*mdsize = cpu_to_be64(*mdsize);
-> +	if (dsize)
-> +		*dsize = cpu_to_be64(*dsize);
-> +
-> +	rc = opal_secvar_get(__pa(key), ksize, __pa(metadata), __pa(mdsize),
-> +			     __pa(data), __pa(dsize));
-> +
-> +	if (mdsize)
-> +		*mdsize = be64_to_cpu(*mdsize);
-> +	if (dsize)
-> +		*dsize = be64_to_cpu(*dsize);
-> +
-> +	return rc;
-> +}
-> +
-> +int opal_variable_version(unsigned long *backend)
-> +{
-> +	int rc;
-> +
-> +	if (!is_opal_secvar_supported())
-> +		return OPAL_UNSUPPORTED;
-> +
-> +	if (backend)
-> +		*backend = cpu_to_be64(*backend);
-> +
-> +	rc = opal_secvar_backend(__pa(backend));
-> +
-> +	if (backend)
-> +		*backend = be64_to_cpu(*backend);
-> +
-> +	return rc;
-> +}
-> -- 
-> 2.20.1
+diff --git a/Documentation/cgroup-v1/blkio-controller.txt b/Documentation/cgroup-v1/blkio-controller.txt
+index 673dc34d3f78..d1a1b7bdd03a 100644
+--- a/Documentation/cgroup-v1/blkio-controller.txt
++++ b/Documentation/cgroup-v1/blkio-controller.txt
+@@ -8,61 +8,13 @@ both at leaf nodes as well as at intermediate nodes in a storage hierarchy.
+ Plan is to use the same cgroup based management interface for blkio controller
+ and based on user options switch IO policies in the background.
+ 
+-Currently two IO control policies are implemented. First one is proportional
+-weight time based division of disk policy. It is implemented in CFQ. Hence
+-this policy takes effect only on leaf nodes when CFQ is being used. The second
+-one is throttling policy which can be used to specify upper IO rate limits
+-on devices. This policy is implemented in generic block layer and can be
+-used on leaf nodes as well as higher level logical devices like device mapper.
++One IO control policy is throttling policy which can be used to
++specify upper IO rate limits on devices. This policy is implemented in
++generic block layer and can be used on leaf nodes as well as higher
++level logical devices like device mapper.
+ 
+ HOWTO
+ =====
+-Proportional Weight division of bandwidth
+------------------------------------------
+-You can do a very simple testing of running two dd threads in two different
+-cgroups. Here is what you can do.
+-
+-- Enable Block IO controller
+-	CONFIG_BLK_CGROUP=y
+-
+-- Enable group scheduling in CFQ
+-	CONFIG_CFQ_GROUP_IOSCHED=y
+-
+-- Compile and boot into kernel and mount IO controller (blkio); see
+-  cgroups.txt, Why are cgroups needed?.
+-
+-	mount -t tmpfs cgroup_root /sys/fs/cgroup
+-	mkdir /sys/fs/cgroup/blkio
+-	mount -t cgroup -o blkio none /sys/fs/cgroup/blkio
+-
+-- Create two cgroups
+-	mkdir -p /sys/fs/cgroup/blkio/test1/ /sys/fs/cgroup/blkio/test2
+-
+-- Set weights of group test1 and test2
+-	echo 1000 > /sys/fs/cgroup/blkio/test1/blkio.weight
+-	echo 500 > /sys/fs/cgroup/blkio/test2/blkio.weight
+-
+-- Create two same size files (say 512MB each) on same disk (file1, file2) and
+-  launch two dd threads in different cgroup to read those files.
+-
+-	sync
+-	echo 3 > /proc/sys/vm/drop_caches
+-
+-	dd if=/mnt/sdb/zerofile1 of=/dev/null &
+-	echo $! > /sys/fs/cgroup/blkio/test1/tasks
+-	cat /sys/fs/cgroup/blkio/test1/tasks
+-
+-	dd if=/mnt/sdb/zerofile2 of=/dev/null &
+-	echo $! > /sys/fs/cgroup/blkio/test2/tasks
+-	cat /sys/fs/cgroup/blkio/test2/tasks
+-
+-- At macro level, first dd should finish first. To get more precise data, keep
+-  on looking at (with the help of script), at blkio.disk_time and
+-  blkio.disk_sectors files of both test1 and test2 groups. This will tell how
+-  much disk time (in milliseconds), each group got and how many sectors each
+-  group dispatched to the disk. We provide fairness in terms of disk time, so
+-  ideally io.disk_time of cgroups should be in proportion to the weight.
+-
+ Throttling/Upper Limit policy
+ -----------------------------
+ - Enable Block IO controller
+@@ -94,7 +46,7 @@ Throttling/Upper Limit policy
+ Hierarchical Cgroups
+ ====================
+ 
+-Both CFQ and throttling implement hierarchy support; however,
++Throttling implements hierarchy support; however,
+ throttling's hierarchy support is enabled iff "sane_behavior" is
+ enabled from cgroup side, which currently is a development option and
+ not publicly available.
+@@ -107,9 +59,8 @@ If somebody created a hierarchy like as follows.
+ 			|
+ 		     test3
+ 
+-CFQ by default and throttling with "sane_behavior" will handle the
+-hierarchy correctly.  For details on CFQ hierarchy support, refer to
+-Documentation/block/cfq-iosched.txt.  For throttling, all limits apply
++Throttling with "sane_behavior" will handle the
++hierarchy correctly. For throttling, all limits apply
+ to the whole subtree while all statistics are local to the IOs
+ directly generated by tasks in that cgroup.
+ 
+@@ -130,10 +81,6 @@ CONFIG_DEBUG_BLK_CGROUP
+ 	- Debug help. Right now some additional stats file show up in cgroup
+ 	  if this option is enabled.
+ 
+-CONFIG_CFQ_GROUP_IOSCHED
+-	- Enables group scheduling in CFQ. Currently only 1 level of group
+-	  creation is allowed.
+-
+ CONFIG_BLK_DEV_THROTTLING
+ 	- Enable block device throttling support in block layer.
+ 
+@@ -344,32 +291,3 @@ Common files among various policies
+ - blkio.reset_stats
+ 	- Writing an int to this file will result in resetting all the stats
+ 	  for that cgroup.
+-
+-CFQ sysfs tunable
+-=================
+-/sys/block/<disk>/queue/iosched/slice_idle
+-------------------------------------------
+-On a faster hardware CFQ can be slow, especially with sequential workload.
+-This happens because CFQ idles on a single queue and single queue might not
+-drive deeper request queue depths to keep the storage busy. In such scenarios
+-one can try setting slice_idle=0 and that would switch CFQ to IOPS
+-(IO operations per second) mode on NCQ supporting hardware.
+-
+-That means CFQ will not idle between cfq queues of a cfq group and hence be
+-able to driver higher queue depth and achieve better throughput. That also
+-means that cfq provides fairness among groups in terms of IOPS and not in
+-terms of disk time.
+-
+-/sys/block/<disk>/queue/iosched/group_idle
+-------------------------------------------
+-If one disables idling on individual cfq queues and cfq service trees by
+-setting slice_idle=0, group_idle kicks in. That means CFQ will still idle
+-on the group in an attempt to provide fairness among groups.
+-
+-By default group_idle is same as slice_idle and does not do anything if
+-slice_idle is enabled.
+-
+-One can experience an overall throughput drop if you have created multiple
+-groups and put applications in that group which are not driving enough
+-IO to keep disk busy. In that case set group_idle=0, and CFQ will not idle
+-on individual groups and throughput should improve.
+-- 
+2.13.7
