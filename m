@@ -2,87 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A5441E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4232D41E48
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731607AbfFLHzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:55:23 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40129 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfFLHzV (ORCPT
+        id S1731574AbfFLHzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:55:04 -0400
+Received: from mail-lf1-f42.google.com ([209.85.167.42]:42557 "EHLO
+        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfFLHzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:55:21 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so6297864pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:55:21 -0700 (PDT)
+        Wed, 12 Jun 2019 03:55:03 -0400
+Received: by mail-lf1-f42.google.com with SMTP id y13so11283807lfh.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:55:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Fl90wvGVk9jQf/e3ED2nkXc10vHdjJ0BRJ8wEykJJm4=;
-        b=DyFfgQQEx33mWJYiam6MYxvlG5nNkiPk4WCy+71VVasj+drxJg4JufGNFag39gfBEH
-         zSr0p6ZySEs9Vb4s9fSruFnjk083UoQt1dAJ4v9r36BI/G4+w6wc6YDXy8MznwFvb6PI
-         xzXGKBOgdDXnJ6KvOtldHLy7rk0UPyZ/Ft0P8nTKlNScfLIYyaBJhBdneF3HNjOtP5Dw
-         J6CAweQoC3TLOnsXB9kf9xDoMJQKV8fdD2/AOPlBBy8PnfnoUFUrNt4PZ4G0cSrX/2BG
-         1p34vLC0YZAaptN62xEiP6S45+MFJgjIVD2HV14gVazd9qNgNEjFwswjK/vwsWG+xD0L
-         vgMA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7PzIlTNIG9ZNiKS3hRUm3RewsbWBmwo6U2w2huv5deg=;
+        b=Ikh3hhr86U05Rwd/ohMNVvV7u0ctcFy7sv/uEL+EuxN98f3uQ67oC/e0EYe1RhQy8P
+         GJFuf3O1tXMHShRpTgs1L8ewX/PFmrqAppj5PDuaoH3wYMGxvrkub2lXMWDhtvhhHInF
+         ARAMOP1P6S6rvNLYPYfqORNKO1XSgrKGhExGTZJLtohlRIq3Npv7paeV6ElrVG69IdHH
+         LxJS0EsMtyX1pKMDDSRbrirELXHF5eqYTU4kvAAzk5tfUlvp4fdYCIKCCxKMbk6xgobY
+         lhpxsi57qNqQJVRRei3ceZXe4P0MuV4wPp9R8Mu4xrPb3dZbVCKlfuKWnUJ7naD6LBXM
+         m3kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Fl90wvGVk9jQf/e3ED2nkXc10vHdjJ0BRJ8wEykJJm4=;
-        b=pYIKmuu2InFQ0WFgLDLfYR6YZQwJCRkewhHoDvZgmoPI0xHTIMTVCzLpJqpVaIji6b
-         DPinxj3/bc+I+JXBvkI6NNn/R1eIMUDgckv9+cD3Qm52vUCvQQ8Re7PMEXBrSlBzqxCM
-         IfohjqVzre3S9inKVoFlUVIqaDVMK6Uelq6RadKm4E/72KfsHUE/9K4em93rubzMOsG1
-         dN9cx0hffer3obwSoe2opILxpsnvle7AX0ND8SWXMqf75nZQUMRcQPuqRDrqi6yUjv2J
-         gwP2Das/IXCz4Su5bu2gzqGMLQDzzMaCkXcy9ZcTeyeEvrnY5tLHSWRyuRjXpnF1LgkU
-         MU+A==
-X-Gm-Message-State: APjAAAUUoufRxwmclyZzq6a8bAKW54Rc5s6ZNNkf+nkryA6GrXUnquYo
-        vmELla+iW+akYykQFUcmVx0w
-X-Google-Smtp-Source: APXvYqxWBYUdZW2Y4YlWacoCLLvBzvetdV8f6Kh7h4YdWN/CXwrhdOPQFCd141iMalRdxN8KCq/8mw==
-X-Received: by 2002:a17:902:61:: with SMTP id 88mr3378053pla.50.1560326121013;
-        Wed, 12 Jun 2019 00:55:21 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:894:d456:15b5:9ca9:e3ec:c06a])
-        by smtp.gmail.com with ESMTPSA id b15sm16846399pfi.141.2019.06.12.00.55.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 00:55:20 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        robh+dt@kernel.org
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loic.pallardy@st.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 3/4] dt-bindings: arm: stm32: Document Avenger96 devicetree binding
-Date:   Wed, 12 Jun 2019 13:24:50 +0530
-Message-Id: <20190612075451.8643-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
-References: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7PzIlTNIG9ZNiKS3hRUm3RewsbWBmwo6U2w2huv5deg=;
+        b=UfFHVCM1QkWQqZS7t+i2ltboDfWv7OnBuy0YDbx/LpRbCpE9GkRVLybNAY+GMVe3j/
+         GD6UwPLDdJ63XdiZJl+kA03efRmHr83skRFOuMu5n6D43EhlQa25R5ioJefDlVyEEZaV
+         a44w1EU/bGfuyyERxBHFk7VcaTxjbeaKv3nTTK1nf7mzYTdDjblKBwcVeJNaYuf9r5CA
+         78zZALW7bcsrECjb6cJ/mAxlyETEplrD+9uw466XZh6XTgPJsPXGUOJ7bY+shmrphTgS
+         EiRZRLPzZY9fk5EQuPNOQAAG2jNdat+ECTibPkOzUCn2PI2G1a+eWKz+pKREMHDSBXnX
+         kbLQ==
+X-Gm-Message-State: APjAAAWoZ1R5PSHFLQ99iuCZ68aMbS4B6VSGQHw7QBypZgc+Pvus+bQI
+        C2MJB1uGMwDHywUTM3uUnQ4otMwcn2RM6xCIhUv1yw==
+X-Google-Smtp-Source: APXvYqwr+IggkBTWnR7/O1aUrCDYKzqAI3QVMBZqKcDtkTqDwEoqgL77KBrEFS20MTecxS2RTiEs6OZy6RxBT1DXdYY=
+X-Received: by 2002:a19:7616:: with SMTP id c22mr36632491lff.115.1560326101939;
+ Wed, 12 Jun 2019 00:55:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-2-grygorii.strashko@ti.com>
+In-Reply-To: <20190610171103.30903-2-grygorii.strashko@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 09:54:50 +0200
+Message-ID: <CACRpkdZvd_pApYbDL+PTJ1LDuDuvcVc2OCA_anRoWvwka_xm6g@mail.gmail.com>
+Subject: Re: [PATCH-next 01/20] gpio: gpio-omap: ensure irq is enabled before wakeup
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Russell King <rmk@arm.linux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit documents Avenger96 devicetree binding based on
-STM32MP157 SoC.
+On Mon, Jun 10, 2019 at 7:11 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+> From: Russell King <rmk+kernel@armlinux.org.uk>
+>
+> Documentation states:
+>
+>   NOTE: There must be a correlation between the wake-up enable and
+>   interrupt-enable registers. If a GPIO pin has a wake-up configured
+>   on it, it must also have the corresponding interrupt enabled (on
+>   one of the two interrupt lines).
+>
+> Ensure that this condition is always satisfied by enabling the detection
+> events after enabling the interrupt, and disabling the detection before
+> disabling the interrupt.  This ensures interrupt/wakeup events can not
+> happen until both the wakeup and interrupt enables correlate.
+>
+> If we do any clearing, clear between the interrupt enable/disable and
+> trigger setting.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-index f53dc0f2d7b3..4d194f1eb03a 100644
---- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-+++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-@@ -25,5 +25,7 @@ properties:
-           - const: st,stm32h743
- 
-       - items:
-+          - enum:
-+              - arrow,stm32mp157a-avenger96 # Avenger96
-           - const: st,stm32mp157
- ...
--- 
-2.17.1
+Patch applied.
 
+Yours,
+Linus Walleij
