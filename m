@@ -2,100 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19838419D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8A9419E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407896AbfFLBJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:09:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39209 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405839AbfFLBJn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:09:43 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v18so13509312ljh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 18:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SZXVeOYEeW/t6moRL6yl166/GZV1HqW8qo9aOqBVN+Q=;
-        b=gAjfSlHuLsIpxvb8lF0RyxQXzEhYSHQJnAZ4as99A8GBRPKGt8LtILDEijhajNv2fV
-         FXhIx40OUX4WPq1W1eQvis0UNqIoFt7tkihxVZ4QyREYOfVPuleZ/0Zq1i4TWCfQY/NA
-         AhmvmJi02EHwj98eCflp9T4F3Jku2HpzQgXkw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SZXVeOYEeW/t6moRL6yl166/GZV1HqW8qo9aOqBVN+Q=;
-        b=bnwLHPET2LkFI9l+VnQhUsFcXKZgG7lsm5UzTElNR2It9SzN6LwRYgQn8V2d+HcFg4
-         eI0LJCjHE39SlE8sdLwNez3ltSNYHHQGhi0I2igtpew/oyER4ZhXI1qMVIzwDNzYi67s
-         dxREYRgemD7UtqJaI0IeXFC9t1fEzR32vThrH+zAjQq5xieCkXdjMMwyiNYo0yhthY6R
-         zQocoTTcMXgFN8wfSxoE7pwtox3QHmBpAgjMlbr3RtItT1Vkm2e2NCTb8VpNyRgchF3+
-         fW6bZ9lipZGdASKWykLkleSOw02UZLi78HJXHXGO2LkF621FKSKgp7LbO7OE03LemLOr
-         THkw==
-X-Gm-Message-State: APjAAAWPcxzNcGRnIPLbd05c8y+Kn0tuCRTXXJHnXfr7LG3iKIgd4jpU
-        V2qb4Lim3ux4I/HMfc+kuRSsWqXo/DM=
-X-Google-Smtp-Source: APXvYqwJIh93gJ/HvldojxYZxHf+aQez0E57Q5bEzgi4Q3u9aFxRNPob6zGT3ZLP17364QDEI/NUjg==
-X-Received: by 2002:a2e:980e:: with SMTP id a14mr31605066ljj.60.1560301781232;
-        Tue, 11 Jun 2019 18:09:41 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id s12sm2840311lji.34.2019.06.11.18.09.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 18:09:41 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id a25so10720849lfg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 18:09:40 -0700 (PDT)
-X-Received: by 2002:ac2:50c4:: with SMTP id h4mr26185312lfm.61.1560301780325;
- Tue, 11 Jun 2019 18:09:40 -0700 (PDT)
+        id S2407098AbfFLBPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 21:15:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404906AbfFLBPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 21:15:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 75BD8C04FFF1;
+        Wed, 12 Jun 2019 01:15:18 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-17.pek2.redhat.com [10.72.12.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BC67643DA;
+        Wed, 12 Jun 2019 01:15:02 +0000 (UTC)
+Subject: Re: [PATCH 0/3 v11] add reserved e820 ranges to the kdump kernel e820
+ table
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, x86@kernel.org,
+        hpa@zytor.com, dyoung@redhat.com, Thomas.Lendacky@amd.com
+References: <20190423013007.17838-1-lijiang@redhat.com>
+ <12847a03-3226-0b29-97b5-04d404410147@redhat.com>
+ <20190607174211.GN20269@zn.tnic> <20190608035451.GB26148@MiWiFi-R3L-srv>
+ <20190608091030.GB32464@zn.tnic> <20190608100139.GC26148@MiWiFi-R3L-srv>
+ <20190608100623.GA9138@zn.tnic> <20190608102659.GA9130@MiWiFi-R3L-srv>
+ <20190610113747.GD5488@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <6d7f4c6f-9d7c-c316-ea53-0c6b8a7b9631@redhat.com>
+Date:   Wed, 12 Jun 2019 09:14:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190611144102.8848-1-hch@lst.de> <20190611144102.8848-17-hch@lst.de>
- <1560300464.nijubslu3h.astroid@bobo.none>
-In-Reply-To: <1560300464.nijubslu3h.astroid@bobo.none>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 11 Jun 2019 15:09:24 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wjSo+TzkvYnAqrp=eFgzzc058DhSMTPr4-2quZTbGLfnw@mail.gmail.com>
-Message-ID: <CAHk-=wjSo+TzkvYnAqrp=eFgzzc058DhSMTPr4-2quZTbGLfnw@mail.gmail.com>
-Subject: Re: [PATCH 16/16] mm: pass get_user_pages_fast iterator arguments in
- a structure
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christoph Hellwig <hch@lst.de>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190610113747.GD5488@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 12 Jun 2019 01:15:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 2:55 PM Nicholas Piggin <npiggin@gmail.com> wrote:
->
-> What does this do for performance? I've found this pattern can be
-> bad for store aliasing detection.
+在 2019年06月10日 19:37, Borislav Petkov 写道:
+> On Sat, Jun 08, 2019 at 06:26:59PM +0800, Baoquan He wrote:
+>> OK, I see. Then it should be the issue we have met and talked about with
+>> Tom.
+>> https://lkml.kernel.org/r/20190604134952.GC26891@MiWiFi-R3L-srv
+>>
+>> You can apply Tom's patch as below. I tested it, it can make kexec
+>> kernel succeed to boot, but failed for kdump kernel booting. The kdump
+>> kernel can boot till the end of kernel initialization, then hang with a
+>> call trace. I have pasted the log in the above thread. Haven't got the
+>> reason.
+>> http://lkml.kernel.org/r/508c2853-dc4f-70a6-6fa8-97c950dc31c6@amd.com
+> 
+> I can confirm the same observation.
+> 
+Currently, i haven't seen any updates yet, so i'm not sure whether this patch
+passed your test.
 
-I wouldn't expect it to be noticeable, and the lack of argument
-reloading etc should make up for it. Plus inlining makes it a
-non-issue when that happens.
+Thanks.
+Lianbo
 
-But I guess we could also at least look at using "restrict", if that
-ends up helping. Unlike the completely bogus type-based aliasing rules
-(that we disable because I think the C people were on some bad bad
-drugs when they came up with them), restricted pointers are a real
-thing that makes sense.
-
-That said, we haven't traditionally used it, and I don't know how much
-it helps gcc. Maybe gcc ignores it entirely? S
-
-               Linus
+> Thx.
+> 
