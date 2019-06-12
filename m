@@ -2,64 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B021B422A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2661A422A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408877AbfFLKgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:36:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43978 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2408253AbfFLKgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:36:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A0633AF97;
-        Wed, 12 Jun 2019 10:36:50 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] x86/xen: disable nosmt in Xen guests
-To:     Jan Beulich <JBeulich@suse.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        tglx@linutronix.de, xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-References: <20190612101228.23898-1-jgross@suse.com>
- <5D00D1A602000078002376A9@prv1-mh.provo.novell.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <8392fdc4-a6b2-a3aa-dca6-0a0ad7a411be@suse.com>
-Date:   Wed, 12 Jun 2019 12:36:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2408890AbfFLKhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:37:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405292AbfFLKhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:37:24 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D011F859FF;
+        Wed, 12 Jun 2019 10:37:23 +0000 (UTC)
+Received: from gondolin (ovpn-116-169.ams2.redhat.com [10.36.116.169])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 821B65D9C9;
+        Wed, 12 Jun 2019 10:37:19 +0000 (UTC)
+Date:   Wed, 12 Jun 2019 12:37:16 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>
+Subject: Re: [PATCH v2 4/4] s390/crypto: sha: Use -ENODEV instead of
+ -EOPNOTSUPP
+Message-ID: <20190612123716.63ea69a4.cohuck@redhat.com>
+In-Reply-To: <20190612102248.18903-5-david@redhat.com>
+References: <20190612102248.18903-1-david@redhat.com>
+        <20190612102248.18903-5-david@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <5D00D1A602000078002376A9@prv1-mh.provo.novell.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 12 Jun 2019 10:37:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.06.19 12:19, Jan Beulich wrote:
->>>> On 12.06.19 at 12:12, <jgross@suse.com> wrote:
->> When running as a Xen guest selecting "nosmt" either via command line
->> or implicitly via default settings makes no sense, as the guest has no
->> clue about the real system topology it is running on. With Xen it is
->> the hypervisor's job to ensure the proper bug mitigations are active
->> regarding smt settings.
+On Wed, 12 Jun 2019 12:22:48 +0200
+David Hildenbrand <david@redhat.com> wrote:
+
+> Let's use the error value that is typically used if HW support is not
+> available when trying to load a module - this is also what systemd's
+> systemd-modules-load.service expects.
 > 
-> I don't agree with the second sentence: It is in principle fine for the
-> hypervisor to expose HT (i.e. not disable it as bug mitigation), and
-> leave it to the guest kernels to protect themselves. We're just not
-> at the point yet where Xen offers sufficient / reliable data to guest
-> kernels to do so, so _for the time being_ what you say is correct.
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/s390/crypto/sha1_s390.c   | 2 +-
+>  arch/s390/crypto/sha256_s390.c | 2 +-
+>  arch/s390/crypto/sha512_s390.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
 
-Okay, I'll add something like:
-
-This is true as long Xen doesn't support core scheduling together with
-exposing the (then) correct sibling information to the guest and
-indicating that case via a sutable interface.
-
-
-Juergen
-
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
