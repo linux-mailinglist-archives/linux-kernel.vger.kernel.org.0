@@ -2,100 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00AE2447D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7FBF447DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbfFMRCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:02:10 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45166 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729523AbfFLXOj (ORCPT
+        id S1727236AbfFMRCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:02:23 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36206 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729522AbfFLXOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 19:14:39 -0400
-Received: by mail-pf1-f193.google.com with SMTP id s11so10520394pfm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 16:14:38 -0700 (PDT)
+        Wed, 12 Jun 2019 19:14:31 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d21so7244328plr.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 16:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hpdxxdnECrCjfxRQwQAXITDsXaRY4S9Y8qNe9cxvook=;
-        b=q5HV6uR0qU8gfYERpbtgOXiB16bdDKZqjJ8yqVAfRUsCVrr5UW/VXIBUMalc8kGJ8e
-         SW7vyN8ZLRzUsDrmlPCeMSaqxOd8NAk8riv426uuleJQLBjjdTxd6ru4CW97jxqxoNj0
-         pcIfFYgGvVNX3u0Fayt2GCS0cMD2hUYzwXOQ6Icz4dsJaconOW9atwDICfo6tWeujct9
-         +411xP5ry8xLiW2r1AhVFPkoCcKzJa0MaXshle9M8188Eo/h3VW4RprwrwerqSKSq7Lt
-         3J7LbbB9FVNZp3WJm5sKC7P3Ic8etu9+CgIvgCmarryYcQLvbtzVS5rNackF2tSbrJfR
-         E78w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zENyOoOSgI8QfaggquPMfPbLKw7a6eUv2Qjm9NWJtcQ=;
+        b=EswV1nGCdvSMNN+Ssd1h7rS3RXzjTfEdTIdOLjAh5nTRd36k1bdXI6zWruRLqObK0d
+         gsC+6WcEPSp6FesMM+ciJCWrwUt+f3/TlPdj8OHr1gJIlaqypHatFu/fEtZyZqtTgxf/
+         7MmVJ24TsNjxF3L2qzae4mJRJIWKsdAgvTDM41obh31wU5DHCFOSTfiDeRVan1EyTWT2
+         FA4K03WJSZqhv2G4TPC4wR1Lyw2YYsUsmJ5/O926cAuclRrP4DGVaFyTWu7dvlXrp9UC
+         rWkAggs99lIDtQwUic825l/5MOVIb6hlsoo+MGQWZsaaKUU00iAbkzb0AD/J2zMhHB2K
+         je/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hpdxxdnECrCjfxRQwQAXITDsXaRY4S9Y8qNe9cxvook=;
-        b=hcIyYlmkG09ksaY1PQiY9aPaS/7VV8m7s+H33lmtykscOsYO4XgzBPahTYEN8t8p+n
-         pI1s/5+ZABjG9XA2X019jrOheLzbnqibd3l+oesOVPuUPykcF7kiSD2+4LQ8wbtBAeaw
-         yObBLDtsLphwVajvwearvVpm40eZlNFohTJnXggsD8k8b2C8yEh1dkW1MvovjbzYp/Wl
-         VmQRIF/9ykLRr4rt3LGK7KDThZtG2YyULQGrhLmZe38Ya278Nyqi8yLf+H4eLOBo/6Ef
-         Oxgc1nVKgO8GuoopiUSYPfCYDCv6mwQ+TxUZk7AyzrS1wqil3nxHU+5sdVasyyh544iK
-         mT0w==
-X-Gm-Message-State: APjAAAWlIiDka7XfaiQ47IYx6DRpsVYIhKsU5OZwGV4KesjseAMUhJwQ
-        e4dtGT1ch4pRpSx/NS1FGBbWfAdxnuFNu4X68ESI5Q==
-X-Google-Smtp-Source: APXvYqztz5V4dpKFE1Y8iXl/I0qdlviNE8GgjRikSDpqDKtChZ+KTIWt5CleNZQU3O9ZT60wDef+zNwlYot5W099IjY=
-X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr1547499pje.123.1560381277880;
- Wed, 12 Jun 2019 16:14:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zENyOoOSgI8QfaggquPMfPbLKw7a6eUv2Qjm9NWJtcQ=;
+        b=i4v+iDeuIQBQMpszhfhuPpavb8UtffvJ8dGDlrii5++vm0c4h8ep7xXwZLFlNFGjVz
+         HBbB3PRwRoisbIihy7/xw1WhGZWTh/lMC56qL66mOqvY/+IYIyT6Nsj3gtJxc3y723gS
+         FfFtZlma/1trCo/2auTYk8/Zr0ZP/PtxCyS9ZwBhMA5e6HL6zK0etzShIsWEuSWHcj5A
+         s2pOOv9uQruo2kpGD3wtjyWp1x/jbEiMq3TdJqTtF2Fli4rgrYhq5Jda3q7bCP66KdqE
+         ub2sbkM5wEakEjaVgqMi46r3gJl46r3kmwVAOjPOrqLKc+X4topGXyhqif3F+tDnEn0d
+         bW/g==
+X-Gm-Message-State: APjAAAWXAaw0ge2wsR6GkOPv5MjOtzDl1Jj6E8QmUKZ/f4M7XozP6bxZ
+        xHmd+bkyBoa138R4lNo0I3Q=
+X-Google-Smtp-Source: APXvYqynFN1ludII3XFLYMfIONiHIRT3DEjMebyu/w5SXt66rSlQbatTCpNAcnVu5y6nlAVVC7h8BQ==
+X-Received: by 2002:a17:902:b70f:: with SMTP id d15mr3048117pls.318.1560381270418;
+        Wed, 12 Jun 2019 16:14:30 -0700 (PDT)
+Received: from gmail.com ([2a00:79e1:abc:1e04:de9a:68c:c1e8:7e8f])
+        by smtp.gmail.com with ESMTPSA id o26sm491338pgv.47.2019.06.12.16.14.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 16:14:29 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 16:14:28 -0700
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>
+Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for
+ /proc/pid/map_files
+Message-ID: <20190612231426.GA3639@gmail.com>
+References: <156007465229.3335.10259979070641486905.stgit@buzz>
+ <156007493995.3335.9595044802115356911.stgit@buzz>
 MIME-Version: 1.0
-References: <20190612225419.241618-1-nhuck@google.com>
-In-Reply-To: <20190612225419.241618-1-nhuck@google.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 12 Jun 2019 16:14:26 -0700
-Message-ID: <CAKwvOdkAJcOCGvveBYaDD2kf4vx7m=b+Nxyn3_n=9aCBapzDcw@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: mv_xor_v2: Fix -Wshift-negative-value
-To:     Nathan Huckleberry <nhuck@google.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, vkoul@kernel.org,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <156007493995.3335.9595044802115356911.stgit@buzz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 3:54 PM 'Nathan Huckleberry' via Clang Built
-Linux <clang-built-linux@googlegroups.com> wrote:
-> Upon further investigation MV_XOR_V2_DMA_IMSG_THRD_SHIFT and
-> MV_XOR_V2_DMA_IMSG_TIMER_THRD_SHIFT are both 0. Since shifting by 0 does
-> nothing, these variables can be removed.
->
-> Cc: clang-built-linux@googlegroups.com
-> Link: https://github.com/ClangBuiltLinux/linux/issues/521
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
+> Do not stuck forever if something wrong.
+> Killable lock allows to cleanup stuck tasks and simplifies investigation.
+
+This patch breaks the CRIU project, because stat() returns EINTR instead
+of ENOENT:
+
+[root@fc24 criu]# stat /proc/self/map_files/0-0
+stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
+
+Here is one inline comment with the fix for this issue.
+
+> 
+> It seems ->d_revalidate() could return any error (except ECHILD) to
+> abort validation and pass error as result of lookup sequence.
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Reviewed-by: Roman Gushchin <guro@fb.com>
+> Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+
+It was nice to see all four of you in one place :).
+
+> Acked-by: Michal Hocko <mhocko@suse.com>
 > ---
->  drivers/dma/mv_xor_v2.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/dma/mv_xor_v2.c b/drivers/dma/mv_xor_v2.c
-> index fa5dab481203..5d2e0d1f3ec9 100644
-> --- a/drivers/dma/mv_xor_v2.c
-> +++ b/drivers/dma/mv_xor_v2.c
-> @@ -261,16 +259,15 @@ void mv_xor_v2_enable_imsg_thrd(struct mv_xor_v2_device *xor_dev)
->
->         /* Configure threshold of number of descriptors, and enable timer */
->         reg = readl(xor_dev->dma_base + MV_XOR_V2_DMA_IMSG_THRD_OFF);
-> -       reg &= (~MV_XOR_V2_DMA_IMSG_THRD_MASK << MV_XOR_V2_DMA_IMSG_THRD_SHIFT);
-> -       reg |= (MV_XOR_V2_DONE_IMSG_THRD << MV_XOR_V2_DMA_IMSG_THRD_SHIFT);
-> +       reg &= (~MV_XOR_V2_DMA_IMSG_THRD_MASK);
-> +       reg |= (MV_XOR_V2_DONE_IMSG_THRD);
->         reg |= MV_XOR_V2_DMA_IMSG_TIMER_EN;
->         writel(reg, xor_dev->dma_base + MV_XOR_V2_DMA_IMSG_THRD_OFF);
->
->         /* Configure Timer Threshold */
->         reg = readl(xor_dev->dma_base + MV_XOR_V2_DMA_IMSG_TMOT);
-> -       reg &= (~MV_XOR_V2_DMA_IMSG_TIMER_THRD_MASK <<
-> -               MV_XOR_V2_DMA_IMSG_TIMER_THRD_SHIFT);
-> -       reg |= (MV_XOR_V2_TIMER_THRD << MV_XOR_V2_DMA_IMSG_TIMER_THRD_SHIFT);
-> +       reg &= (~MV_XOR_V2_DMA_IMSG_TIMER_THRD_MASK);
-> +       reg |= (MV_XOR_V2_TIMER_THRD);
+>  fs/proc/base.c |   27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 9c8ca6cd3ce4..515ab29c2adf 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1962,9 +1962,12 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  		goto out;
+>  
+>  	if (!dname_to_vma_addr(dentry, &vm_start, &vm_end)) {
+> -		down_read(&mm->mmap_sem);
+> -		exact_vma_exists = !!find_exact_vma(mm, vm_start, vm_end);
+> -		up_read(&mm->mmap_sem);
+> +		status = down_read_killable(&mm->mmap_sem);
+> +		if (!status) {
+> +			exact_vma_exists = !!find_exact_vma(mm, vm_start,
+> +							    vm_end);
+> +			up_read(&mm->mmap_sem);
+> +		}
+>  	}
+>  
+>  	mmput(mm);
+> @@ -2010,8 +2013,11 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
+>  	if (rc)
+>  		goto out_mmput;
+>  
+> +	rc = down_read_killable(&mm->mmap_sem);
+> +	if (rc)
+> +		goto out_mmput;
+> +
+>  	rc = -ENOENT;
+> -	down_read(&mm->mmap_sem);
+>  	vma = find_exact_vma(mm, vm_start, vm_end);
+>  	if (vma && vma->vm_file) {
+>  		*path = vma->vm_file->f_path;
+> @@ -2107,7 +2113,10 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+>  	if (!mm)
+>  		goto out_put_task;
+>  
+> -	down_read(&mm->mmap_sem);
+> +	result = ERR_PTR(-EINTR);
+> +	if (down_read_killable(&mm->mmap_sem))
+> +		goto out_put_mm;
+> +
 
-Don't need the parentheses anymore. Please send a v2.
+	result = ERR_PTR(-ENOENT);
 
--- 
-Thanks,
-~Nick Desaulniers
+>  	vma = find_exact_vma(mm, vm_start, vm_end);
+>  	if (!vma)
+>  		goto out_no_vma;
+> @@ -2118,6 +2127,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+>  
+>  out_no_vma:
+>  	up_read(&mm->mmap_sem);
+> +out_put_mm:
+>  	mmput(mm);
+>  out_put_task:
+>  	put_task_struct(task);
+> @@ -2160,7 +2170,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+>  	mm = get_task_mm(task);
+>  	if (!mm)
+>  		goto out_put_task;
+> -	down_read(&mm->mmap_sem);
+> +
+> +	ret = down_read_killable(&mm->mmap_sem);
+> +	if (ret) {
+> +		mmput(mm);
+> +		goto out_put_task;
+> +	}
+>  
+>  	nr_files = 0;
+>  
