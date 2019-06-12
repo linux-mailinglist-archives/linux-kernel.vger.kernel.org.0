@@ -2,125 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD4042272
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E765B42280
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732015AbfFLK3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:29:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42614 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726851AbfFLK3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:29:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 16DA0AE07;
-        Wed, 12 Jun 2019 10:29:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id BA8661E4328; Wed, 12 Jun 2019 12:29:17 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 12:29:17 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190612102917.GB14578@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
- <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz>
- <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+        id S1732231AbfFLKac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:30:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54564 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727493AbfFLKac (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:30:32 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CASW0o146611
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 06:30:30 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t2x2kmtav-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 06:30:30 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Wed, 12 Jun 2019 11:30:28 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Jun 2019 11:30:25 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CAUNnp56688640
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 10:30:23 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3AEF4204C;
+        Wed, 12 Jun 2019 10:30:23 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3150A42049;
+        Wed, 12 Jun 2019 10:30:23 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.145.62.239])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Jun 2019 10:30:23 +0000 (GMT)
+Subject: Re: [PATCH v2 4/4] s390/crypto: sha: Use -ENODEV instead of
+ -EOPNOTSUPP
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+References: <20190612102248.18903-1-david@redhat.com>
+ <20190612102248.18903-5-david@redhat.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Wed, 12 Jun 2019 12:30:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190612102248.18903-5-david@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19061210-4275-0000-0000-00000341A1A7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061210-4276-0000-0000-00003851B787
+Message-Id: <10b7259b-3c73-1c87-6ccd-914da9c796dd@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906120073
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 07-06-19 07:52:13, Ira Weiny wrote:
-> On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
-> > 
-> > > Because the pins would be invisible to sysadmin from that point on. 
-> > 
-> > It is not invisible, it just shows up in a rdma specific kernel
-> > interface. You have to use rdma netlink to see the kernel object
-> > holding this pin.
-> > 
-> > If this visibility is the main sticking point I suggest just enhancing
-> > the existing MR reporting to include the file info for current GUP
-> > pins and teaching lsof to collect information from there as well so it
-> > is easy to use.
-> > 
-> > If the ownership of the lease transfers to the MR, and we report that
-> > ownership to userspace in a way lsof can find, then I think all the
-> > concerns that have been raised are met, right?
-> 
-> I was contemplating some new lsof feature yesterday.  But what I don't
-> think we want is sysadmins to have multiple tools for multiple
-> subsystems.  Or even have to teach lsof something new for every potential
-> new subsystem user of GUP pins.
+On 12.06.19 12:22, David Hildenbrand wrote:
+> Let's use the error value that is typically used if HW support is not
+> available when trying to load a module - this is also what systemd's
+> systemd-modules-load.service expects.
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/s390/crypto/sha1_s390.c   | 2 +-
+>  arch/s390/crypto/sha256_s390.c | 2 +-
+>  arch/s390/crypto/sha512_s390.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/s390/crypto/sha1_s390.c b/arch/s390/crypto/sha1_s390.c
+> index 009572e8276d..7c15542d3685 100644
+> --- a/arch/s390/crypto/sha1_s390.c
+> +++ b/arch/s390/crypto/sha1_s390.c
+> @@ -86,7 +86,7 @@ static struct shash_alg alg = {
+>  static int __init sha1_s390_init(void)
+>  {
+>  	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_1))
+> -		return -EOPNOTSUPP;
+> +		return -ENODEV;
+>  	return crypto_register_shash(&alg);
+>  }
+>  
+> diff --git a/arch/s390/crypto/sha256_s390.c b/arch/s390/crypto/sha256_s390.c
+> index 62833a1d8724..af7505148f80 100644
+> --- a/arch/s390/crypto/sha256_s390.c
+> +++ b/arch/s390/crypto/sha256_s390.c
+> @@ -117,7 +117,7 @@ static int __init sha256_s390_init(void)
+>  	int ret;
+>  
+>  	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_256))
+> -		return -EOPNOTSUPP;
+> +		return -ENODEV;
+>  	ret = crypto_register_shash(&sha256_alg);
+>  	if (ret < 0)
+>  		goto out;
+> diff --git a/arch/s390/crypto/sha512_s390.c b/arch/s390/crypto/sha512_s390.c
+> index be589c340d15..ad29db085a18 100644
+> --- a/arch/s390/crypto/sha512_s390.c
+> +++ b/arch/s390/crypto/sha512_s390.c
+> @@ -127,7 +127,7 @@ static int __init init(void)
+>  	int ret;
+>  
+>  	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_512))
+> -		return -EOPNOTSUPP;
+> +		return -ENODEV;
+>  	if ((ret = crypto_register_shash(&sha512_alg)) < 0)
+>  		goto out;
+>  	if ((ret = crypto_register_shash(&sha384_alg)) < 0)
+fine with me
+Reviewed-by: Harald Freudenberger <freude@linux.ibm.com>
 
-Agreed.
-
-> I was thinking more along the lines of reporting files which have GUP
-> pins on them directly somewhere (dare I say procfs?) and teaching lsof to
-> report that information.  That would cover any subsystem which does a
-> longterm pin.
-
-So lsof already parses /proc/<pid>/maps to learn about files held open by
-memory mappings. It could parse some other file as well I guess. The good
-thing about that would be that then "longterm pin" structure would just hold
-struct file reference. That would avoid any needs of special behavior on
-file close (the file reference in the "longterm pin" structure would make
-sure struct file and thus the lease stays around, we'd just need to make
-explicit lease unlock block until the "longterm pin" structure is freed).
-The bad thing is that it requires us to come up with a sane new proc
-interface for reporting "longterm pins" and associated struct file. Also we
-need to define what this interface shows if the pinned pages are in DRAM
-(either page cache or anon) and not on NVDIMM.
-
-> > > ugly to live so we have to come up with something better. The best I can
-> > > currently come up with is to have a method associated with the lease that
-> > > would invalidate the RDMA context that holds the pins in the same way that
-> > > a file close would do it.
-> > 
-> > This is back to requiring all RDMA HW to have some new behavior they
-> > currently don't have..
-> > 
-> > The main objection to the current ODP & DAX solution is that very
-> > little HW can actually implement it, having the alternative still
-> > require HW support doesn't seem like progress.
-> > 
-> > I think we will eventually start seein some HW be able to do this
-> > invalidation, but it won't be universal, and I'd rather leave it
-> > optional, for recovery from truely catastrophic errors (ie my DAX is
-> > on fire, I need to unplug it).
-> 
-> Agreed.  I think software wise there is not much some of the devices can do
-> with such an "invalidate".
-
-So out of curiosity: What does RDMA driver do when userspace just closes
-the file pointing to RDMA object? It has to handle that somehow by aborting
-everything that's going on... And I wanted similar behavior here.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
