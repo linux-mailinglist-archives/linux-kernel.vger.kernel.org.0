@@ -2,162 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0B6425A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DBC425AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732356AbfFLM00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:26:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438710AbfFLM0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:26:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C30CE20874;
-        Wed, 12 Jun 2019 12:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560342381;
-        bh=Q4DR0ZfiZ07BcC65F0iVrnB89qNKvjsdzyOF+UzlnSQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPC3w47Vx4ftoEzC0SsDE+HJwteGfxPGeFUoMw9bN6/EEl0kVTPxjAemiNyEmzRgG
-         aJHK/b3tZIB/D2HWMXXdc9igxJLIPPdKuaW4ZOMyoThY2zXQED00PVpLu8FQAbD6U6
-         J2DdHQWrJ2eiiigK2Cuk6+JI48CDDkiEaPlnG7WY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     dan.j.williams@intel.com, vkoul@kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sinan Kaya <okaya@kernel.org>, Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] dma: qcom: hidma: no need to check return value of debugfs_create functions
-Date:   Wed, 12 Jun 2019 14:25:57 +0200
-Message-Id: <20190612122557.24158-6-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190612122557.24158-1-gregkh@linuxfoundation.org>
-References: <20190612122557.24158-1-gregkh@linuxfoundation.org>
+        id S2438796AbfFLM0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:26:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50905 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726941AbfFLM0h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 08:26:37 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5CCQBEP684669
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 12 Jun 2019 05:26:11 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5CCQBEP684669
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560342372;
+        bh=RIOx94uVGjoMX+pwFiQ9jhG0RUv4R1Tnc+ptNY6+mmQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Yy9qQOEplWOR/bXZYPlJ89855eIc8CdmWT/YoUm0lejePqc8Z4x0Jj+ieXVRvlCh+
+         DsnvTpbZQ7JEgodrT3QUhTnSg3Ue2hJUsUu4OqLcl9c1ne8h3thAOE06RMzr1i5ioN
+         4FwqohU8WVvMw/D+tKfxubB4dOCiACd2sJ483ZFGsbKWycehcc3Ik0a/NTgyjUhz6V
+         vCQc/e2BkOev7jvsVXcafwZWFnRMKajsl5w9ahOajQJJ9dTq05ewLaKE9VDSCpv8/6
+         Lz4XaRgO7Ex/RGpP1yjZUSi2bQMvfpJLwaQw8kohTRiajHJop67I5W5WcMdKvn/W5m
+         Edrqge3HwbHng==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5CCQB5K684666;
+        Wed, 12 Jun 2019 05:26:11 -0700
+Date:   Wed, 12 Jun 2019 05:26:11 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for James Morse <tipbot@zytor.com>
+Message-ID: <tip-87d3aa28f345bea77c396855fa5d5fec4c24461f@git.kernel.org>
+Cc:     stable@vger.kernel.org, fenghua.yu@intel.com, james.morse@arm.com,
+        hpa@zytor.com, reinette.chatre@intel.com, mingo@kernel.org,
+        bp@alien8.de, tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, bp@alien8.de, reinette.chatre@intel.com,
+          james.morse@arm.com, hpa@zytor.com, fenghua.yu@intel.com,
+          stable@vger.kernel.org
+In-Reply-To: <20190603172531.178830-1-james.morse@arm.com>
+References: <20190603172531.178830-1-james.morse@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/resctrl: Don't stop walking closids when a
+ locksetup group is found
+Git-Commit-ID: 87d3aa28f345bea77c396855fa5d5fec4c24461f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+Commit-ID:  87d3aa28f345bea77c396855fa5d5fec4c24461f
+Gitweb:     https://git.kernel.org/tip/87d3aa28f345bea77c396855fa5d5fec4c24461f
+Author:     James Morse <james.morse@arm.com>
+AuthorDate: Mon, 3 Jun 2019 18:25:31 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 12 Jun 2019 10:31:50 +0200
 
-Also, because there is no need to save the file dentry, remove the
-variables that were saving them as they were never even being used once
-set.
+x86/resctrl: Don't stop walking closids when a locksetup group is found
 
-Cc: Sinan Kaya <okaya@kernel.org>
-Cc: Andy Gross <agross@kernel.org>
-Cc: David Brown <david.brown@linaro.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: dmaengine@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When a new control group is created __init_one_rdt_domain() walks all
+the other closids to calculate the sets of used and unused bits.
+
+If it discovers a pseudo_locksetup group, it breaks out of the loop.  This
+means any later closid doesn't get its used bits added to used_b.  These
+bits will then get set in unused_b, and added to the new control group's
+configuration, even if they were marked as exclusive for a later closid.
+
+When encountering a pseudo_locksetup group, we should continue. This is
+because "a resource group enters 'pseudo-locked' mode after the schemata is
+written while the resource group is in 'pseudo-locksetup' mode." When we
+find a pseudo_locksetup group, its configuration is expected to be
+overwritten, we can skip it.
+
+Fixes: dfe9674b04ff6 ("x86/intel_rdt: Enable entering of pseudo-locksetup mode")
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H Peter Avin <hpa@zytor.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190603172531.178830-1-james.morse@arm.com
+
 ---
- drivers/dma/qcom/hidma.h     |  5 +----
- drivers/dma/qcom/hidma_dbg.c | 37 +++++++-----------------------------
- 2 files changed, 8 insertions(+), 34 deletions(-)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/qcom/hidma.h b/drivers/dma/qcom/hidma.h
-index 5f9966e82c0b..36357d02333a 100644
---- a/drivers/dma/qcom/hidma.h
-+++ b/drivers/dma/qcom/hidma.h
-@@ -101,8 +101,6 @@ struct hidma_chan {
- 	 * It is used by the DMA complete notification to
- 	 * locate the descriptor that initiated the transfer.
- 	 */
--	struct dentry			*debugfs;
--	struct dentry			*stats;
- 	struct hidma_dev		*dmadev;
- 	struct hidma_desc		*running;
- 
-@@ -134,7 +132,6 @@ struct hidma_dev {
- 	struct dma_device		ddev;
- 
- 	struct dentry			*debugfs;
--	struct dentry			*stats;
- 
- 	/* sysfs entry for the channel id */
- 	struct device_attribute		*chid_attrs;
-@@ -166,6 +163,6 @@ irqreturn_t hidma_ll_inthandler(int irq, void *arg);
- irqreturn_t hidma_ll_inthandler_msi(int irq, void *arg, int cause);
- void hidma_cleanup_pending_tre(struct hidma_lldev *llhndl, u8 err_info,
- 				u8 err_code);
--int hidma_debug_init(struct hidma_dev *dmadev);
-+void hidma_debug_init(struct hidma_dev *dmadev);
- void hidma_debug_uninit(struct hidma_dev *dmadev);
- #endif
-diff --git a/drivers/dma/qcom/hidma_dbg.c b/drivers/dma/qcom/hidma_dbg.c
-index 9523faf7acdc..994f448b64d8 100644
---- a/drivers/dma/qcom/hidma_dbg.c
-+++ b/drivers/dma/qcom/hidma_dbg.c
-@@ -146,17 +146,13 @@ void hidma_debug_uninit(struct hidma_dev *dmadev)
- 	debugfs_remove_recursive(dmadev->debugfs);
- }
- 
--int hidma_debug_init(struct hidma_dev *dmadev)
-+void hidma_debug_init(struct hidma_dev *dmadev)
- {
--	int rc = 0;
- 	int chidx = 0;
- 	struct list_head *position = NULL;
-+	struct dentry *dir;
- 
- 	dmadev->debugfs = debugfs_create_dir(dev_name(dmadev->ddev.dev), NULL);
--	if (!dmadev->debugfs) {
--		rc = -ENODEV;
--		return rc;
--	}
- 
- 	/* walk through the virtual channel list */
- 	list_for_each(position, &dmadev->ddev.channels) {
-@@ -165,32 +161,13 @@ int hidma_debug_init(struct hidma_dev *dmadev)
- 		chan = list_entry(position, struct hidma_chan,
- 				  chan.device_node);
- 		sprintf(chan->dbg_name, "chan%d", chidx);
--		chan->debugfs = debugfs_create_dir(chan->dbg_name,
-+		dir = debugfs_create_dir(chan->dbg_name,
- 						   dmadev->debugfs);
--		if (!chan->debugfs) {
--			rc = -ENOMEM;
--			goto cleanup;
--		}
--		chan->stats = debugfs_create_file("stats", S_IRUGO,
--						  chan->debugfs, chan,
--						  &hidma_chan_fops);
--		if (!chan->stats) {
--			rc = -ENOMEM;
--			goto cleanup;
--		}
-+		debugfs_create_file("stats", S_IRUGO, dir, chan,
-+				    &hidma_chan_fops);
- 		chidx++;
- 	}
- 
--	dmadev->stats = debugfs_create_file("stats", S_IRUGO,
--					    dmadev->debugfs, dmadev,
--					    &hidma_dma_fops);
--	if (!dmadev->stats) {
--		rc = -ENOMEM;
--		goto cleanup;
--	}
--
--	return 0;
--cleanup:
--	hidma_debug_uninit(dmadev);
--	return rc;
-+	debugfs_create_file("stats", S_IRUGO, dmadev->debugfs, dmadev,
-+			    &hidma_dma_fops);
- }
--- 
-2.22.0
-
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 333c177a2471..869cbef5da81 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -2542,7 +2542,12 @@ static int __init_one_rdt_domain(struct rdt_domain *d, struct rdt_resource *r,
+ 		if (closid_allocated(i) && i != closid) {
+ 			mode = rdtgroup_mode_by_closid(i);
+ 			if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
+-				break;
++				/*
++				 * ctrl values for locksetup aren't relevant
++				 * until the schemata is written, and the mode
++				 * becomes RDT_MODE_PSEUDO_LOCKED.
++				 */
++				continue;
+ 			/*
+ 			 * If CDP is active include peer domain's
+ 			 * usage to ensure there is no overlap
