@@ -2,83 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAF241EBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911EE41EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436840AbfFLINA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 04:13:00 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:47022 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2436818AbfFLINA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:13:00 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5C88bOO030842;
-        Wed, 12 Jun 2019 03:12:57 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2t0ae2wjud-1;
-        Wed, 12 Jun 2019 03:12:57 -0500
-Received: from EDIEX02.ad.cirrus.com (ediex02.ad.cirrus.com [198.61.84.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 8DC27611C8A7;
-        Wed, 12 Jun 2019 03:13:12 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 12 Jun
- 2019 09:12:56 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Wed, 12 Jun 2019 09:12:56 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 2AEA02A1;
-        Wed, 12 Jun 2019 09:12:56 +0100 (BST)
-Date:   Wed, 12 Jun 2019 09:12:56 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2] regulator: wm831x: Convert to use GPIO descriptors
-Message-ID: <20190612081256.GT28362@ediswmail.ad.cirrus.com>
-References: <20190612074222.10584-1-linus.walleij@linaro.org>
+        id S1730555AbfFLINP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 04:13:15 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:30302 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436876AbfFLINP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 04:13:15 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 57567A01CF;
+        Wed, 12 Jun 2019 10:13:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id uh2br7MzDbkY; Wed, 12 Jun 2019 10:13:08 +0200 (CEST)
+Subject: Re: [PATCH 2/2 v5] tty/serial/8250: use mctrl_gpio helpers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20190611105603.4435-1-sr@denx.de>
+ <20190611105603.4435-2-sr@denx.de> <20190611124415.GT9224@smile.fi.intel.com>
+ <85f0d39c-e5d8-320b-e611-d956630a629f@denx.de>
+ <20190611144828.GX9224@smile.fi.intel.com>
+From:   Stefan Roese <sr@denx.de>
+Message-ID: <12e5180e-b4a0-e5fa-bcad-ddc8103d644c@denx.de>
+Date:   Wed, 12 Jun 2019 10:13:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190612074222.10584-1-linus.walleij@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906120057
+In-Reply-To: <20190611144828.GX9224@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 09:42:22AM +0200, Linus Walleij wrote:
-> This converts the Wolfson Micro WM831x DCDC converter to use
-> a GPIO descriptor for the GPIO driving the DVS pin.
+On 11.06.19 16:48, Andy Shevchenko wrote:
+> On Tue, Jun 11, 2019 at 04:02:54PM +0200, Stefan Roese wrote:
+>> On 11.06.19 14:44, Andy Shevchenko wrote:
+>>> On Tue, Jun 11, 2019 at 12:56:03PM +0200, Stefan Roese wrote:
 > 
-> There is just one (non-DT) machine in the kernel using this, and
-> that is the Wolfson Micro (now Cirrus) Cragganmore 6410 so we
-> patch this board to pass a descriptor table and fix up the driver
-> accordingly.
+>>>>    static inline void serial8250_out_MCR(struct uart_8250_port *up, int value)
+>>>>    {
+>>>>    	serial_out(up, UART_MCR, value);
+>>>> +
+>>>> +	if (up->gpios) {
+>>>> +		int mctrl_gpio = 0;
+>>>> +
+>>>> +		if (value & UART_MCR_RTS)
+>>>> +			mctrl_gpio |= TIOCM_RTS;
+>>>> +		if (value & UART_MCR_DTR)
+>>>> +			mctrl_gpio |= TIOCM_DTR;
+>>>> +
+>>>> +		mctrl_gpio_set(up->gpios, mctrl_gpio);
+>>>> +	}
+>>>>    }
 > 
-> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Cc: patches@opensource.cirrus.com
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Use device name "wm831x-buckv.11" as described by Charles
-> - Use devm_gpiod_get() rather than the optional variant
-> ---
+>>>>    static inline int serial8250_in_MCR(struct uart_8250_port *up)
+>>>>    {
+>>>> -	return serial_in(up, UART_MCR);
+>>>> +	int mctrl;
+>>>> +
+>>>> +	mctrl = serial_in(up, UART_MCR);
+>>>> +
+>>>> +	if (up->gpios) {
+>>>> +		int mctrl_gpio = 0;
+>>>> +
+>>>> +		/* save current MCR values */
+>>>> +		if (mctrl & UART_MCR_RTS)
+>>>> +			mctrl_gpio |= TIOCM_RTS;
+>>>> +		if (mctrl & UART_MCR_DTR)
+>>>> +			mctrl_gpio |= TIOCM_DTR;
+>>>> +
+>>>> +		mctrl_gpio = mctrl_gpio_get_outputs(up->gpios, &mctrl_gpio);
+>>>> +		if (mctrl_gpio & TIOCM_RTS)
+>>>> +			mctrl |= UART_MCR_RTS;
+>>>> +		else
+>>>> +			mctrl &= ~UART_MCR_RTS;
+>>>> +
+>>>> +		if (mctrl_gpio & TIOCM_DTR)
+>>>> +			mctrl |= UART_MCR_DTR;
+>>>> +		else
+>>>> +			mctrl &= ~UART_MCR_DTR;
+>>>> +	}
+>>>> +
+>>>> +	return mctrl;
+>>>>    }
+>>>
+>>> These are using OR logic with potentially volatile data. Shouldn't we mask
+>>> unused bits in UART_MCR in case of up->gpios != NULL?
+>>
+>> Sorry, I don't see, which bits you are referring to? Could you please be
+>> a bit more specific with the variable / macro meant (example)?
+> 
+> I meant that we double write values in the out() which might have some
+> consequences, though I hope nothing wrong with it happens.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Where is the double write to a register? Sorry, I fail to spot it.
+  
+> In the in() we read the all bits in the register.
+> 
+> As now I look at the implementation of mctrl_gpio_get_outputs(),
+> I think we rather get helpers for conversion between TIOCM and UART_MCR values,
+> so, they can be used in get_mctrl() / set_mctrl() and above.
+
+Do you something like this in mind?
+
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index dc9354e34b60..f44561fcb941 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -1954,19 +1954,12 @@ unsigned int serial8250_do_get_mctrl(struct uart_port *port)
+         status = serial8250_modem_status(up);
+         serial8250_rpm_put(up);
+  
+-       ret = 0;
+-
+         if (up->gpios)
+                 return mctrl_gpio_get(up->gpios, &ret);
+  
+-       if (status & UART_MSR_DCD)
+-               ret |= TIOCM_CAR;
+-       if (status & UART_MSR_RI)
+-               ret |= TIOCM_RNG;
+-       if (status & UART_MSR_DSR)
+-               ret |= TIOCM_DSR;
+-       if (status & UART_MSR_CTS)
+-               ret |= TIOCM_CTS;
++       ret = UART_MSR_TO_TIOCM_DCD(status) | UART_MSR_TO_TIOCM_RI(status) |
++               UART_MSR_TO_TIOCM_DSR(status) | UART_MSR_TO_TIOCM_CTS(status);
++
+         return ret;
+  }
+  EXPORT_SYMBOL_GPL(serial8250_do_get_mctrl);
+@@ -1983,16 +1976,9 @@ void serial8250_do_set_mctrl(struct uart_port *port, unsigned int mctrl)
+         struct uart_8250_port *up = up_to_u8250p(port);
+         unsigned char mcr = 0;
+  
+-       if (mctrl & TIOCM_RTS)
+-               mcr |= UART_MCR_RTS;
+-       if (mctrl & TIOCM_DTR)
+-               mcr |= UART_MCR_DTR;
+-       if (mctrl & TIOCM_OUT1)
+-               mcr |= UART_MCR_OUT1;
+-       if (mctrl & TIOCM_OUT2)
+-               mcr |= UART_MCR_OUT2;
+-       if (mctrl & TIOCM_LOOP)
+-               mcr |= UART_MCR_LOOP;
++       mcr = TIOCM_TO_UART_MCR_RTS(mctrl) | TIOCM_TO_UART_MCR_DTR(mctrl) |
++               TIOCM_TO_UART_MCR_OUT1(mctrl) | TIOCM_TO_UART_MCR_OUT2(mctrl) |
++               TIOCM_TO_UART_MCR_LOOP(mctrl);
+  
+         mcr = (mcr & up->mcr_mask) | up->mcr_force | up->mcr;
+  
+diff --git a/include/uapi/linux/serial_reg.h b/include/uapi/linux/serial_reg.h
+index be07b5470f4b..bda905a1b765 100644
+--- a/include/uapi/linux/serial_reg.h
++++ b/include/uapi/linux/serial_reg.h
+@@ -376,5 +376,22 @@
+  #define UART_ALTR_EN_TXFIFO_LW 0x01    /* Enable the TX FIFO Low Watermark */
+  #define UART_ALTR_TX_LOW       0x41    /* Tx FIFO Low Watermark */
+  
++#define UART_MSR_TO_TIOCM_DCD(val)     ((val & UART_MSR_DCD) ? TIOCM_CAR : 0)
++#define UART_MSR_TO_TIOCM_RI(val)      ((val & UART_MSR_RI) ? TIOCM_RNG : 0)
++#define UART_MSR_TO_TIOCM_DSR(val)     ((val & UART_MSR_DSR) ? TIOCM_DSR : 0)
++#define UART_MSR_TO_TIOCM_CTS(val)     ((val & UART_MSR_CTS) ? TIOCM_CTS : 0)
++#define UART_MSR_TO_TIOCM_RTS(val)     ((val & UART_MSR_RTS) ? TIOCM_RTS : 0)
++#define UART_MSR_TO_TIOCM_DTR(val)     ((val & UART_MSR_DTR) ? TIOCM_DTR : 0)
++
++#define TIOCM_TO_UART_MCR_DCD(val)     ((val & TIOCM_DCD) ? UART_MCR_CAR : 0)
++#define TIOCM_TO_UART_MCR_RI(val)      ((val & TIOCM_RI) ? UART_MCR_RNG : 0)
++#define TIOCM_TO_UART_MCR_DSR(val)     ((val & TIOCM_DSR) ? UART_MCR_DSR : 0)
++#define TIOCM_TO_UART_MCR_CTS(val)     ((val & TIOCM_CTS) ? UART_MCR_CTS : 0)
++#define TIOCM_TO_UART_MCR_RTS(val)     ((val & TIOCM_RTS) ? UART_MCR_RTS : 0)
++#define TIOCM_TO_UART_MCR_DTR(val)     ((val & TIOCM_DTR) ? UART_MCR_DTR : 0)
++#define TIOCM_TO_UART_MCR_LOOP(val)    ((val & TIOCM_LOOP) ? UART_MCR_LOOP : 0)
++#define TIOCM_TO_UART_MCR_OUT1(val)    ((val & TIOCM_OUT1) ? UART_MCR_OUT1 : 0)
++#define TIOCM_TO_UART_MCR_OUT2(val)    ((val & TIOCM_OUT2) ? UART_MCR_OUT2 : 0)
++
+  #endif /* _LINUX_SERIAL_REG_H */
+
+
+Plus the use of these macros in this patch of course.
+
+If yes, then I'll add a new patch (pretty similar to the one included
+above) to this series.
 
 Thanks,
-Charles
+Stefan
