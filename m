@@ -2,152 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25AB742604
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D55042615
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408252AbfFLMgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:36:54 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17513 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405938AbfFLMgy (ORCPT
+        id S2409118AbfFLMiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:38:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41425 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406351AbfFLMiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:36:54 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d00f1e40000>; Wed, 12 Jun 2019 05:36:53 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 12 Jun 2019 05:36:52 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 12 Jun 2019 05:36:52 -0700
-Received: from [10.21.132.143] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Jun
- 2019 12:36:49 +0000
-Subject: Re: [PATCH v2 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
-To:     Sameer Pujar <spujar@nvidia.com>, <thierry.reding@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1560243406-2535-1-git-send-email-spujar@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1f2020ae-12f3-2ad1-c844-b4b7885d41f9@nvidia.com>
-Date:   Wed, 12 Jun 2019 13:36:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 12 Jun 2019 08:38:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5CCb2S9686859
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 12 Jun 2019 05:37:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5CCb2S9686859
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560343023;
+        bh=eYKMpZEAjnJ8Js12oOCOaHQmVBeOrwt5sDU+OKEJZTU=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=j40w5J8KWchEte2B1U3uMrs1/vfHUuuU5hL+FnDAJJnmomlYuDLVklWN6Pr4S9f4i
+         lcdiCO9kD4PkzSH0QKkb1DU9UreSJsSFk77jetMcBHB1c7KSW6kwwJAS1JreymKcR7
+         ZJapELuwESJJ6O0JHcfzJLWjNu4caqtdsDtbL4ViUbWsug8m0/575mqeuJTjrOLIcJ
+         ZwVt0qhRtovR2Ku+D63pAoYMgZRAtnRmntYCwB7kPQ/xej6nnwJnaeAHLDOTb7KyHj
+         5DIN7SCOXbv1qonO0uurGhz5i2TboGnviM7WrLSeEfNSXuR8Y3a5knE3oTH6Jt1US/
+         ywjv984Y6FLsw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5CCb1LD686855;
+        Wed, 12 Jun 2019 05:37:01 -0700
+Date:   Wed, 12 Jun 2019 05:37:01 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rajneesh Bhardwaj <tipbot@zytor.com>
+Message-ID: <tip-61caa8621b9979a78b04e353ab2ee44a47ef7a62@git.kernel.org>
+Cc:     bp@alien8.de, lenb@kernel.org, kan.liang@linux.intel.com,
+        srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+        rajneesh.bhardwaj@linux.intel.com, qiuxu.zhuo@intel.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, hpa@zytor.com,
+        andriy.shevchenko@linux.intel.com, linux-pm@vger.kernel.org,
+        dave.hansen@linux.intel.com
+Reply-To: andriy.shevchenko@linux.intel.com, linux-pm@vger.kernel.org,
+          kan.liang@linux.intel.com, srinivas.pandruvada@linux.intel.com,
+          dave.hansen@linux.intel.com, tglx@linutronix.de,
+          rajneesh.bhardwaj@linux.intel.com, bp@alien8.de,
+          qiuxu.zhuo@intel.com, lenb@kernel.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com
+In-Reply-To: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
+References: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/cpu: Add Ice Lake NNPI to Intel family
+Git-Commit-ID: 61caa8621b9979a78b04e353ab2ee44a47ef7a62
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1560243406-2535-1-git-send-email-spujar@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560343013; bh=l/KPUA8SA1zZ0jib8qJ2prVlUEp09ihngQ3+RWqn+j0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=XCK8nLrxKZJM0vFDsRjUUSHFB2qrYL58qNKiKWkXI0dApwyz88s4wcB6ZQ9a+tXIG
-         wbO9BN/RHYDqYCJhT184/D4UiKy7Lod5dHbuG4zWVkvOleH3E21BLN+QllMyVn1ZiS
-         3/UwiCssSnEhbJivKwaZD3bD+0g1XPVYBUI8PlD24fA53LfyR3g3FfYjpT4PjwEgew
-         bVwK0X1AHHj4zLpZZsqoYKy0QWw0G4w1KaETAA6RbxcfvuQsB/F8JgY0kuylK3eRZb
-         ZqYppAvHFWVucKaduEXk0UxI0aw1p3uJhpvXV5st8wH8cY+YRwizCDs/ViuwpojsvY
-         tCakX2O0Koj4g==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  61caa8621b9979a78b04e353ab2ee44a47ef7a62
+Gitweb:     https://git.kernel.org/tip/61caa8621b9979a78b04e353ab2ee44a47ef7a62
+Author:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+AuthorDate: Thu, 6 Jun 2019 06:54:19 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 12 Jun 2019 11:43:42 +0200
 
-On 11/06/2019 09:56, Sameer Pujar wrote:
-> Add DT nodes for following devices on Tegra186 and Tegra194
->  * ACONNECT
->  * ADMA
->  * AGIC
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 68 ++++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 68 ++++++++++++++++++++++++++++++++
->  2 files changed, 136 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> index 426ac0b..ccd902b 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> @@ -1295,4 +1295,72 @@
->  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->  		interrupt-parent = <&gic>;
->  	};
-> +
-> +	aconnect@2a41000 {
-> +		compatible = "nvidia,tegra210-aconnect";
-> +		clocks = <&bpmp TEGRA186_CLK_APE>,
-> +			 <&bpmp TEGRA186_CLK_APB2APE>;
-> +		clock-names = "ape", "apb2ape";
-> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x02930000 0x0 0x02930000 0x50000
-> +			  0x02a41000 0x0 0x02a41000 0x3000>;
+x86/cpu: Add Ice Lake NNPI to Intel family
 
-We only need one address range here that covers the entire APE.
+Add the CPUID model number of Ice Lake Neural Network Processor for Deep
+Learning Inference (ICL-NNPI) to the Intel family list. Ice Lake NNPI uses
+model number 0x9D and this will be documented in a future version of Intel
+Software Development Manual.
 
-> +		status = "disabled";
-> +
-> +		dma-controller@2930000 {
-> +			compatible = "nvidia,tegra186-adma";
-> +			reg = <0x02930000 0x50000>;
-> +			interrupt-parent = <&agic>;
-> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +			#dma-cells = <1>;
-> +			clocks = <&bpmp TEGRA186_CLK_AHUB>;
-> +			clock-names = "d_audio";
-> +			status = "disabled";
-> +		};
-> +
-> +		agic: agic@2a41000 {
-> +			compatible = "nvidia,tegra210-agic";
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			reg = <0x02a41000 0x1000>,
-> +			      <0x02a41000 0x2000>;
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@suse.de
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com
 
-These addresses should not overlap.
+---
+ arch/x86/include/asm/intel-family.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Cheers
-Jon
-
--- 
-nvpublic
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 9f15384c504a..087de5d3b93a 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -53,6 +53,7 @@
+ #define INTEL_FAM6_CANNONLAKE_MOBILE	0x66
+ 
+ #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
++#define INTEL_FAM6_ICELAKE_NNPI		0x9D
+ 
+ /* "Small Core" Processors (Atom) */
+ 
