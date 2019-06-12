@@ -2,148 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB65420AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15BC5420B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408713AbfFLJZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:25:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:48308 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406207AbfFLJZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:25:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C883C28;
-        Wed, 12 Jun 2019 02:25:23 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA1123F246;
-        Wed, 12 Jun 2019 02:25:22 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 10:25:20 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Qian Cai <cai@lca.pw>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] arm64: Don't unconditionally add -Wno-psabi to
- KBUILD_CFLAGS
-Message-ID: <20190612092519.GP28398@e103592.cambridge.arm.com>
-References: <20190607161201.73430-1-natechancellor@gmail.com>
- <20190611171931.99705-1-natechancellor@gmail.com>
+        id S2408745AbfFLJ00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:26:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52010 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406598AbfFLJ0Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:26:25 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AFE27602F3; Wed, 12 Jun 2019 09:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560331584;
+        bh=zeHHmyNed96WAFtWPcPGxVLUicNu4T3ZxCI7j9ROzdE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eYHB8Z0xlAtQF75Iyu1N8rvwvthKbvX4Ybt+BLDJQGOTg35ylXJpB775wnnsL5ZfW
+         Lvxfug3sHkdIOsEGVqsPNmR4y1a/HgShJwRHE5eZZN3Vngy151Bshn4ptYeSFvUsSb
+         MhgI7HFEvHN3ryBAE8UM0SmUprTZlzzhzXJulQIQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.79.128.120] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D72F60256;
+        Wed, 12 Jun 2019 09:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560331584;
+        bh=zeHHmyNed96WAFtWPcPGxVLUicNu4T3ZxCI7j9ROzdE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eYHB8Z0xlAtQF75Iyu1N8rvwvthKbvX4Ybt+BLDJQGOTg35ylXJpB775wnnsL5ZfW
+         Lvxfug3sHkdIOsEGVqsPNmR4y1a/HgShJwRHE5eZZN3Vngy151Bshn4ptYeSFvUsSb
+         MhgI7HFEvHN3ryBAE8UM0SmUprTZlzzhzXJulQIQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D72F60256
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH] arm64: dts: sdm845: Add iommus property to qup1
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+References: <20190604222939.195471-1-swboyd@chromium.org>
+ <20190604223700.GE4814@minitux> <5cf6f4bb.1c69fb81.c39da.5496@mx.google.com>
+ <CAFp+6iHZeawnz7Vfk3=Oox-GN_y6c-E9wMwc-qdp1bTOXgqjFQ@mail.gmail.com>
+ <5cf82c6f.1c69fb81.9e342.dbda@mx.google.com>
+ <CAFp+6iE8FUXxexKbYy=ak+se-pj1XXUZxTu5o=hJvg66V6+Rzw@mail.gmail.com>
+ <5cfee60a.1c69fb81.584d9.cf12@mx.google.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <7299c814-3d9f-c5d1-fe7b-44e05f8b4ec9@codeaurora.org>
+Date:   Wed, 12 Jun 2019 14:56:20 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190611171931.99705-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <5cfee60a.1c69fb81.584d9.cf12@mx.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:19:32AM -0700, Nathan Chancellor wrote:
-> This is a GCC only option, which warns about ABI changes within GCC, so
-> unconditionally adding it breaks Clang with tons of:
-> 
-> warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
-> 
-> and link time failures:
-> 
-> ld.lld: error: undefined symbol: __efistub___stack_chk_guard
-> >>> referenced by arm-stub.c:73
-> (/home/nathan/cbl/linux/drivers/firmware/efi/libstub/arm-stub.c:73)
-> >>>               arm-stub.stub.o:(__efistub_install_memreserve_table)
-> in archive ./drivers/firmware/efi/libstub/lib.a
-> 
-> These failures come from the lack of -fno-stack-protector, which is
-> added via cc-option in drivers/firmware/efi/libstub/Makefile. When an
-> unknown flag is added to KBUILD_CFLAGS, clang will noisily warn that it
-> is ignoring the option like above, unlike gcc, who will just error.
-> 
-> $ echo "int main() { return 0; }" > tmp.c
-> 
-> $ clang -Wno-psabi tmp.c; echo $?
-> warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
-> 1 warning generated.
-> 0
-> 
-> $ gcc -Wsometimes-uninitialized tmp.c; echo $?
-> gcc: error: unrecognized command line option
-> ‘-Wsometimes-uninitialized’; did you mean ‘-Wmaybe-uninitialized’?
-> 1
-> 
-> For cc-option to work properly with clang and behave like gcc, -Werror
-> is needed, which was done in commit c3f0d0bc5b01 ("kbuild, LLVMLinux:
-> Add -Werror to cc-option to support clang").
-> 
-> $ clang -Werror -Wno-psabi tmp.c; echo $?
-> error: unknown warning option '-Wno-psabi'
-> [-Werror,-Wunknown-warning-option]
-> 1
-> 
-> As a consequence of this, when an unknown flag is unconditionally added
-> to KBUILD_CFLAGS, it will cause cc-option to always fail and those flags
-> will never get added:
-> 
-> $ clang -Werror -Wno-psabi -fno-stack-protector tmp.c; echo $?
-> error: unknown warning option '-Wno-psabi'
-> [-Werror,-Wunknown-warning-option]
-> 1
-> 
-> This can be seen when compiling the whole kernel as some warnings that
-> are normally disabled (see below) show up. The full list of flags
-> missing from drivers/firmware/efi/libstub are the following (gathered
-> from diffing .arm64-stub.o.cmd):
-> 
-> -fno-delete-null-pointer-checks
-> -Wno-address-of-packed-member
-> -Wframe-larger-than=2048
-> -Wno-unused-const-variable
-> -fno-strict-overflow
-> -fno-merge-all-constants
-> -fno-stack-check
-> -Werror=date-time
-> -Werror=incompatible-pointer-types
-> -ffreestanding
-> -fno-stack-protector
-> 
-> Use cc-disable-warning so that it gets disabled for GCC and does nothing
-> for Clang.
-> 
-> Fixes: ebcc5928c5d9 ("arm64: Silence gcc warnings about arch ABI drift")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/511
-> Reported-by: Qian Cai <cai@lca.pw>
-> Acked-by: Dave Martin <Dave.Martin@arm.com>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
-> 
-> v1 -> v2:
-> 
-> * Improve commit message explanation, I wasn't entirely happy with the
->   first one; let me know if there are any issues/questions.
-> 
-> * Carry forward Dave's ack and Nick's review (let me know if you
->   disagree with the commit messasge rewording).
-> 
->  arch/arm64/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 8fbd583b18e1..e9d2e578cbe6 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -51,7 +51,7 @@ endif
->  
->  KBUILD_CFLAGS	+= -mgeneral-regs-only $(lseinstr) $(brokengasinst)
->  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
-> -KBUILD_CFLAGS	+= -Wno-psabi
-> +KBUILD_CFLAGS	+= $(call cc-disable-warning, psabi)
->  KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
->  
->  KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
 
-Looks OK to me.  Thanks for the additional explanation.
 
-Cheers
----Dave
+On 6/11/2019 4:51 AM, Stephen Boyd wrote:
+> Quoting Vivek Gautam (2019-06-06 04:17:16)
+>> Hi Stephen,
+>>
+>> On Thu, Jun 6, 2019 at 2:27 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>>> Quoting Vivek Gautam (2019-06-04 21:55:26)
+>>>
+>>>> Cheza will throw faults for anything that is programmed with TZ on mtp
+>>>> as all of that should be handled in HLOS. The firmwares of all these
+>>>> peripherals assume that the SID reservation is done (whether in TZ or HLOS).
+>>>>
+>>>> I am inclined to moving the iommus property for all 'TZ' to board dts files.
+>>>> MTP wouldn't need those SIDs. So, the SOC level dtsi will have just the
+>>>> HLOS SIDs.
+>>> So you're saying you'd like to have the SID be <&apps_smmu 0x6c3 0x0> in
+>>> the sdm845.dtsi file and then override this on Cheza because our SID is
+>>> different (possibly because we don't use GSI)? Why can't we program the
+>>> SID in Cheza firmware to match the "HLOS" SID of 0x6c3?
+>> Sorry my bad, I missed the overriding part.
+>> May be we add the lists of SIDs in board dts only. So, cheza dts will
+>> have all these SIDs -
+>> <&apps_smmu 0x6c0 0x3>   // for both 0x6c0 (TZ) and 0x6c3 (HLOS)
+>> <&apps_smmu 0x6d6 0x0>   // if we want to use the GSI dma.
+>> and
+>> MTP will have
+>> <&apps_smmu 0x6c3 0x0>
+>> <&apps_smmu 0x6d6 0x0>
+>> WDUT?
+> I'd prefer to fix the firmware so that the HLOS SID is used even on this
+> board. Making Cheza use something different from MTP doesn't sound so
+> good. Do you know how that works? Is there some configuration register
+> or something that I should be looking for to see why the SID is not the
+> HLOS one? It's definitely generating SIDs for the TZ SID (0x6c0), but
+> I'd like to make sure that we can't change it because it's tied to some
+> hardware signal like the NS bit and/or the Execution Level. Hopefully
+> it's a config and then our difference from MTP can be minimized.
+
+I don't think SMMU limits any such programming of SIDs. It's a design 
+decision
+to program few SIDs in TZ/Hyp and allocate the corresponding context banks
+and create respective mappings. You should be able to see these SMR 
+configurations
+before kernel boots up. I use a simple T32 command -
+
+smmu.add "<name>" <smmu_type> <base_address>
+smmu.streammaptable <name>
+
+e.g. for sdm845 apps_smmu
+
+smmu.add "apps" MMU500 a:0x15000000
+smmu.StreamMapTable apps
+
+This dumps all the information regarding the smmu.
+
+>
+> As far as I can tell, HLOS on SDM845 has always used GPI (yet another
+> DMA engine) to do the DMA transfers. And the GPI is the hardware block
+> that uses the SID of 0x6d6 above, so putting that into iommus for the
+> geniqup doesn't make any sense given that GPI is another node. Can you
+> confirm this is the case? Furthermore, the SID of 0x6c3 sounds untested?
+> Has it ever been generated on SDM845 MTP?
+
+I will get back with this information.
+
+BRs
+Vivek
+
+>
+> If we ever support GPI, I'd expect to see something like this in DT:
+>
+> 	gpi_dma: gpi@a00000 {
+> 		reg = <0x00a00000 0x60000>;
+> 		iommus = <&apps_smmu 0x6d6 0x0>;
+> 		...
+> 	};
+>
+> 	geniqup@ac0000 {
+> 		reg = <0x00ac0000 0x6000>;
+> 		iommus = <&apps_smmu 0x6c3 0x0>;
+>
+> 		i2c@....{
+>
+> 			dmas = <&gpi_dma ....>;
+> 		};
+>
+> But now I'm worried that the geniqup needs the proper geniqup wrapper
+> clks to talk to it. Most likely the GPI is embedded inside the geniqup
+> wrapper and sits right next to the bus to do bus DMA mastering. From the
+> DT side, it means we should either put it inside the geniqup node, or we
+> should add the wrapper clks to the GPI node and hope things work out
+> with regards to clks and shared resources being used at the right time.
+>
+> If we're left with trying to figure out how to express the different
+> SIDs depending on the CPU execution state then it may be easier to push
+> for GPI upstreaming and use that dma engine to "fold" the SID
+> numberspace into one SID for the GPI. This would avoid having to deal
+> with the HLOS vs. TZ SID problem by adding a whole other driver. Or we
+> could just rip out the non-GPI DMA support in this driver because the
+> SID is all confused.
+>
+
