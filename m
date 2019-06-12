@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CD74492C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F16244927
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:15:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393616AbfFMRPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:15:03 -0400
-Received: from smtp.aristanetworks.com ([52.0.43.43]:48978 "EHLO
+        id S1729021AbfFMRO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:14:59 -0400
+Received: from smtp.aristanetworks.com ([52.0.43.43]:48988 "EHLO
         smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728800AbfFLVwV (ORCPT
+        with ESMTP id S1728803AbfFLVwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 17:52:21 -0400
+        Wed, 12 Jun 2019 17:52:33 -0400
 Received: from smtp.aristanetworks.com (localhost [127.0.0.1])
-        by smtp.aristanetworks.com (Postfix) with ESMTP id A816030DD5A8;
-        Wed, 12 Jun 2019 14:52:19 -0700 (PDT)
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 4416C30DD5A8;
+        Wed, 12 Jun 2019 14:52:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1560376339;
-        bh=gZKRKJcuRQSwe2TyYVhO9ixqNktFM8piGcLI2AKiDUY=;
-        h=From:To:Cc:Subject:Date;
-        b=1ceR8VNQckqIlWxoGgGn9zbBtPmVs/5npYY8OjtyIbVGHiciJtQ0dQNe4lKERZPMu
-         6CixhkXs+XOyifhEnimauktjNu4j/0hBisAPV1usnGX4f2c7pT+Y2h8J0B2YdHfaSK
-         q8B+AScT1PhpDKlgQAs1bWqRZOTxY7t7YAS5QPuxKeNL+33t+KICul0yaoW561kE1N
-         h40tF1z2SrnXXl0oTL0gTm3N2v7XgMSJB9YHNeU2ojrjSalGGtf9Rw030hlJJ+HI7Q
-         i6LISs1BjX6+ye66fIAAXJ/kaEF/P4EUYC1B7IUB6AbX/iVD/BQIDK9Y3Yu77Ha2Wt
-         pIFLYmOZLBTYQ==
+        s=Arista-A; t=1560376352;
+        bh=0YAEwRV8pxaKDZriNp5u14v56Dsy6P+WWcBl+ItO2zQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=o0tcrE69nlTRCy8oBfpiQeJnWgJI43UMXL1JcrYTR2TXwxuLOjTUIkPuuv7MXRqf3
+         YDdo4KeSF7MlOXZXb7AcDS73JCOrcTPDsNRD4rK+wv47rTdNi/Dc4KogK0ScKquYPV
+         Ayw16OMjHVDyyC60fkrTALrVED6wYi0cwq1M46w3MRBQiHsWK1VL5/PNAqeW/k71J+
+         4XnRx4EtiNG+hmSo4aT7WSqrihEBBWcbcaJ+WnRm/tK4ynARFh/fm+IltVeyrfW6d2
+         B0MazUx5XKO6Am0eX+nacKTrwXnAepR4LkQz0xllOJX0zJAdCpdDjGtbXR9W0xEe3g
+         5b148ONyu7h9A==
 Received: from chmeee (unknown [10.80.4.152])
-        by smtp.aristanetworks.com (Postfix) with ESMTP id 84CAB30DD5A5;
-        Wed, 12 Jun 2019 14:52:19 -0700 (PDT)
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 2AD1730DD5A5;
+        Wed, 12 Jun 2019 14:52:32 -0700 (PDT)
 Received: from kevmitch by chmeee with local (Exim 4.92)
         (envelope-from <kevmitch@chmeee>)
-        id 1hbBAI-0003K5-UY; Wed, 12 Jun 2019 14:52:18 -0700
+        id 1hbBAV-0003KF-JQ; Wed, 12 Jun 2019 14:52:31 -0700
 From:   Kevin Mitchell <kevmitch@arista.com>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Kevin Mitchell <kevmitch@arista.com>
-Subject: [PATCH 0/3] handle init errors more gracefully in amd_iommu
-Date:   Wed, 12 Jun 2019 14:52:01 -0700
-Message-Id: <20190612215203.12711-1-kevmitch@arista.com>
+Subject: [PATCH 1/3] iommu/amd: make iommu_disable safer
+Date:   Wed, 12 Jun 2019 14:52:03 -0700
+Message-Id: <20190612215203.12711-2-kevmitch@arista.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190612215203.12711-1-kevmitch@arista.com>
+References: <20190612215203.12711-1-kevmitch@arista.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,33 +48,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series makes error handling more robust in the amd_iommu init
-code. It was initially motivated by problematic firmware that does not
-set up the physical address of the iommu. This led to a NULL dereference
-panic when iommu_disable was called during cleanup.
+Make it safe to call iommu_disable during early init error conditions
+before mmio_base is set, but after the struct amd_iommu has been added
+to the amd_iommu_list. For example, this happens if firmware fails to
+fill in mmio_phys in the ACPI table leading to a NULL pointer
+dereference in iommu_feature_disable.
 
-While the first patch is sufficient to avoid the panic, the subsequent
-two move the cleanup closer to the actual error and avoid calling the
-cleanup code twice when amd_iommu=off is specified on the command line.
+Signed-off-by: Kevin Mitchell <kevmitch@arista.com>
+---
+ drivers/iommu/amd_iommu_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I have tested this series on a variety of AMD CPUs with firmware
-exhibiting the issue. I have additionally tested on platforms where the
-firmware has been fixed. I tried both with and without amd_iommu=off. I
-have also tested on older CPUs where no IOMMU is detected and even one
-where the GART driver ends up running.
-
-Thanks,
-
-Kevin
-
-Kevin Mitchell (3):
-  iommu/amd: make iommu_disable safer
-  iommu/amd: move gart fallback to amd_iommu_init
-  iommu/amd: only free resources once on init error
-
- drivers/iommu/amd_iommu_init.c | 45 ++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index f773792d77fd..3798d7303c99 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -424,6 +424,9 @@ static void iommu_enable(struct amd_iommu *iommu)
+ 
+ static void iommu_disable(struct amd_iommu *iommu)
+ {
++	if (!iommu->mmio_base)
++		return;
++
+ 	/* Disable command buffer */
+ 	iommu_feature_disable(iommu, CONTROL_CMDBUF_EN);
+ 
 -- 
 2.20.1
 
