@@ -2,111 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB5D423E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBD042416
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfFLLSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 07:18:35 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:38138 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbfFLLSf (ORCPT
+        id S2409037AbfFLLeo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 07:34:44 -0400
+Received: from corgi.wingnets.ne.jp ([210.230.216.243]:37798 "EHLO
+        corgi.wingnets.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406406AbfFLLen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:18:35 -0400
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x5CBIF6L022141
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 20:18:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x5CBIF6L022141
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1560338296;
-        bh=9qf4J6QRljcfXo5cUe4iXkNhy9Rz2w4BYyV8ixl/hPM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MsLZJG3O0m4XnY+kDeA6aNO0la9hMNG+YOcdfh9A+CbiK+sVJXGiOFWVgU4vEppmm
-         pH68SIue+8bShOzLSDQ2suMAkHW5W4oo4HVSumabLgvs5JkjfPG88ZlmAt4OWAt6mC
-         O4SCxENac1lwcqJzaFbezMiyxWawHnM0NGT5psLCnHfFUPBupJjaySWWZQ5YQmdTQm
-         5AqvO2SFUJoaiaRlMjFjowrlj1+g0BDN2M4Pp4dk9Ax4I4UpxPxf9R8TVbBCoTnPHa
-         FtgPeJmmaQLrQukh8LjiLleE/6Ix1T0FA3w09RDY+efL+DE0QRAKhwH5eNkAofSuC1
-         LX9FidaSAi55g==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id v6so9989788vsq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 04:18:15 -0700 (PDT)
-X-Gm-Message-State: APjAAAXKLTWapkxcXRl20YJN3diOhx1dt1XpVpQZkEPRKr77QRsTMt8h
-        OSED+TnlDJ1i92ylIEUqiaFcRLtZQLEc8Ys8ohk=
-X-Google-Smtp-Source: APXvYqyiAJLzuWlm9OGNKzll2um7PpgCRjNhqR9NhMbeh8rj+9jrh3+P+45l89HNf3AKA3kzYmgmctCHy5tkeOKPtts=
-X-Received: by 2002:a67:f495:: with SMTP id o21mr28123827vsn.54.1560338294432;
- Wed, 12 Jun 2019 04:18:14 -0700 (PDT)
+        Wed, 12 Jun 2019 07:34:43 -0400
+X-Greylist: delayed 679 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jun 2019 07:34:43 EDT
+Received: from [74.208.242.139] (unknown [74.208.242.139])
+        by corgi.wingnets.ne.jp (Postfix) with ESMTP id E9DF015A2F;
+        Wed, 12 Jun 2019 20:19:23 +0900 (JST)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20190603063119.36544-1-abrodkin@synopsys.com> <C2D7FE5348E1B147BCA15975FBA2307501A2522AB4@us01wembx1.internal.synopsys.com>
- <CY4PR1201MB012022B3EBC7F7C2788E7B06A1140@CY4PR1201MB0120.namprd12.prod.outlook.com>
-In-Reply-To: <CY4PR1201MB012022B3EBC7F7C2788E7B06A1140@CY4PR1201MB0120.namprd12.prod.outlook.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 12 Jun 2019 20:17:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ-NBUuB6duaQP138Jx7y0UpgqaD=wYtRC2G_c5_H=EJg@mail.gmail.com>
-Message-ID: <CAK7LNAQ-NBUuB6duaQP138Jx7y0UpgqaD=wYtRC2G_c5_H=EJg@mail.gmail.com>
-Subject: Re: [PATCH] ARC: build: Try to guess CROSS_COMPILE with cc-cross-prefix
-To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Zu unserem Vorteil!  
+To:     Recipients <01010acb@hkfl.online>
+From:   "Pedro Moreira" <01010acb@hkfl.online>
+Date:   Wed, 12 Jun 2019 11:19:19 +0000
+Reply-To: a123@hkfl.online
+Message-Id: <20190612111923.E9DF015A2F@corgi.wingnets.ne.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+Schöne Grüße!!
 
-On Tue, Jun 4, 2019 at 2:49 AM Alexey Brodkin
-<Alexey.Brodkin@synopsys.com> wrote:
->
-> Hi Vineet,
->
-> > -----Original Message-----
-> > From: Vineet Gupta <vgupta@synopsys.com>
-> > Sent: Monday, June 3, 2019 7:25 PM
-> > To: Alexey Brodkin <abrodkin@synopsys.com>; linux-snps-arc@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org; Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Subject: Re: [PATCH] ARC: build: Try to guess CROSS_COMPILE with cc-cross-prefix
-> >
-> > On 6/2/19 11:31 PM, Alexey Brodkin wrote:
-> > > For a long time we used to hard-code CROSS_COMPILE prefix
-> > > for ARC until it started to cause problems, so we decided to
-> > > solely rely on CROSS_COMPILE externally set by a user:
-> > > commit 40660f1fcee8 ("ARC: build: Don't set CROSS_COMPILE in arch's Makefile").
-> > >
-> > > While it works perfectly fine for build-systems where the prefix
-> > > gets defined anyways for us human beings it's quite an annoying
-> > > requirement especially given most of time the same one prefix
-> > > "arc-linux-" is all what we need.
-> > >
-> > > It looks like finally we're getting the best of both worlds:
-> > >  1. W/o cross-toolchain we still may install headers, build .dtb etc
-> > >  2. W/ cross-toolchain get the kerne built with only ARCH=arc
-> > >
-> > > Inspired by [1] & [2].
-> > >
-> > > [1] http://lists.infradead.org/pipermail/linux-snps-arc/2019-May/005788.html
-> > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fc2b47b55f17
-> > >
-> > > A side note: even though "cc-cross-prefix" does its job it pollutes
-> > > console with output of "which" for all the prefixes it didn't manage to find
-> > > a matching cross-compiler for like that:
-> > > | # ARCH=arc make defconfig
-> > > | which: no arceb-linux-gcc in (~/.local/bin:~/bin:/usr/bin:/usr/sbin)
-> > > | *** Default configuration is based on 'nsim_hs_defconfig'
+Als erstes, möchte ich Ihnen um Ihre vertrauen in diese Transaktion bitten, diese ist völlig vertraulich und streng Geheim. Doch ich weiß dass, die Transaktion auf diese Größe, jeder besorgt und beunruhigt machen kann, aber ich versichere Ihnen, das am Ende alles gut laufen wird.Ich werde anfangen, indem ich mich anständig vorstelle. Es wird Ihnen sicherlich überraschen diesen Brief zu erhalten, da wir vorher keine Absprache hatte. Mein name ist Pedro Moreira, die Berater des verstorbenen Herr Richard <mf:Lastname> aus Deutschland.
+Meine Absicht Sie zu kontaktieren geht darum, Ihre Mitwirkung um die Geld von unserer verstorbenen Kunde zu sichern, und zu verhindern das es nicht von der Bank beschlagnahmend oder verzollt wird, wo das Geld in Wert von 6.950.000.00 Millionen Euro von der verstorbene eingezahlt wurde, bevor er starb.
 
+Die Bank hat mir eine Notiz ausgefertigt eine Nachfolger Verwandtschaft zu kontaktieren, sonst wird das Geld an der Bank Eigentum umgeleitet. Bislang, habe ich mit aller meine Mühe versucht jemanden zu kontaktieren, der mit den verstorbene in Verwandtschaft steht, dies war leider erfolglos. Aus diesem Grund habe ich sie kontaktiert. Eigentlich, bitte ich Sie um Ihre Einwilligung, Sie der Bank als der Nachfolger Verwandt/Besitzerin des Geldes unsere verstorbene Kunde zu repräsentieren, da Sie den gleichen Nachname haben und somit wird der Betrag an Ihnen gezahlt.
 
-I just noticed this patch is queued on top of v5.2-rc4.
-(2bc42bfba9b247abd)
+Alle legale Dokumente, die sie benötigen um Sie zu unterstützen und den Anspruch als meinen Mandant Nachfolger Verwandtschaft zu erhalten, werde ich ihnen zur Verfügung stellen. Um diese Transaktion zu ermöglichen, alles was ich brauche ist eine ehrliche Zusammenarbeit. Ich möchte vorschlagen, dass 20% von dem Geld an Hilfsorganisation verschenkt wird, während das übliche 80 % gleichmäßig an uns verteilt wird. Ich möchte ihnen vergewissern, dass dieser Auftrag völlig Risikofrei ist. Ich werde meine Position als Berater des verstobenes die Transaktion erfolgreich durchführen.
 
-This 'side note' is no longer needed or reproducible
-because -rc4 contains my fix-up (913ab9780fc0212).
+Die geplante Transaktion wird unter eine autorisierte Anordnung durchgeführt, was Sie schützen wird.Falls das Geschäftsleben nicht Ihre Moral entspricht, dann bitte ich Sie meine Entschuldigung zu akzeptieren. Falls Sie im Gegenteil wünschen mit mir dieses Ziel zu Erringen, dann bitte ich Sie für weitere Detail mit mir kontakt aufzunehmen. 
 
-I do not know if the ARC maitainer is happy to rebase.
-
-Just for your information.
-
-
--- 
-Best Regards
-Masahiro Yamada
+Mit freundlichen Grüßen,
+Herr Pedro Moreira.
