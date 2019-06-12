@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7609842540
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A61F42549
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732323AbfFLMNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:13:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53456 "EHLO mail.kernel.org"
+        id S2438709AbfFLMNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:13:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727584AbfFLMNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:13:17 -0400
+        id S1731398AbfFLMNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 08:13:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18D67208CA;
-        Wed, 12 Jun 2019 12:13:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADCD121019;
+        Wed, 12 Jun 2019 12:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560341596;
-        bh=4SmLU4+bYJ493/LkbHQOOJEWVZjXMM4kmuEWI0pnj34=;
+        s=default; t=1560341599;
+        bh=meMOfm/cp2ZdmdOTfHwzOUf3Ik63/BpInCj8Dv0OURk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xOic1LtMPlrND0Iel66b8vgdJ7aZZGUHA0gdaxVVqLFftppZ4ge75LL2t1hQUAec+
-         jQXWgUFJKI7Y8Teo8jvMjZWX9IfBLmuowqfKCNpxj4+S9sQjAVtC0HnDjaseaU71IO
-         chGqJDMMpFCgcs98V/JHE1/9vwIzRY2GMJ8baHSo=
+        b=bwxd+mORdOMEwy7oRUBVQ9NGUlquywuNXh1lFe/AvAVgSH1inkX1PrSyx8eWaqoFS
+         O1mdBM1EMzjnyxUwdVyLlgxdZLaSDJkz5ULfVpGAqKuTpJzAOiLQv/VV+xlUcvhU2H
+         bI5TP2yyMMQHPgVYww5iIsAA2Q+Dt63Q/FYxyJZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     dvhart@infradead.org, andy@infradead.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Ike Panhc <ike.pan@canonical.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/8] platform: x86: dell-laptop: no need to check return value of debugfs_create functions
-Date:   Wed, 12 Jun 2019 14:12:53 +0200
-Message-Id: <20190612121258.19535-3-gregkh@linuxfoundation.org>
+Subject: [PATCH 4/8] platform: x86: ideapad-laptop: no need to check return value of debugfs_create functions
+Date:   Wed, 12 Jun 2019 14:12:54 +0200
+Message-Id: <20190612121258.19535-4-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190612121258.19535-1-gregkh@linuxfoundation.org>
 References: <20190612121258.19535-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,33 +45,80 @@ When calling debugfs functions, there is no need to ever check the
 return value.  The function can work or not, but the code logic should
 never do something different based on this.
 
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: "Pali Rohár" <pali.rohar@gmail.com>
+Cc: Ike Panhc <ike.pan@canonical.com>
 Cc: Darren Hart <dvhart@infradead.org>
 Cc: Andy Shevchenko <andy@infradead.org>
 Cc: platform-driver-x86@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/dell-laptop.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/platform/x86/ideapad-laptop.c | 36 ++++++---------------------
+ 1 file changed, 7 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index a561f653cf13..94a2f259031c 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -2176,9 +2176,8 @@ static int __init dell_init(void)
- 	kbd_led_init(&platform_device->dev);
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 5fb9bfdf1019..7598cd46cf60 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -316,34 +316,15 @@ static int debugfs_cfg_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(debugfs_cfg);
  
- 	dell_laptop_dir = debugfs_create_dir("dell_laptop", NULL);
--	if (dell_laptop_dir != NULL)
--		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
--				    &dell_debugfs_fops);
-+	debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
-+			    &dell_debugfs_fops);
+-static int ideapad_debugfs_init(struct ideapad_private *priv)
++static void ideapad_debugfs_init(struct ideapad_private *priv)
+ {
+-	struct dentry *node;
++	struct dentry *dir;
  
- 	dell_laptop_register_notifier(&dell_laptop_notifier);
+-	priv->debug = debugfs_create_dir("ideapad", NULL);
+-	if (priv->debug == NULL) {
+-		pr_err("failed to create debugfs directory");
+-		goto errout;
+-	}
+-
+-	node = debugfs_create_file("cfg", S_IRUGO, priv->debug, priv,
+-				   &debugfs_cfg_fops);
+-	if (!node) {
+-		pr_err("failed to create cfg in debugfs");
+-		goto errout;
+-	}
+-
+-	node = debugfs_create_file("status", S_IRUGO, priv->debug, priv,
+-				   &debugfs_status_fops);
+-	if (!node) {
+-		pr_err("failed to create status in debugfs");
+-		goto errout;
+-	}
+-
+-	return 0;
++	dir = debugfs_create_dir("ideapad", NULL);
++	priv->debug = dir;
  
+-errout:
+-	return -ENOMEM;
++	debugfs_create_file("cfg", S_IRUGO, dir, priv, &debugfs_cfg_fops);
++	debugfs_create_file("status", S_IRUGO, dir, priv, &debugfs_status_fops);
+ }
+ 
+ static void ideapad_debugfs_exit(struct ideapad_private *priv)
+@@ -1012,9 +993,7 @@ static int ideapad_acpi_add(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = ideapad_debugfs_init(priv);
+-	if (ret)
+-		goto debugfs_failed;
++	ideapad_debugfs_init(priv);
+ 
+ 	ret = ideapad_input_init(priv);
+ 	if (ret)
+@@ -1071,7 +1050,6 @@ static int ideapad_acpi_add(struct platform_device *pdev)
+ 	ideapad_input_exit(priv);
+ input_failed:
+ 	ideapad_debugfs_exit(priv);
+-debugfs_failed:
+ 	ideapad_sysfs_exit(priv);
+ 	return ret;
+ }
 -- 
 2.22.0
 
