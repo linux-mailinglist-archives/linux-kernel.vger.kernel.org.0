@@ -2,67 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A54CE44952
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD9244949
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfFMRQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:16:32 -0400
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:54062 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726293AbfFLV3l (ORCPT
+        id S2393722AbfFMRQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:16:11 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:47002 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbfFLVon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 17:29:41 -0400
-Received: from faui03f.informatik.uni-erlangen.de (faui03f.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:118])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id D788F24098F;
-        Wed, 12 Jun 2019 23:29:35 +0200 (CEST)
-Received: by faui03f.informatik.uni-erlangen.de (Postfix, from userid 30501)
-        id C1DE7341CD4; Wed, 12 Jun 2019 23:29:35 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 23:29:35 +0200
-From:   Thomas Preisner <linux@tpreisner.de>
-To:     asdf@asdf.de
-Cc:     linux@tpreisner.de, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH] ftrace: add simple oneshot function tracer
-Message-ID: <20190612212935.4xq6dyua5d5vrrvj@stud.informatik.uni-erlangen.de>
+        Wed, 12 Jun 2019 17:44:43 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z23so16924778ote.13;
+        Wed, 12 Jun 2019 14:44:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6/4G9x4zsQuQK8+ToSt6QVbv5k7TYmTi2yAsofevHsY=;
+        b=YpKmT0+C2griVMmGw+n8I8gmxAGOjAW393yFX50SzCt8ExJDah1r2ImJwJOnIyxpHH
+         z/enpeUDMhm3A1q80aj1qAJ+A1zWd0Uj3ZRQ2ltJz6LWbgAW1H9VaeRmcpq2Y0RdJ9nt
+         xNyQTrv+ICjrVYBkrAdGvLuvRfeEowzaMV1EcNyrGSnvUyId+g+S2PUIf7JSMlWZnDur
+         YXKN6b1gD6vceR//bU9kH3tmJLPeOTewGz4q8J+LdwMSHyoiqrgx4Uoguwt0JyCvKW2b
+         ZriYTfGZNiCjft+toKKp7HkSd7IKKDEPrK8Uo8wGGuBZmU7LhTm7mFr3wKnGSUvV30Ik
+         OQRA==
+X-Gm-Message-State: APjAAAWMxxdwGKVK6aCOc8sa8MFXbfr3IPYTvFMA32cqOavCZ4yGB3qd
+        VEejyqgoHm77v6FlCoCSKFFCoHnT/vyBoUnde/8=
+X-Google-Smtp-Source: APXvYqxN1bHJmkJ+vh40QbfdXCtjCs4vHEb7WPek5QJRj8zdUZWlSjKRNzigkiS5uP3LHGJ4wWz6y073BK1+jYoNW44=
+X-Received: by 2002:a9d:6959:: with SMTP id p25mr18511958oto.118.1560375882780;
+ Wed, 12 Jun 2019 14:44:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529104552.146fa97c@oasis.local.home>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190609111732.GA2885@amd> <007701d520c7$c397bda0$4ac738e0$@net>
+In-Reply-To: <007701d520c7$c397bda0$4ac738e0$@net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 12 Jun 2019 23:44:30 +0200
+Message-ID: <CAJZ5v0j2pb2WxSA+S44Mr-6bpOx-P9A_T2-sDG3CiWSqLMg3sA@mail.gmail.com>
+Subject: Re: 5.2-rc2: low framerate in flightgear, cpu not running at full
+ speed, thermal related?
+To:     Doug Smythies <dsmythies@telus.net>, Pavel Machek <pavel@ucw.cz>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019 17:52:37 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Jun 12, 2019 at 4:45 AM Doug Smythies <dsmythies@telus.net> wrote:
+>
+> Hi,
+>
+> So, currently there seems to be 3 issues in this thread
+> (and I am guessing a little, without definitive data):
+>
+> 1.) On your system Kernel 5.4-rc2 (or 4) defaults to the intel_pstate CPU frequency
+> scaling driver and the powersave governor, but kernel 4.6 defaults to the
+> acpi-cpufreq CPU frequency scaling driver and the ondemand governor.
 
-> What do you mean? The function profile has its own file to enable it:
-> 
->  echo 1 > /sys/kernel/tracing/function_profile_enabled
->  
->  And disable it:
->  
->   echo 0 > /sys/kernel/tracing/function_profile_enabled
->   
->   -- Steve
+Which means that intel_pstate works in the active mode by default and
+so it uses its internal governor.
 
-Yes, I am aware of the function profiler providing a file operation for
-enabling and disabling itself. However, my oneshot profiler as of [PATCH
-v2] is a separate tracer/profiler without this file operation.
+That governor is more performance-oriented than ondemand and it very
+well may cause more power to be allocated for the processor - at the
+expense of the GPU.
 
-As this oneshot profiler is intended to be used for coverage/usage
-reports I want it to be able to record functions as soon as possible
-during bootup. Therefore, I just permanently activated the oneshot
-profiler since as of now there is no means to activate it or the
-function profiler via kernel commandline just like the normal tracers.
+The lower-than-expected frame rate may result from that, in principle.
 
-Still, if you want to I can add the file operation for
-enabling/disabling this new profiler together with a new kernel
-commandline argument for this profiler?
-
-Or what would be your prefered way?
-
-Greetings,
-Thomas Preisner
-
+One way to mitigate that might be to use intel_pstate in the passive
+mode (pass intel_pstate=passive to the kernel in the command line)
+along with either ondemand or schedutil as the governor.
