@@ -2,121 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BDFD41D91
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D836041DA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731438AbfFLHXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:23:01 -0400
-Received: from mail-eopbgr40050.outbound.protection.outlook.com ([40.107.4.50]:20248
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731310AbfFLHXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:23:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=56LNeMIZNC91/x9mnLlBJ5KPOWRS3wH34/bM1FriudE=;
- b=Bz8Xe8FHPNtPlyQYeVj1yuGhwplBITHhPbCcGVPn/Rvzsjrz1r8FDs1LZAlM0TzJlhx6HqTr8R4OblHxyNYa4mKw7mN7J79Hp140TkXowVjSa7Jwc66t4k9qOELcP476202x6tuCBp5iVoc5GiYLtCHCnDRHlPTImYEjW7EK3qs=
-Received: from VI1PR08MB5488.eurprd08.prod.outlook.com (52.133.246.150) by
- VI1PR08MB3824.eurprd08.prod.outlook.com (20.178.15.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Wed, 12 Jun 2019 07:22:57 +0000
-Received: from VI1PR08MB5488.eurprd08.prod.outlook.com
- ([fe80::e9f4:59c8:9be1:910b]) by VI1PR08MB5488.eurprd08.prod.outlook.com
- ([fe80::e9f4:59c8:9be1:910b%4]) with mapi id 15.20.1987.010; Wed, 12 Jun 2019
- 07:22:56 +0000
-From:   "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>
-CC:     "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: [PATCH v3 2/2] dt/bindings: drm/komeda: Adds SMMU support for D71
- devicetree
-Thread-Topic: [PATCH v3 2/2] dt/bindings: drm/komeda: Adds SMMU support for
- D71 devicetree
-Thread-Index: AQHVIO+oSj+wbiLcuUCxaZC1rLk9uw==
-Date:   Wed, 12 Jun 2019 07:22:56 +0000
-Message-ID: <1560324143-25099-3-git-send-email-lowry.li@arm.com>
-References: <1560324143-25099-1-git-send-email-lowry.li@arm.com>
-In-Reply-To: <1560324143-25099-1-git-send-email-lowry.li@arm.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
+        id S2405484AbfFLHZ6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 03:25:58 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:44754 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728561AbfFLHZm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 03:25:42 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x5C7PHtx003180
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 12 Jun 2019 16:25:17 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7PG92019680;
+        Wed, 12 Jun 2019 16:25:17 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7PGFv022790;
+        Wed, 12 Jun 2019 16:25:16 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-5900495; Wed, 12 Jun 2019 16:24:18 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Wed,
+ 12 Jun 2019 16:24:17 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] mm: hugetlb: soft-offline:
+ dissolve_free_huge_page() return zero on !PageHuge
+Thread-Topic: [PATCH v2 2/2] mm: hugetlb: soft-offline:
+ dissolve_free_huge_page() return zero on !PageHuge
+Thread-Index: AQHVH2UOI3n3iV7mFEufJF8BQjmdkqaWHQeAgADtBAA=
+Date:   Wed, 12 Jun 2019 07:24:16 +0000
+Message-ID: <20190612072422.GA28614@hori.linux.bs1.fc.nec.co.jp>
+References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <1560154686-18497-3-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <039dd97d-83f5-f71a-e78f-a451b0064903@oracle.com>
+In-Reply-To: <039dd97d-83f5-f71a-e78f-a451b0064903@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: HK0P153CA0017.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:18::29) To VI1PR08MB5488.eurprd08.prod.outlook.com
- (2603:10a6:803:137::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Lowry.Li@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.9.1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 36fadaf1-f9bf-40b2-987a-08d6ef06ca5f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB3824;
-x-ms-traffictypediagnostic: VI1PR08MB3824:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <VI1PR08MB38245A2256BEF47E75B3489E9FEC0@VI1PR08MB3824.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0066D63CE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(39860400002)(366004)(396003)(199004)(189003)(50226002)(64756008)(99286004)(6116002)(66946007)(305945005)(102836004)(7736002)(66556008)(5660300002)(66476007)(25786009)(68736007)(8676002)(6636002)(53936002)(76176011)(73956011)(256004)(4326008)(6506007)(55236004)(8936002)(386003)(81166006)(86362001)(52116002)(2501003)(2201001)(316002)(6512007)(81156014)(6486002)(6436002)(66446008)(71190400001)(3846002)(54906003)(14454004)(110136005)(2616005)(11346002)(66066001)(486006)(2906002)(478600001)(446003)(36756003)(476003)(72206003)(26005)(186003)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3824;H:VI1PR08MB5488.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: I3hltVoY+ensp1hR+z/ALoSvXAIz7p4r4IRCuSwcQp2JNyRiHAyZfDxf73SagO2nuAe619LjkvzoTmfO2bxsHCn2D5l64W1hf5Gi2MmyWsoqYtXpZomVZcuayG+7obpmE2o1VGpR/78NpPb+Wa4hUgI/zkBEY7ooIOhmKmK6tjKN3nEXbyRt4L9q6x3Bb4f8GvzXD4V+9Onzu6K3eMyAuvLMb1rpXaRSKLNSgLsr2dbKH+oNzj1Wy2eo54Deh72FQnG9UfKNfT7zw/quFfoFi6o51jhwie7k9SS4YVgQRRDeSKW4wJrCVN7zjMjZhW/SAzk7zVh9rokxmWbnWaFppohERqnHYHd9tvukszotuS6rOfRx/Jjvnykzx+ytFablZEWKmtHn9m8Lhra2+y5Ehh4VJ9pUjxKCQ9OPVFZaOlM=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <BCCB33A416C92644BE29C96ADEA07518@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36fadaf1-f9bf-40b2-987a-08d6ef06ca5f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2019 07:22:56.8702
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Lowry.Li@arm.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3824
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogIkxvd3J5IExpIChBcm0gVGVjaG5vbG9neSBDaGluYSkiIDxMb3dyeS5MaUBhcm0uY29t
-Pg0KDQpVcGRhdGVzIHRoZSBkZXZpY2UtdHJlZSBkb2MgYWJvdXQgaG93IHRvIGVuYWJsZSBTTU1V
-IGJ5IGRldmljZXRyZWUuDQoNClNpZ25lZC1vZmYtYnk6IExvd3J5IExpIChBcm0gVGVjaG5vbG9n
-eSBDaGluYSkgPGxvd3J5LmxpQGFybS5jb20+DQpSZXZpZXdlZC1ieTogTGl2aXUgRHVkYXUgPGxp
-dml1LmR1ZGF1QGFybS5jb20+DQpSZXZpZXdlZC1ieTogSmFtZXMgUWlhbiBXYW5nIChBcm0gVGVj
-aG5vbG9neSBDaGluYSkgPGphbWVzLnFpYW4ud2FuZ0Bhcm0uY29tPg0KLS0tDQogRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYXJtLGtvbWVkYS50eHQgfCA3ICsrKysr
-KysNCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9hcm0sa29tZWRhLnR4dCBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2FybSxrb21lZGEudHh0DQpp
-bmRleCAwMmIyMjY1Li5iMTJjMDQ1IDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYXJtLGtvbWVkYS50eHQNCisrKyBiL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2FybSxrb21lZGEudHh0DQpAQCAtMTEsNiArMTEs
-MTAgQEAgUmVxdWlyZWQgcHJvcGVydGllczoNCiAgICAgICAtICJwY2xrIjogZm9yIHRoZSBBUEIg
-aW50ZXJmYWNlIGNsb2NrDQogLSAjYWRkcmVzcy1jZWxsczogTXVzdCBiZSAxDQogLSAjc2l6ZS1j
-ZWxsczogTXVzdCBiZSAwDQorLSBpb21tdXM6IGNvbmZpZ3VyZSB0aGUgc3RyZWFtIGlkIHRvIElP
-TU1VLCBNdXN0IGJlIGNvbmZpZ3VyZWQgaWYgd2FudCB0bw0KKyAgICBlbmFibGUgaW9tbXUgaW4g
-ZGlzcGxheS4gZm9yIGhvdyB0byBjb25maWd1cmUgdGhpcyBub2RlIHBsZWFzZSByZWZlcmVuY2UN
-CisgICAgICAgIGRldmljZXRyZWUvYmluZGluZ3MvaW9tbXUvYXJtLHNtbXUtdjMudHh0LA0KKyAg
-ICAgICAgZGV2aWNldHJlZS9iaW5kaW5ncy9pb21tdS9pb21tdS50eHQNCiANCiBSZXF1aXJlZCBw
-cm9wZXJ0aWVzIGZvciBzdWItbm9kZTogcGlwZWxpbmVAbnENCiBFYWNoIGRldmljZSBjb250YWlu
-cyBvbmUgb3IgdHdvIHBpcGVsaW5lIHN1Yi1ub2RlcyAoYXQgbGVhc3Qgb25lKSwgZWFjaA0KQEAg
-LTQ0LDYgKzQ4LDkgQEAgRXhhbXBsZToNCiAJCWludGVycnVwdHMgPSA8MCAxNjggND47DQogCQlj
-bG9ja3MgPSA8JmRwdV9tY2xrPiwgPCZkcHVfYWNsaz47DQogCQljbG9jay1uYW1lcyA9ICJtY2xr
-IiwgInBjbGsiOw0KKwkJaW9tbXVzID0gPCZzbW11IDA+LCA8JnNtbXUgMT4sIDwmc21tdSAyPiwg
-PCZzbW11IDM+LA0KKwkJCTwmc21tdSA0PiwgPCZzbW11IDU+LCA8JnNtbXUgNj4sIDwmc21tdSA3
-PiwNCisJCQk8JnNtbXUgOD4sIDwmc21tdSA5PjsNCiANCiAJCWRwMF9waXBlMDogcGlwZWxpbmVA
-MCB7DQogCQkJY2xvY2tzID0gPCZmcGdhb3NjMj4sIDwmZHB1X2FjbGs+Ow0KLS0gDQoxLjkuMQ0K
-DQo=
+On Tue, Jun 11, 2019 at 10:16:03AM -0700, Mike Kravetz wrote:
+> On 6/10/19 1:18 AM, Naoya Horiguchi wrote:
+> > madvise(MADV_SOFT_OFFLINE) often returns -EBUSY when calling soft offline
+> > for hugepages with overcommitting enabled. That was caused by the suboptimal
+> > code in current soft-offline code. See the following part:
+> > 
+> >     ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
+> >                             MIGRATE_SYNC, MR_MEMORY_FAILURE);
+> >     if (ret) {
+> >             ...
+> >     } else {
+> >             /*
+> >              * We set PG_hwpoison only when the migration source hugepage
+> >              * was successfully dissolved, because otherwise hwpoisoned
+> >              * hugepage remains on free hugepage list, then userspace will
+> >              * find it as SIGBUS by allocation failure. That's not expected
+> >              * in soft-offlining.
+> >              */
+> >             ret = dissolve_free_huge_page(page);
+> >             if (!ret) {
+> >                     if (set_hwpoison_free_buddy_page(page))
+> >                             num_poisoned_pages_inc();
+> >             }
+> >     }
+> >     return ret;
+> > 
+> > Here dissolve_free_huge_page() returns -EBUSY if the migration source page
+> > was freed into buddy in migrate_pages(), but even in that case we actually
+> > has a chance that set_hwpoison_free_buddy_page() succeeds. So that means
+> > current code gives up offlining too early now.
+> > 
+> > dissolve_free_huge_page() checks that a given hugepage is suitable for
+> > dissolving, where we should return success for !PageHuge() case because
+> > the given hugepage is considered as already dissolved.
+> > 
+> > This change also affects other callers of dissolve_free_huge_page(),
+> > which are cleaned up together.
+> > 
+> > Reported-by: Chen, Jerry T <jerry.t.chen@intel.com>
+> > Tested-by: Chen, Jerry T <jerry.t.chen@intel.com>
+> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > Fixes: 6bc9b56433b76 ("mm: fix race on soft-offlining")
+> > Cc: <stable@vger.kernel.org> # v4.19+
+> > ---
+> >  mm/hugetlb.c        | 15 +++++++++------
+> >  mm/memory-failure.c |  5 +----
+> >  2 files changed, 10 insertions(+), 10 deletions(-)
+> > 
+> > diff --git v5.2-rc3/mm/hugetlb.c v5.2-rc3_patched/mm/hugetlb.c
+> > index ac843d3..048d071 100644
+> > --- v5.2-rc3/mm/hugetlb.c
+> > +++ v5.2-rc3_patched/mm/hugetlb.c
+> > @@ -1519,7 +1519,12 @@ int dissolve_free_huge_page(struct page *page)
+> 
+> Please update the function description for dissolve_free_huge_page() as
+> well.  It currently says, "Returns -EBUSY if the dissolution fails because
+> a give page is not a free hugepage" which is no longer true as a result of
+> this change.
+
+Thanks for pointing out, I completely missed that.
+
+> 
+> >  	int rc = -EBUSY;
+> >  
+> >  	spin_lock(&hugetlb_lock);
+> > -	if (PageHuge(page) && !page_count(page)) {
+> > +	if (!PageHuge(page)) {
+> > +		rc = 0;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (!page_count(page)) {
+> >  		struct page *head = compound_head(page);
+> >  		struct hstate *h = page_hstate(head);
+> >  		int nid = page_to_nid(head);
+> > @@ -1564,11 +1569,9 @@ int dissolve_free_huge_pages(unsigned long start_pfn, unsigned long end_pfn)
+> >  
+> >  	for (pfn = start_pfn; pfn < end_pfn; pfn += 1 << minimum_order) {
+> >  		page = pfn_to_page(pfn);
+> > -		if (PageHuge(page) && !page_count(page)) {
+> > -			rc = dissolve_free_huge_page(page);
+> > -			if (rc)
+> > -				break;
+> > -		}
+> 
+> We may want to consider keeping at least the PageHuge(page) check before
+> calling dissolve_free_huge_page().  dissolve_free_huge_pages is called as
+> part of memory offline processing.  We do not know if the memory to be offlined
+> contains huge pages or not.  With your changes, we are taking hugetlb_lock
+> on each call to dissolve_free_huge_page just to discover that the page is
+> not a huge page.
+> 
+> You 'could' add a PageHuge(page) check to dissolve_free_huge_page before
+> taking the lock.  However, you would need to check again after taking the
+> lock.
+
+Right, I'll do this.
+
+What was in my mind when writing this was that I actually don't like
+PageHuge because it's slow (not inlined) and called anywhere in mm code,
+so I like to reduce it if possible.
+But I now see that dissolve_free_huge_page() are relatively rare event
+rather than hugepage allocation/free, so dissolve_free_huge_page should take
+burden to precheck PageHuge instead of speculatively taking hugetlb_lock
+and disrupting the hot path.
+
+Thanks,
+- Naoya
