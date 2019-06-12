@@ -2,225 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11CBF42F28
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8812142EE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfFLSij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:38:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45534 "EHLO
+        id S1728378AbfFLSi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:38:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45582 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfFLSii (ORCPT
+        with ESMTP id S1726808AbfFLSij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:38:38 -0400
+        Wed, 12 Jun 2019 14:38:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
-        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LvMZCNqyjGCYorMHMnZsk1Wxffwcw4B9xSPUy6NpG7A=; b=c9JbDLf3c3uOxQ7Dq2GrjBPa2j
-        OHHAR6cixPlZFhc4jad5gctIARzujfBkPCL9CPCGnE0QtGlopg7uyWI4X8CUktAmstk4wU+KsGfZf
-        0YdwMUscmK5ZmuiCtd/89QmN0cHuKZgltWcoIVhAfecgmtvUAonlqGkY8hLVolACCBm+M1NmGZE48
-        dfu1p9FJJeVfUNXAJrtUsED7G8Z5bmijQU1FVruXzk9Ylwj12f3iCP5ORZpDpjzPS9Kzwg9Hl9X/n
-        D64Xzjfbh6YhOB82ZFJFDNsoOOLFGNaDLMO5Y8Gr9amyn9lxMnrR1Z/HObf3IcQGpzg1NygqaXPvF
-        uAMuSm2w==;
+        bh=wrhHYkVqalJudClQ5Slfu9mOYqnzTc7imFqa6mcZE60=; b=NZvStiRhsFYYa9NRYUbzGLyLCB
+        e+ys6z2hiMJTmmGtBJqfbhG0THHhP9Y6Hlzunfv69+vaMhoYuuY5pyXyOLFvVE/wdeYB097J+GN1E
+        GRFbivq15S18qlpvoGc2+3WjQjR9JBGja3e5zBfn/tHi5MzQVuqiOLfLJIjud1DzVCNCc/AMrAoE5
+        CObmytyxgRP/a79NBOm6dvic5citOWy+EdrxaGcQhHgwLtEdl+qwh2SQApmCeJJFU53OXRNsGjPQX
+        OLxOqyx43nbOPbhLvgEwm9wxMmah4UI7BVJXe8GD5BGae+5j04yNwgfhHUZjy1JdgPr6tYV8Z9lK+
+        zu2aAQWg==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb88s-0006Y8-GS; Wed, 12 Jun 2019 18:38:38 +0000
+        id 1hb88s-0006Y9-NV; Wed, 12 Jun 2019 18:38:38 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hb88q-0002B1-3a; Wed, 12 Jun 2019 15:38:36 -0300
+        id 1hb88q-0002B5-4M; Wed, 12 Jun 2019 15:38:36 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v1 12/31] docs: xen-tpmfront.txt: convert it to .rst
-Date:   Wed, 12 Jun 2019 15:38:15 -0300
-Message-Id: <5725f4a1e80540c820a031bc21ae769297d8b32b.1560364494.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v1 13/31] docs: bus-devices: ti-gpmc.rst: convert it to ReST
+Date:   Wed, 12 Jun 2019 15:38:16 -0300
+Message-Id: <7ed15ccc94d3eacefc9b9951daf6701fbcde2b90.1560364494.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560364493.git.mchehab+samsung@kernel.org>
 References: <cover.1560364493.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to be able to add this file to the security book,
-we need first to convert it to reST.
+In order to be able to add this file to a book, it needs
+first to be converted to ReST and renamed.
 
 While this is not part of any book, mark it as :orphan:, in order
 to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{xen-tpmfront.txt => xen-tpmfront.rst}    | 103 ++++++++++--------
- 1 file changed, 58 insertions(+), 45 deletions(-)
- rename Documentation/security/tpm/{xen-tpmfront.txt => xen-tpmfront.rst} (66%)
+ .../bus-devices/{ti-gpmc.txt => ti-gpmc.rst}  | 159 ++++++++++++------
+ 1 file changed, 108 insertions(+), 51 deletions(-)
+ rename Documentation/bus-devices/{ti-gpmc.txt => ti-gpmc.rst} (58%)
 
-diff --git a/Documentation/security/tpm/xen-tpmfront.txt b/Documentation/security/tpm/xen-tpmfront.rst
-similarity index 66%
-rename from Documentation/security/tpm/xen-tpmfront.txt
-rename to Documentation/security/tpm/xen-tpmfront.rst
-index 69346de87ff3..98a16ab87360 100644
---- a/Documentation/security/tpm/xen-tpmfront.txt
-+++ b/Documentation/security/tpm/xen-tpmfront.rst
-@@ -1,4 +1,8 @@
+diff --git a/Documentation/bus-devices/ti-gpmc.txt b/Documentation/bus-devices/ti-gpmc.rst
+similarity index 58%
+rename from Documentation/bus-devices/ti-gpmc.txt
+rename to Documentation/bus-devices/ti-gpmc.rst
+index cc9ce57e0a26..87c366e418be 100644
+--- a/Documentation/bus-devices/ti-gpmc.txt
++++ b/Documentation/bus-devices/ti-gpmc.rst
+@@ -1,8 +1,12 @@
+-GPMC (General Purpose Memory Controller):
+-=========================================
 +:orphan:
 +
-+﻿=============================
- Virtual TPM interface for Xen
-+=============================
++========================================
++GPMC (General Purpose Memory Controller)
++========================================
  
- Authors: Matthew Fioravante (JHUAPL), Daniel De Graaf (NSA)
+ GPMC is an unified memory controller dedicated to interfacing external
+ memory devices like
++
+  * Asynchronous SRAM like memories and application specific integrated
+    circuit devices.
+  * Asynchronous, synchronous, and page mode burst NOR flash devices
+@@ -48,75 +52,128 @@ most of the datasheets & hardware (to be exact none of those supported
+ in mainline having custom timing routine) and by simulation.
  
-@@ -6,7 +10,8 @@ This document describes the virtual Trusted Platform Module (vTPM) subsystem for
- Xen. The reader is assumed to have familiarity with building and installing Xen,
- Linux, and a basic understanding of the TPM and vTPM concepts.
+ gpmc timing dependency on peripheral timings:
++
+ [<gpmc_timing>: <peripheral timing1>, <peripheral timing2> ...]
  
--INTRODUCTION
-+Introduction
-+------------
+ 1. common
+-cs_on: t_ceasu
+-adv_on: t_avdasu, t_ceavd
++
++cs_on:
++	t_ceasu
++adv_on:
++	t_avdasu, t_ceavd
  
- The goal of this work is to provide a TPM functionality to a virtual guest
- operating system (in Xen terms, a DomU).  This allows programs to interact with
-@@ -24,81 +29,89 @@ This mini-os vTPM subsystem was built on top of the previous vTPM work done by
- IBM and Intel corporation.
+ 2. sync common
+-sync_clk: clk
+-page_burst_access: t_bacc
+-clk_activation: t_ces, t_avds
++
++sync_clk:
++	clk
++page_burst_access:
++	t_bacc
++clk_activation:
++	t_ces, t_avds
  
+ 3. read async muxed
+-adv_rd_off: t_avdp_r
+-oe_on: t_oeasu, t_aavdh
+-access: t_iaa, t_oe, t_ce, t_aa
+-rd_cycle: t_rd_cycle, t_cez_r, t_oez
++
++adv_rd_off:
++	t_avdp_r
++oe_on:
++	t_oeasu, t_aavdh
++access:
++	t_iaa, t_oe, t_ce, t_aa
++rd_cycle:
++	t_rd_cycle, t_cez_r, t_oez
  
--DESIGN OVERVIEW
-+Design Overview
- ---------------
+ 4. read async non-muxed
+-adv_rd_off: t_avdp_r
+-oe_on: t_oeasu
+-access: t_iaa, t_oe, t_ce, t_aa
+-rd_cycle: t_rd_cycle, t_cez_r, t_oez
++
++adv_rd_off:
++	t_avdp_r
++oe_on:
++	t_oeasu
++access:
++	t_iaa, t_oe, t_ce, t_aa
++rd_cycle:
++	t_rd_cycle, t_cez_r, t_oez
  
--The architecture of vTPM is described below:
-+The architecture of vTPM is described below::
+ 5. read sync muxed
+-adv_rd_off: t_avdp_r, t_avdh
+-oe_on: t_oeasu, t_ach, cyc_aavdh_oe
+-access: t_iaa, cyc_iaa, cyc_oe
+-rd_cycle: t_cez_r, t_oez, t_ce_rdyz
++
++adv_rd_off:
++	t_avdp_r, t_avdh
++oe_on:
++	t_oeasu, t_ach, cyc_aavdh_oe
++access:
++	t_iaa, cyc_iaa, cyc_oe
++rd_cycle:
++	t_cez_r, t_oez, t_ce_rdyz
  
--+------------------+
--|    Linux DomU    | ...
--|       |  ^       |
--|       v  |       |
--|   xen-tpmfront   |
--+------------------+
--        |  ^
--        v  |
--+------------------+
--| mini-os/tpmback  |
--|       |  ^       |
--|       v  |       |
--|  vtpm-stubdom    | ...
--|       |  ^       |
--|       v  |       |
--| mini-os/tpmfront |
--+------------------+
--        |  ^
--        v  |
--+------------------+
--| mini-os/tpmback  |
--|       |  ^       |
--|       v  |       |
--| vtpmmgr-stubdom  |
--|       |  ^       |
--|       v  |       |
--| mini-os/tpm_tis  |
--+------------------+
--        |  ^
--        v  |
--+------------------+
--|   Hardware TPM   |
--+------------------+
-+  +------------------+
-+  |    Linux DomU    | ...
-+  |       |  ^       |
-+  |       v  |       |
-+  |   xen-tpmfront   |
-+  +------------------+
-+          |  ^
-+          v  |
-+  +------------------+
-+  | mini-os/tpmback  |
-+  |       |  ^       |
-+  |       v  |       |
-+  |  vtpm-stubdom    | ...
-+  |       |  ^       |
-+  |       v  |       |
-+  | mini-os/tpmfront |
-+  +------------------+
-+          |  ^
-+          v  |
-+  +------------------+
-+  | mini-os/tpmback  |
-+  |       |  ^       |
-+  |       v  |       |
-+  | vtpmmgr-stubdom  |
-+  |       |  ^       |
-+  |       v  |       |
-+  | mini-os/tpm_tis  |
-+  +------------------+
-+          |  ^
-+          v  |
-+  +------------------+
-+  |   Hardware TPM   |
-+  +------------------+
+ 6. read sync non-muxed
+-adv_rd_off: t_avdp_r
+-oe_on: t_oeasu
+-access: t_iaa, cyc_iaa, cyc_oe
+-rd_cycle: t_cez_r, t_oez, t_ce_rdyz
++
++adv_rd_off:
++	t_avdp_r
++oe_on:
++	t_oeasu
++access:
++	t_iaa, cyc_iaa, cyc_oe
++rd_cycle:
++	t_cez_r, t_oez, t_ce_rdyz
  
-- * Linux DomU: The Linux based guest that wants to use a vTPM. There may be
-+* Linux DomU:
-+	       The Linux based guest that wants to use a vTPM. There may be
- 	       more than one of these.
+ 7. write async muxed
+-adv_wr_off: t_avdp_w
+-we_on, wr_data_mux_bus: t_weasu, t_aavdh, cyc_aavhd_we
+-we_off: t_wpl
+-cs_wr_off: t_wph
+-wr_cycle: t_cez_w, t_wr_cycle
++
++adv_wr_off:
++	t_avdp_w
++we_on, wr_data_mux_bus:
++	t_weasu, t_aavdh, cyc_aavhd_we
++we_off:
++	t_wpl
++cs_wr_off:
++	t_wph
++wr_cycle:
++	t_cez_w, t_wr_cycle
  
-- * xen-tpmfront.ko: Linux kernel virtual TPM frontend driver. This driver
-+* xen-tpmfront.ko:
-+		    Linux kernel virtual TPM frontend driver. This driver
-                     provides vTPM access to a Linux-based DomU.
+ 8. write async non-muxed
+-adv_wr_off: t_avdp_w
+-we_on, wr_data_mux_bus: t_weasu
+-we_off: t_wpl
+-cs_wr_off: t_wph
+-wr_cycle: t_cez_w, t_wr_cycle
++
++adv_wr_off:
++	t_avdp_w
++we_on, wr_data_mux_bus:
++	t_weasu
++we_off:
++	t_wpl
++cs_wr_off:
++	t_wph
++wr_cycle:
++	t_cez_w, t_wr_cycle
  
-- * mini-os/tpmback: Mini-os TPM backend driver. The Linux frontend driver
-+* mini-os/tpmback:
-+		    Mini-os TPM backend driver. The Linux frontend driver
- 		    connects to this backend driver to facilitate communications
- 		    between the Linux DomU and its vTPM. This driver is also
- 		    used by vtpmmgr-stubdom to communicate with vtpm-stubdom.
+ 9. write sync muxed
+-adv_wr_off: t_avdp_w, t_avdh
+-we_on, wr_data_mux_bus: t_weasu, t_rdyo, t_aavdh, cyc_aavhd_we
+-we_off: t_wpl, cyc_wpl
+-cs_wr_off: t_wph
+-wr_cycle: t_cez_w, t_ce_rdyz
++
++adv_wr_off:
++	t_avdp_w, t_avdh
++we_on, wr_data_mux_bus:
++	t_weasu, t_rdyo, t_aavdh, cyc_aavhd_we
++we_off:
++	t_wpl, cyc_wpl
++cs_wr_off:
++	t_wph
++wr_cycle:
++	t_cez_w, t_ce_rdyz
  
-- * vtpm-stubdom: A mini-os stub domain that implements a vTPM. There is a
-+* vtpm-stubdom:
-+		 A mini-os stub domain that implements a vTPM. There is a
- 		 one to one mapping between running vtpm-stubdom instances and
-                  logical vtpms on the system. The vTPM Platform Configuration
-                  Registers (PCRs) are normally all initialized to zero.
+ 10. write sync non-muxed
+-adv_wr_off: t_avdp_w
+-we_on, wr_data_mux_bus: t_weasu, t_rdyo
+-we_off: t_wpl, cyc_wpl
+-cs_wr_off: t_wph
+-wr_cycle: t_cez_w, t_ce_rdyz
  
-- * mini-os/tpmfront: Mini-os TPM frontend driver. The vTPM mini-os domain
-+* mini-os/tpmfront:
-+		     Mini-os TPM frontend driver. The vTPM mini-os domain
- 		     vtpm-stubdom uses this driver to communicate with
- 		     vtpmmgr-stubdom. This driver is also used in mini-os
- 		     domains such as pv-grub that talk to the vTPM domain.
++adv_wr_off:
++	t_avdp_w
++we_on, wr_data_mux_bus:
++	t_weasu, t_rdyo
++we_off:
++	t_wpl, cyc_wpl
++cs_wr_off:
++	t_wph
++wr_cycle:
++	t_cez_w, t_ce_rdyz
  
-- * vtpmmgr-stubdom: A mini-os domain that implements the vTPM manager. There is
-+* vtpmmgr-stubdom:
-+		    A mini-os domain that implements the vTPM manager. There is
- 		    only one vTPM manager and it should be running during the
- 		    entire lifetime of the machine.  This domain regulates
- 		    access to the physical TPM on the system and secures the
- 		    persistent state of each vTPM.
- 
-- * mini-os/tpm_tis: Mini-os TPM version 1.2 TPM Interface Specification (TIS)
-+* mini-os/tpm_tis:
-+		    Mini-os TPM version 1.2 TPM Interface Specification (TIS)
-                     driver. This driver used by vtpmmgr-stubdom to talk directly to
-                     the hardware TPM. Communication is facilitated by mapping
-                     hardware memory pages into vtpmmgr-stubdom.
- 
-- * Hardware TPM: The physical TPM that is soldered onto the motherboard.
-+* Hardware TPM:
-+		The physical TPM that is soldered onto the motherboard.
- 
- 
--INTEGRATION WITH XEN
-+Integration With Xen
- --------------------
- 
- Support for the vTPM driver was added in Xen using the libxl toolstack in Xen
+-Note: Many of gpmc timings are dependent on other gpmc timings (a few
+-gpmc timings purely dependent on other gpmc timings, a reason that
+-some of the gpmc timings are missing above), and it will result in
+-indirect dependency of peripheral timings to gpmc timings other than
+-mentioned above, refer timing routine for more details. To know what
+-these peripheral timings correspond to, please see explanations in
+-struct gpmc_device_timings definition. And for gpmc timings refer
+-IP details (link above).
++
++Note:
++  Many of gpmc timings are dependent on other gpmc timings (a few
++  gpmc timings purely dependent on other gpmc timings, a reason that
++  some of the gpmc timings are missing above), and it will result in
++  indirect dependency of peripheral timings to gpmc timings other than
++  mentioned above, refer timing routine for more details. To know what
++  these peripheral timings correspond to, please see explanations in
++  struct gpmc_device_timings definition. And for gpmc timings refer
++  IP details (link above).
 -- 
 2.21.0
 
