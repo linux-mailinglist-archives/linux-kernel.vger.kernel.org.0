@@ -2,78 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EF54210E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3455B4212D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437571AbfFLJjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:39:07 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:57087 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406059AbfFLJjH (ORCPT
+        id S2437620AbfFLJj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:39:58 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35105 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437412AbfFLJj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:39:07 -0400
-X-Originating-IP: 83.155.44.161
-Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
-        (Authenticated sender: hadess@hadess.net)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B12B42000B;
-        Wed, 12 Jun 2019 09:38:58 +0000 (UTC)
-Message-ID: <9ad95905975e09646f0f2aa967140881cbbe3477.camel@hadess.net>
-Subject: Re: [PATCH] Revert "Bluetooth: Align minimum encryption key size
- for LE and BR/EDR connections"
-From:   Bastien Nocera <hadess@hadess.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marcel Holtmann <marcel@holtmann.org>
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Date:   Wed, 12 Jun 2019 11:38:57 +0200
-In-Reply-To: <20190612070701.GA13320@kroah.com>
-References: <20190522052002.10411-1-anarsoul@gmail.com>
-         <6BD1D3F7-E2F2-4B2D-9479-06E27049133C@holtmann.org>
-         <7B7F362B-6C8B-4112-8772-FB6BC708ABF5@holtmann.org>
-         <CA+E=qVfopSA90vG2Kkh+XzdYdNn=M-hJN_AptW=R+B5v3HB9eA@mail.gmail.com>
-         <CA+E=qVdLOS9smt-nBxg9Lon0iTZr87kONSp-XPKj9tqB4bvnqw@mail.gmail.com>
-         <723142BB-8217-4A01-A2B9-F527174FDC0F@holtmann.org>
-         <20190612070701.GA13320@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        Wed, 12 Jun 2019 05:39:57 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d23so17847569qto.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 02:39:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gJ5uEcQdLGxPj4sgIEL2qy1S+Og+9M7F0hxXgED9kTI=;
+        b=tkLFTLvbcNuppneAEvt+uPb+ap05G02rEGi1Wmo8GzEwQ0kPXWxejd5iDYhD4wtI8b
+         q+qcVh/Q1JvUIwvNArGpoRx6xU3l81Jh1hW7tPBx8I90KTdQaP11AmM+fO9oFS6Mc8dg
+         VgCcXJUZz/iq2Kf+1hsfFVHldM4gpv7cO1eo3H4yTXY16cbfuFDLTiTRNf1kEm6i362b
+         XRy7zMn/QpQh2GVKCcye4Vn/CTHea1nDu8HDo7BVfaC8BkSo2WuBwIG6iYlETceZRjBW
+         PAmzu6nTJ0yNuk/ti18r/BFKKpxwmkhMrtiJ+EYG2YkM+Hzt5klPrtiXSzdR71MHTeyH
+         y4RA==
+X-Gm-Message-State: APjAAAW7FQLhWtpNzWaxYCImiVCm1qqGx+2NgTC1hR/glhXcLJy0j8By
+        HLS1dhdtKCo8/Nr57RPd+AQLxm5qLkUwYqUPsO2H2/v8Yd8=
+X-Google-Smtp-Source: APXvYqzElkDKd2kzLm7SbVsppgYiLj1v0Cdg14m0I4m//egnblE/rwsl4lv34rLBpVvjWnt03LJkvFn7Lq6HE34uroI=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr35388568qtd.18.1560332396827;
+ Wed, 12 Jun 2019 02:39:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190611184107.GA1873@kroah.com>
+In-Reply-To: <20190611184107.GA1873@kroah.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 12 Jun 2019 11:39:40 +0200
+Message-ID: <CAK8P3a3eQWeqVu_2VJ9=4Z3Fzp+B_zW1Zgcw_YFzC3qD05ygGw@mail.gmail.com>
+Subject: Re: [PATCH] genwq: no need to check return value of debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Frank Haverkamp <haver@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-12 at 09:07 +0200, Greg Kroah-Hartman wrote:
-> On Tue, Jun 11, 2019 at 11:36:26PM +0200, Marcel Holtmann wrote:
-> > Hi Vasily,
-> > 
-> > > Can we get this revert merged into stable branches? Bluetooth HID
-> > > has
-> > > been broken for many devices for quite a while now and RFC patch
-> > > that
-> > > fixes the breakage hasn't seen any movement for almost a month.
-> > 
-> > lets send the RFC patch upstream since it got enough feedback that
-> > it fixes the issue.
-> 
-> According to Hans, the workaround did not work.
+On Tue, Jun 11, 2019 at 8:41 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+>
+> Cc: Frank Haverkamp <haver@linux.ibm.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Is it possible that those folks were running Fedora, and using a
-version of bluetoothd without a fix for using dbus-broker as the D-Bus
-daemon implementation?
-
-I backported the fix in an update last week:
-https://bugzilla.redhat.com/show_bug.cgi?id=1711594
-
-> So can we just get this reverted so that people's machines go back to
-> working?
-> 
-> thanks,
-> 
-> greg k-h
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
