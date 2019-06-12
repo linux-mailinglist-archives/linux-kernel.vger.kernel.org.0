@@ -2,195 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21FEC421D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BCA421D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:58:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731965AbfFLJ6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:58:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60418 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731931AbfFLJ6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:58:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731993AbfFLJ6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:58:21 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44848 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfFLJ6V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:58:21 -0400
+Received: from laptop-1.home (unknown [IPv6:2a01:cb19:8ad6:900:42dd:dd1c:19ee:7c60])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 645087DD03;
-        Wed, 12 Jun 2019 09:58:00 +0000 (UTC)
-Received: from localhost.default (ovpn-116-101.phx2.redhat.com [10.3.116.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D20B7836B;
-        Wed, 12 Jun 2019 09:57:57 +0000 (UTC)
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: [PATCH V6 6/6] x86/jump_label: Batch jump label updates
-Date:   Wed, 12 Jun 2019 11:57:31 +0200
-Message-Id: <57b4caa654bad7e3b066301c9a9ae233dea065b5.1560325897.git.bristot@redhat.com>
-In-Reply-To: <cover.1560325897.git.bristot@redhat.com>
-References: <cover.1560325897.git.bristot@redhat.com>
-MIME-Version: 1.0
+        (Authenticated sender: aragua)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8517E260D5E;
+        Wed, 12 Jun 2019 10:58:19 +0100 (BST)
+Message-ID: <46f153d21d91cdc910a074864ac92fce7f9c76b7.camel@collabora.com>
+Subject: Re: [PATCH v2 1/3] iio: common: cros_ec_sensors: support protocol
+ v3 message
+From:   Fabien Lahoudere <fabien.lahoudere@collabora.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     kernel@collabora.com, Nick Vaccaro <nvaccaro@chromium.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 12 Jun 2019 11:58:16 +0200
+In-Reply-To: <20190612084243.GC4797@dell>
+References: <cover.1558601329.git.fabien.lahoudere@collabora.com>
+         <b619ce4f7f2d10ce1ede2b99d7262828f5b24952.1558601329.git.fabien.lahoudere@collabora.com>
+         <20190612084243.GC4797@dell>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 12 Jun 2019 09:58:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the jump label of a static key is transformed via the arch
-specific function:
+Le mercredi 12 juin 2019 à 09:42 +0100, Lee Jones a écrit :
+> On Thu, 23 May 2019, Fabien Lahoudere wrote:
+> 
+> > Version 3 of the EC protocol provides min and max frequencies and
+> > fifo
+> > size for EC sensors.
+> > 
+> > Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
+> > Signed-off-by: Nick Vaccaro <nvaccaro@chromium.org>
+> > ---
+> >  .../cros_ec_sensors/cros_ec_sensors_core.c    | 83
+> > ++++++++++++++++++-
+> >  .../linux/iio/common/cros_ec_sensors_core.h   |  4 +
+> >  include/linux/mfd/cros_ec_commands.h          | 21 +++++
+> 
+> There have been many changes to this file recently.  We will have to
+> co-ordinate the merge.
+> 
+> But for now:
+> 
+> For my own reference:
+>   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> 
 
-    void arch_jump_label_transform(struct jump_entry *entry,
-                                   enum jump_label_type type)
+Yes I see the changes and my next submission will use recent patch and
+drop my modification in cros_ec_commands.h.
 
-The new approach (batch mode) uses two arch functions, the first has the
-same arguments of the arch_jump_label_transform(), and is the function:
+Thanks for reviewing
 
-    bool arch_jump_label_transform_queue(struct jump_entry *entry,
-                                         enum jump_label_type type)
-
-Rather than transforming the code, it adds the jump_entry in a queue of
-entries to be updated. This functions returns true in the case of a
-successful enqueue of an entry. If it returns false, the caller must to
-apply the queue and then try to queue again, for instance, because the
-queue is full.
-
-This function expects the caller to sort the entries by the address before
-enqueueuing then. This is already done by the arch independent code, though.
-
-After queuing all jump_entries, the function:
-
-    void arch_jump_label_transform_apply(void)
-
-Applies the changes in the queue.
-
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Chris von Recklinghausen <crecklin@redhat.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Scott Wood <swood@redhat.com>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/include/asm/jump_label.h |  2 +
- arch/x86/kernel/jump_label.c      | 69 +++++++++++++++++++++++++++++++
- 2 files changed, 71 insertions(+)
-
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 65191ce8e1cf..06c3cc22a058 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_JUMP_LABEL_H
- #define _ASM_X86_JUMP_LABEL_H
- 
-+#define HAVE_JUMP_LABEL_BATCH
-+
- #define JUMP_LABEL_NOP_SIZE 5
- 
- #ifdef CONFIG_X86_64
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index d3328062b8cf..7391d6d90bcf 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -110,6 +110,75 @@ void arch_jump_label_transform(struct jump_entry *entry,
- 	mutex_unlock(&text_mutex);
- }
- 
-+#define TP_VEC_MAX (PAGE_SIZE / sizeof(struct text_patch_loc))
-+static struct text_patch_loc tp_vec[TP_VEC_MAX];
-+int tp_vec_nr = 0;
-+
-+bool arch_jump_label_transform_queue(struct jump_entry *entry,
-+				     enum jump_label_type type)
-+{
-+	struct text_patch_loc *tp;
-+	void *entry_code;
-+
-+	if (system_state == SYSTEM_BOOTING) {
-+		/*
-+		 * Fallback to the non-batching mode.
-+		 */
-+		arch_jump_label_transform(entry, type);
-+		return true;
-+	}
-+
-+	/*
-+	 * No more space in the vector, tell upper layer to apply
-+	 * the queue before continuing.
-+	 */
-+	if (tp_vec_nr == TP_VEC_MAX)
-+		return false;
-+
-+	tp = &tp_vec[tp_vec_nr];
-+
-+	entry_code = (void *)jump_entry_code(entry);
-+
-+	/*
-+	 * The int3 handler will do a bsearch in the queue, so we need entries
-+	 * to be sorted. We can survive an unsorted list by rejecting the entry,
-+	 * forcing the generic jump_label code to apply the queue. Warning once,
-+	 * to raise the attention to the case of an unsorted entry that is
-+	 * better not happen, because, in the worst case we will perform in the
-+	 * same way as we do without batching - with some more overhead.
-+	 */
-+	if (tp_vec_nr > 0) {
-+		int prev = tp_vec_nr - 1;
-+		struct text_patch_loc *prev_tp = &tp_vec[prev];
-+
-+		if (WARN_ON_ONCE(prev_tp->addr > entry_code))
-+			return false;
-+	}
-+
-+	__jump_label_set_jump_code(entry, type,
-+				   (union jump_code_union *) &tp->opcode, 0);
-+
-+	tp->addr = entry_code;
-+	tp->detour = entry_code + JUMP_LABEL_NOP_SIZE;
-+	tp->len = JUMP_LABEL_NOP_SIZE;
-+
-+	tp_vec_nr++;
-+
-+	return true;
-+}
-+
-+void arch_jump_label_transform_apply(void)
-+{
-+	if (!tp_vec_nr)
-+		return;
-+
-+	mutex_lock(&text_mutex);
-+	text_poke_bp_batch(tp_vec, tp_vec_nr);
-+	mutex_unlock(&text_mutex);
-+
-+	tp_vec_nr = 0;
-+}
-+
- static enum {
- 	JL_STATE_START,
- 	JL_STATE_NO_UPDATE,
--- 
-2.20.1
 
