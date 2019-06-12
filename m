@@ -2,111 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE2B41977
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 02:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 587EA41986
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 02:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407453AbfFLAfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 20:35:11 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39493 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407288AbfFLAfL (ORCPT
+        id S2408241AbfFLAgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 20:36:40 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51566 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391522AbfFLAgk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 20:35:11 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b7so793991pls.6;
-        Tue, 11 Jun 2019 17:35:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ph86gesNnRTM7ujmiRuSEJzFcbh48v/P7EOKY+OdFyY=;
-        b=UD7GmZY8FzpfopaVwv7Q21zdCVPYfTWHzMZb9BOJpgHB5l26CfIO2OuBfGjjrLkN3J
-         QsIYQ7jMZKuLuCSdRB13J78M7OvygaLDg9VciXMarUGgpDsiaHSdFn7md8E2qz8Tzqvv
-         I7myqDGnk/KAy0d/fZ6GSTIUGEbeYZ3THvuOJhN7HUhKXachfNyfN7/Kd/utKT6qqyBh
-         4YZN/lMsTQPXrGCsKu4j57kGZVzoA1sg5ZPykaxpziSP9r7nFEM6A7wseq5EDEaLY4cy
-         E7g1GugR03Y8NhGHxo4JQSfPmFlmNKzRZH0zn6zSUVKF6LfVkBtVTKlgzTtHRIElO26P
-         aPHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ph86gesNnRTM7ujmiRuSEJzFcbh48v/P7EOKY+OdFyY=;
-        b=uXRuLl+pDmu3wYqX/MNWSMQO4f/tTWl5nHfLsxzlDaKn9P+BMYfa6L941aL+juWvbi
-         tuhekcEo/N7GbD7YdXMwZw+SIG9Loi9e+FO8WZCQI5MeO95+SrKe3eS0aIo/WRUF4gxu
-         +KSa5pjg8mAgd7LohPrJukqIpp+j0RXPYB8OqNVBLXTnIdpn2CcvpAkvm/GIU4ZoaaX+
-         BNJm/iGZlJoi956EQFmHh0LlCmuV3pxOc9xT1Gt1Lj8f11hg9v8v2rP9ISsezm+oB2hQ
-         F4bGQt6DIIkRvil++bkuNBSnKpK919UTg5LYWL9UTwDnkjIGG3j/A47zIKrz+zcTZrc5
-         Yc8Q==
-X-Gm-Message-State: APjAAAWKAnatrnD6sTenAc0W9Qas0AMF/iM1SwSe+UFLqrQPw0JX+KBl
-        n2p6ep6ZfOdv7WmF4Xmhf48=
-X-Google-Smtp-Source: APXvYqxZm72YQBMzfu3JeQ/pQSonMtBZam0wR61ec/mANR6WzsknWTt1c/ro/GU7bEt9Ot8Czc6tpw==
-X-Received: by 2002:a17:902:24c:: with SMTP id 70mr78198009plc.2.1560299710166;
-        Tue, 11 Jun 2019 17:35:10 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id a3sm227817pje.3.2019.06.11.17.35.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 11 Jun 2019 17:35:09 -0700 (PDT)
-Date:   Tue, 11 Jun 2019 17:35:07 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     benjamin.tissoires@redhat.com, jikos@kernel.org,
-        bjorn.andersson@linaro.org, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, agross@kernel.org,
-        david.brown@linaro.org, hdegoede@redhat.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] HID: quirks: Refactor ELAN 400 and 401 handling
-Message-ID: <20190612003507.GG143729@dtor-ws>
-References: <20190606161055.47089-1-jeffrey.l.hugo@gmail.com>
- <20190606161322.47192-1-jeffrey.l.hugo@gmail.com>
+        Tue, 11 Jun 2019 20:36:40 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5C0U2aL172563;
+        Wed, 12 Jun 2019 00:35:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=9gKawnpnm3eYTlbJSmpS31BgWCZu6yO6zvRDwLNExMc=;
+ b=vHQc7RiwFlRopnBcV6yXscL30ZNdwN/v/B17eINRtpQHvUvgM6epdVedyPbAKdmcBBV3
+ cpQKUJvANpmF9rest4EECBPlFj+c/6FFyA1MB+Y7QHfaviX1SgktsC/OuLuEeHTjfJfn
+ IHVrIivC0Er8GlXskbXJ6t5OZcUHTAMhyEJ0O8MOVdKDEgKTHfWtz59o9kiNq/kqTY6E
+ 4hAomBRtHJLX3EPEAvdgUe3wJJHguniVZBFYytUSwIeEiPqdsoMO2S6x/RCI4kCCEC8X
+ 5tzrNpCpeUTAjMu2i0Q0axAMVtIdwT/+kMGJyGR6ACAIOztQv/pzRx3K8FTZ+teYFImj 5Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t04etrany-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 00:35:50 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5C0YsTE041414;
+        Wed, 12 Jun 2019 00:35:50 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 2t1jphr047-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Jun 2019 00:35:50 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5C0Zn8q043221;
+        Wed, 12 Jun 2019 00:35:49 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2t1jphr042-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 00:35:49 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5C0ZfCm005680;
+        Wed, 12 Jun 2019 00:35:41 GMT
+Received: from localhost (/10.145.179.81)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Jun 2019 17:35:41 -0700
+Date:   Tue, 11 Jun 2019 17:35:38 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
+        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
+        linux-xfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com
+Subject: Re: [Jfs-discussion] [PATCH 1/4] vfs: create a generic checking
+ function for FS_IOC_SETFLAGS
+Message-ID: <20190612003538.GW1871505@magnolia>
+References: <156022833285.3227089.11990489625041926920.stgit@magnolia>
+ <156022834076.3227089.14763553158562888103.stgit@magnolia>
+ <fb974a33-2192-30ab-9f31-885c3796360b@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606161322.47192-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <fb974a33-2192-30ab-9f31-885c3796360b@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9285 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906120001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 09:13:22AM -0700, Jeffrey Hugo wrote:
-> There needs to be coordination between hid-quirks and the elan_i2c driver
-> about which devices are handled by what drivers.  Currently, both use
-> whitelists, which results in valid devices being unhandled by default,
-> when they should not be rejected by hid-quirks.  This is quickly becoming
-> an issue.
+On Tue, Jun 11, 2019 at 08:41:06AM -0500, Dave Kleikamp wrote:
+> On 6/10/19 11:45 PM, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > Create a generic checking function for the incoming FS_IOC_SETFLAGS flag
+> > values so that we can standardize the implementations that follow ext4's
+> > flag values.
+> > 
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> Since elan_i2c has a maintained whitelist of what devices it will handle,
-> use that to implement a blacklist in hid-quirks so that only the devices
-> that need to be handled by elan_i2c get rejected by hid-quirks, and
-> everything else is handled by default.  The downside is the whitelist and
-> blacklist need to be kept in sync.
+>  -- clip --
 > 
-> Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  drivers/hid/hid-quirks.c | 78 ++++++++++++++++++++++++++++++++++------
->  1 file changed, 67 insertions(+), 11 deletions(-)
+> > diff --git a/fs/jfs/ioctl.c b/fs/jfs/ioctl.c
+> > index ba34dae8bd9f..c8446d2cd0c7 100644
+> > --- a/fs/jfs/ioctl.c
+> > +++ b/fs/jfs/ioctl.c
+> > @@ -98,6 +98,12 @@ long jfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >  		/* Lock against other parallel changes of flags */
+> >  		inode_lock(inode);
+> >  
+> > +		oldflags = jfs_map_ext2(jfs_inode->mode2 & JFS_FL_USER_VISIBLE,
+> > +					0);
+> > +		err = vfs_ioc_setflags_check(inode, oldflags, flags);
+> > +		if (err)
+> > +			goto setflags_out;
 > 
-> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-> index e5ca6fe2ca57..edebd0700e3d 100644
-> --- a/drivers/hid/hid-quirks.c
-> +++ b/drivers/hid/hid-quirks.c
-> @@ -912,8 +912,66 @@ static const struct hid_device_id hid_mouse_ignore_list[] = {
->  	{ }
->  };
->  
-> +/* 
-> + * List of device names that elan_i2c is handling and HID should ignore.  Must
-> + * be kept in sync with elan_i2c
-> + */
-> +static const char *hid_elan_i2c_ignore[] = {
+> inode_unlock(inode) is not called on the error path.
+> 
+> > +
+> >  		oldflags = jfs_inode->mode2;
+> >  
+> >  		/*
+> 
+> This patch leaves jfs's open-coded version of the same check.
 
-If this is a copy of elan whitelist, then, if we do not want to bother
-with sharing it in object form (as a elan-i2c-ids module), can we at
-least move it into include/linux/input/elan-i2c-ids.h and consume from
-hid-quirks.c?
+Heh, thanks for pointing that out.  I'll fix both of those things.
 
-Thanks.
+--D
 
--- 
-Dmitry
+> Thanks,
+> Shaggy
