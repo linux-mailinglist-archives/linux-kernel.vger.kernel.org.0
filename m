@@ -2,43 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4359B426B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F18CA426BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:55:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409186AbfFLMyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:54:07 -0400
-Received: from mga11.intel.com ([192.55.52.93]:25054 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbfFLMyG (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:54:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 05:54:06 -0700
-X-ExtLoop1: 1
-Received: from hjin5-mobl1.ccr.corp.intel.com (HELO [10.254.211.209]) ([10.254.211.209])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jun 2019 05:54:04 -0700
-Subject: Re: [PATCH v2 4/7] perf diff: Use hists to manage basic blocks per
- symbol
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1559572577-25436-1-git-send-email-yao.jin@linux.intel.com>
- <1559572577-25436-5-git-send-email-yao.jin@linux.intel.com>
- <20190605114417.GB5868@krava>
- <4bbc5085-c8b0-5e36-419c-6ee754186027@linux.intel.com>
- <20190611085606.GA11510@krava>
- <c46ee356-9765-42cc-8cff-221bacb63c3d@linux.intel.com>
- <20190612074417.GC6455@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <c9d5e3b1-63a1-c87d-32c2-4c3b25642d1a@linux.intel.com>
-Date:   Wed, 12 Jun 2019 20:54:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2439313AbfFLMzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:55:23 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45870 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438500AbfFLMzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 08:55:22 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a14so23712702edv.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:55:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aD69m6otj68UH0Q7gUM0VGrtwF15HpBY3jIEQiF8Flk=;
+        b=ntZvh2KwaDXB+go+WLsM79HXH1hQprk1qwW56gt37SpPLpCJIDgUWDfdZE3kKPnvic
+         IYVxUGuYejHwnTZL8L11rVQoE9lKG/2PSjT90d15Z9xoyyNSAmVZvc/Zf4dvCACtV3FL
+         68B42Sxx/uKh/ywhDx5mvC4VgA+BZJOBHGFWZq6IdDXeNGvtU7SSKjssh9jZG8RRd5Q/
+         eexIfdZ5/hMA5A0x63bTis0ZqG4yh15PSPvxvsIQmocTfWKwxFmSD2OBTpEm3Hrdqd//
+         RhGwg02JvssdI0FlcU4uLXFHWMZooArwGSEromrjXz+ECByBkSklHogTNZ+d/e5xV4w1
+         1AKw==
+X-Gm-Message-State: APjAAAW4g1m5v1wqRWTZi8+7GkHCOjvjUDvET1cobDqviWD+P4YPVLCY
+        KiHE0T10BKrt+yo9C2GzTgq37XbVcN8=
+X-Google-Smtp-Source: APXvYqyhz7ko/MVJXRvdEbK38K+R1dfbCIspcF/HYfRDUZR8RTCSLzD3QIbIVDj3ba/Wtxy12sgefQ==
+X-Received: by 2002:aa7:d30d:: with SMTP id p13mr4360291edq.292.1560344120330;
+        Wed, 12 Jun 2019 05:55:20 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id m4sm4526164edc.24.2019.06.12.05.55.19
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 05:55:19 -0700 (PDT)
+Subject: Re: [PATCH] platform/x86: touchscreen_dmi: Update Hi10 Air filter
+To:     Christian Oder <me@myself5.de>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190612124053.119182-1-me@myself5.de>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <736848fd-1c45-0bd9-bfd1-747c716bd953@redhat.com>
+Date:   Wed, 12 Jun 2019 14:55:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190612074417.GC6455@krava>
+In-Reply-To: <20190612124053.119182-1-me@myself5.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -47,137 +57,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On 12-06-19 14:40, Christian Oder wrote:
+> Turns out the Hi10 Air is built by multiple companies so using Hampoo
+> as a filter is not enough to cover all variants.
+> 
+> This has been verified as working on the Hampoo and Morshow version.
+> 
+> Signed-off-by: Christian Oder <me@myself5.de>
+
+Patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
-On 6/12/2019 3:44 PM, Jiri Olsa wrote:
-> On Wed, Jun 12, 2019 at 02:11:44PM +0800, Jin, Yao wrote:
->>
->>
->> On 6/11/2019 4:56 PM, Jiri Olsa wrote:
->>> On Sat, Jun 08, 2019 at 07:41:47PM +0800, Jin, Yao wrote:
->>>>
->>>>
->>>> On 6/5/2019 7:44 PM, Jiri Olsa wrote:
->>>>> On Mon, Jun 03, 2019 at 10:36:14PM +0800, Jin Yao wrote:
->>>>>
->>>>> SNIP
->>>>>
->>>>>> diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
->>>>>> index 43623fa..d1641da 100644
->>>>>> --- a/tools/perf/util/sort.h
->>>>>> +++ b/tools/perf/util/sort.h
->>>>>> @@ -79,6 +79,9 @@ struct hist_entry_diff {
->>>>>>     		/* HISTC_WEIGHTED_DIFF */
->>>>>>     		s64	wdiff;
->>>>>> +
->>>>>> +		/* PERF_HPP_DIFF__CYCLES */
->>>>>> +		s64	cycles;
->>>>>>     	};
->>>>>>     };
->>>>>> @@ -143,6 +146,9 @@ struct hist_entry {
->>>>>>     	struct branch_info	*branch_info;
->>>>>>     	long			time;
->>>>>>     	struct hists		*hists;
->>>>>> +	void			*block_hists;
->>>>>> +	int			block_idx;
->>>>>> +	int			block_num;
->>>>>>     	struct mem_info		*mem_info;
->>>>>>     	struct block_info	*block_info;
->>>>>
->>>>> could you please not add the new block* stuff in here,
->>>>> and instead use the "c2c model" and use yourr own struct
->>>>> on top of hist_entry? we are trying to librarize this
->>>>> stuff and keep only necessary things in here..
->>>>>
->>>>> you're already using hist_entry_ops, so should be easy
->>>>>
->>>>> something like:
->>>>>
->>>>> 	struct block_hist_entry {
->>>>> 		void			*block_hists;
->>>>> 		int			block_idx;
->>>>> 		int			block_num;
->>>>> 		struct block_info	*block_info;
->>>>>
->>>>> 		struct hist_entry	he;
->>>>> 	};
->>>>>
->>>>>
->>>>>
->>>>> jirka
->>>>>
->>>>
->>>> Hi Jiri,
->>>>
->>>> After more considerations, maybe I can't move these stuffs from hist_entry
->>>> to block_hist_entry.
->>>
->>> why?
->>>
->>>>
->>>> Actually we use 2 kinds of hist_entry in this patch series. On kind of
->>>> hist_entry is for symbol/function. The other kind of hist_entry is for basic
->>>> block.
->>>
->>> correct
->>>
->>> so the way I see it the processing goes like this:
->>>
->>>
->>> 1) there's standard hist_entry processing ending up
->>>      with evsel->hists->rb_root full of hist entries
->>>
->>> 2) then you process every hist_entry and create
->>>      new 'struct hists' for each and fill it with
->>>      symbol counts data
->>>
->>>
->>>
->>> you could add 'struct hist_entry_ops' for the 1) processing
->>> that adds the 'struct hists' object for each hist_entry
->>>
->>> and add another 'struct hist_entry_ops' for 2) processing
->>> to carry the block data for each hist_entry
->>>
->>> jirka
->>>
->>
->> Hi Jiri,
->>
->> Yes, I can use two hist_entry_ops but one thing is still difficult to handle
->> that is the printing of blocks.
->>
->> One function may contain multiple blocks so I add 'block_num' in 'struct
->> hist_entry' to record the number of blocks.
->>
->> In patch "perf diff: Print the basic block cycles diff", I reuse most of
->> current code to print the blocks. The major change is:
->>
->>   static int hist_entry__fprintf(struct hist_entry *he, size_t size,
->>                                 char *bf, size_t bfsz, FILE *fp,
->>                                 bool ignore_callchains) {
->>
->> +       if (he->block_hists)
->> +               return hist_entry__block_fprintf(he, bf, size, fp);
->> +
+> ---
+>   drivers/platform/x86/touchscreen_dmi.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+> index b662cb2d7cd5..61e7c4987d0d 100644
+> --- a/drivers/platform/x86/touchscreen_dmi.c
+> +++ b/drivers/platform/x86/touchscreen_dmi.c
+> @@ -597,7 +597,8 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
+>   		/* Chuwi Hi10 Air */
+>   		.driver_data = (void *)&chuwi_hi10_air_data,
+>   		.matches = {
+> -			DMI_MATCH(DMI_BOARD_VENDOR, "Hampoo"),
+> +			DMI_MATCH(DMI_SYS_VENDOR, "CHUWI INNOVATION AND TECHNOLOGY(SHENZHEN)CO.LTD"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
+>   			DMI_MATCH(DMI_PRODUCT_SKU, "P1W6_C109D_B"),
+>   		},
+>   	},
 > 
-> you could do it the way we do hierarchy and have
-> something like 'symbol_conf.report_block'
-> 
->          if (symbol_conf.report_hierarchy)
->                  return hist_entry__hierarchy_fprintf(he, &hpp, hists, fp);
-> 
-> and in hist_entry__block_fprintf you cast the hist_entry
-> to your struct.. so you'll have all the data
-> 
-> jirka
-> 
-
-Thanks Jiri. So it looks I need to define 'struct block_hist_entry' in 
-util/sort.h, then hist_entry__block_fprintf can know this struct. 
-Previously I just defined this struct in builtin-diff.c.
-
-Thanks
-Jin Yao
-
