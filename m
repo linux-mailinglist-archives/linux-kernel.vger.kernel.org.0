@@ -2,95 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFFC419F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17335419FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:35:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406704AbfFLB1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:27:13 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41418 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406215AbfFLB1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:27:12 -0400
-Received: by mail-pf1-f196.google.com with SMTP id m30so8052610pff.8;
-        Tue, 11 Jun 2019 18:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=CtAUnKccNVM3Ar1NimuBm5cYjQQHpUUV35G3NGl7I18=;
-        b=agp8LjxgsiKUNBRzMQ6B1lsikXTP9MXAxScOYcZnsKclD0N+jlNVoUl/hzW4poyT5e
-         3L5Kpn7BSqpfe4Vqr0OMLbW+npbpmydrSh4Nk6mj5SGyx5Jj6jf653H8VmcdoFa5nFlP
-         PVXiNmiBrwZEiKboElbWiL4LdjFKAAbWcoG28ZIwtcy8dPhR9hlh49PJ6xikrmMZLHzP
-         20qVkn6ttaCMzY1I08lsTIN5eoleBIFYn7aRuLf/OzGJBwoDwiiv7JFIo5WL8ooodEKt
-         b/SI9mnoX3vTwRgRrKm2an9+aTc8TPah2tNonQDJrq5z+DrzQV1yJmuEkhrXeIPbcuOQ
-         mhuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=CtAUnKccNVM3Ar1NimuBm5cYjQQHpUUV35G3NGl7I18=;
-        b=FzhAsGYxmBnN668L0avinUo4XrpGKzI143/f++HbbliQdoUWYL7rIB07JskNWd+DU7
-         9+jmbLvpyufPPU8eq2izcCQRPo6orwcxUzTS5OUq7UHKXLLbMSF/8DIg84j79oFaTWzH
-         E/Wf2FNiDzxa7xnKm9OoWDmikQTdDGdNnhVVBS6MJm6hrgiPmAba2fijUfhXxYpekJD5
-         un5jWa/UL28tWsTkCFge14d0BYjkEI442PL0hQcNImY80LK60XtCruQlHxXE12hXaNrD
-         TVcToHfg5GzGvJ2hFzaL1CPH0OrbIsZZwU7xYr0epJ4Xmv6eUpK9T9Zd/dtqzCSv62oS
-         Ovpw==
-X-Gm-Message-State: APjAAAW63NOZnX17illK661RcsXbWTv8zbb9LMRh6E+aeNPIC6DjZn8x
-        UlVnDtutcFL11xnw3IiiJkk=
-X-Google-Smtp-Source: APXvYqyJ4j/UPWrjvOrQasPCqbyNI8I79UTnDUErLKqAMrK1NLwjt0JJmzYLlyxhcupMkfrOP1908w==
-X-Received: by 2002:a17:90a:cb87:: with SMTP id a7mr10403544pju.130.1560302831475;
-        Tue, 11 Jun 2019 18:27:11 -0700 (PDT)
-Received: from [10.2.189.129] ([66.170.99.2])
-        by smtp.gmail.com with ESMTPSA id c10sm3547108pjq.14.2019.06.11.18.27.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 18:27:10 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH 16/16] mm: pass get_user_pages_fast iterator arguments in
- a structure
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <1560300464.nijubslu3h.astroid@bobo.none>
-Date:   Tue, 11 Jun 2019 18:27:09 -0700
-Cc:     Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
-        the arch/x86 maintainers <x86@kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <0441EC80-B09F-4722-B186-E42EB6A83386@gmail.com>
-References: <20190611144102.8848-1-hch@lst.de>
- <20190611144102.8848-17-hch@lst.de> <1560300464.nijubslu3h.astroid@bobo.none>
-To:     Nicholas Piggin <npiggin@gmail.com>, Christoph Hellwig <hch@lst.de>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S2406850AbfFLBfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 21:35:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39474 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405839AbfFLBfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 21:35:00 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 102C0308218D;
+        Wed, 12 Jun 2019 01:34:43 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-17.pek2.redhat.com [10.72.12.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 87B5F6404F;
+        Wed, 12 Jun 2019 01:34:31 +0000 (UTC)
+Subject: Re: [PATCH 2/3 v3] x86/kexec: Set the C-bit in the identity map page
+ table when SEV is active
+To:     Boris Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        x86@kernel.org, hpa@zytor.com, dyoung@redhat.com, bhe@redhat.com,
+        Thomas.Lendacky@amd.com, brijesh.singh@amd.com
+References: <20190430074421.7852-1-lijiang@redhat.com>
+ <20190430074421.7852-3-lijiang@redhat.com> <20190515133006.GG24212@zn.tnic>
+ <4707fb2d-b7d3-34e3-a488-8aa9bdca05f1@redhat.com>
+ <0650D79F-2B12-4A80-A37A-F318B5C9ECBC@alien8.de>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <065dfaab-089b-2329-905a-e1dfbd2f3b3f@redhat.com>
+Date:   Wed, 12 Jun 2019 09:34:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <0650D79F-2B12-4A80-A37A-F318B5C9ECBC@alien8.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 12 Jun 2019 01:35:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Jun 11, 2019, at 5:52 PM, Nicholas Piggin <npiggin@gmail.com> wrote:
+在 2019年05月16日 16:15, Boris Petkov 写道:
+> On May 16, 2019 3:12:26 AM GMT+02:00, lijiang <lijiang@redhat.com> wrote:
+>> OK, i will modify it according to your suggestion and post again.
 > 
-> Christoph Hellwig's on June 12, 2019 12:41 am:
->> Instead of passing a set of always repeated arguments down the
->> get_user_pages_fast iterators, create a struct gup_args to hold them and
->> pass that by reference.  This leads to an over 100 byte .text size
->> reduction for x86-64.
+> No need - i fixed it up already. 
 > 
-> What does this do for performance? I've found this pattern can be
-> bad for store aliasing detection.
 
-Note that sometimes such an optimization can also have adverse effect due to
-stack protector code that gcc emits when you use such structs.
+Hi, until now, i haven't seen the upstream branch pick up this patch series,
+any updates?
 
-Matthew Wilcox encountered such a case:
-https://patchwork.kernel.org/patch/10702741/
+Thanks.
+Lianbo
