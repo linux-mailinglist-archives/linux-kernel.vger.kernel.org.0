@@ -2,106 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5920442DE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 534A342E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389624AbfFLRyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:54:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52490 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbfFLRye (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:54:34 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0317C6079C; Wed, 12 Jun 2019 17:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560362073;
-        bh=Hht43qaphXHsqoJvwabinU/2njLIAArwWX/pBi24330=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=JaJbjrNetcmVWhp0vIULfBJMC7Gn3rVFXIH2W0fQEjdk2Bp93NrMfTd8qbm7qYhCT
-         y9kp2li83z87bcDBKPKlpR0+zjJrPRgU2GCIreuvhgfS9yXVqM44kgc/FCG4R8Q7QN
-         I1Onk0464GrBEEMb6fmYt5jI1miQvQYT8j4EvjO4=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from sdias (i-global254.qualcomm.com [199.106.103.254])
+        id S1730225AbfFLRz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:55:58 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60806 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390620AbfFLRzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:55:53 -0400
+Received: from zn.tnic (p200300EC2F0A6800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:6800:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sdias@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C95361196;
-        Wed, 12 Jun 2019 17:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560362071;
-        bh=Hht43qaphXHsqoJvwabinU/2njLIAArwWX/pBi24330=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=SYsHUPKoD8mJbXCmJ0hiPa/v3qQYSR4BeMdPdPqLScwGtvtuMLPtzCjs8S7HgYPt9
-         2m7FG2a4IIZflVvpzg22ifDI+PRPpXmVJ78Tls5WG+4y2jCNI11T1DsjNSk6rrDF++
-         DmSe8/szizaX6BaXBlKs/DomfJ53gju4agD0oSz0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C95361196
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sdias@codeaurora.org
-From:   "Sujeev Dias" <sdias@codeaurora.org>
-To:     "'Daniele Palmas'" <dnlplm@gmail.com>
-Cc:     <linux-kernel@vger.kernel.org>, <truong@codeaurora.org>
-References: <1531166894-30984-1-git-send-email-sdias@codeaurora.org> <1556637058-22331-1-git-send-email-dnlplm@gmail.com>
-In-Reply-To: <1556637058-22331-1-git-send-email-dnlplm@gmail.com>
-Subject: RE: MHI code review
-Date:   Wed, 12 Jun 2019 10:54:30 -0700
-Message-ID: <000c01d52147$e33147f0$a993d7d0$@codeaurora.org>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DBB9E1EC0911;
+        Wed, 12 Jun 2019 19:55:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560362152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=4grj3QejwCBpNAM+uJrsty+0eljwAkLiJVXJTISRSCE=;
+        b=LXPv+FsCSb2KZhF5X4iNxoRJpb0Z1kGoBe+7M+NW2reHoN0cDNfzqAO3pCM7ZSv4vYZqtX
+        G2OCt0WaTavhfJUK1OtJZf2iTKWifMyvMYRwqeF3coUjgKsdQJl8Njcdsd8i43ja3BVtkN
+        a/73KFoTXR4OhWBjj5LdkOzSSXo2mjw=
+Date:   Wed, 12 Jun 2019 19:55:43 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Qian Cai <cai@lca.pw>, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] x86/mm: fix an unused variable "tsk" warning
+Message-ID: <20190612175543.GO32652@zn.tnic>
+References: <1559338641-6145-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQG0yIhPO79iSUqpSJr5eu5vZGCAwAIYoKrIpsg424A=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1559338641-6145-1-git-send-email-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniels
+On Fri, May 31, 2019 at 05:37:21PM -0400, Qian Cai wrote:
+> Since the commit "signal: Remove the task parameter from
+> force_sig_fault", "tsk" is only used when MEMORY_FAILURE=y and generates
+> a compilation warning without it.
+> 
+> arch/x86/mm/fault.c: In function 'do_sigbus':
+> arch/x86/mm/fault.c:1017:22: warning: unused variable 'tsk'
+> [-Wunused-variable]
+> 
+> Also, change to use IS_ENABLED() instead.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  arch/x86/mm/fault.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 46ac96aa7c81..40d70bd3fa84 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -1014,8 +1014,6 @@ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
+>  do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+>  	  vm_fault_t fault)
+>  {
+> -	struct task_struct *tsk = current;
+> -
+>  	/* Kernel mode? Handle exceptions or die: */
+>  	if (!(error_code & X86_PF_USER)) {
+>  		no_context(regs, error_code, address, SIGBUS, BUS_ADRERR);
+> @@ -1028,9 +1026,10 @@ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
+>  
+>  	set_signal_archinfo(address, error_code);
+>  
+> -#ifdef CONFIG_MEMORY_FAILURE
+> -	if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) {
+> +	if (IS_ENABLED(CONFIG_MEMORY_FAILURE) &&
+> +	    (fault & (VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE))) {
+>  		unsigned lsb = 0;
+> +		struct task_struct *tsk = current;
+>  
+>  		pr_err(
+>  	"MCE: Killing %s:%d due to hardware memory corruption fault at %lx\n",
+> @@ -1042,7 +1041,6 @@ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
+>  		force_sig_mceerr(BUS_MCEERR_AR, (void __user *)address, lsb);
+>  		return;
+>  	}
+> -#endif
+>  	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address);
+>  }
+>  
+> -- 
 
-Sorry for delay response.  Yes, we will be pushing new set of series very
-soon that will have support for 55 as well.  The series that's pushed should
-already work for SDX20, 24 and 55.   There are some new features related to
-55 that's not yet in series.
+I was puzzled just like Dave because this code is not in tip.
 
-Thanks
-Sujeev 
+Turns out there's this in linux-next:
 
------Original Message-----
-From: Daniele Palmas <dnlplm@gmail.com> 
-Sent: Tuesday, April 30, 2019 8:11 AM
-To: sdias@codeaurora.org
-Cc: linux-kernel@vger.kernel.org; truong@codeaurora.org; dnlplm@gmail.com
-Subject: Re: MHI code review
+commit 318759b4737c3b3789e2fd64d539f437d52386f5
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Mon Jun 3 10:23:58 2019 -0500
 
-Hi Sujeev,
+    signal/x86: Move tsk inside of CONFIG_MEMORY_FAILURE in do_sigbus
 
-> Hi Greg Kroah-Hartman\Arnd Bergmann and community
->
-> Thank you for all the feedback, I believe I have addressed all the 
-> comments from previous patches. Also, I am excluding mhi network 
-> driver in this series. I still have some modifications to do.
->
-> Please review the new patch series and share your feedback.
->
-> Thanks again
->
-> Sincerely,
-> Sujeev
 
-are you going to continue working on this series?
+-- 
+Regards/Gruss,
+    Boris.
 
-Can this series be used with PCIe SDX20/24/55 based modems?
-
-If yes, it would really be important to have this integrated into an
-official kernel.
-
-Thanks,
-Daniele
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
