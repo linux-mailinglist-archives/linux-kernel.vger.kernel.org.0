@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A735C42B8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB1642B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440367AbfFLP7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:59:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44160 "EHLO
+        id S2502007AbfFLP7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:59:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44402 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438056AbfFLP7c (ORCPT
+        with ESMTP id S2440381AbfFLP7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:59:32 -0400
+        Wed, 12 Jun 2019 11:59:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=F4hBM2hnudeTw3rmBj2H/vr2wvVOT3QCsFB/lvau9Gc=; b=uqWfxXgcMiTw
-        X3AY60kodtH7UiiyRr8zVSRRMMe+Psd5GnL8JcvB0NmMNaVe1wX+VUSU+VYBjKA6RE8brRnk9mZRx
-        2A9e0liTKkyGumR9rRKLzInOhI0faJd1eQViAJUfMyRItaRvALFsmTLgIos/ROtJyUIquAyTgsNcZ
-        1vcQg=;
+        List-Archive; bh=2JhpvVxjZMpldOqSbNerkDc47p59XIK1aaB3h7Mi9vw=; b=gmZepjTMHSy1
+        mRqgQR8FBSZFhKjIaXKdWzoA1B9eFFq0nZcTDV2PvZCaHRxH6oMakoafybMAhsxKm5Dm00zezugoL
+        eVF+mXAc3DaqJytHslOzkgFrB7CxR/t7aoUJWeKDmyMqtvL3L5lth6sP3jzc9bFLKKWkM7ho/J+sG
+        M29ME=;
 Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hb5eq-000367-DK; Wed, 12 Jun 2019 15:59:28 +0000
+        id 1hb5ez-00036T-4m; Wed, 12 Jun 2019 15:59:37 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 970D7440049; Wed, 12 Jun 2019 16:59:27 +0100 (BST)
+        id 9F7CF440046; Wed, 12 Jun 2019 16:59:36 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, jsarha@ti.com, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        misael.lopez@ti.com, robh+dt@kernel.org
-Subject: Applied "bindings: sound: davinci-mcasp: Add support for optional auxclk-fs-ratio" to the asoc tree
-In-Reply-To: <20190611122941.10708-2-peter.ujfalusi@ti.com>
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "regmap: fix bulk writes on paged registers" to the regmap tree
+In-Reply-To: <20190612110343.4463-1-srinivas.kandagatla@linaro.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190612155927.970D7440049@finisterre.sirena.org.uk>
-Date:   Wed, 12 Jun 2019 16:59:27 +0100 (BST)
+Message-Id: <20190612155936.9F7CF440046@finisterre.sirena.org.uk>
+Date:   Wed, 12 Jun 2019 16:59:36 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   bindings: sound: davinci-mcasp: Add support for optional auxclk-fs-ratio
+   regmap: fix bulk writes on paged registers
 
-has been applied to the asoc tree at
+has been applied to the regmap tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-5.2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -72,35 +71,42 @@ to this mail.
 Thanks,
 Mark
 
-From b7e47f48f1197c24f5347327afc2a4f7f6da9ca5 Mon Sep 17 00:00:00 2001
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Tue, 11 Jun 2019 15:29:40 +0300
-Subject: [PATCH] bindings: sound: davinci-mcasp: Add support for optional
- auxclk-fs-ratio
+From db057679de3e9e6a03c1bcd5aee09b0d25fd9f5b Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Wed, 12 Jun 2019 12:03:43 +0100
+Subject: [PATCH] regmap: fix bulk writes on paged registers
 
-When McASP is bus master it's reference clock (AUXCLK) might not be a
-static clock, but running at a specific FS ratio.
+On buses like SlimBus and SoundWire which does not support
+gather_writes yet in regmap, A bulk write on paged register
+would be silently ignored after programming page.
+This is because local variable 'ret' value in regmap_raw_write_impl()
+gets reset to 0 once page register is written successfully and the
+code below checks for 'ret' value to be -ENOTSUPP before linearising
+the write buffer to send to bus->write().
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Fix this by resetting the 'ret' value to -ENOTSUPP in cases where
+gather_writes() is not supported or single register write is
+not possible.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/davinci-mcasp-audio.txt          | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/base/regmap/regmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt b/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
-index a58f79f5345c..c483dcec01f8 100644
---- a/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
-+++ b/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
-@@ -44,6 +44,9 @@ Optional properties:
-   		 please refer to pinctrl-bindings.txt
- - fck_parent : Should contain a valid clock name which will be used as parent
- 	       for the McASP fck
-+- auxclk-fs-ratio: When McASP is bus master indicates the ratio between AUCLK
-+		   and FS rate if applicable:
-+		   AUCLK rate = auxclk-fs-ratio * FS rate
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index f1025452bb39..19f57ccfbe1d 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1637,6 +1637,8 @@ static int _regmap_raw_write_impl(struct regmap *map, unsigned int reg,
+ 					     map->format.reg_bytes +
+ 					     map->format.pad_bytes,
+ 					     val, val_len);
++	else
++		ret = -ENOTSUPP;
  
- Optional GPIO support:
- If any McASP pin need to be used as GPIO then the McASP node must have:
+ 	/* If that didn't work fall back on linearising by hand. */
+ 	if (ret == -ENOTSUPP) {
 -- 
 2.20.1
 
