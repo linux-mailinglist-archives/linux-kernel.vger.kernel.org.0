@@ -2,94 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB04E41A8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3E841A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408544AbfFLC44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 22:56:56 -0400
-Received: from mail-qk1-f170.google.com ([209.85.222.170]:32942 "EHLO
-        mail-qk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406516AbfFLC4z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 22:56:55 -0400
-Received: by mail-qk1-f170.google.com with SMTP id r6so9091509qkc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 19:56:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q1Qi48oLh9iihq2LkIgrDslGg/Vx8JGXFp2UzVtaaTY=;
-        b=GrS5VQHHEPqZSj0SSqWX+li2jU9LgQ/XmJrzBwJgBXd308sYmDYSLhN7BlIJ+pWUt6
-         1LijH6Xf62AENQPgWYxgqRvsEz3CKDdvi3ko+tiKHYmMjwnjXiQEDJRnNIFCHL0cm1WW
-         F8aADtDa8UDYiT88ZkkXLiy9HqrXbIYDTgzXI0vsl70VbFNVHMPKVf4EDDDoK8lmYEuN
-         MJ2zngmTA9m2bh5osbmY/MObMZeqsgbZTsxFd7GtgRJAtqpE2x7NPFElscOL48Thkleu
-         NTXmi3Jj7IbFMWb+LvihMeP1BQvezJ5xEENmTeqBJ6jI1ZwaHs6aeL6O0M1VjkciZn8k
-         /fsQ==
-X-Gm-Message-State: APjAAAXaCrtQCnQd/iAXZ8noGhu6pBJg3yH03uIJTdBr3fMXfVdZsOeA
-        GJOdv0jcBaYw/rR8+Hm5zjWJRGnnly/DtBUOOQfdqQ==
-X-Google-Smtp-Source: APXvYqxctTUcbUUwKEwCDb+kAVsNlcPeMauTITiiVl5q4wHU5Gq3T5KxTJd5OAfYva1ulpddSUg3/ykgbXPYx9uR294=
-X-Received: by 2002:a37:6708:: with SMTP id b8mr61258505qkc.141.1560308214695;
- Tue, 11 Jun 2019 19:56:54 -0700 (PDT)
+        id S2408545AbfFLDHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:07:22 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29083 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404957AbfFLDHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:07:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 20:07:21 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 20:07:15 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] iommu: Bounce page for untrusted devices
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
+ <20190610154241.GS28796@char.us.oracle.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <cd66dab1-9a18-13c1-e668-417036e2dbc1@linux.intel.com>
+Date:   Wed, 12 Jun 2019 11:00:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
- <87eflmpqkb.fsf@notabene.neil.brown.name> <20190222211006.GA10987@redhat.com>
- <7f0aeb7b-fdaa-0625-f785-05c342047550@kernel.dk> <20190222235459.GA11726@redhat.com>
- <CAMeeMh-2ANOr_Sb66EyA_HULkVRudD7fyOZsDbpRpDrshwnR2w@mail.gmail.com>
- <20190223024402.GA12407@redhat.com> <CAMeeMh9qLkTByWJewPR4o844wPkA-g5Hnm7aGjszuPopPAe8vA@mail.gmail.com>
-In-Reply-To: <CAMeeMh9qLkTByWJewPR4o844wPkA-g5Hnm7aGjszuPopPAe8vA@mail.gmail.com>
-From:   John Dorminy <jdorminy@redhat.com>
-Date:   Tue, 11 Jun 2019 22:56:42 -0400
-Message-ID: <CAMeeMh-6KMLgriX_7KT52ynjBMyT9yDWSMKv6YXW+yDpvv0=wA@mail.gmail.com>
-Subject: Re: block: be more careful about status in __bio_chain_endio
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.com>,
-        linux-block@vger.kernel.org,
-        device-mapper development <dm-devel@redhat.com>,
-        Milan Broz <gmazyland@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190610154241.GS28796@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having studied the code in question more thoroughly, my first email's
-scenario can't occur, I believe. bio_put() contains a
-atomic_dec_and_test(), which (according to
-Documentation/atomic_t.txt), having a return value, are fully ordered
-and therefore impose a general memory barrier. A general memory
-barrier means that no value set before bio_put() may be observed
-afterwards, if I accurately understand
-Documentation/memory_barriers.txt. Thus, the scenario I imagined, with
-a load from inside __bio_chain_endio() being visible in bi_end_io(),
-cannot occur.
+Hi,
 
-However, the second email's scenario, of a compiler making two stores
-out of a conditional store, is still accurate according to my
-understanding. I continue to believe setting parent->bi_status needs
-to be a WRITE_ONCE() and any reading of parent->bi_status before
-bio_put() needs to be at least a READ_ONCE(). The last thing in that
-email is wrong for the same reason that the first email couldn't
-happen: the bio_put() general barrier means later accesses to the
-field from a single thread will freshly read the field and thereby not
-get an incorrectly cached value.
+On 6/10/19 11:42 PM, Konrad Rzeszutek Wilk wrote:
+> On Mon, Jun 03, 2019 at 09:16:11AM +0800, Lu Baolu wrote:
+>> The Thunderbolt vulnerabilities are public and have a nice
+>> name as Thunderclap [1] [3] nowadays. This patch series aims
+>> to mitigate those concerns.
+>>
+>> An external PCI device is a PCI peripheral device connected
+>> to the system through an external bus, such as Thunderbolt.
+>> What makes it different is that it can't be trusted to the
+>> same degree as the devices build into the system. Generally,
+>> a trusted PCIe device will DMA into the designated buffers
+>> and not overrun or otherwise write outside the specified
+>> bounds. But it's different for an external device.
+>>
+>> The minimum IOMMU mapping granularity is one page (4k), so
+>> for DMA transfers smaller than that a malicious PCIe device
+>> can access the whole page of memory even if it does not
+>> belong to the driver in question. This opens a possibility
+>> for DMA attack. For more information about DMA attacks
+>> imposed by an untrusted PCI/PCIe device, please refer to [2].
+>>
+>> This implements bounce buffer for the untrusted external
+>> devices. The transfers should be limited in isolated pages
+>> so the IOMMU window does not cover memory outside of what
+>> the driver expects. Previously (v3 and before), we proposed
+>> an optimisation to only copy the head and tail of the buffer
+>> if it spans multiple pages, and directly map the ones in the
+>> middle. Figure 1 gives a big picture about this solution.
+>>
+>>                                  swiotlb             System
+>>                  IOVA          bounce page           Memory
+>>               .---------.      .---------.        .---------.
+>>               |         |      |         |        |         |
+>>               |         |      |         |        |         |
+>> buffer_start .---------.      .---------.        .---------.
+>>               |         |----->|         |*******>|         |
+>>               |         |      |         | swiotlb|         |
+>>               |         |      |         | mapping|         |
+>>   IOMMU Page  '---------'      '---------'        '---------'
+>>    Boundary   |         |                         |         |
+>>               |         |                         |         |
+>>               |         |                         |         |
+>>               |         |------------------------>|         |
+>>               |         |    IOMMU mapping        |         |
+>>               |         |                         |         |
+>>   IOMMU Page  .---------.                         .---------.
+>>    Boundary   |         |                         |         |
+>>               |         |                         |         |
+>>               |         |------------------------>|         |
+>>               |         |     IOMMU mapping       |         |
+>>               |         |                         |         |
+>>               |         |                         |         |
+>>   IOMMU Page  .---------.      .---------.        .---------.
+>>    Boundary   |         |      |         |        |         |
+>>               |         |      |         |        |         |
+>>               |         |----->|         |*******>|         |
+>>    buffer_end '---------'      '---------' swiotlb'---------'
+>>               |         |      |         | mapping|         |
+>>               |         |      |         |        |         |
+>>               '---------'      '---------'        '---------'
+>>            Figure 1: A big view of iommu bounce page
+>>
+>> As Robin Murphy pointed out, this ties us to using strict mode for
+>> TLB maintenance, which may not be an overall win depending on the
+>> balance between invalidation bandwidth vs. memcpy bandwidth. If we
+>> use standard SWIOTLB logic to always copy the whole thing, we should
+>> be able to release the bounce pages via the flush queue to allow
+>> 'safe' lazy unmaps. So since v4 we start to use the standard swiotlb
+>> logic.
+>>
+>>                                  swiotlb             System
+>>                  IOVA          bounce page           Memory
+>> buffer_start .---------.      .---------.        .---------.
+>>               |         |      |         |        |         |
+>>               |         |      |         |        |         |
+>>               |         |      |         |        .---------.physical
+>>               |         |----->|         | ------>|         |_start
+>>               |         |iommu |         | swiotlb|         |
+>>               |         | map  |         |   map  |         |
+>>   IOMMU Page  .---------.      .---------.        '---------'
+> 
+> The prior picture had 'buffer_start' at an offset in the page. I am
+> assuming you meant that here in as well?
 
-As a concrete proposal, I believe either of the following work and fix
-the race NeilB described, as well as the compiler (or CPU) race I
-described:
+In prior picture, since we only use bounce buffer for head and tail
+partial-page buffers, so we need to return buffer_start at the same
+offset as the physical buffer.
 
- -     if (!parent->bi_status)
- -               parent->bi_status = bio->bi_status;
- +     if (bio->bi_status)
- +               WRITE_ONCE(parent->bi_status, bio->bi_status);
+Here, we use a whole swiotlb bounce buffer, hence we should use the same
+offset as the bounce buffer (a.k.a. offset = 0).
 
---or--
+> 
+> Meaning it starts at the same offset as 'physical_start' in the right
+> side box?
+> 
+>>    Boundary   |         |      |         |        |         |
+>>               |         |      |         |        |         |
+>>               |         |----->|         |        |         |
+>>               |         |iommu |         |        |         |
+>>               |         | map  |         |        |         |
+>>               |         |      |         |        |         |
+>>   IOMMU Page  .---------.      .---------.        .---------.
+>>    Boundary   |         |      |         |        |         |
+>>               |         |----->|         |        |         |
+>>               |         |iommu |         |        |         |
+>>               |         | map  |         |        |         |
+>>               |         |      |         |        |         |
+>>   IOMMU Page  |         |      |         |        |         |
+>>    Boundary   .---------.      .---------.        .---------.
+>>               |         |      |         |------->|         |
+>>    buffer_end '---------'      '---------' swiotlb|         |
+>>               |         |----->|         |   map  |         |
+>>               |         |iommu |         |        |         |
+>>               |         | map  |         |        '---------' physical
+>>               |         |      |         |        |         | _end
+>>               '---------'      '---------'        '---------'
+>>            Figure 2: A big view of simplified iommu bounce page
+>>
+>> The implementation of bounce buffers for untrusted devices
+>> will cause a little performance overhead, but we didn't see
+>> any user experience problems. The users could use the kernel
+> 
+> What kind of devices did you test it with?
 
- -     if (!parent->bi_status)
- -               parent->bi_status = bio->bi_status;
- +     if (!READ_ONCE(parent->bi_status) && bio->bi_status)
- +               WRITE_ONCE(parent->bi_status, bio->bi_status);
+Most test work was done by Xu Pengfei (cc'ed). He has run the code
+on real platforms with various thunderbolt peripherals (usb, disk,
+network, etc.).
 
-I believe the second of these might, but is not guaranteed to,
-preserve the first error observed in a child; I believe if you want to
-definitely save the first error you need an atomic.
+> 
+> Thank you for making this awesome cover letter btw!
+> 
+
+You are welcome.
+
+Best regards,
+Baolu
