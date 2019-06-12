@@ -2,144 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D121439AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF60F42AF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbfFMPPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:15:17 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:47179 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732230AbfFMN0D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:26:03 -0400
-X-Originating-IP: 90.88.159.246
-Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id B10E040003;
-        Thu, 13 Jun 2019 13:25:51 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 17:34:23 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Harald Geyer <harald@ccbib.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge
- on Teres-I
-Message-ID: <20190612153423.jjcxsturjip3pn56@flea>
-References: <20190604122150.29D6468B05@newverein.lst.de>
- <20190604122308.98D4868B20@newverein.lst.de>
- <CA+E=qVckHLqRngsfK=AcvstrD0ymEfRkYyhS_kBtZ3YWdE3L=g@mail.gmail.com>
- <20190605101317.GA9345@lst.de>
- <20190605120237.ekmytfxcwbjaqy3x@flea>
- <E1hYsvP-0000PY-Pz@stardust.g4.wien.funkfeuer.at>
- <20190607062802.m5wslx3imiqooq5a@flea>
- <20190607094030.GA12373@lst.de>
+        id S2409390AbfFLPee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:34:34 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40274 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405706AbfFLPee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:34:34 -0400
+Received: from zn.tnic (p200300EC2F0A6800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:6800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C1E021EC09C0;
+        Wed, 12 Jun 2019 17:34:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560353672;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=g4rWJFjEM7kkULl6vDi+aUBsBu1usG9lRov9A1JP3uU=;
+        b=lBOJAcIAePCGsIZyQbFRsd5z9TmBH7Q317mtuTr7HkJkA5n4O3qoOw2ntlUcsXLt52JzVc
+        k7bRn3onzr+vJNStvcQU+K76Q8NFGuywblnA7GCANZ0xZHDnkIC+mnCgcM0CQTB0Rd9r8h
+        lPG2PWO9qMhn7X6ndpemHttD9mBP1V8=
+Date:   Wed, 12 Jun 2019 17:34:25 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Hawa, Hanna" <hhhawa@amazon.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Shenhar, Talel" <talel@amazon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chocron, Jonathan" <jonnyc@amazon.com>,
+        "Krupnik, Ronen" <ronenk@amazon.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "Hanoch, Uri" <hanochu@amazon.com>
+Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
+Message-ID: <20190612153425.GL32652@zn.tnic>
+References: <20190611115651.GD31772@zn.tnic>
+ <6df5a17bb1c900dc69b991171e55632f40d9426f.camel@kernel.crashing.org>
+ <20190612034813.GA32652@zn.tnic>
+ <08bd58dc0045670223f8d3bbc8be774505bd3ddf.camel@kernel.crashing.org>
+ <20190612074242.53a4cf56@coco.lan>
+ <20190612110039.GH32652@zn.tnic>
+ <20190612084213.4fb9e054@coco.lan>
+ <7705227ea831793cc9e45af32e0da8f5547cb14d.camel@kernel.crashing.org>
+ <20190612122504.GI32652@zn.tnic>
+ <6911a79a-bcd7-03e1-1c90-2adb88aaa1db@amazon.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l4e2w5m2mlsciqb7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190607094030.GA12373@lst.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <6911a79a-bcd7-03e1-1c90-2adb88aaa1db@amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 12, 2019 at 03:35:31PM +0300, Hawa, Hanna wrote:
+> We have daemon script that collects correctable/uncorrectable errors from
+> EDAC sysfs and reports to Amazon service that allow us to take action on
+> specific error thresholds.
 
---l4e2w5m2mlsciqb7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What does "take action" mean, more specifically? Is the script taking
+action to poison/isolate memory or a guy goes down to the basement and
+replaces parts? :-)
 
-On Fri, Jun 07, 2019 at 11:40:30AM +0200, Torsten Duwe wrote:
-> On Fri, Jun 07, 2019 at 08:28:02AM +0200, Maxime Ripard wrote:
-> > On Thu, Jun 06, 2019 at 03:59:27PM +0200, Harald Geyer wrote:
-> > >
-> > > If think valid compatible properties would be:
-> > > compatible = "innolux,n116bge", "simple-panel";
-> > > compatible = "edp-connector", "simple-panel";
-> >
-> > A connector isn't a panel.
-> >
-> > > compatible = "innolux,n116bge", "edp-connector", "simple-panel";
-> >
-> > And the innolux,n116bge is certainly not a connector either.
-> >
-> > > compatible = "edp-connector", "innolux,n116bge", "simple-panel";
-> > >
-> > > I can't make up my mind which one I prefere. However neither of these
-> > > variants requires actually implmenting an edp-connector driver.
-> >
-> > No-one asked to do an edp-connector driver. You should use it in your
-> > DT, but if you want to have some code in your driver that parses the
-> > DT directly, I'm totally fine with that.
->
-> I must admit I fail to understand what that extra node would be good for.
-> Logically, the eDP far side is connected to the well-known n116bge.
-> Inside the laptop case it might as well be a flat ribbon cable or
-> soldered directly.
-> In good intention, that's all I wanted to express in the DT. I don't
-> know whether the relevant mechanical dimensions of the panel and the
-> connector are standardised, so whether one could in theory assemble it
-> with a different panel than the one it came with.
+IOW, I'm interested in whether you guys need an additional recovery
+action agent and if so, whether it would make sense to have something
+generic in the tree, which can be shared with others...
 
-Because the panel that comes with the Teres-I is always the
-same. However, that's not true for all the devices out there using the
-bridge, starting with the pinebook.
+Thx.
 
-> OTOH, as I checked during the discussion with anarsoul, the panel's
-> supply voltage is permanently connected to the main 3.3V rail.
+-- 
+Regards/Gruss,
+    Boris.
 
-Again, that may be the case on the Teres-I, but not necessarily on
-other boards.
-
-> We already agreed that the eDP output port must not neccessarily be
-> specified, this setup is a good example why: because the panel is
-> always powered, the anx6345 can always pull valid EDID data from it
-> so at this stage there's no need for any OS driver to reach beyond
-> the bridge. IIRC even the backlight got switched off for the blank
-> screen without.
-
-That's not really the outcome of the discussion we had here though:
-https://patchwork.freedesktop.org/patch/305035/
-
-> All I wanted to say is that "there's usually an n116bge behind it";
-> but this is mostly redundant.
->
-> So, shall we just drop the output port specification (along with the
-> panel node) in order to get one step further?
-
-Depending on the outcome of the discussion above, yes or no :)
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---l4e2w5m2mlsciqb7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQEbfwAKCRDj7w1vZxhR
-xXboAP9taP8cVAug0AmgG1n+5b7orZtPN+yeWqkQV/4rx6fcdgD3Tma8ZrLudyMc
-SNeQDRS8FMpPCWr42VcLCNdIMRk6CA==
-=j/Ze
------END PGP SIGNATURE-----
-
---l4e2w5m2mlsciqb7--
+Good mailing practices for 400: avoid top-posting and trim the reply.
