@@ -2,81 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7192B41A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC3941A42
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:08:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406577AbfFLCHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 22:07:52 -0400
-Received: from mail-ed1-f53.google.com ([209.85.208.53]:41790 "EHLO
-        mail-ed1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404880AbfFLCHv (ORCPT
+        id S2408380AbfFLCI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 22:08:26 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40059 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406597AbfFLCIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 22:07:51 -0400
-Received: by mail-ed1-f53.google.com with SMTP id p15so23055997eds.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 19:07:50 -0700 (PDT)
+        Tue, 11 Jun 2019 22:08:25 -0400
+Received: by mail-qk1-f196.google.com with SMTP id c70so9003372qkg.7;
+        Tue, 11 Jun 2019 19:08:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e3TEzE60VRj/MS8YEEehOOQckYotYtM00jSjKCi8/jI=;
-        b=MTtnxOj8b/+TTYuM6NNkobIsRNOElKsc/8BqXi3Y/+dNGP7+MZ2IGVtBb9IvQn+OsO
-         vW74urYy7EzW8nl+nFudq/JabGlvyX3vo/5Hnrim+qNbyvWWoh95wiXSZNopPL+oXF/O
-         eD2Pnlv4mFpK9NfsXHt421c7OE1+1LjF2t546fw5c+ALo6qKpb5Up3nS2VgDyXsEYmXu
-         0EFS1eXIH10mQztjtBB9u+208ddm8dhgPx+iDuc40U2BU6O0uLBWML0c78uHFi1gvuAk
-         cpkYbNvZV5mNIS/64Z1tTp9WdsscxLL6ysWN85wbls6CM1baoMoKiseSgh4yK5TDDiHE
-         ByZw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J1Es5Api2DcjMjvwsXPpKHwLUKPhoxaSmvaXu8HsUCg=;
+        b=Z6aLRINzBF+QeVOxTh02DZf8c9SQ7413TJl1G8EQclmzHHQD6TCTPPGl7eZGBlkG7y
+         t4EBRpwd5kgJPHi87XvnxYETfntTWo8sAblq16brAAu5XtNxs1Gy1sFkWEAWPeqtlMFW
+         PW+cwMA6FjmdtasKdEfogU7PgTxsZ9d+6f8b+/74rMQt390boDlbmjXhVjOMiRKJyroM
+         3DnnToLVqaeJJ5VWlvXwykv161ju3z5HLvTGVZXvvuQ8L1NHKbuy+qxuQCfDVOCQBnyU
+         ENu2Gdaoc4O/e9T8oot5FiwBVFBguvZP1V9DdSk5VPLZNuhadF3j9rv03mUty0/kmYq5
+         DeYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e3TEzE60VRj/MS8YEEehOOQckYotYtM00jSjKCi8/jI=;
-        b=Va40DPM1MtgQKNm72Ti0VdMU3RieGVeBCTPdcw4W9TwtANH3AbuwzVT8VxYg10s1Sn
-         QZHSXClrQyWIn6KsL/pJMNOncwm1p7L0Y9TnL65NTEkwQcNkS/m1oQDuxV0JIXt4nEKQ
-         WvspL2IjYXt92ChVTZGOq46N/9WTwcoGtKJRyV2DX6FkdJjqbtSHuMt7WK5qqWWFFvR3
-         kJOUnpdouo9suCuqKRgJOCeMv2PDGuTX7wVpWwcFN61nDaVsz6pTkc1yOjxxDUHXWzmP
-         gCTMegKZQKhxk/j070vjSae6uGwDhlPnCyr5+30MQnxXh1byCD7n08/lRIDQvefuhDvg
-         Ra7A==
-X-Gm-Message-State: APjAAAVQ06z+gKQpDCWYKaHHLdaKrIM9QuJO6uoglDrWbQH1T341POZR
-        FJ6AbWsRyfwXHi7jJYr1DD6jIw==
-X-Google-Smtp-Source: APXvYqz0F/coC3G7qHRNAuBkWxFLoYTo3WBL7aSNleJKw+ls654OvYPBn0myZDv5kyjEpbjibAS9FA==
-X-Received: by 2002:a17:906:7d4e:: with SMTP id l14mr19826791ejp.188.1560305270074;
-        Tue, 11 Jun 2019 19:07:50 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id v18sm3176634edq.80.2019.06.11.19.07.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 19:07:49 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id ECA1F10081B; Wed, 12 Jun 2019 05:07:49 +0300 (+03)
-Date:   Wed, 12 Jun 2019 05:07:49 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Larry Bassel <larry.bassel@oracle.com>
-Cc:     mike.kravetz@oracle.com, willy@infradead.org,
-        dan.j.williams@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH, RFC 2/2] Implement sharing/unsharing of PMDs for FS/DAX
-Message-ID: <20190612020749.sjpuquzxrprkalfy@box>
-References: <1557417933-15701-1-git-send-email-larry.bassel@oracle.com>
- <1557417933-15701-3-git-send-email-larry.bassel@oracle.com>
- <20190514130147.2pk2xx32aiomm57b@box>
- <20190524160711.GF19025@ubuette>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J1Es5Api2DcjMjvwsXPpKHwLUKPhoxaSmvaXu8HsUCg=;
+        b=jUtcf14Qz1O06Ag1gNACX+tEk6CggJJ5dyLZfnKfaq1uzxEIgNpJzLDrvx2pYZLxQm
+         LoEQR7DBdogCjXSb9KckUnvHGhIYNQtXgbhxXKrn3EwAgP1YtalMZzov91BoVZtalvIN
+         EzeZJ6cGsDmD4EAcAjjl9lZvvqo8mm73/8YrVc/QiFUrVyY6pdFQfpp2ft99Wuo1SN9s
+         hkhivGTSvOOUxNrMogV9hIAHXtd+MsNRSGsawM4wC80g5wpdftjW35FVp8HiBpJhZUVs
+         5h7UGSbSlrUIYRKIuEuxsanczBAOCfdsKlszBPCRArhb8zZYkgultuAORMFZp0iJW9XZ
+         OQzg==
+X-Gm-Message-State: APjAAAUzWtfXXwcgo9i/jJN8RPwHjB/SM1m9u/9Wco+Dqk+l/DYQpBMr
+        z93DtrYA8BiLXgMOmWf4y3jAK0ia
+X-Google-Smtp-Source: APXvYqz8lsuKQKseN3hGn/Iwm5FNUEFDU4zHL/zuBoQgHfO/e64RsEFDEMoH31yd+Q1p+l3zjHShwA==
+X-Received: by 2002:ae9:c108:: with SMTP id z8mr2277618qki.57.1560305304304;
+        Tue, 11 Jun 2019 19:08:24 -0700 (PDT)
+Received: from localhost.localdomain ([191.35.236.118])
+        by smtp.gmail.com with ESMTPSA id k40sm9870379qta.50.2019.06.11.19.08.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 19:08:23 -0700 (PDT)
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM)
+Subject: [PATCH] scsi: scsi_sysfs.c: Hide wwid sdev attr if VPD is not supported
+Date:   Tue, 11 Jun 2019 23:08:28 -0300
+Message-Id: <20190612020828.8140-1-marcos.souza.org@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524160711.GF19025@ubuette>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 09:07:11AM -0700, Larry Bassel wrote:
-> Again, I don't think this can happen in DAX. The only sharing allowed
-> is for FS/DAX/2MiB pagesize.
+WWID composed from VPD data from device, specifically page 0x83. So,
+when a device does not have VPD support, for example USB storage devices
+where VPD is specifically disabled, a read into <blk device>/device/wwid
+file will always return ENXIO. To avoid this, change the
+scsi_sdev_attr_is_visible function to hide wwid sysfs file when the
+devices does not support VPD.
 
-Hm. I still don't follow. How do you guarantee that DAX actually allocated
-continues space for the file on backing storage and you can map it with
-PMD page? I believe you don't have such guarantee.
+Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+---
+ drivers/scsi/scsi_sysfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index dbb206c90ecf..bfd890fa0c69 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -1159,6 +1159,9 @@ static umode_t scsi_sdev_attr_is_visible(struct kobject *kobj,
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+ 	struct scsi_device *sdev = to_scsi_device(dev);
+ 
++	/* do not present wwid if the device does not support VPD */
++	if (attr == &dev_attr_wwid.attr && sdev->skip_vpd_pages)
++		return 0;
+ 
+ 	if (attr == &dev_attr_queue_depth.attr &&
+ 	    !sdev->host->hostt->change_queue_depth)
 -- 
- Kirill A. Shutemov
+2.21.0
+
