@@ -2,74 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4307341D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E1241D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:14:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407944AbfFLHLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:11:35 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41039 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407055AbfFLHLe (ORCPT
+        id S2407905AbfFLHOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:14:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60408 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404276AbfFLHOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:11:34 -0400
-Received: by mail-lf1-f65.google.com with SMTP id 136so11209382lfa.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1KcMuzl2j9UlUMV+5bVICTUXl/nZCKqZLShOlWK6AIs=;
-        b=Aw/L4d8YErCBnWXwJfO00otZf3wDQGfZunv7P0vOQbVNoN7eMd3CVXEDRcX+z6n9Tk
-         /2euh4O9JfNrPHL31l92kA1LyI+Hf8IwF0mgT+eM06OcpGEZyrMz7ZOzPXbsEHQc1m/g
-         K4znn/UpX6u53bnerzHi6Xm0JOGOda+gBMZAvNGVRyDlVF7mXggr8DA0Do3O3uA/qhMb
-         u4JFf9yQixYhq8vpIkQEncJBgDhdJMQ7FH3ULz61HsO+U9tQk8rEnolE01nRQrKg/92F
-         DLMEdej/O6VZCTO6Q8UQ6ZTf4eeWDcd8p4MF/ztFLRW+/jn7f9O65II2rDLFUMfQu84b
-         SxWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1KcMuzl2j9UlUMV+5bVICTUXl/nZCKqZLShOlWK6AIs=;
-        b=VDtWLND097q1l3T/5cIVOt1n8EbUzp5NOj/TlQ3dhDteMLwxq9rgVGJW3NKxGe9mQa
-         AF4DY7ryUpxxliV/eFSe/spOEbYN3mjMQt9jgx56dnSoPOp7p4VgEX0bxXfnn8M34jT+
-         Oj+vHsSKexiJchiB42NYj8WY5YkI/0WgiuIbGel1dWyOx1CMOM7fSB4ZiQtUYCmt6uDb
-         R673j/+4PjEbqq9Qc7Y3rca+1Y831d3TfBIwkwmlqHbZktehrWAsYUME5JZZGAzCAyBR
-         OFvD3yzi7/ErJFHmXyL9DQPRja9fbhhdGA2Fre6eLgoXOcb+n5LjuyxhpEdqJ5Bk2lS0
-         SQVQ==
-X-Gm-Message-State: APjAAAWdexYDkxioxEyfjEO6O7ohrsK6GjniPm2/LHFRBaJY+uVAgQ+3
-        KEwEKEBq4vcCuN2mAzZZJckz+RDPd5dj7CrlOi+J+Q==
-X-Google-Smtp-Source: APXvYqxk29thQQE/BHKwINb4uefI2UckUUiQ3q2QTbipO6HIND/PFkyMs94HDPXUOnV0M1Ddkg6jgfptNouBMVw9dIU=
-X-Received: by 2002:ac2:50c4:: with SMTP id h4mr27109977lfm.61.1560323492832;
- Wed, 12 Jun 2019 00:11:32 -0700 (PDT)
+        Wed, 12 Jun 2019 03:14:25 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1haxSb-00064A-J4; Wed, 12 Jun 2019 09:14:17 +0200
+Date:   Wed, 12 Jun 2019 09:14:16 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+cc:     Marc Zyngier <marc.zyngier@arm.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Abel Vesa <abelvesa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Carlo Caione <ccaione@baylibre.com>
+Subject: Re: [RFC 0/2] Add workaround for core wake-up on IPI for i.MX8MQ
+In-Reply-To: <VI1PR04MB5055A808A08A1C47784E4332EE130@VI1PR04MB5055.eurprd04.prod.outlook.com>
+Message-ID: <alpine.DEB.2.21.1906120913090.2214@nanos.tec.linutronix.de>
+References: <20190610121346.15779-1-abel.vesa@nxp.com> <20190610131921.GB14647@lakrids.cambridge.arm.com> <20190610132910.srd4j2gtidjeppdx@fsr-ub1664-175> <6f1052ea-623a-b2e8-9aa8-22aef5fab4ca@arm.com> <20190610135514.xd5myavjsloos2y3@fsr-ub1664-175>
+ <7b86aa90-6d64-589c-f11e-d2ee6ab3fd54@arm.com> <VI1PR04MB5055A808A08A1C47784E4332EE130@VI1PR04MB5055.eurprd04.prod.outlook.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190609150953.6432-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190609150953.6432-1-yamada.masahiro@socionext.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 09:11:21 +0200
-Message-ID: <CACRpkdaSM4y_CEJH-MWx_7BqSP6PpTwQ21ZG++wfAT29RPcBHg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: remove unused pin_is_valid()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 9, 2019 at 5:10 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, 10 Jun 2019, Leonard Crestez wrote:
+> On 6/10/2019 5:08 PM, Marc Zyngier wrote:
+> > Nobody is talking about performance here. It is strictly about
+> > correctness, and what I read about this system is that it cannot
+> > reliably use cpuidle.
+> My argument was that it's fine if PPIs and LPIs are broken as long as 
+> they're not used:
+> 
+>   * PPIs are only used for local timer which is not used for wakeup.
 
-> This function was used by pin_request() to pointlessly double-check
-> the pin validity, and it was the only user ever.
->
-> Since commit d2f6a1c6fb0e ("pinctrl: remove double pin validity
-> check."), no one has ever used it.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Huch? The timer has to bring the CPU out of idle as any other interrupt. 
 
-Good catch!
-Patch applied.
+Thanks,
 
-Yours,
-Linus Walleij
+	tglx
