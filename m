@@ -2,301 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B32E42908
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C837142917
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439786AbfFLO1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 10:27:43 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33951 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439772AbfFLO1l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:27:41 -0400
-Received: by mail-pl1-f195.google.com with SMTP id i2so6708030plt.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=nnpmiCMeAmdAQr713slWaKghXz5R3u7jgcXTJpDfpmQ=;
-        b=ICl7eGjVNV7y/AxGAlYPcdDC8W1RmGqrb2exRej2zIW9f3+pWozoiu+SuIBAWactg1
-         oNNHT7BzmgMkV8i2Lc8ApqeMXKA8HqRNoSX0+Q88uYd8/YMWh4ieiO1ABpgEAR7r3DPm
-         tsLP/FacbyuuPZjijre9T4mKbJu+IxT6BfsBjuFpdR79Guon/K2NUejEgGoBMLOnZk7v
-         lv1lt3jNDYhm8lt8iCq3kOUTqzlOI/Fn8x8CW6FCNKjnqBPSUksi6jMjz8FxJSJnSyAF
-         g2Z1ulhMyzbQgEDXF1U8gywAUPq9GcJ4d5cDBaPSyZizuNJDUymdc1gb+nt2vZveOqWK
-         KpKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=nnpmiCMeAmdAQr713slWaKghXz5R3u7jgcXTJpDfpmQ=;
-        b=I7lLxIsa0hold2NVqtOQZ12G7rsYX1VS6nDor6tpY3JlCTSM3YWRNlEaJJJMoXy75V
-         aMHp1OLBsMTeNuuf0tkBJuSKKWdXV+n26jzTwMMaFOqzJuhDB2xOVnAzKvp1HwGv8b1/
-         IibDHjbYjqelJUFDVV+IoO6SUFXAfENRDVUWBU6zp4LrNynOIsEHEVv9xQcag5QV3POy
-         6q8+hVx6FmtA4Taje/XjzzpS+dykaHEC0fZTk50QtQfY2WVwS1FYko0uuvkz1zFi4y1r
-         Z+V8wm+HKDDasQa+g0sC8GA7iYuloxCvE3VarQfD60/Mvi/joy62wy5PRUTunNH6sNzG
-         gi4w==
-X-Gm-Message-State: APjAAAX6e3tDeOXwtmY6xKLe1n7jYbAufgmxMo0fpYq11TYJ33jq7/KC
-        a63I5e4FoFf0ix2MOx4J7x0=
-X-Google-Smtp-Source: APXvYqybtAjl1Hnz8LNcsEWJVANixUAc5DXXdaAQ0FV40oqAZExgdtoONgyBg4IZpTfGPL4UOXWzoQ==
-X-Received: by 2002:a17:902:f095:: with SMTP id go21mr6831787plb.58.1560349660293;
-        Wed, 12 Jun 2019 07:27:40 -0700 (PDT)
-Received: from ahmlpt0706 ([219.65.62.52])
-        by smtp.gmail.com with ESMTPSA id 131sm21146086pfx.57.2019.06.12.07.27.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 07:27:39 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 19:57:27 +0530
-From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     adurbin@chromium.org, groeck@chromium.org, dlaurie@chromium.org
-Subject: [PATCH] gsmi: Replace printk with relevant pr_<level>
-Message-ID: <20190612142727.GA1710@ahmlpt0706>
+        id S1731425AbfFLO2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:28:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44916 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731374AbfFLO2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 10:28:17 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0F2D9308A963;
+        Wed, 12 Jun 2019 14:27:57 +0000 (UTC)
+Received: from ovpn-112-16.rdu2.redhat.com (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2CF501710F;
+        Wed, 12 Jun 2019 14:27:50 +0000 (UTC)
+Message-ID: <f4249aa5f5acdd90275eda35aa16f3cfb29d29be.camel@redhat.com>
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+From:   Dan Williams <dcbw@redhat.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Alex Elder <elder@linaro.org>, abhishek.esse@gmail.com,
+        Ben Chan <benchan@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        syadagir@codeaurora.org
+Date:   Wed, 12 Jun 2019 09:27:49 -0500
+In-Reply-To: <CAK8P3a2Y+tcL1-V57dtypWHndNT3eDJdcKj29c_v+k8o1HHQig@mail.gmail.com>
+References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org>
+         <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+         <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
+         <fc0d08912bc10ad089eb74034726308375279130.camel@redhat.com>
+         <36bca57c999f611353fd9741c55bb2a7@codeaurora.org>
+         <153fafb91267147cf22e2bf102dd822933ec823a.camel@redhat.com>
+         <CAK8P3a2Y+tcL1-V57dtypWHndNT3eDJdcKj29c_v+k8o1HHQig@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline; filename="0001-gsmi-Replace-printk-with-relevant-pr_-level.patch"
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 14:28:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From 3a9cec48147b24fd9d793e0fdf20058461445646 Mon Sep 17 00:00:00 2001
-From: Saiyam Doshi <saiyamdoshi.in@gmail.com>
-Date: Tue, 11 Jun 2019 19:21:50 +0530
-Subject: [PATCH] gsmi: Replace printk with relevant pr_<level>
+On Wed, 2019-06-12 at 10:31 +0200, Arnd Bergmann wrote:
+> On Tue, Jun 11, 2019 at 7:23 PM Dan Williams <dcbw@redhat.com> wrote:
+> > On Tue, 2019-06-11 at 10:52 -0600, Subash Abhinov Kasiviswanathan
+> > wrote:
+> > 
+> > rmnet should handle muxing the QMAP, QoS, and aggregation and pass
+> > the
+> > resulting packet to the lower layer. That lower layer could be IPA
+> > or
+> > qmi_wwan, which in turn passes that QMAP packet to USB or GSI or
+> > whatever. This is typically how Linux handles clean abstractions
+> > between different protocol layers in drivers.
+> > 
+> > Similar to some WiFi drivers (drivers/net/wireless/marvell/libertas
+> > for
+> > example) where the same firmware interface can be accessed via PCI,
+> > SDIO, USB, SPI, etc. The bus-specific code is self-contained and
+> > does
+> > not creep into the upper more generic parts.
+> 
+> Yes, I think that is a good model. In case of libertas, we have
+> multiple
+> layers inheritence from the basic device (slightly different in the
+> implementation,
+> but that is how it should be):
 
-Replace printk() with pr_* macros for logging consistency.
-This also helps avoid checkpatch warnings.
+To be clear (and I probably wasn't earlier) I wasn't talking as deep
+about the actual code structures as you are here but this a great
+discussion.
 
-Signed-off-by: Saiyam Doshi <saiyamdoshi.in@gmail.com>
----
- drivers/firmware/google/gsmi.c | 59 ++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 31 deletions(-)
+I was trying to make the point that rmnet doesn't need to care about
+how the QMAP packets get to the device itself; it can be pretty generic
+so that it can be used by IPA/qmi_wwan/rmnet_smd/etc.
 
-diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index edaa4e5d84ad..e4e7f04bced8 100644
---- a/drivers/firmware/google/gsmi.c
-+++ b/drivers/firmware/google/gsmi.c
-@@ -151,7 +151,7 @@ static struct gsmi_buf *gsmi_buf_alloc(void)
- 
- 	smibuf = kzalloc(sizeof(*smibuf), GFP_KERNEL);
- 	if (!smibuf) {
--		printk(KERN_ERR "gsmi: out of memory\n");
-+		pr_err("gsmi: out of memory\n");
- 		return NULL;
- 	}
- 
-@@ -159,7 +159,7 @@ static struct gsmi_buf *gsmi_buf_alloc(void)
- 	smibuf->start = dma_pool_alloc(gsmi_dev.dma_pool, GFP_KERNEL,
- 				       &smibuf->handle);
- 	if (!smibuf->start) {
--		printk(KERN_ERR "gsmi: failed to allocate name buffer\n");
-+		pr_err("gsmi: failed to allocate name buffer\n");
- 		kfree(smibuf);
- 		return NULL;
- 	}
-@@ -257,34 +257,33 @@ static int gsmi_exec(u8 func, u8 sub)
- 		rc = 1;
- 		break;
- 	case GSMI_INVALID_PARAMETER:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Invalid parameter\n", cmd);
-+		pr_err("gsmi: exec 0x%04x: Invalid parameter\n", cmd);
- 		rc = -EINVAL;
- 		break;
- 	case GSMI_BUFFER_TOO_SMALL:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Buffer too small\n", cmd);
-+		pr_err("gsmi: exec 0x%04x: Buffer too small\n", cmd);
- 		rc = -ENOMEM;
- 		break;
- 	case GSMI_UNSUPPORTED:
- 	case GSMI_UNSUPPORTED2:
- 		if (sub != GSMI_CMD_HANDSHAKE_TYPE)
--			printk(KERN_ERR "gsmi: exec 0x%04x: Not supported\n",
--			       cmd);
-+			pr_err("gsmi: exec 0x%04x: Not supported\n", cmd);
- 		rc = -ENOSYS;
- 		break;
- 	case GSMI_NOT_READY:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Not ready\n", cmd);
-+		pr_err("gsmi: exec 0x%04x: Not ready\n", cmd);
- 		rc = -EBUSY;
- 		break;
- 	case GSMI_DEVICE_ERROR:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Device error\n", cmd);
-+		pr_err("gsmi: exec 0x%04x: Device error\n", cmd);
- 		rc = -EFAULT;
- 		break;
- 	case GSMI_NOT_FOUND:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Data not found\n", cmd);
-+		pr_err("gsmi: exec 0x%04x: Data not found\n", cmd);
- 		rc = -ENOENT;
- 		break;
- 	case GSMI_LOG_FULL:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Log full\n", cmd);
-+		pr_err("gsmi: exec 0x%04x: Log full\n", cmd);
- 		rc = -ENOSPC;
- 		break;
- 	case GSMI_HANDSHAKE_CF:
-@@ -293,7 +292,7 @@ static int gsmi_exec(u8 func, u8 sub)
- 		rc = result;
- 		break;
- 	default:
--		printk(KERN_ERR "gsmi: exec 0x%04x: Unknown error 0x%04x\n",
-+		pr_err("gsmi: exec 0x%04x: Unknown error 0x%04x\n",
- 		       cmd, result);
- 		rc = -ENXIO;
- 	}
-@@ -341,7 +340,7 @@ static efi_status_t gsmi_get_variable(efi_char16_t *name,
- 
- 	rc = gsmi_exec(GSMI_CALLBACK, GSMI_CMD_GET_NVRAM_VAR);
- 	if (rc < 0) {
--		printk(KERN_ERR "gsmi: Get Variable failed\n");
-+		pr_err("gsmi: Get Variable failed\n");
- 		ret = EFI_LOAD_ERROR;
- 	} else if (rc == 1) {
- 		/* variable was not found */
-@@ -403,7 +402,7 @@ static efi_status_t gsmi_get_next_variable(unsigned long *name_size,
- 
- 	rc = gsmi_exec(GSMI_CALLBACK, GSMI_CMD_GET_NEXT_VAR);
- 	if (rc < 0) {
--		printk(KERN_ERR "gsmi: Get Next Variable Name failed\n");
-+		pr_err("gsmi: Get Next Variable Name failed\n");
- 		ret = EFI_LOAD_ERROR;
- 	} else if (rc == 1) {
- 		/* variable not found -- end of list */
-@@ -467,7 +466,7 @@ static efi_status_t gsmi_set_variable(efi_char16_t *name,
- 
- 	rc = gsmi_exec(GSMI_CALLBACK, GSMI_CMD_SET_NVRAM_VAR);
- 	if (rc < 0) {
--		printk(KERN_ERR "gsmi: Set Variable failed\n");
-+		pr_err("gsmi: Set Variable failed\n");
- 		ret = EFI_INVALID_PARAMETER;
- 	}
- 
-@@ -517,7 +516,7 @@ static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
- 
- 	rc = gsmi_exec(GSMI_CALLBACK, GSMI_CMD_SET_EVENT_LOG);
- 	if (rc < 0)
--		printk(KERN_ERR "gsmi: Set Event Log failed\n");
-+		pr_err("gsmi: Set Event Log failed\n");
- 
- 	spin_unlock_irqrestore(&gsmi_dev.lock, flags);
- 
-@@ -645,10 +644,9 @@ static int gsmi_shutdown_reason(int reason)
- 	spin_unlock_irqrestore(&gsmi_dev.lock, flags);
- 
- 	if (rc < 0)
--		printk(KERN_ERR "gsmi: Log Shutdown Reason failed\n");
-+		pr_err("gsmi: Log Shutdown Reason failed\n");
- 	else
--		printk(KERN_EMERG "gsmi: Log Shutdown Reason 0x%02x\n",
--		       reason);
-+		pr_emerg("gsmi: Log Shutdown Reason 0x%02x\n", reason);
- 
- 	return rc;
- }
-@@ -759,7 +757,7 @@ static __init int gsmi_system_valid(void)
- 	 * whitewash our board names out of the public driver.
- 	 */
- 	if (!strncmp(acpi_gbl_FADT.header.oem_table_id, "FACP", 4)) {
--		printk(KERN_INFO "gsmi: Board is too old\n");
-+		pr_info("gsmi: Board is too old\n");
- 		return -ENODEV;
- 	}
- 
-@@ -879,7 +877,7 @@ static __init int gsmi_init(void)
- #ifdef CONFIG_PM
- 	ret = platform_driver_register(&gsmi_driver_info);
- 	if (unlikely(ret)) {
--		printk(KERN_ERR "gsmi: unable to register platform driver\n");
-+		pr_err("gsmi: unable to register platform driver\n");
- 		return ret;
- 	}
- #endif
-@@ -887,7 +885,7 @@ static __init int gsmi_init(void)
- 	/* register device */
- 	gsmi_dev.pdev = platform_device_register_full(&gsmi_dev_info);
- 	if (IS_ERR(gsmi_dev.pdev)) {
--		printk(KERN_ERR "gsmi: unable to register platform device\n");
-+		pr_err("gsmi: unable to register platform device\n");
- 		return PTR_ERR(gsmi_dev.pdev);
- 	}
- 
-@@ -906,19 +904,19 @@ static __init int gsmi_init(void)
- 	 */
- 	gsmi_dev.name_buf = gsmi_buf_alloc();
- 	if (!gsmi_dev.name_buf) {
--		printk(KERN_ERR "gsmi: failed to allocate name buffer\n");
-+		pr_err("gsmi: failed to allocate name buffer\n");
- 		goto out_err;
- 	}
- 
- 	gsmi_dev.data_buf = gsmi_buf_alloc();
- 	if (!gsmi_dev.data_buf) {
--		printk(KERN_ERR "gsmi: failed to allocate data buffer\n");
-+		pr_err("gsmi: failed to allocate data buffer\n");
- 		goto out_err;
- 	}
- 
- 	gsmi_dev.param_buf = gsmi_buf_alloc();
- 	if (!gsmi_dev.param_buf) {
--		printk(KERN_ERR "gsmi: failed to allocate param buffer\n");
-+		pr_err("gsmi: failed to allocate param buffer\n");
- 		goto out_err;
- 	}
- 
-@@ -960,8 +958,7 @@ static __init int gsmi_init(void)
- 
- 	/* Remove and clean up gsmi if the handshake could not complete. */
- 	if (gsmi_dev.handshake_type == -ENXIO) {
--		printk(KERN_INFO "gsmi version " DRIVER_VERSION
--		       " failed to load\n");
-+		pr_info("gsmi version " DRIVER_VERSION " failed to load\n");
- 		ret = -ENODEV;
- 		goto out_err;
- 	}
-@@ -970,28 +967,28 @@ static __init int gsmi_init(void)
- 	ret = -ENOMEM;
- 	gsmi_kobj = kobject_create_and_add("gsmi", firmware_kobj);
- 	if (!gsmi_kobj) {
--		printk(KERN_INFO "gsmi: Failed to create firmware kobj\n");
-+		pr_info("gsmi: Failed to create firmware kobj\n");
- 		goto out_err;
- 	}
- 
- 	/* Setup eventlog access */
- 	ret = sysfs_create_bin_file(gsmi_kobj, &eventlog_bin_attr);
- 	if (ret) {
--		printk(KERN_INFO "gsmi: Failed to setup eventlog");
-+		pr_info("gsmi: Failed to setup eventlog");
- 		goto out_err;
- 	}
- 
- 	/* Other attributes */
- 	ret = sysfs_create_files(gsmi_kobj, gsmi_attrs);
- 	if (ret) {
--		printk(KERN_INFO "gsmi: Failed to add attrs");
-+		pr_info("gsmi: Failed to add attrs");
- 		goto out_remove_bin_file;
- 	}
- 
- #ifdef CONFIG_EFI_VARS
- 	ret = efivars_register(&efivars, &efivar_ops, gsmi_kobj);
- 	if (ret) {
--		printk(KERN_INFO "gsmi: Failed to register efivars\n");
-+		pr_info("gsmi: Failed to register efivars\n");
- 		sysfs_remove_files(gsmi_kobj, gsmi_attrs);
- 		goto out_remove_bin_file;
- 	}
-@@ -1002,7 +999,7 @@ static __init int gsmi_init(void)
- 	atomic_notifier_chain_register(&panic_notifier_list,
- 				       &gsmi_panic_notifier);
- 
--	printk(KERN_INFO "gsmi version " DRIVER_VERSION " loaded\n");
-+	pr_info("gsmi version " DRIVER_VERSION " loaded\n");
- 
- 	return 0;
- 
--- 
-2.20.1
+Your points below are a great discussion though...
+
+> struct if_cs_card { /* pcmcia specific */
+>      struct lbs_private {  /* libertas specific */
+>            struct wireless_dev { /* 802.11 specific */
+>                   struct net_device {
+>                         struct device {
+>                               ...
+>                         };
+>                         ...
+>                   };
+>                   ...
+>            };
+>            ...
+>       };
+>       ...
+> };
+
+> The outer structure gets allocated when probing the hardware specific
+> driver, and everything below it is implemented as direct function
+> calls
+> into the more generic code, or as function pointers into the more
+> specific
+> code.
+> 
+> The current rmnet model is different in that by design the upper
+> layer
+> (rmnet) and the lower layer (qmi_wwan, ipa, ...) are kept independent
+> in
+> both directions, i.e. ipa has (almost) no knowledge of rmnet, and
+> just
+> has pointers to the other net_device:
+> 
+>        ipa_device
+>            net_device
+> 
+>        rmnet_port
+>            net_device
+> 
+> I understand that the rmnet model was intended to provide a cleaner
+> abstraction, but it's not how we normally structure subsystems in
+> Linux, and moving to a model more like how wireless_dev works
+> would improve both readability and performance, as you describe
+> it, it would be more like (ignoring for now the need for multiple
+> connections):
+> 
+>    ipa_dev
+>         rmnet_dev
+>                wwan_dev
+>                       net_device
+
+Perhaps I'm assuming too much from this diagram but this shows a 1:1
+between wwan_dev and "lower" devices.
+
+What Johannes is proposing (IIRC) is something a bit looser where a
+wwan_dev does not necessarily provide netdev itself, but is instead the
+central point that various channels (control, data, gps, sim card, etc)
+register with. That way the wwan_dev can provide an overall view of the
+WWAN device to userspace, and userspace can talk to the wwan_dev to ask
+the lower drivers (ipa, rmnet, etc) to create new channels (netdev,
+tty, otherwise) when the control channel has told the modem firmware to
+expect one.
+
+For example, say you have told the firmware to create a new data
+channel with ID 5 via QMI (which the kernel is unaware of because it
+does not process higher-level QMI requests).
+
+Perhaps (and this is all just brainstorming) then userspace asks the
+wwan_dev to create a new data channel with ID 5 and a certain QoS. IPA
+(or rmnet because that's the data channel provider for IPA) has
+registered callbacks to the wwan_dev, receives this request, and
+creates a new rmnet_dev/net_device, and then the wwan_dev passes the
+ifindex back to userspace so we don't have to play the dance of "match
+up my request with a random netlink ADD event".
+
+The point being that since data channels aren't actually useful until
+the control channel agrees with the firmware that one should exist, if
+we have a wwan_dev that represents the entire WWAN device then we don't
+need the initial-but-useless net_device.
+
+Just some thoughts; Johannes can feel free to correct me at any time :)
+
+> Where each layer is a specialization of the next. Note: this is a
+> common change when moving from proprietary code to upstream
+> code. If a driver module is designed to live out of tree, there
+> is a strong incentive to limit the number of interfaces it uses,
+> but when it gets merged, it becomes much more flexible, as
+> an internal interface between wwan_dev and the hardware driver(s)
+> can be easily changed by modifying all drivers at once.
+
+Yep, I've seen this time and time again.
+
+Dan
 
