@@ -2,96 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AAE441AC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9D841ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436554AbfFLDek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:34:40 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52554 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404730AbfFLDei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:34:38 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B62A31A0C2E;
-        Wed, 12 Jun 2019 05:34:36 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 35E181A00CD;
-        Wed, 12 Jun 2019 05:34:32 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 57791402DD;
-        Wed, 12 Jun 2019 11:34:26 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, leonard.crestez@nxp.com,
-        viresh.kumar@linaro.org, abel.vesa@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] soc: imx8: Use existing of_root directly
-Date:   Wed, 12 Jun 2019 11:36:20 +0800
-Message-Id: <20190612033620.3556-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190612033620.3556-1-Anson.Huang@nxp.com>
-References: <20190612033620.3556-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2407184AbfFLDoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:44:16 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55226 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726568AbfFLDoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:44:16 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6A40A1D14A6A6AD88AE1;
+        Wed, 12 Jun 2019 11:44:14 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
+ 11:44:05 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mchehab@kernel.org>, <tglx@linutronix.de>, <corbet@lwn.net>,
+        <gregkh@linuxfoundation.org>, <sean@mess.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] media: ttpci: Fix build error without RC_CORE
+Date:   Wed, 12 Jun 2019 11:43:10 +0800
+Message-ID: <20190612034310.4640-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+If RC_CORE is not set, building fails:
 
-There is common of_root for reference, no need to find it
-from DT again, use of_root directly to make driver simple.
+drivers/media/pci/ttpci/av7110_ir.o: In function `av7110_ir_init':
+av7110_ir.c:(.text+0x1b0): undefined reference to `rc_allocate_device'
+av7110_ir.c:(.text+0x2c1): undefined reference to `rc_register_device'
+av7110_ir.c:(.text+0x2dc): undefined reference to `rc_free_device'
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 71f49a8bf5c5 ("media: ttpci: use rc-core for the IR receiver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/soc/imx/soc-imx8.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/media/pci/ttpci/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
-index 86b925a..a632083 100644
---- a/drivers/soc/imx/soc-imx8.c
-+++ b/drivers/soc/imx/soc-imx8.c
-@@ -100,7 +100,6 @@ static int __init imx8_soc_init(void)
- {
- 	struct soc_device_attribute *soc_dev_attr;
- 	struct soc_device *soc_dev;
--	struct device_node *root;
- 	const struct of_device_id *id;
- 	u32 soc_rev = 0;
- 	const struct imx8_soc_data *data;
-@@ -112,12 +111,11 @@ static int __init imx8_soc_init(void)
- 
- 	soc_dev_attr->family = "Freescale i.MX";
- 
--	root = of_find_node_by_path("/");
--	ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
-+	ret = of_property_read_string(of_root, "model", &soc_dev_attr->machine);
- 	if (ret)
- 		goto free_soc;
- 
--	id = of_match_node(imx8_soc_match, root);
-+	id = of_match_node(imx8_soc_match, of_root);
- 	if (!id) {
- 		ret = -ENODEV;
- 		goto free_soc;
-@@ -145,8 +143,6 @@ static int __init imx8_soc_init(void)
- 		goto free_rev;
- 	}
- 
--	of_node_put(root);
--
- 	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
- 		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
- 
-@@ -156,7 +152,6 @@ static int __init imx8_soc_init(void)
- 	kfree(soc_dev_attr->revision);
- free_soc:
- 	kfree(soc_dev_attr);
--	of_node_put(root);
- 	return ret;
- }
- device_initcall(imx8_soc_init);
+diff --git a/drivers/media/pci/ttpci/Kconfig b/drivers/media/pci/ttpci/Kconfig
+index d96d4fa..b705631 100644
+--- a/drivers/media/pci/ttpci/Kconfig
++++ b/drivers/media/pci/ttpci/Kconfig
+@@ -7,7 +7,7 @@ config DVB_AV7110
+ 	depends on DVB_CORE && PCI && I2C
+ 	select TTPCI_EEPROM
+ 	select VIDEO_SAA7146_VV
+-	select DVB_AV7110_IR if INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110
++	select DVB_AV7110_IR if RC_CORE=DVB_AV7110 && (INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110)
+ 	depends on VIDEO_DEV	# dependencies of VIDEO_SAA7146_VV
+ 	select DVB_VES1820 if MEDIA_SUBDRV_AUTOSELECT
+ 	select DVB_VES1X93 if MEDIA_SUBDRV_AUTOSELECT
 -- 
 2.7.4
+
 
