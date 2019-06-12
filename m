@@ -2,31 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D8C4303B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 064794303E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfFLTcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:32:41 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:50378 "EHLO
+        id S2388229AbfFLTct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 15:32:49 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:50394 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbfFLTck (ORCPT
+        with ESMTP id S1727419AbfFLTcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:32:40 -0400
+        Wed, 12 Jun 2019 15:32:48 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.92)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1hb8z1-0001BN-Pi; Wed, 12 Jun 2019 15:32:31 -0400
+        id 1hb8z1-0001BN-RO; Wed, 12 Jun 2019 15:32:31 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     peterz@infradead.org
 Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-team@fb.com,
         morten.rasmussen@arm.com, tglx@linutronix.de,
         dietmar.eggeman@arm.com, mgorman@techsingularity.com,
-        vincent.guittot@linaro.org
-Subject: [RFC] sched,cfs: flatten CPU controller runqueues
-Date:   Wed, 12 Jun 2019 15:32:19 -0400
-Message-Id: <20190612193227.993-1-riel@surriel.com>
+        vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
+Subject: [PATCH 1/8] sched: introduce task_se_h_load helper
+Date:   Wed, 12 Jun 2019 15:32:20 -0400
+Message-Id: <20190612193227.993-2-riel@surriel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190612193227.993-1-riel@surriel.com>
+References: <20190612193227.993-1-riel@surriel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -34,58 +36,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current implementation of the CPU controller uses hierarchical
-runqueues, where on wakeup a task is enqueued on its group's runqueue,
-the group is enqueued on the runqueue of the group above it, etc.
+Sometimes the hierarchical load of a sched_entity needs to be calculated.
+Split out task_h_load into a task_se_h_load that takes a sched_entity pointer
+as its argument, and a task_h_load wrapper that calls task_se_h_load.
 
-This increases a fairly large amount of overhead for workloads that
-do a lot of wakeups a second, especially given that the default systemd
-hierarchy is 2 or 3 levels deep.
+No functional changes.
 
-This patch series is an attempt at reducing that overhead, by placing
-all the tasks on the same runqueue, and scaling the task priority by
-the priority of the group, which is calculated periodically.
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ kernel/sched/fair.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-This patch series still has a number of TODO items:
-- Clean up the code, and fix compilation without CONFIG_FAIR_GROUP_SCHED.
-- Remove some more now unused code.
-- Figure out a regression with schbench, where the p99 latency goes up
-  before the system is fully overloaded. I suspect wakeup_preempt_entity()
-  and wakeup_gran() because they now use the task_h_load instead of the
-  unscaled load to figure out whether a task should be preempted.
-- Reimplement CONFIG_CFS_BANDWIDTH.
-
-Plan for the CONFIG_CFS_BANDWIDTH reimplementation:
-- When a cgroup gets throttled, mark the cgroup and its children
-  as throttled.
-- When pick_next_entity finds a task that is on a throttled cgroup,
-  stash it on the cgroup runqueue (which is not used for runnable
-  tasks any more). Leave the vruntime unchanged, and adjust that
-  runqueue's vruntime to be that of the left-most task.
-- When a cgroup gets unthrottled, and has tasks on it, place it on
-  a vruntime ordered heap separate from the main runqueue.
-- Have pick_next_task_fair grab one task off that heap every time it
-  is called, and the min vruntime of that heap is lower than the
-  vruntime of the CPU's cfs_rq (or the CPU has no other runnable tasks).
-- Place that selected task on the CPU's cfs_rq, renormalizing its
-  vruntime with the GENTLE_FAIR_SLEEPERS logic. That should help
-  interleave the already runnable tasks with the recently unthrottled
-  group, and prevent thundering herd issues.
-- If the group gets throttled again before all of its task had a chance
-  to run, vruntime sorting ensures all the tasks in the throttled cgroup
-  get a chance to run over time.
-
-This patch applies on top of what was Linus's current tree when I last
-rebased it:
-2c1212de6f97 ("Merge tag 'spdx-5.2-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core")
-
- include/linux/sched.h |    5 
- kernel/sched/core.c   |    2 
- kernel/sched/debug.c  |   12 
- kernel/sched/fair.c   |  744 +++++++++++++++++++++-----------------------------
- kernel/sched/pelt.c   |   55 +--
- kernel/sched/pelt.h   |    2 
- kernel/sched/sched.h  |    9 
- 7 files changed, 346 insertions(+), 483 deletions(-)
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f35930f5e528..df624f7a68e7 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -706,6 +706,7 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ #ifdef CONFIG_SMP
+ 
+ static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
++static unsigned long task_se_h_load(struct sched_entity *se);
+ static unsigned long task_h_load(struct task_struct *p);
+ static unsigned long capacity_of(int cpu);
+ 
+@@ -7833,14 +7834,19 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ 	}
+ }
+ 
+-static unsigned long task_h_load(struct task_struct *p)
++static unsigned long task_se_h_load(struct sched_entity *se)
+ {
+-	struct cfs_rq *cfs_rq = task_cfs_rq(p);
++	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 
+ 	update_cfs_rq_h_load(cfs_rq);
+-	return div64_ul(p->se.avg.load_avg * cfs_rq->h_load,
++	return div64_ul(se->avg.load_avg * cfs_rq->h_load,
+ 			cfs_rq_load_avg(cfs_rq) + 1);
+ }
++
++static unsigned long task_h_load(struct task_struct *p)
++{
++	return task_se_h_load(&p->se);
++}
+ #else
+ static inline void update_blocked_averages(int cpu)
+ {
+@@ -7865,6 +7871,11 @@ static inline void update_blocked_averages(int cpu)
+ 	rq_unlock_irqrestore(rq, &rf);
+ }
+ 
++static unsigned long task_se_h_load(struct sched_entity *se)
++{
++	return se->avg.load_avg;
++}
++
+ static unsigned long task_h_load(struct task_struct *p)
+ {
+ 	return p->se.avg.load_avg;
+-- 
+2.20.1
 
