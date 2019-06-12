@@ -2,109 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 500C14218C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC930421AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437814AbfFLJyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:54:16 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38043 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437698AbfFLJyP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:54:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 53DD1802E0; Wed, 12 Jun 2019 11:54:03 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 11:54:13 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Brian Norris <briannorris@google.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Doug Anderson <dianders@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Guenter Roeck <groeck@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Message-ID: <20190612095413.GA12656@amd>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com>
- <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain>
- <20190610205233.GB137143@google.com>
- <20190611104913.egsbwcedshjdy3m5@holly.lan>
- <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
- <20190611223019.GH137143@google.com>
+        id S2437907AbfFLJzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:55:31 -0400
+Received: from mga12.intel.com ([192.55.52.136]:48761 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437752AbfFLJza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:55:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 02:55:30 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga005.fm.intel.com with ESMTP; 12 Jun 2019 02:55:28 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hazya-0007sG-Dq; Wed, 12 Jun 2019 12:55:28 +0300
+Date:   Wed, 12 Jun 2019 12:55:28 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v2] device property: Add helpers to count items in an
+ array
+Message-ID: <20190612095528.GF9224@smile.fi.intel.com>
+References: <20190520135004.15203-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611223019.GH137143@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190520135004.15203-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 20, 2019 at 04:50:04PM +0300, Andy Shevchenko wrote:
+> The usual pattern to allocate the necessary space for an array of properties is
+> to count them first by calling:
+> 
+>   count = device_property_read_uXX_array(dev, propname, NULL, 0);
+>   if (count < 0)
+> 	return count;
+> 
+> Introduce helpers device_property_count_uXX() to count items by supplying hard
+> coded last two parameters to device_property_readXX_array().
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Rafael, can be this applied if you have no objections?
 
-On Tue 2019-06-11 15:30:19, Matthias Kaehlcke wrote:
-> On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
-> > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
-> > <daniel.thompson@linaro.org> wrote:
-> > > This is a long standing flaw in the backlight interfaces. AFAIK gener=
-ic
-> > > userspaces end up with a (flawed) heuristic.
-> >=20
-> > Bingo! Would be nice if we could start to fix this long-standing flaw.
->=20
-> Agreed!
->=20
-> How could a fix look like, a sysfs attribute? Would a boolean value
-> like 'logarithmic_scale' or 'linear_scale' be enough or could more
-> granularity be needed?
+> ---
+> - gathered tags
+> - rephrase a bit the commit message and fix a typo (Sakari)
+>  include/linux/property.h | 44 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index a29369c89e6e..65e31c090f9f 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -144,6 +144,26 @@ static inline int device_property_read_u64(struct device *dev,
+>  	return device_property_read_u64_array(dev, propname, val, 1);
+>  }
+>  
+> +static inline int device_property_count_u8(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u8_array(dev, propname, NULL, 0);
+> +}
+> +
+> +static inline int device_property_count_u16(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u16_array(dev, propname, NULL, 0);
+> +}
+> +
+> +static inline int device_property_count_u32(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u32_array(dev, propname, NULL, 0);
+> +}
+> +
+> +static inline int device_property_count_u64(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u64_array(dev, propname, NULL, 0);
+> +}
+> +
+>  static inline bool fwnode_property_read_bool(const struct fwnode_handle *fwnode,
+>  					     const char *propname)
+>  {
+> @@ -174,6 +194,30 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
+>  	return fwnode_property_read_u64_array(fwnode, propname, val, 1);
+>  }
+>  
+> +static inline int fwnode_property_count_u8(const struct fwnode_handle *fwnode,
+> +					   const char *propname)
+> +{
+> +	return fwnode_property_read_u8_array(fwnode, propname, NULL, 0);
+> +}
+> +
+> +static inline int fwnode_property_count_u16(const struct fwnode_handle *fwnode,
+> +					    const char *propname)
+> +{
+> +	return fwnode_property_read_u16_array(fwnode, propname, NULL, 0);
+> +}
+> +
+> +static inline int fwnode_property_count_u32(const struct fwnode_handle *fwnode,
+> +					    const char *propname)
+> +{
+> +	return fwnode_property_read_u32_array(fwnode, propname, NULL, 0);
+> +}
+> +
+> +static inline int fwnode_property_count_u64(const struct fwnode_handle *fwnode,
+> +					    const char *propname)
+> +{
+> +	return fwnode_property_read_u64_array(fwnode, propname, NULL, 0);
+> +}
+> +
+>  /**
+>   * struct property_entry - "Built-in" device property representation.
+>   * @name: Name of the property.
+> -- 
+> 2.20.1
+> 
 
-I'd expect attribute "scale" with values "linear" or "logarithmic".
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> The new attribute could be optional (it only exists if explicitly
-> specified by the driver) or be set to a default based on a heuristic
-> if not specified and be 'fixed' on a case by case basis. The latter
-> might violate "don't break userspace" though, so I'm not sure it's a
-> good idea.
 
-I'd do it only when we explicitely know. We don't want it to be buggy.
-
-And I guess we should decide what interface we really want? (Linear?
-Logarithmic?) And make new drivers do that.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0Ay8UACgkQMOfwapXb+vIeJgCggLbpjHz3nKmV58LAUi3ZiuUa
-uScAn2D1iGqQP7z/oj5Jluw9Rq5L6vCE
-=G1uG
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
