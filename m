@@ -2,86 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7693F427E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A2642845
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439373AbfFLNqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 09:46:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47210 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436660AbfFLNqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:46:14 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B19BE307F5FF;
-        Wed, 12 Jun 2019 13:46:04 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2BE7A665F1;
-        Wed, 12 Jun 2019 13:46:00 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 12 Jun 2019 15:46:04 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 15:45:59 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "e@80x24.org" <e@80x24.org>,
-        "jbaron@akamai.com" <jbaron@akamai.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Message-ID: <20190612134558.GB3276@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com>
- <87k1dxaxcl.fsf_-_@xmission.com>
- <87ef45axa4.fsf_-_@xmission.com>
- <20190610162244.GB8127@redhat.com>
- <87lfy96sta.fsf@xmission.com>
- <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+        id S2439538AbfFLN7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:59:38 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50878 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2437126AbfFLN7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 09:59:38 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id F36B1AAB7E15BB89D9AB;
+        Wed, 12 Jun 2019 21:47:25 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.32) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
+ 21:47:19 +0800
+From:   Xiang Zheng <zhengxiang9@huawei.com>
+Subject: Re: [PATCH] KVM: ARM64: Update perf event when setting PMU count
+ value
+To:     Andrew Murray <andrew.murray@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        <marc.zyngier@arm.com>, Wang Haibin <wanghaibin.wang@huawei.com>
+References: <20190519100559.7188-1-zhengxiang9@huawei.com>
+ <20190521164445.GW8268@e119886-lin.cambridge.arm.com>
+Message-ID: <482838e5-64a4-ef99-2e51-4b58e18ba4b4@huawei.com>
+Date:   Wed, 12 Jun 2019 21:47:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 13:46:13 +0000 (UTC)
+In-Reply-To: <20190521164445.GW8268@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11, David Laight wrote:
->
-> If I have an application that has a loop with a pselect call that
-> enables SIGINT (without a handler) and, for whatever reason,
-> one of the fd is always 'ready' then I'd expect a SIGINT
-> (from ^C) to terminate the program.
 
-This was never true.
+On 2019/5/22 0:44, Andrew Murray wrote:
+> On Sun, May 19, 2019 at 06:05:59PM +0800, Xiang Zheng wrote:
+>> Guest will adjust the sample period and set PMU counter value when
+>> it takes a long time to handle the PMU interrupts.
+>>
+>> However, we don't have a corresponding change on the virtual PMU
+>> which is emulated via a perf event. It could cause a large number
+>> of PMU interrupts injected to guest. Then guest will get hang for
+>> handling these interrupts.
+> 
+> Yes this is indeed an issue. I believe I've addressed this in my 'chained
+> pmu' series - the relevant patch is here...
+> 
+> https://lists.cs.columbia.edu/pipermail/kvmarm/2019-May/035933.html
+> 
+> Some other comments below.
+> 
 
-Before Eric's patches SIGINT can kill a process or not, depending on timing.
-In particular, if SIGINT was already pending before pselect() and it finds
-an already ready fd, the program won't terminate.
+Sorry for that I didn't notice your patches...
+I will test your patch series.
 
-After the Eric's patches SIGINT will only kill the program if pselect() does
-not find a ready fd.
+>>
+>> So update the sample_period of perf event if the counter value is
+>> changed to avoid this case.
+>>
+>> Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+>> ---
+>>  virt/kvm/arm/pmu.c | 54 +++++++++++++++++++++++++++++++++++++++++++++---------
+>>  1 file changed, 45 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
+>> index 1c5b76c..cbad3ec 100644
+>> --- a/virt/kvm/arm/pmu.c
+>> +++ b/virt/kvm/arm/pmu.c
+>> @@ -24,6 +24,11 @@
+>>  #include <kvm/arm_pmu.h>
+>>  #include <kvm/arm_vgic.h>
+>>  
+>> +static void kvm_pmu_stop_counter(struct kvm_vcpu *vcpu, struct kvm_pmc *pmc);
+>> +static struct perf_event *kvm_pmu_create_perf_event(struct kvm_vcpu *vcpu,
+>> +						    struct kvm_pmc *pmc,
+>> +						    struct perf_event_attr *attr);
+>> +
+>>  /**
+>>   * kvm_pmu_get_counter_value - get PMU counter value
+>>   * @vcpu: The vcpu pointer
+>> @@ -57,11 +62,29 @@ u64 kvm_pmu_get_counter_value(struct kvm_vcpu *vcpu, u64 select_idx)
+>>   */
+>>  void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu, u64 select_idx, u64 val)
+>>  {
+>> -	u64 reg;
+>> +	u64 reg, counter, old_sample_period;
+>> +	struct kvm_pmu *pmu = &vcpu->arch.pmu;
+>> +	struct kvm_pmc *pmc = &pmu->pmc[select_idx];
+>> +	struct perf_event *event;
+>> +	struct perf_event_attr attr;
+>>  
+>>  	reg = (select_idx == ARMV8_PMU_CYCLE_IDX)
+>>  	      ? PMCCNTR_EL0 : PMEVCNTR0_EL0 + select_idx;
+>>  	__vcpu_sys_reg(vcpu, reg) += (s64)val - kvm_pmu_get_counter_value(vcpu, select_idx);
+>> +
+>> +	if (pmc->perf_event) {
+>> +		attr = pmc->perf_event->attr;
+>> +		old_sample_period = attr.sample_period;
+>> +		counter = kvm_pmu_get_counter_value(vcpu, select_idx);
+>> +		attr.sample_period = (-counter) & pmc->bitmask;
+>> +		if (attr.sample_period == old_sample_period)
+>> +			return;
+> 
+> I'd be interested to know how often this would evaluate to true.
+> 
 
-And this is much more consistent. Now we can simply say that the signal will
-be delivered only if pselect() fails and returns -EINTR. If it doesn't have
-a handler the process will be killed, otherwise the handler will be called.
+I have counted it while running my test script, the result shows that there are 1552288
+times evaluated to true and 8294235 times not.
 
-Oleg.
+I think different testcases may produce different results.
+
+>> +
+>> +		kvm_pmu_stop_counter(vcpu, pmc);
+>> +		event = kvm_pmu_create_perf_event(vcpu, pmc, &attr);
+> 
+> I'm not sure it's necessary to change the prototype of kvm_pmu_create_perf_event
+> as this function will recalculate the sample period based on the updated counter
+> value anyway.
+> 
+
+In this patch, kvm_pmu_create_perf_event() will not recalculate the sample period. Maybe
+you confuse it with your patch.:)
+
+> Thanks,
+> 
+> Andrew Murray
+> 
+>> +		if (event)
+>> +			pmc->perf_event = event;
+>> +	}
+>>  }
+>>  
+>>  /**
+>> @@ -303,6 +326,24 @@ static void kvm_pmu_perf_overflow(struct perf_event *perf_event,
+>>  	}
+>>  }
+>>  
+>> +static struct perf_event *kvm_pmu_create_perf_event(struct kvm_vcpu *vcpu,
+>> +						    struct kvm_pmc *pmc,
+>> +						    struct perf_event_attr *attr)
+>> +{
+>> +	struct perf_event *event;
+>> +
+>> +	event = perf_event_create_kernel_counter(attr, -1, current,
+>> +						 kvm_pmu_perf_overflow, pmc);
+>> +
+>> +	if (IS_ERR(event)) {
+>> +		pr_err_once("kvm: pmu event creation failed %ld\n",
+>> +			    PTR_ERR(event));
+>> +		return NULL;
+>> +	}
+>> +
+>> +	return event;
+>> +}
+>> +
+>>  /**
+>>   * kvm_pmu_software_increment - do software increment
+>>   * @vcpu: The vcpu pointer
+>> @@ -416,15 +457,10 @@ void kvm_pmu_set_counter_event_type(struct kvm_vcpu *vcpu, u64 data,
+>>  	/* The initial sample period (overflow count) of an event. */
+>>  	attr.sample_period = (-counter) & pmc->bitmask;
+>>  
+>> -	event = perf_event_create_kernel_counter(&attr, -1, current,
+>> -						 kvm_pmu_perf_overflow, pmc);
+>> -	if (IS_ERR(event)) {
+>> -		pr_err_once("kvm: pmu event creation failed %ld\n",
+>> -			    PTR_ERR(event));
+>> -		return;
+>> -	}
+>> +	event = kvm_pmu_create_perf_event(vcpu, pmc, &attr);
+>>  
+>> -	pmc->perf_event = event;
+>> +	if (event)
+>> +		pmc->perf_event = event;
+>>  }
+>>  
+>>  bool kvm_arm_support_pmu_v3(void)
+>> -- 
+>> 1.8.3.1
+>>
+>>
+>> _______________________________________________
+>> kvmarm mailing list
+>> kvmarm@lists.cs.columbia.edu
+>> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> 
+> .
+> 
+-- 
+
+Thanks,
+Xiang
+
 
