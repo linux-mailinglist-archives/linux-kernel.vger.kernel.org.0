@@ -2,139 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AD2642379
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5EB142384
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408939AbfFLLH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 07:07:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2407551AbfFLLH7 (ORCPT
+        id S2408979AbfFLLIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 07:08:48 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40543 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408950AbfFLLIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:07:59 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CB2gBo089603
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:07:57 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t2ytx99aa-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:07:57 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Wed, 12 Jun 2019 12:07:55 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Jun 2019 12:07:53 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CB7ps952166910
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Jun 2019 11:07:51 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6753B42041;
-        Wed, 12 Jun 2019 11:07:51 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1CA54203F;
-        Wed, 12 Jun 2019 11:07:50 +0000 (GMT)
-Received: from [10.0.2.15] (unknown [9.145.62.239])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Jun 2019 11:07:50 +0000 (GMT)
-Subject: Re: [PATCH v2 1/4] s390/pkey: Use -ENODEV instead of -EOPNOTSUPP
-To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-References: <20190612102248.18903-1-david@redhat.com>
- <20190612102248.18903-2-david@redhat.com>
- <7f313d87-f9ea-e291-49e2-8da29cf41680@linux.ibm.com>
- <53936c66-ca09-98a7-4c3c-eae8c6024887@redhat.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Wed, 12 Jun 2019 13:07:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 12 Jun 2019 07:08:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id p184so6174778pfp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 04:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w620wCIkG8GXS/KYH0IDoZ7ej5kJ3WmWx8LtN+LbTUQ=;
+        b=VggNUJ7a0brq2Ev6nAJQqO2O72gohucw8zeY5YtHck9VQOLSeh4HE1gegC/6IXwwZQ
+         yGU57RiXcKZXz6rEKzU45Xf6W2ce+VRfcbyLnBuDiGAB0WY+oQBhpKyfWyvJoxfZX9DP
+         yh5EZsvMAI815IqL/1YdyEKkghoO2fuJKDAzd5Q9y/OjjRwPS+GPbIwNDHqKiLuIYdn3
+         FS/k/NQyAktrRCCDybeyESanVpXbjmTwdROU2U/U+lx1nc+kfxYxbzF+ximhp+/PoGPk
+         LddaTqB/qiSjwgqbl0KdSRDedqW9qTDDWoaJfcFucWGR/PYqdZ87SzwkAPpr4TVyN7Wo
+         N3Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w620wCIkG8GXS/KYH0IDoZ7ej5kJ3WmWx8LtN+LbTUQ=;
+        b=cKRq2oaYAipbn+9XWN7Lsld58+VIr4rjDso8+ItkOsR9sOavBfCvN6hJy5txwSO1Um
+         Fxi0DF1mZs4p96tkdTMw8KSnjD27lFma+G3O6iqmjwKrAmrjniVf8OKjFAXdG6+kNuhj
+         Kgu4Bh5V/kyfRnRe0wnf3UBhFIYS2xgFhva6ECJeOFPRIXztTDHSXpUZ8LiHnmjA6q7u
+         P9zw0EAx1Q4cHdgD7RW53P6EJKlgwy0uXN1qteigdYeRE4gum4z3cSSidy9Msv2Gpp3v
+         JIEhmlpzhn+4JVKqbQGf2J4J0puCcf57t202kAc+Sj6I7lWBik/qVtJhj3MRUXU95orS
+         LTOQ==
+X-Gm-Message-State: APjAAAWrUqdoHClI8BR1f4Z4KRhCT+urIwHey29K1xAdg+jyHXvxg5mZ
+        mEgQch87qCYxc4c4QSmby+sxdMte/KKD+9X89lQ3CQ==
+X-Google-Smtp-Source: APXvYqxvUwlKkJ1D0n5ZAgi1aKr005PngCLgks22Vr4JdWsBWlki9wY2M2Qsc1xcmNb71INK9Pq98aEQaKS4b6HnOls=
+X-Received: by 2002:aa7:97bb:: with SMTP id d27mr18449962pfq.93.1560337726555;
+ Wed, 12 Jun 2019 04:08:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <53936c66-ca09-98a7-4c3c-eae8c6024887@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19061211-0012-0000-0000-000003287567
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061211-0013-0000-0000-000021617CC3
-Message-Id: <dcdf0d42-3a39-53aa-188a-82895c86cc34@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906120077
+References: <cover.1559580831.git.andreyknvl@google.com> <e410843d00a4ecd7e525a7a949e605ffc6c394c4.1559580831.git.andreyknvl@google.com>
+ <d0dffcf8-d7bf-a7b4-5766-3a6f87437851@oracle.com>
+In-Reply-To: <d0dffcf8-d7bf-a7b4-5766-3a6f87437851@oracle.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 12 Jun 2019 13:08:35 +0200
+Message-ID: <CAAeHK+yTmU9Vz0OB4b7bcgjU3W1v6NFxgpiy4tud7j0AHXkwtw@mail.gmail.com>
+Subject: Re: [PATCH v16 04/16] mm: untag user pointers in do_pages_move
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.06.19 12:41, David Hildenbrand wrote:
-> On 12.06.19 12:39, Harald Freudenberger wrote:
->> On 12.06.19 12:22, David Hildenbrand wrote:
->>> systemd-modules-load.service automatically tries to load the pkey module
->>> on systems that have MSA.
->>>
->>> Pkey also requires the MSA3 facility and a bunch of subfunctions.
->>> Failing with -EOPNOTSUPP makes "systemd-modules-load.service" fail on
->>> any system that does not have all needed subfunctions. For example,
->>> when running under QEMU TCG (but also on systems where protected keys
->>> are disabled via the HMC).
->>>
->>> Let's use -ENODEV, so systemd-modules-load.service properly ignores
->>> failing to load the pkey module because of missing HW functionality.
->>>
->>> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>> ---
->>>  drivers/s390/crypto/pkey_api.c | 6 +++---
->>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
->>> index 45eb0c14b880..ddfcefb47284 100644
->>> --- a/drivers/s390/crypto/pkey_api.c
->>> +++ b/drivers/s390/crypto/pkey_api.c
->>> @@ -1695,15 +1695,15 @@ static int __init pkey_init(void)
->>>  	 * are able to work with protected keys.
->>>  	 */
->>>  	if (!cpacf_query(CPACF_PCKMO, &pckmo_functions))
->>> -		return -EOPNOTSUPP;
->>> +		return -ENODEV;
->>>  
->>>  	/* check for kmc instructions available */
->>>  	if (!cpacf_query(CPACF_KMC, &kmc_functions))
->>> -		return -EOPNOTSUPP;
->>> +		return -ENODEV;
->>>  	if (!cpacf_test_func(&kmc_functions, CPACF_KMC_PAES_128) ||
->>>  	    !cpacf_test_func(&kmc_functions, CPACF_KMC_PAES_192) ||
->>>  	    !cpacf_test_func(&kmc_functions, CPACF_KMC_PAES_256))
->>> -		return -EOPNOTSUPP;
->>> +		return -ENODEV;
->>>  
->>>  	pkey_debug_init();
->>>  
->> You missed one match in this file. Function pkey_clr2protkey()
->> also does a cpacf_test_func() and may return -EOPNOTSUPP.
->> I checked the call chain, it's save to change the returncode there also.
-> That's unrelated to module loading (if I am not wrong), shall we still
-> include this change here?
+On Tue, Jun 11, 2019 at 10:18 PM Khalid Aziz <khalid.aziz@oracle.com> wrote:
 >
-> Thanks!
-That would be nice.
-However, I agree it is not related to module loading.
+> On 6/3/19 10:55 AM, Andrey Konovalov wrote:
+> > This patch is a part of a series that extends arm64 kernel ABI to allow to
+> > pass tagged user pointers (with the top byte set to something else other
+> > than 0x00) as syscall arguments.
+> >
+> > do_pages_move() is used in the implementation of the move_pages syscall.
+> >
+> > Untag user pointers in this function.
+> >
+> > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > ---
+> >  mm/migrate.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/mm/migrate.c b/mm/migrate.c
+> > index f2ecc2855a12..3930bb6fa656 100644
+> > --- a/mm/migrate.c
+> > +++ b/mm/migrate.c
+> > @@ -1617,6 +1617,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+> >               if (get_user(node, nodes + i))
+> >                       goto out_flush;
+> >               addr = (unsigned long)p;
+> > +             addr = untagged_addr(addr);
 >
->> If done, Thanks and add my
->> reviewed-by: Harald Freudenberger <freude@linux.ibm.com>
->>
->
+> Why not just "addr = (unsigned long)untagged_addr(p);"
 
+Will do in the next version. I think I'll also merge this commit into
+the "untag user pointers passed to memory syscalls" one.
+
+>
+> --
+> Khalid
+>
