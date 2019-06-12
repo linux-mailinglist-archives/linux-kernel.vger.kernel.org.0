@@ -2,86 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251084252D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8403942506
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407129AbfFLMLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:11:47 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42610 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406814AbfFLMLq (ORCPT
+        id S2438599AbfFLMI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:08:26 -0400
+Received: from server.eikelenboom.it ([91.121.65.215]:54960 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436551AbfFLMIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:11:46 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y13so11873548lfh.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Duu79dpq4xQ4GqJnetl02QLC2/nvLqahgO6AyVV2eW0=;
-        b=i68wzTyTJMBYZeU/Uf8aHN3gFbC7lSoRCAZqZl+xhx72QGrEg3gqZ5/y1WcXz+vc9z
-         FL6gxN8vFOSjCuJqXkAx9zVf6miod5Aahafo/JHI2RJw/2eez0ZDr7jeu/PJ79VymTvj
-         3zzQbwQP5OZnLmuRwfuojhikVBJT1vGDYJSI9c/3KFaes0wXblo5dELdA/xtyE1gFn9z
-         FRZcIDktNxleExVJgqFoQYntcptFTRamGrwaCQol0FxU7gCy4pyW/dnBjS+U71GaRy1b
-         KNoRbWZNvqk5Vk3nntGu8CUDBKyEVszeEt4R72o/hqK3l8zTzt8VFBhODmKgqk6+COSf
-         AAPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Duu79dpq4xQ4GqJnetl02QLC2/nvLqahgO6AyVV2eW0=;
-        b=Bj3qX3An5yBTiR7n25ylrMF155lxywohWjRCNcyPZg2nUXAgVVroMePSkBW6izqAUl
-         ZWGc+nu6YNm506QohS3BsgurOSRcFpmS1uWrQKJuMxThaaYIeLcV2QT2uPXk68AyOZ4g
-         LDB2klBFiy1mpogZDWuPreDTzNL2D/3SRJPwi9H02+VgBEcQkdFiBNarLBCZ3aqt78p7
-         hBKK5NKzliPA3cbVX/kfZ4V/s0E/dMP30+5CAnA2OaAxMUnNKPmK/vPowDGInPZqPyyR
-         ufkCFYRRYyO52c0oK1/ZfMeslpf58H5jxD/PHIr+OZZmi6Gzo9+BW6uDib4pxgF1rQWa
-         SnpQ==
-X-Gm-Message-State: APjAAAXwJo3wyVE5K9f5w9Wt5dLlb1n+RHGU50LEwdudrred4MLgCJA6
-        TYVv3/9Cy859UNsvoIp5h0TRuZAqfooFAkd26GZNIA==
-X-Google-Smtp-Source: APXvYqxeSw1G1TV/Mz5WMMi5ca+pxpZ1Zqv2pYg8vcbT68h3rpCYOTh6UCtYKXmOybD0IJolLu2MDJSxPI1hB0SKH8g=
-X-Received: by 2002:ac2:598d:: with SMTP id w13mr39539109lfn.165.1560341504411;
- Wed, 12 Jun 2019 05:11:44 -0700 (PDT)
+        Wed, 12 Jun 2019 08:08:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=HMMzkEP4WbpPiU7OaAK4YYStnvL4huMRmKxIzkOsvO0=; b=YziB4QXQ1wZZTmpueJ7TbStAiC
+        2OB0T4AcHVrvcXFvdn+encKtRh++7eIctsFdZRN2IA428qb3nU1FiAGa68Q+vvyr6BL7ohsIraMK7
+        zJzAnpX/bMXKuE8eLl7Ued5Z8lCWfuCFrWtHbjg5lForaybVdp6y73fJa6pfzOXXUfBw=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:25793 helo=[10.97.34.6])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1hb23B-0004SJ-0E; Wed, 12 Jun 2019 14:08:21 +0200
+Subject: Re: [PATCH] fuse: require /dev/fuse reads to have enough buffer
+ capacity (take 2)
+To:     Kirill Smelkov <kirr@nexedi.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, gluster-devel@gluster.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
+ <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
+ <20190611202738.GA22556@deco.navytux.spb.ru>
+ <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
+ <20190612112544.GA21465@deco.navytux.spb.ru>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <97c87eb3-5b95-c848-8c50-ed7b535220b0@eikelenboom.it>
+Date:   Wed, 12 Jun 2019 14:11:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190611140940.14357-1-icenowy@aosc.io> <20190611140940.14357-2-icenowy@aosc.io>
-In-Reply-To: <20190611140940.14357-2-icenowy@aosc.io>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 14:11:31 +0200
-Message-ID: <CACRpkdaj-VkHaENpSqW32gFYBuLDErzqoKZ-aD4W4htORN_SiA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] dt-bindings: pinctrl: add missing compatible
- string for V3s
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190612112544.GA21465@deco.navytux.spb.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 4:10 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+On 12/06/2019 13:25, Kirill Smelkov wrote:
+> On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
+>> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
+>>
+>>> Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
+>>> header room change be accepted?
+>>
+>> Yes, next cycle.   For 4.2 I'll just push the revert.
+> 
+> Thanks Miklos. Please consider queuing the following patch for 5.3.
+> Sander, could you please confirm that glusterfs is not broken with this
+> version of the check?
+> 
+> Thanks beforehand,
+> Kirill
 
-> The pinctrl driver of V3s is already available and used in the kernel,
-> but the compatible string of it is forgotten to be added.
->
-> Add the missing compatible string.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> Changes in v2:
-> - Add the ACK tag by Maxime and the review tag by Rob.
+Sure will give it a spin this evening and report back.
 
-Patch applied to the pinctrl tree.
-
-Yours,
-Linus Walleij
+--
+Sander
