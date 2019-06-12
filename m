@@ -2,78 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D97439B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BBE42772
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfFMPP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:15:28 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:49193 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732225AbfFMNZp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:25:45 -0400
-X-Originating-IP: 90.88.159.246
-Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 22B9A4000D;
-        Thu, 13 Jun 2019 13:25:35 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 15:26:15 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [PATCH v4] arm64: dts: allwinner: h6: Add DMA node
-Message-ID: <20190612132615.roglo6p7oanjniao@flea>
-References: <20190611214055.25613-1-peron.clem@gmail.com>
+        id S2439398AbfFLN1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:27:04 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:45468 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728977AbfFLN1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 09:27:03 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 311D5202EC;
+        Wed, 12 Jun 2019 15:27:02 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 1A9AC1FF7C;
+        Wed, 12 Jun 2019 15:27:02 +0200 (CEST)
+To:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     DRI <dri-devel@lists.freedesktop.org>,
+        fbdev <linux-fbdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Antonino Daplas <adaplas@gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [PATCH v1] backlight: Don't build support by default
+Message-ID: <70bd61f9-8fc5-75b1-9f32-7a5826ce6b48@free.fr>
+Date:   Wed, 12 Jun 2019 15:27:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wifg27wmr2vtryhw"
-Content-Disposition: inline
-In-Reply-To: <20190611214055.25613-1-peron.clem@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Jun 12 15:27:02 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+b20c5249aa6a ("backlight: Fix compile error if CONFIG_FB is unset")
+added 'default m' for BACKLIGHT_CLASS_DEVICE and LCD_CLASS_DEVICE.
 
---wifg27wmr2vtryhw
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Let's go back to not building support by default.
 
-On Tue, Jun 11, 2019 at 11:40:55PM +0200, Cl=E9ment P=E9ron wrote:
-> From: Jernej Skrabec <jernej.skrabec@siol.net>
->
-> H6 has DMA controller which supports 16 channels.
->
-> Add a node for it.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+ drivers/video/backlight/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied, thanks!
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---wifg27wmr2vtryhw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQD9dwAKCRDj7w1vZxhR
-xTPPAQDwqeaWzIXvVqScIX0NTUe7WK7fmLzHPVpab8IJpa5dGwD/f3YtkUYQPqTG
-coeXk9Fx3YFFviAuHQZtPs7OUKhl5ws=
-=sK8n
------END PGP SIGNATURE-----
-
---wifg27wmr2vtryhw--
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index 8b081d61773e..40676be2e46a 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -10,7 +10,6 @@ menu "Backlight & LCD device support"
+ #
+ config LCD_CLASS_DEVICE
+         tristate "Lowlevel LCD controls"
+-	default m
+ 	help
+ 	  This framework adds support for low-level control of LCD.
+ 	  Some framebuffer devices connect to platform-specific LCD modules
+@@ -143,7 +142,6 @@ endif # LCD_CLASS_DEVICE
+ #
+ config BACKLIGHT_CLASS_DEVICE
+         tristate "Lowlevel Backlight controls"
+-	default m
+ 	help
+ 	  This framework adds support for low-level control of the LCD
+           backlight. This includes support for brightness and power.
+-- 
+2.17.1
