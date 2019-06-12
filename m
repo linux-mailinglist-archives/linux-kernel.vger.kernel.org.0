@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C3F0427E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:46:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE7CC427E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436802AbfFLNpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 09:45:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726098AbfFLNpv (ORCPT
+        id S1728932AbfFLNn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:43:27 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39030 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfFLNn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:45:51 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CDiR8S089738
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 09:45:50 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t313fveqg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 09:45:40 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Wed, 12 Jun 2019 14:42:02 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Jun 2019 14:42:00 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CDfq6736700532
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Jun 2019 13:41:52 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E7DDA405C;
-        Wed, 12 Jun 2019 13:41:59 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C4334A405F;
-        Wed, 12 Jun 2019 13:41:56 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.85.88.130])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 12 Jun 2019 13:41:56 +0000 (GMT)
-Date:   Wed, 12 Jun 2019 19:11:53 +0530
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     jpoimboe@redhat.com, jikos@kernel.org, pmladek@suse.com,
-        joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] Revert "livepatch: Remove reliable stacktrace
- check in klp_try_switch_task()"
-References: <20190611141320.25359-1-mbenes@suse.cz>
- <20190611141320.25359-3-mbenes@suse.cz>
+        Wed, 12 Jun 2019 09:43:27 -0400
+Received: by mail-vs1-f65.google.com with SMTP id n2so10251501vso.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 06:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IOmrgQcD/lSti5Qh71Stv0ataNYNESHJ6g2zB80MgJE=;
+        b=RMNltOgIPJ7TW0YTQcEvULo3TkaGMhgixILLxsUTZMlg9hB7LkUbXLV2fswn8bp9iV
+         /qsCdg7+H/mCTIMBUjdCMjunQzyV8BGnZCjx5jXwTL2w0tYWSQaX85mGSJDjlc8ZrTjc
+         QM06q/bkY+nEXMCaas2Ic6iWzjUBkwVwaMLnV8vfeIr9zynmLRpV+9Lgh1qcRIWtADev
+         8arL8t1ohG7hYAd8GbnrQDiryPih9sBqegBBCvrUkwJvzvY4IytC+5U1B2LOUphZ4VcO
+         OpOydkAWoY1hBCkqcxl4NB38GWn4Q0SkBTH+5oBjCkQq07dXtAdlIXRg4oUJKdY1V8dV
+         z64w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IOmrgQcD/lSti5Qh71Stv0ataNYNESHJ6g2zB80MgJE=;
+        b=Uah1vAUdko3VmmPHPBCcYl0bvAW7xuLcgHfAQnIGMvuALq8qp4P4My0nOINUSBaPai
+         /1YYfpGuGobRUTqAxPnSsVLFzxemTcZ8naXK1yjLXKGHBSHfqDLI5bG0YYfhPJfh4Exb
+         woh8z21aeEqZI9s9kMQ6QUjZLYe5z8r/ztzjOrbWbW6K93dqfu14s0PD+KoiHYwyWNLE
+         YUgIuk3t5go93Qgya1xYtFXT0PCVhZqGoS6aNCNjH9NkaOdDC3reZuG6RoTX1mGghKit
+         OReYyxZ2dGOibqWG1lo/p+SXR8KHleHiDS4t6sfG4xd1rIlHq2y3pD/i8rMNuacvPIs3
+         Iqxw==
+X-Gm-Message-State: APjAAAUQTBby8APc1cn0yP/EAfO0axyOSgHUSF8bqpqlAQ4GF5nwQkm9
+        +vjBbEPLfhlmWs97xtqkeB7Y7+VVY4804EtUB+6pSQ==
+X-Google-Smtp-Source: APXvYqzBzSRapUWvVQUQ4WKVQvhfEDjlTToobgTaZsocNytd3GbbujFaPYU62UQMMnPDC9VWRraClJHmnwqtNxHu5rA=
+X-Received: by 2002:a67:ee5b:: with SMTP id g27mr10810132vsp.165.1560347006610;
+ Wed, 12 Jun 2019 06:43:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611141320.25359-3-mbenes@suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-TM-AS-GCONF: 00
-x-cbid: 19061213-0008-0000-0000-000002F3200B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061213-0009-0000-0000-00002260220C
-Message-Id: <20190612134153.GB8298@JAVRIS.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=972 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906120093
+References: <20190610185354.35310-1-rrangel@chromium.org> <20190610185354.35310-3-rrangel@chromium.org>
+In-Reply-To: <20190610185354.35310-3-rrangel@chromium.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 12 Jun 2019 15:42:50 +0200
+Message-ID: <CAPDyKFo9U7ChoEQC1QFaW9cXLYQ-Q2UrYyH0KqJd_reyka3zvw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mmc: sdhci: Fix indenting on SDHCI_CTRL_8BITBUS
+To:     Raul E Rangel <rrangel@chromium.org>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "ernest.zhang" <ernest.zhang@bayhubtech.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 04:13:19PM +0200, Miroslav Benes wrote:
-> This reverts commit 1d98a69e5cef3aeb68bcefab0e67e342d6bb4dad. Commit
-> 31adf2308f33 ("livepatch: Convert error about unsupported reliable
-> stacktrace into a warning") weakened the enforcement for architectures
-> to have reliable stack traces support. The system only warns now about
-> it.
-> 
-> It only makes sense to reintroduce the compile time checking in
-> klp_try_switch_task() again and bail out early.
-> 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+On Mon, 10 Jun 2019 at 20:55, Raul E Rangel <rrangel@chromium.org> wrote:
+>
+> The value is referring to SDHCI_HOST_CONTROL, not SDHCI_CTRL_DMA_MASK.
 
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Perhaps re-phrase this changelog as to mention that you are removing a
+white-space to fix alignment, as that was not so obvious.
 
+Kind regards
+Uffe
+
+>
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> ---
+>
+>  drivers/mmc/host/sdhci.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 199712e7adbb3..89fd96596a1f7 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -89,7 +89,7 @@
+>  #define   SDHCI_CTRL_ADMA32    0x10
+>  #define   SDHCI_CTRL_ADMA64    0x18
+>  #define   SDHCI_CTRL_ADMA3     0x18
+> -#define   SDHCI_CTRL_8BITBUS   0x20
+> +#define  SDHCI_CTRL_8BITBUS    0x20
+>  #define  SDHCI_CTRL_CDTEST_INS 0x40
+>  #define  SDHCI_CTRL_CDTEST_EN  0x80
+>
+> --
+> 2.22.0.rc2.383.gf4fbbf30c2-goog
+>
