@@ -2,70 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2AA541A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C2041A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:55:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391888AbfFLBtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:49:15 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18131 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729044AbfFLBtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:49:15 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E8849EB679BB46D72185;
-        Wed, 12 Jun 2019 09:49:10 +0800 (CST)
-Received: from RH5885H-V3.huawei.com (10.90.53.225) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 12 Jun 2019 09:48:57 +0800
-From:   ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>, <peterz@infradead.org>,
-        <dvhart@infradead.org>, <linux-kernel@vger.kernel.org>,
-        <zhangxiaoxu5@huawei.com>
-Subject: [PATCH] futex: Fix futex lock the wrong page
-Date:   Wed, 12 Jun 2019 09:54:25 +0800
-Message-ID: <1560304465-68966-1-git-send-email-zhangxiaoxu5@huawei.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+        id S2408313AbfFLBzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 21:55:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404091AbfFLBzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 21:55:11 -0400
+Subject: Re: [GIT PULL] Btrfs fix for 5.2-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560304510;
+        bh=IH2n/rNr1mNHaQl1eZb628HBD5FQEExCtCUPXnWNU0U=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Ad/LBcVo4xSD3yQM7qrV8GHflqQhcSG0wjZ2DYjfOI2QAeMCH5xZtoMiVib4ryAQo
+         wNPKEwGPFC5fd/F6lU5tHojHjfpqMNWQXKNOb0YLmN4TvbVCn324b8XWBJZC4+URjk
+         JcGQOti5lRMwq4yogYG7St9DJtnTkSB9WvNmeSx0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <cover.1560268545.git.dsterba@suse.com>
+References: <cover.1560268545.git.dsterba@suse.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cover.1560268545.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.2-rc4-tag
+X-PR-Tracked-Commit-Id: 8103d10b71610aa65a65d6611cd3ad3f3bd7beeb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6fa425a2651515f8d262f2c1d972c6632e7c941d
+Message-Id: <156030451057.13515.14003261403956431603.pr-tracker-bot@kernel.org>
+Date:   Wed, 12 Jun 2019 01:55:10 +0000
+To:     David Sterba <dsterba@suse.com>
+Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
+        clm@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The upstram commit 65d8fc777f6d ("futex: Remove requirement
-for lock_page() in get_futex_key()") use variable 'page' as
-the page head, when merge it to stable branch, the variable
-`page_head` is page head.
+The pull request you sent on Tue, 11 Jun 2019 18:16:28 +0200:
 
-In the stable branch, the variable `page` not means the page
-head, when lock the page head, we should lock 'page_head',
-rather than 'page'.
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.2-rc4-tag
 
-It maybe lead a hung task problem.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6fa425a2651515f8d262f2c1d972c6632e7c941d
 
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Cc: stable@vger.kernel.org
----
- kernel/futex.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thank you!
 
-diff --git a/kernel/futex.c b/kernel/futex.c
-index ec9df5b..15d850f 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -593,8 +593,8 @@ again:
- 		 * applies. If this is really a shmem page then the page lock
- 		 * will prevent unexpected transitions.
- 		 */
--		lock_page(page);
--		shmem_swizzled = PageSwapCache(page) || page->mapping;
-+		lock_page(page_head);
-+		shmem_swizzled = PageSwapCache(page_head) || page_head->mapping;
- 		unlock_page(page_head);
- 		put_page(page_head);
- 
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
