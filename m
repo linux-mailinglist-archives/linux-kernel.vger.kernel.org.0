@@ -2,50 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C2041A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537FB41A1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408313AbfFLBzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52020 "EHLO mail.kernel.org"
+        id S2408337AbfFLBzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 21:55:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404091AbfFLBzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404758AbfFLBzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Jun 2019 21:55:11 -0400
-Subject: Re: [GIT PULL] Btrfs fix for 5.2-rc5
+Subject: Re: [GIT PULL] VFIO fixes for v5.2-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560304510;
-        bh=IH2n/rNr1mNHaQl1eZb628HBD5FQEExCtCUPXnWNU0U=;
+        s=default; t=1560304511;
+        bh=qlNkLT4spnpEfd+L838OBJlNx2DAQrldqfx6iJBh698=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Ad/LBcVo4xSD3yQM7qrV8GHflqQhcSG0wjZ2DYjfOI2QAeMCH5xZtoMiVib4ryAQo
-         wNPKEwGPFC5fd/F6lU5tHojHjfpqMNWQXKNOb0YLmN4TvbVCn324b8XWBJZC4+URjk
-         JcGQOti5lRMwq4yogYG7St9DJtnTkSB9WvNmeSx0=
+        b=YpcV/lfMDn6YqKfnIehNmSCR9kWDwWEkC1oYlTAox85/PfBuTw2FNkeiH6Zr60oCS
+         ndGLCxP5vqwnPTbU8q+Shb2auFhUr7M0/aF4FTVMnh3SbEHms7mBJxORBtvoS6l1VB
+         Rm7/vXfq8njoS+Ipx2AxqyzI+LlkzWYuhLHZtIGY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1560268545.git.dsterba@suse.com>
-References: <cover.1560268545.git.dsterba@suse.com>
+In-Reply-To: <20190611114955.2d0b6388@x1.home>
+References: <20190611114955.2d0b6388@x1.home>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1560268545.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.2-rc4-tag
-X-PR-Tracked-Commit-Id: 8103d10b71610aa65a65d6611cd3ad3f3bd7beeb
+X-PR-Tracked-Message-Id: <20190611114955.2d0b6388@x1.home>
+X-PR-Tracked-Remote: git://github.com/awilliam/linux-vfio.git
+ tags/vfio-v5.2-rc5
+X-PR-Tracked-Commit-Id: 5715c4dd66a315515eedef3fc4cbe1bf4620f009
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6fa425a2651515f8d262f2c1d972c6632e7c941d
-Message-Id: <156030451057.13515.14003261403956431603.pr-tracker-bot@kernel.org>
-Date:   Wed, 12 Jun 2019 01:55:10 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        clm@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: c23b07125f8aebf8b39fffa325145826098f7d8f
+Message-Id: <156030451113.13515.13439301806650379331.pr-tracker-bot@kernel.org>
+Date:   Wed, 12 Jun 2019 01:55:11 +0000
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 11 Jun 2019 18:16:28 +0200:
+The pull request you sent on Tue, 11 Jun 2019 11:49:55 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.2-rc4-tag
+> git://github.com/awilliam/linux-vfio.git tags/vfio-v5.2-rc5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6fa425a2651515f8d262f2c1d972c6632e7c941d
+https://git.kernel.org/torvalds/c/c23b07125f8aebf8b39fffa325145826098f7d8f
 
 Thank you!
 
