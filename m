@@ -2,297 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4F4420AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A92420B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408731AbfFLJ0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:26:18 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36509 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406598AbfFLJ0S (ORCPT
+        id S2408766AbfFLJ1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:27:37 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56215 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407865AbfFLJ1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:26:18 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w7so11174345oic.3;
-        Wed, 12 Jun 2019 02:26:17 -0700 (PDT)
+        Wed, 12 Jun 2019 05:27:36 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a15so5769020wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 02:27:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+wBbh02PquGQYzMb8PBH+bcdYLtCgL7ng1xqyOD2UWk=;
-        b=OMR+UiN/wLemTK6SD0hMMTPGSri2avW5VVW6DEO2Ejbklqa6ZEimHszzZbmNWWdbmy
-         GjUVxSi8kLYAthKJVQBUKnz+vI4LC7DZevdiKWd7trhUfP0WFA1ozRGmvd2IavdR6E1e
-         JpzI6bAZ+SKGLgQM4DTT3xuT36HqnFFOFxUB05KcTW7BVnUDpgejgqIBaWllAMrf9+Ia
-         wcXgKEd15cNjfrLL2fg7RmdeW6U5cJdNjuj+CRVJlm4lo75gwnNGCvOXnWn4I9etlt3c
-         NT38OUotZWdrdcS8pv7EU20O90lQfo+bJMhWlbo7ntRtu0FLMUQMO3kEO3udjJTFu04H
-         K5rg==
+        d=linaro.org; s=google;
+        h=subject:to:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mF1ZZIqX0fVgmACtu99hDygnph7n89tfAuCMAfh6B8w=;
+        b=UcaAlYAJVozvXtiF7F8GXev0nXIqbmMzwhuQ1PB+H04+cwHYz9NBMi6p+AnKOBkTSx
+         KZvqZZfIzpTTo9zcNkuKYFUL1JpoLl0RnDjXXQePseqqCoGnj8/kQOXDj7DnlOwUefZb
+         QcvdqbkpLaaKYmE/3Wlb/Q3HnUyoINIVJPPbK5WI/K/5jYITh0Ep7Gl4IMsbH2vG/ZlR
+         llpGk14nqREp4b8vB1mFT2Le3w4kaxyfl4nvjhJETmPK2rXN7NP0vhGWq5jg7K1CS/Ug
+         RdWhTKZhSJHwfMYKwRQbNQW4xHty4DCWdnOn+PzOQ0M4xEkEY14jEVBMvDM4TkLcavUU
+         H7fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+wBbh02PquGQYzMb8PBH+bcdYLtCgL7ng1xqyOD2UWk=;
-        b=mxM0CDXX6HLbiXcaMyLQGvPzSTNFab3cs9oJsmw5JiidjQvqS/yp406+d4tTJfxL12
-         yuHS4WRN6ULFvmR0zoJx6hW93+5N7OagJZDTzIzijgoNlDhuIXZyBsUDkNORdiu9RrK2
-         L8F6iw9HvuFaAjJUK5+NoMSelFWoVkZDnAFdpVR9wrMKt0SmNVGznM+m/ugi8JGENWN8
-         RPexxElOagODDy743yr4LDGXSCNMhXBQvycY8TliYYO1QKTyHiq0JW9WADHqhG24lxdx
-         xmkXnv8dEBjl+i1A8gG+jKsf8y8WmKH/VQ5JwRccu4QoJVIBv60zCmIim6/t7T2yIMGK
-         57ug==
-X-Gm-Message-State: APjAAAX5BkbJP0dsiboPFLGE3u7k5j3B/+MLvtY+lm5YmAs45xyhqSE6
-        eL2jUhYtW+qEspx9TC/D4xxcqu1152Pt8SmcLdo=
-X-Google-Smtp-Source: APXvYqxsHz4A4siDqGDH5Yf3W+tXjAuKmkRdmOUOBGQcfLzPLQxyws01E4CK5Q8nDMFzHjv52X40ST0gG3kwb5pQ/OA=
-X-Received: by 2002:aca:51ce:: with SMTP id f197mr18760856oib.33.1560331577426;
- Wed, 12 Jun 2019 02:26:17 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mF1ZZIqX0fVgmACtu99hDygnph7n89tfAuCMAfh6B8w=;
+        b=KDS6CA159ijpwFw69xmFxrOWa4WVml837LwyN0fn95o/JmD2dxiTxUEvmoba41cq99
+         ZMSzcpRFRxVn5tZ1p11NYRztJgfJImbx6DI0kf3R0G0N9T9VXl2WLtR2rUsw2T7cxsye
+         9sq/9AbVY9VawLHGfT9cpvrJxImH2B3KDtXqWsw4GIBl/QufVQ20JK/NEVnRsTrUup4z
+         VdKa1hVRC0Yf9Bd3/d03XVHV557r36imA0Rgqut3LFvrrt/92yuMuNNCRtPXhZyeTnpy
+         tmSdVRrEHawQYxoxzydc5XSy+oesBCAr0ctUFw574JWMDr0VOitN6qjdg9OFe55HmSsC
+         2y/g==
+X-Gm-Message-State: APjAAAWGISU4zmarukGcTvLRYDRB+Th16itBnW2WOWgUJ4xMso98fvuX
+        sgVDoB3gKe7z5ahP897RVW8KTKGGJxM=
+X-Google-Smtp-Source: APXvYqwufgong1ncp9HKmZfLz2jY82v+4fTKjifwjzfUpmZBWzzsgb094Ud3jLgbkhbDIhoGryExqA==
+X-Received: by 2002:a7b:cb4b:: with SMTP id v11mr20533383wmj.85.1560331653524;
+        Wed, 12 Jun 2019 02:27:33 -0700 (PDT)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id o2sm2016803wrq.56.2019.06.12.02.27.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 02:27:32 -0700 (PDT)
+Subject: Re: [PATCH v5 0/3] Make IPA use PM_EM
+To:     Quentin Perret <quentin.perret@arm.com>, edubezval@gmail.com,
+        rui.zhang@intel.com, javi.merino@kernel.org,
+        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
+        mka@chromium.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190530092038.12020-1-quentin.perret@arm.com>
+ <20190612091351.jet5sew5dnirsapz@queper01-lin>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e9b57e71-81eb-2ac8-cd4a-76b57eee63df@linaro.org>
+Date:   Wed, 12 Jun 2019 11:27:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <1559284814-20378-1-git-send-email-wanpengli@tencent.com> <20190611012118.GC24835@linux.intel.com>
-In-Reply-To: <20190611012118.GC24835@linux.intel.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 12 Jun 2019 17:27:00 +0800
-Message-ID: <CANRm+CxTOz-6dkgZTbsw5VTPFJkMB2wcBBqf98E4KJw0k4jYMA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] KVM: LAPIC: Optimize timer latency consider world
- switch time
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190612091351.jet5sew5dnirsapz@queper01-lin>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019 at 09:21, Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Fri, May 31, 2019 at 02:40:13PM +0800, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Advance lapic timer tries to hidden the hypervisor overhead between the
-> > host emulated timer fires and the guest awares the timer is fired. Howe=
-ver,
-> > even though after more sustaining optimizations, kvm-unit-tests/tscdead=
-line_latency
-> > still awares ~1000 cycles latency since we lost the time between the en=
-d of
-> > wait_lapic_expire and the guest awares the timer is fired. There are
-> > codes between the end of wait_lapic_expire and the world switch, furthe=
-rmore,
-> > the world switch itself also has overhead. Actually the guest_tsc is eq=
-ual
-> > to the target deadline time in wait_lapic_expire is too late, guest wil=
-l
-> > aware the latency between the end of wait_lapic_expire() and after vmen=
-try
-> > to the guest. This patch takes this time into consideration.
-> >
-> > The vmentry_lapic_timer_advance_ns module parameter should be well tune=
-d by
-> > host admin, setting bit 0 to 1 to finally cache parameter in KVM. This =
-patch
-> > can reduce average cyclictest latency from 3us to 2us on Skylake server=
-.
-> > (guest w/ nohz=3Doff, idle=3Dpoll, host w/ preemption_timer=3DN, the cy=
-clictest
-> > latency is not too sensitive when preemption_timer=3DY for this optimiz=
-ation in
-> > my testing), kvm-unit-tests/tscdeadline_latency can reach 0.
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> > NOTE: rebase on https://lkml.org/lkml/2019/5/20/449
-> > v1 -> v2:
-> >  * rename get_vmentry_advance_delta to get_vmentry_advance_cycles
-> >  * cache vmentry_advance_cycles by setting param bit 0
-> >  * add param max limit
-> >
-> >  arch/x86/kvm/lapic.c   | 38 +++++++++++++++++++++++++++++++++++---
-> >  arch/x86/kvm/lapic.h   |  3 +++
-> >  arch/x86/kvm/vmx/vmx.c |  2 +-
-> >  arch/x86/kvm/x86.c     |  9 +++++++++
-> >  arch/x86/kvm/x86.h     |  2 ++
-> >  5 files changed, 50 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > index fcf42a3..60587b5 100644
-> > --- a/arch/x86/kvm/lapic.c
-> > +++ b/arch/x86/kvm/lapic.c
-> > @@ -1531,6 +1531,38 @@ static inline void adjust_lapic_timer_advance(st=
-ruct kvm_vcpu *vcpu,
-> >       apic->lapic_timer.timer_advance_ns =3D timer_advance_ns;
-> >  }
-> >
-> > +#define MAX_VMENTRY_ADVANCE_NS 1000
-> > +
-> > +u64 compute_vmentry_advance_cycles(struct kvm_vcpu *vcpu)
->
-> This can be static, unless get_vmentry_advance_cycles() is moved to
+On 12/06/2019 11:13, Quentin Perret wrote:
+> Hi,
+> 
+> On Thursday 30 May 2019 at 10:20:35 (+0100), Quentin Perret wrote:
+>> Changes in v5:
+>> **************
+>>  - Changed patch 02 to guard IPA-specific code in cpu_cooling.c with
+>>    appropriate ifdefery (Daniel)
+>>  - Rebased on 5.2-rc2
+> 
+> Is there anything else I can do on this series ? Should I send a v6 with
+> Viresh's and Daniel's Acked-by ?
 
-compute_vmentry_advance_cycles() is also used in x86.c
+No need to send a V6 if there are no changes in the patches. The
+maintainer will take care of collecting the tags (which is usually
+automatic when using the patchwork tools).
 
-> lapic.h, in which case compute_vmentry_advance_cycles() would need to be
-> exported.
->
-> > +{
-> > +     u64 cycles;
-> > +     struct kvm_lapic *apic =3D vcpu->arch.apic;
-> > +     u64 val =3D min_t(u32, vmentry_lapic_timer_advance_ns, MAX_VMENTR=
-Y_ADVANCE_NS);
-> > +
-> > +     cycles =3D (val & ~1ULL) * vcpu->arch.virtual_tsc_khz;
-> > +     do_div(cycles, 1000000);
-> > +
-> > +     /* setting bit 0 locks the value, it is cached */
-> > +     if (val & 1)
-> > +             apic->lapic_timer.vmentry_advance_cycles =3D cycles;
-> > +
-> > +     return cycles;
-> > +}
-> > +
-> > +inline u64 get_vmentry_advance_cycles(struct kvm_vcpu *vcpu)
->
-> This shouldn't be 'inline' since it's exported from a C file.  That being
 
-Agreed.
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-> said, I think it's short enough to define as a 'static inline' in lapic.h=
-.
->
-> > +{
-> > +     struct kvm_lapic *apic =3D vcpu->arch.apic;
-> > +
-> > +     if (!vmentry_lapic_timer_advance_ns)
-> > +             return 0;
-> > +
-> > +     if (likely(apic->lapic_timer.vmentry_advance_cycles))
-> > +             return apic->lapic_timer.vmentry_advance_cycles;
-> > +
-> > +     return compute_vmentry_advance_cycles(vcpu);
-> > +}
-> > +EXPORT_SYMBOL_GPL(get_vmentry_advance_cycles);
-> > +
-> >  void kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
-> >  {
-> >       struct kvm_lapic *apic =3D vcpu->arch.apic;
-> > @@ -1544,7 +1576,7 @@ void kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
-> >
-> >       tsc_deadline =3D apic->lapic_timer.expired_tscdeadline;
-> >       apic->lapic_timer.expired_tscdeadline =3D 0;
-> > -     guest_tsc =3D kvm_read_l1_tsc(vcpu, rdtsc());
-> > +     guest_tsc =3D kvm_read_l1_tsc(vcpu, rdtsc()) + get_vmentry_advanc=
-e_cycles(vcpu);
-> >       apic->lapic_timer.advance_expire_delta =3D guest_tsc - tsc_deadli=
-ne;
-> >
-> >       if (guest_tsc < tsc_deadline)
-> > @@ -1572,7 +1604,7 @@ static void start_sw_tscdeadline(struct kvm_lapic=
- *apic)
-> >       local_irq_save(flags);
-> >
-> >       now =3D ktime_get();
-> > -     guest_tsc =3D kvm_read_l1_tsc(vcpu, rdtsc());
-> > +     guest_tsc =3D kvm_read_l1_tsc(vcpu, rdtsc()) + get_vmentry_advanc=
-e_cycles(vcpu);
-> >
-> >       ns =3D (tscdeadline - guest_tsc) * 1000000ULL;
-> >       do_div(ns, this_tsc_khz);
-> > @@ -2329,7 +2361,7 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int t=
-imer_advance_ns)
-> >               apic->lapic_timer.timer_advance_ns =3D timer_advance_ns;
-> >               apic->lapic_timer.timer_advance_adjust_done =3D true;
-> >       }
-> > -
-> > +     apic->lapic_timer.vmentry_advance_cycles =3D 0;
-> >
-> >       /*
-> >        * APIC is created enabled. This will prevent kvm_lapic_set_base =
-from
-> > diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-> > index f974a3d..70854a9 100644
-> > --- a/arch/x86/kvm/lapic.h
-> > +++ b/arch/x86/kvm/lapic.h
-> > @@ -33,6 +33,7 @@ struct kvm_timer {
-> >       u64 expired_tscdeadline;
-> >       u32 timer_advance_ns;
-> >       s64 advance_expire_delta;
-> > +     u64 vmentry_advance_cycles;
-> >       atomic_t pending;                       /* accumulated triggered =
-timers */
-> >       bool hv_timer_in_use;
-> >       bool timer_advance_adjust_done;
-> > @@ -221,6 +222,8 @@ static inline int kvm_lapic_latched_init(struct kvm=
-_vcpu *vcpu)
-> >  bool kvm_apic_pending_eoi(struct kvm_vcpu *vcpu, int vector);
-> >
-> >  void kvm_wait_lapic_expire(struct kvm_vcpu *vcpu);
-> > +u64 compute_vmentry_advance_cycles(struct kvm_vcpu *vcpu);
-> > +inline u64 get_vmentry_advance_cycles(struct kvm_vcpu *vcpu);
-> >
-> >  bool kvm_intr_is_single_vcpu_fast(struct kvm *kvm, struct kvm_lapic_ir=
-q *irq,
-> >                       struct kvm_vcpu **dest_vcpu);
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index a341663..255b5d5 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -7047,7 +7047,7 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu=
-, u64 guest_deadline_tsc,
-> >
-> >       vmx =3D to_vmx(vcpu);
-> >       tscl =3D rdtsc();
-> > -     guest_tscl =3D kvm_read_l1_tsc(vcpu, tscl);
-> > +     guest_tscl =3D kvm_read_l1_tsc(vcpu, tscl) + get_vmentry_advance_=
-cycles(vcpu);
-> >       delta_tsc =3D max(guest_deadline_tsc, guest_tscl) - guest_tscl;
-> >       lapic_timer_advance_cycles =3D nsec_to_cycles(vcpu,
-> >                                                   ktimer->timer_advance=
-_ns);
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 69c3672e..0d4eb27 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -145,6 +145,13 @@ module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_=
-IWUSR);
-> >  static int __read_mostly lapic_timer_advance_ns =3D -1;
-> >  module_param(lapic_timer_advance_ns, int, S_IRUGO | S_IWUSR);
-> >
-> > +/*
-> > + * lapic timer vmentry advance (tscdeadline mode only) in nanoseconds.=
- Setting
-> > + * bit 0 to 1 after well manually tuning to cache vmentry advance time=
-.
-> > + */
-> > +u32 __read_mostly vmentry_lapic_timer_advance_ns =3D 0;
-> > +module_param(vmentry_lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
-> > +
-> >  static bool __read_mostly vector_hashing =3D true;
-> >  module_param(vector_hashing, bool, S_IRUGO);
-> >
-> > @@ -1592,6 +1599,8 @@ static int kvm_set_tsc_khz(struct kvm_vcpu *vcpu,=
- u32 user_tsc_khz)
-> >       kvm_get_time_scale(user_tsc_khz * 1000LL, NSEC_PER_SEC,
-> >                          &vcpu->arch.virtual_tsc_shift,
-> >                          &vcpu->arch.virtual_tsc_mult);
-> > +     if (vcpu->arch.apic && user_tsc_khz !=3D vcpu->arch.virtual_tsc_k=
-hz)
-> > +             compute_vmentry_advance_cycles(vcpu);
-> >       vcpu->arch.virtual_tsc_khz =3D user_tsc_khz;
-> >
-> >       /*
-> > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > index 275b3b6..b0a3b84 100644
-> > --- a/arch/x86/kvm/x86.h
-> > +++ b/arch/x86/kvm/x86.h
-> > @@ -294,6 +294,8 @@ extern u64 kvm_supported_xcr0(void);
-> >
-> >  extern unsigned int min_timer_period_us;
-> >
-> > +extern unsigned int vmentry_lapic_timer_advance_ns;
-> > +
-> >  extern bool enable_vmware_backdoor;
-> >
-> >  extern struct static_key kvm_no_apic_vcpu;
-> > --
-> > 2.7.4
-> >
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
