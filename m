@@ -2,115 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D003429C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33596429C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732522AbfFLOpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 10:45:47 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36680 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbfFLOpq (ORCPT
+        id S1732552AbfFLOrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:47:42 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36756 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728707AbfFLOrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:45:46 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5CEjhlO123299;
-        Wed, 12 Jun 2019 09:45:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560350743;
-        bh=xyAWNTrYH0QoNd9ukAbvyzeuxkpCV6ALotpkbQS0afA=;
-        h=From:To:CC:Subject:Date;
-        b=NGU+gcXHrfLDdBMjSjJW29qFwrVKeVVvnTBrDiINwHuZzOcnJWCMSJYCkR+HIGIbu
-         a+9WF7E0LU/XEfGyUp5yCtIU1h8WO2alp8x7KMsaVKeHYeC5MdJ5GNC52CgmuhR2Ft
-         Wpd4TGQqjVBaeIVBoyjY0kE8ACWUvDUTmWeXUEQE=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5CEjhJS079595
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Jun 2019 09:45:43 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 12
- Jun 2019 09:45:43 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 12 Jun 2019 09:45:43 -0500
-Received: from a0393675ula.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5CEjf5P083688;
-        Wed, 12 Jun 2019 09:45:41 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <lee.jones@linaro.org>, <broonie@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <t-kristo@ti.com>, <j-keerthy@ti.com>
-Subject: [RESEND PATCH v2 3/3] regulator: lp87565: Add 4-phase lp87561 regulator support
-Date:   Wed, 12 Jun 2019 20:16:20 +0530
-Message-ID: <20190612144620.28331-1-j-keerthy@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 12 Jun 2019 10:47:42 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u8so6854458wmm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xVfFJLv5dW5aoHUXpc1sbJZh/y+oS0CZ+4jF9K929Ic=;
+        b=OXL0DJrvcuXnFE6j3/rttToGT7J8dbIWTIpGZw2iNsWo3aTmAoVkFzJyCr05LqGz8X
+         cnzpG334ZYRq5Gc5Vck+gPJXBpslNBUSwpuA6L3qt3suXolVqb6B54eD3fUWQwxfCt+q
+         /9qpskkDkpxaqK+SImjqYcea2sMKQbq7Us+Hh0hxlSE1E5a7aw10adBhzEUScbnVSajd
+         pW79Pb5gI0sq6doAnODKqhGh4MYN50IDBON5fkioe6DA/KpyQrysI8F1pFUVjSKbxqG+
+         9Rq3qZpeUyl4xE7Zlv+jfD+W5gQbtFpwXnTLC+HhTbK2CpGR/h6L9MmLdzaAike3tdQQ
+         oH8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xVfFJLv5dW5aoHUXpc1sbJZh/y+oS0CZ+4jF9K929Ic=;
+        b=e2vvqXAUoeWg/NfbGad73894gqpJQVofsfH/d62CeYEN2e+nr4djjGmNacIaLIHAJG
+         YsfgLvrgs3MB1E0E3FHpAew0tMFDW/99qYrA9Ta+L2bkxrEaGQSK6Z2UUoloUYY6wowT
+         aDDHdr6isZlu7DyDyVuAQUkyeXdlMrULe59XH5sOcG/9qysG4kkdIr8jNzIvzUSBoC2F
+         J3MnoyRC7OW06ny6j4XzJypWlZMqkcf3DIAorWM3OjMBhthGwlhTA1r1Qb1OpuvZbqq5
+         xK2HvlWK5CEixBRIu9uNK3wW2d3zLfS5oOcsDxrILu1aD9WZYISK8XE+99tfWlGvw96C
+         Sdsw==
+X-Gm-Message-State: APjAAAVkYXvx7/CC2fGqVDrI7qi3kKg++n4YOIafo3/h1Do7AAckvOQB
+        r6FHGHkQF28hS7ksNinteztAU9HYKTQ=
+X-Google-Smtp-Source: APXvYqwMEP9IsARouhljexIF2ov+S/cFFLZePUwjrlALbWU1ji3V37i6Q9oBb26w6TYFPVRjg/X0KQ==
+X-Received: by 2002:a7b:c251:: with SMTP id b17mr22212885wmj.143.1560350860016;
+        Wed, 12 Jun 2019 07:47:40 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id c24sm256466wmb.21.2019.06.12.07.47.38
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 07:47:39 -0700 (PDT)
+Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+References: <20190528002412.1625-1-dima@arista.com>
+ <20190528041500.GB26865@jagdpanzerIV> <20190528044619.GA3429@jagdpanzerIV>
+ <20190528134227.xyb3622gjwu52q4r@pathway.suse.cz>
+ <20190603065153.GA13072@jagdpanzerIV>
+ <20190606071039.txqczrjlntrljlrx@pathway.suse.cz>
+ <20190612083643.GA7722@jagdpanzerIV>
+ <20190612120012.mmokgz4yybywfs26@pathway.suse.cz>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <34698b8a-5204-e9e8-b96b-dbb16340423d@arista.com>
+Date:   Wed, 12 Jun 2019 15:47:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190612120012.mmokgz4yybywfs26@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LP8756x family has a single output 4-phase regulator
-configuration. Add support for the same. The control
-lies in the master buck which is buck0 for 4-phase
-configuration. Enable/disable/voltage set happen via
-buck0 registers.
+On 6/12/19 1:00 PM, Petr Mladek wrote:
+> On Wed 2019-06-12 17:36:43, Sergey Senozhatsky wrote:
+>> On (06/06/19 09:10), Petr Mladek wrote:
+>>> Just to be sure. I wanted to say that I like the idea with
+>>> KERN_UNSUPRESSED. So, I think that we are on the same page.
+>>
+>> I understand. All I wanted to say is that KERN_UNSUPRESSED is
+>> per-message, while the most interesting (and actually broken)
+>> cases, IMHO, are per-context, IOW things like this one
+>>
+>> 	console_loglevel = NEW
+>> 	foo()
+>> 	  dump_stack()
+>> 	     printk
+>> 	     ...
+>> 	     printk
+>> 	console_loglevel = OLD
+>>
+>> KERN_UNSUPRESSED does not help here. We probably can't convert
+>> dump_stack() to KERN_UNSUPRESSED.
+> 
+> I agree. I take KERN_UNSUPRESSED like a nice trick how to pass
+> the information about the unsupressed printk context via
+> printk_safe and printk_nmi per-CPU buffers.
+> 
+> The single line in sysrq __handle_sysrq() seems to be the only
+> location where KERN_UNSUPRESSED can be used directly.
 
-Data Sheet: https://www.ti.com/lit/ds/symlink/lp87561-q1.pdf
+I likely don't understand all the reasons why it's not possible.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Mark Brown <broonie@kernel.org>
----
+Looking at kdb - prints those can't be converted straight-away are
+show_regs() and show_stack().. could we add helpers those take a
+loglevel to show the info? (having as an example show_trace_log_lvl()
+that can "eat" a modifier already).
 
-patches 1/3 2/3 are already applied to linux-next.
+Not that I want to sell the idea of KERN_UNSUPRESSED, but to my mind the
+alternative patches were kind of too intricate and bring more complexity
+to printk.. and there are only ~3(?) places those manipulate
+console_loglevel directly in the kernel tree (so we might want something
+simple and dumb as hell).
 
-Changes in v2:
-
-  * Changed if/else block to switch statement.
-
- drivers/regulator/lp87565-regulator.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
-index 81eb4b890c0c..af00d1ffcf33 100644
---- a/drivers/regulator/lp87565-regulator.c
-+++ b/drivers/regulator/lp87565-regulator.c
-@@ -153,6 +153,12 @@ static const struct lp87565_regulator regulators[] = {
- 			  LP87565_REG_BUCK2_CTRL_1,
- 			  LP87565_BUCK_CTRL_1_EN, 3230,
- 			  buck0_1_2_3_ranges, LP87565_REG_BUCK2_CTRL_2),
-+	LP87565_REGULATOR("BUCK3210", LP87565_BUCK_3210, "buck3210",
-+			  lp87565_buck_ops, 256, LP87565_REG_BUCK0_VOUT,
-+			  LP87565_BUCK_VSET, LP87565_REG_BUCK0_CTRL_1,
-+			  LP87565_BUCK_CTRL_1_EN |
-+			  LP87565_BUCK_CTRL_1_FPWM_MP_0_2, 3230,
-+			  buck0_1_2_3_ranges, LP87565_REG_BUCK0_CTRL_2),
- };
- 
- static int lp87565_regulator_probe(struct platform_device *pdev)
-@@ -169,9 +175,18 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
- 	config.driver_data = lp87565;
- 	config.regmap = lp87565->regmap;
- 
--	if (lp87565->dev_type == LP87565_DEVICE_TYPE_LP87565_Q1) {
-+	switch (lp87565->dev_type) {
-+	case LP87565_DEVICE_TYPE_LP87565_Q1:
- 		min_idx = LP87565_BUCK_10;
- 		max_idx = LP87565_BUCK_23;
-+		break;
-+	case LP87565_DEVICE_TYPE_LP87561_Q1:
-+		min_idx = LP87565_BUCK_3210;
-+		max_idx = LP87565_BUCK_3210;
-+	default:
-+		dev_err(lp87565->dev, "Invalid lp config %d\n",
-+			lp87565->dev_type);
-+		return -EINVAL;
- 	}
- 
- 	for (i = min_idx; i <= max_idx; i++) {
--- 
-2.17.1
-
+Thanks,
+          Dima
