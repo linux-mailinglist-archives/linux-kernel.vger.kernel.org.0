@@ -2,81 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0E341F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66A6941FA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407407AbfFLItc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 04:49:32 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42717 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406833AbfFLItc (ORCPT
+        id S2436581AbfFLIuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 04:50:01 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:53834 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfFLIuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:49:32 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t28so14337854lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 01:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Go55dDXBxVBTWBgHjRr7inycAYbApdoypRw2tPb4kWQ=;
-        b=XULc8GkrnhaQZap8xerLTLJbDC4Vu3G3CYe+YRnGb9SOhgJo8QyYfbP/z4RLyLHyGO
-         JI097H7HICDQV6/JiBVxzTFPbxvFr55c32ket0JRA1wepBTGOVMGHDkQkQpf+qPWOppC
-         b6Ped6QGTDS2BkRxpdvw7W37G6Oe1I8/47flObJxn8Fv/sI+3J+Gq1x0SbMT+EU4kCL1
-         m4UVOBVgo6/Abl2/aqX53jzwfKm1saWCRdhn8m88+wTfefqD5QyqRwgi/ZZsZELMBKYO
-         w5Tkl1ULDEl4uCWNJ7yAGLlJK6bx7xmyGchKTAvL+v88bUvCxyYdhBcbDYsqsjpMRGwU
-         QQLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Go55dDXBxVBTWBgHjRr7inycAYbApdoypRw2tPb4kWQ=;
-        b=U/E7aPlesRmdm87Va2ToXWuhbX36+IgfN1cuXEZvmtmEBLDf5wxta9j3RC89ceWla5
-         dgPg/8gI6ueBXYR3fnEUzgK4X1FXJZbu2ibmggTYliFnjWWoKWC9EoyKgTSGG8BKB7fw
-         D+F7hHgl5MFcv7dMYVyAKMPMrOQ/PymiYBxFIL30iyIKwxvz2PZ1bJBcY/O3jCzq1ToX
-         Y+6cWFKbOIPnYmw0YbIlaMT+8lEZUr1uNw1IqkfXOVMBqH+ADgU1rfqPw7lRWVQU/Tdg
-         K+SNnA9pAPJwYaxidkKMrh7B7yqu6d4ocOU2wlIe9vYlJpAiCynWiJEakda22yxXi+7J
-         YWfQ==
-X-Gm-Message-State: APjAAAWr05iamxsnYedNFQ1gBOnhDvHTP6TzXmZS1hZ4qjJ+geqTaPtI
-        9RU9crvdtzMzclJF+VNbim1oqCjPljLJV9IgXl2t1A==
-X-Google-Smtp-Source: APXvYqzT4UuSfXJUfCCGnwLeNcRt44Bq6L/QA4xe4AKQZSNz6rHdkZ/b4iGfLvjO/pGIhZkElV+yC5wfkayrlEYjqP0=
-X-Received: by 2002:a2e:5dc4:: with SMTP id v65mr33005733lje.138.1560329370020;
- Wed, 12 Jun 2019 01:49:30 -0700 (PDT)
+        Wed, 12 Jun 2019 04:50:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1560329398; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qI8IlvgG3xtgR+kPR9NmFwLa8z15R4AFwa5PzuA3tsw=;
+        b=nkRUMm+MmQ3Z4Poafx518YANlIeZoQ1q6oucK0Gym45Q4O0ovk2TX8p7NxBFAKT7mFrvVc
+        Eiu3/JU9eofLGdOPC7QIqaGuglgk9LXEtddQxc4wmi2AmGeGVh4k/tKMLb+pLu7XJn9Uzl
+        FYkCR6nTFUepT40VYhfFNfKM1TIhYRY=
+Date:   Wed, 12 Jun 2019 10:49:52 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 1/2] dt-bindings: Add doc for the Ingenic JZ47xx LCD
+ controller driver
+To:     Rob Herring <robh@kernel.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, od@zcrc.me,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
+Message-Id: <1560329392.1823.1@crapouillou.net>
+In-Reply-To: <20190611215554.GA23791@bogus>
+References: <20190603152331.23160-1-paul@crapouillou.net>
+        <20190611215554.GA23791@bogus>
 MIME-Version: 1.0
-References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-9-grygorii.strashko@ti.com>
-In-Reply-To: <20190610171103.30903-9-grygorii.strashko@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 10:49:18 +0200
-Message-ID: <CACRpkdY4eUN=E6BD-J=8oo+QjDPhL8giFasNrb-=vvGE7dTy1Q@mail.gmail.com>
-Subject: Re: [PATCH-next 08/20] gpio: gpio-omap: simplify get() method
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Russell King <rmk@arm.linux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 7:12 PM Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
 
-> From: Russell King <rmk+kernel@armlinux.org.uk>
->
-> omap_gpio_get() calls omap_get_gpio_datain() or omap_get_gpio_dataout()
-> to read the GPIO state. These two functions are only called from this
-> method, so they don't add much value.  Move their contents into
-> omap_gpio_get() method and simplify.
->
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Patch applied.
+Le mar. 11 juin 2019 =E0 23:55, Rob Herring <robh@kernel.org> a =E9crit :
+> On Mon,  3 Jun 2019 17:23:30 +0200, Paul Cercueil wrote:
+>>  Add documentation for the devicetree bindings of the LCD controller=20
+>> present in
+>>  the JZ47xx family of SoCs from Ingenic.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  Tested-by: Artur Rojek <contact@artur-rojek.eu>
+>>  ---
+>>=20
+>>  Notes:
+>>      v2: Remove ingenic,panel property.
+>>=20
+>>      v3: - Rename compatible strings from ingenic,jz47XX-drm to=20
+>> ingenic,jz47XX-lcd
+>>          - The ingenic,lcd-mode property is now read from the panel=20
+>> node instead
+>>      	  of from the driver node
+>>=20
+>>      v4: Remove ingenic,lcd-mode property completely.
+>>=20
+>>      v5: No change
+>>=20
+>>   .../bindings/display/ingenic,lcd.txt          | 44=20
+>> +++++++++++++++++++
+>>   1 file changed, 44 insertions(+)
+>>   create mode 100644=20
+>> Documentation/devicetree/bindings/display/ingenic,lcd.txt
+>>=20
+>=20
+> Please add Acked-by/Reviewed-by tags when posting new versions.=20
+> However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
+>=20
+> If a tag was not added on purpose, please state why and what changed.
 
-Yours,
-Linus Walleij
+Sorry Rob, my mistake. I simply forgot that you ever reviewed that=20
+patch.
+
+=
+
