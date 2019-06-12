@@ -2,85 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9D442DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C969242DA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfFLRuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:50:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:17070 "EHLO mga09.intel.com"
+        id S1728692AbfFLRl3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 13:41:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57954 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725764AbfFLRuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:50:37 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 10:50:36 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga005.jf.intel.com with ESMTP; 12 Jun 2019 10:50:35 -0700
-Date:   Wed, 12 Jun 2019 10:41:13 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16
- instructions
-Message-ID: <20190612174112.GG180343@romley-ivt3.sc.intel.com>
-References: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
- <20190610192026.GI5488@zn.tnic>
- <20190611181920.GC180343@romley-ivt3.sc.intel.com>
- <20190611194701.GJ31772@zn.tnic>
- <20190611222822.GD180343@romley-ivt3.sc.intel.com>
- <3E5A0FA7E9CA944F9D5414FEC6C712209D8F4253@ORSMSX106.amr.corp.intel.com>
- <20190612035908.GB32652@zn.tnic>
+        id S1725878AbfFLRl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:41:29 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1899231628E2;
+        Wed, 12 Jun 2019 17:41:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 058825D9CA;
+        Wed, 12 Jun 2019 17:41:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com>
+References: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: What do LSMs *actually* need for checks on notifications?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612035908.GB32652@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14575.1560361278.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 12 Jun 2019 18:41:18 +0100
+Message-ID: <14576.1560361278@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 17:41:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 05:59:08AM +0200, Borislav Petkov wrote:
-> On Wed, Jun 12, 2019 at 03:29:57AM +0000, Yu, Fenghua wrote:
-> > My bad. I studied a bit more and found the patch #1 is not needed.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+
+> >  (4) The security attributes of the object on which the watch was set (uid,
+> >      gid, mode, labels).
 > 
-> Why, I think you were spot-on:
+> Smack needs this to set a watch on the named object (file, key, ...).
+> I am going to say that if you can't access an object you can't watch it.
+
+So for the things I've so far defined:
+
+ (*) Keys/keyrings require View permission, but it could be Read permission
+     instead - though that may get disabled if the key type does not support
+     KEYCTL_READ.
+
+ (*) Mount/superblock watches - I've made these require execute permission on
+     the specified directory.  Could be read permission instead.
+
+ (*) Device events (block/usb) don't require any permissions, but currently
+     only deliver hardware notifications.
+
+> I think that read access is sufficient provided that no one else can
+> see what watches I've created.
+
+You can't find out what watches exist.
+
+> > At the moment, when post_one_notification() wants to write a notification
+> > into a queue, it calls security_post_notification() to ask if it should be
+> > allowed to do so.  This is passed (1) and (3) above plus the notification
+> > record.
 > 
-> "And the two variables are ONLY used in resctrl monitoring
-> configuration. There is no need to store them in cpuinfo_x86 on each
-> CPU."
+> Is "current" (2)? Smack needs (2) for the event delivery access check.
+
+(2) was current_cred() when watch_sb(), KEYCTL_NOTIFY, etc. was called, but
+isn't necessarily current_cred() at the point post_one_notification() is
+called.  The latter is called at the point the event is generated and
+current_cred() is the creds of whatever thread that is called in (which may be
+a work_queue thread if it got deferred).
+
+At the moment, I'm storing the creds of whoever opened the queue (ie. (1)) and
+using that, but I could cache the creds of whoever created each watch
+(ie. (2)) and pass that to post_one_notification() instead.
+
+However, it should be noted that (1) is the creds of the buffer owner.
+
+> >  (e) All the points at which we walk over an object in a chain from (c) to
+> >      find the watch on which we can effect (d) (eg. we walk rootwards from a
+> >      mountpoint to find watches on a branch in the mount topology).
 > 
-> That was a real overkill to put them in cpuinfo_x86. The information
-> needed should simply be read out in rdt_get_mon_l3_config() and that's
-> it - no need to global values to store them.
+> Smack does not require anything beyond existing checks.
+
+I'm glad to hear that, as this might be sufficiently impractical as to render
+it unusable with Smack.  Calling i_op->permissions() a lot would suck.
+
+> >  (y) What checks should be done on object destruction after final put and
+> >      what contexts need to be supplied?
 > 
-> Now removing them should be in a separate patch so that review is easy.
-> 
-> Or am I missing an aspect?
+> Classically there is no such thing as filesystem object deletion.
+> By making it possible to set a watch on that you've inadvertently
+> added a security relevant action to the security model. :o
 
-x86_init_cache_qos() fnds the minimum number of rmid on all CPUs and
-store it in boot_cpu_data.
+That wasn't my original intention - I intended fsmount(2) to mount directly as
+mount(2) does, but Al had other ideas.
 
-If removing the two variables from cpuinfo_x86 and getting number of
-rmid and occupancy scale in rdt_get_mon_l3_config() directly from
-CPUID on the current CPU, we need to assume all CPUs have the same
-number of rmid.
+Now fsmount(2) produces a file descriptor referring to a new mount object that
+can be mounted into by move_mount(2) before being spliced into the mount
+topology by move_mount(2).  However, if the fd is closed before the last step,
+close() will destroy the mount subtree attached to it (kind of quasi-unmount).
 
-Is this a right assumption?
+That wouldn't be a problem, except that the fd from fsmount(2) can be used
+anywhere an O_PATH fd can be used - including watch_mount(2), fchdir(2), ...
+Further, FMODE_NEED_UNMOUNT gets cleared if the mount is spliced in at least
+once.
 
-After think again, it might be a right assumption after all. AFAICT, each
-Intel platform that supports resctrl has the same number of rmid on all
-CPUs and there is no plan to have a resctrl platform that has different
-numbers of rmid on CPUs.
+Okay, having tried it you don't get an unmount event (since there's no actual
+unmount), but you do get an event to say that your watch got deleted (if the
+directory on which the watch was placed got removed from the system).
 
-So Ok, I will write the patch #1 that removes the two variables from
-cpuinfo_x86 and gets the info directly from CPUID in rdt_get_mon_l3_config().
+So...  does the "your watch got deleted" message need checking?  In my
+opinion, it shouldn't get discarded because then the watcher doesn't know
+their watch went away.
 
-Thanks.
-
--Fenghua
+David
