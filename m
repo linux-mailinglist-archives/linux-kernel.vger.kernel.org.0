@@ -2,79 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F48942242
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4375942266
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732052AbfFLKVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:21:40 -0400
-Received: from sauhun.de ([88.99.104.3]:58160 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727404AbfFLKVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:21:40 -0400
-Received: from localhost (p5486CACA.dip0.t-ipconnect.de [84.134.202.202])
-        by pokefinder.org (Postfix) with ESMTPSA id 5A19F2C54BC;
-        Wed, 12 Jun 2019 12:21:38 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 12:21:37 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Bitan Biswas <bbiswas@nvidia.com>
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-Subject: Re: [PATCH V5 1/7] i2c: tegra: clean up macros
-Message-ID: <20190612102137.mc2fwrifmbl2x6dr@ninjato>
-References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+        id S2390488AbfFLKXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:23:13 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43282 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408847AbfFLKXJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:23:09 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5CAN8tl038317;
+        Wed, 12 Jun 2019 05:23:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560334988;
+        bh=gXlPsskpiWFKuL3pKSUlET3jukGcKHstSsj3yxbC3+Q=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Wb2slfVJ1rQBhaKZ4ASf+uNopTTbp4J3NtShek+8YU8hnDPfLVoKpkPI0xFCoYnGf
+         hCDRzscN825i8jiPk9pQKlxs4+5fu06BNgQ1OTUCPeMQGeub6fXRsYaFvGU/A2EJik
+         uIXd8WlYKqa26C7J51TcNR4cgsTG8+bwOpNAU1bA=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5CAN8vC078071
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Jun 2019 05:23:08 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 12
+ Jun 2019 05:23:08 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 12 Jun 2019 05:23:08 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5CAN5sd016514;
+        Wed, 12 Jun 2019 05:23:07 -0500
+Subject: Re: [GIT PULL] PHY: for 5.2-rc
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20190611140122.9429-1-kishon@ti.com>
+ <20190611170401.GA23216@kroah.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <1f381f69-ca3f-05d4-d183-91bd59c3a26b@ti.com>
+Date:   Wed, 12 Jun 2019 15:51:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="glfpl6iv3trozchb"
-Content-Disposition: inline
-In-Reply-To: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190611170401.GA23216@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---glfpl6iv3trozchb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/06/19 10:34 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jun 11, 2019 at 07:31:22PM +0530, Kishon Vijay Abraham I wrote:
+>> Hi Greg,
+>>
+>> Please find the pull request for 5.2 -rc cycle.
+>>
+>> The major fix being moving supplies powering PLLs used by USB, SATA,
+>> PCIe to tegra-xusb driver fixing initialization failure.
+>>
+>> Others are minor fixes. Please see the tag message below for more
+>> details.
+>>
+>> Consider merging it in this -rc cycle and let me know if you want me
+>> to make any changes.
+>>
+>> Thanks
+>> Kishon
+>>
+>> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+>>
+>>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+>>
+>> are available in the Git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.2-rc
+>>
+>> for you to fetch changes up to ada28f7b3a97fa720864c86504a7c426ee6f91c1:
+>>
+>>   phy: tegra: xusb: Add Tegra210 PLL power supplies (2019-06-07 15:58:34 +0530)
+>>
+>> ----------------------------------------------------------------
+>> phy: for 5.2-rc
+>>
+>>   *) Move Tegra124 PLL power supplies to be enabled by xusb-tegra124
+>>   *) Move Tegra210 PLL power supplies to be enabled by xusb-tegra210
+>>   *) Minor fixes: fix memory leaks at error path, fix sparse warnings
+>>      and addresses coverity.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>
+>> ----------------------------------------------------------------
+>> Colin Ian King (1):
+>>       phy: qcom-qusb2: fix missing assignment of ret when calling clk_prepare_enable
+>>
+>> Florian Fainelli (1):
+>>       phy: usb: phy-brcm-usb: Remove sysfs attributes upon driver removal
+>>
+>> Thierry Reding (3):
+>>       dt-bindings: phy: tegra-xusb: List PLL power supplies
+>>       phy: tegra: xusb: Add Tegra124 PLL power supplies
+>>       phy: tegra: xusb: Add Tegra210 PLL power supplies
+>>
+>> Yoshihiro Shimoda (1):
+>>       phy: renesas: rcar-gen2: Fix memory leak at error paths
+>>
+>> YueHaibing (1):
+>>       phy: ti: am654-serdes: Make serdes_am654_xlate() static
+> 
+> sparse fixes are not for the -rc cycle, unless they fix an actual bug.
+> 
+> Care to send these as a patch series and I can queue up the real
+> bugfixes for -final and take the others for 5.3-rc1?
 
-On Tue, Jun 11, 2019 at 03:51:08AM -0700, Bitan Biswas wrote:
-> Clean up macros by:
-> 1) removing unused macros
-> 2) replace constants by macro BIT()
->=20
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Sure, I'll send the patches with an updated pull request.
 
-Applied to for-next, thanks!
-
-
---glfpl6iv3trozchb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0A0jEACgkQFA3kzBSg
-KbZ4YBAAr3ydA4TVT7tPO956qQjxScFkJ8fFKU/zTKTL9covc5QfQinf4fyTkGbv
-WR53r2u4NfAEtq/4wTbOA4bfK6t4FCZG9cH31YeY6ce6MkHTAFo7vKls09c0m8sg
-wPgoyPuRnw5GftVK7gwLfhIg3Gh7xDdyDD0XNzFC6/pKFe0OJmDWFR8S43FWsiwP
-t5x//BT5N2EjQq3HKYoJwjU8+iUeBisEdAuataWuqLfLiVz2JfxBRGx6/WUr0QqU
-RTpZ6Y+kgZ6/9fFIF4C8jgpjg0YOYoScX2NL6D0k/C//maaTVcgzaV5MrkjQZoLL
-wHDj0LTCGPcz+UFkCYrtJnogyUOBGWQawLGXOoNWJXD+U5l+DkZP9YSWeq3Um4+o
-0Puvn+GHBPjYC0yjP+basLveGfuWjRhTBz/7vlAAP5xT+NKRFw6UZ6ygk8mi4sQx
-OcoTLdBgbpUbufiRdP2HLyMZXbf4A5C5HqkvJS3ELq82ZbfjJVn6Wzo418NcJRmX
-s1xxElkDi7SsuI8F1d5P8c7cSmpDY7Wv8MX6GIaXiCm/bcsNa1yIOYNi6eVx6liz
-nQpcm4P7ngtaRuAh/EbU4fYs1O5sMU0Iuixz/6Es1YQWX1vh+Ehn5IGB5os3V8fr
-4upKSK/pFR78pqZE18Kgvv+ejjaIAGANjY6ooD7mGxAvpJXCDTo=
-=/aKc
------END PGP SIGNATURE-----
-
---glfpl6iv3trozchb--
+Thanks
+Kishon
