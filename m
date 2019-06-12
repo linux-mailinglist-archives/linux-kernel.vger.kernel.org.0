@@ -2,154 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CB5D41A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 720E341AA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408575AbfFLDNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:13:01 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:28867 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2406872AbfFLDNA (ORCPT
+        id S2391887AbfFLDRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:17:50 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34216 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388207AbfFLDRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:13:00 -0400
-X-UUID: dfb021c722e34194afb53bd68c7cfd93-20190612
-X-UUID: dfb021c722e34194afb53bd68c7cfd93-20190612
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 174732528; Wed, 12 Jun 2019 11:12:47 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 12 Jun 2019 11:12:40 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 12 Jun 2019 11:12:40 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Felix Fietkau <nbd@nbd.name>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-CC:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
-        Yiwei Chung <yiwei.chung@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-wireless@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 2/2] mt76: mt7615: update peer's bssid when state transition changes
-Date:   Wed, 12 Jun 2019 11:12:34 +0800
-Message-ID: <449fee28c558b6f02b62275f9beefaab02b47efc.1560221172.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <3065a01998dfa04a5d2d680e820a17cb5c110d0f.1560221172.git.ryder.lee@mediatek.com>
-References: <3065a01998dfa04a5d2d680e820a17cb5c110d0f.1560221172.git.ryder.lee@mediatek.com>
+        Tue, 11 Jun 2019 23:17:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=IpLE7ds2K7OtQWpRAGotTZF/PZyEILhWbTrpge7p0cg=; b=FskF3yeL0/79r17kY13jKRiXqy
+        p61RiQCqPCuaV6wK9aOriMS+o6syY3+q3GH7ogGSRoDe/+XfIq7c3mE89pCRdTuPboH6VRQt+SStN
+        lqosfsN/knVsUPDu+htIe6f1BQyQUMMbTAHsbnhRwyfN1JGJR+U+4iTddXmRHS9eg0efGrhB8dqAc
+        zpbSCTiIS9/Zr9qngbf4DcdJs29NelKYWZh9P4OkM8JNtcY1hWacSQELN+riB9wmgX7oHFiAPeVK6
+        sxzet/L+MDj7qbMmQEjKczKQzlF02y9qoc9JSnRxJZliY/e3sLAx/rSp7MFgPmpuGpsNSOrSHcseo
+        CL/3eMUw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hatlL-0002pl-M5; Wed, 12 Jun 2019 03:17:24 +0000
+Subject: Re: linux-next 20190611: objtool warning
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>
+References: <a9ceb8f8-f2fd-e57d-3428-aaf50e011a43@infradead.org>
+ <20190612025227.lxumqqtqao6iqms3@treble>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <18e6ef70-2fa3-3f70-0fcd-3eadef2cfceb@infradead.org>
+Date:   Tue, 11 Jun 2019 20:17:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 3F5B734C7013F11341551BE8410EA107F2318531696F13E719DF083F3416BACF2000:8
-X-MTK:  N
+In-Reply-To: <20190612025227.lxumqqtqao6iqms3@treble>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Driver should update peer's bssid and bss information when
-state transition changes.
+On 6/11/19 7:52 PM, Josh Poimboeuf wrote:
+> On Tue, Jun 11, 2019 at 06:59:22PM -0700, Randy Dunlap wrote:
+>> Hi,
+>>
+>> New warning AFAIK:
+>>
+>> drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0x11f: sibling call from callable instruction with modified stack frame
+> 
+> I'm getting a different warning:
+> 
+>   drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0xb6: can't find jump dest instruction at .text+0x93a
+> 
+> But I bet the root cause is the same.
+> 
+> This fixes it for me:
+> 
+> From: Josh Poimboeuf <jpoimboe@redhat.com>
+> Subject: [PATCH] hwmon/smsc47m1: Fix objtool warning caused by undefined behavior
+> 
+> Objtool is reporting the following warning:
+> 
+>   drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0xb6: can't find jump dest instruction at .text+0x93a
+> 
+> It's apparently caused by
+> 
+>   2cf6745e69d1 ("hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings")
+> 
+> which is somehow convincing GCC to add a jump past the end of the
+> function:
+> 
+>   793:   45 85 ed                test   %r13d,%r13d
+>   796:   0f 88 9e 01 00 00       js     93a <fan_div_store+0x25a>
+>   ...
+>   930:   e9 5e fe ff ff          jmpq   793 <fan_div_store+0xb3>
+>   935:   e8 00 00 00 00          callq  93a <fan_div_store+0x25a>
+> 			936: R_X86_64_PLT32     __stack_chk_fail-0x4
+>   <function end>
+> 
+> I suppose this falls under the category of undefined behavior, so we
+> probably can't call it a GCC bug.  But if the value of "nr" were out of
+> range somehow then it would start executing random code.  Use a runtime
+> BUG() assertion to avoid undefined behavior.
+> 
+> Fixes: 2cf6745e69d1 ("hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- .../net/wireless/mediatek/mt76/mt7615/main.c  |  5 +-
- .../net/wireless/mediatek/mt76/mt7615/mcu.c   | 49 ++++++++++---------
- 2 files changed, 27 insertions(+), 27 deletions(-)
+Yes, that works for me.  Thanks.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-index d21407ddda31..e0824392c019 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-@@ -283,9 +283,8 @@ static void mt7615_bss_info_changed(struct ieee80211_hw *hw,
- 
- 	mutex_lock(&dev->mt76.mutex);
- 
--	/* TODO: sta mode connect/disconnect
--	 * BSS_CHANGED_ASSOC | BSS_CHANGED_BSSID
--	 */
-+	if (changed & BSS_CHANGED_ASSOC)
-+		mt7615_mcu_set_bss_info(dev, vif, info->assoc);
- 
- 	/* TODO: update beacon content
- 	 * BSS_CHANGED_BEACON
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index e82086eb8aa4..8fc12cd37906 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -741,17 +741,6 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
- 	u8 *buf, *data, tx_wlan_idx = 0;
- 	struct req_hdr *hdr;
- 
--	if (en) {
--		len += sizeof(struct bss_info_omac);
--		features |= BIT(BSS_INFO_OMAC);
--		if (mvif->omac_idx > EXT_BSSID_START) {
--			len += sizeof(struct bss_info_ext_bss);
--			features |= BIT(BSS_INFO_EXT_BSS);
--			ntlv++;
--		}
--		ntlv++;
--	}
--
- 	switch (vif->type) {
- 	case NL80211_IFTYPE_AP:
- 	case NL80211_IFTYPE_MESH_POINT:
-@@ -759,22 +748,23 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
- 		conn_type = CONNECTION_INFRA_AP;
- 		break;
- 	case NL80211_IFTYPE_STATION: {
--		struct ieee80211_sta *sta;
--		struct mt7615_sta *msta;
--
--		rcu_read_lock();
--
--		sta = ieee80211_find_sta(vif, vif->bss_conf.bssid);
--		if (!sta) {
-+		/* TODO: enable BSS_INFO_UAPSD & BSS_INFO_PM */
-+		if (en) {
-+			struct ieee80211_sta *sta;
-+			struct mt7615_sta *msta;
-+
-+			rcu_read_lock();
-+			sta = ieee80211_find_sta(vif, vif->bss_conf.bssid);
-+			if (!sta) {
-+				rcu_read_unlock();
-+				return -EINVAL;
-+			}
-+
-+			msta = (struct mt7615_sta *)sta->drv_priv;
-+			tx_wlan_idx = msta->wcid.idx;
- 			rcu_read_unlock();
--			return -EINVAL;
- 		}
--
--		msta = (struct mt7615_sta *)sta->drv_priv;
--		tx_wlan_idx = msta->wcid.idx;
- 		conn_type = CONNECTION_INFRA_STA;
--
--		rcu_read_unlock();
- 		break;
- 	}
- 	default:
-@@ -782,6 +772,17 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
- 		break;
- 	}
- 
-+	if (en) {
-+		len += sizeof(struct bss_info_omac);
-+		features |= BIT(BSS_INFO_OMAC);
-+		if (mvif->omac_idx > EXT_BSSID_START) {
-+			len += sizeof(struct bss_info_ext_bss);
-+			features |= BIT(BSS_INFO_EXT_BSS);
-+			ntlv++;
-+		}
-+		ntlv++;
-+	}
-+
- 	buf = kzalloc(len, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+> ---
+>  drivers/hwmon/smsc47m1.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
+> index 6d366c9cb906..b637836b58a1 100644
+> --- a/drivers/hwmon/smsc47m1.c
+> +++ b/drivers/hwmon/smsc47m1.c
+> @@ -352,7 +352,7 @@ static ssize_t fan_div_store(struct device *dev,
+>  		smsc47m1_write_value(data, SMSC47M2_REG_FANDIV3, tmp);
+>  		break;
+>  	default:
+> -		unreachable();
+> +		BUG();
+>  	}
+>  
+>  	/* Preserve fan min */
+> 
+
+
 -- 
-2.18.0
-
+~Randy
