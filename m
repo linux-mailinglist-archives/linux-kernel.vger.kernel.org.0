@@ -2,137 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E8E41F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66FA41F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406706AbfFLIq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 04:46:59 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:29095 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726731AbfFLIq7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:46:59 -0400
-X-UUID: faa316b07d844a8eaa6d6698e80ba31b-20190612
-X-UUID: faa316b07d844a8eaa6d6698e80ba31b-20190612
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 658078462; Wed, 12 Jun 2019 16:46:47 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs07n1.mediatek.inc
- (172.21.101.16) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Jun
- 2019 16:46:46 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 12 Jun 2019 16:46:45 +0800
-Message-ID: <1560329205.3255.17.camel@mhfsdcap03>
-Subject: Re: [PATCH] mtu3: fix setup packet response for HNP and SRP request
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Macpaul Lin <macpaul.lin@mediatek.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Date:   Wed, 12 Jun 2019 16:46:45 +0800
-In-Reply-To: <1560320892-30551-1-git-send-email-macpaul.lin@mediatek.com>
-References: <1560320892-30551-1-git-send-email-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1731873AbfFLIrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 04:47:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18138 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726636AbfFLIrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 04:47:42 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DB3D0222C3369D7533CC;
+        Wed, 12 Jun 2019 16:47:38 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
+ 16:47:28 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <pablo@netfilter.org>, <kadlec@blackhole.kfki.hu>, <fw@strlen.de>,
+        <davem@davemloft.net>, <rdunlap@infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <coreteam@netfilter.org>,
+        <netfilter-devel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] netfilter: ipv6: Fix build error without CONFIG_IPV6
+Date:   Wed, 12 Jun 2019 16:47:15 +0800
+Message-ID: <20190612084715.21656-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Macpaul,
+If CONFIG_IPV6 is not set, building fails:
 
-On Wed, 2019-06-12 at 14:28 +0800, Macpaul Lin wrote:
-> 1. Add OTG_HNP_REQD and OTG_SRP_REQD definitions in ch9.h.
-> 2. When OTG_HNP_REQD and OTG_SRP_REQD has been received,
-> usb hardware must not enter TEST mode but need to response setup packet.
-> 3. Add otg_srp_reqd and otg_hnp_reqd in struct ssusb_mtk for futher
-> implementation.
-> 
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  drivers/usb/mtu3/mtu3.h            |  4 ++++
->  drivers/usb/mtu3/mtu3_gadget_ep0.c | 13 +++++++++++++
->  include/uapi/linux/usb/ch9.h       |  5 +++++
->  3 files changed, 22 insertions(+)
-The driver currently doesn't support HNP/SRP, so there will be something
-wrong when connected with PET to run compliance test, and I prefer not
-to support it, because it's rarely used in normal case, thanks
+net/bridge/netfilter/nf_conntrack_bridge.o: In function `nf_ct_bridge_pre':
+nf_conntrack_bridge.c:(.text+0x41c): undefined symbol `nf_ct_frag6_gather'
+net/bridge/netfilter/nf_conntrack_bridge.o: In function `nf_ct_bridge_post':
+nf_conntrack_bridge.c:(.text+0x820): undefined symbol `br_ip6_fragment'
 
-> 
-> diff --git a/drivers/usb/mtu3/mtu3.h b/drivers/usb/mtu3/mtu3.h
-> index 76ecf12fdf62..bb8a31bc6e4d 100644
-> --- a/drivers/usb/mtu3/mtu3.h
-> +++ b/drivers/usb/mtu3/mtu3.h
-> @@ -226,6 +226,8 @@ struct otg_switch_mtk {
->   * @dma_clk: dma_bus_ck clock for AXI bus etc
->   * @dr_mode: works in which mode:
->   *		host only, device only or dual-role mode
-> + * @otg_srp_reqd: used for SRP request handling.
-> + * @otg_hnp_reqd: used for HNP request handling.
->   * @u2_ports: number of usb2.0 host ports
->   * @u3_ports: number of usb3.0 host ports
->   * @u3p_dis_msk: mask of disabling usb3 ports, for example, bit0==1 to
-> @@ -252,6 +254,8 @@ struct ssusb_mtk {
->  	/* otg */
->  	struct otg_switch_mtk otg_switch;
->  	enum usb_dr_mode dr_mode;
-> +	bool otg_srp_reqd;
-> +	bool otg_hnp_reqd;
->  	bool is_host;
->  	int u2_ports;
->  	int u3_ports;
-> diff --git a/drivers/usb/mtu3/mtu3_gadget_ep0.c b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-> index 4da216c99726..1247c43a63e6 100644
-> --- a/drivers/usb/mtu3/mtu3_gadget_ep0.c
-> +++ b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-> @@ -285,11 +285,24 @@ static int handle_test_mode(struct mtu3 *mtu, struct usb_ctrlrequest *setup)
->  		dev_dbg(mtu->dev, "TEST_PACKET\n");
->  		mtu->test_mode_nr = TEST_PACKET_MODE;
->  		break;
-> +	case OTG_SRP_REQD:
-> +		dev_dbg(mtu->dev, "OTG_SRP_REQD\n");
-> +		mtu->ssusb->otg_srp_reqd = 1;
-> +		break;
-> +	case OTG_HNP_REQD:
-> +		dev_dbg(mtu->dev, "OTG_HNP_REQD\n");
-> +		mtu->ssusb->otg_hnp_reqd = 1;
-> +		break;
->  	default:
->  		handled = -EINVAL;
->  		goto out;
->  	}
->  
-> +	if (mtu->ssusb->otg_srp_reqd || mtu->ssusb->otg_hnp_reqd) {
-> +		mtu->ep0_state = MU3D_EP0_STATE_SETUP;
-> +		goto out;
-> +	}
-> +
->  	mtu->test_mode = true;
->  
->  	/* no TX completion interrupt, and need restart platform after test */
-> diff --git a/include/uapi/linux/usb/ch9.h b/include/uapi/linux/usb/ch9.h
-> index d5a5caec8fbc..545918c83fd1 100644
-> --- a/include/uapi/linux/usb/ch9.h
-> +++ b/include/uapi/linux/usb/ch9.h
-> @@ -143,6 +143,11 @@
->  #define	TEST_SE0_NAK	3
->  #define	TEST_PACKET	4
->  #define	TEST_FORCE_EN	5
-> +/*
-> + * OTG HNP and SRP REQD
-> + */
-> +#define	OTG_SRP_REQD	6
-> +#define	OTG_HNP_REQD	7
->  
->  /* Status Type */
->  #define USB_STATUS_TYPE_STANDARD	0
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: c9bb6165a16e ("netfilter: nf_conntrack_bridge: fix CONFIG_IPV6=y")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ include/linux/netfilter_ipv6.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/netfilter_ipv6.h b/include/linux/netfilter_ipv6.h
+index 3a3dc4b..0e1febc 100644
+--- a/include/linux/netfilter_ipv6.h
++++ b/include/linux/netfilter_ipv6.h
+@@ -108,8 +108,11 @@ static inline int nf_ipv6_br_defrag(struct net *net, struct sk_buff *skb,
+ 		return 1;
+ 
+ 	return v6_ops->br_defrag(net, skb, user);
+-#else
++#endif
++#if IS_BUILTIN(CONFIG_IPV6)
+ 	return nf_ct_frag6_gather(net, skb, user);
++#else
++	return 1;
+ #endif
+ }
+ 
+@@ -133,8 +136,11 @@ static inline int nf_br_ip6_fragment(struct net *net, struct sock *sk,
+ 		return 1;
+ 
+ 	return v6_ops->br_fragment(net, sk, skb, data, output);
+-#else
++#endif
++#if IS_BUILTIN(CONFIG_IPV6)
+ 	return br_ip6_fragment(net, sk, skb, data, output);
++#else
++	return 1;
+ #endif
+ }
+ 
+-- 
+2.7.4
 
 
