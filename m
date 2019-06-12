@@ -2,81 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C6BE42163
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F3E4216E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:52:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437707AbfFLJuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:50:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39593 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437364AbfFLJuw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:50:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x4so13515720wrt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 02:50:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PAvGFOoYzPS61be8d0hDk59IdKm5jv+M0Lyik/mzoSE=;
-        b=H6HnwMmEfVLqiSFxflIKrGX8lvGrrMUMCTWhtWX9JC6FZBwWqqHHrpMl3rvtu8/pR0
-         jP2TVE2YeiHJbuJkRMjDnJs2Get4JM55vrEu7L3K2w6W96o7AsAG7s8kDY/V60nXcX00
-         712VVmzEozDrKdoV8kfuO2b1RMjWtJ/GNKffOH6cH9ayfNJt4Dzdezo7ktVw8/qU3hsW
-         yIbY8357heW537h3uBMQEk1BvIZWUrd6Jh0ihFPe7kXaWSN8Aj/cFQQMz9qM+D1TPIQc
-         A6twkH+qNYdBjoIf8m0SI6e71CIY/uhbvYwZvc8o0m7HOo1IouvmBHaBRBn+VsUnKatn
-         mbpg==
-X-Gm-Message-State: APjAAAWU/bZXtpVCCjolH3L7FXJwJLtdW4CWrXRYfU/OcaRqUQUm+jAW
-        1HG9IaLL9An9nVo6PfI6Wt7l/w==
-X-Google-Smtp-Source: APXvYqxWCtXFIT7WAXyNcyUz59E7fx+sMjOkrh9/IR0cbl66vKkr0afl6Z0nTISHKI7+dI3deUDvpw==
-X-Received: by 2002:a5d:51cb:: with SMTP id n11mr14633941wrv.143.1560333050210;
-        Wed, 12 Jun 2019 02:50:50 -0700 (PDT)
-Received: from mcroce-redhat.mxp.redhat.com (nat-pool-mxp-t.redhat.com. [149.6.153.186])
-        by smtp.gmail.com with ESMTPSA id q20sm44919103wra.36.2019.06.12.02.50.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 02:50:49 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH net] mpls: fix af_mpls dependencies for real
-Date:   Wed, 12 Jun 2019 11:50:37 +0200
-Message-Id: <20190612095037.6472-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        id S2437734AbfFLJwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:52:41 -0400
+Received: from mga14.intel.com ([192.55.52.115]:48959 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437415AbfFLJwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:52:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 02:52:40 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by orsmga005.jf.intel.com with ESMTP; 12 Jun 2019 02:52:35 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hazvl-0007ql-Rx; Wed, 12 Jun 2019 12:52:33 +0300
+Date:   Wed, 12 Jun 2019 12:52:33 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@suse.de,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [Patch v2] x86/cpu: Add Ice Lake NNPI to Intel family
+Message-ID: <20190612095233.GE9224@smile.fi.intel.com>
+References: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy reported that selecting MPLS_ROUTING without PROC_FS breaks
-the build, because since commit c1a9d65954c6 ("mpls: fix af_mpls
-dependencies"), MPLS_ROUTING selects PROC_SYSCTL, but Kconfig's select
-doesn't recursively handle dependencies.
-Change the select into a dependency.
+On Thu, Jun 06, 2019 at 06:54:19AM +0530, Rajneesh Bhardwaj wrote:
+> Add the CPUID model number of Ice Lake Neural Network Processor for Deep
+> Learning Inference (ICL-NNPI) to the Intel family list. Ice Lake NNPI uses
+> model number 0x9D and this will be documented in a future version of Intel
+> Software Development Manual.
 
-Fixes: c1a9d65954c6 ("mpls: fix af_mpls dependencies")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- net/mpls/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
+> +#define INTEL_FAM6_ICELAKE_NNPI		0x9D
 
-diff --git a/net/mpls/Kconfig b/net/mpls/Kconfig
-index 2b802a48d5a6..d1ad69b7942a 100644
---- a/net/mpls/Kconfig
-+++ b/net/mpls/Kconfig
-@@ -26,7 +26,7 @@ config NET_MPLS_GSO
- config MPLS_ROUTING
- 	tristate "MPLS: routing support"
- 	depends on NET_IP_TUNNEL || NET_IP_TUNNEL=n
--	select PROC_SYSCTL
-+	depends on PROC_SYSCTL
- 	---help---
- 	 Add support for forwarding of mpls packets.
- 
+What "I" stands for?
+
+For me sounds like it's redundant here or something like NNP_DLI would be
+better (because somewhere we have _NP as for Network Processor).
+
 -- 
-2.21.0
+With Best Regards,
+Andy Shevchenko
+
 
