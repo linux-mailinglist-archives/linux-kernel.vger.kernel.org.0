@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD0FC42EFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C64542F1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388144AbfFLSjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:39:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45690 "EHLO
+        id S2403823AbfFLSku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:40:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45626 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727732AbfFLSim (ORCPT
+        with ESMTP id S1727343AbfFLSik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:38:42 -0400
+        Wed, 12 Jun 2019 14:38:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ySP7Rfm9vrPZVi9yG2V7YPPuHG8L4YJY7F6xTxyIBXY=; b=c3zn2kqhuZzFJp3lcjd/ue6Dqn
-        XHuyKho1f9h4HZc+YGxomgSi6Blus0kwDPutRAA3g92ZCkX1PUmNBZbcvA5yGazgawtRgwJzcy57J
-        OsysAPX89j4SoFIKONx/gM9h/7TfzrS2IXXmq9fB1S6LAP2KwEbB0Ku5VLSmsXKJSRBLu+oXaSq3V
-        WnCJ8hGK4MauwONjr8ohP29jZwc22Y4kJ33sltPMvs10C2F2YVQtvaD5cyb2CxOO3d3Dj0b8Vwub9
-        QLXplnUu8aZbKmRe38KeHVFfD24/qLulvUlwPWKLBdXXePBQzCDVj07cQFwraHosKnXTXNrQ3zcf3
-        5k/0OV2w==;
+        bh=1Z10GoepMy73tsXMyNGClo922cVQsKxK41VTPmgHbT4=; b=mFEnTnVqgGd7QSch+UuUVQqont
+        P3uV4vd9F8Y51QeR0suYF9hl5ygUhammswpW8eHEQgLrI7dzq5qQ1Kux68eCv0rVZ5FemWYuHco8Z
+        6MSeyFMHNAgH/Wp/bEZDFCsA0+mrNfEnHabhNw8qYodGyH5UlEvPulF4w15Sn0JsN1tVxheWcVJ13
+        MbHL0YrZfOv7UXJWNARxmvzE2qYAeVnJYYfAYCTE4pHppb60zvFehJPokgJJINZKSgNAc0pIL8peY
+        BlOn27ANvLXRc8zc5e8yIPrZ/ljydD2cmzt1aC2Ar+x3ZlapV7qaQMpVzRwTPBFWVCMRiyfIHFOLZ
+        uaFmrMPQ==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb88s-0006YT-Nc; Wed, 12 Jun 2019 18:38:39 +0000
+        id 1hb88s-0006YH-Jr; Wed, 12 Jun 2019 18:38:39 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hb88q-0002BP-8T; Wed, 12 Jun 2019 15:38:36 -0300
+        id 1hb88q-0002BT-9K; Wed, 12 Jun 2019 15:38:36 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
-Subject: [PATCH v1 18/31] docs: accounting: convert to ReST
-Date:   Wed, 12 Jun 2019 15:38:21 -0300
-Message-Id: <c9b13fed529144ae419678db1e386d5853709c9c.1560364494.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v1 19/31] docs: fmc: convert to ReST
+Date:   Wed, 12 Jun 2019 15:38:22 -0300
+Message-Id: <c560f879777b6d1edf525967716871dd614b7d17.1560364494.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560364493.git.mchehab+samsung@kernel.org>
 References: <cover.1560364493.git.mchehab+samsung@kernel.org>
@@ -51,540 +48,787 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the accounting documentation files to ReST, add an
+Rename the FMC documentation files to ReST, add an
 index for them and adjust in order to produce a nice html
 output via the Sphinx build system.
+
+At least some of this files seemed to be using some markup
+language similar to ReST, but with a different markup for
+cross-references. Adjust those to use the ReST syntax.
 
 At its new index.rst, let's add a :orphan: while this is not linked to
 the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{cgroupstats.txt => cgroupstats.rst}      | 14 ++--
- ...ay-accounting.txt => delay-accounting.rst} | 61 ++++++++------
- Documentation/accounting/index.rst            | 14 ++++
- Documentation/accounting/{psi.txt => psi.rst} | 40 +++++-----
- ...kstats-struct.txt => taskstats-struct.rst} | 79 ++++++++++++-------
- .../{taskstats.txt => taskstats.rst}          | 15 ++--
- Documentation/admin-guide/cgroup-v2.rst       |  6 +-
- init/Kconfig                                  |  2 +-
- 8 files changed, 139 insertions(+), 92 deletions(-)
- rename Documentation/accounting/{cgroupstats.txt => cgroupstats.rst} (77%)
- rename Documentation/accounting/{delay-accounting.txt => delay-accounting.rst} (77%)
- create mode 100644 Documentation/accounting/index.rst
- rename Documentation/accounting/{psi.txt => psi.rst} (91%)
- rename Documentation/accounting/{taskstats-struct.txt => taskstats-struct.rst} (78%)
- rename Documentation/accounting/{taskstats.txt => taskstats.rst} (95%)
+ Documentation/fmc/{API.txt => api.rst}        | 10 +--
+ .../fmc/{carrier.txt => carrier.rst}          | 65 ++++++++++---------
+ .../fmc/{FMC-and-SDB.txt => fmc-and-sdb.rst}  | 19 ++++--
+ .../fmc/{fmc-chardev.txt => fmc-chardev.rst}  |  9 +--
+ .../fmc/{fmc-fakedev.txt => fmc-fakedev.rst}  | 13 ++--
+ .../fmc/{fmc-trivial.txt => fmc-trivial.rst}  | 11 ++--
+ ...-write-eeprom.txt => fmc-write-eeprom.rst} | 36 +++++-----
+ .../fmc/{identifiers.txt => identifiers.rst}  | 20 +++---
+ Documentation/fmc/index.rst                   | 21 ++++++
+ .../fmc/{mezzanine.txt => mezzanine.rst}      | 34 +++++-----
+ .../fmc/{parameters.txt => parameters.rst}    | 11 ++--
+ 11 files changed, 147 insertions(+), 102 deletions(-)
+ rename Documentation/fmc/{API.txt => api.rst} (87%)
+ rename Documentation/fmc/{carrier.txt => carrier.rst} (91%)
+ rename Documentation/fmc/{FMC-and-SDB.txt => fmc-and-sdb.rst} (88%)
+ rename Documentation/fmc/{fmc-chardev.txt => fmc-chardev.rst} (96%)
+ rename Documentation/fmc/{fmc-fakedev.txt => fmc-fakedev.rst} (85%)
+ rename Documentation/fmc/{fmc-trivial.txt => fmc-trivial.rst} (69%)
+ rename Documentation/fmc/{fmc-write-eeprom.txt => fmc-write-eeprom.rst} (79%)
+ rename Documentation/fmc/{identifiers.txt => identifiers.rst} (93%)
+ create mode 100644 Documentation/fmc/index.rst
+ rename Documentation/fmc/{mezzanine.txt => mezzanine.rst} (87%)
+ rename Documentation/fmc/{parameters.txt => parameters.rst} (96%)
 
-diff --git a/Documentation/accounting/cgroupstats.txt b/Documentation/accounting/cgroupstats.rst
-similarity index 77%
-rename from Documentation/accounting/cgroupstats.txt
-rename to Documentation/accounting/cgroupstats.rst
-index d16a9849e60e..b9afc48f4ea2 100644
---- a/Documentation/accounting/cgroupstats.txt
-+++ b/Documentation/accounting/cgroupstats.rst
-@@ -1,3 +1,7 @@
-+==================
-+Control Groupstats
-+==================
+diff --git a/Documentation/fmc/API.txt b/Documentation/fmc/api.rst
+similarity index 87%
+rename from Documentation/fmc/API.txt
+rename to Documentation/fmc/api.rst
+index 06b06b92c794..157a7343180c 100644
+--- a/Documentation/fmc/API.txt
++++ b/Documentation/fmc/api.rst
+@@ -2,7 +2,7 @@ Functions Exported by fmc.ko
+ ****************************
+ 
+ The FMC core exports the usual 4 functions that are needed for a bus to
+-work, and a few more:
++work, and a few more::
+ 
+         int fmc_driver_register(struct fmc_driver *drv);
+         void fmc_driver_unregister(struct fmc_driver *drv);
+@@ -20,9 +20,9 @@ work, and a few more:
+         int fmc_reprogram(struct fmc_device *f, struct fmc_driver *d, char *gw,
+                           int sdb_entry);
+ 
+-The data structure that describe a device is detailed in *note FMC
+-Device::, the one that describes a driver is detailed in *note FMC
+-Driver::.  Please note that structures of type fmc_device must be
++The data structure that describe a device is detailed in :ref:`fmc_device`,
++the one that describes a driver is detailed in :ref:`fmc_driver`.
++Please note that structures of type fmc_device must be
+ allocated by the caller, but must not be released after unregistering.
+ The fmc-bus itself takes care of releasing the structure when their use
+ count reaches zero - actually, the device model does that in lieu of us.
+@@ -39,7 +39,7 @@ should register as a group only mezzanines that are driven by the same
+ FPGA, for the reason outlined above.
+ 
+ Finally, the fmc_reprogram function calls the reprogram method (see
+-*note The API Offered by Carriers:: and also scans the memory area for
++:ref:`fmc_api_offered_by_carriers`) and also scans the memory area for
+ an SDB tree. You can pass -1 as sdb_entry to disable such scan.
+ Otherwise, the function fails if no tree is found at the specified
+ entry point.  The function is meant to factorize common code, and by
+diff --git a/Documentation/fmc/carrier.txt b/Documentation/fmc/carrier.rst
+similarity index 91%
+rename from Documentation/fmc/carrier.txt
+rename to Documentation/fmc/carrier.rst
+index 5e4f1dd3e98b..06ba443441e1 100644
+--- a/Documentation/fmc/carrier.txt
++++ b/Documentation/fmc/carrier.rst
+@@ -1,5 +1,8 @@
++.. _fmc_device:
 +
- Control Groupstats is inspired by the discussion at
- http://lkml.org/lkml/2007/4/11/187 and implements per cgroup statistics as
- suggested by Andrew Morton in http://lkml.org/lkml/2007/4/11/263.
-@@ -19,9 +23,9 @@ about tasks blocked on I/O. If CONFIG_TASK_DELAY_ACCT is disabled, this
- information will not be available.
++==========
+ FMC Device
+-**********
++==========
  
- To extract cgroup statistics a utility very similar to getdelays.c
--has been developed, the sample output of the utility is shown below
-+has been developed, the sample output of the utility is shown below::
+ Within the Linux bus framework, the FMC device is created and
+ registered by the carrier driver. For example, the PCI driver for the
+@@ -25,7 +28,7 @@ change for compatible changes (like a new flag) and the major number
+ will increase when an incompatible change happens (for example, a
+ change in layout of some fmc data structures).  Device writers should
+ just set it to the value FMC_VERSION, and be ready to get back -EINVAL
+-at registration time.
++at registration time::
  
--~/balbir/cgroupstats # ./getdelays  -C "/sys/fs/cgroup/a"
--sleeping 1, blocked 0, running 1, stopped 0, uninterruptible 0
--~/balbir/cgroupstats # ./getdelays  -C "/sys/fs/cgroup"
--sleeping 155, blocked 0, running 1, stopped 0, uninterruptible 2
-+  ~/balbir/cgroupstats # ./getdelays  -C "/sys/fs/cgroup/a"
-+  sleeping 1, blocked 0, running 1, stopped 0, uninterruptible 0
-+  ~/balbir/cgroupstats # ./getdelays  -C "/sys/fs/cgroup"
-+  sleeping 155, blocked 0, running 1, stopped 0, uninterruptible 2
-diff --git a/Documentation/accounting/delay-accounting.txt b/Documentation/accounting/delay-accounting.rst
-similarity index 77%
-rename from Documentation/accounting/delay-accounting.txt
-rename to Documentation/accounting/delay-accounting.rst
-index 042ea59b5853..7cc7f5852da0 100644
---- a/Documentation/accounting/delay-accounting.txt
-+++ b/Documentation/accounting/delay-accounting.rst
+      struct fmc_device {
+              unsigned long version;
+@@ -123,13 +126,15 @@ As I write this, she SPEC carrier is already completely functional in
+ the fmc-bus environment, and is a good reference to look at.
+ 
+ 
++.. _fmc_api_offered_by_carriers:
++
+ The API Offered by Carriers
+ ===========================
+ 
+ The carrier provides a number of methods by means of the
+-`fmc_operations' structure, which currently is defined like this
++`fmc_operations` structure, which currently is defined like this
+ (again, it is a moving target, please refer to the header rather than
+-this document):
++this document)::
+ 
+      struct fmc_operations {
+              uint32_t (*readl)(struct fmc_device *fmc, int offset);
+@@ -148,8 +153,7 @@ this document):
+ 
+ The individual methods perform the following tasks:
+ 
+-`readl'
+-`writel'
++`readl`, `writel`
+      These functions access FPGA registers by whatever means the
+      carrier offers. They are not expected to fail, and most of the time
+      they will just make a memory access to the host bus. If the
+@@ -161,20 +165,20 @@ The individual methods perform the following tasks:
+      or other non-local carriers, error-management is still to be
+      defined.
+ 
+-`validate'
++`validate`
+      Module parameters are used to manage different applications for
+      two or more boards of the same kind. Validation is based on the
+      busid module parameter, if provided, and returns the matching
+-     index in the associated array. See *note Module Parameters:: in in
+-     doubt. If no match is found, `-ENOENT' is returned; if the user
+-     didn't pass `busid=', all devices will pass validation.  The value
++     index in the associated array. See :ref:`fmc_module_parameters` in in
++     doubt. If no match is found, `-ENOENT` is returned; if the user
++     didn't pass `busid=`, all devices will pass validation.  The value
+      returned by the validate method can be used as index into other
+-     parameters (for example, some drivers use the `lm32=' parameter in
+-     this way). Such "generic parameters" are documented in *note
+-     Module Parameters::, below. The validate method is used by
+-     `fmc-trivial.ko', described in *note fmc-trivial::.
++     parameters (for example, some drivers use the `lm32=` parameter in
++     this way). Such "generic parameters" are documented in
++     :ref:`fmc_module_parameters` below. The validate method is used by
++     `fmc-trivial.ko`, described in :ref:`fmc_trivial`.
+ 
+-`reprogram'
++`reprogram`
+      The carrier enumerates FMC devices by loading a standard (or
+      golden) FPGA binary that allows EEPROM access. Each driver, then,
+      will need to reprogram the FPGA by calling this function.  If the
+@@ -182,31 +186,28 @@ The individual methods perform the following tasks:
+      binary. If the gateware name has been overridden through module
+      parameters (in a carrier-specific way) the file loaded will match
+      the parameters. Per-device gateware names can be specified using
+-     the `gateware=' parameter, see *note Module Parameters::.  Note:
++     the `gateware=` parameter, see :ref:`fmc_module_parameters`.  Note:
+      Clients should call rhe new helper, fmc_reprogram, which both
+      calls this method and parse the SDB tree of the FPGA.
+ 
+-`irq_request'
+-`irq_ack'
+-`irq_free'
++`irq_request`, `irq_ack`, `irq_free`
+      Interrupt management is carrier-specific, so it is abstracted as
+      operations. The interrupt number is listed in the device
+      structure, and for the mezzanine driver the number is only
+      informative.  The handler will receive the fmc pointer as dev_id;
+      the flags argument is passed to the Linux request_irq function,
+      but fmc-specific flags may be added in the future. You'll most
+-     likely want to pass the `IRQF_SHARED' flag.
++     likely want to pass the `IRQF_SHARED` flag.
+ 
+-`gpio_config'
++`gpio_config`
+      The method allows to configure a GPIO pin in the carrier, and read
+-     its current value if it is configured as input. See *note The GPIO
+-     Abstraction:: for details.
++     its current value if it is configured as input. See
++     :ref:`fmc_gpio_abstraction` for details.
+ 
+-`read_ee'
+-`write_ee'
++`read_ee`, `write_ee`
+      Read or write the EEPROM. The functions are expected to be only
+      called before reprogramming and the carrier should refuse them
+-     with `ENODEV' after reprogramming.  The offset is expected to be
++     with `ENODEV` after reprogramming.  The offset is expected to be
+      within 8kB (the current size), but addresses up to 1MB are
+      reserved to fit bigger I2C devices in the future. Carriers may
+      offer access to other internal flash memories using these same
+@@ -214,9 +215,9 @@ The individual methods perform the following tasks:
+      I2C memory is seen at offset 1M and the internal SPI flash is seen
+      at offset 16M.  This multiplexing of several flash memories in the
+      same address space is carrier-specific and should only be used
+-     by a driver that has verified the `carrier_name' field.
+-
++     by a driver that has verified the `carrier_name` field.
+ 
++.. _fmc_gpio_abstraction:
+ 
+ The GPIO Abstraction
+ ====================
+@@ -230,7 +231,7 @@ some knowledge of the carrier itself.  For this reason, the specific
+ driver can request to configure carrier-specific GPIO pins, numbered
+ from 0 to at most 4095.  Configuration is performed by passing a
+ pointer to an array of struct fmc_gpio items, as well as the length of
+-the array. This is the data structure:
++the array. This is the data structure::
+ 
+         struct fmc_gpio {
+                 char *carrier_name;
+@@ -254,7 +255,7 @@ pins, and expect one such configuration to succeed - if none succeeds
+ it most likely means that the current carrier is a still-unknown one.
+ 
+ If, however, your GPIO pin has a specific known role, you can pass a
+-special number in the gpio field, using one of the following macros:
++special number in the gpio field, using one of the following macros::
+ 
+         #define FMC_GPIO_RAW(x)         (x)             /* 4096 of them */
+         #define FMC_GPIO_IRQ(x)         ((x) + 0x1000)  /*  256 of them */
+@@ -293,9 +294,9 @@ carriers.
+ 
+ The return value of gpio_config is defined as follows:
+ 
+-   * If no pin in the array can be used by the carrier, `-ENODEV'.
++   * If no pin in the array can be used by the carrier, `-ENODEV`.
+ 
+-   * If at least one virtual GPIO number cannot be mapped, `-ENOENT'.
++   * If at least one virtual GPIO number cannot be mapped, `-ENOENT`.
+ 
+    * On success, 0 or positive. The value returned is the number of
+      high input bits (if no input is configured, the value for success
+diff --git a/Documentation/fmc/FMC-and-SDB.txt b/Documentation/fmc/fmc-and-sdb.rst
+similarity index 88%
+rename from Documentation/fmc/FMC-and-SDB.txt
+rename to Documentation/fmc/fmc-and-sdb.rst
+index fa14e0b24521..e64c6104a241 100644
+--- a/Documentation/fmc/FMC-and-SDB.txt
++++ b/Documentation/fmc/fmc-and-sdb.rst
+@@ -1,3 +1,6 @@
++============
++Introduction
++============
+ 
+ FMC (FPGA Mezzanine Card) is the standard we use for our I/O devices,
+ in the context of White Rabbit and related hardware.
+@@ -18,12 +21,12 @@ submodule.
+ The most up to date version of code and documentation is always
+ available from the repository you can clone from:
+ 
+-        git://ohwr.org/fmc-projects/fmc-bus.git (read-only)
+-        git@ohwr.org:fmc-projects/fmc-bus.git (read-write for developers)
++        - git://ohwr.org/fmc-projects/fmc-bus.git (read-only)
++        - git@ohwr.org:fmc-projects/fmc-bus.git (read-write for developers)
+ 
+ Selected versions of the documentation, as well as complete tar
+ archives for selected revisions are placed to the Files section of the
+-project: `http://www.ohwr.org/projects/fmc-bus/files'
++project: `http://www.ohwr.org/projects/fmc-bus/files`
+ 
+ 
+ What is FMC
+@@ -62,13 +65,15 @@ a filesystem inside the FMC EEPROM.
+ SDB is not mandatory for use of this FMC kernel bus, but if you have SDB
+ this package can make good use of it.  SDB itself is developed in the
+ fpga-config-space OHWR project. The link to the repository is
+-`git://ohwr.org/hdl-core-lib/fpga-config-space.git' and what is used in
++`git://ohwr.org/hdl-core-lib/fpga-config-space.git` and what is used in
+ this project lives in the sdbfs subdirectory in there.
+ 
+-SDB support for FMC is described in *note FMC Identification:: and
+-*note SDB Support::
++SDB support for FMC is described in :ref:`fmc_identification` and
++:ref:`fmc_sdb_support`.
+ 
+ 
++.. _fmc_sdb_support:
++
+ SDB Support
+ ***********
+ 
+@@ -79,7 +84,7 @@ memory image.
+ The module exports the following functions, in the special header
+ <linux/fmc-sdb.h>. The linux/ prefix in the name is there because we
+ plan to submit it upstream in the future, and don't want to force
+-changes on our drivers if that happens.
++changes on our drivers if that happens::
+ 
+          int fmc_scan_sdb_tree(struct fmc_device *fmc, unsigned long address);
+          void fmc_show_sdb_tree(struct fmc_device *fmc);
+diff --git a/Documentation/fmc/fmc-chardev.txt b/Documentation/fmc/fmc-chardev.rst
+similarity index 96%
+rename from Documentation/fmc/fmc-chardev.txt
+rename to Documentation/fmc/fmc-chardev.rst
+index d9ccb278e597..5aa77511e4d1 100644
+--- a/Documentation/fmc/fmc-chardev.txt
++++ b/Documentation/fmc/fmc-chardev.rst
 @@ -1,5 +1,6 @@
+-fmc-chardev
+-===========
 +================
- Delay accounting
------------------
++Character device
 +================
  
- Tasks encounter delays in execution when they wait
- for some kernel resource to become available e.g. a
-@@ -39,7 +40,9 @@ in detail in a separate document in this directory. Taskstats returns a
- generic data structure to userspace corresponding to per-pid and per-tgid
- statistics. The delay accounting functionality populates specific fields of
- this structure. See
+ This is a simple generic driver, that allows user access by means of a
+ character device (actually, one for each mezzanine it takes hold of).
+@@ -27,7 +28,7 @@ arises.
+ The example below shows raw access to a SPEC card programmed with its
+ golden FPGA file, that features an SDB structure at offset 256 - i.e.
+ 64 words.  The mezzanine's EEPROM in this case is not programmed, so the
+-default name is fmc-<bus><devfn>, and there are two cards in the system:
++default name is fmc-<bus><devfn>, and there are two cards in the system::
+ 
+   spusa.root# insmod fmc-chardev.ko
+   [ 1073.339332] spec 0000:02:00.0: Driver has no ID: matches all
+@@ -52,7 +53,7 @@ repeated reading data is written to stdout; repeated writes read from
+ stdin and the value argument is ignored.
+ 
+ The following examples show reading the SDB magic number and the first
+-SDB record from a SPEC device programmed with its golden image:
++SDB record from a SPEC device programmed with its golden image::
+ 
+      spusa.root# ./fmc-mem /dev/fmc-0200 100
+      5344422d
+diff --git a/Documentation/fmc/fmc-fakedev.txt b/Documentation/fmc/fmc-fakedev.rst
+similarity index 85%
+rename from Documentation/fmc/fmc-fakedev.txt
+rename to Documentation/fmc/fmc-fakedev.rst
+index e85b74a4ae30..e9300e839eef 100644
+--- a/Documentation/fmc/fmc-fakedev.txt
++++ b/Documentation/fmc/fmc-fakedev.rst
+@@ -1,7 +1,10 @@
+-fmc-fakedev
+-===========
++.. _fmc_fakedev:
+ 
+-This package includes a software-only device, called fmc-fakedev, which
++=========================
++Software-only Fake Device
++=========================
 +
-      include/linux/taskstats.h
++This package includes a software-only device, called **fmc-fakedev**, which
+ is able to register up to 4 mezzanines (by default it registers one).
+ Unlike the SPEC driver, which creates an FMC device for each PCI cards
+ it manages, this module creates a single instance of its set of
+@@ -9,14 +12,14 @@ mezzanines.
+ 
+ It is meant as the simplest possible example of how a driver should be
+ written, and it includes a fake EEPROM image (built using the tools
+-described in *note FMC Identification::),, which by default is
++described in :ref:`fmc_identification` which by default is
+ replicated for each fake mezzanine.
+ 
+ You can also use this device to verify the match algorithms, by asking
+ it to test your own EEPROM image. You can provide the image by means of
+ the eeprom= module parameter: the new EEPROM image is loaded, as usual,
+ by means of the firmware loader.  This example shows the defaults and a
+-custom EEPROM image:
++custom EEPROM image::
+ 
+      spusa.root# insmod fmc-fakedev.ko
+      [   99.971247]  fake-fmc-carrier: mezzanine 0
+diff --git a/Documentation/fmc/fmc-trivial.txt b/Documentation/fmc/fmc-trivial.rst
+similarity index 69%
+rename from Documentation/fmc/fmc-trivial.txt
+rename to Documentation/fmc/fmc-trivial.rst
+index d1910bc67159..c98324f955ea 100644
+--- a/Documentation/fmc/fmc-trivial.txt
++++ b/Documentation/fmc/fmc-trivial.rst
+@@ -1,7 +1,9 @@
+-fmc-trivial
+-===========
++.. _fmc_trivial:
+ 
+-The simple module fmc-trivial is just a simple client that registers an
++FMC trivial driver
++==================
 +
- for a description of the fields pertaining to delay accounting.
- It will generally be in the form of counters returning the cumulative
- delay seen for cpu, sync block I/O, swapin, memory reclaim etc.
-@@ -61,13 +64,16 @@ also serves as an example of using the taskstats interface.
- Usage
- -----
++The simple module **fmc-trivial** is just a simple client that registers an
+ interrupt handler. I used it to verify the basic mechanism of the FMC
+ bus and how interrupts worked.
  
--Compile the kernel with
-+Compile the kernel with::
+@@ -9,8 +11,7 @@ The module implements the generic FMC parameters, so it can program a
+ different gateware file in each card. The whole list of parameters it
+ accepts are:
+ 
+-`busid='
+-`gateware='
++`busid=`, `gateware=`
+      Generic parameters. See mezzanine.txt
+ 
+ 
+diff --git a/Documentation/fmc/fmc-write-eeprom.txt b/Documentation/fmc/fmc-write-eeprom.rst
+similarity index 79%
+rename from Documentation/fmc/fmc-write-eeprom.txt
+rename to Documentation/fmc/fmc-write-eeprom.rst
+index e0a9712156aa..45311bcc804a 100644
+--- a/Documentation/fmc/fmc-write-eeprom.txt
++++ b/Documentation/fmc/fmc-write-eeprom.rst
+@@ -1,9 +1,12 @@
+-fmc-write-eeprom
++.. _fmc_write_eeprom:
 +
- 	CONFIG_TASK_DELAY_ACCT=y
- 	CONFIG_TASKSTATS=y
++================
++FMC write eeprom
+ ================
  
- Delay accounting is enabled by default at boot up.
--To disable, add
-+To disable, add::
+-This module is designed to load a binary file from /lib/firmware and to
+-write it to the internal EEPROM of the mezzanine card. This driver uses
+-the `busid' generic parameter.
++The module **fmc-write-eeprom** is designed to load a binary file from
++/lib/firmware and to write it to the internal EEPROM of the mezzanine card.
++This driver uses the `busid` generic parameter.
+ 
+ Overwriting the EEPROM is not something you should do daily, and it is
+ expected to only happen during manufacturing. For this reason, the
+@@ -11,36 +14,36 @@ module makes it unlikely for the random user to change a working EEPROM.
+ 
+ However, since the EEPROM may include application-specific information
+ other than the identification, later versions of this packages added
+-write-support through sysfs. See *note Accessing the EEPROM::.
++write-support through sysfs. See :ref:`fmc_accessing_eeprom`.
+ 
+ To avoid damaging the EEPROM content, the module takes the following
+ measures:
+ 
+-   * It accepts a `file=' argument (within /lib/firmware) and if no
++   * It accepts a `file=` argument (within /lib/firmware) and if no
+      such argument is received, it doesn't write anything to EEPROM
+      (i.e. there is no default file name).
+ 
+-   * If the file name ends with `.bin' it is written verbatim starting
++   * If the file name ends with `.bin` it is written verbatim starting
+      at offset 0.
+ 
+-   * If the file name ends with `.tlv' it is interpreted as
++   * If the file name ends with `.tlv` it is interpreted as
+      type-length-value (i.e., it allows writev(2)-like operation).
+ 
+    * If the file name doesn't match any of the patterns above, it is
+      ignored and no write is performed.
+ 
+-   * Only cards listed with `busid=' are written to. If no busid is
++   * Only cards listed with `busid=` are written to. If no busid is
+      specified, no programming is done (and the probe function of the
+      driver will fail).
+ 
+ 
+ Each TLV tuple is formatted in this way: the header is 5 bytes,
+-followed by data. The first byte is `w' for write, the next two bytes
++followed by data. The first byte is `w` for write, the next two bytes
+ represent the address, in little-endian byte order, and the next two
+ represent the data length, in little-endian order. The length does not
+ include the header (it is the actual number of bytes to be written).
+ 
+-This is a real example: that writes 5 bytes at position 0x110:
++This is a real example: that writes 5 bytes at position 0x110::
+ 
+         spusa.root# od -t x1 -Ax /lib/firmware/try.tlv
+         000000 77 10 01 05 00 30 31 32 33 34
+@@ -55,13 +58,13 @@ Rabbit environment. For this reason the TLV format is not expected to
+ be used much and is not expected to be developed further.
+ 
+ If you want to try reflashing fake EEPROM devices, you can use the
+-fmc-fakedev.ko module (see *note fmc-fakedev::).  Whenever you change
++fmc-fakedev.ko module (see :ref:`fmc_fakedev`).  Whenever you change
+ the image starting at offset 0, it will deregister and register again
+ after two seconds.  Please note, however, that if fmc-write-eeprom is
+ still loaded, the system will associate it to the new device, which
+ will be reprogrammed and thus will be unloaded after two seconds.  The
+ following example removes the module after it reflashed fakedev the
+-first time.
++first time::
+ 
+      spusa.root# insmod fmc-fakedev.ko
+         [   72.984733]  fake-fmc: Manufacturer: fake-vendor
+@@ -74,12 +77,13 @@ first time.
+         [  132.895794]  fake-fmc: Manufacturer: CERN
+         [  132.899872]  fake-fmc: Product name: FmcDelay1ns4cha
+ 
++.. _fmc_accessing_eeprom:
+ 
+ Accessing the EEPROM
+-=====================
++====================
+ 
+ The bus creates a sysfs binary file called eeprom for each mezzanine it
+-knows about:
++knows about::
+ 
+         spusa.root# cd /sys/bus/fmc/devices; ls -l */eeprom
+         -r--r--r-- 1 root root 8192 Feb 21 12:30 FmcAdc100m14b4cha-0800/eeprom
+@@ -94,5 +98,5 @@ the FPGA with a custom circuit, the carrier is unable to access the
+ EEPROM and returns ENOTSUPP.
+ 
+ An alternative way to write the EEPROM is the mezzanine driver
+-fmc-write-eeprom (See *note fmc-write-eeprom::), but the procedure is
++fmc-write-eeprom (See :ref:`fmc_write_eeprom`), but the procedure is
+ more complex.
+diff --git a/Documentation/fmc/identifiers.txt b/Documentation/fmc/identifiers.rst
+similarity index 93%
+rename from Documentation/fmc/identifiers.txt
+rename to Documentation/fmc/identifiers.rst
+index 3bb577ff0d52..01e6dde0996f 100644
+--- a/Documentation/fmc/identifiers.txt
++++ b/Documentation/fmc/identifiers.rst
+@@ -1,3 +1,5 @@
++.. _fmc_identification:
 +
-    nodelayacct
-+
- to the kernel boot options. The rest of the instructions
- below assume this has not been done.
+ FMC Identification
+ ******************
  
-@@ -78,40 +84,43 @@ The utility also allows a given command to be
- executed and the corresponding delays to be
- seen.
+@@ -19,7 +21,7 @@ package and SDB (part of the fpga-config-space package).
  
--General format of the getdelays command
-+General format of the getdelays command::
- 
--getdelays [-t tgid] [-p pid] [-c cmd...]
-+	getdelays [-t tgid] [-p pid] [-c cmd...]
+ The first sections are only interesting for manufacturers who need to
+ write the EEPROM. If you are just a software developer writing an FMC
+-device or driver, you may jump straight to *note SDB Support::.
++device or driver, you may jump straight to :ref:`fmc_sdb_support`.
  
  
--Get delays, since system boot, for pid 10
--# ./getdelays -p 10
--(output similar to next case)
-+Get delays, since system boot, for pid 10::
+ Building the FRU Structure
+@@ -27,7 +29,7 @@ Building the FRU Structure
  
--Get sum of delays, since system boot, for all pids with tgid 5
--# ./getdelays -t 5
-+	# ./getdelays -p 10
-+	(output similar to next case)
+ If you want to know the internals of the FRU structure and despair, you
+ can retrieve the document from
+-`http://download.intel.com/design/servers/ipmi/FRU1011.pdf' .  The
++`http://download.intel.com/design/servers/ipmi/FRU1011.pdf` .  The
+ standard is awful and difficult without reason, so we only support the
+ minimum mandatory subset - we create a simple structure and parse it
+ back at run time, but we are not able to either generate or parse more
+@@ -43,13 +45,15 @@ line takes precedence)
+ To make a long story short, in order to build a standard-compliant
+ binary file to be burned in your EEPROM, you need the following items:
  
-+Get sum of delays, since system boot, for all pids with tgid 5::
++	===========    ===     =====================  ============
+         Environment    Opt     Official Name          Default
+----------------------------------------------------------------------
++	===========    ===     =====================  ============
+         FRU_VENDOR     -v      "Board Manufacturer"   fmc-example
+         FRU_NAME       -n      "Board Product Name"   mezzanine
+-        FRU_SERIAL     -s      `Board Serial Number"  0001
++        FRU_SERIAL     -s      "Board Serial Number"  0001
+         FRU_PART       -p      "Board Part Number"    sample-part
+         FRU_OUTPUT     -o      not applicable         /dev/stdout
++	===========    ===     =====================  ============
  
--CPU	count	real total	virtual total	delay total
--	7876	92005750	100000000	24001500
--IO	count	delay total
--	0	0
--SWAP	count	delay total
--	0	0
--RECLAIM	count	delay total
--	0	0
-+	# ./getdelays -t 5
+ The "Official Name" above is what you find in the FRU official
+ documentation, chapter 11, page 7 ("Board Info Area Format").  The
+@@ -63,7 +67,7 @@ soon as I find some time for that.
  
--Get delays seen in executing a given simple command
--# ./getdelays -c ls /
+ FIXME: consumption etc for FRU are here or in PTS?
  
--bin   data1  data3  data5  dev  home  media  opt   root  srv        sys  usr
--boot  data2  data4  data6  etc  lib   mnt    proc  sbin  subdomain  tmp  var
-+	CPU	count	real total	virtual total	delay total
-+		7876	92005750	100000000	24001500
-+	IO	count	delay total
-+		0	0
-+	SWAP	count	delay total
-+		0	0
-+	RECLAIM	count	delay total
-+		0	0
+-The following example creates a binary image for a specific board:
++The following example creates a binary image for a specific board::
  
-+Get delays seen in executing a given simple command::
+         ./tools/fru-generator -v CERN -n FmcAdc100m14b4cha \
+                -s HCCFFIA___-CR000003 -p EDA-02063-V5-0 > eeprom.bin
+@@ -71,7 +75,7 @@ The following example creates a binary image for a specific board:
+ The following example shows a script that builds several binary EEPROM
+ images for a series of boards, changing the serial number for each of
+ them. The script uses a mix of environment variables and command line
+-options, and uses the same string patterns shown above.
++options, and uses the same string patterns shown above::
  
--CPU	count	real total	virtual total	delay total
-+  # ./getdelays -c ls /
-+
-+  bin   data1  data3  data5  dev  home  media  opt   root  srv        sys  usr
-+  boot  data2  data4  data6  etc  lib   mnt    proc  sbin  subdomain  tmp  var
-+
-+
-+  CPU	count	real total	virtual total	delay total
- 	6	4000250		4000000		0
--IO	count	delay total
-+  IO	count	delay total
- 	0	0
--SWAP	count	delay total
-+  SWAP	count	delay total
- 	0	0
--RECLAIM	count	delay total
-+  RECLAIM	count	delay total
- 	0	0
-diff --git a/Documentation/accounting/index.rst b/Documentation/accounting/index.rst
+         #!/bin/sh
+ 
+@@ -131,7 +135,7 @@ name. The IPMI-FRU name is not mandatory, but a strongly suggested
+ choice; the name filename is mandatory, because this is the preferred
+ short name used by the FMC core.  For example, a name of "fdelay" may
+ supplement a Product Name like "FmcDelay1ns4cha" - exactly as
+-demonstrated in `tools/sdbfs'.
++demonstrated in `tools/sdbfs`.
+ 
+ Note: SDB access to flash memory is not yet supported, so the short
+ name currently in use is just the "Product Name" FRU string.
+@@ -139,7 +143,7 @@ name currently in use is just the "Product Name" FRU string.
+ The example in tools/sdbfs includes an extra file, that is needed by
+ the fine-delay driver, and must live at a known address of 0x1800.  By
+ running gensdbfs on that directory you can output your binary EEPROM
+-image (here below spusa$ is the shell prompt):
++image (here below spusa$ is the shell prompt)::
+ 
+         spusa$ ../fru-generator -v CERN -n FmcDelay1ns4cha -s proto-0 \
+                       -p EDA-02267-V3 > IPMI-FRU
+diff --git a/Documentation/fmc/index.rst b/Documentation/fmc/index.rst
 new file mode 100644
-index 000000000000..e1f6284b5ff3
+index 000000000000..a749cb04f39e
 --- /dev/null
-+++ b/Documentation/accounting/index.rst
-@@ -0,0 +1,14 @@
++++ b/Documentation/fmc/index.rst
+@@ -0,0 +1,21 @@
 +:orphan:
 +
-+==========
-+Accounting
-+==========
++=========================
++FMC (FPGA Mezzanine Card)
++=========================
 +
 +.. toctree::
 +   :maxdepth: 1
 +
-+   cgroupstats
-+   delay-accounting
-+   psi
-+   taskstats
-+   taskstats-struct
-diff --git a/Documentation/accounting/psi.txt b/Documentation/accounting/psi.rst
-similarity index 91%
-rename from Documentation/accounting/psi.txt
-rename to Documentation/accounting/psi.rst
-index 5cbe5659e3b7..621111ce5740 100644
---- a/Documentation/accounting/psi.txt
-+++ b/Documentation/accounting/psi.rst
-@@ -35,14 +35,14 @@ Pressure interface
- Pressure information for each resource is exported through the
- respective file in /proc/pressure/ -- cpu, memory, and io.
- 
--The format for CPU is as such:
-+The format for CPU is as such::
- 
--some avg10=0.00 avg60=0.00 avg300=0.00 total=0
-+	some avg10=0.00 avg60=0.00 avg300=0.00 total=0
- 
--and for memory and IO:
-+and for memory and IO::
- 
--some avg10=0.00 avg60=0.00 avg300=0.00 total=0
--full avg10=0.00 avg60=0.00 avg300=0.00 total=0
-+	some avg10=0.00 avg60=0.00 avg300=0.00 total=0
-+	full avg10=0.00 avg60=0.00 avg300=0.00 total=0
- 
- The "some" line indicates the share of time in which at least some
- tasks are stalled on a given resource.
-@@ -77,9 +77,9 @@ To register a trigger user has to open psi interface file under
- /proc/pressure/ representing the resource to be monitored and write the
- desired threshold and time window. The open file descriptor should be
- used to wait for trigger events using select(), poll() or epoll().
--The following format is used:
-+The following format is used::
- 
--<some|full> <stall amount in us> <time window in us>
-+	<some|full> <stall amount in us> <time window in us>
- 
- For example writing "some 150000 1000000" into /proc/pressure/memory
- would add 150ms threshold for partial memory stall measured within
-@@ -115,18 +115,20 @@ trigger  is closed.
- Userspace monitor usage example
- ===============================
- 
--#include <errno.h>
--#include <fcntl.h>
--#include <stdio.h>
--#include <poll.h>
--#include <string.h>
--#include <unistd.h>
-+::
- 
--/*
-- * Monitor memory partial stall with 1s tracking window size
-- * and 150ms threshold.
-- */
--int main() {
-+  #include <errno.h>
-+  #include <fcntl.h>
-+  #include <stdio.h>
-+  #include <poll.h>
-+  #include <string.h>
-+  #include <unistd.h>
++   fmc-and-sdb
++   carrier
++   identifiers
++   mezzanine
++   parameters
 +
-+  /*
-+   * Monitor memory partial stall with 1s tracking window size
-+   * and 150ms threshold.
-+   */
-+  int main() {
- 	const char trig[] = "some 150000 1000000";
- 	struct pollfd fds;
- 	int n;
-@@ -165,7 +167,7 @@ int main() {
- 	}
++   api
++
++   fmc-fakedev
++   fmc-trivial
++   fmc-write-eeprom
++   fmc-chardev
+diff --git a/Documentation/fmc/mezzanine.txt b/Documentation/fmc/mezzanine.rst
+similarity index 87%
+rename from Documentation/fmc/mezzanine.txt
+rename to Documentation/fmc/mezzanine.rst
+index 87910dbfc91e..9a37147e8f14 100644
+--- a/Documentation/fmc/mezzanine.txt
++++ b/Documentation/fmc/mezzanine.rst
+@@ -1,5 +1,8 @@
++.. _fmc_driver:
++
++==========
+ FMC Driver
+-**********
++==========
  
- 	return 0;
--}
-+  }
+ An FMC driver is concerned with the specific mezzanine and associated
+ gateware. As such, it is expected to be independent of the carrier
+@@ -12,23 +15,23 @@ configured in the FPGA; the latter technique is used when the FPGA is
+ already programmed when the device is registered to the bus core.
  
- Cgroup2 interface
+ In some special cases it is possible for a driver to directly access
+-FPGA registers, by means of the `fpga_base' field of the device
++FPGA registers, by means of the `fpga_base` field of the device
+ structure. This may be needed for high-bandwidth peripherals like fast
+ ADC cards. If the device module registered a remote device (for example
+-by means of Etherbone), the `fpga_base' pointer will be NULL.
++by means of Etherbone), the `fpga_base` pointer will be NULL.
+ Therefore, drivers must be ready to deal with NULL base pointers, and
+ fail gracefully.  Most driver, however, are not expected to access the
+ pointer directly but run fmc_readl and fmc_writel instead, which will
+ work in any case.
+ 
+ In even more special cases, the driver may access carrier-specific
+-functionality: the `carrier_name' string allows the driver to check
+-which is the current carrier and make use of the `carrier_data'
++functionality: the `carrier_name` string allows the driver to check
++which is the current carrier and make use of the `carrier_data`
+ pointer.  We chose to use carrier names rather than numeric identifiers
+ for greater flexibility, but also to avoid a central registry within
+-the `fmc.h' file - we hope other users will exploit our framework with
++the `fmc.h` file - we hope other users will exploit our framework with
+ their own carriers.  An example use of carrier names is in GPIO setup
+-(see *note The GPIO Abstraction::), although the name match is not
++(see :ref:`fmc_gpio_abstraction`), although the name match is not
+ expected to be performed by the driver.  If you depend on specific
+ carriers, please check the carrier name and fail gracefully if your
+ driver finds it is running in a yet-unknown-to-it environment.
+@@ -44,7 +47,7 @@ their EEPROM or on the actual FPGA cores that can be enumerated.
+ Therefore, we have two tables of identifiers.
+ 
+ Matching of FRU information depends on two names, the manufacturer (or
+-vendor) and the device (see *note FMC Identification::); for
++vendor) and the device (see :ref:`fmc_identification`); for
+ flexibility during production (i.e. before writing to the EEPROM) the
+ bus supports a catch-all driver that specifies NULL strings. For this
+ reason, the table is specified as pointer-and-length, not a a
+@@ -58,7 +61,7 @@ instantiated), and for consistency the list is passed as
+ pointer-and-length.  Several similar devices can be driven by the same
+ driver, and thus the driver specifies and array of such arrays.
+ 
+-The complete set of involved data structures is thus the following:
++The complete set of involved data structures is thus the following::
+ 
+         struct fmc_fru_id { char *manufacturer; char *product_name; };
+         struct fmc_sdb_one_id { uint64_t vendor; uint32_t device; };
+@@ -71,13 +74,14 @@ The complete set of involved data structures is thus the following:
+ 
+ A better reference, with full explanation, is the <linux/fmc.h> header.
+ 
++.. _fmc_module_parameters:
+ 
+ Module Parameters
  =================
-diff --git a/Documentation/accounting/taskstats-struct.txt b/Documentation/accounting/taskstats-struct.rst
-similarity index 78%
-rename from Documentation/accounting/taskstats-struct.txt
-rename to Documentation/accounting/taskstats-struct.rst
-index e7512c061c15..ca90fd489c9a 100644
---- a/Documentation/accounting/taskstats-struct.txt
-+++ b/Documentation/accounting/taskstats-struct.rst
-@@ -1,5 +1,6 @@
-+====================
- The struct taskstats
----------------------
-+====================
  
- This document contains an explanation of the struct taskstats fields.
+ Most of the FMC drivers need the same set of kernel parameters. This
+ package includes support to implement common parameters by means of
+-fields in the `fmc_driver' structure and simple macro definitions.
++fields in the `fmc_driver` structure and simple macro definitions.
  
-@@ -10,16 +11,24 @@ There are three different groups of fields in the struct taskstats:
-     the common fields and basic accounting fields are collected for
-     delivery at do_exit() of a task.
- 2) Delay accounting fields
--    These fields are placed between
--    /* Delay accounting fields start */
--    and
--    /* Delay accounting fields end */
-+    These fields are placed between::
-+
-+	/* Delay accounting fields start */
-+
-+    and::
-+
-+	/* Delay accounting fields end */
-+
-     Their values are collected if CONFIG_TASK_DELAY_ACCT is set.
- 3) Extended accounting fields
--    These fields are placed between
--    /* Extended accounting fields start */
--    and
--    /* Extended accounting fields end */
-+    These fields are placed between::
-+
-+	/* Extended accounting fields start */
-+
-+    and::
-+
-+	/* Extended accounting fields end */
-+
-     Their values are collected if CONFIG_TASK_XACCT is set.
+ The parameters are carrier-specific, in that they rely on the busid
+ concept, that varies among carriers. For the SPEC, the identifier is a
+@@ -88,20 +92,20 @@ and some code duplication is unavoidable.
+ This is the list of parameters that are common to several modules to
+ see how they are actually used, please look at spec-trivial.c.
  
- 4) Per-task and per-thread context switch count statistics
-@@ -31,31 +40,33 @@ There are three different groups of fields in the struct taskstats:
- Future extension should add fields to the end of the taskstats struct, and
- should not change the relative position of each field within the struct.
+-`busid='
++`busid=`
+      This is an array of integers, listing carrier-specific
+-     identification numbers. For PIC, for example, `0x0400' represents
++     identification numbers. For PIC, for example, `0x0400` represents
+      bus 4, slot 0.  If any such ID is specified, the driver will only
+      accept to drive cards that appear in the list (even if the FMC ID
+      matches). This is accomplished by the validate carrier method.
  
-+::
+-`gateware='
++`gateware=`
+      The argument is an array of strings. If no busid= is specified,
+      the first string of gateware= is used for all cards; otherwise the
+      identifiers and gateware names are paired one by one, in the order
+      specified.
  
--struct taskstats {
-+  struct taskstats {
-+
-+1) Common and basic accounting fields::
+-`show_sdb='
++`show_sdb=`
+      For modules supporting it, this parameter asks to show the SDB
+      internal structure by means of kernel messages. It is disabled by
+      default because those lines tend to hide more important messages,
+@@ -113,7 +117,7 @@ see how they are actually used, please look at spec-trivial.c.
+ For example, if you are using the trivial driver to load two different
+ gateware files to two different cards, you can use the following
+ parameters to load different binaries to the cards, after looking up
+-the PCI identifiers. This has been tested with a SPEC carrier.
++the PCI identifiers. This has been tested with a SPEC carrier::
  
--1) Common and basic accounting fields:
- 	/* The version number of this struct. This field is always set to
- 	 * TAKSTATS_VERSION, which is defined in <linux/taskstats.h>.
- 	 * Each time the struct is changed, the value should be incremented.
- 	 */
- 	__u16	version;
+         insmod fmc-trivial.ko \
+                               busid=0x0200,0x0400 \
+diff --git a/Documentation/fmc/parameters.txt b/Documentation/fmc/parameters.rst
+similarity index 96%
+rename from Documentation/fmc/parameters.txt
+rename to Documentation/fmc/parameters.rst
+index 59edf088e3a4..bf4566967e9c 100644
+--- a/Documentation/fmc/parameters.txt
++++ b/Documentation/fmc/parameters.rst
+@@ -1,16 +1,17 @@
++===========================
+ Module Parameters in fmc.ko
+-***************************
++===========================
  
--  	/* The exit code of a task. */
-+	/* The exit code of a task. */
- 	__u32	ac_exitcode;		/* Exit status */
+ The core driver receives two module parameters, meant to help debugging
+ client modules. Both parameters can be modified by writing to
+ /sys/module/fmc/parameters/, because they are used when client drivers
+ are devices are registered, not when fmc.ko is loaded.
  
--  	/* The accounting flags of a task as defined in <linux/acct.h>
-+	/* The accounting flags of a task as defined in <linux/acct.h>
- 	 * Defined values are AFORK, ASU, ACOMPAT, ACORE, and AXSIG.
- 	 */
- 	__u8	ac_flag;		/* Record flags */
+-`dump_eeprom='
++`dump_eeprom=`
+      If not zero, the parameter asks the bus controller to dump the
+      EEPROM of any device that is registered, using printk.
  
--  	/* The value of task_nice() of a task. */
-+	/* The value of task_nice() of a task. */
- 	__u8	ac_nice;		/* task_nice */
+-`dump_sdb='
++`dump_sdb=`
+      If not zero, the parameter prints the SDB tree of every FPGA it is
+      loaded by fmc_reprogram(). If greater than one, it asks to dump
+      the binary content of SDB records.  This currently only dumps the
+@@ -19,7 +20,7 @@ are devices are registered, not when fmc.ko is loaded.
  
--  	/* The name of the command that started this task. */
-+	/* The name of the command that started this task. */
- 	char	ac_comm[TS_COMM_LEN];	/* Command name */
+ EEPROM dumping avoids repeating lines, since most of the contents is
+ usually empty and all bits are one or zero. This is an example of the
+-output:
++output::
  
--  	/* The scheduling discipline as set in task->policy field. */
-+	/* The scheduling discipline as set in task->policy field. */
- 	__u8	ac_sched;		/* Scheduling discipline */
+         [ 6625.850480] spec 0000:02:00.0: FPGA programming successful
+         [ 6626.139949] spec 0000:02:00.0: Manufacturer: CERN
+@@ -40,7 +41,7 @@ output:
  
- 	__u8	ac_pad[3];
-@@ -64,26 +75,27 @@ struct taskstats {
- 	__u32	ac_pid;			/* Process ID */
- 	__u32	ac_ppid;		/* Parent process ID */
+ The dump of SDB looks like the following; the example shows the simple
+ golden gateware for the SPEC card, removing the leading timestamps to
+-fit the page:
++fit the page::
  
--  	/* The time when a task begins, in [secs] since 1970. */
-+	/* The time when a task begins, in [secs] since 1970. */
- 	__u32	ac_btime;		/* Begin time [sec since 1970] */
- 
--  	/* The elapsed time of a task, in [usec]. */
-+	/* The elapsed time of a task, in [usec]. */
- 	__u64	ac_etime;		/* Elapsed time [usec] */
- 
--  	/* The user CPU time of a task, in [usec]. */
-+	/* The user CPU time of a task, in [usec]. */
- 	__u64	ac_utime;		/* User CPU time [usec] */
- 
--  	/* The system CPU time of a task, in [usec]. */
-+	/* The system CPU time of a task, in [usec]. */
- 	__u64	ac_stime;		/* System CPU time [usec] */
- 
--  	/* The minor page fault count of a task, as set in task->min_flt. */
-+	/* The minor page fault count of a task, as set in task->min_flt. */
- 	__u64	ac_minflt;		/* Minor Page Fault Count */
- 
- 	/* The major page fault count of a task, as set in task->maj_flt. */
- 	__u64	ac_majflt;		/* Major Page Fault Count */
- 
- 
--2) Delay accounting fields:
-+2) Delay accounting fields::
-+
- 	/* Delay accounting fields start
- 	 *
- 	 * All values, until the comment "Delay accounting fields end" are
-@@ -134,7 +146,8 @@ struct taskstats {
- 	/* version 1 ends here */
- 
- 
--3) Extended accounting fields
-+3) Extended accounting fields::
-+
- 	/* Extended accounting fields start */
- 
- 	/* Accumulated RSS usage in duration of a task, in MBytes-usecs.
-@@ -145,15 +158,15 @@ struct taskstats {
- 	 */
- 	__u64	coremem;		/* accumulated RSS usage in MB-usec */
- 
--  	/* Accumulated virtual memory usage in duration of a task.
-+	/* Accumulated virtual memory usage in duration of a task.
- 	 * Same as acct_rss_mem1 above except that we keep track of VM usage.
- 	 */
- 	__u64	virtmem;		/* accumulated VM usage in MB-usec */
- 
--  	/* High watermark of RSS usage in duration of a task, in KBytes. */
-+	/* High watermark of RSS usage in duration of a task, in KBytes. */
- 	__u64	hiwater_rss;		/* High-watermark of RSS usage */
- 
--  	/* High watermark of VM  usage in duration of a task, in KBytes. */
-+	/* High watermark of VM  usage in duration of a task, in KBytes. */
- 	__u64	hiwater_vm;		/* High-water virtual memory usage */
- 
- 	/* The following four fields are I/O statistics of a task. */
-@@ -164,17 +177,23 @@ struct taskstats {
- 
- 	/* Extended accounting fields end */
- 
--4) Per-task and per-thread statistics
-+4) Per-task and per-thread statistics::
-+
- 	__u64	nvcsw;			/* Context voluntary switch counter */
- 	__u64	nivcsw;			/* Context involuntary switch counter */
- 
--5) Time accounting for SMT machines
-+5) Time accounting for SMT machines::
-+
- 	__u64	ac_utimescaled;		/* utime scaled on frequency etc */
- 	__u64	ac_stimescaled;		/* stime scaled on frequency etc */
- 	__u64	cpu_scaled_run_real_total; /* scaled cpu_run_real_total */
- 
--6) Extended delay accounting fields for memory reclaim
-+6) Extended delay accounting fields for memory reclaim::
-+
- 	/* Delay waiting for memory reclaim */
- 	__u64	freepages_count;
- 	__u64	freepages_delay_total;
--}
-+
-+::
-+
-+  }
-diff --git a/Documentation/accounting/taskstats.txt b/Documentation/accounting/taskstats.rst
-similarity index 95%
-rename from Documentation/accounting/taskstats.txt
-rename to Documentation/accounting/taskstats.rst
-index ff06b738bb88..2a28b7f55c10 100644
---- a/Documentation/accounting/taskstats.txt
-+++ b/Documentation/accounting/taskstats.rst
-@@ -1,5 +1,6 @@
-+=============================
- Per-task statistics interface
-------------------------------
-+=============================
- 
- 
- Taskstats is a netlink-based interface for sending per-task and
-@@ -65,7 +66,7 @@ taskstats.h file.
- 
- The data exchanged between user and kernel space is a netlink message belonging
- to the NETLINK_GENERIC family and using the netlink attributes interface.
--The messages are in the format
-+The messages are in the format::
- 
-     +----------+- - -+-------------+-------------------+
-     | nlmsghdr | Pad |  genlmsghdr | taskstats payload |
-@@ -167,15 +168,13 @@ extended and the number of cpus grows large.
- To avoid losing statistics, userspace should do one or more of the following:
- 
- - increase the receive buffer sizes for the netlink sockets opened by
--listeners to receive exit data.
-+  listeners to receive exit data.
- 
- - create more listeners and reduce the number of cpus being listened to by
--each listener. In the extreme case, there could be one listener for each cpu.
--Users may also consider setting the cpu affinity of the listener to the subset
--of cpus to which it listens, especially if they are listening to just one cpu.
-+  each listener. In the extreme case, there could be one listener for each cpu.
-+  Users may also consider setting the cpu affinity of the listener to the subset
-+  of cpus to which it listens, especially if they are listening to just one cpu.
- 
- Despite these measures, if the userspace receives ENOBUFS error messages
- indicated overflow of receive buffers, it should take measures to handle the
- loss of data.
--
------
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 110c3d34df71..4b971a0bc99a 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1014,7 +1014,7 @@ All time durations are in microseconds.
- 	A read-only nested-key file which exists on non-root cgroups.
- 
- 	Shows pressure stall information for CPU. See
--	Documentation/accounting/psi.txt for details.
-+	Documentation/accounting/psi.rst for details.
- 
- 
- Memory
-@@ -1361,7 +1361,7 @@ PAGE_SIZE multiple when read back.
- 	A read-only nested-key file which exists on non-root cgroups.
- 
- 	Shows pressure stall information for memory. See
--	Documentation/accounting/psi.txt for details.
-+	Documentation/accounting/psi.rst for details.
- 
- 
- Usage Guidelines
-@@ -1504,7 +1504,7 @@ IO Interface Files
- 	A read-only nested-key file which exists on non-root cgroups.
- 
- 	Shows pressure stall information for IO. See
--	Documentation/accounting/psi.txt for details.
-+	Documentation/accounting/psi.rst for details.
- 
- 
- Writeback
-diff --git a/init/Kconfig b/init/Kconfig
-index 6db89d4155d8..1707cf0802a7 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -517,7 +517,7 @@ config PSI
- 	  have cpu.pressure, memory.pressure, and io.pressure files,
- 	  which aggregate pressure stalls for the grouped tasks only.
- 
--	  For more details see Documentation/accounting/psi.txt.
-+	  For more details see Documentation/accounting/psi.rst.
- 
- 	  Say N if unsure.
- 
+         spec 0000:02:00.0: SDB: 00000651:e6a542c9 WB4-Crossbar-GSI
+         spec 0000:02:00.0: SDB: 0000ce42:ff07fc47 WR-Periph-Syscon (00000000-000000ff)
 -- 
 2.21.0
 
