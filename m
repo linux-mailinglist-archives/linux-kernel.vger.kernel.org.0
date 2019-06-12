@@ -2,139 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E8A141B3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCBB41B30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbfFLEfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 00:35:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39813 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbfFLEfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 00:35:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 196so8193470pgc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 21:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rJn1YZ706aJfrT07Hn2oI2Mia8615vCPrYsCrOsg17g=;
-        b=nqTKRZCKIs+8kG9Liz37bjElzQMgiWIkqbp++oZGf4NKeWcTbix2jRPp8mGO/hAgR6
-         4+HNZHFyqoG6vx+pkuGWDOYH/mueiggyXED2gqRaFTKHeVEUfGhAMGncR0Y61bP1+Jng
-         XWbBDY7gsgQmfzGku7MtRuYYrk4EaxY1CoudU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rJn1YZ706aJfrT07Hn2oI2Mia8615vCPrYsCrOsg17g=;
-        b=qlhIglcvnuQNtT4P5FRY0apMtLzLZu9y4ndaO0cqhX88toW3abMk3T/S1D1UAefZ+i
-         rV5S9GDCcBPp7YvcMv2ZGdX1kmmUIjNQSbo9HuWA31+Kvu3p/JwNDwPeXXyAoi3Vjh2W
-         3FPlxdg88d7qedmniFjiLb2RjpRShuSwK8kK1+mOz0+MReLO+N81H+6Zl6BH9HBJOWWz
-         iNvIN2GalLTdKYd0sDbEqxZJYyWNd3NQoWDajvZ0u7vGUO4euGKxxjjarYQSQoiPW75U
-         OqY3U5tRau3AmTUPU66z+dhICeK7l43Q6SNHBwhalGZRSxLITYfgmkZE0ZgWhU1oSCDO
-         amlQ==
-X-Gm-Message-State: APjAAAVGRykDQzo/8O3jPPr7qvhEeBiqX7Xl+47DGEb67VtUKj22T+nC
-        jQZzEx1x7SNfV8lJg/0Eg3jOyg==
-X-Google-Smtp-Source: APXvYqy6WDq4Lk5pwGNHojTbI4ATefffHsAeuBNNuE8NFwZSff+br4DhRCYcJDdPXvX4l1j7ZaLK6w==
-X-Received: by 2002:a65:63c6:: with SMTP id n6mr18294203pgv.370.1560314110645;
-        Tue, 11 Jun 2019 21:35:10 -0700 (PDT)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id k8sm15285998pfi.168.2019.06.11.21.35.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 11 Jun 2019 21:35:10 -0700 (PDT)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v6 3/3] arm64: kexec_file: add rng-seed support
-Date:   Wed, 12 Jun 2019 12:33:02 +0800
-Message-Id: <20190612043258.166048-4-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190612043258.166048-1-hsinyi@chromium.org>
-References: <20190612043258.166048-1-hsinyi@chromium.org>
+        id S1729644AbfFLEdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 00:33:55 -0400
+Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:54247
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725280AbfFLEdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 00:33:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t1IAPRsyJixiIDkuGc2CrGq3QqlHknmJalCsZSN7AaQ=;
+ b=Wsh8eoz/6lrY/omXmsTwPCsz7twTJRVg6BfnsmojBhl7tcRbUjxk+voi6RLE2u7Qd8P11ODuZ7Ol/jcZwbU2QyAAUTaW1P1R2A/zybV43gMB69uWfNXwj8n5hOFYYoXNLs8zbVHh8hQZBANTi1irR0aREZjVIjz6/dDKAjqxFTU=
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com (10.169.134.149) by
+ VI1PR0501MB2848.eurprd05.prod.outlook.com (10.172.15.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Wed, 12 Jun 2019 04:33:51 +0000
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::10d7:3b2d:5471:1eb6]) by VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::10d7:3b2d:5471:1eb6%10]) with mapi id 15.20.1987.010; Wed, 12 Jun
+ 2019 04:33:51 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+CC:     Cornelia Huck <cohuck@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "cjia@nvidia.com" <cjia@nvidia.com>
+Subject: RE: [PATCHv6 3/3] vfio/mdev: Synchronize device create/remove with
+ parent removal
+Thread-Topic: [PATCHv6 3/3] vfio/mdev: Synchronize device create/remove with
+ parent removal
+Thread-Index: AQHVGj4q7+/NzeZHEUWGN8sRZjbLIKaK/b4AgArXHICAAPRRgIAAskuA
+Date:   Wed, 12 Jun 2019 04:33:50 +0000
+Message-ID: <VI1PR0501MB2271E9CD61064F5A552BBFB7D1EC0@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+References: <20190603185658.54517-1-parav@mellanox.com>
+        <20190603185658.54517-4-parav@mellanox.com>
+        <20190604074820.71853cbb.cohuck@redhat.com>
+        <AM4PR0501MB2260589DAFDA6ECF1E8D6D87D1ED0@AM4PR0501MB2260.eurprd05.prod.outlook.com>
+ <20190611115517.7a6f9c8f@x1.home>
+In-Reply-To: <20190611115517.7a6f9c8f@x1.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [49.207.52.114]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f5e5fd51-19a7-454b-f78e-08d6eeef2b50
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0501MB2848;
+x-ms-traffictypediagnostic: VI1PR0501MB2848:
+x-microsoft-antispam-prvs: <VI1PR0501MB284848400E65BC48AAF47F8FD1EC0@VI1PR0501MB2848.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0066D63CE6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(396003)(346002)(189003)(199004)(13464003)(256004)(76176011)(14444005)(55016002)(4326008)(68736007)(52536014)(3846002)(55236004)(6116002)(478600001)(6916009)(25786009)(53936002)(102836004)(8936002)(53546011)(14454004)(6506007)(7696005)(99286004)(5660300002)(9686003)(186003)(229853002)(74316002)(7736002)(33656002)(446003)(66066001)(26005)(2906002)(66946007)(73956011)(76116006)(6436002)(66556008)(64756008)(8676002)(54906003)(66446008)(86362001)(305945005)(476003)(6246003)(11346002)(71200400001)(71190400001)(4744005)(66476007)(81166006)(81156014)(486006)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2848;H:VI1PR0501MB2271.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: K7/De5+DIInQJXefBJaF0zzTArGled+A+EedBWy7YrLW0jSvDR2ltefHaNs8dofMRIOu1Q6kGBDtLIGujODHzT8vz5+kCyWborJ7w/0kH8+Yj2cO5yKBqiARhWYFLcdDVSm5H7aLm8vhkyRg0gFIZcs9p59Lpdi0Ju6DZnd5HEq5VRMyzL1rFC5ESxFRsOoqixoTJZ98GAtT5bGISgMqg8GuYRPiQUIDGdfgvUCEjGm4PEoYSNeQCKNJoVbM/SYhgHcUatbKj0tt1DtpCvhTnH3w9/hX1FFVk9M6kfOO0K3Fp1QHZ8EeO2f2E3JkS9ZsrqxRKoAH7FLFaV+FFEcQpGKII8pQhAIyBRuX8UHKGrMoF2YCFXeqZYVYatIYXVHsVdOjnCC1xNREkk8vcuUiJAtzOdiIfgVjGBy8ctd4Gws=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5e5fd51-19a7-454b-f78e-08d6eeef2b50
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2019 04:33:51.0054
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: parav@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2848
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding "rng-seed" to dtb. It's fine to add this property if original
-fdt doesn't contain it. Since original seed will be wiped after
-read, so use a default size 128 bytes here.
 
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
----
-change log v5->v6:
-* no change
----
- arch/arm64/kernel/machine_kexec_file.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 58871333737a..d40fde72a023 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -27,6 +27,8 @@
- #define FDT_PROP_INITRD_END	"linux,initrd-end"
- #define FDT_PROP_BOOTARGS	"bootargs"
- #define FDT_PROP_KASLR_SEED	"kaslr-seed"
-+#define FDT_PROP_RNG_SEED	"rng-seed"
-+#define RNG_SEED_SIZE		128
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	&kexec_image_ops,
-@@ -102,6 +104,23 @@ static int setup_dtb(struct kimage *image,
- 				FDT_PROP_KASLR_SEED);
- 	}
- 
-+	/* add rng-seed */
-+	if (rng_is_initialized()) {
-+		void *rng_seed = kmalloc(RNG_SEED_SIZE, GFP_ATOMIC);
-+		get_random_bytes(rng_seed, RNG_SEED_SIZE);
-+
-+		ret = fdt_setprop(dtb, off, FDT_PROP_RNG_SEED, rng_seed,
-+				RNG_SEED_SIZE);
-+		kfree(rng_seed);
-+
-+		if (ret)
-+			goto out;
-+
-+	} else {
-+		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
-+				FDT_PROP_RNG_SEED);
-+	}
-+
- out:
- 	if (ret)
- 		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
-@@ -110,7 +129,8 @@ static int setup_dtb(struct kimage *image,
- }
- 
- /*
-- * More space needed so that we can add initrd, bootargs and kaslr-seed.
-+ * More space needed so that we can add initrd, bootargs, kaslr-seed, and
-+ * rng-seed.
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
--- 
-2.20.1
-
+> -----Original Message-----
+> From: Alex Williamson <alex.williamson@redhat.com>
+> Sent: Tuesday, June 11, 2019 11:25 PM
+> To: Parav Pandit <parav@mellanox.com>
+> Cc: Cornelia Huck <cohuck@redhat.com>; kvm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; kwankhede@nvidia.com; cjia@nvidia.com
+> Subject: Re: [PATCHv6 3/3] vfio/mdev: Synchronize device create/remove
+> with parent removal
+>=20
+> On Tue, 11 Jun 2019 03:22:37 +0000
+> Parav Pandit <parav@mellanox.com> wrote:
+>=20
+> > Hi Alex,
+> >
+> [snip]
+>=20
+> > Now that we have all 3 patches reviewed and comments addressed, if
+> > there are no more comments, can you please take it forward?
+>=20
+> Yep, I put it in a branch rolled into linux-next for upstream testing las=
+t week
+> and just sent a pull request to Linus today.  Thanks,
+>=20
+Oh ok. Great. Thanks Alex.
