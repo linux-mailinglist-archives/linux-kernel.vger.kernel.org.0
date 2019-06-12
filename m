@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F137D42E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7E842E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404259AbfFLR47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:56:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40402 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388151AbfFLRxM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388571AbfFLRxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 12 Jun 2019 13:53:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40390 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387793AbfFLRxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:53:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/ZZUTqS7pPsucm3eiqOvCLTIQSRmjVrFHqOoPzJmW2M=; b=WSSzJJjY+6oXa8zy+IkvkvfSPP
-        DbiDPEiN/8YS0nBCfFaqJQePXlnkz5YsKnU1IuEBuTnFeQi9LpGECjHAWunErP3poi1azc2wXsQoE
-        4znYFmmbaXmbS1/LrRf4xz3lmFTgSJhWmshgdNcepJ0EqWKZxwfNcO54rbFRTNDhzswfSb2RtqdJv
-        mQbWCC7PjvS9zUgRRjV3Epz0ohDIoDPZFQ0lXtY+mvJtttV/IjxVTKamLes/aOcIpN7+MvocTeCxB
-        aAhQ3wQ1yA3xdoSAMrzoTXFKYIDYSmecujONCAzQ5jVrZZFfQAzL19nrtNTPwhR6iinLgHf6uyUlP
-        tPbyKJiA==;
+        bh=vL4lOYobBwCnYeVEKz9+S+U0qDj+pEo1Zutn3iMRF3w=; b=bVniTSEq3eGp3ZnjsE6pnPwGL6
+        TZk9luV9nGuNHvWkeiNmoA45pY9qIt75u0NyaHokBpcoDAU70f5Ghs70gmPhejltHdwbg9+IPhgT9
+        9tp3TFsK5WA/8SQ0y50q6yinOZYKyD2sth38rRfA8b6w6u4t5mjrDBjFbm3G2cYz/tNLA5fAdAMap
+        F2bdJFSgzgz+6l0eyb276DrHYeKnBt9PfhFw+0ZQIFMA77sdJsr2oyBJy4GVPNwu6JuLdppSWI9tw
+        RRFOwqTlyEpZy/OGQQRL4wh2MouDUfxf54Moc9U5oOL5bKxgPEiq2Y5KPG4bwwy772T3bnabxLL6l
+        19ZRnPnw==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb7Qt-0002Dl-1U; Wed, 12 Jun 2019 17:53:11 +0000
+        id 1hb7Qs-0002Dm-R9; Wed, 12 Jun 2019 17:53:10 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hb7Qq-0001hB-Ik; Wed, 12 Jun 2019 14:53:08 -0300
+        id 1hb7Qq-0001hF-JY; Wed, 12 Jun 2019 14:53:08 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rodolfo Giometti <giometti@enneenne.com>
-Subject: [PATCH v4 20/28] docs: pps.txt: convert to ReST and rename to pps.rst
-Date:   Wed, 12 Jun 2019 14:52:56 -0300
-Message-Id: <844bdcf3720d4b2e43ff6c16429583d1c0d61316.1560361364.git.mchehab+samsung@kernel.org>
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH v4 21/28] docs: ptp.txt: convert to ReST and move to driver-api
+Date:   Wed, 12 Jun 2019 14:52:57 -0300
+Message-Id: <7855f0fd13e76718a182f877927f4cbd690a4a38.1560361364.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560361364.git.mchehab+samsung@kernel.org>
 References: <cover.1560361364.git.mchehab+samsung@kernel.org>
@@ -49,181 +50,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This file is already in a good shape: just its title and
-adding some literal block markups is needed for it to be
-part of the document.
-
-While it has a small chapter with sysfs stuff, most of
-the document is focused on driver development.
-
-As it describes a kernel API, move it to the driver-api
-directory.
+The conversion is trivial: just adjust title markups.
 
 In order to avoid conflicts, let's add an :orphan: tag
-to it, to be removed when added to the driver-api book.
+to it, to be removed when this file gets added to the
+driver-api book.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 ---
- .../{pps/pps.txt => driver-api/pps.rst}       | 67 ++++++++++---------
+ .../{ptp/ptp.txt => driver-api/ptp.rst}       | 26 +++++++++++++------
+ Documentation/networking/timestamping.txt     |  2 +-
  MAINTAINERS                                   |  2 +-
- 2 files changed, 36 insertions(+), 33 deletions(-)
- rename Documentation/{pps/pps.txt => driver-api/pps.rst} (89%)
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+ rename Documentation/{ptp/ptp.txt => driver-api/ptp.rst} (88%)
 
-diff --git a/Documentation/pps/pps.txt b/Documentation/driver-api/pps.rst
-similarity index 89%
-rename from Documentation/pps/pps.txt
-rename to Documentation/driver-api/pps.rst
-index 99f5d8c4c652..1456d2c32ebd 100644
---- a/Documentation/pps/pps.txt
-+++ b/Documentation/driver-api/pps.rst
-@@ -1,8 +1,10 @@
+diff --git a/Documentation/ptp/ptp.txt b/Documentation/driver-api/ptp.rst
+similarity index 88%
+rename from Documentation/ptp/ptp.txt
+rename to Documentation/driver-api/ptp.rst
+index 11e904ee073f..b6e65d66d37a 100644
+--- a/Documentation/ptp/ptp.txt
++++ b/Documentation/driver-api/ptp.rst
+@@ -1,5 +1,8 @@
 +:orphan:
  
--			PPS - Pulse Per Second
--			----------------------
-+======================
-+PPS - Pulse Per Second
-+======================
+-* PTP hardware clock infrastructure for Linux
++===========================================
++PTP hardware clock infrastructure for Linux
++===========================================
  
--(C) Copyright 2007 Rodolfo Giometti <giometti@enneenne.com>
-+Copyright (C) 2007 Rodolfo Giometti <giometti@enneenne.com>
+   This patch set introduces support for IEEE 1588 PTP clocks in
+   Linux. Together with the SO_TIMESTAMPING socket options, this
+@@ -22,7 +25,8 @@
+     - Period output signals configurable from user space
+     - Synchronization of the Linux system time via the PPS subsystem
  
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
-@@ -88,7 +90,7 @@ Coding example
- --------------
+-** PTP hardware clock kernel API
++PTP hardware clock kernel API
++=============================
  
- To register a PPS source into the kernel you should define a struct
--pps_source_info as follows:
-+pps_source_info as follows::
+    A PTP clock driver registers itself with the class driver. The
+    class driver handles all of the dealings with user space. The
+@@ -36,7 +40,8 @@
+    development, it can be useful to have more than one clock in a
+    single system, in order to allow performance comparisons.
  
-     static struct pps_source_info pps_ktimer_info = {
- 	    .name         = "ktimer",
-@@ -101,12 +103,12 @@ pps_source_info as follows:
-     };
+-** PTP hardware clock user space API
++PTP hardware clock user space API
++=================================
  
- and then calling the function pps_register_source() in your
--initialization routine as follows:
-+initialization routine as follows::
+    The class driver also creates a character device for each
+    registered clock. User space can use an open file descriptor from
+@@ -49,7 +54,8 @@
+    ancillary clock features. User space can receive time stamped
+    events via blocking read() and poll().
  
-     source = pps_register_source(&pps_ktimer_info,
- 			PPS_CAPTUREASSERT | PPS_OFFSETASSERT);
+-** Writing clock drivers
++Writing clock drivers
++=====================
  
--The pps_register_source() prototype is:
-+The pps_register_source() prototype is::
+    Clock drivers include include/linux/ptp_clock_kernel.h and register
+    themselves by presenting a 'struct ptp_clock_info' to the
+@@ -66,14 +72,17 @@
+    class driver, since the lock may also be needed by the clock
+    driver's interrupt service routine.
  
-   int pps_register_source(struct pps_source_info *info, int default_params)
- 
-@@ -118,7 +120,7 @@ pps_source_info which describe the capabilities of the driver).
- 
- Once you have registered a new PPS source into the system you can
- signal an assert event (for example in the interrupt handler routine)
--just using:
-+just using::
- 
-     pps_event(source, &ts, PPS_CAPTUREASSERT, ptr)
- 
-@@ -134,13 +136,13 @@ Please see the file drivers/pps/clients/pps-ktimer.c for example code.
- SYSFS support
- -------------
- 
--If the SYSFS filesystem is enabled in the kernel it provides a new class:
-+If the SYSFS filesystem is enabled in the kernel it provides a new class::
- 
-    $ ls /sys/class/pps/
-    pps0/  pps1/  pps2/
- 
- Every directory is the ID of a PPS sources defined in the system and
--inside you find several files:
-+inside you find several files::
- 
-    $ ls -F /sys/class/pps/pps0/
-    assert     dev        mode       path       subsystem@
-@@ -148,7 +150,7 @@ inside you find several files:
- 
- 
- Inside each "assert" and "clear" file you can find the timestamp and a
--sequence number:
-+sequence number::
- 
-    $ cat /sys/class/pps/pps0/assert
-    1170026870.983207967#8
-@@ -175,11 +177,11 @@ and the userland tools available in your distribution's pps-tools package,
- http://linuxpps.org , or https://github.com/redlab-i/pps-tools.
- 
- Once you have enabled the compilation of pps-ktimer just modprobe it (if
--not statically compiled):
-+not statically compiled)::
- 
-    # modprobe pps-ktimer
- 
--and the run ppstest as follow:
-+and the run ppstest as follow::
- 
-    $ ./ppstest /dev/pps1
-    trying PPS source "/dev/pps1"
-@@ -204,26 +206,27 @@ nor affordable. The cheap way is to load a PPS generator on one of the
- computers (master) and PPS clients on others (slaves), and use very simple
- cables to deliver signals using parallel ports, for example.
- 
--Parallel port cable pinout:
--pin	name	master      slave
--1	STROBE	  *------     *
--2	D0	  *     |     *
--3	D1	  *     |     *
--4	D2	  *     |     *
--5	D3	  *     |     *
--6	D4	  *     |     *
--7	D5	  *     |     *
--8	D6	  *     |     *
--9	D7	  *     |     *
--10	ACK	  *     ------*
--11	BUSY	  *           *
--12	PE	  *           *
--13	SEL	  *           *
--14	AUTOFD	  *           *
--15	ERROR	  *           *
--16	INIT	  *           *
--17	SELIN	  *           *
--18-25	GND	  *-----------*
-+Parallel port cable pinout::
+-** Supported hardware
++Supported hardware
++==================
 +
-+	pin	name	master      slave
-+	1	STROBE	  *------     *
-+	2	D0	  *     |     *
-+	3	D1	  *     |     *
-+	4	D2	  *     |     *
-+	5	D3	  *     |     *
-+	6	D4	  *     |     *
-+	7	D5	  *     |     *
-+	8	D6	  *     |     *
-+	9	D7	  *     |     *
-+	10	ACK	  *     ------*
-+	11	BUSY	  *           *
-+	12	PE	  *           *
-+	13	SEL	  *           *
-+	14	AUTOFD	  *           *
-+	15	ERROR	  *           *
-+	16	INIT	  *           *
-+	17	SELIN	  *           *
-+	18-25	GND	  *-----------*
++   * Freescale eTSEC gianfar
  
- Please note that parallel port interrupt occurs only on high->low transition,
- so it is used for PPS assert edge. PPS clear edge can be determined only
+-   + Freescale eTSEC gianfar
+      - 2 Time stamp external triggers, programmable polarity (opt. interrupt)
+      - 2 Alarm registers (optional interrupt)
+      - 3 Periodic signals (optional interrupt)
+ 
+-   + National DP83640
++   * National DP83640
++
+      - 6 GPIOs programmable as inputs or outputs
+      - 6 GPIOs with dedicated functions (LED/JTAG/clock) can also be
+        used as general inputs or outputs
+@@ -81,6 +90,7 @@
+      - GPIO outputs can produce periodic signals
+      - 1 interrupt pin
+ 
+-   + Intel IXP465
++   * Intel IXP465
++
+      - Auxiliary Slave/Master Mode Snapshot (optional interrupt)
+      - Target Time (optional interrupt)
+diff --git a/Documentation/networking/timestamping.txt b/Documentation/networking/timestamping.txt
+index bbdaf8990031..8dd6333c3270 100644
+--- a/Documentation/networking/timestamping.txt
++++ b/Documentation/networking/timestamping.txt
+@@ -368,7 +368,7 @@ ts[1] used to hold hardware timestamps converted to system time.
+ Instead, expose the hardware clock device on the NIC directly as
+ a HW PTP clock source, to allow time conversion in userspace and
+ optionally synchronize system time with a userspace PTP stack such
+-as linuxptp. For the PTP clock API, see Documentation/ptp/ptp.txt.
++as linuxptp. For the PTP clock API, see Documentation/driver-api/ptp.rst.
+ 
+ Note that if the SO_TIMESTAMP or SO_TIMESTAMPNS option is enabled
+ together with SO_TIMESTAMPING using SOF_TIMESTAMPING_SOFTWARE, a false
 diff --git a/MAINTAINERS b/MAINTAINERS
-index b3746e7b5652..5c5714eddde4 100644
+index 5c5714eddde4..9d9399c9cf47 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -12709,7 +12709,7 @@ M:	Rodolfo Giometti <giometti@enneenne.com>
- W:	http://wiki.enneenne.com/index.php/LinuxPPS_support
- L:	linuxpps@ml.enneenne.com (subscribers-only)
+@@ -12815,7 +12815,7 @@ L:	netdev@vger.kernel.org
  S:	Maintained
--F:	Documentation/pps/
-+F:	Documentation/driver-api/pps.rst
- F:	Documentation/devicetree/bindings/pps/pps-gpio.txt
- F:	Documentation/ABI/testing/sysfs-pps
- F:	drivers/pps/
+ W:	http://linuxptp.sourceforge.net/
+ F:	Documentation/ABI/testing/sysfs-ptp
+-F:	Documentation/ptp/*
++F:	Documentation/driver-api/ptp.rst
+ F:	drivers/net/phy/dp83640*
+ F:	drivers/ptp/*
+ F:	include/linux/ptp_cl*
 -- 
 2.21.0
 
