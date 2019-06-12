@@ -2,103 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3323042F0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6EF42F18
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfFLSkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:40:15 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33191 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbfFLSkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:40:14 -0400
-Received: by mail-lj1-f195.google.com with SMTP id h10so10142834ljg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 11:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BCHDCMqhJT/6FshXZBORq3geSmDeK2ImfsvkULZ7ako=;
-        b=lE2zkkflj0+rg65PZkQJswReFAFB73OuSI0tN6PxnBkJP/VFGNj1K6LE3WlWR1dg5V
-         P5Aq0dfZFClkS9LxQBbxtFDEJ1Scp1OfJPvRy686oMTHdRjyWofbzn5Hr5asuisoAS+T
-         NpIsWoQvpLvQvEyJrrk2fHLDKAr2jq+vUqkMot2y6a9eVObTSo5oRHrUGQnGWppBbpFf
-         +37jFd1wvaUHxFs1OpWZOEv/uyLWxvqde73l6D208E3fAqL3dCIFouietBA2/2pJUBz7
-         ci0YmRCAdnfog+siXDGqltWsATRNrAfiwun3LivBIy3vUD0Kg7++F//HIPKR5g8lPPz8
-         7G7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BCHDCMqhJT/6FshXZBORq3geSmDeK2ImfsvkULZ7ako=;
-        b=uNhIe4G2O/jykTZEV+LKXZW+R9vQKVDM9XfQ3OO4uV/ZluZiRtI+RAaGZHVW1jX0ud
-         5bFvS1MmefUaaN/eNhG4hIh0Tnm9H8ZL3AQw+ZxE0eqixgMI6Ym+lNozqd0uZgDn3C7I
-         +zBUiPyS6VXgek0ecXS5sCHhrIaG/ffZl4lPhaiEr0E7UlrhWWbAsved28VgKwnIxuBf
-         CVyV26cseoTJAEmsI0ddkTbxip+H5IhRh421QPtUX6O0x9rMaD8CUxvaDar/zBM4nUQS
-         L7raGvw/KXyHVtxzzzf59P5gYbdrDfemskj6RvFxx1yjqxIAM5dTAfL0cROfZgIeWZ0W
-         Z8mg==
-X-Gm-Message-State: APjAAAXxqV0N27d56gSb0cmuW4Ukvy4ND+yV5hgAe/o3ZTpAUXpTRDx7
-        QA/l1jIrXHD9szizOBbBXknltHuKHsJp/W8MwIs1ug==
-X-Google-Smtp-Source: APXvYqx1aU3ktFN2gcF7RCr6w2X4mZJs1SwOwOdH5Y2XxcJU445SgyS7OuaIeO5AfJMw0REuUlJKVxTW5q6NEmLlwTM=
-X-Received: by 2002:a2e:5d54:: with SMTP id r81mr7178030ljb.104.1560364812092;
- Wed, 12 Jun 2019 11:40:12 -0700 (PDT)
+        id S2403750AbfFLSkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:40:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726724AbfFLSke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:40:34 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E62313082A9B;
+        Wed, 12 Jun 2019 18:40:28 +0000 (UTC)
+Received: from x230.aquini.net (dhcp-17-61.bos.redhat.com [10.18.17.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CA6B6015E;
+        Wed, 12 Jun 2019 18:40:28 +0000 (UTC)
+Date:   Wed, 12 Jun 2019 14:40:26 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Joel Savitz <jsavitz@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org
+Subject: Re: [RESEND PATCH v2] mm/oom_killer: Add task UID to info message on
+ an oom kill
+Message-ID: <20190612184026.GD5313@x230.aquini.net>
+References: <1560362273-534-1-git-send-email-jsavitz@redhat.com>
 MIME-Version: 1.0
-References: <20190612081147.1372-1-anders.roxell@linaro.org>
- <CACRpkdbhRAdybqKdMgyM9Jy=eSJaRHjTpuOZO=KBgeaCbcP88Q@mail.gmail.com> <20190612131647.GD23615@lunn.ch>
-In-Reply-To: <20190612131647.GD23615@lunn.ch>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 20:39:59 +0200
-Message-ID: <CACRpkdZof4S9xySBLMnf6Uu4LuRSjoEyxJYv4EXTgKDOf5R8Ag@mail.gmail.com>
-Subject: Re: [PATCH v2] drivers: net: dsa: fix warning same module names
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560362273-534-1-git-send-email-jsavitz@redhat.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 18:40:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 3:16 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> On Wed, Jun 12, 2019 at 02:36:44PM +0200, Linus Walleij wrote:
-
-> > Sorry for giving bad advice here on IRC... my wrong.
-> >
-> > > -obj-$(CONFIG_NET_DSA_REALTEK_SMI) += realtek.o
-> > > -realtek-objs                   := realtek-smi.o rtl8366.o rtl8366rb.o
-> > > +obj-$(CONFIG_NET_DSA_REALTEK_SMI) += rtl8366.o
-> > > +rtl8366-objs                   := realtek-smi.o rtl8366-common.o rtl8366rb.o
-> >
-> > What is common for this family is not the name rtl8366
-> > (there is for example rtl8369 in this family, we just haven't
-> > added it yet) but the common technical item is SMI.
->
-> Hi Linus
->
-> I was not sure about this. I thought SMI was the bus used to
-> communicate with the switch. It just seemed odd to call a switch
-> family after the bus.
-
-It is true, but as can be seen from:
-Documentation/devicetree/bindings/net/dsa/realtek-smi.txt
-it is a family of 8 switches. I think we should just have
-one module handling all of them for simplicity, once we
-get around to implementing anything else than RTL8366RB
-that is.
-
-It's these 8 switches that talk SMI and they have a lot
-in common like talking RRCP internally AFAICT.
-I think these switches are pretty complex on the inside,
-we just don't have very good documentation :/
-
-> Anyway, if you are happy with the name realtek-smi:
->
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-Thanks!
-
-Yours,
-Linus Walleij
+On Wed, Jun 12, 2019 at 01:57:53PM -0400, Joel Savitz wrote:
+> In the event of an oom kill, useful information about the killed
+> process is printed to dmesg. Users, especially system administrators,
+> will find it useful to immediately see the UID of the process.
+> 
+> In the following example, abuse_the_ram is the name of a program
+> that attempts to iteratively allocate all available memory until it is
+> stopped by force.
+> 
+> Current message:
+> 
+> Out of memory: Killed process 35389 (abuse_the_ram)
+> total-vm:133718232kB, anon-rss:129624980kB, file-rss:0kB,
+> shmem-rss:0kB
+> 
+> Patched message:
+> 
+> Out of memory: Killed process 2739 (abuse_the_ram),
+> total-vm:133880028kB, anon-rss:129754836kB, file-rss:0kB,
+> shmem-rss:0kB, UID 0
+> 
+> 
+> Suggested-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+> ---
+>  mm/oom_kill.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 3a2484884cfd..af2e3faa72a0 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -874,12 +874,13 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+>  	 */
+>  	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+>  	mark_oom_victim(victim);
+> -	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+> +	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID %d\n",
+>  		message, task_pid_nr(victim), victim->comm,
+>  		K(victim->mm->total_vm),
+>  		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+>  		K(get_mm_counter(victim->mm, MM_FILEPAGES)),
+> -		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
+> +		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)),
+> +		from_kuid(&init_user_ns, task_uid(victim)));
+>  	task_unlock(victim);
+>  
+>  	/*
+> -- 
+> 2.18.1
+> 
+Acked-by: Rafael Aquini <aquini@redhat.com>
