@@ -2,90 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 070EB41ADB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A7C41AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407677AbfFLDyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:54:37 -0400
-Received: from mail-eopbgr70087.outbound.protection.outlook.com ([40.107.7.87]:54990
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S2436591AbfFLDty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:49:54 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60556 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406758AbfFLDyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:54:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j5y5vSOxQ1vFiT3txUAqQuK5J5zFuJdPc2T3Vj/dFww=;
- b=Ju4LKV+tHS/Mr1D9l17U+/wezNl4nd5+LC9UfKUrU/taSANF38IeGmQZdwfdjQZvGanTxiis2oLWh2XAGJVZoYXp90iPc5jYw6T3dGzil0q6YaP8/vG/gw6i5UZe5JUz0oViYidNFhRwZaR7A9WFFf0m/U1rvbPJmiysFrS4UXI=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB5203.eurprd04.prod.outlook.com (20.177.42.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Wed, 12 Jun 2019 03:54:30 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::11e1:3bb9:156b:a3e4]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::11e1:3bb9:156b:a3e4%3]) with mapi id 15.20.1965.017; Wed, 12 Jun 2019
- 03:54:30 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 2/2] soc: imx8: Use existing of_root directly
-Thread-Topic: [PATCH 2/2] soc: imx8: Use existing of_root directly
-Thread-Index: AQHVIM/DO5YY7FKnPE+TSFiseBOReKaXYxTA
-Date:   Wed, 12 Jun 2019 03:54:30 +0000
-Message-ID: <AM0PR04MB42119EED46EECC647451A8C280EC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190612033620.3556-1-Anson.Huang@nxp.com>
- <20190612033620.3556-2-Anson.Huang@nxp.com>
-In-Reply-To: <20190612033620.3556-2-Anson.Huang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 106031d4-2fdc-4e9b-ce6c-08d6eee9ac5a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5203;
-x-ms-traffictypediagnostic: AM0PR04MB5203:
-x-microsoft-antispam-prvs: <AM0PR04MB5203D10952F9DD7538F7861180EC0@AM0PR04MB5203.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1227;
-x-forefront-prvs: 0066D63CE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39860400002)(136003)(366004)(199004)(189003)(6246003)(86362001)(2201001)(53936002)(68736007)(3846002)(2906002)(110136005)(478600001)(66946007)(6116002)(33656002)(55016002)(316002)(4326008)(14454004)(9686003)(256004)(229853002)(25786009)(71190400001)(71200400001)(6436002)(8676002)(99286004)(558084003)(7696005)(76116006)(81166006)(81156014)(8936002)(73956011)(6506007)(66446008)(66556008)(52536014)(76176011)(486006)(446003)(11346002)(44832011)(74316002)(102836004)(476003)(26005)(305945005)(66066001)(2501003)(7736002)(66476007)(186003)(5660300002)(64756008)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5203;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bf39/5dLa6KxRZOqMNh3UGvu7fG5XoMDxAuUwFFoU2Us1VZc+ub1s6hxxB9yN8/SxYZoUPtrMNVOG68h4kfKnpPr+ILymC7KFPIpPKynZOjXNS6PQp7NegT8uhD6BJevpjfGrEx1bDMd9HdH5M7tQ+ugZwES1EBYwIZmV6/06D2xV2UjSmaxD8a8uhEsv7QwUs0Vjl34HpmFIJuS9TyPVw1z4rSe+plwY7lmN5rMv8P/CsbrUVMPbGoKegU90sNrI59bPbKHrxBBorsgL03ZjxMbBm+He0dZGiWBAgH0SHfDEGVejccdyUYg+U7gWnXIkmR9YXmTiJXrxNxPfhOG+5z0DlkKCJfuvbZ/afJI56ZZbkXT6qd8CgS1KfbrlNpT9slnqhJMoa/8QaT2VTyxJ7ETgc1NCAPnOyGncv6scnQ=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2407047AbfFLDtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:49:53 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 268FD9DDA16174A382EF;
+        Wed, 12 Jun 2019 11:49:49 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 12 Jun 2019 11:49:40 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <edumazet@google.com>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH net v2] tcp: avoid creating multiple req socks with the same tuples
+Date:   Wed, 12 Jun 2019 11:57:15 +0800
+Message-ID: <20190612035715.166676-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 106031d4-2fdc-4e9b-ce6c-08d6eee9ac5a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2019 03:54:30.4357
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aisheng.dong@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5203
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBBbnNvbi5IdWFuZ0BueHAuY29tIFttYWlsdG86QW5zb24uSHVhbmdAbnhwLmNvbV0N
-Cj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDEyLCAyMDE5IDExOjM2IEFNDQo+IA0KPiBUaGVyZSBp
-cyBjb21tb24gb2Zfcm9vdCBmb3IgcmVmZXJlbmNlLCBubyBuZWVkIHRvIGZpbmQgaXQgZnJvbSBE
-VCBhZ2FpbiwgdXNlDQo+IG9mX3Jvb3QgZGlyZWN0bHkgdG8gbWFrZSBkcml2ZXIgc2ltcGxlLg0K
-PiANCj4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQoN
-ClJldmlld2VkLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KDQpSZWdh
-cmRzDQpEb25nIEFpc2hlbmcNCg==
+There is one issue about bonding mode BOND_MODE_BROADCAST, and
+two slaves with diffierent affinity, so packets will be handled
+by different cpu. These are two pre-conditions in this case.
+
+When two slaves receive the same syn packets at the same time,
+two request sock(reqsk) will be created if below situation happens:
+1. syn1 arrived tcp_conn_request, create reqsk1 and have not yet called
+inet_csk_reqsk_queue_hash_add.
+2. syn2 arrived tcp_v4_rcv, it goes to tcp_conn_request and create
+reqsk2
+because it can't find reqsk1 in the __inet_lookup_skb.
+
+Then reqsk1 and reqsk2 are added to establish hash table, and two synack
+with different
+seq(seq1 and seq2) are sent to client, then tcp ack arrived and will be
+processed in tcp_v4_rcv and tcp_check_req, if __inet_lookup_skb find the
+reqsk2, and
+tcp ack packet is ack_seq is seq1, it will be failed after checking:
+TCP_SKB_CB(skb)->ack_seq != tcp_rsk(req)->snt_isn + 1)
+and then tcp rst will be sent to client and close the connection.
+
+To fix this, call __inet_lookup_established() before __sk_nulls_add_node_rcu()
+in inet_ehash_insert(). If there is existed reqsk with same tuples in
+established hash table, directly to remove current reqsk2, and does not send
+synack to client.
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: move __inet_lookup_established from tcp_conn_request() to inet_ehash_insert()
+ as Eric suggested.
+---
+ include/net/inet_connection_sock.h |  2 +-
+ net/ipv4/inet_connection_sock.c    | 16 ++++++++++++----
+ net/ipv4/inet_hashtables.c         | 13 +++++++++++++
+ net/ipv4/tcp_input.c               |  7 ++++---
+ 4 files changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
+index c57d53e7e02c..2d3538e333cb 100644
+--- a/include/net/inet_connection_sock.h
++++ b/include/net/inet_connection_sock.h
+@@ -263,7 +263,7 @@ struct dst_entry *inet_csk_route_child_sock(const struct sock *sk,
+ struct sock *inet_csk_reqsk_queue_add(struct sock *sk,
+ 				      struct request_sock *req,
+ 				      struct sock *child);
+-void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
++bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+ 				   unsigned long timeout);
+ struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock *child,
+ 					 struct request_sock *req,
+diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+index 13ec7c3a9c49..fd45ed2fd985 100644
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -749,7 +749,7 @@ static void reqsk_timer_handler(struct timer_list *t)
+ 	inet_csk_reqsk_queue_drop_and_put(sk_listener, req);
+ }
+ 
+-static void reqsk_queue_hash_req(struct request_sock *req,
++static bool reqsk_queue_hash_req(struct request_sock *req,
+ 				 unsigned long timeout)
+ {
+ 	req->num_retrans = 0;
+@@ -759,19 +759,27 @@ static void reqsk_queue_hash_req(struct request_sock *req,
+ 	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
+ 	mod_timer(&req->rsk_timer, jiffies + timeout);
+ 
+-	inet_ehash_insert(req_to_sk(req), NULL);
++	if (!inet_ehash_insert(req_to_sk(req), NULL)) {
++		if (timer_pending(&req->rsk_timer))
++			del_timer_sync(&req->rsk_timer);
++		return false;
++	}
+ 	/* before letting lookups find us, make sure all req fields
+ 	 * are committed to memory and refcnt initialized.
+ 	 */
+ 	smp_wmb();
+ 	refcount_set(&req->rsk_refcnt, 2 + 1);
++	return true;
+ }
+ 
+-void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
++bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+ 				   unsigned long timeout)
+ {
+-	reqsk_queue_hash_req(req, timeout);
++	if (!reqsk_queue_hash_req(req, timeout))
++		return false;
++
+ 	inet_csk_reqsk_queue_added(sk);
++	return true;
+ }
+ EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
+ 
+diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
+index c4503073248b..b6a1b5334565 100644
+--- a/net/ipv4/inet_hashtables.c
++++ b/net/ipv4/inet_hashtables.c
+@@ -477,6 +477,7 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk)
+ 	struct inet_ehash_bucket *head;
+ 	spinlock_t *lock;
+ 	bool ret = true;
++	struct sock *reqsk = NULL;
+ 
+ 	WARN_ON_ONCE(!sk_unhashed(sk));
+ 
+@@ -486,6 +487,18 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk)
+ 	lock = inet_ehash_lockp(hashinfo, sk->sk_hash);
+ 
+ 	spin_lock(lock);
++	if (!osk)
++		reqsk = __inet_lookup_established(sock_net(sk), &tcp_hashinfo,
++							sk->sk_daddr, sk->sk_dport,
++							sk->sk_rcv_saddr, sk->sk_num,
++							sk->sk_bound_dev_if, sk->sk_bound_dev_if);
++	if (unlikely(reqsk)) {
++		ret = false;
++		reqsk_free(inet_reqsk(sk));
++		spin_unlock(lock);
++		return ret;
++	}
++
+ 	if (osk) {
+ 		WARN_ON_ONCE(sk->sk_hash != osk->sk_hash);
+ 		ret = sk_nulls_del_node_init_rcu(osk);
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 38dfc308c0fb..358272394590 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -6570,9 +6570,10 @@ int tcp_conn_request(struct request_sock_ops *rsk_ops,
+ 		sock_put(fastopen_sk);
+ 	} else {
+ 		tcp_rsk(req)->tfo_listener = false;
+-		if (!want_cookie)
+-			inet_csk_reqsk_queue_hash_add(sk, req,
+-				tcp_timeout_init((struct sock *)req));
++		if (!want_cookie && !inet_csk_reqsk_queue_hash_add(sk, req,
++					tcp_timeout_init((struct sock *)req)))
++			return 0;
++
+ 		af_ops->send_synack(sk, dst, &fl, req, &foc,
+ 				    !want_cookie ? TCP_SYNACK_NORMAL :
+ 						   TCP_SYNACK_COOKIE);
+-- 
+2.20.1
+
