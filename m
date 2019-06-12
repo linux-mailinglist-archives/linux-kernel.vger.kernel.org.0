@@ -2,148 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569E242DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5920442DE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:55:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390309AbfFLRzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:55:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40650 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389228AbfFLRxS (ORCPT
+        id S2389624AbfFLRyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:54:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52490 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727474AbfFLRye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:53:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LODV2xUoFNxknV26miUARY9/ZInmVpzomuSRyMjtHiw=; b=qhY3Sf6FfNEogGrDLpyftWrZuf
-        JJQdRw/7eO3o/MuDOTpXitWc7L7YkGvyhhGnLy/2MBysWmo8kOkt9oXi1/0wjav78Qr8zKOeJLhbk
-        w6XziYseHKPtC9heWrMhpH/1SZrPO9Q9DFpiofc4Bug0LdxpxZPtboIKOUFrMdZ0Yqg7yBk+ob+gE
-        OmSYjUB+t5xYqfqgZPzydsGjfukWcIaXKv70dYDNYmOmXTCSi83WDOHaW9Obv7rwJS4jyhYwgZPFC
-        rNNweA1HfZEHJW7UeLaFoQ1wWaIda3Ehk1GwhpGvo2kHCljDdFwMa4tiRjeyuTAYoONsXKfyUGKOt
-        MLWlL0pw==;
-Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb7Qx-0002Dv-WE; Wed, 12 Jun 2019 17:53:16 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hb7Qq-0001hm-Py; Wed, 12 Jun 2019 14:53:08 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v4 28/28] docs: EDID/HOWTO.txt: convert it and rename to howto.rst
-Date:   Wed, 12 Jun 2019 14:53:04 -0300
-Message-Id: <fda591389c53e22ae95d1493f0cb443370484757.1560361364.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1560361364.git.mchehab+samsung@kernel.org>
-References: <cover.1560361364.git.mchehab+samsung@kernel.org>
+        Wed, 12 Jun 2019 13:54:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0317C6079C; Wed, 12 Jun 2019 17:54:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560362073;
+        bh=Hht43qaphXHsqoJvwabinU/2njLIAArwWX/pBi24330=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=JaJbjrNetcmVWhp0vIULfBJMC7Gn3rVFXIH2W0fQEjdk2Bp93NrMfTd8qbm7qYhCT
+         y9kp2li83z87bcDBKPKlpR0+zjJrPRgU2GCIreuvhgfS9yXVqM44kgc/FCG4R8Q7QN
+         I1Onk0464GrBEEMb6fmYt5jI1miQvQYT8j4EvjO4=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from sdias (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sdias@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C95361196;
+        Wed, 12 Jun 2019 17:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560362071;
+        bh=Hht43qaphXHsqoJvwabinU/2njLIAArwWX/pBi24330=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=SYsHUPKoD8mJbXCmJ0hiPa/v3qQYSR4BeMdPdPqLScwGtvtuMLPtzCjs8S7HgYPt9
+         2m7FG2a4IIZflVvpzg22ifDI+PRPpXmVJ78Tls5WG+4y2jCNI11T1DsjNSk6rrDF++
+         DmSe8/szizaX6BaXBlKs/DomfJ53gju4agD0oSz0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C95361196
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sdias@codeaurora.org
+From:   "Sujeev Dias" <sdias@codeaurora.org>
+To:     "'Daniele Palmas'" <dnlplm@gmail.com>
+Cc:     <linux-kernel@vger.kernel.org>, <truong@codeaurora.org>
+References: <1531166894-30984-1-git-send-email-sdias@codeaurora.org> <1556637058-22331-1-git-send-email-dnlplm@gmail.com>
+In-Reply-To: <1556637058-22331-1-git-send-email-dnlplm@gmail.com>
+Subject: RE: MHI code review
+Date:   Wed, 12 Jun 2019 10:54:30 -0700
+Message-ID: <000c01d52147$e33147f0$a993d7d0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQG0yIhPO79iSUqpSJr5eu5vZGCAwAIYoKrIpsg424A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sphinx need to know when a paragraph ends. So, do some adjustments
-at the file for it to be properly parsed.
+Hi Daniels
 
-At its new index.rst, let's add a :orphan: while this is not linked to
-the main index.rst file, in order to avoid build warnings.
+Sorry for delay response.  Yes, we will be pushing new set of series very
+soon that will have support for 55 as well.  The series that's pushed should
+already work for SDX20, 24 and 55.   There are some new features related to
+55 that's not yet in series.
 
-that's said, I believe that this file should be moved to the
-GPU/DRM documentation.
+Thanks
+Sujeev 
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/EDID/{HOWTO.txt => howto.rst}   | 31 ++++++++++++-------
- .../admin-guide/kernel-parameters.txt         |  2 +-
- drivers/gpu/drm/Kconfig                       |  2 +-
- 3 files changed, 22 insertions(+), 13 deletions(-)
- rename Documentation/EDID/{HOWTO.txt => howto.rst} (83%)
+-----Original Message-----
+From: Daniele Palmas <dnlplm@gmail.com> 
+Sent: Tuesday, April 30, 2019 8:11 AM
+To: sdias@codeaurora.org
+Cc: linux-kernel@vger.kernel.org; truong@codeaurora.org; dnlplm@gmail.com
+Subject: Re: MHI code review
 
-diff --git a/Documentation/EDID/HOWTO.txt b/Documentation/EDID/howto.rst
-similarity index 83%
-rename from Documentation/EDID/HOWTO.txt
-rename to Documentation/EDID/howto.rst
-index 539871c3b785..725fd49a88ca 100644
---- a/Documentation/EDID/HOWTO.txt
-+++ b/Documentation/EDID/howto.rst
-@@ -1,3 +1,9 @@
-+:orphan:
-+
-+====
-+EDID
-+====
-+
- In the good old days when graphics parameters were configured explicitly
- in a file called xorg.conf, even broken hardware could be managed.
- 
-@@ -34,16 +40,19 @@ Makefile. Please note that the EDID data structure expects the timing
- values in a different way as compared to the standard X11 format.
- 
- X11:
--HTimings:  hdisp hsyncstart hsyncend htotal
--VTimings:  vdisp vsyncstart vsyncend vtotal
-+  HTimings:
-+    hdisp hsyncstart hsyncend htotal
-+  VTimings:
-+    vdisp vsyncstart vsyncend vtotal
- 
--EDID:
--#define XPIX hdisp
--#define XBLANK htotal-hdisp
--#define XOFFSET hsyncstart-hdisp
--#define XPULSE hsyncend-hsyncstart
-+EDID::
- 
--#define YPIX vdisp
--#define YBLANK vtotal-vdisp
--#define YOFFSET vsyncstart-vdisp
--#define YPULSE vsyncend-vsyncstart
-+  #define XPIX hdisp
-+  #define XBLANK htotal-hdisp
-+  #define XOFFSET hsyncstart-hdisp
-+  #define XPULSE hsyncend-hsyncstart
-+
-+  #define YPIX vdisp
-+  #define YBLANK vtotal-vdisp
-+  #define YOFFSET vsyncstart-vdisp
-+  #define YPULSE vsyncend-vsyncstart
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 3d072ca532bb..3faf37b8b001 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -930,7 +930,7 @@
- 			edid/1680x1050.bin, or edid/1920x1080.bin is given
- 			and no file with the same name exists. Details and
- 			instructions how to build your own EDID data are
--			available in Documentation/EDID/HOWTO.txt. An EDID
-+			available in Documentation/EDID/howto.rst. An EDID
- 			data set will only be used for a particular connector,
- 			if its name and a colon are prepended to the EDID
- 			name. Each connector may use a unique EDID data
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 6b34949416b1..c3a6dd284c91 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -141,7 +141,7 @@ config DRM_LOAD_EDID_FIRMWARE
- 	  monitor are unable to provide appropriate EDID data. Since this
- 	  feature is provided as a workaround for broken hardware, the
- 	  default case is N. Details and instructions how to build your own
--	  EDID data are given in Documentation/EDID/HOWTO.txt.
-+	  EDID data are given in Documentation/EDID/howto.rst.
- 
- config DRM_DP_CEC
- 	bool "Enable DisplayPort CEC-Tunneling-over-AUX HDMI support"
--- 
-2.21.0
+Hi Sujeev,
+
+> Hi Greg Kroah-Hartman\Arnd Bergmann and community
+>
+> Thank you for all the feedback, I believe I have addressed all the 
+> comments from previous patches. Also, I am excluding mhi network 
+> driver in this series. I still have some modifications to do.
+>
+> Please review the new patch series and share your feedback.
+>
+> Thanks again
+>
+> Sincerely,
+> Sujeev
+
+are you going to continue working on this series?
+
+Can this series be used with PCIe SDX20/24/55 based modems?
+
+If yes, it would really be important to have this integrated into an
+official kernel.
+
+Thanks,
+Daniele
 
