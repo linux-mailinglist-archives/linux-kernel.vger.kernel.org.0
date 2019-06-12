@@ -2,148 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA3441A60
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F00B41A51
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 04:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408417AbfFLC3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 22:29:48 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57842 "EHLO mga09.intel.com"
+        id S2408416AbfFLCXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 22:23:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34806 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405046AbfFLC3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 22:29:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 19:29:47 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 19:29:41 -0700
-Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v4 6/9] iommu/vt-d: Check whether device requires bounce
- buffer
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
- <20190603011620.31999-7-baolu.lu@linux.intel.com>
- <20190610160802.GX28796@char.us.oracle.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <bf973966-d975-9100-475d-bf30dbb99bf6@linux.intel.com>
-Date:   Wed, 12 Jun 2019 10:22:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2405661AbfFLCXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 22:23:13 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 63D5C3082E03;
+        Wed, 12 Jun 2019 02:23:12 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 32A02648BF;
+        Wed, 12 Jun 2019 02:23:11 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 2391624B25;
+        Wed, 12 Jun 2019 02:23:10 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 22:23:09 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     cohuck@redhat.com, jack@suse.cz, kvm@vger.kernel.org,
+        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
+        zwisler@kernel.org, aarcange@redhat.com,
+        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
+        linux-nvdimm@lists.01.org,
+        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
+        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
+        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
+        kilobyte@angband.pl, rdunlap@infradead.org, riel@surriel.com,
+        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
+        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
+        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
+        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        darrick wong <darrick.wong@oracle.com>, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, imammedo@redhat.com
+Message-ID: <332155967.34508010.1560306189624.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190611171416.GA1248@redhat.com>
+References: <20190611163802.25352-1-pagupta@redhat.com> <20190611163802.25352-5-pagupta@redhat.com> <20190611171416.GA1248@redhat.com>
+Subject: Re: [Qemu-devel] [PATCH v12 4/7] dm: enable synchronous dax
 MIME-Version: 1.0
-In-Reply-To: <20190610160802.GX28796@char.us.oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.70, 10.4.195.27]
+Thread-Topic: enable synchronous dax
+Thread-Index: 7O59Nmg+n8QzGpvkvBkkxWqWG8w3fA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 12 Jun 2019 02:23:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 6/11/19 12:08 AM, Konrad Rzeszutek Wilk wrote:
-> On Mon, Jun 03, 2019 at 09:16:17AM +0800, Lu Baolu wrote:
->> This adds a helper to check whether a device needs to use bounce
->> buffer. It also provides a boot time option to disable the bounce
->> buffer. Users can use this to prevent the iommu driver from using
->> the bounce buffer for performance gain.
->> 
->> Cc: Ashok Raj <ashok.raj@intel.com> Cc: Jacob Pan
->> <jacob.jun.pan@linux.intel.com> Cc: Kevin Tian
->> <kevin.tian@intel.com> Signed-off-by: Lu Baolu
->> <baolu.lu@linux.intel.com> Tested-by: Xu Pengfei
->> <pengfei.xu@intel.com> Tested-by: Mika Westerberg
->> <mika.westerberg@intel.com> --- 
->> Documentation/admin-guide/kernel-parameters.txt | 5 +++++ 
->> drivers/iommu/intel-iommu.c                     | 6 ++++++ 2 files
->> changed, 11 insertions(+)
->> 
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt
->> b/Documentation/admin-guide/kernel-parameters.txt index
->> 138f6664b2e2..65685c6e53e4 100644 ---
->> a/Documentation/admin-guide/kernel-parameters.txt +++
->> b/Documentation/admin-guide/kernel-parameters.txt @@ -1728,6
->> +1728,11 @@ Note that using this option lowers the security 
->> provided by tboot because it makes the system vulnerable to DMA
->> attacks. +		nobounce [Default off] +			Do not use the bounce buffer
->> for untrusted devices like +			the Thunderbolt devices. This will
->> treat the untrusted
+> On Tue, Jun 11 2019 at 12:37pm -0400,
+> Pankaj Gupta <pagupta@redhat.com> wrote:
 > 
-> My brain has sometimes a hard time parsing 'Not' and 'un'. Could this
-> be:
+> > This patch sets dax device 'DAXDEV_SYNC' flag if all the target
+> > devices of device mapper support synchrononous DAX. If device
+> > mapper consists of both synchronous and asynchronous dax devices,
+> > we don't set 'DAXDEV_SYNC' flag.
+> > 
+> > 'dm_table_supports_dax' is refactored to pass 'iterate_devices_fn'
+> > as argument so that the callers can pass the appropriate functions.
+> > 
+> > Suggested-by: Mike Snitzer <snitzer@redhat.com>
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
 > 
-> Disable bounce buffer for unstrusted devices ..?
+> Thanks, and for the benefit of others, passing function pointers like
+> this is perfectly fine IMHO because this code is _not_ in the fast
+> path.  These methods are only for device creation.
 > 
+> Reviewed-by: Mike Snitzer <snitzer@redhat.com>
 
-Fair enough.
-
-> 
-> And perhaps call it 'noswiotlb' ? Not everyone knows that SWIOTLB =
-> bounce buffer.
-
-As I said in previous thread, swiotlb is not only used for BOUNCE_PAGE
-case, but also used by direct dma APIs. Will it cause confusion?
-
-Anyway, I have no strong feeling to use 'nobounce' or 'noswiotlb'. It's
-a driver specific switch for debugging purpose. People suggested that we
-should move this switch into pci module, but I heard that it's more
-helpful to implement per-device switch for "trusted' or "untrusted".
-So I kept this untouched in this version.
-
-> 
->> +			devices as the trusted ones, hence might expose security +
->> risks of DMA attacks.
->> 
->> intel_idle.max_cstate=	[KNL,HW,ACPI,X86] 0	disables intel_idle and
->> fall back on acpi_idle. diff --git a/drivers/iommu/intel-iommu.c
->> b/drivers/iommu/intel-iommu.c index 235837c50719..41439647f75d
->> 100644 --- a/drivers/iommu/intel-iommu.c +++
->> b/drivers/iommu/intel-iommu.c @@ -371,6 +371,7 @@ static int
->> dmar_forcedac; static int intel_iommu_strict; static int
->> intel_iommu_superpage = 1; static int iommu_identity_mapping; 
->> +static int intel_no_bounce;
-> 
-> intel_swiotlb_on = 1 ?
-> 
->> 
->> #define IDENTMAP_ALL		1 #define IDENTMAP_GFX		2 @@ -384,6 +385,8 @@
->> EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped); static
->> DEFINE_SPINLOCK(device_domain_lock); static
->> LIST_HEAD(device_domain_list);
->> 
->> +#define device_needs_bounce(d) (!intel_no_bounce &&
->> dev_is_untrusted(d)) + /* * Iterate over elements in
->> device_domain_list and call the specified * callback @fn against
->> each element. @@ -466,6 +469,9 @@ static int __init
->> intel_iommu_setup(char *str) printk(KERN_INFO "Intel-IOMMU: not
->> forcing on after tboot. This could expose security risk for
->> tboot\n"); intel_iommu_tboot_noforce = 1; +		} else if
->> (!strncmp(str, "nobounce", 8)) { +			pr_info("Intel-IOMMU: No
->> bounce buffer. This could expose security risks of DMA
->> attacks\n");
-> 
-> Again, Intel-IOMMU: No SWIOTLB. T.. blah blah'
-> 
-> Asking for this as doing 'dmesg | grep SWIOTLB' will expose nicely
-> all the SWIOTLB invocations..
-
-Yes. Will refine this.
+Thank you, Mike
 
 Best regards,
-Baolu
+Pankaj
+
+> 
+> 
