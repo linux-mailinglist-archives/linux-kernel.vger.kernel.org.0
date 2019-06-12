@@ -2,94 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAE2428A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42077428A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409223AbfFLOVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 10:21:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35482 "EHLO mx1.redhat.com"
+        id S1731414AbfFLOUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:20:38 -0400
+Received: from smtp3.ono.com ([62.42.230.163]:35127 "EHLO smtp3.ono.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfFLOVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:21:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1648030C3195;
-        Wed, 12 Jun 2019 14:20:56 +0000 (UTC)
-Received: from gondolin (ovpn-116-169.ams2.redhat.com [10.36.116.169])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D885A79581;
-        Wed, 12 Jun 2019 14:20:14 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 16:20:12 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dan.j.williams@intel.com,
-        zwisler@kernel.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
-        mst@redhat.com, jasowang@redhat.com, willy@infradead.org,
-        rjw@rjwysocki.net, hch@infradead.org, lenb@kernel.org,
-        jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
-        darrick.wong@oracle.com, lcapitulino@redhat.com, kwolf@redhat.com,
-        imammedo@redhat.com, jmoyer@redhat.com, nilal@redhat.com,
-        riel@surriel.com, stefanha@redhat.com, aarcange@redhat.com,
-        david@redhat.com, david@fromorbit.com,
-        xiaoguangrong.eric@gmail.com, pbonzini@redhat.com,
-        yuval.shaia@oracle.com, kilobyte@angband.pl, jstaron@google.com,
-        rdunlap@infradead.org, snitzer@redhat.com
-Subject: Re: [PATCH v13 2/7] virtio-pmem: Add virtio pmem driver
-Message-ID: <20190612162012.06b4af7f.cohuck@redhat.com>
-In-Reply-To: <20190612124527.3763-3-pagupta@redhat.com>
-References: <20190612124527.3763-1-pagupta@redhat.com>
-        <20190612124527.3763-3-pagupta@redhat.com>
-Organization: Red Hat GmbH
+        id S1726921AbfFLOUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 10:20:38 -0400
+X-Junkmail-Premium-Raw: score=16/50,refid=2.7.2:2019.6.12.134517:17:16.798,ip=62.42.230.131,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, __PHISH_SPEAR_SUBJ_ALERT,
+ __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __ANY_URI,
+ __FRAUD_BODY_WEBMAIL, __URI_NO_WWW, __FRAUD_INTRO, __FRAUD_REPLY,
+ HI_MY_NAME_IS, __NO_HTML_TAG_RAW, BODY_SIZE_700_799,
+ BODYTEXTP_SIZE_3000_LESS, __MIME_TEXT_P1, __MIME_TEXT_ONLY, __URI_NS,
+ HTML_00_01, HTML_00_10, __PHISH_SPEAR_GREETING, FRAUD_X3,
+ BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL, WEBMAIL_REPLYTO_NOT_FROM,
+ FRAUD_WEBMAIL_R_NOT_F, __FRAUD_COMMON, __MIME_TEXT_P,
+ __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS,
+ __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
+ BODY_SIZE_7000_LESS, TO_MALFORMED
+Received: from resprs01 (62.42.230.131) by smtp3.ono.com (9.0.019.09-1)
+        id 5CC0A28F02610BA4; Wed, 12 Jun 2019 16:20:15 +0200
+Received: from (149.126.75.3) by webmailcpr01n.ono.com;  Wed, 12 Jun 2019 16:20:15 +0200
+Message-ID: <10763923.380101560349215420.JavaMail.defaultUser@defaultHost>
+Date:   Wed, 12 Jun 2019 16:20:15 +0200 (CEST)
+From:   Kate Philips <o0fit@ono.com>
+Reply-To: dr.katephilips2000@email.cz
+Subject: Hello Dear.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 12 Jun 2019 14:21:04 +0000 (UTC)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Jun 2019 18:15:22 +0530
-Pankaj Gupta <pagupta@redhat.com> wrote:
+Hello Dear. 
 
-> This patch adds virtio-pmem driver for KVM guest.
-> 
-> Guest reads the persistent memory range information from
-> Qemu over VIRTIO and registers it on nvdimm_bus. It also
-> creates a nd_region object with the persistent memory
-> range information so that existing 'nvdimm/pmem' driver
-> can reserve this into system memory map. This way
-> 'virtio-pmem' driver uses existing functionality of pmem
-> driver to register persistent memory compatible for DAX
-> capable filesystems.
-> 
-> This also provides function to perform guest flush over
-> VIRTIO from 'pmem' driver when userspace performs flush
-> on DAX memory range.
-> 
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> Acked-by: Jakub Staron <jstaron@google.com>
-> Tested-by: Jakub Staron <jstaron@google.com>
-> ---
->  drivers/nvdimm/Makefile          |   1 +
->  drivers/nvdimm/nd_virtio.c       | 125 +++++++++++++++++++++++++++++++
->  drivers/nvdimm/virtio_pmem.c     | 122 ++++++++++++++++++++++++++++++
->  drivers/nvdimm/virtio_pmem.h     |  55 ++++++++++++++
->  drivers/virtio/Kconfig           |  11 +++
->  include/uapi/linux/virtio_ids.h  |   1 +
->  include/uapi/linux/virtio_pmem.h |  35 +++++++++
->  7 files changed, 350 insertions(+)
->  create mode 100644 drivers/nvdimm/nd_virtio.c
->  create mode 100644 drivers/nvdimm/virtio_pmem.c
->  create mode 100644 drivers/nvdimm/virtio_pmem.h
->  create mode 100644 include/uapi/linux/virtio_pmem.h
+My name is Dr. Kate Philips, I am 27 years old medical doctor from USA 
+united state of america but working at UK at St Paul Hospital also 
+working as a secretary at ULW H. C .starting from today, 
+I was just going through the Internet search When your profile which i 
+like it, am looking for a good honest and trustworthy friend That can 
+lead to something good, 
+if you are honest person please get back to me and tell Me Something 
+About Yourself, Please Do Not Need Love Of Money From Any Man. 
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+I will be happy to see you reply for us to know each other better and 
+give you my pictures and details about me. 
+you can reach me at 
+
+dr.katephilips2000@email.cz
+
+and tell me about yourself 
+
+Yours 
+
+Dr. Kate Philips,
