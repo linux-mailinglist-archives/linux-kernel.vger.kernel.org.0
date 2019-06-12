@@ -2,56 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE45741A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F3241A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437077AbfFLBzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:55:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52094 "EHLO mail.kernel.org"
+        id S2437102AbfFLBzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 21:55:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48242 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408338AbfFLBzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:55:13 -0400
-Subject: Re: [GIT PULL] Minor ptrace fixes for v5.2-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560304513;
-        bh=mjpZy/AXm9YfznLfbotCtjfRbleaCjIRMqbO8WDfh70=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=KeQ2dZWSNXS5341KaDgyM4gY77EDlRxXcGznim6yMmq4Fr02ng9n0YQhbvZYKJm+p
-         YcIkmOfyHFFi3PTlf22evlrIUryOyUjTj7qy1ikqFTCb00rznBIMZqZ6Scd7DE71d9
-         CNBRsbW+4cK+AWfQHBDad9Q9JSP7xBJlDpUIAj7k=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <87d0jj6fcw.fsf@xmission.com>
-References: <87d0jj6fcw.fsf@xmission.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87d0jj6fcw.fsf@xmission.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git
- for-linus
-X-PR-Tracked-Commit-Id: f6581f5b55141a95657ef5742cf6a6bfa20a109f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: aa7235483a838be79b7c22a86b0dc4cb12ee5dd6
-Message-Id: <156030451320.13515.9066573219794161403.pr-tracker-bot@kernel.org>
-Date:   Wed, 12 Jun 2019 01:55:13 +0000
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>
+        id S2406027AbfFLBzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 21:55:53 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 311FA3082B64;
+        Wed, 12 Jun 2019 01:55:53 +0000 (UTC)
+Received: from localhost (ovpn-12-46.pek2.redhat.com [10.72.12.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3EA5F1001B0A;
+        Wed, 12 Jun 2019 01:55:51 +0000 (UTC)
+Date:   Wed, 12 Jun 2019 09:55:49 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     lijiang <lijiang@redhat.com>, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, x86@kernel.org,
+        hpa@zytor.com, dyoung@redhat.com, Thomas.Lendacky@amd.com
+Subject: Re: [PATCH 0/3 v11] add reserved e820 ranges to the kdump kernel
+ e820 table
+Message-ID: <20190612015549.GI26148@MiWiFi-R3L-srv>
+References: <20190423013007.17838-1-lijiang@redhat.com>
+ <12847a03-3226-0b29-97b5-04d404410147@redhat.com>
+ <20190607174211.GN20269@zn.tnic>
+ <20190608035451.GB26148@MiWiFi-R3L-srv>
+ <20190608091030.GB32464@zn.tnic>
+ <20190608100139.GC26148@MiWiFi-R3L-srv>
+ <20190608100623.GA9138@zn.tnic>
+ <20190608102659.GA9130@MiWiFi-R3L-srv>
+ <20190610113747.GD5488@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610113747.GD5488@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 01:55:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 11 Jun 2019 15:23:27 -0500:
+On 06/10/19 at 01:37pm, Borislav Petkov wrote:
+> On Sat, Jun 08, 2019 at 06:26:59PM +0800, Baoquan He wrote:
+> > OK, I see. Then it should be the issue we have met and talked about with
+> > Tom.
+> > https://lkml.kernel.org/r/20190604134952.GC26891@MiWiFi-R3L-srv
+> > 
+> > You can apply Tom's patch as below. I tested it, it can make kexec
+> > kernel succeed to boot, but failed for kdump kernel booting. The kdump
+> > kernel can boot till the end of kernel initialization, then hang with a
+> > call trace. I have pasted the log in the above thread. Haven't got the
+> > reason.
+> > http://lkml.kernel.org/r/508c2853-dc4f-70a6-6fa8-97c950dc31c6@amd.com
+> 
+> I can confirm the same observation.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
+With further investigation, the failure after applying Tom's patch is
+caused by OOM. When increase crashkernel reservation to 512M, kdump
+kernel can boot successfully. I noticed your crashkernel reservation is
+256M, that will fail and stuck there very possibly.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/aa7235483a838be79b7c22a86b0dc4cb12ee5dd6
+So Tom's patch can fix the issue. We need further check why much more
+crashkernel memory is needed on those AMD boxes with sme support..
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks
+Baoquan
