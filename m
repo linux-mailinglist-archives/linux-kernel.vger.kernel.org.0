@@ -2,128 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4375942266
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4ED442248
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390488AbfFLKXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:23:13 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43282 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408847AbfFLKXJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:23:09 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5CAN8tl038317;
-        Wed, 12 Jun 2019 05:23:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560334988;
-        bh=gXlPsskpiWFKuL3pKSUlET3jukGcKHstSsj3yxbC3+Q=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Wb2slfVJ1rQBhaKZ4ASf+uNopTTbp4J3NtShek+8YU8hnDPfLVoKpkPI0xFCoYnGf
-         hCDRzscN825i8jiPk9pQKlxs4+5fu06BNgQ1OTUCPeMQGeub6fXRsYaFvGU/A2EJik
-         uIXd8WlYKqa26C7J51TcNR4cgsTG8+bwOpNAU1bA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5CAN8vC078071
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Jun 2019 05:23:08 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 12
- Jun 2019 05:23:08 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 12 Jun 2019 05:23:08 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5CAN5sd016514;
-        Wed, 12 Jun 2019 05:23:07 -0500
-Subject: Re: [GIT PULL] PHY: for 5.2-rc
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>
-References: <20190611140122.9429-1-kishon@ti.com>
- <20190611170401.GA23216@kroah.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <1f381f69-ca3f-05d4-d183-91bd59c3a26b@ti.com>
-Date:   Wed, 12 Jun 2019 15:51:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1732071AbfFLKVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:21:45 -0400
+Received: from sauhun.de ([88.99.104.3]:58172 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732038AbfFLKVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:21:44 -0400
+Received: from localhost (p5486CACA.dip0.t-ipconnect.de [84.134.202.202])
+        by pokefinder.org (Postfix) with ESMTPSA id 5AC162C54BC;
+        Wed, 12 Jun 2019 12:21:42 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 12:21:42 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Bitan Biswas <bbiswas@nvidia.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+Subject: Re: [PATCH V5 2/7] i2c: tegra: remove unnecessary variable init
+Message-ID: <20190612102141.p2dm53chv3d6sd5w@ninjato>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-2-git-send-email-bbiswas@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20190611170401.GA23216@kroah.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cpx4mfhacgqsirus"
+Content-Disposition: inline
+In-Reply-To: <1560250274-18499-2-git-send-email-bbiswas@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 11/06/19 10:34 PM, Greg Kroah-Hartman wrote:
-> On Tue, Jun 11, 2019 at 07:31:22PM +0530, Kishon Vijay Abraham I wrote:
->> Hi Greg,
->>
->> Please find the pull request for 5.2 -rc cycle.
->>
->> The major fix being moving supplies powering PLLs used by USB, SATA,
->> PCIe to tegra-xusb driver fixing initialization failure.
->>
->> Others are minor fixes. Please see the tag message below for more
->> details.
->>
->> Consider merging it in this -rc cycle and let me know if you want me
->> to make any changes.
->>
->> Thanks
->> Kishon
->>
->> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
->>
->>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
->>
->> are available in the Git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.2-rc
->>
->> for you to fetch changes up to ada28f7b3a97fa720864c86504a7c426ee6f91c1:
->>
->>   phy: tegra: xusb: Add Tegra210 PLL power supplies (2019-06-07 15:58:34 +0530)
->>
->> ----------------------------------------------------------------
->> phy: for 5.2-rc
->>
->>   *) Move Tegra124 PLL power supplies to be enabled by xusb-tegra124
->>   *) Move Tegra210 PLL power supplies to be enabled by xusb-tegra210
->>   *) Minor fixes: fix memory leaks at error path, fix sparse warnings
->>      and addresses coverity.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>
->> ----------------------------------------------------------------
->> Colin Ian King (1):
->>       phy: qcom-qusb2: fix missing assignment of ret when calling clk_prepare_enable
->>
->> Florian Fainelli (1):
->>       phy: usb: phy-brcm-usb: Remove sysfs attributes upon driver removal
->>
->> Thierry Reding (3):
->>       dt-bindings: phy: tegra-xusb: List PLL power supplies
->>       phy: tegra: xusb: Add Tegra124 PLL power supplies
->>       phy: tegra: xusb: Add Tegra210 PLL power supplies
->>
->> Yoshihiro Shimoda (1):
->>       phy: renesas: rcar-gen2: Fix memory leak at error paths
->>
->> YueHaibing (1):
->>       phy: ti: am654-serdes: Make serdes_am654_xlate() static
-> 
-> sparse fixes are not for the -rc cycle, unless they fix an actual bug.
-> 
-> Care to send these as a patch series and I can queue up the real
-> bugfixes for -final and take the others for 5.3-rc1?
+--cpx4mfhacgqsirus
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure, I'll send the patches with an updated pull request.
+On Tue, Jun 11, 2019 at 03:51:09AM -0700, Bitan Biswas wrote:
+> Remove variable initializations in functions that
+> are followed by assignments before use
+>=20
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-Thanks
-Kishon
+Applied to for-next, thanks!
+
+
+--cpx4mfhacgqsirus
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0A0jUACgkQFA3kzBSg
+KbaNcQ/+KpA29qjJEt9lo/rmTsTB76jUXW+YMwI+dtdIlDIuXv+yo7LDZJ4fVQ3q
+z8dFKkKR0AIjyJmmqq7YTbVneBY+cyqx+WHtr+4GC92pwIP91AvbHYxjRUP9abty
+u7QCWAeSggStsAt0emF5NGnkIf+VcPUu7LmdcF6cbfm3uzOOgKvgPr2ayl0Ot8Qk
+XCVVZigOatokShqAKEApVyIvZURW5Kt+NHj7hMcIt3kYj538GNJv+gTDRvDaU2Bq
+Z+CodjXHt5VU8tqaawcHJnbEDirBxWHcYIKG46T3qiNoZqUKEiBi5FhSjJghcK6x
+d3bpL+u6OjJjGJagGFCiG6iKU8rKRMWaM9unUnSSQThhn/mm4J/ZyXNwro/KRCg/
+f9sKv8DHIcV7JTyQgACBQB/dt0FJZHUdg1BkP/KpaMt9hPLRlyV9JxRclQfwxW/d
+tX5QEfBySOH4OmtG3iTLZ/UnYXzSd5ec60p0heJw+CUq64+1xmmRjDd0URewfWXW
+NjyIXwyXBSCwVu9b4Y5R6NCnEU/CMSGMMAfI83ComEZ4CM32tIpab4YFwmoFhvtT
+2tWEHddqWJPruQunshb8eDia97jldi0GhaG4eY1fafw0Jv9WuQ3XQBY8ST6j0VPZ
+rl9zOaMjBT1cO7jC4trIHtMbPh6XgM+8zC3Q2OzDbsN1ejkRoTc=
+=cErD
+-----END PGP SIGNATURE-----
+
+--cpx4mfhacgqsirus--
