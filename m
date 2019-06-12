@@ -2,107 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C46642BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1661842BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:02:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbfFLQBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 12:01:25 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50366 "EHLO mga04.intel.com"
+        id S2440181AbfFLQCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 12:02:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbfFLQBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 12:01:24 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 09:01:23 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2019 09:01:23 -0700
-Date:   Wed, 12 Jun 2019 09:01:23 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v2 1/5] KVM: X86: Dynamic allocate core residency msr
- state
-Message-ID: <20190612160123.GH20308@linux.intel.com>
-References: <1560238451-19495-1-git-send-email-wanpengli@tencent.com>
- <1560238451-19495-2-git-send-email-wanpengli@tencent.com>
+        id S2406982AbfFLQCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 12:02:16 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F2E621734;
+        Wed, 12 Jun 2019 16:02:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560355335;
+        bh=metd6bfdlEBpzQ+ceKHY3yudA9GwzpuxQi/0AJYZuR8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oM3YEkg5JFAtr+dxqlSmKGC5DoRVFr9YH8llHwQvbj05188iWTHOHyZTwGZTihjdy
+         RUNponKwURuc7jhnmsN26O1yJsqqQcx79O4t7KN6p4MD6sap6D2o60q/3o2le1RtJp
+         keYYthQbmm5nwIkUSPxFQCOA3VGMLOOB8nQdAgas=
+Received: by mail-qk1-f180.google.com with SMTP id w187so10614100qkb.11;
+        Wed, 12 Jun 2019 09:02:15 -0700 (PDT)
+X-Gm-Message-State: APjAAAX/JPwcOIn5gPDkwYemvK+dhwYMnIysM0kwzAutoXwX31L6rfJl
+        4m5mlZJ2sae85wB2jd4uCxZ7rIEHhOQ6OLIelA==
+X-Google-Smtp-Source: APXvYqybvPsqmqFny7a/JtFlhcTlJvlaZutyfLURiANi3yYx5Ws3TiRMG/YwRYEOIfUSRlyBWiQ9Ld6YtcnmxxUqqK4=
+X-Received: by 2002:a37:a6c9:: with SMTP id p192mr68957195qke.184.1560355333838;
+ Wed, 12 Jun 2019 09:02:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560238451-19495-2-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org> <20190612075451.8643-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190612075451.8643-3-manivannan.sadhasivam@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 12 Jun 2019 10:02:01 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLRTK=7Ch7V-WA07_zxWMNGXmRH7=1TRR9m-zY7h_-YYQ@mail.gmail.com>
+Message-ID: <CAL_JsqLRTK=7Ch7V-WA07_zxWMNGXmRH7=1TRR9m-zY7h_-YYQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: arm: stm32: Convert STM32 SoC
+ bindings to DT schema
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        loic pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 03:34:07PM +0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Dynamic allocate core residency msr state. MSR_CORE_C1_RES is unreadable 
-> except for ATOM platform, so it is ignore here.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+On Wed, Jun 12, 2019 at 1:55 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> This commit converts STM32 SoC bindings to DT schema using jsonschema.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  arch/x86/include/asm/kvm_host.h | 11 +++++++++++
->  arch/x86/kvm/vmx/vmx.c          |  5 +++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 15e973d..bd615ee 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -538,6 +538,15 @@ struct kvm_vcpu_hv {
->  	cpumask_t tlb_flush;
->  };
->  
-> +#define NR_CORE_RESIDENCY_MSRS 3
-> +
-> +struct kvm_residency_msr {
-> +	s64 value;
-> +	u32 index;
-> +	bool delta_from_host;
-> +	bool count_with_host;
-> +};
-> +
->  struct kvm_vcpu_arch {
->  	/*
->  	 * rip and regs accesses must go through
-> @@ -785,6 +794,8 @@ struct kvm_vcpu_arch {
->  
->  	/* AMD MSRC001_0015 Hardware Configuration */
->  	u64 msr_hwcr;
-> +
-> +	struct kvm_residency_msr *core_cstate_msrs;
+>  .../devicetree/bindings/arm/stm32/stm32.txt   | 10 -------
+>  .../devicetree/bindings/arm/stm32/stm32.yaml  | 29 +++++++++++++++++++
+>  2 files changed, 29 insertions(+), 10 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/stm32/stm32.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/stm32/stm32.yaml
 
-Why are these in kvm_vcpu_arch?  AFAICT they're only wired up for VMX.
-
->  };
->  
->  struct kvm_lpage_info {
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 0b241f4..4dc2459 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6658,6 +6658,11 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
->  			goto free_vmcs;
->  	}
->  
-> +	vmx->vcpu.arch.core_cstate_msrs = kzalloc(sizeof(struct kvm_residency_msr) *
-> +		NR_CORE_RESIDENCY_MSRS, GFP_KERNEL_ACCOUNT);
-> +	if (!vmx->vcpu.arch.core_cstate_msrs)
-> +		goto free_vmcs;
-> +
->  	if (nested)
->  		nested_vmx_setup_ctls_msrs(&vmx->nested.msrs,
->  					   vmx_capability.ept,
-> -- 
-> 2.7.4
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
