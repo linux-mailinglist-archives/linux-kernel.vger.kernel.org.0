@@ -2,85 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B2942CC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4564242CD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502282AbfFLQxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 12:53:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50064 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440346AbfFLQxb (ORCPT
+        id S1730383AbfFLQ4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 12:56:45 -0400
+Received: from smtprelay0196.hostedemail.com ([216.40.44.196]:34948 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726529AbfFLQ4n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 12:53:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NPN8bfwZq6cTbjgqtoqpT0enq0VICOKpKzqeN1XUFC4=; b=b2KWPzY9i8fB5AVv6I/4J73SY
-        kGQ2f92R/5QJb32/wyLs7IVbii/eurBR7I7+dxNv6Snumit62xce/U6tOyieaJMgsK80oe5nhm+mT
-        2zQWjvXYAz9ckK1kmLdHIf7jlDmEtH5QDY1fr/JvFq2T9UtYYtzkCu+mXdFcAueGMNgJQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hb6V8-0003CH-6H; Wed, 12 Jun 2019 16:53:30 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 93B9E440046; Wed, 12 Jun 2019 17:53:29 +0100 (BST)
-Date:   Wed, 12 Jun 2019 17:53:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] drivers: regulator: 88pm800: fix warning same module
- names
-Message-ID: <20190612165329.GF5316@sirena.org.uk>
-References: <20190612081158.1424-1-anders.roxell@linaro.org>
- <20190612122114.GE5316@sirena.org.uk>
- <CADYN=9K4WZQf4jy0Tk-kkVqwHJQvVBToH7ZOYq3z6gK94vR8ZA@mail.gmail.com>
+        Wed, 12 Jun 2019 12:56:43 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 186D02C33;
+        Wed, 12 Jun 2019 16:56:42 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:69:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1544:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2828:2904:2914:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:4250:4321:4605:5007:6119:7576:7875:8603:9592:10004:10848:11026:11232:11473:11658:11914:12043:12048:12296:12438:12555:12683:12740:12760:12895:12986:13439:13972:14181:14659:14721:21080:21433:21451:21627:30045:30054:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
+X-HE-Tag: elbow51_57385ec3ca363
+X-Filterd-Recvd-Size: 5165
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 12 Jun 2019 16:56:39 +0000 (UTC)
+Message-ID: <183d192c4f3d0a8032bda73953ac8d1719590570.camel@perches.com>
+Subject: Re: [PATCH v2 3/6] serial: uartps: Fix multiple line dereference
+From:   Joe Perches <joe@perches.com>
+To:     Michal Simek <michal.simek@xilinx.com>, johan@kernel.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        monstr@monstr.eu
+Cc:     Nava kishore Manne <nava.manne@xilinx.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Wed, 12 Jun 2019 09:56:32 -0700
+In-Reply-To: <3a5b27987c5b4fc5ec7dc7f58485db63057edbfe.1560338079.git.michal.simek@xilinx.com>
+References: <cover.1560338079.git.michal.simek@xilinx.com>
+         <3a5b27987c5b4fc5ec7dc7f58485db63057edbfe.1560338079.git.michal.simek@xilinx.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DO5DiztRLs659m5i"
-Content-Disposition: inline
-In-Reply-To: <CADYN=9K4WZQf4jy0Tk-kkVqwHJQvVBToH7ZOYq3z6gK94vR8ZA@mail.gmail.com>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2019-06-12 at 13:14 +0200, Michal Simek wrote:
+> From: Nava kishore Manne <nava.manne@xilinx.com>
+> 
+> Trivial patch which fixes this checkpatch warning:
+> WARNING: Avoid multiple line dereference - prefer 'port->state->xmit.tail'
+> +				port->state->xmit.buf[port->state->xmit.
+> +				tail], port->membase + CDNS_UART_FIFO);
+> 
+> Fixes: c8dbdc842d30 ("serial: xuartps: Rewrite the interrupt handling logic")
+> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+> Changes in v2:
+> - Split patch from v1
+> - Add Fixes tag
+> 
+>  drivers/tty/serial/xilinx_uartps.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+> index c84db82bdaab..4cd20c036750 100644
+> --- a/drivers/tty/serial/xilinx_uartps.c
+> +++ b/drivers/tty/serial/xilinx_uartps.c
+> @@ -319,8 +319,8 @@ static void cdns_uart_handle_tx(void *dev_id)
+>  			 * register.
+>  			 */
+>  			writel(
+> -				port->state->xmit.buf[port->state->xmit.
+> -				tail], port->membase + CDNS_UART_FIFO);
+> +				port->state->xmit.buf[port->state->xmit.tail],
+> +					port->membase + CDNS_UART_FIFO);
+>  
+>  			port->icount.tx++;
 
---DO5DiztRLs659m5i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Another way to rewrite this is to use a temporary for
+port->state->xmit and also return early on empty to
+avoid unnecessary indentation.
 
-On Wed, Jun 12, 2019 at 04:14:38PM +0200, Anders Roxell wrote:
-> On Wed, 12 Jun 2019 at 14:21, Mark Brown <broonie@kernel.org> wrote:
+Using a temporary can also reduce object size a bit by
+removing unnecessary dereferences: (defconfig x86-64)
 
-> > Please use subject lines matching the style for the subsystem.  This
-> > makes it easier for people to identify relevant patches.
+$ size drivers/tty/serial/xilinx_uartps.o*
+   text	   data	    bss	    dec	    hex	filename
+  26578	   4632	    320	  31530	   7b2a	drivers/tty/serial/xilinx_uartps.o.new
+  26642	   4632	    320	  31594	   7b6a	drivers/tty/serial/xilinx_uartps.o.old
 
-> I should have payed more attention, sorry.
+i.e.:
 
-> Do you want me to send a v3 to fix the subject line for this patch?
+---
+ drivers/tty/serial/xilinx_uartps.c | 54 ++++++++++++++++++--------------------
+ 1 file changed, 25 insertions(+), 29 deletions(-)
 
-It's OK, I fixed it up by hand.
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index 605354fd60b1..09b586aeeca3 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -305,40 +305,36 @@ static void cdns_uart_handle_rx(void *dev_id, unsigned int isrstatus)
+ static void cdns_uart_handle_tx(void *dev_id)
+ {
+ 	struct uart_port *port = (struct uart_port *)dev_id;
++	struct circ_buf *xmit = &port->state->xmit;
+ 	unsigned int numbytes;
+ 
+-	if (uart_circ_empty(&port->state->xmit)) {
++	if (uart_circ_empty(xmit)) {
+ 		writel(CDNS_UART_IXR_TXEMPTY, port->membase + CDNS_UART_IDR);
+-	} else {
+-		numbytes = port->fifosize;
+-		while (numbytes && !uart_circ_empty(&port->state->xmit) &&
+-		       !(readl(port->membase + CDNS_UART_SR) & CDNS_UART_SR_TXFULL)) {
+-			/*
+-			 * Get the data from the UART circular buffer
+-			 * and write it to the cdns_uart's TX_FIFO
+-			 * register.
+-			 */
+-			writel(
+-				port->state->xmit.buf[port->state->xmit.
+-				tail], port->membase + CDNS_UART_FIFO);
+-
+-			port->icount.tx++;
+-
+-			/*
+-			 * Adjust the tail of the UART buffer and wrap
+-			 * the buffer if it reaches limit.
+-			 */
+-			port->state->xmit.tail =
+-				(port->state->xmit.tail + 1) &
+-					(UART_XMIT_SIZE - 1);
+-
+-			numbytes--;
+-		}
++		return;
++	}
++
++	numbytes = port->fifosize;
++	while (numbytes && !uart_circ_empty(xmit) &&
++	       !(readl(port->membase + CDNS_UART_SR) & CDNS_UART_SR_TXFULL)) {
++		/*
++		 * Get the data from the UART circular buffer and write it
++		 * to the cdns_uart's TX_FIFO register.
++		 */
++		writel(xmit->buf[xmit->tail], port->membase + CDNS_UART_FIFO);
++
++		port->icount.tx++;
++
++		/*
++		 * Adjust the tail of the UART buffer and wrap the buffer
++		 * if it reaches limit.
++		 */
++		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+ 
+-		if (uart_circ_chars_pending(
+-				&port->state->xmit) < WAKEUP_CHARS)
+-			uart_write_wakeup(port);
++		numbytes--;
+ 	}
++
++	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
++		uart_write_wakeup(port);
+ }
+ 
+ /**
+ 
 
---DO5DiztRLs659m5i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0BLggACgkQJNaLcl1U
-h9CPlQf/TzkXQx2fBiyHR7gtrIz0k8K9xE3RxhGAoYHrqn0/SxOmjBYDb/Gb709h
-YTqzOtnoDaRzszpdZnjHQL9QMSdJR9QtzA+Ps4c4mWYVQeZRlwMqnMvN6pDca1Lf
-X/73E1gbJIXunzP36X9vwMsv0OZLBY2WKiuuI3DmQaO5DgD6Xw4KYDa2CytMIl1s
-ikaxpYiAEqAd8gYOJDuRMGOLcX+EVyyPvyJtuxz9Bz1yeffm1MwEEKXs3Ba56MwZ
-5xJR4bpasERKRyPgnhX+m2qA2HKMH4fqX/KLE+5XJFYMXe+xzkhCxeknjm2Hspjh
-gwQqMhAToISjb8XRFt17eaqScKoX/A==
-=2S8T
------END PGP SIGNATURE-----
-
---DO5DiztRLs659m5i--
