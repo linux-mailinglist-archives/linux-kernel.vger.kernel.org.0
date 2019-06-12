@@ -2,161 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E573B43015
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E77F42FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:27:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbfFLT2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:28:22 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35473 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728575AbfFLT0q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:26:46 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d126so10259109pfd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 12:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JGTJNpxtoSxf9cQjifYgXwRhQ7ZHC2LuIfFDHnbUz+Q=;
-        b=jkCOi89f8z4k6wMOAeyYKznf4Y62pis19MeQNmtA7Jh53MHFibTLDJ9TYgKVn+f5kD
-         fLUDfVGDMuu4aWcnxDzxbp07lL+Lz51Iy00qrEIJCzXdYG49TZOl7ZAvAbf9jiUmmh/V
-         ih3U2U6lZeAoQ/pfzf5gNEqmoDoWlcBOwlo+E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JGTJNpxtoSxf9cQjifYgXwRhQ7ZHC2LuIfFDHnbUz+Q=;
-        b=QdF+c3YYecpf5ps+1otKW4uHtRIlmWsmtrbplz6OVmepczxmjfTLOvDtG0EFrIZAe4
-         VjQFn/EoUyaK0+nv0o1HdqrtodU38YT5sgS7hsu92HkVat4DleIpfV/Io3qxTf6WDTHD
-         Our0BZKOCh7ooNh5c+2d4VlKWhvRzFtqCCFcejYiEHAL7DRaRemIFvFbYoogm5fL6LB0
-         BpAhMFO1KqWfiCoSV/Rpn/1ZhodumnQGaf+ck2A0nilQJqc0Qf/dybYDuQhyYIyefBQk
-         OTQ6skTPPnVXuMmYE68FKQHeHP+hpLFa3uHBM6jDGQO/5achRowKmIobygXk8bMPD/HT
-         G9mw==
-X-Gm-Message-State: APjAAAWmWiY2o7oT/F14OSedUOgLnOCBX7ld1C/MyHYY1tj3EVerynN7
-        GV21uEjezrDd2lN543j3+ZgHBQ==
-X-Google-Smtp-Source: APXvYqzXNaVC/oJkIo+F4M5Yj007p4G4RNdM/LCI3g6mVncptMolQVeByev0CceqM+5WvJuPiF17VA==
-X-Received: by 2002:a62:5306:: with SMTP id h6mr89297716pfb.29.1560367605628;
-        Wed, 12 Jun 2019 12:26:45 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id e26sm326416pfn.94.2019.06.12.12.26.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 12:26:44 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 12:26:42 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Brian Norris <briannorris@google.com>, Pavel Machek <pavel@ucw.cz>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Doug Anderson <dianders@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Guenter Roeck <groeck@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Message-ID: <20190612192642.GK137143@google.com>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com>
- <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain>
- <20190610205233.GB137143@google.com>
- <20190611104913.egsbwcedshjdy3m5@holly.lan>
- <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
- <20190611223019.GH137143@google.com>
- <20190612110325.xdn3q2aod52oalge@holly.lan>
+        id S2387934AbfFLT11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 15:27:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42978 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729083AbfFLT1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 15:27:25 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C2A263087958;
+        Wed, 12 Jun 2019 19:27:25 +0000 (UTC)
+Received: from flask (unknown [10.40.205.10])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 428E260CCD;
+        Wed, 12 Jun 2019 19:27:20 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Wed, 12 Jun 2019 21:27:20 +0200
+Date:   Wed, 12 Jun 2019 21:27:20 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v3 1/2] KVM: LAPIC: Optimize timer latency consider world
+ switch time
+Message-ID: <20190612192720.GB23583@flask>
+References: <1560332419-17195-1-git-send-email-wanpengli@tencent.com>
+ <20190612151447.GD20308@linux.intel.com>
+ <20190612192243.GA23583@flask>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190612110325.xdn3q2aod52oalge@holly.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190612192243.GA23583@flask>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 19:27:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-On Wed, Jun 12, 2019 at 12:03:25PM +0100, Daniel Thompson wrote:
-> On Tue, Jun 11, 2019 at 03:30:19PM -0700, Matthias Kaehlcke wrote:
-> > On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
-> > > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
-> > > <daniel.thompson@linaro.org> wrote:
-> > > > This is a long standing flaw in the backlight interfaces. AFAIK generic
-> > > > userspaces end up with a (flawed) heuristic.
-> > > 
-> > > Bingo! Would be nice if we could start to fix this long-standing flaw.
+2019-06-12 21:22+0200, Radim Krčmář:
+> 2019-06-12 08:14-0700, Sean Christopherson:
+> > On Wed, Jun 12, 2019 at 05:40:18PM +0800, Wanpeng Li wrote:
+> > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > @@ -145,6 +145,12 @@ module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
+> > >  static int __read_mostly lapic_timer_advance_ns = -1;
+> > >  module_param(lapic_timer_advance_ns, int, S_IRUGO | S_IWUSR);
+> > >  
+> > > +/*
+> > > + * lapic timer vmentry advance (tscdeadline mode only) in nanoseconds.
+> > > + */
+> > > +u32 __read_mostly vmentry_advance_ns = 300;
 > > 
-> > Agreed!
+> > Enabling this by default makes me nervous, e.g. nothing guarantees that
+> > future versions of KVM and/or CPUs will continue to have 300ns of overhead
+> > between wait_lapic_expire() and VM-Enter.
 > > 
-> > How could a fix look like, a sysfs attribute? Would a boolean value
-> > like 'logarithmic_scale' or 'linear_scale' be enough or could more
-> > granularity be needed?
+> > If we want it enabled by default so that it gets tested, the default
+> > value should be extremely conservative, e.g. set the default to a small
+> > percentage (25%?) of the latency of VM-Enter itself on modern CPUs,
+> > VM-Enter latency being the min between VMLAUNCH and VMLOAD+VMRUN+VMSAVE.
 > 
-> Certainly "linear" (this device will work more or less correctly if the
-> userspace applies perceptual curves). Not sure about logarithmic since
-> what is actually useful is something that is "perceptually linear"
-> (logarithmic is merely a way to approximate that).
+> I share the sentiment.  We definitely must not enter the guest before
+> the deadline has expired and CPUs are approaching 5 GHz (in turbo), so
+> 300 ns would be too much even today.
 > 
-> I do wonder about a compatible string like most-detailed to
-> least-detailed description. This for a PWM with the auto-generated
-> tables we'd see something like:
-> 
-> cie-1991,perceptual,non-linear
-> 
-> For something that is non-linear but we are not sure what its tables are
-> we can offer just "non-linear".
+> I wrote a simple testcase for rough timing and there are 267 cycles
+> (111 ns @ 2.4 GHz) between doing rdtsc() right after
+> kvm_wait_lapic_expire() [1] and doing rdtsc() in the guest as soon as
+> possible (see the attached kvm-unit-test).
 
-Thanks for the feedback!
+I forgot to attach it, pasting here as a patch for kvm-unit-tests.
 
-It seems clear that we want a string for the added flexibility. I can
-work on a patch with the compatible string like description you
-suggested and we can discuss in the review if we want to go with that
-or prefer something else.
-
-> > The new attribute could be optional (it only exists if explicitly
-> > specified by the driver) or be set to a default based on a heuristic
-> > if not specified and be 'fixed' on a case by case basis. The latter
-> > might violate "don't break userspace" though, so I'm not sure it's a
-> > good idea.
-> 
-> I think we should avoid any heuristic! There are several drivers and we
-> may not be able to work through all of them and make the correct
-> decision.
-
-Agreed
-
-> Instead one valid value for the sysfs should be "unknown" and this be
-> the default for drivers we have not analysed (this also makes it easy to
-> introduce change here).
-
-An "unknown" value sounds good, it allows userspace to just do what it
-did/would hace done before this attribute existed.
-
-> We should only set the property to something else for drivers that have
-> been reviewed.
-> 
-> There could be a special case for pwm_bl.c in that I'm prepared to
-> assume that the hardware components downstream of the PWM have a
-> roughly linear response and that if the user provided tables that their
-> function is to provide a perceptually comfortable response.
-
-Unfortunately this isn't universally true :(
-
-At least several Chrome OS devices use a linear brightness scale and
-userspace does the transformation in the animated slider. A quick
-'git grep -A10 brightness-levels arch' suggests that there are
-multiple other devices/platforms using a linear scale.
-
-We could treat devices with a predefined brightness table as
-"unknown", unless there is a (new optional) DT property that indicates
-the type of the scale.
-
-Cheers
-
-Matthias
+---
+diff --git a/x86/Makefile.common b/x86/Makefile.common
+index e612dbe..ceed648 100644
+--- a/x86/Makefile.common
++++ b/x86/Makefile.common
+@@ -58,7 +58,7 @@ tests-common = $(TEST_DIR)/vmexit.flat $(TEST_DIR)/tsc.flat \
+                $(TEST_DIR)/init.flat $(TEST_DIR)/smap.flat \
+                $(TEST_DIR)/hyperv_synic.flat $(TEST_DIR)/hyperv_stimer.flat \
+                $(TEST_DIR)/hyperv_connections.flat \
+-               $(TEST_DIR)/umip.flat
++               $(TEST_DIR)/umip.flat $(TEST_DIR)/vmentry_latency.flat
+ 
+ ifdef API
+ tests-api = api/api-sample api/dirty-log api/dirty-log-perf
+diff --git a/x86/vmentry_latency.c b/x86/vmentry_latency.c
+new file mode 100644
+index 0000000..3859f09
+--- /dev/null
++++ b/x86/vmentry_latency.c
+@@ -0,0 +1,45 @@
++#include "x86/vm.h"
++
++static u64 get_last_hypervisor_tsc_delta(void)
++{
++	u64 a = 0, b, c, d;
++	u64 tsc;
++
++	/*
++	 * The first vmcall is there to force a vm exit just before measuring.
++	 */
++	asm volatile ("vmcall" : "+a"(a), "=b"(b), "=c"(c), "=d"(d));
++
++	tsc = rdtsc();
++
++	/*
++	 * The second hypercall recovers the value that was stored when vm
++	 * entering to execute the rdtsc()
++	 */
++	a = 11;
++	asm volatile ("vmcall" : "+a"(a), "=b"(b), "=c"(c), "=d"(d));
++
++	return tsc - a;
++}
++
++static void vmentry_latency(void)
++{
++	unsigned i = 1000000;
++	u64 min = -1;
++
++	while (i--) {
++		u64 latency = get_last_hypervisor_tsc_delta();
++		if (latency < min)
++			min = latency;
++	}
++
++	printf("vm entry latency is %"PRIu64" TSC cycles\n", min);
++}
++
++int main(void)
++{
++	setup_vm();
++	vmentry_latency();
++
++	return 0;
++}
