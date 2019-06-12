@@ -2,170 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C11B42B4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF8742B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:52:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbfFLPyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:54:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39692 "EHLO mx1.redhat.com"
+        id S2440139AbfFLPw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:52:26 -0400
+Received: from fieldses.org ([173.255.197.46]:51348 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbfFLPyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:54:21 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1CBB563162;
-        Wed, 12 Jun 2019 15:54:13 +0000 (UTC)
-Received: from jsavitz.bos.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D2AF719481;
-        Wed, 12 Jun 2019 15:54:08 +0000 (UTC)
-From:   Joel Savitz <jsavitz@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Savitz <jsavitz@redhat.com>, Li Zefan <lizefan@huawei.com>,
-        Phil Auld <pauld@redhat.com>, Waiman Long <longman@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org
-Subject: [RESEND PATCH v3] cpuset: restore sanity to cpuset_cpus_allowed_fallback()
-Date:   Wed, 12 Jun 2019 11:50:48 -0400
-Message-Id: <1560354648-23632-1-git-send-email-jsavitz@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 12 Jun 2019 15:54:21 +0000 (UTC)
+        id S1726829AbfFLPw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:52:26 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id A606C1E3B; Wed, 12 Jun 2019 11:52:24 -0400 (EDT)
+Date:   Wed, 12 Jun 2019 11:52:24 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Wenbin Zeng <wenbin.zeng@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, davem@davemloft.net, jlayton@kernel.org,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        wenbinzeng@tencent.com, dsahern@gmail.com,
+        nicolas.dichtel@6wind.com, willy@infradead.org,
+        edumazet@google.com, jakub.kicinski@netronome.com,
+        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] auth_gss: netns refcount leaks when
+ use-gss-proxy==1
+Message-ID: <20190612155224.GF16331@fieldses.org>
+References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
+ <1557470163-30071-1-git-send-email-wenbinzeng@tencent.com>
+ <20190515010331.GA3232@fieldses.org>
+ <20190612083755.GA27776@bridge.tencent.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612083755.GA27776@bridge.tencent.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the case that a process is constrained by taskset(1) (i.e.
-sched_setaffinity(2)) to a subset of available cpus, and all of those are
-subsequently offlined, the scheduler will set tsk->cpus_allowed to
-the current value of task_cs(tsk)->effective_cpus.
+On Wed, Jun 12, 2019 at 04:37:55PM +0800, Wenbin Zeng wrote:
+> On Tue, May 14, 2019 at 09:03:31PM -0400, J. Bruce Fields wrote:
+> > Whoops, I was slow to test these.  I'm getting failuring krb5 nfs
+> > mounts, and the following the server's logs.  Dropping the three patches
+> > for now.
+> My bad, I should have found it earlier. Thank you for testing it, Bruce.
+> 
+> I figured it out, the problem that you saw is due to the following code:
+> the if-condition is incorrect here because sn->gssp_clnt==NULL doesn't mean
+> inexistence of 'use-gss-proxy':
 
-This is done via a call to do_set_cpus_allowed() in the context of 
-cpuset_cpus_allowed_fallback() made by the scheduler when this case is
-detected. This is the only call made to cpuset_cpus_allowed_fallback()
-in the latest mainline kernel.
+Thanks, but with the new patches I see the following.  I haven't tried
+to investigate.
 
-However, this is not sane behavior.
+--b.
 
-I will demonstrate this on a system running the latest upstream kernel
-with the following initial configuration:
-
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:	ffffffff,fffffff
-	Cpus_allowed_list:	0-63
-
-(Where cpus 32-63 are provided via smt.)
-
-If we limit our current shell process to cpu2 only and then offline it
-and reonline it:
-
-	# taskset -p 4 $$
-	pid 2272's current affinity mask: ffffffffffffffff
-	pid 2272's new affinity mask: 4
-
-	# echo off > /sys/devices/system/cpu/cpu2/online
-	# dmesg | tail -3
-	[ 2195.866089] process 2272 (bash) no longer affine to cpu2
-	[ 2195.872700] IRQ 114: no longer affine to CPU2
-	[ 2195.879128] smpboot: CPU 2 is now offline
-
-	# echo on > /sys/devices/system/cpu/cpu2/online
-	# dmesg | tail -1
-	[ 2617.043572] smpboot: Booting Node 0 Processor 2 APIC 0x4
-
-
-We see that our current process now has an affinity mask containing
-every cpu available on the system _except_ the one we originally
-constrained it to:
-
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:   ffffffff,fffffffb
-	Cpus_allowed_list:      0-1,3-63 
-
-This is not sane behavior, as the scheduler can now not only place the
-process on previously forbidden cpus, it can't even schedule it on
-the cpu it was originally constrained to!
-
-Other cases result in even more exotic affinity masks. Take for instance
-a process with an affinity mask containing only cpus provided by smt at
-the moment that smt is toggled, in a configuration such as the following:
-
-	# taskset -p f000000000 $$
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:	000000f0,00000000
-	Cpus_allowed_list:	36-39
-
-A double toggle of smt results in the following behavior:
-
-	# echo off > /sys/devices/system/cpu/smt/control
-	# echo on > /sys/devices/system/cpu/smt/control
-	# grep -i cpus /proc/$$/status
-	Cpus_allowed:	ffffff00,ffffffff
-	Cpus_allowed_list:	0-31,40-63
-
-This is even less sane than the previous case, as the new affinity mask
-excludes all smt-provided cpus with ids less than those that were
-previously in the affinity mask, as well as those that were actually in
-the mask.
-
-With this patch applied, both of these cases end in the following state:
-
-	# grep -i cpu /proc/$$/status
-	Cpus_allowed:	ffffffff,ffffffff
-	Cpus_allowed_list:	0-63
-
-The original policy is discarded. Though not ideal, it is the simplest way
-to restore sanity to this fallback case without reinventing the cpuset
-wheel that rolls down the kernel just fine in cgroup v2. A user who wishes
-for the previous affinity mask to be restored in this fallback case can use
-that mechanism instead.
-
-This patch modifies scheduler behavior by instead resetting the mask to
-task_cs(tsk)->cpus_allowed by default, and cpu_possible mask in legacy
-mode. I tested the cases above on both modes.
-
-Note that the scheduler uses this fallback mechanism if and only if
-_every_ other valid avenue has been traveled, and it is the last resort
-before calling BUG().
-
-Suggested-by: Waiman Long <longman@redhat.com>
-Suggested-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
----
- kernel/cgroup/cpuset.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 6a1942ed781c..515525ff1cfd 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -3254,10 +3254,23 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
- 	spin_unlock_irqrestore(&callback_lock, flags);
- }
- 
-+/**
-+ * cpuset_cpus_allowed_fallback - final fallback before complete catastrophe.
-+ * @tsk: pointer to task_struct with which the scheduler is struggling
-+ *
-+ * Description: In the case that the scheduler cannot find an allowed cpu in
-+ * tsk->cpus_allowed, we fall back to task_cs(tsk)->cpus_allowed. In legacy
-+ * mode however, this value is the same as task_cs(tsk)->effective_cpus,
-+ * which will not contain a sane cpumask during cases such as cpu hotplugging.
-+ * This is the absolute last resort for the scheduler and it is only used if
-+ * _every_ other avenue has been traveled.
-+ **/
-+
- void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
- {
- 	rcu_read_lock();
--	do_set_cpus_allowed(tsk, task_cs(tsk)->effective_cpus);
-+	do_set_cpus_allowed(tsk, is_in_v2_mode() ?
-+		task_cs(tsk)->cpus_allowed : cpu_possible_mask);
- 	rcu_read_unlock();
- 
- 	/*
--- 
-2.18.1
-
+[ 2908.134813] ------------[ cut here ]------------
+[ 2908.135732] name 'use-gss-proxy'
+[ 2908.136276] WARNING: CPU: 2 PID: 15032 at fs/proc/generic.c:673 remove_proc_entry+0x124/0x190
+[ 2908.138144] Modules linked in: nfsv4 rpcsec_gss_krb5 nfsv3 nfs_acl nfs lockd grace auth_rpcgss sunrpc
+[ 2908.140183] CPU: 2 PID: 15032 Comm: (coredump) Not tainted 5.2.0-rc2-00441-gaef575f54640 #2257
+[ 2908.142062] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
+[ 2908.143756] RIP: 0010:remove_proc_entry+0x124/0x190
+[ 2908.144519] Code: c3 48 c7 c7 60 24 8b 82 e8 29 16 a5 00 eb d5 48 c7 c7 60 24 8b 82 e8 1b 16 a5 00 4c 89 e6 48 c7 c7 ec 4c 52 82 e8 50 fd db ff <0f> 0b eb b6 48 8b 04 24 83 a8 90 00 00 00 01 e9 78 ff ff ff 4c 89
+[ 2908.148138] RSP: 0018:ffffc900047bbdb0 EFLAGS: 00010282
+[ 2908.148945] RAX: 0000000000000000 RBX: ffff888036060580 RCX: 0000000000000000
+[ 2908.150139] RDX: ffff88807fd24e80 RSI: ffff88807fd165b8 RDI: 00000000ffffffff
+[ 2908.151334] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[ 2908.152564] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa00adb1b
+[ 2908.153816] R13: 00007ffc8bda5d30 R14: 0000000000000000 R15: ffff88805e2873a8
+[ 2908.155007] FS:  00007f470bc27e40(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
+[ 2908.156421] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2908.157333] CR2: 0000562b07764c58 CR3: 000000005e8ea001 CR4: 00000000001606e0
+[ 2908.158529] Call Trace:
+[ 2908.158796]  destroy_use_gss_proxy_proc_entry+0xb7/0x150 [auth_rpcgss]
+[ 2908.159966]  gss_svc_shutdown_net+0x11/0x170 [auth_rpcgss]
+[ 2908.160830]  netns_evict+0x2f/0x40
+[ 2908.161266]  nsfs_evict+0x27/0x40
+[ 2908.161685]  evict+0xd0/0x1a0
+[ 2908.162035]  __dentry_kill+0xdf/0x180
+[ 2908.162520]  dentry_kill+0x50/0x1c0
+[ 2908.163005]  ? dput+0x1c/0x2b0
+[ 2908.163369]  dput+0x260/0x2b0
+[ 2908.163739]  path_put+0x12/0x20
+[ 2908.164155]  do_faccessat+0x17c/0x240
+[ 2908.164643]  do_syscall_64+0x50/0x1c0
+[ 2908.165170]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 2908.165959] RIP: 0033:0x7f47098e2157
+[ 2908.166445] Code: 77 01 c3 48 8b 15 69 dd 2c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 15 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 39 dd 2c 00 f7 d8 64 89 02 b8
+[ 2908.169994] RSP: 002b:00007ffc8bda5d28 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
+[ 2908.171315] RAX: ffffffffffffffda RBX: 0000562b0774d979 RCX: 00007f47098e2157
+[ 2908.172563] RDX: 00007ffc8bda5d3e RSI: 0000000000000000 RDI: 00007ffc8bda5d30
+[ 2908.173753] RBP: 00007ffc8bda5d70 R08: 0000000000000000 R09: 0000562b07d0b130
+[ 2908.174943] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc8bda5d30
+[ 2908.176163] R13: 0000562b07b34c80 R14: 0000562b07b35120 R15: 0000000000000000
+[ 2908.177395] irq event stamp: 4256
+[ 2908.177835] hardirqs last  enabled at (4255): [<ffffffff811221ee>] console_unlock+0x41e/0x590
+[ 2908.179378] hardirqs last disabled at (4256): [<ffffffff81001b2f>] trace_hardirqs_off_thunk+0x1a/0x1c
+[ 2908.181031] softirqs last  enabled at (4252): [<ffffffff820002be>] __do_softirq+0x2be/0x4aa
+[ 2908.182458] softirqs last disabled at (4233): [<ffffffff810bf8e0>] irq_exit+0x80/0x90
+[ 2908.183869] ---[ end trace d88132b63efc09d8 ]---
+[ 2908.184620] BUG: kernel NULL pointer dereference, address: 0000000000000030
+[ 2908.185829] #PF: supervisor read access in kernel mode
+[ 2908.186924] #PF: error_code(0x0000) - not-present page
+[ 2908.187887] PGD 0 P4D 0 
+[ 2908.188318] Oops: 0000 [#1] PREEMPT SMP PTI
+[ 2908.189254] CPU: 2 PID: 15032 Comm: (coredump) Tainted: G        W         5.2.0-rc2-00441-gaef575f54640 #2257
+[ 2908.192506] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
+[ 2908.195137] RIP: 0010:__lock_acquire+0x3d2/0x1d90
+[ 2908.196414] Code: db 48 8b 84 24 88 00 00 00 65 48 33 04 25 28 00 00 00 0f 85 be 10 00 00 48 8d 65 d8 44 89 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 <48> 81 3f 60 0d 01 83 41 bb 00 00 00 00 45 0f 45 d8 83 fe 01 0f 87
+[ 2908.202720] RSP: 0018:ffffc900047bbc80 EFLAGS: 00010002
+[ 2908.204165] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
+[ 2908.206125] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000030
+[ 2908.208203] RBP: ffffc900047bbd40 R08: 0000000000000001 R09: 0000000000000000
+[ 2908.210219] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88807ad91500
+[ 2908.211386] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000282
+[ 2908.212532] FS:  00007f470bc27e40(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
+[ 2908.213647] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2908.214400] CR2: 0000000000000030 CR3: 000000005e8ea001 CR4: 00000000001606e0
+[ 2908.215393] Call Trace:
+[ 2908.215589]  ? __lock_acquire+0x255/0x1d90
+[ 2908.216071]  ? clear_gssp_clnt+0x1b/0x50 [auth_rpcgss]
+[ 2908.216720]  ? __mutex_lock+0x99/0x920
+[ 2908.217114]  lock_acquire+0x95/0x1b0
+[ 2908.217484]  ? cache_purge+0x1c/0x110 [sunrpc]
+[ 2908.218000]  _raw_spin_lock+0x2f/0x40
+[ 2908.218370]  ? cache_purge+0x1c/0x110 [sunrpc]
+[ 2908.218882]  cache_purge+0x1c/0x110 [sunrpc]
+[ 2908.219346]  gss_svc_shutdown_net+0xb8/0x170 [auth_rpcgss]
+[ 2908.220104]  netns_evict+0x2f/0x40
+[ 2908.220439]  nsfs_evict+0x27/0x40
+[ 2908.220786]  evict+0xd0/0x1a0
+[ 2908.221050]  __dentry_kill+0xdf/0x180
+[ 2908.221458]  dentry_kill+0x50/0x1c0
+[ 2908.221842]  ? dput+0x1c/0x2b0
+[ 2908.222126]  dput+0x260/0x2b0
+[ 2908.222384]  path_put+0x12/0x20
+[ 2908.222753]  do_faccessat+0x17c/0x240
+[ 2908.223125]  do_syscall_64+0x50/0x1c0
+[ 2908.223479]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 2908.224152] RIP: 0033:0x7f47098e2157
+[ 2908.224566] Code: 77 01 c3 48 8b 15 69 dd 2c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 15 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 39 dd 2c 00 f7 d8 64 89 02 b8
+[ 2908.228198] RSP: 002b:00007ffc8bda5d28 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
+[ 2908.229496] RAX: ffffffffffffffda RBX: 0000562b0774d979 RCX: 00007f47098e2157
+[ 2908.230938] RDX: 00007ffc8bda5d3e RSI: 0000000000000000 RDI: 00007ffc8bda5d30
+[ 2908.232182] RBP: 00007ffc8bda5d70 R08: 0000000000000000 R09: 0000562b07d0b130
+[ 2908.233481] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc8bda5d30
+[ 2908.234750] R13: 0000562b07b34c80 R14: 0000562b07b35120 R15: 0000000000000000
+[ 2908.236068] Modules linked in: nfsv4 rpcsec_gss_krb5 nfsv3 nfs_acl nfs lockd grace auth_rpcgss sunrpc
+[ 2908.237861] CR2: 0000000000000030
+[ 2908.238277] ---[ end trace d88132b63efc09d9 ]---
