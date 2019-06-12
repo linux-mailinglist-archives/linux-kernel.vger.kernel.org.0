@@ -2,76 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF79D428ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C50F842907
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:29:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439681AbfFLO1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2439776AbfFLO1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:27:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33133 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439671AbfFLO1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Jun 2019 10:27:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60032 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439638AbfFLO1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:27:01 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 91C0DC18B2F3;
-        Wed, 12 Jun 2019 14:27:00 +0000 (UTC)
-Received: from treble (ovpn-120-37.rdu2.redhat.com [10.10.120.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA67519483;
-        Wed, 12 Jun 2019 14:26:54 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 09:26:52 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Kairui Song <kasong@redhat.com>,
-        Alexei Starovoitov <ast@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Subject: Re: Getting empty callchain from perf_callchain_kernel()
-Message-ID: <20190612142652.tzrlwduirm4edmtf@treble>
-References: <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
- <20190522174517.pbdopvookggen3d7@treble>
- <20190522234635.a47bettklcf5gt7c@treble>
- <CACPcB9dRJ89YAMDQdKoDMU=vFfpb5AaY0mWC_Xzw1ZMTFBf6ng@mail.gmail.com>
- <20190523133253.tad6ywzzexks6hrp@treble>
- <CACPcB9fQKg7xhzhCZaF4UGi=EQs1HLTFgg-C_xJQaUfho3yMyA@mail.gmail.com>
- <20190523152413.m2pbnamihu3s2c5s@treble>
- <20190524085319.GE2589@hirez.programming.kicks-ass.net>
- <20190612030501.7tbsjy353g7l74ej@treble>
- <20190612091023.6bccf262@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190612091023.6bccf262@gandalf.local.home>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 12 Jun 2019 14:27:01 +0000 (UTC)
+Received: by mail-wr1-f68.google.com with SMTP id n9so17198293wru.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 07:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=fy6aQtpj04fOwVei4zMchW/ihmwVQAgPeocDj7znWWs=;
+        b=OrQ5ncDIKVyQSJV2lGbcoHTeQSe6MmmBwUcZC5zqV4QZ3vTVA1BtrgPUQ8jbMgb67v
+         /kOxwnETofKRgBNj1b0HtE9u0AFFdOWCcPcAbfIoJnuGIvOw57czbPWLpltqHuWbXWRj
+         fKXJ4DRXKuAYnQjGzz+tj23i+n5DN2bx3mYS5xPRMMAzHx9ZOqGZWEvU0hVNym6SnQL4
+         Jg4GILy6YS//Erz1lNqcpODAIzqawBCFwBpA+4APbSeGmT0vek59soiMsm8V76nAUrCv
+         Ljz98I133N7M+6ePZoFk6KumhrqC+Uk+SpqdoVV40pdsRct4z0Cgsbt4Rq99N2yIAGwK
+         eWDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=fy6aQtpj04fOwVei4zMchW/ihmwVQAgPeocDj7znWWs=;
+        b=YRqhBA41RwFekmElc9ksxK7VDYX07z0flO4UhF2HNVMvVvrmDiBeV7/NQA8A2G1LIB
+         OL6bJaMgtHb7lfxscLAHFu8ce+DXtL8U3rbsO9zVUSWQVot8/NOlXD2utqfQoQZKj7zx
+         YRjKExT2rZKb3KFq39djO3rMkXQ6vUzRx6Qa6/e9aK3no5mlFrao0VWL09+7RQ5ew4X9
+         vAT8F82Hv9Zj46/1UdzwurTfN2TfLh5z83OCzLj67kckKErpFXTzdsho+DMmVJDGuilB
+         E3Ajv21wX1sB5BLRCxYHSmmhMt+5NnyKmxIx+YNM0m2irwrYJufWnuehe0H6ZXGXvGuP
+         AT2A==
+X-Gm-Message-State: APjAAAVqmdpaCFjk52JCLuFz9nzqu73IjAaE/6QoZyOqOifwP6ulrv54
+        A/Y7QgXsf3OKxZzzozkVFcy3pg==
+X-Google-Smtp-Source: APXvYqwFw+UqoHDB/67jT5cutBxDI1YWxBlU2IDiPnPIIo4Ib0zOzE+46btHcLsNuy0V0H4zJJx2KA==
+X-Received: by 2002:a5d:53ca:: with SMTP id a10mr42518942wrw.131.1560349623979;
+        Wed, 12 Jun 2019 07:27:03 -0700 (PDT)
+Received: from dell.watershed.co.uk ([185.80.132.160])
+        by smtp.gmail.com with ESMTPSA id y18sm203959wmd.29.2019.06.12.07.27.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 07:27:03 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org,
+        ard.biesheuvel@linaro.org, jlhugo@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-usb@vger.kernel.or,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v4 5/6] usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
+Date:   Wed, 12 Jun 2019 15:26:53 +0100
+Message-Id: <20190612142654.9639-6-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190612142654.9639-1-lee.jones@linaro.org>
+References: <20190612142654.9639-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 09:10:23AM -0400, Steven Rostedt wrote:
-> On Tue, 11 Jun 2019 22:05:01 -0500
-> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> 
-> > Right now, ftrace has a special hook in the ORC unwinder
-> > (orc_ftrace_find).  It would be great if we could get rid of that in
-> > favor of the "always use frame pointers" approach.  I'll hold off on
-> > doing the kpatch/kprobe trampoline conversions in my patches since it
-> > would conflict with yours.
-> 
-> Basically, IIUC, what you are saying is that the ftrace trampoline
-> should always store the %sp in %rb even when CONFIG_FRAME_POINTER is not
-> enabled? And this can allow you to remove the ftrace specific code from
-> the orc unwinder?
+When booting with Device Tree, the current default boot configuration
+table option, the request to boot via 'host mode' comes from the
+'dr_mode' property.  A property of the same name can be used inside
+ACPI tables too.  However it is missing from the SDM845's ACPI tables
+so we have to supply this information using Platform Device Properties
+instead.
 
-Basically, yes.  Though the frame pointer encoding which Peter is adding
-to the ftrace/kprobes trampolines might complicate things a bit.
+This does not change the behaviour of any currently supported devices.
+The property is only set on ACPI enabled platforms, thus for H/W
+booting DT, unless a 'dr_mode' property is present, the default is
+still OTG (On-The-Go) as per [0].  Any new ACPI devices added will
+also be able to over-ride this implementation by providing a 'dr_mode'
+property in their ACPI tables.  In cases where 'dr_mode' is omitted
+from the tables AND 'host mode' should not be the default (very
+unlikely), then we will have to add some way of choosing between them
+at run time - most likely by ACPI HID.
 
+[0] Documentation/devicetree/bindings/usb/generic.txt
+
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index 1e1f12b7991d..55ba04254e38 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -444,6 +444,11 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+ 	return 0;
+ }
+ 
++static const struct property_entry dwc3_qcom_acpi_properties[] = {
++	PROPERTY_ENTRY_STRING("dr_mode", "host"),
++	{}
++};
++
+ static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
+ {
+ 	struct dwc3_qcom 	*qcom = platform_get_drvdata(pdev);
+@@ -488,6 +493,13 @@ static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
+ 		goto out;
+ 	}
+ 
++	ret = platform_device_add_properties(qcom->dwc3,
++					     dwc3_qcom_acpi_properties);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to add properties\n");
++		goto out;
++	}
++
+ 	ret = platform_device_add(qcom->dwc3);
+ 	if (ret)
+ 		dev_err(&pdev->dev, "failed to add device\n");
 -- 
-Josh
+2.17.1
+
