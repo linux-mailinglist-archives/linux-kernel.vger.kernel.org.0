@@ -2,103 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2BE427CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF5B427D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407657AbfFLNjF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 09:39:05 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:48426 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732397AbfFLNjF (ORCPT
+        id S2408594AbfFLNlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:41:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52896 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2408476AbfFLNlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:39:05 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-66-VETJ8E46Mh-MLo7lg8Dqqg-1; Wed, 12 Jun 2019 14:39:02 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 12 Jun 2019 14:39:00 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 12 Jun 2019 14:39:00 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Oleg Nesterov' <oleg@redhat.com>
-CC:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        'Andrew Morton' <akpm@linux-foundation.org>,
-        'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'arnd@arndb.de'" <arnd@arndb.de>,
-        "'dbueso@suse.de'" <dbueso@suse.de>,
-        "'axboe@kernel.dk'" <axboe@kernel.dk>,
-        "'dave@stgolabs.net'" <dave@stgolabs.net>,
-        "'e@80x24.org'" <e@80x24.org>,
-        "'jbaron@akamai.com'" <jbaron@akamai.com>,
-        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
-        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
-        "'tglx@linutronix.de'" <tglx@linutronix.de>,
-        'Al Viro' <viro@ZenIV.linux.org.uk>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
-Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31QgAAjZdCAAbHqlYAAAXJw///4tQCAABGpsA==
-Date:   Wed, 12 Jun 2019 13:39:00 +0000
-Message-ID: <4f5f36915e484b5a9d12e840c79f54cb@AcuMS.aculab.com>
-References: <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
- <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
- <87lfy96sta.fsf@xmission.com>
- <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
- <95decc6904754004af8a5546aca0468a@AcuMS.aculab.com>
- <87pnnj2ca0.fsf@xmission.com>
- <a11bb1a2a6de4cf5aa773ea79c602f1a@AcuMS.aculab.com>
- <20190612133519.GA3276@redhat.com>
-In-Reply-To: <20190612133519.GA3276@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 12 Jun 2019 09:41:31 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CDIQ3P007274
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 09:41:30 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t313fve01-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 09:41:29 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
+        Wed, 12 Jun 2019 14:41:27 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Jun 2019 14:41:23 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CDfMk259441320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 13:41:22 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 164AD5204E;
+        Wed, 12 Jun 2019 13:41:22 +0000 (GMT)
+Received: from JAVRIS.in.ibm.com (unknown [9.85.88.130])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 2C2DB52054;
+        Wed, 12 Jun 2019 13:41:18 +0000 (GMT)
+Date:   Wed, 12 Jun 2019 19:11:15 +0530
+From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     jpoimboe@redhat.com, jikos@kernel.org, pmladek@suse.com,
+        joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4 1/3] stacktrace: Remove weak version of
+ save_stack_trace_tsk_reliable()
+References: <20190611141320.25359-1-mbenes@suse.cz>
+ <20190611141320.25359-2-mbenes@suse.cz>
 MIME-Version: 1.0
-X-MC-Unique: VETJ8E46Mh-MLo7lg8Dqqg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611141320.25359-2-mbenes@suse.cz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-TM-AS-GCONF: 00
+x-cbid: 19061213-0012-0000-0000-000003288037
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061213-0013-0000-0000-000021618832
+Message-Id: <20190612134115.GA8298@JAVRIS.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=885 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906120092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov
-> Sent: 12 June 2019 14:35
-> On 06/12, David Laight wrote:
-> >
-> > > > If I add a signal handler for SIGINT it is called when pselect()
-> > > > returns regardless of the return value.
-> > >
-> > > That is odd.  Is this with Oleg's fix applied?
-> >
-> > No it is a 5.1.0-rc5 kernel with no related local patches.
-> > So it is the 'historic' behaviour of pselect().
+On Tue, Jun 11, 2019 at 04:13:18PM +0200, Miroslav Benes wrote:
+> Recent rework of stack trace infrastructure introduced a new set of
+> helpers for common stack trace operations (commit e9b98e162aa5
+> ("stacktrace: Provide helpers for common stack trace operations") and
+> related). As a result, save_stack_trace_tsk_reliable() is not directly
+> called anywhere. Livepatch, currently the only user of the reliable
+> stack trace feature, now calls stack_trace_save_tsk_reliable().
 > 
-> No, this is not historic behaviour,
+> When CONFIG_HAVE_RELIABLE_STACKTRACE is set and depending on
+> CONFIG_ARCH_STACKWALK, stack_trace_save_tsk_reliable() calls either
+> arch_stack_walk_reliable() or mentioned save_stack_trace_tsk_reliable().
+> x86_64 defines the former, ppc64le the latter. All other architectures
+> do not have HAVE_RELIABLE_STACKTRACE and include/linux/stacktrace.h
+> defines -ENOSYS returning version for them.
 > 
-> > But not the original one! Under 2.6.22-5-31 the signal handler isn't caller
-> > when pselect() returns 1.
+> In short, stack_trace_save_tsk_reliable() returning -ENOSYS defined in
+> include/linux/stacktrace.h serves the same purpose as the old weak
+> version of save_stack_trace_tsk_reliable() which is therefore no longer
+> needed.
 > 
-> This is historic behaviour.
-> 
-> And it was broken by 854a6ed56839a4 ("signal: Add restore_user_sigmask()").
-> 
-> And this is what we already discussed many, many times in this thread ;)
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
 
-My brain hurts :-)
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 
