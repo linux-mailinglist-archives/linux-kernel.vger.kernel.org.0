@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B108541EC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9194941EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436864AbfFLING (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 04:13:06 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:47030 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2436818AbfFLING (ORCPT
+        id S1730176AbfFLIMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 04:12:00 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38689 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfFLIMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:13:06 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5C88tEa031260;
-        Wed, 12 Jun 2019 03:10:35 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2t0ae2wjrf-1;
-        Wed, 12 Jun 2019 03:10:35 -0500
-Received: from EDIEX02.ad.cirrus.com (ediex02.ad.cirrus.com [198.61.84.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id C05F4611E3BA;
-        Wed, 12 Jun 2019 03:11:19 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 12 Jun
- 2019 09:10:34 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Wed, 12 Jun 2019 09:10:34 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 3DE8444;
-        Wed, 12 Jun 2019 09:10:34 +0100 (BST)
-Date:   Wed, 12 Jun 2019 09:10:34 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Thomas Preston <thomas.preston@codethink.co.uk>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] dt-bindings: ASoC: Add TDA7802 amplifier
-Message-ID: <20190612081034.GS28362@ediswmail.ad.cirrus.com>
-References: <20190611174909.12162-1-thomas.preston@codethink.co.uk>
- <20190611174909.12162-2-thomas.preston@codethink.co.uk>
+        Wed, 12 Jun 2019 04:12:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id b11so11343639lfa.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 01:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lFS4BBAAFXbjrbCxdYjYSGPzdbbXyO/GncmZQneFLcA=;
+        b=qin+oZhf13sdSKn1SKVta6xNQYBa7ZCymdbgUUHhuXuNkSdmsnN+xPwGBDrKl1DDKA
+         9eirix1ojbveQYt3vkTmM3znNupkTqQ8im6xurMFPDyRXfonbylfyKnt15BDcEym4lMm
+         zbtDPDw9VXTMVRkSt4rI+FWRMj1Xt9LbcvKTqAjccyQz1RgkOT7KcWQMjwFvReihwunX
+         5IId7kX7++BKRB2fbN9hvksAPw8W2FWW8C3fA5ZdlzJyuJ3b7B0RFoEVakEDyZ633Z8p
+         MGnaSs3SJUvJl5KKJ4xQOKm/SeukK6uVQdR8m6q9ikusAy5ui1WToMXZfIqpBKQxclhK
+         4grA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lFS4BBAAFXbjrbCxdYjYSGPzdbbXyO/GncmZQneFLcA=;
+        b=EhbRSdGRt+Rhy/QSTx/y28tleSHT7fOo5/hIN9dmbMVEaimO/4jxgTy/rLv8LpAOyK
+         TXMQSib4NokVfpjf+Kxg1EC8OrVHQq/CkvXSpO2RGuvvVD7+O6m11EepBSLUB4E/rM21
+         AW0HeyrCDkytul88NqpnXvpAKF+hzUEQv4xfGs/09WhQbNWmJzhd6BBEkJxVty0BtZHc
+         JJMMxV+6xC1O1unUaIT81fqKo5dKspFjkuv31yNUSMgc032VKvkOxHq0kwnNvBGs2SV7
+         33+EDKMv00mgkXthx6L6EIdNb38hcO1LIBFVm9kiS4CbmtHSl9e5YsPhqtnjSU0xUiZB
+         Ak3A==
+X-Gm-Message-State: APjAAAV57/Esf6mwgNqnc2xai6CyvxszfzPVSWsK+Q9HyJSt04OobprE
+        sJ0bROqCyNHGMqWpbGNSv/U3hGcRTzhAmA==
+X-Google-Smtp-Source: APXvYqzFkbRzv2cUwnOkrG34fAgQA5tXqMO36EKSSBfuGGn0JzJjJC6Fc/hggdqH7MAIezjdsxEYaQ==
+X-Received: by 2002:ac2:4466:: with SMTP id y6mr13435120lfl.0.1560327118141;
+        Wed, 12 Jun 2019 01:11:58 -0700 (PDT)
+Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
+        by smtp.gmail.com with ESMTPSA id z6sm2544076ljk.57.2019.06.12.01.11.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 01:11:57 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     davem@davemloft.net
+Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        linus.walleij@linaro.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] drivers: net: dsa: fix warning same module names
+Date:   Wed, 12 Jun 2019 10:11:47 +0200
+Message-Id: <20190612081147.1372-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190611174909.12162-2-thomas.preston@codethink.co.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906120057
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 06:49:06PM +0100, Thomas Preston wrote:
-> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
-> Cc: Patrick Glaser <pglaser@tesla.com>
-> Cc: Rob Duncan <rduncan@tesla.com>
-> Cc: Nate Case <ncase@tesla.com>
-> ---
->  .../devicetree/bindings/sound/tda7802.txt          | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/tda7802.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/tda7802.txt b/Documentation/devicetree/bindings/sound/tda7802.txt
-> new file mode 100644
-> index 000000000000..f80aaf4f1ba0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/tda7802.txt
-> @@ -0,0 +1,26 @@
-> +ST TDA7802 audio processor
-> +
-> +This device supports I2C only.
-> +
-> +Required properties:
-> +
-> +- compatible : "st,tda7802"
-> +- reg : the I2C address of the device
-> +- enable-supply : a regulator spec for the PLLen pin
-> +
-> +Optional properties:
-> +
-> +- st,gain-ch13 : gain for channels 1 and 3 (range: 1-4)
-> +- st,gain-ch24 : gain for channels 2 and 3 (range: 1-4)
+When building with CONFIG_NET_DSA_REALTEK_SMI and CONFIG_REALTEK_PHY
+enabled as loadable modules, we see the following warning:
 
-Does it make sense to have the gains in device tree? Are these
-expected to be fixed by the system design, normally the gain
-would be controlled through an ALSA control.
+warning: same module names found:
+  drivers/net/phy/realtek.ko
+  drivers/net/dsa/realtek.ko
 
-Thanks,
-Charles
+Rework so the driver name is rtl8366 instead of realtek.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/net/dsa/Makefile                        | 4 ++--
+ drivers/net/dsa/{rtl8366.c => rtl8366-common.c} | 0
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ rename drivers/net/dsa/{rtl8366.c => rtl8366-common.c} (100%)
+
+diff --git a/drivers/net/dsa/Makefile b/drivers/net/dsa/Makefile
+index fefb6aaa82ba..d7a282eb2ff9 100644
+--- a/drivers/net/dsa/Makefile
++++ b/drivers/net/dsa/Makefile
+@@ -9,8 +9,8 @@ obj-$(CONFIG_NET_DSA_LANTIQ_GSWIP) += lantiq_gswip.o
+ obj-$(CONFIG_NET_DSA_MT7530)	+= mt7530.o
+ obj-$(CONFIG_NET_DSA_MV88E6060) += mv88e6060.o
+ obj-$(CONFIG_NET_DSA_QCA8K)	+= qca8k.o
+-obj-$(CONFIG_NET_DSA_REALTEK_SMI) += realtek.o
+-realtek-objs			:= realtek-smi.o rtl8366.o rtl8366rb.o
++obj-$(CONFIG_NET_DSA_REALTEK_SMI) += rtl8366.o
++rtl8366-objs			:= realtek-smi.o rtl8366-common.o rtl8366rb.o
+ obj-$(CONFIG_NET_DSA_SMSC_LAN9303) += lan9303-core.o
+ obj-$(CONFIG_NET_DSA_SMSC_LAN9303_I2C) += lan9303_i2c.o
+ obj-$(CONFIG_NET_DSA_SMSC_LAN9303_MDIO) += lan9303_mdio.o
+diff --git a/drivers/net/dsa/rtl8366.c b/drivers/net/dsa/rtl8366-common.c
+similarity index 100%
+rename from drivers/net/dsa/rtl8366.c
+rename to drivers/net/dsa/rtl8366-common.c
+-- 
+2.20.1
+
