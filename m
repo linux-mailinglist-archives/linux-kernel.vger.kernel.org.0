@@ -2,113 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3671A4309F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 22:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEBE24307C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390428AbfFLT7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:59:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32975 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390167AbfFLT7r (ORCPT
+        id S2388339AbfFLT7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 15:59:18 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:40560 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387605AbfFLT7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:59:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so18274425wru.0;
-        Wed, 12 Jun 2019 12:59:46 -0700 (PDT)
+        Wed, 12 Jun 2019 15:59:17 -0400
+Received: by mail-vk1-f195.google.com with SMTP id s16so3570684vke.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 12:59:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PXhKgHiRKTDbq5+IaKGfsR6BmgG7q4N1qI/aWdYB6Q8=;
-        b=hsWXPbeCUxn3AeVTaPkpWpYSU2rkvwPwmfSQhu5TejlCTxIevBFbCaEhNMeVV3Eadv
-         iMEl6v4r1YDJGL+0c92HnsZAUK8z8U8zq9cd1BHn8Wjc0+q7JLDqkjYpVnQJR1NyUNmf
-         lD+O+U7pAXvs3nKGVevnBnGsdqiV1HavIGsHSVU+ekgZxBBmLmwYfZGrLHH7SqvjgUDe
-         7elnq0Keg1BIVERCnF7K2WnYAhfvHByXXd4k1xBS/JrA4FQmPERQyS4Qr5z358KOE/dH
-         hqPQjLV5c/km5q7eVFSYRaiCxgMEAVLjM99fuQEjERJrVxg15VUSB1dw14m7kB6e5I1i
-         n+9g==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=Ybob6G4/RgxkIUDWvbYn3Dj2Z5pOioBKuJ32kUZtOb4=;
+        b=VUFgYUy/L2lnjtYNdM6Qtqgd/edTRKpJPk3wvG+vRsDfwQblECyair288QVyMWN6Xx
+         2KCbIUt80VMbCkDhwsem9Z7I9ThHvXOb6KwzE+b2Bf2WiZr2ZAoYxkpz8zlbB9pEZDiy
+         QdF8tDPqWu0zQiHNUX7yWE2wL0OJt6jrZQ3X7MJbrI1+obKoB9hgX2cAycK9l2jG/E93
+         /0YXsl6PD/jGQ4zqqx/uhocrfyYaHR0RbnZj5xAwLV/isuQi6sLZ6lnjBPO1koSNo79U
+         YR3VHsiMtrCBF0iBW6mt2YyKndEjR8C3GNxLJ/eYnsWXCCRbGLquLt6Z0LiYMoUckT66
+         fZXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PXhKgHiRKTDbq5+IaKGfsR6BmgG7q4N1qI/aWdYB6Q8=;
-        b=l5TTFanvlh4ahqeRGqHnuQIJcJjZu5IKWBmxBB2xqyJfN/PJo1Wok8XJkLcpENx8O7
-         7PU5+O7ntPHCz1mFQRGp7TbvpWGGqs981io4GIyj+jSNfpgTaNDRD0b5oFpFZWFrLumr
-         7ShL08GacVclY37UojEOJr9QNT3PHdeh/Z+9Z/3BqAQmkF4KN+8ASPa38DYziaa+LBjk
-         wZd/QQEs+/n3xguSFe1juoNziLB/3JVZJe443OlRsuIHM1G+AssWMgALWyNfhPct6oPV
-         HHXyqr4+MyanJlbOENxTtyUoxNaO2+V32VoUhXjDQBqnFPncqBwHOg6tWFMfgtl/g7Fh
-         ehiA==
-X-Gm-Message-State: APjAAAWd+F1qsDAfqDBCNX3K0HPl2MRPC8Xs9MJy2Zmds0OJfmtqlCBR
-        J9xBmNwGtn7VGvAooo5hmNs=
-X-Google-Smtp-Source: APXvYqx8IAmX+s+7TK5qnozIRIA6bDm97DsRI8ndxcRI4R7vbPriPYONQXPZ8+lE0Itz0xkzmnsqoQ==
-X-Received: by 2002:adf:f68f:: with SMTP id v15mr5871100wrp.4.1560369586066;
-        Wed, 12 Jun 2019 12:59:46 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133DDA400428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:33dd:a400:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id f10sm1026745wrg.24.2019.06.12.12.59.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=Ybob6G4/RgxkIUDWvbYn3Dj2Z5pOioBKuJ32kUZtOb4=;
+        b=cPOIyf7jQMj4JEYSAjwrE1goy//y43yXBn0Rm+XSEGxrw9nnnbEhcv1zJfzMkxIfGi
+         0eIQtg9sxKGjHaK1IfgHeXNWMSSH+5c7cWegbO1ZhXTIsgIZ9E7SRXAuIOYvIcblm9iM
+         PwqXpM0Wsz3W3xqsjvNjLKGTWlQeMO54HQTtaoWjPurk3rzYGWXkEFlkf4h1R9aL4ovV
+         Da8LHqvWo3sYh/1VzCT/szW64oJntm0NY+mM1VNNgE23ZxEetYtDHWGNzKp7ORDC/B8+
+         QsEMhnbPWnBzfQ9jwgTPcnMVerL+F5UDfSC6sPuGBzLttsKRsy7wFXysCZNJsxfeTOKN
+         Ph4g==
+X-Gm-Message-State: APjAAAUB6d/l8KVoXw6lsJ6cBJqxTjicGffVK3RYkWs7THj1t+v5hEwr
+        DEPlNS2YmStxa+nC4xLezotSvg==
+X-Google-Smtp-Source: APXvYqzf7zquRH5DAjzGb65HiAYfn8puj5zPaUOZhtehgtgFrm66azwNRJtGNYQxusE1XqozQ7PZMg==
+X-Received: by 2002:a1f:6347:: with SMTP id x68mr19508435vkb.64.1560369556242;
+        Wed, 12 Jun 2019 12:59:16 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id g41sm461937uah.12.2019.06.12.12.59.15
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 12:59:45 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, linux-pwm@vger.kernel.org,
-        thierry.reding@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        u.kleine-koenig@pengutronix.de, narmstrong@baylibre.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 14/14] pwm: meson: add documentation to the driver
-Date:   Wed, 12 Jun 2019 21:59:11 +0200
-Message-Id: <20190612195911.4442-15-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190612195911.4442-1-martin.blumenstingl@googlemail.com>
-References: <20190612195911.4442-1-martin.blumenstingl@googlemail.com>
+        Wed, 12 Jun 2019 12:59:16 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 12:59:11 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     peterz@infradead.org, netdev@vger.kernel.org, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
+Subject: Re: [PATCH] locking/static_key: always define
+ static_branch_deferred_inc
+Message-ID: <20190612125911.509d79f2@cakuba.netronome.com>
+In-Reply-To: <20190612194409.197461-1-willemdebruijn.kernel@gmail.com>
+References: <20190612194409.197461-1-willemdebruijn.kernel@gmail.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add links to the datasheet and a short summary how the hardware works.
-The goal is to make it easier for other developers to understand why the
-pwm-meson driver is implemented the way it is.
+On Wed, 12 Jun 2019 15:44:09 -0400, Willem de Bruijn wrote:
+> From: Willem de Bruijn <willemb@google.com>
+> 
+> This interface is currently only defined if CONFIG_JUMP_LABEL. Make it
+> available also when jump labels are disabled.
+> 
+> Fixes: ad282a8117d50 ("locking/static_key: Add support for deferred static branches")
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> 
+> ---
+> 
+> The original patch went into 5.2-rc1, but this interface is not yet
+> used, so this could target either 5.2 or 5.3.
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Co-authored-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/pwm/pwm-meson.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Can we drop the Fixes tag?  It's an ugly omission but not a bug fix.
 
-diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-index bb48ba85f756..31259026484c 100644
---- a/drivers/pwm/pwm-meson.c
-+++ b/drivers/pwm/pwm-meson.c
-@@ -1,5 +1,27 @@
- // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
- /*
-+ * PWM controller driver for Amlogic Meson SoCs.
-+ *
-+ * This PWM is only a set of Gates, Dividers and Counters:
-+ * PWM output is achieved by calculating a clock that permits calculating
-+ * two periods (low and high). The counter then has to be set to switch after
-+ * N cycles for the first half period.
-+ * The hardware has no "polarity" setting. This driver reverses the period
-+ * cycles (the low length is inverted with the high length) for
-+ * PWM_POLARITY_INVERSED. This means that .get_state cannot read the polarity
-+ * from the hardware.
-+ * Setting the duty cycle will disable and re-enable the PWM output.
-+ * Disabling the PWM stops the output immediately (without waiting for the
-+ * current period to complete first).
-+ *
-+ * The public S912 (GXM) datasheet contains some documentation for this PWM
-+ * controller starting on page 543:
-+ * https://dl.khadas.com/Hardware/VIM2/Datasheet/S912_Datasheet_V0.220170314publicversion-Wesion.pdf
-+ * An updated version of this IP block is found in S922X (G12B) SoCs. The
-+ * datasheet contains the description for this IP block revision starting at
-+ * page 1084:
-+ * https://dn.odroid.com/S922X/ODROID-N2/Datasheet/S922X_Public_Datasheet_V0.2.pdf
-+ *
-  * Copyright (c) 2016 BayLibre, SAS.
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-  * Copyright (C) 2014 Amlogic, Inc.
--- 
-2.22.0
+Are you planning to switch clean_acked_data_enable() to the helper once
+merged?
+
+Thanks!
+
+> diff --git a/include/linux/jump_label_ratelimit.h b/include/linux/jump_label_ratelimit.h
+> index 42710d5949ba..8c3ee291b2d8 100644
+> --- a/include/linux/jump_label_ratelimit.h
+> +++ b/include/linux/jump_label_ratelimit.h
+> @@ -60,8 +60,6 @@ extern void jump_label_update_timeout(struct work_struct *work);
+>  						   0),			\
+>  	}
+>  
+> -#define static_branch_deferred_inc(x)	static_branch_inc(&(x)->key)
+> -
+>  #else	/* !CONFIG_JUMP_LABEL */
+>  struct static_key_deferred {
+>  	struct static_key  key;
+> @@ -95,4 +93,7 @@ jump_label_rate_limit(struct static_key_deferred *key,
+>  	STATIC_KEY_CHECK_USE(key);
+>  }
+>  #endif	/* CONFIG_JUMP_LABEL */
+> +
+> +#define static_branch_deferred_inc(x)	static_branch_inc(&(x)->key)
+> +
+>  #endif	/* _LINUX_JUMP_LABEL_RATELIMIT_H */
 
