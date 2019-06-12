@@ -2,74 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A66B41ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DAD41AE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:04:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729423AbfFLD7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:59:16 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:53932 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbfFLD7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:59:15 -0400
-Received: from zn.tnic (p200300EC2F0A680098854F45E2A0A47F.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:6800:9885:4f45:e2a0:a47f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AB9451EC0467;
-        Wed, 12 Jun 2019 05:59:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560311954;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ikFC7uLb35HFXWIlG2Hhv6pd2xXTkrLRX2yjuvtuaig=;
-        b=lpGKhP550gWmjUJuEPlIap5yRl+eJeeOcbPwdPt42/X9t66YMAGVQu4bewvxYucPPs7pWO
-        CgjSoQjFaEOYMG6apm143PaOj1vFaohHZ21oOjY7SAhZuiz2TzFwvoiTdAF6GocurdI8mc
-        tyUqOptBgZK/12TPicCJP34IidHM2ME=
-Date:   Wed, 12 Jun 2019 05:59:08 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Yu, Fenghua" <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16
- instructions
-Message-ID: <20190612035908.GB32652@zn.tnic>
-References: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
- <20190610192026.GI5488@zn.tnic>
- <20190611181920.GC180343@romley-ivt3.sc.intel.com>
- <20190611194701.GJ31772@zn.tnic>
- <20190611222822.GD180343@romley-ivt3.sc.intel.com>
- <3E5A0FA7E9CA944F9D5414FEC6C712209D8F4253@ORSMSX106.amr.corp.intel.com>
+        id S1726424AbfFLEDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 00:03:06 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16842 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725280AbfFLEDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 00:03:03 -0400
+X-UUID: fc6ce90485e84dd9b89e82f2c271838d-20190612
+X-UUID: fc6ce90485e84dd9b89e82f2c271838d-20190612
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 812905548; Wed, 12 Jun 2019 12:02:55 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Jun 2019 12:02:54 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 12 Jun 2019 12:02:54 +0800
+Message-ID: <1560312174.20601.6.camel@mtkswgap22>
+Subject: Re: [PATCH v3 2/3] dt-bindings: rng: update bindings for MediaTek
+ ARMv8 SoCs
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+        Crystal Guo <Crystal.Guo@mediatek.com>
+Date:   Wed, 12 Jun 2019 12:02:54 +0800
+In-Reply-To: <20190611225351.GA17332@bogus>
+References: <1560162984-26104-1-git-send-email-neal.liu@mediatek.com>
+         <1560162984-26104-3-git-send-email-neal.liu@mediatek.com>
+         <20190611225351.GA17332@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3E5A0FA7E9CA944F9D5414FEC6C712209D8F4253@ORSMSX106.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 03:29:57AM +0000, Yu, Fenghua wrote:
-> My bad. I studied a bit more and found the patch #1 is not needed.
+On Tue, 2019-06-11 at 16:53 -0600, Rob Herring wrote:
+> On Mon, Jun 10, 2019 at 06:36:23PM +0800, Neal Liu wrote:
+> > Document the binding used by the MediaTek ARMv8 SoCs random
+> > number generator with TrustZone enabled.
+> > 
+> > Signed-off-by: Neal Liu <neal.liu@mediatek.com>
+> > ---
+> >  Documentation/devicetree/bindings/rng/mtk-rng.txt |   15 ++++++++++++---
+> >  1 file changed, 12 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/rng/mtk-rng.txt b/Documentation/devicetree/bindings/rng/mtk-rng.txt
+> > index 2bc89f1..fb3dd59 100644
+> > --- a/Documentation/devicetree/bindings/rng/mtk-rng.txt
+> > +++ b/Documentation/devicetree/bindings/rng/mtk-rng.txt
+> > @@ -3,9 +3,13 @@ found in MediaTek SoC family
+> >  
+> >  Required properties:
+> >  - compatible	    : Should be
+> > -			"mediatek,mt7622-rng", 	"mediatek,mt7623-rng" : for MT7622
+> > -			"mediatek,mt7629-rng",  "mediatek,mt7623-rng" : for MT7629
+> > -			"mediatek,mt7623-rng" : for MT7623
+> > +			"mediatek,mt7622-rng", "mediatek,mt7623-rng" for MT7622
+> > +			"mediatek,mt7629-rng", "mediatek,mt7623-rng" for MT7629
+> > +			"mediatek,mt7623-rng" for MT7623
+> > +			"mediatek,mtk-sec-rng" for MediaTek ARMv8 SoCs with
+> > +			security RNG
+> 
+> Is there any commonality with the prior h/w? If not, make this a 
+> separate binding doc.
 
-Why, I think you were spot-on:
+There are less common with the prior h/w... I had been thinking about
+make new binding doc. Since your suggestion, I'll make one.
 
-"And the two variables are ONLY used in resctrl monitoring
-configuration. There is no need to store them in cpuinfo_x86 on each
-CPU."
+> 
+> > +
+> > +Optional properties:
+> >  - clocks	    : list of clock specifiers, corresponding to
+> >  		      entries in clock-names property;
+> >  - clock-names	    : Should contain "rng" entries;
+> > @@ -19,3 +23,8 @@ rng: rng@1020f000 {
+> >  	clocks = <&infracfg CLK_INFRA_TRNG>;
+> >  	clock-names = "rng";
+> >  };
+> > +
+> > +/* secure RNG */
+> > +hwrng: hwrng {
+> > +	compatible = "mediatek,mtk-sec-rng";
+> 
+> How does one access this? Seems like this should be part of a node for 
+> firmware? What about other functions?
 
-That was a real overkill to put them in cpuinfo_x86. The information
-needed should simply be read out in rdt_get_mon_l3_config() and that's
-it - no need to global values to store them.
+Yes, We move all hw register & clock control access to the ATF by smc.
 
-Now removing them should be in a separate patch so that review is easy.
+> 
+> > +};
+> > -- 
+> > 1.7.9.5
+> > 
 
-Or am I missing an aspect?
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
