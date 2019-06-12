@@ -2,213 +2,298 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCE942F54
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:51:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8CD742F69
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfFLSuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:50:50 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41659 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbfFLSuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:50:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 11:50:49 -0700
-X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 12 Jun 2019 11:50:49 -0700
-Date:   Wed, 12 Jun 2019 11:53:58 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Vincent Stehle <Vincent.Stehle@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 26/29] vfio-pci: Register an iommu fault handler
-Message-ID: <20190612115358.0d90b322@jacob-builder>
-In-Reply-To: <905f130b-02dc-6971-8d5b-ce87d9bc96a4@arm.com>
-References: <20190526161004.25232-1-eric.auger@redhat.com>
-        <20190526161004.25232-27-eric.auger@redhat.com>
-        <20190603163139.70fe8839@x1.home>
-        <10dd60d9-4af0-c0eb-08c9-a0db7ee1925e@redhat.com>
-        <20190605154553.0d00ad8d@jacob-builder>
-        <2753d192-1c46-d78e-c425-0c828e48cde2@arm.com>
-        <20190606132903.064f7ac4@jacob-builder>
-        <dc051424-67d7-02ff-9b8e-0d7a8a4e59eb@arm.com>
-        <20190607104301.6b1bbd74@jacob-builder>
-        <e02b024f-6ebc-e8fa-c30c-5bf3f4b164d6@arm.com>
-        <20190610143134.7bff96e9@jacob-builder>
-        <905f130b-02dc-6971-8d5b-ce87d9bc96a4@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727646AbfFLS5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:57:33 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41479 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbfFLS5b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:57:31 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c2so18051016wrm.8;
+        Wed, 12 Jun 2019 11:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O9pMEwemj8CP8ntOVk398xcx7TSrvuxqEDq6r7MO+do=;
+        b=DyI9Y0mJWC3FGNGhF7V1PbHD8TXKuO18I2dRveMHF/AAABZmenps5vyDnDl3OPi4oc
+         d2USrhCd+FTzS8TkLHqckQVkNQSiBnJ6vmhrpxfM5EsabdDUOyYm0vpg6WddOQBGhu3b
+         9eW4mGsaoeKOgkCSs+nbIwuhp4XGQlE8jinuC1JlHa6nSMsVBqoVf2OPnM8PT748JzPA
+         +ikZfA874lNQnywHRc3bcsw3IYHWu9AdvbbnmO9UpWTTKuo+276Z/JLwlwdYfB8zzA5j
+         3GxEeoFNNPPkVMy7vVHrRV2pV4pVzFFEOT4JhQzNf4ylZgpnQtaamlC1nUGMVFdbw8tN
+         /GPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O9pMEwemj8CP8ntOVk398xcx7TSrvuxqEDq6r7MO+do=;
+        b=ip+PaPT6hGcE7HhP+iLP3R8V8YkWA/kjN5wigmtAHb4hi1HC6o7McR6vQqrsJS1HUl
+         NliMXFfF45zTPuVnAErulVf0YFe+sDNLg0cV7SPoFgU3bRi5+EP+Br2fV90UVzgNarvQ
+         ACJ4lTvPNSLvU/9ECvdMMCEOuHf07REwqbAAwd1I09cTfCu3o/IY982dQeqgL0/OnTNi
+         uXY9wjAE3EWe/QKmANYWRQbelydwNAdUd3tUZ1oOA/gNtxt9i78N0jfMLXag3q9bCwBH
+         jmrFexyyfbhQxk3DB9NdC/N2RoZ1YS0p26Fy0SsLcGBz7sdHP6zuMWLMgAtg6Yj4qsmd
+         bHPw==
+X-Gm-Message-State: APjAAAVRzh5sOXOpL0seQH9Us5NvrJ+O6zTbvwcQGSjuCig1jyeScoCT
+        sZ7LxS9vJjjVNPWIMS4cXGYtoyiK
+X-Google-Smtp-Source: APXvYqzDCdk632ipqwoEVxlMjJeksIC4aEuHdUdSQDkGA7lwsLPEYd9t+WGfqygIxikgpniQGILqEQ==
+X-Received: by 2002:a5d:6212:: with SMTP id y18mr8026725wru.178.1560365847173;
+        Wed, 12 Jun 2019 11:57:27 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id h90sm817685wrh.15.2019.06.12.11.57.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 11:57:26 -0700 (PDT)
+Subject: Re: [PATCH] dma: tegra: add accurate reporting of dma state
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        linux-kernel@lists.codethink.co.uk
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190424162348.23692-1-ben.dooks@codethink.co.uk>
+ <dbe7c256-c7ad-a172-9e63-9251bec6f182@gmail.com>
+ <b10126c5-227b-af9d-8774-7c9cf8f43908@codethink.co.uk>
+ <6631ad02-0e3c-d768-8c23-fd1f091402df@gmail.com>
+ <6cceabe0-ecfa-e241-a937-5a7c9761820a@gmail.com>
+Message-ID: <95a7b8e9-0638-a548-a907-ec80d415d7a3@gmail.com>
+Date:   Wed, 12 Jun 2019 21:57:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <6cceabe0-ecfa-e241-a937-5a7c9761820a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019 14:14:33 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-
-> On 10/06/2019 22:31, Jacob Pan wrote:
-> > On Mon, 10 Jun 2019 13:45:02 +0100
-> > Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-> >   
-> >> On 07/06/2019 18:43, Jacob Pan wrote:  
-> >>>>> So it seems we agree on the following:
-> >>>>> - iommu_unregister_device_fault_handler() will never fail
-> >>>>> - iommu driver cleans up all pending faults when handler is
-> >>>>> unregistered
-> >>>>> - assume device driver or guest not sending more page response
-> >>>>> _after_ handler is unregistered.
-> >>>>> - system will tolerate rare spurious response
-> >>>>>
-> >>>>> Sounds right?      
-> >>>>
-> >>>> Yes, I'll add that to the fault series    
-> >>> Hold on a second please, I think we need more clarifications.
-> >>> Ashok pointed out to me that the spurious response can be harmful
-> >>> to other devices when it comes to mdev, where PRQ group id is not
-> >>> per PASID, device may reuse the group number and receiving
-> >>> spurious page response can confuse the entire PF.     
-> >>
-> >> I don't understand how mdev differs from the non-mdev situation
-> >> (but I also still don't fully get how mdev+PASID will be
-> >> implemented). Is the following the case you're worried about?
-> >>
-> >>   M#: mdev #
-> >>
-> >> # Dev         Host        mdev drv       VFIO/QEMU        Guest
-> >> ====================================================================
-> >> 1                     <- reg(handler)
-> >> 2 PR1 G1 P1    ->         M1 PR1 G1        inject ->     M1 PR1 G1
-> >> 3                     <- unreg(handler)
-> >> 4       <- PS1 G1 P1 (F)      |
-> >> 5                        unreg(handler)
-> >> 6                     <- reg(handler)
-> >> 7 PR2 G1 P1    ->         M2 PR2 G1        inject ->     M2 PR2 G1
-> >> 8                                                     <- M1 PS1 G1
-> >> 9         accept ??    <- PS1 G1 P1
-> >> 10                                                    <- M2 PS2 G1
-> >> 11        accept       <- PS2 G1 P1
-> >>  
-> > Not really. I am not worried about PASID reuse or unbind. Just
-> > within the same PASID bind lifetime of a single mdev, back to back
-> > register/unregister fault handler.
-> > After Step 4, device will think G1 is done. Device could reuse G1
-> > for the next PR, if we accept PS1 in step 9, device will terminate
-> > G1 before the real G1 PS arrives in Step 11. The real G1 PS might
-> > have a different response code. Then we just drop the PS in Step
-> > 11?  
+05.05.2019 16:39, Dmitry Osipenko пишет:
+> 04.05.2019 19:06, Dmitry Osipenko пишет:
+>> 01.05.2019 11:58, Ben Dooks пишет:
+>>> On 24/04/2019 19:17, Dmitry Osipenko wrote:
+>>>> 24.04.2019 19:23, Ben Dooks пишет:
+>>>>> The tx_status callback does not report the state of the transfer
+>>>>> beyond complete segments. This causes problems with users such as
+>>>>> ALSA when applications want to know accurately how much data has
+>>>>> been moved.
+>>>>>
+>>>>> This patch addes a function tegra_dma_update_residual() to query
+>>>>> the hardware and modify the residual information accordinly. It
+>>>>> takes into account any hardware issues when trying to read the
+>>>>> state, such as delays between finishing a buffer and signalling
+>>>>> the interrupt.
+>>>>>
+>>>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>>
+>>>> Hello Ben,
+>>>>
+>>>> Thank you very much for keeping it up. I have couple comments, please
+>>>> see them below.
+>>>>
+>>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
+>>>>> Cc: Laxman Dewangan <ldewangan@nvidia.com> (supporter:TEGRA DMA DRIVERS)
+>>>>> Cc: Jon Hunter <jonathanh@nvidia.com> (supporter:TEGRA DMA DRIVERS)
+>>>>> Cc: Vinod Koul <vkoul@kernel.org> (maintainer:DMA GENERIC OFFLOAD
+>>>>> ENGINE SUBSYSTEM)
+>>>>> Cc: Dan Williams <dan.j.williams@intel.com> (reviewer:ASYNCHRONOUS
+>>>>> TRANSFERS/TRANSFORMS (IOAT) API)
+>>>>> Cc: Thierry Reding <thierry.reding@gmail.com> (supporter:TEGRA
+>>>>> ARCHITECTURE SUPPORT)
+>>>>> Cc: dmaengine@vger.kernel.org (open list:DMA GENERIC OFFLOAD ENGINE
+>>>>> SUBSYSTEM)
+>>>>> Cc: linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+>>>>> Cc: linux-kernel@vger.kernel.org (open list)
+>>>>> ---
+>>>>>   drivers/dma/tegra20-apb-dma.c | 92 ++++++++++++++++++++++++++++++++---
+>>>>>   1 file changed, 86 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c
+>>>>> b/drivers/dma/tegra20-apb-dma.c
+>>>>> index cf462b1abc0b..544e7273e741 100644
+>>>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
+>>>>> @@ -808,6 +808,90 @@ static int tegra_dma_terminate_all(struct
+>>>>> dma_chan *dc)
+>>>>>       return 0;
+>>>>>   }
+>>>>>   +static unsigned int tegra_dma_update_residual(struct
+>>>>> tegra_dma_channel *tdc,
+>>>>> +                          struct tegra_dma_sg_req *sg_req,
+>>>>> +                          struct tegra_dma_desc *dma_desc,
+>>>>> +                          unsigned int residual)
+>>>>> +{
+>>>>> +    unsigned long status = 0x0;
+>>>>> +    unsigned long wcount;
+>>>>> +    unsigned long ahbptr;
+>>>>> +    unsigned long tmp = 0x0;
+>>>>> +    unsigned int result;
+>>>>
+>>>> You could pre-assign ahbptr=0xffffffff and result=residual here, then
+>>>> you could remove all the duplicated assigns below.
+>>>
+>>> ok, ta.
+>>>
+>>>>> +    int retries = TEGRA_APBDMA_BURST_COMPLETE_TIME * 10;
+>>>>> +    int done;
+>>>>> +
+>>>>> +    /* if we're not the current request, then don't alter the
+>>>>> residual */
+>>>>> +    if (sg_req != list_first_entry(&tdc->pending_sg_req,
+>>>>> +                       struct tegra_dma_sg_req, node)) {
+>>>>> +        result = residual;
+>>>>> +        ahbptr = 0xffffffff;
+>>>>> +        goto done;
+>>>>> +    }
+>>>>> +
+>>>>> +    /* loop until we have a reliable result for residual */
+>>>>> +    do {
+>>>>> +        ahbptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
+>>>>> +        status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+>>>>> +        tmp =  tdc_read(tdc, 0x08);    /* total count for debug */
+>>>>
+>>>> The "tmp" variable isn't used anywhere in the code, please remove it.
+>>>
+>>> must have been left over.
+>>>
+>>>>> +
+>>>>> +        /* check status, if channel isn't busy then skip */
+>>>>> +        if (!(status & TEGRA_APBDMA_STATUS_BUSY)) {
+>>>>> +            result = residual;
+>>>>> +            break;
+>>>>> +        }
+>>>>
+>>>> This doesn't look correct because TRM says "Busy bit gets set as soon
+>>>> as a channel is enabled and gets cleared after transfer completes",
+>>>> hence a cleared BUSY bit means that all transfers are completed and
+>>>> result=residual is incorrect here. Given that there is a check for EOC
+>>>> bit being set below, this hunk should be removed.
+>>>
+>>> I'll check notes, but see below.
+>>>
+>>>>> +
+>>>>> +        /* if we've got an interrupt pending on the channel, don't
+>>>>> +         * try and deal with the residue as the hardware has likely
+>>>>> +         * moved on to the next buffer. return all data moved.
+>>>>> +         */
+>>>>> +        if (status & TEGRA_APBDMA_STATUS_ISE_EOC) {
+>>>>> +            result = residual - sg_req->req_len;
+>>>>> +            break;
+>>>>> +        }
+>>>>> +
+>>>>> +        if (tdc->tdma->chip_data->support_separate_wcount_reg)
+>>>>> +            wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+>>>>> +        else
+>>>>> +            wcount = status;
+>>>>> +
+>>>>> +        /* If the request is at the full point, then there is a
+>>>>> +         * chance that we have read the status register in the
+>>>>> +         * middle of the hardware reloading the next buffer.
+>>>>> +         *
+>>>>> +         * The sequence seems to be at the end of the buffer, to
+>>>>> +         * load the new word count before raising the EOC flag (or
+>>>>> +         * changing the ping-pong flag which could have also been
+>>>>> +         * used to determine a new buffer). This  means there is a
+>>>>> +         * small window where we cannot determine zero-done for the
+>>>>> +         * current buffer, or moved to next buffer.
+>>>>> +         *
+>>>>> +         * If done shows 0, then retry the load, as it may hit the
+>>>>> +         * above hardware race. We will either get a new value which
+>>>>> +         * is from the first buffer, or we get an EOC (new buffer)
+>>>>> +         * or both a new value and an EOC...
+>>>>> +         */
+>>>>> +        done = get_current_xferred_count(tdc, sg_req, wcount);
+>>>>> +        if (done != 0) {
+>>>>> +            result = residual - done;
+>>>>> +            break;
+>>>>> +        }
+>>>>> +
+>>>>> +        ndelay(100);
+>>>>
+>>>> Please use udelay(1) because there is no ndelay on arm32 and
+>>>> ndelay(100) is getting rounded up to 1usec. AFAIK, arm64 doesn't have
+>>>> reliable ndelay on Tegra either because timer rate changes with the
+>>>> CPU frequency scaling.
+>>>
+>>> I'll check, but last time it was implemented. This seems a backwards step.
+>>>
+>>>> Secondly done=0 isn't a error case, technically this could be the case
+>>>> when tegra_dma_update_residual() is invoked just after starting the
+>>>> transfer. Hence I think this do-while loop and timeout checking aren't
+>>>> needed at all since done=0 is a perfectly valid case.
+>>>
+>>> this is not checking for an error, it's checking for a possible
+>>> inaccurate reading.
+>>
+>> If you'll change reading order of the status / words registers like I
+>> suggested, then there won't be a case for the inaccuracy.
+>>
+>> The EOC bit should be set atomically once transfer is finished, you
+>> can't get wrapped around words count and EOC bit not being set.
+>>
+>> For oneshot transfer that runs with interrupt being disabled, the words
+>> counter will stop at 0 and the unset BUSY bit will indicate that the
+>> transfer is completed.
+>>
+>>>>
+>>>> Altogether seems the tegra_dma_update_residual() could be reduced to:
+>>>>
+>>>> static unsigned int tegra_dma_update_residual(struct tegra_dma_channel
+>>>> *tdc,
+>>>>                           struct tegra_dma_sg_req *sg_req,
+>>>>                           struct tegra_dma_desc *dma_desc,
+>>>>                           unsigned int residual) 
+>>>> {
+>>>>     unsigned long status, wcount;
+>>>>
+>>>>     if (list_is_first(&sg_req->node, &tdc->pending_sg_req))
+>>>>         return residual;
+>>>>
+>>>>     if (tdc->tdma->chip_data->support_separate_wcount_reg)
+>>>>         wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+>>>>
+>>>>     status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+>>>>
+>>>>     if (!tdc->tdma->chip_data->support_separate_wcount_reg)
+>>>>         wcount = status;
+>>>>
+>>>>     if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+>>>>         return residual - sg_req->req_len;
+>>>>
+>>>>     return residual - get_current_xferred_count(tdc, sg_req, wcount);
+>>>> }
+>>>
+>>> I'm not sure if that will work all the time. It took days of testing to
+>>> get reliable error data for the cases we're looking for here.
+>>
+>> Could you please tell exactly what those cases are. I don't see when the
+>> simplified variant could fail, but maybe I already forgot some extra
+>> details about how APB DMA works.
+>>
+>> I tested the variant I'm suggesting (with the fixed typos and added
+>> check for the BUSY bit) and it works absolutely fine, audio stuttering
+>> issue is fixed, everything else works too. Please consider to use it for
+>> the next version of the patch if there are no objections.
+>>
 > 
-> Yes, I think we do. Two possibilities:
+> Actually the BUSY bit checking shouldn't be needed. I think it's a bug
+> in the driver that it may not enable EOC interrupt and will send a patch
+> to fix it.
 > 
-> * G1 is reused at step 7 for the same PASID context, which means that
-> it is for the same mdev. The problem is then identical to the non-mdev
-> case, new page faults and old page response may cross:
-> 
-> # Dev         Host        mdev drv       VFIO/QEMU        Guest
-> ====================================================================
-> 7 PR2 G1 P1  --.
-> 8               \                         .------------- M1 PS1 G1
-> 9                '----->  PR2 G1 P1  ->  /   inject  --> M1 PR2 G1
-> 10           accept <---  PS1 G1 P1  <--'
-> 11           reject <---  PS2 G1 P1  <------------------ M1 PS2 G1
-> 
-> And the incorrect page response is returned to the guest. However it
-> affects a single mdev/guest context, it doesn't affect other mdevs.
-> 
-> * Or G1 is reused at step 7 for a different PASID. At step 10 the
-> fault handler rejects the page response because the PASID is
-> different, and step 11 is accepted.
-> 
-> 
-> >>> Having spurious page response is also not
-> >>> abiding the PCIe spec. exactly.    
-> >>
-> >> We are following the PCI spec though, in that we don't send page
-> >> responses for PRGIs that aren't in flight.
-> >>  
-> > You are right, the worst case of the spurious PS is to terminate the
-> > group prematurely. Need to know the scope of the HW damage in case
-> > of mdev where group IDs can be shared among mdevs belong to the
-> > same PF.  
-> 
-> But from the IOMMU fault API point of view, the full page request is
-> identified by both PRGI and PASID. Given that each mdev has its own
-> set of PASIDs, it should be easy to isolate page responses per mdev.
-> 
-On Intel platform, devices sending page request with private data must
-receive page response with matching private data. If we solely depend
-on PRGI and PASID, we may send stale private data to the device in
-those incorrect page response. Since private data may represent PF
-device wide contexts, the consequence of sending page response with
-wrong private data may affect other mdev/PASID.
 
-One solution we are thinking to do is to inject the sequence #(e.g.
-ktime raw mono clock) as vIOMMU private data into to the guest. Guest
-would return this fake private data in page response, then host will
-send page response back to the device that matches PRG1 and PASID and
-private_data.
+Hello Ben,
 
-This solution does not expose HW context related private data to the
-guest but need to extend page response in iommu uapi.
-
-/**
- * struct iommu_page_response - Generic page response information
- * @version: API version of this structure
- * @flags: encodes whether the corresponding fields are valid
- *         (IOMMU_FAULT_PAGE_RESPONSE_* values)
- * @pasid: Process Address Space ID
- * @grpid: Page Request Group Index
- * @code: response code from &enum iommu_page_response_code
- * @private_data: private data for the matching page request
- */
-struct iommu_page_response {
-#define IOMMU_PAGE_RESP_VERSION_1	1
-	__u32	version;
-#define IOMMU_PAGE_RESP_PASID_VALID	(1 << 0)
-#define IOMMU_PAGE_RESP_PRIVATE_DATA	(1 << 1)
-	__u32	flags;
-	__u32	pasid;
-	__u32	grpid;
-	__u32	code;
-	__u32	padding;
-	__u64	private_data[2];
-};
-
-There is also the change needed for separating storage for the real and
-fake private data.
-
-Sorry for the last minute change, did not realize the HW implications.
-
-I see this as a future extension due to limited testing, perhaps for
-now, can you add paddings similar to page request? Make it 64B as well.
-
-struct iommu_page_response {
-#define IOMMU_PAGE_RESP_VERSION_1	1
-	__u32	version;
-#define IOMMU_PAGE_RESP_PASID_VALID	(1 << 0)
-	__u32	flags;
-	__u32	pasid;
-	__u32	grpid;
-	__u32	code;
-	__u8	padding[44];
-};
-
-Thanks!
-
-Jacob
+I'm going to post a reduced version of the patch that I'm was suggesting
+here since it fixes a longstanding problem that I'm experiencing. Any
+other changes could be made on top of it later on if needed. Please let
+me know if you have any objections, I can wait a bit longer if you're
+going to send an updated version of the patch that addresses all of the
+comments anytime soon.
