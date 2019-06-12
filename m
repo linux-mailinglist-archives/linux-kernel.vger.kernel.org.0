@@ -2,55 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FFB642E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD2242DE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:55:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390595AbfFLRzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:55:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40478 "EHLO
+        id S1730278AbfFLRyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:54:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40848 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388722AbfFLRxO (ORCPT
+        with ESMTP id S2389624AbfFLRxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:53:14 -0400
+        Wed, 12 Jun 2019 13:53:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Zt3xoMrxZU+L1IqkBU/DdgxjyhNGin3s3jVYlUtGi7w=; b=KZbejZKoEgJtow9o5a7n7Xm31r
-        uL7HeN0o/NrRjMOd4hp7+au7j/xc/3NPYkc/2YiFhdiFf1b5lbgtEFfkNjqm5l5WA2DSUIMurUpCu
-        Rixsw1xpv1Hl1R6aqu4PJ9+ki7C2tvJMTuwPyiL+l3rav2rxOGI5jadFy6YedPOZUpYzbSYhXeZn+
-        fPu5T6m2mh9VhBCyuEszurKErXMDOLzRTywxcdHYZwDTsFCJrKszI9PwEmqV7Lb28JNf/43sBms+n
-        hQ8x86uZ6p7qoR9ytLObSaHbeQ2ySX6N0h8zJZjR6hlkOt0I3KXkKUDqd9DC6eD0VONAw9O6RLll1
-        qFEuesWQ==;
+        bh=8dH0Zdi1b6MjYfgb9odloDVY4FfbVRDBfw/e3gt8b7s=; b=N8GUc01HFy+rR7xlaUfNQy7YsW
+        hKF+iChYqaUGR5SVbXKOnVZUn5TLGTJixqEf3MDZyQlVQbyj8z5BHr5xPwom0E7H/NMO0KsVj98XN
+        j8lXNhf09s8rcGZSdApD1qFPeTBqjaSiL7YRw7EYuuMZBbEn5m4/23yZD1Sj67SVF0sHyQsVevdT7
+        FIXChVUqI0PWUOnMm4m0KETHjQTTWSdRlVVGc+q81DOjwlOdQM5YeA0gX8nsVIdHHjxQDgGpwEQzZ
+        TYWDk/46VyXO9UFwylB7oCaeZjZ4MUjbi+LH8lj91Nt7MgVvmtHV3SnZSYtMYoXLkGeDLMkhSgcAW
+        anlry8Cg==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb7Qt-0002Dd-2K; Wed, 12 Jun 2019 17:53:11 +0000
+        id 1hb7Qx-0002Dk-GO; Wed, 12 Jun 2019 17:53:16 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hb7Qq-0001gN-8y; Wed, 12 Jun 2019 14:53:08 -0300
+        id 1hb7Qq-0001gX-BM; Wed, 12 Jun 2019 14:53:08 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Borislav Petkov <bp@alien8.de>, Jens Axboe <axboe@kernel.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org
-Subject: [PATCH v4 11/28] docs: ide: convert docs to ReST and rename to *.rst
-Date:   Wed, 12 Jun 2019 14:52:47 -0300
-Message-Id: <c8d81e59f9d7d6611531086b59e26ee399ade3a8.1560361364.git.mchehab+samsung@kernel.org>
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
+Subject: [PATCH v4 13/28] docs: kdump: convert docs to ReST and rename to *.rst
+Date:   Wed, 12 Jun 2019 14:52:49 -0300
+Message-Id: <fdf8f8b99f8f660e0a2442b13ffcb0f1d44c3741.1560361364.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560361364.git.mchehab+samsung@kernel.org>
 References: <cover.1560361364.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Convert kdump documentation to ReST and add it to the
+user faced manual, as the documents are mainly focused on
+sysadmins that would be enabling kdump.
+
+Note: the vmcoreinfo.rst has one very long title on one of its
+sub-sections:
+
+	PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
+
+I opted to break this one, into two entries with the same content,
+in order to make it easier to display after being parsed in html and PDF.
 
 The conversion is actually:
   - add blank lines and identation in order to identify paragraphs;
@@ -63,457 +92,87 @@ At its new index.rst, let's add a :orphan: while this is not linked to
 the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- .../admin-guide/kernel-parameters.txt         |   2 +-
- Documentation/cdrom/ide-cd.rst                |  18 +--
- Documentation/ide/changelogs.rst              |  17 ++
- .../ide/{ide-tape.txt => ide-tape.rst}        |  23 +--
- Documentation/ide/{ide.txt => ide.rst}        | 147 ++++++++++--------
- Documentation/ide/index.rst                   |  21 +++
- ...arm-plug-howto.txt => warm-plug-howto.rst} |  10 +-
- arch/m68k/q40/README                          |   2 +-
- drivers/ide/Kconfig                           |  20 +--
- 9 files changed, 155 insertions(+), 105 deletions(-)
- create mode 100644 Documentation/ide/changelogs.rst
- rename Documentation/ide/{ide-tape.txt => ide-tape.rst} (83%)
- rename Documentation/ide/{ide.txt => ide.rst} (72%)
- create mode 100644 Documentation/ide/index.rst
- rename Documentation/ide/{warm-plug-howto.txt => warm-plug-howto.rst} (61%)
+ Documentation/admin-guide/bug-hunting.rst     |   2 +-
+ .../admin-guide/kernel-parameters.txt         |   6 +-
+ Documentation/kdump/index.rst                 |  21 +++
+ Documentation/kdump/{kdump.txt => kdump.rst}  | 131 +++++++++++-------
+ .../kdump/{vmcoreinfo.txt => vmcoreinfo.rst}  |  59 ++++----
+ .../powerpc/firmware-assisted-dump.txt        |   2 +-
+ .../translations/zh_CN/oops-tracing.txt       |   2 +-
+ Documentation/watchdog/hpwdt.txt              |   2 +-
+ arch/arm/Kconfig                              |   2 +-
+ arch/arm64/Kconfig                            |   2 +-
+ arch/sh/Kconfig                               |   2 +-
+ arch/x86/Kconfig                              |   4 +-
+ 12 files changed, 137 insertions(+), 98 deletions(-)
+ create mode 100644 Documentation/kdump/index.rst
+ rename Documentation/kdump/{kdump.txt => kdump.rst} (91%)
+ rename Documentation/kdump/{vmcoreinfo.txt => vmcoreinfo.rst} (95%)
 
+diff --git a/Documentation/admin-guide/bug-hunting.rst b/Documentation/admin-guide/bug-hunting.rst
+index f278b289e260..b761aa2a51d2 100644
+--- a/Documentation/admin-guide/bug-hunting.rst
++++ b/Documentation/admin-guide/bug-hunting.rst
+@@ -90,7 +90,7 @@ the disk is not available then you have three options:
+     run a null modem to a second machine and capture the output there
+     using your favourite communication program.  Minicom works well.
+ 
+-(3) Use Kdump (see Documentation/kdump/kdump.txt),
++(3) Use Kdump (see Documentation/kdump/kdump.rst),
+     extract the kernel ring buffer from old memory with using dmesg
+     gdbmacro in Documentation/kdump/gdbmacros.txt.
+ 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 581d8888e829..affed5d447de 100644
+index affed5d447de..c31373f39240 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1502,7 +1502,7 @@
- 			Format: =0.0 to prevent dma on hda, =0.1 hdb =1.0 hdc
- 			.vlb_clock .pci_clock .noflush .nohpa .noprobe .nowerr
- 			.cdrom .chs .ignore_cable are additional options
--			See Documentation/ide/ide.txt.
-+			See Documentation/ide/ide.rst.
+@@ -708,14 +708,14 @@
+ 			[KNL, x86_64] select a region under 4G first, and
+ 			fall back to reserve region above 4G when '@offset'
+ 			hasn't been specified.
+-			See Documentation/kdump/kdump.txt for further details.
++			See Documentation/kdump/kdump.rst for further details.
  
- 	ide-generic.probe-mask= [HW] (E)IDE subsystem
- 			Format: <int>
-diff --git a/Documentation/cdrom/ide-cd.rst b/Documentation/cdrom/ide-cd.rst
-index dadc94ef6b6c..bdccb74fc92d 100644
---- a/Documentation/cdrom/ide-cd.rst
-+++ b/Documentation/cdrom/ide-cd.rst
-@@ -47,7 +47,7 @@ This driver provides the following features:
- ---------------
+ 	crashkernel=range1:size1[,range2:size2,...][@offset]
+ 			[KNL] Same as above, but depends on the memory
+ 			in the running system. The syntax of range is
+ 			start-[end] where start and end are both
+ 			a memory unit (amount[KMG]). See also
+-			Documentation/kdump/kdump.txt for an example.
++			Documentation/kdump/kdump.rst for an example.
  
- 0. The ide-cd relies on the ide disk driver.  See
--   Documentation/ide/ide.txt for up-to-date information on the ide
-+   Documentation/ide/ide.rst for up-to-date information on the ide
-    driver.
+ 	crashkernel=size[KMG],high
+ 			[KNL, x86_64] range could be above 4G. Allow kernel
+@@ -1207,7 +1207,7 @@
+ 			Specifies physical address of start of kernel core
+ 			image elf header and optionally the size. Generally
+ 			kexec loader will pass this option to capture kernel.
+-			See Documentation/kdump/kdump.txt for details.
++			See Documentation/kdump/kdump.rst for details.
  
- 1. Make sure that the ide and ide-cd drivers are compiled into the
-@@ -62,7 +62,7 @@ This driver provides the following features:
- 
-    Depending on what type of IDE interface you have, you may need to
-    specify additional configuration options.  See
--   Documentation/ide/ide.txt.
-+   Documentation/ide/ide.rst.
- 
- 2. You should also ensure that the iso9660 filesystem is either
-    compiled into the kernel or available as a loadable module.  You
-@@ -82,7 +82,7 @@ This driver provides the following features:
-    on the primary IDE interface are called `hda` and `hdb`,
-    respectively.  The drives on the secondary interface are called
-    `hdc` and `hdd`.  (Interfaces at other locations get other letters
--   in the third position; see Documentation/ide/ide.txt.)
-+   in the third position; see Documentation/ide/ide.rst.)
- 
-    If you want your CDROM drive to be found automatically by the
-    driver, you should make sure your IDE interface uses either the
-@@ -91,7 +91,7 @@ This driver provides the following features:
-    be jumpered as `master`.  (If for some reason you cannot configure
-    your system in this manner, you can probably still use the driver.
-    You may have to pass extra configuration information to the kernel
--   when you boot, however.  See Documentation/ide/ide.txt for more
-+   when you boot, however.  See Documentation/ide/ide.rst for more
-    information.)
- 
- 4. Boot the system.  If the drive is recognized, you should see a
-@@ -163,7 +163,7 @@ to change.  If the slot number is -1, the drive is unloaded.
- This section discusses some common problems encountered when trying to
- use the driver, and some possible solutions.  Note that if you are
- experiencing problems, you should probably also review
--Documentation/ide/ide.txt for current information about the underlying
-+Documentation/ide/ide.rst for current information about the underlying
- IDE support code.  Some of these items apply only to earlier versions
- of the driver, but are mentioned here for completeness.
- 
-@@ -173,7 +173,7 @@ from the driver.
- a. Drive is not detected during booting.
- 
-    - Review the configuration instructions above and in
--     Documentation/ide/ide.txt, and check how your hardware is
-+     Documentation/ide/ide.rst, and check how your hardware is
-      configured.
- 
-    - If your drive is the only device on an IDE interface, it should
-@@ -181,7 +181,7 @@ a. Drive is not detected during booting.
- 
-    - If your IDE interface is not at the standard addresses of 0x170
-      or 0x1f0, you'll need to explicitly inform the driver using a
--     lilo option.  See Documentation/ide/ide.txt.  (This feature was
-+     lilo option.  See Documentation/ide/ide.rst.  (This feature was
-      added around kernel version 1.3.30.)
- 
-    - If the autoprobing is not finding your drive, you can tell the
-@@ -207,7 +207,7 @@ a. Drive is not detected during booting.
-      Support for some interfaces needing extra initialization is
-      provided in later 1.3.x kernels.  You may need to turn on
-      additional kernel configuration options to get them to work;
--     see Documentation/ide/ide.txt.
-+     see Documentation/ide/ide.rst.
- 
-      Even if support is not available for your interface, you may be
-      able to get it to work with the following procedure.  First boot
-@@ -261,7 +261,7 @@ c. System hangups.
-     be worked around by specifying the `serialize` option when
-     booting.  Recent kernels should be able to detect the need for
-     this automatically in most cases, but the detection is not
--    foolproof.  See Documentation/ide/ide.txt for more information
-+    foolproof.  See Documentation/ide/ide.rst for more information
-     about the `serialize` option and the CMD640B.
- 
-   - Note that many MS-DOS CDROM drivers will work with such buggy
-diff --git a/Documentation/ide/changelogs.rst b/Documentation/ide/changelogs.rst
+ 	enable_mtrr_cleanup [X86]
+ 			The kernel tries to adjust MTRR layout from continuous
+diff --git a/Documentation/kdump/index.rst b/Documentation/kdump/index.rst
 new file mode 100644
-index 000000000000..fdf9d0fb8027
+index 000000000000..2b17fcf6867a
 --- /dev/null
-+++ b/Documentation/ide/changelogs.rst
-@@ -0,0 +1,17 @@
-+Changelog for ide cd
-+--------------------
-+
-+ .. include:: ChangeLog.ide-cd.1994-2004
-+    :literal:
-+
-+Changelog for ide floppy
-+------------------------
-+
-+ .. include:: ChangeLog.ide-floppy.1996-2002
-+    :literal:
-+
-+Changelog for ide tape
-+----------------------
-+
-+ .. include:: ChangeLog.ide-tape.1995-2002
-+    :literal:
-diff --git a/Documentation/ide/ide-tape.txt b/Documentation/ide/ide-tape.rst
-similarity index 83%
-rename from Documentation/ide/ide-tape.txt
-rename to Documentation/ide/ide-tape.rst
-index 3f348a0b21d8..3e061d9c0e38 100644
---- a/Documentation/ide/ide-tape.txt
-+++ b/Documentation/ide/ide-tape.rst
-@@ -1,4 +1,6 @@
--IDE ATAPI streaming tape driver.
-+===============================
-+IDE ATAPI streaming tape driver
-+===============================
- 
- This driver is a part of the Linux ide driver.
- 
-@@ -10,14 +12,14 @@ to the request-list of the block device, and waits for their completion.
- The block device major and minor numbers are determined from the
- tape's relative position in the ide interfaces, as explained in ide.c.
- 
--The character device interface consists of the following devices:
-+The character device interface consists of the following devices::
- 
--ht0		major 37, minor 0	first  IDE tape, rewind on close.
--ht1		major 37, minor 1	second IDE tape, rewind on close.
--...
--nht0		major 37, minor 128	first  IDE tape, no rewind on close.
--nht1		major 37, minor 129	second IDE tape, no rewind on close.
--...
-+  ht0		major 37, minor 0	first  IDE tape, rewind on close.
-+  ht1		major 37, minor 1	second IDE tape, rewind on close.
-+  ...
-+  nht0		major 37, minor 128	first  IDE tape, no rewind on close.
-+  nht1		major 37, minor 129	second IDE tape, no rewind on close.
-+  ...
- 
- The general magnetic tape commands compatible interface, as defined by
- include/linux/mtio.h, is accessible through the character device.
-@@ -40,9 +42,10 @@ Testing was done with a 2 GB CONNER CTMA 4000 IDE ATAPI Streaming Tape Drive.
- Here are some words from the first releases of hd.c, which are quoted
- in ide.c and apply here as well:
- 
--| Special care is recommended.  Have Fun!
-+* Special care is recommended.  Have Fun!
- 
--Possible improvements:
-+Possible improvements
-+=====================
- 
- 1. Support for the ATAPI overlap protocol.
- 
-diff --git a/Documentation/ide/ide.txt b/Documentation/ide/ide.rst
-similarity index 72%
-rename from Documentation/ide/ide.txt
-rename to Documentation/ide/ide.rst
-index 7aca987c23d9..88bdcba92f7d 100644
---- a/Documentation/ide/ide.txt
-+++ b/Documentation/ide/ide.rst
-@@ -1,41 +1,43 @@
--
--	Information regarding the Enhanced IDE drive in Linux 2.6
--
--==============================================================================
--
-+============================================
-+Information regarding the Enhanced IDE drive
-+============================================
- 
-    The hdparm utility can be used to control various IDE features on a
-    running system. It is packaged separately.  Please Look for it on popular
-    linux FTP sites.
- 
-+-------------------------------------------------------------------------------
- 
-+.. important::
- 
--***  IMPORTANT NOTICES:  BUGGY IDE CHIPSETS CAN CORRUPT DATA!!
--***  =================
--***  PCI versions of the CMD640 and RZ1000 interfaces are now detected
--***  automatically at startup when PCI BIOS support is configured.
--***
--***  Linux disables the "prefetch" ("readahead") mode of the RZ1000
--***  to prevent data corruption possible due to hardware design flaws.
--***
--***  For the CMD640, linux disables "IRQ unmasking" (hdparm -u1) on any
--***  drive for which the "prefetch" mode of the CMD640 is turned on.
--***  If "prefetch" is disabled (hdparm -p8), then "IRQ unmasking" can be
--***  used again.
--***
--***  For the CMD640, linux disables "32bit I/O" (hdparm -c1) on any drive
--***  for which the "prefetch" mode of the CMD640 is turned off.
--***  If "prefetch" is enabled (hdparm -p9), then "32bit I/O" can be
--***  used again.
--***
--***  The CMD640 is also used on some Vesa Local Bus (VLB) cards, and is *NOT*
--***  automatically detected by Linux.  For safe, reliable operation with such
--***  interfaces, one *MUST* use the "cmd640.probe_vlb" kernel option.
--***
--***  Use of the "serialize" option is no longer necessary.
--
--================================================================================
--Common pitfalls:
-+   BUGGY IDE CHIPSETS CAN CORRUPT DATA!!
-+
-+    PCI versions of the CMD640 and RZ1000 interfaces are now detected
-+    automatically at startup when PCI BIOS support is configured.
-+
-+    Linux disables the "prefetch" ("readahead") mode of the RZ1000
-+    to prevent data corruption possible due to hardware design flaws.
-+
-+    For the CMD640, linux disables "IRQ unmasking" (hdparm -u1) on any
-+    drive for which the "prefetch" mode of the CMD640 is turned on.
-+    If "prefetch" is disabled (hdparm -p8), then "IRQ unmasking" can be
-+    used again.
-+
-+    For the CMD640, linux disables "32bit I/O" (hdparm -c1) on any drive
-+    for which the "prefetch" mode of the CMD640 is turned off.
-+    If "prefetch" is enabled (hdparm -p9), then "32bit I/O" can be
-+    used again.
-+
-+    The CMD640 is also used on some Vesa Local Bus (VLB) cards, and is *NOT*
-+    automatically detected by Linux.  For safe, reliable operation with such
-+    interfaces, one *MUST* use the "cmd640.probe_vlb" kernel option.
-+
-+    Use of the "serialize" option is no longer necessary.
-+
-+-------------------------------------------------------------------------------
-+
-+Common pitfalls
-+===============
- 
- - 40-conductor IDE cables are capable of transferring data in DMA modes up to
-   udma2, but no faster.
-@@ -49,19 +51,18 @@ Common pitfalls:
- - Even better try to stick to the same vendor and device type on the same
-   cable.
- 
--================================================================================
--
--This is the multiple IDE interface driver, as evolved from hd.c.
-+This is the multiple IDE interface driver, as evolved from hd.c
-+===============================================================
- 
- It supports up to 9 IDE interfaces per default, on one or more IRQs (usually
--14 & 15).  There can be up to two drives per interface, as per the ATA-6 spec.
-+14 & 15).  There can be up to two drives per interface, as per the ATA-6 spec.::
- 
--Primary:    ide0, port 0x1f0; major=3;  hda is minor=0; hdb is minor=64
--Secondary:  ide1, port 0x170; major=22; hdc is minor=0; hdd is minor=64
--Tertiary:   ide2, port 0x1e8; major=33; hde is minor=0; hdf is minor=64
--Quaternary: ide3, port 0x168; major=34; hdg is minor=0; hdh is minor=64
--fifth..     ide4, usually PCI, probed
--sixth..     ide5, usually PCI, probed
-+  Primary:    ide0, port 0x1f0; major=3;  hda is minor=0; hdb is minor=64
-+  Secondary:  ide1, port 0x170; major=22; hdc is minor=0; hdd is minor=64
-+  Tertiary:   ide2, port 0x1e8; major=33; hde is minor=0; hdf is minor=64
-+  Quaternary: ide3, port 0x168; major=34; hdg is minor=0; hdh is minor=64
-+  fifth..     ide4, usually PCI, probed
-+  sixth..     ide5, usually PCI, probed
- 
- To access devices on interfaces > ide0, device entries please make sure that
- device files for them are present in /dev.  If not, please create such
-@@ -80,12 +81,15 @@ seldom occurs.  Be careful, and if in doubt, don't do it!
- 
- Drives are normally found by auto-probing and/or examining the CMOS/BIOS data.
- For really weird situations, the apparent (fdisk) geometry can also be specified
--on the kernel "command line" using LILO.  The format of such lines is:
-+on the kernel "command line" using LILO.  The format of such lines is::
- 
- 	ide_core.chs=[interface_number.device_number]:cyls,heads,sects
--or	ide_core.cdrom=[interface_number.device_number]
- 
--For example:
-+or::
-+
-+	ide_core.cdrom=[interface_number.device_number]
-+
-+For example::
- 
- 	ide_core.chs=1.0:1050,32,64  ide_core.cdrom=1.1
- 
-@@ -96,10 +100,12 @@ geometry for partitioning purposes (fdisk).
- If the auto-probing during boot time confuses a drive (ie. the drive works
- with hd.c but not with ide.c), then an command line option may be specified
- for each drive for which you'd like the drive to skip the hardware
--probe/identification sequence.  For example:
-+probe/identification sequence.  For example::
- 
- 	ide_core.noprobe=0.1
--or
-+
-+or::
-+
- 	ide_core.chs=1.0:768,16,32
- 	ide_core.noprobe=1.0
- 
-@@ -115,22 +121,24 @@ Such drives will be identified at boot time, just like a hard disk.
- 
- If for some reason your cdrom drive is *not* found at boot time, you can force
- the probe to look harder by supplying a kernel command line parameter
--via LILO, such as:
-+via LILO, such as:::
- 
- 	ide_core.cdrom=1.0	/* "master" on second interface (hdc) */
--or
-+
-+or::
-+
- 	ide_core.cdrom=1.1	/* "slave" on second interface (hdd) */
- 
- For example, a GW2000 system might have a hard drive on the primary
- interface (/dev/hda) and an IDE cdrom drive on the secondary interface
--(/dev/hdc).  To mount a CD in the cdrom drive, one would use something like:
-+(/dev/hdc).  To mount a CD in the cdrom drive, one would use something like::
- 
- 	ln -sf /dev/hdc /dev/cdrom
- 	mkdir /mnt/cdrom
- 	mount /dev/cdrom /mnt/cdrom -t iso9660 -o ro
- 
- If, after doing all of the above, mount doesn't work and you see
--errors from the driver (with dmesg) complaining about `status=0xff',
-+errors from the driver (with dmesg) complaining about `status=0xff`,
- this means that the hardware is not responding to the driver's attempts
- to read it.  One of the following is probably the problem:
- 
-@@ -165,7 +173,7 @@ drivers can always be compiled as loadable modules, the chipset drivers
- can only be compiled into the kernel, and the core code (ide.c) can be
- compiled as a loadable module provided no chipset support is needed.
- 
--When using ide.c as a module in combination with kmod, add:
-+When using ide.c as a module in combination with kmod, add::
- 
- 	alias block-major-3 ide-probe
- 
-@@ -176,10 +184,8 @@ driver using the "options=" keyword to insmod, while replacing any ',' with
- ';'.
- 
- 
--================================================================================
--
- Summary of ide driver parameters for kernel command line
----------------------------------------------------------
-+========================================================
- 
- For legacy IDE VLB host drivers (ali14xx/dtc2278/ht6560b/qd65xx/umc8672)
- you need to explicitly enable probing by using "probe" kernel parameter,
-@@ -226,28 +232,31 @@ Other kernel parameters for ide_core are:
- 
- * "chs=[interface_number.device_number]" to force device as a disk (using CHS)
- 
--================================================================================
- 
- Some Terminology
------------------
--IDE = Integrated Drive Electronics, meaning that each drive has a built-in
--controller, which is why an "IDE interface card" is not a "controller card".
-+================
- 
--ATA = AT (the old IBM 286 computer) Attachment Interface, a draft American
--National Standard for connecting hard drives to PCs.  This is the official
--name for "IDE".
-+IDE
-+  Integrated Drive Electronics, meaning that each drive has a built-in
-+  controller, which is why an "IDE interface card" is not a "controller card".
- 
--The latest standards define some enhancements, known as the ATA-6 spec,
--which grew out of vendor-specific "Enhanced IDE" (EIDE) implementations.
-+ATA
-+  AT (the old IBM 286 computer) Attachment Interface, a draft American
-+  National Standard for connecting hard drives to PCs.  This is the official
-+  name for "IDE".
- 
--ATAPI = ATA Packet Interface, a new protocol for controlling the drives,
--similar to SCSI protocols, created at the same time as the ATA2 standard.
--ATAPI is currently used for controlling CDROM, TAPE and FLOPPY (ZIP or
--LS120/240) devices, removable R/W cartridges, and for high capacity hard disk
--drives.
-+  The latest standards define some enhancements, known as the ATA-6 spec,
-+  which grew out of vendor-specific "Enhanced IDE" (EIDE) implementations.
-+
-+ATAPI
-+  ATA Packet Interface, a new protocol for controlling the drives,
-+  similar to SCSI protocols, created at the same time as the ATA2 standard.
-+  ATAPI is currently used for controlling CDROM, TAPE and FLOPPY (ZIP or
-+  LS120/240) devices, removable R/W cartridges, and for high capacity hard disk
-+  drives.
- 
- mlord@pobox.com
----
-+
- 
- Wed Apr 17 22:52:44 CEST 2002 edited by Marcin Dalecki, the current
- maintainer.
-diff --git a/Documentation/ide/index.rst b/Documentation/ide/index.rst
-new file mode 100644
-index 000000000000..45bc12d3957f
---- /dev/null
-+++ b/Documentation/ide/index.rst
++++ b/Documentation/kdump/index.rst
 @@ -0,0 +1,21 @@
 +:orphan:
 +
-+==================================
-+Integrated Drive Electronics (IDE)
-+==================================
++================================================================
++Documentation for Kdump - The kexec-based Crash Dumping Solution
++================================================================
++
++This document includes overview, setup and installation, and analysis
++information.
 +
 +.. toctree::
 +    :maxdepth: 1
 +
-+    ide
-+    ide-tape
-+    warm-plug-howto
-+
-+    changelogs
++    kdump
++    vmcoreinfo
 +
 +.. only::  subproject and html
 +
@@ -521,138 +180,603 @@ index 000000000000..45bc12d3957f
 +   =======
 +
 +   * :ref:`genindex`
-diff --git a/Documentation/ide/warm-plug-howto.txt b/Documentation/ide/warm-plug-howto.rst
-similarity index 61%
-rename from Documentation/ide/warm-plug-howto.txt
-rename to Documentation/ide/warm-plug-howto.rst
-index 98152bcd515a..c245242ef2f1 100644
---- a/Documentation/ide/warm-plug-howto.txt
-+++ b/Documentation/ide/warm-plug-howto.rst
-@@ -1,14 +1,14 @@
--
-+===================
- IDE warm-plug HOWTO
- ===================
+diff --git a/Documentation/kdump/kdump.txt b/Documentation/kdump/kdump.rst
+similarity index 91%
+rename from Documentation/kdump/kdump.txt
+rename to Documentation/kdump/kdump.rst
+index 3162eeb8c262..ac7e131d2935 100644
+--- a/Documentation/kdump/kdump.txt
++++ b/Documentation/kdump/kdump.rst
+@@ -71,9 +71,8 @@ This is a symlink to the latest version.
  
--To warm-plug devices on a port 'idex':
-+To warm-plug devices on a port 'idex'::
+ The latest kexec-tools git tree is available at:
  
--# echo -n "1" > /sys/class/ide_port/idex/delete_devices
-+	# echo -n "1" > /sys/class/ide_port/idex/delete_devices
+-git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
+-and
+-http://www.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
++- git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
++- http://www.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
  
--unplug old device(s) and plug new device(s)
-+unplug old device(s) and plug new device(s)::
+ There is also a gitweb interface available at
+ http://www.kernel.org/git/?p=utils/kernel/kexec/kexec-tools.git
+@@ -81,25 +80,25 @@ http://www.kernel.org/git/?p=utils/kernel/kexec/kexec-tools.git
+ More information about kexec-tools can be found at
+ http://horms.net/projects/kexec/
  
--# echo -n "1" > /sys/class/ide_port/idex/scan
-+	# echo -n "1" > /sys/class/ide_port/idex/scan
+-3) Unpack the tarball with the tar command, as follows:
++3) Unpack the tarball with the tar command, as follows::
  
- done
+-   tar xvpzf kexec-tools.tar.gz
++	tar xvpzf kexec-tools.tar.gz
  
-diff --git a/arch/m68k/q40/README b/arch/m68k/q40/README
-index 93f4c4cd3c45..a4991d2d8af6 100644
---- a/arch/m68k/q40/README
-+++ b/arch/m68k/q40/README
-@@ -31,7 +31,7 @@ drivers used by the Q40, apart from the very obvious (console etc.):
- 		char/joystick/*		# most of this should work, not
- 				        # in default config.in
- 	        block/q40ide.c		# startup for ide
--		      ide*		# see Documentation/ide/ide.txt
-+		      ide*		# see Documentation/ide/ide.rst
- 		      floppy.c		# normal PC driver, DMA emu in asm/floppy.h
- 					# and arch/m68k/kernel/entry.S
- 					# see drivers/block/README.fd
-diff --git a/drivers/ide/Kconfig b/drivers/ide/Kconfig
-index fdd2a62f9d52..9eada392df15 100644
---- a/drivers/ide/Kconfig
-+++ b/drivers/ide/Kconfig
-@@ -25,13 +25,13 @@ menuconfig IDE
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ide-core.
+-4) Change to the kexec-tools directory, as follows:
++4) Change to the kexec-tools directory, as follows::
  
--	  For further information, please read <file:Documentation/ide/ide.txt>.
-+	  For further information, please read <file:Documentation/ide/ide.rst>.
+-   cd kexec-tools-VERSION
++	cd kexec-tools-VERSION
  
- 	  If unsure, say N.
+-5) Configure the package, as follows:
++5) Configure the package, as follows::
  
- if IDE
+-   ./configure
++	./configure
  
--comment "Please see Documentation/ide/ide.txt for help/info on IDE drives"
-+comment "Please see Documentation/ide/ide.rst for help/info on IDE drives"
+-6) Compile the package, as follows:
++6) Compile the package, as follows::
  
- config IDE_XFER_MODE
- 	bool
-@@ -163,7 +163,7 @@ config BLK_DEV_IDETAPE
- 	  along with other IDE devices, as "hdb" or "hdc", or something
- 	  similar, and will be mapped to a character device such as "ht0"
- 	  (check the boot messages with dmesg).  Be sure to consult the
--	  <file:drivers/ide/ide-tape.c> and <file:Documentation/ide/ide.txt>
-+	  <file:drivers/ide/ide-tape.c> and <file:Documentation/ide/ide.rst>
- 	  files for usage information.
+-   make
++	make
  
- 	  To compile this driver as a module, choose M here: the
-@@ -251,7 +251,7 @@ config BLK_DEV_CMD640
+-7) Install the package, as follows:
++7) Install the package, as follows::
  
- 	  The CMD640 chip is also used on add-in cards by Acculogic, and on
- 	  the "CSA-6400E PCI to IDE controller" that some people have. For
--	  details, read <file:Documentation/ide/ide.txt>.
-+	  details, read <file:Documentation/ide/ide.rst>.
+-   make install
++	make install
  
- config BLK_DEV_CMD640_ENHANCED
- 	bool "CMD640 enhanced support"
-@@ -259,7 +259,7 @@ config BLK_DEV_CMD640_ENHANCED
- 	help
- 	  This option includes support for setting/autotuning PIO modes and
- 	  prefetch on CMD640 IDE interfaces.  For details, read
--	  <file:Documentation/ide/ide.txt>. If you have a CMD640 IDE interface
-+	  <file:Documentation/ide/ide.rst>. If you have a CMD640 IDE interface
- 	  and your BIOS does not already do this for you, then say Y here.
- 	  Otherwise say N.
  
-@@ -819,7 +819,7 @@ config BLK_DEV_ALI14XX
- 	  boot parameter.  It enables support for the secondary IDE interface
- 	  of the ALI M1439/1443/1445/1487/1489 chipsets, and permits faster
- 	  I/O speeds to be set as well.
--	  See the files <file:Documentation/ide/ide.txt> and
-+	  See the files <file:Documentation/ide/ide.rst> and
- 	  <file:drivers/ide/ali14xx.c> for more info.
+ Build the system and dump-capture kernels
+@@ -126,25 +125,25 @@ dump-capture kernels for enabling kdump support.
+ System kernel config options
+ ----------------------------
  
- config BLK_DEV_DTC2278
-@@ -830,7 +830,7 @@ config BLK_DEV_DTC2278
- 	  This driver is enabled at runtime using the "dtc2278.probe" kernel
- 	  boot parameter. It enables support for the secondary IDE interface
- 	  of the DTC-2278 card, and permits faster I/O speeds to be set as
--	  well. See the <file:Documentation/ide/ide.txt> and
-+	  well. See the <file:Documentation/ide/ide.rst> and
- 	  <file:drivers/ide/dtc2278.c> files for more info.
+-1) Enable "kexec system call" in "Processor type and features."
++1) Enable "kexec system call" in "Processor type and features."::
  
- config BLK_DEV_HT6560B
-@@ -841,7 +841,7 @@ config BLK_DEV_HT6560B
- 	  This driver is enabled at runtime using the "ht6560b.probe" kernel
- 	  boot parameter. It enables support for the secondary IDE interface
- 	  of the Holtek card, and permits faster I/O speeds to be set as well.
--	  See the <file:Documentation/ide/ide.txt> and
-+	  See the <file:Documentation/ide/ide.rst> and
- 	  <file:drivers/ide/ht6560b.c> files for more info.
+-   CONFIG_KEXEC=y
++	CONFIG_KEXEC=y
  
- config BLK_DEV_QD65XX
-@@ -851,7 +851,7 @@ config BLK_DEV_QD65XX
- 	help
- 	  This driver is enabled at runtime using the "qd65xx.probe" kernel
- 	  boot parameter.  It permits faster I/O speeds to be set.  See the
--	  <file:Documentation/ide/ide.txt> and <file:drivers/ide/qd65xx.c>
-+	  <file:Documentation/ide/ide.rst> and <file:drivers/ide/qd65xx.c>
- 	  for more info.
+ 2) Enable "sysfs file system support" in "Filesystem" -> "Pseudo
+-   filesystems." This is usually enabled by default.
++   filesystems." This is usually enabled by default::
  
- config BLK_DEV_UMC8672
-@@ -862,7 +862,7 @@ config BLK_DEV_UMC8672
- 	  This driver is enabled at runtime using the "umc8672.probe" kernel
- 	  boot parameter. It enables support for the secondary IDE interface
- 	  of the UMC-8672, and permits faster I/O speeds to be set as well.
--	  See the files <file:Documentation/ide/ide.txt> and
-+	  See the files <file:Documentation/ide/ide.rst> and
- 	  <file:drivers/ide/umc8672.c> for more info.
+-   CONFIG_SYSFS=y
++	CONFIG_SYSFS=y
  
- endif
+    Note that "sysfs file system support" might not appear in the "Pseudo
+    filesystems" menu if "Configure standard kernel features (for small
+    systems)" is not enabled in "General Setup." In this case, check the
+-   .config file itself to ensure that sysfs is turned on, as follows:
++   .config file itself to ensure that sysfs is turned on, as follows::
+ 
+-   grep 'CONFIG_SYSFS' .config
++	grep 'CONFIG_SYSFS' .config
+ 
+-3) Enable "Compile the kernel with debug info" in "Kernel hacking."
++3) Enable "Compile the kernel with debug info" in "Kernel hacking."::
+ 
+-   CONFIG_DEBUG_INFO=Y
++	CONFIG_DEBUG_INFO=Y
+ 
+    This causes the kernel to be built with debug symbols. The dump
+    analysis tools require a vmlinux with debug symbols in order to read
+@@ -154,29 +153,32 @@ Dump-capture kernel config options (Arch Independent)
+ -----------------------------------------------------
+ 
+ 1) Enable "kernel crash dumps" support under "Processor type and
+-   features":
++   features"::
+ 
+-   CONFIG_CRASH_DUMP=y
++	CONFIG_CRASH_DUMP=y
+ 
+-2) Enable "/proc/vmcore support" under "Filesystems" -> "Pseudo filesystems".
++2) Enable "/proc/vmcore support" under "Filesystems" -> "Pseudo filesystems"::
++
++	CONFIG_PROC_VMCORE=y
+ 
+-   CONFIG_PROC_VMCORE=y
+    (CONFIG_PROC_VMCORE is set by default when CONFIG_CRASH_DUMP is selected.)
+ 
+ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ --------------------------------------------------------------------
+ 
+ 1) On i386, enable high memory support under "Processor type and
+-   features":
++   features"::
+ 
+-   CONFIG_HIGHMEM64G=y
+-   or
+-   CONFIG_HIGHMEM4G
++	CONFIG_HIGHMEM64G=y
++
++   or::
++
++	CONFIG_HIGHMEM4G
+ 
+ 2) On i386 and x86_64, disable symmetric multi-processing support
+-   under "Processor type and features":
++   under "Processor type and features"::
+ 
+-   CONFIG_SMP=n
++	CONFIG_SMP=n
+ 
+    (If CONFIG_SMP=y, then specify maxcpus=1 on the kernel command line
+    when loading the dump-capture kernel, see section "Load the Dump-capture
+@@ -184,9 +186,9 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ 
+ 3) If one wants to build and use a relocatable kernel,
+    Enable "Build a relocatable kernel" support under "Processor type and
+-   features"
++   features"::
+ 
+-   CONFIG_RELOCATABLE=y
++	CONFIG_RELOCATABLE=y
+ 
+ 4) Use a suitable value for "Physical address where the kernel is
+    loaded" (under "Processor type and features"). This only appears when
+@@ -211,13 +213,13 @@ Dump-capture kernel config options (Arch Dependent, i386 and x86_64)
+ Dump-capture kernel config options (Arch Dependent, ppc64)
+ ----------------------------------------------------------
+ 
+-1) Enable "Build a kdump crash kernel" support under "Kernel" options:
++1) Enable "Build a kdump crash kernel" support under "Kernel" options::
+ 
+-   CONFIG_CRASH_DUMP=y
++	CONFIG_CRASH_DUMP=y
+ 
+-2)   Enable "Build a relocatable kernel" support
++2)   Enable "Build a relocatable kernel" support::
+ 
+-   CONFIG_RELOCATABLE=y
++	CONFIG_RELOCATABLE=y
+ 
+    Make and install the kernel and its modules.
+ 
+@@ -231,11 +233,13 @@ Dump-capture kernel config options (Arch Dependent, ia64)
+ 
+   The crashkernel region can be automatically placed by the system
+   kernel at run time. This is done by specifying the base address as 0,
+-  or omitting it all together.
++  or omitting it all together::
+ 
+-  crashkernel=256M@0
+-  or
+-  crashkernel=256M
++	crashkernel=256M@0
++
++  or::
++
++	crashkernel=256M
+ 
+   If the start address is specified, note that the start address of the
+   kernel will be aligned to 64Mb, so if the start address is not then
+@@ -245,9 +249,9 @@ Dump-capture kernel config options (Arch Dependent, arm)
+ ----------------------------------------------------------
+ 
+ -   To use a relocatable kernel,
+-    Enable "AUTO_ZRELADDR" support under "Boot" options:
++    Enable "AUTO_ZRELADDR" support under "Boot" options::
+ 
+-    AUTO_ZRELADDR=y
++	AUTO_ZRELADDR=y
+ 
+ Dump-capture kernel config options (Arch Dependent, arm64)
+ ----------------------------------------------------------
+@@ -265,12 +269,12 @@ on the value of System RAM -- that's mostly for distributors that pre-setup
+ the kernel command line to avoid a unbootable system after some memory has
+ been removed from the machine.
+ 
+-The syntax is:
++The syntax is::
+ 
+     crashkernel=<range1>:<size1>[,<range2>:<size2>,...][@offset]
+     range=start-[end]
+ 
+-For example:
++For example::
+ 
+     crashkernel=512M-2G:64M,2G-:128M
+ 
+@@ -326,35 +330,46 @@ can choose to load the uncompressed vmlinux or compressed bzImage/vmlinuz
+ of dump-capture kernel. Following is the summary.
+ 
+ For i386 and x86_64:
++
+ 	- Use vmlinux if kernel is not relocatable.
+ 	- Use bzImage/vmlinuz if kernel is relocatable.
++
+ For ppc64:
++
+ 	- Use vmlinux
++
+ For ia64:
++
+ 	- Use vmlinux or vmlinuz.gz
++
+ For s390x:
++
+ 	- Use image or bzImage
++
+ For arm:
++
+ 	- Use zImage
++
+ For arm64:
++
+ 	- Use vmlinux or Image
+ 
+ If you are using an uncompressed vmlinux image then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec -p <dump-capture-kernel-vmlinux-image> \
+    --initrd=<initrd-for-dump-capture-kernel> --args-linux \
+    --append="root=<root-dev> <arch-specific-options>"
+ 
+ If you are using a compressed bzImage/vmlinuz, then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec -p <dump-capture-kernel-bzImage> \
+    --initrd=<initrd-for-dump-capture-kernel> \
+    --append="root=<root-dev> <arch-specific-options>"
+ 
+ If you are using a compressed zImage, then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec --type zImage -p <dump-capture-kernel-bzImage> \
+    --initrd=<initrd-for-dump-capture-kernel> \
+@@ -362,7 +377,7 @@ to load dump-capture kernel.
+    --append="root=<root-dev> <arch-specific-options>"
+ 
+ If you are using an uncompressed Image, then use following command
+-to load dump-capture kernel.
++to load dump-capture kernel::
+ 
+    kexec -p <dump-capture-kernel-Image> \
+    --initrd=<initrd-for-dump-capture-kernel> \
+@@ -376,18 +391,23 @@ Following are the arch specific command line options to be used while
+ loading dump-capture kernel.
+ 
+ For i386, x86_64 and ia64:
++
+ 	"1 irqpoll maxcpus=1 reset_devices"
+ 
+ For ppc64:
++
+ 	"1 maxcpus=1 noirqdistrib reset_devices"
+ 
+ For s390x:
++
+ 	"1 maxcpus=1 cgroup_disable=memory"
+ 
+ For arm:
++
+ 	"1 maxcpus=1 reset_devices"
+ 
+ For arm64:
++
+ 	"1 maxcpus=1 reset_devices"
+ 
+ Notes on loading the dump-capture kernel:
+@@ -464,7 +484,7 @@ Write Out the Dump File
+ =======================
+ 
+ After the dump-capture kernel is booted, write out the dump file with
+-the following command:
++the following command::
+ 
+    cp /proc/vmcore <dump-file>
+ 
+@@ -476,7 +496,7 @@ Before analyzing the dump image, you should reboot into a stable kernel.
+ 
+ You can do limited analysis using GDB on the dump file copied out of
+ /proc/vmcore. Use the debug vmlinux built with -g and run the following
+-command:
++command::
+ 
+    gdb vmlinux <dump-file>
+ 
+@@ -504,6 +524,11 @@ to achieve the same behaviour.
+ Contact
+ =======
+ 
+-Vivek Goyal (vgoyal@redhat.com)
+-Maneesh Soni (maneesh@in.ibm.com)
++- Vivek Goyal (vgoyal@redhat.com)
++- Maneesh Soni (maneesh@in.ibm.com)
+ 
++GDB macros
++==========
++
++.. include:: gdbmacros.txt
++   :literal:
+diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.rst
+similarity index 95%
+rename from Documentation/kdump/vmcoreinfo.txt
+rename to Documentation/kdump/vmcoreinfo.rst
+index bb94a4bd597a..007a6b86e0ee 100644
+--- a/Documentation/kdump/vmcoreinfo.txt
++++ b/Documentation/kdump/vmcoreinfo.rst
+@@ -1,8 +1,7 @@
+-================================================================
+-			VMCOREINFO
+-================================================================
++==========
++VMCOREINFO
++==========
+ 
+-===========
+ What is it?
+ ===========
+ 
+@@ -12,7 +11,6 @@ values, field offsets, etc. These data are packed into an ELF note
+ section and used by user-space tools like crash and makedumpfile to
+ analyze a kernel's memory layout.
+ 
+-================
+ Common variables
+ ================
+ 
+@@ -49,7 +47,7 @@ in a system, one bit position per node number. Used to keep track of
+ which nodes are in the system and online.
+ 
+ swapper_pg_dir
+--------------
++--------------
+ 
+ The global page directory pointer of the kernel. Used to translate
+ virtual to physical addresses.
+@@ -132,16 +130,14 @@ nodemask_t
+ The size of a nodemask_t type. Used to compute the number of online
+ nodes.
+ 
+-(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
+-       compound_order|compound_head)
+--------------------------------------------------------------------
++(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|compound_order|compound_head)
++-------------------------------------------------------------------------------------------------
+ 
+ User-space tools compute their values based on the offset of these
+ variables. The variables are used when excluding unnecessary pages.
+ 
+-(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
+-              spanned_pages|node_id)
+--------------------------------------------------------------------
++(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_spanned_pages|node_id)
++-----------------------------------------------------------------------------------------
+ 
+ On NUMA machines, each NUMA node has a pg_data_t to describe its memory
+ layout. On UMA machines there is a single pglist_data which describes the
+@@ -245,21 +241,25 @@ NR_FREE_PAGES
+ On linux-2.6.21 or later, the number of free pages is in
+ vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
+ 
+-PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision
+-|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)
+-|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
+------------------------------------------------------------------
++PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask
++------------------------------------------------------------------------------
+ 
+ Page attributes. These flags are used to filter various unnecessary for
+ dumping pages.
+ 
++PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
++-----------------------------------------------------------------------------
++
++More page attributes. These flags are used to filter various unnecessary for
++dumping pages.
++
++
+ HUGETLB_PAGE_DTOR
+ -----------------
+ 
+ The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
+ excludes these pages.
+ 
+-======
+ x86_64
+ ======
+ 
+@@ -318,12 +318,12 @@ address.
+ Currently, sme_mask stores the value of the C-bit position. If needed,
+ additional SME-relevant info can be placed in that variable.
+ 
+-For example:
+-[ misc	        ][ enc bit  ][ other misc SME info       ]
+-0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
+-63   59   55   51   47   43   39   35   31   27   ... 3
++For example::
++
++  [ misc	        ][ enc bit  ][ other misc SME info       ]
++  0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
++  63   59   55   51   47   43   39   35   31   27   ... 3
+ 
+-======
+ x86_32
+ ======
+ 
+@@ -335,7 +335,6 @@ of a higher page table lookup overhead, and also consumes more page
+ table space per process. Used to check whether PAE was enabled in the
+ crash kernel when converting virtual addresses to physical addresses.
+ 
+-====
+ ia64
+ ====
+ 
+@@ -366,7 +365,6 @@ PGTABLE_3|PGTABLE_4
+ User-space tools need to know whether the crash kernel was in 3-level or
+ 4-level paging mode. Used to distinguish the page table.
+ 
+-=====
+ ARM64
+ =====
+ 
+@@ -395,9 +393,8 @@ KERNELOFFSET
+ The kernel randomization offset. Used to compute the page offset. If
+ KASLR is disabled, this value is zero.
+ 
+-====
+ arm
+-====
++===
+ 
+ ARM_LPAE
+ --------
+@@ -405,12 +402,11 @@ ARM_LPAE
+ It indicates whether the crash kernel supports large physical address
+ extensions. Used to translate virtual to physical addresses.
+ 
+-====
+ s390
+ ====
+ 
+ lowcore_ptr
+-----------
++-----------
+ 
+ An array with a pointer to the lowcore of every CPU. Used to print the
+ psw and all registers information.
+@@ -425,7 +421,6 @@ Used to get the vmalloc_start address from the high_memory symbol.
+ 
+ The maximum number of CPUs.
+ 
+-=======
+ powerpc
+ =======
+ 
+@@ -460,9 +455,8 @@ Page size definitions, i.e. 4k, 64k, or 16M.
+ 
+ Used to make vtop translations.
+ 
+-vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
+-(vmemmap_backing, virt_addr)
+-----------------------------------------------------------------
++vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|(vmemmap_backing, virt_addr)
++--------------------------------------------------------------------------------------------
+ 
+ The vmemmap virtual address space management does not have a traditional
+ page table to track which virtual struct pages are backed by a physical
+@@ -480,7 +474,6 @@ member.
+ 
+ Used in vtop translations.
+ 
+-==
+ sh
+ ==
+ 
+diff --git a/Documentation/powerpc/firmware-assisted-dump.txt b/Documentation/powerpc/firmware-assisted-dump.txt
+index 18c5feef2577..0c41d6d463f3 100644
+--- a/Documentation/powerpc/firmware-assisted-dump.txt
++++ b/Documentation/powerpc/firmware-assisted-dump.txt
+@@ -59,7 +59,7 @@ as follows:
+          the default calculated size. Use this option if default
+          boot memory size is not sufficient for second kernel to
+          boot successfully. For syntax of crashkernel= parameter,
+-         refer to Documentation/kdump/kdump.txt. If any offset is
++         refer to Documentation/kdump/kdump.rst. If any offset is
+          provided in crashkernel= parameter, it will be ignored
+          as fadump uses a predefined offset to reserve memory
+          for boot memory dump preservation in case of a crash.
+diff --git a/Documentation/translations/zh_CN/oops-tracing.txt b/Documentation/translations/zh_CN/oops-tracing.txt
+index 93fa061cf9e4..368ddd05b304 100644
+--- a/Documentation/translations/zh_CN/oops-tracing.txt
++++ b/Documentation/translations/zh_CN/oops-tracing.txt
+@@ -53,7 +53,7 @@ cat /proc/kmsg > file， 然而你必须介入中止传输， kmsg是一个“
+ （2）用串口终端启动（请参看Documentation/admin-guide/serial-console.rst），运行一个null
+ modem到另一台机器并用你喜欢的通讯工具获取输出。Minicom工作地很好。
+ 
+-（3）使用Kdump（请参看Documentation/kdump/kdump.txt），
++（3）使用Kdump（请参看Documentation/kdump/kdump.rst），
+ 使用在Documentation/kdump/gdbmacros.txt中定义的dmesg gdb宏，从旧的内存中提取内核
+ 环形缓冲区。
+ 
+diff --git a/Documentation/watchdog/hpwdt.txt b/Documentation/watchdog/hpwdt.txt
+index 55df692c5595..aaa9e4b4bdcd 100644
+--- a/Documentation/watchdog/hpwdt.txt
++++ b/Documentation/watchdog/hpwdt.txt
+@@ -51,7 +51,7 @@ Last reviewed: 08/20/2018
+  and loop forever.  This is generally not what a watchdog user wants.
+ 
+  For those wishing to learn more please see:
+-	Documentation/kdump/kdump.txt
++	Documentation/kdump/kdump.rst
+ 	Documentation/admin-guide/kernel-parameters.txt (panic=)
+ 	Your Linux Distribution specific documentation.
+ 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 204cbc6bf234..af58d31ee4e1 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -2006,7 +2006,7 @@ config CRASH_DUMP
+ 	  kdump/kexec. The crash dump kernel must be compiled to a
+ 	  memory address not used by the main kernel
+ 
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
+ 
+ config AUTO_ZRELADDR
+ 	bool "Auto calculation of the decompressed kernel image address"
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index c2afcea9b19b..ac33b4bd1624 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -996,7 +996,7 @@ config CRASH_DUMP
+ 	  reserved region and then later executed after a crash by
+ 	  kdump/kexec.
+ 
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
+ 
+ config XEN_DOM0
+ 	def_bool y
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index b77f512bb176..ce1a28654507 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -623,7 +623,7 @@ config CRASH_DUMP
+ 	  to a memory address not used by the main kernel using
+ 	  PHYSICAL_START.
+ 
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
+ 
+ config KEXEC_JUMP
+ 	bool "kexec jump (EXPERIMENTAL)"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4b37664e7471..a109141a8d3b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2038,7 +2038,7 @@ config CRASH_DUMP
+ 	  to a memory address not used by the main kernel or BIOS using
+ 	  PHYSICAL_START, or it must be built as a relocatable image
+ 	  (CONFIG_RELOCATABLE=y).
+-	  For more details see Documentation/kdump/kdump.txt
++	  For more details see Documentation/kdump/kdump.rst
+ 
+ config KEXEC_JUMP
+ 	bool "kexec jump"
+@@ -2075,7 +2075,7 @@ config PHYSICAL_START
+ 	  the reserved region.  In other words, it can be set based on
+ 	  the "X" value as specified in the "crashkernel=YM@XM"
+ 	  command line boot parameter passed to the panic-ed
+-	  kernel. Please take a look at Documentation/kdump/kdump.txt
++	  kernel. Please take a look at Documentation/kdump/kdump.rst
+ 	  for more details about crash dumps.
+ 
+ 	  Usage of bzImage for capturing the crash dump is recommended as
 -- 
 2.21.0
 
