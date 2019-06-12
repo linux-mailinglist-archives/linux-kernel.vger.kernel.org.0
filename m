@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 479FF41D9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB8041C97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 08:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731447AbfFLHZj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 03:25:39 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:38240 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728561AbfFLHZi (ORCPT
+        id S2391203AbfFLGtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 02:49:39 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:39397 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390376AbfFLGtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:25:38 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x5C7PBVo017699
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Jun 2019 16:25:11 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7PBwD001465;
-        Wed, 12 Jun 2019 16:25:11 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7NqIT021960;
-        Wed, 12 Jun 2019 16:25:11 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-1232875; Wed, 12 Jun 2019 15:48:25 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Wed,
- 12 Jun 2019 15:48:24 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-CC:     Mike Kravetz <mike.kravetz@oracle.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "Chen, Jerry T" <jerry.t.chen@intel.com>,
-        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
- set_hwpoison_free_buddy_page() fails
-Thread-Topic: [PATCH v2 1/2] mm: soft-offline: return -EBUSY if
- set_hwpoison_free_buddy_page() fails
-Thread-Index: AQHVH2UNBW9Lhf3e5UinMjf59GXrMKaVARSAgAAKeoCAAHo+AIABejoA
-Date:   Wed, 12 Jun 2019 06:48:23 +0000
-Message-ID: <20190612064830.GA25015@hori.linux.bs1.fc.nec.co.jp>
-References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <1560154686-18497-2-git-send-email-n-horiguchi@ah.jp.nec.com>
- <8e8e6afc-cddb-9e79-c8ae-c2814b73cbe9@oracle.com>
- <20190611005715.GB5187@hori.linux.bs1.fc.nec.co.jp>
- <67bb5891-d0be-ffb8-3161-092c8167a960@arm.com>
-In-Reply-To: <67bb5891-d0be-ffb8-3161-092c8167a960@arm.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <65E535AA03EEC54FB0EF6A3FD422054B@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Jun 2019 02:49:39 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id ax4dhACelbiAgax4ghBTsF; Wed, 12 Jun 2019 08:49:37 +0200
+Subject: Re: [PATCHv4 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
+        linux-media@vger.kernel.org
+Cc:     Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Maxime Jourdan <mjourdan@baylibre.com>
+References: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
+ <20190603112835.19661-2-hverkuil-cisco@xs4all.nl>
+ <ffaad429bbdcf1a15049ec6df404618f4f2a9a36.camel@ndufresne.ca>
+ <9c19ece0-f980-62a6-f26e-a91930d117f3@xs4all.nl>
+ <3ced040be477ca0d17405157f919deee3cd4675d.camel@ndufresne.ca>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <f016182a-e7b8-2dc9-edde-e62e8aacc63b@xs4all.nl>
+Date:   Wed, 12 Jun 2019 08:49:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+In-Reply-To: <3ced040be477ca0d17405157f919deee3cd4675d.camel@ndufresne.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfDKin55+5JKQlwresyM7SGiB0viexchg1pco6TMLoagwhqMDZjJzGmKjHfWa+gWRIYMVMipsZRpelgmvWlXhlqSWYe58zwmdYqzQVHjx+Xv6TpkQo6Wt
+ qotjfnPjCTjQQod+LrBYIWFxuJxVRxFhdblbRBqL6R54xGlXBA/bH14lpHyyXwbhBr1hWbeZjza4lUHnfji5rekA53JLvA/Z8kPL3n//xW6FevpN2FvXxd8R
+ E4X9CnNsuTJZBhZsUoE7HdH1UMARnyYDk8yRpniw/wYxR1WDoOJNoB9aIui2K+sFsLPn9IdbLRyCbP8jjv2pVnAJkMHqLlmGZcyvrUMOAYYiihJc9MGfT2BR
+ BZ6k63N+TjprgNyGzoR7FlSf1nkudO+rzaJZsUeJUpngjPsV3SS3yBFD8xriXRhIPDRzYc/pN4G7GZrVI3YFpGU1jHH+KFJF+k/F3KubxPoS9eaGwCm6Fvrs
+ Q4IGtgg3erZlQS7zSLlDJO4lXy+1r+TmQzJAxFrqrUWpFbK6sCLEBI0txfI/Bh0J1CDva3IqgJc01Zs7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 01:44:46PM +0530, Anshuman Khandual wrote:
+On 6/12/19 2:25 AM, Nicolas Dufresne wrote:
+> Le mardi 11 juin 2019 à 10:29 +0200, Hans Verkuil a écrit :
+>> On 6/10/19 9:54 PM, Nicolas Dufresne wrote:
+>>> Hi Hans,
+>>>
+>>> I went through it, and I think we are close to ready. Unfortunately, I
+>>> believe the SOURCE_CHANGE event is still under specified. There was a
+>>> post recently to try and add a new flag for changes in color space
+>>> which is not included here. We are also missing a workflow for changes
+>>> that don't affect the allocation but will affect the rendering on a
+>>> display (like colorimetry). Userspace needs to know at which frames
+>>> these parameter changes in order to signal that to the following
+>>> processing block. I think we must have a plane for this.
+>>
+>> Yes, we need a new flag for the SOURCE_CHANGE event to indicate colorimetry
+>> changes. That's actually useful for e.g. HDMI receivers as well.
+>>
+>> But I don't see why that should make much of a change to the spec: you still
+>> have to drain the capture queue, the only difference is that you don't need
+>> to reallocate buffers, you can just restart the decoder.
 > 
-> 
-> On 06/11/2019 06:27 AM, Naoya Horiguchi wrote:
-> > On Mon, Jun 10, 2019 at 05:19:45PM -0700, Mike Kravetz wrote:
-> >> On 6/10/19 1:18 AM, Naoya Horiguchi wrote:
-> >>> The pass/fail of soft offline should be judged by checking whether the
-> >>> raw error page was finally contained or not (i.e. the result of
-> >>> set_hwpoison_free_buddy_page()), but current code do not work like that.
-> >>> So this patch is suggesting to fix it.
-> >>>
-> >>> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> >>> Fixes: 6bc9b56433b76 ("mm: fix race on soft-offlining")
-> >>> Cc: <stable@vger.kernel.org> # v4.19+
-> >>
-> >> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-> > 
-> > Thank you, Mike.
-> > 
-> >>
-> >> To follow-up on Andrew's comment/question about user visible effects.  Without
-> >> this fix, there are cases where madvise(MADV_SOFT_OFFLINE) may not offline the
-> >> original page and will not return an error.
-> > 
-> > Yes, that's right.
-> 
-> Then should this be included in the commit message as well ?
+> I don't think you need to drain the queue if the change is just
+> metadata that have no impact on the buffers allocation or layout. I
+> think we should have a way to communicate these changed while
+> streaming. Basically, something like the event, but serialized.
 
-Right, I'll clarify the point in the description.
+I guess we can extend the struct v4l2_event_src_change and add a buffer
+index field to indicate at which capture buffer index the colorimetry
+change takes effect. Then there is no need for draining.
 
-Thanks,
-- Naoya
+In the future when we create replacement streaming ioctls and have a
+new, larger struct v4l2_buffer, then we can add the colorimetry information
+there as well.
+
+Regards,
+
+	Hans
