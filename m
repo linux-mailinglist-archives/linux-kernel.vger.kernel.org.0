@@ -2,95 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9449241AA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E471241AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391929AbfFLDTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:19:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37702 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391176AbfFLDTc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:19:32 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 20so8106225pgr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 20:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ate72NuJmVUI6S2BuZQCuvpskZE3U2N/nMIH2X9inqs=;
-        b=wONe3ABjpXyvX++muN+ZuuQPCqABZNEGqIqxYQ/Kt3+uMGojPLxRSIvfb/BY+fdwuG
-         KekIHVfMMPWEt2iVGpYLRtMDFlvWdWZQ5k1LeLMG6u/GZrzIezH7XP6vIhGcsBW+ii0L
-         gOnSHP9g6CBDUTxhU2oTLwRXVDlXsKmhEbPEYheQAqd7KVigbRcszf2ZesnwW85PE1dO
-         iyU20ncmowoBO3l8SVj5VyrMj5LmSNEaWqBtwhga5wxb4uKNqWI9n7cGRT4AetHicKKc
-         Aw/YlYfKfl5ziY0qdFhe1J71Org6PQArMHzDhgPN6gLNsPPoPq3bsND8qGL8LNA0flRp
-         9Seg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ate72NuJmVUI6S2BuZQCuvpskZE3U2N/nMIH2X9inqs=;
-        b=tNiJuzK2D9r7+0uWuMwNJtO6bp6qdHzU7A9SBa9vKo4V+pcEkliTgFXzxe6lgjTBxj
-         lOrDwBGkTXZc6d/VRr+Ep270CoI2j90CkcrwXIufSMVPZbDnaReWOwtq+ZjM2u9u2D1G
-         HGQvmCtInQDnWxifv89HzFPLnH2XLpYtWNJOJswmDUeF7Vv2FXUY/qGJ6gdIC1jjGrZl
-         0/FtDuarnURPWuJYdISpdPU++7Fv5KAhlyW3ANxs3M0aQV0SRIoVox9dImOdS2lcJrru
-         fSD9x/qMWxgS7C19OZ/MxX9GmHwHKlUslClh+Um+gsva3R3WJyT8ANlfrep2Dy8oxE+t
-         bdUw==
-X-Gm-Message-State: APjAAAUdSmDLTx9C2IhbHTymQPcmCJJ5lQx9hvxpgrC1krt6ZZKxEEL6
-        H+jUb+ShH+4v+YfXAO0igkgqxw==
-X-Google-Smtp-Source: APXvYqzHGgDNU6Vo6rIo/Aq12B4nqhPE19OxuX8C/VoLATKTH5QzhJS9otDk/sgsXlZcHlrej3ZyIg==
-X-Received: by 2002:a17:90a:22c6:: with SMTP id s64mr30744352pjc.5.1560309571012;
-        Tue, 11 Jun 2019 20:19:31 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id d9sm14160236pgj.34.2019.06.11.20.19.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 20:19:30 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 08:49:27 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: gpio: Convert Arm PL061 to json-schema
-Message-ID: <20190612031927.mgr62xiirjqrzkeu@vireshk-i7>
-References: <20190514005033.15593-1-robh@kernel.org>
- <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
- <20190527064146.5rlm2audk6uojdxn@vireshk-i7>
- <CAL_JsqK3iS+Tv+0HYMApL6C6WQeVsf9hXgvpLpuR+dbDuygQdg@mail.gmail.com>
+        id S2392199AbfFLDYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:24:30 -0400
+Received: from mga17.intel.com ([192.55.52.151]:58308 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391141AbfFLDYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:24:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 20:24:29 -0700
+X-ExtLoop1: 1
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
+  by orsmga003.jf.intel.com with ESMTP; 11 Jun 2019 20:24:26 -0700
+Date:   Wed, 12 Jun 2019 11:22:36 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/gvt: remove duplicate entry of trace
+Message-ID: <20190612032236.GH9684@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20190526075633.GA9245@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="JSVXQxoTSdH0Ya++"
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqK3iS+Tv+0HYMApL6C6WQeVsf9hXgvpLpuR+dbDuygQdg@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20190526075633.GA9245@hari-Inspiron-1545>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-06-19, 13:54, Rob Herring wrote:
-> On Mon, May 27, 2019 at 12:41 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > I checked SPEAr and it is missing interrupt-controller at few places and clocks
-> > everywhere. Missing clocks should be fine as SPEAr doesn't get clocks from DT.
-> 
-> Clocks not from DT was supposed to be a transitional thing...
 
-Right, but by the time I left ST in 2012, mainline clock's DT support
-wasn't there and the SPEAr core team got fired soon after that. No one
-was left in ST to do the porting, but there are still people using the
-SPEAr boards and there are products in market, so we can't delete the
-platform as well.
+--JSVXQxoTSdH0Ya++
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So, no one is going to add clock DT support now.
+On 2019.05.26 13:26:33 +0530, Hariprasad Kelam wrote:
+> Remove duplicate include of trace.h
+>=20
+> Issue identified by includecheck
+>=20
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/trace_points.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/trace_points.c b/drivers/gpu/drm/i9=
+15/gvt/trace_points.c
+> index a3deed69..569f5e3 100644
+> --- a/drivers/gpu/drm/i915/gvt/trace_points.c
+> +++ b/drivers/gpu/drm/i915/gvt/trace_points.c
+> @@ -32,5 +32,4 @@
+> =20
+>  #ifndef __CHECKER__
+>  #define CREATE_TRACE_POINTS
+> -#include "trace.h"
+>  #endif
+> --=20
 
-> > And interrupt-controller can be just added, I don't think there would be any
-> > platform dependent side-affects ?
-> 
-> There shouldn't be.
+This actually caused build issue like
+ERROR: "__tracepoint_gma_index" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_render_mmio" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_gvt_command" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_spt_guest_change" [drivers/gpu/drm/i915/i915.ko] undef=
+ined!
+ERROR: "__tracepoint_gma_translate" [drivers/gpu/drm/i915/i915.ko] undefine=
+d!
+ERROR: "__tracepoint_spt_alloc" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_spt_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_oos_sync" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_write_ir" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_propagate_event" [drivers/gpu/drm/i915/i915.ko] undefi=
+ned!
+ERROR: "__tracepoint_inject_msi" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_spt_refcount" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_spt_free" [drivers/gpu/drm/i915/i915.ko] undefined!
+ERROR: "__tracepoint_oos_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+scripts/Makefile.modpost:91: recipe for target '__modpost' failed
 
-Okay, will send a patch for that then.
+Looks we need fix like below.
 
--- 
-viresh
+Subject: [PATCH] drm/i915/gvt: remove duplicate include of trace.h
+
+This removes duplicate include of trace.h. Found by Hariprasad Kelam
+with includecheck.
+
+Reported-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+---
+ drivers/gpu/drm/i915/gvt/trace_points.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/trace_points.c b/drivers/gpu/drm/i915=
+/gvt/trace_points.c
+index a3deed692b9c..fe552e877e09 100644
+--- a/drivers/gpu/drm/i915/gvt/trace_points.c
++++ b/drivers/gpu/drm/i915/gvt/trace_points.c
+@@ -28,8 +28,6 @@
+  *
+  */
+=20
+-#include "trace.h"
+-
+ #ifndef __CHECKER__
+ #define CREATE_TRACE_POINTS
+ #include "trace.h"
+--=20
+2.20.1
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--JSVXQxoTSdH0Ya++
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXQBv/AAKCRCxBBozTXgY
+J6qvAJ9q4SpHBMazUVGyrExwIyT3tac9zQCbB8m/t9a9wlOqkm0W0bss9NDOds0=
+=lNiG
+-----END PGP SIGNATURE-----
+
+--JSVXQxoTSdH0Ya++--
