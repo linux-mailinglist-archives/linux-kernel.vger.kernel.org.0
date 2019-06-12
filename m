@@ -2,85 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22A7941A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0A0741AA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:16:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437097AbfFLDFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:05:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49286 "EHLO mx1.redhat.com"
+        id S2437114AbfFLDPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:15:38 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29460 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404957AbfFLDFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:05:19 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50A2C8553D;
-        Wed, 12 Jun 2019 03:05:08 +0000 (UTC)
-Received: from treble (ovpn-120-37.rdu2.redhat.com [10.10.120.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3AB7D7DFCA;
-        Wed, 12 Jun 2019 03:05:03 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 22:05:01 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kairui Song <kasong@redhat.com>, Alexei Starovoitov <ast@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: Getting empty callchain from perf_callchain_kernel()
-Message-ID: <20190612030501.7tbsjy353g7l74ej@treble>
-References: <CACPcB9cpNp5CBqoRs+XMCwufzAFa8Pj-gbmj9fb+g5wVdue=ig@mail.gmail.com>
- <20190522140233.GC16275@worktop.programming.kicks-ass.net>
- <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
- <20190522174517.pbdopvookggen3d7@treble>
- <20190522234635.a47bettklcf5gt7c@treble>
- <CACPcB9dRJ89YAMDQdKoDMU=vFfpb5AaY0mWC_Xzw1ZMTFBf6ng@mail.gmail.com>
- <20190523133253.tad6ywzzexks6hrp@treble>
- <CACPcB9fQKg7xhzhCZaF4UGi=EQs1HLTFgg-C_xJQaUfho3yMyA@mail.gmail.com>
- <20190523152413.m2pbnamihu3s2c5s@treble>
- <20190524085319.GE2589@hirez.programming.kicks-ass.net>
+        id S2406820AbfFLDPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:15:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 20:15:38 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 20:15:32 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] swiotlb: Zero out bounce buffer for untrusted
+ device
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
+ <20190603011620.31999-4-baolu.lu@linux.intel.com>
+ <20190610154553.GT28796@char.us.oracle.com>
+ <ec6ac2ba-7b88-2bcf-aa95-f8981b258c5c@linux.intel.com>
+ <20190612010518.GB22479@char.us.oracle.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <8ad77caa-3245-4d06-314d-c4a92aa0f2ac@linux.intel.com>
+Date:   Wed, 12 Jun 2019 11:08:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190524085319.GE2589@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 12 Jun 2019 03:05:18 +0000 (UTC)
+In-Reply-To: <20190612010518.GB22479@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 10:53:19AM +0200, Peter Zijlstra wrote:
-> > For ORC, I'm thinking we may be able to just require that all generated
-> > code (BPF and others) always use frame pointers.  Then when ORC doesn't
-> > recognize a code address, it could try using the frame pointer as a
-> > fallback.
+Hi,
+
+On 6/12/19 9:05 AM, Konrad Rzeszutek Wilk wrote:
+> On Wed, Jun 12, 2019 at 08:43:40AM +0800, Lu Baolu wrote:
+>> Hi Konrad,
+>>
+>> Thanks a lot for your reviewing.
+>>
+>> On 6/10/19 11:45 PM, Konrad Rzeszutek Wilk wrote:
+>>> On Mon, Jun 03, 2019 at 09:16:14AM +0800, Lu Baolu wrote:
+>>>> This is necessary to avoid exposing valid kernel data to any
+>>>> milicious device.
+>>>
+>>> malicious
+>>
+>> Yes, thanks.
+>>
+>>>
+>>>>
+>>>> Suggested-by: Christoph Hellwig <hch@lst.de>
+>>>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>>> ---
+>>>>    kernel/dma/swiotlb.c | 6 ++++++
+>>>>    1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+>>>> index f956f785645a..ed41eb7f6131 100644
+>>>> --- a/kernel/dma/swiotlb.c
+>>>> +++ b/kernel/dma/swiotlb.c
+>>>> @@ -35,6 +35,7 @@
+>>>>    #include <linux/scatterlist.h>
+>>>>    #include <linux/mem_encrypt.h>
+>>>>    #include <linux/set_memory.h>
+>>>> +#include <linux/pci.h>
+>>>>    #ifdef CONFIG_DEBUG_FS
+>>>>    #include <linux/debugfs.h>
+>>>>    #endif
+>>>> @@ -560,6 +561,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>>>>    	 */
+>>>>    	for (i = 0; i < nslots; i++)
+>>>>    		io_tlb_orig_addr[index+i] = orig_addr + (i << IO_TLB_SHIFT);
+>>>> +
+>>>> +	/* Zero out the bounce buffer if the consumer is untrusted. */
+>>>> +	if (dev_is_untrusted(hwdev))
+>>>> +		memset(phys_to_virt(tlb_addr), 0, alloc_size);
+>>>
+>>> What if the alloc_size is less than a PAGE? Should this at least have ALIGN or such?
+>>
+>> It's the consumer (iommu subsystem) who requires this to be page
+>> aligned. For swiotlb, it just clears out all data in the allocated
+>> bounce buffer.
 > 
-> Yes, this seems like a sensible approach. We'd also have to audit the
-> ftrace and kprobe trampolines, IIRC they only do framepointer setup for
-> CONFIG_FRAME_POINTER currently, which should be easy to fix (after the
-> patches I have to fix the FP generation in the first place:
+> I am thinking that the if you don't memset the full page the malicious hardware could read stale date from the rest of the page
+> that hasn't been cleared?
+
+Yes. My point is that this should be guaranteed by the bounce page
+implementation in iommu.
+
+Best regards,
+Baolu
+
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=x86/wip
-
-Right now, ftrace has a special hook in the ORC unwinder
-(orc_ftrace_find).  It would be great if we could get rid of that in
-favor of the "always use frame pointers" approach.  I'll hold off on
-doing the kpatch/kprobe trampoline conversions in my patches since it
-would conflict with yours.
-
-Though, hm, because of pt_regs I guess ORC would need to be able to
-decode an encoded frame pointer?  I was hoping we could leave those
-encoded frame pointers behind in CONFIG_FRAME_POINTER-land forever...
-
-Here are my latest BPF unwinder patches in case anybody wants a sneak
-peek:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/log/?h=bpf-orc-fix
-
--- 
-Josh
+>>
+>> Best regards,
+>> Baolu
+>>
+>>>
+>>>> +
+>>>>    	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
+>>>>    	    (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL))
+>>>>    		swiotlb_bounce(orig_addr, tlb_addr, mapping_size, DMA_TO_DEVICE);
+>>>> -- 
+>>>> 2.17.1
+>>>>
+>>>
+> 
