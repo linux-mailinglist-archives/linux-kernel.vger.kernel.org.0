@@ -2,117 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED225421C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 500C14218C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:54:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731859AbfFLJ4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:56:15 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9938 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbfFLJ4N (ORCPT
+        id S2437814AbfFLJyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:54:16 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38043 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437698AbfFLJyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:56:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d00cc3c0001>; Wed, 12 Jun 2019 02:56:12 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 12 Jun 2019 02:56:12 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 12 Jun 2019 02:56:12 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Jun
- 2019 09:56:11 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Jun
- 2019 09:56:11 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 12 Jun 2019 09:56:11 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d00cc360001>; Wed, 12 Jun 2019 02:56:11 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kishon@ti.com>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>
-CC:     <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V10 15/15] arm64: Add Tegra194 PCIe driver to defconfig
-Date:   Wed, 12 Jun 2019 15:23:39 +0530
-Message-ID: <20190612095339.20118-16-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190612095339.20118-1-vidyas@nvidia.com>
-References: <20190612095339.20118-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 12 Jun 2019 05:54:15 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 53DD1802E0; Wed, 12 Jun 2019 11:54:03 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 11:54:13 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Brian Norris <briannorris@google.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Doug Anderson <dianders@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Guenter Roeck <groeck@google.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+Message-ID: <20190612095413.GA12656@amd>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+ <20190610205233.GB137143@google.com>
+ <20190611104913.egsbwcedshjdy3m5@holly.lan>
+ <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
+ <20190611223019.GH137143@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560333372; bh=X0ccuyLoiNssgnPmNxd9/0PgI5r6ZqmMmCkpX+oOCcE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=Nt8cUzm3F7L/loGih8+lnsyOKMPnQmAadQ9SoZZ6wEDMAeqWy/60ba+XTWHDlZ49d
-         i6lV1nUu3o/XuNDyD2c+AaHW8cTBwkBaJRN2OEoRpgoo6yLtkRFnC7b1zcaFyu68xl
-         lqKmYoDt6WXHmV6oJ5fiu08QHZf1mKqW7+wgzW5AkjH9V52FGYI4mIatk3BqgDrkA5
-         t6+VYSQJdthgAd5FFpVcXImjbYY7InCi3dOTx9VF/T89c4RWJYynZUm20hf2jC827Y
-         oeQc4X44cNfgI9SbNjwQ5m7dnC7+Y/RIO2GsGGYwBYHNA2H6A07UtwsPb3HORzvjuo
-         xle42ECNl+suA==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+In-Reply-To: <20190611223019.GH137143@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PCIe host controller driver for DesignWare core based
-PCIe controller IP present in Tegra194.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-Changes since [v9]:
-* None
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since [v8]:
-* None
+On Tue 2019-06-11 15:30:19, Matthias Kaehlcke wrote:
+> On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
+> > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
+> > <daniel.thompson@linaro.org> wrote:
+> > > This is a long standing flaw in the backlight interfaces. AFAIK gener=
+ic
+> > > userspaces end up with a (flawed) heuristic.
+> >=20
+> > Bingo! Would be nice if we could start to fix this long-standing flaw.
+>=20
+> Agreed!
+>=20
+> How could a fix look like, a sysfs attribute? Would a boolean value
+> like 'logarithmic_scale' or 'linear_scale' be enough or could more
+> granularity be needed?
 
-Changes since [v7]:
-* None
+I'd expect attribute "scale" with values "linear" or "logarithmic".
 
-Changes since [v6]:
-* None
+> The new attribute could be optional (it only exists if explicitly
+> specified by the driver) or be set to a default based on a heuristic
+> if not specified and be 'fixed' on a case by case basis. The latter
+> might violate "don't break userspace" though, so I'm not sure it's a
+> good idea.
 
-Changes since [v5]:
-* None
+I'd do it only when we explicitely know. We don't want it to be buggy.
 
-Changes since [v4]:
-* None
+And I guess we should decide what interface we really want? (Linear?
+Logarithmic?) And make new drivers do that.
 
-Changes since [v3]:
-* None
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Changes since [v2]:
-* None
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Changes since [v1]:
-* Changed CONFIG_PCIE_TEGRA194 from 'y' to 'm'
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+iEYEARECAAYFAl0Ay8UACgkQMOfwapXb+vIeJgCggLbpjHz3nKmV58LAUi3ZiuUa
+uScAn2D1iGqQP7z/oj5Jluw9Rq5L6vCE
+=G1uG
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index bb0705e1f52e..6462a4dbac87 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -192,6 +192,7 @@ CONFIG_PCIE_QCOM=y
- CONFIG_PCIE_ARMADA_8K=y
- CONFIG_PCIE_KIRIN=y
- CONFIG_PCIE_HISI_STB=y
-+CONFIG_PCIE_TEGRA194=m
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
--- 
-2.17.1
-
+--2fHTh5uZTiUOsy+g--
