@@ -2,101 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4192642D46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A20342D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406994AbfFLRQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:16:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43706 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbfFLRQk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:16:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qeRjLUH/X3Ruy89C7L++Ek8YtcKL4Q76UMeawZymlkg=; b=s1dD6nrTMTiC40NDmcf8GgZ0D
-        M2s9QOLcsrg9LROHGm+imgEZWu91Cmnsq7WD6ySYqLv4mLkknasd8dVn6fJF2tSFKA36Cs5/nGEAq
-        JgKjK7GfXGr1ERtAIu8J/K2JLKW9ne6kdeZBrp3Y+XsylXSwmhVN5kj6htku8SuoiWq+E57bNSgHm
-        8cQLlR8idQPBT3Sp+vbk+NCh24KNbMLP9ftPezPLgwtzdxSYj2kiV/43vNddCKDTQFCxJaFRvJIaq
-        92BzUELZK4Nmb1zistIFqJGz0HIVvgJJUIxcBoPpoR7P8oM89V0eLXt3KajBfsjI7zDYFQQ88JMQq
-        +g4kTn5Fg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb6rB-0001Ko-O0; Wed, 12 Jun 2019 17:16:18 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C071F202C9D60; Wed, 12 Jun 2019 19:09:30 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 19:09:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-ID: <20190612170930.GK3402@hirez.programming.kicks-ass.net>
-References: <20190605130753.327195108@infradead.org>
- <20190605131945.005681046@infradead.org>
- <20190608004708.7646b287151cf613838ce05f@kernel.org>
- <20190607173427.GK3436@hirez.programming.kicks-ass.net>
+        id S2438317AbfFLRKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:10:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725844AbfFLRK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:10:29 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B732921019;
+        Wed, 12 Jun 2019 17:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560359429;
+        bh=pR3lImaJcFV2m+YhE4MeLz9MG23pccWXMxksWRjf92Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XUO24YX2cpqrqgDpiQshwO9BAcXpAB5dG2reIhSLVLWJNwcB9sExTw2I/cRUvCuvl
+         V02bxNO10PPMGI1b+LS+aUji9o7FP5JzMdRWh/HyOQAn/+RexTtBBNlmY77vNfHqf/
+         DVmSTjKqoiPUtjwJYNbx8isDVTljlm7Cv74RtWu0=
+Date:   Wed, 12 Jun 2019 19:10:26 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Qian Cai <cai@gmx.us>, Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Zhong Jiang <zhongjiang@huawei.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: debugobjects: no need to check return value of
+ debugfs_create functions
+Message-ID: <20190612171026.GB6986@kroah.com>
+References: <20190612153513.GA21082@kroah.com>
+ <20190612165819.GA123863@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190607173427.GK3436@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190612165819.GA123863@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 07:34:27PM +0200, Peter Zijlstra wrote:
-> On Sat, Jun 08, 2019 at 12:47:08AM +0900, Masami Hiramatsu wrote:
-
-> > > @@ -943,8 +949,21 @@ int poke_int3_handler(struct pt_regs *re
-> > >  	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
-> > >  		return 0;
-> > >  
-> > > -	/* set up the specified breakpoint handler */
-> > > -	regs->ip = (unsigned long) bp_int3_handler;
-> > > +	opcode = *(struct opcode *)bp_int3_opcode;
-> > > +
-> > > +	switch (opcode.insn) {
-> > > +	case 0xE8: /* CALL */
-> > > +		int3_emulate_call(regs, ip + opcode.rel);
-> > > +		break;
-> > > +
-> > > +	case 0xE9: /* JMP */
-> > > +		int3_emulate_jmp(regs, ip + opcode.rel);
-> > > +		break;
-> > > +
-> > > +	default: /* assume NOP */
+On Wed, Jun 12, 2019 at 12:58:19PM -0400, Joel Fernandes wrote:
+> On Wed, Jun 12, 2019 at 05:35:13PM +0200, Greg Kroah-Hartman wrote:
+> > When calling debugfs functions, there is no need to ever check the
+> > return value.  The function can work or not, but the code logic should
+> > never do something different based on this.
 > > 
-> > Shouldn't we check whether it is actually NOP here?
+> > Cc: Qian Cai <cai@gmx.us>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Waiman Long <longman@redhat.com>
+> > Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > Cc: Zhong Jiang <zhongjiang@huawei.com>
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  lib/debugobjects.c | 14 ++------------
+> >  1 file changed, 2 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+> > index 55437fd5128b..2ac42286cd08 100644
+> > --- a/lib/debugobjects.c
+> > +++ b/lib/debugobjects.c
+> > @@ -850,26 +850,16 @@ static const struct file_operations debug_stats_fops = {
+> >  
+> >  static int __init debug_objects_init_debugfs(void)
+> >  {
+> > -	struct dentry *dbgdir, *dbgstats;
+> > +	struct dentry *dbgdir;
+> >  
+> >  	if (!debug_objects_enabled)
+> >  		return 0;
+> >  
+> >  	dbgdir = debugfs_create_dir("debug_objects", NULL);
+> > -	if (!dbgdir)
+> > -		return -ENOMEM;
+> >  
+> > -	dbgstats = debugfs_create_file("stats", 0444, dbgdir, NULL,
+> > -				       &debug_stats_fops);
+> > -	if (!dbgstats)
+> > -		goto err;
+> > +	debugfs_create_file("stats", 0444, dbgdir, NULL, &debug_stats_fops);
 > 
-> I was/am lazy and didn't want to deal with:
 > 
-> arch/x86/include/asm/nops.h:#define GENERIC_NOP5_ATOMIC NOP_DS_PREFIX,GENERIC_NOP4
-> arch/x86/include/asm/nops.h:#define K8_NOP5_ATOMIC 0x66,K8_NOP4
-> arch/x86/include/asm/nops.h:#define K7_NOP5_ATOMIC NOP_DS_PREFIX,K7_NOP4
-> arch/x86/include/asm/nops.h:#define P6_NOP5_ATOMIC P6_NOP5
-> 
-> But maybe we should check for all the various NOP5 variants and BUG() on
-> anything unexpected.
+> One weirdness is, if dbgdir is ever NULL, then debugfs_create_file() may end
+> up creating the stats file in the root.
 
-I realized we never actually poke a !ideal nop5_atomic, so I've added
-that to the latest versions.
+Yes, but dbgdir can not be NULL.
+
+> In debugfs_create_file():
+>         /* If the parent is not specified, we create it in the root.
+>          * We need the root dentry to do this, which is in the super
+>          * block. A pointer to that is in the struct vfsmount that we
+>          * have around.
+>          */
+>         if (!parent)
+>                 parent = debugfs_mount->mnt_root;
+
+Yes, but debugfs_create_dir() will never return NULL.
+
+> But I guess that's not a major issue since its debugfs :-) So LGTM,
+
+Yup!
+
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+thanks for the review.
+
+greg k-h
