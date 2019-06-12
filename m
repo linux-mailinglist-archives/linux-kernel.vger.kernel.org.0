@@ -2,135 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19603448BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06D28448B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfFMRLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:11:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49498 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729190AbfFLWby (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 18:31:54 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CMVRKI083942
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 18:31:53 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t39hx1ee2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 18:31:53 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 12 Jun 2019 23:31:51 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Jun 2019 23:31:46 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CMVjkq55836814
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Jun 2019 22:31:45 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20D615205F;
-        Wed, 12 Jun 2019 22:31:45 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2CA8B52054;
-        Wed, 12 Jun 2019 22:31:44 +0000 (GMT)
-Subject: Re: [PATCH V8 3/3] Call ima_kexec_cmdline to measure the cmdline
- args
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Dave Young <dyoung@redhat.com>,
-        kexec <kexec@lists.infradead.org>
-Date:   Wed, 12 Jun 2019 18:31:43 -0400
-In-Reply-To: <20190612221549.28399-4-prsriva02@gmail.com>
-References: <20190612221549.28399-1-prsriva02@gmail.com>
-         <20190612221549.28399-4-prsriva02@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        id S1729412AbfFMRKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:10:42 -0400
+Received: from smtp2.ono.com ([62.42.230.179]:39487 "EHLO smtp2.ono.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729342AbfFLWng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 18:43:36 -0400
+X-Junkmail-Premium-Raw: score=48/50,refid=2.7.2:2019.6.12.215416:17:48.750,ip=62.42.230.132,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, SUBJ_1WORD, __MIME_VERSION, __CT,
+ __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS, __FRAUD_FAMILY, __STOCK_PHRASE_7,
+ __OEM_PRICE, __FRAUD_MISC, __FRAUD_MONEY_CURRENCY_DOLLAR, __INT_PROD_LOC,
+ __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS, BODYTEXTP_SIZE_3000_LESS,
+ BODY_SIZE_300_399, __MIME_TEXT_P1, __MIME_TEXT_ONLY, HTML_00_01, HTML_00_10,
+ __FRAUD_MONEY_CURRENCY, FRAUD_X3, FRAUD_HIGH_X3, BODY_SIZE_5000_LESS,
+ __FRAUD_WEBMAIL, WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F,
+ __MIME_TEXT_P, NO_URI_FOUND, NO_CTA_URI_FOUND, FRAUD_LITTLE_BODY,
+ __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS,
+ __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
+ BODY_SIZE_7000_LESS, TO_MALFORMED, FRAUD_X3_WEB_REPLYTO
+Received: from resprs02 (62.42.230.132) by smtp2.ono.com (9.0.019.09-1)
+        id 5CAF0F5D030FE34E; Thu, 13 Jun 2019 00:43:10 +0200
+Received: from (149.126.75.15) by webmailcpr02n.ono.com;  Thu, 13 Jun 2019 00:43:09 +0200
+Message-ID: <11637940.382771560379389489.JavaMail.defaultUser@defaultHost>
+Date:   Thu, 13 Jun 2019 00:43:09 +0200 (CEST)
+From:   Ayesha Qaddafi <jorgeanton@ono.com>
+Reply-To: ayeshaqaddafi01@aol.com
+Subject: Hello
+MIME-Version: 1.0
+Content-Type: text/plain;charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061222-0012-0000-0000-00000328A073
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061222-0013-0000-0000-00002161A9C6
-Message-Id: <1560378703.4578.91.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906120158
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc: kexec mailing list]
+I am Ayesha Qaddafi, I am writing this mail with tears and sorrow from my heart asking for your help at this time here 
+in Oman, to help me and claim the funds of my late father a sum of $35.5 M USD deposit will BIB International Du 
+Burkina Faso
 
-Hi Eric, Dave,
+Thanks and may Allah bless you
+Miss Ayesha Qaddafi
 
-On Wed, 2019-06-12 at 15:15 -0700, Prakhar Srivastava wrote:
-> During soft reboot(kexec_file_load) boot cmdline args
-> are not measured.Thus the new kernel on load boots with
-> an assumption of cold reboot.
-> 
-> This patch makes a call to the ima hook ima_kexec_cmdline,
-> added in "Define a new IMA hook to measure the boot command
-> line arguments"
-> to measure the boot cmdline args into the ima log.
-> 
-> - call ima_kexec_cmdline from kexec_file_load.
-> - move the call ima_add_kexec_buffer after the cmdline
-> args have been measured.
-> 
-> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Dave Young <dyoung@redhat.com>
-
-Any chance we could get some Acks?
-
-thanks,
-
-Mimi
-
-> ---
->  kernel/kexec_file.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 072b6ee55e3f..b0c724e5d86c 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  		return ret;
->  	image->kernel_buf_len = size;
->  
-> -	/* IMA needs to pass the measurement list to the next kernel. */
-> -	ima_add_kexec_buffer(image);
-> -
->  	/* Call arch image probe handlers */
->  	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
->  					    image->kernel_buf_len);
-> @@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  			ret = -EINVAL;
->  			goto out;
->  		}
-> +
-> +		ima_kexec_cmdline(image->cmdline_buf,
-> +				  image->cmdline_buf_len - 1);
->  	}
->  
-> +	/* IMA needs to pass the measurement list to the next kernel. */
-> +	ima_add_kexec_buffer(image);
-> +
->  	/* Call arch image load handlers */
->  	ldata = arch_kexec_kernel_image_load(image);
->  
 
