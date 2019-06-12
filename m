@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D948E42E19
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D848842E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:58:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404223AbfFLR4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:56:34 -0400
-Received: from gofer.mess.org ([88.97.38.141]:42583 "EHLO gofer.mess.org"
+        id S1728936AbfFLR6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:58:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49262 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404183AbfFLR4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:56:32 -0400
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id BF6A860226; Wed, 12 Jun 2019 18:56:29 +0100 (BST)
-Date:   Wed, 12 Jun 2019 18:56:29 +0100
-From:   Sean Young <sean@mess.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>, tglx@linutronix.de,
-        corbet@lwn.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: ttpci: Fix build error without RC_CORE
-Message-ID: <20190612175629.srfw7ybr256se5rt@gofer.mess.org>
-References: <20190612034310.4640-1-yuehaibing@huawei.com>
- <20190612074254.eky2xo7bajorkhfy@gofer.mess.org>
- <20190612063708.64498b44@coco.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612063708.64498b44@coco.lan>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1727439AbfFLR6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:58:02 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E4BC3001572;
+        Wed, 12 Jun 2019 17:58:02 +0000 (UTC)
+Received: from jsavitz.bos.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE1371001B17;
+        Wed, 12 Jun 2019 17:57:55 +0000 (UTC)
+From:   Joel Savitz <jsavitz@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Joel Savitz <jsavitz@redhat.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org
+Subject: [RESEND PATCH v2] mm/oom_killer: Add task UID to info message on an oom kill
+Date:   Wed, 12 Jun 2019 13:57:53 -0400
+Message-Id: <1560362273-534-1-git-send-email-jsavitz@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 12 Jun 2019 17:58:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 06:37:08AM -0300, Mauro Carvalho Chehab wrote:
-> Em Wed, 12 Jun 2019 08:42:55 +0100
-> Sean Young <sean@mess.org> escreveu:
-> 
-> > On Wed, Jun 12, 2019 at 11:43:10AM +0800, YueHaibing wrote:
-> > > If RC_CORE is not set, building fails:
-> > > 
-> > > drivers/media/pci/ttpci/av7110_ir.o: In function `av7110_ir_init':
-> > > av7110_ir.c:(.text+0x1b0): undefined reference to `rc_allocate_device'
-> > > av7110_ir.c:(.text+0x2c1): undefined reference to `rc_register_device'
-> > > av7110_ir.c:(.text+0x2dc): undefined reference to `rc_free_device'
-> > > 
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Fixes: 71f49a8bf5c5 ("media: ttpci: use rc-core for the IR receiver")
-> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>  
-> > 
-> > Thank you for spotting this and writing a patch.
-> > 
-> > > ---
-> > >  drivers/media/pci/ttpci/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/media/pci/ttpci/Kconfig b/drivers/media/pci/ttpci/Kconfig
-> > > index d96d4fa..b705631 100644
-> > > --- a/drivers/media/pci/ttpci/Kconfig
-> > > +++ b/drivers/media/pci/ttpci/Kconfig
-> > > @@ -7,7 +7,7 @@ config DVB_AV7110
-> > >  	depends on DVB_CORE && PCI && I2C
-> > >  	select TTPCI_EEPROM
-> > >  	select VIDEO_SAA7146_VV
-> > > -	select DVB_AV7110_IR if INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110  
-> > 
-> > This says if
-> >  - select DVB_AV7110_IR if INPUT_EVDEV and DVB_AV7110 are both y or m
-> >  - select DVB_AV7110_IR if INPUT_EVDEV=y
-> >    This exists for the case when INPUT_EVDEV=y and DVB_AV7110=m, which is fine
-> > 
-> > > +	select DVB_AV7110_IR if RC_CORE=DVB_AV7110 && (INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110)  
-> > 
-> > That's not exactly the same. For one thing it should not longer depend on
-> > INPUT_EVDEV=y.
-> > 
-> > Now if DVB_AV7110=m and RC_CORE=y is not allowed which should be (this is
-> > the case in Fedora default kernel config for example).
-> 
-> My suggestion here is to stop using select here, using, instead
-> a depends on for DVB_AV7110_IR, e. g. something like (untested):
-> 
-> config DVB_AV7110_IR
-> 	bool
-> 	depends on RC_CORE && DVB_AV7110
-> 	default DVB_AV7110
+In the event of an oom kill, useful information about the killed
+process is printed to dmesg. Users, especially system administrators,
+will find it useful to immediately see the UID of the process.
 
-Build will fail if RC_CORE=m && DVB_AV7110=y. So it should be
+In the following example, abuse_the_ram is the name of a program
+that attempts to iteratively allocate all available memory until it is
+stopped by force.
 
-        depends on RC_CORE=y || RC_CORE = DVB_AV7110
+Current message:
+
+Out of memory: Killed process 35389 (abuse_the_ram)
+total-vm:133718232kB, anon-rss:129624980kB, file-rss:0kB,
+shmem-rss:0kB
+
+Patched message:
+
+Out of memory: Killed process 2739 (abuse_the_ram),
+total-vm:133880028kB, anon-rss:129754836kB, file-rss:0kB,
+shmem-rss:0kB, UID 0
 
 
-Thanks,
+Suggested-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+---
+ mm/oom_kill.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Sean
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 3a2484884cfd..af2e3faa72a0 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -874,12 +874,13 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+ 	 */
+ 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+ 	mark_oom_victim(victim);
+-	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
++	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID %d\n",
+ 		message, task_pid_nr(victim), victim->comm,
+ 		K(victim->mm->total_vm),
+ 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+ 		K(get_mm_counter(victim->mm, MM_FILEPAGES)),
+-		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
++		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)),
++		from_kuid(&init_user_ns, task_uid(victim)));
+ 	task_unlock(victim);
+ 
+ 	/*
+-- 
+2.18.1
+
