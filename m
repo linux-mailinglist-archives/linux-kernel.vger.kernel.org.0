@@ -2,205 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02FA4226E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5818942278
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407300AbfFLK0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:26:22 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37429 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405987AbfFLK0V (ORCPT
+        id S1732134AbfFLK3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:29:35 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:35040 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbfFLK3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:26:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v14so16280147wrr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 03:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WOZgls7V/J5HLYwy0qbOPqukCLjTUBeaw4pQKR6aMhA=;
-        b=Lhh3bjCi9LPQOsYgV2u5hHUquMAX8JaWupSQ0JJTR6kRfdaSHWk58EUThXr5aoduGG
-         ZaDBW5Rgxtx5MA3vhep8sB0LIJiKcNNOZvWeos4oEZNcCqrv3Dq4Jgo/l7SNmtJpqIh0
-         eCN2+hUuhLKq356XSn10+47M5mvGcNQfRhYqLLd0GQ5+vy5cM3GZl8K6bFe8Zx+Mf1Op
-         vb+mljL6fOKjJ7mN7cDXb9OdK3XStpJYR2ptBCaYVB5YwVwpVE915mtXtLVw6vMxWcZz
-         SYHfU+fjaW2cicwf823jWJjZ0GQ2uFsjxWf0So9lW0hsRof5D2cWQXXzbfFJf0lc6Vtq
-         iSrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WOZgls7V/J5HLYwy0qbOPqukCLjTUBeaw4pQKR6aMhA=;
-        b=FwqlUR/cqUFB4V/+vEIVMnN8D13qFxAjrmPxm4TNz1Pr6Vh2YiubuS5xiY9VS3RFKo
-         co5CXJFoqvvh8Rys0/Uq70KxLSnTVsqNFDC3IY+lDE4JSFTWXwE7dkmt1Wd0Wt2pmE22
-         d+7vUu2Mp0o7BRdWKBx6ZxwmwwY281e8Om5oJ/kFVJZMST0J29HWaFwtBHHWWOhsFGIb
-         ITw6biPywESmcp97zQB4oEUWV0V96BBN4Ki8MnTojFNg80NvtfckPmynBOQxltR+AmYP
-         Ix1+bhvOgRF0h8W9JQqTd3V2B2iPDaJYCJW2r4j1ipkX6JJcZt7jxzsSMZNgeyWeM9Vw
-         rapg==
-X-Gm-Message-State: APjAAAX+fIfipW84SZPgmFl2MO43Rva9m6M7AKo1mX+4Ev6390cwAQs8
-        OseQM7IM/BPsGaQbzhVEiBmwUA==
-X-Google-Smtp-Source: APXvYqy2ExsmO9A/pnY9mOCCX4rJ8sv2zoGHwjcelZMJjAJyJZBRrQByS3dzi6opNGCwn+DrY/Df2A==
-X-Received: by 2002:a5d:6644:: with SMTP id f4mr40097019wrw.51.1560335178466;
-        Wed, 12 Jun 2019 03:26:18 -0700 (PDT)
-Received: from holly.lan ([185.80.132.160])
-        by smtp.gmail.com with ESMTPSA id c16sm15265578wrr.53.2019.06.12.03.26.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 03:26:17 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 11:26:15 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Shobhit Kukreti <shobhitkukreti@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] video: backlight: Replace old GPIO APIs with GPIO
- Consumer APIs for sky81542-backlight driver
-Message-ID: <20190612102615.f4zbprojjxfuahqc@holly.lan>
-References: <20190612043229.GA18179@t-1000>
+        Wed, 12 Jun 2019 06:29:34 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5CATX6X062162;
+        Wed, 12 Jun 2019 05:29:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560335373;
+        bh=gffXr0SPmGe2RjlhTe5mohxf2lQM5X6YUpJTien3xyc=;
+        h=From:To:CC:Subject:Date;
+        b=PPEti6saL+4v+jr6tI2oF0dQR1hyTUAmO0+v/KKSTbVQ4OxOL+xD4xMwnP6ZGwk86
+         9jGDm1NxNzPd0pGagBu/i4BQ/aVCFbiK70VuoRFNmyxt1OFMbZtXGRHRMrLnLVlmy6
+         Nv4ztYr/lwuSK/W/ne691rtHRCgO4C0rDiQ40Vsw=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5CATXjs085203
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Jun 2019 05:29:33 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 12
+ Jun 2019 05:29:32 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 12 Jun 2019 05:29:32 -0500
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5CATTJW128310;
+        Wed, 12 Jun 2019 05:29:30 -0500
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <kishon@ti.com>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL v2] PHY: for 5.2-rc 
+Date:   Wed, 12 Jun 2019 15:57:57 +0530
+Message-ID: <20190612102803.25398-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612043229.GA18179@t-1000>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shobhit
+Hi Greg,
 
-Thanks for the patch. Feedback below...
+Please find the updated pull request for 5.2 -rc cycle. Here I dropped
+the patch that added "static" for a function to fix sparse warning.
 
+I'm also sending the patches along with this pull request in case you'd
+like to look them.
 
-On Tue, Jun 11, 2019 at 09:32:32PM -0700, Shobhit Kukreti wrote:
-> Port the sky81452-backlight driver to adhere to new gpio descriptor based
-> APIs. Modified the file sky81452-backlight.c and sky81452-backlight.h.
-> The gpio descriptor property in device tree should be "sky81452-en-gpios"
+Consider merging it in this -rc cycle and let me know if you want me
+to make any further changes.
 
-That is contradicted by the device tree bindings. The property should
-remain "gpios" as it was before this conversion.
+Thanks
+Kishon
 
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-> Removed unnecessary header files "linux/gpio.h" and "linux/of_gpio.h".
-> 
-> Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-What level of testing have you done? Is this a fix for hardware you own
-or a cleanup after searching the sources?
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.2-rc_v2
 
-> ---
->  drivers/video/backlight/sky81452-backlight.c     | 24 ++++++++++++------------
->  include/linux/platform_data/sky81452-backlight.h |  4 +++-
->  2 files changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/sky81452-backlight.c b/drivers/video/backlight/sky81452-backlight.c
-> index d414c7a..12ef628 100644
-> --- a/drivers/video/backlight/sky81452-backlight.c
-> +++ b/drivers/video/backlight/sky81452-backlight.c
-> @@ -19,12 +19,10 @@
->  
->  #include <linux/backlight.h>
->  #include <linux/err.h>
-> -#include <linux/gpio.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/platform_data/sky81452-backlight.h>
-> @@ -193,7 +191,6 @@ static struct sky81452_bl_platform_data *sky81452_bl_parse_dt(
->  	pdata->ignore_pwm = of_property_read_bool(np, "skyworks,ignore-pwm");
->  	pdata->dpwm_mode = of_property_read_bool(np, "skyworks,dpwm-mode");
->  	pdata->phase_shift = of_property_read_bool(np, "skyworks,phase-shift");
-> -	pdata->gpio_enable = of_get_gpio(np, 0);
->  
->  	ret = of_property_count_u32_elems(np, "led-sources");
->  	if (ret < 0) {
-> @@ -274,13 +271,17 @@ static int sky81452_bl_probe(struct platform_device *pdev)
->  		if (IS_ERR(pdata))
->  			return PTR_ERR(pdata);
->  	}
-> -
-> -	if (gpio_is_valid(pdata->gpio_enable)) {
-> -		ret = devm_gpio_request_one(dev, pdata->gpio_enable,
-> -					GPIOF_OUT_INIT_HIGH, "sky81452-en");
-> -		if (ret < 0) {
-> -			dev_err(dev, "failed to request GPIO. err=%d\n", ret);
-> -			return ret;
-> +	pdata->gpiod_enable = devm_gpiod_get(dev, "sk81452-en", GPIOD_OUT_HIGH);
+for you to fetch changes up to e3888cda394c72dcfd450afec1121d9777a59805:
 
-As above... I think the second argument here needs to be NULL in order
-to preserve the current DT bindings.
+  phy: tegra: xusb: Add Tegra210 PLL power supplies (2019-06-12 15:35:44 +0530)
 
+----------------------------------------------------------------
+phy: for 5.2-rc
 
-> +	if (IS_ERR(pdata->gpiod_enable)) {
-> +		long ret = PTR_ERR(pdata->gpiod_enable);
-> +
-> +		/**
+  *) Move Tegra124 PLL power supplies to be enabled by xusb-tegra124
+  *) Move Tegra210 PLL power supplies to be enabled by xusb-tegra210
+  *) Minor fixes: fix memory leaks at error path and addresses coverity.
 
-Nitpicking... but no second star here. That's a trigger symbold for
-documentation processors.
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 
-> +		 * gpiod_enable is optional in device tree.
-> +		 * Return error only if gpio was assigned in device tree
+----------------------------------------------------------------
+Colin Ian King (1):
+      phy: qcom-qusb2: fix missing assignment of ret when calling clk_prepare_enable
 
-Also nitpicking but I had to read this a few times because
-gpiod_enable is not in device tree, gpios is.
+Florian Fainelli (1):
+      phy: usb: phy-brcm-usb: Remove sysfs attributes upon driver removal
 
-This is a common pattern so the comment can be very short. Something
-like:
+Thierry Reding (3):
+      dt-bindings: phy: tegra-xusb: List PLL power supplies
+      phy: tegra: xusb: Add Tegra124 PLL power supplies
+      phy: tegra: xusb: Add Tegra210 PLL power supplies
 
-    This DT property is optional so no need to propagate ENOENT
+Yoshihiro Shimoda (1):
+      phy: renesas: rcar-gen2: Fix memory leak at error paths
 
+ Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt | 12 ++++++++++++
+ drivers/phy/broadcom/phy-brcm-usb.c                                   |  8 ++++++++
+ drivers/phy/qualcomm/phy-qcom-qusb2.c                                 |  2 +-
+ drivers/phy/renesas/phy-rcar-gen2.c                                   |  2 ++
+ drivers/phy/tegra/xusb-tegra124.c                                     |  9 +++++++++
+ drivers/phy/tegra/xusb-tegra210.c                                     |  9 +++++++++
+ 6 files changed, 41 insertions(+), 1 deletion(-)
+-- 
+2.17.1
 
-> +		 */
-> +		if (ret != -ENOENT) {
-> +			dev_err(dev, "failed to request GPIO. err=%ld\n", ret);
-> +			return PTR_ERR(pdata->gpiod_enable);
->  		}
->  	}
->  
-> @@ -323,8 +324,7 @@ static int sky81452_bl_remove(struct platform_device *pdev)
->  	bd->props.brightness = 0;
->  	backlight_update_status(bd);
->  
-> -	if (gpio_is_valid(pdata->gpio_enable))
-> -		gpio_set_value_cansleep(pdata->gpio_enable, 0);
-> +	gpiod_set_value_cansleep(pdata->gpiod_enable, 0);
->  
->  	return 0;
->  }
-> diff --git a/include/linux/platform_data/sky81452-backlight.h b/include/linux/platform_data/sky81452-backlight.h
-> index 1231e9b..dc4cb85 100644
-> --- a/include/linux/platform_data/sky81452-backlight.h
-> +++ b/include/linux/platform_data/sky81452-backlight.h
-> @@ -20,6 +20,8 @@
->  #ifndef _SKY81452_BACKLIGHT_H
->  #define _SKY81452_BACKLIGHT_H
->  
-> +#include <linux/gpio/consumer.h>
-> +
-
-This heaer file should be included from the C file... it is not required
-to parse the header.
-
-
-Daniel.
-
-
->  /**
->   * struct sky81452_platform_data
->   * @name:	backlight driver name.
-> @@ -34,7 +36,7 @@
->   */
->  struct sky81452_bl_platform_data {
->  	const char *name;
-> -	int gpio_enable;
-> +	struct gpio_desc *gpiod_enable;
->  	unsigned int enable;
->  	bool ignore_pwm;
->  	bool dpwm_mode;
-> -- 
-> 2.7.4
-> 
