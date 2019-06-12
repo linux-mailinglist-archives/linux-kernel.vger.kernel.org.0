@@ -2,70 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0481542D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4192642D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:16:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbfFLRIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:08:55 -0400
-Received: from mga07.intel.com ([134.134.136.100]:17836 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731468AbfFLRIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:08:55 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 10:08:54 -0700
-X-ExtLoop1: 1
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga006.fm.intel.com with ESMTP; 12 Jun 2019 10:08:50 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hb6jw-00041X-WF; Wed, 12 Jun 2019 20:08:49 +0300
-Date:   Wed, 12 Jun 2019 20:08:48 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, bp@suse.de,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
+        id S2406994AbfFLRQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:16:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43706 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfFLRQk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:16:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qeRjLUH/X3Ruy89C7L++Ek8YtcKL4Q76UMeawZymlkg=; b=s1dD6nrTMTiC40NDmcf8GgZ0D
+        M2s9QOLcsrg9LROHGm+imgEZWu91Cmnsq7WD6ySYqLv4mLkknasd8dVn6fJF2tSFKA36Cs5/nGEAq
+        JgKjK7GfXGr1ERtAIu8J/K2JLKW9ne6kdeZBrp3Y+XsylXSwmhVN5kj6htku8SuoiWq+E57bNSgHm
+        8cQLlR8idQPBT3Sp+vbk+NCh24KNbMLP9ftPezPLgwtzdxSYj2kiV/43vNddCKDTQFCxJaFRvJIaq
+        92BzUELZK4Nmb1zistIFqJGz0HIVvgJJUIxcBoPpoR7P8oM89V0eLXt3KajBfsjI7zDYFQQ88JMQq
+        +g4kTn5Fg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hb6rB-0001Ko-O0; Wed, 12 Jun 2019 17:16:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C071F202C9D60; Wed, 12 Jun 2019 19:09:30 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 19:09:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [Patch v2] x86/cpu: Add Ice Lake NNPI to Intel family
-Message-ID: <20190612170848.GQ9224@smile.fi.intel.com>
-References: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
- <20190612095233.GE9224@smile.fi.intel.com>
- <73eb1ba5-dc29-53ee-487d-d22700b874a1@intel.com>
- <20190612162918.GP9224@smile.fi.intel.com>
- <414a8fe8-4c85-f323-d71c-16b231823ffe@intel.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
+ instructions
+Message-ID: <20190612170930.GK3402@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.005681046@infradead.org>
+ <20190608004708.7646b287151cf613838ce05f@kernel.org>
+ <20190607173427.GK3436@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <414a8fe8-4c85-f323-d71c-16b231823ffe@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190607173427.GK3436@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 09:33:30AM -0700, Dave Hansen wrote:
-> On 6/12/19 9:29 AM, Andy Shevchenko wrote:
-> > What I'm talking is a consistency among suffixes. If there is a real
-> > abbreviation (NNPI) which anybody can google, 
+On Fri, Jun 07, 2019 at 07:34:27PM +0200, Peter Zijlstra wrote:
+> On Sat, Jun 08, 2019 at 12:47:08AM +0900, Masami Hiramatsu wrote:
+
+> > > @@ -943,8 +949,21 @@ int poke_int3_handler(struct pt_regs *re
+> > >  	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
+> > >  		return 0;
+> > >  
+> > > -	/* set up the specified breakpoint handler */
+> > > -	regs->ip = (unsigned long) bp_int3_handler;
+> > > +	opcode = *(struct opcode *)bp_int3_opcode;
+> > > +
+> > > +	switch (opcode.insn) {
+> > > +	case 0xE8: /* CALL */
+> > > +		int3_emulate_call(regs, ip + opcode.rel);
+> > > +		break;
+> > > +
+> > > +	case 0xE9: /* JMP */
+> > > +		int3_emulate_jmp(regs, ip + opcode.rel);
+> > > +		break;
+> > > +
+> > > +	default: /* assume NOP */
+> > 
+> > Shouldn't we check whether it is actually NOP here?
 > 
-> There is and you can. :)
+> I was/am lazy and didn't want to deal with:
+> 
+> arch/x86/include/asm/nops.h:#define GENERIC_NOP5_ATOMIC NOP_DS_PREFIX,GENERIC_NOP4
+> arch/x86/include/asm/nops.h:#define K8_NOP5_ATOMIC 0x66,K8_NOP4
+> arch/x86/include/asm/nops.h:#define K7_NOP5_ATOMIC NOP_DS_PREFIX,K7_NOP4
+> arch/x86/include/asm/nops.h:#define P6_NOP5_ATOMIC P6_NOP5
+> 
+> But maybe we should check for all the various NOP5 variants and BUG() on
+> anything unexpected.
 
-Good, I have no objections.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+I realized we never actually poke a !ideal nop5_atomic, so I've added
+that to the latest versions.
