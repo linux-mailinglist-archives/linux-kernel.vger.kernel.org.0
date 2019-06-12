@@ -2,148 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B14DB41B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B936A41B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbfFLEpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 00:45:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40965 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730094AbfFLEpn (ORCPT
+        id S1730284AbfFLEvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 00:51:53 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34241 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730250AbfFLEvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 00:45:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id m30so8330401pff.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 21:45:43 -0700 (PDT)
+        Wed, 12 Jun 2019 00:51:53 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c85so8869045pfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 21:51:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nklP3shPG4ODY4LCy558nFWqV2jQgBjX6+qH4GruTes=;
-        b=lPqruB5x/x03TcytL7LVzvnmJ+yemBLds1ibUr/mVVzOzZ6w2j2C/krp36OlLbD8yh
-         QsJBhhfHx94RSc30x87DYrEs82Qlp6ePW+Q2k1cl3Cy0Chg59N6FHigUHCN1qXjo4YzO
-         E9HeULmJlirqarV4/bJbL4ud/YtRa0MVr79nozbJxCNlAhECdlSJn5q2Ff0cD0l0brqk
-         BqgRiRPv5iqlvPf1hNFdGHfbzJBGKQ5rW1It33qWoZwNzL+lSmHCiwTtAcWja0MpF37B
-         iEBF+WvW2IOV0xub5iNXxw+LN0qiKsdNkUiuV7ADG8nxz1T7GdKU7ETtxVc5qFZLE03x
-         yoNw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+tVeozzvulLUwaDZlww2OwCv9jqjaP7+AKjXeXEP1kw=;
+        b=qXljOS9GdbYUhEM576X6M+dFkz7yhLw9ykyWiWjr12gOx0ZyQ6wf79IkerbXOjLxbs
+         omn23QrzwJi+x5Ugv1CIm+CBJ252vIZo+5SyG/HEkr6W712BRJjdth39DWN022G3ZhxK
+         aPPso9D5OdmM2OVQktkwg68itVWTJqM/zZCCs18R8lxbpGyF9mktscszcoc6rOIn+wIJ
+         ZsEMwuVXYaLVQc/pKywgsadJ02KUrJ881PWBQPPW/1PLk1pvYV3e5aZk0TQrT1Xj7Lw/
+         3QbjQwpRk9mt2fMfFjqg9FLOyWI+A5HL1ldNgNQEYmfH2NVQGNDaITb1ofp55VgskKxE
+         RCtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nklP3shPG4ODY4LCy558nFWqV2jQgBjX6+qH4GruTes=;
-        b=LIHFEjXFFsPdm+F+drY7WjGca6Ef23rdnkUS+wbl/8xTBMloAeJUBpo5xJ+fEGFo/p
-         PzxIjsREedSkl5525mGOaQ7N+Op5WrhkoUjHkYFU/iuIGmFiiLCQ61U8bUSmppctKCTk
-         bD8R7Zi4uLDRDDTRMGzq4rAmk2342UeAXbfcC6ZYqVJHN+egDAJwWeMyr5HLtY1Nv2y3
-         iqvRMmiTKF8aL4eFZNQld9fdo1vscEPtLa9qDUhjlM9K/eGD8CuijlZm9o0yV0LFmIjy
-         PIhoQhsKCLIjmFDdvxdg9kJWiogCD5MMx8yCm2R1Wu7xuOkBCes+NQeIeYEfK5u4Rajd
-         e4cg==
-X-Gm-Message-State: APjAAAUM6q89Xqe8gZd34gYfACSTfM5YLKXx43fxuh0wUjAwI870ZEuG
-        vrJXlujx7D4C8iuF1wprkFOb+KJs63U=
-X-Google-Smtp-Source: APXvYqwFBdGhHcjeVlfocEKbR9j58n78JNQlwypjDowu3shZmxffhL57NUrwLladwD1Gq2ifHwsVfw==
-X-Received: by 2002:a17:90a:22c5:: with SMTP id s63mr29977778pjc.23.1560314743008;
-        Tue, 11 Jun 2019 21:45:43 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z126sm17129194pfb.100.2019.06.11.21.45.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 21:45:42 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 4/4] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Date:   Tue, 11 Jun 2019 21:45:36 -0700
-Message-Id: <20190612044536.13940-5-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190612044536.13940-1-bjorn.andersson@linaro.org>
-References: <20190612044536.13940-1-bjorn.andersson@linaro.org>
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+tVeozzvulLUwaDZlww2OwCv9jqjaP7+AKjXeXEP1kw=;
+        b=B3BKuX7Gi9ievTTAMc8EV7zk2uQNDUCLJNMWQloYsgLSky7w0krUuSe5IU5sraOpHB
+         MEPVgUQmIbs6qOyggGxP2WzLhS1Asb6jLW52nLuDfbHRubQ5wsvHJyCsiHozbzikC/qy
+         se6Yb8FbYM8BQUh+0nEoIt73pbqMubv5eOjN/9THPUA5nrlrQag7IAlh3Bp8V4G77f9P
+         JGxJ6xgdoFiCHxoCYk9BlHfo7jBQEHNPDPJ53iPoNtSFxe/vbyJCva9tDyOA6Qv0dnVd
+         3lqM5AGqS2BGmsLXz8Xvyr9a5u/1vRdzJXwg6cwtAhC28PptqHpUg+klpN5XvbV32a5i
+         lrCA==
+X-Gm-Message-State: APjAAAVJ+6rw7YoKMykHuIz3aZjoXtwkb33IUuiIu5VWJ+4xdJD8PI1Y
+        yNBelmPjPyrxdXmSJFVqm/wOmyw4
+X-Google-Smtp-Source: APXvYqwEVUC6RXo1xkm5/gJsrJQSpL1BbEZH9JL/KnmFBUuWKvwvdOk5Uiw78GjHk9Mn2X18nAkRxQ==
+X-Received: by 2002:a63:4c0f:: with SMTP id z15mr23099098pga.245.1560315112063;
+        Tue, 11 Jun 2019 21:51:52 -0700 (PDT)
+Received: from localhost.localdomain ([117.192.27.213])
+        by smtp.googlemail.com with ESMTPSA id t184sm1072719pgt.88.2019.06.11.21.51.49
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 21:51:51 -0700 (PDT)
+From:   Deepak Mishra <linux.dkm@gmail.com>
+To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        linux.dkm@gmail.com, straube.linux@gmail.com
+Subject: [PATCH 0/2] staging: rtl8712: cleanup struct _adapter 
+Date:   Wed, 12 Jun 2019 10:21:29 +0530
+Message-Id: <cover.1560314282.git.linux.dkm@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sibi Sankar <sibis@codeaurora.org>
+In process of cleaning up rtl8712 struct _adapter in drv_types.h I have
+fixed the camelcasing of lockRxFF0Filter and wkFilterRxFF0
 
-This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
+Deepak Mishra (2):
+  staging: rtl8712: Fixed CamelCase lockRxFF0Filter renamed to
+    lock_rx_ff0_filter
+  staging: rtl8712: Fixed CamelCase wkFilterRxFF0 renamed to
+    wk_filter_rx_ff0
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+ drivers/staging/rtl8712/drv_types.h    | 4 ++--
+ drivers/staging/rtl8712/rtl871x_xmit.c | 2 +-
+ drivers/staging/rtl8712/usb_intf.c     | 2 +-
+ drivers/staging/rtl8712/xmit_linux.c   | 6 +++---
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-Changes since v8:
-- None
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index c80881309f79..601cfb078bd5 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1850,6 +1850,64 @@
- 			};
- 		};
- 
-+		mss_pil: remoteproc@4080000 {
-+			compatible = "qcom,sdm845-mss-pil";
-+			reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+				 <&gcc GCC_PRNG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "prng", "xo";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+			reset-names = "mss_restart", "pdc_reset";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+
-+			power-domains = <&aoss_qmp 2>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "load_state", "cx", "mx", "mss";
-+
-+			mba {
-+				memory-region = <&mba_region>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_region>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+			};
-+		};
-+
- 		gpucc: clock-controller@5090000 {
- 			compatible = "qcom,sdm845-gpucc";
- 			reg = <0 0x05090000 0 0x9000>;
 -- 
-2.18.0
+2.19.1
 
