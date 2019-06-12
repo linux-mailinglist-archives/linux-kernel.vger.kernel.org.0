@@ -2,106 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 659E942204
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCD44220A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:11:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437828AbfFLKJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:09:07 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42495 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437611AbfFLKJH (ORCPT
+        id S2437968AbfFLKLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:11:30 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34557 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437611AbfFLKL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:09:07 -0400
-Received: by mail-ed1-f65.google.com with SMTP id z25so24849659edq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 03:09:06 -0700 (PDT)
+        Wed, 12 Jun 2019 06:11:29 -0400
+Received: by mail-vs1-f67.google.com with SMTP id q64so9889044vsd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 03:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IFDigL4vy3b62qjT1WszXB3PDewotHj2dqglzXL17hc=;
-        b=Tg/uhL+iL9PuNKj7XqCbh3ZlwnLo3Bkb5j6KENo20u6kFaYzi532JwLfbpnW1eZKEn
-         qg/O9uyq8wQk4gj/Lpi0h1MpOw3w9F5BoCTyMcJdkPEwqLRDn/s6v2Metm2m9kCUBo40
-         xGWjB/G5W4hGI6GA+FOM2MkB8IrBmZciapsN0KRQaX3C/Vg3EdL8wOnroO77kkmOlL79
-         mClDpnY4zoMtcRhJr0uE22Wdfo+yAkT8PNyQGB3TEaidmVa2qs5YWFnbdgSrcFEHmPyw
-         yjNiLnvfO8k23ResCBgbXP/gSUZgTBmozNcdxSAYu3Ju0S0ckgmdJ1e9/fCZptLcwZkE
-         WrWg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vwwsd0tdKxa00vg2i3C1zrYsYmEGYn7C9UHSqxLUOAY=;
+        b=cNuXOLWUPlPjzsuZ7Z6BuN/fwPgNEqYjZXIJhRFvcMn54FRyd3mnAeCRjTPJEmoRxx
+         xDPmcvmPVRh581RobGwdUC2EsTF2EhwhYlmpZcuZ1sQCcejbMGT133Abgv/YaQPzr3CV
+         ///CpGcB3drMtVF/D1a9lHuUcbiWPZGDYJrkeshfN6hkMqBjOgV60A8iRBMSAj+m6YUx
+         5kpoq7HOqxzFwsqtg4spRZYFg0/dpuVf/aZaHr8rxUguZigoD5SiyuF8nBrVAclPtY/I
+         ASCtN2N1+XGfiS8vxP+riDAtTtka9iDhNlbnybkrK7T2xWiFKG+OL7N38Ketqfqe1GKg
+         mi2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IFDigL4vy3b62qjT1WszXB3PDewotHj2dqglzXL17hc=;
-        b=n97J5Wstz5ZPItSg3jHJRA9C899eurvceddc8+1/+tXJ64FAD1NsHVaB5TChFx+Nr0
-         uyYlPdk8a+CiLShc/Kx7y4Oz8xMkrN2WPlle5qdawiWP2PfoiVJHOZmArjN5XW0RFHAK
-         ar1OxmYtgFRdN+Wn9/Qsq6E+D6Y4oPp8tgaAhFynOYJPCuG/1OV3krlWau9rRAmSZ4eM
-         S7FBzML+NJS/Czsde70XgwWyoVIUBpZugwF5p2foCtZN/muvQNP93yIAQmLD1YF4dNj1
-         uWu0qHkx9d7JtFqT59wK4bJYic1UBcvBGzl2WcoWLHxE5cLxemkH4QnPfBVeRzPCyUP9
-         +LvA==
-X-Gm-Message-State: APjAAAWD266UbxRRxXLqTpNf0TOzA+/sM6HLnfqc77KGYwHhWoAgg2Fx
-        F/uMGlGMmMk4Ys9/+kj7lzfo8g==
-X-Google-Smtp-Source: APXvYqxLR+/UiDQosNM49+jAIr4tIfd9cSPCVBqomYavVwUMuZ0jfVhYTiMeBZXpDB37wwwcRWjQrQ==
-X-Received: by 2002:a17:906:6056:: with SMTP id p22mr7266053ejj.171.1560334145847;
-        Wed, 12 Jun 2019 03:09:05 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c8sm2674841ejm.55.2019.06.12.03.09.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 03:09:05 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 1914A102306; Wed, 12 Jun 2019 13:09:06 +0300 (+03)
-Date:   Wed, 12 Jun 2019 13:09:06 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
-        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
-        shakeelb@google.com, rientjes@google.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm: thp: make deferred split shrinker memcg aware
-Message-ID: <20190612100906.xllp2bfgmadvbh2q@box>
-References: <1559887659-23121-1-git-send-email-yang.shi@linux.alibaba.com>
- <1559887659-23121-3-git-send-email-yang.shi@linux.alibaba.com>
- <20190612024747.f5nsol7ntvubjckq@box>
- <ace52062-e6be-a3f2-7ef1-d8612f3a76f9@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vwwsd0tdKxa00vg2i3C1zrYsYmEGYn7C9UHSqxLUOAY=;
+        b=kZWAB5awbB5oP8ygBXxQZGLcY7I8vOtQtawd3Zm2a4f8WwngcQR02mvOR2D2R9jXus
+         bN7o+4Xy0dQOZmX8eDIjCHUqWvR1U8I1oHFkD/cFWG3zVU4SeisT3SnfqvrtljGZh+/+
+         NTnzrUszpvVDnspVi1mUV38/Kqg3CGqVGD5Y9Eg9ZvOsoaedatx0S5W/ZCtjkikpwH5J
+         fsxtQIQea1bJTFL8s7/9cUmknvRJ/Ej8wpjPBd5C1Doz9D7oxWvdAM/mO1xckw+cXuZj
+         V9AK09kjF93I9+vAfyVf47GKsxo0ZK+Jvm03HL9sGnCKGWA9zKrK5CWNKhxE8oy/FOh9
+         3Gvg==
+X-Gm-Message-State: APjAAAUzv6ROudTgOOC8wJGH7TgM8ln5L2pr/5ZZUVtm1EICGGP3MjsT
+        iU5TdVev1Zhs0oVRsBZFRk4625+LZqQu2Wn3L9K6hQ==
+X-Google-Smtp-Source: APXvYqz9HdjKJz1FgwE/Nx/EZT4gQSK6X7I7/l+mUBC1IPdGylVrfi3vGB2PufieZ8KgmvsoIDewFF/91qoctXVN1SA=
+X-Received: by 2002:a67:ee16:: with SMTP id f22mr9599693vsp.191.1560334287942;
+ Wed, 12 Jun 2019 03:11:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ace52062-e6be-a3f2-7ef1-d8612f3a76f9@linux.alibaba.com>
-User-Agent: NeoMutt/20180716
+References: <20190607223716.119277-1-dianders@chromium.org>
+ <20190607223716.119277-4-dianders@chromium.org> <363DA0ED52042842948283D2FC38E4649C52F8A0@IRSMSX106.ger.corp.intel.com>
+ <CAD=FV=U8eo78Ee9xjhGXJMv=8YF9o89KLX024GH3iBRnRjCRvQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=U8eo78Ee9xjhGXJMv=8YF9o89KLX024GH3iBRnRjCRvQ@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 12 Jun 2019 12:10:51 +0200
+Message-ID: <CAPDyKFo=QMRTkNYUVSE2AqiZgytkTVRXF0Mvznn6trVT4-cR=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] brcmfmac: sdio: Disable auto-tuning around
+ commands expected to fail
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     "Hunter, Adrian" <adrian.hunter@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        "brcm80211-dev-list.pdl@broadcom.com" 
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        Double Lo <double.lo@cypress.com>,
+        "briannorris@chromium.org" <briannorris@chromium.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Naveen Gupta <naveen.gupta@cypress.com>,
+        Madhan Mohan R <madhanmohan.r@cypress.com>,
+        "mka@chromium.org" <mka@chromium.org>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "brcm80211-dev-list@cypress.com" <brcm80211-dev-list@cypress.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:06:36PM -0700, Yang Shi wrote:
-> 
-> 
-> On 6/11/19 7:47 PM, Kirill A. Shutemov wrote:
-> > On Fri, Jun 07, 2019 at 02:07:37PM +0800, Yang Shi wrote:
-> > > +	/*
-> > > +	 * The THP may be not on LRU at this point, e.g. the old page of
-> > > +	 * NUMA migration.  And PageTransHuge is not enough to distinguish
-> > > +	 * with other compound page, e.g. skb, THP destructor is not used
-> > > +	 * anymore and will be removed, so the compound order sounds like
-> > > +	 * the only choice here.
-> > > +	 */
-> > > +	if (PageTransHuge(page) && compound_order(page) == HPAGE_PMD_ORDER) {
-> > What happens if the page is the same order as THP is not THP? Why removing
-> 
-> It may corrupt the deferred split queue since it is never added into the
-> list, but deleted here.
-> 
-> > of destructor is required?
-> 
-> Due to the change to free_transhuge_page() (extracted deferred split queue
-> manipulation and moved before memcg uncharge since page->mem_cgroup is
-> needed), it just calls free_compound_page(). So, it sounds pointless to
-> still keep THP specific destructor.
-> 
-> It looks there is not a good way to tell if the compound page is THP in
-> free_page path or not, we may keep the destructor just for this?
+On Mon, 10 Jun 2019 at 18:50, Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Mon, Jun 10, 2019 at 1:56 AM Hunter, Adrian <adrian.hunter@intel.com> wrote:
+> >
+> > > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> > > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> > > @@ -16,6 +16,7 @@
+> > >  #include <linux/mmc/sdio_ids.h>
+> > >  #include <linux/mmc/sdio_func.h>
+> > >  #include <linux/mmc/card.h>
+> > > +#include <linux/mmc/core.h>
+> >
+> > SDIO function drivers should not really include linux/mmc/core.h
+> > (Also don't know why linux/mmc/card.h is included)
+>
+> OK, so I guess you're requesting an extra level of "sdio_" wrappers
+> for all the functions I need to call.  I don't think the wrappers buy
+> us a ton other than to abstract things a little bit and make it look
+> prettier.  :-)  ...but certainly I can code that up if that's what
+> everyone wants.
 
-Other option would be to move mem_cgroup_uncharge(page); from
-__page_cache_release() to destructors. Destructors will be able to
-call it as it fits.
+Are the new code you refer to going to be used for anything else but
+SDIO? If not, please put them in the sdio specific headers instead.
 
--- 
- Kirill A. Shutemov
+BTW, apologize for not looking at this series any earlier, but I will
+come to it soon.
+
+>
+> Just to make sure, I looked in "drivers/net/wireless/" and I do see
+> quite a few instances of "mmc_" functions being used.  That doesn't
+> mean all these instances are correct but it does appear to be
+> commonplace.  Selected examples:
+>
+> drivers/net/wireless/ath/ath10k/sdio.c:
+>   ret = mmc_hw_reset(ar_sdio->func->card->host);
+
+mmc_hw_reset() is already an exported function, used by the mmc block
+layer. So I think this is okay.
+
+>
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c:
+>   mmc_set_data_timeout(md, func->card);
+>   mmc_wait_for_req(func->card->host, mr);
+
+These are not okay, none of these things calls should really be done
+from an SDIO func driver.
+
+It tells me that the func driver is a doing workaround for something
+that should be managed in a common way.
+
+>
+> drivers/net/wireless/marvell/mwifiex/sdio.c:
+>   mmc_hw_reset(func->card->host);
+
+Okay.
+
+>
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:
+>   err = mmc_wait_for_cmd(host, &cmd, 3);
+
+Not okay.
+
+>
+>
+> ...anyway, I'll give it a few days and if nobody else chimes in then
+> I'll assume you indeed want "sdio_" wrappers for things and I'll post
+> a v4.  If patch #1 happens to land in the meantime then I won't
+> object.  ;-)
+
+Adrian has a very good point. We need to strive to avoid exporting
+APIs to here and there and just trust that they will be used wisely.
+
+If the above calls to mmc_wait_for_req|cmd() and
+mmc_set_data_timeout() could have been avoided, we would probably have
+a more proper solution by now.
+
+Kind regards
+Uffe
