@@ -2,171 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47852425E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06345425EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439021AbfFLMcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:32:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38455 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436805AbfFLMcr (ORCPT
+        id S2439034AbfFLMdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:33:09 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41735 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438948AbfFLMdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:32:47 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5CCWe9H685877
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 12 Jun 2019 05:32:40 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5CCWe9H685877
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560342761;
-        bh=87ih78ecyWWEaRcf1tlUfHtm4KXNt0XJG/zmNQ/YodI=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Fj9h9MnPZtoKEtfc7wBzg/g8djLgLXvMiv4QFvhn8/tgIZeG7ldH6ycBD958LwliJ
-         3PZOEfohVTlQAd8aVj6jpvFjWxwaG5lf0zQw5uS+mM+HzqUggV/jtp9I/6+PQ+oANe
-         8CHhJbXned9MhxHQHkS7exVEXZgplaEwX7QitIKO1uzwUiFHMXD9EFelD6FdCreICh
-         V38dpdvbLbwvtb8NxhVX4MCovjHzwCzYVyRbEKuIkkBsbh66l2iWkMC4FfIjDOPrBl
-         47Ok8ZjZ7tDiZk7CTPuSp9h6TuOInr+ilP7DSp0PHkyvBhIHvz5zNoJuga+rMWfAVN
-         5n55OHUFWZnDQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5CCWenn685873;
-        Wed, 12 Jun 2019 05:32:40 -0700
-Date:   Wed, 12 Jun 2019 05:32:40 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Daniel Lezcano <tipbot@zytor.com>
-Message-ID: <tip-699785f5d898965408430e841d10cd1cb2c02a77@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, daniel.lezcano@linaro.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, hpa@zytor.com, daniel.lezcano@linaro.org,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20190527205521.12091-9-daniel.lezcano@linaro.org>
-References: <20190527205521.12091-9-daniel.lezcano@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/timings: Add selftest for next event
- computation
-Git-Commit-ID: 699785f5d898965408430e841d10cd1cb2c02a77
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 12 Jun 2019 08:33:08 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p15so25465915eds.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:33:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/9+BscyBSG8LtxRtL3bsLVsuCvjxfppgNJUSn3pi0BA=;
+        b=dHKW1qzNZwyMVOn+qHOePUQ35FtWe1LEhdHRgQQ6XejmTk73mI96UnD0DRfyc0b82b
+         agVXEKrYAal+c4XlyDbWwTf42Q3Ek06h2zAPI4lfi4MufDeQIoiMMYsZ78cKTlDn25vx
+         /NtTc8w2oP3ThoCqlSXI8e6PAElGTvic+3CGAfLQGo3+O1T/xMBMe19YMs2pWVCFCmIt
+         4O3enn5J6iE4EIDsNs/O29VE2WDl9eM1SRh2B6HIpLEvCg7rKP1PiozuBdiYrLqIUKd5
+         O6crjGl9NUWFT9SfqIOIfXZQ8vFyZEwdTn7weXz5S1RB7HxPgVb64VKDJic3uUqeJWkj
+         DGAA==
+X-Gm-Message-State: APjAAAWSKiNBdcDJHUkvSpnaIofCdlav+q0oEIWgOiHO88uqxrzBwqcg
+        ++j8xz9GWXHNZxAVMwC5rmeQEQ==
+X-Google-Smtp-Source: APXvYqwH+EIsTHqwWN3f9HxFMK99PgTbuqj4T1Pw/EUS2brCmPFSeeUdToS6/AutI5NLtTDk9/MaKw==
+X-Received: by 2002:a50:b561:: with SMTP id z30mr32633599edd.87.1560342787019;
+        Wed, 12 Jun 2019 05:33:07 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id c21sm2784931ejk.79.2019.06.12.05.33.05
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 05:33:06 -0700 (PDT)
+Subject: Re: [PATCH 4/5] drm/connector: Split out orientation quirk detection
+To:     "dbasehore ." <dbasehore@chromium.org>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+References: <20190611040350.90064-1-dbasehore@chromium.org>
+ <20190611040350.90064-5-dbasehore@chromium.org> <87zhmoy270.fsf@intel.com>
+ <01636500-0be5-acf8-5f93-a57383bf4b20@redhat.com>
+ <CAGAzgsoxpsft-vmVOuKSAbLJqR-EZvcceLpMeWkz6ikJEKGJHg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <fe774952-6fd5-b4ec-56c9-32fd30546313@redhat.com>
+Date:   Wed, 12 Jun 2019 14:33:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <CAGAzgsoxpsft-vmVOuKSAbLJqR-EZvcceLpMeWkz6ikJEKGJHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  699785f5d898965408430e841d10cd1cb2c02a77
-Gitweb:     https://git.kernel.org/tip/699785f5d898965408430e841d10cd1cb2c02a77
-Author:     Daniel Lezcano <daniel.lezcano@linaro.org>
-AuthorDate: Mon, 27 May 2019 22:55:21 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 12 Jun 2019 10:47:05 +0200
+Hi,
 
-genirq/timings: Add selftest for next event computation
+On 12-06-19 02:16, dbasehore . wrote:
+> On Tue, Jun 11, 2019 at 1:54 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi,
+>>
+>> On 11-06-19 10:08, Jani Nikula wrote:
+>>> On Mon, 10 Jun 2019, Derek Basehore <dbasehore@chromium.org> wrote:
+>>>> This removes the orientation quirk detection from the code to add
+>>>> an orientation property to a panel. This is used only for legacy x86
+>>>> systems, yet we'd like to start using this on devicetree systems where
+>>>> quirk detection like this is not needed.
+>>>
+>>> Not needed, but no harm done either, right?
+>>>
+>>> I guess I'll defer judgement on this to Hans and Ville (Cc'd).
+>>
+>> Hmm, I'm not big fan of this change. It adds code duplication and as
+>> other models with the same issue using a different driver or panel-type
+>> show up we will get more code duplication.
+>>
+>> Also I'm not convinced that devicetree based platforms will not need
+>> this. The whole devicetree as an ABI thing, which means that all
+>> devicetree bindings need to be set in stone before things are merged
+>> into the mainline, is done solely so that we can get vendors to ship
+>> hardware with the dtb files included in the firmware.
+> 
+> We've posted fixes to the devicetree well after the initial merge into
+> mainline before, so I don't see what you mean about the bindings being
+> set in stone.
 
-The circular buffers are now validated with selftests. The next interrupt
-index algorithm which is the hardest part to validate needs extra coverage.
+That was just me repeating the official party line about devicetree.
 
-Add a selftest which uses the intervals stored in the arrays and insert all
-the values except the last one. The next event computation must return the
-same value as the last element which was not inserted.
+> I also don't really see the point. The devicetree is in
+> the kernel. If there's some setting in the devicetree that we want to
+> change, it's effectively the same to make the change in the devicetree
+> versus some quirk setting. The only difference seems to be that making
+> the change in the devicetree is cleaner.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: andriy.shevchenko@linux.intel.com
-Link: https://lkml.kernel.org/r/20190527205521.12091-9-daniel.lezcano@linaro.org
+I agree with you that devicetree in practice is easy to update after
+shipping. But at least whenever I tried to get new bindings reviewed
+I was always told that I was not allowed to count on that.
 
----
- kernel/irq/timings.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+>> I'm 100% sure that there is e.g. ARM hardware out there which uses
+>> non upright mounted LCD panels (I used to have a few Allwinner
+>> tablets which did this). And given my experience with the quality
+>> of firmware bundled tables like ACPI tables I'm quite sure that
+>> if we ever move to firmware included dtb files that we will need
+>> quirks for those too.
+> 
+> Is there a timeline to start using firmware bundled tables?
 
-diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index 5b13c2231d4f..e960d7ce7bcc 100644
---- a/kernel/irq/timings.c
-+++ b/kernel/irq/timings.c
-@@ -704,6 +704,68 @@ static struct timings_intervals tis[] __initdata = {
- 	{ intervals4, ARRAY_SIZE(intervals4) },
- };
- 
-+static int __init irq_timings_test_next_index(struct timings_intervals *ti)
-+{
-+	int _buffer[IRQ_TIMINGS_SIZE];
-+	int buffer[IRQ_TIMINGS_SIZE];
-+	int index, start, i, count, period_max;
-+
-+	count = ti->count - 1;
-+
-+	period_max = count > (3 * PREDICTION_PERIOD_MAX) ?
-+		PREDICTION_PERIOD_MAX : count / 3;
-+
-+	/*
-+	 * Inject all values except the last one which will be used
-+	 * to compare with the next index result.
-+	 */
-+	pr_debug("index suite: ");
-+
-+	for (i = 0; i < count; i++) {
-+		index = irq_timings_interval_index(ti->intervals[i]);
-+		_buffer[i & IRQ_TIMINGS_MASK] = index;
-+		pr_cont("%d ", index);
-+	}
-+
-+	start = count < IRQ_TIMINGS_SIZE ? 0 :
-+		count & IRQ_TIMINGS_MASK;
-+
-+	count = min_t(int, count, IRQ_TIMINGS_SIZE);
-+
-+	for (i = 0; i < count; i++) {
-+		int index = (start + i) & IRQ_TIMINGS_MASK;
-+		buffer[i] = _buffer[index];
-+	}
-+
-+	index = irq_timings_next_event_index(buffer, count, period_max);
-+	i = irq_timings_interval_index(ti->intervals[ti->count - 1]);
-+
-+	if (index != i) {
-+		pr_err("Expected (%d) and computed (%d) next indexes differ\n",
-+		       i, index);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init irq_timings_next_index_selftest(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(tis); i++) {
-+
-+		pr_info("---> Injecting intervals number #%d (count=%zd)\n",
-+			i, tis[i].count);
-+
-+		ret = irq_timings_test_next_index(&tis[i]);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
- static int __init irq_timings_test_irqs(struct timings_intervals *ti)
- {
- 	struct irqt_stat __percpu *s;
-@@ -875,6 +937,10 @@ static int __init irq_timings_selftest(void)
- 		goto out;
- 
- 	ret = irq_timings_irqs_selftest();
-+	if (ret)
-+		goto out;
-+
-+	ret = irq_timings_next_index_selftest();
- out:
- 	pr_info("---------- selftest end with %s -----------\n",
- 		ret ? "failure" : "success");
+Nope, as I said "if we ever move to ...".
+
+> Since the
+> quirk code only uses DMI, it will need to be changed anyways for
+> firmware bundled devicetree files anyways.
+> 
+> We could consolidate the duplicated code into another function that
+> calls drm_get_panel_orientation_quirks too. The only reason it's like
+> it is is because I initially only had the call to
+> drm_get_panel_orientation_quirk once in the code.
+
+Yes if you can add a new helper for the current callers, then
+I'm fine with dropping the quirk handling from
+drm_connector_init_panel_orientation_property()
+
+Regards,
+
+Hans
