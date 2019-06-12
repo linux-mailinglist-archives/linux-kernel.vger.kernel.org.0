@@ -2,169 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FDBE448CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFCC7448B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbfFMRLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:11:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42000 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729110AbfFLWUr (ORCPT
+        id S1729246AbfFMRKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:10:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38324 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729204AbfFLWdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 18:20:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6E3A760A42; Wed, 12 Jun 2019 22:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560378045;
-        bh=TyBZfve1UAcUIxJVv/pwvffuVJYpSGzvXxE0yFWh3tQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YlGK7G627dyWti5JtzgoOdpbTyy6JowipOj+zmhU8d8NGj4nv7QHD41sx6C4vtKVt
-         0mQ2PCj+A4bBWmLPJL4cwQPzmmGUa3LKn36MgW3GimqzV6UsMJ899f84/f7OqHj6qh
-         LgBA/KL3espizB7k2z7o65run4g2kO0is2Jvlk+k=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 182C360741;
-        Wed, 12 Jun 2019 22:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560378044;
-        bh=TyBZfve1UAcUIxJVv/pwvffuVJYpSGzvXxE0yFWh3tQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SrGaRP2rWnakJm4aMI31oVfz1S1KFvJSVNvmgEM9FJcV8znU2qyyCftSl5O0vT7V7
-         aBPEf3HFFYWVakNjuu9F3cTiGzw8pfcoNkDyHn39fxE0HDkdfcLSPZdu2OHr3zOTO1
-         jT2hvH+scjfclQcwuHQ4liVONIIYVligoVrM9cRs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 182C360741
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: Re: [PATCH v6 2/5] HID: quirks: Refactor ELAN 400 and 401
- handling
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     benjamin.tissoires@redhat.com, jikos@kernel.org,
-        hdegoede@redhat.com, bjorn.andersson@linaro.org, agross@kernel.org,
-        lee.jones@linaro.org, xnox@ubuntu.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190612212604.32089-1-jeffrey.l.hugo@gmail.com>
- <20190612212721.32195-1-jeffrey.l.hugo@gmail.com>
- <20190612214636.GA40779@dtor-ws>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <84e7d83f-e133-0281-612a-94d8c4319040@codeaurora.org>
-Date:   Wed, 12 Jun 2019 16:20:42 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 12 Jun 2019 18:33:09 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5CMTs85064050;
+        Wed, 12 Jun 2019 22:31:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=SOIVm550t2juiTj4vnRQ5BaJ/KWVoCF7DZnOrZI0vno=;
+ b=lhk5qU4z4GwfZqTKR5mbk79cDQzaoJ563ewToos4HaKC4mOW42ZuJj4rIKQuuXEL39VM
+ tp4ZtszcjEpWB2WzalUsZvkf7EoQ4QcnxIQ2Qft1s6ZYSRtjhbym4uydGIVYMvhQvAHw
+ fRHwYoG8GoVcSmHkzJ6QvWx2AS/Jpc3PwZV8EssJZG84yCzFBaQYH11ADbuo9e/H9WzV
+ gBEoPFk2imAOKNWZH8Ol5/pQ2PTjvdP/f1tgifVJKX2HZGYVJYPuqPyaHLVwju+kvqVN
+ 3IYSt5eHrO4z++6UFpnrsjBUDs0k5Ev4rGF32Mx66rhmqD9/GhvxdpAvARzyeKXqVnkG 1A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t04etx9bj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 22:31:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5CMSCmx113818;
+        Wed, 12 Jun 2019 22:29:47 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2t0p9s3x41-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 22:29:47 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5CMTW3r019311;
+        Wed, 12 Jun 2019 22:29:39 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 12 Jun 2019 15:29:32 -0700
+Date:   Wed, 12 Jun 2019 18:29:34 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, hannes@cmpxchg.org,
+        jiangshanlai@gmail.com, lizefan@huawei.com, bsd@redhat.com,
+        dan.j.williams@intel.com, dave.hansen@intel.com,
+        juri.lelli@redhat.com, mhocko@kernel.org, peterz@infradead.org,
+        steven.sistare@oracle.com, tglx@linutronix.de,
+        tom.hromatka@oracle.com, vdavydov.dev@gmail.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, shakeelb@google.com
+Subject: Re: [RFC v2 0/5] cgroup-aware unbound workqueues
+Message-ID: <20190612222934.y74wxy3aju6eqs4r@ca-dmjordan1.us.oracle.com>
+References: <20190605133650.28545-1-daniel.m.jordan@oracle.com>
+ <20190605135319.GK374014@devbig004.ftw2.facebook.com>
+ <20190605153229.nvxr6j7tdzffwkgj@ca-dmjordan1.us.oracle.com>
+ <20190611195549.GL3341036@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190612214636.GA40779@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611195549.GL3341036@devbig004.ftw2.facebook.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906120157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906120157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/2019 3:46 PM, Dmitry Torokhov wrote:
-> On Wed, Jun 12, 2019 at 02:27:21PM -0700, Jeffrey Hugo wrote:
->> There needs to be coordination between hid-quirks and the elan_i2c driver
->> about which devices are handled by what drivers.  Currently, both use
->> whitelists, which results in valid devices being unhandled by default,
->> when they should not be rejected by hid-quirks.  This is quickly becoming
->> an issue.
->>
->> Since elan_i2c has a maintained whitelist of what devices it will handle,
->> which is now in a header file that hid-quirks can access, use that to
->> implement a blacklist in hid-quirks so that only the devices that need to
->> be handled by elan_i2c get rejected by hid-quirks, and everything else is
->> handled by default.
->>
->> Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
->> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
->> ---
->>   drivers/hid/hid-quirks.c | 27 ++++++++++++++++-----------
->>   1 file changed, 16 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
->> index e5ca6fe2ca57..bd81bb090222 100644
->> --- a/drivers/hid/hid-quirks.c
->> +++ b/drivers/hid/hid-quirks.c
->> @@ -16,6 +16,7 @@
->>   #include <linux/export.h>
->>   #include <linux/slab.h>
->>   #include <linux/mutex.h>
->> +#include <linux/input/elan-i2c-ids.h>
->>   
->>   #include "hid-ids.h"
->>   
->> @@ -914,6 +915,8 @@ static const struct hid_device_id hid_mouse_ignore_list[] = {
->>   
->>   bool hid_ignore(struct hid_device *hdev)
->>   {
->> +	int i;
->> +
->>   	if (hdev->quirks & HID_QUIRK_NO_IGNORE)
->>   		return false;
->>   	if (hdev->quirks & HID_QUIRK_IGNORE)
->> @@ -978,18 +981,20 @@ bool hid_ignore(struct hid_device *hdev)
->>   		break;
->>   	case USB_VENDOR_ID_ELAN:
->>   		/*
->> -		 * Many Elan devices have a product id of 0x0401 and are handled
->> -		 * by the elan_i2c input driver. But the ACPI HID ELAN0800 dev
->> -		 * is not (and cannot be) handled by that driver ->
->> -		 * Ignore all 0x0401 devs except for the ELAN0800 dev.
->> +		 * Blacklist of everything that gets handled by the elan_i2c
->> +		 * input driver.  This avoids disabling valid touchpads and
->> +		 * other ELAN devices.
->>   		 */
->> -		if (hdev->product == 0x0401 &&
->> -		    strncmp(hdev->name, "ELAN0800", 8) != 0)
->> -			return true;
->> -		/* Same with product id 0x0400 */
->> -		if (hdev->product == 0x0400 &&
->> -		    strncmp(hdev->name, "QTEC0001", 8) != 0)
->> -			return true;
->> +		if ((hdev->product == 0x0401 || hdev->product == 0x0400)) {
->> +			for (i = 0; strlen(elan_acpi_id[i].id); ++i)
->> +				if (!strncmp(hdev->name, elan_acpi_id[i].id,
->> +					     strlen(elan_acpi_id[i].id)))
->> +					return true;
->> +			for (i = 0; strlen(elan_of_match[i].name); ++i)
->> +				if (!strncmp(hdev->name, elan_of_match[i].name,
->> +					     strlen(elan_of_match[i].name)))
->> +					return true;
+On Tue, Jun 11, 2019 at 12:55:49PM -0700, Tejun Heo wrote:
+> > > CPU doesn't have a backcharging mechanism yet and depending on the use
+> > > case, we *might* need to put kthreads in different cgroups.  However,
+> > > such use cases might not be that abundant and there may be gotaches
+> > > which require them to be force-executed and back-charged (e.g. fs
+> > > compression from global reclaim).
+> > 
+> > The CPU-intensiveness of these works is one of the reasons for actually putting
+> > the workers through the migration path.  I don't know of a way to get the
+> > workers to respect the cpu controller (and even cpuset for that matter) without
+> > doing that.
 > 
-> Do we really need to blacklist the OF case here? I thought that in ACPI
-> case we have clashes as HID gets matched by elan_i2c and CID is matched
-> by i2c-hid, but I do not believe we'll run into the same situation on OF
-> systems.
+> So, I still think it'd likely be better to go back-charging route than
+> actually putting kworkers in non-root cgroups.  That's gonna be way
+> cheaper, simpler and makes avoiding inadvertent priority inversions
+> trivial.
 
-I think its the safer approach.
+Ok, I'll experiment with backcharging in the cpu controller.  Initial plan is
+to smooth out resource usage by backcharging after each chunk of work that each
+helper thread does rather than do one giant backcharge after the multithreaded
+job is over.  May turn out better performance-wise to do it less often than
+this.
 
-On an OF system, such as patch 3 in the series, the "hid-over-i2c" will 
-end up running through this (kind of the whole reason why this series 
-exists).  The vendor and product ids will still match, so we'll end up 
-going through the lists to see if the hdev->name (the compatible string) 
-will match the blacklist.  "hid-over-i2c" won't match the blacklist, but 
-if there is a more specific compatible, it might.
+I'll also experiment with getting workqueue workers to respect cpuset without
+migrating.  Seems to make sense to use the intersection of an unbound worker's
+cpumask and the cpuset's cpumask, and make some compromises if the result is
+empty.
 
-In that case, not matching OF would work, however how it could break 
-today is if both "hid-over-i2c" and "elan,ekth3000" were listed for the 
-same device, and elan_i2c was not compiled.  In that case, if we skip 
-the OF part of the black list, hid-quirks will not reject the device, 
-and you'll probably have some odd behavior instead of the obvious "the 
-device doesn't work because the correct driver isn't present" behavior.
-
-While that scenario might be far fetched since having both 
-"hid-over-i2c" and "elan,ekth3000" probably violates the OF bindings, 
-its still safer to include the OF case in the blacklist against future 
-scenarios.
-
-
+Daniel
