@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5291442254
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AB64224E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437998AbfFLKWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:22:01 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37449 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437986AbfFLKV7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:21:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 22so5934654wmg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 03:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AFoHMSEj9tVrWcEUPH5FAzB19SGdLo79LhrgprT3fB0=;
-        b=rulL1S3rudmYvANWuk91UMefuzuee5m+1kiBg/S4z4W6rohQIQJvVef0Ga8/kNwqJP
-         kQbz+GWJXFvKOlUq8wHsIOsVwPqBI6yU4JVUxy8FcXHzelpiTu0d9AnpLnqKnk6brVeP
-         0fI7UN+JLLjazssXG03F2xYy4RGi8lRQZddXYhMMtpv3pOhX4qKtG2S8uhFGlc+GLnT6
-         pvwprNWkUYEuVh6VpDMyqPFBM3B4d4BM96DCh7LGjxch5bvcQL2oQCAMKcd+OcUFDS/9
-         lerJBd9pWHPVwxh6CPJHbt3h+bxG3bzij0XlNY2uclYVY1/q+J8iyOw8VXcY4XYFT3kO
-         9meA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AFoHMSEj9tVrWcEUPH5FAzB19SGdLo79LhrgprT3fB0=;
-        b=EzH/a8hrao4Q7UPNfe+ISRCwk7tIji7/iV67DJzQy3k+lWUu7rxjn7bkO4CfR3qqp0
-         wXfxqj5uO17n9RXxCOlLPIKa0sAQqhr78r2/JctDofb1neme/INAHZOtzN5A/fpNZaNP
-         62/4UZbS3glN3LdXEZ9LSPeZ+NFAJiZD8huG0fXrMJ9P//7F2DqNbvYjzNcqwTai2cpp
-         NNA9tcVIzn9oXQ3FxvQzbuAheMsGUqg3dwIh5eB1LfGkfWVG+IJpk5hBIajmUIljHHUS
-         3vHicIEfZlS1jxF0VsDH1pHeZIlPlQmwVFAAwUl3suqcz8306yJ2Gx5bqAp3UOrUKqQj
-         xu6Q==
-X-Gm-Message-State: APjAAAUgDCpTl0f57UwnaYPQDY4EqN50ycdoBiqUfDSiip4n6R6Q7fKU
-        71xalL6jnMY50ytj1mvHfIqrPJxP7K7EfJIaiGWR3w==
-X-Google-Smtp-Source: APXvYqz6AjVcZoYHA6CdaGJpxS+2mtUzECSit9/BS1GTOdIOLeI2k4WuyT2w1sPbw2Vab/weDhNLTVi2+YFEotGwynw=
-X-Received: by 2002:a1c:ed07:: with SMTP id l7mr19968400wmh.148.1560334917880;
- Wed, 12 Jun 2019 03:21:57 -0700 (PDT)
+        id S2437030AbfFLKVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:21:52 -0400
+Received: from sauhun.de ([88.99.104.3]:58188 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2407987AbfFLKVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:21:51 -0400
+Received: from localhost (p5486CACA.dip0.t-ipconnect.de [84.134.202.202])
+        by pokefinder.org (Postfix) with ESMTPSA id C66992C54BC;
+        Wed, 12 Jun 2019 12:21:49 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 12:21:49 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Bitan Biswas <bbiswas@nvidia.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+Subject: Re: [PATCH V5 4/7] i2c: tegra: add spinlock definition comment
+Message-ID: <20190612102149.gebnmuwbrrziqina@ninjato>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-4-git-send-email-bbiswas@nvidia.com>
 MIME-Version: 1.0
-References: <20190612100536.22368-1-yuehaibing@huawei.com>
-In-Reply-To: <20190612100536.22368-1-yuehaibing@huawei.com>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Wed, 12 Jun 2019 12:21:47 +0200
-Message-ID: <CAMO6nayiXiOkHSxgZU+oyPdSo5ugcV6XaCdy7P1Riutv+c7XRQ@mail.gmail.com>
-Subject: Re: [PATCH -next] media: meson: vdec: Add missing kthread.h
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        gregkh@linuxfoundation.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-media@lists.freedesktop.org,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="syrdxohe2neenpi3"
+Content-Disposition: inline
+In-Reply-To: <1560250274-18499-4-git-send-email-bbiswas@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 12:05 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fix building error:
->
-> drivers/staging/media/meson/vdec/vdec.c: In function vdec_recycle_thread:
-> drivers/staging/media/meson/vdec/vdec.c:59:10: error: implicit declaration
->  of function kthread_should_stop;
->  did you mean thread_saved_sp? [-Werror=implicit-function-declaration]
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 3e7f51bd9607 ("media: meson: add v4l2 m2m video decoder driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/staging/media/meson/vdec/vdec.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/staging/media/meson/vdec/vdec.c b/drivers/staging/media/meson/vdec/vdec.c
-> index 4e4f9d6..0a1a04f 100644
-> --- a/drivers/staging/media/meson/vdec/vdec.c
-> +++ b/drivers/staging/media/meson/vdec/vdec.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/slab.h>
->  #include <linux/interrupt.h>
-> +#include <linux/kthread.h>
->  #include <media/v4l2-ioctl.h>
->  #include <media/v4l2-event.h>
->  #include <media/v4l2-ctrls.h>
-> --
-> 2.7.4
->
->
 
-Thanks for the patch, sorry that this one slipped through.
+--syrdxohe2neenpi3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Maxime Jourdan <mjourdan@baylibre.com>
+On Tue, Jun 11, 2019 at 03:51:11AM -0700, Bitan Biswas wrote:
+> Fix checkpatch.pl CHECK as follows:
+> CHECK: spinlock_t definition without comment
+> +       spinlock_t xfer_lock;
+>=20
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+
+Applied to for-next, thanks!
+
+
+--syrdxohe2neenpi3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0A0j0ACgkQFA3kzBSg
+KbYnUg/8C6Ikq70WXseSBxacKWo08CyoMd+yd+W09dKxaYPnxLrfazUxkPYTTE7D
+4VLEzeBcMDujgklma9uKQQOqFdjf8v+pDUoRaQYiOCQiNY+WWqrClAD0oj404gfN
+z8/JgE6yM6Bc9WAYMBc0Dr8cTk0kmjb6BqHLw/t/89vb6C8egqDgNIzMJZUA8j+o
+34GgAI14Nixh2b0beKnxIZmvD8XgaThurpwhyEY02klL+wuaDz5cJGR2Cg/7JBQL
+VR8YdfSg1VcznYWhfQNj5rxSWdkCrSGhcli34d6ySj7/K1xEtodp6gr4N1fSSuED
+gCp6mNNSre2UmiCMyW+8DNo4Hf4tao80MJQXzulXNs5iYWfy+aVgJ68LnJeiLElY
+tGhz6/zvXbkFMWwaHkrx2L9Y3+z/ANF8dSAO215IjibnfkefuCvPBZ5lmoqlI5R4
+vUJERgxd7HAFQgVOzsj3AUnm5I1L9n0mb4xjwVYZxpHCdRQutawdZV/hDMJR01vu
+ryYDRisv+6vfBQuxeJ8T53aV9ABOwYf9cuEn++bKkFhE93zllGk1zmPRYywNlZUd
+7gqeSkGMmrEU3ChN/ajnaKigRJsFjYBl8r0kE/ApYC3PMptnQ7oU1sGIMqmVXI+B
+hj0QunKsplmbpx9PikzCMGWzPRAWMZkmfDhPiSfBVODZihuIL6o=
+=KqxX
+-----END PGP SIGNATURE-----
+
+--syrdxohe2neenpi3--
