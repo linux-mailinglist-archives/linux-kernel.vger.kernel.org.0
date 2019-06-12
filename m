@@ -2,136 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C15AB447EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E24FE447E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389764AbfFMRC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:02:56 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33351 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729490AbfFLXD3 (ORCPT
+        id S1730137AbfFMRCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:02:52 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55565 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729497AbfFLXEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 19:03:29 -0400
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 341A143A474;
-        Thu, 13 Jun 2019 09:03:22 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hbCG8-0003d7-Ew; Thu, 13 Jun 2019 09:02:24 +1000
-Date:   Thu, 13 Jun 2019 09:02:24 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
- merged)
-Message-ID: <20190612230224.GJ14308@dread.disaster.area>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel>
+        Wed, 12 Jun 2019 19:04:16 -0400
+Received: by mail-it1-f195.google.com with SMTP id i21so13659386ita.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 16:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xXTsl9abuCJP4gMkG5zbGPKcEw/zSKuHmG+emo/prKw=;
+        b=Y2OL6auF7oqK2mhZntML81cQMd7aEghXbMGNkTISj+me2jhT/RmN+um0VcQm8fKypg
+         mqwU7R9MrBBwRFqV51j9wq3FQgaxdm/mYHPDZZwE0jf/EDum3Po5fuGXb0vFulxYkFZL
+         nE3dleL5HcgGdE5jWPqNkTye/TUOhHNe7uwKU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xXTsl9abuCJP4gMkG5zbGPKcEw/zSKuHmG+emo/prKw=;
+        b=O6HHjIDzKkF0H5AA0JC3uRxVDsKg/I38KJA/WBqu2b07GtI4iruZDDQ8BW8WmwXqlR
+         4shdyeBV2jNW3YVCi9k/PDUOpsU8ygZC0btVrBf/ZjF9YjKcC6O6zL+9oFS/nVs2cPER
+         4odPdzjU90inc0Lbf91J41uFedmE721b0hcg9+sGWI4VQYPZgBd5WzMQdGW8v2RVfAtI
+         lLG2LtMx3yM/eeifr6BG1iT5ryjZcMk7xv8kbLmox7b7aHWgVkGYImUfYdQuRmbQpIEW
+         aT1oc5/Sr+P+/h3eSYrodNyAEB7SCH88AnMlUv2c4DwXOVnsaZXfQdd4HbmCfbf8OIN4
+         Sn7Q==
+X-Gm-Message-State: APjAAAWPPs/e3Je0qBmBmR8Ojc8rjCRUOxKXmDzncrtiZNs+STwzdPQD
+        R+hz0deFb33NqYCBLpVlF8r0ZQ==
+X-Google-Smtp-Source: APXvYqzAChvmhnqCnuAGx0CRA159GDYS6DtCqUXh1HjwHgCtLP+8HSINmvJsYj+qqrL9kOEZnRfmag==
+X-Received: by 2002:a02:ccdc:: with SMTP id k28mr8409969jaq.41.1560380655147;
+        Wed, 12 Jun 2019 16:04:15 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id r185sm558413itd.42.2019.06.12.16.04.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 16:04:14 -0700 (PDT)
+Subject: Re: [PATCH 1/2] media: v4l2-core: Shifting signed 32-bit value by 31
+ bits error
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com,
+        niklas.soderlund+renesas@ragnatech.se, ezequiel@collabora.com,
+        paul.kocialkowski@bootlin.com
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <cover.1559764506.git.skhan@linuxfoundation.org>
+ <bac3ee3b10de409b6cdf7286e0e84737e63662ee.1559764506.git.skhan@linuxfoundation.org>
+ <8cc03625-f41d-6009-d50c-823e5f498dca@infradead.org>
+ <7819cae4-58e5-cbe1-ac9d-bca00d390066@xs4all.nl>
+ <d5aea86a-b556-aae4-0b97-9add8878f99f@linuxfoundation.org>
+ <6b4654b1-7cd5-8fea-8c08-472ade8f3ebb@xs4all.nl>
+ <9f925e72-4d55-0cfc-ace6-dfe69bbc6903@linuxfoundation.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <0dbeb68c-592c-1665-35fb-6b1a3aa98160@linuxfoundation.org>
+Date:   Wed, 12 Jun 2019 17:04:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612162144.GA7619@kmo-pixel>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=tccdw4E4cXR0RJmQ1BEA:9 a=0qVWwiFle0hDQdq2:21
-        a=AnpUfA7Lj1-y_lnq:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <9f925e72-4d55-0cfc-ace6-dfe69bbc6903@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 12:21:44PM -0400, Kent Overstreet wrote:
-> On Tue, Jun 11, 2019 at 02:33:36PM +1000, Dave Chinner wrote:
-> > I just recently said this with reference to the range lock stuff I'm
-> > working on in the background:
-> > 
-> > 	FWIW, it's to avoid problems with stupid userspace stuff
-> > 	that nobody really should be doing that I want range locks
-> > 	for the XFS inode locks.  If userspace overlaps the ranges
-> > 	and deadlocks in that case, they they get to keep all the
-> > 	broken bits because, IMO, they are doing something
-> > 	monumentally stupid. I'd probably be making it return
-> > 	EDEADLOCK back out to userspace in the case rather than
-> > 	deadlocking but, fundamentally, I think it's broken
-> > 	behaviour that we should be rejecting with an error rather
-> > 	than adding complexity trying to handle it.
-> > 
-> > So I think this recusive locking across a page fault case should
-> > just fail, not add yet more complexity to try to handle a rare
-> > corner case that exists more in theory than in reality. i.e put the
-> > lock context in the current task, then if the page fault requires a
-> > conflicting lock context to be taken, we terminate the page fault,
-> > back out of the IO and return EDEADLOCK out to userspace. This works
-> > for all types of lock contexts - only the filesystem itself needs to
-> > know what the lock context pointer contains....
+On 6/11/19 4:27 PM, Shuah Khan wrote:
+> On 6/11/19 2:50 PM, Hans Verkuil wrote:
+>> On 6/11/19 9:42 PM, Shuah Khan wrote:
+>>> On 6/6/19 12:33 AM, Hans Verkuil wrote:
+>>>> On 6/6/19 5:22 AM, Randy Dunlap wrote:
+>>>>> On 6/5/19 2:53 PM, Shuah Khan wrote:
+>>>>>> Fix the following cppcheck error:
+>>>>>>
+>>>>>> Checking drivers/media/v4l2-core/v4l2-ioctl.c ...
+>>>>>> [drivers/media/v4l2-core/v4l2-ioctl.c:1370]: (error) Shifting 
+>>>>>> signed 32-bit value by 31 bits is undefined behaviour
+>>>>>>
+>>>>>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>>>>>> ---
+>>>>>>    drivers/media/v4l2-core/v4l2-ioctl.c | 2 +-
+>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c 
+>>>>>> b/drivers/media/v4l2-core/v4l2-ioctl.c
+>>>>>> index 6859bdac86fe..333e387bafeb 100644
+>>>>>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>>>>>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>>>>>> @@ -1364,7 +1364,7 @@ static void v4l_fill_fmtdesc(struct 
+>>>>>> v4l2_fmtdesc *fmt)
+>>>>>>                        (char)((fmt->pixelformat >> 8) & 0x7f),
+>>>>>>                        (char)((fmt->pixelformat >> 16) & 0x7f),
+>>>>>>                        (char)((fmt->pixelformat >> 24) & 0x7f),
+>>>>>> -                    (fmt->pixelformat & (1 << 31)) ? "-BE" : "");
+>>>>>> +                    (fmt->pixelformat & BIT(31)) ? "-BE" : "");
+>>>>>>                break;
+>>>>>>            }
+>>>>>>        }
+>>>>>>
+>>>>>
+>>>>> If this builds, I guess #define BIT(x) got pulled in indirectly
+>>>>> since bits.h nor bitops.h is currently #included in that source file.
+>>>>>
+>>>
+>>> It does build. You are right that I should have included bitops.h
+>>>
+>>>>> Documentation/process/submit-checklist.rst rule #1 says:
+>>>>> 1) If you use a facility then #include the file that defines/declares
+>>>>>      that facility.  Don't depend on other header files pulling in 
+>>>>> ones
+>>>>>      that you use.
+>>>>>
+>>>>> Please add #include <linux/bits or bitops.h>
+>>>>>
+>>>>
+>>>> I'm not sure about this patch. '1 << 31' is used all over in the 
+>>>> kernel,
+>>>> including in public headers (e.g. media.h, videodev2.h).
+>>>>
+>>>> It seems arbitrary to change it only here, but not anywhere else.
+>>>>
+>>>
+>>> Right. We have several places in the kernel that do that.
+>>>
+>>>> In this particular example for the fourcc handling I would prefer to 
+>>>> just
+>>>> use '1U << 31', both in v4l2-ioctl.c and videodev2.h.
+>>>>
+>>>
+>>> If you would like to take the patch, I can send v2 fixing it using
+>>> 1U << 31 - This is simpler since it doesn't nee additional includes.
+>>
+>> I would like to have this cleaned up in the public media APIs. Those 
+>> can be
+>> used by other compilers as well and it makes sense to me not to have
+>> undefined behavior in those headers.
+>>
 > 
-> Ok, I'm totally on board with returning EDEADLOCK.
+> Great. That is a good point. I will start looking at the public media
+> APIs.
 > 
-> Question: Would we be ok with returning EDEADLOCK for any IO where the buffer is
-> in the same address space as the file being read/written to, even if the buffer
-> and the IO don't technically overlap?
+>>>
+>>>> A separate patch doing the same for MEDIA_ENT_ID_FLAG_NEXT in 
+>>>> media.h would
+>>>> probably be a good idea either: that way the public API at least 
+>>>> will do
+>>>> the right thing.
+>>>>
+> 
+> Sounds good.
+> 
+>>>
+>>> I should have explained it better. I wanted to start with one or two
+>>> places first to see if it is worth our time to fix these:
+>>>
+>>> The full kernel cppcheck log for "Shifting signed 32-bit value by 31
+>>> bits is undefined behaviour" can be found at:
+>>>
+>>> https://drive.google.com/file/d/19Xu7UqBGJ7BpzxEp92ZQYb6F8UPrk3z3/view
+>>
+>> I don't think it makes sense to fix this for drivers. If gcc would do 
+>> this
+>> wrong, we'd have noticed it ages ago.
+> 
 
-I'd say that depends on the lock granularity. For a range lock,
-we'd be able to do the IO for non-overlapping ranges. For a normal
-mutex or rwsem, then we risk deadlock if the page fault triggers on
-the same address space host as we already have locked for IO. That's
-the case we currently handle with the second IO lock in XFS, ext4,
-btrfs, etc (XFS_MMAPLOCK_* in XFS).
+Did some research into this. We are fine with gcc, however looks like
+clang had the problem which has been fixed very recently in late 2018
+in 6.0 release. This will be a problem even for kernel/drivers if older
+clang is used to build it.
 
-One of the reasons I'm looking at range locks for XFS is to get rid
-of the need for this second mmap lock, as there is no reason for it
-existing if we can lock ranges and EDEADLOCK inside page faults and
-return errors.
+I am sending the two header fixes (media.h, and videodev2.h) to start
+with.
 
-> This would simplify things a lot and eliminate a really nasty corner case - page
-> faults trigger readahead. Even if the buffer and the direct IO don't overlap,
-> readahead can pull in pages that do overlap with the dio.
-
-Page cache readahead needs to be moved under the filesystem IO
-locks. There was a recent thread about how readahead can race with
-hole punching and other fallocate() operations because page cache
-readahead bypasses the filesystem IO locks used to serialise page
-cache invalidation.
-
-e.g. Readahead can be directed by userspace via fadvise, so we now
-have file->f_op->fadvise() so that filesystems can lock the inode
-before calling generic_fadvise() such that page cache instantiation
-and readahead dispatch can be serialised against page cache
-invalidation. I have a patch for XFS sitting around somewhere that
-implements the ->fadvise method.
-
-I think there are some other patches floating around to address the
-other readahead mechanisms to only be done under filesytem IO locks,
-but I haven't had time to dig into it any further. Readahead from
-page faults most definitely needs to be under the MMAPLOCK at
-least so it serialises against fallocate()...
-
-> And on getting EDEADLOCK we could fall back to buffered IO, so
-> userspace would never know....
-
-Yup, that's a choice that individual filesystems can make.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+thanks,
+-- Shuah
