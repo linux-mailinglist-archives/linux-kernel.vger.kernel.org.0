@@ -2,98 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C408A42265
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A82DC42269
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408833AbfFLKXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:23:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44202 "EHLO mx1.redhat.com"
+        id S2391655AbfFLKZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:25:01 -0400
+Received: from sauhun.de ([88.99.104.3]:58236 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407254AbfFLKXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:23:04 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21158C0587F5;
-        Wed, 12 Jun 2019 10:23:04 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-159.ams2.redhat.com [10.36.116.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C4D3560CCC;
-        Wed, 12 Jun 2019 10:22:59 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: [PATCH v2 4/4] s390/crypto: sha: Use -ENODEV instead of -EOPNOTSUPP
-Date:   Wed, 12 Jun 2019 12:22:48 +0200
-Message-Id: <20190612102248.18903-5-david@redhat.com>
-In-Reply-To: <20190612102248.18903-1-david@redhat.com>
-References: <20190612102248.18903-1-david@redhat.com>
+        id S2390609AbfFLKZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:25:00 -0400
+Received: from localhost (p5486CACA.dip0.t-ipconnect.de [84.134.202.202])
+        by pokefinder.org (Postfix) with ESMTPSA id A641C2C54BC;
+        Wed, 12 Jun 2019 12:24:58 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 12:24:58 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Bitan Biswas <bbiswas@nvidia.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
+Message-ID: <20190612102458.liieiohnprfyyvs6@ninjato>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Jun 2019 10:23:04 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t3rkxinhkpc76bjs"
+Content-Disposition: inline
+In-Reply-To: <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's use the error value that is typically used if HW support is not
-available when trying to load a module - this is also what systemd's
-systemd-modules-load.service expects.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/s390/crypto/sha1_s390.c   | 2 +-
- arch/s390/crypto/sha256_s390.c | 2 +-
- arch/s390/crypto/sha512_s390.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+--t3rkxinhkpc76bjs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/s390/crypto/sha1_s390.c b/arch/s390/crypto/sha1_s390.c
-index 009572e8276d..7c15542d3685 100644
---- a/arch/s390/crypto/sha1_s390.c
-+++ b/arch/s390/crypto/sha1_s390.c
-@@ -86,7 +86,7 @@ static struct shash_alg alg = {
- static int __init sha1_s390_init(void)
- {
- 	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_1))
--		return -EOPNOTSUPP;
-+		return -ENODEV;
- 	return crypto_register_shash(&alg);
- }
- 
-diff --git a/arch/s390/crypto/sha256_s390.c b/arch/s390/crypto/sha256_s390.c
-index 62833a1d8724..af7505148f80 100644
---- a/arch/s390/crypto/sha256_s390.c
-+++ b/arch/s390/crypto/sha256_s390.c
-@@ -117,7 +117,7 @@ static int __init sha256_s390_init(void)
- 	int ret;
- 
- 	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_256))
--		return -EOPNOTSUPP;
-+		return -ENODEV;
- 	ret = crypto_register_shash(&sha256_alg);
- 	if (ret < 0)
- 		goto out;
-diff --git a/arch/s390/crypto/sha512_s390.c b/arch/s390/crypto/sha512_s390.c
-index be589c340d15..ad29db085a18 100644
---- a/arch/s390/crypto/sha512_s390.c
-+++ b/arch/s390/crypto/sha512_s390.c
-@@ -127,7 +127,7 @@ static int __init init(void)
- 	int ret;
- 
- 	if (!cpacf_query_func(CPACF_KIMD, CPACF_KIMD_SHA_512))
--		return -EOPNOTSUPP;
-+		return -ENODEV;
- 	if ((ret = crypto_register_shash(&sha512_alg)) < 0)
- 		goto out;
- 	if ((ret = crypto_register_shash(&sha384_alg)) < 0)
--- 
-2.21.0
+On Tue, Jun 11, 2019 at 03:51:13AM -0700, Bitan Biswas wrote:
+> Fix expression for residual bytes(less than word) transfer
+> in I2C PIO mode RX/TX.
+>=20
+> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
 
+I applied patches 1-5 to my for-next tree now. No need to resend them
+anymore, you can focus on the remaining patches now.
+
+Question: The nominal maintainer for this driver is
+
+        Laxman Dewangan <ldewangan@nvidia.com> (supporter:TEGRA I2C DRIVER)
+
+I wonder if he is still around and interested?
+
+That aside, thanks a lot Dmitry for the review of this series!
+
+
+--t3rkxinhkpc76bjs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0A0vkACgkQFA3kzBSg
+KbZ9mw//T4O3hoJ/kzky0Dkl2XSb0PlOZ2Bw61yaBOQYAQgHggU7wP0OfFki5Gfq
+4yxLGVDoKxGLNBOG6cdtkTFMMQKauZxRzoEkBjfWXYNfV37LDWoBIuS7HEPAAcgv
+2Kix3fbeOaEcozQz+czeVq5MKC9C/oniYGOsLNWYLJn0PIFDmqbj9Q/cQh/1prrX
+ACkMyvdrsHdm7kZLDAFY+6llztTf0CK7d1isXfnCTmlym2rj5aaU+jXfRMjdYOX9
+VJlJg4HSs85Tw9SpRCjKbgGO2zzP8YaNhhoNuVycFuj43M2TPV+4fqRKDFnyKi8y
+4LMotA1S2ikbptkvEhtdZ+sggAx65cwu6O4Uc+C1xnux6BWQamjnhgj7kPyauzzC
+3zs6bNFedSjgGRHR3u4eH6sStcM38/p+CgrGkhBq0VOA4p5aQr+xv5OfiTS5kh1z
+P9zzOI+VT0rCqRBdkZTOhSrbkr6/4GdvwvXsqHVlihrEOG0C+RvOih765Tm27DVQ
+Ey0ynpMFdVdb9rlJrdDjHMdlZVdy/JyrPqcpw1HZfhN2THDRzyBBr7itV0jabcWY
+XmD88PnRbE/VUk4eqxeC2FVumEYMB06k+9dQ7HwJyMumyCFIBz6rdHmWDnZxPvt0
+CypA65YWeTbZ6ptOJls/EsbiMqhrMdnUUmifAoof/KAyrDLE4MY=
+=Mw1x
+-----END PGP SIGNATURE-----
+
+--t3rkxinhkpc76bjs--
