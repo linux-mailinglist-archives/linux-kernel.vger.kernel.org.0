@@ -2,50 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B33842333
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F0CC422C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438133AbfFLK7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:59:54 -0400
-Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:48004 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2438119AbfFLK7w (ORCPT
+        id S2438062AbfFLKkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:40:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36565 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438050AbfFLKkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:59:52 -0400
-X-Greylist: delayed 1164 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Jun 2019 06:59:51 EDT
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1hb0fz-0004eM-FG; Wed, 12 Jun 2019 12:40:19 +0200
-Date:   Wed, 12 Jun 2019 12:40:19 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] xfrm: fix missing break on AF_INET6 case
-Message-ID: <20190612104019.2f6x72wa2qdxw5p3@breakpoint.cc>
-References: <20190612103624.27246-1-colin.king@canonical.com>
+        Wed, 12 Jun 2019 06:40:32 -0400
+Received: by mail-wm1-f65.google.com with SMTP id u8so5998220wmm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 03:40:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=coVyfpvXPJCAOdjEJog8oxLYcOdt2ks8N3/iSzlLkjo=;
+        b=Lbhwv+aIOee2spcFvpEy4ofJt2rBGedfEgHdUI/3x94K6l4R8XwXBgDTJZIrSKXsjo
+         MGISUv2XzcBhluZzszS23djrQ3B366R5OGsgYJA4uC+gb5adst+byP9NhUIYIVuAw58i
+         pYIreSivj7Uz91D4SDgCq1HV8T34GazheXJEVBAojmex0JvV9Xs1BXq+DdIXvlK76BKG
+         b5zMFZ4MH1+Wemgo4UkA7XTvqa6uxiKKvreyQqCwznf2qZopXPc45SA31hMUNF2r2x/H
+         7Yc0keo3M2mT9O8y3ROw/9TE/V6HKv+fS6J81aBfBp2rxUuVPcXfQVVBYY+ij6yUksFn
+         xDeA==
+X-Gm-Message-State: APjAAAUh0+7CRNWKcT6DfXMUDqTVvKlh2HHcffxcQXktUxdkqlMLdK4N
+        eoDouTda1qn6oOxSHkzW595chA==
+X-Google-Smtp-Source: APXvYqytNtBYrV48yNCxQWNZ1Wwwzi+FBFSmmQ0IkV3kL4qSlmB0hFbGM23kQv/y4nnaLlaz2k4oIQ==
+X-Received: by 2002:a7b:c144:: with SMTP id z4mr22622706wmi.50.1560336030451;
+        Wed, 12 Jun 2019 03:40:30 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id d18sm18854753wrn.26.2019.06.12.03.40.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 03:40:29 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Maya Nakamura <m.maya.nakamura@gmail.com>
+Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikelley@microsoft.com,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org
+Subject: Re: [PATCH v2 4/5] HID: hv: Remove dependencies on PAGE_SIZE for ring buffer
+In-Reply-To: <0e9385a241dc7c26445eb7e104d08e2e2c5d30de.1559807514.git.m.maya.nakamura@gmail.com>
+References: <cover.1559807514.git.m.maya.nakamura@gmail.com> <0e9385a241dc7c26445eb7e104d08e2e2c5d30de.1559807514.git.m.maya.nakamura@gmail.com>
+Date:   Wed, 12 Jun 2019 12:40:29 +0200
+Message-ID: <87h88vdr36.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612103624.27246-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> It appears that there is a missing break statement for the AF_INET6 case
-> that falls through to the default WARN_ONCE case. I don't think that is
-> intentional. Fix this by adding in the missing break.
+Maya Nakamura <m.maya.nakamura@gmail.com> writes:
 
-Yes, I sent same patch a few minutes ago:
+> Define the ring buffer size as a constant expression because it should
+> not depend on the guest page size.
+>
+> Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+> ---
+>  drivers/hid/hid-hyperv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
+> index d3311d714d35..e8b154fa38e2 100644
+> --- a/drivers/hid/hid-hyperv.c
+> +++ b/drivers/hid/hid-hyperv.c
+> @@ -112,8 +112,8 @@ struct synthhid_input_report {
+>  
+>  #pragma pack(pop)
+>  
+> -#define INPUTVSC_SEND_RING_BUFFER_SIZE		(10*PAGE_SIZE)
+> -#define INPUTVSC_RECV_RING_BUFFER_SIZE		(10*PAGE_SIZE)
+> +#define INPUTVSC_SEND_RING_BUFFER_SIZE		(40 * 1024)
+> +#define INPUTVSC_RECV_RING_BUFFER_SIZE		(40 * 1024)
+>  
 
-https://patchwork.ozlabs.org/patch/1114377/
+My understanding is that this size is pretty arbitrary and as I see you
+use it for hyperv-keyboard.c as well. It may make sense to have a
+define, something like HYPERV_STD_RINGBUFFER_SIZE.
 
-I don't mind which one gets applied.
+>  
+>  enum pipe_prot_msg_type {
+
+-- 
+Vitaly
