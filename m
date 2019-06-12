@@ -2,115 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43FCD42B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A5242B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440386AbfFLP7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:59:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58036 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436987AbfFLP7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:59:36 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B96E4223882;
-        Wed, 12 Jun 2019 15:59:17 +0000 (UTC)
-Received: from [10.36.116.67] (ovpn-116-67.ams2.redhat.com [10.36.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7B463183FD;
-        Wed, 12 Jun 2019 15:59:01 +0000 (UTC)
-Subject: Re: [PATCH v17 14/15] vfio/type1, arm64: untag user pointers in
- vaddr_get_pfn
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-References: <cover.1560339705.git.andreyknvl@google.com>
- <e86d8cd6bd0ade9cce6304594bcaf0c8e7f788b0.1560339705.git.andreyknvl@google.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <ac482b04-94b1-ab29-97cc-3232fc44b3d1@redhat.com>
-Date:   Wed, 12 Jun 2019 17:58:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <e86d8cd6bd0ade9cce6304594bcaf0c8e7f788b0.1560339705.git.andreyknvl@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 12 Jun 2019 15:59:28 +0000 (UTC)
+        id S2440355AbfFLP7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:59:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44130 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438038AbfFLP7c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:59:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=YA2MYBNBMatcq9Mz5KnNb8V+dC8ifZ7eYiCOOwL6tbo=; b=lz9BXByn6KgX
+        Eutanqm/JEhXdOmdzvZvsoooBh6ZUcu94QNmg8Ibi05s02nTg3zGQvw4lUNqzgfV5wnBoIaJMkYkY
+        /DbaHmcGaONCxNJH4e21H6w6/bV0hroU40xOE6biJPyPjx6FqY4lwQqkBk1hTvG6F4uXkrGyWFvfm
+        zsi70=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hb5ep-000366-NJ; Wed, 12 Jun 2019 15:59:27 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 04CC7440046; Wed, 12 Jun 2019 16:59:26 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        devicetree@vger.kernel.org, jsarha@ti.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        misael.lopez@ti.com, robh+dt@kernel.org
+Subject: Applied "ASoC: ti: davinci-mcasp: Support for auxclk-fs-ratio" to the asoc tree
+In-Reply-To: <20190611122941.10708-3-peter.ujfalusi@ti.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190612155927.04CC7440046@finisterre.sirena.org.uk>
+Date:   Wed, 12 Jun 2019 16:59:26 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
+The patch
 
-On 6/12/19 1:43 PM, Andrey Konovalov wrote:
-> This patch is a part of a series that extends arm64 kernel ABI to allow to
-> pass tagged user pointers (with the top byte set to something else other
-> than 0x00) as syscall arguments.
-> 
-> vaddr_get_pfn() uses provided user pointers for vma lookups, which can
-> only by done with untagged pointers.
-> 
-> Untag user pointers in this function.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+   ASoC: ti: davinci-mcasp: Support for auxclk-fs-ratio
 
-Thanks
+has been applied to the asoc tree at
 
-Eric
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 3ddc375e7063..528e39a1c2dd 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -384,6 +384,8 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->  
->  	down_read(&mm->mmap_sem);
->  
-> +	vaddr = untagged_addr(vaddr);
-> +
->  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
->  
->  	if (vma && vma->vm_flags & VM_PFNMAP) {
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 764958f2b5239cbf174e70cad4c3f19a8c1081ba Mon Sep 17 00:00:00 2001
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Date: Tue, 11 Jun 2019 15:29:41 +0300
+Subject: [PATCH] ASoC: ti: davinci-mcasp: Support for auxclk-fs-ratio
+
+When McASP is bus master and it's AUXCLK clock is not static, but it is
+a multiple of the frame sync the constraint rules should take it account
+when validating possible stream formats.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/ti/davinci-mcasp.c | 52 ++++++++++++++++++++++++++++++------
+ 1 file changed, 44 insertions(+), 8 deletions(-)
+
+diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
+index 9fbc759fdefe..a8378d223a9e 100644
+--- a/sound/soc/ti/davinci-mcasp.c
++++ b/sound/soc/ti/davinci-mcasp.c
+@@ -100,6 +100,7 @@ struct davinci_mcasp {
+ 
+ 	int	sysclk_freq;
+ 	bool	bclk_master;
++	u32	auxclk_fs_ratio;
+ 
+ 	unsigned long pdir; /* Pin direction bitfield */
+ 
+@@ -1064,13 +1065,13 @@ static int mcasp_dit_hw_param(struct davinci_mcasp *mcasp,
+ }
+ 
+ static int davinci_mcasp_calc_clk_div(struct davinci_mcasp *mcasp,
++				      unsigned int sysclk_freq,
+ 				      unsigned int bclk_freq, bool set)
+ {
+-	int error_ppm;
+-	unsigned int sysclk_freq = mcasp->sysclk_freq;
+ 	u32 reg = mcasp_get_reg(mcasp, DAVINCI_MCASP_AHCLKXCTL_REG);
+ 	int div = sysclk_freq / bclk_freq;
+ 	int rem = sysclk_freq % bclk_freq;
++	int error_ppm;
+ 	int aux_div = 1;
+ 
+ 	if (div > (ACLKXDIV_MASK + 1)) {
+@@ -1175,7 +1176,8 @@ static int davinci_mcasp_hw_params(struct snd_pcm_substream *substream,
+ 		if (mcasp->slot_width)
+ 			sbits = mcasp->slot_width;
+ 
+-		davinci_mcasp_calc_clk_div(mcasp, rate * sbits * slots, true);
++		davinci_mcasp_calc_clk_div(mcasp, mcasp->sysclk_freq,
++					   rate * sbits * slots, true);
+ 	}
+ 
+ 	ret = mcasp_common_hw_param(mcasp, substream->stream,
+@@ -1282,12 +1284,19 @@ static int davinci_mcasp_hw_rule_rate(struct snd_pcm_hw_params *params,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(davinci_mcasp_dai_rates); i++) {
+ 		if (snd_interval_test(ri, davinci_mcasp_dai_rates[i])) {
+-			uint bclk_freq = sbits*slots*
+-				davinci_mcasp_dai_rates[i];
++			uint bclk_freq = sbits * slots *
++					 davinci_mcasp_dai_rates[i];
++			unsigned int sysclk_freq;
+ 			int ppm;
+ 
+-			ppm = davinci_mcasp_calc_clk_div(rd->mcasp, bclk_freq,
+-							 false);
++			if (rd->mcasp->auxclk_fs_ratio)
++				sysclk_freq =  davinci_mcasp_dai_rates[i] *
++					       rd->mcasp->auxclk_fs_ratio;
++			else
++				sysclk_freq = rd->mcasp->sysclk_freq;
++
++			ppm = davinci_mcasp_calc_clk_div(rd->mcasp, sysclk_freq,
++							 bclk_freq, false);
+ 			if (abs(ppm) < DAVINCI_MAX_RATE_ERROR_PPM) {
+ 				if (range.empty) {
+ 					range.min = davinci_mcasp_dai_rates[i];
+@@ -1321,12 +1330,19 @@ static int davinci_mcasp_hw_rule_format(struct snd_pcm_hw_params *params,
+ 	for (i = 0; i <= SNDRV_PCM_FORMAT_LAST; i++) {
+ 		if (snd_mask_test(fmt, i)) {
+ 			uint sbits = snd_pcm_format_width(i);
++			unsigned int sysclk_freq;
+ 			int ppm;
+ 
++			if (rd->mcasp->auxclk_fs_ratio)
++				sysclk_freq =  rate *
++					       rd->mcasp->auxclk_fs_ratio;
++			else
++				sysclk_freq = rd->mcasp->sysclk_freq;
++
+ 			if (rd->mcasp->slot_width)
+ 				sbits = rd->mcasp->slot_width;
+ 
+-			ppm = davinci_mcasp_calc_clk_div(rd->mcasp,
++			ppm = davinci_mcasp_calc_clk_div(rd->mcasp, sysclk_freq,
+ 							 sbits * slots * rate,
+ 							 false);
+ 			if (abs(ppm) < DAVINCI_MAX_RATE_ERROR_PPM) {
+@@ -1991,6 +2007,22 @@ static inline int davinci_mcasp_init_gpiochip(struct davinci_mcasp *mcasp)
+ }
+ #endif /* CONFIG_GPIOLIB */
+ 
++static int davinci_mcasp_get_dt_params(struct davinci_mcasp *mcasp)
++{
++	struct device_node *np = mcasp->dev->of_node;
++	int ret;
++	u32 val;
++
++	if (!np)
++		return 0;
++
++	ret = of_property_read_u32(np, "auxclk-fs-ratio", &val);
++	if (ret >= 0)
++		mcasp->auxclk_fs_ratio = val;
++
++	return 0;
++}
++
+ static int davinci_mcasp_probe(struct platform_device *pdev)
+ {
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+@@ -2224,6 +2256,10 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err;
+ 
++	ret = davinci_mcasp_get_dt_params(mcasp);
++	if (ret)
++		return -EINVAL;
++
+ 	ret = devm_snd_soc_register_component(&pdev->dev,
+ 					&davinci_mcasp_component,
+ 					&davinci_mcasp_dai[pdata->op_mode], 1);
+-- 
+2.20.1
+
