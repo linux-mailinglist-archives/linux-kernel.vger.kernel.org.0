@@ -2,113 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA3741BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 07:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8966041BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 07:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfFLFwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 01:52:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:64620 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbfFLFwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 01:52:18 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45NwxW2rMFz9v0lc;
-        Wed, 12 Jun 2019 07:52:15 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=RBdMUJ9B; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id dBgxHB_AY2Yx; Wed, 12 Jun 2019 07:52:15 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45NwxW1jKtz9v0lL;
-        Wed, 12 Jun 2019 07:52:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560318735; bh=ohAp/YSXJJ0PS41E8peTUSFPOADBTv6CNhYclehwS+E=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RBdMUJ9BIMIA2W6herx08iJdndrXtUWfahMDw0rDznctgcLh8nTtHlc62fud6SoT8
-         iHNTY4o8nkhRbj1Ihknh4gnAqKO3IydSH/cBO22/OEN+erLaCu5smSuTLuwhUbO7Hy
-         ZLV0v/g1glyhL9n8M6tbWaEGPr5dt1ZnvYe8Augc=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1D6468B802;
-        Wed, 12 Jun 2019 07:52:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id BBvVVHRFsBJn; Wed, 12 Jun 2019 07:52:16 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.230.107])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EB1C68B75A;
-        Wed, 12 Jun 2019 07:52:15 +0200 (CEST)
-Subject: Re: [PATCH v2 0/4] Additional fixes on Talitos driver
-To:     Horia Geanta <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1560263641.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB34853CAF031426F4183FE29B98ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <0cb7c534-6e48-5284-899c-c0ef85c3c126@c-s.fr>
- <VI1PR0402MB3485AD965F36709F27EFB72698ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <58787543-76d3-e0db-9517-ccd0f6494d85@c-s.fr>
-Date:   Wed, 12 Jun 2019 07:52:13 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1730731AbfFLFzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 01:55:51 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:63763 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725601AbfFLFzu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 01:55:50 -0400
+X-UUID: db192daf4e4c4231aab5289b95b197ca-20190612
+X-UUID: db192daf4e4c4231aab5289b95b197ca-20190612
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 565738570; Wed, 12 Jun 2019 13:55:40 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Jun 2019 13:55:37 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 12 Jun 2019 13:55:31 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jumin Li <jumin.li@mediatek.com>
+Subject: [PATCH 1/5] dt-bindings: usb: mtu3: fix typo of DMA clock name
+Date:   Wed, 12 Jun 2019 13:55:17 +0800
+Message-ID: <5e06482a0be15476c7b5825f155accf98275afa8.1560246390.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB3485AD965F36709F27EFB72698ED0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix typo of dma_ck
 
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ Documentation/devicetree/bindings/usb/mediatek,mtu3.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Le 11/06/2019 à 18:30, Horia Geanta a écrit :
-> On 6/11/2019 6:40 PM, Christophe Leroy wrote:
->>
->>
->> Le 11/06/2019 à 17:37, Horia Geanta a écrit :
->>> On 6/11/2019 5:39 PM, Christophe Leroy wrote:
->>>> This series is the last set of fixes for the Talitos driver.
->>>>
->>>> We now get a fully clean boot on both SEC1 (SEC1.2 on mpc885) and
->>>> SEC2 (SEC2.2 on mpc8321E) with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS:
->>>>
->>> I am getting below failures on a sec 3.3.2 (p1020rdb) for hmac(sha384) and
->>> hmac(sha512):
->>
->> Is that new with this series or did you already have it before ?
->>
-> Looks like this happens with or without this series.
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
+index 3382b5cb471d..5d740e9d4525 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
+@@ -16,7 +16,7 @@ Required properties:
+ 	entry in clock-names
+  - clock-names : must contain "sys_ck" for clock of controller,
+ 	the following clocks are optional:
+-	"ref_ck", "mcu_ck" and "dam_ck";
++	"ref_ck", "mcu_ck" and "dma_ck";
+  - phys : see usb-hcd.txt in the current directory
+  - dr_mode : should be one of "host", "peripheral" or "otg",
+ 	refer to usb/generic.txt
+-- 
+2.21.0
 
-Found the issue, that's in 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=b8fbdc2bc4e71b62646031d5df5f08aafe15d5ad
-
-CONFIG_CRYPTO_DEV_TALITOS_SEC2 should be CONFIG_CRYPTO_DEV_TALITOS2 instead.
-
-Just sent a patch to fix it.
-
-Thanks
-Christophe
-
-> 
-> I haven't checked the state of this driver for quite some time.
-> Since I've noticed increased activity, I thought it would be worth
-> actually testing the changes.
-> 
-> Are changes in patch 2/4 ("crypto: talitos - fix hash on SEC1.")
-> strictly for sec 1.x or they affect all revisions?
-> 
->> What do you mean by "fuzz testing" enabled ? Is that
->> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS or something else ?
->>
-> Yes, it's this config symbol.
-> 
-> Horia
-> 
