@@ -2,60 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A829A42063
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D48F142068
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407964AbfFLJLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:11:37 -0400
-Received: from smtp2.ono.com ([62.42.230.179]:37617 "EHLO smtp2.ono.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405024AbfFLJLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:11:37 -0400
-X-Junkmail-Premium-Raw: score=35/50,refid=2.7.2:2019.6.12.83916:17:35.434,ip=62.42.230.144,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO,
- __PHISH_SPEAR_SUBJ_ALERT, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
- MISSING_HEADERS, __ANY_URI, __FRAUD_BODY_WEBMAIL, __URI_NO_WWW,
- __FRAUD_INTRO, __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
- __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS,
- BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_300_399, __MIME_TEXT_P1,
- __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
- __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __MIME_TEXT_P,
- FRAUD_LITTLE_BODY, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS,
- BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY,
- NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs05 (62.42.230.144) by smtp2.ono.com (9.0.019.09-1)
-        id 5CAF0F5D03068CF3; Wed, 12 Jun 2019 11:11:23 +0200
-Received: from (149.126.75.3) by webmailcpr05n.ono.com;  Wed, 12 Jun 2019 11:11:23 +0200
-Message-ID: <9662983.419301560330683321.JavaMail.defaultUser@defaultHost>
-Date:   Wed, 12 Jun 2019 11:11:23 +0200 (CEST)
-From:   Mrs Maria Ibrahim <o0fit@ono.com>
-Reply-To: mrsmariaibrahim@gmail.com
-Subject: Dear Friend,
+        id S2408636AbfFLJL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:11:58 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45189 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408414AbfFLJLz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:11:55 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m23so14386752lje.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 02:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mYym2l8mqAEx5DPcwNMYFMU/GTCZC3cLzsLhFQIJHOM=;
+        b=dM4y3ztI6yt1g4hASKxq2snbEX1K68CjUC6gTHWe+9d9vvdCjc0Hyb7Tt4SFpWfMnZ
+         PP/1qBniNFTnD2xxgtG3ZnHDp3pAvcZ0c8KOwrNuqHiEukY0hi7MsorGkKtlPbbpBMyF
+         epma8V7XicgRJLPbSvVz0Bb5ZAXr/qBaK4wG4k0ftrVRFJ+4phQYjdYLRjOhAVFwa7Wx
+         T+Buc4YW4OtkNrK67CwaDSfapcUXfthRM4P8N8fGIE3Yzxk3j9Jn7CKZJxbXXdvAknSN
+         amls9/vG09ZfIzWpnAPHn5suPlmmYG8YDi92WVUyX4FsL/+D9JHImhzF8Ietl15bSNTC
+         G7Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mYym2l8mqAEx5DPcwNMYFMU/GTCZC3cLzsLhFQIJHOM=;
+        b=ev61i3PqGo/rGuryhNMFN4a2thSoocRWx0xF8z7YySgs8u8GmVER1ccMbMPH8VYUgu
+         unv2BKMvV5Ayw9Lshw4YR7H/bICl4mPt0O3aK++dAMpeDAWKeRMbU8H2UZA2VxMzEZVv
+         2LujNWqYSRuaME7XgtLF0e2iVpFlUcPDwr06m7sLprVtVFJv1pAASFDcWxUdtGndelUp
+         ugAu1dfF7uMzekOd5WSLUluzdEPv0SzBhAmnvdUa4xZzks6nIwytDM+IYM64DIu9IT/y
+         T6mOZhzDhdNJ2+PvBmNFj/aoh9YN8JjQBTmZ+NIQZEFnQ0s3+xI6Lx3RYjPsxeSZUITo
+         J2Sw==
+X-Gm-Message-State: APjAAAUbrnTpPjCOiOkOalDCQg1biqemZB/F+cOipfTFCcLOkQgjiue8
+        qvCDzD0MeoStKzWHWFt9bmKc1MNheODgSVavTgZ0Pw==
+X-Google-Smtp-Source: APXvYqxPQeP+YZhtl1yArUP/kEZEaq45Z/0+ctNo29822y9vO0QaRlGNPkN9752MhVjSxAx4U3gKOqJrOx5tmU+Q5gs=
+X-Received: by 2002:a2e:480a:: with SMTP id v10mr5624585lja.94.1560330713660;
+ Wed, 12 Jun 2019 02:11:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-21-grygorii.strashko@ti.com>
+In-Reply-To: <20190610171103.30903-21-grygorii.strashko@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 11:11:41 +0200
+Message-ID: <CACRpkda2FhYNYA2TkVANOF5GWd3hE9cqM7N_pFDFj9nh-fh=iA@mail.gmail.com>
+Subject: Re: [PATCH-next 20/20] gpio: gpio-omap: clean up register access in omap2_set_gpio_debounce()
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Russell King <rmk@arm.linux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 10, 2019 at 7:13 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
+> From: Russell King <rmk+kernel@armlinux.org.uk>
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
---
-Dear Friend,
+Patch applied.
 
-I am Mrs Maria Ibrahim. am sending you this brief letter to solicit 
-your
-partnership to transfer $18.5 million US Dollars.I shall send you more
-information and procedures when I receive positive response from you.
-please send me a message in my Email box (mrsmariaibrahim@gmail.com)
-as i wait to hear from you.
+At your convenience please look at the debounce function a bit
+closer because I think there is a bug/unpredictable behavior:
 
-Best regard
-Mrs Maria Ibrahim.
---
+IIUC the whole bank/block of GPIOs share the same debounce
+timer setting, and it is currently handled in a "last caller wins"
+manner, so if the different GPIOs in the bank has different
+debounce settings, the call order decides what debounce time
+is used across all of them.
 
+In drivers/gpio/gpio-ftgpio.c function ftgpio_gpio_set_config()
+I simply reject a dounce time setting
+different from the currently configured if any GPIOs are
+currently using the deounce feature.
+
+(It's the semantic I came up with but maybe there are other
+ideas here.)
+
+Yours,
+Linus Walleij
