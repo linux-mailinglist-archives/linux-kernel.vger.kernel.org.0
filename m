@@ -2,108 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3433841FF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 986CB41FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 10:55:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437407AbfFLIyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 04:54:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38322 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731714AbfFLIyu (ORCPT
+        id S2437416AbfFLIzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 04:55:10 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45899 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731584AbfFLIzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:54:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DX/8C5iPqro7r1mMnPX+ipmA3A/CBB6VQR50M3FGzco=; b=F95PB4+p5JUAzXjmnWgrl96Me
-        kJ0qo/iMAQOz9m7GDAkW9INg3OhbW6riHwB6NXrVEY+0CpDYvrBOfga0YqJtk5NnTNxAQ5mzvHFbi
-        X2AphJOsAhvHzNhoApoUTd21k8GVgUJmpgXmg50ZjMC769dCOs939h5yZ/6KSF15rRSBtXG6ggyT1
-        pGETfaDcWYoprry8vXfMsr+e1pNLgsawCNQZvKY2r1F2Vpmtge8zAqaJjROFwyA+mX4Cakl7kVJ+F
-        hsylT918Fk6WqLxEPbMVDxLl6VYmXDq0cUAEB1RyZwwC3Ss9OcP/+CgrtSwpTmrXU+2XqVOGKzYYD
-        M+nQJGUhA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1haz1V-0005Zz-Re; Wed, 12 Jun 2019 08:54:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4A6EB20564E2A; Wed, 12 Jun 2019 10:54:23 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 10:54:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Kairui Song <kasong@redhat.com>, Alexei Starovoitov <ast@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: Getting empty callchain from perf_callchain_kernel()
-Message-ID: <20190612085423.GE3436@hirez.programming.kicks-ass.net>
-References: <20190522140233.GC16275@worktop.programming.kicks-ass.net>
- <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
- <20190522174517.pbdopvookggen3d7@treble>
- <20190522234635.a47bettklcf5gt7c@treble>
- <CACPcB9dRJ89YAMDQdKoDMU=vFfpb5AaY0mWC_Xzw1ZMTFBf6ng@mail.gmail.com>
- <20190523133253.tad6ywzzexks6hrp@treble>
- <CACPcB9fQKg7xhzhCZaF4UGi=EQs1HLTFgg-C_xJQaUfho3yMyA@mail.gmail.com>
- <20190523152413.m2pbnamihu3s2c5s@treble>
- <20190524085319.GE2589@hirez.programming.kicks-ass.net>
- <20190612030501.7tbsjy353g7l74ej@treble>
+        Wed, 12 Jun 2019 04:55:09 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u10so11426306lfm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 01:55:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kYmy1iwC9fHd5KWLhp1RgKawKxO1mu1wxNioKBbyABA=;
+        b=h6usaoQug8lDvGPga/GoFi0ROvWZSoFgoJtb4cGyFbDPe9GepaD4ZR88gxTxmAKSjc
+         k0s72v3ZCuBZW4L7iF3K1umMYln6/dVvvGLdZu5CuzqWT8CynCANyyq3R3cltgLDim9e
+         VHu5z3PS7r3qGy/XdpON1jH5mX+WY+z4Phh8ItRc8wbT0fCciV76wmJf7Ar7v8p8sOPd
+         2wpDzzpluUdLY5pgT2SJWi/3bPsjuvRdWl+C76gGgK5BoOo3D3rV6GbR1NXnbpQq7d1H
+         RuSbtTsf56z6dcb1ezTBGHpBPegXMwulv3qa5Hl+yfTXHsS54N+2Cs1S/qK5uNuGNNPw
+         TfcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kYmy1iwC9fHd5KWLhp1RgKawKxO1mu1wxNioKBbyABA=;
+        b=Jsaha0im6CTK8DT76vnE1oxhUBitrVXlSIkHKsXlbX+lLcMvlJPIzdIbr5ocvCOVpM
+         PLWHE/DEOQ+GsEE4n81sE8a5uN1sjLCgnf612xiISvVdcU1vOUp4ezqjR+sTSGqWAxcp
+         u6ySPMfnOTsnQ3PPtHmmavL+UqLm4eE4Maq5tcmzCmiE5o1xLYHH4jawwgylEyhzXKk9
+         pz/tRf0JwSneaJBiQiE1K1t9NUPbDY3Opa6vmaTm8EnmDwO4oL3YxJZnr4E3oCKLWK3T
+         +rQVrk8RzU30VOfH/UXSwYtgQt8Cy70dWHzZkTuPcaiAxDqjq1WAl4ta/tIzkMJu2JIX
+         ZbdA==
+X-Gm-Message-State: APjAAAV00Ql9SdsE6JM5b5vk89LscU/Ie5BQ0edY8sl9wqqJ8sEb3q0Z
+        tE8uOSIz6EC1LH5miAkEhQowdm0uuAVClcPxjYeSuw==
+X-Google-Smtp-Source: APXvYqzeDRSSKfvhmShyB+/P0FILzPLpf2pje3o4J+5k4U0J1a8BDmwLQm4k9Sil0KRtpRKe+JdwQr33hsfwQpyIN2g=
+X-Received: by 2002:a19:dc0d:: with SMTP id t13mr16897617lfg.152.1560329708499;
+ Wed, 12 Jun 2019 01:55:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612030501.7tbsjy353g7l74ej@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-15-grygorii.strashko@ti.com>
+In-Reply-To: <20190610171103.30903-15-grygorii.strashko@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 10:54:57 +0200
+Message-ID: <CACRpkdZ0fwHuFr9f_QTn=gXGo56Vo1CUM7=zmiCaxfwjp_Pyxg@mail.gmail.com>
+Subject: Re: [PATCH-next 14/20] gpio: gpio-omap: simplify omap_set_gpio_irqenable()
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Russell King <rmk@arm.linux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:05:01PM -0500, Josh Poimboeuf wrote:
-> On Fri, May 24, 2019 at 10:53:19AM +0200, Peter Zijlstra wrote:
-> > > For ORC, I'm thinking we may be able to just require that all generated
-> > > code (BPF and others) always use frame pointers.  Then when ORC doesn't
-> > > recognize a code address, it could try using the frame pointer as a
-> > > fallback.
-> > 
-> > Yes, this seems like a sensible approach. We'd also have to audit the
-> > ftrace and kprobe trampolines, IIRC they only do framepointer setup for
-> > CONFIG_FRAME_POINTER currently, which should be easy to fix (after the
-> > patches I have to fix the FP generation in the first place:
-> > 
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=x86/wip
-> 
-> Right now, ftrace has a special hook in the ORC unwinder
-> (orc_ftrace_find).  It would be great if we could get rid of that in
-> favor of the "always use frame pointers" approach.  I'll hold off on
-> doing the kpatch/kprobe trampoline conversions in my patches since it
-> would conflict with yours.
-> 
-> Though, hm, because of pt_regs I guess ORC would need to be able to
-> decode an encoded frame pointer?  I was hoping we could leave those
-> encoded frame pointers behind in CONFIG_FRAME_POINTER-land forever...
+On Mon, Jun 10, 2019 at 7:12 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-Ah, I see.. could a similar approach work for the kprobe trampolines
-perhaps?
+> From: Russell King <rmk+kernel@armlinux.org.uk>
+>
+> omap_set_gpio_irqenable() calls two helpers that are almost the same
+> apart from whether they set or clear bits. We can consolidate these:
+>
+> - in the set/clear bit register case, we can perform the operation on
+>   our saved context copy and write the appropriate set/clear register.
+> - otherwise, we can use our read-modify-write helper and invert enable
+>   if irqenable_inv is set.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-> Here are my latest BPF unwinder patches in case anybody wants a sneak
-> peek:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/log/?h=bpf-orc-fix
+Patch applied.
 
-On a quick read-through, that looks good to me. A minor nit:
-
-			/* mov dst_reg, %r11 */
-			EMIT_mov(dst_reg, AUX_REG);
-
-The disparity between %r11 and AUX_REG is jarring. I understand the
-whole bpf register mapping thing, but it is just weird when reading
-this.
-
-Other than that, the same note as before, the 32bit JIT still seems
-buggered, but I'm not sure you (or anybody else) cares enough about that
-to fix it though. It seems to use ebp as its own frame pointer, which
-completely defeats an unwinder.
+Yours,
+Linus Walleij
