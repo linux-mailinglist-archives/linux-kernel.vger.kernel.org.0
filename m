@@ -2,66 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3341F41D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E36041D24
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407794AbfFLHBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:01:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50494 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404851AbfFLHBq (ORCPT
+        id S2407833AbfFLHCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:02:08 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:41829 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404851AbfFLHCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:01:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U7CBgI/BlOH8mCpak6QJYkxnxyBdoEy/BPSE3vs157A=; b=Bzb3btvII+xO775JFm+/k4qqn
-        eHS/t3brEGYdMoJtVpIGT5EN2xaM3k7I71ALJsbbc+0vNmy8E6uGvgXyQb2ZqWuEQyPxy2lL/TD3s
-        uMzXPuNdC+uyOv3QLqxtZjr8Jjdtu3o3eUUIx3Odo483jPATMKUouu0blV4M0xTAkF80OunW1Z7jF
-        LBBOFvv+p2bswnZmudxhQwgVJUYeAJZYogoM/0PEtY6Al28wR3Z4Vx7kZQiirCPrJws0g+8seZO/f
-        e7jBGxpuGd5dCTGNxlOOHGOrTTq6GAsoeq9Y0FUPBC8IR1BqktaTs9S5schf5x3nbgz3iU4CAiqDE
-        YCgQ3nYWA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1haxFu-0005GR-Tc; Wed, 12 Jun 2019 07:01:10 +0000
-Date:   Wed, 12 Jun 2019 00:01:10 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     John Dorminy <jdorminy@redhat.com>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        NeilBrown <neilb@suse.com>, linux-block@vger.kernel.org,
-        device-mapper development <dm-devel@redhat.com>,
-        Milan Broz <gmazyland@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: block: be more careful about status in __bio_chain_endio
-Message-ID: <20190612070110.GA11707@infradead.org>
-References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
- <87eflmpqkb.fsf@notabene.neil.brown.name>
- <20190222211006.GA10987@redhat.com>
- <7f0aeb7b-fdaa-0625-f785-05c342047550@kernel.dk>
- <20190222235459.GA11726@redhat.com>
- <CAMeeMh-2ANOr_Sb66EyA_HULkVRudD7fyOZsDbpRpDrshwnR2w@mail.gmail.com>
- <20190223024402.GA12407@redhat.com>
- <CAMeeMh9qLkTByWJewPR4o844wPkA-g5Hnm7aGjszuPopPAe8vA@mail.gmail.com>
- <CAMeeMh-6KMLgriX_7KT52ynjBMyT9yDWSMKv6YXW+yDpvv0=wA@mail.gmail.com>
+        Wed, 12 Jun 2019 03:02:06 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id axGihAHBrbiAgaxGlhBWpJ; Wed, 12 Jun 2019 09:02:04 +0200
+Subject: Re: [PATCHv4 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
+        linux-media@vger.kernel.org
+Cc:     Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Maxime Jourdan <mjourdan@baylibre.com>
+References: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
+ <20190603112835.19661-2-hverkuil-cisco@xs4all.nl>
+ <ffaad429bbdcf1a15049ec6df404618f4f2a9a36.camel@ndufresne.ca>
+ <9c19ece0-f980-62a6-f26e-a91930d117f3@xs4all.nl>
+ <3ced040be477ca0d17405157f919deee3cd4675d.camel@ndufresne.ca>
+ <f016182a-e7b8-2dc9-edde-e62e8aacc63b@xs4all.nl>
+Message-ID: <1e2f5724-7ca6-2521-206a-c8edccda74f6@xs4all.nl>
+Date:   Wed, 12 Jun 2019 09:02:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMeeMh-6KMLgriX_7KT52ynjBMyT9yDWSMKv6YXW+yDpvv0=wA@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <f016182a-e7b8-2dc9-edde-e62e8aacc63b@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfHrdha4/tojLhC2AOCnzN7EcnIM/MPGkibxA03Ex60I5d+fzhBLqWHGGDPsPHARHpdlORQ4txudWeDkhD2Je+a8kwUO12tJDQ63rWQLat1GbCuRkDWJ/
+ tBDdGOj/TLdfF4eVbBv9r6lfVUy2q7KMX/Taf9zYIRq/c2k7RHy36WXbh45Pb1q7dFUCRd961DvivHtuwGFniTOQKHB/Bq4SHh6GfDnB92m6i02y2asgOooF
+ mh8f4GpSw4iM14aAVuZ0l2YcqrdPOeRDVXQA6NtMRT2LbOaXjiRHp4/K+0JLBB1sPcLzsNUXwvmYfebOmvyMZlkW0tXmjEPppGvY96GUDZCh/mMWnC0RxnSO
+ ZBwNUkkWJxwnlqeHAB6nBd1A0dI386ddR1LDXKY7cqnOmRb3IRDjb3qGO3JRjJbqEyJWqRrVxmlVqQw2JawmOPn70l8z5hWYTEnBg1xXlj8jAAulzuWBKPZ1
+ 6IoRYS39TlgJ3ATM+dE+TcORNwHZ6+pW7j3Fags6dghSFClUbRuRLwErVWJ/4HoJwC65NGShuuY/txvx
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:56:42PM -0400, John Dorminy wrote:
-> I believe the second of these might, but is not guaranteed to,
-> preserve the first error observed in a child; I believe if you want to
-> definitely save the first error you need an atomic.
+On 6/12/19 8:49 AM, Hans Verkuil wrote:
+> On 6/12/19 2:25 AM, Nicolas Dufresne wrote:
+>> Le mardi 11 juin 2019 à 10:29 +0200, Hans Verkuil a écrit :
+>>> On 6/10/19 9:54 PM, Nicolas Dufresne wrote:
+>>>> Hi Hans,
+>>>>
+>>>> I went through it, and I think we are close to ready. Unfortunately, I
+>>>> believe the SOURCE_CHANGE event is still under specified. There was a
+>>>> post recently to try and add a new flag for changes in color space
+>>>> which is not included here. We are also missing a workflow for changes
+>>>> that don't affect the allocation but will affect the rendering on a
+>>>> display (like colorimetry). Userspace needs to know at which frames
+>>>> these parameter changes in order to signal that to the following
+>>>> processing block. I think we must have a plane for this.
+>>>
+>>> Yes, we need a new flag for the SOURCE_CHANGE event to indicate colorimetry
+>>> changes. That's actually useful for e.g. HDMI receivers as well.
+>>>
+>>> But I don't see why that should make much of a change to the spec: you still
+>>> have to drain the capture queue, the only difference is that you don't need
+>>> to reallocate buffers, you can just restart the decoder.
+>>
+>> I don't think you need to drain the queue if the change is just
+>> metadata that have no impact on the buffers allocation or layout. I
+>> think we should have a way to communicate these changed while
+>> streaming. Basically, something like the event, but serialized.
+> 
+> I guess we can extend the struct v4l2_event_src_change and add a buffer
+> index field to indicate at which capture buffer index the colorimetry
+> change takes effect. Then there is no need for draining.
 
-Is there any reason not to simply use a cmpxchg?  Yes, it is a
-relatively expensive operation, but once we are chaining bios we are out
-of the super hot path anyway.  We do something similar in xfs and iomap
-already.
+Just wanted to add something here: for now drivers can just use SOURCE_CHANGE
++ drain if they detect a colorimetry change. It's not as efficient as it can
+be, but it will work. Applications can easily check that they don't need to
+reallocate since the reported sizeimage will be the same for the old and new
+formats.
+
+> In the future when we create replacement streaming ioctls and have a
+> new, larger struct v4l2_buffer, then we can add the colorimetry information
+> there as well.
+
+When this is in place, then it would make sense to add a V4L2_EVENT_SRC_CH_COLORIMETRY
+flag that just indicates that something changed w.r.t. colorimetry.
+
+We DO need this flag for HDMI receivers in any case.
+
+Regards,
+
+	Hans
