@@ -2,126 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 720E341AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6E841AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391887AbfFLDRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:17:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34216 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388207AbfFLDRt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:17:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IpLE7ds2K7OtQWpRAGotTZF/PZyEILhWbTrpge7p0cg=; b=FskF3yeL0/79r17kY13jKRiXqy
-        p61RiQCqPCuaV6wK9aOriMS+o6syY3+q3GH7ogGSRoDe/+XfIq7c3mE89pCRdTuPboH6VRQt+SStN
-        lqosfsN/knVsUPDu+htIe6f1BQyQUMMbTAHsbnhRwyfN1JGJR+U+4iTddXmRHS9eg0efGrhB8dqAc
-        zpbSCTiIS9/Zr9qngbf4DcdJs29NelKYWZh9P4OkM8JNtcY1hWacSQELN+riB9wmgX7oHFiAPeVK6
-        sxzet/L+MDj7qbMmQEjKczKQzlF02y9qoc9JSnRxJZliY/e3sLAx/rSp7MFgPmpuGpsNSOrSHcseo
-        CL/3eMUw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hatlL-0002pl-M5; Wed, 12 Jun 2019 03:17:24 +0000
-Subject: Re: linux-next 20190611: objtool warning
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jean Delvare <jdelvare@suse.com>
-References: <a9ceb8f8-f2fd-e57d-3428-aaf50e011a43@infradead.org>
- <20190612025227.lxumqqtqao6iqms3@treble>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <18e6ef70-2fa3-3f70-0fcd-3eadef2cfceb@infradead.org>
-Date:   Tue, 11 Jun 2019 20:17:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2392180AbfFLDUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:20:30 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58020 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388693AbfFLDU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:20:29 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B8EA16075F7EE67F5A9C;
+        Wed, 12 Jun 2019 11:20:26 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
+ 11:20:16 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <minyard@acm.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <Asmaa@mellanox.com>, <vadimp@mellanox.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <openipmi-developer@lists.sourceforge.net>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] ipmi: ipmb: Fix build error while CONFIG_I2C is set to m
+Date:   Wed, 12 Jun 2019 11:18:25 +0800
+Message-ID: <20190612031825.24732-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20190612025227.lxumqqtqao6iqms3@treble>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/19 7:52 PM, Josh Poimboeuf wrote:
-> On Tue, Jun 11, 2019 at 06:59:22PM -0700, Randy Dunlap wrote:
->> Hi,
->>
->> New warning AFAIK:
->>
->> drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0x11f: sibling call from callable instruction with modified stack frame
-> 
-> I'm getting a different warning:
-> 
->   drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0xb6: can't find jump dest instruction at .text+0x93a
-> 
-> But I bet the root cause is the same.
-> 
-> This fixes it for me:
-> 
-> From: Josh Poimboeuf <jpoimboe@redhat.com>
-> Subject: [PATCH] hwmon/smsc47m1: Fix objtool warning caused by undefined behavior
-> 
-> Objtool is reporting the following warning:
-> 
->   drivers/hwmon/smsc47m1.o: warning: objtool: fan_div_store()+0xb6: can't find jump dest instruction at .text+0x93a
-> 
-> It's apparently caused by
-> 
->   2cf6745e69d1 ("hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings")
-> 
-> which is somehow convincing GCC to add a jump past the end of the
-> function:
-> 
->   793:   45 85 ed                test   %r13d,%r13d
->   796:   0f 88 9e 01 00 00       js     93a <fan_div_store+0x25a>
->   ...
->   930:   e9 5e fe ff ff          jmpq   793 <fan_div_store+0xb3>
->   935:   e8 00 00 00 00          callq  93a <fan_div_store+0x25a>
-> 			936: R_X86_64_PLT32     __stack_chk_fail-0x4
->   <function end>
-> 
-> I suppose this falls under the category of undefined behavior, so we
-> probably can't call it a GCC bug.  But if the value of "nr" were out of
-> range somehow then it would start executing random code.  Use a runtime
-> BUG() assertion to avoid undefined behavior.
-> 
-> Fixes: 2cf6745e69d1 ("hwmon: (smsc47m1) fix (suspicious) outside array bounds warnings")
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+If CONFIG_I2C is m and CONFIG_I2C_SLAVE is y,
+building with CONFIG_IPMB_DEVICE_INTERFACE setting to
+y will fail:
 
-Yes, that works for me.  Thanks.
+drivers/char/ipmi/ipmb_dev_int.o: In function `ipmb_remove':
+ipmb_dev_int.c: undefined reference to `i2c_slave_unregister'
+drivers/char/ipmi/ipmb_dev_int.o: In function `ipmb_write':
+ipmb_dev_int.c: undefined reference to `i2c_smbus_write_block_data'
+drivers/char/ipmi/ipmb_dev_int.o: In function `ipmb_probe':
+ipmb_dev_int.c: undefined reference to `i2c_slave_register'
+drivers/char/ipmi/ipmb_dev_int.o: In function `ipmb_driver_init':
+ipmb_dev_int.c: undefined reference to `i2c_register_driver'
+drivers/char/ipmi/ipmb_dev_int.o: In function `ipmb_driver_exit':
+ipmb_dev_int.c: undefined reference to `i2c_del_driver'
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Add I2C Kconfig dependency to fix this.
 
-> ---
->  drivers/hwmon/smsc47m1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
-> index 6d366c9cb906..b637836b58a1 100644
-> --- a/drivers/hwmon/smsc47m1.c
-> +++ b/drivers/hwmon/smsc47m1.c
-> @@ -352,7 +352,7 @@ static ssize_t fan_div_store(struct device *dev,
->  		smsc47m1_write_value(data, SMSC47M2_REG_FANDIV3, tmp);
->  		break;
->  	default:
-> -		unreachable();
-> +		BUG();
->  	}
->  
->  	/* Preserve fan min */
-> 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 51bd6f291583 ("Add support for IPMB driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/char/ipmi/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-
+diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
+index 987191b..4bad061 100644
+--- a/drivers/char/ipmi/Kconfig
++++ b/drivers/char/ipmi/Kconfig
+@@ -135,6 +135,7 @@ config ASPEED_BT_IPMI_BMC
+ 
+ config IPMB_DEVICE_INTERFACE
+ 	tristate 'IPMB Interface handler'
++	depends on I2C
+ 	depends on I2C_SLAVE
+ 	help
+ 	  Provides a driver for a device (Satellite MC) to
 -- 
-~Randy
+2.7.4
+
+
