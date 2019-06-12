@@ -2,243 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE69444973
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B4C44970
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:18:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbfFMRR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:17:28 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41806 "EHLO
+        id S2393596AbfFMRRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:17:14 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34633 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728452AbfFLVVD (ORCPT
+        with ESMTP id S1728198AbfFLV0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 17:21:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 83so9608156pgg.8;
-        Wed, 12 Jun 2019 14:21:03 -0700 (PDT)
+        Wed, 12 Jun 2019 17:26:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p10so3767886pgn.1;
+        Wed, 12 Jun 2019 14:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MKxVm/WfGETVRsG3kCSe/758WxcwLgrzhgM6fPPKDZg=;
-        b=Qb+kCs3U00uOTJiF0XYJ8Zg3wOUSD69g79a4p5UfDUBIwAB6KhNoPRApNIv00L/iL5
-         pDPWbVRRwGO40eFyx0fD0DKEpj18F+YU5tT7+KcMY1Ri1MVqyZP8gZIrDAmWwhEE9Er6
-         K2PLLmK6CSglO8r13crX9l215tS+glQC8oyojWeAibX4TYz3EQhGuQk7BEO+GnEXGhw5
-         sXHZWATmCpENd05f0C5uPgVnlvcZoMx1w1vaKncrl7XpOLkUMikgIipuChTOkVYcsJ7o
-         LHgtGhDa2KMvTLLXlNukCz9HpMrEW8aLYOKzdO1/KngAU1wVq3ATr2W1ZFac4C8CUotR
-         0xjw==
+        h=from:to:cc:subject:date:message-id;
+        bh=B9X0MPRX7xZfDuTbCvFOX7nvzRBpgFVnMaQCxz6OgdU=;
+        b=IUHfTS4RqAdZf2/0XbVg9yfHfkyKyBql+0jIyDfHuqTb8ueZ+sXHT7IaAw2b+3O8yD
+         GN7lJzAiKdQjIwn01eI7DL76WSgM7adjcAZV2+jdGEl/DQcEXECVfPfULEHRvRroLJZl
+         8aXZQrAvbQWmaAtgdPe6UA+Ki3X6ia22JhPhBVVv+5OEk9r4J3qP7vpM/w8BL9xvKl9Z
+         riFBc96sjOBT1tQNoGJwTQhx1biopgSoH38L2K1BBZlX/NQ/4JU9LAlNMw9SEHhlf3oj
+         B5v6aW0sT9rKn0QiaXvdI8bESveALGOQDqgvNMuuUEYiQ8ok5g/Er1vLp1T/QWyfM6kZ
+         fBCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MKxVm/WfGETVRsG3kCSe/758WxcwLgrzhgM6fPPKDZg=;
-        b=Uh8RVJp14FGDgL0ZcV2KcZ7ziKz95MAUaij1EWBLP0lboPD1Il20GUjhQUX6COW3bb
-         4RnLtB3UCA64zFT010HXoyOreODx87K1QJjNVxkXvJMMuLKE5sV/IavDbRCCtPwdPBoI
-         QxdSP2JZZlKX8YbyvaMOrdKWq7lpfydNMGbhhbkHnU9THkKNtX5NRL6EUMZ9lANggvgV
-         6VVlbcl1ZNnGs7d5MlJZ611sq54lJjUsqfNbHsqj9aWuzCq22xG5zEYOgboeFJH8rvYN
-         LXljt5B49HIRVkpLoond7IHDQe4hNVnzD9iBwDOKCTk2yKdNtiJTLvPhzniOL3ka1LKp
-         +YoA==
-X-Gm-Message-State: APjAAAWIaz4iF0vPwE7SezrXQJrm5gaP9IIexp4xt76EffYKk9W1/fuy
-        akBbUD7yfpXPqrzJXFwGxCs=
-X-Google-Smtp-Source: APXvYqzKHi6082P19NzJghJqnn3jp5lvt6SHmUNNSZ1OGNELyjbvr5wAqXD49msD7OmThG4Udz691A==
-X-Received: by 2002:a62:1750:: with SMTP id 77mr20648005pfx.172.1560374463082;
-        Wed, 12 Jun 2019 14:21:03 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id w24sm393889pga.90.2019.06.12.14.21.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B9X0MPRX7xZfDuTbCvFOX7nvzRBpgFVnMaQCxz6OgdU=;
+        b=undzYgRXlURuddZqezjH8TAzKHRFOhng0/sBr9tqC8jPeGqF3eErtd4jviqeVBT9fR
+         EFjE/yE3KKqgld+QAlvDQEHrt6qXZZS4LAnn5GP8N7IW/WxQKWVYuK12/BX2CdgYZMtt
+         nMI7+HbQsNAgkuCEj6ZdVjpGWxOVHnKhIRUEldVaBlgQR6Ld8IvlqS1hqhDVQnK+vC0K
+         i/5vZcb3GrO5VSkdHfsCI+XYBWMiPTMxSEELoK9bgn7aMj4+QJYUqf6/6n2D7vi36pPU
+         45oKz80LIjCSTKLH8fATxKDLlma8pl+8a2J/kuP/GOnAsvMFVYaCg2+Q+IAJntaB5k57
+         pbKQ==
+X-Gm-Message-State: APjAAAWc/zMJfdVdIxoU+b/sZBkx64ldPeUaZ7Gg9+5J8X5lfOsMqSrl
+        REURqJIz5XEDiaaY/hYo4Sc=
+X-Google-Smtp-Source: APXvYqx8PO+nnCxda+czlOB0lVkz7Xh5HzTIi4gQeji9cay7D3Vp9FWSoTGePngXLYiGjGFyzcZo9w==
+X-Received: by 2002:a17:90a:2ec2:: with SMTP id h2mr1211409pjs.119.1560374769098;
+        Wed, 12 Jun 2019 14:26:09 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id x8sm474023pfa.46.2019.06.12.14.26.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 14:21:02 -0700 (PDT)
-Subject: Re: [RESEND PATCH v1 0/5] Solve postboot supplier cleanup and
- optimize probe ordering
-To:     Saravana Kannan <saravanak@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, David Collins <collinsd@codeaurora.org>
-References: <20190604003218.241354-1-saravanak@google.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <095b631b-155d-483e-5ffb-3a04b0db0245@gmail.com>
-Date:   Wed, 12 Jun 2019 14:21:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190604003218.241354-1-saravanak@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 12 Jun 2019 14:26:08 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     benjamin.tissoires@redhat.com, dmitry.torokhov@gmail.com,
+        jikos@kernel.org, hdegoede@redhat.com, bjorn.andersson@linaro.org,
+        agross@kernel.org, lee.jones@linaro.org, xnox@ubuntu.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v6 0/5] Basic DT support for Lenovo Miix 630
+Date:   Wed, 12 Jun 2019 14:26:04 -0700
+Message-Id: <20190612212604.32089-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding cc: David Collins
+The Lenovo Miix 630 is one of three ARM based (specifically Qualcomm
+MSM8998) laptops that comes with Windows, and seems to have a dedicated
+following of folks intrested to get Linux up and running on it.
 
-Plus my comments below.
+This series adds support for the basic functionality this is validated
+towork using devicetree.  Although the laptops do feed ACPI to Windows,
+the existing MSM8998 support in mainline is DT based, so DT provides a
+quick path to functionality while ACPI support is investigated.
 
-On 6/3/19 5:32 PM, Saravana Kannan wrote:
-> Add a generic "depends-on" property that allows specifying mandatory
-> functional dependencies between devices. Add device-links after the
-> devices are created (but before they are probed) by looking at this
-> "depends-on" property.
-> 
-> This property is used instead of existing DT properties that specify
-> phandles of other devices (Eg: clocks, pinctrl, regulators, etc). This
-> is because not all resources referred to by existing DT properties are
-> mandatory functional dependencies. Some devices/drivers might be able
-> to operate with reduced functionality when some of the resources
-> aren't available. For example, a device could operate in polling mode
-> if no IRQ is available, a device could skip doing power management if
-> clock or voltage control isn't available and they are left on, etc.
-> 
-> So, adding mandatory functional dependency links between devices by
-> looking at referred phandles in DT properties won't work as it would
-> prevent probing devices that could be probed. By having an explicit
-> depends-on property, we can handle these cases correctly.
-> 
-> Having functional dependencies explicitly called out in DT and
-> automatically added before the devices are probed, provides the
-> following benefits:
-> 
-> - Optimizes device probe order and avoids the useless work of
->   attempting probes of devices that will not probe successfully
->   (because their suppliers aren't present or haven't probed yet).
-> 
->   For example, in a commonly available mobile SoC, registering just
->   one consumer device's driver at an initcall level earlier than the
->   supplier device's driver causes 11 failed probe attempts before the
->   consumer device probes successfully. This was with a kernel with all
->   the drivers statically compiled in. This problem gets a lot worse if
->   all the drivers are loaded as modules without direct symbol
->   dependencies.
-> 
-> - Supplier devices like clock providers, regulators providers, etc
->   need to keep the resources they provide active and at a particular
->   state(s) during boot up even if their current set of consumers don't
->   request the resource to be active. This is because the rest of the
->   consumers might not have probed yet and turning off the resource
->   before all the consumers have probed could lead to a hang or
->   undesired user experience.
-> 
->   Some frameworks (Eg: regulator) handle this today by turning off
->   "unused" resources at late_initcall_sync and hoping all the devices
->   have probed by then. This is not a valid assumption for systems with
->   loadable modules. Other frameworks (Eg: clock) just don't handle
->   this due to the lack of a clear signal for when they can turn off
->   resources. This leads to downstream hacks to handle cases like this
->   that can easily be solved in the upstream kernel.
-> 
->   By linking devices before they are probed, we give suppliers a clear
->   count of the number of dependent consumers. Once all of the
->   consumers are active, the suppliers can turn off the unused
->   resources without making assumptions about the number of consumers.
-> 
-> By default we just add device-links to track "driver presence" (probe
-> succeeded) of the supplier device. If any other functionality provided
-> by device-links are needed, it is left to the consumer/supplier
-> devices to change the link when they probe.
->  
-> 
-> Saravana Kannan (5):
->   of/platform: Speed up of_find_device_by_node()
->   driver core: Add device links support for pending links to suppliers
->   dt-bindings: Add depends-on property
->   of/platform: Add functional dependency link from "depends-on" property
->   driver core: Add sync_state driver/bus callback
-> 
->  .../devicetree/bindings/depends-on.txt        |  26 +++++
->  drivers/base/core.c                           | 106 ++++++++++++++++++
->  drivers/of/platform.c                         |  75 ++++++++++++-
->  include/linux/device.h                        |  24 ++++
->  include/linux/of.h                            |   3 +
->  5 files changed, 233 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/depends-on.txt
-> 
+The three devices are very similar, but do have differences in the set
+of peripherals supported, so the idea is that the vast majority of the
+support for all three can live in a common include, which should reduce
+overall duplication.  Adding support for the other two devices is tacked
+onto the end of the series.
 
+The bleeding edge work for these laptops and work in progress can be
+found at https://github.com/aarch64-laptops/prebuilt
 
-I don't think the above description adequately describes one key problem
-that the patch set addresses.
+v6:
+-Export the elan_i2c DT and ACPI ids so that hid-quirks can use them
+-Use the elan_i2c ids within hid-quirks to reduce duplication
+-Add DTs for the Asus and HP devices since the DT seems finalized, and
+folks have been asking
 
-David Collins described the problem in an email late in the thread of
-the first submission of this series.  Instead of providing a link to
-that email, I am going to fully copy it here:
+v5:
+-Split out elan_i2c changes into their own patch
+-Use a static list of strings to match
+-Fixed typo of "whitelist"
+-Dropped incorrect thermal zones
+-Dropped tags from Bjorn and Lee since the functional should be
+identical, but the code is structured different
 
-On 5/31/19 4:27 PM, David Collins wrote:
-> Hello Saravana,
-> 
-> On 5/23/19 6:01 PM, Saravana Kannan wrote:
-> ...
->> Having functional dependencies explicitly called out in DT and
->> automatically added before the devices are probed, provides the
->> following benefits:
-> ...
->> - Supplier devices like clock providers, regulators providers, etc
->>   need to keep the resources they provide active and at a particular
->>   state(s) during boot up even if their current set of consumers don't
->>   request the resource to be active. This is because the rest of the
->>   consumers might not have probed yet and turning off the resource
->>   before all the consumers have probed could lead to a hang or
->>   undesired user experience.
-> This benefit provided by the sync_state() callback function introduced in
-> this series gives us a mechanism to solve a specific problem encountered
-> on Qualcomm Technologies, Inc. (QTI) boards when booting with drivers
-> compiled as modules.  QTI boards have a regulator that powers the PHYs for
-> display, camera, USB, UFS, and PCIe.  When these boards boot up, the boot
-> loader enables this regulator along with other resources in order to
-> display a splash screen image.  The regulator must remain enabled until
-> the Linux display driver has probed and made a request with the regulator
-> framework to keep the regulator enabled.  If the regulator is disabled
-> prematurely, then the screen image is corrupted and the display hardware
-> enters a bad state.
-> 
-> We have observed that when the camera driver probes before the display
-> driver, it performs this sequence: regulator_enable(), camera register IO,
-> regulator_disable().  Since it is the first consumer of the shared
-> regulator, the regulator is physically disabled (even though display
-> hardware still requires it to be enabled).  We have solved this problem
-> when compiling drivers statically with a downstream regulator
-> proxy-consumer driver.  This proxy-consumer is able to make an enable
-> request for the shared regulator before any other consumer.  It then
-> removes its request at late_initcall_sync.
-> 
-> Unfortunately, when drivers are compiled as modules instead of compiled
-> statically into the kernel image, late_initcall_sync is not a meaningful
-> marker of driver probe completion.  This means that our existing proxy
-> voting system will not work when drivers are compiled as modules.  The
-> sync_state() callback resolves this issue by providing a notification that
-> is guaranteed to arrive only after all consumers of the shared regulator
-> have probed.
-> 
-> QTI boards have other cases of shared resources such as bus bandwidth
-> which must remain at least at a level set by boot loaders in order to
-> properly support hardware blocks that are enabled before the Linux kernel
-> starts booting.
-> 
-> Take care,
-> David
-> 
+v4:
+-Changed the hid-quirks ELAN handling around per Benjamin Tissoires
+-Dropped new DT binding
 
-To paraphrase, the problem is:
+v3:
+-Changed "clam" to "clamshell"
+-Defined a dt binding for the combo Elan keyboard + touchpad device
+-Adjusted the HID quirk to be correct for dt boot
+-Removed extranious comment in board dts
+-Fixed board level compatible
 
-   - bootloader enables a regulator for display
-   - during Linux boot camera driver probes:
-      * enable the regulator also used for display
-      * disable the regulator
-         + screen image is corrupted
-         + display hardware enters bad state
-   - later during Linux boot display driver probes:
-      * enable the regulator, but too late
+v2:
+-Changed "cls" to "clam" since feedback indicated "cls" is too opaque,
+but
+"clamshell" is a mouthfull.  "clam" seems to be a happy medium.
 
-So the problem is an ordering dependency between the camera driver probe
-and the display driver probe.
+Jeffrey Hugo (5):
+  Input: elan_i2c: Export the device id whitelist
+  HID: quirks: Refactor ELAN 400 and 401 handling
+  arm64: dts: qcom: Add Lenovo Miix 630
+  arm64: dts: qcom: Add HP Envy x2
+  arm64: dts: qcom: Add Asus NovaGo TP370QL
 
-Or alternatively the problem could be seen as: the bootloader has enabled
-a regulator for a device that the bootloader is aware of, but has not
-communicated to the Linux regulator framework that the device requires
-the regulator to remain enabled.
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/msm8998-clamshell.dtsi      | 240 ++++++++++++++++++
+ .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 +++
+ drivers/hid/hid-quirks.c                      |  78 +++++-
+ drivers/input/mouse/elan_i2c_core.c           |   4 +
+ 5 files changed, 342 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
 
-Thinking about the problem this way could lead to an entirely different
-solution.
+-- 
+2.17.1
 
--Frank
-      
