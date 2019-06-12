@@ -2,131 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D2541E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B33BD41E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408578AbfFLHu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:50:56 -0400
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:37803 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405233AbfFLHu4 (ORCPT
+        id S2407649AbfFLHzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:55:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37350 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731527AbfFLHzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:50:56 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id E4B234DF;
-        Wed, 12 Jun 2019 03:50:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 12 Jun 2019 03:50:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=ibnfl+8xKs40HASLH7el8ogm6D7
-        fXLbZYdTL2iD4vcQ=; b=NM/fZdYl0Cq1bfgm5IT3B33aeNuPMS9hmSYPmeq0S9j
-        w3BAbcmccRBUibbsCfiA5Tdp4C6nu95MLTuBhOfTWSY9Lxw4Pr01G/PXJ9BmHPTu
-        CZhHqKdfwZ48eA+TCne2DudbVUGFe98IBcb3ygWQDcNqNQkc1QPmftGP+1V41O9a
-        GEBR5r9w+2OOtrAiI3vIffymQfS1bbeTqY867is3nUUjYvAI3U3MryBcGgniMnDa
-        pg/15qArkkrq92CjbfLgaH57VpWgznJOqCb0hZyucjeh41Ag2TbuDDKpsGmwi2Y+
-        FMxDSQV0cTLc9EikIjFSIsUQqj5ayUUkFF33Mjiaf1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ibnfl+
-        8xKs40HASLH7el8ogm6D7fXLbZYdTL2iD4vcQ=; b=IrsdjC7SrNhyzj+rtqjnqJ
-        pLm9ZNCrnbrm/xQrHkaXwGnkq87242dkM7dDNm0KjtOjvHyYyDHAi8OMvF3uY0Tk
-        AVgshoX3D7J1rZ5IV+6ADil6dU/RLEAEVDrdTWZfLd+FTJRsFHgC7jFKJWIWv+y6
-        mAYDmzL922KJaEdsHSAqrwR8Mq4LIjg/UfjoECWsNoBVFatWG2sQ2JwOqcpAHf0m
-        5lFyFF+AjgeBbYhajo83Z+hN/ZO6P8nPvflwOHkvuXz8fmENAgz9GLQHHEogkD9u
-        4EJUV+1n3xpJJCBTyRWYKHEZU4kWHfanfY1jLtjZBFK4jMSAXAznZjb6V+pxNWvw
-        ==
-X-ME-Sender: <xms:264AXXpbBEkp4MhaDU5UYOrIc7VBrG89WjfZtogX9pD5pE-ezWIrJQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehiedguddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
-    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:264AXcS-AqMVU-L3-qlnj37Yp41RRi-n5xkH4r_kvBsvf-y07KbSvg>
-    <xmx:264AXaMH4cXEa5APKJdr9xykdvrkr1u5RxiuTvvoUzy6_ROHiyqz-A>
-    <xmx:264AXaiu95q0rZ3GtK1OJjjvbubARo8dGhgeTBAHAqj0RNiZX_7IsA>
-    <xmx:264AXeBiKpIGaHkHLtj6qWbSf7hfvetUlu-XPhG9l3QX9E4b4YMSwg>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C27878005C;
-        Wed, 12 Jun 2019 03:50:50 -0400 (EDT)
-Date:   Wed, 12 Jun 2019 09:50:49 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Rolf Eike Beer <eb@emlix.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        stable@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.9.180 build fails =?utf-8?Q?wi?=
- =?utf-8?Q?th_gcc_9_and_'cleanup=5Fmodule'_specifies_less_restrictive_attr?=
- =?utf-8?Q?ibute_than_its_target_=E2=80=A6?=
-Message-ID: <20190612075049.GB17662@kroah.com>
-References: <259986242.BvXPX32bHu@devpool35>
- <CANiq72nfFqYkiYgKJ1UZV3Mx2C3wzu_7TRtXFn=iafNt+Oc_2g@mail.gmail.com>
- <20190606185900.GA19937@kroah.com>
- <3659495.RxnUGBN4mp@devpool35>
+        Wed, 12 Jun 2019 03:55:04 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 19so8324732pfa.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t/zZQ82E/N4gFFsCTmRZdYbvd54D5nSgY4uOp2BfUg4=;
+        b=JMuYTPILm5oCrO9h51xNSn+tS6CagMc0yZFGqpOBe60q4o0BGqiouryTqq5e1OMzHD
+         rPPNZ6vtqqgXRNsjRVtnkphRfkUPh+ageRVwawW3Zb9/JzbfLx2+gbG/Q05yndF8bg80
+         fdkSyEiFKeDP8Zg8eMMFLl4Xygesmch6UQi95PqTzgRYLLjzZCkfdxLcdEBzGvaufIuM
+         mcjHpczgaPIKv5/CQL1z9f3shXhEdLul5A9x2m0C5DeWaO8pItHJXx2sKOUZ/3wzfyQz
+         tO9WxRv1cwUSO9K7qfKf6uCA5ogtyUUpa4CaHtiviKvqDF28bKJZ/M9N7zW914ZOfNaF
+         a9qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t/zZQ82E/N4gFFsCTmRZdYbvd54D5nSgY4uOp2BfUg4=;
+        b=bEXegrlXvX2XGHLVMGWIBm041Ls+bYrHJJ/ZF8/2j0/74xyCFhkhWzzdW4+mUq+QUE
+         GIWhRVU74rYhgqheMtB19rgMZ7UDSCrvVnZ7RJK4dBcF/cJHGEDEiiLkc/l7LGCwvj/f
+         SYs3nKPq86SFMSuIU5VSuC2FCclZiR11ipVF1QXls6mTROOb3Bw4fb23vidM6Q1isVIG
+         1MVCTNUSKuYq7oiZ4/YmSI08dN1ltBx9o3vAzix8KWYHdzjurreAMlFm1c7Voz2Ro+3V
+         krx+ptb4gkALz/19kf/Qu37c3U5tb41OgxZIRG0E2fHuwM0i3a6TqLPu7mqy8ZOx/Cos
+         +DsQ==
+X-Gm-Message-State: APjAAAWrScmIE83eFVT/OSKxWnfJ4MWKx1UZs1erpGnEgUX9i7xnbtvh
+        dMKm5oFt2OzwuqqTiajN+Hxzm8D0dfD2
+X-Google-Smtp-Source: APXvYqyhsNDJVnEra02+JvmqkHRHXuSl223Vx4mOQwGbwFeFfO1wG9ZHDU3uBEIjt7IKjmaKTRH8Uw==
+X-Received: by 2002:a17:90b:8d6:: with SMTP id ds22mr31537248pjb.143.1560326103017;
+        Wed, 12 Jun 2019 00:55:03 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:894:d456:15b5:9ca9:e3ec:c06a])
+        by smtp.gmail.com with ESMTPSA id b15sm16846399pfi.141.2019.06.12.00.54.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 00:55:02 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        robh+dt@kernel.org
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loic.pallardy@st.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 0/4] Add Avenger96 board support
+Date:   Wed, 12 Jun 2019 13:24:47 +0530
+Message-Id: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3659495.RxnUGBN4mp@devpool35>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 09:19:15AM +0200, Rolf Eike Beer wrote:
-> Am Donnerstag, 6. Juni 2019, 20:59:00 CEST schrieb Greg KH:
-> > On Thu, Jun 06, 2019 at 08:25:28PM +0200, Miguel Ojeda wrote:
-> > > On Thu, Jun 6, 2019 at 5:29 PM Greg KH <greg@kroah.com> wrote:
-> > > > And if you want this, you should look at how the backports to 4.14.y
-> > > > worked, they did not include a3f8a30f3f00 ("Compiler Attributes: use
-> > > > feature checks instead of version checks"), as that gets really messy...
-> > > 
-> > > I am confused -- I interpreted Rolf's message as reporting that he
-> > > already successfully built 4.9 by applying a6e60d84989f
-> > > ("include/linux/module.h: copy __init/__exit attrs to
-> > > init/cleanup_module") and manually fixing it up. But maybe I am
-> > > completely wrong... :-)
-> > 
-> > "manually fixing it up" means "hacked it to pieces" to me, I have no
-> > idea what the end result really was :)
-> > 
-> > If someone wants to send me some patches I can actually apply, that
-> > would be best...
-> 
-> Hi all,
-> 
-> the patch I actually used was this:
-> 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 8fa38d3e7538..f5bc4c046461 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -129,13 +129,13 @@ extern void cleanup_module(void);
->  #define module_init(initfn)					\
->  	static inline initcall_t __maybe_unused __inittest(void)		\
->  	{ return initfn; }					\
-> -	int init_module(void) __attribute__((alias(#initfn)));
-> +	int init_module(void) __attribute__((__copy__(initfn))) __attribute__((alias(#initfn)));
->  
->  /* This is only required if you want to be unloadable. */
->  #define module_exit(exitfn)					\
->  	static inline exitcall_t __maybe_unused __exittest(void)		\
->  	{ return exitfn; }					\
-> -	void cleanup_module(void) __attribute__((alias(#exitfn)));
-> +	void cleanup_module(void) __attribute__((__copy__(exitfn))) __attribute__((alias(#exitfn)));
->  
->  #endif
->  
-> 
-> So the final question is: do we want 4.9.x to be buildable with gcc 9.x? If
-> yes then we can probably get this patches into shape.
+Hello,
 
-Eventually, yes, we (or at least I) will want to build 4.9.x with gcc
-9.x.  We went through this same process for gcc 8.x as all of my builder
-test machines switched their default version of gcc...
+This patchset adds Avenger96 board support. This board is one of the
+Consumer Edition boards of the 96Boards family from Arrow Electronics
+featuring STM32MP157A MPU and has the following features:
 
-thanks,
+SoC: STM32MP157AAC
+PMIC: STPMIC1A
+RAM: 1024 Mbyte @ 533MHz
+Storage: eMMC v4.51: 8 Gbyte
+         microSD Socket: UHS-1 v3.01
+Ethernet Port: 10/100/1000 Mbit/s, IEEE 802.3 Compliant
+Wireless: WiFi 5 GHz & 2.4GHz IEEE 802.11a/b/g/n/ac
+          Bluetooth®v4.2 (BR/EDR/BLE)
+USB: 2x Type A (USB 2.0) Host and 1x Micro B (USB 2.0) OTG
+Display: HDMI: WXGA (1366x768)@ 60 fps, HDMI 1.4
+LED: 4x User LED, 1x WiFi LED, 1x BT LED
 
-greg k-h
+More information about this board can be found in 96Boards website:
+https://www.96boards.org/product/avenger96/
+
+Thanks,
+Mani
+
+Changes in v4
+
+* Deleted the old stm32.txt binding
+* Added Rob's Reviewed-by tag
+
+Changes in v3:
+
+* Converted STM32 platform bindings to DT schema
+
+Changes in v2:
+
+As per Alex's review:
+
+* Fixed I2C2 pinctrl node
+* Sorted the avenger96 dtb in alphabetical order
+* Added device-type property to memory node
+
+Manivannan Sadhasivam (4):
+  ARM: dts: stm32mp157: Add missing pinctrl definitions
+  dt-bindings: arm: stm32: Convert STM32 SoC bindings to DT schema
+  dt-bindings: arm: stm32: Document Avenger96 devicetree binding
+  ARM: dts: Add Avenger96 devicetree support based on STM32MP157A
+
+ .../devicetree/bindings/arm/stm32/stm32.txt   |  10 -
+ .../devicetree/bindings/arm/stm32/stm32.yaml  |  31 ++
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi     |  75 ++++
+ arch/arm/boot/dts/stm32mp157a-avenger96.dts   | 321 ++++++++++++++++++
+ 5 files changed, 428 insertions(+), 10 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/stm32/stm32.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+ create mode 100644 arch/arm/boot/dts/stm32mp157a-avenger96.dts
+
+-- 
+2.17.1
+
