@@ -2,128 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615C342DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9D442DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 19:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfFLRk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 13:40:26 -0400
-Received: from casper.infradead.org ([85.118.1.10]:37624 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfFLRkZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:40:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QttHRjHJ7MdlFs6psyes3YVzvNlpLf2MWMHYPysLwuw=; b=QddYO1C9EJA++Jit0trZp/JUNF
-        3wVeuwLM40EQ05IVR/ZKCgmmPouY6r5zSG+wmAaz1KZ5W5tzKVwYSr0Sa2M/r5RGDbAUMyWFebE51
-        yUdq8Cevmj2flA/1vVfKKTtjyWhpFG/F+mk7tba3WWhkJ39a3kKwoxJ/Si70HAjOFrvOAbbwxKbOG
-        sHKz4WruU56R1I4yQ+aDgF1epxWJUU/4Fi6IiwSL+HFDUMlbw055MCsq2e+Te1UTA9/dlCvQLbmZr
-        zLdQ31mezeTlD2m8JCZ4WmNrfzKeg3e3Hl5RmZArBYmv2kVUs0v/Q29KZE+KZPnOxyIxgAA3ZJ6Rb
-        IioY5hIQ==;
-Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb7ER-0000RS-UF; Wed, 12 Jun 2019 17:40:20 +0000
-Date:   Wed, 12 Jun 2019 14:40:15 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 33/33] docs: EDID/HOWTO.txt: convert it and rename to
- howto.rst
-Message-ID: <20190612144015.033247db@coco.lan>
-In-Reply-To: <20190611093701.44344d00@lwn.net>
-References: <cover.1560045490.git.mchehab+samsung@kernel.org>
-        <74bec0b5b7c32c8d84adbaf9ff208803475198e5.1560045490.git.mchehab+samsung@kernel.org>
-        <20190611083731.GS21222@phenom.ffwll.local>
-        <20190611060215.232af2bb@coco.lan>
-        <20190611093701.44344d00@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1729094AbfFLRuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 13:50:37 -0400
+Received: from mga09.intel.com ([134.134.136.24]:17070 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725764AbfFLRuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:50:37 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 10:50:36 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga005.jf.intel.com with ESMTP; 12 Jun 2019 10:50:35 -0700
+Date:   Wed, 12 Jun 2019 10:41:13 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH] x86/cpufeatures: Enumerate new AVX512 bfloat16
+ instructions
+Message-ID: <20190612174112.GG180343@romley-ivt3.sc.intel.com>
+References: <1560186158-174788-1-git-send-email-fenghua.yu@intel.com>
+ <20190610192026.GI5488@zn.tnic>
+ <20190611181920.GC180343@romley-ivt3.sc.intel.com>
+ <20190611194701.GJ31772@zn.tnic>
+ <20190611222822.GD180343@romley-ivt3.sc.intel.com>
+ <3E5A0FA7E9CA944F9D5414FEC6C712209D8F4253@ORSMSX106.amr.corp.intel.com>
+ <20190612035908.GB32652@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612035908.GB32652@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, 11 Jun 2019 09:37:01 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+On Wed, Jun 12, 2019 at 05:59:08AM +0200, Borislav Petkov wrote:
+> On Wed, Jun 12, 2019 at 03:29:57AM +0000, Yu, Fenghua wrote:
+> > My bad. I studied a bit more and found the patch #1 is not needed.
+> 
+> Why, I think you were spot-on:
+> 
+> "And the two variables are ONLY used in resctrl monitoring
+> configuration. There is no need to store them in cpuinfo_x86 on each
+> CPU."
+> 
+> That was a real overkill to put them in cpuinfo_x86. The information
+> needed should simply be read out in rdt_get_mon_l3_config() and that's
+> it - no need to global values to store them.
+> 
+> Now removing them should be in a separate patch so that review is easy.
+> 
+> Or am I missing an aspect?
 
-> On Tue, 11 Jun 2019 06:02:15 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
->=20
-> > Jon, please correct me if I' wrong, bu I guess the plan is to place the=
-m=20
-> > somewhere under Documentation/admin-guide/. =20
->=20
-> That makes sense to me.
->=20
-> > If so, perhaps creating a Documentation/admin-guide/drm dir there and=20
-> > place docs like EDID/HOWTO.txt, svga.txt, etc would work. =20
->=20
-> Maybe "graphics" or "display" rather than "drm", which may not entirely
-> applicable to all of those docs or as familiar to all admins?
+x86_init_cache_qos() fnds the minimum number of rmid on all CPUs and
+store it in boot_cpu_data.
 
-It is up to Daniel/David to decide. Personally, I agree with you that
-either "graphics" or "display" would be better at the admin guide.
+If removing the two variables from cpuinfo_x86 and getting number of
+rmid and occupancy scale in rdt_get_mon_l3_config() directly from
+CPUID on the current CPU, we need to assume all CPUs have the same
+number of rmid.
 
->=20
-> > Btw, that's one of the reasons[1] why I opted to keep the files where t=
-hey
-> > are: properly organizing the converted documents call for such kind
-> > of discussions. On my experience, discussing names and directory locati=
-ons
-> > can generate warm discussions and take a lot of time to reach consensus=
-. =20
->=20
-> Moving docs is a pain; my life would certainly be easier if I were happy
-> to just let everything lie where it fell :)  But it's far from the hardest
-> problem we solve in kernel development, I assume we can figure it out.
+Is this a right assumption?
 
-Yeah, it is doable. I'm happy to write the rename patches and even try
-to split some documents at the places I'm more familiar with, but, IMHO,
-we should do some discussions before some of such renames.
+After think again, it might be a right assumption after all. AFAICT, each
+Intel platform that supports resctrl has the same number of rmid on all
+CPUs and there is no plan to have a resctrl platform that has different
+numbers of rmid on CPUs.
 
-For example, Daniel said that:
+So Ok, I will write the patch #1 that removes the two variables from
+cpuinfo_x86 and gets the info directly from CPUID in rdt_get_mon_l3_config().
 
-> > > Yeah atm we're doing a bad job of keeping the kapi and uapi parts
-> > > separate. But the plan at least is to move all the gpu related uapi s=
-tuff
-> > > into Documentation/gpu/drm-uapi.rst. Not sure there's value in moving=
- that
-> > > out of the gpu folder ...
+Thanks.
 
-=46rom the conversions I've made so far, almost all driver subsystems
-put everything under Documentation/<subsystem: kAPI, uAPI, admin info,
-driver-specific technical info.
-
-It should be doable to place kAPI and uAPI on different books, but there
-will be lots of cross-reference links between them, on properly-written
-docs.
-
-However, other admin-guide stuff under drivers are usually in the middle
-of the documents. For example, on media, we have some at the uAPI guide,
-like the Device Naming item:
-
-	https://linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/open.html#device-n=
-aming
-
-But splitting it from uAPI guide is not an easy task.
-
-At the driver's specific documentation is even messier.
-
-Ok, splitting is doable, but require lots of dedication, and I'm not
-convinced if it would make much difference in practice.
-
-Thanks,
-Mauro
+-Fenghua
