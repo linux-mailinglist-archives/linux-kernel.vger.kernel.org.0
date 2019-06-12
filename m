@@ -2,2331 +2,2130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D46A42F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0A842EF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:40:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbfFLSj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:39:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45692 "EHLO
+        id S2387921AbfFLSjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:39:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45698 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbfFLSim (ORCPT
+        with ESMTP id S1727736AbfFLSim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Jun 2019 14:38:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
-        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eQA4KrlXoSmB+WzQ6IsizNxi+8ru9zeey05lYN37gwo=; b=K2G4WhFbBUdsvyCqfw3QmGgWT6
-        DXHpf9v5aMe61VLTmh3LWISRuWldcfxe1a/JVb9M6c3NhNcNGvWcJ+4RpM7ZRNtB2zk1lP+19ei7/
-        i9t4fC3ZcvNG5lUFKTu0EBZNzfWhErq7QdQXGSIKPpTX2vYQGeMeP4UnV0ScTvmlbCUqlNfnHDghH
-        lGdKoo7Z+aL1kMjkCzoCLJPWZ/fVCwNQN38IgXWlRVjh7T8dVnjoLvmrUACosL9cGv62RvTu2Rw6R
-        KNsH7Z/LzZfId5l8T7umTZKfQvp1uRBQoN/qUubL4kcojT93oaP/Dh8sjcgnSiALAHtXA9wePqhWr
-        oPfJHVLA==;
+        bh=0jFbf4CsZxRGMAGEVdh4CfAW6Or9jokvwGq4/zFWi/Y=; b=YKMG5XQDUV4IPxKkUi2ssjmLF/
+        Gqgs2+VSrzIY7zektVEGbIiIgECcrGfoPABI+vfJtd0f2plPg8BjjjBzu2BDvBE0vjlO8dJeGcCb5
+        o+0svbiegOdmxPwhY+9x+uInRWHwGCSjTnJeYC90dfy9HUOnN7cTQUyHJAcEkSnnNLdfmXBhGlWdX
+        SHy1ZRDwmmCxqlwl1xCaY12PneE6TB8aolLg78BluWS9OtUpFTAZd6L51ouXsiF1bDqcDGK0v+447
+        Psc2le9uuET1Apffa1r9hAt7lRQOe2kmxSh4lYMfBZ+tkddjDg/1wDGJzovZCQU2QmT+1bmSJwXMI
+        W3s2lD2A==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb88s-0006YZ-Q4; Wed, 12 Jun 2019 18:38:40 +0000
+        id 1hb88s-0006YX-Uy; Wed, 12 Jun 2019 18:38:40 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hb88q-0002BY-AI; Wed, 12 Jun 2019 15:38:36 -0300
+        id 1hb88q-0002Bc-BM; Wed, 12 Jun 2019 15:38:36 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v1 20/31] docs: hid: convert to ReST
-Date:   Wed, 12 Jun 2019 15:38:23 -0300
-Message-Id: <f21a936a8a7ea5fdbcca16c91ec49265cd258acf.1560364494.git.mchehab+samsung@kernel.org>
+        Pat Gefre <pfg@sgi.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        linux-efi@vger.kernel.org
+Subject: [PATCH v1 21/31] docs: ia64: convert to ReST
+Date:   Wed, 12 Jun 2019 15:38:24 -0300
+Message-Id: <a07be841f9821eecb22d7bbee0e633b7399f0e1a.1560364494.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560364493.git.mchehab+samsung@kernel.org>
 References: <cover.1560364493.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the HID documentation files to ReST, add an
+Rename the ia64 documentation files to ReST, add an
 index for them and adjust in order to produce a nice html
 output via the Sphinx build system.
 
-While here, fix the sysfs example from hid-sensor.txt, that
-has a lot of "?" instead of the proper UTF-8 characters that
-are produced by the tree command.
+There are two upper case file names. Rename them to
+lower case, as we're working to avoid upper case file
+names at Documentation.
 
 At its new index.rst, let's add a :orphan: while this is not linked to
 the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../hid/{hid-alps.txt => hid-alps.rst}        |  85 ++-
- .../hid/{hid-sensor.txt => hid-sensor.rst}    | 192 +++----
- .../{hid-transport.txt => hid-transport.rst}  |  82 ++-
- Documentation/hid/{hiddev.txt => hiddev.rst}  | 154 ++++--
- Documentation/hid/{hidraw.txt => hidraw.rst}  |  53 +-
- Documentation/hid/index.rst                   |  18 +
- Documentation/hid/intel-ish-hid.rst           | 485 ++++++++++++++++++
- Documentation/hid/intel-ish-hid.txt           | 454 ----------------
- Documentation/hid/{uhid.txt => uhid.rst}      |  46 +-
- Documentation/input/input.rst                 |   2 +-
+ .../ia64/{aliasing.txt => aliasing.rst}       |  73 ++--
+ Documentation/ia64/{efirtc.txt => efirtc.rst} | 118 +++---
+ .../ia64/{err_inject.txt => err_inject.rst}   | 349 +++++++++---------
+ Documentation/ia64/{fsys.txt => fsys.rst}     | 127 ++++---
+ Documentation/ia64/{README => ia64.rst}       |  26 +-
+ Documentation/ia64/index.rst                  |  18 +
+ .../ia64/{IRQ-redir.txt => irq-redir.rst}     |  31 +-
+ Documentation/ia64/{mca.txt => mca.rst}       |  10 +-
+ Documentation/ia64/{serial.txt => serial.rst} |  36 +-
+ Documentation/ia64/xen.rst                    | 206 +++++++++++
+ Documentation/ia64/xen.txt                    | 183 ---------
  MAINTAINERS                                   |   2 +-
- 11 files changed, 897 insertions(+), 676 deletions(-)
- rename Documentation/hid/{hid-alps.txt => hid-alps.rst} (64%)
- rename Documentation/hid/{hid-sensor.txt => hid-sensor.rst} (61%)
- rename Documentation/hid/{hid-transport.txt => hid-transport.rst} (93%)
- rename Documentation/hid/{hiddev.txt => hiddev.rst} (77%)
- rename Documentation/hid/{hidraw.txt => hidraw.rst} (89%)
- create mode 100644 Documentation/hid/index.rst
- create mode 100644 Documentation/hid/intel-ish-hid.rst
- delete mode 100644 Documentation/hid/intel-ish-hid.txt
- rename Documentation/hid/{uhid.txt => uhid.rst} (94%)
+ arch/ia64/kernel/efi.c                        |   2 +-
+ arch/ia64/kernel/fsys.S                       |   2 +-
+ arch/ia64/mm/ioremap.c                        |   2 +-
+ arch/ia64/pci/pci.c                           |   2 +-
+ 16 files changed, 660 insertions(+), 527 deletions(-)
+ rename Documentation/ia64/{aliasing.txt => aliasing.rst} (83%)
+ rename Documentation/ia64/{efirtc.txt => efirtc.rst} (70%)
+ rename Documentation/ia64/{err_inject.txt => err_inject.rst} (82%)
+ rename Documentation/ia64/{fsys.txt => fsys.rst} (76%)
+ rename Documentation/ia64/{README => ia64.rst} (61%)
+ create mode 100644 Documentation/ia64/index.rst
+ rename Documentation/ia64/{IRQ-redir.txt => irq-redir.rst} (86%)
+ rename Documentation/ia64/{mca.txt => mca.rst} (96%)
+ rename Documentation/ia64/{serial.txt => serial.rst} (87%)
+ create mode 100644 Documentation/ia64/xen.rst
+ delete mode 100644 Documentation/ia64/xen.txt
 
-diff --git a/Documentation/hid/hid-alps.txt b/Documentation/hid/hid-alps.rst
-similarity index 64%
-rename from Documentation/hid/hid-alps.txt
-rename to Documentation/hid/hid-alps.rst
-index 6b02a2447c77..e2f4c4c11e3f 100644
---- a/Documentation/hid/hid-alps.txt
-+++ b/Documentation/hid/hid-alps.rst
-@@ -1,19 +1,26 @@
-+==========================
- ALPS HID Touchpad Protocol
------------------------
-+==========================
+diff --git a/Documentation/ia64/aliasing.txt b/Documentation/ia64/aliasing.rst
+similarity index 83%
+rename from Documentation/ia64/aliasing.txt
+rename to Documentation/ia64/aliasing.rst
+index 5a4dea6abebd..a08b36aba015 100644
+--- a/Documentation/ia64/aliasing.txt
++++ b/Documentation/ia64/aliasing.rst
+@@ -1,20 +1,25 @@
+-	         MEMORY ATTRIBUTE ALIASING ON IA-64
++==================================
++Memory Attribute Aliasing on IA-64
++==================================
  
- Introduction
- ------------
- Currently ALPS HID driver supports U1 Touchpad device.
+-			   Bjorn Helgaas
+-		       <bjorn.helgaas@hp.com>
+-			    May 4, 2006
++Bjorn Helgaas <bjorn.helgaas@hp.com>
  
--U1 devuce basic information.
-+U1 device basic information.
++May 4, 2006
+ 
+-MEMORY ATTRIBUTES
 +
-+==========	======
- Vender ID	0x044E
- Product ID	0x120B
- Version ID	0x0121
-+==========	======
++Memory Attributes
++=================
  
+     Itanium supports several attributes for virtual memory references.
+     The attribute is part of the virtual translation, i.e., it is
+     contained in the TLB entry.  The ones of most interest to the Linux
+     kernel are:
  
- HID Descriptor
--------------
-+--------------
-+
-+=======	====================	=====	=======================================
- Byte	Field			Value	Notes
-+=======	====================	=====	=======================================
- 0	wHIDDescLength		001E	Length of HID Descriptor : 30 bytes
- 2	bcdVersion		0100	Compliant with Version 1.00
- 4	wReportDescLength	00B2	Report Descriptor is 178 Bytes (0x00B2)
-@@ -28,32 +35,42 @@ Byte	Field			Value	Notes
- 22	wProductID		120B	Product ID 0x120B
- 24	wVersionID		0121	Version 01.21
- 26	RESERVED		0000	RESERVED
-+=======	====================	=====	=======================================
+-	WB		Write-back (cacheable)
++	==		======================
++        WB		Write-back (cacheable)
+ 	UC		Uncacheable
+ 	WC		Write-coalescing
++	==		======================
  
+     System memory typically uses the WB attribute.  The UC attribute is
+     used for memory-mapped I/O devices.  The WC attribute is uncacheable
+@@ -29,7 +34,8 @@ MEMORY ATTRIBUTES
+     support either WB or UC access to main memory, while others support
+     only WB access.
  
- Report ID
--------------
--ReportID-1	(Input Reports)	(HIDUsage-Mouse) for TP&SP
--ReportID-2	(Input Reports)	(HIDUsage-keyboard) for TP
--ReportID-3	(Input Reports)	(Vendor Usage: Max 10 finger data) for TP
--ReportID-4	(Input Reports)	(Vendor Usage: ON bit data) for GP
--ReportID-5	(Feature Reports)	Feature Reports
--ReportID-6	(Input Reports)	(Vendor Usage: StickPointer data) for SP
--ReportID-7	(Feature Reports)	Flash update (Bootloader)
-+---------
-+
-+==========	=================  =========================================
-+ReportID-1	(Input Reports)	   (HIDUsage-Mouse) for TP&SP
-+ReportID-2	(Input Reports)	   (HIDUsage-keyboard) for TP
-+ReportID-3	(Input Reports)	   (Vendor Usage: Max 10 finger data) for TP
-+ReportID-4	(Input Reports)	   (Vendor Usage: ON bit data) for GP
-+ReportID-5	(Feature Reports)  Feature Reports
-+ReportID-6	(Input Reports)	   (Vendor Usage: StickPointer data) for SP
-+ReportID-7	(Feature Reports)  Flash update (Bootloader)
-+==========	=================  =========================================
+-MEMORY MAP
++Memory Map
++==========
  
+     Platform firmware describes the physical memory map and the
+     supported attributes for each region.  At boot-time, the kernel uses
+@@ -55,7 +61,8 @@ MEMORY MAP
+     The efi_memmap table is preserved unmodified because the original
+     boot-time information is required for kexec.
  
- Data pattern
- ------------
-+
-+=====	==========	=====	=================
- Case1	ReportID_1	TP/SP	Relative/Relative
- Case2	ReportID_3	TP	Absolute
- 	ReportID_6	SP	Absolute
-+=====	==========	=====	=================
+-KERNEL IDENTITY MAPPINGS
++Kernel Identify Mappings
++========================
  
+     Linux/ia64 identity mappings are done with large pages, currently
+     either 16MB or 64MB, referred to as "granules."  Cacheable mappings
+@@ -74,17 +81,20 @@ KERNEL IDENTITY MAPPINGS
+     are only partially populated, or populated with a combination of UC
+     and WB regions.
  
- Command Read/Write
- ------------------
- To read/write to RAM, need to send a commands to the device.
-+
- The command format is as below.
+-USER MAPPINGS
++User Mappings
++=============
  
- DataByte(SET_REPORT)
-+
-+=====	======================
- Byte1	Command Byte
- Byte2	Address - Byte 0 (LSB)
- Byte3	Address - Byte 1
-@@ -61,13 +78,19 @@ Byte4	Address - Byte 2
- Byte5	Address - Byte 3 (MSB)
- Byte6	Value Byte
- Byte7	Checksum
-+=====	======================
+     User mappings are typically done with 16K or 64K pages.  The smaller
+     page size allows more flexibility because only 16K or 64K has to be
+     homogeneous with respect to memory attributes.
  
- Command Byte is read=0xD1/write=0xD2 .
-+
- Address is read/write RAM address.
-+
- Value Byte is writing data when you send the write commands.
-+
- When you read RAM, there is no meaning.
+-POTENTIAL ATTRIBUTE ALIASING CASES
++Potential Attribute Aliasing Cases
++==================================
  
- DataByte(GET_REPORT)
-+
-+=====	======================
- Byte1	Response Byte
- Byte2	Address - Byte 0 (LSB)
- Byte3	Address - Byte 1
-@@ -75,6 +98,7 @@ Byte4	Address - Byte 2
- Byte5	Address - Byte 3 (MSB)
- Byte6	Value Byte
- Byte7	Checksum
-+=====	======================
+     There are several ways the kernel creates new mappings:
  
- Read value is stored in Value Byte.
+-    mmap of /dev/mem
++mmap of /dev/mem
++----------------
  
-@@ -82,7 +106,11 @@ Read value is stored in Value Byte.
- Packet Format
- Touchpad data byte
- ------------------
--	b7	b6	b5	b4	b3	b2	b1	b0
-+
-+
-+======= ======= ======= ======= ======= ======= ======= ======= =====
-+-	b7	b6	b5	b4	b3	b2	b1	b0
-+======= ======= ======= ======= ======= ======= ======= ======= =====
- 1	0	0	SW6	SW5	SW4	SW3	SW2	SW1
- 2	0	0	0	Fcv	Fn3	Fn2	Fn1	Fn0
- 3	Xa0_7	Xa0_6	Xa0_5	Xa0_4	Xa0_3	Xa0_2	Xa0_1	Xa0_0
-@@ -114,17 +142,25 @@ Touchpad data byte
- 25	Ya4_7	Ya4_6	Ya4_5	Ya4_4	Ya4_3	Ya4_2	Ya4_1	Ya4_0
- 26	Ya4_15	Ya4_14	Ya4_13	Ya4_12	Ya4_11	Ya4_10	Ya4_9	Ya4_8
- 27	LFB4	Zs4_6	Zs4_5	Zs4_4	Zs4_3	Zs4_2	Zs4_1	Zs4_0
-+======= ======= ======= ======= ======= ======= ======= ======= =====
+ 	This uses remap_pfn_range(), which creates user mappings.  These
+ 	mappings may be either WB or UC.  If the region being mapped
+@@ -98,7 +108,8 @@ POTENTIAL ATTRIBUTE ALIASING CASES
+ 	Since the EFI memory map does not describe MMIO on some
+ 	machines, this should use an uncacheable mapping as a fallback.
  
+-    mmap of /sys/class/pci_bus/.../legacy_mem
++mmap of /sys/class/pci_bus/.../legacy_mem
++-----------------------------------------
  
--SW1-SW6:	SW ON/OFF status
--Xan_15-0(16bit):X Absolute data of the "n"th finger
--Yan_15-0(16bit):Y Absolute data of the "n"th finger
--Zsn_6-0(7bit):	Operation area of the "n"th finger
-+SW1-SW6:
-+	SW ON/OFF status
-+Xan_15-0(16bit):
-+	X Absolute data of the "n"th finger
-+Yan_15-0(16bit):
-+	Y Absolute data of the "n"th finger
-+Zsn_6-0(7bit):
-+	Operation area of the "n"th finger
+ 	This is very similar to mmap of /dev/mem, except that legacy_mem
+ 	only allows mmap of the one megabyte "legacy MMIO" area for a
+@@ -112,9 +123,10 @@ POTENTIAL ATTRIBUTE ALIASING CASES
  
+ 	The /dev/mem mmap constraints apply.
  
- StickPointer data byte
--------------------
--	b7	b6	b5	b4	b3	b2	b1	b0
-+----------------------
-+
-+======= ======= ======= ======= ======= ======= ======= ======= =====
-+-	b7	b6	b5	b4	b3	b2	b1	b0
-+======= ======= ======= ======= ======= ======= ======= ======= =====
- Byte1	1	1	1	0	1	SW3	SW2	SW1
- Byte2	X7	X6	X5	X4	X3	X2	X1	X0
- Byte3	X15	X14	X13	X12	X11	X10	X9	X8
-@@ -132,8 +168,13 @@ Byte4	Y7	Y6	Y5	Y4	Y3	Y2	Y1	Y0
- Byte5	Y15	Y14	Y13	Y12	Y11	Y10	Y9	Y8
- Byte6	Z7	Z6	Z5	Z4	Z3	Z2	Z1	Z0
- Byte7	T&P	Z14	Z13	Z12	Z11	Z10	Z9	Z8
-+======= ======= ======= ======= ======= ======= ======= ======= =====
- 
--SW1-SW3:	SW ON/OFF status
--Xn_15-0(16bit):X Absolute data
--Yn_15-0(16bit):Y Absolute data
--Zn_14-0(15bit):Z
-+SW1-SW3:
-+	SW ON/OFF status
-+Xn_15-0(16bit):
-+	X Absolute data
-+Yn_15-0(16bit):
-+	Y Absolute data
-+Zn_14-0(15bit):
-+	Z
-diff --git a/Documentation/hid/hid-sensor.txt b/Documentation/hid/hid-sensor.rst
-similarity index 61%
-rename from Documentation/hid/hid-sensor.txt
-rename to Documentation/hid/hid-sensor.rst
-index b287752a31cd..758972e34971 100644
---- a/Documentation/hid/hid-sensor.txt
-+++ b/Documentation/hid/hid-sensor.rst
-@@ -1,6 +1,6 @@
--
-+=====================
- HID Sensors Framework
--======================
-+=====================
- HID sensor framework provides necessary interfaces to implement sensor drivers,
- which are connected to a sensor hub. The sensor hub is a HID device and it provides
- a report descriptor conforming to HID 1.12 sensor usage tables.
-@@ -15,22 +15,22 @@ the drivers themselves."
- This specification describes many usage IDs, which describe the type of sensor
- and also the individual data fields. Each sensor can have variable number of
- data fields. The length and order is specified in the report descriptor. For
--example a part of report descriptor can look like:
-+example a part of report descriptor can look like::
- 
--   INPUT(1)[INPUT]
-- ..
--    Field(2)
--      Physical(0020.0073)
--      Usage(1)
--        0020.045f
--      Logical Minimum(-32767)
--      Logical Maximum(32767)
--      Report Size(8)
--      Report Count(1)
--      Report Offset(16)
--      Flags(Variable Absolute)
--..
--..
-+     INPUT(1)[INPUT]
-+   ..
-+      Field(2)
-+        Physical(0020.0073)
-+        Usage(1)
-+          0020.045f
-+        Logical Minimum(-32767)
-+        Logical Maximum(32767)
-+        Report Size(8)
-+        Report Count(1)
-+        Report Offset(16)
-+        Flags(Variable Absolute)
-+  ..
-+  ..
- 
- The report is indicating "sensor page (0x20)" contains an accelerometer-3D (0x73).
- This accelerometer-3D has some fields. Here for example field 2 is motion intensity
-@@ -40,13 +40,14 @@ data will use this format.
- 
- 
- Implementation
--=================
-+==============
- 
- This specification defines many different types of sensors with different sets of
- data fields. It is difficult to have a common input event to user space applications,
- for different sensors. For example an accelerometer can send X,Y and Z data, whereas
- an ambient light sensor can send illumination data.
- So the implementation has two parts:
-+
- - Core hid driver
- - Individual sensor processing part (sensor drivers)
- 
-@@ -55,8 +56,11 @@ Core driver
- The core driver registers (hid-sensor-hub) registers as a HID driver. It parses
- report descriptors and identifies all the sensors present. It adds an MFD device
- with name HID-SENSOR-xxxx (where xxxx is usage id from the specification).
--For example
-+
-+For example:
-+
- HID-SENSOR-200073 is registered for an Accelerometer 3D driver.
-+
- So if any driver with this name is inserted, then the probe routine for that
- function will be called. So an accelerometer processing driver can register
- with this name and will be probed if there is an accelerometer-3D detected.
-@@ -66,7 +70,8 @@ drivers to register and get events for that usage id. Also it provides parsing
- functions, which get and set each input/feature/output report.
- 
- Individual sensor processing part (sensor drivers)
-------------
-+--------------------------------------------------
-+
- The processing driver will use an interface provided by the core driver to parse
- the report and get the indexes of the fields and also can get events. This driver
- can use IIO interface to use the standard ABI defined for a type of sensor.
-@@ -75,31 +80,34 @@ can use IIO interface to use the standard ABI defined for a type of sensor.
- Core driver Interface
- =====================
- 
--Callback structure:
--Each processing driver can use this structure to set some callbacks.
-+Callback structure::
-+
-+  Each processing driver can use this structure to set some callbacks.
- 	int (*suspend)(..): Callback when HID suspend is received
- 	int (*resume)(..): Callback when HID resume is received
- 	int (*capture_sample)(..): Capture a sample for one of its data fields
- 	int (*send_event)(..): One complete event is received which can have
-                                multiple data fields.
- 
--Registration functions:
--int sensor_hub_register_callback(struct hid_sensor_hub_device *hsdev,
-+Registration functions::
-+
-+  int sensor_hub_register_callback(struct hid_sensor_hub_device *hsdev,
- 			u32 usage_id,
- 			struct hid_sensor_hub_callbacks *usage_callback):
- 
- Registers callbacks for an usage id. The callback functions are not allowed
--to sleep.
-+to sleep::
- 
- 
--int sensor_hub_remove_callback(struct hid_sensor_hub_device *hsdev,
-+  int sensor_hub_remove_callback(struct hid_sensor_hub_device *hsdev,
- 			u32 usage_id):
- 
- Removes callbacks for an usage id.
- 
- 
--Parsing function:
--int sensor_hub_input_get_attribute_info(struct hid_sensor_hub_device *hsdev,
-+Parsing function::
-+
-+  int sensor_hub_input_get_attribute_info(struct hid_sensor_hub_device *hsdev,
- 			u8 type,
- 			u32 usage_id, u32 attr_usage_id,
- 			struct hid_sensor_hub_attribute_info *info);
-@@ -110,26 +118,27 @@ so that fields can be set or get individually.
- These indexes avoid searching every time and getting field index to get or set.
- 
- 
--Set Feature report
--int sensor_hub_set_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
-+Set Feature report::
-+
-+  int sensor_hub_set_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
- 			u32 field_index, s32 value);
- 
- This interface is used to set a value for a field in feature report. For example
- if there is a field report_interval, which is parsed by a call to
--sensor_hub_input_get_attribute_info before, then it can directly set that individual
--field.
-+sensor_hub_input_get_attribute_info before, then it can directly set that
-+individual field::
- 
- 
--int sensor_hub_get_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
-+  int sensor_hub_get_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
- 			u32 field_index, s32 *value);
- 
- This interface is used to get a value for a field in input report. For example
- if there is a field report_interval, which is parsed by a call to
--sensor_hub_input_get_attribute_info before, then it can directly get that individual
--field value.
-+sensor_hub_input_get_attribute_info before, then it can directly get that
-+individual field value::
- 
- 
--int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
-+  int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
- 			u32 usage_id,
- 			u32 attr_usage_id, u32 report_id);
- 
-@@ -143,6 +152,8 @@ registered callback function to process the sample.
- ----------
- 
- HID Custom and generic Sensors
+-    mmap of /proc/bus/pci/.../??.?
++mmap of /proc/bus/pci/.../??.?
 +------------------------------
+ 
+-    	This is an MMIO mmap of PCI functions, which additionally may or
++	This is an MMIO mmap of PCI functions, which additionally may or
+ 	may not be requested as using the WC attribute.
+ 
+ 	If WC is requested, and the region in kern_memmap is either WC
+@@ -124,7 +136,8 @@ POTENTIAL ATTRIBUTE ALIASING CASES
+ 	Otherwise, the user mapping must use the same attribute as the
+ 	kernel mapping.
+ 
+-    read/write of /dev/mem
++read/write of /dev/mem
++----------------------
+ 
+ 	This uses copy_from_user(), which implicitly uses a kernel
+ 	identity mapping.  This is obviously safe for things in
+@@ -138,7 +151,8 @@ POTENTIAL ATTRIBUTE ALIASING CASES
+ 	eight-byte accesses, and the copy_from_user() path doesn't allow
+ 	any control over the access size, so this would be dangerous.
+ 
+-    ioremap()
++ioremap()
++---------
+ 
+ 	This returns a mapping for use inside the kernel.
+ 
+@@ -155,9 +169,11 @@ POTENTIAL ATTRIBUTE ALIASING CASES
+ 
+ 	Failing all of the above, we have to fall back to a UC mapping.
+ 
+-PAST PROBLEM CASES
++Past Problem Cases
++==================
+ 
+-    mmap of various MMIO regions from /dev/mem by "X" on Intel platforms
++mmap of various MMIO regions from /dev/mem by "X" on Intel platforms
++--------------------------------------------------------------------
+ 
+       The EFI memory map may not report these MMIO regions.
+ 
+@@ -166,12 +182,16 @@ PAST PROBLEM CASES
+       succeed.  It may create either WB or UC user mappings, depending
+       on whether the region is in kern_memmap or the EFI memory map.
+ 
+-    mmap of 0x0-0x9FFFF /dev/mem by "hwinfo" on HP sx1000 with VGA enabled
++mmap of 0x0-0x9FFFF /dev/mem by "hwinfo" on HP sx1000 with VGA enabled
++----------------------------------------------------------------------
+ 
+       The EFI memory map reports the following attributes:
 +
++        =============== ======= ==================
+         0x00000-0x9FFFF WB only
+         0xA0000-0xBFFFF UC only (VGA frame buffer)
+         0xC0000-0xFFFFF WB only
++        =============== ======= ==================
  
- HID Sensor specification defines two special sensor usage types. Since they
- don't represent a standard sensor, it is not possible to define using Linux IIO
-@@ -158,66 +169,73 @@ keyboard attached/detached or lid open/close.
- To allow application to utilize these sensors, here they are exported uses sysfs
- attribute groups, attributes and misc device interface.
+       This mmap is done with user pages, not kernel identity mappings,
+       so it is safe to use WB mappings.
+@@ -182,7 +202,8 @@ PAST PROBLEM CASES
+       never generate an uncacheable reference to the WB-only areas unless
+       the driver explicitly touches them.
  
--An example of this representation on sysfs:
--/sys/devices/pci0000:00/INT33C2:00/i2c-0/i2c-INT33D1:00/0018:8086:09FA.0001/HID-SENSOR-2000e1.6.auto$ tree -R
--.
--????????? enable_sensor
--????????? feature-0-200316
--??????? ????????? feature-0-200316-maximum
--??????? ????????? feature-0-200316-minimum
--??????? ????????? feature-0-200316-name
--??????? ????????? feature-0-200316-size
--??????? ????????? feature-0-200316-unit-expo
--??????? ????????? feature-0-200316-units
--??????? ????????? feature-0-200316-value
--????????? feature-1-200201
--??????? ????????? feature-1-200201-maximum
--??????? ????????? feature-1-200201-minimum
--??????? ????????? feature-1-200201-name
--??????? ????????? feature-1-200201-size
--??????? ????????? feature-1-200201-unit-expo
--??????? ????????? feature-1-200201-units
--??????? ????????? feature-1-200201-value
--????????? input-0-200201
--??????? ????????? input-0-200201-maximum
--??????? ????????? input-0-200201-minimum
--??????? ????????? input-0-200201-name
--??????? ????????? input-0-200201-size
--??????? ????????? input-0-200201-unit-expo
--??????? ????????? input-0-200201-units
--??????? ????????? input-0-200201-value
--????????? input-1-200202
--??????? ????????? input-1-200202-maximum
--??????? ????????? input-1-200202-minimum
--??????? ????????? input-1-200202-name
--??????? ????????? input-1-200202-size
--??????? ????????? input-1-200202-unit-expo
--??????? ????????? input-1-200202-units
--??????? ????????? input-1-200202-value
-+An example of this representation on sysfs::
+-    mmap of 0x0-0xFFFFF legacy_mem by "X"
++mmap of 0x0-0xFFFFF legacy_mem by "X"
++-------------------------------------
+ 
+       If the EFI memory map reports that the entire range supports the
+       same attributes, we can allow the mmap (and we will prefer WB if
+@@ -197,15 +218,18 @@ PAST PROBLEM CASES
+       that doesn't report the VGA frame buffer at all), we should fail the
+       mmap and force the user to map just the specific region of interest.
+ 
+-    mmap of 0xA0000-0xBFFFF legacy_mem by "X" on HP sx1000 with VGA disabled
++mmap of 0xA0000-0xBFFFF legacy_mem by "X" on HP sx1000 with VGA disabled
++------------------------------------------------------------------------
 +
-+  /sys/devices/pci0000:00/INT33C2:00/i2c-0/i2c-INT33D1:00/0018:8086:09FA.0001/HID-SENSOR-2000e1.6.auto$ tree -R
-+  .
-+  │   ├──  enable_sensor
-+  │   │   ├── feature-0-200316
-+  │   │   │   ├── feature-0-200316-maximum
-+  │   │   │   ├── feature-0-200316-minimum
-+  │   │   │   ├── feature-0-200316-name
-+  │   │   │   ├── feature-0-200316-size
-+  │   │   │   ├── feature-0-200316-unit-expo
-+  │   │   │   ├── feature-0-200316-units
-+  │   │   │   ├── feature-0-200316-value
-+  │   │   ├── feature-1-200201
-+  │   │   │   ├── feature-1-200201-maximum
-+  │   │   │   ├── feature-1-200201-minimum
-+  │   │   │   ├── feature-1-200201-name
-+  │   │   │   ├── feature-1-200201-size
-+  │   │   │   ├── feature-1-200201-unit-expo
-+  │   │   │   ├── feature-1-200201-units
-+  │   │   │   ├── feature-1-200201-value
-+  │   │   ├── input-0-200201
-+  │   │   │   ├── input-0-200201-maximum
-+  │   │   │   ├── input-0-200201-minimum
-+  │   │   │   ├── input-0-200201-name
-+  │   │   │   ├── input-0-200201-size
-+  │   │   │   ├── input-0-200201-unit-expo
-+  │   │   │   ├── input-0-200201-units
-+  │   │   │   ├── input-0-200201-value
-+  │   │   ├── input-1-200202
-+  │   │   │   ├── input-1-200202-maximum
-+  │   │   │   ├── input-1-200202-minimum
-+  │   │   │   ├── input-1-200202-name
-+  │   │   │   ├── input-1-200202-size
-+  │   │   │   ├── input-1-200202-unit-expo
-+  │   │   │   ├── input-1-200202-units
-+  │   │   │   ├── input-1-200202-value
++      The EFI memory map reports the following attributes::
  
- Here there is a custom sensors with four fields, two feature and two inputs.
- Each field is represented by a set of attributes. All fields except the "value"
- are read only. The value field is a RW field.
--Example
--/sys/bus/platform/devices/HID-SENSOR-2000e1.6.auto/feature-0-200316$ grep -r . *
--feature-0-200316-maximum:6
--feature-0-200316-minimum:0
--feature-0-200316-name:property-reporting-state
--feature-0-200316-size:1
--feature-0-200316-unit-expo:0
--feature-0-200316-units:25
--feature-0-200316-value:1
+-      The EFI memory map reports the following attributes:
+         0x00000-0xFFFFF WB only (no VGA MMIO hole)
+ 
+       This is a special case of the previous case, and the mmap should
+       fail for the same reason as above.
+ 
+-    read of /sys/devices/.../rom
++read of /sys/devices/.../rom
++----------------------------
+ 
+       For VGA devices, this may cause an ioremap() of 0xC0000.  This
+       used to be done with a UC mapping, because the VGA frame buffer
+@@ -215,7 +239,8 @@ PAST PROBLEM CASES
+       We should use WB page table mappings to avoid covering the VGA
+       frame buffer.
+ 
+-NOTES
++Notes
++=====
+ 
+     [1] SDM rev 2.2, vol 2, sec 4.4.1.
+     [2] SDM rev 2.2, vol 2, sec 4.4.6.
+diff --git a/Documentation/ia64/efirtc.txt b/Documentation/ia64/efirtc.rst
+similarity index 70%
+rename from Documentation/ia64/efirtc.txt
+rename to Documentation/ia64/efirtc.rst
+index 057e6bebda8f..2f7ff5026308 100644
+--- a/Documentation/ia64/efirtc.txt
++++ b/Documentation/ia64/efirtc.rst
+@@ -1,12 +1,16 @@
++==========================
+ EFI Real Time Clock driver
+--------------------------------
++==========================
 +
-+Example::
+ S. Eranian <eranian@hpl.hp.com>
 +
-+  /sys/bus/platform/devices/HID-SENSOR-2000e1.6.auto/feature-0-200316$ grep -r . *
-+  feature-0-200316-maximum:6
-+  feature-0-200316-minimum:0
-+  feature-0-200316-name:property-reporting-state
-+  feature-0-200316-size:1
-+  feature-0-200316-unit-expo:0
-+  feature-0-200316-units:25
-+  feature-0-200316-value:1
+ March 2000
  
- How to enable such sensor?
-+^^^^^^^^^^^^^^^^^^^^^^^^^^
+-I/ Introduction
++1. Introduction
++===============
+ 
+ This document describes the efirtc.c driver has provided for
+-the IA-64 platform. 
++the IA-64 platform.
+ 
+ The purpose of this driver is to supply an API for kernel and user applications
+ to get access to the Time Service offered by EFI version 0.92.
+@@ -16,112 +20,124 @@ SetTime(), GetWakeupTime(), SetWakeupTime() which are all supported by this
+ driver. We describe those calls as well the design of the driver in the
+ following sections.
+ 
+-II/ Design Decisions
++2. Design Decisions
++===================
+ 
+-The original ideas was to provide a very simple driver to get access to, 
+-at first, the time of day service. This is required in order to access, in a 
+-portable way, the CMOS clock. A program like /sbin/hwclock uses such a clock 
++The original ideas was to provide a very simple driver to get access to,
++at first, the time of day service. This is required in order to access, in a
++portable way, the CMOS clock. A program like /sbin/hwclock uses such a clock
+ to initialize the system view of the time during boot.
+ 
+ Because we wanted to minimize the impact on existing user-level apps using
+ the CMOS clock, we decided to expose an API that was very similar to the one
+-used today with the legacy RTC driver (driver/char/rtc.c). However, because 
++used today with the legacy RTC driver (driver/char/rtc.c). However, because
+ EFI provides a simpler services, not all ioctl() are available. Also
+-new ioctl()s have been introduced for things that EFI provides but not the 
++new ioctl()s have been introduced for things that EFI provides but not the
+ legacy.
+ 
+ EFI uses a slightly different way of representing the time, noticeably
+ the reference date is different. Year is the using the full 4-digit format.
+ The Epoch is January 1st 1998. For backward compatibility reasons we don't
+-expose this new way of representing time. Instead we use something very 
++expose this new way of representing time. Instead we use something very
+ similar to the struct tm, i.e. struct rtc_time, as used by hwclock.
+ One of the reasons for doing it this way is to allow for EFI to still evolve
+ without necessarily impacting any of the user applications. The decoupling
+ enables flexibility and permits writing wrapper code is ncase things change.
+ 
+ The driver exposes two interfaces, one via the device file and a set of
+-ioctl()s. The other is read-only via the /proc filesystem. 
++ioctl()s. The other is read-only via the /proc filesystem.
+ 
+ As of today we don't offer a /proc/sys interface.
+ 
+ To allow for a uniform interface between the legacy RTC and EFI time service,
+-we have created the include/linux/rtc.h header file to contain only the 
+-"public" API of the two drivers.  The specifics of the legacy RTC are still 
++we have created the include/linux/rtc.h header file to contain only the
++"public" API of the two drivers.  The specifics of the legacy RTC are still
+ in include/linux/mc146818rtc.h.
+ 
+- 
+-III/ Time of day service
 +
- By default sensor can be power gated. To enable sysfs attribute "enable" can be
--used.
--$ echo 1 > enable_sensor
-+used::
++3. Time of day service
++======================
+ 
+ The part of the driver gives access to the time of day service of EFI.
+ Two ioctl()s, compatible with the legacy RTC calls:
+ 
+-	Read the CMOS clock: ioctl(d, RTC_RD_TIME, &rtc);
++	Read the CMOS clock::
+ 
+-	Write the CMOS clock: ioctl(d, RTC_SET_TIME, &rtc);
++		ioctl(d, RTC_RD_TIME, &rtc);
 +
-+	$ echo 1 > enable_sensor
- 
- Once enabled and powered on, sensor can report value using HID reports.
--These reports are pushed using misc device interface in a FIFO order.
--/dev$ tree | grep HID-SENSOR-2000e1.6.auto
--??????? ????????? 10:53 -> ../HID-SENSOR-2000e1.6.auto
--????????? HID-SENSOR-2000e1.6.auto
-+These reports are pushed using misc device interface in a FIFO order::
++	Write the CMOS clock::
 +
-+	/dev$ tree | grep HID-SENSOR-2000e1.6.auto
-+	│   │   │   ├── 10:53 -> ../HID-SENSOR-2000e1.6.auto
-+	│   ├──  HID-SENSOR-2000e1.6.auto
++		ioctl(d, RTC_SET_TIME, &rtc);
  
- Each reports can be of variable length preceded by a header. This header
- consist of a 32 bit usage id, 64 bit time stamp and 32 bit length field of raw
-diff --git a/Documentation/hid/hid-transport.txt b/Documentation/hid/hid-transport.rst
-similarity index 93%
-rename from Documentation/hid/hid-transport.txt
-rename to Documentation/hid/hid-transport.rst
-index 3dcba9fd4a3a..6f3aaa86ce7b 100644
---- a/Documentation/hid/hid-transport.txt
-+++ b/Documentation/hid/hid-transport.rst
-@@ -1,5 +1,6 @@
--                          HID I/O Transport Drivers
--                         ===========================
-+=========================
-+HID I/O Transport Drivers
-+=========================
+ The rtc is a pointer to a data structure defined in rtc.h which is close
+-to a struct tm:
++to a struct tm::
  
- The HID subsystem is independent of the underlying transport driver. Initially,
- only USB was supported, but other specifications adopted the HID design and
-@@ -16,6 +17,8 @@ transport and device setup/management. HID core is responsible of
- report-parsing, report interpretation and the user-space API. Device specifics
- and quirks are handled by all layers depending on the quirk.
+-struct rtc_time {
+-        int tm_sec;
+-        int tm_min;
+-        int tm_hour;
+-        int tm_mday;
+-        int tm_mon;
+-        int tm_year;
+-        int tm_wday;
+-        int tm_yday;
+-        int tm_isdst;
+-};
++  struct rtc_time {
++          int tm_sec;
++          int tm_min;
++          int tm_hour;
++          int tm_mday;
++          int tm_mon;
++          int tm_year;
++          int tm_wday;
++          int tm_yday;
++          int tm_isdst;
++  };
  
-+::
+ The driver takes care of converting back an forth between the EFI time and
+ this format.
+ 
+ Those two ioctl()s can be exercised with the hwclock command:
+ 
+-For reading:
+-# /sbin/hwclock --show
+-Mon Mar  6 15:32:32 2000  -0.910248 seconds
++For reading::
+ 
+-For setting:
+-# /sbin/hwclock --systohc
++	# /sbin/hwclock --show
++	Mon Mar  6 15:32:32 2000  -0.910248 seconds
 +
-  +-----------+  +-----------+            +-----------+  +-----------+
-  | Device #1 |  | Device #i |            | Device #j |  | Device #k |
-  +-----------+  +-----------+            +-----------+  +-----------+
-@@ -42,8 +45,9 @@ and quirks are handled by all layers depending on the quirk.
-  +----------------+  +-----------+  +------------------+  +------------------+
- 
- Example Drivers:
--  I/O: USB, I2C, Bluetooth-l2cap
--  Transport: USB-HID, I2C-HID, BT-HIDP
++For setting::
 +
-+  - I/O: USB, I2C, Bluetooth-l2cap
-+  - Transport: USB-HID, I2C-HID, BT-HIDP
++	# /sbin/hwclock --systohc
  
- Everything below "HID Core" is simplified in this graph as it is only of
- interest to HID device drivers. Transport drivers do not need to know the
-@@ -183,7 +187,7 @@ Other ctrl-channel requests are supported by USB-HID but are not available
- -------------------
+ Root privileges are required to be able to set the time of day.
  
- Transport drivers normally use the following procedure to register a new device
--with HID core:
-+with HID core::
+-IV/ Wakeup Alarm service
++4. Wakeup Alarm service
++=======================
  
- 	struct hid_device *hid;
+ EFI provides an API by which one can program when a machine should wakeup,
+ i.e. reboot. This is very different from the alarm provided by the legacy
+ RTC which is some kind of interval timer alarm. For this reason we don't use
+ the same ioctl()s to get access to the service. Instead we have
+-introduced 2 news ioctl()s to the interface of an RTC. 
++introduced 2 news ioctl()s to the interface of an RTC.
+ 
+ We have added 2 new ioctl()s that are specific to the EFI driver:
+ 
+-	Read the current state of the alarm
+-	ioctl(d, RTC_WKLAM_RD, &wkt)
++	Read the current state of the alarm::
+ 
+-	Set the alarm or change its status
+-	ioctl(d, RTC_WKALM_SET, &wkt)
++		ioctl(d, RTC_WKLAM_RD, &wkt)
+ 
+-The wkt structure encapsulates a struct rtc_time + 2 extra fields to get 
+-status information:
+-	
+-struct rtc_wkalrm {
++	Set the alarm or change its status::
+ 
+-        unsigned char enabled; /* =1 if alarm is enabled */
+-        unsigned char pending; /* =1 if alarm is pending  */
++		ioctl(d, RTC_WKALM_SET, &wkt)
+ 
+-        struct rtc_time time;
+-} 
++The wkt structure encapsulates a struct rtc_time + 2 extra fields to get
++status information::
++
++  struct rtc_wkalrm {
++
++          unsigned char enabled; /* =1 if alarm is enabled */
++          unsigned char pending; /* =1 if alarm is pending  */
++
++          struct rtc_time time;
++  }
+ 
+ As of today, none of the existing user-level apps supports this feature.
+-However writing such a program should be hard by simply using those two 
+-ioctl(). 
++However writing such a program should be hard by simply using those two
++ioctl().
+ 
+ Root privileges are required to be able to set the alarm.
+ 
+-V/ References.
++5. References
++=============
+ 
+ Checkout the following Web site for more information on EFI:
+ 
+diff --git a/Documentation/ia64/err_inject.txt b/Documentation/ia64/err_inject.rst
+similarity index 82%
+rename from Documentation/ia64/err_inject.txt
+rename to Documentation/ia64/err_inject.rst
+index 9f651c181429..900f71e93a29 100644
+--- a/Documentation/ia64/err_inject.txt
++++ b/Documentation/ia64/err_inject.rst
+@@ -1,4 +1,4 @@
+-
++========================================
+ IPF Machine Check (MC) error inject tool
+ ========================================
+ 
+@@ -32,94 +32,94 @@ Errata: Itanium 2 Processors Specification Update lists some errata against
+ the pal_mc_error_inject PAL procedure. The following err.conf has been tested
+ on latest Montecito PAL.
+ 
+-err.conf:
++err.conf::
+ 
+-#This is configuration file for err_inject_tool.
+-#The format of the each line is:
+-#cpu, loop, interval, err_type_info, err_struct_info, err_data_buffer
+-#where
+-#	cpu: logical cpu number the error will be inject in.
+-#	loop: times the error will be injected.
+-#	interval: In second. every so often one error is injected.
+-#	err_type_info, err_struct_info: PAL parameters.
+-#
+-#Note: All values are hex w/o or w/ 0x prefix.
++  #This is configuration file for err_inject_tool.
++  #The format of the each line is:
++  #cpu, loop, interval, err_type_info, err_struct_info, err_data_buffer
++  #where
++  #	cpu: logical cpu number the error will be inject in.
++  #	loop: times the error will be injected.
++  #	interval: In second. every so often one error is injected.
++  #	err_type_info, err_struct_info: PAL parameters.
++  #
++  #Note: All values are hex w/o or w/ 0x prefix.
+ 
+ 
+-#On cpu2, inject only total 0x10 errors, interval 5 seconds
+-#corrected, data cache, hier-2, physical addr(assigned by tool code).
+-#working on Montecito latest PAL.
+-2, 10, 5, 4101, 95
++  #On cpu2, inject only total 0x10 errors, interval 5 seconds
++  #corrected, data cache, hier-2, physical addr(assigned by tool code).
++  #working on Montecito latest PAL.
++  2, 10, 5, 4101, 95
+ 
+-#On cpu4, inject and consume total 0x10 errors, interval 5 seconds
+-#corrected, data cache, hier-2, physical addr(assigned by tool code).
+-#working on Montecito latest PAL.
+-4, 10, 5, 4109, 95
++  #On cpu4, inject and consume total 0x10 errors, interval 5 seconds
++  #corrected, data cache, hier-2, physical addr(assigned by tool code).
++  #working on Montecito latest PAL.
++  4, 10, 5, 4109, 95
+ 
+-#On cpu15, inject and consume total 0x10 errors, interval 5 seconds
+-#recoverable, DTR0, hier-2.
+-#working on Montecito latest PAL.
+-0xf, 0x10, 5, 4249, 15
++  #On cpu15, inject and consume total 0x10 errors, interval 5 seconds
++  #recoverable, DTR0, hier-2.
++  #working on Montecito latest PAL.
++  0xf, 0x10, 5, 4249, 15
+ 
+ The sample application source code:
+ 
+-err_injection_tool.c:
++err_injection_tool.c::
+ 
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+- * NON INFRINGEMENT.  See the GNU General Public License for more
+- * details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *
+- * Copyright (C) 2006 Intel Co
+- *	Fenghua Yu <fenghua.yu@intel.com>
+- *
+- */
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-#include <fcntl.h>
+-#include <stdio.h>
+-#include <sched.h>
+-#include <unistd.h>
+-#include <stdlib.h>
+-#include <stdarg.h>
+-#include <string.h>
+-#include <errno.h>
+-#include <time.h>
+-#include <sys/ipc.h>
+-#include <sys/sem.h>
+-#include <sys/wait.h>
+-#include <sys/mman.h>
+-#include <sys/shm.h>
++  /*
++   * This program is free software; you can redistribute it and/or modify
++   * it under the terms of the GNU General Public License as published by
++   * the Free Software Foundation; either version 2 of the License, or
++   * (at your option) any later version.
++   *
++   * This program is distributed in the hope that it will be useful, but
++   * WITHOUT ANY WARRANTY; without even the implied warranty of
++   * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++   * NON INFRINGEMENT.  See the GNU General Public License for more
++   * details.
++   *
++   * You should have received a copy of the GNU General Public License
++   * along with this program; if not, write to the Free Software
++   * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++   *
++   * Copyright (C) 2006 Intel Co
++   *	Fenghua Yu <fenghua.yu@intel.com>
++   *
++   */
++  #include <sys/types.h>
++  #include <sys/stat.h>
++  #include <fcntl.h>
++  #include <stdio.h>
++  #include <sched.h>
++  #include <unistd.h>
++  #include <stdlib.h>
++  #include <stdarg.h>
++  #include <string.h>
++  #include <errno.h>
++  #include <time.h>
++  #include <sys/ipc.h>
++  #include <sys/sem.h>
++  #include <sys/wait.h>
++  #include <sys/mman.h>
++  #include <sys/shm.h>
+ 
+-#define MAX_FN_SIZE 		256
+-#define MAX_BUF_SIZE 		256
+-#define DATA_BUF_SIZE 		256
+-#define NR_CPUS 		512
+-#define MAX_TASK_NUM		2048
+-#define MIN_INTERVAL		5	// seconds
+-#define	ERR_DATA_BUFFER_SIZE 	3	// Three 8-byte.
+-#define PARA_FIELD_NUM		5
+-#define MASK_SIZE		(NR_CPUS/64)
+-#define PATH_FORMAT "/sys/devices/system/cpu/cpu%d/err_inject/"
++  #define MAX_FN_SIZE 		256
++  #define MAX_BUF_SIZE 		256
++  #define DATA_BUF_SIZE 		256
++  #define NR_CPUS 		512
++  #define MAX_TASK_NUM		2048
++  #define MIN_INTERVAL		5	// seconds
++  #define	ERR_DATA_BUFFER_SIZE 	3	// Three 8-byte.
++  #define PARA_FIELD_NUM		5
++  #define MASK_SIZE		(NR_CPUS/64)
++  #define PATH_FORMAT "/sys/devices/system/cpu/cpu%d/err_inject/"
+ 
+-int sched_setaffinity(pid_t pid, unsigned int len, unsigned long *mask);
++  int sched_setaffinity(pid_t pid, unsigned int len, unsigned long *mask);
+ 
+-int verbose;
+-#define vbprintf if (verbose) printf
++  int verbose;
++  #define vbprintf if (verbose) printf
+ 
+-int log_info(int cpu, const char *fmt, ...)
+-{
++  int log_info(int cpu, const char *fmt, ...)
++  {
+ 	FILE *log;
+ 	char fn[MAX_FN_SIZE];
+ 	char buf[MAX_BUF_SIZE];
+@@ -142,12 +142,12 @@ int log_info(int cpu, const char *fmt, ...)
+ 	fclose(log);
+ 
+ 	return 0;
+-}
++  }
+ 
+-typedef unsigned long u64;
+-typedef unsigned int  u32;
++  typedef unsigned long u64;
++  typedef unsigned int  u32;
+ 
+-typedef union err_type_info_u {
++  typedef union err_type_info_u {
+ 	struct {
+ 		u64	mode		: 3,	/* 0-2 */
+ 			err_inj		: 3,	/* 3-5 */
+@@ -157,9 +157,9 @@ typedef union err_type_info_u {
+ 			reserved	: 48;	/* 16-63 */
+ 	} err_type_info_u;
+ 	u64	err_type_info;
+-} err_type_info_t;
++  } err_type_info_t;
+ 
+-typedef union err_struct_info_u {
++  typedef union err_struct_info_u {
+ 	struct {
+ 		u64	siv		: 1,	/* 0	 */
+ 			c_t		: 2,	/* 1-2	 */
+@@ -197,9 +197,9 @@ typedef union err_struct_info_u {
+ 		u64	reserved;
+ 	} err_struct_info_bus_processor_interconnect;
+ 	u64	err_struct_info;
+-} err_struct_info_t;
++  } err_struct_info_t;
+ 
+-typedef union err_data_buffer_u {
++  typedef union err_data_buffer_u {
+ 	struct {
+ 		u64	trigger_addr;		/* 0-63		*/
+ 		u64	inj_addr;		/* 64-127 	*/
+@@ -221,9 +221,9 @@ typedef union err_data_buffer_u {
+ 		u64	reserved;		/* 0-63		*/
+ 	} err_data_buffer_bus_processor_interconnect;
+ 	u64 err_data_buffer[ERR_DATA_BUFFER_SIZE];
+-} err_data_buffer_t;
++  } err_data_buffer_t;
+ 
+-typedef union capabilities_u {
++  typedef union capabilities_u {
+ 	struct {
+ 		u64	i		: 1,
+ 			d		: 1,
+@@ -276,9 +276,9 @@ typedef union capabilities_u {
+ 	struct {
+ 		u64	reserved;
+ 	} capabilities_bus_processor_interconnect;
+-} capabilities_t;
++  } capabilities_t;
+ 
+-typedef struct resources_s {
++  typedef struct resources_s {
+ 	u64	ibr0		: 1,
+ 		ibr2		: 1,
+ 		ibr4		: 1,
+@@ -288,24 +288,24 @@ typedef struct resources_s {
+ 		dbr4		: 1,
+ 		dbr6		: 1,
+ 		reserved	: 48;
+-} resources_t;
++  } resources_t;
+ 
+ 
+-long get_page_size(void)
+-{
++  long get_page_size(void)
++  {
+ 	long page_size=sysconf(_SC_PAGESIZE);
+ 	return page_size;
+-}
++  }
+ 
+-#define PAGE_SIZE (get_page_size()==-1?0x4000:get_page_size())
+-#define SHM_SIZE (2*PAGE_SIZE*NR_CPUS)
+-#define SHM_VA 0x2000000100000000
++  #define PAGE_SIZE (get_page_size()==-1?0x4000:get_page_size())
++  #define SHM_SIZE (2*PAGE_SIZE*NR_CPUS)
++  #define SHM_VA 0x2000000100000000
+ 
+-int shmid;
+-void *shmaddr;
++  int shmid;
++  void *shmaddr;
+ 
+-int create_shm(void)
+-{
++  int create_shm(void)
++  {
+ 	key_t key;
+ 	char fn[MAX_FN_SIZE];
+ 
+@@ -343,34 +343,34 @@ int create_shm(void)
+ 	mlock(shmaddr, SHM_SIZE);
+ 
+ 	return 0;
+-}
++  }
+ 
+-int free_shm()
+-{
++  int free_shm()
++  {
+ 	munlock(shmaddr, SHM_SIZE);
+-        shmdt(shmaddr);
++          shmdt(shmaddr);
+ 	semctl(shmid, 0, IPC_RMID);
+ 
+ 	return 0;
+-}
++  }
+ 
+-#ifdef _SEM_SEMUN_UNDEFINED
+-union semun
+-{
++  #ifdef _SEM_SEMUN_UNDEFINED
++  union semun
++  {
+ 	int val;
+ 	struct semid_ds *buf;
+ 	unsigned short int *array;
+ 	struct seminfo *__buf;
+-};
+-#endif
++  };
++  #endif
+ 
+-u32 mode=1; /* 1: physical mode; 2: virtual mode. */
+-int one_lock=1;
+-key_t key[NR_CPUS];
+-int semid[NR_CPUS];
++  u32 mode=1; /* 1: physical mode; 2: virtual mode. */
++  int one_lock=1;
++  key_t key[NR_CPUS];
++  int semid[NR_CPUS];
+ 
+-int create_sem(int cpu)
+-{
++  int create_sem(int cpu)
++  {
+ 	union semun arg;
+ 	char fn[MAX_FN_SIZE];
+ 	int sid;
+@@ -407,37 +407,37 @@ int create_sem(int cpu)
+ 	}
+ 
+ 	return 0;
+-}
++  }
+ 
+-static int lock(int cpu)
+-{
++  static int lock(int cpu)
++  {
+ 	struct sembuf lock;
+ 
+ 	lock.sem_num = cpu;
+ 	lock.sem_op = 1;
+ 	semop(semid[cpu], &lock, 1);
+ 
+-        return 0;
+-}
++          return 0;
++  }
+ 
+-static int unlock(int cpu)
+-{
++  static int unlock(int cpu)
++  {
+ 	struct sembuf unlock;
+ 
+ 	unlock.sem_num = cpu;
+ 	unlock.sem_op = -1;
+ 	semop(semid[cpu], &unlock, 1);
+ 
+-        return 0;
+-}
++          return 0;
++  }
+ 
+-void free_sem(int cpu)
+-{
++  void free_sem(int cpu)
++  {
+ 	semctl(semid[cpu], 0, IPC_RMID);
+-}
++  }
+ 
+-int wr_multi(char *fn, unsigned long *data, int size)
+-{
++  int wr_multi(char *fn, unsigned long *data, int size)
++  {
+ 	int fd;
+ 	char buf[MAX_BUF_SIZE];
  	int ret;
-@@ -215,7 +219,7 @@ Once hid_add_device() is entered, HID core might use the callbacks provided in
- "custom_ll_driver". Note that fields like "country" can be ignored by underlying
- transport-drivers if not supported.
+@@ -459,15 +459,15 @@ int wr_multi(char *fn, unsigned long *data, int size)
+ 	ret=write(fd, buf, sizeof(buf));
+ 	close(fd);
+ 	return ret;
+-}
++  }
  
--To unregister a device, use:
-+To unregister a device, use::
+-int wr(char *fn, unsigned long data)
+-{
++  int wr(char *fn, unsigned long data)
++  {
+ 	return wr_multi(fn, &data, 1);
+-}
++  }
  
- 	hid_destroy_device(hid);
+-int rd(char *fn, unsigned long *data)
+-{
++  int rd(char *fn, unsigned long *data)
++  {
+ 	int fd;
+ 	char buf[MAX_BUF_SIZE];
  
-@@ -226,73 +230,110 @@ driver callbacks.
- -----------------------------
+@@ -480,10 +480,10 @@ int rd(char *fn, unsigned long *data)
+ 	*data=strtoul(buf, NULL, 16);
+ 	close(fd);
+ 	return 0;
+-}
++  }
  
- The available HID callbacks are:
-- - int (*start) (struct hid_device *hdev)
-+
-+   ::
-+
-+      int (*start) (struct hid_device *hdev)
-+
-    Called from HID device drivers once they want to use the device. Transport
-    drivers can choose to setup their device in this callback. However, normally
-    devices are already set up before transport drivers register them to HID core
-    so this is mostly only used by USB-HID.
+-int rd_status(char *path, int *status)
+-{
++  int rd_status(char *path, int *status)
++  {
+ 	char fn[MAX_FN_SIZE];
+ 	sprintf(fn, "%s/status", path);
+ 	if (rd(fn, (u64*)status)<0) {
+@@ -492,10 +492,10 @@ int rd_status(char *path, int *status)
+ 	}
  
-- - void (*stop) (struct hid_device *hdev)
-+   ::
-+
-+      void (*stop) (struct hid_device *hdev)
-+
-    Called from HID device drivers once they are done with a device. Transport
-    drivers can free any buffers and deinitialize the device. But note that
-    ->start() might be called again if another HID device driver is loaded on the
-    device.
-+
-    Transport drivers are free to ignore it and deinitialize devices after they
-    destroyed them via hid_destroy_device().
+ 	return 0;
+-}
++  }
  
-- - int (*open) (struct hid_device *hdev)
-+   ::
-+
-+      int (*open) (struct hid_device *hdev)
-+
-    Called from HID device drivers once they are interested in data reports.
-    Usually, while user-space didn't open any input API/etc., device drivers are
-    not interested in device data and transport drivers can put devices asleep.
-    However, once ->open() is called, transport drivers must be ready for I/O.
-    ->open() calls are nested for each client that opens the HID device.
+-int rd_capabilities(char *path, u64 *capabilities)
+-{
++  int rd_capabilities(char *path, u64 *capabilities)
++  {
+ 	char fn[MAX_FN_SIZE];
+ 	sprintf(fn, "%s/capabilities", path);
+ 	if (rd(fn, capabilities)<0) {
+@@ -504,10 +504,10 @@ int rd_capabilities(char *path, u64 *capabilities)
+ 	}
  
-- - void (*close) (struct hid_device *hdev)
-+   ::
-+
-+      void (*close) (struct hid_device *hdev)
-+
-    Called from HID device drivers after ->open() was called but they are no
-    longer interested in device reports. (Usually if user-space closed any input
-    devices of the driver).
-+
-    Transport drivers can put devices asleep and terminate any I/O of all
-    ->open() calls have been followed by a ->close() call. However, ->start() may
-    be called again if the device driver is interested in input reports again.
+ 	return 0;
+-}
++  }
  
-- - int (*parse) (struct hid_device *hdev)
-+   ::
-+
-+      int (*parse) (struct hid_device *hdev)
-+
-    Called once during device setup after ->start() has been called. Transport
-    drivers must read the HID report-descriptor from the device and tell HID core
-    about it via hid_parse_report().
+-int rd_all(char *path)
+-{
++  int rd_all(char *path)
++  {
+ 	unsigned long err_type_info, err_struct_info, err_data_buffer;
+ 	int status;
+ 	unsigned long capabilities, resources;
+@@ -556,11 +556,11 @@ int rd_all(char *path)
+ 	printf("resources=%lx\n", resources);
  
-- - int (*power) (struct hid_device *hdev, int level)
-+   ::
-+
-+      int (*power) (struct hid_device *hdev, int level)
-+
-    Called by HID core to give PM hints to transport drivers. Usually this is
-    analogical to the ->open() and ->close() hints and redundant.
+ 	return 0;
+-}
++  }
  
-- - void (*request) (struct hid_device *hdev, struct hid_report *report,
--                    int reqtype)
-+   ::
-+
-+      void (*request) (struct hid_device *hdev, struct hid_report *report,
-+		       int reqtype)
-+
-    Send an HID request on the ctrl channel. "report" contains the report that
-    should be sent and "reqtype" the request type. Request-type can be
-    HID_REQ_SET_REPORT or HID_REQ_GET_REPORT.
-+
-    This callback is optional. If not provided, HID core will assemble a raw
-    report following the HID specs and send it via the ->raw_request() callback.
-    The transport driver is free to implement this asynchronously.
+-int query_capabilities(char *path, err_type_info_t err_type_info,
++  int query_capabilities(char *path, err_type_info_t err_type_info,
+ 			u64 *capabilities)
+-{
++  {
+ 	char fn[MAX_FN_SIZE];
+ 	err_struct_info_t err_struct_info;
+ 	err_data_buffer_t err_data_buffer;
+@@ -583,10 +583,10 @@ int query_capabilities(char *path, err_type_info_t err_type_info,
+ 		return -1;
  
-- - int (*wait) (struct hid_device *hdev)
-+   ::
-+
-+      int (*wait) (struct hid_device *hdev)
-+
-    Used by HID core before calling ->request() again. A transport driver can use
-    it to wait for any pending requests to complete if only one request is
-    allowed at a time.
+ 	return 0;
+-}
++  }
  
-- - int (*raw_request) (struct hid_device *hdev, unsigned char reportnum,
--                       __u8 *buf, size_t count, unsigned char rtype,
--                       int reqtype)
-+   ::
-+
-+      int (*raw_request) (struct hid_device *hdev, unsigned char reportnum,
-+                          __u8 *buf, size_t count, unsigned char rtype,
-+                          int reqtype)
-+
-    Same as ->request() but provides the report as raw buffer. This request shall
-    be synchronous. A transport driver must not use ->wait() to complete such
-    requests. This request is mandatory and hid core will reject the device if
-    it is missing.
+-int query_all_capabilities()
+-{
++  int query_all_capabilities()
++  {
+ 	int status;
+ 	err_type_info_t err_type_info;
+ 	int err_sev, err_struct, struct_hier;
+@@ -629,12 +629,12 @@ int query_all_capabilities()
+ 	}
  
-- - int (*output_report) (struct hid_device *hdev, __u8 *buf, size_t len)
-+   ::
-+
-+      int (*output_report) (struct hid_device *hdev, __u8 *buf, size_t len)
-+
-    Send raw output report via intr channel. Used by some HID device drivers
-    which require high throughput for outgoing requests on the intr channel. This
-    must not cause SET_REPORT calls! This must be implemented as asynchronous
-    output report on the intr channel!
+ 	return 0;
+-}
++  }
  
-- - int (*idle) (struct hid_device *hdev, int report, int idle, int reqtype)
-+   ::
-+
-+      int (*idle) (struct hid_device *hdev, int report, int idle, int reqtype)
-+
-    Perform SET/GET_IDLE request. Only used by USB-HID, do not implement!
+-int err_inject(int cpu, char *path, err_type_info_t err_type_info,
++  int err_inject(int cpu, char *path, err_type_info_t err_type_info,
+ 		err_struct_info_t err_struct_info,
+ 		err_data_buffer_t err_data_buffer)
+-{
++  {
+ 	int status;
+ 	char fn[MAX_FN_SIZE];
  
- 2.3) Data Path
-@@ -314,4 +355,5 @@ transport driver and not passed to hid_input_report().
- Acknowledgements to SET_REPORT requests are not of interest to HID core.
+@@ -667,13 +667,13 @@ int err_inject(int cpu, char *path, err_type_info_t err_type_info,
+ 	}
  
- ----------------------------------------------------
+ 	return status;
+-}
++  }
+ 
+-static int construct_data_buf(char *path, err_type_info_t err_type_info,
++  static int construct_data_buf(char *path, err_type_info_t err_type_info,
+ 		err_struct_info_t err_struct_info,
+ 		err_data_buffer_t *err_data_buffer,
+ 		void *va1)
+-{
++  {
+ 	char fn[MAX_FN_SIZE];
+ 	u64 virt_addr=0, phys_addr=0;
+ 
+@@ -710,22 +710,22 @@ static int construct_data_buf(char *path, err_type_info_t err_type_info,
+ 	}
+ 
+ 	return 0;
+-}
++  }
+ 
+-typedef struct {
++  typedef struct {
+ 	u64 cpu;
+ 	u64 loop;
+ 	u64 interval;
+ 	u64 err_type_info;
+ 	u64 err_struct_info;
+ 	u64 err_data_buffer[ERR_DATA_BUFFER_SIZE];
+-} parameters_t;
++  } parameters_t;
+ 
+-parameters_t line_para;
+-int para;
++  parameters_t line_para;
++  int para;
+ 
+-static int empty_data_buffer(u64 *err_data_buffer)
+-{
++  static int empty_data_buffer(u64 *err_data_buffer)
++  {
+ 	int empty=1;
+ 	int i;
+ 
+@@ -734,10 +734,10 @@ static int empty_data_buffer(u64 *err_data_buffer)
+ 		empty=0;
+ 
+ 	return empty;
+-}
++  }
+ 
+-int err_inj()
+-{
++  int err_inj()
++  {
+ 	err_type_info_t err_type_info;
+ 	err_struct_info_t err_struct_info;
+ 	err_data_buffer_t err_data_buffer;
+@@ -951,10 +951,10 @@ int err_inj()
+ 	printf("All done.\n");
+ 
+ 	return 0;
+-}
++  }
+ 
+-void help()
+-{
++  void help()
++  {
+ 	printf("err_inject_tool:\n");
+ 	printf("\t-q: query all capabilities. default: off\n");
+ 	printf("\t-m: procedure mode. 1: physical 2: virtual. default: 1\n");
+@@ -977,10 +977,10 @@ void help()
+ 	printf("The tool will take err.conf file as ");
+ 	printf("input to inject single or multiple errors ");
+ 	printf("on one or multiple cpus in parallel.\n");
+-}
++  }
+ 
+-int main(int argc, char **argv)
+-{
++  int main(int argc, char **argv)
++  {
+ 	char c;
+ 	int do_err_inj=0;
+ 	int do_query_all=0;
+@@ -1031,7 +1031,7 @@ int main(int argc, char **argv)
+ 				if (count!=PARA_FIELD_NUM+3) {
+ 				    line_para.err_data_buffer[0]=-1,
+ 				    line_para.err_data_buffer[1]=-1,
+-			 	    line_para.err_data_buffer[2]=-1;
++				    line_para.err_data_buffer[2]=-1;
+ 				    count=sscanf(optarg, "%lx, %lx, %lx, %lx, %lx\n",
+ 						&line_para.cpu,
+ 						&line_para.loop,
+@@ -1064,5 +1064,4 @@ int main(int argc, char **argv)
+ 		help();
+ 
+ 	return 0;
+-}
+-
++  }
+diff --git a/Documentation/ia64/fsys.txt b/Documentation/ia64/fsys.rst
+similarity index 76%
+rename from Documentation/ia64/fsys.txt
+rename to Documentation/ia64/fsys.rst
+index 59dd689d9b86..a702d2cc94b6 100644
+--- a/Documentation/ia64/fsys.txt
++++ b/Documentation/ia64/fsys.rst
+@@ -1,9 +1,9 @@
+--*-Mode: outline-*-
+-
+-		Light-weight System Calls for IA-64
+-		-----------------------------------
++===================================
++Light-weight System Calls for IA-64
++===================================
+ 
+ 		        Started: 13-Jan-2003
 +
- Written 2013, David Herrmann <dh.herrmann@gmail.com>
-diff --git a/Documentation/hid/hiddev.txt b/Documentation/hid/hiddev.rst
-similarity index 77%
-rename from Documentation/hid/hiddev.txt
-rename to Documentation/hid/hiddev.rst
-index 638448707aa2..209e6ba4e019 100644
---- a/Documentation/hid/hiddev.txt
-+++ b/Documentation/hid/hiddev.rst
-@@ -1,6 +1,9 @@
-+================================================
- Care and feeding of your Human Interface Devices
-+================================================
+ 		    Last update: 27-Sep-2003
  
--INTRODUCTION
-+Introduction
+ 	              David Mosberger-Tang
+@@ -52,12 +52,13 @@ privilege level is at level 0, this means that fsys-mode requires some
+ care (see below).
+ 
+ 
+-* How to tell fsys-mode
++How to tell fsys-mode
++=====================
+ 
+ Linux operates in fsys-mode when (a) the privilege level is 0 (most
+ privileged) and (b) the stacks have NOT been switched to kernel memory
+ yet.  For convenience, the header file <asm-ia64/ptrace.h> provides
+-three macros:
++three macros::
+ 
+ 	user_mode(regs)
+ 	user_stack(task,regs)
+@@ -70,11 +71,12 @@ to by "regs" was executing in user mode (privilege level 3).
+ user_stack() returns TRUE if the state pointed to by "regs" was
+ executing on the user-level stack(s).  Finally, fsys_mode() returns
+ TRUE if the CPU state pointed to by "regs" was executing in fsys-mode.
+-The fsys_mode() macro is equivalent to the expression:
++The fsys_mode() macro is equivalent to the expression::
+ 
+ 	!user_mode(regs) && user_stack(task,regs)
+ 
+-* How to write an fsyscall handler
++How to write an fsyscall handler
++================================
+ 
+ The file arch/ia64/kernel/fsys.S contains a table of fsyscall-handlers
+ (fsyscall_table).  This table contains one entry for each system call.
+@@ -87,66 +89,72 @@ of the getpid() system call.
+ 
+ The entry and exit-state of an fsyscall handler is as follows:
+ 
+-** Machine state on entry to fsyscall handler:
++Machine state on entry to fsyscall handler
++------------------------------------------
+ 
+- - r10	  = 0
+- - r11	  = saved ar.pfs (a user-level value)
+- - r15	  = system call number
+- - r16	  = "current" task pointer (in normal kernel-mode, this is in r13)
+- - r32-r39 = system call arguments
+- - b6	  = return address (a user-level value)
+- - ar.pfs = previous frame-state (a user-level value)
+- - PSR.be = cleared to zero (i.e., little-endian byte order is in effect)
+- - all other registers may contain values passed in from user-mode
++  ========= ===============================================================
++  r10	    0
++  r11	    saved ar.pfs (a user-level value)
++  r15	    system call number
++  r16	    "current" task pointer (in normal kernel-mode, this is in r13)
++  r32-r39   system call arguments
++  b6	    return address (a user-level value)
++  ar.pfs    previous frame-state (a user-level value)
++  PSR.be    cleared to zero (i.e., little-endian byte order is in effect)
++  -         all other registers may contain values passed in from user-mode
++  ========= ===============================================================
+ 
+-** Required machine state on exit to fsyscall handler:
++Required machine state on exit to fsyscall handler
++--------------------------------------------------
+ 
+- - r11	  = saved ar.pfs (as passed into the fsyscall handler)
+- - r15	  = system call number (as passed into the fsyscall handler)
+- - r32-r39 = system call arguments (as passed into the fsyscall handler)
+- - b6	  = return address (as passed into the fsyscall handler)
+- - ar.pfs = previous frame-state (as passed into the fsyscall handler)
++  ========= ===========================================================
++  r11	    saved ar.pfs (as passed into the fsyscall handler)
++  r15	    system call number (as passed into the fsyscall handler)
++  r32-r39   system call arguments (as passed into the fsyscall handler)
++  b6	    return address (as passed into the fsyscall handler)
++  ar.pfs    previous frame-state (as passed into the fsyscall handler)
++  ========= ===========================================================
+ 
+ Fsyscall handlers can execute with very little overhead, but with that
+ speed comes a set of restrictions:
+ 
+- o Fsyscall-handlers MUST check for any pending work in the flags
++ * Fsyscall-handlers MUST check for any pending work in the flags
+    member of the thread-info structure and if any of the
+    TIF_ALLWORK_MASK flags are set, the handler needs to fall back on
+    doing a full system call (by calling fsys_fallback_syscall).
+ 
+- o Fsyscall-handlers MUST preserve incoming arguments (r32-r39, r11,
++ * Fsyscall-handlers MUST preserve incoming arguments (r32-r39, r11,
+    r15, b6, and ar.pfs) because they will be needed in case of a
+    system call restart.  Of course, all "preserved" registers also
+    must be preserved, in accordance to the normal calling conventions.
+ 
+- o Fsyscall-handlers MUST check argument registers for containing a
++ * Fsyscall-handlers MUST check argument registers for containing a
+    NaT value before using them in any way that could trigger a
+    NaT-consumption fault.  If a system call argument is found to
+    contain a NaT value, an fsyscall-handler may return immediately
+    with r8=EINVAL, r10=-1.
+ 
+- o Fsyscall-handlers MUST NOT use the "alloc" instruction or perform
++ * Fsyscall-handlers MUST NOT use the "alloc" instruction or perform
+    any other operation that would trigger mandatory RSE
+    (register-stack engine) traffic.
+ 
+- o Fsyscall-handlers MUST NOT write to any stacked registers because
++ * Fsyscall-handlers MUST NOT write to any stacked registers because
+    it is not safe to assume that user-level called a handler with the
+    proper number of arguments.
+ 
+- o Fsyscall-handlers need to be careful when accessing per-CPU variables:
++ * Fsyscall-handlers need to be careful when accessing per-CPU variables:
+    unless proper safe-guards are taken (e.g., interruptions are avoided),
+    execution may be pre-empted and resumed on another CPU at any given
+    time.
+ 
+- o Fsyscall-handlers must be careful not to leak sensitive kernel'
++ * Fsyscall-handlers must be careful not to leak sensitive kernel'
+    information back to user-level.  In particular, before returning to
+    user-level, care needs to be taken to clear any scratch registers
+    that could contain sensitive information (note that the current
+    task pointer is not considered sensitive: it's already exposed
+    through ar.k6).
+ 
+- o Fsyscall-handlers MUST NOT access user-memory without first
++ * Fsyscall-handlers MUST NOT access user-memory without first
+    validating access-permission (this can be done typically via
+    probe.r.fault and/or probe.w.fault) and without guarding against
+    memory access exceptions (this can be done with the EX() macros
+@@ -162,7 +170,8 @@ fast system call execution (while fully preserving system call
+ semantics), but there is also a lot of flexibility in handling more
+ complicated cases.
+ 
+-* Signal handling
++Signal handling
++===============
+ 
+ The delivery of (asynchronous) signals must be delayed until fsys-mode
+ is exited.  This is accomplished with the help of the lower-privilege
+@@ -173,7 +182,8 @@ PSR.lp and returns immediately.  When fsys-mode is exited via the
+ occur.  The trap handler clears PSR.lp again and returns immediately.
+ The kernel exit path then checks for and delivers any pending signals.
+ 
+-* PSR Handling
++PSR Handling
 +============
  
- In addition to the normal input type HID devices, USB also uses the
- human interface device protocols for things that are not really human
-@@ -16,38 +19,40 @@ normalised event interface - see Documentation/input/input.rst
- * the hiddev interface, which provides fairly raw HID events
+ The "epc" instruction doesn't change the contents of PSR at all.  This
+ is in contrast to a regular interruption, which clears almost all
+@@ -181,6 +191,7 @@ bits.  Because of that, some care needs to be taken to ensure things
+ work as expected.  The following discussion describes how each PSR bit
+ is handled.
  
- The data flow for a HID event produced by a device is something like
--the following :
-+the following::
++======= =======================================================================
+ PSR.be	Cleared when entering fsys-mode.  A srlz.d instruction is used
+ 	to ensure the CPU is in little-endian mode before the first
+ 	load/store instruction is executed.  PSR.be is normally NOT
+@@ -202,7 +213,8 @@ PSR.pp	Unchanged.
+ PSR.di	Unchanged.
+ PSR.si	Unchanged.
+ PSR.db	Unchanged.  The kernel prevents user-level from setting a hardware
+-	breakpoint that triggers at any privilege level other than 3 (user-mode).
++	breakpoint that triggers at any privilege level other than
++	3 (user-mode).
+ PSR.lp	Unchanged.
+ PSR.tb	Lazy redirect.  If a taken-branch trap occurs while in
+ 	fsys-mode, the trap-handler modifies the saved machine state
+@@ -235,47 +247,52 @@ PSR.ed	Unchanged.  Note: This bit could only have an effect if an fsys-mode
+ PSR.bn	Unchanged.  Note: fsys-mode handlers may clear the bit, if needed.
+ 	Doing so requires clearing PSR.i and PSR.ic as well.
+ PSR.ia	Unchanged.  Note: the ia64 linux kernel never sets this bit.
++======= =======================================================================
  
-  usb.c ---> hid-core.c  ----> hid-input.c ----> [keyboard/mouse/joystick/event]
-                          |
-                          |
--                          --> hiddev.c ----> POWER / MONITOR CONTROL 
-+                          --> hiddev.c ----> POWER / MONITOR CONTROL
+-* Using fast system calls
++Using fast system calls
++=======================
  
- In addition, other subsystems (apart from USB) can potentially feed
- events into the input subsystem, but these have no effect on the hid
- device interface.
+ To use fast system calls, userspace applications need simply call
+ __kernel_syscall_via_epc().  For example
  
--USING THE HID DEVICE INTERFACE
-+Using the HID Device Interface
-+==============================
- 
- The hiddev interface is a char interface using the normal USB major,
- with the minor numbers starting at 96 and finishing at 111. Therefore,
--you need the following commands:
--mknod /dev/usb/hiddev0 c 180 96
--mknod /dev/usb/hiddev1 c 180 97
--mknod /dev/usb/hiddev2 c 180 98
--mknod /dev/usb/hiddev3 c 180 99
--mknod /dev/usb/hiddev4 c 180 100
--mknod /dev/usb/hiddev5 c 180 101
--mknod /dev/usb/hiddev6 c 180 102
--mknod /dev/usb/hiddev7 c 180 103
--mknod /dev/usb/hiddev8 c 180 104
--mknod /dev/usb/hiddev9 c 180 105
--mknod /dev/usb/hiddev10 c 180 106
--mknod /dev/usb/hiddev11 c 180 107
--mknod /dev/usb/hiddev12 c 180 108
--mknod /dev/usb/hiddev13 c 180 109
--mknod /dev/usb/hiddev14 c 180 110
--mknod /dev/usb/hiddev15 c 180 111
-+you need the following commands::
+ -- example fgettimeofday() call --
 +
-+	mknod /dev/usb/hiddev0 c 180 96
-+	mknod /dev/usb/hiddev1 c 180 97
-+	mknod /dev/usb/hiddev2 c 180 98
-+	mknod /dev/usb/hiddev3 c 180 99
-+	mknod /dev/usb/hiddev4 c 180 100
-+	mknod /dev/usb/hiddev5 c 180 101
-+	mknod /dev/usb/hiddev6 c 180 102
-+	mknod /dev/usb/hiddev7 c 180 103
-+	mknod /dev/usb/hiddev8 c 180 104
-+	mknod /dev/usb/hiddev9 c 180 105
-+	mknod /dev/usb/hiddev10 c 180 106
-+	mknod /dev/usb/hiddev11 c 180 107
-+	mknod /dev/usb/hiddev12 c 180 108
-+	mknod /dev/usb/hiddev13 c 180 109
-+	mknod /dev/usb/hiddev14 c 180 110
-+	mknod /dev/usb/hiddev15 c 180 111
+ -- fgettimeofday.S --
  
- So you point your hiddev compliant user-space program at the correct
- interface for your device, and it all just works.
-@@ -56,7 +61,9 @@ Assuming that you have a hiddev compliant user-space program, of
- course. If you need to write one, read on.
+-#include <asm/asmmacro.h>
++::
  
+-GLOBAL_ENTRY(fgettimeofday)
+-.prologue
+-.save ar.pfs, r11
+-mov r11 = ar.pfs
+-.body 
++  #include <asm/asmmacro.h>
  
--THE HIDDEV API
-+The HIDDEV API
-+==============
+-mov r2 = 0xa000000000020660;;  // gate address 
+-			       // found by inspection of System.map for the 
++  GLOBAL_ENTRY(fgettimeofday)
++  .prologue
++  .save ar.pfs, r11
++  mov r11 = ar.pfs
++  .body
 +
- This description should be read in conjunction with the HID
- specification, freely available from http://www.usb.org, and
- conveniently linked of http://www.linux-usb.org.
-@@ -69,12 +76,14 @@ each of which can have one or more "usages".  In the hid-core,
- each one of these usages has a single signed 32 bit value.
++  mov r2 = 0xa000000000020660;;  // gate address
++			       // found by inspection of System.map for the
+ 			       // __kernel_syscall_via_epc() function.  See
+ 			       // below for how to do this for real.
  
- read():
-+-------
-+
- This is the event interface.  When the HID device's state changes,
- it performs an interrupt transfer containing a report which contains
- the changed value.  The hid-core.c module parses the report, and
- returns to hiddev.c the individual usages that have changed within
- the report.  In its basic mode, the hiddev will make these individual
--usage changes available to the reader using a struct hiddev_event:
-+usage changes available to the reader using a struct hiddev_event::
+-mov b7 = r2
+-mov r15 = 1087		       // gettimeofday syscall
+-;;
+-br.call.sptk.many b6 = b7
+-;;
++  mov b7 = r2
++  mov r15 = 1087		       // gettimeofday syscall
++  ;;
++  br.call.sptk.many b6 = b7
++  ;;
  
-        struct hiddev_event {
-            unsigned hid;
-@@ -90,13 +99,19 @@ behavior of the read() function can be modified using the HIDIOCSFLAG
- ioctl() described below.
+-.restore sp
++  .restore sp
+ 
+-mov ar.pfs = r11
+-br.ret.sptk.many rp;;	      // return to caller
+-END(fgettimeofday)
++  mov ar.pfs = r11
++  br.ret.sptk.many rp;;	      // return to caller
++  END(fgettimeofday)
+ 
+ -- end fgettimeofday.S --
+ 
+ In reality, getting the gate address is accomplished by two extra
+ values passed via the ELF auxiliary vector (include/asm-ia64/elf.h)
+ 
+- o AT_SYSINFO : is the address of __kernel_syscall_via_epc()
+- o AT_SYSINFO_EHDR : is the address of the kernel gate ELF DSO
++ * AT_SYSINFO : is the address of __kernel_syscall_via_epc()
++ * AT_SYSINFO_EHDR : is the address of the kernel gate ELF DSO
+ 
+ The ELF DSO is a pre-linked library that is mapped in by the kernel at
+ the gate page.  It is a proper ELF shared object so, with a dynamic
+diff --git a/Documentation/ia64/README b/Documentation/ia64/ia64.rst
+similarity index 61%
+rename from Documentation/ia64/README
+rename to Documentation/ia64/ia64.rst
+index aa17f2154cba..b725019a9492 100644
+--- a/Documentation/ia64/README
++++ b/Documentation/ia64/ia64.rst
+@@ -1,43 +1,49 @@
+-        Linux kernel release 2.4.xx for the IA-64 Platform
++===========================================
++Linux kernel release for the IA-64 Platform
++===========================================
+ 
+-   These are the release notes for Linux version 2.4 for IA-64
++   These are the release notes for Linux since version 2.4 for IA-64
+    platform.  This document provides information specific to IA-64
+    ONLY, to get additional information about the Linux kernel also
+    read the original Linux README provided with the kernel.
+ 
+-INSTALLING the kernel:
++Installing the Kernel
++=====================
+ 
+  - IA-64 kernel installation is the same as the other platforms, see
+    original README for details.
  
  
--ioctl(): 
--This is the control interface. There are a number of controls: 
-+ioctl():
-+--------
+-SOFTWARE REQUIREMENTS
++Software Requirements
++=====================
  
--HIDIOCGVERSION - int (read)
--Gets the version code out of the hiddev driver.
-+This is the control interface. There are a number of controls:
-+
-+HIDIOCGVERSION
-+  - int (read)
-+
-+ Gets the version code out of the hiddev driver.
-+
-+HIDIOCAPPLICATION
-+  - (none)
+    Compiling and running this kernel requires an IA-64 compliant GCC
+    compiler.  And various software packages also compiled with an
+    IA-64 compliant GCC compiler.
  
--HIDIOCAPPLICATION - (none)
- This ioctl call returns the HID application usage associated with the
- hid device. The third argument to ioctl() specifies which application
- index to get. This is useful when the device has more than one
-@@ -104,25 +119,33 @@ application collection. If the index is invalid (greater or equal to
- the number of application collections this device has) the ioctl
- returns -1. You can find out beforehand how many application
- collections the device has from the num_applications field from the
--hiddev_devinfo structure. 
-+hiddev_devinfo structure.
-+
-+HIDIOCGCOLLECTIONINFO
-+  - struct hiddev_collection_info (read/write)
  
--HIDIOCGCOLLECTIONINFO - struct hiddev_collection_info (read/write)
- This returns a superset of the information above, providing not only
- application collections, but all the collections the device has.  It
- also returns the level the collection lives in the hierarchy.
--The user passes in a hiddev_collection_info struct with the index 
--field set to the index that should be returned.  The ioctl fills in 
--the other fields.  If the index is larger than the last collection 
-+The user passes in a hiddev_collection_info struct with the index
-+field set to the index that should be returned.  The ioctl fills in
-+the other fields.  If the index is larger than the last collection
- index, the ioctl returns -1 and sets errno to -EINVAL.
+-CONFIGURING the kernel:
++Configuring the Kernel
++======================
  
--HIDIOCGDEVINFO - struct hiddev_devinfo (read)
-+HIDIOCGDEVINFO
-+  - struct hiddev_devinfo (read)
-+
- Gets a hiddev_devinfo structure which describes the device.
+    Configuration is the same, see original README for details.
  
--HIDIOCGSTRING - struct hiddev_string_descriptor (read/write)
-+HIDIOCGSTRING
-+  - struct hiddev_string_descriptor (read/write)
-+
- Gets a string descriptor from the device. The caller must fill in the
- "index" field to indicate which descriptor should be returned.
  
--HIDIOCINITREPORT - (none)
-+HIDIOCINITREPORT
-+  - (none)
-+
- Instructs the kernel to retrieve all input and feature report values
- from the device. At this point, all the usage structures will contain
- current values for the device, and will maintain it as the device
-@@ -130,21 +153,29 @@ changes.  Note that the use of this ioctl is unnecessary in general,
- since later kernels automatically initialize the reports from the
- device at attach time.
+-COMPILING the kernel:
++Compiling the Kernel:
  
--HIDIOCGNAME - string (variable length)
-+HIDIOCGNAME
-+  - string (variable length)
-+
- Gets the device name
+  - Compiling this kernel doesn't differ from other platform so read
+    the original README for details BUT make sure you have an IA-64
+    compliant GCC compiler.
  
--HIDIOCGREPORT - struct hiddev_report_info (write)
-+HIDIOCGREPORT
-+  - struct hiddev_report_info (write)
-+
- Instructs the kernel to get a feature or input report from the device,
- in order to selectively update the usage structures (in contrast to
- INITREPORT).
+-IA-64 SPECIFICS
++IA-64 Specifics
++===============
  
--HIDIOCSREPORT - struct hiddev_report_info (write)
-+HIDIOCSREPORT
-+  - struct hiddev_report_info (write)
-+
- Instructs the kernel to send a report to the device. This report can
- be filled in by the user through HIDIOCSUSAGE calls (below) to fill in
- individual usage values in the report before sending the report in full
--to the device. 
-+to the device.
-+
-+HIDIOCGREPORTINFO
-+  - struct hiddev_report_info (read/write)
+  - General issues:
  
--HIDIOCGREPORTINFO - struct hiddev_report_info (read/write)
- Fills in a hiddev_report_info structure for the user. The report is
- looked up by type (input, output or feature) and id, so these fields
- must be filled in by the user. The ID can be absolute -- the actual
-@@ -154,52 +185,67 @@ report_id) for the next report after report_id. Without a-priori
- information about report ids, the right way to use this ioctl is to
- use the relative IDs above to enumerate the valid IDs. The ioctl
- returns non-zero when there is no more next ID. The real report ID is
--filled into the returned hiddev_report_info structure. 
-+filled into the returned hiddev_report_info structure.
-+
-+HIDIOCGFIELDINFO
-+  - struct hiddev_field_info (read/write)
+-    o Hardly any performance tuning has been done. Obvious targets
++    * Hardly any performance tuning has been done. Obvious targets
+       include the library routines (IP checksum, etc.). Less
+       obvious targets include making sure we don't flush the TLB
+       needlessly, etc.
  
--HIDIOCGFIELDINFO - struct hiddev_field_info (read/write)
- Returns the field information associated with a report in a
- hiddev_field_info structure. The user must fill in report_id and
- report_type in this structure, as above. The field_index should also
- be filled in, which should be a number from 0 and maxfield-1, as
--returned from a previous HIDIOCGREPORTINFO call. 
-+returned from a previous HIDIOCGREPORTINFO call.
-+
-+HIDIOCGUCODE
-+  - struct hiddev_usage_ref (read/write)
+-    o SMP locks cleanup/optimization
++    * SMP locks cleanup/optimization
  
--HIDIOCGUCODE - struct hiddev_usage_ref (read/write)
- Returns the usage_code in a hiddev_usage_ref structure, given that
- given its report type, report id, field index, and index within the
- field have already been filled into the structure.
- 
--HIDIOCGUSAGE - struct hiddev_usage_ref (read/write)
-+HIDIOCGUSAGE
-+  - struct hiddev_usage_ref (read/write)
-+
- Returns the value of a usage in a hiddev_usage_ref structure. The
- usage to be retrieved can be specified as above, or the user can
- choose to fill in the report_type field and specify the report_id as
- HID_REPORT_ID_UNKNOWN. In this case, the hiddev_usage_ref will be
- filled in with the report and field information associated with this
--usage if it is found. 
-+usage if it is found.
-+
-+HIDIOCSUSAGE
-+  - struct hiddev_usage_ref (write)
- 
--HIDIOCSUSAGE - struct hiddev_usage_ref (write)
- Sets the value of a usage in an output report.  The user fills in
- the hiddev_usage_ref structure as above, but additionally fills in
- the value field.
- 
--HIDIOGCOLLECTIONINDEX - struct hiddev_usage_ref (write)
-+HIDIOGCOLLECTIONINDEX
-+  - struct hiddev_usage_ref (write)
-+
- Returns the collection index associated with this usage.  This
- indicates where in the collection hierarchy this usage sits.
- 
--HIDIOCGFLAG - int (read)
--HIDIOCSFLAG - int (write)
-+HIDIOCGFLAG
-+  - int (read)
-+HIDIOCSFLAG
-+  - int (write)
-+
- These operations respectively inspect and replace the mode flags
- that influence the read() call above.  The flags are as follows:
- 
--    HIDDEV_FLAG_UREF - read() calls will now return 
-+    HIDDEV_FLAG_UREF
-+      - read() calls will now return
-         struct hiddev_usage_ref instead of struct hiddev_event.
-         This is a larger structure, but in situations where the
-         device has more than one usage in its reports with the
-         same usage code, this mode serves to resolve such
-         ambiguity.
- 
--    HIDDEV_FLAG_REPORT - This flag can only be used in conjunction
-+    HIDDEV_FLAG_REPORT
-+      - This flag can only be used in conjunction
-         with HIDDEV_FLAG_UREF.  With this flag set, when the device
-         sends a report, a struct hiddev_usage_ref will be returned
--        to read() filled in with the report_type and report_id, but 
-+        to read() filled in with the report_type and report_id, but
-         with field_index set to FIELD_INDEX_NONE.  This serves as
-         additional notification when the device has sent a report.
-diff --git a/Documentation/hid/hidraw.txt b/Documentation/hid/hidraw.rst
-similarity index 89%
-rename from Documentation/hid/hidraw.txt
-rename to Documentation/hid/hidraw.rst
-index c8436e354f44..4a4a0ba1f362 100644
---- a/Documentation/hid/hidraw.txt
-+++ b/Documentation/hid/hidraw.rst
-@@ -1,5 +1,6 @@
--      HIDRAW - Raw Access to USB and Bluetooth Human Interface Devices
--     ==================================================================
-+================================================================
-+HIDRAW - Raw Access to USB and Bluetooth Human Interface Devices
-+================================================================
- 
- The hidraw driver provides a raw interface to USB and Bluetooth Human
- Interface Devices (HIDs).  It differs from hiddev in that reports sent and
-@@ -31,6 +32,7 @@ directly under /dev (eg: /dev/hidraw0).  As this location is distribution-
- and udev rule-dependent, applications should use libudev to locate hidraw
- devices attached to the system.  There is a tutorial on libudev with a
- working example at:
-+
- 	http://www.signal11.us/oss/udev/
- 
- The HIDRAW API
-@@ -51,7 +53,7 @@ byte.  For devices which do not use numbered reports, the report data
- will begin at the first byte.
- 
- write()
----------
-+-------
- The write() function will write a report to the device. For USB devices, if
- the device has an INTERRUPT OUT endpoint, the report will be sent on that
- endpoint. If it does not, the report will be sent over the control endpoint,
-@@ -62,38 +64,52 @@ number.  If the device does not use numbered reports, the first byte should
- be set to 0. The report data itself should begin at the second byte.
- 
- ioctl()
----------
-+-------
- Hidraw supports the following ioctls:
- 
--HIDIOCGRDESCSIZE: Get Report Descriptor Size
-+HIDIOCGRDESCSIZE:
-+	Get Report Descriptor Size
-+
- This ioctl will get the size of the device's report descriptor.
- 
--HIDIOCGRDESC: Get Report Descriptor
-+HIDIOCGRDESC:
-+	Get Report Descriptor
-+
- This ioctl returns the device's report descriptor using a
- hidraw_report_descriptor struct.  Make sure to set the size field of the
- hidraw_report_descriptor struct to the size returned from HIDIOCGRDESCSIZE.
- 
--HIDIOCGRAWINFO: Get Raw Info
-+HIDIOCGRAWINFO:
-+	Get Raw Info
-+
- This ioctl will return a hidraw_devinfo struct containing the bus type, the
- vendor ID (VID), and product ID (PID) of the device. The bus type can be one
--of:
--	BUS_USB
--	BUS_HIL
--	BUS_BLUETOOTH
--	BUS_VIRTUAL
-+of::
-+
-+	- BUS_USB
-+	- BUS_HIL
-+	- BUS_BLUETOOTH
-+	- BUS_VIRTUAL
-+
- which are defined in uapi/linux/input.h.
- 
--HIDIOCGRAWNAME(len): Get Raw Name
-+HIDIOCGRAWNAME(len):
-+	Get Raw Name
-+
- This ioctl returns a string containing the vendor and product strings of
- the device.  The returned string is Unicode, UTF-8 encoded.
- 
--HIDIOCGRAWPHYS(len): Get Physical Address
-+HIDIOCGRAWPHYS(len):
-+	Get Physical Address
-+
- This ioctl returns a string representing the physical address of the device.
- For USB devices, the string contains the physical path to the device (the
- USB controller, hubs, ports, etc).  For Bluetooth devices, the string
- contains the hardware (MAC) address of the device.
- 
--HIDIOCSFEATURE(len): Send a Feature Report
-+HIDIOCSFEATURE(len):
-+	Send a Feature Report
-+
- This ioctl will send a feature report to the device.  Per the HID
- specification, feature reports are always sent using the control endpoint.
- Set the first byte of the supplied buffer to the report number.  For devices
-@@ -101,7 +117,9 @@ which do not use numbered reports, set the first byte to 0. The report data
- begins in the second byte. Make sure to set len accordingly, to one more
- than the length of the report (to account for the report number).
- 
--HIDIOCGFEATURE(len): Get a Feature Report
-+HIDIOCGFEATURE(len):
-+	Get a Feature Report
-+
- This ioctl will request a feature report from the device using the control
- endpoint.  The first byte of the supplied buffer should be set to the report
- number of the requested report.  For devices which do not use numbered
-@@ -109,11 +127,12 @@ reports, set the first byte to 0.  The report will be returned starting at
- the first byte of the buffer (ie: the report number is not returned).
- 
- Example
-----------
-+-------
- In samples/, find hid-example.c, which shows examples of read(), write(),
- and all the ioctls for hidraw.  The code may be used by anyone for any
- purpose, and can serve as a starting point for developing applications using
- hidraw.
- 
- Document by:
-+
- 	Alan Ott <alan@signal11.us>, Signal 11 Software
-diff --git a/Documentation/hid/index.rst b/Documentation/hid/index.rst
+-    o IA32 support.  Currently experimental.  It mostly works.
++    * IA32 support.  Currently experimental.  It mostly works.
+diff --git a/Documentation/ia64/index.rst b/Documentation/ia64/index.rst
 new file mode 100644
-index 000000000000..af4324902622
+index 000000000000..a3e3052ad6e2
 --- /dev/null
-+++ b/Documentation/hid/index.rst
++++ b/Documentation/ia64/index.rst
 @@ -0,0 +1,18 @@
 +:orphan:
 +
-+=============================
-+Human Interface Devices (HID)
-+=============================
++==================
++IA-64 Architecture
++==================
 +
 +.. toctree::
 +   :maxdepth: 1
 +
-+   hiddev
-+   hidraw
-+   hid-sensor
-+   hid-transport
++   ia64
++   aliasing
++   efirtc
++   err_inject
++   fsys
++   irq-redir
++   mca
++   serial
++   xen
+diff --git a/Documentation/ia64/IRQ-redir.txt b/Documentation/ia64/irq-redir.rst
+similarity index 86%
+rename from Documentation/ia64/IRQ-redir.txt
+rename to Documentation/ia64/irq-redir.rst
+index f7bd72261283..39bf94484a15 100644
+--- a/Documentation/ia64/IRQ-redir.txt
++++ b/Documentation/ia64/irq-redir.rst
+@@ -1,6 +1,8 @@
++==============================
+ IRQ affinity on IA64 platforms
+-------------------------------
+-                           07.01.2002, Erich Focht <efocht@ess.nec.de>
++==============================
 +
-+   uhid
++07.01.2002, Erich Focht <efocht@ess.nec.de>
+ 
+ 
+ By writing to /proc/irq/IRQ#/smp_affinity the interrupt routing can be
+@@ -12,22 +14,27 @@ IRQ target is one particular CPU and cannot be a mask of several
+ CPUs. Only the first non-zero bit is taken into account.
+ 
+ 
+-Usage examples:
++Usage examples
++==============
+ 
+ The target CPU has to be specified as a hexadecimal CPU mask. The
+ first non-zero bit is the selected CPU. This format has been kept for
+ compatibility reasons with i386.
+ 
+ Set the delivery mode of interrupt 41 to fixed and route the
+-interrupts to CPU #3 (logical CPU number) (2^3=0x08):
++interrupts to CPU #3 (logical CPU number) (2^3=0x08)::
 +
-+   hid-alps
-+   intel-ish-hid
-diff --git a/Documentation/hid/intel-ish-hid.rst b/Documentation/hid/intel-ish-hid.rst
+      echo "8" >/proc/irq/41/smp_affinity
+ 
+ Set the default route for IRQ number 41 to CPU 6 in lowest priority
+-delivery mode (redirectable):
++delivery mode (redirectable)::
++
+      echo "r 40" >/proc/irq/41/smp_affinity
+ 
+-The output of the command
++The output of the command::
++
+      cat /proc/irq/IRQ#/smp_affinity
++
+ gives the target CPU mask for the specified interrupt vector. If the CPU
+ mask is preceded by the character "r", the interrupt is redirectable
+ (i.e. lowest priority mode routing is used), otherwise its route is
+@@ -35,7 +42,8 @@ fixed.
+ 
+ 
+ 
+-Initialization and default behavior:
++Initialization and default behavior
++===================================
+ 
+ If the platform features IRQ redirection (info provided by SAL) all
+ IO-SAPIC interrupts are initialized with CPU#0 as their default target
+@@ -43,9 +51,11 @@ and the routing is the so called "lowest priority mode" (actually
+ fixed SAPIC mode with hint). The XTP chipset registers are used as hints
+ for the IRQ routing. Currently in Linux XTP registers can have three
+ values:
++
+ 	- minimal for an idle task,
+ 	- normal if any other task runs,
+ 	- maximal if the CPU is going to be switched off.
++
+ The IRQ is routed to the CPU with lowest XTP register value, the
+ search begins at the default CPU. Therefore most of the interrupts
+ will be handled by CPU #0.
+@@ -53,12 +63,14 @@ will be handled by CPU #0.
+ If the platform doesn't feature interrupt redirection IOSAPIC fixed
+ routing is used. The target CPUs are distributed in a round robin
+ manner. IRQs will be routed only to the selected target CPUs. Check
+-with
++with::
++
+         cat /proc/interrupts
+ 
+ 
+ 
+-Comments:
++Comments
++========
+ 
+ On large (multi-node) systems it is recommended to route the IRQs to
+ the node to which the corresponding device is connected.
+@@ -66,4 +78,3 @@ For systems like the NEC AzusA we get IRQ node-affinity for free. This
+ is because usually the chipsets on each node redirect the interrupts
+ only to their own CPUs (as they cannot see the XTP registers on the
+ other nodes).
+-
+diff --git a/Documentation/ia64/mca.txt b/Documentation/ia64/mca.rst
+similarity index 96%
+rename from Documentation/ia64/mca.txt
+rename to Documentation/ia64/mca.rst
+index f097c60cba1b..08270bba44a4 100644
+--- a/Documentation/ia64/mca.txt
++++ b/Documentation/ia64/mca.rst
+@@ -1,5 +1,8 @@
+-An ad-hoc collection of notes on IA64 MCA and INIT processing.  Feel
+-free to update it with notes about any area that is not clear.
++=============================================================
++An ad-hoc collection of notes on IA64 MCA and INIT processing
++=============================================================
++
++Feel free to update it with notes about any area that is not clear.
+ 
+ ---
+ 
+@@ -82,7 +85,8 @@ if we have a choice here.
+   own stack as running on that cpu.  Then a recursive error gets a
+   trace of the failing handler's "task".
+ 
+-[1] My (Keith Owens) original design called for ia64 to separate its
++[1]
++    My (Keith Owens) original design called for ia64 to separate its
+     struct task and the kernel stacks.  Then the MCA/INIT data would be
+     chained stacks like i386 interrupt stacks.  But that required
+     radical surgery on the rest of ia64, plus extra hard wired TLB
+diff --git a/Documentation/ia64/serial.txt b/Documentation/ia64/serial.rst
+similarity index 87%
+rename from Documentation/ia64/serial.txt
+rename to Documentation/ia64/serial.rst
+index a63d2c54329b..1de70c305a79 100644
+--- a/Documentation/ia64/serial.txt
++++ b/Documentation/ia64/serial.rst
+@@ -1,4 +1,9 @@
+-SERIAL DEVICE NAMING
++==============
++Serial Devices
++==============
++
++Serial Device Naming
++====================
+ 
+     As of 2.6.10, serial devices on ia64 are named based on the
+     order of ACPI and PCI enumeration.  The first device in the
+@@ -30,17 +35,21 @@ SERIAL DEVICE NAMING
+     (described in the ACPI namespace) plus an MP[2] (a PCI device) has
+     these ports:
+ 
+-                                  pre-2.6.10      pre-2.6.10
+-                    MMIO         (EFI console    (EFI console
+-                   address        on builtin)     on MP port)    2.6.10
+-                  ==========      ==========      ==========     ======
++      ==========  ==========     ============    ============   =======
++      Type        MMIO           pre-2.6.10      pre-2.6.10     2.6.10+
++		  address
++				 (EFI console    (EFI console
++                                 on builtin)     on MP port)
++      ==========  ==========     ============    ============   =======
+       builtin     0xff5e0000        ttyS0           ttyS1         ttyS0
+       MP UPS      0xf8031000        ttyS1           ttyS2         ttyS1
+       MP Console  0xf8030000        ttyS2           ttyS0         ttyS2
+       MP 2        0xf8030010        ttyS3           ttyS3         ttyS3
+       MP 3        0xf8030038        ttyS4           ttyS4         ttyS4
++      ==========  ==========     ============    ============   =======
+ 
+-CONSOLE SELECTION
++Console Selection
++=================
+ 
+     EFI knows what your console devices are, but it doesn't tell the
+     kernel quite enough to actually locate them.  The DIG64 HCDP
+@@ -67,7 +76,8 @@ CONSOLE SELECTION
+     entries in /etc/inittab (for getty) and /etc/securetty (to allow
+     root login).
+ 
+-EARLY SERIAL CONSOLE
++Early Serial Console
++====================
+ 
+     The kernel can't start using a serial console until it knows where
+     the device lives.  Normally this happens when the driver enumerates
+@@ -80,7 +90,8 @@ EARLY SERIAL CONSOLE
+     or if the EFI console path contains only a UART device and the
+     firmware supplies an HCDP.
+ 
+-TROUBLESHOOTING SERIAL CONSOLE PROBLEMS
++Troubleshooting Serial Console Problems
++=======================================
+ 
+     No kernel output after elilo prints "Uncompressing Linux... done":
+ 
+@@ -133,19 +144,22 @@ TROUBLESHOOTING SERIAL CONSOLE PROBLEMS
+ 
+ 
+ 
+-[1] http://www.dig64.org/specifications/agreement 
++[1]
++    http://www.dig64.org/specifications/agreement
+     The table was originally defined as the "HCDP" for "Headless
+     Console/Debug Port."  The current version is the "PCDP" for
+     "Primary Console and Debug Port Devices."
+ 
+-[2] The HP MP (management processor) is a PCI device that provides
++[2]
++    The HP MP (management processor) is a PCI device that provides
+     several UARTs.  One of the UARTs is often used as a console; the
+     EFI Boot Manager identifies it as "Acpi(HWP0002,700)/Pci(...)/Uart".
+     The external connection is usually a 25-pin connector, and a
+     special dongle converts that to three 9-pin connectors, one of
+     which is labelled "Console."
+ 
+-[3] EFI console devices are configured using the EFI Boot Manager
++[3]
++    EFI console devices are configured using the EFI Boot Manager
+     "Boot option maintenance" menu.  You may have to interrupt the
+     boot sequence to use this menu, and you will have to reset the
+     box after changing console configuration.
+diff --git a/Documentation/ia64/xen.rst b/Documentation/ia64/xen.rst
 new file mode 100644
-index 000000000000..cccbf4be17d7
+index 000000000000..831339c74441
 --- /dev/null
-+++ b/Documentation/hid/intel-ish-hid.rst
-@@ -0,0 +1,485 @@
++++ b/Documentation/ia64/xen.rst
+@@ -0,0 +1,206 @@
++********************************************************
++Recipe for getting/building/running Xen/ia64 with pv_ops
++********************************************************
++This recipe describes how to get xen-ia64 source and build it,
++and run domU with pv_ops.
++
++Requirements
++============
++
++  - python
++  - mercurial
++    it (aka "hg") is an open-source source code
++    management software. See the below.
++    http://www.selenic.com/mercurial/wiki/
++  - git
++  - bridge-utils
++
++Getting and Building Xen and Dom0
 +=================================
-+Intel Integrated Sensor Hub (ISH)
-+=================================
 +
-+A sensor hub enables the ability to offload sensor polling and algorithm
-+processing to a dedicated low power co-processor. This allows the core
-+processor to go into low power modes more often, resulting in the increased
-+battery life.
++  My environment is:
 +
-+There are many vendors providing external sensor hubs confirming to HID
-+Sensor usage tables, and used in several tablets, 2 in 1 convertible laptops
-+and embedded products. Linux had this support since Linux 3.9.
++    - Machine  : Tiger4
++    - Domain0 OS  : RHEL5
++    - DomainU OS  : RHEL5
 +
-+Intel® introduced integrated sensor hubs as a part of the SoC starting from
-+Cherry Trail and now supported on multiple generations of CPU packages. There
-+are many commercial devices already shipped with Integrated Sensor Hubs (ISH).
-+These ISH also comply to HID sensor specification, but the  difference is the
-+transport protocol used for communication. The current external sensor hubs
-+mainly use HID over i2C or USB. But ISH doesn't use either i2c or USB.
++ 1. Download source::
 +
-+1. Overview
-+===========
++	# hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable.hg
++	# cd xen-unstable.hg
++	# hg clone http://xenbits.xensource.com/ext/ia64/linux-2.6.18-xen.hg
 +
-+Using a analogy with a usbhid implementation, the ISH follows a similar model
-+for a very high speed communication::
++ 2. # make world
 +
-+	-----------------		----------------------
-+	|    USB HID	|	-->	|    ISH HID	     |
-+	-----------------		----------------------
-+	-----------------		----------------------
-+	|  USB protocol	|	-->	|    ISH Transport   |
-+	-----------------		----------------------
-+	-----------------		----------------------
-+	|  EHCI/XHCI	|	-->	|    ISH IPC	     |
-+	-----------------		----------------------
-+	      PCI				 PCI
-+	-----------------		----------------------
-+        |Host controller|	-->	|    ISH processor   |
-+	-----------------		----------------------
-+	     USB Link
-+	-----------------		----------------------
-+	| USB End points|	-->	|    ISH Clients     |
-+	-----------------		----------------------
++ 3. # make install-tools
 +
-+Like USB protocol provides a method for device enumeration, link management
-+and user data encapsulation, the ISH also provides similar services. But it is
-+very light weight tailored to manage and communicate with ISH client
-+applications implemented in the firmware.
++ 4. copy kernels and xen::
 +
-+The ISH allows multiple sensor management applications executing in the
-+firmware. Like USB endpoints the messaging can be to/from a client. As part of
-+enumeration process, these clients are identified. These clients can be simple
-+HID sensor applications, sensor calibration application or senor firmware
-+update application.
++	# cp xen/xen.gz /boot/efi/efi/redhat/
++	# cp build-linux-2.6.18-xen_ia64/vmlinux.gz \
++	/boot/efi/efi/redhat/vmlinuz-2.6.18.8-xen
 +
-+The implementation model is similar, like USB bus, ISH transport is also
-+implemented as a bus. Each client application executing in the ISH processor
-+is registered as a device on this bus. The driver, which binds each device
-+(ISH HID driver) identifies the device type and registers with the hid core.
++ 5. make initrd for Dom0/DomU::
 +
-+2. ISH Implementation: Block Diagram
-+====================================
++	# make -C linux-2.6.18-xen.hg ARCH=ia64 modules_install \
++          O=$(pwd)/build-linux-2.6.18-xen_ia64
++	# mkinitrd -f /boot/efi/efi/redhat/initrd-2.6.18.8-xen.img \
++	  2.6.18.8-xen --builtin mptspi --builtin mptbase \
++	  --builtin mptscsih --builtin uhci-hcd --builtin ohci-hcd \
++	  --builtin ehci-hcd
 +
-+::
++Making a disk image for guest OS
++================================
 +
-+	 ---------------------------
-+	|  User Space Applications  |
-+	 ---------------------------
++ 1. make file::
 +
-+  ----------------IIO ABI----------------
-+	 --------------------------
-+	|  IIO Sensor Drivers	  |
-+	 --------------------------
-+	 --------------------------
-+	|	 IIO core	  |
-+	 --------------------------
-+	 --------------------------
-+	|   HID Sensor Hub MFD	  |
-+	 --------------------------
-+	 --------------------------
-+	|       HID Core	  |
-+	 --------------------------
-+	 --------------------------
-+	|   HID over ISH Client   |
-+	 --------------------------
-+	 --------------------------
-+	|   ISH Transport (ISHTP) |
-+	 --------------------------
-+	 --------------------------
-+	|      IPC Drivers	  |
-+	 --------------------------
-+  OS
-+  ---------------- PCI -----------------
-+  Hardware + Firmware
-+	 ----------------------------
-+	| ISH Hardware/Firmware(FW) |
-+	 ----------------------------
++      # dd if=/dev/zero of=/root/rhel5.img bs=1M seek=4096 count=0
++      # mke2fs -F -j /root/rhel5.img
++      # mount -o loop /root/rhel5.img /mnt
++      # cp -ax /{dev,var,etc,usr,bin,sbin,lib} /mnt
++      # mkdir /mnt/{root,proc,sys,home,tmp}
 +
-+3. High level processing in above blocks
-+========================================
++      Note: You may miss some device files. If so, please create them
++      with mknod. Or you can use tar instead of cp.
 +
-+3.1 Hardware Interface
-+----------------------
++ 2. modify DomU's fstab::
 +
-+The ISH is exposed as "Non-VGA unclassified PCI device" to the host. The PCI
-+product and vendor IDs are changed from different generations of processors. So
-+the source code which enumerate drivers needs to update from generation to
-+generation.
++      # vi /mnt/etc/fstab
++         /dev/xvda1  /            ext3    defaults        1 1
++         none        /dev/pts     devpts  gid=5,mode=620  0 0
++         none        /dev/shm     tmpfs   defaults        0 0
++         none        /proc        proc    defaults        0 0
++         none        /sys         sysfs   defaults        0 0
 +
-+3.2 Inter Processor Communication (IPC) driver
-+----------------------------------------------
++ 3. modify inittab
 +
-+Location: drivers/hid/intel-ish-hid/ipc
++    set runlevel to 3 to avoid X trying to start::
 +
-+The IPC message used memory mapped I/O. The registers are defined in
-+hw-ish-regs.h.
++      # vi /mnt/etc/inittab
++         id:3:initdefault:
 +
-+3.2.1 IPC/FW message types
-+^^^^^^^^^^^^^^^^^^^^^^^^^^
++    Start a getty on the hvc0 console::
 +
-+There are two types of messages, one for management of link and other messages
-+are to and from transport layers.
++       X0:2345:respawn:/sbin/mingetty hvc0
 +
-+TX and RX of Transport messages
-+...............................
++    tty1-6 mingetty can be commented out
 +
-+A set of memory mapped register offers support of multi byte messages TX and
-+RX (E.g.IPC_REG_ISH2HOST_MSG, IPC_REG_HOST2ISH_MSG). The IPC layer maintains
-+internal queues to sequence messages and send them in order to the FW.
-+Optionally the caller can register handler to get notification of completion.
-+A door bell mechanism is used in messaging to trigger processing in host and
-+client firmware side. When ISH interrupt handler is called, the ISH2HOST
-+doorbell register is used by host drivers to determine that the interrupt
-+is for ISH.
++ 4. add hvc0 into /etc/securetty::
 +
-+Each side has 32 32-bit message registers and a 32-bit doorbell. Doorbell
-+register has the following format:
-+Bits 0..6: fragment length (7 bits are used)
-+Bits 10..13: encapsulated protocol
-+Bits 16..19: management command (for IPC management protocol)
-+Bit 31: doorbell trigger (signal H/W interrupt to the other side)
-+Other bits are reserved, should be 0.
++      # vi /mnt/etc/securetty (add hvc0)
 +
-+3.2.2 Transport layer interface
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++ 5. umount::
 +
-+To abstract HW level IPC communication, a set of callbacks are registered.
-+The transport layer uses them to send and receive messages.
-+Refer to  struct ishtp_hw_ops for callbacks.
++      # umount /mnt
 +
-+3.3 ISH Transport layer
-+-----------------------
++FYI, virt-manager can also make a disk image for guest OS.
++It's GUI tools and easy to make it.
 +
-+Location: drivers/hid/intel-ish-hid/ishtp/
++Boot Xen & Domain0
++==================
 +
-+3.3.1 A Generic Transport Layer
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++ 1. replace elilo
++    elilo of RHEL5 can boot Xen and Dom0.
++    If you use old elilo (e.g RHEL4), please download from the below
++    http://elilo.sourceforge.net/cgi-bin/blosxom
++    and copy into /boot/efi/efi/redhat/::
 +
-+The transport layer is a bi-directional protocol, which defines:
-+- Set of commands to start, stop, connect, disconnect and flow control
-+(ishtp/hbm.h) for details
-+- A flow control mechanism to avoid buffer overflows
++      # cp elilo-3.6-ia64.efi /boot/efi/efi/redhat/elilo.efi
 +
-+This protocol resembles bus messages described in the following document:
-+http://www.intel.com/content/dam/www/public/us/en/documents/technical-\
-+specifications/dcmi-hi-1-0-spec.pdf "Chapter 7: Bus Message Layer"
++ 2. modify elilo.conf (like the below)::
 +
-+3.3.2 Connection and Flow Control Mechanism
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++      # vi /boot/efi/efi/redhat/elilo.conf
++      prompt
++      timeout=20
++      default=xen
++      relocatable
 +
-+Each FW client and a protocol is identified by an UUID. In order to communicate
-+to a FW client, a connection must be established using connect request and
-+response bus messages. If successful, a pair (host_client_id and fw_client_id)
-+will identify the connection.
++      image=vmlinuz-2.6.18.8-xen
++             label=xen
++             vmm=xen.gz
++             initrd=initrd-2.6.18.8-xen.img
++             read-only
++             append=" -- rhgb root=/dev/sda2"
 +
-+Once connection is established, peers send each other flow control bus messages
-+independently. Every peer may send a message only if it has received a
-+flow-control credit before. Once it sent a message, it may not send another one
-+before receiving the next flow control credit.
-+Either side can send disconnect request bus message to end communication. Also
-+the link will be dropped if major FW reset occurs.
++The append options before "--" are for xen hypervisor,
++the options after "--" are for dom0.
 +
-+3.3.3 Peer to Peer data transfer
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++FYI, your machine may need console options like
++"com1=19200,8n1 console=vga,com1". For example,
++append="com1=19200,8n1 console=vga,com1 -- rhgb console=tty0 \
++console=ttyS0 root=/dev/sda2"
 +
-+Peer to Peer data transfer can happen with or without using DMA. Depending on
-+the sensor bandwidth requirement DMA can be enabled by using module parameter
-+ishtp_use_dma under intel_ishtp.
++Getting and Building domU with pv_ops
++=====================================
 +
-+Each side (host and FW) manages its DMA transfer memory independently. When an
-+ISHTP client from either host or FW side wants to send something, it decides
-+whether to send over IPC or over DMA; for each transfer the decision is
-+independent. The sending side sends DMA_XFER message when the message is in
-+the respective host buffer (TX when host client sends, RX when FW client
-+sends). The recipient of DMA message responds with DMA_XFER_ACK, indicating
-+the sender that the memory region for that message may be reused.
++ 1. get pv_ops tree::
 +
-+DMA initialization is started with host sending DMA_ALLOC_NOTIFY bus message
-+(that includes RX buffer) and FW responds with DMA_ALLOC_NOTIFY_ACK.
-+Additionally to DMA address communication, this sequence checks capabilities:
-+if thw host doesn't support DMA, then it won't send DMA allocation, so FW can't
-+send DMA; if FW doesn't support DMA then it won't respond with
-+DMA_ALLOC_NOTIFY_ACK, in which case host will not use DMA transfers.
-+Here ISH acts as busmaster DMA controller. Hence when host sends DMA_XFER,
-+it's request to do host->ISH DMA transfer; when FW sends DMA_XFER, it means
-+that it already did DMA and the message resides at host. Thus, DMA_XFER
-+and DMA_XFER_ACK act as ownership indicators.
++      # git clone http://people.valinux.co.jp/~yamahata/xen-ia64/linux-2.6-xen-ia64.git/
 +
-+At initial state all outgoing memory belongs to the sender (TX to host, RX to
-+FW), DMA_XFER transfers ownership on the region that contains ISHTP message to
-+the receiving side, DMA_XFER_ACK returns ownership to the sender. A sender
-+needs not wait for previous DMA_XFER to be ack'ed, and may send another message
-+as long as remaining continuous memory in its ownership is enough.
-+In principle, multiple DMA_XFER and DMA_XFER_ACK messages may be sent at once
-+(up to IPC MTU), thus allowing for interrupt throttling.
-+Currently, ISH FW decides to send over DMA if ISHTP message is more than 3 IPC
-+fragments and via IPC otherwise.
++ 2. git branch (if necessary)::
 +
-+3.3.4 Ring Buffers
-+^^^^^^^^^^^^^^^^^^
++      # cd linux-2.6-xen-ia64/
++      # git checkout -b your_branch origin/xen-ia64-domu-minimal-2008may19
 +
-+When a client initiate a connection, a ring or RX and TX buffers are allocated.
-+The size of ring can be specified by the client. HID client set 16 and 32 for
-+TX and RX buffers respectively. On send request from client, the data to be
-+sent is copied to one of the send ring buffer and scheduled to be sent using
-+bus message protocol. These buffers are required because the FW may have not
-+have processed the last message and may not have enough flow control credits
-+to send. Same thing holds true on receive side and flow control is required.
++   Note:
++     The current branch is xen-ia64-domu-minimal-2008may19.
++     But you would find the new branch. You can see with
++     "git branch -r" to get the branch lists.
 +
-+3.3.5 Host Enumeration
-+^^^^^^^^^^^^^^^^^^^^^^
++       http://people.valinux.co.jp/~yamahata/xen-ia64/for_eagl/linux-2.6-ia64-pv-ops.git/
 +
-+The host enumeration bus command allow discovery of clients present in the FW.
-+There can be multiple sensor clients and clients for calibration function.
++     is also available.
 +
-+To ease in implantation and allow independent driver handle each client
-+this transport layer takes advantage of Linux Bus driver model. Each
-+client is registered as device on the the transport bus (ishtp bus).
++     The tree is based on
 +
-+Enumeration sequence of messages:
++      git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux-2.6 test)
 +
-+- Host sends HOST_START_REQ_CMD, indicating that host ISHTP layer is up.
-+- FW responds with HOST_START_RES_CMD
-+- Host sends HOST_ENUM_REQ_CMD (enumerate FW clients)
-+- FW responds with HOST_ENUM_RES_CMD that includes bitmap of available FW
-+  client IDs
-+- For each FW ID found in that bitmap host sends
-+  HOST_CLIENT_PROPERTIES_REQ_CMD
-+- FW responds with HOST_CLIENT_PROPERTIES_RES_CMD. Properties include UUID,
-+  max ISHTP message size, etc.
-+- Once host received properties for that last discovered client, it considers
-+  ISHTP device fully functional (and allocates DMA buffers)
++ 3. copy .config for pv_ops of domU::
 +
-+3.4 HID over ISH Client
-+-----------------------
++      # cp arch/ia64/configs/xen_domu_wip_defconfig .config
 +
-+Location: drivers/hid/intel-ish-hid
++ 4. make kernel with pv_ops::
 +
-+The ISHTP client driver is responsible for:
++      # make oldconfig
++      # make
 +
-+- enumerate HID devices under FW ISH client
-+- Get Report descriptor
-+- Register with HID core as a LL driver
-+- Process Get/Set feature request
-+- Get input reports
++ 5. install the kernel and initrd::
 +
-+3.5 HID Sensor Hub MFD and IIO sensor drivers
-+---------------------------------------------
++      # cp vmlinux.gz /boot/efi/efi/redhat/vmlinuz-2.6-pv_ops-xenU
++      # make modules_install
++      # mkinitrd -f /boot/efi/efi/redhat/initrd-2.6-pv_ops-xenU.img \
++        2.6.26-rc3xen-ia64-08941-g1b12161 --builtin mptspi \
++        --builtin mptbase --builtin mptscsih --builtin uhci-hcd \
++        --builtin ohci-hcd --builtin ehci-hcd
 +
-+The functionality in these drivers is the same as an external sensor hub.
-+Refer to
-+Documentation/hid/hid-sensor.rst for HID sensor
-+Documentation/ABI/testing/sysfs-bus-iio for IIO ABIs to user space
++Boot DomainU with pv_ops
++========================
 +
-+3.6 End to End HID transport Sequence Diagram
-+---------------------------------------------
++ 1. make config of DomU::
 +
-+::
++     # vi /etc/xen/rhel5
++       kernel = "/boot/efi/efi/redhat/vmlinuz-2.6-pv_ops-xenU"
++       ramdisk = "/boot/efi/efi/redhat/initrd-2.6-pv_ops-xenU.img"
++       vcpus = 1
++       memory = 512
++       name = "rhel5"
++       disk = [ 'file:/root/rhel5.img,xvda1,w' ]
++       root = "/dev/xvda1 ro"
++       extra= "rhgb console=hvc0"
 +
-+  HID-ISH-CLN                    ISHTP                    IPC                             HW
-+          |                        |                       |                               |
-+          |                        |                       |-----WAKE UP------------------>|
-+          |                        |                       |                               |
-+          |                        |                       |-----HOST READY--------------->|
-+          |                        |                       |                               |
-+          |                        |                       |<----MNG_RESET_NOTIFY_ACK----- |
-+          |                        |                       |                               |
-+          |                        |<----ISHTP_START------ |                               |
-+          |                        |                       |                               |
-+          |                        |<-----------------HOST_START_RES_CMD-------------------|
-+          |                        |                       |                               |
-+          |                        |------------------QUERY_SUBSCRIBER-------------------->|
-+          |                        |                       |                               |
-+          |                        |------------------HOST_ENUM_REQ_CMD------------------->|
-+          |                        |                       |                               |
-+          |                        |<-----------------HOST_ENUM_RES_CMD--------------------|
-+          |                        |                       |                               |
-+          |                        |------------------HOST_CLIENT_PROPERTIES_REQ_CMD------>|
-+          |                        |                       |                               |
-+          |                        |<-----------------HOST_CLIENT_PROPERTIES_RES_CMD-------|
-+          |       Create new device on in ishtp bus        |                               |
-+          |                        |                       |                               |
-+          |                        |------------------HOST_CLIENT_PROPERTIES_REQ_CMD------>|
-+          |                        |                       |                               |
-+          |                        |<-----------------HOST_CLIENT_PROPERTIES_RES_CMD-------|
-+          |       Create new device on in ishtp bus        |                               |
-+          |                        |                       |                               |
-+          |                        |--Repeat HOST_CLIENT_PROPERTIES_REQ_CMD-till last one--|
-+          |                        |                       |                               |
-+       probed()
-+          |----ishtp_cl_connect--->|----------------- CLIENT_CONNECT_REQ_CMD-------------->|
-+          |                        |                       |                               |
-+          |                        |<----------------CLIENT_CONNECT_RES_CMD----------------|
-+          |                        |                       |                               |
-+          |register event callback |                       |                               |
-+          |                        |                       |                               |
-+          |ishtp_cl_send(
-+          HOSTIF_DM_ENUM_DEVICES)  |----------fill ishtp_msg_hdr struct write to HW-----  >|
-+          |                        |                       |                               |
-+          |                        |                       |<-----IRQ(IPC_PROTOCOL_ISHTP---|
-+          |                        |                       |                               |
-+          |<--ENUM_DEVICE RSP------|                       |                               |
-+          |                        |                       |                               |
-+  for each enumerated device
-+          |ishtp_cl_send(
-+          HOSTIF_GET_HID_DESCRIPTOR|----------fill ishtp_msg_hdr struct write to HW-----  >|
-+          |                        |                       |                               |
-+          ...Response
-+          |                        |                       |                               |
-+  for each enumerated device
-+          |ishtp_cl_send(
-+       HOSTIF_GET_REPORT_DESCRIPTOR|--------------fill ishtp_msg_hdr struct write to HW-- >|
-+          |                        |                       |                               |
-+          |                        |                       |                               |
-+   hid_allocate_device
-+          |                        |                       |                               |
-+   hid_add_device                  |                       |                               |
-+          |                        |                       |                               |
++ 2. After boot xen and dom0, start xend::
 +
++	# /etc/init.d/xend start
 +
-+3.7 ISH Debugging
-+-----------------
++   ( In the debugging case, `# XEND_DEBUG=1 xend trace_start` )
 +
-+To debug ISH, event tracing mechanism is used. To enable debug logs
-+echo 1 > /sys/kernel/debug/tracing/events/intel_ish/enable
-+cat sys/kernel/debug/tracing/trace
++ 3. start domU::
 +
-+3.8 ISH IIO sysfs Example on Lenovo thinkpad Yoga 260
-+-----------------------------------------------------
++	# xm create -c rhel5
 +
-+::
++Reference
++=========
++- Wiki of Xen/IA64 upstream merge
++  http://wiki.xensource.com/xenwiki/XenIA64/UpstreamMerge
 +
-+  root@otcpl-ThinkPad-Yoga-260:~# tree -l /sys/bus/iio/devices/
-+  /sys/bus/iio/devices/
-+  ├── iio:device0 -> ../../../devices/0044:8086:22D8.0001/HID-SENSOR-200073.9.auto/iio:device0
-+  │   ├── buffer
-+  │   │   ├── enable
-+  │   │   ├── length
-+  │   │   └── watermark
-+  ...
-+  │   ├── in_accel_hysteresis
-+  │   ├── in_accel_offset
-+  │   ├── in_accel_sampling_frequency
-+  │   ├── in_accel_scale
-+  │   ├── in_accel_x_raw
-+  │   ├── in_accel_y_raw
-+  │   ├── in_accel_z_raw
-+  │   ├── name
-+  │   ├── scan_elements
-+  │   │   ├── in_accel_x_en
-+  │   │   ├── in_accel_x_index
-+  │   │   ├── in_accel_x_type
-+  │   │   ├── in_accel_y_en
-+  │   │   ├── in_accel_y_index
-+  │   │   ├── in_accel_y_type
-+  │   │   ├── in_accel_z_en
-+  │   │   ├── in_accel_z_index
-+  │   │   └── in_accel_z_type
-+  ...
-+  │   │   ├── devices
-+  │   │   │   │   ├── buffer
-+  │   │   │   │   │   ├── enable
-+  │   │   │   │   │   ├── length
-+  │   │   │   │   │   └── watermark
-+  │   │   │   │   ├── dev
-+  │   │   │   │   ├── in_intensity_both_raw
-+  │   │   │   │   ├── in_intensity_hysteresis
-+  │   │   │   │   ├── in_intensity_offset
-+  │   │   │   │   ├── in_intensity_sampling_frequency
-+  │   │   │   │   ├── in_intensity_scale
-+  │   │   │   │   ├── name
-+  │   │   │   │   ├── scan_elements
-+  │   │   │   │   │   ├── in_intensity_both_en
-+  │   │   │   │   │   ├── in_intensity_both_index
-+  │   │   │   │   │   └── in_intensity_both_type
-+  │   │   │   │   ├── trigger
-+  │   │   │   │   │   └── current_trigger
-+  ...
-+  │   │   │   │   ├── buffer
-+  │   │   │   │   │   ├── enable
-+  │   │   │   │   │   ├── length
-+  │   │   │   │   │   └── watermark
-+  │   │   │   │   ├── dev
-+  │   │   │   │   ├── in_magn_hysteresis
-+  │   │   │   │   ├── in_magn_offset
-+  │   │   │   │   ├── in_magn_sampling_frequency
-+  │   │   │   │   ├── in_magn_scale
-+  │   │   │   │   ├── in_magn_x_raw
-+  │   │   │   │   ├── in_magn_y_raw
-+  │   │   │   │   ├── in_magn_z_raw
-+  │   │   │   │   ├── in_rot_from_north_magnetic_tilt_comp_raw
-+  │   │   │   │   ├── in_rot_hysteresis
-+  │   │   │   │   ├── in_rot_offset
-+  │   │   │   │   ├── in_rot_sampling_frequency
-+  │   │   │   │   ├── in_rot_scale
-+  │   │   │   │   ├── name
-+  ...
-+  │   │   │   │   ├── scan_elements
-+  │   │   │   │   │   ├── in_magn_x_en
-+  │   │   │   │   │   ├── in_magn_x_index
-+  │   │   │   │   │   ├── in_magn_x_type
-+  │   │   │   │   │   ├── in_magn_y_en
-+  │   │   │   │   │   ├── in_magn_y_index
-+  │   │   │   │   │   ├── in_magn_y_type
-+  │   │   │   │   │   ├── in_magn_z_en
-+  │   │   │   │   │   ├── in_magn_z_index
-+  │   │   │   │   │   ├── in_magn_z_type
-+  │   │   │   │   │   ├── in_rot_from_north_magnetic_tilt_comp_en
-+  │   │   │   │   │   ├── in_rot_from_north_magnetic_tilt_comp_index
-+  │   │   │   │   │   └── in_rot_from_north_magnetic_tilt_comp_type
-+  │   │   │   │   ├── trigger
-+  │   │   │   │   │   └── current_trigger
-+  ...
-+  │   │   │   │   ├── buffer
-+  │   │   │   │   │   ├── enable
-+  │   │   │   │   │   ├── length
-+  │   │   │   │   │   └── watermark
-+  │   │   │   │   ├── dev
-+  │   │   │   │   ├── in_anglvel_hysteresis
-+  │   │   │   │   ├── in_anglvel_offset
-+  │   │   │   │   ├── in_anglvel_sampling_frequency
-+  │   │   │   │   ├── in_anglvel_scale
-+  │   │   │   │   ├── in_anglvel_x_raw
-+  │   │   │   │   ├── in_anglvel_y_raw
-+  │   │   │   │   ├── in_anglvel_z_raw
-+  │   │   │   │   ├── name
-+  │   │   │   │   ├── scan_elements
-+  │   │   │   │   │   ├── in_anglvel_x_en
-+  │   │   │   │   │   ├── in_anglvel_x_index
-+  │   │   │   │   │   ├── in_anglvel_x_type
-+  │   │   │   │   │   ├── in_anglvel_y_en
-+  │   │   │   │   │   ├── in_anglvel_y_index
-+  │   │   │   │   │   ├── in_anglvel_y_type
-+  │   │   │   │   │   ├── in_anglvel_z_en
-+  │   │   │   │   │   ├── in_anglvel_z_index
-+  │   │   │   │   │   └── in_anglvel_z_type
-+  │   │   │   │   ├── trigger
-+  │   │   │   │   │   └── current_trigger
-+  ...
-+  │   │   │   │   ├── buffer
-+  │   │   │   │   │   ├── enable
-+  │   │   │   │   │   ├── length
-+  │   │   │   │   │   └── watermark
-+  │   │   │   │   ├── dev
-+  │   │   │   │   ├── in_anglvel_hysteresis
-+  │   │   │   │   ├── in_anglvel_offset
-+  │   │   │   │   ├── in_anglvel_sampling_frequency
-+  │   │   │   │   ├── in_anglvel_scale
-+  │   │   │   │   ├── in_anglvel_x_raw
-+  │   │   │   │   ├── in_anglvel_y_raw
-+  │   │   │   │   ├── in_anglvel_z_raw
-+  │   │   │   │   ├── name
-+  │   │   │   │   ├── scan_elements
-+  │   │   │   │   │   ├── in_anglvel_x_en
-+  │   │   │   │   │   ├── in_anglvel_x_index
-+  │   │   │   │   │   ├── in_anglvel_x_type
-+  │   │   │   │   │   ├── in_anglvel_y_en
-+  │   │   │   │   │   ├── in_anglvel_y_index
-+  │   │   │   │   │   ├── in_anglvel_y_type
-+  │   │   │   │   │   ├── in_anglvel_z_en
-+  │   │   │   │   │   ├── in_anglvel_z_index
-+  │   │   │   │   │   └── in_anglvel_z_type
-+  │   │   │   │   ├── trigger
-+  │   │   │   │   │   └── current_trigger
-+  ...
-diff --git a/Documentation/hid/intel-ish-hid.txt b/Documentation/hid/intel-ish-hid.txt
++Written by Akio Takebe <takebe_akio@jp.fujitsu.com> on 28 May 2008
+diff --git a/Documentation/ia64/xen.txt b/Documentation/ia64/xen.txt
 deleted file mode 100644
-index d48b21c71ddd..000000000000
---- a/Documentation/hid/intel-ish-hid.txt
+index a12c74ce2773..000000000000
+--- a/Documentation/ia64/xen.txt
 +++ /dev/null
-@@ -1,454 +0,0 @@
--Intel Integrated Sensor Hub (ISH)
--===============================
+@@ -1,183 +0,0 @@
+-       Recipe for getting/building/running Xen/ia64 with pv_ops
+-       --------------------------------------------------------
 -
--A sensor hub enables the ability to offload sensor polling and algorithm
--processing to a dedicated low power co-processor. This allows the core
--processor to go into low power modes more often, resulting in the increased
--battery life.
+-This recipe describes how to get xen-ia64 source and build it,
+-and run domU with pv_ops.
 -
--There are many vendors providing external sensor hubs confirming to HID
--Sensor usage tables, and used in several tablets, 2 in 1 convertible laptops
--and embedded products. Linux had this support since Linux 3.9.
+-============
+-Requirements
+-============
 -
--Intel® introduced integrated sensor hubs as a part of the SoC starting from
--Cherry Trail and now supported on multiple generations of CPU packages. There
--are many commercial devices already shipped with Integrated Sensor Hubs (ISH).
--These ISH also comply to HID sensor specification, but the  difference is the
--transport protocol used for communication. The current external sensor hubs
--mainly use HID over i2C or USB. But ISH doesn't use either i2c or USB.
+-  - python
+-  - mercurial
+-    it (aka "hg") is an open-source source code
+-    management software. See the below.
+-    http://www.selenic.com/mercurial/wiki/
+-  - git
+-  - bridge-utils
 -
--1. Overview
+-=================================
+-Getting and Building Xen and Dom0
+-=================================
 -
--Using a analogy with a usbhid implementation, the ISH follows a similar model
--for a very high speed communication:
+-  My environment is;
+-    Machine  : Tiger4
+-    Domain0 OS  : RHEL5
+-    DomainU OS  : RHEL5
 -
--	-----------------		----------------------
--	|    USB HID	|	-->	|    ISH HID	     |
--	-----------------		----------------------
--	-----------------		----------------------
--	|  USB protocol	|	-->	|    ISH Transport   |
--	-----------------		----------------------
--	-----------------		----------------------
--	|  EHCI/XHCI	|	-->	|    ISH IPC	     |
--	-----------------		----------------------
--	      PCI				 PCI
--	-----------------		----------------------
--        |Host controller|	-->	|    ISH processor   |
--	-----------------		----------------------
--	     USB Link
--	-----------------		----------------------
--	| USB End points|	-->	|    ISH Clients     |
--	-----------------		----------------------
+- 1. Download source
+-    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable.hg
+-    # cd xen-unstable.hg
+-    # hg clone http://xenbits.xensource.com/ext/ia64/linux-2.6.18-xen.hg
 -
--Like USB protocol provides a method for device enumeration, link management
--and user data encapsulation, the ISH also provides similar services. But it is
--very light weight tailored to manage and communicate with ISH client
--applications implemented in the firmware.
+- 2. # make world
 -
--The ISH allows multiple sensor management applications executing in the
--firmware. Like USB endpoints the messaging can be to/from a client. As part of
--enumeration process, these clients are identified. These clients can be simple
--HID sensor applications, sensor calibration application or senor firmware
--update application.
+- 3. # make install-tools
 -
--The implementation model is similar, like USB bus, ISH transport is also
--implemented as a bus. Each client application executing in the ISH processor
--is registered as a device on this bus. The driver, which binds each device
--(ISH HID driver) identifies the device type and registers with the hid core.
+- 4. copy kernels and xen
+-    # cp xen/xen.gz /boot/efi/efi/redhat/
+-    # cp build-linux-2.6.18-xen_ia64/vmlinux.gz \
+-      /boot/efi/efi/redhat/vmlinuz-2.6.18.8-xen
 -
--2. ISH Implementation: Block Diagram
+- 5. make initrd for Dom0/DomU
+-    # make -C linux-2.6.18-xen.hg ARCH=ia64 modules_install \
+-      O=$(pwd)/build-linux-2.6.18-xen_ia64
+-    # mkinitrd -f /boot/efi/efi/redhat/initrd-2.6.18.8-xen.img \
+-      2.6.18.8-xen --builtin mptspi --builtin mptbase \
+-      --builtin mptscsih --builtin uhci-hcd --builtin ohci-hcd \
+-      --builtin ehci-hcd
 -
--	 ---------------------------
--	|  User Space Applications  |
--	 ---------------------------
+-================================
+-Making a disk image for guest OS
+-================================
 -
------------------IIO ABI----------------
--	 --------------------------
--	|  IIO Sensor Drivers	  |
--	 --------------------------
--	 --------------------------
--	|	 IIO core	  |
--	 --------------------------
--	 --------------------------
--	|   HID Sensor Hub MFD	  |
--	 --------------------------
--	 --------------------------
--	|       HID Core	  |
--	 --------------------------
--	 --------------------------
--	|   HID over ISH Client   |
--	 --------------------------
--	 --------------------------
--	|   ISH Transport (ISHTP) |
--	 --------------------------
--	 --------------------------
--	|      IPC Drivers	  |
--	 --------------------------
--OS
------------------   PCI -----------------
--Hardware + Firmware
--	 ----------------------------
--	| ISH Hardware/Firmware(FW) |
--	 ----------------------------
+- 1. make file
+-    # dd if=/dev/zero of=/root/rhel5.img bs=1M seek=4096 count=0
+-    # mke2fs -F -j /root/rhel5.img
+-    # mount -o loop /root/rhel5.img /mnt
+-    # cp -ax /{dev,var,etc,usr,bin,sbin,lib} /mnt
+-    # mkdir /mnt/{root,proc,sys,home,tmp}
 -
--3. High level processing in above blocks
+-    Note: You may miss some device files. If so, please create them
+-    with mknod. Or you can use tar instead of cp.
 -
--3.1 Hardware Interface
+- 2. modify DomU's fstab
+-    # vi /mnt/etc/fstab
+-       /dev/xvda1  /            ext3    defaults        1 1
+-       none        /dev/pts     devpts  gid=5,mode=620  0 0
+-       none        /dev/shm     tmpfs   defaults        0 0
+-       none        /proc        proc    defaults        0 0
+-       none        /sys         sysfs   defaults        0 0
 -
--The ISH is exposed as "Non-VGA unclassified PCI device" to the host. The PCI
--product and vendor IDs are changed from different generations of processors. So
--the source code which enumerate drivers needs to update from generation to
--generation.
+- 3. modify inittab
+-    set runlevel to 3 to avoid X trying to start
+-    # vi /mnt/etc/inittab
+-       id:3:initdefault:
+-    Start a getty on the hvc0 console
+-       X0:2345:respawn:/sbin/mingetty hvc0
+-    tty1-6 mingetty can be commented out
 -
--3.2 Inter Processor Communication (IPC) driver
--Location: drivers/hid/intel-ish-hid/ipc
+- 4. add hvc0 into /etc/securetty
+-    # vi /mnt/etc/securetty (add hvc0)
 -
--The IPC message used memory mapped I/O. The registers are defined in
--hw-ish-regs.h.
+- 5. umount
+-    # umount /mnt
 -
--3.2.1 IPC/FW message types
+-FYI, virt-manager can also make a disk image for guest OS.
+-It's GUI tools and easy to make it.
 -
--There are two types of messages, one for management of link and other messages
--are to and from transport layers.
+-==================
+-Boot Xen & Domain0
+-==================
 -
--TX and RX of Transport messages
+- 1. replace elilo
+-    elilo of RHEL5 can boot Xen and Dom0.
+-    If you use old elilo (e.g RHEL4), please download from the below
+-    http://elilo.sourceforge.net/cgi-bin/blosxom
+-    and copy into /boot/efi/efi/redhat/
+-    # cp elilo-3.6-ia64.efi /boot/efi/efi/redhat/elilo.efi
 -
--A set of memory mapped register offers support of multi byte messages TX and
--RX (E.g.IPC_REG_ISH2HOST_MSG, IPC_REG_HOST2ISH_MSG). The IPC layer maintains
--internal queues to sequence messages and send them in order to the FW.
--Optionally the caller can register handler to get notification of completion.
--A door bell mechanism is used in messaging to trigger processing in host and
--client firmware side. When ISH interrupt handler is called, the ISH2HOST
--doorbell register is used by host drivers to determine that the interrupt
--is for ISH.
+- 2. modify elilo.conf (like the below)
+-    # vi /boot/efi/efi/redhat/elilo.conf
+-     prompt
+-     timeout=20
+-     default=xen
+-     relocatable
 -
--Each side has 32 32-bit message registers and a 32-bit doorbell. Doorbell
--register has the following format:
--Bits 0..6: fragment length (7 bits are used)
--Bits 10..13: encapsulated protocol
--Bits 16..19: management command (for IPC management protocol)
--Bit 31: doorbell trigger (signal H/W interrupt to the other side)
--Other bits are reserved, should be 0.
+-     image=vmlinuz-2.6.18.8-xen
+-             label=xen
+-             vmm=xen.gz
+-             initrd=initrd-2.6.18.8-xen.img
+-             read-only
+-             append=" -- rhgb root=/dev/sda2"
 -
--3.2.2 Transport layer interface
+-The append options before "--" are for xen hypervisor,
+-the options after "--" are for dom0.
 -
--To abstract HW level IPC communication, a set of callbacks are registered.
--The transport layer uses them to send and receive messages.
--Refer to  struct ishtp_hw_ops for callbacks.
+-FYI, your machine may need console options like
+-"com1=19200,8n1 console=vga,com1". For example,
+-append="com1=19200,8n1 console=vga,com1 -- rhgb console=tty0 \
+-console=ttyS0 root=/dev/sda2"
 -
--3.3 ISH Transport layer
--Location: drivers/hid/intel-ish-hid/ishtp/
+-=====================================
+-Getting and Building domU with pv_ops
+-=====================================
 -
--3.3.1 A Generic Transport Layer
+- 1. get pv_ops tree
+-    # git clone http://people.valinux.co.jp/~yamahata/xen-ia64/linux-2.6-xen-ia64.git/
 -
--The transport layer is a bi-directional protocol, which defines:
--- Set of commands to start, stop, connect, disconnect and flow control
--(ishtp/hbm.h) for details
--- A flow control mechanism to avoid buffer overflows
--
--This protocol resembles bus messages described in the following document:
--http://www.intel.com/content/dam/www/public/us/en/documents/technical-\
--specifications/dcmi-hi-1-0-spec.pdf "Chapter 7: Bus Message Layer"
--
--3.3.2 Connection and Flow Control Mechanism
--
--Each FW client and a protocol is identified by an UUID. In order to communicate
--to a FW client, a connection must be established using connect request and
--response bus messages. If successful, a pair (host_client_id and fw_client_id)
--will identify the connection.
--
--Once connection is established, peers send each other flow control bus messages
--independently. Every peer may send a message only if it has received a
--flow-control credit before. Once it sent a message, it may not send another one
--before receiving the next flow control credit.
--Either side can send disconnect request bus message to end communication. Also
--the link will be dropped if major FW reset occurs.
--
--3.3.3 Peer to Peer data transfer
--
--Peer to Peer data transfer can happen with or without using DMA. Depending on
--the sensor bandwidth requirement DMA can be enabled by using module parameter
--ishtp_use_dma under intel_ishtp.
--
--Each side (host and FW) manages its DMA transfer memory independently. When an
--ISHTP client from either host or FW side wants to send something, it decides
--whether to send over IPC or over DMA; for each transfer the decision is
--independent. The sending side sends DMA_XFER message when the message is in
--the respective host buffer (TX when host client sends, RX when FW client
--sends). The recipient of DMA message responds with DMA_XFER_ACK, indicating
--the sender that the memory region for that message may be reused.
--
--DMA initialization is started with host sending DMA_ALLOC_NOTIFY bus message
--(that includes RX buffer) and FW responds with DMA_ALLOC_NOTIFY_ACK.
--Additionally to DMA address communication, this sequence checks capabilities:
--if thw host doesn't support DMA, then it won't send DMA allocation, so FW can't
--send DMA; if FW doesn't support DMA then it won't respond with
--DMA_ALLOC_NOTIFY_ACK, in which case host will not use DMA transfers.
--Here ISH acts as busmaster DMA controller. Hence when host sends DMA_XFER,
--it's request to do host->ISH DMA transfer; when FW sends DMA_XFER, it means
--that it already did DMA and the message resides at host. Thus, DMA_XFER
--and DMA_XFER_ACK act as ownership indicators.
--
--At initial state all outgoing memory belongs to the sender (TX to host, RX to
--FW), DMA_XFER transfers ownership on the region that contains ISHTP message to
--the receiving side, DMA_XFER_ACK returns ownership to the sender. A sender
--needs not wait for previous DMA_XFER to be ack'ed, and may send another message
--as long as remaining continuous memory in its ownership is enough.
--In principle, multiple DMA_XFER and DMA_XFER_ACK messages may be sent at once
--(up to IPC MTU), thus allowing for interrupt throttling.
--Currently, ISH FW decides to send over DMA if ISHTP message is more than 3 IPC
--fragments and via IPC otherwise.
--
--3.3.4 Ring Buffers
--
--When a client initiate a connection, a ring or RX and TX buffers are allocated.
--The size of ring can be specified by the client. HID client set 16 and 32 for
--TX and RX buffers respectively. On send request from client, the data to be
--sent is copied to one of the send ring buffer and scheduled to be sent using
--bus message protocol. These buffers are required because the FW may have not
--have processed the last message and may not have enough flow control credits
--to send. Same thing holds true on receive side and flow control is required.
--
--3.3.5 Host Enumeration
--
--The host enumeration bus command allow discovery of clients present in the FW.
--There can be multiple sensor clients and clients for calibration function.
--
--To ease in implantation and allow independent driver handle each client
--this transport layer takes advantage of Linux Bus driver model. Each
--client is registered as device on the the transport bus (ishtp bus).
--
--Enumeration sequence of messages:
--- Host sends HOST_START_REQ_CMD, indicating that host ISHTP layer is up.
--- FW responds with HOST_START_RES_CMD
--- Host sends HOST_ENUM_REQ_CMD (enumerate FW clients)
--- FW responds with HOST_ENUM_RES_CMD that includes bitmap of available FW
--client IDs
--- For each FW ID found in that bitmap host sends
--HOST_CLIENT_PROPERTIES_REQ_CMD
--- FW responds with HOST_CLIENT_PROPERTIES_RES_CMD. Properties include UUID,
--max ISHTP message size, etc.
--- Once host received properties for that last discovered client, it considers
--ISHTP device fully functional (and allocates DMA buffers)
--
--3.4 HID over ISH Client
--Location: drivers/hid/intel-ish-hid
--
--The ISHTP client driver is responsible for:
--- enumerate HID devices under FW ISH client
--- Get Report descriptor
--- Register with HID core as a LL driver
--- Process Get/Set feature request
--- Get input reports
--
--3.5 HID Sensor Hub MFD and IIO sensor drivers
--
--The functionality in these drivers is the same as an external sensor hub.
--Refer to
--Documentation/hid/hid-sensor.txt for HID sensor
--Documentation/ABI/testing/sysfs-bus-iio for IIO ABIs to user space
--
--3.6 End to End HID transport Sequence Diagram
--
--HID-ISH-CLN			ISHTP			IPC				HW
--	|			|			|				|
--	|			|			|-----WAKE UP------------------>|
--	|			|			|				|
--	|			|			|-----HOST READY--------------->|
--	|			|			|				|
--	|			|			|<----MNG_RESET_NOTIFY_ACK----- |
--	|			|			|				|
--	|			|<----ISHTP_START------ |				|
--	|			|			|				|
--	|			|<-----------------HOST_START_RES_CMD-------------------|
--	|			|			|				|
--	|			|------------------QUERY_SUBSCRIBER-------------------->|
--	|			|			|				|
--	|			|------------------HOST_ENUM_REQ_CMD------------------->|
--	|			|			|				|
--	|			|<-----------------HOST_ENUM_RES_CMD--------------------|
--	|			|			|				|
--	|			|------------------HOST_CLIENT_PROPERTIES_REQ_CMD------>|
--	|			|			|				|
--	|			|<-----------------HOST_CLIENT_PROPERTIES_RES_CMD-------|
--	|	Create new device on in ishtp bus	|				|
--	|			|			|				|
--	|			|------------------HOST_CLIENT_PROPERTIES_REQ_CMD------>|
--	|			|			|				|
--	|			|<-----------------HOST_CLIENT_PROPERTIES_RES_CMD-------|
--	|	Create new device on in ishtp bus	|				|
--	|			|			|				|
--	|			|--Repeat HOST_CLIENT_PROPERTIES_REQ_CMD-till last one--|
--	|			|			|				|
--     probed()
--	|----ishtp_cl_connect-->|----------------- CLIENT_CONNECT_REQ_CMD-------------->|
--	|			|			|				|
--	|			|<----------------CLIENT_CONNECT_RES_CMD----------------|
--	|			|			|				|
--	|register event callback|			|				|
--	|			|			|				|
--	|ishtp_cl_send(
--	HOSTIF_DM_ENUM_DEVICES) |----------fill ishtp_msg_hdr struct write to HW-----  >|
--	|			|			|				|
--	|			|			|<-----IRQ(IPC_PROTOCOL_ISHTP---|
--	|			|			|				|
--	|<--ENUM_DEVICE RSP-----|			|				|
--	|			|			|				|
--for each enumerated device
--	|ishtp_cl_send(
--	HOSTIF_GET_HID_DESCRIPTOR |----------fill ishtp_msg_hdr struct write to HW---  >|
--	|			|			|				|
--	...Response
--	|			|			|				|
--for each enumerated device
--	|ishtp_cl_send(
--	HOSTIF_GET_REPORT_DESCRIPTOR |----------fill ishtp_msg_hdr struct write to HW- >|
--	|			|			|				|
--	|			|			|				|
-- hid_allocate_device
--	|			|			|				|
-- hid_add_device			|			|				|
--	|			|			|				|
+- 2. git branch (if necessary)
+-    # cd linux-2.6-xen-ia64/
+-    # git checkout -b your_branch origin/xen-ia64-domu-minimal-2008may19
+-    (Note: The current branch is xen-ia64-domu-minimal-2008may19.
+-    But you would find the new branch. You can see with
+-    "git branch -r" to get the branch lists.
+-    http://people.valinux.co.jp/~yamahata/xen-ia64/for_eagl/linux-2.6-ia64-pv-ops.git/
+-    is also available. The tree is based on
+-    git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux-2.6 test)
 -
 -
--3.7 ISH Debugging
+- 3. copy .config for pv_ops of domU
+-    # cp arch/ia64/configs/xen_domu_wip_defconfig .config
 -
--To debug ISH, event tracing mechanism is used. To enable debug logs
--echo 1 > /sys/kernel/debug/tracing/events/intel_ish/enable
--cat sys/kernel/debug/tracing/trace
+- 4. make kernel with pv_ops
+-    # make oldconfig
+-    # make
 -
--3.8 ISH IIO sysfs Example on Lenovo thinkpad Yoga 260
+- 5. install the kernel and initrd
+-    # cp vmlinux.gz /boot/efi/efi/redhat/vmlinuz-2.6-pv_ops-xenU
+-    # make modules_install
+-    # mkinitrd -f /boot/efi/efi/redhat/initrd-2.6-pv_ops-xenU.img \
+-      2.6.26-rc3xen-ia64-08941-g1b12161 --builtin mptspi \
+-      --builtin mptbase --builtin mptscsih --builtin uhci-hcd \
+-      --builtin ohci-hcd --builtin ehci-hcd
 -
--root@otcpl-ThinkPad-Yoga-260:~# tree -l /sys/bus/iio/devices/
--/sys/bus/iio/devices/
--├── iio:device0 -> ../../../devices/0044:8086:22D8.0001/HID-SENSOR-200073.9.auto/iio:device0
--│   ├── buffer
--│   │   ├── enable
--│   │   ├── length
--│   │   └── watermark
--...
--│   ├── in_accel_hysteresis
--│   ├── in_accel_offset
--│   ├── in_accel_sampling_frequency
--│   ├── in_accel_scale
--│   ├── in_accel_x_raw
--│   ├── in_accel_y_raw
--│   ├── in_accel_z_raw
--│   ├── name
--│   ├── scan_elements
--│   │   ├── in_accel_x_en
--│   │   ├── in_accel_x_index
--│   │   ├── in_accel_x_type
--│   │   ├── in_accel_y_en
--│   │   ├── in_accel_y_index
--│   │   ├── in_accel_y_type
--│   │   ├── in_accel_z_en
--│   │   ├── in_accel_z_index
--│   │   └── in_accel_z_type
--...
--│   │   ├── devices
--│   │   │   │   ├── buffer
--│   │   │   │   │   ├── enable
--│   │   │   │   │   ├── length
--│   │   │   │   │   └── watermark
--│   │   │   │   ├── dev
--│   │   │   │   ├── in_intensity_both_raw
--│   │   │   │   ├── in_intensity_hysteresis
--│   │   │   │   ├── in_intensity_offset
--│   │   │   │   ├── in_intensity_sampling_frequency
--│   │   │   │   ├── in_intensity_scale
--│   │   │   │   ├── name
--│   │   │   │   ├── scan_elements
--│   │   │   │   │   ├── in_intensity_both_en
--│   │   │   │   │   ├── in_intensity_both_index
--│   │   │   │   │   └── in_intensity_both_type
--│   │   │   │   ├── trigger
--│   │   │   │   │   └── current_trigger
--...
--│   │   │   │   ├── buffer
--│   │   │   │   │   ├── enable
--│   │   │   │   │   ├── length
--│   │   │   │   │   └── watermark
--│   │   │   │   ├── dev
--│   │   │   │   ├── in_magn_hysteresis
--│   │   │   │   ├── in_magn_offset
--│   │   │   │   ├── in_magn_sampling_frequency
--│   │   │   │   ├── in_magn_scale
--│   │   │   │   ├── in_magn_x_raw
--│   │   │   │   ├── in_magn_y_raw
--│   │   │   │   ├── in_magn_z_raw
--│   │   │   │   ├── in_rot_from_north_magnetic_tilt_comp_raw
--│   │   │   │   ├── in_rot_hysteresis
--│   │   │   │   ├── in_rot_offset
--│   │   │   │   ├── in_rot_sampling_frequency
--│   │   │   │   ├── in_rot_scale
--│   │   │   │   ├── name
--...
--│   │   │   │   ├── scan_elements
--│   │   │   │   │   ├── in_magn_x_en
--│   │   │   │   │   ├── in_magn_x_index
--│   │   │   │   │   ├── in_magn_x_type
--│   │   │   │   │   ├── in_magn_y_en
--│   │   │   │   │   ├── in_magn_y_index
--│   │   │   │   │   ├── in_magn_y_type
--│   │   │   │   │   ├── in_magn_z_en
--│   │   │   │   │   ├── in_magn_z_index
--│   │   │   │   │   ├── in_magn_z_type
--│   │   │   │   │   ├── in_rot_from_north_magnetic_tilt_comp_en
--│   │   │   │   │   ├── in_rot_from_north_magnetic_tilt_comp_index
--│   │   │   │   │   └── in_rot_from_north_magnetic_tilt_comp_type
--│   │   │   │   ├── trigger
--│   │   │   │   │   └── current_trigger
--...
--│   │   │   │   ├── buffer
--│   │   │   │   │   ├── enable
--│   │   │   │   │   ├── length
--│   │   │   │   │   └── watermark
--│   │   │   │   ├── dev
--│   │   │   │   ├── in_anglvel_hysteresis
--│   │   │   │   ├── in_anglvel_offset
--│   │   │   │   ├── in_anglvel_sampling_frequency
--│   │   │   │   ├── in_anglvel_scale
--│   │   │   │   ├── in_anglvel_x_raw
--│   │   │   │   ├── in_anglvel_y_raw
--│   │   │   │   ├── in_anglvel_z_raw
--│   │   │   │   ├── name
--│   │   │   │   ├── scan_elements
--│   │   │   │   │   ├── in_anglvel_x_en
--│   │   │   │   │   ├── in_anglvel_x_index
--│   │   │   │   │   ├── in_anglvel_x_type
--│   │   │   │   │   ├── in_anglvel_y_en
--│   │   │   │   │   ├── in_anglvel_y_index
--│   │   │   │   │   ├── in_anglvel_y_type
--│   │   │   │   │   ├── in_anglvel_z_en
--│   │   │   │   │   ├── in_anglvel_z_index
--│   │   │   │   │   └── in_anglvel_z_type
--│   │   │   │   ├── trigger
--│   │   │   │   │   └── current_trigger
--...
--│   │   │   │   ├── buffer
--│   │   │   │   │   ├── enable
--│   │   │   │   │   ├── length
--│   │   │   │   │   └── watermark
--│   │   │   │   ├── dev
--│   │   │   │   ├── in_anglvel_hysteresis
--│   │   │   │   ├── in_anglvel_offset
--│   │   │   │   ├── in_anglvel_sampling_frequency
--│   │   │   │   ├── in_anglvel_scale
--│   │   │   │   ├── in_anglvel_x_raw
--│   │   │   │   ├── in_anglvel_y_raw
--│   │   │   │   ├── in_anglvel_z_raw
--│   │   │   │   ├── name
--│   │   │   │   ├── scan_elements
--│   │   │   │   │   ├── in_anglvel_x_en
--│   │   │   │   │   ├── in_anglvel_x_index
--│   │   │   │   │   ├── in_anglvel_x_type
--│   │   │   │   │   ├── in_anglvel_y_en
--│   │   │   │   │   ├── in_anglvel_y_index
--│   │   │   │   │   ├── in_anglvel_y_type
--│   │   │   │   │   ├── in_anglvel_z_en
--│   │   │   │   │   ├── in_anglvel_z_index
--│   │   │   │   │   └── in_anglvel_z_type
--│   │   │   │   ├── trigger
--│   │   │   │   │   └── current_trigger
--...
-diff --git a/Documentation/hid/uhid.txt b/Documentation/hid/uhid.rst
-similarity index 94%
-rename from Documentation/hid/uhid.txt
-rename to Documentation/hid/uhid.rst
-index 958fff945304..b18cb96c885f 100644
---- a/Documentation/hid/uhid.txt
-+++ b/Documentation/hid/uhid.rst
-@@ -1,5 +1,6 @@
--      UHID - User-space I/O driver support for HID subsystem
--     ========================================================
-+======================================================
-+UHID - User-space I/O driver support for HID subsystem
-+======================================================
- 
- UHID allows user-space to implement HID transport drivers. Please see
- hid-transport.txt for an introduction into HID transport drivers. This document
-@@ -22,9 +23,9 @@ If a new device is detected by your HID I/O Driver and you want to register this
- device with the HID subsystem, then you need to open /dev/uhid once for each
- device you want to register. All further communication is done by read()'ing or
- write()'ing "struct uhid_event" objects. Non-blocking operations are supported
--by setting O_NONBLOCK.
-+by setting O_NONBLOCK::
- 
--struct uhid_event {
-+  struct uhid_event {
-         __u32 type;
-         union {
-                 struct uhid_create2_req create2;
-@@ -32,7 +33,7 @@ struct uhid_event {
-                 struct uhid_input2_req input2;
-                 ...
-         } u;
--};
-+  };
- 
- The "type" field contains the ID of the event. Depending on the ID different
- payloads are sent. You must not split a single event across multiple read()'s or
-@@ -86,31 +87,31 @@ the request was handled successfully. O_NONBLOCK does not affect write() as
- writes are always handled immediately in a non-blocking fashion. Future requests
- might make use of O_NONBLOCK, though.
- 
--  UHID_CREATE2:
-+UHID_CREATE2:
-   This creates the internal HID device. No I/O is possible until you send this
-   event to the kernel. The payload is of type struct uhid_create2_req and
-   contains information about your device. You can start I/O now.
- 
--  UHID_DESTROY:
-+UHID_DESTROY:
-   This destroys the internal HID device. No further I/O will be accepted. There
-   may still be pending messages that you can receive with read() but no further
-   UHID_INPUT events can be sent to the kernel.
-   You can create a new device by sending UHID_CREATE2 again. There is no need to
-   reopen the character device.
- 
--  UHID_INPUT2:
-+UHID_INPUT2:
-   You must send UHID_CREATE2 before sending input to the kernel! This event
-   contains a data-payload. This is the raw data that you read from your device
-   on the interrupt channel. The kernel will parse the HID reports.
- 
--  UHID_GET_REPORT_REPLY:
-+UHID_GET_REPORT_REPLY:
-   If you receive a UHID_GET_REPORT request you must answer with this request.
-   You  must copy the "id" field from the request into the answer. Set the "err"
-   field to 0 if no error occurred or to EIO if an I/O error occurred.
-   If "err" is 0 then you should fill the buffer of the answer with the results
-   of the GET_REPORT request and set "size" correspondingly.
- 
--  UHID_SET_REPORT_REPLY:
-+UHID_SET_REPORT_REPLY:
-   This is the SET_REPORT equivalent of UHID_GET_REPORT_REPLY. Unlike GET_REPORT,
-   SET_REPORT never returns a data buffer, therefore, it's sufficient to set the
-   "id" and "err" fields correctly.
-@@ -120,16 +121,18 @@ read()
- read() will return a queued output report. No reaction is required to any of
- them but you should handle them according to your needs.
- 
--  UHID_START:
-+UHID_START:
-   This is sent when the HID device is started. Consider this as an answer to
-   UHID_CREATE2. This is always the first event that is sent. Note that this
-   event might not be available immediately after write(UHID_CREATE2) returns.
-   Device drivers might required delayed setups.
-   This event contains a payload of type uhid_start_req. The "dev_flags" field
-   describes special behaviors of a device. The following flags are defined:
--      UHID_DEV_NUMBERED_FEATURE_REPORTS:
--      UHID_DEV_NUMBERED_OUTPUT_REPORTS:
--      UHID_DEV_NUMBERED_INPUT_REPORTS:
-+
-+      - UHID_DEV_NUMBERED_FEATURE_REPORTS
-+      - UHID_DEV_NUMBERED_OUTPUT_REPORTS
-+      - UHID_DEV_NUMBERED_INPUT_REPORTS
-+
-           Each of these flags defines whether a given report-type uses numbered
-           reports. If numbered reports are used for a type, all messages from
-           the kernel already have the report-number as prefix. Otherwise, no
-@@ -137,33 +140,35 @@ them but you should handle them according to your needs.
-           For messages sent by user-space to the kernel, you must adjust the
-           prefixes according to these flags.
- 
--  UHID_STOP:
-+UHID_STOP:
-   This is sent when the HID device is stopped. Consider this as an answer to
-   UHID_DESTROY.
-+
-   If you didn't destroy your device via UHID_DESTROY, but the kernel sends an
-   UHID_STOP event, this should usually be ignored. It means that the kernel
-   reloaded/changed the device driver loaded on your HID device (or some other
-   maintenance actions happened).
-+
-   You can usually ignored any UHID_STOP events safely.
- 
--  UHID_OPEN:
-+UHID_OPEN:
-   This is sent when the HID device is opened. That is, the data that the HID
-   device provides is read by some other process. You may ignore this event but
-   it is useful for power-management. As long as you haven't received this event
-   there is actually no other process that reads your data so there is no need to
-   send UHID_INPUT2 events to the kernel.
- 
--  UHID_CLOSE:
-+UHID_CLOSE:
-   This is sent when there are no more processes which read the HID data. It is
-   the counterpart of UHID_OPEN and you may as well ignore this event.
- 
--  UHID_OUTPUT:
-+UHID_OUTPUT:
-   This is sent if the HID device driver wants to send raw data to the I/O
-   device on the interrupt channel. You should read the payload and forward it to
-   the device. The payload is of type "struct uhid_output_req".
-   This may be received even though you haven't received UHID_OPEN, yet.
- 
--  UHID_GET_REPORT:
-+UHID_GET_REPORT:
-   This event is sent if the kernel driver wants to perform a GET_REPORT request
-   on the control channeld as described in the HID specs. The report-type and
-   report-number are available in the payload.
-@@ -177,11 +182,12 @@ them but you should handle them according to your needs.
-   timed out, the kernel will ignore the response silently. The "id" field is
-   never re-used, so conflicts cannot happen.
- 
--  UHID_SET_REPORT:
-+UHID_SET_REPORT:
-   This is the SET_REPORT equivalent of UHID_GET_REPORT. On receipt, you shall
-   send a SET_REPORT request to your hid device. Once it replies, you must tell
-   the kernel about it via UHID_SET_REPORT_REPLY.
-   The same restrictions as for UHID_GET_REPORT apply.
- 
- ----------------------------------------------------
-+
- Written 2012, David Herrmann <dh.herrmann@gmail.com>
-diff --git a/Documentation/input/input.rst b/Documentation/input/input.rst
-index 47f86a4bf16c..0eb61e67a7b7 100644
---- a/Documentation/input/input.rst
-+++ b/Documentation/input/input.rst
-@@ -188,7 +188,7 @@ LCDs and many other purposes.
- 
- The monitor and speaker controls should be easy to add to the hid/input
- interface, but for the UPSs and LCDs it doesn't make much sense. For this,
--the hiddev interface was designed. See Documentation/hid/hiddev.txt
-+the hiddev interface was designed. See Documentation/hid/hiddev.rst
- for more information about it.
- 
- The usage of the usbhid module is very simple, it takes no parameters,
+-========================
+-Boot DomainU with pv_ops
+-========================
+-
+- 1. make config of DomU
+-   # vi /etc/xen/rhel5
+-     kernel = "/boot/efi/efi/redhat/vmlinuz-2.6-pv_ops-xenU"
+-     ramdisk = "/boot/efi/efi/redhat/initrd-2.6-pv_ops-xenU.img"
+-     vcpus = 1
+-     memory = 512
+-     name = "rhel5"
+-     disk = [ 'file:/root/rhel5.img,xvda1,w' ]
+-     root = "/dev/xvda1 ro"
+-     extra= "rhgb console=hvc0"
+-
+- 2. After boot xen and dom0, start xend
+-   # /etc/init.d/xend start
+-   ( In the debugging case, # XEND_DEBUG=1 xend trace_start )
+-
+- 3. start domU
+-   # xm create -c rhel5
+-
+-=========
+-Reference
+-=========
+-- Wiki of Xen/IA64 upstream merge
+-  http://wiki.xensource.com/xenwiki/XenIA64/UpstreamMerge
+-
+-Written by Akio Takebe <takebe_akio@jp.fujitsu.com> on 28 May 2008
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8d39979e4091..969225e6bfce 100644
+index 969225e6bfce..f8f2394f9e84 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -16383,7 +16383,7 @@ M:	Benjamin Tissoires <benjamin.tissoires@redhat.com>
- L:	linux-usb@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
- S:	Maintained
--F:	Documentation/hid/hiddev.txt
-+F:	Documentation/hid/hiddev.rst
- F:	drivers/hid/usbhid/
+@@ -14263,7 +14263,7 @@ SGI SN-IA64 (Altix) SERIAL CONSOLE DRIVER
+ M:	Pat Gefre <pfg@sgi.com>
+ L:	linux-ia64@vger.kernel.org
+ S:	Supported
+-F:	Documentation/ia64/serial.txt
++F:	Documentation/ia64/serial.rst
+ F:	drivers/tty/serial/ioc?_serial.c
+ F:	include/linux/ioc?.h
  
- USB INTEL XHCI ROLE MUX DRIVER
+diff --git a/arch/ia64/kernel/efi.c b/arch/ia64/kernel/efi.c
+index 8f106638913c..3795d18276c4 100644
+--- a/arch/ia64/kernel/efi.c
++++ b/arch/ia64/kernel/efi.c
+@@ -852,7 +852,7 @@ valid_phys_addr_range (phys_addr_t phys_addr, unsigned long size)
+ 	 * /dev/mem reads and writes use copy_to_user(), which implicitly
+ 	 * uses a granule-sized kernel identity mapping.  It's really
+ 	 * only safe to do this for regions in kern_memmap.  For more
+-	 * details, see Documentation/ia64/aliasing.txt.
++	 * details, see Documentation/ia64/aliasing.rst.
+ 	 */
+ 	attr = kern_mem_attribute(phys_addr, size);
+ 	if (attr & EFI_MEMORY_WB || attr & EFI_MEMORY_UC)
+diff --git a/arch/ia64/kernel/fsys.S b/arch/ia64/kernel/fsys.S
+index d80c99a5f55d..0750a716adc7 100644
+--- a/arch/ia64/kernel/fsys.S
++++ b/arch/ia64/kernel/fsys.S
+@@ -28,7 +28,7 @@
+ #include <asm/native/inst.h>
+ 
+ /*
+- * See Documentation/ia64/fsys.txt for details on fsyscalls.
++ * See Documentation/ia64/fsys.rst for details on fsyscalls.
+  *
+  * On entry to an fsyscall handler:
+  *   r10	= 0 (i.e., defaults to "successful syscall return")
+diff --git a/arch/ia64/mm/ioremap.c b/arch/ia64/mm/ioremap.c
+index 43964cde6214..c7da3376b6f8 100644
+--- a/arch/ia64/mm/ioremap.c
++++ b/arch/ia64/mm/ioremap.c
+@@ -45,7 +45,7 @@ ioremap (unsigned long phys_addr, unsigned long size)
+ 	/*
+ 	 * For things in kern_memmap, we must use the same attribute
+ 	 * as the rest of the kernel.  For more details, see
+-	 * Documentation/ia64/aliasing.txt.
++	 * Documentation/ia64/aliasing.rst.
+ 	 */
+ 	attr = kern_mem_attribute(phys_addr, size);
+ 	if (attr & EFI_MEMORY_WB)
+diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
+index e308196c2229..165e561dc81a 100644
+--- a/arch/ia64/pci/pci.c
++++ b/arch/ia64/pci/pci.c
+@@ -450,7 +450,7 @@ pci_mmap_legacy_page_range(struct pci_bus *bus, struct vm_area_struct *vma,
+ 		return -ENOSYS;
+ 
+ 	/*
+-	 * Avoid attribute aliasing.  See Documentation/ia64/aliasing.txt
++	 * Avoid attribute aliasing.  See Documentation/ia64/aliasing.rst
+ 	 * for more details.
+ 	 */
+ 	if (!valid_mmap_phys_addr_range(vma->vm_pgoff, size))
 -- 
 2.21.0
 
