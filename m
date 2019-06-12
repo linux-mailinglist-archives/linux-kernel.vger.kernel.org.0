@@ -2,93 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A444427E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7693F427E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbfFLNo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 09:44:59 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33764 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728710AbfFLNo7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:44:59 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n9so17032565wru.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 06:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CQKaNUnLIucKafeeoPkc/JJRL8af7D1Af/DQkJi/Aoo=;
-        b=XowKl4Kd09YYo08R/kBpwc+m1HGn0FXQyhCkIIirTPUM/FUZ0tR6yYn/iiZgonpZFt
-         hE5YSubBD+CsyLGQynk6CLKVY5r/jKdPJWnkarVgi9zExZpRn6O8Za/VtC6drM5x0lyR
-         rSpy5Rv1h++k+zUO0+0so+WNpvldIwFx54r51S3161w2Z3O6uEeS57IfXSgTySWPHFwc
-         dP1YbGrboihHucsIFmqye9kgrOKteOIlJkv3KTDtU3bUBP5A5XTh4dSv6OgCkAO7srIB
-         Cii+KbxA6UFG3cSp2SPHVsqBT8quArXNZSW/F2vahuwrzXbekKpeiNjUHfeFadevEHv0
-         HoRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CQKaNUnLIucKafeeoPkc/JJRL8af7D1Af/DQkJi/Aoo=;
-        b=CYpDgZLHpSvF4Qbyy8Z77MYL9Vf8rApdXMqZ3CpBWsNDofWv2PJefXJVQZQ3ZACFi3
-         3Q9H6/WPmBGduj6A1o1kaWFZgo06TcHoUqMLzmpwiJ5IFcfMOUP+NsgMUQiEFBWmdD4r
-         yq8qPFowL9+Dg9S17BzQ/Ymqga//1PIfkQH54agW92fBXzjiJEPklAyZXeRL7yGP7zk1
-         agIrUmU7UmyPIpaU4mVQ8Ar0chzStzli3pM1h3/ts8RxKF7XX8uEvJh8CP4EcXyF3k8a
-         Cjp/r6imLYty72ooNf/15VXoy71NH4oEZzXiGdELINR38YYH20so+ICQXGmBvjlFQygu
-         rBOg==
-X-Gm-Message-State: APjAAAWZpai4XCN6yR57kqqgpZLBXLbDJ+WQiFRnWDKsWT4ho5LFwOai
-        6ywyFnZYf1/ItWhGA3yPsv3jwRu/FIs=
-X-Google-Smtp-Source: APXvYqxgQ/VIbZ0qG24gAWKbCfqBD1oZHT9byjqAfsrleHeN8KhuFOTcNe+KuuC5pG+729IiAbtIyw==
-X-Received: by 2002:adf:9dcc:: with SMTP id q12mr4720477wre.93.1560347097577;
-        Wed, 12 Jun 2019 06:44:57 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([108.61.173.19])
-        by smtp.gmail.com with ESMTPSA id u11sm12745912wrn.1.2019.06.12.06.44.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 06:44:56 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 21:44:49 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     nico@fluxnic.net, kilobyte@angband.pl, textshell@uchuujin.de,
-        mpatocka@redhat.com, daniel.vetter@ffwll.ch,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] vt: fix a missing-check bug in con_init()
-Message-ID: <20190612134449.GA4015@zhanggen-UX430UQ>
-References: <20190612131506.GA3526@zhanggen-UX430UQ>
- <20190612133838.GA7748@kroah.com>
+        id S2439373AbfFLNqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:46:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47210 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436660AbfFLNqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 09:46:14 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B19BE307F5FF;
+        Wed, 12 Jun 2019 13:46:04 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2BE7A665F1;
+        Wed, 12 Jun 2019 13:46:00 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 12 Jun 2019 15:46:04 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 15:45:59 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "e@80x24.org" <e@80x24.org>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Message-ID: <20190612134558.GB3276@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com>
+ <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com>
+ <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612133838.GA7748@kroah.com>
+In-Reply-To: <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 13:46:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 03:38:38PM +0200, Greg KH wrote:
-> On Wed, Jun 12, 2019 at 09:15:06PM +0800, Gen Zhang wrote:
-> > In function con_init(), the pointer variable vc_cons[currcons].d, vc and 
-> > vc->vc_screenbuf is allocated by kzalloc(). However, kzalloc() returns 
-> > NULL when fails. Therefore, we should check the return value and handle 
-> > the error.
-> > 
-> > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> > ---
-> 
-> What changed from v1, v2, and v3?
-Thanks for your timely response. I am not a native English speaker, so
-I am not sure I understand this correctly. Does this mean that I should
-use "v5", rather than "v4"? 
-> 
-> That always goes below the --- line.
-And I can't see what goes wrong with "---". Could you please make some
-explaination?
+On 06/11, David Laight wrote:
+>
+> If I have an application that has a loop with a pselect call that
+> enables SIGINT (without a handler) and, for whatever reason,
+> one of the fd is always 'ready' then I'd expect a SIGINT
+> (from ^C) to terminate the program.
 
-Thanks
-Gen
-> 
-> v5 please.
-> 
-> thanks,
-> 
-> greg k-h
+This was never true.
+
+Before Eric's patches SIGINT can kill a process or not, depending on timing.
+In particular, if SIGINT was already pending before pselect() and it finds
+an already ready fd, the program won't terminate.
+
+After the Eric's patches SIGINT will only kill the program if pselect() does
+not find a ready fd.
+
+And this is much more consistent. Now we can simply say that the signal will
+be delivered only if pselect() fails and returns -EINTR. If it doesn't have
+a handler the process will be killed, otherwise the handler will be called.
+
+Oleg.
+
