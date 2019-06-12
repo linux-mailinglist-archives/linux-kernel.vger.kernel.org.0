@@ -2,128 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D23F42FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0278C4301D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbfFLT1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:27:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35162 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729106AbfFLT1J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:27:09 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m3so18175690wrv.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 12:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Gc99P+6N6+xSxQKHKwT0OD+Dx6Ni+QOkx9u56EzlVmA=;
-        b=F2bLr6Usjp0SS+YH0qbHW4ub7lF+EA48coYkSUubqCXi4L86a8pbijVIRgDvpuSUsF
-         ZrK1Shovt+bDl648RmoiYd0gtNwx38PveHrl2akp0/4gVW6L1gdnFMajsh3iPjGadno4
-         0w+RVcfN1Az3gqf8b2lwzW/qAfl1AeEaqkzUE8yrXIb0ZD+g6RdrTckRWUM0PhWrh2oF
-         jusm5g5Vb6YDoIbI3gf+RwyYIJ0n0S8J7fniaqQsd3uOABGpnTgA2gFyawsrYMQJbKbD
-         hsRJOs43wENKcjTM9+yzTYzgj4XFg6jPN7rkBT7t0taep/aGmnhvlMKjsoLzm5ssPtn7
-         fTuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Gc99P+6N6+xSxQKHKwT0OD+Dx6Ni+QOkx9u56EzlVmA=;
-        b=aoCiLeFcMaQbg699mITRrRJ5CTscDHN86+0RQKJ7GxFs9zEvhHNsifPJMXtTdcFzK3
-         e7YgNGWY5cL+5duehQXBYW1K32BE1h4Vo2YLolm5JSRoukg1Rxt4jgochtAhRO47PMX8
-         S3cBKRYR0QLaHaCQ1XWXrDE45pIfH9G8t9OWaOK5n1C3Da0Bt8XuUENbR7QWIrmmYH00
-         yTwa+A5/x+OZlcMcMu3DuiI7zzqwOYXX0AtDwF9G/jVSBRztnLvflCYnQPEA9YsrSajs
-         K/t0PLUFUKLCjXeIZJ8MeY6NEolSDom4TuEbE0Kr2i6qVBIK2gK6CFEW7/nzX5hmdUPu
-         YsPw==
-X-Gm-Message-State: APjAAAV/dcDg2ckcQ+R3w3cWw0+cFK5/BoKva4MyXj4JkhYxXb1HBort
-        IJXFr5gnbov9APAC+TpCOVEaLftsFBU=
-X-Google-Smtp-Source: APXvYqxIsPY4F76dTJDcOjFZdmSdKlq0GPIonqcAmCK2zG2wSLgAsYvCqwuGTkiuPGkT6q30d63hgw==
-X-Received: by 2002:adf:ee42:: with SMTP id w2mr42257126wro.253.1560367627677;
-        Wed, 12 Jun 2019 12:27:07 -0700 (PDT)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id r5sm612526wrg.10.2019.06.12.12.27.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 12:27:07 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
+        id S1728223AbfFLT0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 15:26:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:24089 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728011AbfFLT0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 15:26:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 12:26:35 -0700
+X-ExtLoop1: 1
+Received: from suygunge-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.116])
+  by orsmga001.jf.intel.com with ESMTP; 12 Jun 2019 12:26:27 -0700
+Date:   Wed, 12 Jun 2019 22:26:26 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCHv4 26/28] x86/vdso: Align VDSO functions by CPU L1 cache line
-Date:   Wed, 12 Jun 2019 20:26:25 +0100
-Message-Id: <20190612192628.23797-27-dima@arista.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190612192628.23797-1-dima@arista.com>
-References: <20190612192628.23797-1-dima@arista.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH v2 2/5] x86/sgx: Require userspace to define enclave
+ pages' protection bits
+Message-ID: <20190612192626.GD3378@linux.intel.com>
+References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+ <20190606021145.12604-3-sean.j.christopherson@intel.com>
+ <20190610152717.GB3752@linux.intel.com>
+ <20190610161532.GC15995@linux.intel.com>
+ <20190610174506.GB13732@linux.intel.com>
+ <20190610181744.GH15995@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610181744.GH15995@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
+On Mon, Jun 10, 2019 at 11:17:44AM -0700, Sean Christopherson wrote:
+> On Mon, Jun 10, 2019 at 08:45:06PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Jun 10, 2019 at 09:15:33AM -0700, Sean Christopherson wrote:
+> > > > 'flags' should would renamed as 'secinfo_flags_mask' even if the name is
+> > > > longish. It would use the same values as the SECINFO flags. The field in
+> > > > struct sgx_encl_page should have the same name. That would express
+> > > > exactly relation between SECINFO and the new field. I would have never
+> > > > asked on last iteration why SECINFO is not enough with a better naming.
+> > > 
+> > > No, these flags do not impact the EPCM protections in any way.  Userspace
+> > > can extend the EPCM protections without going through the kernel.  The
+> > > protection flags for an enclave page impact VMA/PTE protection bits.
+> > > 
+> > > IMO, it is best to treat the EPCM as being completely separate from the
+> > > kernel's EPC management.
+> > 
+> > It is a clumsy API if permissions are not taken in the same format for
+> > everything. There is no reason not to do it. The way mprotect() callback
+> > just interprets the field is as VMA permissions.
+> 
+> They are two entirely different things.  The explicit protection bits are
+> consumed by the kernel, while SECINFO.flags is consumed by the CPU.  The
+> intent is to have the protection flags be analogous to mprotect(), the
+> fact that they have a similar/identical format to SECINFO is irrelevant.
+> 
+> Calling the field secinfo_flags_mask is straight up wrong on SGX2, as 
+> userspace can use EMODPE to set SECINFO after the page is added.  It's
+> also wrong on SGX1 when adding TCS pages since SECINFO.RWX bits for TCS
+> pages are forced to zero by hardware.
 
-After performance testing VDSO patches a noticeable 20% regression was
-found on gettime_perf selftest with a cold cache.
-As it turns to be, before time namespaces introduction, VDSO functions
-were quite aligned to cache lines, but adding a new code to adjust
-timens offset inside namespace created a small shift and vdso functions
-become unaligned on cache lines.
+The new variable tells the limits on which kernel will co-operate with
+the enclave. It is way more descriptive than 'flags'.
 
-Add align to vdso functions with gcc option to fix performance drop.
+> > It would also be more future-proof just to have a mask covering all bits
+> > of the SECINFO flags field.
+> 
+> This simply doesn't work, e.g. the PENDING, MODIFIED and PR flags in the
+> SECINFO are read-only from a software perspective.
 
-Coping the resulting numbers from cover letter:
+It is easy to validate reserved bits from a SECINFO struct.
 
-Hot CPU cache (more gettime_perf.c cycles - the better):
-        | before     | CONFIG_TIME_NS=n | host        | inside timens
---------|------------|------------------|-------------|-------------
-cycles  | 139887013  | 139453003        | 139899785   | 128792458
-diff (%)| 100        | 99.7             | 100         | 92
-
-Cold cache (lesser tsc per gettime_perf_cold.c cycle - the better):
-        | before     | CONFIG_TIME_NS=n | host        | inside timens
---------|------------|------------------|-------------|-------------
-tsc     | 6748       | 6718             | 6862        | 12682
-diff (%)| 100        | 99.6             | 101.7       | 188
-
-Measured on Intel(R) Core(TM) i5-6300U CPU @ 2.40GHz
-
-Co-developed-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- arch/x86/entry/vdso/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index b58d34120fd8..c7bfd62d1fc3 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -4,6 +4,7 @@
- #
- 
- KBUILD_CFLAGS += $(DISABLE_LTO)
-+KBUILD_CFLAGS += -falign-functions=$(CONFIG_X86_L1_CACHE_SHIFT)
- KASAN_SANITIZE			:= n
- UBSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
--- 
-2.22.0
-
+/Jarkko
