@@ -2,91 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CDA941D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F0941DAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbfFLHZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:25:45 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3938 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729080AbfFLHZk (ORCPT
+        id S2405846AbfFLH0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:26:04 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41983 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405528AbfFLH0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:25:40 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5C7LXNM032480;
-        Wed, 12 Jun 2019 09:25:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=mscPIPZ3FaNG1fi5inSmP9H7jFv8oBUHJnCQ3UPmBlE=;
- b=acMmyrCwj6N46GmEph6JwKd35yXOV71CZZlDPjJ3TYyG1LfBriKSz6H3Xg4mT0QTNJIc
- apRV1Lq8OdtXeYqfkWxEb0HF8pMi5+OWtd+bQdEPw73+D9J/ni1zFRFdkDEpRiDebMcv
- O9Mfsqf6ut9ZcQ4w3iXhazPoTKSNjqFxHQSRPAaoApScRlWo/3yPL+oV0cfO6J8okujh
- sEivAA8CaZggmlbBfIBKOuenOH/yIvQAZBpfKPF6kCT9yJF+d6q4kmPSadddkKynUEHr
- joqgQCjfL2Rtz5LdK9DtnS6JP8bhipdawayoBuvgDipL1leC18zifKehN5GiZJkr1SV2 1w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t2f8bukdj-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 12 Jun 2019 09:25:04 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 798D63D;
-        Wed, 12 Jun 2019 07:25:03 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0C0C7164B;
-        Wed, 12 Jun 2019 07:25:03 +0000 (GMT)
-Received: from localhost (10.75.127.48) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Jun 2019 09:25:02
- +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
-CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
-        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] ARM: dts: stm32: add ADC analog switches syscfg on stm32mp157c
-Date:   Wed, 12 Jun 2019 09:24:36 +0200
-Message-ID: <1560324276-681-4-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560324276-681-1-git-send-email-fabrice.gasnier@st.com>
-References: <1560324276-681-1-git-send-email-fabrice.gasnier@st.com>
+        Wed, 12 Jun 2019 03:26:00 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s21so14176597lji.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=msM4dgHT7OChSN8YMEnC/hlz7O4CQA3Qt/8x5kRoeWA=;
+        b=b/xNVmBGr774Ie44vkdUYzW5g96u3La3k0A9SkL3ZCvZkJF98mYXDQ6oP9LRZh7Wp/
+         2vvQhSHA3r4OQBrQ7F92Mofp94Op3kqIQEKS8O+hSDMP2fnYaKO61aP1PbwJcYdaNkud
+         Uyg/uruiDUcv2DAYwC7O9pg8remPu1Uh3BpmwKar4uCP4Sp2HYDx1JVC3VEx1wjMqJNo
+         bRXEiIeSR30mKPOoa8C77KYigxq3DHc3oCTvWo7Qzb1rVN30/VnNJ2zgp/VN1Is2rgqC
+         Y+sDCDqKg9uQcSI7N022tg6lqvie69RffAY9o34iLiLGyXRl91cmjVEhOhil7iISNP/k
+         aFrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=msM4dgHT7OChSN8YMEnC/hlz7O4CQA3Qt/8x5kRoeWA=;
+        b=ZfUT4Pq2jRgDRI27U0AsFJPd25jPxMxP5JiIDvbjDUWs8nsktNm7zf7Js8Pj5ODV+z
+         LYEwn5YFFcaZuWGJrONq6MOReDAku7q27/4dFrOHKAz83WBr/9bUlPTuDGWcy75b6Msa
+         bldzSmhweP2ca1tVR1O+ugOI9Niu2hLFseVhJdGkHUiG5IabdMzbprExFgJXq2g9iM/C
+         CvU+Z+TZA4KJRPbmDS3KeEgCf77vX/0pmy3lo4mDW0a1uSW4/y54RWdbsjHxwtLTmvCH
+         fkLtntauirRJ3B/77b0zuOxu08qSdpn1Euvzt3ZDlMj8PbwmoUOX9oE05WbaTHfCX0xv
+         OAQg==
+X-Gm-Message-State: APjAAAWjL7xSfjZBL1TrowzF2O3pDqt2yZznNfDK16zEqIQr0lQEfNlo
+        94IPPEgHCw3l+18suzu/7Jgv6sPOOF3Y8oTOLdLVGw==
+X-Google-Smtp-Source: APXvYqx5YwbEg0avWvoTtMnv22p8ShuveFC0J0UpmFk2uYfKnJ2tkg9tfFI9Py8uT6FyJuuL+H4KmQND6QpZjMGZBTE=
+X-Received: by 2002:a2e:7508:: with SMTP id q8mr26602026ljc.165.1560324358738;
+ Wed, 12 Jun 2019 00:25:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG6NODE3.st.com (10.75.127.18) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_04:,,
- signatures=0
+References: <20190610084213.1052-1-lee.jones@linaro.org> <20190610084213.1052-3-lee.jones@linaro.org>
+In-Reply-To: <20190610084213.1052-3-lee.jones@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 09:25:47 +0200
+Message-ID: <CACRpkdaXHC6dfOMMOj-a8o1zCzqqZoeQLEEAZ=XpPWKN_nf=9w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] pinctrl: msm: Add ability for drivers to supply a
+ reserved GPIO list
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeffrey Hugo <jlhugo@gmail.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On stm32mp157c, the ADC inputs are multiplexed with analog switches which
-have reduced performances when their supply is below 2.7V (vdda by
-default).
-Add syscfg registers that can be used on stm32mp157c, to get full ADC
-analog performances.
+On Mon, Jun 10, 2019 at 10:42 AM Lee Jones <lee.jones@linaro.org> wrote:
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> When booting MSM based platforms with Device Tree or some ACPI
+> implementations, it is possible to provide a list of reserved pins
+> via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
+> However some ACPI tables are not populated with this information,
+> thus it has to come from a knowledgable device driver instead.
+>
+> Here we provide the MSM common driver with additional support to
+> parse this informtion and correctly populate the widely used
+> 'valid_mask'.
+>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 2afeee6..64d71c9 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -856,6 +856,7 @@
- 			clocks = <&rcc ADC12>, <&rcc ADC12_K>;
- 			clock-names = "bus", "adc";
- 			interrupt-controller;
-+			st,syscfg = <&syscfg>;
- 			#interrupt-cells = <1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.7.4
+I have queued patches 3 and 4 in the pin control tree on an
+immutable branch with Bjorn's ACKs:
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+ib-qcom-acpi
 
+I have also merge this to pinctrl's devel branch for next.
+
+Yours,
+Linus Walleij
