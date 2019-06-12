@@ -2,93 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B12DE42B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD0B942B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409453AbfFLPgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:36:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43230 "EHLO mail.kernel.org"
+        id S2437822AbfFLPiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:38:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59539 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409443AbfFLPgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:36:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726829AbfFLPiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:38:15 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 794D7215EA;
-        Wed, 12 Jun 2019 15:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560353776;
-        bh=HpcaMDHf6apvppP8x1d2hnvQGsEvTJUrmUraAlHDIJU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=V5i4TYClZNXSEepTT76JWjOsB0zEF+EF5m9+f/JvCOmiWsKnwOdwyjW0w2BwYwVRr
-         ECYbjVa4bOvKF9hxwBbkNNeni8VaIWEdMVCvc5cYQMkje62tUzDIUs+YUkZt9Znblm
-         7hwuOFvZva7pm/aH44ijpEL4rlmUtUN14ZhSyqEw=
-Date:   Wed, 12 Jun 2019 17:36:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] lib: notifier-error-inject: no need to check return value of
- debugfs_create functions
-Message-ID: <20190612153613.GA21239@kroah.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 496DF6EBA3;
+        Wed, 12 Jun 2019 15:38:04 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C2FBC28561;
+        Wed, 12 Jun 2019 15:37:57 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 12 Jun 2019 17:38:04 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 17:37:57 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "e@80x24.org" <e@80x24.org>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Message-ID: <20190612153756.GD3276@redhat.com>
+References: <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com>
+ <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com>
+ <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+ <87v9xayh27.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <87v9xayh27.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 12 Jun 2019 15:38:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+On 06/12, Eric W. Biederman wrote:
+> David Laight <David.Laight@ACULAB.COM> writes:
+>
+> > From: Oleg Nesterov
+> >> Sent: 12 June 2019 14:46
+> >> On 06/11, David Laight wrote:
+> >> >
+> >> > If I have an application that has a loop with a pselect call that
+> >> > enables SIGINT (without a handler) and, for whatever reason,
+> >> > one of the fd is always 'ready' then I'd expect a SIGINT
+> >> > (from ^C) to terminate the program.
+>
+> I think this gets into a quality of implementation.
+>
+> I suspect that set_user_sigmask should do:
+> if (signal_pending())
+> 	return -ERESTARNOSIGHAND; /* -EINTR that restarts if nothing was pending */
+>
+> Which should be safe as nothing has blocked yet to consume any of the
+> timeouts, and it should ensure that none of the routines miss a signal.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- lib/notifier-error-inject.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Why? I don't think this makes any sense.
 
-diff --git a/lib/notifier-error-inject.c b/lib/notifier-error-inject.c
-index 3d2ba7cf83f4..21016b32d313 100644
---- a/lib/notifier-error-inject.c
-+++ b/lib/notifier-error-inject.c
-@@ -59,33 +59,22 @@ struct dentry *notifier_err_inject_init(const char *name, struct dentry *parent,
- 	err_inject->nb.priority = priority;
- 
- 	dir = debugfs_create_dir(name, parent);
--	if (!dir)
--		return ERR_PTR(-ENOMEM);
- 
- 	actions_dir = debugfs_create_dir("actions", dir);
--	if (!actions_dir)
--		goto fail;
- 
- 	for (action = err_inject->actions; action->name; action++) {
- 		struct dentry *action_dir;
- 
- 		action_dir = debugfs_create_dir(action->name, actions_dir);
--		if (!action_dir)
--			goto fail;
- 
- 		/*
- 		 * Create debugfs r/w file containing action->error. If
- 		 * notifier call chain is called with action->val, it will
- 		 * fail with the error code
- 		 */
--		if (!debugfs_create_errno("error", mode, action_dir,
--					&action->error))
--			goto fail;
-+		debugfs_create_errno("error", mode, action_dir, &action->error);
- 	}
- 	return dir;
--fail:
--	debugfs_remove_recursive(dir);
--	return ERR_PTR(-ENOMEM);
- }
- EXPORT_SYMBOL_GPL(notifier_err_inject_init);
- 
--- 
-2.22.0
+Perhaps we could do this _after_ set_current_blocked() for the case when
+the already pending SIGINT was unblocked but a) I am not sure this would
+be really better and b) I think it is too late to change this.
+
+Oleg.
 
