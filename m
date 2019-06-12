@@ -2,86 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAE342B41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C11B42B4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440087AbfFLPuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:50:10 -0400
-Received: from casper.infradead.org ([85.118.1.10]:55118 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437689AbfFLPuK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:50:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lZ7jhMBykRVdY/yQT29SU8tqCwPRLhDwhRSycURiLbk=; b=m49CucLekkneu5UkgnMxLwpfx6
-        BPrQAcXZDq8UNx3QIACIXQRjR9QX/JrtQmUujeYWHJQA/f/qA4PgFVXbMuYkshqL1s/vzP/qTwfS7
-        i96PGjwqNZ7nT65nEQGHB4jiCV31rK9GZ1Ualni7IcRFESMjVKP8BpfeJGdoODkUaxj5+0ZMm7W27
-        jd4N/ylZU3iF0J8G8r1MBApxhb/y3prNO5rxXzcOYQNwodyD28kILi0qV2eYSbbEqmR0GmZdIsVgw
-        FH55Cq4BYA/bT3wPHfZznyDKcjCcUzeBbpPLmWb/43eSo0JQJKZ8cDwSA4disskKSa9nh2W+IOpW/
-        VQYLzMcQ==;
-Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb5Vm-0002VI-Mr; Wed, 12 Jun 2019 15:50:07 +0000
-Date:   Wed, 12 Jun 2019 12:50:02 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v5.2-rc1] media updates
-Message-ID: <20190612125002.66e84492@coco.lan>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729519AbfFLPyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:54:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39692 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726725AbfFLPyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:54:21 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CBB563162;
+        Wed, 12 Jun 2019 15:54:13 +0000 (UTC)
+Received: from jsavitz.bos.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D2AF719481;
+        Wed, 12 Jun 2019 15:54:08 +0000 (UTC)
+From:   Joel Savitz <jsavitz@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Joel Savitz <jsavitz@redhat.com>, Li Zefan <lizefan@huawei.com>,
+        Phil Auld <pauld@redhat.com>, Waiman Long <longman@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org
+Subject: [RESEND PATCH v3] cpuset: restore sanity to cpuset_cpus_allowed_fallback()
+Date:   Wed, 12 Jun 2019 11:50:48 -0400
+Message-Id: <1560354648-23632-1-git-send-email-jsavitz@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 12 Jun 2019 15:54:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+In the case that a process is constrained by taskset(1) (i.e.
+sched_setaffinity(2)) to a subset of available cpus, and all of those are
+subsequently offlined, the scheduler will set tsk->cpus_allowed to
+the current value of task_cs(tsk)->effective_cpus.
 
-Please pull from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v5.2-2
+This is done via a call to do_set_cpus_allowed() in the context of 
+cpuset_cpus_allowed_fallback() made by the scheduler when this case is
+detected. This is the only call made to cpuset_cpus_allowed_fallback()
+in the latest mainline kernel.
 
-For a couple patches:
+However, this is not sane behavior.
 
-  - a debug warning for satellite tuning at dvb core was producing
-    too much noise;
-  - a regression at hfi_parser on Venus driver.
+I will demonstrate this on a system running the latest upstream kernel
+with the following initial configuration:
 
-Regards,
-Mauro
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:	ffffffff,fffffff
+	Cpus_allowed_list:	0-63
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+(Where cpus 32-63 are provided via smt.)
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+If we limit our current shell process to cpu2 only and then offline it
+and reonline it:
 
-are available in the Git repository at:
+	# taskset -p 4 $$
+	pid 2272's current affinity mask: ffffffffffffffff
+	pid 2272's new affinity mask: 4
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v5.2-2
+	# echo off > /sys/devices/system/cpu/cpu2/online
+	# dmesg | tail -3
+	[ 2195.866089] process 2272 (bash) no longer affine to cpu2
+	[ 2195.872700] IRQ 114: no longer affine to CPU2
+	[ 2195.879128] smpboot: CPU 2 is now offline
 
-for you to fetch changes up to a200c721956ca026f44416acccc8efcca41109c5:
+	# echo on > /sys/devices/system/cpu/cpu2/online
+	# dmesg | tail -1
+	[ 2617.043572] smpboot: Booting Node 0 Processor 2 APIC 0x4
 
-  media: venus: hfi_parser: fix a regression in parser (2019-05-29 10:20:06 -0400)
 
-----------------------------------------------------------------
-media updates for v5.2-rc1
+We see that our current process now has an affinity mask containing
+every cpu available on the system _except_ the one we originally
+constrained it to:
 
-----------------------------------------------------------------
-Sean Young (1):
-      media: dvb: warning about dvb frequency limits produces too much noise
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:   ffffffff,fffffffb
+	Cpus_allowed_list:      0-1,3-63 
 
-Stanimir Varbanov (1):
-      media: venus: hfi_parser: fix a regression in parser
+This is not sane behavior, as the scheduler can now not only place the
+process on previously forbidden cpus, it can't even schedule it on
+the cpu it was originally constrained to!
 
- drivers/media/dvb-core/dvb_frontend.c          | 2 +-
- drivers/media/platform/qcom/venus/hfi_helper.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Other cases result in even more exotic affinity masks. Take for instance
+a process with an affinity mask containing only cpus provided by smt at
+the moment that smt is toggled, in a configuration such as the following:
+
+	# taskset -p f000000000 $$
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:	000000f0,00000000
+	Cpus_allowed_list:	36-39
+
+A double toggle of smt results in the following behavior:
+
+	# echo off > /sys/devices/system/cpu/smt/control
+	# echo on > /sys/devices/system/cpu/smt/control
+	# grep -i cpus /proc/$$/status
+	Cpus_allowed:	ffffff00,ffffffff
+	Cpus_allowed_list:	0-31,40-63
+
+This is even less sane than the previous case, as the new affinity mask
+excludes all smt-provided cpus with ids less than those that were
+previously in the affinity mask, as well as those that were actually in
+the mask.
+
+With this patch applied, both of these cases end in the following state:
+
+	# grep -i cpu /proc/$$/status
+	Cpus_allowed:	ffffffff,ffffffff
+	Cpus_allowed_list:	0-63
+
+The original policy is discarded. Though not ideal, it is the simplest way
+to restore sanity to this fallback case without reinventing the cpuset
+wheel that rolls down the kernel just fine in cgroup v2. A user who wishes
+for the previous affinity mask to be restored in this fallback case can use
+that mechanism instead.
+
+This patch modifies scheduler behavior by instead resetting the mask to
+task_cs(tsk)->cpus_allowed by default, and cpu_possible mask in legacy
+mode. I tested the cases above on both modes.
+
+Note that the scheduler uses this fallback mechanism if and only if
+_every_ other valid avenue has been traveled, and it is the last resort
+before calling BUG().
+
+Suggested-by: Waiman Long <longman@redhat.com>
+Suggested-by: Phil Auld <pauld@redhat.com>
+Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+---
+ kernel/cgroup/cpuset.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 6a1942ed781c..515525ff1cfd 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -3254,10 +3254,23 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ 	spin_unlock_irqrestore(&callback_lock, flags);
+ }
+ 
++/**
++ * cpuset_cpus_allowed_fallback - final fallback before complete catastrophe.
++ * @tsk: pointer to task_struct with which the scheduler is struggling
++ *
++ * Description: In the case that the scheduler cannot find an allowed cpu in
++ * tsk->cpus_allowed, we fall back to task_cs(tsk)->cpus_allowed. In legacy
++ * mode however, this value is the same as task_cs(tsk)->effective_cpus,
++ * which will not contain a sane cpumask during cases such as cpu hotplugging.
++ * This is the absolute last resort for the scheduler and it is only used if
++ * _every_ other avenue has been traveled.
++ **/
++
+ void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
+ {
+ 	rcu_read_lock();
+-	do_set_cpus_allowed(tsk, task_cs(tsk)->effective_cpus);
++	do_set_cpus_allowed(tsk, is_in_v2_mode() ?
++		task_cs(tsk)->cpus_allowed : cpu_possible_mask);
+ 	rcu_read_unlock();
+ 
+ 	/*
+-- 
+2.18.1
 
