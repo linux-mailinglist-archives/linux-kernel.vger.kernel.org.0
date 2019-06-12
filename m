@@ -2,266 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62F6542C3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E0F42C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502122AbfFLQ2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 12:28:34 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33327 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502106AbfFLQ2e (ORCPT
+        id S2502107AbfFLQZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 12:25:06 -0400
+Received: from server.eikelenboom.it ([91.121.65.215]:56262 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbfFLQZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 12:28:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x15so9996710pfq.0;
-        Wed, 12 Jun 2019 09:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9ucWxJ6q9SaBb2GtuoCWauKcHmhMhNM9AVCq4M27NX8=;
-        b=TOsdq0zEKlm1ovsLqsofSlAHa6P17YnxyTYaU0SrWx35AJQLEaLkF0+3Vu7rnet7kS
-         QxkXWuUBzC5I9Ox8e5luKErNSTypQjGJ2Q1wWrmjeitE7qA8Jvi71xrtaEX1rh4Qwc+Y
-         h3wSFAIKRAqmDhfys8Bm9Yu9mIrnwNwBvtrZcam657nib4HkVXSKKjfVlbGt3aFtYFGJ
-         MyXlAAGV88Qyq+89N2CFLXgheOeSe6fDhHox3L8iSsiYAy77Lx7pUWaFRD3RCZ0tarbX
-         Dxl6n6xUNhXMgoht0Lghj/t1sfKCR8htND5N8NfMAgKGBNPavYBTzy3lGAZJvT27clHh
-         ugtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9ucWxJ6q9SaBb2GtuoCWauKcHmhMhNM9AVCq4M27NX8=;
-        b=GKThGho7yNNl0yMTbduTJXshIEJZkZVCDeHNuuGxhejfznnhQS6JrIeAYHZysSP06m
-         jKNzmdz7BoUI5bf1OQrXqPGoBo4kLjfSI93M1jLD9r/D2BXLtRr1lHX//JUFIh7Ty/+L
-         3FFG6TQZmzf3kI91hZZ1dqIWuZ3Dhr5KnyUrQHeT7nRsVGST+ER5/LH3pI5UCS6CkK7a
-         jL1aeFNrpIpqq6ydg3BY02ZS2f18XHb7AW2rOW7va7Xc2quQDMf4aBALyEvsywPUBgjV
-         NIqzOWQJigYl2mQR9taUFQo6h1S7UR02qXpxlUmWzDwsjBeVYgGehJHId/FqAuQeqbmc
-         wQHw==
-X-Gm-Message-State: APjAAAXxjpFEg2ZifIOnvzZJXAFX1c2qGYmo06TVrhW/rVxEezpc1ABD
-        Pp/JP1Fn8nGAc18++X+Zpfw=
-X-Google-Smtp-Source: APXvYqx4AUVnFpEL1E+Qnsfwj4SRiJmLXGwFXB2fvIYC6OXMoah2zJ2Tiz3sgHkbW+X9oMz7oXpZhg==
-X-Received: by 2002:a63:610d:: with SMTP id v13mr25531305pgb.341.1560356912884;
-        Wed, 12 Jun 2019 09:28:32 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id 201sm70299pfz.24.2019.06.12.09.28.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2019 09:28:32 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, rjw@rjwysocki.net,
-        davem@davemloft.net, mchehab+samsung@kernel.org,
-        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
-        nicolas.ferre@microchip.com, paulmck@linux.ibm.com
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [RESEND, PATCH v4 2/2] dt-bindings: cpufreq: Document allwinner,sun50i-h6-operating-points
-Date:   Wed, 12 Jun 2019 12:28:16 -0400
-Message-Id: <20190612162816.31713-3-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190612162816.31713-1-tiny.windzz@gmail.com>
-References: <20190612162816.31713-1-tiny.windzz@gmail.com>
+        Wed, 12 Jun 2019 12:25:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ktowEjqF/CBPxhQY3pu7cziNBjpasaaInkiP4lM1ITk=; b=RSlgjpwaOad4S6Af3UpDb10U4o
+        dC7hhgdeQYuNplE4lMwObyLofK5gd7ONp6mAexVHPXXBoFTRvgqpdJmyUudt/WiPUNIj7jjICxEmj
+        IpNyVa0Nz254ZSjkoJpQjgIBcexHaR8UVvXVNPXoUZtLmlIXHUMs5NBuGuJ8gZdmoyUs=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:38718 helo=[172.16.1.50])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1hb63Y-0004wh-UT; Wed, 12 Jun 2019 18:25:00 +0200
+Subject: Re: [PATCH] fuse: require /dev/fuse reads to have enough buffer
+ capacity (take 2)
+To:     Kirill Smelkov <kirr@nexedi.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>, gluster-devel@gluster.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
+ <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
+ <20190611202738.GA22556@deco.navytux.spb.ru>
+ <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
+ <20190612112544.GA21465@deco.navytux.spb.ru>
+ <f31ca7b5-0c9b-5fde-6a75-967265de67c6@eikelenboom.it>
+ <20190612141220.GA25389@deco.navytux.spb.ru>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <f79ff13f-701b-89d8-149c-e53bb880bb77@eikelenboom.it>
+Date:   Wed, 12 Jun 2019 18:28:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190612141220.GA25389@deco.navytux.spb.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner Process Voltage Scaling Tables defines the voltage and
-frequency value based on the speedbin blown in the efuse combination.
-The sunxi-cpufreq-nvmem driver reads the efuse value from the SoC to
-provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each
-OPP of operating-points-v2 table when it is parsed by the OPP framework.
+On 12/06/2019 16:12, Kirill Smelkov wrote:
+> On Wed, Jun 12, 2019 at 03:03:49PM +0200, Sander Eikelenboom wrote:
+>> On 12/06/2019 13:25, Kirill Smelkov wrote:
+>>> On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
+>>>> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
+>>>>
+>>>>> Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
+>>>>> header room change be accepted?
+>>>>
+>>>> Yes, next cycle.   For 4.2 I'll just push the revert.
+>>>
+>>> Thanks Miklos. Please consider queuing the following patch for 5.3.
+>>> Sander, could you please confirm that glusterfs is not broken with this
+>>> version of the check?
+>>>
+>>> Thanks beforehand,
+>>> Kirill
+>>
+>>
+>> Hmm unfortunately it doesn't build, see below.
+>> [...]
+>> fs/fuse/dev.c:1336:14: error: ‘fuse_in_header’ undeclared (first use in this function)
+>>        sizeof(fuse_in_header) + sizeof(fuse_write_in) + fc->max_write))
+> 
+> Sorry, my bad, it was missing "struct" before fuse_in_header. I
+> originally compile-tested the patch with `make -j4`, was distracted onto
+> other topic and did not see the error after returning due to long tail
+> of successful CC lines. Apologize for the inconvenience. Below is a
+> fixed patch that was both compile-tested and runtime-tested with my FUSE
+> workloads (non-glusterfs).
+> 
+> Kirill
+> 
 
-The "allwinner,sun50i-h6-operating-points" DT extends the
-"operating-points-v2"
-with following parameters:
-- nvmem-cells (NVMEM area containig the speedbin information)
-- opp-microvolt-<name>: voltage in micro Volts.
-  At runtime, the platform can pick a <name> and matching
-  opp-microvolt-<name> property.
-                        HW:             <name>:
-                        sun50i-h6      speed0 speed1 speed2
+Just tested and it works for me, thanks !
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- .../bindings/opp/sun50i-nvmem-cpufreq.txt     | 167 ++++++++++++++++++
- 1 file changed, 167 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
-
-diff --git a/Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt b/Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
-new file mode 100644
-index 000000000000..7deae57a587b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
-@@ -0,0 +1,167 @@
-+Allwinner Technologies, Inc. NVMEM CPUFreq and OPP bindings
-+===================================
-+
-+For some SoCs, the CPU frequency subset and voltage value of each OPP
-+varies based on the silicon variant in use. Allwinner Process Voltage
-+Scaling Tables defines the voltage and frequency value based on the
-+speedbin blown in the efuse combination. The sun50i-cpufreq-nvmem driver
-+reads the efuse value from the SoC to provide the OPP framework with
-+required information.
-+
-+Required properties:
-+--------------------
-+In 'cpus' nodes:
-+- operating-points-v2: Phandle to the operating-points-v2 table to use.
-+
-+In 'operating-points-v2' table:
-+- compatible: Should be
-+	- 'allwinner,sun50i-h6-operating-points'.
-+- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
-+		efuse registers that has information about the speedbin
-+		that is used to select the right frequency/voltage value
-+		pair. Please refer the for nvmem-cells bindings
-+		Documentation/devicetree/bindings/nvmem/nvmem.txt and
-+		also examples below.
-+
-+In every OPP node:
-+- opp-microvolt-<name>: Voltage in micro Volts.
-+			At runtime, the platform can pick a <name> and
-+			matching opp-microvolt-<name> property.
-+			[See: opp.txt]
-+			HW:		<name>:
-+			sun50i-h6	speed0 speed1 speed2
-+
-+Example 1:
-+---------
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+        };
-+
-+        cpu_opp_table: opp_table {
-+                compatible = "allwinner,sun50i-h6-operating-points";
-+                nvmem-cells = <&speedbin_efuse>;
-+                opp-shared;
-+
-+                opp@480000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <480000000>;
-+
-+                        opp-microvolt-speed0 = <880000>;
-+                        opp-microvolt-speed1 = <820000>;
-+                        opp-microvolt-speed2 = <800000>;
-+                };
-+
-+                opp@720000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <720000000>;
-+
-+                        opp-microvolt-speed0 = <880000>;
-+                        opp-microvolt-speed1 = <820000>;
-+                        opp-microvolt-speed2 = <800000>;
-+                };
-+
-+                opp@816000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <816000000>;
-+
-+                        opp-microvolt-speed0 = <880000>;
-+                        opp-microvolt-speed1 = <820000>;
-+                        opp-microvolt-speed2 = <800000>;
-+                };
-+
-+                opp@888000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <888000000>;
-+
-+                        opp-microvolt-speed0 = <940000>;
-+                        opp-microvolt-speed1 = <820000>;
-+                        opp-microvolt-speed2 = <800000>;
-+                };
-+
-+                opp@1080000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <1080000000>;
-+
-+                        opp-microvolt-speed0 = <1060000>;
-+                        opp-microvolt-speed1 = <880000>;
-+                        opp-microvolt-speed2 = <840000>;
-+                };
-+
-+                opp@1320000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <1320000000>;
-+
-+                        opp-microvolt-speed0 = <1160000>;
-+                        opp-microvolt-speed1 = <940000>;
-+                        opp-microvolt-speed2 = <900000>;
-+                };
-+
-+                opp@1488000000 {
-+                        clock-latency-ns = <244144>; /* 8 32k periods */
-+                        opp-hz = /bits/ 64 <1488000000>;
-+
-+                        opp-microvolt-speed0 = <1160000>;
-+                        opp-microvolt-speed1 = <1000000>;
-+                        opp-microvolt-speed2 = <960000>;
-+                };
-+        };
-+....
-+soc {
-+....
-+	sid: sid@3006000 {
-+		compatible = "allwinner,sun50i-h6-sid";
-+		reg = <0x03006000 0x400>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		....
-+		speedbin_efuse: speed@1c {
-+			reg = <0x1c 4>;
-+		};
-+        };
-+};
--- 
-2.17.0
-
+--
+Sander
