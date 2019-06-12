@@ -2,80 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5300941B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C2F41B6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 07:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbfFLE5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 00:57:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43094 "EHLO mail.kernel.org"
+        id S1730454AbfFLE7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 00:59:13 -0400
+Received: from ozlabs.org ([203.11.71.1]:40361 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725372AbfFLE5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 00:57:31 -0400
-Received: from localhost (unknown [106.200.205.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 373CC20866;
-        Wed, 12 Jun 2019 04:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560315450;
-        bh=wd2149PBzfIH5Tyo7dV50mGQ50f22EKBdPxxPt8UKbQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z65Rj73quB9MLOYs/h2T6t7ExrIQimLogxR0aGLWski5KDXH1xSWS05I/zrQ48PhQ
-         omROdZbnbeRtpvEkLNkeftJgwNe48IeLt2gphNYRj/B/x6ABPnvilDjbqqPOU+SBOv
-         UrOyWd5uYBH0M+pFZH8F+0ap0IbTW4Q8T6A8yhrg=
-Date:   Wed, 12 Jun 2019 10:24:23 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     gustavo.pimentel@synopsys.com, dan.j.williams@intel.com,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: [PATCH -next] dmaengine: dw-edma: Fix build error without
- CONFIG_PCI_MSI
-Message-ID: <20190612045423.GZ9160@vkoul-mobl.Dlink>
-References: <20190612041954.256-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612041954.256-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1730393AbfFLE7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 00:59:12 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 45NvmH0kL6z9sBr; Wed, 12 Jun 2019 14:59:10 +1000 (AEST)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: c21f5a9ed85ca3e914ca11f421677ae9ae0d04b0
+X-Patchwork-Hint: ignore
+In-Reply-To: <90d30adb0943a11ab127808c03229ba657478df4.1559566521.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mathieu Malaterre <malat@debian.org>
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/32s: fix booting with CONFIG_PPC_EARLY_DEBUG_BOOTX
+Message-Id: <45NvmH0kL6z9sBr@ozlabs.org>
+Date:   Wed, 12 Jun 2019 14:59:10 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-06-19, 12:19, YueHaibing wrote:
-> If CONFIG_PCI_MSI is not set, building with CONFIG_DW_EDMA
-> fails:
+On Mon, 2019-06-03 at 13:00:51 UTC, Christophe Leroy wrote:
+> When booting through OF, setup_disp_bat() does nothing because
+> disp_BAT are not set. By change, it used to work because BOOTX
+> buffer is mapped 1:1 at address 0x81000000 by the bootloader, and
+> btext_setup_display() sets virt addr same as phys addr.
 > 
-> drivers/dma/dw-edma/dw-edma-core.c: In function dw_edma_irq_request:
-> drivers/dma/dw-edma/dw-edma-core.c:784:21: error: implicit declaration of function pci_irq_vector; did you mean rcu_irq_enter? [-Werror=implicit-function-declaration]
->    err = request_irq(pci_irq_vector(to_pci_dev(dev), 0),
->                      ^~~~~~~~~~~~~~
+> But since commit 215b823707ce ("powerpc/32s: set up an early static
+> hash table for KASAN."), a temporary page table overrides the
+> bootloader mapping.
+> 
+> This 0x81000000 is also problematic with the newly implemented
+> Kernel Userspace Access Protection (KUAP) because it is within user
+> address space.
+> 
+> This patch fixes those issues by properly setting disp_BAT through
+> a call to btext_prepare_BAT(), allowing setup_disp_bat() to
+> properly setup BAT3 for early bootx screen buffer access.
+> 
+> Reported-by: Mathieu Malaterre <malat@debian.org>
+> Fixes: 215b823707ce ("powerpc/32s: set up an early static hash table for KASAN.")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Tested-by: Mathieu Malaterre <malat@debian.org>
 
-Applied with adding reported by Randy as well, thanks
+Applied to powerpc fixes, thanks.
 
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: e63d79d1ffcd ("dmaengine: Add Synopsys eDMA IP core driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/dma/dw-edma/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/dma/dw-edma/Kconfig b/drivers/dma/dw-edma/Kconfig
-> index c0838ce..7ff17b2 100644
-> --- a/drivers/dma/dw-edma/Kconfig
-> +++ b/drivers/dma/dw-edma/Kconfig
-> @@ -2,6 +2,7 @@
->  
->  config DW_EDMA
->  	tristate "Synopsys DesignWare eDMA controller driver"
-> +	depends on PCI && PCI_MSI
->  	select DMA_ENGINE
->  	select DMA_VIRTUAL_CHANNELS
->  	help
-> -- 
-> 2.7.4
-> 
+https://git.kernel.org/powerpc/c/c21f5a9ed85ca3e914ca11f421677ae9
 
--- 
-~Vinod
+cheers
