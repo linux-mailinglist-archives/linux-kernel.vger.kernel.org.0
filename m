@@ -2,94 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E0F42C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA4B42C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 18:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502107AbfFLQZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 12:25:06 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:56262 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbfFLQZG (ORCPT
+        id S2502142AbfFLQ26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 12:28:58 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35739 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502128AbfFLQ26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 12:25:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ktowEjqF/CBPxhQY3pu7cziNBjpasaaInkiP4lM1ITk=; b=RSlgjpwaOad4S6Af3UpDb10U4o
-        dC7hhgdeQYuNplE4lMwObyLofK5gd7ONp6mAexVHPXXBoFTRvgqpdJmyUudt/WiPUNIj7jjICxEmj
-        IpNyVa0Nz254ZSjkoJpQjgIBcexHaR8UVvXVNPXoUZtLmlIXHUMs5NBuGuJ8gZdmoyUs=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:38718 helo=[172.16.1.50])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1hb63Y-0004wh-UT; Wed, 12 Jun 2019 18:25:00 +0200
-Subject: Re: [PATCH] fuse: require /dev/fuse reads to have enough buffer
- capacity (take 2)
-To:     Kirill Smelkov <kirr@nexedi.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>, gluster-devel@gluster.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
- <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
- <20190611202738.GA22556@deco.navytux.spb.ru>
- <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
- <20190612112544.GA21465@deco.navytux.spb.ru>
- <f31ca7b5-0c9b-5fde-6a75-967265de67c6@eikelenboom.it>
- <20190612141220.GA25389@deco.navytux.spb.ru>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <f79ff13f-701b-89d8-149c-e53bb880bb77@eikelenboom.it>
-Date:   Wed, 12 Jun 2019 18:28:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 12 Jun 2019 12:28:58 -0400
+Received: by mail-it1-f195.google.com with SMTP id n189so11579265itd.0;
+        Wed, 12 Jun 2019 09:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yATkbjTw8m3Q2dRPh5UAzdwM9szsemwHSJzk0zw5vRI=;
+        b=NJy20Mnqfu+Z39JVh+cD+rlnma0I6e0xYfIA6aMB86ck/8gq0ulfhoZuq50qFwrPjp
+         YpKU/FucIoUuzRYZBuWq/qrB7YbnqLf/E0CAeqUQoMjcBnZ5YL4pKqGx2Y5Nda09727g
+         okaSOVQ2IXunryTsYPSHYNJOHygLR3NZjF65121kpqkwqvSkFA0X4UsF75X7GjCdX3Cx
+         0yKoADdNzJm9pJjf0w4lyF3joG64/G+46n+aOxRS2U/sCcl/AztvAc13IVzrqRYASdM6
+         fwWD98c1SnsDyEGk+qZx3LXBk36NRosoeBukK8ohbPb3XYncV+zpmtf6vGlTzgesDLbR
+         ZIZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yATkbjTw8m3Q2dRPh5UAzdwM9szsemwHSJzk0zw5vRI=;
+        b=iIchdfm+/gMYv8AkV0JOyeWJFxlJ6OCnk0i8oNFa5noSpEAalw1XnjTxDDWFGHtTJp
+         YEsA0QjNxnTYp76ApTqQVvOP9/Ms42Vp6AEuhXecYAFs/XEP/oSo2PvgCU4dq2OHtLiJ
+         WP3gwDMYuKe6WJEJ7qmA85Nww3xHZBZI1/ZorQz0o1qJSp5ZyO4Ew9eo2uLP2tULb6X3
+         QJqza7L6K8SsjfWQJj/0TS2Fk6Hjk4ef2erc9Uv9dp5c6ikNcudELtHwl+/X2I90jECd
+         jlRaYZdsxmgnTWsz7nFm/JWMyhPkftlbvvpKs2cRZ+gyVaXTn3Vel069oP6xbNk06Qcm
+         6pYQ==
+X-Gm-Message-State: APjAAAUB3qB9YaNLAbDcrTp08DGN5fsGnDTRWgeCbhLQjmEPPB06GGa3
+        NJcqJ04w/7AW98vSjOd9xc4OG18t8By9W1Dw5UE=
+X-Google-Smtp-Source: APXvYqyFy2pdIz1NIdWEELkm+gtHMFJN4Sd8HaM3yVeRCc656dsv6Qlh7LAzwGcFw1K4ggW00KmzMxZsCUTJRrfmunM=
+X-Received: by 2002:a02:3b62:: with SMTP id i34mr50167719jaf.91.1560356937141;
+ Wed, 12 Jun 2019 09:28:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612141220.GA25389@deco.navytux.spb.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190607200225.21419-1-andrew.smirnov@gmail.com>
+ <20190607200225.21419-2-andrew.smirnov@gmail.com> <VI1PR04MB50558864B434388A52A00915EEEC0@VI1PR04MB5055.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB50558864B434388A52A00915EEEC0@VI1PR04MB5055.eurprd04.prod.outlook.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Wed, 12 Jun 2019 09:28:45 -0700
+Message-ID: <CAHQ1cqHw4whpq9Q0hNOrh4Q-72dxQVoNqJ-VEk9g7ZMimNTCkg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] crypto: caam - do not initialise clocks on the i.MX8
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Chris Spencer <christopher.spencer@sea.co.uk>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2019 16:12, Kirill Smelkov wrote:
-> On Wed, Jun 12, 2019 at 03:03:49PM +0200, Sander Eikelenboom wrote:
->> On 12/06/2019 13:25, Kirill Smelkov wrote:
->>> On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
->>>> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
->>>>
->>>>> Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
->>>>> header room change be accepted?
->>>>
->>>> Yes, next cycle.   For 4.2 I'll just push the revert.
->>>
->>> Thanks Miklos. Please consider queuing the following patch for 5.3.
->>> Sander, could you please confirm that glusterfs is not broken with this
->>> version of the check?
->>>
->>> Thanks beforehand,
->>> Kirill
->>
->>
->> Hmm unfortunately it doesn't build, see below.
->> [...]
->> fs/fuse/dev.c:1336:14: error: ‘fuse_in_header’ undeclared (first use in this function)
->>        sizeof(fuse_in_header) + sizeof(fuse_write_in) + fc->max_write))
-> 
-> Sorry, my bad, it was missing "struct" before fuse_in_header. I
-> originally compile-tested the patch with `make -j4`, was distracted onto
-> other topic and did not see the error after returning due to long tail
-> of successful CC lines. Apologize for the inconvenience. Below is a
-> fixed patch that was both compile-tested and runtime-tested with my FUSE
-> workloads (non-glusterfs).
-> 
-> Kirill
-> 
+On Wed, Jun 12, 2019 at 6:53 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+>
+> On 07.06.2019 23:03, Andrey Smirnov wrote:
+>
+> > There are no clocks that the CAAM driver needs to initialise on the
+> > i.MX8.
+>
+> The clk handling inside CAAM is very convoluted and this patch doesn't
+> help. All the driver actually does is "enable all required clocks", this
+> shouldn't be complicated.
+>
 
-Just tested and it works for me, thanks !
+As I mentioned before, this patch is now dropped. It is replaced with
+a one-liner to avoid requesting "emi_slow" clock on i.mx8mq.
 
---
-Sander
+> I propose adding a const caam_soc_data struct which has a bool flag
+> marking if each clock is required or not, the replace all the
+> of_machine_is_compatible() logic with statements of the form:
+>
+> if (ctrlpriv->soc_data->need_ipg_clk)
+>      ctrlpriv->caam_ipg = devm_clk_get("ipg");
+>
+> You could even make all clks optional and claim that if a clk is not
+> listed in DT then it's assumed to be always on. However that means that
+> on some SOCs if DT is incorrect you can get a hang (due to missing clk)
+> instead of a probe error.
+>
+
+I agree with this approach in principle, but I'd rather focus this
+series on adding i.MX8MQ support with least amount changes needed. I
+have a separate series doing a bunch of devres related cleanup on this
+driver, which I plan to submit once i.MX8MQ is supported and we can
+(and I'd rather) address the problem there.
+
+> > +     clk_disable_unprepare(ctrlpriv->caam_ipg);
+> > +     if (ctrlpriv->caam_mem)
+> > +             clk_disable_unprepare(ctrlpriv->caam_mem);
+> > +     clk_disable_unprepare(ctrlpriv->caam_aclk);
+> > +     if (ctrlpriv->caam_emi_slow)
+> > +             clk_disable_unprepare(ctrlpriv->caam_emi_slow);
+>
+> Clock APIs have no effect if clk argument is NULL, please just drop
+> these if statements.
+
+As a part of my refactoring changes I replaced all of that code with
+devres, so it should already be addressed there.
+
+Thanks,
+Andrey Smirnov
