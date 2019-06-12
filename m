@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90FCE4255B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ADF24255F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:18:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438754AbfFLMRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:17:14 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46997 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436570AbfFLMRO (ORCPT
+        id S2438782AbfFLMSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:18:09 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44009 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438779AbfFLMSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:17:14 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v24so10545545ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:17:13 -0700 (PDT)
+        Wed, 12 Jun 2019 08:18:09 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j29so11902490lfk.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2txdGGqAtBgtUiiIPP10i5KT2B4f0+7u5UH9LS7ouJg=;
-        b=dusx49mrCLSgU5t83nzKnjS+WluovaOxnHyWSgEcpeQJPi0w63Vjj0FYvbpHl8IZ0M
-         0Eg7mJFCz8lJciydS+e8UNQaC7r8ojgw9QaIwsF5onCMIfBQpqxcaGfmtdOVvxgAS1KJ
-         iZq25ceilSdWqf4legHqbrKpfWh4VKQT0VMk1AZzYWalsKzgxxO8bSpWHPJeScvgczFQ
-         UG9KdibBNgx/ir54+DcjvIdzr+rJjZpD58RkUmmiAXwcrcVgH4HS2cGQGBcFg8/U+PQZ
-         Sos5qV0IrsWvi+9ROxVD7rnYs9P3dEm3uBX6AprDgms9/N5jIdr73kQfNzUk9tpZsI4F
-         PxiA==
+        bh=lLgqFLgI1RD7txKsXHTcttpt8QJ2qspurJ8r4TaFBuo=;
+        b=FfvLpUOfzN6wTBDG93ptVmlfJBX2N34h39prIp2th17F7l4y5WYEM1Easy5npKwdPR
+         yrNaZYf2mW4ZJ++7lbZWkbYO5T/KdbeNQ8aIFYczQ2ylarmaXoYt/zdNMPONaKWImR4C
+         qBuxaiOyay2r17jP/3shi+mEkf16wTWbWzu+5BH2RN/BUaaJsOljwQJPtKPbPljdFhSG
+         FxbxZ8ijKX2RMJyFfxSH00IrZJF91EcroP5wgKVdynk9K09i03hnimr+LhD8uQyTaoE+
+         3LWLKtl+zXMFXfnXQqS/4vSDK6OiYZDSuHafztRmKI5qpZOCks9/gdAoyUPDIn66y9VY
+         7rFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2txdGGqAtBgtUiiIPP10i5KT2B4f0+7u5UH9LS7ouJg=;
-        b=d3cmae8fZLBepARW7E1EzoLOJq6Iw325rwcnNQcOKyWU/mIwVbp2EA+tNK07JOrINk
-         La8drGGC20beuwrXaVdkX9osWI7sDcRmI8lwtjcB8biQ0h2z6J9l7IEn2zkVtzkb7n3U
-         rMhiqABqA24th0/xqDvO2UTHl+E5668bDPCwTlue4O0NZCXk4muPABN4jx7RBmquSvTw
-         vy1bj5b5POFy7HUgGOyAxEHvW6io9JC5p+o+SBs9770RIMT8ywYqKYoc8A5wsbJjLSN8
-         mwk5f8EVEomtRyZ06pgrlVl9I43YtzsK5mRk1G2y+DsM2V6sVJS8dun27Guf7heeYCN9
-         s18w==
-X-Gm-Message-State: APjAAAVLNzwfDIzNpid20aM14DIVcZp7p+cxKGxZjBInRCFjMdJsUDTv
-        O5+gX1+wRzyqQ+op9skMqkTMWn4xvW/JnRCNRW5p1LPCxqA=
-X-Google-Smtp-Source: APXvYqyY0A/WfPrOeCNf6qf18ESfRNrBcrzXIRXu/sUdZWtDXsnEw4ymCliw3ZfYA/tTBPR2Wnzztl40Q8AA2XCcUE4=
-X-Received: by 2002:a2e:5dc4:: with SMTP id v65mr33483063lje.138.1560341832416;
- Wed, 12 Jun 2019 05:17:12 -0700 (PDT)
+        bh=lLgqFLgI1RD7txKsXHTcttpt8QJ2qspurJ8r4TaFBuo=;
+        b=G4SVuto6GhzOWKewGf8E4PTjExL98jEAzLXsbYZVBcCq30haub8pD/Ba/VIJtEVSGV
+         fqBrZnnrM+sEzag0CjN/d627+r33ElSHmN+GdSZSuURmar4ZxkmlYGhwUmzTTDRjH5Nh
+         AJMrMOY+jrWNHap3/o0/efvklA2tgisgjpTim3tVZY3xki0EQ5C/o0cKx4K+IX9a3AEU
+         xHjiSVlfUVrwXkb7VOvOPoB92ANwQts1gyFofxW/xdnjbVPR6aPN0jPgkw0IglXdtHlb
+         /+ZBuF10YyafKx2baMO4wvsvLVf1Ce9H5/RmAelR8K2OhojZnOxCr0+cj1Ew1B1pIZ5F
+         KzqQ==
+X-Gm-Message-State: APjAAAVaFPoukMu4CtAIEasSGMZxfmLuCHM+RSgUCTxXhauGH/0LytyJ
+        t1apOUcrhFr8zVEh0J6bHe6tb08eeWyY+d0GZxBVZKjR
+X-Google-Smtp-Source: APXvYqzzhiF6iMG++OhR+MGtmOroCfV56gr3a2ZeGoM8umsfC45K9xFo43Z8yZlHV/8RUbSoa7Te3b3r4DhtKwjvqug=
+X-Received: by 2002:a19:7616:: with SMTP id c22mr37373804lff.115.1560341887523;
+ Wed, 12 Jun 2019 05:18:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190611072004.2978373-1-lkundrak@v3.sk>
-In-Reply-To: <20190611072004.2978373-1-lkundrak@v3.sk>
+References: <20190611072001.2978298-1-lkundrak@v3.sk>
+In-Reply-To: <20190611072001.2978298-1-lkundrak@v3.sk>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 14:17:01 +0200
-Message-ID: <CACRpkdb7jZ3Hw3uH_hqGRhbsoreQW17ck_QPXKxqLA8ov9ffuQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: lantiq: Switch to SPDX header
+Date:   Wed, 12 Jun 2019 14:17:56 +0200
+Message-ID: <CACRpkdYeWMs30Q3zD1vQF-yC1_PKuOFDSDs5nVqhMSfrgFvu1Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: xway: Switch to SPDX header
 To:     Lubomir Rintel <lkundrak@v3.sk>
 Cc:     John Crispin <john@phrozen.org>,
+        Martin Schiller <mschiller@tdt.de>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -66,9 +67,7 @@ On Tue, Jun 11, 2019 at 9:20 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
 >
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-This is already fixed upstream in Torvald's tree, see
-commit 1d0ea0692ae3f909b22e99af3121bcf3142a5c5f
-"treewide: Replace GPLv2 boilerplate/reference with SPDX - rule 332"
+Already fixed upstream by tglx pattern patches.
 
 Yours,
 Linus Walleij
