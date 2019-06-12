@@ -2,94 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A03C3424B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9BA426F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 15:06:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbfFLLsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 07:48:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59600 "EHLO
+        id S1731748AbfFLNGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 09:06:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48472 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbfFLLsf (ORCPT
+        with ESMTP id S1728322AbfFLNGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:48:35 -0400
+        Wed, 12 Jun 2019 09:06:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N36G2g57Ph5uthflFMPZ6+P+b7ByUozCwCs1YB+Sqpk=; b=jas+EXkG6E230EvfsPKthqm51
-        XM2eWfuLmox2Fxh4sqPljdTZYkicu3GTqMofjpZIAdffOApbbBlLivJzIVuiufD+s8O51wVLoeHrE
-        nmg7+L86pKdq3W+U3l2/uq41hGO0qTmEvwxFAVMJHh3NVmItNr03HUq7yzCfm+5UquNYLZsqcXvyZ
-        W00U07o9+qOClYHKQHWKbvVqP4Ccfns9yXl2W6rW1DkLwSuOCI1huPCGVEfMg6Ai1IWdxS+QctC1r
-        mDlupCXKhzywCvZz/McwbowxRzceFUxjUzNR2J3wOKBux6Kn3PVjyErevST6S9RG0H8H/LLbiWmPK
-        CQykCKw9g==;
-Received: from 177.41.119.178.dynamic.adsl.gvt.net.br ([177.41.119.178] helo=coco.lan)
+         bh=Vz71fAv9Dgsi5w8SWFWAKFrTsfzkrQd2BAWGvR/wWuI=; b=fErnmr3AWG76KtAlXl/YU8PcH
+        TunZZicwX9oi7ZawY41vyXVmfR5Lsrdam4Nt5CesogYlNN+9bAAyLvoBe87Iv4BSAUSZs48pp8lPw
+        YRadvSKrf2MpcW17rAP6mbqKeVAf+gmWrtNDb08tCFvZdQHhydJ/7ezrvMEF0+EedtOvwx1/HlNPI
+        p7eAEKvubGtQgWXHLoaa2lCEtyO0tR9rPwhmLu7e8h+HFwCddEahLEpZHNW3LGknuER4plSS9imiN
+        OBHEf86p9woXaqAyyCdj96h1Vjb80lIzCNprL9JpN8Dt4DEr55DhlPjlVm4v7aLXygmMW8zqUk9KT
+        +2OKIaRaw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hb1jw-0004Xw-Ke; Wed, 12 Jun 2019 11:48:29 +0000
-Date:   Wed, 12 Jun 2019 08:48:24 -0300
-From:   Mauro Carvalho Chehab <mchehab@infradead.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ruslan Babayev <ruslan@babayev.com>,
-        Andrew de Quincey <adq_dvb@lidskialf.net>
-Subject: Re: linux-next: build warning after merge of the i2c tree
-Message-ID: <20190612084824.16671efa@coco.lan>
-In-Reply-To: <20190612110904.qhuoxyljgoo76yjj@ninjato>
-References: <20190611102528.44ad5783@canb.auug.org.au>
-        <20190612081929.GA1687@kunai>
-        <20190612080226.45d2115a@coco.lan>
-        <20190612110904.qhuoxyljgoo76yjj@ninjato>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id 1hb2xP-0004XY-0m; Wed, 12 Jun 2019 13:06:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 89BD620259522; Wed, 12 Jun 2019 13:48:36 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 13:48:36 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/xen: disable nosmt in Xen guests
+Message-ID: <20190612114836.GI3436@hirez.programming.kicks-ass.net>
+References: <20190612101228.23898-1-jgross@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <mchehab@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612101228.23898-1-jgross@suse.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 12 Jun 2019 13:09:04 +0200
-Wolfram Sang <wsa@the-dreams.de> escreveu:
+On Wed, Jun 12, 2019 at 12:12:28PM +0200, Juergen Gross wrote:
+> When running as a Xen guest selecting "nosmt" either via command line
+> or implicitly via default settings makes no sense, as the guest has no
+> clue about the real system topology it is running on. With Xen it is
+> the hypervisor's job to ensure the proper bug mitigations are active
+> regarding smt settings.
+> 
+> So when running as a Xen guest set cpu_smt_control to "not supported"
+> in order to avoid disabling random vcpus.
 
-> Hi Mauro,
-> 
-> > That entire use of _P, _R and _ri looks weird into my eyes. The code there  
-> 
-> Yes.
-> 
-> > do things like:
-> > 
-> > #define _P 32
-> > 
-> > ...
-> > 
-> >         if (_P == 64)
-> >                 reg1[1] |= 0x40;  
-> 
-> Yup, I saw this, too, but didn't feel like refactoring the driver.
-> Thanks for stepping up!
-> 
-> > I'll work on a patch to address it.  
-> 
-> OK, so that means I should send my pull request after yours in the next
-> merge window? To avoid the build breakage?
+If it doesn't make sense; then the topology should not expose SMT
+threads and the knob will not have any effect.
 
-Either that or you can apply my patch on your tree before the
-patch that caused the breakage. 
-
-Just let me know what works best for you.
-
-> 
-> Kind regards,
-> 
->    Wolfram
-> 
-
-
-
-Thanks,
-Mauro
+If you expose SMT topology info to the guest, then you get what you ask
+for.
