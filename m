@@ -2,87 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153E2425B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:27:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCCC8425B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438886AbfFLM10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:27:26 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44161 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438842AbfFLM10 (ORCPT
+        id S2407431AbfFLM1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:27:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37203 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406351AbfFLM1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:27:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r15so11927521lfm.11
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 05:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7YXfx44CbHqzJ+2PHFNUjf1EVeDIqUOcBZAWMQXOofo=;
-        b=BPt+ISWtfE24CQZAaHNYHj8ReER12QgsGOkUBErX29okeRmFOPMF4KZPZsqT5026k4
-         c8AoGglJVfsw+ElyP/nr4U+657nEJ/oMwIOxqjXGzAn0Cl2wDTT1YobQAc4YyTLDWhjJ
-         38/UoElB4LK+c806V/PvRZACTQZU/VdCJ/qB3mgpnCx0AUBQjjbXk9VGkXqWW6igsNuI
-         KqtjnxSn+fY1fqJnR0cudtQeG4dRFFb0BkBAqQhJii+2xOI0ktYrsSqYLr5c8ykb0IFR
-         fWWZEGbrqn1QEYZjCz77M4UgdImgfNy/f7beUMiRGYZsC4lPQx5hbfmleclzF0MBFTYj
-         kj5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7YXfx44CbHqzJ+2PHFNUjf1EVeDIqUOcBZAWMQXOofo=;
-        b=qO3zVV66kx8VOG/KcehTZ9EzKCrk3xE7H+o/5YkpAQCuuLfsPW8QPfPyC78yiE/JMt
-         1Eqv8AW9Mx6ul/ubgRgZiuEAkvoAlDCJ2kvFneQGBzblszx2uDy6MViywFT4yRGdJXHJ
-         XuCmbjDQNQE8ZfT75dulwC/KGd7b8r4DLTJb8dW97QABeqvZcR48nRzeo2FAesLDXoTW
-         44ff/7L7XTzkHLoxCuPjyd3n7ExuBbGwwRlcviYACH6UDy6lyXSfZ6aed+1lsuIcnllO
-         XeQf3gCP9zuqLvOW5dH8uJ4mrxOwuw4XRWkx23RkBgRuPEVDA+2gUKqPjs+o/aZRBOst
-         2PXA==
-X-Gm-Message-State: APjAAAUOd+9HNF52fzUY2lv9TQ5ThNaYtBA1vMBe+vUVaz6t1PqGXAaP
-        8Z0VgJGtT3THgdH2Rspjk/FqH5Jc0VpXvBvLlWA36nyX
-X-Google-Smtp-Source: APXvYqxPAyw8VQgmjh8XCBoqH+CTdK92GBXr3n9PB2010YxOENF5DffiExDBojd/7HO6BdIOjgXqslUkt3b0WohZiT4=
-X-Received: by 2002:a19:dc0d:: with SMTP id t13mr17406333lfg.152.1560342443919;
- Wed, 12 Jun 2019 05:27:23 -0700 (PDT)
+        Wed, 12 Jun 2019 08:27:46 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5CCRd91685107
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 12 Jun 2019 05:27:40 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5CCRd91685107
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560342460;
+        bh=Tm/1EUthS7+yPjnl5CHbEXqupEC97Y+DzIGcP3UVbxk=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=sSyJq0xlRWhGyQejnkIfniakUPWqz934ALYOZR4sx1PKdpY3uKOqsJG7rASVt5140
+         fwNQenxpTLk7snkUhx0Ha5GwRlMy1X7ls+ydDmvEQwvH47+3PNOMMn9d5cVo2ePh5J
+         bMyGxKTvlmkAjVgKDZ1V6I/SHeSPYazwSvsus5hApJplRCgTFYH7ieSHiPVeiStw+F
+         JQjpocO4L4zRKrIlRZHcsnJi8JTxaCTRPxAHO+Ve1IU0FFGyoZH0YcQi7VzvkRW1wt
+         XMh9YcO1US/ctYl9MNVCCrNXDy9TWqxe/2r6vdQMsrUP+uvIoA2x549rdBcXx44Cdq
+         WAfEjPYuemifA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5CCRcxJ685104;
+        Wed, 12 Jun 2019 05:27:38 -0700
+Date:   Wed, 12 Jun 2019 05:27:38 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Daniel Lezcano <tipbot@zytor.com>
+Message-ID: <tip-619c1baa91b2820eae9ff5d89eb525df81ea7a5a@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190527205521.12091-2-daniel.lezcano@linaro.org>
+References: <20190527205521.12091-2-daniel.lezcano@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq/timings: Fix next event index function
+Git-Commit-ID: 619c1baa91b2820eae9ff5d89eb525df81ea7a5a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190610141809.17542-1-linus.walleij@linaro.org>
-In-Reply-To: <20190610141809.17542-1-linus.walleij@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 14:27:12 +0200
-Message-ID: <CACRpkdYrL110Ae-FkVJ83=MStDbeZy63aJQotZg3MdG5+gxrAA@mail.gmail.com>
-Subject: Re: [PATCH] fmc: Delete the FMC subsystem
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Federico Vaga <federico.vaga@cern.ch>,
-        Pat Riehecky <riehecky@fnal.gov>,
-        Alessandro Rubini <rubini@gnudd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 4:18 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+Commit-ID:  619c1baa91b2820eae9ff5d89eb525df81ea7a5a
+Gitweb:     https://git.kernel.org/tip/619c1baa91b2820eae9ff5d89eb525df81ea7a5a
+Author:     Daniel Lezcano <daniel.lezcano@linaro.org>
+AuthorDate: Mon, 27 May 2019 22:55:14 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 12 Jun 2019 10:47:03 +0200
 
-> The FMC subsystem was created in 2012 with the ambition to
-> drive development of drivers for this hardware upstream.
->
-> The current implementation has architectural flaws and would
-> need to be revamped using real hardware to something that can
-> reuse existing kernel abstractions in the subsystems for e.g.
-> I2C, FPGA and GPIO.
->
-> We have concluded that for the mainline kernel it will be
-> better to delete the subsystem and start over with a clean
-> slate when/if an active maintainer steps up.
->
-> For details see:
-> https://lkml.org/lkml/2018/10/29/534
->
-> Suggested-by: Federico Vaga <federico.vaga@cern.ch>
-> Cc: Federico Vaga <federico.vaga@cern.ch>
-> Cc: Pat Riehecky <riehecky@fnal.gov>
-> Cc: Alessandro Rubini <rubini@gnudd.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+genirq/timings: Fix next event index function
 
-After consent from the authors I have queued the removal in
-the GPIO subsystem tree.
+The current code is luckily working with most of the interval samples
+testing but actually it fails to correctly detect pattern repetition
+breaking at the end of the buffer.
 
-Yours,
-Linus Walleij
+Narrowing down the bug has been a real pain because of the pointers,
+so the routine is rewrittne by using indexes instead.
+
+Fixes: bbba0e7c5cda "genirq/timings: Add array suffix computation code"
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: andriy.shevchenko@linux.intel.com
+Link: https://lkml.kernel.org/r/20190527205521.12091-2-daniel.lezcano@linaro.org
+
+---
+ kernel/irq/timings.c | 51 ++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
+index 90c735da15d0..4f5daf3db13b 100644
+--- a/kernel/irq/timings.c
++++ b/kernel/irq/timings.c
+@@ -297,7 +297,16 @@ static u64 irq_timings_ema_new(u64 value, u64 ema_old)
+ 
+ static int irq_timings_next_event_index(int *buffer, size_t len, int period_max)
+ {
+-	int i;
++	int period;
++
++	/*
++	 * Move the beginning pointer to the end minus the max period x 3.
++	 * We are at the point we can begin searching the pattern
++	 */
++	buffer = &buffer[len - (period_max * 3)];
++
++	/* Adjust the length to the maximum allowed period x 3 */
++	len = period_max * 3;
+ 
+ 	/*
+ 	 * The buffer contains the suite of intervals, in a ilog2
+@@ -306,21 +315,45 @@ static int irq_timings_next_event_index(int *buffer, size_t len, int period_max)
+ 	 * period beginning at the end of the buffer. We do that for
+ 	 * each suffix.
+ 	 */
+-	for (i = period_max; i >= PREDICTION_PERIOD_MIN ; i--) {
++	for (period = period_max; period >= PREDICTION_PERIOD_MIN; period--) {
+ 
+-		int *begin = &buffer[len - (i * 3)];
+-		int *ptr = begin;
++		/*
++		 * The first comparison always succeed because the
++		 * suffix is deduced from the first n-period bytes of
++		 * the buffer and we compare the initial suffix with
++		 * itself, so we can skip the first iteration.
++		 */
++		int idx = period;
++		size_t size = period;
+ 
+ 		/*
+ 		 * We look if the suite with period 'i' repeat
+ 		 * itself. If it is truncated at the end, as it
+ 		 * repeats we can use the period to find out the next
+-		 * element.
++		 * element with the modulo.
+ 		 */
+-		while (!memcmp(ptr, begin, i * sizeof(*ptr))) {
+-			ptr += i;
+-			if (ptr >= &buffer[len])
+-				return begin[((i * 3) % i)];
++		while (!memcmp(buffer, &buffer[idx], size * sizeof(int))) {
++
++			/*
++			 * Move the index in a period basis
++			 */
++			idx += size;
++
++			/*
++			 * If this condition is reached, all previous
++			 * memcmp were successful, so the period is
++			 * found.
++			 */
++			if (idx == len)
++				return buffer[len % period];
++
++			/*
++			 * If the remaining elements to compare are
++			 * smaller than the period, readjust the size
++			 * of the comparison for the last iteration.
++			 */
++			if (len - idx < period)
++				size = len - idx;
+ 		}
+ 	}
+ 
