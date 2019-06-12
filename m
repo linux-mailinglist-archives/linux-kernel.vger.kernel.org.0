@@ -2,109 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCBB41B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72A4E41B46
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 06:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfFLEdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 00:33:55 -0400
-Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:54247
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725280AbfFLEdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 00:33:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t1IAPRsyJixiIDkuGc2CrGq3QqlHknmJalCsZSN7AaQ=;
- b=Wsh8eoz/6lrY/omXmsTwPCsz7twTJRVg6BfnsmojBhl7tcRbUjxk+voi6RLE2u7Qd8P11ODuZ7Ol/jcZwbU2QyAAUTaW1P1R2A/zybV43gMB69uWfNXwj8n5hOFYYoXNLs8zbVHh8hQZBANTi1irR0aREZjVIjz6/dDKAjqxFTU=
-Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com (10.169.134.149) by
- VI1PR0501MB2848.eurprd05.prod.outlook.com (10.172.15.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Wed, 12 Jun 2019 04:33:51 +0000
-Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com
- ([fe80::10d7:3b2d:5471:1eb6]) by VI1PR0501MB2271.eurprd05.prod.outlook.com
- ([fe80::10d7:3b2d:5471:1eb6%10]) with mapi id 15.20.1987.010; Wed, 12 Jun
- 2019 04:33:51 +0000
-From:   Parav Pandit <parav@mellanox.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-CC:     Cornelia Huck <cohuck@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "cjia@nvidia.com" <cjia@nvidia.com>
-Subject: RE: [PATCHv6 3/3] vfio/mdev: Synchronize device create/remove with
- parent removal
-Thread-Topic: [PATCHv6 3/3] vfio/mdev: Synchronize device create/remove with
- parent removal
-Thread-Index: AQHVGj4q7+/NzeZHEUWGN8sRZjbLIKaK/b4AgArXHICAAPRRgIAAskuA
-Date:   Wed, 12 Jun 2019 04:33:50 +0000
-Message-ID: <VI1PR0501MB2271E9CD61064F5A552BBFB7D1EC0@VI1PR0501MB2271.eurprd05.prod.outlook.com>
-References: <20190603185658.54517-1-parav@mellanox.com>
-        <20190603185658.54517-4-parav@mellanox.com>
-        <20190604074820.71853cbb.cohuck@redhat.com>
-        <AM4PR0501MB2260589DAFDA6ECF1E8D6D87D1ED0@AM4PR0501MB2260.eurprd05.prod.outlook.com>
- <20190611115517.7a6f9c8f@x1.home>
-In-Reply-To: <20190611115517.7a6f9c8f@x1.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=parav@mellanox.com; 
-x-originating-ip: [49.207.52.114]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f5e5fd51-19a7-454b-f78e-08d6eeef2b50
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0501MB2848;
-x-ms-traffictypediagnostic: VI1PR0501MB2848:
-x-microsoft-antispam-prvs: <VI1PR0501MB284848400E65BC48AAF47F8FD1EC0@VI1PR0501MB2848.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0066D63CE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(396003)(346002)(189003)(199004)(13464003)(256004)(76176011)(14444005)(55016002)(4326008)(68736007)(52536014)(3846002)(55236004)(6116002)(478600001)(6916009)(25786009)(53936002)(102836004)(8936002)(53546011)(14454004)(6506007)(7696005)(99286004)(5660300002)(9686003)(186003)(229853002)(74316002)(7736002)(33656002)(446003)(66066001)(26005)(2906002)(66946007)(73956011)(76116006)(6436002)(66556008)(64756008)(8676002)(54906003)(66446008)(86362001)(305945005)(476003)(6246003)(11346002)(71200400001)(71190400001)(4744005)(66476007)(81166006)(81156014)(486006)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2848;H:VI1PR0501MB2271.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: K7/De5+DIInQJXefBJaF0zzTArGled+A+EedBWy7YrLW0jSvDR2ltefHaNs8dofMRIOu1Q6kGBDtLIGujODHzT8vz5+kCyWborJ7w/0kH8+Yj2cO5yKBqiARhWYFLcdDVSm5H7aLm8vhkyRg0gFIZcs9p59Lpdi0Ju6DZnd5HEq5VRMyzL1rFC5ESxFRsOoqixoTJZ98GAtT5bGISgMqg8GuYRPiQUIDGdfgvUCEjGm4PEoYSNeQCKNJoVbM/SYhgHcUatbKj0tt1DtpCvhTnH3w9/hX1FFVk9M6kfOO0K3Fp1QHZ8EeO2f2E3JkS9ZsrqxRKoAH7FLFaV+FFEcQpGKII8pQhAIyBRuX8UHKGrMoF2YCFXeqZYVYatIYXVHsVdOjnCC1xNREkk8vcuUiJAtzOdiIfgVjGBy8ctd4Gws=
-Content-Type: text/plain; charset="us-ascii"
+        id S1729906AbfFLEmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 00:42:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34972 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbfFLEmY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 00:42:24 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5C4Y7QG151814;
+        Wed, 12 Jun 2019 04:40:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=Dvgzk7NkhDjyOBKbHEmBJhstfiU7BL6wh43neF+ZDkY=;
+ b=eBXhtMqXh8EbDaA5cd4D3GN7ltogiLw0wHdiLQVI1uQwRHXIS3DHjZvRCRaEUcd5xHkz
+ JAM7IoXdBgfIrH7+JznevmT1Mp2ZJRe/trIkEPNY44SRY43R3Tshf1Qe1hyOJUnJK1St
+ Y4nYDWdh19ikRfbs0EWiuUo/w/RPjr3A4/jMTbNPYc3SFuyCfx/n3r+qbGS/kGvhALLL
+ Bs4Wm6qJ35n3iYR4qvcSbs4Jiqc/V6TnjFt/17JJfEkRJ0nDaXI695/drkHljkQrW/wp
+ 3PPttF8sqdA/OqPKJZW0ZYXnj4t1CeN3cMmitwxQsx1iORublrBr082JGosrJPHMP7H7 2w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2t05nqrvse-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 04:40:51 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5C4bIUd020268;
+        Wed, 12 Jun 2019 04:38:50 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2t024us0pr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 04:38:50 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5C4cVCg022576;
+        Wed, 12 Jun 2019 04:38:31 GMT
+Received: from [10.39.217.163] (/10.39.217.163)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Jun 2019 21:38:30 -0700
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.2 \(3259\))
+Subject: Re: [PATCH v2 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+From:   Alex Kogan <alex.kogan@oracle.com>
+In-Reply-To: <cc3eee8c-5212-7af5-c932-897ab8f3f8bf@huawei.com>
+Date:   Wed, 12 Jun 2019 00:38:29 -0400
+Cc:     linux@armlinux.org.uk, Peter Zijlstra <peterz@infradead.org>,
+        mingo@redhat.com, will.deacon@arm.com, arnd@arndb.de,
+        Waiman Long <longman@redhat.com>, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, dave.dice@oracle.com,
+        Rahul Yadav <rahul.x.yadav@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5e5fd51-19a7-454b-f78e-08d6eeef2b50
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2019 04:33:51.0054
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: parav@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2848
+Message-Id: <54241445-458C-4AE2-840B-6DFCCD410399@oracle.com>
+References: <20190329152006.110370-1-alex.kogan@oracle.com>
+ <20190329152006.110370-4-alex.kogan@oracle.com>
+ <cc3eee8c-5212-7af5-c932-897ab8f3f8bf@huawei.com>
+To:     "liwei (GF)" <liwei391@huawei.com>
+X-Mailer: Apple Mail (2.3259)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9285 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906120030
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9285 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906120030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Wei.
+
+> On Jun 11, 2019, at 12:22 AM, liwei (GF) <liwei391@huawei.com> wrote:
+>=20
+> Hi Alex,
+>=20
+> On 2019/3/29 23:20, Alex Kogan wrote:
+>> In CNA, spinning threads are organized in two queues, a main queue =
+for
+>> threads running on the same node as the current lock holder, and a
+>> secondary queue for threads running on other nodes. At the unlock =
+time,
+>> the lock holder scans the main queue looking for a thread running on
+>> the same node. If found (call it thread T), all threads in the main =
+queue
+>> between the current lock holder and T are moved to the end of the
+>> secondary queue, and the lock is passed to T. If such T is not found, =
+the
+>> lock is passed to the first node in the secondary queue. Finally, if =
+the
+>> secondary queue is empty, the lock is passed to the next thread in =
+the
+>> main queue. For more details, see =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__arxiv.org_abs_1810.=
+05600&d=3DDwICbg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3DHvhk3=
+F4omdCk-GE1PTOm3Kn0A7ApWOZ2aZLTuVxFK4k&m=3DU7mfTbYj1r2Te2BBUUNbVrRPuTa_ujl=
+pR4GZfUsrGTM&s=3DDw4O1EniF-nde4fp6RA9ISlSMOjWuqeR9OS1G0iauj0&e=3D.
+>>=20
+>> Note that this variant of CNA may introduce starvation by =
+continuously
+>> passing the lock to threads running on the same node. This issue
+>> will be addressed later in the series.
+>>=20
+>> Enabling CNA is controlled via a new configuration option
+>> (NUMA_AWARE_SPINLOCKS), which is enabled by default if NUMA is =
+enabled.
+>>=20
+>> Signed-off-by: Alex Kogan <alex.kogan@oracle.com>
+>> Reviewed-by: Steve Sistare <steven.sistare@oracle.com>
+>> ---
+>> arch/x86/Kconfig                      |  14 +++
+>> include/asm-generic/qspinlock_types.h |  13 +++
+>> kernel/locking/mcs_spinlock.h         |  10 ++
+>> kernel/locking/qspinlock.c            |  29 +++++-
+>> kernel/locking/qspinlock_cna.h        | 173 =
+++++++++++++++++++++++++++++++++++
+>> 5 files changed, 236 insertions(+), 3 deletions(-)
+>> create mode 100644 kernel/locking/qspinlock_cna.h
+>>=20
+> (SNIP)
+>> +
+>> +static __always_inline int get_node_index(struct mcs_spinlock *node)
+>> +{
+>> +	return decode_count(node->node_and_count++);
+> When nesting level is > 4, it won't return a index >=3D 4 here and the =
+numa node number
+> is changed by mistake. It will go into a wrong way instead of the =
+following branch.
+>=20
+>=20
+> 	/*
+> 	 * 4 nodes are allocated based on the assumption that there will
+> 	 * not be nested NMIs taking spinlocks. That may not be true in
+> 	 * some architectures even though the chance of needing more =
+than
+> 	 * 4 nodes will still be extremely unlikely. When that happens,
+> 	 * we fall back to spinning on the lock directly without using
+> 	 * any MCS node. This is not the most elegant solution, but is
+> 	 * simple enough.
+> 	 */
+> 	if (unlikely(idx >=3D MAX_NODES)) {
+> 		while (!queued_spin_trylock(lock))
+> 			cpu_relax();
+> 		goto release;
+> 	}
+Good point.
+This patch does not handle count overflows gracefully.
+It can be easily fixed by allocating more bits for the count =E2=80=94 =
+we don=E2=80=99t really need 30 bits for #NUMA nodes.
+
+However, I am working on a new revision of the patch, in which the cna =
+node encapsulates the mcs node (following Peter=E2=80=99s suggestion and =
+similarly to pv_node).
+With that approach, this issue is gone.
+
+Best regards,
+=E2=80=94 Alex
 
 
-> -----Original Message-----
-> From: Alex Williamson <alex.williamson@redhat.com>
-> Sent: Tuesday, June 11, 2019 11:25 PM
-> To: Parav Pandit <parav@mellanox.com>
-> Cc: Cornelia Huck <cohuck@redhat.com>; kvm@vger.kernel.org; linux-
-> kernel@vger.kernel.org; kwankhede@nvidia.com; cjia@nvidia.com
-> Subject: Re: [PATCHv6 3/3] vfio/mdev: Synchronize device create/remove
-> with parent removal
->=20
-> On Tue, 11 Jun 2019 03:22:37 +0000
-> Parav Pandit <parav@mellanox.com> wrote:
->=20
-> > Hi Alex,
-> >
-> [snip]
->=20
-> > Now that we have all 3 patches reviewed and comments addressed, if
-> > there are no more comments, can you please take it forward?
->=20
-> Yep, I put it in a branch rolled into linux-next for upstream testing las=
-t week
-> and just sent a pull request to Linus today.  Thanks,
->=20
-Oh ok. Great. Thanks Alex.
+
