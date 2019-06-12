@@ -2,113 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F1141AD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EADC741AD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 05:52:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407635AbfFLDsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 23:48:23 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52586 "EHLO mail.skyhub.de"
+        id S2407662AbfFLDwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 23:52:20 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59546 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407061AbfFLDsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 23:48:22 -0400
-Received: from zn.tnic (p200300EC2F0A680098854F45E2A0A47F.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:6800:9885:4f45:e2a0:a47f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B4D1C1EC01AD;
-        Wed, 12 Jun 2019 05:48:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560311300;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=J1N1vI6eyDVtjlL+ZshOlH/0wAtVw2YVqy7wYoH0usQ=;
-        b=QukZpvZs6Q/q1XtjMMV2DJy8T8vdHnSMai/7i7ER9R2aJv1H0B+Durxvgx90070ANE8Ckk
-        RLdLhGXAFm1/6cbSsR3YiQ/slQq9Gp34Q0Fm/sva9NXybvOZaWTqEah1RuxY8ctl6Ny5wK
-        R+B8a35EGnwK+rKVfQiT5FBVW1u1aPY=
-Date:   Wed, 12 Jun 2019 05:48:14 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        James Morse <james.morse@arm.com>
-Cc:     "Hawa, Hanna" <hhhawa@amazon.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Shenhar, Talel" <talel@amazon.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chocron, Jonathan" <jonnyc@amazon.com>,
-        "Krupnik, Ronen" <ronenk@amazon.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "Hanoch, Uri" <hanochu@amazon.com>
-Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
-Message-ID: <20190612034813.GA32652@zn.tnic>
-References: <bfbc12fb68eea9d8d4cc257c213393fd4e92c33a.camel@amazon.com>
- <20190531051400.GA2275@cz.tnic>
- <ce01a2bc-7973-5978-b033-a6bdc61b9d4b@amazon.com>
- <32431fa2-2285-6c41-ce32-09630205bb54@arm.com>
- <9a2aaf4a9545ed30568a0613e64bc3f57f047799.camel@kernel.crashing.org>
- <20190608090556.GA32464@zn.tnic>
- <1ae5e7a3464f9d8e16b112cd371957ea20472864.camel@kernel.crashing.org>
- <68446361fd1e742b284555b96b638fe6b5218b8b.camel@kernel.crashing.org>
- <20190611115651.GD31772@zn.tnic>
- <6df5a17bb1c900dc69b991171e55632f40d9426f.camel@kernel.crashing.org>
+        id S2407047AbfFLDwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 23:52:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 20:52:19 -0700
+X-ExtLoop1: 1
+Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
+  by orsmga005.jf.intel.com with ESMTP; 11 Jun 2019 20:52:15 -0700
+Date:   Wed, 12 Jun 2019 11:52:29 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Willem de Bruijn <willemb@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, "lkp@01.org" <lkp@01.org>,
+        "David S. Miller" <davem@davemloft.net>, ying.huang@intel.com
+Subject: Re: [LKP] [tcp] 8b27dae5a2: netperf.Throughput_Mbps -25.7% regression
+Message-ID: <20190612035133.GA18313@shbuild999.sh.intel.com>
+References: <20190403063436.GG20952@shao2-debian>
+ <20190530103048.hfld4t4m37jsg4yo@shbuild888>
+ <CANn89iL4TYBYVnRhzVAH8UXSptStnYkZ+Rq3swzsMWngRJmGCA@mail.gmail.com>
+ <20190530152314.ise5ycz6sdwfygph@shbuild888>
+ <20190604100735.s2g3tc35ofybimek@shbuild888>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6df5a17bb1c900dc69b991171e55632f40d9426f.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190604100735.s2g3tc35ofybimek@shbuild888>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 08:25:52AM +1000, Benjamin Herrenschmidt wrote:
-> Yes, we would be in a world of pain already if tracepoints couldn't
-> handle concurrency :-)
+On Tue, Jun 04, 2019 at 06:07:35PM +0800, Feng Tang wrote:
+> On Thu, May 30, 2019 at 11:23:14PM +0800, Feng Tang wrote:
+> > Hi Eric,
+> > 
+> > On Thu, May 30, 2019 at 05:21:40AM -0700, Eric Dumazet wrote:
+> > > On Thu, May 30, 2019 at 3:31 AM Feng Tang <feng.tang@intel.com> wrote:
+> > > >
+> > > > On Wed, Apr 03, 2019 at 02:34:36PM +0800, kernel test robot wrote:
+> > > > > Greeting,
+> > > > >
+> > > > > FYI, we noticed a -25.7% regression of netperf.Throughput_Mbps due to commit:
+> > > > >
+> > > > >
+> > > > > commit: 8b27dae5a2e89a61c46c6dbc76c040c0e6d0ed4c ("tcp: add one skb cache for rx")
+> > > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > > >
+> > > > Hi Eric,
+> > > >
+> > > > Could you help to check this? thanks,
+> > > >
+> > > 
+> > > Hmmm... patch is old and had some bugs that have been fixed.
+> > > 
+> > > What numbers do you have with more recent kernels ?
+> > 
+> > 
+> > I just run the test  with 5.2-rc2, and the regression is still there.
+> 
+> Hi Eric,
+> 
+> Any hint on this?
+> 
+> >From the perf data, the spinlock contention has an obvious increase:
+> 
+> 9.28            +7.6       16.91        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.free_one_page.__free_pages_ok.___pskb_trim
+> 18.55           +8.6       27.14        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock_irqsave.get_page_from_freelist.__alloc_pages_nodemask.skb_page_frag_refill
 
-Right, lockless buffer and the whole shebang :)
+Hi Eric,
 
-> Sort-of... I still don't see a race in what we propose but I might be
-> missing something subtle. We are talking about two drivers for two
-> different IP blocks updating different counters etc...
+Any thoughts?
 
-If you do only *that* you should be fine. That should technically be ok.
+Actually I did some further check. The increased lock contention
+comes from the mm zone lock for page alloc/free. I did an 
+experiment by changing the SKB_FRAG_PAGE_ORDER from 32K to 64K,
+the lock contention is dramatically reduced, and the throughput
+got some recovery (10% ~ 15% gain) depending on HW platform, but
+can't fully recover the -25.7% loss. Hope this info helps.
 
-I still think, though, that the sensible thing to do is have one
-platform driver which concentrates all RAS functionality. It is the
-more sensible design and takes care of potential EDAC shortcomings and
-the need to communicate between the different logging functionality,
-as in, for example, "I had so many errors, lemme go and increase DRAM
-scrubber frequency." For example. And all the other advantages of having
-everything in a single driver.
+Thanks,
+Feng
 
-And x86 already does that - we even have a single driver for all AMD
-platforms - amd64_edac. Intel has a couple but there's still a lot of
-sharing.
-
-But apparently ARM folks want to have one driver per IP block. And we
-have this discussion each time a new vendor decides to upstream its
-driver. And there's no shortage of vendors in ARM-land trying to do
-that.
-
-James and I have tried to come up with a nice scheme to make that work
-on ARM and he has an example prototype here:
-
-http://www.linux-arm.org/git?p=linux-jm.git;a=shortlog;h=refs/heads/edac_dummy/v1
-
-to show how it could look like.
-
-But I'm slowly growing a serious aversion against having this very same
-discussion each time an ARM vendor sends a driver. And that happens
-pretty often nowadays.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> 
+> And for commit 8b27dae5a2 ("tcp: add one skb cache for rx"), IIUC, it
+> is not a real cache like the "tx skb cache" patch, and kind of a
+> delayed freeing.
+> 
+> Thanks,
+> Feng
+> 
+>  
