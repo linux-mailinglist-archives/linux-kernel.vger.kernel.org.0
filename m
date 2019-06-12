@@ -2,119 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FE4D41BC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 07:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CED41BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 07:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbfFLF4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 01:56:05 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:34952 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730695AbfFLF4B (ORCPT
+        id S1730697AbfFLFzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 01:55:31 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:60554 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfFLFzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 01:56:01 -0400
-X-UUID: 64847a9f3a504d1c88cde0d4f142c093-20190612
-X-UUID: 64847a9f3a504d1c88cde0d4f142c093-20190612
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1279344623; Wed, 12 Jun 2019 13:55:51 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 12 Jun 2019 13:55:49 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 12 Jun 2019 13:55:48 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Jumin Li <jumin.li@mediatek.com>
-Subject: [PATCH 5/5] usb: xhci-mtk: add an optional xhci_ck clock
-Date:   Wed, 12 Jun 2019 13:55:21 +0800
-Message-ID: <41bb0198ef2a4059685a8736b54c88487864a517.1560246390.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <5e06482a0be15476c7b5825f155accf98275afa8.1560246390.git.chunfeng.yun@mediatek.com>
-References: <5e06482a0be15476c7b5825f155accf98275afa8.1560246390.git.chunfeng.yun@mediatek.com>
+        Wed, 12 Jun 2019 01:55:31 -0400
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23990398AbfFLFz2EBmjF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
+        Wed, 12 Jun 2019 07:55:28 +0200
+Date:   Wed, 12 Jun 2019 06:55:28 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+cc:     Alexandre Oliva <lxoliva@fsfla.org>, Tom Li <tomli@tomli.me>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] On the Current Troubles of Mainlining Loongson Platform
+ Drivers
+In-Reply-To: <20190610214938.GB7147@darkstar.musicnaut.iki.fi>
+Message-ID: <alpine.LFD.2.21.1906102253080.19418@eddie.linux-mips.org>
+References: <20190211230614.GB22242@darkstar.musicnaut.iki.fi> <orva1jj9ht.fsf@lxoliva.fsfla.org> <20190217235951.GA20700@darkstar.musicnaut.iki.fi> <orpnrpj2rk.fsf@lxoliva.fsfla.org> <alpine.LFD.2.21.1902180227090.15915@eddie.linux-mips.org>
+ <orlg1ryyo2.fsf@lxoliva.fsfla.org> <alpine.LFD.2.21.1903071744560.7728@eddie.linux-mips.org> <orwolaw5u1.fsf@lxoliva.fsfla.org> <alpine.LFD.2.21.1903082347330.31648@eddie.linux-mips.org> <or7ead4lq3.fsf@lxoliva.fsfla.org>
+ <20190610214938.GB7147@darkstar.musicnaut.iki.fi>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some SoCs may have an optional clock xhci_ck (125M or 200M), it
-usually uses the same PLL as sys_ck, so support it.
+On Tue, 11 Jun 2019, Aaro Koskinen wrote:
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
- drivers/usb/host/xhci-mtk.c | 13 +++++++++++++
- drivers/usb/host/xhci-mtk.h |  1 +
- 2 files changed, 14 insertions(+)
+> However, with your patch the "nobody cared" is never reached so all is
+> good. I tried 10 boots with the patch and all were successful. Without
+> the patch 8 out of 10 failed with the "nobody cared" warning.
 
-diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-index 026fe18972d3..b18a6baef204 100644
---- a/drivers/usb/host/xhci-mtk.c
-+++ b/drivers/usb/host/xhci-mtk.c
-@@ -216,6 +216,10 @@ static int xhci_mtk_clks_get(struct xhci_hcd_mtk *mtk)
- 		return PTR_ERR(mtk->sys_clk);
- 	}
- 
-+	mtk->xhci_clk = devm_clk_get_optional(dev, "xhci_ck");
-+	if (IS_ERR(mtk->xhci_clk))
-+		return PTR_ERR(mtk->xhci_clk);
-+
- 	mtk->ref_clk = devm_clk_get_optional(dev, "ref_ck");
- 	if (IS_ERR(mtk->ref_clk))
- 		return PTR_ERR(mtk->ref_clk);
-@@ -244,6 +248,12 @@ static int xhci_mtk_clks_enable(struct xhci_hcd_mtk *mtk)
- 		goto sys_clk_err;
- 	}
- 
-+	ret = clk_prepare_enable(mtk->xhci_clk);
-+	if (ret) {
-+		dev_err(mtk->dev, "failed to enable xhci_clk\n");
-+		goto xhci_clk_err;
-+	}
-+
- 	ret = clk_prepare_enable(mtk->mcu_clk);
- 	if (ret) {
- 		dev_err(mtk->dev, "failed to enable mcu_clk\n");
-@@ -261,6 +271,8 @@ static int xhci_mtk_clks_enable(struct xhci_hcd_mtk *mtk)
- dma_clk_err:
- 	clk_disable_unprepare(mtk->mcu_clk);
- mcu_clk_err:
-+	clk_disable_unprepare(mtk->xhci_clk);
-+xhci_clk_err:
- 	clk_disable_unprepare(mtk->sys_clk);
- sys_clk_err:
- 	clk_disable_unprepare(mtk->ref_clk);
-@@ -272,6 +284,7 @@ static void xhci_mtk_clks_disable(struct xhci_hcd_mtk *mtk)
- {
- 	clk_disable_unprepare(mtk->dma_clk);
- 	clk_disable_unprepare(mtk->mcu_clk);
-+	clk_disable_unprepare(mtk->xhci_clk);
- 	clk_disable_unprepare(mtk->sys_clk);
- 	clk_disable_unprepare(mtk->ref_clk);
- }
-diff --git a/drivers/usb/host/xhci-mtk.h b/drivers/usb/host/xhci-mtk.h
-index 8be8c5f7ff62..5ac458b7d2e0 100644
---- a/drivers/usb/host/xhci-mtk.h
-+++ b/drivers/usb/host/xhci-mtk.h
-@@ -139,6 +139,7 @@ struct xhci_hcd_mtk {
- 	struct regulator *vusb33;
- 	struct regulator *vbus;
- 	struct clk *sys_clk;	/* sys and mac clock */
-+	struct clk *xhci_clk;
- 	struct clk *ref_clk;
- 	struct clk *mcu_clk;
- 	struct clk *dma_clk;
--- 
-2.21.0
+ I wouldn't call it "good", just less obvious or painful.  This is still 
+causing wasted CPU cycles that are used for taking the phantom interrupts.
 
+ There is clearly a completion barrier missing somewhere that causes the 
+interrupt request to linger beyond the point interrupts are reenabled at 
+the CPU.
+
+ One way to attempt to narrow it down might be taking a backtrace from 
+where IRQ 14 is found to be spurious.  This would indicate the offending 
+interrupt unmask action.  E.g. I see no explicit completion barrier 
+between the final `outb' in `mask_and_ack_8259A' and the following call to 
+`raw_spin_unlock_irqrestore', which are obviously otherwise unordered WRT 
+each other (because `outb' is I/O or MMIO and `raw_spin_unlock_irqrestore' 
+is contained within the CPU on UP).  I can see provisions however for 
+issuing an architecture-specific barrier in `do_raw_spin_unlock', which is 
+the workhorse for `raw_spin_unlock_irqrestore', so maybe this is the place 
+to look into?
+
+ Also how's IRQ 14 registered as indicated by /proc/interrupts?
+
+  Maciej
