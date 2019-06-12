@@ -2,99 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F05BC4264B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E4842654
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439153AbfFLMrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:47:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39702 "EHLO mail.kernel.org"
+        id S2439186AbfFLMrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:47:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52426 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439095AbfFLMrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:47:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E31E420896;
-        Wed, 12 Jun 2019 12:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560343635;
-        bh=0QvY7pijT10DSAiLLHjqi4qCfFoPRdRX7HMvtEV5wN4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NjpWAxSkI/pC+ujjMnp6AHoaiEDUP2ckPWYQe7N+Ye0p75V426/yNLif79folKA3C
-         HR75eVjdFXYhaAtI8iQSosERcI5DyvZmF+uF5GCezLg0anhDqCrz/MseAa0BemOJa0
-         yOBIeyT5c8nJCaHTylDYm6XRndIeLZjsnCRD5v+Q=
-Date:   Wed, 12 Jun 2019 14:47:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     dvhart@infradead.org, andy@infradead.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] platform: x86: dell-laptop: no need to check return
- value of debugfs_create functions
-Message-ID: <20190612124713.GA27788@kroah.com>
-References: <20190612121258.19535-1-gregkh@linuxfoundation.org>
- <20190612121258.19535-3-gregkh@linuxfoundation.org>
- <20190612122105.miyyfkmae24kddwt@pali>
- <20190612123604.GB25718@kroah.com>
- <20190612124411.nbjslftjtc72a25v@pali>
+        id S2439140AbfFLMrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 08:47:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 05:47:32 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by orsmga003.jf.intel.com with ESMTP; 12 Jun 2019 05:47:31 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hb2f4-0000uZ-LR; Wed, 12 Jun 2019 15:47:30 +0300
+Date:   Wed, 12 Jun 2019 15:47:30 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] MAINAINERS: Swap words in INTEL PMIC MULTIFUNCTION
+ DEVICE DRIVERS
+Message-ID: <20190612124730.GH9224@smile.fi.intel.com>
+References: <20190211105710.37800-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190612124411.nbjslftjtc72a25v@pali>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190211105710.37800-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 02:44:11PM +0200, Pali Rohár wrote:
-> On Wednesday 12 June 2019 14:36:04 Greg Kroah-Hartman wrote:
-> > On Wed, Jun 12, 2019 at 02:21:05PM +0200, Pali Rohár wrote:
-> > > On Wednesday 12 June 2019 14:12:53 Greg Kroah-Hartman wrote:
-> > > > When calling debugfs functions, there is no need to ever check the
-> > > > return value.  The function can work or not, but the code logic should
-> > > > never do something different based on this.
-> > > > 
-> > > > Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-> > > > Cc: "Pali Rohár" <pali.rohar@gmail.com>
-> > > > Cc: Darren Hart <dvhart@infradead.org>
-> > > > Cc: Andy Shevchenko <andy@infradead.org>
-> > > > Cc: platform-driver-x86@vger.kernel.org
-> > > > Cc: linux-kernel@vger.kernel.org
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > ---
-> > > >  drivers/platform/x86/dell-laptop.c | 5 ++---
-> > > >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-> > > > index a561f653cf13..94a2f259031c 100644
-> > > > --- a/drivers/platform/x86/dell-laptop.c
-> > > > +++ b/drivers/platform/x86/dell-laptop.c
-> > > > @@ -2176,9 +2176,8 @@ static int __init dell_init(void)
-> > > >  	kbd_led_init(&platform_device->dev);
-> > > >  
-> > > >  	dell_laptop_dir = debugfs_create_dir("dell_laptop", NULL);
-> > > > -	if (dell_laptop_dir != NULL)
-> > > > -		debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
-> > > > -				    &dell_debugfs_fops);
-> > > > +	debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
-> > > > +			    &dell_debugfs_fops);
-> > > 
-> > > Hi!
-> > > 
-> > > So... debugfs_create_dir() can return NULL, right?
-> > 
-> > Nope.
+On Mon, Feb 11, 2019 at 12:57:10PM +0200, Andy Shevchenko wrote:
+> Swap PMIC and MULTIFUNCTION words in the title to:
+> - show that this is about Intel PMICs
+> - keep MAINTAINERS properly sorted
 > 
-> Yea, now I see implementation. It does not return NULL on error, but
-> rather ERR_PTR.
-> 
-> So dell_laptop_dir is always not-NULL. And that check was wrong.
-> 
-> You can add my
-> Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
 
-Thanks!
+Any comment on this?
 
-greg k-h
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9919840d54cd..918795d5eea6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7789,7 +7789,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git
+>  F:	drivers/gpio/gpio-*cove.c
+>  F:	drivers/gpio/gpio-msic.c
+>  
+> -INTEL MULTIFUNCTION PMIC DEVICE DRIVERS
+> +INTEL PMIC MULTIFUNCTION DEVICE DRIVERS
+>  R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>  S:	Maintained
+>  F:	drivers/mfd/intel_msic.c
+> -- 
+> 2.20.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
