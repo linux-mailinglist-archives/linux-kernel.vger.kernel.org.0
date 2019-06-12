@@ -2,127 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53207422AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B08D4422B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 12:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408936AbfFLKis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 06:38:48 -0400
-Received: from mout.web.de ([212.227.17.12]:35415 "EHLO mout.web.de"
+        id S2438011AbfFLKjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 06:39:20 -0400
+Received: from foss.arm.com ([217.140.110.172]:49826 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407474AbfFLKis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:38:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1560335920;
-        bh=w7Zapu97qEenwfGP8VjODN6jV86L8V7ffF+//76IatM=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=pkZ3HlONe4+40eHueQucv6Xeqc1A/rYbNkDUO3XhfCvN/rCGD8DODqaj7aT2ayAzG
-         SKgDsJ/kn16PZRo9/AWahOg2zy5pLqDUyJj9rVQNFzGF4vzA8U3A44+GJaZMGawj0r
-         7hih7dCuoPuVICCCQnKvH6N+wEDl4DSUjGGGcMhQ=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.43.108] ([89.15.237.104]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MZlZK-1hwOLh1sdC-00LXk3; Wed, 12
- Jun 2019 12:38:39 +0200
-Subject: Re: [PATCH] Revert "usb: core: remove local_irq_save() around
- ->complete() handler"
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20190531215340.24539-1-smoch@web.de>
- <20190531220535.GA16603@kroah.com>
- <6c03445c-3607-9f33-afee-94613f8d6978@web.de>
- <20190601105008.zfqrtu6krw4mhisb@linutronix.de>
- <20190601110247.v4lzwvqhuwrjrotb@linutronix.de>
-From:   Soeren Moch <smoch@web.de>
-Message-ID: <fb64b378-57a1-19f4-0fd2-1689fc3d8540@web.de>
-Date:   Wed, 12 Jun 2019 12:38:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2437055AbfFLKjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:39:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29FDA28;
+        Wed, 12 Jun 2019 03:39:19 -0700 (PDT)
+Received: from C02TF0J2HF1T.local (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0039F3F246;
+        Wed, 12 Jun 2019 03:40:38 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 11:38:49 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v16 15/16] vfio/type1, arm64: untag user pointers in
+ vaddr_get_pfn
+Message-ID: <20190612103848.GA28951@C02TF0J2HF1T.local>
+References: <cover.1559580831.git.andreyknvl@google.com>
+ <c529e1eeea7700beff197c4456da6a882ce2efb7.1559580831.git.andreyknvl@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190601110247.v4lzwvqhuwrjrotb@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ITNzeUPAh3LVNjomSsgP/7ESekNXFtNIcYrM8VUzfhsiM22HdCO
- CWmklggNCUM0Uf4ZW2ZKTToWeTInSyP6JbGKafvWIP6EWHdDZ71Pic8v2sQXSlSz0jBYdKl
- SGZjq3HugqgJi0zhQl0zw3gbMgJkoqf1rUw4h/RS4cNzv4oVRvhzG6IYNcFsJbSKrM9sDd2
- GexEeIchvU8IqpVb1PH6Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mKTjyQwiRoo=:jxymFFKr2qEOQchX/kGA8F
- 3Vb44yIm2uxAibNMScG0Q39c+yZMRO6Ly82yoN7ZYkQUTw1ddGd0AOeD1R93IgHeBuA3LPpy2
- S3iibh9PXMiC6laGMQJwPtB+A8OSQ/+H0w/IoxCB7NP8tocZP/qSvTcismqjjnagJi1npxKuM
- 1iNNDnt66/53JrWALQqNghnE8FJKBojKSkjHkGzlcL3nAhjwCdshD5J1fnd0uYqsxZIcUPIh4
- cW8KC0rxuNegknB+zqQ6pSqfGO/jV8HKJhYJ2vgvMVVmhIBb2emrR0IZVUT02TwxDebHRlDC/
- GTVLvx2Fi2PVW6EZ5CQUAhHbdNGLU6uzkl41o9TiiukD7TtubMMD8sraRwHT3t3bb6GhDeOjw
- OplazHsqxLjy0BLOD+mHKUTVhGvjtWrE4YKBzLnYowpcI/gkuNGgx5tbUQRnPmyKDLKy0Cxjg
- IbZr5ePmwgpPQWMc0mbUf5zp2pmDOYlqrjD+D2CJUKBAnfKotceym9fPSx5lXW8RRU3uXczmN
- LK9bSO2wcomdNUp+YB/wGDVc/c6hrHMAymlMNYQ5FZCVgQtJ7y5YgWN8hj/dufE/b3qsDM01f
- /s1Bsh3WM3EWSyytA1I9Qqap9KUnV+lpV1nAdGfYsDmkx1QOjZ6lrvV1SBW/wfGQvpCHPnxMT
- mUmx6LBPAAK2SS/6jNghnknFFXKCIwmDTvQUVOf5K5wP/piVV4sjyqWRV6O3stnyOPxcsuuyx
- VvaasqNBwSmDoO3o9SMlaYIMrtZso+46ZshdYIByDkmxlioKlNylR3ClB5F0mYQeCYrFe02uk
- /ji5C80f7yyJKg5Ul0cAYhNCv9PjD+K1rxsmPewnnISdhDP8DZ60omTmzmeOaeib16XBiym4o
- t2g62ePBcjlcdTYku3h6tYD0oslZl7BdCDEN1sdEmMbrinwVU1BYZ9ahU9PiMufHEmiZEGg54
- VFcLhy9Yh5+ruw1LmrwvUJsa/Gpq+JbVYvzfhZJyiv/SARdiciy9NAssRSZdLhEe2WT6KEX1e
- 5A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c529e1eeea7700beff197c4456da6a882ce2efb7.1559580831.git.andreyknvl@google.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 03, 2019 at 06:55:17PM +0200, Andrey Konovalov wrote:
+> This patch is a part of a series that extends arm64 kernel ABI to allow to
+> pass tagged user pointers (with the top byte set to something else other
+> than 0x00) as syscall arguments.
+> 
+> vaddr_get_pfn() uses provided user pointers for vma lookups, which can
+> only by done with untagged pointers.
+> 
+> Untag user pointers in this function.
+> 
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 
-
-On 01.06.19 13:02, Sebastian Andrzej Siewior wrote:
-> On 2019-06-01 12:50:08 [+0200], To Soeren Moch wrote:
->> I will look into this.
->
-> nothing obvious. If there is really blocken lock, could you please
-> enable lockdep
-> |CONFIG_LOCK_DEBUGGING_SUPPORT=3Dy
-> |CONFIG_PROVE_LOCKING=3Dy
-> |# CONFIG_LOCK_STAT is not set
-> |CONFIG_DEBUG_RT_MUTEXES=3Dy
-> |CONFIG_DEBUG_SPINLOCK=3Dy
-> |CONFIG_DEBUG_MUTEXES=3Dy
-> |CONFIG_DEBUG_WW_MUTEX_SLOWPATH=3Dy
-> |CONFIG_DEBUG_RWSEMS=3Dy
-> |CONFIG_DEBUG_LOCK_ALLOC=3Dy
-> |CONFIG_LOCKDEP=3Dy
-> |# CONFIG_DEBUG_LOCKDEP is not set
-> |CONFIG_DEBUG_ATOMIC_SLEEP=3Dy
->
-> and send me the splat that lockdep will report?
->
-
-Nothing interesting:
-
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.000000] Linux version 5.1.0 (root@matrix) (gcc version 7.4.0
-(Debian 7.4.0-6)) #6 SMP PREEMPT Wed Jun 12 11:28:41 CEST 2019
-[    0.000000] CPU: ARMv7 Processor [412fc09a] revision 10 (ARMv7),
-cr=3D10c5387d
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
-instruction cache
-[    0.000000] OF: fdt: Machine model: TBS2910 Matrix ARM mini PC
-...
-[    0.000000] rcu: Preemptible hierarchical RCU implementation.
-[    0.000000] rcu:     RCU lockdep checking is enabled.
-...
-[    0.003546] Lock dependency validator: Copyright (c) 2006 Red Hat,
-Inc., Ingo Molnar
-[    0.003657] ... MAX_LOCKDEP_SUBCLASSES:  8
-[    0.003713] ... MAX_LOCK_DEPTH:          48
-[    0.003767] ... MAX_LOCKDEP_KEYS:        8191
-[    0.003821] ... CLASSHASH_SIZE:          4096
-[    0.003876] ... MAX_LOCKDEP_ENTRIES:     32768
-[    0.003931] ... MAX_LOCKDEP_CHAINS:      65536
-[    0.003986] ... CHAINHASH_SIZE:          32768
-[    0.004042]  memory used by lock dependency info: 5243 kB
-
-Nothing else.
-
-When stopping hostapd after it hangs:
-[  903.504475] ieee80211 phy0: rt2x00queue_flush_queue: Warning - Queue
-14 failed to flush
-
-Soeren
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
