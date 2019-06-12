@@ -2,82 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 083B841E6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F1941E46
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436720AbfFLH5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:57:09 -0400
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:36289 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436684AbfFLH5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:57:09 -0400
-Received: by mail-lj1-f170.google.com with SMTP id i21so14231803ljj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AXA5+gru4alxNYEnUDfWlNEf8IzRnyf79cJH1pZ+38A=;
-        b=kyXw3a62hPc8udfYOuMAFQYc8Fccbdh+faAsJI+P80Pmxk1yzP+yGX3iYvLw6rKGmd
-         Hq5U0d+axsu6EW2le0gAyQbKtW9kf/Ivndl6VImX75cPGL0Fcs+i59EUswbIX/VS2Xhe
-         k76atnR56cJ9m+Gc7s2SUb6x7P9Xlwnk6yWRJ6MECQ6KIz0SlTN9IRrgopyv/Fh0563I
-         S0qhrdQi0Ej8Uh/vBVyPDklESV3Z2hMmmSJoYCP9VMLofhElWe2ZL1d5PDyzXiWkUKIM
-         83GyzWzjMVmFDkjFDTb9Ku1+kYkQvONmgcpVTlTkjGsljU7iz7h6TkDrpbNNxmcilk0v
-         2zzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AXA5+gru4alxNYEnUDfWlNEf8IzRnyf79cJH1pZ+38A=;
-        b=qCyOjXwyIwkfI1afcsLpaAchwM1AHStve2Kb4NAL4cfiEBGABZ29wmO//CP+TNgepL
-         dwZ/t2l5AVNxnBvCXZw+ywHLp1ST371QPfGmfEtpYx3KTm8a/F7R6PRyLwYeSyWGL2G3
-         ug11FRzZLvQATYTyYv+8PCNgYtcT0MWXE/dQhMFrfEAjvsBwVjAN8BorvC3rgyl9wq8Z
-         x8p0fL1SnIqdMurG2hboG1WolCrpmqnVi9ANm0tkYpcY12fOmASim0cy/ZKQ2+1ekvWo
-         sb4vTs8GcK018/djNPxWD364D5HBdg7vudresse3EzOLuEp9vcYzog1IHjZ2QaTg0M9X
-         IcrA==
-X-Gm-Message-State: APjAAAU6UWnzQ4PX5Z6JjDaP87TEisvUXR0URRKutR4E3FJkeN9Ap1/Q
-        F46IWBQJjVlbDt+Ocj9GhDWR1y7YZfk0YStGK+pA5w==
-X-Google-Smtp-Source: APXvYqyB3zRR+puZuMgastRuk2Y+CVJpnyH92tVnnNrgusklC+mEKSu4OgiVQhvUTB626b3d5lUUV2RAlvRSInwCGJ8=
-X-Received: by 2002:a2e:5d54:: with SMTP id r81mr5507217ljb.104.1560326227130;
- Wed, 12 Jun 2019 00:57:07 -0700 (PDT)
+        id S1729327AbfFLHyP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 03:54:15 -0400
+Received: from mga17.intel.com ([192.55.52.151]:56056 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725810AbfFLHyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 03:54:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 00:54:14 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Jun 2019 00:54:12 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@collabora.com>,
+        linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net, kernel@collabora.com,
+        =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@collabora.com>
+Subject: Re: [PATCH] sphinx.rst: Add note about code snippets embedded in the text
+In-Reply-To: <20190611200316.30054-1-andrealmeid@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190611200316.30054-1-andrealmeid@collabora.com>
+Date:   Wed, 12 Jun 2019 10:57:12 +0300
+Message-ID: <87ftofxmlj.fsf@intel.com>
 MIME-Version: 1.0
-References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-4-grygorii.strashko@ti.com>
-In-Reply-To: <20190610171103.30903-4-grygorii.strashko@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 12 Jun 2019 09:56:55 +0200
-Message-ID: <CACRpkdaH6mE8GoLGJfZFTQZntBdOLqJ3GxSGMX8xyi5nRzXhug@mail.gmail.com>
-Subject: Re: [PATCH-next 03/20] gpio: gpio-omap: remove remainder of list management
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Russell King <rmk@arm.linux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 7:11 PM Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Tue, 11 Jun 2019, André Almeida <andrealmeid@collabora.com> wrote:
+> There's a paragraph that explains how to create fixed width text block,
+> but it doesn't explains how to create fixed width text inline, although
+> this feature is really used through the documentation. Fix that adding a
+> quick note about it.
 
-> From: Russell King <rmk+kernel@armlinux.org.uk>
+I don't mind this addition, it's simple enough, but in general I think
+we should reference the Sphinx and reStructuredText documentation,
+whichever is more applicable, instead of duplicating the
+documentation. The idea is that this document describes how to use them
+in kernel. Contrast with coding style and language reference.
+
+BR,
+Jani.
+
+
 >
-> Commit c4791bc6e3a6 ("gpio: omap: drop omap_gpio_list") removed the
-> list head and addition to the list head of each gpio bank, but failed
-> to remove the list_del() call and the node inside struct gpio_bank.
-> Remove these too.
+> Signed-off-by: André Almeida <andrealmeid@collabora.com>
+> ---
+>  Documentation/doc-guide/sphinx.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Fixes: c4791bc6e3a6 ("gpio: omap: drop omap_gpio_list")
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
+> index c039224b404e..f48abc07f4c5 100644
+> --- a/Documentation/doc-guide/sphinx.rst
+> +++ b/Documentation/doc-guide/sphinx.rst
+> @@ -218,7 +218,7 @@ Here are some specific guidelines for the kernel documentation:
+>    examples, etc.), use ``::`` for anything that doesn't really benefit
+>    from syntax highlighting, especially short snippets. Use
+>    ``.. code-block:: <language>`` for longer code blocks that benefit
+> -  from highlighting.
+> +  from highlighting. For a short snippet of code embedded in the text, use \`\`.
+>  
+>  
+>  the C domain
 
-Patch applied.
-
-Yours,
-Linus Walleij
+-- 
+Jani Nikula, Intel Open Source Graphics Center
