@@ -2,76 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0F1941E46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D16E841E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfFLHyP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 03:54:15 -0400
-Received: from mga17.intel.com ([192.55.52.151]:56056 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbfFLHyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:54:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 00:54:14 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Jun 2019 00:54:12 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@collabora.com>,
-        linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net, kernel@collabora.com,
-        =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@collabora.com>
-Subject: Re: [PATCH] sphinx.rst: Add note about code snippets embedded in the text
-In-Reply-To: <20190611200316.30054-1-andrealmeid@collabora.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190611200316.30054-1-andrealmeid@collabora.com>
-Date:   Wed, 12 Jun 2019 10:57:12 +0300
-Message-ID: <87ftofxmlj.fsf@intel.com>
+        id S2436744AbfFLH57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:57:59 -0400
+Received: from mail-lj1-f174.google.com ([209.85.208.174]:42552 "EHLO
+        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436729AbfFLH56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 03:57:58 -0400
+Received: by mail-lj1-f174.google.com with SMTP id t28so14203511lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 00:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hu5mYy1Aik4aGPpt9uX6kLLpSvEpnab82Qz7EMOsZ3s=;
+        b=W1Zi7sy9qLC8jVk3nI8TRNpGFhYFOg7/lKaQRrKAONX2MyAFj2Lxo/XZLD7w9L9J7G
+         4HYzdvdsUG1/nA6PskBT2Pr7ZmrNoSE/oO7BZSxQg0QizW2L9D2Ggzgd2EO6fVqvIE1L
+         zKWQOcKKgkm5x997Hyd3bJaqGq8QHPX1IVzJy9BU19gJUn4CtAijTcv4GDZm/PKjp/q+
+         M0GG5oMeL0QsLX/oHElAhFI1DN1MWe+Xe7KcLbp9lLt3IgDbDZXdaZz1wuIs1rwn41Rg
+         GwxUnKxkTbajCy/iDW6NUVvfR37huqzvfE4N+QRN73y1wWkSrzq4SWgd5sRV/NMwzdtE
+         6pFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hu5mYy1Aik4aGPpt9uX6kLLpSvEpnab82Qz7EMOsZ3s=;
+        b=ISdlbtPpLmeW5Oc79EFgFx9zZ1molQOtTSq+21a2bmd2D2A4YlqxNzGdCdN8Ca5Msc
+         XvcBQSX9AlEEvQ7ZaGZUQt2PDNUDgD8gpnW7EqkjsLJwdUMPEbZU7N8SrcM8ZzP4i1MS
+         iMr2ilBN485DUsOBYEMzDToAwcpLGgc9lSsgPQlAnBUBKv6Vfk9g6NoAQACvFNGrwxcL
+         nVKWz1E3nFKTxtZUZHY404lkcBx31/DXK2rGcs5LcGVX0Dx4nf2zCXffAZ/dGxIBAtOT
+         WUsgxNHqTlJsXzYNpBuZT8xPzgHYECr+SPeuwaMwKLgD2weCGmVc8vM70M9VsoNGlfrE
+         yjvg==
+X-Gm-Message-State: APjAAAX8szPjAYePSCwUtPSttE+V0tJc9I22QWi364YyGxgmMgZfxpK+
+        HyRmC4dFyjdY+aIiXJN/+CYvNiGC3jG9OKsJAW2t0Q==
+X-Google-Smtp-Source: APXvYqxl+ZtAXPoKQZGqWkavmG+pD5XFEpR1tkG2C7EK7lnCxHlD6+0qWESpsMmznMtDhMWnyXc7r0iAy9Bqcf/Y/90=
+X-Received: by 2002:a2e:9753:: with SMTP id f19mr3842459ljj.113.1560326276665;
+ Wed, 12 Jun 2019 00:57:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <20190610171103.30903-1-grygorii.strashko@ti.com> <20190610171103.30903-5-grygorii.strashko@ti.com>
+In-Reply-To: <20190610171103.30903-5-grygorii.strashko@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 12 Jun 2019 09:57:45 +0200
+Message-ID: <CACRpkdZ2o1AP4YdbNqS7BjHZzpgfpMLSM8GeXNWFPdJ8_C0shQ@mail.gmail.com>
+Subject: Re: [PATCH-next 04/20] gpio: gpio-omap: clean up edge interrupt handling
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Russell King <rmk@arm.linux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019, André Almeida <andrealmeid@collabora.com> wrote:
-> There's a paragraph that explains how to create fixed width text block,
-> but it doesn't explains how to create fixed width text inline, although
-> this feature is really used through the documentation. Fix that adding a
-> quick note about it.
+On Mon, Jun 10, 2019 at 7:11 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-I don't mind this addition, it's simple enough, but in general I think
-we should reference the Sphinx and reStructuredText documentation,
-whichever is more applicable, instead of duplicating the
-documentation. The idea is that this document describes how to use them
-in kernel. Contrast with coding style and language reference.
-
-BR,
-Jani.
-
-
+> From: Russell King <rmk+kernel@armlinux.org.uk>
 >
-> Signed-off-by: André Almeida <andrealmeid@collabora.com>
-> ---
->  Documentation/doc-guide/sphinx.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The edge interrupt handling was effectively:
 >
-> diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-> index c039224b404e..f48abc07f4c5 100644
-> --- a/Documentation/doc-guide/sphinx.rst
-> +++ b/Documentation/doc-guide/sphinx.rst
-> @@ -218,7 +218,7 @@ Here are some specific guidelines for the kernel documentation:
->    examples, etc.), use ``::`` for anything that doesn't really benefit
->    from syntax highlighting, especially short snippets. Use
->    ``.. code-block:: <language>`` for longer code blocks that benefit
-> -  from highlighting.
-> +  from highlighting. For a short snippet of code embedded in the text, use \`\`.
->  
->  
->  the C domain
+>         isr = ISR_reg & enabled;
+>         if (bank->level_mask)
+>                 level_mask = bank->level_mask & enabled;
+>         else
+>                 level_mask = 0;
+>
+>         edge = isr & ~level_mask;
+>
+> When bank->level_mask is zero, level_mask will be computed as zero
+> anyway, so the if() statement is redundant.  We are then left with:
+>
+>         isr = ISR_reg & enabled;
+>         level_mask = bank->level_mask & enabled;
+>         edge = isr & ~level_mask;
+>
+> This can be simplified further to:
+>
+>         isr = ISR_reg & enabled;
+>         edge = isr & ~bank->level_mask;
+>
+> since the second mask with 'enabled' is redundant.
+>
+> Improve the associated comment as well.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Patch applied.
+
+Yours,
+Linus Walleij
