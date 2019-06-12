@@ -2,115 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9EAE419AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 02:50:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9474419A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 02:45:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405922AbfFLAuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 20:50:54 -0400
-Received: from mga09.intel.com ([134.134.136.24]:51300 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405015AbfFLAuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 20:50:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 17:50:52 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 11 Jun 2019 17:50:48 -0700
-Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/9] swiotlb: Zero out bounce buffer for untrusted
- device
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20190603011620.31999-1-baolu.lu@linux.intel.com>
- <20190603011620.31999-4-baolu.lu@linux.intel.com>
- <20190610154553.GT28796@char.us.oracle.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <ec6ac2ba-7b88-2bcf-aa95-f8981b258c5c@linux.intel.com>
-Date:   Wed, 12 Jun 2019 08:43:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2405648AbfFLAo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 20:44:27 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38353 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405015AbfFLAo1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 20:44:27 -0400
+Received: by mail-ot1-f67.google.com with SMTP id d17so13770871oth.5;
+        Tue, 11 Jun 2019 17:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rom31ac+oTIgk+nM7YCEF4uKjf6HAUZ2gRCm9n6eGlE=;
+        b=RRm2KOrokA19xU1MyfdHQKveGTVmuPjyOyDOgBJ0901rg3gcSIUAcmwKrOI9N4Gsqz
+         Ei5EK/eyaR6hwp/2V9DpGKAAWcQzNqJaKd+73ohRdtn8qe/sCseGGRK25Puvv8Ln+KlR
+         C3pEf7YqRJMCgAfBY4ca4OcpMJhSISuwmKL010tvq1LfCoClSh7A7g2FPTW6/GZo4nxk
+         TUied5oyVr/YWeZ0485ASZ7FDT2kb9BjmLgHE1JqY+59xn3++E4n9BtXZ5WWcYxhDoh1
+         OlJEix/bCHEAOn2TRTuxZaXHi8M+mWLXdcNhQKU54XwJrcEma1q1MnGd24oZ+Sf04tkh
+         GzsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rom31ac+oTIgk+nM7YCEF4uKjf6HAUZ2gRCm9n6eGlE=;
+        b=R5uNhtC4Z4kGtloerr/zJnk1+3lDfzfQIGHVMRNmIvWSHNv/L9ZQVF4cqN1PzzAjCB
+         A56V3p69e5uz5yMhnTSajwa6x55ZCMSsFiay26yGW8Rzx90nh2XJRpBYcij2E9E56NUH
+         fO49wKsYQcBclKdQErCOQq4XkfKItyCZNhLFQqPU1SXoTRbFPtKiypLDgXyF0oDp8ceF
+         JLcrleu3Lx447pF4qXgS5MkMaoUZYP+Poo4zqOh0f8Ah8Ff4p2CNkHoe6v1CAk0Qube+
+         aGbgybsVrBTejKjckGRRjs3nbsIxm7vWBhLh0xuHiKgcEpkMJ6DFfFNG0WOEVXT3Yu2e
+         Mwkg==
+X-Gm-Message-State: APjAAAU02vaJuPz+MjOsFK/0G3uTktbHKcn6IvWku26Ge3vd9QOftAA5
+        brcbSUudPWsbRvE4FVHYX7vmxOJuoN1niPZl2PQ6jg==
+X-Google-Smtp-Source: APXvYqxCTelBtBy8c7ZzcF6pLAiYq933Kz+WQV+xqodYVKyK1hqOCvJY+Cl0TGO/rUc8CCP9lZlqQCjpY2RLdGCuUak=
+X-Received: by 2002:a9d:2c47:: with SMTP id f65mr37530306otb.185.1560300266463;
+ Tue, 11 Jun 2019 17:44:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190610154553.GT28796@char.us.oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1560255429-7105-1-git-send-email-wanpengli@tencent.com>
+ <1560255429-7105-2-git-send-email-wanpengli@tencent.com> <20190611203919.GB7520@amt.cnet>
+In-Reply-To: <20190611203919.GB7520@amt.cnet>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 12 Jun 2019 08:45:10 +0800
+Message-ID: <CANRm+CxX4__=p8BJ_Dd6GbKrgEpQH733sN_FATYrD2jNRayXaA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] KVM: LAPIC: Make lapic timer unpinned when timer
+ is injected by pi
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Konrad,
+On Wed, 12 Jun 2019 at 04:39, Marcelo Tosatti <mtosatti@redhat.com> wrote:
+>
+> On Tue, Jun 11, 2019 at 08:17:06PM +0800, Wanpeng Li wrote:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > Make lapic timer unpinned when timer is injected by posted-interrupt,
+> > the emulated timer can be offload to the housekeeping cpus.
+> >
+> > The host admin should fine tuned, e.g. dedicated instances scenario
+> > w/ nohz_full cover the pCPUs which vCPUs resident, several pCPUs
+> > surplus for housekeeping, disable mwait/hlt/pause vmexits to occupy
+> > the pCPUs, fortunately preemption timer is disabled after mwait is
+> > exposed to guest which makes emulated timer offload can be possible.
+>
+> Li,
+>
+> Nice!
+>
+> I think you can drop the HRTIMER_MODE_ABS_PINNED and
+> instead have
+>
+> void kvm_set_pending_timer(struct kvm_vcpu *vcpu)
+> {
+>         kvm_make_request(KVM_REQ_PENDING_TIMER, vcpu);
+>         kvm_vcpu_kick(vcpu);
+> }
+>
+> As an alternative to commit 61abdbe0bcc2b32745ab4479cc550f4c1f518ee2
+> (as a first patch in your series).
+>
+> This will make the logic simpler (and timer migration, for
+> nonhousekeeping case, ensures timer is migrated).
 
-Thanks a lot for your reviewing.
+Good point. :)
 
-On 6/10/19 11:45 PM, Konrad Rzeszutek Wilk wrote:
-> On Mon, Jun 03, 2019 at 09:16:14AM +0800, Lu Baolu wrote:
->> This is necessary to avoid exposing valid kernel data to any
->> milicious device.
-> 
-> malicious
+>
+> Also, should make this work for non housekeeping case as well.
+> (But that can be done later).
 
-Yes, thanks.
+The timer fire may cause other vCPUs vmexits for non housekeeping
+case(after migrating timers fail during vCPU is scheduled to run in a
+different pCPU). Could you explain more?
 
-> 
->>
->> Suggested-by: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   kernel/dma/swiotlb.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
->> index f956f785645a..ed41eb7f6131 100644
->> --- a/kernel/dma/swiotlb.c
->> +++ b/kernel/dma/swiotlb.c
->> @@ -35,6 +35,7 @@
->>   #include <linux/scatterlist.h>
->>   #include <linux/mem_encrypt.h>
->>   #include <linux/set_memory.h>
->> +#include <linux/pci.h>
->>   #ifdef CONFIG_DEBUG_FS
->>   #include <linux/debugfs.h>
->>   #endif
->> @@ -560,6 +561,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
->>   	 */
->>   	for (i = 0; i < nslots; i++)
->>   		io_tlb_orig_addr[index+i] = orig_addr + (i << IO_TLB_SHIFT);
->> +
->> +	/* Zero out the bounce buffer if the consumer is untrusted. */
->> +	if (dev_is_untrusted(hwdev))
->> +		memset(phys_to_virt(tlb_addr), 0, alloc_size);
-> 
-> What if the alloc_size is less than a PAGE? Should this at least have ALIGN or such?
-
-It's the consumer (iommu subsystem) who requires this to be page
-aligned. For swiotlb, it just clears out all data in the allocated
-bounce buffer.
-
-Best regards,
-Baolu
-
-> 
->> +
->>   	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
->>   	    (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL))
->>   		swiotlb_bounce(orig_addr, tlb_addr, mapping_size, DMA_TO_DEVICE);
->> -- 
->> 2.17.1
->>
-> 
+Regards,
+Wanpeng Li
