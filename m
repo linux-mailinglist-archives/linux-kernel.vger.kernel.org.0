@@ -2,185 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B17420EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52134420E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408856AbfFLJeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:34:07 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:35126 "EHLO wind.enjellic.com"
+        id S2408805AbfFLJcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:32:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:48554 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408577AbfFLJeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:34:07 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5C9WOWI024604;
-        Wed, 12 Jun 2019 04:32:24 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5C9WLgm024603;
-        Wed, 12 Jun 2019 04:32:21 -0500
-Date:   Wed, 12 Jun 2019 04:32:21 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Cedric Xing <cedric.xing@intel.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, nhorman@redhat.com,
-        pmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
-        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
-        rientjes@google.com, william.c.roberts@intel.com,
-        philip.b.tricca@intel.com
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
-Message-ID: <20190612093221.GA24188@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com>
-Mime-Version: 1.0
+        id S2408577AbfFLJcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:32:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 871CE337;
+        Wed, 12 Jun 2019 02:32:44 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EEAC83F246;
+        Wed, 12 Jun 2019 02:32:40 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 10:32:38 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     Florian Weimer <fweimer@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
+ ELF file
+Message-ID: <20190612093238.GQ28398@e103592.cambridge.arm.com>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+ <20190606200646.3951-23-yu-cheng.yu@intel.com>
+ <20190607180115.GJ28398@e103592.cambridge.arm.com>
+ <94b9c55b3b874825fda485af40ab2a6bc3dad171.camel@intel.com>
+ <87lfy9cq04.fsf@oldenburg2.str.redhat.com>
+ <20190611114109.GN28398@e103592.cambridge.arm.com>
+ <031bc55d8dcdcf4f031e6ff27c33fd52c61d33a5.camel@intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611220243.GB3416@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 12 Jun 2019 04:32:24 -0500 (CDT)
+In-Reply-To: <031bc55d8dcdcf4f031e6ff27c33fd52c61d33a5.camel@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 03:02:43PM -0700, Sean Christopherson wrote:
-
-Good morning, I hope the week is proceeding well for everyone.
-
-> On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
-> > I haven't looked at this code closely, but it feels like a lot of
-> > SGX-specific logic embedded into SELinux that will have to be repeated or
-> > reused for every security module.  Does SGX not track this state itself?
-
-> SGX does track equivalent state.
+On Tue, Jun 11, 2019 at 12:31:34PM -0700, Yu-cheng Yu wrote:
+> On Tue, 2019-06-11 at 12:41 +0100, Dave Martin wrote:
+> > On Mon, Jun 10, 2019 at 07:24:43PM +0200, Florian Weimer wrote:
+> > > * Yu-cheng Yu:
+> > > 
+> > > > To me, looking at PT_GNU_PROPERTY and not trying to support anything is a
+> > > > logical choice.  And it breaks only a limited set of toolchains.
+> > > > 
+> > > > I will simplify the parser and leave this patch as-is for anyone who wants
+> > > > to
+> > > > back-port.  Are there any objections or concerns?
+> > > 
+> > > Red Hat Enterprise Linux 8 does not use PT_GNU_PROPERTY and is probably
+> > > the largest collection of CET-enabled binaries that exists today.
+> > 
+> > For clarity, RHEL is actively parsing these properties today?
+> > 
+> > > My hope was that we would backport the upstream kernel patches for CET,
+> > > port the glibc dynamic loader to the new kernel interface, and be ready
+> > > to run with CET enabled in principle (except that porting userspace
+> > > libraries such as OpenSSL has not really started upstream, so many
+> > > processes where CET is particularly desirable will still run without
+> > > it).
+> > > 
+> > > I'm not sure if it is a good idea to port the legacy support if it's not
+> > > part of the mainline kernel because it comes awfully close to creating
+> > > our own private ABI.
+> > 
+> > I guess we can aim to factor things so that PT_NOTE scanning is
+> > available as a fallback on arches for which the absence of
+> > PT_GNU_PROPERTY is not authoritative.
 > 
-> There are three proposals on the table (I think):
-> 
->   1. Require userspace to explicitly specificy (maximal) enclave page
->      permissions at build time.  The enclave page permissions are provided
->      to, and checked by, LSMs at enclave build time.
-> 
->      Pros: Low-complexity kernel implementation, straightforward auditing
->      Cons: Sullies the SGX UAPI to some extent, may increase complexity of
->            SGX2 enclave loaders.
-> 
->   2. Pre-check LSM permissions and dynamically track mappings to enclave
->      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
->      based on the pre-checked permissions.
-> 
->      Pros: Does not impact SGX UAPI, medium kernel complexity
->      Cons: Auditing is complex/weird, requires taking enclave-specific
->            lock during mprotect() to query/update tracking.
-> 
->   3. Implement LSM hooks in SGX to allow LSMs to track enclave regions
->      from cradle to grave, but otherwise defer everything to LSMs.
-> 
->      Pros: Does not impact SGX UAPI, maximum flexibility, precise auditing
->      Cons: Most complex and "heaviest" kernel implementation of the three,
->            pushes more SGX details into LSMs.
-> 
-> My RFC series[1] implements #1.  My understanding is that Andy (Lutomirski)
-> prefers #2.  Cedric's RFC series implements #3.
-> 
-> Perhaps the easiest way to make forward progress is to rule out the
-> options we absolutely *don't* want by focusing on the potentially blocking
-> issue with each option:
->
->   #1 - SGX UAPI funkiness
-> 
->   #2 - Auditing complexity, potential enclave lock contention
-> 
->   #3 - Pushing SGX details into LSMs and complexity of kernel implementation
+> We can probably check PT_GNU_PROPERTY first, and fallback (based on ld-linux
+> version?) to PT_NOTE scanning?
 
-At the risk of repeating myself, I believe the issue that has not
-received full clarity is that, for a security relevant solution, there
-has to be two separate aspects of LSM coverage for SGX.  I believe
-that a high level review of the requirements may assist in selection
-of a course of action for the driver.
+For arm64, we can check for PT_GNU_PROPERTY and then give up
+unconditionally.
 
-The first aspect of LSM control has been covered extensively and that
-is the notion of implementing control over the ability of a user
-identity to request some cohort of page privileges.  The cohort of
-obvious concern is the ability of a page to possess both WRITE and
-EXECUTE privileges at sometime during its lifetime.
+For x86, we would fall back to PT_NOTE scanning, but this will add a bit
+of cost to binaries that don't have NT_GNU_PROPERTY_TYPE_0.  The ld.so
+version doesn't tell you what ELF ABI a given executable conforms to.
 
-Given that SGX2 support is the ultimate and necesary goal for this
-driver, the selected proposal should be the one that gives the most
-simplistic application of this policy.  As I have noted previously,
-once SGX2 becomes available, the only relevant security control that
-can be realized with this type of LSM support is whether or not the
-platform owner wishes to limit access by a user identity to the
-ability to dynamically load code in enclave context.
+Since this sounds like it's largely a distro-specific issue, maybe there
+could be a Kconfig option to turn the fallback PT_NOTE scanning on?
 
-With SGX2 we will, by necessity, have to admit the notion that a
-platform owner will not have any effective visibility into code that
-is loaded and executed, since it can come in over a secured network
-connection in an enclave security context.  This advocates for the
-simplest approach possible to providing some type of regulation to any
-form of WX page access.
-
-Current state of the art, and there doesn't appear to be a reason to
-change this, is to package an enclave in the form of an ELF shared
-library.  It seems straight forward to inherit and act on page
-privileges from the privileges specified on the ELF sections that are
-loaded.  Loaders will have a file descriptor available so an mmap of
-the incoming page with the specified privileges should trigger the
-required LSM interventions and tie them to a specific enclave.
-
-The current enclave 'standard' also uses layout metadata, stored in a
-special .notes section of the shared image, to direct a loader with
-respect to construction of the enclave stack, heap, TCS and other
-miscellaneous regions not directly coded by the ELF TEXT sections.  It
-seems straight forward to extend this paradigm to declare region(s) of
-an enclave that are eligible to be generated at runtime (EAUG'ed) with
-the RWX protections needed to support dynamically loaded code.
-
-If an enclave wishes to support this functionality, it would seem
-straight forward to require an enclave to provide a single zero page
-which the loader will mmap with those protections in order to trigger
-the desired LSM checks against that specific enclave.
-
-The simplest driver approach that achieves the desired introspection
-of permissions in the described framework will implement as much LSM
-security as is possible with SGX technology and with minimal
-disruption to the existing SGX software eco-system.
-
-This leaves the second aspect of LSM security and that is the ability
-to inspect and act on the initialized characteristics of the enclave.
-This is the aspect of SGX LSM functionality that has not been clearly
-called out.
-
-All that is needed here is an LSM hook that gets handed a pointer to
-the signature structure (SIGSTRUCT) that is passed to the EINIT ioctl.
-If the SIGSTRUCT does not match the proposed enclave image that the
-processor has computed secondary to the enclave image creation process
-the enclave will not initialize, so all that is needed is for an LSM
-to be allowed to interpret and act on the characteristics defined in
-that structure before the enclave is actually initialized.
-
-As we have now collectively demonstrated, it is easy to get lost in
-minutia with respect to all of this.  I believe if we can focus on a
-solution that implements what I have discussed above we will achieve
-as much as can be achieved with respect to platform security for SGX
-systems.
-
-Best wishes for a productive remainder of the week.
-
-Dr. Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686            EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Nullum magnum ingenium sine mixtura dementiae fuit."
-        (There is no great genius without some touch of madness.)
-                                -- Seneca
+Cheers
+---Dave
