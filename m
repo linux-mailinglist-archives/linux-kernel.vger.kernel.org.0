@@ -2,135 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6F642EC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4794042ECF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 20:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfFLSgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 14:36:01 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34551 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbfFLSgA (ORCPT
+        id S1727143AbfFLShF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 14:37:05 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39833 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbfFLShC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:36:00 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m29so19616455qtu.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 11:35:59 -0700 (PDT)
+        Wed, 12 Jun 2019 14:37:02 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j2so10179381pfe.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 11:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ccd2Dl/s5BEnRCE+LL0hkZ64UWDD7pEB/PZyv8yO8ZY=;
-        b=IcABX1nM51p2QrQVsut+vh/j10d5dr6geQ+a/RrmE6DOHq7udCPilWtmRYD99j0boR
-         ov5Ysub7+GqF4lbZDxDthsXnWeXk+ES3UVFuSCse5kakCEymFY4P7BJeaa1eqMTm9m4J
-         a+/2xER8DdWKm0/0yHAUhnmEJWAiez71uz/DfX4C+ZMkDAyMe9n6LHO40E10deKj4zJN
-         Wel0wmmIihoR/AvHw5HUgRWq+VZtm2o2vy9xdx+v9Lo1iXmV5/ZbXP3K7XF07He5wGRh
-         eTLt9p7wJXVFha1pn5wg6b5vpyG2Z/ZLgk4Y4y0kGDJ+N6XDcakHacAueyHQQONRObHL
-         LFHA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DXItd4QKKcMyTRkmGL6RVgljzEiWFbcFIOw7FfH00GY=;
+        b=V1ykHWXuVctHxVCMZR31Lhf3ekEW5RMkXg6I05eaOkPCMQsvEUB1GVZaePVtkB/AkR
+         bWSJpUjVq7yRTAKhi/PaorCVoSomgKPHQvsWCaE+dw/19ArzU5MGJLobYMvq1YBz3bCg
+         CaZVseF+pNS62h+aqbO+KjLTbqJwEe1uqAAfLm39CR4/eXxMhNmm0pN471EUwlAs+qhh
+         leT90bOaEEsVRv/62wmo+FKl1YZoiEhxSA+DsweI4ZqY6+So33HOn5cK68e3IKzNWBAp
+         JcPEAhEDlISCS4ivdeUEp8kSAGLMQzJI513eyyHD1dHe8C150IH+AaURoTChf1U7GI+R
+         M53A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ccd2Dl/s5BEnRCE+LL0hkZ64UWDD7pEB/PZyv8yO8ZY=;
-        b=ueCjhKCTToIRIDG7ufD/DEHQq2S2QvIDWGUX3FChFFH1ok5pzWhFUJkifeQcUFXO+O
-         FfoymCtKnQkgSwrvupPOhUJto4g7+YXNcXX4lOsHsr2/92uS+4meRxlkCF0o+wKPcI5i
-         tqju5OS+xb0Ph4+cgWZX0L3ZpPgqDDN+aS84TFWu5wiH1m73pw2/S0vh1VE54l9WyE+o
-         IeNh5F5biA+0BWWh1A2v5+lSzFL1AANFkhdU+5kl05+noWVSmdnqMwvt3YfRnKfKoT+M
-         fHDN5S8mNMkqBauS3inuXUqtwDo8zA2Su038/31IzHIRgAf67PCH52U4qfP2RvGFUfaO
-         SNcA==
-X-Gm-Message-State: APjAAAVvy1uwl1eCVRQK94vrnAXYvBdeACUwWMmfLabuZUQEQLpevNvf
-        Emkkvbq231G7cbPkvbiMzE8CdA==
-X-Google-Smtp-Source: APXvYqxVhJgr9VMk6UTsEjd7fGkQxdE+ShlHGLoBskD9CcIJfDIiuN/yiHxzbH4RhCcTZeh0Ja2AHg==
-X-Received: by 2002:a0c:fde3:: with SMTP id m3mr136658qvu.205.1560364559359;
-        Wed, 12 Jun 2019 11:35:59 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id t67sm224679qkf.34.2019.06.12.11.35.57
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DXItd4QKKcMyTRkmGL6RVgljzEiWFbcFIOw7FfH00GY=;
+        b=p7KopVlq8LrqXTJgT9hXWY1KWqaZnVgvSWbQkMjHvIxSpXtwaHk8GJv07Zp46OdDXK
+         diwrBmaDJ4FNEUmxTUvCw3odpC7VLO2UtAWEBFOyCHhliwKHV1X1sRhGKLlXrxHm44ZA
+         s4Yojdb1TTyEEl4tiYU0e1cVN2ifJrzRni6a5bblIuGagJSIkgc21gDWhIBsIvS6Eh/3
+         Vg0SJoI9Qopvf/aa8VDnh1w6uIxJca8STBOckO4qIshOJHBffYUYHJtgrlSpKAii/M7i
+         dUQYdggL3+rhljwKpUaOXTHYVRdKRXP03YiaTkEtqqbbAxEzWLzb8LUejdn+sT73c0uB
+         U2Rw==
+X-Gm-Message-State: APjAAAVY2P0Bh43tEbz+aMoQnq+Gqsoe7wwlNJeP+4DCqIG3khgxWeTi
+        P6Ge/mV6Y+jXR6CepP3wQ+c=
+X-Google-Smtp-Source: APXvYqzjdoMxCVuEJbHHk09NkgKkEkrFSeajkMZcGBlMNFEnpUY9Mfd7qwmsZB2dZpGscl2+DABZMA==
+X-Received: by 2002:a62:4d04:: with SMTP id a4mr87702880pfb.177.1560364621102;
+        Wed, 12 Jun 2019 11:37:01 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.89.153])
+        by smtp.gmail.com with ESMTPSA id 3sm250910pfp.114.2019.06.12.11.36.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 11:35:58 -0700 (PDT)
-Message-ID: <1560364557.5154.2.camel@lca.pw>
-Subject: Re: [PATCH -next] arm64/mm: fix a bogus GFP flag in pgd_alloc()
-From:   Qian Cai <cai@lca.pw>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        catalin.marinas@arm.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mhocko@kernel.org, linux-mm@kvack.org, vdavydov.dev@gmail.com,
-        hannes@cmpxchg.org, cgroups@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Wed, 12 Jun 2019 14:35:57 -0400
-In-Reply-To: <20190612065728.GB4761@rapoport-lnx>
-References: <1559656836-24940-1-git-send-email-cai@lca.pw>
-         <20190604142338.GC24467@lakrids.cambridge.arm.com>
-         <20190610114326.GF15979@fuggles.cambridge.arm.com>
-         <1560187575.6132.70.camel@lca.pw>
-         <20190611100348.GB26409@lakrids.cambridge.arm.com>
-         <20190611124118.GA4761@rapoport-lnx>
-         <3F6E1B9F-3789-4648-B95C-C4243B57DA02@lca.pw>
-         <20190612065728.GB4761@rapoport-lnx>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 12 Jun 2019 11:37:00 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 00:06:55 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/gvt: remove duplicate entry of trace
+Message-ID: <20190612183654.GA16750@hari-Inspiron-1545>
+References: <20190526075633.GA9245@hari-Inspiron-1545>
+ <20190612032236.GH9684@zhen-hp.sh.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612032236.GH9684@zhen-hp.sh.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-12 at 09:57 +0300, Mike Rapoport wrote:
-> Hi,
+On Wed, Jun 12, 2019 at 11:22:36AM +0800, Zhenyu Wang wrote:
+> On 2019.05.26 13:26:33 +0530, Hariprasad Kelam wrote:
+> > Remove duplicate include of trace.h
+> > 
+> > Issue identified by includecheck
+> > 
+> > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> > ---
+> >  drivers/gpu/drm/i915/gvt/trace_points.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/i915/gvt/trace_points.c b/drivers/gpu/drm/i915/gvt/trace_points.c
+> > index a3deed69..569f5e3 100644
+> > --- a/drivers/gpu/drm/i915/gvt/trace_points.c
+> > +++ b/drivers/gpu/drm/i915/gvt/trace_points.c
+> > @@ -32,5 +32,4 @@
+> >  
+> >  #ifndef __CHECKER__
+> >  #define CREATE_TRACE_POINTS
+> > -#include "trace.h"
+> >  #endif
+> > -- 
 > 
-> On Tue, Jun 11, 2019 at 08:46:45AM -0400, Qian Cai wrote:
-> > 
-> > > On Jun 11, 2019, at 8:41 AM, Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > > 
-> > > Sorry for the delay, I'm mostly offline these days.
-> > > 
-> > > I wanted to understand first what is the reason for the failure. I've
-> > > tried
-> > > to reproduce it with qemu, but I failed to find a bootable configuration
-> > > that will have PGD_SIZE != PAGE_SIZE :(
-> > > 
-> > > Qian Cai, can you share what is your environment and the kernel config?
-> > 
-> > https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config
-> > 
-> > # lscpu
-> > Architecture:        aarch64
-> > Byte Order:          Little Endian
-> > CPU(s):              256
-> > On-line CPU(s) list: 0-255
-> > Thread(s) per core:  4
-> > Core(s) per socket:  32
-> > Socket(s):           2
-> > NUMA node(s):        2
-> > Vendor ID:           Cavium
-> > Model:               1
-> > Model name:          ThunderX2 99xx
-> > Stepping:            0x1
-> > BogoMIPS:            400.00
-> > L1d cache:           32K
-> > L1i cache:           32K
-> > L2 cache:            256K
-> > L3 cache:            32768K
-> > NUMA node0 CPU(s):   0-127
-> > NUMA node1 CPU(s):   128-255
-> > Flags:               fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics
-> > cpuid asimdrdm
-> > 
-> > # dmidecode
-> > Handle 0x0001, DMI type 1, 27 bytes
-> > System Information
-> >         Manufacturer: HPE
-> >         Product Name: Apollo 70             
-> >         Version: X1
-> >         Wake-up Type: Power Switch
-> >         Family: CN99XX
-> > 
+> This actually caused build issue like
+> ERROR: "__tracepoint_gma_index" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_render_mmio" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_gvt_command" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_guest_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_gma_translate" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_alloc" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_oos_sync" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_write_ir" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_propagate_event" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_inject_msi" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_refcount" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_free" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_oos_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+> scripts/Makefile.modpost:91: recipe for target '__modpost' failed
 > 
-> Can you please also send the entire log when the failure happens?
+> Looks we need fix like below.
+> 
+> Subject: [PATCH] drm/i915/gvt: remove duplicate include of trace.h
+> 
+> This removes duplicate include of trace.h. Found by Hariprasad Kelam
+> with includecheck.
+> 
+> Reported-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/trace_points.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gvt/trace_points.c b/drivers/gpu/drm/i915/gvt/trace_points.c
+> index a3deed692b9c..fe552e877e09 100644
+> --- a/drivers/gpu/drm/i915/gvt/trace_points.c
+> +++ b/drivers/gpu/drm/i915/gvt/trace_points.c
+> @@ -28,8 +28,6 @@
+>   *
+>   */
+>  
+> -#include "trace.h"
+> -
+>  #ifndef __CHECKER__
+>  #define CREATE_TRACE_POINTS
+>  #include "trace.h"
+> -- 
+> 2.20.1
+> 
+> -- 
+> Open Source Technology Center, Intel ltd.
+> 
+> $gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
 
-https://cailca.github.io/files/dmesg.txt
+Hi Zhenyu Wang,
+Thanks for correcting the patch.
+It seems we should first define CREATE_TRACE_POINTS and include trace.h as per documentation.
 
-> Another question, is the problem exist with PGD_SIZE == PAGE_SIZE?
-
-No.
+Thanks,
+Hariprasad k
