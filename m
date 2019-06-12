@@ -2,158 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F402242548
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49D244254B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438698AbfFLMNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:13:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438674AbfFLMNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:13:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B10C2173C;
-        Wed, 12 Jun 2019 12:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560341609;
-        bh=VzkLSGcPjGZ9zxQTwow3pQZPqT0PVx6/J+e/zLME1/s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xIWVqNFE2nkFvJpuwYJPFllQ7QHMXPFGKAwUffq7vm6sBOZDxe4NeBynIO5OyfsFn
-         qGueKqvHKONrl2RTzjLAJuqBmBXDquwWF0twnRgyCUNvPxsPEXlMxxXY8fmHhTUB5y
-         F3QIsSdhBcDHHA4Sr16ou/mnQd85PzAWnMVP0OUc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     dvhart@infradead.org, andy@infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "David E. Box" <david.e.box@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] platform: x86: intel_telemetry: no need to check return value of debugfs_create functions
-Date:   Wed, 12 Jun 2019 14:12:58 +0200
-Message-Id: <20190612121258.19535-8-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190612121258.19535-1-gregkh@linuxfoundation.org>
-References: <20190612121258.19535-1-gregkh@linuxfoundation.org>
+        id S2438719AbfFLMOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:14:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56086 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfFLMN7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 08:13:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MuB134CvZ+ahtWza/rg2L29zFcKfvY+JEgj2hbgZkKg=; b=SlKYE6/09sXEUzAquFUIC06H4
+        msOpbvssFhXh6ebKsUighYE+VEdtmnZjrewFXkyiRYxSAQl/WcvFnZYa0b5FwldmGrKVenMSco9E1
+        6FWfB+y0e40Bab9kX90noMMR2gFA5dR8H5FpHKzGw1Ltd5p5BvYCWVLY8ROHgcaghc3FGyacUrgO7
+        iSHfyUeY0lSHgCslfC/lhjt4BByLi6AbKVYLux4inMb8UDigONXt70fjSU37Arnqpwi7dbv58VjEQ
+        vH2hAYeAPbYyjpGX0Jqdl0Ni7A0BybKwlb0QiRCbr400bcOMxDtEOfDtTXiA/WIcNvTpfTxDT3UAR
+        owMPzAq9w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hb28a-00011T-SF; Wed, 12 Jun 2019 12:13:56 +0000
+Date:   Wed, 12 Jun 2019 05:13:56 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
+        <thellstrom@vmwopensource.org>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-mm@kvack.org, Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [PATCH v5 3/9] mm: Add write-protect and clean utilities for
+ address space ranges
+Message-ID: <20190612121356.GA719@infradead.org>
+References: <20190612064243.55340-1-thellstrom@vmwopensource.org>
+ <20190612064243.55340-4-thellstrom@vmwopensource.org>
+ <20190612112349.GA20226@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612112349.GA20226@infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+On Wed, Jun 12, 2019 at 04:23:50AM -0700, Christoph Hellwig wrote:
+> friends.  Also in general new core functionality like this should go
+> along with the actual user, we don't need to repeat the hmm disaster.
 
-Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Cc: "David E. Box" <david.e.box@linux.intel.com>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- .../platform/x86/intel_telemetry_debugfs.c    | 78 ++++---------------
- 1 file changed, 16 insertions(+), 62 deletions(-)
-
-diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
-index 98ba9185a27b..e84d3e983e0c 100644
---- a/drivers/platform/x86/intel_telemetry_debugfs.c
-+++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-@@ -900,7 +900,7 @@ static int __init telemetry_debugfs_init(void)
- {
- 	const struct x86_cpu_id *id;
- 	int err;
--	struct dentry *f;
-+	struct dentry *dir;
- 
- 	/* Only APL supported for now */
- 	id = x86_match_cpu(telemetry_debugfs_cpu_ids);
-@@ -923,68 +923,22 @@ static int __init telemetry_debugfs_init(void)
- 
- 	register_pm_notifier(&pm_notifier);
- 
--	err = -ENOMEM;
--	debugfs_conf->telemetry_dbg_dir = debugfs_create_dir("telemetry", NULL);
--	if (!debugfs_conf->telemetry_dbg_dir)
--		goto out_pm;
--
--	f = debugfs_create_file("pss_info", S_IFREG | S_IRUGO,
--				debugfs_conf->telemetry_dbg_dir, NULL,
--				&telem_pss_states_fops);
--	if (!f) {
--		pr_err("pss_sample_info debugfs register failed\n");
--		goto out;
--	}
--
--	f = debugfs_create_file("ioss_info", S_IFREG | S_IRUGO,
--				debugfs_conf->telemetry_dbg_dir, NULL,
--				&telem_ioss_states_fops);
--	if (!f) {
--		pr_err("ioss_sample_info debugfs register failed\n");
--		goto out;
--	}
--
--	f = debugfs_create_file("soc_states", S_IFREG | S_IRUGO,
--				debugfs_conf->telemetry_dbg_dir,
--				NULL, &telem_soc_states_fops);
--	if (!f) {
--		pr_err("ioss_sample_info debugfs register failed\n");
--		goto out;
--	}
--
--	f = debugfs_create_file("s0ix_residency_usec", S_IFREG | S_IRUGO,
--				debugfs_conf->telemetry_dbg_dir,
--				NULL, &telem_s0ix_fops);
--	if (!f) {
--		pr_err("s0ix_residency_usec debugfs register failed\n");
--		goto out;
--	}
--
--	f = debugfs_create_file("pss_trace_verbosity", S_IFREG | S_IRUGO,
--				debugfs_conf->telemetry_dbg_dir, NULL,
--				&telem_pss_trc_verb_ops);
--	if (!f) {
--		pr_err("pss_trace_verbosity debugfs register failed\n");
--		goto out;
--	}
--
--	f = debugfs_create_file("ioss_trace_verbosity", S_IFREG | S_IRUGO,
--				debugfs_conf->telemetry_dbg_dir, NULL,
--				&telem_ioss_trc_verb_ops);
--	if (!f) {
--		pr_err("ioss_trace_verbosity debugfs register failed\n");
--		goto out;
--	}
--
-+	dir = debugfs_create_dir("telemetry", NULL);
-+	debugfs_conf->telemetry_dbg_dir = dir;
-+
-+	debugfs_create_file("pss_info", S_IFREG | S_IRUGO, dir, NULL,
-+			    &telem_pss_states_fops);
-+	debugfs_create_file("ioss_info", S_IFREG | S_IRUGO, dir, NULL,
-+			    &telem_ioss_states_fops);
-+	debugfs_create_file("soc_states", S_IFREG | S_IRUGO, dir, NULL,
-+			    &telem_soc_states_fops);
-+	debugfs_create_file("s0ix_residency_usec", S_IFREG | S_IRUGO, dir, NULL,
-+			    &telem_s0ix_fops);
-+	debugfs_create_file("pss_trace_verbosity", S_IFREG | S_IRUGO, dir, NULL,
-+			    &telem_pss_trc_verb_ops);
-+	debugfs_create_file("ioss_trace_verbosity", S_IFREG | S_IRUGO, dir,
-+			    NULL, &telem_ioss_trc_verb_ops);
- 	return 0;
--
--out:
--	debugfs_remove_recursive(debugfs_conf->telemetry_dbg_dir);
--	debugfs_conf->telemetry_dbg_dir = NULL;
--out_pm:
--	unregister_pm_notifier(&pm_notifier);
--
--	return err;
- }
- 
- static void __exit telemetry_debugfs_exit(void)
--- 
-2.22.0
-
+Ok, I see you actually did that, it just got hidden by the awful
+selective cc stuff a lot of people do at the moment.  Sorry for the
+noise.
