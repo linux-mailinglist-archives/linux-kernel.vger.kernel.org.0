@@ -2,75 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E3A424D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 994DE424DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 13:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391889AbfFLLzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 07:55:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:51684 "EHLO foss.arm.com"
+        id S2392007AbfFLL6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 07:58:11 -0400
+Received: from gate.crashing.org ([63.228.1.57]:58006 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387878AbfFLLzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:55:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E6C128;
-        Wed, 12 Jun 2019 04:55:19 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E30603F246;
-        Wed, 12 Jun 2019 04:57:00 -0700 (PDT)
-Subject: Re: [PATCH v2 0/4] iommu: Add device fault reporting API
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
+        id S2387878AbfFLL6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 07:58:09 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x5CBvfmS019047;
+        Wed, 12 Jun 2019 06:57:42 -0500
+Message-ID: <7705227ea831793cc9e45af32e0da8f5547cb14d.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     James Morse <james.morse@arm.com>,
+        "Hawa, Hanna" <hhhawa@amazon.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Shenhar, Talel" <talel@amazon.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Robin Murphy <Robin.Murphy@arm.com>
-References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
- <20190612081944.GB17505@8bytes.org>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <0f21e1b2-837f-87ba-6cf3-f6490d9e2a57@arm.com>
-Date:   Wed, 12 Jun 2019 12:54:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190612081944.GB17505@8bytes.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        "Chocron, Jonathan" <jonnyc@amazon.com>,
+        "Krupnik, Ronen" <ronenk@amazon.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "Hanoch, Uri" <hanochu@amazon.com>
+Date:   Wed, 12 Jun 2019 21:57:40 +1000
+In-Reply-To: <20190612084213.4fb9e054@coco.lan>
+References: <32431fa2-2285-6c41-ce32-09630205bb54@arm.com>
+         <9a2aaf4a9545ed30568a0613e64bc3f57f047799.camel@kernel.crashing.org>
+         <20190608090556.GA32464@zn.tnic>
+         <1ae5e7a3464f9d8e16b112cd371957ea20472864.camel@kernel.crashing.org>
+         <68446361fd1e742b284555b96b638fe6b5218b8b.camel@kernel.crashing.org>
+         <20190611115651.GD31772@zn.tnic>
+         <6df5a17bb1c900dc69b991171e55632f40d9426f.camel@kernel.crashing.org>
+         <20190612034813.GA32652@zn.tnic>
+         <08bd58dc0045670223f8d3bbc8be774505bd3ddf.camel@kernel.crashing.org>
+         <20190612074242.53a4cf56@coco.lan> <20190612110039.GH32652@zn.tnic>
+         <20190612084213.4fb9e054@coco.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2019 09:19, Joerg Roedel wrote:
-> On Mon, Jun 03, 2019 at 03:57:45PM +0100, Jean-Philippe Brucker wrote:
->> Jacob Pan (3):
->>   driver core: Add per device iommu param
->>   iommu: Introduce device fault data
->>   iommu: Introduce device fault report API
->>
->> Jean-Philippe Brucker (1):
->>   iommu: Add recoverable fault reporting
->>
->>  drivers/iommu/iommu.c      | 236 ++++++++++++++++++++++++++++++++++++-
->>  include/linux/device.h     |   3 +
->>  include/linux/iommu.h      |  87 ++++++++++++++
->>  include/uapi/linux/iommu.h | 153 ++++++++++++++++++++++++
->>  4 files changed, 476 insertions(+), 3 deletions(-)
->>  create mode 100644 include/uapi/linux/iommu.h
+On Wed, 2019-06-12 at 08:42 -0300, Mauro Carvalho Chehab wrote:
+> > Yes, we do have different error reporting facilities but I still
+> > think
+> > that concentrating all the error information needed in order to do
+> > proper recovery action is the better approach here. And make that
+> > part
+> > of the kernel so that it is robust. Userspace can still configure
+> > it and
+> > so on.
 > 
-> Applied, thanks.
+> If the error reporting facilities are for the same hardware "group"
+> (like the machine's memory controllers), I agree with you: it makes
+> sense to have a single driver. 
+> 
+> If they are for completely independent hardware then implementing
+> as separate drivers would work equally well, with the advantage of
+> making easier to maintain and make it generic enough to support
+> different vendors using the same IP block.
 
-Thanks! As discussed I think we need to add padding into the iommu_fault
-structure before this reaches mainline, to make the UAPI easier to
-extend in the future. It's already possible to extend but requires
-introducing a new ABI version number and support two structures. Adding
-some padding would only require introducing new flags. If there is no
-objection I'll send a one-line patch bumping the structure size to 64
-bytes (currently 48)
+Right. And if you really want a platform orchestrator for recovery in
+the kenrel, it should be a separate one, that consumes data from the
+individual IP block drivers that report the raw errors anyway.
 
-Thanks,
-Jean
+But for the main case that really needs to be in the kernel, which is
+DRAM, the recovery can usually be contained to the MC driver anyway.
+
+Cheers,
+Ben.
+
+
