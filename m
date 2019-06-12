@@ -2,151 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4C942080
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:16:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0184D4209B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 11:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437312AbfFLJQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 05:16:25 -0400
-Received: from mga06.intel.com ([134.134.136.31]:18157 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730353AbfFLJQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:16:25 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 02:16:24 -0700
-X-ExtLoop1: 1
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga006.jf.intel.com with ESMTP; 12 Jun 2019 02:16:21 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hazMj-00077D-8W; Wed, 12 Jun 2019 12:16:21 +0300
-Date:   Wed, 12 Jun 2019 12:16:21 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stefan Roese <sr@denx.de>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2 v5] tty/serial/8250: use mctrl_gpio helpers
-Message-ID: <20190612091621.GA9224@smile.fi.intel.com>
-References: <20190611105603.4435-1-sr@denx.de>
- <20190611105603.4435-2-sr@denx.de>
- <20190611124415.GT9224@smile.fi.intel.com>
- <85f0d39c-e5d8-320b-e611-d956630a629f@denx.de>
- <20190611144828.GX9224@smile.fi.intel.com>
- <12e5180e-b4a0-e5fa-bcad-ddc8103d644c@denx.de>
+        id S2437365AbfFLJVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 05:21:11 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43986 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2436698AbfFLJVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:21:11 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C1E5B7232FB05951CF92;
+        Wed, 12 Jun 2019 17:21:07 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 12 Jun 2019
+ 17:21:00 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ast@kernel.org>, <daniel@iogearbox.net>, <kafai@fb.com>,
+        <songliubraving@fb.com>, <yhs@fb.com>, <davem@davemloft.net>,
+        <jakub.kicinski@netronome.com>, <jonathan.lemon@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <xdp-newbies@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH bpf-next] bpf: Fix build error without CONFIG_INET
+Date:   Wed, 12 Jun 2019 17:18:47 +0800
+Message-ID: <20190612091847.23708-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12e5180e-b4a0-e5fa-bcad-ddc8103d644c@denx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 10:13:05AM +0200, Stefan Roese wrote:
-> On 11.06.19 16:48, Andy Shevchenko wrote:
-> > On Tue, Jun 11, 2019 at 04:02:54PM +0200, Stefan Roese wrote:
-> > > On 11.06.19 14:44, Andy Shevchenko wrote:
-> > > > On Tue, Jun 11, 2019 at 12:56:03PM +0200, Stefan Roese wrote:
-> > 
-> > > > >    static inline void serial8250_out_MCR(struct uart_8250_port *up, int value)
-> > > > >    {
-> > > > >    	serial_out(up, UART_MCR, value);
-> > > > > +
-> > > > > +	if (up->gpios) {
-> > > > > +		int mctrl_gpio = 0;
-> > > > > +
-> > > > > +		if (value & UART_MCR_RTS)
-> > > > > +			mctrl_gpio |= TIOCM_RTS;
-> > > > > +		if (value & UART_MCR_DTR)
-> > > > > +			mctrl_gpio |= TIOCM_DTR;
-> > > > > +
-> > > > > +		mctrl_gpio_set(up->gpios, mctrl_gpio);
-> > > > > +	}
-> > > > >    }
-> > 
-> > > > >    static inline int serial8250_in_MCR(struct uart_8250_port *up)
-> > > > >    {
-> > > > > -	return serial_in(up, UART_MCR);
-> > > > > +	int mctrl;
-> > > > > +
-> > > > > +	mctrl = serial_in(up, UART_MCR);
-> > > > > +
-> > > > > +	if (up->gpios) {
-> > > > > +		int mctrl_gpio = 0;
-> > > > > +
-> > > > > +		/* save current MCR values */
-> > > > > +		if (mctrl & UART_MCR_RTS)
-> > > > > +			mctrl_gpio |= TIOCM_RTS;
-> > > > > +		if (mctrl & UART_MCR_DTR)
-> > > > > +			mctrl_gpio |= TIOCM_DTR;
-> > > > > +
-> > > > > +		mctrl_gpio = mctrl_gpio_get_outputs(up->gpios, &mctrl_gpio);
-> > > > > +		if (mctrl_gpio & TIOCM_RTS)
-> > > > > +			mctrl |= UART_MCR_RTS;
-> > > > > +		else
-> > > > > +			mctrl &= ~UART_MCR_RTS;
-> > > > > +
-> > > > > +		if (mctrl_gpio & TIOCM_DTR)
-> > > > > +			mctrl |= UART_MCR_DTR;
-> > > > > +		else
-> > > > > +			mctrl &= ~UART_MCR_DTR;
-> > > > > +	}
-> > > > > +
-> > > > > +	return mctrl;
-> > > > >    }
-> > > > 
-> > > > These are using OR logic with potentially volatile data. Shouldn't we mask
-> > > > unused bits in UART_MCR in case of up->gpios != NULL?
-> > > 
-> > > Sorry, I don't see, which bits you are referring to? Could you please be
-> > > a bit more specific with the variable / macro meant (example)?
-> > 
-> > I meant that we double write values in the out() which might have some
-> > consequences, though I hope nothing wrong with it happens.
-> 
-> Where is the double write to a register? Sorry, I fail to spot it.
+If CONFIG_INET is not set, building fails:
 
-Not to the one register. From the functional point of view the same signal is
-set up twice: once per UART register, once per GPIO pins.
+kernel/bpf/verifier.o: In function `check_mem_access':
+verifier.c: undefined reference to `bpf_xdp_sock_is_valid_access'
+kernel/bpf/verifier.o: In function `convert_ctx_accesses':
+verifier.c: undefined reference to `bpf_xdp_sock_convert_ctx_access'
 
-> > In the in() we read the all bits in the register.
-> > 
-> > As now I look at the implementation of mctrl_gpio_get_outputs(),
-> > I think we rather get helpers for conversion between TIOCM and UART_MCR values,
-> > so, they can be used in get_mctrl() / set_mctrl() and above.
-> 
-> Do you something like this in mind?
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: fada7fdc83c0 ("bpf: Allow bpf_map_lookup_elem() on an xskmap")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ include/linux/bpf.h | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-More likely
-
-static inline int serial8250_MCR_to_TIOCM(int mcr)
-{
-	int tiocm = 0;
-
-	if (mcr & ...)
-		tiocm |= ...;
-	...
-
-	return tiocm;
-}
-
-static inline int serial8250_TIOCM_to_MCR(int tiocm)
-{
-	... in a similar way ...
-}
-
-> Plus the use of these macros in this patch of course.
-
-No macros, please.
-
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 4118f3d..72ca1e7 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -725,13 +725,6 @@ void __cpu_map_insert_ctx(struct bpf_map *map, u32 index);
+ void __cpu_map_flush(struct bpf_map *map);
+ int cpu_map_enqueue(struct bpf_cpu_map_entry *rcpu, struct xdp_buff *xdp,
+ 		    struct net_device *dev_rx);
+-bool bpf_xdp_sock_is_valid_access(int off, int size, enum bpf_access_type type,
+-				  struct bpf_insn_access_aux *info);
+-u32 bpf_xdp_sock_convert_ctx_access(enum bpf_access_type type,
+-				    const struct bpf_insn *si,
+-				    struct bpf_insn *insn_buf,
+-				    struct bpf_prog *prog,
+-				    u32 *target_size);
+ 
+ /* Return map's numa specified by userspace */
+ static inline int bpf_map_attr_numa_node(const union bpf_attr *attr)
+@@ -1107,6 +1100,15 @@ u32 bpf_tcp_sock_convert_ctx_access(enum bpf_access_type type,
+ 				    struct bpf_insn *insn_buf,
+ 				    struct bpf_prog *prog,
+ 				    u32 *target_size);
++
++bool bpf_xdp_sock_is_valid_access(int off, int size, enum bpf_access_type type,
++				  struct bpf_insn_access_aux *info);
++
++u32 bpf_xdp_sock_convert_ctx_access(enum bpf_access_type type,
++				    const struct bpf_insn *si,
++				    struct bpf_insn *insn_buf,
++				    struct bpf_prog *prog,
++				    u32 *target_size);
+ #else
+ static inline bool bpf_tcp_sock_is_valid_access(int off, int size,
+ 						enum bpf_access_type type,
+@@ -1123,6 +1125,21 @@ static inline u32 bpf_tcp_sock_convert_ctx_access(enum bpf_access_type type,
+ {
+ 	return 0;
+ }
++static inline bool bpf_xdp_sock_is_valid_access(int off, int size,
++						enum bpf_access_type type,
++						struct bpf_insn_access_aux *info)
++{
++	return false;
++}
++
++static inline u32 bpf_xdp_sock_convert_ctx_access(enum bpf_access_type type,
++						  const struct bpf_insn *si,
++						  struct bpf_insn *insn_buf,
++						  struct bpf_prog *prog,
++						  u32 *target_size)
++{
++	return 0;
++}
+ #endif /* CONFIG_INET */
+ 
+ #endif /* _LINUX_BPF_H */
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
 
 
