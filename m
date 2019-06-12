@@ -2,84 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DAA41E07
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAAC141E12
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407505AbfFLHm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 03:42:59 -0400
-Received: from gofer.mess.org ([88.97.38.141]:47575 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406649AbfFLHm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:42:59 -0400
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 79842602BB; Wed, 12 Jun 2019 08:42:55 +0100 (BST)
-Date:   Wed, 12 Jun 2019 08:42:55 +0100
-From:   Sean Young <sean@mess.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     mchehab@kernel.org, tglx@linutronix.de, corbet@lwn.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: ttpci: Fix build error without RC_CORE
-Message-ID: <20190612074254.eky2xo7bajorkhfy@gofer.mess.org>
-References: <20190612034310.4640-1-yuehaibing@huawei.com>
+        id S2407960AbfFLHn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:43:28 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42971 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405755AbfFLHn2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 03:43:28 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y13so11258696lfh.9;
+        Wed, 12 Jun 2019 00:43:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RGbRj2wYsEmztwHw3Pn5AYv2PzA45B/YLiXGtuotTKs=;
+        b=nMlrH2MAcekySIjsSxz45bCq4IQW3AfDqrfHn5UVU4U3enko2EF8Fq49+8zEJn1vJM
+         Vv9RtMPgUKyWWkjcpLq318MBu8qBdZMhtKotyJNU+WgPOCU0BNBehFUvTDn4v1uztutN
+         4oZUJ5qaL3efqzVGING3oVF3eORFMk8g3aoURHaSOT8DIcM6vDH50Xvb1D0AZcsGEnRW
+         ONG8sugIS1rxAlwVDMS7ALl0q+n7yh41+Ukj19M9lVNUh1GGh80/KYXq7FJCITkpxgBp
+         3+2e7FQCGqgCYzkTa8yVA7/fYAMpwOBZm8ldDfLjVzEE9FS2MUarszCxrXuAIT1fklul
+         /Zfw==
+X-Gm-Message-State: APjAAAXhLmRo+Pbuad6wotWWNYZtw/toR95bW40wAiLp3StytQOr7CVT
+        EHxor2vNARAy98BFMlf+8XTjxqEh+CKpoaxaftk=
+X-Google-Smtp-Source: APXvYqxq5md2jQfgVOiyRA4y5E2ZNyXbmM8b5Y9O3ZBQ3tX8KoUwiYzSoIDJH1MeAjdTlMBIWRbEc4WtaVcO388mSNE=
+X-Received: by 2002:ac2:5467:: with SMTP id e7mr16915356lfn.23.1560325405807;
+ Wed, 12 Jun 2019 00:43:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612034310.4640-1-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org> <20190606142220.1392-7-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190606142220.1392-7-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 12 Jun 2019 09:43:13 +0200
+Message-ID: <CAMuHMdWUFDurgWmJgoKZYUxzJFwwK03F0Eca1SEDPk_o65iSwg@mail.gmail.com>
+Subject: Re: [PATCH 06/20] clk: renesas: r8a77965: Add CMM clocks
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 11:43:10AM +0800, YueHaibing wrote:
-> If RC_CORE is not set, building fails:
-> 
-> drivers/media/pci/ttpci/av7110_ir.o: In function `av7110_ir_init':
-> av7110_ir.c:(.text+0x1b0): undefined reference to `rc_allocate_device'
-> av7110_ir.c:(.text+0x2c1): undefined reference to `rc_register_device'
-> av7110_ir.c:(.text+0x2dc): undefined reference to `rc_free_device'
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 71f49a8bf5c5 ("media: ttpci: use rc-core for the IR receiver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Thu, Jun 6, 2019 at 4:22 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add clock definitions for CMM units on Renesas R-Car Gen3 M3-N.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Thank you for spotting this and writing a patch.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.3.
 
-> ---
->  drivers/media/pci/ttpci/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/pci/ttpci/Kconfig b/drivers/media/pci/ttpci/Kconfig
-> index d96d4fa..b705631 100644
-> --- a/drivers/media/pci/ttpci/Kconfig
-> +++ b/drivers/media/pci/ttpci/Kconfig
-> @@ -7,7 +7,7 @@ config DVB_AV7110
->  	depends on DVB_CORE && PCI && I2C
->  	select TTPCI_EEPROM
->  	select VIDEO_SAA7146_VV
-> -	select DVB_AV7110_IR if INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110
+Gr{oetje,eeting}s,
 
-This says if
- - select DVB_AV7110_IR if INPUT_EVDEV and DVB_AV7110 are both y or m
- - select DVB_AV7110_IR if INPUT_EVDEV=y
-   This exists for the case when INPUT_EVDEV=y and DVB_AV7110=m, which is fine
+                        Geert
 
-> +	select DVB_AV7110_IR if RC_CORE=DVB_AV7110 && (INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-That's not exactly the same. For one thing it should not longer depend on
-INPUT_EVDEV=y.
-
-Now if DVB_AV7110=m and RC_CORE=y is not allowed which should be (this is
-the case in Fedora default kernel config for example).
-
->  	depends on VIDEO_DEV	# dependencies of VIDEO_SAA7146_VV
->  	select DVB_VES1820 if MEDIA_SUBDRV_AUTOSELECT
->  	select DVB_VES1X93 if MEDIA_SUBDRV_AUTOSELECT
-> -- 
-> 2.7.4
-> 
-
-Thanks,
-
-Sean
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
