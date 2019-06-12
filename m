@@ -2,207 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAF542B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA4D242B0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 17:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409438AbfFLPfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 11:35:51 -0400
-Received: from foss.arm.com ([217.140.110.172]:55884 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408737AbfFLPfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:35:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFFE7337;
-        Wed, 12 Jun 2019 08:35:49 -0700 (PDT)
-Received: from C02TF0J2HF1T.local (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C44B63F73C;
-        Wed, 12 Jun 2019 08:35:46 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 16:35:39 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>
-Subject: Re: [PATCH v4 1/2] arm64: Define
- Documentation/arm64/tagged-address-abi.txt
-Message-ID: <20190612153538.GL28951@C02TF0J2HF1T.local>
-References: <cover.1560339705.git.andreyknvl@google.com>
- <20190612142111.28161-1-vincenzo.frascino@arm.com>
- <20190612142111.28161-2-vincenzo.frascino@arm.com>
+        id S2437501AbfFLPg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 11:36:26 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:29736 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409443AbfFLPgZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:36:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1560353785; x=1591889785;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=iysjHFEmFK6WReRy+l8vRaIRl3mJUVuzUzI1BfSSuWA=;
+  b=h/VdZDVYQt+QuQNBHV4WQ+OaIWjgZxkOixOP5tuhujVKt3nw4Zw7Tj66
+   rcjM+fuAzhGM8euXjkXwb1oZC9MjkJ33u9BD/n7YQjxyO9Qwo8+wlGgFL
+   SYPcbygmmVGaWnFg3thwdySl+31uA18jG+QsdDO0nMt/E4MQ5r8a30n00
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.62,366,1554768000"; 
+   d="scan'208";a="400429507"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 12 Jun 2019 15:36:23 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 494C6A245B;
+        Wed, 12 Jun 2019 15:36:18 +0000 (UTC)
+Received: from EX13D08UEE002.ant.amazon.com (10.43.62.92) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 12 Jun 2019 15:36:18 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D08UEE002.ant.amazon.com (10.43.62.92) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 12 Jun 2019 15:36:18 +0000
+Received: from u6cf1b7119fa15b.ant.amazon.com (10.28.85.98) by
+ mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Wed, 12 Jun 2019 15:36:15 +0000
+From:   Sam Caccavale <samcacc@amazon.de>
+CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
+        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
+        <graf@amazon.de>, <karahmed@amazon.de>,
+        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
+        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+        <paullangton4@gmail.com>, <anirudhkaushik@google.com>,
+        <x86@kernel.org>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sam Caccavale <samcacc@amazon.de>
+Subject: [v2, 0/4] x86 instruction emulator fuzzing
+Date:   Wed, 12 Jun 2019 17:35:56 +0200
+Message-ID: <20190612153600.13073-1-samcacc@amazon.de>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612142111.28161-2-vincenzo.frascino@arm.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincenzo,
+Dear all,
 
-Some minor comments below but it looks fine to me overall. Cc'ing
-Szabolcs as well since I'd like a view from the libc people.
+This series aims to provide an entrypoint for, and fuzz KVM's x86 instruction
+emulator from userspace.  It mirrors Xen's application of the AFL fuzzer to
+it's instruction emulator in the hopes of discovering vulnerabilities.
+Since this entrypoint also allows arbitrary execution of the emulators code
+from userspace, it may also be useful for testing.
 
-On Wed, Jun 12, 2019 at 03:21:10PM +0100, Vincenzo Frascino wrote:
-> diff --git a/Documentation/arm64/tagged-address-abi.txt b/Documentation/arm64/tagged-address-abi.txt
-> new file mode 100644
-> index 000000000000..96e149e2c55c
-> --- /dev/null
-> +++ b/Documentation/arm64/tagged-address-abi.txt
-> @@ -0,0 +1,111 @@
-> +ARM64 TAGGED ADDRESS ABI
-> +========================
-> +
-> +This document describes the usage and semantics of the Tagged Address
-> +ABI on arm64.
-> +
-> +1. Introduction
-> +---------------
-> +
-> +On arm64 the TCR_EL1.TBI0 bit has been always enabled on the arm64 kernel,
-> +hence the userspace (EL0) is allowed to set a non-zero value in the top
+The current 4 patches build the emulator and 2 harnesses: simple-harness is
+an example of unit testing; afl-harness is a frontend for the AFL fuzzer.
 
-I'd be clearer here: "userspace (EL0) is allowed to perform a user
-memory access through a 64-bit pointer with a non-zero top byte" (or
-something along the lines). Otherwise setting a non-zero top byte is
-allowed on any architecture, dereferencing it is a problem.
+Patches
+=======
 
-> +byte but the resulting pointers are not allowed at the user-kernel syscall
-> +ABI boundary.
-> +
-> +This document describes a relaxation of the ABI with which it is possible
+- 01: Builds and links afl-harness with the required kernel objects.
+- 02: Introduces the minimal set of emulator operations and supporting code
+to emulate simple instructions.
+- 03: Demonstrates simple-harness as a unit test.
+- 04: Adds scripts for install, running, and crash triage.
 
-"relaxation of the ABI that makes it possible to..."
+Any comments/suggestions are greatly appreciated.
 
-> +to pass tagged tagged pointers to the syscalls, when these pointers are in
-> +memory ranges obtained as described in paragraph 2.
+Best,
+Sam Caccavale
 
-"section 2" is better. There are a lot more paragraphs.
+Sam Caccavale (4):
+  Build target for emulate.o as a userspace binary
+  Emulate simple x86 instructions in userspace
+  Demonstrating unit testing via simple-harness
+  Added scripts for filtering, building, deploying
 
-> +
-> +Since it is not desirable to relax the ABI to allow tagged user addresses
-> +into the kernel indiscriminately, arm64 provides a new sysctl interface
-> +(/proc/sys/abi/tagged_addr) that is used to prevent the applications from
-> +enabling the relaxed ABI and a new prctl() interface that can be used to
-> +enable or disable the relaxed ABI.
-> +
-> +The sysctl is meant also for testing purposes in order to provide a simple
-> +way for the userspace to verify the return error checking of the prctl()
-> +command without having to reconfigure the kernel.
-> +
-> +The ABI properties are inherited by threads of the same application and
-> +fork()'ed children but cleared when a new process is spawn (execve()).
+ tools/Makefile                                |   9 +
+ tools/fuzz/x86ie/.gitignore                   |   2 +
+ tools/fuzz/x86ie/Makefile                     |  54 +++
+ tools/fuzz/x86ie/README.md                    |  12 +
+ tools/fuzz/x86ie/afl-harness.c                | 151 +++++++
+ tools/fuzz/x86ie/common.h                     |  87 ++++
+ tools/fuzz/x86ie/emulator_ops.c               | 398 ++++++++++++++++++
+ tools/fuzz/x86ie/emulator_ops.h               | 120 ++++++
+ tools/fuzz/x86ie/scripts/afl-many             |  28 ++
+ tools/fuzz/x86ie/scripts/bin.sh               |  49 +++
+ tools/fuzz/x86ie/scripts/build.sh             |  32 ++
+ tools/fuzz/x86ie/scripts/coalesce.sh          |   6 +
+ tools/fuzz/x86ie/scripts/deploy.sh            |   9 +
+ tools/fuzz/x86ie/scripts/deploy_remote.sh     |   9 +
+ tools/fuzz/x86ie/scripts/gen_output.sh        |  11 +
+ tools/fuzz/x86ie/scripts/install_afl.sh       |  14 +
+ .../fuzz/x86ie/scripts/install_deps_ubuntu.sh |   5 +
+ tools/fuzz/x86ie/scripts/rebuild.sh           |   6 +
+ tools/fuzz/x86ie/scripts/run.sh               |  10 +
+ tools/fuzz/x86ie/scripts/summarize.sh         |   9 +
+ tools/fuzz/x86ie/simple-harness.c             |  42 ++
+ tools/fuzz/x86ie/stubs.c                      |  56 +++
+ tools/fuzz/x86ie/stubs.h                      |  52 +++
+ 23 files changed, 1171 insertions(+)
+ create mode 100644 tools/fuzz/x86ie/.gitignore
+ create mode 100644 tools/fuzz/x86ie/Makefile
+ create mode 100644 tools/fuzz/x86ie/README.md
+ create mode 100644 tools/fuzz/x86ie/afl-harness.c
+ create mode 100644 tools/fuzz/x86ie/common.h
+ create mode 100644 tools/fuzz/x86ie/emulator_ops.c
+ create mode 100644 tools/fuzz/x86ie/emulator_ops.h
+ create mode 100755 tools/fuzz/x86ie/scripts/afl-many
+ create mode 100755 tools/fuzz/x86ie/scripts/bin.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/build.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/coalesce.sh
+ create mode 100644 tools/fuzz/x86ie/scripts/deploy.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/deploy_remote.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/gen_output.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/install_afl.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/install_deps_ubuntu.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/rebuild.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/run.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/summarize.sh
+ create mode 100644 tools/fuzz/x86ie/simple-harness.c
+ create mode 100644 tools/fuzz/x86ie/stubs.c
+ create mode 100644 tools/fuzz/x86ie/stubs.h
 
-"spawned".
+--
+2.17.1
 
-I guess you could drop these three paragraphs here and mention the
-inheritance properties when introducing the prctl() below. You can also
-mention the global sysctl switch after the prctl() was introduced.
 
-> +
-> +2. ARM64 Tagged Address ABI
-> +---------------------------
-> +
-> +From the kernel syscall interface prospective, we define, for the purposes
-> +of this document, a "valid tagged pointer" as a pointer that either it has
 
-"either has" (no 'it') sounds slightly better but I'm not a native
-English speaker either.
 
-> +a zero value set in the top byte or it has a non-zero value, it is in memory
-> +ranges privately owned by a userspace process and it is obtained in one of
-> +the following ways:
-> +  - mmap() done by the process itself, where either:
-> +    * flags = MAP_PRIVATE | MAP_ANONYMOUS
-> +    * flags = MAP_PRIVATE and the file descriptor refers to a regular
-> +      file or "/dev/zero"
-> +  - a mapping below sbrk(0) done by the process itself
-> +  - any memory mapped by the kernel in the process's address space during
-> +    creation and following the restrictions presented above (i.e. data, bss,
-> +    stack).
-> +
-> +The ARM64 Tagged Address ABI is an opt-in feature, and an application can
-> +control it using the following prctl()s:
-> +  - PR_SET_TAGGED_ADDR_CTRL: can be used to enable the Tagged Address ABI.
+Amazon Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
+Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
+Sitz: Berlin
+Ust-ID: DE 289 237 879
 
-enable or disable (not sure we need the latter but it doesn't heart).
 
-I'd add the arg2 description here as well.
 
-> +  - PR_GET_TAGGED_ADDR_CTRL: can be used to check the status of the Tagged
-> +                             Address ABI.
-> +
-> +As a consequence of invoking PR_SET_TAGGED_ADDR_CTRL prctl() by an applications,
-> +the ABI guarantees the following behaviours:
-> +
-> +  - Every current or newly introduced syscall can accept any valid tagged
-> +    pointers.
-> +
-> +  - If a non valid tagged pointer is passed to a syscall then the behaviour
-> +    is undefined.
-> +
-> +  - Every valid tagged pointer is expected to work as an untagged one.
-> +
-> +  - The kernel preserves any valid tagged pointers and returns them to the
-> +    userspace unchanged in all the cases except the ones documented in the
-> +    "Preserving tags" paragraph of tagged-pointers.txt.
-
-I'd think we need to qualify the context here in which the kernel
-preserves the tagged pointers. Did you mean on the syscall return?
-
-> +
-> +A definition of the meaning of tagged pointers on arm64 can be found in:
-> +Documentation/arm64/tagged-pointers.txt.
-> +
-> +3. ARM64 Tagged Address ABI Exceptions
-> +--------------------------------------
-> +
-> +The behaviours described in paragraph 2, with particular reference to the
-
-"section 2"
-
-> +acceptance by the syscalls of any valid tagged pointer are not applicable
-> +to the following cases:
-> +  - mmap() addr parameter.
-> +  - mremap() new_address parameter.
-> +  - prctl_set_mm() struct prctl_map fields.
-> +  - prctl_set_mm_map() struct prctl_map fields.
-> +
-> +4. Example of correct usage
-> +---------------------------
-> +
-> +void main(void)
-> +{
-> +	static int tbi_enabled = 0;
-> +	unsigned long tag = 0;
-> +
-> +	char *ptr = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE,
-> +			 MAP_ANONYMOUS, -1, 0);
-> +
-> +	if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE,
-> +		  0, 0, 0) == 0)
-> +		tbi_enabled = 1;
-> +
-> +	if (!ptr)
-> +		return -1;
-> +
-> +	if (tbi_enabled)
-> +		tag = rand() & 0xff;
-> +
-> +	ptr = (char *)((unsigned long)ptr | (tag << TAG_SHIFT));
-> +
-> +	*ptr = 'a';
-> +
-> +	...
-> +}
-> +
-> -- 
-> 2.21.0
-
--- 
-Catalin
