@@ -2,211 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D882042FF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E573B43015
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:28:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbfFLT1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:27:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34327 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729144AbfFLT1N (ORCPT
+        id S1728699AbfFLT2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 15:28:22 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35473 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbfFLT0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:27:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e16so18167363wrn.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 12:27:11 -0700 (PDT)
+        Wed, 12 Jun 2019 15:26:46 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d126so10259109pfd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 12:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ksRGStZF6QCaA6nna+N4wh/TM9BtGkGQ4q0OpSDny6o=;
-        b=AVyvvColl0CGo4dMLMz+GetbY7r6vpLo4Q4IjqtorX8mM2CAXCsOR+4ou4mbrlMc1v
-         Zm+D5nLWIRUOUovrUhnjy5kD4YTNp57GaUawIehZKGuZPv3LlCLL0p36Q/svMK9Xs+Ea
-         W36dF8AOx7a/AIO4Gvp0bkHZurQJQCY2Uh4Q7TnKdFkLg86sQjvQ2qKRqkGrQC79OJ2S
-         YcYXR4OFSGpDtw0/phnXE2jiN9fDCyUCojvZA2+dlkBaq+rH8FLzff18gO0taO79wTIy
-         SwGBEbMGEil/FcIK7gehxBCh9VxiFc1aEOr8xrp5Xb1HfDaQgFdiivZA70i4RdfLvSNc
-         3Fhg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JGTJNpxtoSxf9cQjifYgXwRhQ7ZHC2LuIfFDHnbUz+Q=;
+        b=jkCOi89f8z4k6wMOAeyYKznf4Y62pis19MeQNmtA7Jh53MHFibTLDJ9TYgKVn+f5kD
+         fLUDfVGDMuu4aWcnxDzxbp07lL+Lz51Iy00qrEIJCzXdYG49TZOl7ZAvAbf9jiUmmh/V
+         ih3U2U6lZeAoQ/pfzf5gNEqmoDoWlcBOwlo+E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ksRGStZF6QCaA6nna+N4wh/TM9BtGkGQ4q0OpSDny6o=;
-        b=cKjJGG8MvjF19bGA8Ya77qkKLfPk4IWjsxOhvUbKvy3pMlN3LfTE/VuQrtpODn8soM
-         a5+t/tfnwMmDpgM70R93q+fzu80GeZp+ahL0xcnr9aY+cZmHraU8Ilrj+7lKIpK7T+qt
-         Cz23FQSKyG/AcaVq2ESKWu6AKbikSzy6YLyuV8xguGR1Rep6g79oQ6FTmVUzCTlZhI+h
-         pZJ9sbczCRe77sLzRMZvTM/S/8rJWiKMQGHQpJmv9TaYS3CFSs4P9er5QWGahmen+3He
-         IJraQluxjMO6ScamXg/6C6Yj9OSEbBIoue8JENdERulbWV3u+3lpM0Sq5WbEjFN293Of
-         wEGA==
-X-Gm-Message-State: APjAAAWAyRDxAaCa71nEgl4SaVBFD8rNc7d44AsYeT0ZJvkwFxl8vSQA
-        RqJMxbHZsggZKdNtXYtkt+f0ZBpGtyw=
-X-Google-Smtp-Source: APXvYqwurNlgeZeJuK7JcwSvbj3ROInpDNqCYw2rKVecuwNdwAVwX7nDOChrnVht3RRH9OU7f2np/A==
-X-Received: by 2002:a5d:4a0e:: with SMTP id m14mr9709542wrq.91.1560367630666;
-        Wed, 12 Jun 2019 12:27:10 -0700 (PDT)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id r5sm612526wrg.10.2019.06.12.12.27.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 12:27:10 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCHv4 28/28] selftest/timens: Check that a right vdso is mapped after fork and exec
-Date:   Wed, 12 Jun 2019 20:26:27 +0100
-Message-Id: <20190612192628.23797-29-dima@arista.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190612192628.23797-1-dima@arista.com>
-References: <20190612192628.23797-1-dima@arista.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JGTJNpxtoSxf9cQjifYgXwRhQ7ZHC2LuIfFDHnbUz+Q=;
+        b=QdF+c3YYecpf5ps+1otKW4uHtRIlmWsmtrbplz6OVmepczxmjfTLOvDtG0EFrIZAe4
+         VjQFn/EoUyaK0+nv0o1HdqrtodU38YT5sgS7hsu92HkVat4DleIpfV/Io3qxTf6WDTHD
+         Our0BZKOCh7ooNh5c+2d4VlKWhvRzFtqCCFcejYiEHAL7DRaRemIFvFbYoogm5fL6LB0
+         BpAhMFO1KqWfiCoSV/Rpn/1ZhodumnQGaf+ck2A0nilQJqc0Qf/dybYDuQhyYIyefBQk
+         OTQ6skTPPnVXuMmYE68FKQHeHP+hpLFa3uHBM6jDGQO/5achRowKmIobygXk8bMPD/HT
+         G9mw==
+X-Gm-Message-State: APjAAAWmWiY2o7oT/F14OSedUOgLnOCBX7ld1C/MyHYY1tj3EVerynN7
+        GV21uEjezrDd2lN543j3+ZgHBQ==
+X-Google-Smtp-Source: APXvYqzXNaVC/oJkIo+F4M5Yj007p4G4RNdM/LCI3g6mVncptMolQVeByev0CceqM+5WvJuPiF17VA==
+X-Received: by 2002:a62:5306:: with SMTP id h6mr89297716pfb.29.1560367605628;
+        Wed, 12 Jun 2019 12:26:45 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id e26sm326416pfn.94.2019.06.12.12.26.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 12:26:44 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 12:26:42 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Brian Norris <briannorris@google.com>, Pavel Machek <pavel@ucw.cz>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Doug Anderson <dianders@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Guenter Roeck <groeck@google.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+Message-ID: <20190612192642.GK137143@google.com>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+ <20190610205233.GB137143@google.com>
+ <20190611104913.egsbwcedshjdy3m5@holly.lan>
+ <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
+ <20190611223019.GH137143@google.com>
+ <20190612110325.xdn3q2aod52oalge@holly.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190612110325.xdn3q2aod52oalge@holly.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
+Hi Daniel,
 
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Co-developed-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- tools/testing/selftests/timens/.gitignore |  1 +
- tools/testing/selftests/timens/Makefile   |  2 +-
- tools/testing/selftests/timens/exec.c     | 91 +++++++++++++++++++++++
- 3 files changed, 93 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/timens/exec.c
+On Wed, Jun 12, 2019 at 12:03:25PM +0100, Daniel Thompson wrote:
+> On Tue, Jun 11, 2019 at 03:30:19PM -0700, Matthias Kaehlcke wrote:
+> > On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
+> > > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
+> > > <daniel.thompson@linaro.org> wrote:
+> > > > This is a long standing flaw in the backlight interfaces. AFAIK generic
+> > > > userspaces end up with a (flawed) heuristic.
+> > > 
+> > > Bingo! Would be nice if we could start to fix this long-standing flaw.
+> > 
+> > Agreed!
+> > 
+> > How could a fix look like, a sysfs attribute? Would a boolean value
+> > like 'logarithmic_scale' or 'linear_scale' be enough or could more
+> > granularity be needed?
+> 
+> Certainly "linear" (this device will work more or less correctly if the
+> userspace applies perceptual curves). Not sure about logarithmic since
+> what is actually useful is something that is "perceptually linear"
+> (logarithmic is merely a way to approximate that).
+> 
+> I do wonder about a compatible string like most-detailed to
+> least-detailed description. This for a PWM with the auto-generated
+> tables we'd see something like:
+> 
+> cie-1991,perceptual,non-linear
+> 
+> For something that is non-linear but we are not sure what its tables are
+> we can offer just "non-linear".
 
-diff --git a/tools/testing/selftests/timens/.gitignore b/tools/testing/selftests/timens/.gitignore
-index 16292e4d08a5..789f21e81028 100644
---- a/tools/testing/selftests/timens/.gitignore
-+++ b/tools/testing/selftests/timens/.gitignore
-@@ -1,4 +1,5 @@
- clock_nanosleep
-+exec
- gettime_perf
- gettime_perf_cold
- procfs
-diff --git a/tools/testing/selftests/timens/Makefile b/tools/testing/selftests/timens/Makefile
-index ef65bf96b55c..9e0edf354906 100644
---- a/tools/testing/selftests/timens/Makefile
-+++ b/tools/testing/selftests/timens/Makefile
-@@ -1,4 +1,4 @@
--TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs gettime_perf
-+TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs gettime_perf exec
- 
- uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/i386/)
-diff --git a/tools/testing/selftests/timens/exec.c b/tools/testing/selftests/timens/exec.c
-new file mode 100644
-index 000000000000..b3a05c41e202
---- /dev/null
-+++ b/tools/testing/selftests/timens/exec.c
-@@ -0,0 +1,91 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdbool.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <time.h>
-+#include <unistd.h>
-+#include <time.h>
-+#include <string.h>
-+
-+#include "log.h"
-+#include "timens.h"
-+
-+#define OFFSET (36000)
-+
-+int main(int argc, char *argv[])
-+{
-+	struct timespec now, tst;
-+	int status, i;
-+	pid_t pid;
-+
-+	if (argc > 1) {
-+		if (sscanf(argv[1], "%ld", &now.tv_sec) != 1)
-+			return pr_perror("sscanf");
-+
-+		for (i = 0; i < 2; i++) {
-+			_gettime(CLOCK_MONOTONIC, &tst, i);
-+			if (abs(tst.tv_sec - now.tv_sec) > 5)
-+				return pr_fail("%ld %ld\n", now.tv_sec, tst.tv_sec);
-+		}
-+	}
-+
-+	nscheck();
-+
-+	clock_gettime(CLOCK_MONOTONIC, &now);
-+
-+	if (unshare(CLONE_NEWTIME))
-+		return pr_perror("Can't unshare() timens");
-+
-+	if (_settime(CLOCK_MONOTONIC, OFFSET))
-+		return 1;
-+
-+	for (i = 0; i < 2; i++) {
-+		_gettime(CLOCK_MONOTONIC, &tst, i);
-+		if (abs(tst.tv_sec - now.tv_sec) > 5)
-+			return pr_fail("%ld %ld\n",
-+					now.tv_sec, tst.tv_sec);
-+	}
-+
-+	if (argc > 1)
-+		return 0;
-+
-+	pid = fork();
-+	if (pid < 0)
-+		return pr_perror("fork");
-+
-+	if (pid == 0) {
-+		char now_str[64];
-+		char *cargv[] = {"exec", now_str, NULL};
-+		char *cenv[] = {NULL};
-+
-+		/* Check that a child process is in the new timens. */
-+		for (i = 0; i < 2; i++) {
-+			_gettime(CLOCK_MONOTONIC, &tst, i);
-+			if (abs(tst.tv_sec - now.tv_sec - OFFSET) > 5)
-+				return pr_fail("%ld %ld\n",
-+						now.tv_sec + OFFSET, tst.tv_sec);
-+		}
-+
-+		/* Check that a proper vdso will be mapped after execve. */
-+		snprintf(now_str, sizeof(now_str), "%ld", now.tv_sec + OFFSET);
-+		execve("/proc/self/exe", cargv, cenv);
-+		return pr_perror("execve");
-+	}
-+
-+	if (waitpid(pid, &status, 0) != pid)
-+		return pr_perror("waitpid");
-+
-+	if (status)
-+		ksft_exit_fail();
-+
-+	ksft_test_result_pass("exec\n");
-+	ksft_exit_pass();
-+	return 0;
-+}
--- 
-2.22.0
+Thanks for the feedback!
 
+It seems clear that we want a string for the added flexibility. I can
+work on a patch with the compatible string like description you
+suggested and we can discuss in the review if we want to go with that
+or prefer something else.
+
+> > The new attribute could be optional (it only exists if explicitly
+> > specified by the driver) or be set to a default based on a heuristic
+> > if not specified and be 'fixed' on a case by case basis. The latter
+> > might violate "don't break userspace" though, so I'm not sure it's a
+> > good idea.
+> 
+> I think we should avoid any heuristic! There are several drivers and we
+> may not be able to work through all of them and make the correct
+> decision.
+
+Agreed
+
+> Instead one valid value for the sysfs should be "unknown" and this be
+> the default for drivers we have not analysed (this also makes it easy to
+> introduce change here).
+
+An "unknown" value sounds good, it allows userspace to just do what it
+did/would hace done before this attribute existed.
+
+> We should only set the property to something else for drivers that have
+> been reviewed.
+> 
+> There could be a special case for pwm_bl.c in that I'm prepared to
+> assume that the hardware components downstream of the PWM have a
+> roughly linear response and that if the user provided tables that their
+> function is to provide a perceptually comfortable response.
+
+Unfortunately this isn't universally true :(
+
+At least several Chrome OS devices use a linear brightness scale and
+userspace does the transformation in the animated slider. A quick
+'git grep -A10 brightness-levels arch' suggests that there are
+multiple other devices/platforms using a linear scale.
+
+We could treat devices with a predefined brightness table as
+"unknown", unless there is a (new optional) DT property that indicates
+the type of the scale.
+
+Cheers
+
+Matthias
