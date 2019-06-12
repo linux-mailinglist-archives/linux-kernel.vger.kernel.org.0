@@ -2,140 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EB7A41A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC5341A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 03:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfFLBsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 21:48:16 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41466 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbfFLBsQ (ORCPT
+        id S2407544AbfFLBtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 21:49:52 -0400
+Received: from mail-lf1-f47.google.com ([209.85.167.47]:42979 "EHLO
+        mail-lf1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728996AbfFLBtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:48:16 -0400
-Received: by mail-oi1-f195.google.com with SMTP id g7so7296370oia.8;
-        Tue, 11 Jun 2019 18:48:15 -0700 (PDT)
+        Tue, 11 Jun 2019 21:49:52 -0400
+Received: by mail-lf1-f47.google.com with SMTP id y13so10732480lfh.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 18:49:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dm76JZldFkWEgkVO1SScer1LyP51y0/fkMGkyI4B5po=;
-        b=jqOtu9b9g/g4PCAlxBumBB8oZSTNGeigc03WPBDH0+euBKHEh9LwKL+aKT7vI4blsi
-         VECTaKvJ279kOlWcowd8LHyBRW6p2+yj/I6p+/4Dc2SQKFbwjv5Ihbbe4D0J2E/jAGla
-         khBDvdpHU5bFJg8GrC3+SGLypXs3NTxL0Brb6FiqVajiNbf/4LvisZj7dfeCDy7dgIK3
-         KA0hxTtA3bTuAva51ncqrDyPtdEA7u8E/QUNBYKEdFDqWSqmu9oLkigYG8FRQyngemem
-         1jRaRIPm7zO7GUifkeWIlsMNVqTNlHm7Ek25SonVTtYaRzzvh0wzYxH6mzsNWJ71jC25
-         iirQ==
+         :cc;
+        bh=gbMfZABo41/f10Q7nJ+1rb6WtMx9eMLy3331KA8ZSqQ=;
+        b=LR555UVASGUDAyRxWXlECzWrsKk48W+39pIgi3RyHpdk6L/TiCzuG+CjSD/QFngxnb
+         XvfdnDsbPH7Gvn8YfJ2uSd4Lnwvl6ygKOBzaoI0eVuOQzPzQc9uqfj9SKz4ruqH9Bklc
+         PHQUsMWjtgFk61b6MNW2smHNPOl1cVkhHMang=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dm76JZldFkWEgkVO1SScer1LyP51y0/fkMGkyI4B5po=;
-        b=nVTbP6/Zn4zF4NR/4oU08DaqwyZcJ9UewAs1P2+YumOeBEUWAI5D/XoHQaa29D+/7C
-         dUJzTQheTlaGlDRAKhEB7ApyKXZ6JTsLhZEJiaN9y2jRlPS0rqS5xnBkR2VuGuHe3YLk
-         sjd1FpOeXUUj6snziyYJ+g4HBCPRJDE1sSVW1IX/xAfarS1EQD0JaXBPLu9arE5SDcon
-         mxRS6Zq5ygnKNjrZq/CiiSVhXfpZL2XesY44DD8RWQpyr/RWcGWbYMTPmvzWHQZpOf5L
-         OtybAdu2zRxAVbUrg64UdF7S4Q1hnDOpxyj5bSRFh4e2ASKBcMZONGcPBpoFIHW6V8wb
-         kXTQ==
-X-Gm-Message-State: APjAAAWIXfyNbd7aEn86ihSjoTTl2v5HznIbRhgmaktUvSGYP0qxef6E
-        pnFr+k3b6XHcqBHb/ZsplVqL96fBH3ZMbtGCTe/DJD9S
-X-Google-Smtp-Source: APXvYqy5z3LMZU/0QZyJ7yBAYlqwpNzIZB9WFfgK0/75pyUsnLxMTAhTbz7QgExMpnh95v9Fw7cZH3ZK1JgYLfVg6rg=
-X-Received: by 2002:aca:51ce:: with SMTP id f197mr17752443oib.33.1560304095162;
- Tue, 11 Jun 2019 18:48:15 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=gbMfZABo41/f10Q7nJ+1rb6WtMx9eMLy3331KA8ZSqQ=;
+        b=rqs41VNx7DKNRCrqcZBJMAGdcjS0g9AWrKQLBmKt1SCmGrx6sv/bKZq+fytq/kgr3s
+         9nvvFsPWceuiq4kOsdfO2Xd9VFILvGzKwYRefVspI/g5ZgzeQNUjbAIg9RKSTUYxlbPJ
+         pOrXOyZIlaYU3sGiPbI6p318RRPaD3KO0vN0hhGCyIXW8ABuKOORcQJTVNxAPhjYEqrt
+         RAVnMMdNkcNaEzr9EG0zLyWQN6cl58K/83zZyOfqV8w6ta9tgJu5A5nAa4kX5shK/NH0
+         SEcPx9AQKeyIV277XPKro+4nnT1yqWBI95D6YBVVpkuYUL9Q7EeDvXs4CHi5abevi+5Z
+         /dqA==
+X-Gm-Message-State: APjAAAVNponOq2ejTkI5aw48QQNWW6nwE7N7FNKcxpmOyj3jIGIDLavo
+        lrq/h0Kqk19Cf0owx5vTtuIoOhoyr8w=
+X-Google-Smtp-Source: APXvYqxc43VfBVWrxmQd4uaHGm95XKUz9ey3fJelA90k/nD278IZuDfS0V1eOCHFAqnE0Dej5r0Ivg==
+X-Received: by 2002:a19:6a07:: with SMTP id u7mr37429028lfu.74.1560304189721;
+        Tue, 11 Jun 2019 18:49:49 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id z12sm2780473lfg.67.2019.06.11.18.49.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 18:49:48 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id a21so13574726ljh.7
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 18:49:48 -0700 (PDT)
+X-Received: by 2002:a2e:658e:: with SMTP id e14mr11773158ljf.147.1560304188412;
+ Tue, 11 Jun 2019 18:49:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <1560255429-7105-1-git-send-email-wanpengli@tencent.com>
- <1560255429-7105-3-git-send-email-wanpengli@tencent.com> <20190611201849.GA7520@amt.cnet>
-In-Reply-To: <20190611201849.GA7520@amt.cnet>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 12 Jun 2019 09:48:58 +0800
-Message-ID: <CANRm+CwrbMQpQ1d_KMp-EBMd-pXFVePQ8GV4Y4X0oy8-zGZCBQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] KVM: LAPIC: lapic timer interrupt is injected by
- posted interrupt
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <87d0jj6fcw.fsf@xmission.com>
+In-Reply-To: <87d0jj6fcw.fsf@xmission.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 11 Jun 2019 15:49:32 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgZceNP1SOrGZmSwernbx-d7+ZYyCTJW8WBsEsZaBEbhw@mail.gmail.com>
+Message-ID: <CAHk-=wgZceNP1SOrGZmSwernbx-d7+ZYyCTJW8WBsEsZaBEbhw@mail.gmail.com>
+Subject: Re: [GIT PULL] Minor ptrace fixes for v5.2-rc5
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Jun 2019 at 04:39, Marcelo Tosatti <mtosatti@redhat.com> wrote:
+On Tue, Jun 11, 2019 at 10:23 AM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
 >
-> On Tue, Jun 11, 2019 at 08:17:07PM +0800, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Dedicated instances are currently disturbed by unnecessary jitter due
-> > to the emulated lapic timers fire on the same pCPUs which vCPUs residen=
-t.
-> > There is no hardware virtual timer on Intel for guest like ARM. Both
-> > programming timer in guest and the emulated timer fires incur vmexits.
-> > This patch tries to avoid vmexit which is incurred by the emulated
-> > timer fires in dedicated instance scenario.
-> >
-> > When nohz_full is enabled in dedicated instances scenario, the emulated
-> > timers can be offload to the nearest busy housekeeping cpus since APICv
-> > is really common in recent years. The guest timer interrupt is injected
-> > by posted-interrupt which is delivered by housekeeping cpu once the emu=
-lated
-> > timer fires.
-> >
-> > ~3% redis performance benefit can be observed on Skylake server.
-> >
-> > w/o patch:
-> >
-> >             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time   Av=
-g time
-> >
-> > EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us   0.=
-71us ( +-   1.09% )
-> >
-> > w/ patch:
-> >
-> >             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time     =
-    Avg time
-> >
-> > EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us   0.=
-72us ( +-   4.02% )
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> >  arch/x86/kvm/lapic.c | 32 +++++++++++++++++++++++++-------
-> >  1 file changed, 25 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > index e57eeba..020599f 100644
-> > --- a/arch/x86/kvm/lapic.c
-> > +++ b/arch/x86/kvm/lapic.c
-> > @@ -133,6 +133,12 @@ inline bool posted_interrupt_inject_timer_enabled(=
-struct kvm_vcpu *vcpu)
-> >  }
-> >  EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer_enabled);
-> >
-> > +static inline bool can_posted_interrupt_inject_timer(struct kvm_vcpu *=
-vcpu)
-> > +{
-> > +     return posted_interrupt_inject_timer_enabled(vcpu) &&
-> > +             kvm_hlt_in_guest(vcpu->kvm);
-> > +}
->
-> Hi Li,
+> Apologies for being a little slow about getting this to you, I am still
+> figuring out how to develop with a little baby in the house.
 
-Hi Marcelo,
+Heh. It gets better as they age. In just a couple of decades, you'll
+find they have it all figured out..
 
->
-> Don't think its necessary to depend on kvm_hlt_in_guest: Can also use
-> exitless injection if the guest is running (think DPDK style workloads
-> that busy-spin on network card).
->
-
-There are some discussions here.
-
-https://lkml.org/lkml/2019/6/11/424
-https://lkml.org/lkml/2019/6/5/436
-
-Regards,
-Wanpeng Li
+              Linus
