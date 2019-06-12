@@ -2,96 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11EF1419BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 02:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A10419C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 02:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406381AbfFLAy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 11 Jun 2019 20:54:57 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33145 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406117AbfFLAy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Jun 2019 20:54:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45NpLP2K5tz9s00;
-        Wed, 12 Jun 2019 10:54:53 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560300894;
-        bh=jJVvQRYv+RNct+AwT6tYADRT40DSB6dPMv1XUCrWfrQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GRfIjh5qO9TFHNI6LP9yAJ+evoY6UDmuBo/eJPcDq47EE/3P/6Y7Hh/O98St9VyuH
-         Xgmz51MjoE/Aqxz9qyrw4gdZjBl+VYOUu3lBl98r+XQSA3ZRU53kWgP0dCRLssonnH
-         y3GGqJBtaM1cJAPJRhq4BjoRKykv07tqDrfxSggWgxuwnSz4Tx62ouOvuGZmnI7ZiO
-         lP8U6VbaLGqWbjo7IDXk++gJ4Ek8VUlLFo6LZW83dGv0sn3egQ36wSzZm3dLuCf4LH
-         YiHXm23S+L2pnPHK/LnsWbN54EjUX29x/y9ySKlIbfaijgfMlHwpz/FizpKKztibuk
-         BaHtOMH00Zh9w==
-Date:   Wed, 12 Jun 2019 10:54:51 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-next@vger.kernel.org>
-Subject: Re: [RESEND PATCH net-next] net: ethernet: ti: cpts: fix build
- failure for powerpc
-Message-ID: <20190612105451.4d2e9aa3@canb.auug.org.au>
-In-Reply-To: <20190611111632.9444-1-grygorii.strashko@ti.com>
-References: <20190611111632.9444-1-grygorii.strashko@ti.com>
+        id S2436469AbfFLA6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 11 Jun 2019 20:58:37 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44557 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405497AbfFLA6h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Jun 2019 20:58:37 -0400
+Received: by mail-qk1-f195.google.com with SMTP id w187so8895562qkb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Jun 2019 17:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=lCyIvXUF/KVDLpAYcUT+Ck5ZH0kz/HDS3rHiDVetioQ=;
+        b=KVoUy7zQH//7/UopVPM441Ud29XCSoOL3F993oSS4Aju2MULAyOcmNN1ggtBuDt5wd
+         dOKY1LEltzP9rNvjuAUtL4rTWo1rVE/dMmU6311VzxTBvXevWRHkTZIOlFOIG00r7BCU
+         ZVhfMWYEx22jcetcnXnMGuttdFW4pWXCRrrJTCxYlOFKqW1ZQ6YgppnX3KVqxGsbCdf1
+         QhvP5VIxeUshfA9QA+bUbSq3m6jD8uBDucMEXNGEdl6JrBrKJzJZWVHsskqpyS/eWyzP
+         O9nHDuHfAcr2Ysfr4F/kgtxJysGn67Dfh5QuXab+86bcIaafX5I2OG20jz7FlX8fAaHU
+         OP2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=lCyIvXUF/KVDLpAYcUT+Ck5ZH0kz/HDS3rHiDVetioQ=;
+        b=LaoSJFYLv9kMPfG9uplYxchGOq8ThdmXSzNlFYoUUwBYJUXDeI2pbQU7MZNJLOo/H0
+         cJlv01QKzkbpXkfDPxdLghadNBp1vT58r5RLpMIf1x1kF/SbgkiHH62RKLOaTNPSIc1h
+         4vvzz9Ns528SV8sTfFATB3LSmmEv3lB6xL5P13Ci5mHKmFdcVGBXDy85VmBM+3zik+vE
+         svtwvQIFRZaJVUYjVVdAcVY1NW4pp5iy6pNp/zQkMyYk2rxpFFRO7F0IfMU7j3AbgovY
+         hY/eARhGJvxZUbORIzDqZr2r1tE+UjXN5LrFEoTeNooGVxrKdgbtVptpNy/+pQYlNSZz
+         QGvw==
+X-Gm-Message-State: APjAAAWyH0j7wVoRlBY7vO9CawL1ZCxdT8TIs5NipDPlnYCx2QsxfxlL
+        xJCRLjdZMkc3a37JOM/D3jVxqg==
+X-Google-Smtp-Source: APXvYqxZR85xJdgsXY+YNlNTC3iOdxqJUmzjZIfm3dI75Ue5eLolzP3t9Y33Jnlpbd7riDNlFijOCg==
+X-Received: by 2002:a37:660b:: with SMTP id a11mr62787324qkc.342.1560301116293;
+        Tue, 11 Jun 2019 17:58:36 -0700 (PDT)
+Received: from skullcanyon ([192.222.193.21])
+        by smtp.gmail.com with ESMTPSA id u125sm7255907qkd.5.2019.06.11.17.58.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 11 Jun 2019 17:58:34 -0700 (PDT)
+Message-ID: <1d2adae2b6d0f370f17b9bac94ae4e9207dccbad.camel@ndufresne.ca>
+Subject: Re: [PATCH v7 2/4] media: videodev2: add
+ V4L2_FMT_FLAG_FIXED_RESOLUTION
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Maxime Jourdan <mjourdan@baylibre.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Date:   Tue, 11 Jun 2019 20:58:32 -0400
+In-Reply-To: <1560243127.13886.3.camel@pengutronix.de>
+References: <20190531093126.26956-1-mjourdan@baylibre.com>
+         <20190531093126.26956-3-mjourdan@baylibre.com>
+         <9731b2db-efd4-87d0-c48d-87adec433747@xs4all.nl>
+         <1560243127.13886.3.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2bUUK0tUc_lYIUql4YF9vie"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/2bUUK0tUc_lYIUql4YF9vie
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Le mardi 11 juin 2019 à 10:52 +0200, Philipp Zabel a écrit :
+> On Wed, 2019-06-05 at 15:39 +0200, Hans Verkuil wrote:
+> > Hi Maxime,
+> > 
+> > I am wondering if this flag shouldn't be inverted: you set
+> > V4L2_FMT_FLAG_DYN_RESOLUTION if dynamic resolution is supported,
+> > otherwise it isn't.
+> > 
+> > Can all the existing mainlined codec drivers handle midstream
+> > resolution changes?
+> > 
+> > s5p-mfc, venus and mediatek can, but I see no SOURCE_CHANGE event in
+> > the coda drivers, so I suspect that that can't handle this.
+> > 
+> > Philipp, what is the status of the coda driver for dynamic resolution
+> > changes?
+> 
+> FTR, to my knowledge there is no dynamic resolution change support in
+> the firmware, as there is no signal (interrupt nor picture run return
+> value) to indicate that different headers were parsed.
+> 
+> I am planning to add the initial source change event required by the
+> current decoder API documentation, but I am afraid there will be no
+> support for source changes due to mid-stream resolution changes due to
+> firmware limitations.
 
-Hi all,
+I'm far from familiar with this IP, but at least on CODA988, I can read
+from the manual that the workflow is to first guess the allocation, and
+if you guess it wrong, an error is returned. What seems to match the
+SOURCE_CHANGE event in that version would be in the picture status
+register, the bit 20, which is documented as triggered if the stream
+requires bigger buffers sizes, or more buffers. After fixing that, you
+should, if I read correctly, retry.
 
-On Tue, 11 Jun 2019 14:16:32 +0300 Grygorii Strashko <grygorii.strashko@ti.=
-com> wrote:
->
-> Add dependency to TI CPTS from Common CLK framework COMMON_CLK to fix
-> allyesconfig build for Powerpc:
->=20
-> drivers/net/ethernet/ti/cpts.c: In function 'cpts_of_mux_clk_setup':
-> drivers/net/ethernet/ti/cpts.c:567:2: error: implicit declaration of func=
-tion 'of_clk_parent_fill'; did you mean 'of_clk_get_parent_name'? [-Werror=
-=3Dimplicit-function-declaration]
->   of_clk_parent_fill(refclk_np, parent_names, num_parents);
->   ^~~~~~~~~~~~~~~~~~
->   of_clk_get_parent_name
->=20
-> Fixes: a3047a81ba13 ("net: ethernet: ti: cpts: add support for ext rftclk=
- selection")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+It does not notify if the buffers are too large, but you can detect,
+since there is register with the output stream information. This
+basically means that for V4L2 restriction, you'd have to bounce the
+buffers on frame size boundary or something like thisé
 
-I have applied this to linu-next today instead of reverting a3047a81ba13.
+This workflow is very similar to how OMX works, but V4L2 is even less
+flexible on allocation vs format, forcing more re-allocation.
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> regards
+> Philipp
 
---Sig_/2bUUK0tUc_lYIUql4YF9vie
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0ATVsACgkQAVBC80lX
-0GxUiQf8DC0a5Zd5gWjOT5FiuKW9u3jmojquQB/VqM7zhVpf/34wTw93JvoiIAd1
-I59WfIfDCzPwFE3bFMjxeReBhZStQocz5ADc5lGleJ0qHX7z3rbEcbgGILSWOEsm
-r10tVBmqphIvQdQLzkL2WIYdE0fVC931lkcUf1UV/qc7MdsKrAi3wG72YWNjfMXM
-zYlhw6DI3nrwlUaiiAbo3FhdeIVmlUdaEBJI6BDDB/dPjo4u8YFj9OGeNldl4+2L
-3L3q5ZPggrEF4VbF/CBnL3uEMzGHU2PhkMxAexpzCZmUpNzF2MDbsN6RqjgN+KpX
-5DO2V/Uv91jWR4z8BmxK/rwXZoQAsw==
-=Cbkw
------END PGP SIGNATURE-----
-
---Sig_/2bUUK0tUc_lYIUql4YF9vie--
