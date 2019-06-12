@@ -2,98 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243CC4312C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 22:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DFD43136
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 22:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390211AbfFLUzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 16:55:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34590 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389710AbfFLUzw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 16:55:52 -0400
-Received: by mail-wm1-f67.google.com with SMTP id w9so5106840wmd.1;
-        Wed, 12 Jun 2019 13:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/gDKxCzkOGRMbdoCC0wOn2Sy/Yhww68pPHd5X9PQ/go=;
-        b=rUFa0q2c0ueMNjFCD1Ac5K6Fk3nNqiUfkEeny7sxh9dWEiE47qRnzWq/iyJskI1FN6
-         TkvKq+3i0BEq+hEvnmDXfmeMkxmbmaEeWY7Al9ZAMXzhvuIb9UTLv4OqgxxaucaebMeg
-         HglMyVVyQVo1UvCHaN4eTBCMv6080H2AYZzxmGKwLBpLGuZLsdg+A3gDjedobRasNnVX
-         oaNucyrsFv/jrfCh0Qim+CfblXfOK1UP/F3mfsKW+kk5Lq2GmcyG9an87uJWAmMbNQxx
-         EI32FZJtuNT9y8crY9P8KETEaPvzZOjxyWZSv8f5bsUX3LIc4AyJBC6fj12cVvNpwplH
-         F5gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/gDKxCzkOGRMbdoCC0wOn2Sy/Yhww68pPHd5X9PQ/go=;
-        b=LQY51wi0dYzqG+xVyhJAicXxyPtoK3E+hi7+NIJM4wD8vGVncXIXQC4Jzib6sqM7Iq
-         6eULmr6l0x9OR9LwaLDeLJBo8vww4kUrk8V7WVBWz8j34jpofb9+LELY1ebav7xi+gEE
-         myIZQmko/i3+IUNSe0nK3lmPtyjU9OPZ52pvKDKv5/ZFQMnrAJe643mPlcGLVAlAMH3l
-         hYREmcanGi7KSu+9XQZGLjaRcCs38CLhTaU25vNWzV6YJZO7twr2KW4nfDik9hgQnteR
-         NfB1hIAP9/YNUdEHzCd8HrKufFq/lComMrAR0km+2CVbH4PRlEd7GIXwji4S3qzfXpM4
-         YHMQ==
-X-Gm-Message-State: APjAAAWrBb8FwK8zirJQLt+87lKuYDGPaC0jWd4ERyOcesaGaSVvy1iw
-        Z5br/MF2BihxQ4xc0eP8PkI=
-X-Google-Smtp-Source: APXvYqzcczDON40ZlWQv3oZhlUvn1FVQLcLqir1pA8IDNtA5z7hDUzg0Hn0fX1zXP3GmKNC7Wsrr/Q==
-X-Received: by 2002:a7b:c081:: with SMTP id r1mr820317wmh.76.1560372949589;
-        Wed, 12 Jun 2019 13:55:49 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133DDA400428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:33dd:a400:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id s7sm3445793wmc.2.2019.06.12.13.55.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 13:55:48 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linus.walleij@linaro.org, andrew@lunn.ch,
-        robin.murphy@arm.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/4] arm64: dts: meson: g12b: odroid-n2: add the Ethernet PHY reset line
-Date:   Wed, 12 Jun 2019 22:55:29 +0200
-Message-Id: <20190612205529.19834-5-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190612205529.19834-1-martin.blumenstingl@googlemail.com>
-References: <20190612205529.19834-1-martin.blumenstingl@googlemail.com>
+        id S2390472AbfFLU4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 16:56:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388338AbfFLU4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 16:56:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BBB9D309703F;
+        Wed, 12 Jun 2019 20:56:19 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-23.phx2.redhat.com [10.3.112.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4791C5F9A7;
+        Wed, 12 Jun 2019 20:56:17 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id F28D6115; Wed, 12 Jun 2019 17:56:11 -0300 (BRT)
+Date:   Wed, 12 Jun 2019 17:56:11 -0300
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: perf build failure with newer glibc headers
+Message-ID: <20190612205611.GA2149@redhat.com>
+References: <4c0a4264-7142-2e6d-540d-aa354700e0bb@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4c0a4264-7142-2e6d-540d-aa354700e0bb@redhat.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 12 Jun 2019 20:56:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reset line of the RTL8211F PHY is routed to the GPIOZ_15 pad.
-Describe this in the device tree so the PHY framework can bring the PHY
-into a known state when initializing it. GPIOZ_15 doesn't support
-driving the output HIGH (to take the PHY out of reset, only output LOW
-to reset the PHY is supported). The datasheet states it's an "3.3V input
-tolerant open drain (OD) output pin". Instead there's a pull-up resistor
-on the board to take the PHY out of reset. The GPIO itself will be set
-to INPUT mode to take the PHY out of reset and LOW to reset the PHY,
-which is achieved with the flags (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN).
+Em Wed, Jun 12, 2019 at 03:23:12PM -0400, Laura Abbott escreveu:
+> Hi,
+> 
+> While doing some build experiments, I found a compile failure with perf and jvmti:
+> 
+> BUILDSTDERR:   gcc -Wp,-MD,./.xsk.o.d -Wp,-MT,xsk.o -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-jvmti/jvmti_agent.c:48:21: error: static declaration of 'gettid' follows non-static declaration
+> BUILDSTDERR:    48 | static inline pid_t gettid(void)
+> BUILDSTDERR:       |                     ^~~~~~
+> BUILDSTDERR: In file included from /usr/include/unistd.h:1170,
+> BUILDSTDERR:                  from jvmti/jvmti_agent.c:33:
+> BUILDSTDERR: /usr/include/bits/unistd_ext.h:40:16: note: previous declaration of 'gettid' was here
+> BUILDSTDERR:    40 | extern __pid_t gettid (void) __THROW;
+> BUILDSTDERR:       |                ^~~~~~
+> 
+> 
+> This is with the newer glibc headers that came into Fedora earlier this week
+> (glibc-2.29.9000-27.fc31)  It looks like the newer headers now define gettid
+> so the in file gettid no longer works. Note this was a custom build with
+> jvmti enabled as regular Fedora doesn't have it enabled which is why this
+> wasn't reported elsewhere.
+> 
+> I don't know enough about either the glibc headers or perf to make a suggestion
+> on how to fix this but I'm happy to test.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Bummer, I haven't noticed this because my fedora:rawhide perf build test
+container wasn't building the jvmti code:
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 4146cd84989c..f911bbdc4e70 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -186,6 +186,10 @@
- 		/* Realtek RTL8211F (0x001cc916) */	
- 		reg = <0>;
- 		max-speed = <1000>;
-+
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <30000>;
-+		reset-gpios = <&gpio GPIOZ_15 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
- 	};
- };
- 
--- 
-2.22.0
+Makefile.config:925: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
 
+i.e.:
+
+[perfbuilder@c0326e8b6511 perf]$ cat /tmp/build/perf/feature/test-jvmti.make.output 
+test-jvmti.c:2:10: fatal error: jvmti.h: No such file or directory
+    2 | #include <jvmti.h>
+      |          ^~~~~~~~~
+compilation terminated.
+[perfbuilder@c0326e8b6511 perf]$
+
+Installing it I get:
+
+[root@2d7fe307ad20 perf]# rpm -qa | grep openjdk
+java-1.8.0-openjdk-1.8.0.212.b04-4.fc31.x86_64
+java-1.8.0-openjdk-headless-1.8.0.212.b04-4.fc31.x86_64
+java-1.8.0-openjdk-devel-1.8.0.212.b04-4.fc31.x86_64
+[root@2d7fe307ad20 perf]# cat
+/tmp/build/perf/feature/test-jvmti.make.output 
+[root@2d7fe307ad20 perf]# ls -la /tmp/build/perf/feature/test-jvmti.bin 
+-rwxr-xr-x. 1 root root 21592 Jun 12 20:48
+/tmp/build/perf/feature/test-jvmti.bin
+[root@2d7fe307ad20 perf]# 
+
+And reproduce the problem you reported:
+
+jvmti/jvmti_agent.c:48:21: error: static declaration of ‘gettid’ follows
+non-static declaration
+   48 | static inline pid_t gettid(void)
+      |                     ^~~~~~
+In file included from /usr/include/unistd.h:1170,
+                 from jvmti/jvmti_agent.c:33:
+
+So, we'll have to have a feature test, that defines some HAVE_GETTID
+that then ifdefs out our inline copy, working on it.
+
+Thanks for the report!
+
+- Arnaldo
