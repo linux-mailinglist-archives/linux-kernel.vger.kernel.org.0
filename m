@@ -2,105 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3D0343075
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8E44308E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 22:01:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388433AbfFLTzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:55:39 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33034 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387605AbfFLTzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:55:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 12:55:38 -0700
-X-ExtLoop1: 1
-Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga007.jf.intel.com with ESMTP; 12 Jun 2019 12:55:38 -0700
-Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM
- secrets
-To:     Marius Hillenbrand <mhillenb@amazon.de>, kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, Alexander Graf <graf@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20190612170834.14855-1-mhillenb@amazon.de>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
-Date:   Wed, 12 Jun 2019 12:55:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2388887AbfFLT7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 15:59:33 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35821 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388521AbfFLT7c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 15:59:32 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c6so7784922wml.0;
+        Wed, 12 Jun 2019 12:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gSCXfO4SZrHlREdSSaw8mmXbrGugYj3k3dCGPOAQii8=;
+        b=b5yvmRACWpqZ/mN/ykGbaGobmJoGlHZekESdaJ+IMrlyyO486QMrsD9N2cimWIO4dG
+         Kq+tWdh2lksKWf5OOkGBv8kWpJtVTyYTxgO5jkGDcfD3zruKUO/v+Y6hTLzpMZ3sD4jI
+         3eIvzVe7KE5gFjV57z7PQ53N9aaJRubZLPgVENh/O079qENraDUMbkWeMnLZRCAZSlaR
+         i7AJIZ5lJc/a+FysvG/zS0quCQKlZfchyH4/9CiNF4EhIELK80/GqmMomPJAqhSxAStJ
+         RQYLZpsXBIEW2BTaYaj6aAbYNDwTNRxCkc8ke5VpzvkcTKKZKlmlEkfMAl+jm/1+vjPs
+         UE4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gSCXfO4SZrHlREdSSaw8mmXbrGugYj3k3dCGPOAQii8=;
+        b=rFvNQtoup7LzYQd4RO4J4AM4jEeVUE31PInxbXmCxOawcCRjk8zAjizePxQ7BD2ryN
+         nuZUwcMk1VV9atT9DxsfSaongnGFaHEqqgFciVwIZaibAKaPxr3sJDECr2lWJcz+bl0L
+         gsEcbMx+kBFosXMWIrOtbsZkSpR8WbX6EKA4JqlwaDf1Kj2Bk7g3ylxk0yKp1rtIMe2Q
+         6FtgslkkLm/AvChXZhhI7lq1EIRXs51uqfNDEJ2XvpwRUf+fFHnHVYwN9o/UnEH2nKTt
+         0qmujLbYIoycFf++YHMSVO6q5EkPdVMkhdYtGgIx4CBuqqD9DDURaiVQA8qWSVQAkS6+
+         oZsQ==
+X-Gm-Message-State: APjAAAW+pi6ycrnIpO5RiISG+W/FBcCZOq7MlgZLTxijW3JmiQZTij+G
+        sOLt7wpOu81vF3D9sMhUfVA=
+X-Google-Smtp-Source: APXvYqxx6WQ0Q2TthI9hcw9mcaNNk72tal9lYxSvbzj/rzuhF1Bm90n0CNI5eUROu1nDamDovAo5Tw==
+X-Received: by 2002:a1c:4b1a:: with SMTP id y26mr601629wma.105.1560369569855;
+        Wed, 12 Jun 2019 12:59:29 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300F133DDA400428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:33dd:a400:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id f10sm1026745wrg.24.2019.06.12.12.59.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 12:59:28 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, linux-pwm@vger.kernel.org,
+        thierry.reding@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        u.kleine-koenig@pengutronix.de, narmstrong@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 00/14] pwm-meson: cleanups and improvements
+Date:   Wed, 12 Jun 2019 21:58:57 +0200
+Message-Id: <20190612195911.4442-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190612170834.14855-1-mhillenb@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/19 10:08 AM, Marius Hillenbrand wrote:
-> This patch series proposes to introduce a region for what we call
-> process-local memory into the kernel's virtual address space. 
+This series consists of various cleanups and improvements for the
+pwm-meson driver.
 
-It might be fun to cc some x86 folks on this series.  They might have
-some relevant opinions. ;)
+Patches 1 to 6 are small code cleanups with the goal of making the code
+easier to read.
 
-A few high-level questions:
+Patches 7 to 9 are reworking the way the per-channel settings are
+accessed. This is a first preparation step for adding full support to
+meson_pwm_get_state() in the pwm-meson driver. Patch 7 makes struct
+meson_pwm_channel accessible from struct meson_pwm because
+meson_pwm_get_state() cannot use pwm_get_chip_data(). Patch 8 removes
+redundant switch/case statements and ensures that we don't have to
+add another redundant one for the upcoming full meson_pwm_get_state()
+implementation. Patch 9 gets rid of meson_pwm_add_channels() and moves
+the pwm_set_chip_data() call to meson_pwm_request() (like all other PWM
+drivers do - except two).
 
-Why go to all this trouble to hide guest state like registers if all the
-guest data itself is still mapped?
+Patch 10 is based on a suggestion by Uwe to simplify the calculation of
+the values which the PWM IP requires. The nice benefit of this is that
+we have an easier calculation which we can do "in reverse" for the
+meson_pwm_get_state() (which calculates nanoseconds from the hardware
+values).
 
-Where's the context-switching code?  Did I just miss it?
+Patch 11 implements reading the period and duty cycle in the
+meson_pwm_get_state() callback.
 
-We've discussed having per-cpu page tables where a given PGD is only in
-use from one CPU at a time.  I *think* this scheme still works in such a
-case, it just adds one more PGD entry that would have to context-switched.
+Patch 12 removes some internal caching which we don't need anymore now
+meson_pwm_get_state() is fully implemented. The PWM core now takes care
+of not calling pwm_ops.apply() if "nothing has changed".
+
+Patch 13 adds support for PWM_POLARITY_INVERSED when disabling the
+output as suggested by Uwe.
+
+Patch 14 completes this series by adding some documentation to the
+driver. Thanks to Neil for summarizing how the hardware works
+internally.
+
+Due to the changed PWM calculation in patch 10 I have verified that
+we don't break any existing boards. The patch itself contains two
+examples which show that the new calculation improves precision. I
+made screenshots of the measurements in pulseview [0] for the second
+case ("PWM LED on Khadas VIM"):
+- old algorithm: [1]
+- old algorithm: [2]
+
+Dependencies:
+This series applies on top of Neil's patch "pwm: pwm-meson: update with
+SPDX Licence identifier" [3]
+
+Changes since v1 at [4]:
+- fixed MESON_NUM_PWM vs MESON_NUM_PWMS typo in patch #7
+- add another example to patch #10 where the pre_div has changed with
+  the new calculation. the generated PWM signal is still the same as
+  measuring shows
+- added Neil's Reviewed-by's and Uwe's Acked-by (thank you!)
+
+Changes since v2 at [5]:
+- fix the SoC name in the documentation patch (#14). The link points
+  to the S912 datasheet so we shouldn't call it the "S922X datasheet".
+  Spotted by Chris Moore (thank you!)
+- add the link to the S922X datasheet in the documentation patch (#14)
+  because that SoC generation contains an updated version of the IP
+  block with hardware support for "inversion" and "constant mode"
+- put my Signed-off-by after all Reviewed-by/Acked-by to indicate that
+  I was the one who put the R-b/A-b there (spotted by Uwe - thank you)
+- added Uwe's Reviewed-by to three patches (thank you!)
+
+
+[0] https://sigrok.org/wiki/PulseView
+[1] https://abload.de/img/old-algormjs9.png
+[2] https://abload.de/img/new-algo4ckjo.png
+[3] https://patchwork.kernel.org/patch/10951319/
+[4] https://patchwork.kernel.org/cover/10961073/
+[5] https://patchwork.kernel.org/cover/10983279/
+
+
+Martin Blumenstingl (14):
+  pwm: meson: unify the parameter list of meson_pwm_{enable,disable}
+  pwm: meson: use devm_clk_get_optional() to get the input clock
+  pwm: meson: use GENMASK and FIELD_PREP for the lo and hi values
+  pwm: meson: change MISC_CLK_SEL_WIDTH to MISC_CLK_SEL_MASK
+  pwm: meson: don't duplicate the polarity internally
+  pwm: meson: pass struct pwm_device to meson_pwm_calc()
+  pwm: meson: add the meson_pwm_channel data to struct meson_pwm
+  pwm: meson: add the per-channel register offsets and bits in a struct
+  pwm: meson: move pwm_set_chip_data() to meson_pwm_request()
+  pwm: meson: simplify the calculation of the pre-divider and count
+  pwm: meson: read the full hardware state in meson_pwm_get_state()
+  pwm: meson: don't cache struct pwm_state internally
+  pwm: meson: add support PWM_POLARITY_INVERSED when disabling
+  pwm: meson: add documentation to the driver
+
+ drivers/pwm/pwm-meson.c | 327 +++++++++++++++++++++-------------------
+ 1 file changed, 173 insertions(+), 154 deletions(-)
+
+-- 
+2.22.0
+
