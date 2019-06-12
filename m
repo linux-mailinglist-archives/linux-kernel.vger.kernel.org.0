@@ -2,84 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAAE5425ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F6CE425F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 14:35:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439045AbfFLMd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 08:33:59 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46820 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436780AbfFLMd7 (ORCPT
+        id S2407646AbfFLMe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 08:34:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42447 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728606AbfFLMe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:33:59 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5CCXk6w089106;
-        Wed, 12 Jun 2019 07:33:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560342826;
-        bh=C5ukbZB3W88dRDJsXql7AfOwN6+01AO8bczZY4+rJR0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hEp+lukknjcfoaeyLMSGrX1xyeeDiXTBsOTC4dwNU5Lky6NkFCDpgUA/E8A65ZplJ
-         RqpSWejMKg0+KwqoqMns1hYn3LmUJRkEaHy6C/Xv5bZkNyTP2POTitfFlBecnvlYRa
-         ao3izFpnGgRHDkR17aHxC5J6Jcj+QB2PTHFn/e1Y=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5CCXkAj094123
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Jun 2019 07:33:46 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 12
- Jun 2019 07:33:45 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 12 Jun 2019 07:33:45 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5CCXh29052198;
-        Wed, 12 Jun 2019 07:33:43 -0500
-Subject: Re: [PATCH v5 00/15] tc358767 driver improvements
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        <dri-devel@lists.freedesktop.org>
-CC:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>
-References: <20190612083252.15321-1-andrew.smirnov@gmail.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <91d5be5b-916a-905b-783f-9911424df45b@ti.com>
-Date:   Wed, 12 Jun 2019 15:33:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 12 Jun 2019 08:34:56 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5CCY8Vp686254
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 12 Jun 2019 05:34:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5CCY8Vp686254
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560342849;
+        bh=i8E3Pjz132lVE/zyO3itgO5Jj7nZ1IpdYVG2JGHWWAE=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=TyEyvxw2ds5wYz0DLZh2WakXDjqXhWWBkiIPtAB8sy6OaSNJcORxqpRwSTOR59rYB
+         Yl+m5Zn5JmVuFlgnzDGdpeZt+uIhFdYsdQIJUyDwMTLP6RkJF0XE4AoVFda8TJleqw
+         6R6969Jp+XEU64YQoaVoBNhNrUYCzTEBw/51YTJybTp9SwOpL5E1+p1e5CD3iNAGLE
+         v/EqD7nOr4qhj3ZvIcj/ch01jmPn8Zi437j+QaqXuRApzMRmlUewBcb3cpCdhAfNkE
+         NwXHRGx90oj0QsnA/OTu1sM2006fVYRkeFgXynYQyEphNfcxI1jB3pf8XrORUie1AD
+         nuFp29VMkv9Ag==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5CCY8Zv686251;
+        Wed, 12 Jun 2019 05:34:08 -0700
+Date:   Wed, 12 Jun 2019 05:34:08 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Pavankumar Kondeti <tipbot@zytor.com>
+Message-ID: <tip-a66d955e910ab0e598d7a7450cbe6139f52befe7@git.kernel.org>
+Cc:     konrad.wilk@oracle.com, mojha@codeaurora.org, jkosina@suse.cz,
+        mingo@kernel.org, hpa@zytor.com, rjw@rjwysocki.net,
+        tglx@linutronix.de, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, len.brown@intel.com,
+        pkondeti@codeaurora.org, jpoimboe@redhat.com, pavel@ucw.cz
+Reply-To: tglx@linutronix.de, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, len.brown@intel.com,
+          pkondeti@codeaurora.org, jpoimboe@redhat.com, pavel@ucw.cz,
+          konrad.wilk@oracle.com, mojha@codeaurora.org, jkosina@suse.cz,
+          mingo@kernel.org, hpa@zytor.com, rjw@rjwysocki.net
+In-Reply-To: <1559536263-16472-1-git-send-email-pkondeti@codeaurora.org>
+References: <1559536263-16472-1-git-send-email-pkondeti@codeaurora.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:smp/hotplug] cpu/hotplug: Abort disabling secondary CPUs if
+ wakeup is pending
+Git-Commit-ID: a66d955e910ab0e598d7a7450cbe6139f52befe7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190612083252.15321-1-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit-ID:  a66d955e910ab0e598d7a7450cbe6139f52befe7
+Gitweb:     https://git.kernel.org/tip/a66d955e910ab0e598d7a7450cbe6139f52befe7
+Author:     Pavankumar Kondeti <pkondeti@codeaurora.org>
+AuthorDate: Mon, 3 Jun 2019 10:01:03 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 12 Jun 2019 11:03:05 +0200
 
-On 12/06/2019 11:32, Andrey Smirnov wrote:
-> Everyone:
-> 
-> This series contains various improvements (at least in my mind) and
-> fixes that I made to tc358767 while working with the code of the
-> driver. Hopefuly each patch is self explanatory.
+cpu/hotplug: Abort disabling secondary CPUs if wakeup is pending
 
-I haven't had time to debug, but I did a quick test with the series, and 
-EDID read no longer works on my setup. drm_get_edid() returns 0. I need 
-to dig in further.
+When "deep" suspend is enabled, all CPUs except the primary CPU are frozen
+via CPU hotplug one by one. After all secondary CPUs are unplugged the
+wakeup pending condition is evaluated and if pending the suspend operation
+is aborted and the secondary CPUs are brought up again.
 
-  Tomi
+CPU hotplug is a slow operation, so it makes sense to check for wakeup
+pending in the freezer loop before bringing down the next CPU. This
+improves the system suspend abort latency significantly.
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+[ tglx: Massaged changelog and improved printk message ]
+
+Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: iri Kosina <jkosina@suse.cz>
+Cc: Mukesh Ojha <mojha@codeaurora.org>
+Cc: linux-pm@vger.kernel.org
+Link: https://lkml.kernel.org/r/1559536263-16472-1-git-send-email-pkondeti@codeaurora.org
+
+---
+ kernel/cpu.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index be82cbc11a8a..0778249cd49d 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1221,6 +1221,13 @@ int freeze_secondary_cpus(int primary)
+ 	for_each_online_cpu(cpu) {
+ 		if (cpu == primary)
+ 			continue;
++
++		if (pm_wakeup_pending()) {
++			pr_info("Wakeup pending. Abort CPU freeze\n");
++			error = -EBUSY;
++			break;
++		}
++
+ 		trace_suspend_resume(TPS("CPU_OFF"), cpu, true);
+ 		error = _cpu_down(cpu, 1, CPUHP_OFFLINE);
+ 		trace_suspend_resume(TPS("CPU_OFF"), cpu, false);
