@@ -2,170 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D836041DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CEE641D9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 09:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405484AbfFLHZ6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 12 Jun 2019 03:25:58 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:44754 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728561AbfFLHZm (ORCPT
+        id S1731496AbfFLHZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 03:25:43 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41822 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731444AbfFLHZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 03:25:42 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x5C7PHtx003180
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Jun 2019 16:25:17 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7PG92019680;
-        Wed, 12 Jun 2019 16:25:17 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x5C7PGFv022790;
-        Wed, 12 Jun 2019 16:25:16 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-5900495; Wed, 12 Jun 2019 16:24:18 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Wed,
- 12 Jun 2019 16:24:17 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "Chen, Jerry T" <jerry.t.chen@intel.com>,
-        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] mm: hugetlb: soft-offline:
- dissolve_free_huge_page() return zero on !PageHuge
-Thread-Topic: [PATCH v2 2/2] mm: hugetlb: soft-offline:
- dissolve_free_huge_page() return zero on !PageHuge
-Thread-Index: AQHVH2UOI3n3iV7mFEufJF8BQjmdkqaWHQeAgADtBAA=
-Date:   Wed, 12 Jun 2019 07:24:16 +0000
-Message-ID: <20190612072422.GA28614@hori.linux.bs1.fc.nec.co.jp>
-References: <1560154686-18497-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <1560154686-18497-3-git-send-email-n-horiguchi@ah.jp.nec.com>
- <039dd97d-83f5-f71a-e78f-a451b0064903@oracle.com>
-In-Reply-To: <039dd97d-83f5-f71a-e78f-a451b0064903@oracle.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <BCCB33A416C92644BE29C96ADEA07518@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Jun 2019 03:25:41 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5C7LWAv032477;
+        Wed, 12 Jun 2019 09:25:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=KbcSWP4wfCKyU5i1RBXyvNUgYhKI0uEtgTlQINAU0ac=;
+ b=c3t1+sjSdVDhM/5oMjux9wwOHa5QHWdJTmK3WbucMzyaeLIy4YsF0R8OPjCMbV1+wROT
+ ED2kx0rGVEqJgJLXjG3SpVdKPCfJUR4W6cr5PEEHwTAD3EbwOfCpYhpyXRjd4bQI1pE6
+ PbzYknl5CilxKqX3E/0HATK5laDphch0zu3RZ0GsfSHc0R2N6qJRCEypWQSgeVXNrh2y
+ 8Usbg+x7UvB439EAgftWyVuTTVljh1nH7Q5Ik+0S+PEs7jOcYFjMp4+ZhThq2Dybx7a+
+ liSFnnlGLDMeSVlkwXT9P6UhiIhF3RYHbLOJHAPE+gIUZqUI7q4iX7TaGrEKNtRv1HOL Eg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2t2f8bukd2-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 12 Jun 2019 09:25:00 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0489A38;
+        Wed, 12 Jun 2019 07:24:58 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C09D3164B;
+        Wed, 12 Jun 2019 07:24:58 +0000 (GMT)
+Received: from localhost (10.75.127.48) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Jun 2019 09:24:58
+ +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
+CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] STM32 ADC analog switches supply control
+Date:   Wed, 12 Jun 2019 09:24:33 +0200
+Message-ID: <1560324276-681-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG6NODE3.st.com (10.75.127.18) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:16:03AM -0700, Mike Kravetz wrote:
-> On 6/10/19 1:18 AM, Naoya Horiguchi wrote:
-> > madvise(MADV_SOFT_OFFLINE) often returns -EBUSY when calling soft offline
-> > for hugepages with overcommitting enabled. That was caused by the suboptimal
-> > code in current soft-offline code. See the following part:
-> > 
-> >     ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
-> >                             MIGRATE_SYNC, MR_MEMORY_FAILURE);
-> >     if (ret) {
-> >             ...
-> >     } else {
-> >             /*
-> >              * We set PG_hwpoison only when the migration source hugepage
-> >              * was successfully dissolved, because otherwise hwpoisoned
-> >              * hugepage remains on free hugepage list, then userspace will
-> >              * find it as SIGBUS by allocation failure. That's not expected
-> >              * in soft-offlining.
-> >              */
-> >             ret = dissolve_free_huge_page(page);
-> >             if (!ret) {
-> >                     if (set_hwpoison_free_buddy_page(page))
-> >                             num_poisoned_pages_inc();
-> >             }
-> >     }
-> >     return ret;
-> > 
-> > Here dissolve_free_huge_page() returns -EBUSY if the migration source page
-> > was freed into buddy in migrate_pages(), but even in that case we actually
-> > has a chance that set_hwpoison_free_buddy_page() succeeds. So that means
-> > current code gives up offlining too early now.
-> > 
-> > dissolve_free_huge_page() checks that a given hugepage is suitable for
-> > dissolving, where we should return success for !PageHuge() case because
-> > the given hugepage is considered as already dissolved.
-> > 
-> > This change also affects other callers of dissolve_free_huge_page(),
-> > which are cleaned up together.
-> > 
-> > Reported-by: Chen, Jerry T <jerry.t.chen@intel.com>
-> > Tested-by: Chen, Jerry T <jerry.t.chen@intel.com>
-> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Fixes: 6bc9b56433b76 ("mm: fix race on soft-offlining")
-> > Cc: <stable@vger.kernel.org> # v4.19+
-> > ---
-> >  mm/hugetlb.c        | 15 +++++++++------
-> >  mm/memory-failure.c |  5 +----
-> >  2 files changed, 10 insertions(+), 10 deletions(-)
-> > 
-> > diff --git v5.2-rc3/mm/hugetlb.c v5.2-rc3_patched/mm/hugetlb.c
-> > index ac843d3..048d071 100644
-> > --- v5.2-rc3/mm/hugetlb.c
-> > +++ v5.2-rc3_patched/mm/hugetlb.c
-> > @@ -1519,7 +1519,12 @@ int dissolve_free_huge_page(struct page *page)
-> 
-> Please update the function description for dissolve_free_huge_page() as
-> well.  It currently says, "Returns -EBUSY if the dissolution fails because
-> a give page is not a free hugepage" which is no longer true as a result of
-> this change.
+This series adds support for SYSCFG bits that control ADC analog switches
+supply on STM32MP1 and STM32H7.
 
-Thanks for pointing out, I completely missed that.
+The ADC inputs are multiplexed with analog switches which have reduced
+performances when their supply is below 2.7V. Analog switches supply
+can be controlled using SYSCFG bits, to reach full ADC performance.
 
-> 
-> >  	int rc = -EBUSY;
-> >  
-> >  	spin_lock(&hugetlb_lock);
-> > -	if (PageHuge(page) && !page_count(page)) {
-> > +	if (!PageHuge(page)) {
-> > +		rc = 0;
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (!page_count(page)) {
-> >  		struct page *head = compound_head(page);
-> >  		struct hstate *h = page_hstate(head);
-> >  		int nid = page_to_nid(head);
-> > @@ -1564,11 +1569,9 @@ int dissolve_free_huge_pages(unsigned long start_pfn, unsigned long end_pfn)
-> >  
-> >  	for (pfn = start_pfn; pfn < end_pfn; pfn += 1 << minimum_order) {
-> >  		page = pfn_to_page(pfn);
-> > -		if (PageHuge(page) && !page_count(page)) {
-> > -			rc = dissolve_free_huge_page(page);
-> > -			if (rc)
-> > -				break;
-> > -		}
-> 
-> We may want to consider keeping at least the PageHuge(page) check before
-> calling dissolve_free_huge_page().  dissolve_free_huge_pages is called as
-> part of memory offline processing.  We do not know if the memory to be offlined
-> contains huge pages or not.  With your changes, we are taking hugetlb_lock
-> on each call to dissolve_free_huge_page just to discover that the page is
-> not a huge page.
-> 
-> You 'could' add a PageHuge(page) check to dissolve_free_huge_page before
-> taking the lock.  However, you would need to check again after taking the
-> lock.
+Fabrice Gasnier (3):
+  dt-bindings: iio: adc: stm32: add analog switches supply control
+  iio: adc: stm32-adc: add analog switches supply control
+  ARM: dts: stm32: add ADC analog switches syscfg on stm32mp157c
 
-Right, I'll do this.
+ .../devicetree/bindings/iio/adc/st,stm32-adc.txt   |   6 +
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   1 +
+ drivers/iio/adc/stm32-adc-core.c                   | 232 ++++++++++++++++++++-
+ 3 files changed, 237 insertions(+), 2 deletions(-)
 
-What was in my mind when writing this was that I actually don't like
-PageHuge because it's slow (not inlined) and called anywhere in mm code,
-so I like to reduce it if possible.
-But I now see that dissolve_free_huge_page() are relatively rare event
-rather than hugepage allocation/free, so dissolve_free_huge_page should take
-burden to precheck PageHuge instead of speculatively taking hugetlb_lock
-and disrupting the hot path.
+-- 
+2.7.4
 
-Thanks,
-- Naoya
