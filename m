@@ -2,117 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D9643081
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 21:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9039430AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 22:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389070AbfFLT7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 15:59:34 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:36121 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387605AbfFLT7c (ORCPT
+        id S2389245AbfFLUBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 16:01:43 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43933 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388447AbfFLUBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:59:32 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TU03sVe_1560369565;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TU03sVe_1560369565)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 13 Jun 2019 03:59:28 +0800
-Subject: Re: [v2 PATCH] mm: thp: fix false negative of shmem vma's THP
- eligibility
-To:     Hugh Dickins <hughd@google.com>
-Cc:     mhocko@suse.com, vbabka@suse.cz, rientjes@google.com,
-        kirill@shutemov.name, kirill.shutemov@linux.intel.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1556037781-57869-1-git-send-email-yang.shi@linux.alibaba.com>
- <alpine.LSU.2.11.1906072008210.3614@eggly.anvils>
- <578b7903-40ef-e616-d700-473713f438c0@linux.alibaba.com>
- <alpine.LSU.2.11.1906121120240.1107@eggly.anvils>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <185ccaa5-c380-f84a-ddbb-b89c8f49445a@linux.alibaba.com>
-Date:   Wed, 12 Jun 2019 12:59:24 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 12 Jun 2019 16:01:43 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i8so16669917oth.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 13:01:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0O8kud1OZKkvtHeAHVJbfPeAphq/Q2FLAtf0UYYJ3/U=;
+        b=jfvmGr6vXnwPJXt2O/LJ+JA/LZ9J7HqtQsp80r4ZrIQ3/S50EA+IwkiTBriCXwFyKg
+         MOFOGjaHZ/rDyA4dr+TqkDyKpGhurM6wkW23Ghi9L4gTt33Ov5swAa2pMYU9T4Nqxtv5
+         DqH304gbQO4Vt8Y54k1QkC42oQgs6zAY0osLuDATW1olzV3nasxDoAbi9MKjnyEjk+v7
+         UaeL80WnvyhOg0qPR6ULLu1EAZZ9s5b05Kls/6hcWIZVzeHS9orTunrnT79tXNWbNRxC
+         LntV3JrgK0/snHU0b+yacZr5vDlghoFK2iggtONksdaLiNKxd7ITfnRGFSYcCfzc30XU
+         qKvw==
+X-Gm-Message-State: APjAAAXWigCGwG9njgUW7o+dYs1+OwcaKpmZyWKgMuoFY+HL+bApB9yH
+        e+MnYwK9I3xR4vrtasPgCxaLQ0Ru
+X-Google-Smtp-Source: APXvYqzJVTYaWENbmZQvZgwch+ObRfP7lb9GuIMIds4iW518UgnGBKfuWXySpXfrM5XGqnpA5SJXCA==
+X-Received: by 2002:a9d:7a9a:: with SMTP id l26mr33759232otn.71.1560369702116;
+        Wed, 12 Jun 2019 13:01:42 -0700 (PDT)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id x128sm222264oig.54.2019.06.12.13.01.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 13:01:41 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id p4so13448958oti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 13:01:40 -0700 (PDT)
+X-Received: by 2002:a05:6830:1192:: with SMTP id u18mr35659756otq.74.1560369700348;
+ Wed, 12 Jun 2019 13:01:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1906121120240.1107@eggly.anvils>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190422183056.16375-1-leoyang.li@nxp.com> <20190510030525.GC15856@dragon>
+In-Reply-To: <20190510030525.GC15856@dragon>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Wed, 12 Jun 2019 15:01:29 -0500
+X-Gmail-Original-Message-ID: <CADRPPNT2G20j2pvSEyqX=_WNDPrcNR+xCR_XZukbnSW19wFLNA@mail.gmail.com>
+Message-ID: <CADRPPNT2G20j2pvSEyqX=_WNDPrcNR+xCR_XZukbnSW19wFLNA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable FSL_EDMA driver
+To:     Shawn Guo <shawnguo@kernel.org>, madalin.bucur@nxp.com,
+        Rob Herring <robh+dt@kernel.org>, aisheng.dong@nxp.com
+Cc:     Vinod Koul <vkoul@kernel.org>, Grant Likely <grant.likely@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/12/19 11:44 AM, Hugh Dickins wrote:
-> On Mon, 10 Jun 2019, Yang Shi wrote:
->> On 6/7/19 8:58 PM, Hugh Dickins wrote:
->>> Yes, that is correct; and correctly placed. But a little more is needed:
->>> see how mm/memory.c's transhuge_vma_suitable() will only allow a pmd to
->>> be used instead of a pte if the vma offset and size permit. smaps should
->>> not report a shmem vma as THPeligible if its offset or size prevent it.
->>>
->>> And I see that should also be fixed on anon vmas: at present smaps
->>> reports even a 4kB anon vma as THPeligible, which is not right.
->>> Maybe a test like transhuge_vma_suitable() can be added into
->>> transparent_hugepage_enabled(), to handle anon and shmem together.
->>> I say "like transhuge_vma_suitable()", because that function needs
->>> an address, which here you don't have.
->> Thanks for the remind. Since we don't have an address I'm supposed we just
->> need check if the vma's size is big enough or not other than other alignment
->> check.
->>
->> And, I'm wondering whether we could reuse transhuge_vma_suitable() by passing
->> in an impossible address, i.e. -1 since it is not a valid userspace address.
->> It can be used as and indicator that this call is from THPeligible context.
-> Perhaps, but sounds like it will abuse and uglify transhuge_vma_suitable()
-> just for smaps. Would passing transhuge_vma_suitable() the address
->      ((vma->vm_end & HPAGE_PMD_MASK) - HPAGE_PMD_SIZE)
-> give the the correct answer in all cases?
-
-Yes, it looks better.
-
+On Thu, May 9, 2019 at 10:15 PM Shawn Guo <shawnguo@kernel.org> wrote:
 >
->>> The anon offset situation is interesting: usually anon vm_pgoff is
->>> initialized to fit with its vm_start, so the anon offset check passes;
->>> but I wonder what happens after mremap to a different address - does
->>> transhuge_vma_suitable() then prevent the use of pmds where they could
->>> actually be used? Not a Number#1 priority to investigate or fix here!
->>> but a curiosity someone might want to look into.
->> Will mark on my TODO list.
->>
->>> Even with your changes
->>> ShmemPmdMapped:     4096 kB
->>> THPeligible:    0
->>> will easily be seen: THPeligible reflects whether a huge page can be
->>> allocated and mapped by pmd in that vma; but if something else already
->>> allocated the huge page earlier, it will be mapped by pmd in this vma
->>> if offset and size allow, whatever THPeligible says. We could change
->>> transhuge_vma_suitable() to force ptes in that case, but it would be
->>> a silly change, just to make what smaps shows easier to explain.
->> Where did this come from? From the commit log? If so it is the example for
->> the wrong smap output. If that case really happens, I think we could document
->> it since THPeligible should just show the current status.
-> Please read again what I explained there: it's not necessarily an example
-> of wrong smaps output, it's reasonable smaps output for a reasonable case.
+> On Mon, Apr 22, 2019 at 01:30:56PM -0500, Li Yang wrote:
+> > Enables the FSL EDMA driver by default.  This also works around an issue
+> > that imx-i2c driver keeps deferring the probe because of the DMA is not
+> > ready.  And currently the DMA engine framework can not correctly tell
+> > if the DMA channels will truly become available later (it will never be
+> > available if the DMA driver is not enabled).
+> >
+> > This will cause indefinite messages like below:
+> > [    3.335829] imx-i2c 2180000.i2c: can't get pinctrl, bus recovery not supported
+> > [    3.344455] ina2xx 0-0040: power monitor ina220 (Rshunt = 1000 uOhm)
+> > [    3.350917] lm90 0-004c: 0-004c supply vcc not found, using dummy regulator
+> > [    3.362089] imx-i2c 2180000.i2c: can't get pinctrl, bus recovery not supported
+> > [    3.370741] ina2xx 0-0040: power monitor ina220 (Rshunt = 1000 uOhm)
+> > [    3.377205] lm90 0-004c: 0-004c supply vcc not found, using dummy regulator
+> > [    3.388455] imx-i2c 2180000.i2c: can't get pinctrl, bus recovery not supported
+> > .....
+> >
+> > Signed-off-by: Li Yang <leoyang.li@nxp.com>
 >
-> Yes, maybe Documentation/filesystems/proc.txt should explain "THPeligble"
-> a little better - "eligible for allocating THP pages" rather than just
-> "eligible for THP pages" would be good enough? we don't want to write
-> a book about the various cases.
+> Applied, thanks.
 
-Yes, I agree.
+Hi Shawn,
 
->
-> Oh, and the "THPeligible" output lines up very nicely there in proc.txt:
-> could the actual alignment of that 0 or 1 be fixed in smaps itself too?
+Is it possible to move this patch to the -fix series so that it can
+reach the mainline earlier?  It is having a boot failure in mainline
+for platforms using this device without this workaround.
 
-Sure.
+I see Rob added a new API driver_deferred_probe_check_state() last
+year.  Probably we should update the imx-i2c driver to use the new API
+for optional dependencies to avoid this kind of situation completely?
 
-Thanks,
-Yang
-
->
-> Thanks,
-> Hugh
-
+Regards,
+Leo
