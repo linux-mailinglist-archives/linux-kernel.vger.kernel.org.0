@@ -2,79 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D0F4291F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:29:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC5C4293E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Jun 2019 16:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437656AbfFLO3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 12 Jun 2019 10:29:17 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42017 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437144AbfFLO3Q (ORCPT
+        id S2439817AbfFLObG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 12 Jun 2019 10:31:06 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:51676 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437584AbfFLObG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:29:16 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q10so9759675pff.9;
-        Wed, 12 Jun 2019 07:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version;
-        bh=i2lHhyHM9Am5ZKv4ZERVjIYftF/2/pl8FBg2eVYcKHk=;
-        b=JLmcSe+wAzzpnKkgwvo/T1DJShHK+8zUW4xmw1zWJyEFwLFoR2TFoW6jDWzWVft820
-         iHjVOXhjGBw7OEiJyAN66RZdasUZcnvtNYqA+30QJDCD17RJEU+VTAmcbnbFDvKaT8cY
-         HpPXZJn9Emvrt9lGfQfpeG0f3Wr/e8u0blJVePSPGWQBbuX5BbV+xrl1tvOpuelSJBo4
-         wzXHtk0BZ60Bkf0cDdY2oHZ0ZdLf0F6A7bO7lNdYHwU6rraAtlN8qqe9M+fRmu6t5XmK
-         NkqpoSB7t5Ld9ElLjyfDnbMm48It11x2lQpFhvnccQIgrBUxaHc8SM8cfjCwihiUptik
-         Na9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version;
-        bh=i2lHhyHM9Am5ZKv4ZERVjIYftF/2/pl8FBg2eVYcKHk=;
-        b=B5GITcWw77BwKDPPC287cexNQqlU60Lw7ySRQ4NS4OFL+IEGBXVc59OPNQcwgFJKy+
-         H+X9dIPIo57ClSefgs5xZWgdtuZnpb8hsmAAXBvZ2gtWVhgnCapnDsteX28G/Af8LmBb
-         +/sRmrq+HdCERyR1Or8NPjiMS6qrhOAIcKTBtPgi1zlHw25TGA4iH2lhiu8eCW+GbtnE
-         URvADwYSKYUZbz37woyLU+8HVsTYvoGBJUb1t9R8E6EcW+O7qGKnVYFjGOP2euBxtviV
-         uZFbXR7Tu6pPVBZRnFQy3zfwTxqSvbtd+nzt4KXYErnJRq3wIP+a+NJY0i1OZ+5Gz0hp
-         Omnw==
-X-Gm-Message-State: APjAAAVtdXmp7P/NXySI/Z44J74wzk7uDUdXX+Nb7c1/l4EwSZSHGldE
-        i0PtcbRBUauSqMETqPviCZk=
-X-Google-Smtp-Source: APXvYqzFwERzMYTKTt+QXS/AxrGBHTzZgwv6lP7jSb9Fw8afo+Zi0xwYKJxnHkZ21IaK/DjcWBIeCQ==
-X-Received: by 2002:a17:90a:2e87:: with SMTP id r7mr33021706pjd.121.1560349755472;
-        Wed, 12 Jun 2019 07:29:15 -0700 (PDT)
-Received: from [172.26.107.103] ([2620:10d:c090:180::1:1d4d])
-        by smtp.gmail.com with ESMTPSA id j14sm19519914pfe.10.2019.06.12.07.29.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 07:29:14 -0700 (PDT)
-From:   "Jonathan Lemon" <jonathan.lemon@gmail.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, davem@davemloft.net,
-        jakub.kicinski@netronome.com, linux-kernel@vger.kernel.org,
-        xdp-newbies@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf: Fix build error without CONFIG_INET
-Date:   Wed, 12 Jun 2019 07:29:13 -0700
-X-Mailer: MailMate (1.12.5r5635)
-Message-ID: <CFE96009-1D3A-4D99-8A96-86C281772396@gmail.com>
-In-Reply-To: <20190612091847.23708-1-yuehaibing@huawei.com>
-References: <20190612091847.23708-1-yuehaibing@huawei.com>
+        Wed, 12 Jun 2019 10:31:06 -0400
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,366,1557212400"; 
+   d="scan'208";a="37046409"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Jun 2019 07:30:17 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 12 Jun 2019 07:30:17 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Wed, 12 Jun 2019 07:30:16 -0700
+Date:   Wed, 12 Jun 2019 16:29:17 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>
+CC:     Codrin Ciubotariu - M19940 <Codrin.Ciubotariu@microchip.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: at91: generated: Truncate divisor to
+ GENERATED_MAX_DIV + 1
+Message-ID: <20190612142917.sbpks6nhf7fy6rk6@M43218.corp.atmel.com>
+Mail-Followup-To: Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
+        Codrin Ciubotariu - M19940 <Codrin.Ciubotariu@microchip.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190610151712.16572-1-codrin.ciubotariu@microchip.com>
+ <7306f2c5-e035-31d1-194e-6b4afb6a61c1@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7306f2c5-e035-31d1-194e-6b4afb6a61c1@microchip.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 Jun 2019, at 2:18, YueHaibing wrote:
+On Wed, Jun 12, 2019 at 03:54:00PM +0200, Nicolas Ferre - M43238 wrote:
+> On 10/06/2019 at 17:20, Codrin Ciubotariu - M19940 wrote:
+> > From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> > 
+> > In clk_generated_determine_rate(), if the divisor is greater than
+> > GENERATED_MAX_DIV + 1, then the wrong best_rate will be returned.
+> > If clk_generated_set_rate() will be called later with this wrong
+> > rate, it will return -EINVAL, so the generated clock won't change
+> > its value. Do no let the divisor be greater than GENERATED_MAX_DIV + 1.
+> > 
+> > Fixes: 8c7aa6328947 ("clk: at91: clk-generated: remove useless divisor loop")
+> > Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> 
+> Yes:
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-> If CONFIG_INET is not set, building fails:
->
-> kernel/bpf/verifier.o: In function `check_mem_access':
-> verifier.c: undefined reference to `bpf_xdp_sock_is_valid_access'
-> kernel/bpf/verifier.o: In function `convert_ctx_accesses':
-> verifier.c: undefined reference to `bpf_xdp_sock_convert_ctx_access'
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: fada7fdc83c0 ("bpf: Allow bpf_map_lookup_elem() on an xskmap")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+
+Thanks
+
+Ludovic
+
+> 
+> Thanks for having fixed this Codrin. Best regards,
+>    Nicolas
+> 
+> > ---
+> >   drivers/clk/at91/clk-generated.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> > index 5f18847965c1..290cffe35deb 100644
+> > --- a/drivers/clk/at91/clk-generated.c
+> > +++ b/drivers/clk/at91/clk-generated.c
+> > @@ -146,6 +146,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+> >   			continue;
+> >   
+> >   		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
+> > +		if (div > GENERATED_MAX_DIV + 1)
+> > +			div = GENERATED_MAX_DIV + 1;
+> >   
+> >   		clk_generated_best_diff(req, parent, parent_rate, div,
+> >   					&best_diff, &best_rate);
+> > 
+> 
+> 
+> -- 
+> Nicolas Ferre
