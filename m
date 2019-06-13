@@ -2,94 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1229044ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A366C44EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 00:07:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbfFMV5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:57:12 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:33497 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfFMV5L (ORCPT
+        id S1728216AbfFMWHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 18:07:32 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:47094 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbfFMWHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:57:11 -0400
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E8A4A240005;
-        Thu, 13 Jun 2019 21:57:06 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 00:06:54 +0200
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: aardvark: Fix PCI_EXP_RTCTL conf register writing
-Message-ID: <20190613220653.GB12859@voidbox.localdomain>
-References: <20190522213351.21366-1-repk@triplefau.lt>
- <20190613161441.GA2247@e121166-lin.cambridge.arm.com>
+        Thu, 13 Jun 2019 18:07:32 -0400
+Received: by mail-qk1-f195.google.com with SMTP id x18so400393qkn.13;
+        Thu, 13 Jun 2019 15:07:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BhWdQ+n9lb5V8igkIdjlDGkO+bOshDClHntzHo4xkx4=;
+        b=pB8ZQhLWydN7xaJSbR0D7SlL/nA6gyRv96uz10UScA+WoCvpn7fjWrqtlEFr0yZVOA
+         2stJzMuVMJg+dWmZDFI+kw3yKZCKyjGza3X9ZSKfTe/0XoaHqEbQ4uG1GRgIXIXfcfk+
+         cZH781VT2lUFcGyFEAAAh/+XLJWO5E/dRnx8mLx+HTf8eSJSfqATq6d523izP75RROJ1
+         Da8gHmb/p/rfdxl1/y/QxTR3NXJMA4/Xgmjx4wHJ1NWD1SyFzzYQF0LkUjhDurgfL4q5
+         UETq1WCB1dgUDZ2IkceOjMcUJIl1RatDFA0hoEpmDGfsp8qQkZoubz37swFV6enAYvAh
+         v4hw==
+X-Gm-Message-State: APjAAAVF7fVuQSZgobzul++G9TT1Hrw8snyz/c3/KIcxfdvmWu3mYaLT
+        pRJAVAqR+NVp5AQ2ByMJjA==
+X-Google-Smtp-Source: APXvYqzlg3l0HADoNTIkv5SXk7nuuzVo6Jw7oSlbsAolVM+MxEBgZazQrw5oWThYP2sbSY8L9PzBsg==
+X-Received: by 2002:a37:6512:: with SMTP id z18mr73992402qkb.158.1560463650992;
+        Thu, 13 Jun 2019 15:07:30 -0700 (PDT)
+Received: from localhost ([64.188.179.243])
+        by smtp.gmail.com with ESMTPSA id t8sm708240qtc.80.2019.06.13.15.07.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 15:07:30 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 16:07:29 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ran Wang <ran.wang_1@nxp.com>
+Cc:     Li Yang <leoyang.li@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: Re: [PATCH 2/3] Documentation: dt: binding: fsl: Add 'little-endian'
+ and update Chassis define
+Message-ID: <20190613220729.GA29761@bogus>
+References: <20190517024748.15534-1-ran.wang_1@nxp.com>
+ <20190517024748.15534-2-ran.wang_1@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613161441.GA2247@e121166-lin.cambridge.arm.com>
+In-Reply-To: <20190517024748.15534-2-ran.wang_1@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 05:14:41PM +0100, Lorenzo Pieralisi wrote:
-> On Wed, May 22, 2019 at 11:33:49PM +0200, Remi Pommarel wrote:
-> > PCI_EXP_RTCTL is used to activate PME interrupt only, so writing into it
-> > should not modify other interrupts' mask (such as ISR0).
-> > 
-> > Fixes: 6302bf3ef78d ("PCI: Init PCIe feature bits for managed host bridge alloc")
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> > Please note that I will unlikely be able to answer any comments from May
-> > 24th to June 10th.
-> > ---
-> >  drivers/pci/controller/pci-aardvark.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> > index 134e0306ff00..27102d3b4f9c 100644
-> > --- a/drivers/pci/controller/pci-aardvark.c
-> > +++ b/drivers/pci/controller/pci-aardvark.c
-> > @@ -451,10 +451,14 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
-> >  		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
-> >  		break;
-> >  
-> > -	case PCI_EXP_RTCTL:
-> > -		new = (new & PCI_EXP_RTCTL_PMEIE) << 3;
-> > -		advk_writel(pcie, new, PCIE_ISR0_MASK_REG);
-> > +	case PCI_EXP_RTCTL: {
-> > +		/* Only mask/unmask PME interrupt */
-> > +		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG) &
-> > +			~PCIE_MSG_PM_PME_MASK;
-> > +		val |= (new & PCI_EXP_RTCTL_PMEIE) << 3;
+On Fri, 17 May 2019 10:47:47 +0800, Ran Wang wrote:
+> By default, QorIQ SoC's RCPM register block is Big Endian. But
+> there are some exceptions, such as LS1088A and LS2088A, are Little
+> Endian. So add this optional property to help identify them.
 > 
-> I know you have not introduced this code but maybe we can
-> take an opportunity to clarify it (that << 3 shift obfuscates
-> a bit):
+> Actually LS2021A and other Layerscapes won't totally follow Chassis
+> 2.1, so separate them from powerpc SoC.
 > 
-> 	u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG) &
-> 			~PCIE_MSG_PM_PME_MASK;
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/soc/fsl/rcpm.txt |    8 +++++++-
+>  1 files changed, 7 insertions(+), 1 deletions(-)
 > 
-> 	if (new & PCI_EXP_RTCTL_PMEIE)
-> 		val |= PCIE_MSG_PM_PME_MASK;
-> 
-> 	advk_writel(pcie, val, PCIE_ISR0_MASK_REG);
-> 	break;
-> 
-> Or I am not reading the code correctly ?
 
-Sure, that clarifies the code at the point where I realize that the
-"<< 3" from the original code was off by one and the mask polarity was
-inverted. So I'll fix all that in the v2.
-
-Thanks.
-
--- 
-Remi
+Reviewed-by: Rob Herring <robh@kernel.org>
