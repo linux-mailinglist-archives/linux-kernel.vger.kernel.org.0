@@ -2,123 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B223F43BD2
+	by mail.lfdr.de (Postfix) with ESMTP id 45E0443BD1
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfFMPb6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Jun 2019 11:31:58 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:40338 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728585AbfFMK4W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:56:22 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-145-lRm-i_CsMV6GXrqEfUx8qQ-1; Thu, 13 Jun 2019 11:56:18 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 13 Jun 2019 11:56:17 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 13 Jun 2019 11:56:17 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Oleg Nesterov' <oleg@redhat.com>
-CC:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        'Andrew Morton' <akpm@linux-foundation.org>,
-        'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'arnd@arndb.de'" <arnd@arndb.de>,
-        "'dbueso@suse.de'" <dbueso@suse.de>,
-        "'axboe@kernel.dk'" <axboe@kernel.dk>,
-        "'dave@stgolabs.net'" <dave@stgolabs.net>,
-        "'e@80x24.org'" <e@80x24.org>,
-        "'jbaron@akamai.com'" <jbaron@akamai.com>,
-        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
-        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
-        "'tglx@linutronix.de'" <tglx@linutronix.de>,
-        'Al Viro' <viro@ZenIV.linux.org.uk>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
-Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31QgAHScICAABPkMIABOuaw////xYCAAB9eAA==
-Date:   Thu, 13 Jun 2019 10:56:17 +0000
-Message-ID: <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
-References: <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
- <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
- <87lfy96sta.fsf@xmission.com>
- <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
- <20190612134558.GB3276@redhat.com>
- <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
- <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
- <20190613094324.GA12506@redhat.com>
-In-Reply-To: <20190613094324.GA12506@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: lRm-i_CsMV6GXrqEfUx8qQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1726865AbfFMPby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:31:54 -0400
+Received: from gate.crashing.org ([63.228.1.57]:47095 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728593AbfFMK46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:56:58 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x5DAuVOr010532;
+        Thu, 13 Jun 2019 05:56:32 -0500
+Message-ID: <5e3e3f21b53f45cb115b4c04e04dc7557c63982d.camel@kernel.crashing.org>
+Subject: Re: [PATCH+DISCUSSION] irqchip: armada-370-xp: Remove redundant ops
+ assignment
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 13 Jun 2019 20:56:31 +1000
+In-Reply-To: <86muilc012.wl-marc.zyngier@arm.com>
+References: <e4c7b434452775d00b6621012ad5e263076b3fcf.camel@kernel.crashing.org>
+         <86muilc012.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov
-> Sent: 13 June 2019 10:43
-> On 06/13, David Laight wrote:
-> >
-> > I tested NetBSD last night.
-> > pselect() always calls the signal handlers even when an fd is ready.
-> > I'm beginning to suspect that this is the 'standards conforming' behaviour.
+On Thu, 2019-06-13 at 10:22 +0100, Marc Zyngier wrote:
 > 
-> May be. May be not. I have no idea.
+> It looks to me that masking at the PCI level is rather superfluous as
+> long as the MSI controller HW has the capability to mask the interrupt
+> on a per MSI basis. After all, most non MSI-X endpoint lack support
+> for masking of individual vectors, so I think that we should just mask
+> things at the irqchip level. This is also consistent with what you'd
+> have to do for non-PCI MSI, where nothing standardises the MSI
+> masking.
 > 
-> > > The ToG page for pselect() http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html
-> > > says:
-> > >     "If sigmask is not a null pointer, then the pselect() function shall replace
-> > >     the signal mask of the caller by the set of signals pointed to by sigmask
-> > >     before examining the descriptors, and shall restore the signal mask of the
-> > >     calling thread before returning."
+> I think this is in effect a split in responsibilities:
 > 
-> > > Note that it says 'before examining the descriptors' not 'before blocking'.
+> - the end-point driver should (directly or indirectly) control the
+>   interrupt generation at the end-point level,
 > 
-> And you interpret this as if a pending signal should be delivered in any case,
-> even if pselect succeeds. Again, perhaps you are right, but to me this is simply
-> undocumented.
-
-This text (from http://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html) is moderately clear:
-    ... if all threads within the process block delivery of the signal, the signal shall
-    remain pending on the process until a thread calls a sigwait() function selecting that
-    signal, a thread unblocks delivery of the signal, or the action associated with the signal
-    is set to ignore the signal.
-
-So when pselect() 'replaces the signal mask' any pending signals should be delivered.
-And 'delivery' means 'call the signal handler'.
-All Unix systems will defer calling the signal handler until the system call
-returns, but this is not mandated by Posix.
-
-> However, linux never did this. Until the commit 854a6ed56839 ("signal: Add
-> restore_user_sigmask()"). This commit caused regression. We had to revert it.
-
-That change wasn't expected to change the behaviour...
-
-	David
-
-> > > If nothing else the man pages need a note about the standards and portability.
+> - the MSI controller driver should control the signalling of the MSI
+>   to the CPU.
 > 
-> Agreed.
-> 
-> Oleg.
+> The only case where we should rely on masking interrupts at the
+> end-point level is when the MSI controller doesn't provide a method to
+> do so (hopefully a rare exception).
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+While I would tend to agree, I'm also wary of standardizing on
+something which isn't what x86 does today :-)
+
+You know what happens when we break them... interestingly enough they
+(like quite a few other drivers) don't even bother trying to mask at
+the APIC level unless I misread the code. That means that for endpoints
+that don't support masking, they just get those MSIs and
+"ignore" them...
+
+But I'll look into it, see what the patch looks like.
+
+I've also looked at trying to make the "inner domain" more generic but
+that's looking a tad trickier... not giving up yet though :-)
+
+Cheers,
+Ben.
+
 
