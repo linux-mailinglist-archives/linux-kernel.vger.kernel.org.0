@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97EEF4433B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E38534433E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391994AbfFMQ14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:27:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54928 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbfFMQ1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:27:54 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 2E34F27D7A1
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     devicetree@vger.kernel.org
-Cc:     Collabora Kernel ML <kernel@collabora.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vicente Bergas <vicencb@gmail.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
-        Randy Li <ayaka@soulik.info>,
-        Tony Xie <tony.xie@rock-chips.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH] arm64: dts: rockchip: Update DWC3 modules on RK3399 SoCs
-Date:   Thu, 13 Jun 2019 18:27:45 +0200
-Message-Id: <20190613162745.12195-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        id S2403893AbfFMQ2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727271AbfFMQ2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:28:06 -0400
+Received: from localhost (unknown [131.107.160.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EE1F21743;
+        Thu, 13 Jun 2019 16:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560443285;
+        bh=pTWfd28rxTsC36j5nVi4lXHdrxsHMLFah47TRp8/Hl0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jH+hYGmLO1NFzZnYcUN5UZLEqmsoQQ3AoV3p5xisj858SDLvyW9Nh3RakQJBRYq4g
+         oBxFnQEyHGkFv/4dw+UJxCsMrHHu5+M315FphN83xvW4/NOf+v9mP2WcwFdyfr8Zdk
+         pJD1fokgt1FQHAtnRbEeOUG/eM3pCje3IPwso66A=
+Date:   Thu, 13 Jun 2019 12:28:05 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
+Subject: Re: [PATCH 4.14 61/81] ALSA: seq: Protect in-kernel ioctl calls with
+ mutex
+Message-ID: <20190613162805.GI1513@sasha-vm>
+References: <20190613075649.074682929@linuxfoundation.org>
+ <20190613075653.581995283@linuxfoundation.org>
+ <s5hzhmlluwx.wl-tiwai@suse.de>
+ <20190613091122.GA31122@kroah.com>
+ <s5hv9x9luek.wl-tiwai@suse.de>
+ <20190613153946.GG1513@sasha-vm>
+ <s5hwohpjxrk.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <s5hwohpjxrk.wl-tiwai@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per binding documentation [1], the DWC3 core should have the "ref",
-"bus_early" and "suspend" clocks. As explained in the binding, those
-clocks are required for new platforms but not for existing platforms
-before commit fe8abf332b8f ("usb: dwc3: support clocks and resets for
-DWC3 core").
+On Thu, Jun 13, 2019 at 05:44:15PM +0200, Takashi Iwai wrote:
+>On Thu, 13 Jun 2019 17:39:46 +0200,
+>Sasha Levin wrote:
+>>
+>> On Thu, Jun 13, 2019 at 11:13:55AM +0200, Takashi Iwai wrote:
+>> >On Thu, 13 Jun 2019 11:11:22 +0200,
+>> >Greg Kroah-Hartman wrote:
+>> >>
+>> >> On Thu, Jun 13, 2019 at 11:02:54AM +0200, Takashi Iwai wrote:
+>> >> > On Thu, 13 Jun 2019 10:33:44 +0200,
+>> >> > Greg Kroah-Hartman wrote:
+>> >> > >
+>> >> > > [ Upstream commit feb689025fbb6f0aa6297d3ddf97de945ea4ad32 ]
+>> >> > >
+>> >> > > ALSA OSS sequencer calls the ioctl function indirectly via
+>> >> > > snd_seq_kernel_client_ctl().  While we already applied the protection
+>> >> > > against races between the normal ioctls and writes via the client's
+>> >> > > ioctl_mutex, this code path was left untouched.  And this seems to be
+>> >> > > the cause of still remaining some rare UAF as spontaneously triggered
+>> >> > > by syzkaller.
+>> >> > >
+>> >> > > For the sake of robustness, wrap the ioctl_mutex also for the call via
+>> >> > > snd_seq_kernel_client_ctl(), too.
+>> >> > >
+>> >> > > Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
+>> >> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+>> >> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> >> >
+>> >> > This commit is reverted later by commit f0654ba94e33.
+>> >> > So please drop this.  The proper fix is done later by commit
+>> >> > 7c32ae35fbf9 ("ALSA: seq: Cover unsubscribe_port() in list_mutex")
+>> >> >
+>> >> > Ditto for 4.19.y and 5.1.y.
+>> >>
+>> >> Now dropped everywhere, and I added 7c32ae35fbf9 ("ALSA: seq: Cover
+>> >> unsubscribe_port() in list_mutex") everywhere instead.
+>> >
+>> >Thanks!
+>> >
+>> >BTW, do we have a systematic check whether the selected stable commit
+>> >is reverted in a later commit?  At least, you can track it as long as
+>> >Fixes tag is properly set.
+>>
+>> I have that scripting in place, and I usually check it once before I
+>> send the initial reviews and then once Greg does the -rc release.
+>
+>OK, good to hear.  So this time must be some exceptional error.
 
-However, as those clocks are really treated as required, this ends with
-having some annoying messages when the "rockchip,rk3399-dwc3" is used:
+I still run these manually (I guess it's time to automate that too), so
+it happens sometimes that folks notice these faster :)
 
-[    1.724107] dwc3 fe800000.dwc3: Failed to get clk 'ref': -2
-[    1.731893] dwc3 fe900000.dwc3: Failed to get clk 'ref': -2
-[    2.495937] dwc3 fe800000.dwc3: Failed to get clk 'ref': -2
-[    2.647239] dwc3 fe900000.dwc3: Failed to get clk 'ref': -2
-
-In order to remove those annoying messages, update the DWC3 hardware
-module node and add all the required clocks. With this change, both, the
-glue node and the DWC3 core node, have the clocks defined, but that's
-not really a problem and there isn't a side effect on do this. So, we
-can get rid of the annoying get clk error messages.
-
-[1] Documentation/devicetree/bindings/usb/dwc3.txt
-
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 196ac9b78076..a15348d185ce 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -414,6 +414,9 @@
- 			compatible = "snps,dwc3";
- 			reg = <0x0 0xfe800000 0x0 0x100000>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH 0>;
-+			clocks = <&cru SCLK_USB3OTG0_REF>, <&cru ACLK_USB3OTG0>,
-+				 <&cru SCLK_USB3OTG0_SUSPEND>;
-+			clock-names = "ref", "bus_early", "suspend";
- 			dr_mode = "otg";
- 			phys = <&u2phy0_otg>, <&tcphy0_usb3>;
- 			phy-names = "usb2-phy", "usb3-phy";
-@@ -447,6 +450,9 @@
- 			compatible = "snps,dwc3";
- 			reg = <0x0 0xfe900000 0x0 0x100000>;
- 			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH 0>;
-+			clocks = <&cru SCLK_USB3OTG1_REF>, <&cru ACLK_USB3OTG1>,
-+				 <&cru SCLK_USB3OTG1_SUSPEND>;
-+			clock-names = "ref", "bus_early", "suspend";
- 			dr_mode = "otg";
- 			phys = <&u2phy1_otg>, <&tcphy1_usb3>;
- 			phy-names = "usb2-phy", "usb3-phy";
--- 
-2.20.1
-
+--
+Thanks,
+Sasha
