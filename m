@@ -2,74 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2740743CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9CC43CF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbfFMPhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:37:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbfFMPhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:37:48 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A7E02080A;
-        Thu, 13 Jun 2019 15:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560440267;
-        bh=GVf49hFCmcRRH5IPgZDm+9Q8NkzxgT1kPYT89nbbwgU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uDnHm1StBx+nQRq0m1g9H/twrrrfEiVi0hC8aCH1S5N0Zc8HGay21dh98aIyPLML2
-         /cYshCvedsyI7rMoGeegHKKGvkNMmTfLPk39drws9i3soJUgRYhEiwX0QXcxCz8Tno
-         yhzOcoCOvptF3CaDx7C9LVVUTJd8ZQVQ7iEqZcDE=
-Date:   Thu, 13 Jun 2019 17:37:44 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     sashal@kernel.org, Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/81] 4.14.126-stable review
-Message-ID: <20190613153744.GA15226@kroah.com>
-References: <20190613075649.074682929@linuxfoundation.org>
- <1139f9d4-1a0a-b422-276d-546e7cb1bc85@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1139f9d4-1a0a-b422-276d-546e7cb1bc85@roeck-us.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S2388545AbfFMPii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:38:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57996 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388373AbfFMPig (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:38:36 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DFWCoh056186
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 11:38:35 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t3s620eqr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 11:38:34 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 13 Jun 2019 16:38:32 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Jun 2019 16:38:29 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5DFcS8A38273254
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 15:38:28 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6688A4051;
+        Thu, 13 Jun 2019 15:38:28 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6DF4A405B;
+        Thu, 13 Jun 2019 15:38:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.91])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jun 2019 15:38:27 +0000 (GMT)
+Subject: Re: [PATCH -next] ima: Make arch_policy_entry static
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     YueHaibing <yuehaibing@huawei.com>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date:   Thu, 13 Jun 2019 11:38:17 -0400
+In-Reply-To: <20190611134032.14656-1-yuehaibing@huawei.com>
+References: <20190611134032.14656-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061315-0012-0000-0000-00000328DFF3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061315-0013-0000-0000-00002161ECE4
+Message-Id: <1560440297.4805.23.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906130116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 08:11:33AM -0700, Guenter Roeck wrote:
-> On 6/13/19 1:32 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.126 release.
-> > There are 81 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat 15 Jun 2019 07:54:51 AM UTC.
-> > Anything received after that time might be too late.
-> > 
+On Tue, 2019-06-11 at 21:40 +0800, YueHaibing wrote:
+> Fix sparse warning:
 > 
-> [early feedback]
+> security/integrity/ima/ima_policy.c:202:23: warning:
+>  symbol 'arch_policy_entry' was not declared. Should it be static?
 > 
-> Building mips:nlm_xlp_defconfig ... failed (and other mips builds)
-> --------------
-> Error log:
-> /opt/buildbot/slave/stable-queue-4.14/build/arch/mips/kernel/prom.c: In function 'early_init_dt_add_memory_arch':
-> /opt/buildbot/slave/stable-queue-4.14/build/arch/mips/kernel/prom.c:44:14: error: 'PHYS_ADDR_MAX' undeclared
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Thanks, this patch has been queued to be upstreamed.
+
+Mimi
+
+> ---
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The problem affects v4.14.y and all earlier branches.
-> PHYS_ADDR_MAX is indeed undeclared in those branches. It was introduced
-> with commit 1c4bc43ddfd52 ("mm/memblock: introduce PHYS_ADDR_MAX").
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 1cc822a..cd1b728 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -199,7 +199,7 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+>  };
+>  
+>  /* An array of architecture specific rules */
+> -struct ima_rule_entry *arch_policy_entry __ro_after_init;
+> +static struct ima_rule_entry *arch_policy_entry __ro_after_init;
+>  
+>  static LIST_HEAD(ima_default_rules);
+>  static LIST_HEAD(ima_policy_rules);
 
-Thanks, I've dropped the mips patch that caused this.  I'll also drop it
-from the 4.4 and 4.9 trees.
-
-Sasha, I thought you had builders set up for stuff like this?
-
-greg k-h
