@@ -2,63 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82AD244613
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 635664460C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404198AbfFMQtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:49:07 -0400
-Received: from mail-qk1-f173.google.com ([209.85.222.173]:38703 "EHLO
-        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbfFMElp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 00:41:45 -0400
-Received: by mail-qk1-f173.google.com with SMTP id a27so11898521qkk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 21:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mail-followup-to:mime-version
-         :content-disposition:user-agent;
-        bh=Uh7QEcZOHyufjXnKgIUUP1TR4HXzFVNhNjMRmSOQ/So=;
-        b=YoqZ+USSEjvVBJNXLV9esc9fw1+C5ITKaMSyYellEYDbnDIqAyYLtQidVCeog5VnN2
-         i9RV+lHJnbEeufxRJu97ENmOYw95cnwU6YvTHr321OsjDxiWMEMIi7zMfd3DmF6vBO5K
-         vu3NUCY52osolrT/cAC9T2lwhbpEfz7MPCE38v7sQ47IIyLs/cprI6aommAUK1G3TH8a
-         k2RgO5LilXbUhAi6RtVc5uv9AnDeHiu49aaFhlGbkvTWXO6kAgqqI2pWk1lIwKOT3BXH
-         R7eERKgjyQ7m3c0K2DJy58bAGacFm+Yp6YKSC/wWaIxJDT3pO4AyZQIhV+mJ62fYU72D
-         JvGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :mime-version:content-disposition:user-agent;
-        bh=Uh7QEcZOHyufjXnKgIUUP1TR4HXzFVNhNjMRmSOQ/So=;
-        b=dVgfprjHMVAu/P1Wrt1l/zEtcvb9GEdRxSzwaZlQ6uFHluGFjWBGcGSTSF+cotOCmJ
-         VPPO1XlP5OatpSjs3DHj++mSSeY9aGZY78qrXA9+b3UkY42sn4wjVLKpzaf88L1IP2KH
-         APmx2D5SW1EtAv/Fu+72sdy2Fx36Pf9miUJn0AFI5hf2wiq7bHmqwwRK7o7fWSao7Wa2
-         92MZkP2/jtpQLSN6nd6x6yVTV/SlumOqeKAlDuxl4l+i8KiYeZZ4sj8Equ0Jay7Vovpz
-         6INrdYqhrsmPrteBuI5q+WLa7EM57kCNR0jfvMCnxQOBFGv7X8nOZtRCVz1qJpVn++jI
-         rWow==
-X-Gm-Message-State: APjAAAUsiwYlNe/DTGNmWLLZC55i3UEFZvA0kmg8rB4F8wm3J0YDbuNW
-        4kTXGMBFd358XkCoUni3tubpRUViHuY=
-X-Google-Smtp-Source: APXvYqwQkzmP0f5Xf6GB03DEo+j4pTSJdcvI7wjlYg9ohdlo9m0gVB4J9Tc3awuE7h1zqPgs7C2lnw==
-X-Received: by 2002:a37:b87:: with SMTP id 129mr50552087qkl.132.1560400904643;
-        Wed, 12 Jun 2019 21:41:44 -0700 (PDT)
-Received: from freebsd.route53-aws-cloud.de (ec2-3-95-91-234.compute-1.amazonaws.com. [3.95.91.234])
-        by smtp.gmail.com with ESMTPSA id d31sm1196348qta.39.2019.06.12.21.41.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 21:41:44 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 06:41:42 +0200
-From:   Damian Tometzki <damian.tometzki@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Subject: linux
-Message-ID: <20190613044141.GA44572@freebsd.route53-aws-cloud.de>
-Mail-Followup-To: linux-kernel@vger.kernel.org
+        id S1730192AbfFMQsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:48:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730197AbfFMErE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 00:47:04 -0400
+Received: from localhost (unknown [122.167.115.6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F073B20896;
+        Thu, 13 Jun 2019 04:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560401222;
+        bh=K9FNPHmnqxi+cDtQvQzeft88w5PoDLsLVmgqgk4WPmY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Anwqmr4rxIxTzAwwmYCKh1b1lsb2Hwr6+b824GvOspF92wg4JCoUn9yTIBRU+v4FE
+         QB4F8U4SWd+NBczAXp5lz8i0k0QKmM6pGCEUDONXigsaqOFNFKdoXzyuWWvysAZdIZ
+         3bH9HoMRUflLpwflFyltle5G6/CUhmjqcKRuC5ZI=
+Date:   Thu, 13 Jun 2019 10:13:52 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     dan.j.williams@intel.com, tiwai@suse.com, jonathanh@nvidia.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
+        mkumard@nvidia.com
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+Message-ID: <20190613044352.GC9160@vkoul-mobl.Dlink>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502060446.GI3845@vkoul-mobl.Dlink>
+ <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linux
+On 06-06-19, 09:19, Sameer Pujar wrote:
+
+> > you are really going other way around about the whole picture. FWIW that
+> > is how *other* folks do audio with dmaengine!
+> I discussed this internally with HW folks and below is the reason why DMA
+> needs
+> to know FIFO size.
+> 
+> - FIFOs reside in peripheral device(ADMAIF), which is the ADMA interface to
+> the audio sub-system.
+> - ADMAIF has multiple channels and share FIFO buffer for individual
+> operations. There is a provision
+>   to allocate specific fifo size for each individual ADMAIF channel from the
+> shared buffer.
+> - Tegra Audio DMA(ADMA) architecture is different from the usual DMA
+> engines, which you described earlier.
+> - The flow control logic is placed inside ADMA. Slave peripheral
+> device(ADMAIF) signals ADMA whenever a
+>   read or write happens on the FIFO(per WORD basis). Please note that the
+> signaling is per channel. There is
+>   no other signaling present from ADMAIF to ADMA.
+> - ADMA keeps a counter related to above signaling. Whenever a sufficient
+
+when is signal triggered? When there is space available or some
+threshold of space is reached?
+
+> space is available, it initiates a transfer.
+>   But the question is, how does it know when to transfer. This is the
+> reason, why ADMA has to be aware of FIFO
+>   depth of ADMAIF channel. Depending on the counters and FIFO depth, it
+> knows exactly when a free space is available
+>   in the context of a specific channel. On ADMA, FIFO_SIZE is just a value
+> which should match to actual FIFO_DEPTH/SIZE
+>   of ADMAIF channel.
+
+That doesn't sound too different from typical dmaengine. To give an
+example of a platform (and general DMAengine principles as well) I worked
+on the FIFO was 16 word deep. DMA didn't knew!
+
+Peripheral driver would signal to DMA when a threshold is reached and
+DMA would send a burst controlled by src/dst_burst_size. For example if
+you have a FIFO with 16 words depth, typical burst_size would be 8 words
+and peripheral will configure signalling for FIFO having 8 words, so
+signal from peripheral will make dma transfer 8 words.
+
+Here the peripheral driver FIFO is important, but the driver
+configures it and sets burst_size accordingly.
+
+So can you explain me what is the difference here that the peripheral
+cannot configure and use burst size with passing fifo depth?
+
+> - Now consider two cases based on above logic,
+>   * Case 1: when DMA_FIFO_SIZE > SLAVE_FIFO_SIZE
+>     In this case, ADMA thinks that there is enough space available for
+> transfer, when actually the FIFO data
+>     on slave is not consumed yet. It would result in OVERRUN.
+>   * Case 2: when DMA_FIFO_SIZE < SLAVE_FIFO_SIZE
+>     This is case where ADMA won’t transfer, even though sufficient space is
+> available, resulting in UNDERRUN.
+> - The guideline is to program, DMA_FIFO_SIZE(on ADMA side) =
+> SLAVE_FIFO_SIZE(on ADMAIF side) and hence we need a
+>   way to communicate fifo size info to ADMA.
+
+-- 
+~Vinod
