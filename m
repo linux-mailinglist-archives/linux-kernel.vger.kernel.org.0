@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869E743F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3FEB440DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390026AbfFMP4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:56:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38576 "EHLO mail.kernel.org"
+        id S2391339AbfFMQKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:10:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731521AbfFMIvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:51:06 -0400
+        id S1731256AbfFMIoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:44:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71F7421473;
-        Thu, 13 Jun 2019 08:51:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0050721479;
+        Thu, 13 Jun 2019 08:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415865;
-        bh=Kw+HJr+R42y6/vvn4jURGVl/5vkrzlwKS9vwDuY+uEk=;
+        s=default; t=1560415449;
+        bh=OwZ0qLFkEiHNIobShGBggg/4oh/hdfHyky43omuQniU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VYr70y0wmOuhBUKe4/tq5VWMEckbjAUcObAs6caZZLayTotYYkKG1Bpc980vGP7g1
-         waB+7Zqgsk6KlH1inwDS4ak9p4ia8fZxuBOA+9pRCPliiVYaq/p2CLJ9ns1a70X46c
-         pAqsQpDmhk91Z5x+7v0zDQ8vRoStPNnEc+TYLHsY=
+        b=VOBU6KFcn9RoPisi1FcpuSBwiGK18aFFOkFJfze+n33//TdassBAWJprGxXul5IzO
+         AFJOdhCDDwaUAcURKfACVe5etDJQfCmI2MuN5OlOcuzIgQfC4vPMKsg9nsVvhMi7ro
+         eCD2BAW3l60Rm01NhSsy1QZXGQTlAx/xIcgnf5Cc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Aditya Pakki <pakki001@umn.edu>,
+        Ferenc Bakonyi <fero@drama.obuda.kando.hu>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 125/155] PCI: rcar: Fix a potential NULL pointer dereference
+Subject: [PATCH 4.19 099/118] video: hgafb: fix potential NULL pointer dereference
 Date:   Thu, 13 Jun 2019 10:33:57 +0200
-Message-Id: <20190613075659.825943377@linuxfoundation.org>
+Message-Id: <20190613075649.723453822@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,37 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f0d14edd2ba43b995bef4dd5da5ffe0ae19321a1 ]
+[ Upstream commit ec7f6aad57ad29e4e66cc2e18e1e1599ddb02542 ]
 
-In case __get_free_pages() fails and returns NULL, fix the return
-value to -ENOMEM and release resources to avoid dereferencing a
-NULL pointer.
+When ioremap fails, hga_vram should not be dereferenced. The fix
+check the failure to avoid NULL pointer dereference.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Cc: Aditya Pakki <pakki001@umn.edu>
+Cc: Ferenc Bakonyi <fero@drama.obuda.kando.hu>
+[b.zolnierkie: minor patch summary fixup]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-rcar.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/video/fbdev/hgafb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 6a4e435bd35f..765c39911c0c 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -931,6 +931,10 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+diff --git a/drivers/video/fbdev/hgafb.c b/drivers/video/fbdev/hgafb.c
+index 463028543173..59e1cae57948 100644
+--- a/drivers/video/fbdev/hgafb.c
++++ b/drivers/video/fbdev/hgafb.c
+@@ -285,6 +285,8 @@ static int hga_card_detect(void)
+ 	hga_vram_len  = 0x08000;
  
- 	/* setup MSI data target */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-+	if (!msi->pages) {
-+		err = -ENOMEM;
-+		goto err;
-+	}
- 	base = virt_to_phys((void *)msi->pages);
+ 	hga_vram = ioremap(0xb0000, hga_vram_len);
++	if (!hga_vram)
++		goto error;
  
- 	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
+ 	if (request_region(0x3b0, 12, "hgafb"))
+ 		release_io_ports = 1;
 -- 
 2.20.1
 
