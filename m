@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E166446A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EF54469B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:53:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404409AbfFMQxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:53:32 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:35296 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbfFMDE7 (ORCPT
+        id S2392904AbfFMQxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:53:22 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:34400 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730095AbfFMDFA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:04:59 -0400
-Received: by mail-yb1-f195.google.com with SMTP id v17so7209823ybm.2;
-        Wed, 12 Jun 2019 20:04:58 -0700 (PDT)
+        Wed, 12 Jun 2019 23:05:00 -0400
+Received: by mail-yw1-f68.google.com with SMTP id a11so1589189ywc.1;
+        Wed, 12 Jun 2019 20:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bKWy+MYAC9Qnk4R94EFOwHl0lKGQuAZ2oqXPCo3dOhw=;
-        b=JTpvtPBkRmGtQnud9fO2fYZJevc3HJLX591AVdzUF4SmiS18T8U/m2k9xky5KPUMYT
-         3xkW9Ykht4kyduPLAN3/qjvuFHcjess1RPLgG8AgdLKLOls8tFlg93kBPwAWayogWELt
-         zmsxO/ixd/zeHTcgxad4aRdvBT3ipPCggmAZShGhhIo5MRh3kTgmM+gBqjS31AGp0x1w
-         f0sYCrm9yzJ5BHfHbSAJ/YUj72Oi8FZRsfsM6wgFVg60qepxJeqPzQMqKOSUX6dQnmTZ
-         o73SaB7mY8WidO2ntPdA4EtXwkq8LsXpW1mjUiZ55YuTcXh6F8t4Ob6eFUrM0wd5YWIw
-         Edng==
+        bh=4S5lqn5I3zXmixd7LhbTzQ90QBdVDOadcoSgSK1gCOU=;
+        b=KrUI5Tu6zNMBrq05zotXrdh9heUiqi7xbScH8EwQOyONcKXTp+CvKgkRTWE9zi6lMT
+         HMLoFTwcZ7c+TNNMB5soGWw7BFAfNpkhSALhb3mm342GBFL/CxEDkSM7Fsu5fAUcIXSy
+         l1cj2//rqY43Alm0AGi8cRXB32HsXsnp3zTgSTPoXkHlpmRju0Rdxxt501uDvGPOZk4V
+         f2gY0tdJxiOwEPeWShAVOFyxDBwoyGOC9xProejMYqscuTJYMxjg36z708/lHQA6z/Ho
+         z2y3tw/7KjJZCGOY54vPJOz5U667wbE1OgG2iktoXPxHQ+OQB/EDzyzBhhRjUHGaLylO
+         D92g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bKWy+MYAC9Qnk4R94EFOwHl0lKGQuAZ2oqXPCo3dOhw=;
-        b=qBttOupWfLu0C2oVmF4HVi6khNlBQm7gl9c51y0y/IGLdt+cIu7mNz5SFBDN46RVmD
-         N+2+T5JS7p11PSb1hobktFHpJwhmvOnau8qeeeLWSn2nEYrLWiaUnMy4zJHz/Dx8zt9J
-         JAlSY1NWeyxdR/f4pTdj6KvIcHKR9074X+xH5pd4+yLQJcONmukjPxn9/JVtOgj8mw/1
-         pRdIc4dETSP/9DBLDvn/cz1kYb0XaTyp3OJpIHQa9s3J8wOsmHo5UOG7EIPHjfd+Ff10
-         pboHKHaUp7L1CQejUEOIz6cVGHM2fscp+HfncZcz1kFWB5T1mGzetQIWpkaiy5kkEly8
-         apJQ==
-X-Gm-Message-State: APjAAAVrM1Bo04MoeUbesnwJq3qPNnQF3IH73RC4J5QKgxU/eFPys8DH
-        gl4UJr9agDfEy6O0T89PTQ==
-X-Google-Smtp-Source: APXvYqz7Iw97WcJzg59QpO1fIdasPdVT8+xM6RNGzAz94X5hYmGBPkrdg3oga1rcJqorZbflskpnEg==
-X-Received: by 2002:a5b:801:: with SMTP id x1mr38471062ybp.95.1560395097834;
-        Wed, 12 Jun 2019 20:04:57 -0700 (PDT)
+        bh=4S5lqn5I3zXmixd7LhbTzQ90QBdVDOadcoSgSK1gCOU=;
+        b=W1P/eHwxYnDnoIfcdN2zh+zjH/AQm4qFvN18dOlTaWXsy8DhC13T/NVDMRXUlgBFEj
+         t5mS86T38VUOzMeM7iLH/rvFtB7u4JQdKnN0so1b2+wbnVrDY5vC9ctA5kFK156iXr0D
+         Vpm+mprbjXAJAImXyXf5AtIcFTVriuq38y2dTvPEMrKvmHkHU5zVRc2vylGdRo6o14p7
+         OBTXAxNEeKMG/OkDwShR3E5yyIzOGOdRWKY4ej4lcvAiEI4gbJQN+AULNhPNoIel21oQ
+         zJaxTZRGlZNjEzePovPfiKwdB4FIQc8OwAhv2+rm1/ZSaa8F5/rKjwsg8WL69E+93zZE
+         20yQ==
+X-Gm-Message-State: APjAAAX/bsQG5CB8BoBUJvyCly8X1u0KWcXAVId597CWbeAUVH1rn5iU
+        TLJRCMDQkqyC3XR06hJ8Bm0YcEiIDw==
+X-Google-Smtp-Source: APXvYqylhQw4ltDpktiVjx6zWXMhigkwD7C2gG3zsJn/8dmWhxog4MIBDsp1oOp0vLh0T00iuPwzGQ==
+X-Received: by 2002:a81:3358:: with SMTP id z85mr46704537ywz.251.1560395099163;
+        Wed, 12 Jun 2019 20:04:59 -0700 (PDT)
 Received: from 960.localdomain ([71.46.56.3])
-        by smtp.gmail.com with ESMTPSA id j184sm424831ywf.8.2019.06.12.20.04.57
+        by smtp.gmail.com with ESMTPSA id j184sm424831ywf.8.2019.06.12.20.04.58
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 20:04:57 -0700 (PDT)
+        Wed, 12 Jun 2019 20:04:58 -0700 (PDT)
 From:   Ayman Bagabas <ayman.bagabas@gmail.com>
 To:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     ayman.bagabas@gmail.com
-Subject: [PATCH v2 3/8] platform/x86: huawei-wmi: use quirks and module parameters
-Date:   Wed, 12 Jun 2019 23:04:10 -0400
-Message-Id: <20190613030416.25807-5-ayman.bagabas@gmail.com>
+Subject: [PATCH v2 4/8] platform/x86: huawei-wmi: control micmute LED through WMI interface
+Date:   Wed, 12 Jun 2019 23:04:11 -0400
+Message-Id: <20190613030416.25807-6-ayman.bagabas@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190613030416.25807-1-ayman.bagabas@gmail.com>
 References: <20190613030416.25807-1-ayman.bagabas@gmail.com>
@@ -63,164 +63,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch introduces two parameters to force reporting brightness keys
-and sleeping after setting battery thresholds value.
-These parameters are implemented as quirks along with `ec_micmute` quirk
-which controls the micmute LED through ACPI EC interface.
-
-All newer models that "fully" implement the new interface report
-brightness key events twice, once through WMI and once through
-acpi-video. Older models, such as `MateBook X`, don't report brightness
-events using WMI. This is implemented as a quirk and can be forced using
-module parameters.
-
-Some models don't allow setting thresholds to (0, 100), due to bad ASL
-code, which indicates reset values, instead, it only turns off battery
-charging protection. This would return the currently set values even
-though battery protection is off which doesn't make sense. A sane value
-like (0, 100) indicates no charging protection, but since it's not
-possible to set such values, (0, 0) is set before turning protection
-off with (0, 100). This requires a delay after setting (0, 0) and after
-(0, 100) so that these values make their way to EC memory.
-
-    Method (SBTT, 1, NotSerialized)
-    {
-        Name (BUFF, Buffer (0x0100){})
-        Local0 = Arg0
-        CreateByteField (Arg0, 0x02, STCP)
-        CreateByteField (Arg0, 0x03, SOCP)
-        CreateByteField (BUFF, Zero, STAT)
-        If (((STCP == Zero) && (SOCP == 0x64)))
-        {
-            \_SB.PCI0.LPCB.EC0.ECXT (0xC7, Zero, Zero, Zero, Zero, Zero)
-        }
-        Else
-        {
-            \_SB.PCI0.LPCB.EC0.ECXT (0xC7, One, STCP, SOCP, Zero, Zero)
-        }                                // ^    ^     ^
-                                         // |    |     |
-        STAT = Zero                      // on   low   high
-        Return (BUFF) /* \SBTT.BUFF */   // bit  thresh  thresh
-    }
-
-ASL code taken from MateBook X Pro (MACH-WX9) showing how it turns off
-protection without changing values.
+Using HWMI interface, micmute LED can be controlled on supported models.
+`MateBook X` from 2017, doesn't provide controlling the micmute
+LED through this interface instead it uses another "legacy" interface
+that is not "fully" implemented yet.
+Currently, this "legacy" interface is used for hotkeys on this specific
+model. A quirk is set to use ACPI method to control micmute LED on
+MateBook X (2017).
 
 Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 ---
- drivers/platform/x86/huawei-wmi.c | 71 +++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ drivers/platform/x86/huawei-wmi.c | 74 ++++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 37b09d497f5e..647c5a6c8ab3 100644
+index 647c5a6c8ab3..358d9d168300 100644
 --- a/drivers/platform/x86/huawei-wmi.c
 +++ b/drivers/platform/x86/huawei-wmi.c
-@@ -6,6 +6,7 @@
-  */
+@@ -239,42 +239,52 @@ static int huawei_wmi_cmd(struct device *dev, u64 arg, u8 *buf, size_t buflen)
+ static int huawei_wmi_micmute_led_set(struct led_classdev *led_cdev,
+ 		enum led_brightness brightness)
+ {
+-	char *acpi_method;
+-	acpi_handle handle;
+-	acpi_status status;
+-	union acpi_object args[3];
+-	struct acpi_object_list arg_list = {
+-		.pointer = args,
+-		.count = ARRAY_SIZE(args),
+-	};
+-
+-	handle = ec_get_handle();
+-	if (!handle) {
+-		dev_err(led_cdev->dev->parent, "Failed to get EC handle\n");
+-		return -ENODEV;
+-	}
++	/* This is a workaround until the "legacy" interface is implemented. */
++	if (quirks && quirks->ec_micmute) {
++		char *acpi_method;
++		acpi_handle handle;
++		acpi_status status;
++		union acpi_object args[3];
++		struct acpi_object_list arg_list = {
++			.pointer = args,
++			.count = ARRAY_SIZE(args),
++		};
++
++		handle = ec_get_handle();
++		if (!handle) {
++			dev_err(led_cdev->dev->parent, "Failed to get EC handle\n");
++			return -ENODEV;
++		}
  
- #include <linux/acpi.h>
-+#include <linux/dmi.h>
- #include <linux/input.h>
- #include <linux/input/sparse-keymap.h>
- #include <linux/leds.h>
-@@ -35,6 +36,14 @@ enum {
- 	MICMUTE_LED_SET 		= 0x00000b04, /* \SMLS */
- };
+-	args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
+-	args[1].integer.value = 0x04;
+-
+-	if (acpi_has_method(handle, "SPIN")) {
+-		acpi_method = "SPIN";
+-		args[0].integer.value = 0;
+-		args[2].integer.value = brightness ? 1 : 0;
+-	} else if (acpi_has_method(handle, "WPIN")) {
+-		acpi_method = "WPIN";
+-		args[0].integer.value = 1;
+-		args[2].integer.value = brightness ? 0 : 1;
++		args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
++		args[1].integer.value = 0x04;
++
++		if (acpi_has_method(handle, "SPIN")) {
++			acpi_method = "SPIN";
++			args[0].integer.value = 0;
++			args[2].integer.value = brightness ? 1 : 0;
++		} else if (acpi_has_method(handle, "WPIN")) {
++			acpi_method = "WPIN";
++			args[0].integer.value = 1;
++			args[2].integer.value = brightness ? 0 : 1;
++		} else {
++			return -ENODEV;
++		}
++
++		status = acpi_evaluate_object(handle, acpi_method, &arg_list, NULL);
++		if (ACPI_FAILURE(status)) {
++			return -ENODEV;
++		}
++
++		return 0;
+ 	} else {
+-		return -ENODEV;
+-	}
++		u8 arg[8];
  
-+struct quirk_entry {
-+	bool battery_sleep;
-+	bool ec_micmute;
-+	bool report_brightness;
-+};
-+
-+static struct quirk_entry *quirks;
-+
- struct huawei_wmi {
- 	struct led_classdev cdev;
- 	struct input_dev *idev[2];
-@@ -61,6 +70,58 @@ static const struct key_entry huawei_wmi_keymap[] = {
- 	{ KE_END,	 0 }
- };
+-	status = acpi_evaluate_object(handle, acpi_method, &arg_list, NULL);
+-	if (ACPI_FAILURE(status)) {
+-		return -ENODEV;
+-	}
++		*(u64 *)arg = MICMUTE_LED_SET;
++		arg[2] = brightness;
  
-+static bool battery_sleep;
-+static bool report_brightness;
-+
-+module_param(battery_sleep, bool, 0444);
-+MODULE_PARM_DESC(battery_sleep,
-+		"Delay after setting battery charging thresholds.");
-+module_param(report_brightness, bool, 0444);
-+MODULE_PARM_DESC(report_brightness,
-+		"Report brightness key events.");
-+
-+/* Quirks */
-+
-+static int __init dmi_matched(const struct dmi_system_id *dmi)
-+{
-+	quirks = dmi->driver_data;
-+	return 1;
-+}
-+
-+static struct quirk_entry quirk_unknown = {
-+};
-+
-+static struct quirk_entry quirk_battery_sleep = {
-+	.battery_sleep = true,
-+};
-+
-+static struct quirk_entry quirk_matebook_x = {
-+	.ec_micmute = true,
-+	.report_brightness = true,
-+};
-+
-+static const struct dmi_system_id huawei_quirks[] = {
-+	{
-+		.callback = dmi_matched,
-+		.ident = "Huawei MACH-WX9",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HUAWEI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "MACH-WX9"),
-+		},
-+		.driver_data = &quirk_battery_sleep
-+	},
-+	{
-+		.callback = dmi_matched,
-+		.ident = "Huawei MateBook X",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HUAWEI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "HUAWEI MateBook X")
-+		},
-+		.driver_data = &quirk_matebook_x
-+	},
-+	{  }
-+};
-+
- /* Utils */
- 
- static int huawei_wmi_call(struct device *dev, struct acpi_buffer *in,
-@@ -266,6 +327,11 @@ static void huawei_wmi_process_key(struct input_dev *idev, int code)
- 		return;
- 	}
- 
-+	if (quirks && !quirks->report_brightness &&
-+			(key->sw.code == KEY_BRIGHTNESSDOWN ||
-+			key->sw.code == KEY_BRIGHTNESSUP))
-+		return;
-+
- 	sparse_keymap_report_entry(idev, key, 1, true);
+-	return 0;
++		return huawei_wmi_cmd(led_cdev->dev->parent, *(u64 *)arg, NULL, NULL);
++	}
  }
  
-@@ -378,6 +444,11 @@ static __init int huawei_wmi_init(void)
- {
- 	int err;
- 
-+	quirks = &quirk_unknown;
-+	dmi_check_system(huawei_quirks);
-+	quirks->battery_sleep |= battery_sleep;
-+	quirks->report_brightness |= report_brightness;
-+
- 	err = platform_driver_register(&huawei_wmi_driver);
- 	if (err) {
- 		pr_err("Failed to register platform driver\n");
+ static int huawei_wmi_leds_setup(struct device *dev)
 -- 
 2.20.1
 
