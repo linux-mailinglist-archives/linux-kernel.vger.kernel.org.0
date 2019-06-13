@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C3AA4402C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEB4944026
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391078AbfFMQDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:03:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35756 "EHLO mail.kernel.org"
+        id S2391073AbfFMQDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:03:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731386AbfFMIrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:33 -0400
+        id S1731387AbfFMIrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:47:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F4AB206BA;
-        Thu, 13 Jun 2019 08:47:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A93C1206BA;
+        Thu, 13 Jun 2019 08:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415652;
-        bh=kc0rt5Nlbt+IARvsXc6rgoBG+u6fhH5XIqKm+HRwN0Y=;
+        s=default; t=1560415655;
+        bh=pjnwfwGiJYutj18puiYrP3QmViEjlCpeHyEpfC+fZKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOJjd9LasFpmQjIyDHvj0p1FnZE/wusLEBHIMbSOMzD5fRxKQ7FsAIpvmSui226Xv
-         pTLUML+bpByPDY0hXxsDhMFX/BGTKHSyou1jf+VMbO2tW/Fx21+Alc7Ho1qccAFLFA
-         MkIiUTzo0G3Til6PBlnxPEiTakBOpPTS5Q7C/xek=
+        b=qJn24IPU06ukPgXuwepQoPELz4bz1aumLlEbVASaHK0w9UnD9ieydQqNBNswZpHcj
+         x3hGs6Bv3pYNonHVBOSz/9fAwdXe4qEMKLN7qzHXnlyNr08UnyZsAJC0yIaD323x+4
+         qn1RobflhphGHxYg0GStYNARgfhZoH/KZ0fXNwmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 078/155] netfilter: nf_flow_table: fix netdev refcnt leak
-Date:   Thu, 13 Jun 2019 10:33:10 +0200
-Message-Id: <20190613075657.383627722@linuxfoundation.org>
+        stable@vger.kernel.org, Liwei Song <liwei.song@windriver.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 079/155] ALSA: hda - Register irq handler after the chip initialization
+Date:   Thu, 13 Jun 2019 10:33:11 +0200
+Message-Id: <20190613075657.448190480@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
 References: <20190613075652.691765927@linuxfoundation.org>
@@ -44,38 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 26a302afbe328ecb7507cae2035d938e6635131b ]
+[ Upstream commit f495222e28275222ab6fd93813bd3d462e16d340 ]
 
-flow_offload_alloc() calls nf_route() to get a dst_entry. Internally,
-nf_route() calls ip_route_output_key() that allocates a dst_entry and
-holds it. So, a dst_entry should be released by dst_release() if
-nf_route() is successful.
+Currently the IRQ handler in HD-audio controller driver is registered
+before the chip initialization.  That is, we have some window opened
+between the azx_acquire_irq() call and the CORB/RIRB setup.  If an
+interrupt is triggered in this small window, the IRQ handler may
+access to the uninitialized RIRB buffer, which leads to a NULL
+dereference Oops.
 
-Otherwise, netns exit routine cannot be finished and the following
-message is printed:
+This is usually no big problem since most of Intel chips do register
+the IRQ via MSI, and we've already fixed the order of the IRQ
+enablement and the CORB/RIRB setup in the former commit b61749a89f82
+("sound: enable interrupt after dma buffer initialization"), hence the
+IRQ won't be triggered in that room.  However, some platforms use a
+shared IRQ, and this may allow the IRQ trigger by another source.
 
-[  257.490952] unregister_netdevice: waiting for lo to become free. Usage count = 1
+Another possibility is the kdump environment: a stale interrupt might
+be present in there, the IRQ handler can be falsely triggered as well.
 
-Fixes: ac2a66665e23 ("netfilter: add generic flow table infrastructure")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+For covering this small race, let's move the azx_acquire_irq() call
+after hda_intel_init_chip() call.  Although this is a bit radical
+change, it can cover more widely than checking the CORB/RIRB setup
+locally in the callee side.
+
+Reported-by: Liwei Song <liwei.song@windriver.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_flow_offload.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/hda_intel.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index 6e6b9adf7d38..ff50bc1b144f 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -113,6 +113,7 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
- 	if (ret < 0)
- 		goto err_flow_add;
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 2ec91085fa3e..789308f54785 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1788,9 +1788,6 @@ static int azx_first_init(struct azx *chip)
+ 			chip->msi = 0;
+ 	}
  
-+	dst_release(route.tuple[!dir].dst);
- 	return;
+-	if (azx_acquire_irq(chip, 0) < 0)
+-		return -EBUSY;
+-
+ 	pci_set_master(pci);
+ 	synchronize_irq(bus->irq);
  
- err_flow_add:
+@@ -1904,6 +1901,9 @@ static int azx_first_init(struct azx *chip)
+ 		return -ENODEV;
+ 	}
+ 
++	if (azx_acquire_irq(chip, 0) < 0)
++		return -EBUSY;
++
+ 	strcpy(card->driver, "HDA-Intel");
+ 	strlcpy(card->shortname, driver_short_names[chip->driver_type],
+ 		sizeof(card->shortname));
 -- 
 2.20.1
 
