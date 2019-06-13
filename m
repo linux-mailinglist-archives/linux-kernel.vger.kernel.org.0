@@ -2,119 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B19446D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6E2446E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404484AbfFMQyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:54:52 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34137 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404474AbfFMQyt (ORCPT
+        id S2393124AbfFMQzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:55:17 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35195 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393037AbfFMQzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:54:49 -0400
-Received: by mail-qk1-f195.google.com with SMTP id t8so9521899qkt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:54:48 -0700 (PDT)
+        Thu, 13 Jun 2019 12:55:15 -0400
+Received: by mail-io1-f65.google.com with SMTP id m24so18489974ioo.2;
+        Thu, 13 Jun 2019 09:55:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yOlq9/cnKUf58RBN8U9nKcy5UZOs9qGQCumfqe7jZ8c=;
-        b=gpHQ/bLmEGM/wfem9wjHlttvx5YiGjPwT/u36I7n7oSVzWpFpHjYj2L4hUjv4lm9XO
-         88kzzQeW7JVz92cBQKqYiwLJEzdL4TVeLyPtZIvyGS4sTz1YMqYNAcVwAOiYu1DZ88uj
-         imlKcFuW+ag52SlfM+r8drN5Rmpdu+YZCUxJJb6fQv3fEFfuOUHlloiz0kM5x8Zkl9du
-         Vb03W/0Vn/7Svv9YarlOhUO3OOzNsqNb9ZENAauxnuBucS+p02IPc+Us5GhfTSTPrXwV
-         tUSxOg8HGjp0M7ClHrKamigpXbDoaOSfkOuXpgz5saGaeyigGTAIJjT/pVPBCGI8LqPb
-         p9/Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ClC0u2JGR2lSo+6Tvkb2x52kadnHao11/SSLbD6/58k=;
+        b=JrNaEHWuGK31T7Uo+VSWno6hHFAJENibo1UonPm+66izBPrzhseMDm7bv7X64xM5DK
+         Cw9kQc0KCnUjh4IFkW/C31Zk4kzA6mouPoQfGyg+p3mDujIALjKIKTevGWXwncMxhJwO
+         m2kMdmGqR/BatXqMusdoFI5nCzADTl/eYJnHTXoEVhw1h5HEyYenJYrp+kjJoQb3v6xJ
+         mOUMwPay5Dm1ubWMu/GLLAxiBdkfT+DerQmRsGvmVB4Tgr0z0KELyQqYVcHzYXJRIgy/
+         iSvOID0iZKuxCkn7pAxT6UAXELNV164onq0HuVxvAytjhlCn0A1cPqeVRPVxyuBCioD9
+         8QjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yOlq9/cnKUf58RBN8U9nKcy5UZOs9qGQCumfqe7jZ8c=;
-        b=JbjnHl7lZ/w1Q8HzC9FQmeiTN2UFCO4EDO43nN8Bap8X4lyxZ+GDZpZxkdWl3g3e4x
-         pUI78HXbD0xqZs/BnVEcqeIWplrDk5ToiSEIW1/aPJi+4JAI1zT13xCTJ+hfJ5nmEswA
-         a3f9J2ng5ZKLnZfNBRzNa0vXm8iz62DNscqU7AXSRsscJQo5CnBwL6fj6H7+eztKJTP4
-         9FMp4xKHF6wWergRh+uH5TGSgJzn1aSddE5xtK9ANMrqxCtohi6p0YzT1wLgXlEjco9u
-         1L4YfSUwljeAV8EpgdQJZni27XJXselZIlPxX+S0edPbJ4IdEpLlPCCaRf7JfjGhWZKs
-         mfOg==
-X-Gm-Message-State: APjAAAXe74XdCRMKkjsg9vTI6u0+QVgEumwZtPnWOQ8iRqWL6N55Lx/m
-        sY1q34P36HXlSAfAhmrwHDTEFg==
-X-Google-Smtp-Source: APXvYqxyuH5IBObnKkcdS09bJVE6NC5rFdmbqwiDVXyLYGh2OnmAzufcVgAM1WT2j6xoZWPRgOuCnA==
-X-Received: by 2002:a37:9bca:: with SMTP id d193mr72859834qke.122.1560444888347;
-        Thu, 13 Jun 2019 09:54:48 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::d1])
-        by smtp.gmail.com with ESMTPSA id x10sm138866qtc.34.2019.06.13.09.54.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 09:54:47 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 12:54:46 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Roman Stratiienko <roman.stratiienko@globallogic.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
-        nbd@other.debian.org,
-        Aleksandr Bulyshchenko <A.Bulyshchenko@globallogic.com>,
-        linux-block@vger.kernel.org, axboe@kernel.dkn.org
-Subject: Re: [PATCH 2/2] nbd: add support for nbd as root device
-Message-ID: <20190613165444.kfd53humatuv5j2w@MacBook-Pro-91.local>
-References: <20190612163144.18486-1-roman.stratiienko@globallogic.com>
- <20190612163144.18486-2-roman.stratiienko@globallogic.com>
- <20190613135241.aghcrrz7rg2au3bw@MacBook-Pro-91.local>
- <CAODwZ7v=RSsmVj5GjcvGn2dn+ejLRBHZ79x-+S9DrX4GoXuVaQ@mail.gmail.com>
- <20190613145535.tdesq3y2xy6ycpw7@MacBook-Pro-91.local>
- <CAODwZ7so4cVVJmPHXGGOxKRO_0L2NjZJac73wfaHPV7ZN6ce1g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ClC0u2JGR2lSo+6Tvkb2x52kadnHao11/SSLbD6/58k=;
+        b=e73VH3RwIHHY1EyQXo8Afv5XNF3VUjZM3fSke4mZmU+lLOJKkJs9lnD2hHpvetmCkW
+         O70kXcLIXwXxxOK15JzU6r2+IGImYBRazj3G/IToJSt3M9C1sYmqiZj40uhFOvrK5ovX
+         dvBL/5SKGdgA8mCeK3iC293erEW03Zw28z0ZqeaBHYFlD9/pbHvtrQiuQeHG3syCE1W1
+         di5eCTnwhU6lIiap9XfC4slKFfUtJeRudSwHy4ofgIu+icIi7pqvomg+U65+f6nwxNvD
+         nBrq1xjWgvqcv7hh7SFjGTHVHi4pyUJmVV5VUdXFiXgMCvDVSufGi3EtdOn2LnpA0BuV
+         6S3Q==
+X-Gm-Message-State: APjAAAVJYRTZV3YXQ/IsepKSXHY6hArqGPIXV6jkwuKco15X/bQYdM7X
+        0xF6SFK00IhaM8FxdX1RHjV+wHGZMkx/sFF6E2o=
+X-Google-Smtp-Source: APXvYqylceZhLVcUp0gOO9Vg8sEwwQ2V26ZkYvdHadRA9KxZ4IFbMZeY52TIAhHmV5cKS4Wm3sFmdLPdFRRz42Unlow=
+X-Received: by 2002:a5e:8e42:: with SMTP id r2mr453389ioo.305.1560444913870;
+ Thu, 13 Jun 2019 09:55:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAODwZ7so4cVVJmPHXGGOxKRO_0L2NjZJac73wfaHPV7ZN6ce1g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20190613162703.986-1-tiny.windzz@gmail.com> <20190613162703.986-3-tiny.windzz@gmail.com>
+ <ac67e363-70cf-af64-d634-c3b0b6d408fa@ti.com>
+In-Reply-To: <ac67e363-70cf-af64-d634-c3b0b6d408fa@ti.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Fri, 14 Jun 2019 00:55:02 +0800
+Message-ID: <CAEExFWuM+oMUKf440myr0GHAnatdzaxr=0ibFDGVXDHs6J1bzA@mail.gmail.com>
+Subject: Re: [PATCH 03/10] iommu/omap: convert to SPDX license tags
+To:     Suman Anna <s-anna@ti.com>
+Cc:     "joro@8bytes.org" <joro@8bytes.org>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "david.brown@linaro.org" <david.brown@linaro.org>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 07:21:43PM +0300, Roman Stratiienko wrote:
-> > I don't doubt you have a good reason to want it, I'm just not clear on why an
-> > initramfs isn't an option?  You have this special kernel with your special
-> > option, and you manage to get these things to boot your special kernel right?
-> > So why is a initramfs with a tiny nbd-client binary in there not an option?
+On Fri, Jun 14, 2019 at 12:39 AM Suman Anna <s-anna@ti.com> wrote:
+>
+> Hi Yangtao,
+>
+> On 6/13/19 11:26 AM, Yangtao Li wrote:
+> > Updates license to use SPDX-License-Identifier.
 > >
-> > Also I mean that there are a bunch of different nbd servers out there.  We have
-> > our own here at Facebook, qemu has one, IIRC there's a ceph one.  They all have
-> > their own connection protocols.  The beauty of NBD is that it doesn't have to
-> > know about that part, it just does the block device part, and I'd really rather
-> > leave it that way.  Thanks,
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>
+> Thanks for the patch. Can you also update another related file
+> while at this. Will leave it to Joerg if he prefers it as a separate
+> patch, or folded into this patch.
+>
+> include/linux/platform_data/iommu-omap.h
+>
+
+Done.
+
+Yangtao
+
+> Acked-by: Suman Anna <s-anna@ti.com>
+>
+> regards
+> Suman
+>
+> > ---
+> >  drivers/iommu/omap-iommu-debug.c | 5 +----
+> >  drivers/iommu/omap-iommu.c       | 5 +----
+> >  drivers/iommu/omap-iommu.h       | 5 +----
+> >  drivers/iommu/omap-iopgtable.h   | 5 +----
+> >  4 files changed, 4 insertions(+), 16 deletions(-)
 > >
-> > Josef
-> 
-> 
-> The only reason I prefer embed client into the kernel is to save
-> valuable engineering time creating and supporting custom initramfs,
-> that is not so easy especially on Android-based systems.
-> 
-
-I'm unconvinced that creating an initramfs is any harder than building your own
-kernel with this patch and providing the configuration information to the
-device, especially for android where we inside of Facebook provision android
-devices with a custom initramfs all the time, and have done so for many, many
-years.
-
-> Taking into account that if using NBD and creating custom initramfs
-> required only for automated testing, many companies would choose
-> manual deployment instead, that is bad for the human progress.
-> 
-> I believe that all users of non-standard NBD handshake protocols could
-> continue to use custom nbd-clients.
-
-There is no "standard NBD handshake protocol" is my point.  That part exists
-outside of the NBD spec that the kernel is concerned with.  The client is happy
-to do whatever it pleases.  Now there's no doubt that the standard nbd client
-and server that is shipped is the reference spec, but my point is that it is
-still outside the kernel and so able to change as it sees fit.
-
-> 
-> Either you accept this patch or not I would like to pass review from
-> maintainers and other persons that was involved in NBD development,
-> thus making a step closer to get this mainlined in some future.
-
-...I am the maintainer, but feel free to try to get Jens to take a patch that I
-think is unnecessary.  Thanks,
-
-Josef
+> > diff --git a/drivers/iommu/omap-iommu-debug.c b/drivers/iommu/omap-iommu-debug.c
+> > index 4abc0ef522a8..55ec67a45101 100644
+> > --- a/drivers/iommu/omap-iommu-debug.c
+> > +++ b/drivers/iommu/omap-iommu-debug.c
+> > @@ -1,13 +1,10 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> >  /*
+> >   * omap iommu: debugfs interface
+> >   *
+> >   * Copyright (C) 2008-2009 Nokia Corporation
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #include <linux/err.h>
+> > diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+> > index d2fb347aa4ff..e6442876913f 100644
+> > --- a/drivers/iommu/omap-iommu.c
+> > +++ b/drivers/iommu/omap-iommu.c
+> > @@ -1,3 +1,4 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> >  /*
+> >   * omap iommu: tlb and pagetable primitives
+> >   *
+> > @@ -6,10 +7,6 @@
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>,
+> >   *           Paul Mundt and Toshihiro Kobayashi
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #include <linux/dma-mapping.h>
+> > diff --git a/drivers/iommu/omap-iommu.h b/drivers/iommu/omap-iommu.h
+> > index 1703159ef5af..5256e17d86a7 100644
+> > --- a/drivers/iommu/omap-iommu.h
+> > +++ b/drivers/iommu/omap-iommu.h
+> > @@ -1,13 +1,10 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >  /*
+> >   * omap iommu: main structures
+> >   *
+> >   * Copyright (C) 2008-2009 Nokia Corporation
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #ifndef _OMAP_IOMMU_H
+> > diff --git a/drivers/iommu/omap-iopgtable.h b/drivers/iommu/omap-iopgtable.h
+> > index 01a315227bf0..871c2a38f453 100644
+> > --- a/drivers/iommu/omap-iopgtable.h
+> > +++ b/drivers/iommu/omap-iopgtable.h
+> > @@ -1,13 +1,10 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >  /*
+> >   * omap iommu: pagetable definitions
+> >   *
+> >   * Copyright (C) 2008-2010 Nokia Corporation
+> >   *
+> >   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License version 2 as
+> > - * published by the Free Software Foundation.
+> >   */
+> >
+> >  #ifndef _OMAP_IOPGTABLE_H
+> >
+>
