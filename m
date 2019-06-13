@@ -2,126 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD05442E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9AF9442CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391448AbfFMQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:26:37 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43514 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392309AbfFMQ0V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:26:21 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5DGPDRn016963;
-        Thu, 13 Jun 2019 09:25:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=Rl6wOXJYCzDQwlutYVbitb+2UlSRrel76r98JpXVsVA=;
- b=XRwjp1b9ikxfeAOuIvdFmEVvIiuDswDFcK2oRfxyVOLyYKK7RR/Ju8xUrNO+YB8cYahW
- FE6+1/QeEkE1sy+AfLz0j5JfmSJfuvjzIN7Nx8KiptKjUWAHU65JpbQbhR/iHw7Hvd2L
- p080+1I+8CsjJ9zz17R+7yFnhPq+zBupkKw= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2t3s7yg65q-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jun 2019 09:25:47 -0700
-Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
- prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Thu, 13 Jun 2019 09:25:34 -0700
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Thu, 13 Jun 2019 09:25:34 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rl6wOXJYCzDQwlutYVbitb+2UlSRrel76r98JpXVsVA=;
- b=KqkshA3/ZVEiC02VnHlUkeFk4R+Z/vkYpbDgM9wJDmP8DV8Gm4zfRqZQ4nRNAWn05k4RppPDiUfiOrhmkkpyWpvn3VSpiSmtvmRJ7soEEQ0b5s4iiUrKdcEU2OaGwiNlfOhu88uxg8Ag2I0Uo3brB4RGW6sp+Ecl4zr6h5cM2aU=
-Received: from DM6PR15MB2635.namprd15.prod.outlook.com (20.179.161.152) by
- DM6PR15MB3082.namprd15.prod.outlook.com (20.179.16.209) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.13; Thu, 13 Jun 2019 16:25:31 +0000
-Received: from DM6PR15MB2635.namprd15.prod.outlook.com
- ([fe80::5022:93e0:dd8b:b1a1]) by DM6PR15MB2635.namprd15.prod.outlook.com
- ([fe80::5022:93e0:dd8b:b1a1%7]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
- 16:25:31 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Vladimir Davydov <vdavydov.dev@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v7 01/10] mm: postpone kmem_cache memcg pointer
- initialization to memcg_link_cache()
-Thread-Topic: [PATCH v7 01/10] mm: postpone kmem_cache memcg pointer
- initialization to memcg_link_cache()
-Thread-Index: AQHVIKv7eKlgl+FF5UyOUicyA2PiQKaY10uAgADwlYA=
-Date:   Thu, 13 Jun 2019 16:25:31 +0000
-Message-ID: <20190613162524.GA1267@tower.DHCP.thefacebook.com>
-References: <20190611231813.3148843-1-guro@fb.com>
- <20190611231813.3148843-2-guro@fb.com>
- <20190612190423.9971299bba0559e117faae92@linux-foundation.org>
-In-Reply-To: <20190612190423.9971299bba0559e117faae92@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR18CA0043.namprd18.prod.outlook.com
- (2603:10b6:104:2::11) To DM6PR15MB2635.namprd15.prod.outlook.com
- (2603:10b6:5:1a6::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::2:17da]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 53fc8be4-9a53-4d51-c052-08d6f01bc0fb
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM6PR15MB3082;
-x-ms-traffictypediagnostic: DM6PR15MB3082:
-x-microsoft-antispam-prvs: <DM6PR15MB308283347AD9359FE329F538BEEF0@DM6PR15MB3082.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(366004)(396003)(376002)(346002)(136003)(39860400002)(189003)(199004)(25786009)(6512007)(46003)(5660300002)(386003)(1076003)(71200400001)(4744005)(52116002)(9686003)(102836004)(478600001)(71190400001)(76176011)(86362001)(6116002)(11346002)(446003)(2906002)(256004)(6916009)(54906003)(229853002)(476003)(316002)(6506007)(99286004)(14454004)(486006)(64756008)(186003)(66556008)(305945005)(6436002)(6486002)(6246003)(66476007)(8676002)(73956011)(66946007)(8936002)(53936002)(7736002)(4326008)(33656002)(68736007)(81166006)(66446008)(81156014)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR15MB3082;H:DM6PR15MB2635.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 34PhiovMekORtJW+wmeKsEmgDgCCa+BTVmm0EgoXs3zUpEoREPCkZ8LK/lmRpkkXPZAtTR46QF2K1QDFmcnrXqWzSA2HjjeYISXlDdbCCtjIzNFXVbmZWKr4u2sM/Ka1R28Rx+wSPsRKh5M6YKc+jouTt4kB8JeEOlgP2O0mxdFiveDSwHDy5TD9a4rkf+Q5cggM7ww9Wq5v3oNhAWFKL+dibEd5vcP+kw+vxrlUGogCyjyooV8PGCOkFW1JbXBPfBexYEBe4/jjq3Q7orpu6uTDiKHm9jD1yO70GajoIFFInkChrV47MRwfe7y17OaS6PTLMvEd/zJ33g+Qd19gpBv53u13DVcdLJYw4sZFaAUs/sR4Nx4XXvb/R7QzPCOxahefSzVK2Dq39EuIoZrBCesCqu7VkHCzofUVPOX8+tI=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <CE277DF53E86E740945AB8546EF59B7D@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53fc8be4-9a53-4d51-c052-08d6f01bc0fb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 16:25:31.5739
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: guro@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3082
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=676 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906130121
-X-FB-Internal: deliver
+        id S2392280AbfFMQ0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:26:02 -0400
+Received: from smtp5-g21.free.fr ([212.27.42.5]:34420 "EHLO smtp5-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730967AbfFMQ0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:26:00 -0400
+Received: from heffalump.sk2.org (unknown [88.186.243.14])
+        by smtp5-g21.free.fr (Postfix) with ESMTPS id E012F5FFD3;
+        Thu, 13 Jun 2019 18:25:57 +0200 (CEST)
+Received: from steve by heffalump.sk2.org with local (Exim 4.89)
+        (envelope-from <steve@sk2.org>)
+        id 1hbSY0-0005A0-Vs; Thu, 13 Jun 2019 18:25:57 +0200
+From:   Stephen Kitt <steve@sk2.org>
+To:     corbet@lwn.net, federico.vaga@vaga.pv.it, linux-doc@vger.kernel.org
+Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
+        Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] docs: stop suggesting strlcpy
+Date:   Thu, 13 Jun 2019 18:25:48 +0200
+Message-Id: <20190613162548.19792-1-steve@sk2.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 07:04:23PM -0700, Andrew Morton wrote:
-> On Tue, 11 Jun 2019 16:18:04 -0700 Roman Gushchin <guro@fb.com> wrote:
->=20
-> > Subject: [PATCH v7 01/10] mm: postpone kmem_cache memcg pointer initial=
-ization to memcg_link_cache()]
->=20
-> I think mm is too large a place for patches to be described as
-> affecting simply "mm".  So I'll irritatingly rewrite all these titles to
-> "mm: memcg/slab:".
+Since strlcpy is deprecated, the documentation shouldn't suggest using
+it. This patch fixes the examples to use strscpy instead. It also uses
+sizeof instead of underlying constants as far as possible, to simplify
+future changes to the corresponding data structures.
 
-Works for me. Thanks!
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ Documentation/hid/hid-transport.txt                         | 6 +++---
+ Documentation/i2c/instantiating-devices                     | 2 +-
+ Documentation/i2c/upgrading-clients                         | 4 ++--
+ Documentation/kernel-hacking/locking.rst                    | 6 +++---
+ Documentation/translations/it_IT/kernel-hacking/locking.rst | 6 +++---
+ 5 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/hid/hid-transport.txt b/Documentation/hid/hid-transport.txt
+index 3dcba9fd4a3a..4f41d67f1b4b 100644
+--- a/Documentation/hid/hid-transport.txt
++++ b/Documentation/hid/hid-transport.txt
+@@ -194,9 +194,9 @@ with HID core:
+ 		goto err_<...>;
+ 	}
+ 
+-	strlcpy(hid->name, <device-name-src>, 127);
+-	strlcpy(hid->phys, <device-phys-src>, 63);
+-	strlcpy(hid->uniq, <device-uniq-src>, 63);
++	strscpy(hid->name, <device-name-src>, sizeof(hid->name));
++	strscpy(hid->phys, <device-phys-src>, sizeof(hid->phys));
++	strscpy(hid->uniq, <device-uniq-src>, sizeof(hid->uniq));
+ 
+ 	hid->ll_driver = &custom_ll_driver;
+ 	hid->bus = <device-bus>;
+diff --git a/Documentation/i2c/instantiating-devices b/Documentation/i2c/instantiating-devices
+index 0d85ac1935b7..8bc7d99133e3 100644
+--- a/Documentation/i2c/instantiating-devices
++++ b/Documentation/i2c/instantiating-devices
+@@ -137,7 +137,7 @@ static int usb_hcd_nxp_probe(struct platform_device *pdev)
+ 	(...)
+ 	i2c_adap = i2c_get_adapter(2);
+ 	memset(&i2c_info, 0, sizeof(struct i2c_board_info));
+-	strlcpy(i2c_info.type, "isp1301_nxp", I2C_NAME_SIZE);
++	strscpy(i2c_info.type, "isp1301_nxp", sizeof(i2c_info.type));
+ 	isp1301_i2c_client = i2c_new_probed_device(i2c_adap, &i2c_info,
+ 						   normal_i2c, NULL);
+ 	i2c_put_adapter(i2c_adap);
+diff --git a/Documentation/i2c/upgrading-clients b/Documentation/i2c/upgrading-clients
+index ccba3ffd6e80..96392cc5b5c7 100644
+--- a/Documentation/i2c/upgrading-clients
++++ b/Documentation/i2c/upgrading-clients
+@@ -43,7 +43,7 @@ static int example_attach(struct i2c_adapter *adap, int addr, int kind)
+ 	example->client.adapter = adap;
+ 
+ 	i2c_set_clientdata(&state->i2c_client, state);
+-	strlcpy(client->i2c_client.name, "example", I2C_NAME_SIZE);
++	strscpy(client->i2c_client.name, "example", sizeof(client->i2c_client.name));
+ 
+ 	ret = i2c_attach_client(&state->i2c_client);
+ 	if (ret < 0) {
+@@ -138,7 +138,7 @@ can be removed:
+ -	example->client.flags   = 0;
+ -	example->client.adapter = adap;
+ -
+--	strlcpy(client->i2c_client.name, "example", I2C_NAME_SIZE);
++-	strscpy(client->i2c_client.name, "example", sizeof(client->i2c_client.name));
+ 
+ The i2c_set_clientdata is now:
+ 
+diff --git a/Documentation/kernel-hacking/locking.rst b/Documentation/kernel-hacking/locking.rst
+index 519673df0e82..dc698ea456e0 100644
+--- a/Documentation/kernel-hacking/locking.rst
++++ b/Documentation/kernel-hacking/locking.rst
+@@ -451,7 +451,7 @@ to protect the cache and all the objects within it. Here's the code::
+             if ((obj = kmalloc(sizeof(*obj), GFP_KERNEL)) == NULL)
+                     return -ENOMEM;
+ 
+-            strlcpy(obj->name, name, sizeof(obj->name));
++            strscpy(obj->name, name, sizeof(obj->name));
+             obj->id = id;
+             obj->popularity = 0;
+ 
+@@ -660,7 +660,7 @@ Here is the code::
+      }
+ 
+     @@ -63,6 +94,7 @@
+-             strlcpy(obj->name, name, sizeof(obj->name));
++             strscpy(obj->name, name, sizeof(obj->name));
+              obj->id = id;
+              obj->popularity = 0;
+     +        obj->refcnt = 1; /* The cache holds a reference */
+@@ -774,7 +774,7 @@ the lock is no longer used to protect the reference count itself.
+      }
+ 
+     @@ -94,7 +76,7 @@
+-             strlcpy(obj->name, name, sizeof(obj->name));
++             strscpy(obj->name, name, sizeof(obj->name));
+              obj->id = id;
+              obj->popularity = 0;
+     -        obj->refcnt = 1; /* The cache holds a reference */
+diff --git a/Documentation/translations/it_IT/kernel-hacking/locking.rst b/Documentation/translations/it_IT/kernel-hacking/locking.rst
+index 0ef31666663b..5fd8a1abd2be 100644
+--- a/Documentation/translations/it_IT/kernel-hacking/locking.rst
++++ b/Documentation/translations/it_IT/kernel-hacking/locking.rst
+@@ -468,7 +468,7 @@ e tutti gli oggetti che contiene. Ecco il codice::
+             if ((obj = kmalloc(sizeof(*obj), GFP_KERNEL)) == NULL)
+                     return -ENOMEM;
+ 
+-            strlcpy(obj->name, name, sizeof(obj->name));
++            strscpy(obj->name, name, sizeof(obj->name));
+             obj->id = id;
+             obj->popularity = 0;
+ 
+@@ -678,7 +678,7 @@ Ecco il codice::
+      }
+ 
+     @@ -63,6 +94,7 @@
+-             strlcpy(obj->name, name, sizeof(obj->name));
++             strscpy(obj->name, name, sizeof(obj->name));
+              obj->id = id;
+              obj->popularity = 0;
+     +        obj->refcnt = 1; /* The cache holds a reference */
+@@ -792,7 +792,7 @@ contatore stesso.
+      }
+ 
+     @@ -94,7 +76,7 @@
+-             strlcpy(obj->name, name, sizeof(obj->name));
++             strscpy(obj->name, name, sizeof(obj->name));
+              obj->id = id;
+              obj->popularity = 0;
+     -        obj->refcnt = 1; /* The cache holds a reference */
+-- 
+2.11.0
+
