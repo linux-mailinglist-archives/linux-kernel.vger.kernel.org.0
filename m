@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD4E43ECC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371EB43EC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389992AbfFMPxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:53:00 -0400
-Received: from mail-eopbgr50093.outbound.protection.outlook.com ([40.107.5.93]:50395
+        id S2389857AbfFMPwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:52:53 -0400
+Received: from mail-eopbgr50112.outbound.protection.outlook.com ([40.107.5.112]:32518
         "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731627AbfFMJFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:05:51 -0400
+        id S1731629AbfFMJGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:06:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tfoLJ2uyi9gIFrIr9NFk5yTVsbbJ4EiE2IM2iDHLCjE=;
- b=cExGUxpVqAW2zkgRMRR5wQmmWL5iFJkDvQVVxwJKke7k1g+L6Xy7n9wFD3n00VVg5bL3Gzc1nTpTEfTyS/BFIy5iSTHfF4Y4axQiCQu3dCsV74N+1476SBsQR8a1eJkys4+65N4o0drif33Puih2XNWp05mNRMjSfU4rvrVIQzg=
+ bh=V5Oo7YHv3N4WeTHDMLA2HPwPovcO6ORtzEu2yX6fwgk=;
+ b=nbK0c+BQms9WKYF/SXq1TlXmtU3h6ZBQL3foOY6BuuqPZPNU01h53J/QheD2foBVV1nnEozOjKU2hXF/2V8itCb4lt1yHXpcILwpFps1efVzrVoaYDXh0NuPXCp0oQ5Bqipys6LeaxP1RandG5kxJqq5dt9DZcmgxDmf64iZzxM=
 Received: from VI1PR05MB6477.eurprd05.prod.outlook.com (20.179.26.150) by
  VI1PR05MB5599.eurprd05.prod.outlook.com (20.177.203.31) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.10; Thu, 13 Jun 2019 09:05:48 +0000
+ 15.20.1987.10; Thu, 13 Jun 2019 09:06:07 +0000
 Received: from VI1PR05MB6477.eurprd05.prod.outlook.com
  ([fe80::8437:8389:cec3:452c]) by VI1PR05MB6477.eurprd05.prod.outlook.com
  ([fe80::8437:8389:cec3:452c%6]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
- 09:05:48 +0000
+ 09:06:07 +0000
 From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
 To:     "festevam@gmail.com" <festevam@gmail.com>,
         Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 CC:     Igor Opaniuk <igor.opaniuk@toradex.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH v1 3/6] ASoC: sgtl5000: Fix of unmute outputs on probe
-Thread-Topic: [PATCH v1 3/6] ASoC: sgtl5000: Fix of unmute outputs on probe
-Thread-Index: AQHVD9h3/DmKQS3aZk+Tx9Nq7fePFaaZbq+A
-Date:   Thu, 13 Jun 2019 09:05:48 +0000
-Message-ID: <fc1b98afcd1d243e035fddd9916241633b343404.camel@toradex.com>
+Subject: Re: [PATCH v1 4/6] ASoC: sgtl5000: Fix charge pump source assignment
+Thread-Topic: [PATCH v1 4/6] ASoC: sgtl5000: Fix charge pump source assignment
+Thread-Index: AQHVD9h2j33UZ9XhhkqUix6wZGjeSaaZbsYA
+Date:   Thu, 13 Jun 2019 09:06:07 +0000
+Message-ID: <15af220ffe1bcd36bd0cf178ed9f8d09a332d447.camel@toradex.com>
 References: <20190521103619.4707-1-oleksandr.suvorov@toradex.com>
-         <20190521103619.4707-4-oleksandr.suvorov@toradex.com>
-In-Reply-To: <20190521103619.4707-4-oleksandr.suvorov@toradex.com>
+         <20190521103619.4707-5-oleksandr.suvorov@toradex.com>
+In-Reply-To: <20190521103619.4707-5-oleksandr.suvorov@toradex.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -47,24 +47,24 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=marcel.ziswiler@toradex.com; 
 x-originating-ip: [46.140.72.82]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d3eb22d0-de41-4705-2b9d-08d6efde53cc
+x-ms-office365-filtering-correlation-id: 1d75888b-8ef6-4d6c-fb1d-08d6efde5ec9
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR05MB5599;
 x-ms-traffictypediagnostic: VI1PR05MB5599:
-x-microsoft-antispam-prvs: <VI1PR05MB55993A5B8AC7DA35329916A9FBEF0@VI1PR05MB5599.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
+x-microsoft-antispam-prvs: <VI1PR05MB5599A77581D1F52CAE7BA2C5FBEF0@VI1PR05MB5599.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
 x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39850400004)(366004)(346002)(136003)(189003)(199004)(305945005)(186003)(118296001)(6636002)(11346002)(229853002)(26005)(6486002)(316002)(71190400001)(7736002)(71200400001)(54906003)(86362001)(478600001)(110136005)(14454004)(3846002)(6246003)(81156014)(99286004)(36756003)(76176011)(8676002)(6506007)(53936002)(476003)(6512007)(256004)(5660300002)(25786009)(81166006)(14444005)(6436002)(8936002)(66446008)(66066001)(4326008)(2501003)(66556008)(66476007)(64756008)(68736007)(66946007)(76116006)(44832011)(2616005)(2906002)(6116002)(486006)(446003)(102836004)(73956011);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB5599;H:VI1PR05MB6477.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39850400004)(366004)(346002)(136003)(189003)(199004)(305945005)(186003)(118296001)(6636002)(11346002)(229853002)(26005)(6486002)(316002)(71190400001)(7736002)(71200400001)(54906003)(86362001)(478600001)(110136005)(14454004)(3846002)(6246003)(81156014)(99286004)(36756003)(76176011)(8676002)(6506007)(53936002)(476003)(6512007)(256004)(5660300002)(25786009)(81166006)(6436002)(8936002)(66446008)(66066001)(4326008)(2501003)(66556008)(66476007)(64756008)(68736007)(66946007)(76116006)(44832011)(2616005)(2906002)(6116002)(486006)(446003)(102836004)(73956011);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR05MB5599;H:VI1PR05MB6477.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uQqAds9iyovgrsMxLgTlXs73Zr2OoIgLEQyB2tF+VQtfESpzOLZQrcoUXi8Q3ZAHvKtBOBeKj7RIgzRaprqm2KjH9WBSOneqX4R3NEq3flzjCxHDg77TOA1ip0oBH2svkpYTbCqbrwzKnSPLUqDC5uiZl7dbH7vlv+V5McAl/AvPVyXI8dk0dv7nDjrnHBjhZXewBGR+b24Q2bTOe3QWpypZ16u5w7v5HFKb1Yo0rVN218hIbY7Vq95NvAWMoIucwO9d4ibNZMy7LAltgCYp3tgNDPSaNu9xVGwzYQG1p1akJSNbQP4idc6AhxAMwvZ0lIPeFMtSX9mulFvoyN1qOM5EJyTUDIh4Anm+B6ov9vOR5020L0lbQvKPtg7Q9Jc8fkj/UXuFSqiKxZPJo6rc0QRemuPWsx716ljHGCY6o44=
+x-microsoft-antispam-message-info: bJjiAbU6LZXTXRQEDsMAPBUyZldT2reqp0wKB3olZPvROsG1HAzHebmeKUqU7a2VE/mGgOCrxWU/mfexNkWzg8tx1XnT1hRKohh7cF7eBK7ypEAhbl7iw693GgUv95xtpBO5fWQq9zOio/pJlkesYC4jJQbgQNWFkRK8WxR/SmoqJEWF4EiMAIkkdBlCCewz4AgLbqctDkadp2oZHdozjncXk7HWHfMb8fDheTN9rqR+rwX6tqe4ZE/kFPtXkoVg30PmPs5RlT+1wwYkIk+QkuMt3hDeWQ9I8s9F8ZilcpOHuG6g8IwNHIUdmsF29vyyzuv6OfkoTx2RacnaUBdz/GJhypEWtRNF+jGHy7GaoE/QPKS7I0K/iqgdxS4T4axMnYBrgo26MdKS6MI+0VS1X+dViQ/fxu/ZixIq8gSW9CQ=
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <FBAE2C25A90D254DAE2D3621CFBE7757@eurprd05.prod.outlook.com>
+Content-ID: <DE33956761B04E468ED912869CCE356D@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3eb22d0-de41-4705-2b9d-08d6efde53cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 09:05:48.5562
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d75888b-8ef6-4d6c-fb1d-08d6efde5ec9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 09:06:07.0657
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
@@ -77,29 +77,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 T24gVHVlLCAyMDE5LTA1LTIxIGF0IDEzOjM2ICswMzAwLCBPbGVrc2FuZHIgU3V2b3JvdiB3cm90
-ZToNCj4gVG8gZW5hYmxlICJ6ZXJvIGNyb3NzIGRldGVjdCIgZm9yIEFEQy9IUCwgY2hhbmdlDQo+
-IEhQX1pDRF9FTi9BRENfWkNEX0VOIGJpdHMgb25seSBpbnN0ZWFkIG9mIHdyaXRpbmcgdGhlIHdo
-b2xlDQo+IENISVBfQU5BX0NUUkwgcmVnaXN0ZXIuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBPbGVr
-c2FuZHIgU3V2b3JvdiA8b2xla3NhbmRyLnN1dm9yb3ZAdG9yYWRleC5jb20+DQoNClJldmlld2Vk
-LWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCg0KPiAt
-LS0NCj4gDQo+ICBzb3VuZC9zb2MvY29kZWNzL3NndGw1MDAwLmMgfCA2ICsrKy0tLQ0KPiAgMSBm
-aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
-LS1naXQgc291bmQvc29jL2NvZGVjcy9zZ3RsNTAwMC5jIHNvdW5kL3NvYy9jb2RlY3Mvc2d0bDUw
-MDAuYw0KPiBpbmRleCBiYjU4Yzk5N2M2OTEuLmU4MTNhMzc5MTBhZiAxMDA2NDQNCj4gLS0tIHNv
-dW5kL3NvYy9jb2RlY3Mvc2d0bDUwMDAuYw0KPiArKysgc291bmQvc29jL2NvZGVjcy9zZ3RsNTAw
-MC5jDQo+IEBAIC0xMjg5LDYgKzEyODksNyBAQCBzdGF0aWMgaW50IHNndGw1MDAwX3Byb2JlKHN0
-cnVjdA0KPiBzbmRfc29jX2NvbXBvbmVudCAqY29tcG9uZW50KQ0KPiAgCWludCByZXQ7DQo+ICAJ
-dTE2IHJlZzsNCj4gIAlzdHJ1Y3Qgc2d0bDUwMDBfcHJpdiAqc2d0bDUwMDAgPQ0KPiBzbmRfc29j
-X2NvbXBvbmVudF9nZXRfZHJ2ZGF0YShjb21wb25lbnQpOw0KPiArCXVuc2lnbmVkIGludCB6Y2Rf
-bWFzayA9IFNHVEw1MDAwX0hQX1pDRF9FTiB8DQo+IFNHVEw1MDAwX0FEQ19aQ0RfRU47DQo+ICAN
-Cj4gIAkvKiBwb3dlciB1cCBzZ3RsNTAwMCAqLw0KPiAgCXJldCA9IHNndGw1MDAwX3NldF9wb3dl
-cl9yZWdzKGNvbXBvbmVudCk7DQo+IEBAIC0xMzE2LDkgKzEzMTcsOCBAQCBzdGF0aWMgaW50IHNn
-dGw1MDAwX3Byb2JlKHN0cnVjdA0KPiBzbmRfc29jX2NvbXBvbmVudCAqY29tcG9uZW50KQ0KPiAg
-CSAgICAgICAweDFmKTsNCj4gIAlzbmRfc29jX2NvbXBvbmVudF93cml0ZShjb21wb25lbnQsIFNH
-VEw1MDAwX0NISVBfUEFEX1NUUkVOR1RILA0KPiByZWcpOw0KPiAgDQo+IC0Jc25kX3NvY19jb21w
-b25lbnRfd3JpdGUoY29tcG9uZW50LCBTR1RMNTAwMF9DSElQX0FOQV9DVFJMLA0KPiAtCQkJU0dU
-TDUwMDBfSFBfWkNEX0VOIHwNCj4gLQkJCVNHVEw1MDAwX0FEQ19aQ0RfRU4pOw0KPiArCXNuZF9z
-b2NfY29tcG9uZW50X3VwZGF0ZV9iaXRzKGNvbXBvbmVudCwNCj4gU0dUTDUwMDBfQ0hJUF9BTkFf
-Q1RSTCwNCj4gKwkJemNkX21hc2ssIHpjZF9tYXNrKTsNCj4gIA0KPiAgCXNuZF9zb2NfY29tcG9u
-ZW50X3VwZGF0ZV9iaXRzKGNvbXBvbmVudCwNCj4gU0dUTDUwMDBfQ0hJUF9NSUNfQ1RSTCwNCj4g
-IAkJCVNHVEw1MDAwX0JJQVNfUl9NQVNLLA0KPiAtLSANCj4gMi4yMC4xDQo=
+ZToNCj4gSWYgVkREQSAhPSBWRERJTyBhbmQgYW55IG9mIHRoZW0gaXMgZ3JlYXRlciB0aGFuIDMu
+MVYsIGNoYXJnZSBwdW1wDQo+IHNvdXJjZSBjYW4gYmUgYXNzaWduZWQgYXV0b21hdGljYWxseS4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9sZWtzYW5kciBTdXZvcm92IDxvbGVrc2FuZHIuc3V2b3Jv
+dkB0b3JhZGV4LmNvbT4NCg0KUmV2aWV3ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnpp
+c3dpbGVyQHRvcmFkZXguY29tPg0KDQo+IC0tLQ0KPiANCj4gIHNvdW5kL3NvYy9jb2RlY3Mvc2d0
+bDUwMDAuYyB8IDE0ICsrKysrKysrKy0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRp
+b25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBzb3VuZC9zb2MvY29kZWNz
+L3NndGw1MDAwLmMgc291bmQvc29jL2NvZGVjcy9zZ3RsNTAwMC5jDQo+IGluZGV4IGU4MTNhMzc5
+MTBhZi4uZWUxZTRiZjYxMzIyIDEwMDY0NA0KPiAtLS0gc291bmQvc29jL2NvZGVjcy9zZ3RsNTAw
+MC5jDQo+ICsrKyBzb3VuZC9zb2MvY29kZWNzL3NndGw1MDAwLmMNCj4gQEAgLTExNzQsMTIgKzEx
+NzQsMTYgQEAgc3RhdGljIGludCBzZ3RsNTAwMF9zZXRfcG93ZXJfcmVncyhzdHJ1Y3QNCj4gc25k
+X3NvY19jb21wb25lbnQgKmNvbXBvbmVudCkNCj4gIAkJCQkJU0dUTDUwMDBfSU5UX09TQ19FTik7
+DQo+ICAJCS8qIEVuYWJsZSBWRERDIGNoYXJnZSBwdW1wICovDQo+ICAJCWFuYV9wd3IgfD0gU0dU
+TDUwMDBfVkREQ19DSFJHUE1QX1BPV0VSVVA7DQo+IC0JfSBlbHNlIGlmICh2ZGRpbyA+PSAzMTAw
+ICYmIHZkZGEgPj0gMzEwMCkgew0KPiArCX0gZWxzZSB7DQo+ICAJCWFuYV9wd3IgJj0gflNHVEw1
+MDAwX1ZERENfQ0hSR1BNUF9QT1dFUlVQOw0KPiAtCQkvKiBWRERDIHVzZSBWRERJTyByYWlsICov
+DQo+IC0JCWxyZWdfY3RybCB8PSBTR1RMNTAwMF9WRERDX0FTU05fT1ZSRDsNCj4gLQkJbHJlZ19j
+dHJsIHw9IFNHVEw1MDAwX1ZERENfTUFOX0FTU05fVkRESU8gPDwNCj4gLQkJCSAgICBTR1RMNTAw
+MF9WRERDX01BTl9BU1NOX1NISUZUOw0KPiArCQkvKiBpZiB2ZGRpbyA9PSB2ZGRhIHRoZSBzb3Vy
+Y2Ugb2YgY2hhcmdlIHB1bXAgc2hvdWxkIGJlDQo+ICsJCSAqIGFzc2lnbmVkIG1hbnVhbGx5IHRv
+IFZERElPDQo+ICsJCSAqLw0KPiArCQlpZiAodmRkaW8gPT0gdmRkYSkgew0KPiArCQkJbHJlZ19j
+dHJsIHw9IFNHVEw1MDAwX1ZERENfQVNTTl9PVlJEOw0KPiArCQkJbHJlZ19jdHJsIHw9IFNHVEw1
+MDAwX1ZERENfTUFOX0FTU05fVkRESU8gPDwNCj4gKwkJCQkgICAgU0dUTDUwMDBfVkREQ19NQU5f
+QVNTTl9TSElGVDsNCj4gKwkJfQ0KPiAgCX0NCj4gIA0KPiAgCXNuZF9zb2NfY29tcG9uZW50X3dy
+aXRlKGNvbXBvbmVudCwgU0dUTDUwMDBfQ0hJUF9MSU5SRUdfQ1RSTCwNCj4gbHJlZ19jdHJsKTsN
+Cj4gLS0gDQo+IDIuMjAuMQ0K
