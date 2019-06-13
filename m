@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E95F4500B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A02845008
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbfFMXai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 19:30:38 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:46326 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727515AbfFMXah (ORCPT
+        id S1727385AbfFMXaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 19:30:20 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:35530 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726705AbfFMXaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:30:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TU6DYEz_1560468591;
+        Thu, 13 Jun 2019 19:30:03 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R701e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TU6DYEz_1560468591;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TU6DYEz_1560468591)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 14 Jun 2019 07:30:00 +0800
+          Fri, 14 Jun 2019 07:30:01 +0800
 From:   Yang Shi <yang.shi@linux.alibaba.com>
 To:     mhocko@suse.com, mgorman@techsingularity.net, riel@surriel.com,
         hannes@cmpxchg.org, akpm@linux-foundation.org,
@@ -24,9 +24,9 @@ To:     mhocko@suse.com, mgorman@techsingularity.net, riel@surriel.com,
         ying.huang@intel.com, ziy@nvidia.com
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 7/9] mm: vmscan: check if the demote target node is contended or not
-Date:   Fri, 14 Jun 2019 07:29:35 +0800
-Message-Id: <1560468577-101178-8-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [v3 PATCH 8/9] mm: vmscan: add page demotion counter
+Date:   Fri, 14 Jun 2019 07:29:36 +0800
+Message-Id: <1560468577-101178-9-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -35,113 +35,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When demoting to the migration target node, the target node may have
-memory pressure, then the memory pressure may cause migrate_pages()
-fail.
+Account the number of demoted pages into reclaim_state->nr_demoted.
 
-If the failure is caused by memory pressure (i.e. returning -ENOMEM),
-tag the node with PGDAT_CONTENDED.  The tag would be cleared once the
-target node is balanced again.
-
-Check if the target node is PGDAT_CONTENDED or not, if it is just skip
-demotion.
+Add pgdemote_kswapd and pgdemote_direct VM counters showed in
+/proc/vmstat.
 
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- include/linux/mmzone.h |  3 +++
- mm/vmscan.c            | 37 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+ include/linux/vm_event_item.h | 2 ++
+ include/linux/vmstat.h        | 1 +
+ mm/vmscan.c                   | 8 ++++++++
+ mm/vmstat.c                   | 2 ++
+ 4 files changed, 13 insertions(+)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 70394ca..d4e05c5 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -573,6 +573,9 @@ enum pgdat_flags {
- 					 * many pages under writeback
- 					 */
- 	PGDAT_RECLAIM_LOCKED,		/* prevents concurrent reclaim */
-+	PGDAT_CONTENDED,		/* the node has not enough free memory
-+					 * available
-+					 */
+diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+index 47a3441..499a3aa 100644
+--- a/include/linux/vm_event_item.h
++++ b/include/linux/vm_event_item.h
+@@ -32,6 +32,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+ 		PGREFILL,
+ 		PGSTEAL_KSWAPD,
+ 		PGSTEAL_DIRECT,
++		PGDEMOTE_KSWAPD,
++		PGDEMOTE_DIRECT,
+ 		PGSCAN_KSWAPD,
+ 		PGSCAN_DIRECT,
+ 		PGSCAN_DIRECT_THROTTLE,
+diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+index bdeda4b..00d53d4 100644
+--- a/include/linux/vmstat.h
++++ b/include/linux/vmstat.h
+@@ -29,6 +29,7 @@ struct reclaim_stat {
+ 	unsigned nr_activate[2];
+ 	unsigned nr_ref_keep;
+ 	unsigned nr_unmap_fail;
++	unsigned nr_demoted;
  };
  
- enum zone_flags {
+ #ifdef CONFIG_VM_EVENT_COUNTERS
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index fb931ded..9ec55d7 100644
+index 9ec55d7..f65cd45 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -1126,6 +1126,21 @@ static inline struct page *alloc_demote_page(struct page *page,
- }
- #endif
+@@ -130,6 +130,7 @@ struct scan_control {
+ 		unsigned int immediate;
+ 		unsigned int file_taken;
+ 		unsigned int taken;
++		unsigned int demoted;
+ 	} nr;
+ };
  
-+static inline bool is_migration_target_contended(int nid)
-+{
-+	int node;
-+	nodemask_t used_mask;
-+
-+
-+	nodes_clear(used_mask);
-+	node = find_next_best_node(nid, &used_mask, true);
-+
-+	if (test_bit(PGDAT_CONTENDED, &NODE_DATA(node)->flags))
-+		return true;
-+
-+	return false;
-+}
-+
- static inline bool is_demote_ok(int nid, struct scan_control *sc)
- {
- 	/* Just do demotion with migrate mode of node reclaim */
-@@ -1144,6 +1159,10 @@ static inline bool is_demote_ok(int nid, struct scan_control *sc)
- 	if (!has_migration_target_node_online())
- 		return false;
+@@ -1582,6 +1583,12 @@ static unsigned long shrink_page_list(struct list_head *page_list,
  
-+	/* Check if the demote target node is contended or not */
-+	if (is_migration_target_contended(nid))
-+		return false;
-+
- 	return true;
- }
- 
-@@ -1564,6 +1583,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
  		nr_reclaimed += nr_succeeded;
  
++		stat->nr_demoted = nr_succeeded;
++		if (current_is_kswapd())
++			__count_vm_events(PGDEMOTE_KSWAPD, stat->nr_demoted);
++		else
++			__count_vm_events(PGDEMOTE_DIRECT, stat->nr_demoted);
++
  		if (err) {
-+			if (err == -ENOMEM)
-+				set_bit(PGDAT_CONTENDED,
-+					&NODE_DATA(target_nid)->flags);
-+
- 			putback_movable_pages(&demote_pages);
- 
- 			list_splice(&ret_pages, &demote_pages);
-@@ -2597,6 +2620,19 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
- 		 * scan target and the percentage scanning already complete
- 		 */
- 		lru = (lru == LRU_FILE) ? LRU_BASE : LRU_FILE;
-+
-+		/*
-+		 * The shrink_page_list() may find the demote target node is
-+		 * contended, if so it doesn't make sense to scan anonymous
-+		 * LRU again.
-+		 *
-+		 * Need check if swap is available or not too since demotion
-+		 * may happen on swapless system.
-+		 */
-+		if (!is_demote_ok(pgdat->node_id, sc) &&
-+		    (!sc->may_swap || mem_cgroup_get_nr_swap_pages(memcg) <= 0))
-+			lru = LRU_FILE;
-+
- 		nr_scanned = targets[lru] - nr[lru];
- 		nr[lru] = targets[lru] * (100 - percentage) / 100;
- 		nr[lru] -= min(nr[lru], nr_scanned);
-@@ -3447,6 +3483,7 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
- 	clear_bit(PGDAT_CONGESTED, &pgdat->flags);
- 	clear_bit(PGDAT_DIRTY, &pgdat->flags);
- 	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
-+	clear_bit(PGDAT_CONTENDED, &pgdat->flags);
- }
- 
- /*
+ 			if (err == -ENOMEM)
+ 				set_bit(PGDAT_CONTENDED,
+@@ -2097,6 +2104,7 @@ static int current_may_throttle(void)
+ 	sc->nr.unqueued_dirty += stat.nr_unqueued_dirty;
+ 	sc->nr.writeback += stat.nr_writeback;
+ 	sc->nr.immediate += stat.nr_immediate;
++	sc->nr.demoted += stat.nr_demoted;
+ 	sc->nr.taken += nr_taken;
+ 	if (file)
+ 		sc->nr.file_taken += nr_taken;
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index d876ac0..eee29a9 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1192,6 +1192,8 @@ int fragmentation_index(struct zone *zone, unsigned int order)
+ 	"pgrefill",
+ 	"pgsteal_kswapd",
+ 	"pgsteal_direct",
++	"pgdemote_kswapd",
++	"pgdemote_direct",
+ 	"pgscan_kswapd",
+ 	"pgscan_direct",
+ 	"pgscan_direct_throttle",
 -- 
 1.8.3.1
 
