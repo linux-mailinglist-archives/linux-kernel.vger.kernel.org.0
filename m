@@ -2,235 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C654398A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A2343961
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388452AbfFMPOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:14:14 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:37237 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732259AbfFMNaS (ORCPT
+        id S2387982AbfFMPN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:13:29 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35721 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732261AbfFMNa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:30:18 -0400
-Received: by mail-yw1-f68.google.com with SMTP id 186so8328876ywo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:30:18 -0700 (PDT)
+        Thu, 13 Jun 2019 09:30:26 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c6so10171602wml.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gpC/BcbJqZm/b199OKanFtWwuFNfn3Nh4TAP7OeO2NA=;
-        b=BXofh382FGQ6XKPL2MfgAofF8BQm+/tgz4ml76l/iJkrG2E/+Dn2CcsfgfbiuEU3tj
-         RuZDqTsDzm6ObH1XEtafWfBUf0me0bv7ELlRK/EDgBLTTgGPCN72PLbTY5I64v8joDPd
-         vxEGj4K1laNQ4h//KZVXnpwBplBXDchGCJsiGY/LoSNyOPFsqamliqkc/auc6LnvDP6z
-         NdYHf9KnTMvUsC+0FFJCOuLumZOWQWWFFm7EjGvUO1RF3FRQHmeF81IER2zJvyqqJvVa
-         tYxikwp4VS73sfIlUIcSULdSIFQqhVNuqn4zfVaeOca9Eh6qh4k1yBfMCKcYh7/N9fdC
-         cPzQ==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=fG7zTrGYhrTn2R8dicpGyyCWK8SjK6usqkrzLPnkewQ=;
+        b=uCQaZyzX5/SinctvqDo8dFQ4w2Na8NlIkQzusQo9dViadlKq9VIwX02tHVDXpjt4UR
+         fYujjVWR+GnxCIFsUXKKCUYndPnCBEjxUIs2osCBcFFPiDFaGFkiVwLpQL8MRUx0mQVG
+         fky6mP+/FcwwBHuHGg0OugYptaDJ6jxyDi4FJ9ezUVV45icwJMINKGmeL3bpq2QzWf+w
+         JE8RGTmqYYAYoSuQxa77CxEyRBZYjTbAyubo+2xxZDptGnS9RUsilnhteU+tnRrcZWBH
+         Af8codS/S6Of1r9oDANWmAu8EYIfLzPbSj8PuC7XApzPdWOUsUkaC4qOQeRqd1PueFKj
+         kZ4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gpC/BcbJqZm/b199OKanFtWwuFNfn3Nh4TAP7OeO2NA=;
-        b=E64NERG+Bi5M3l7RKJc2UtBXNydjSDd57hDxcOVOq/gGDzrP6kQW9lQoxWQ2QIN817
-         EdvdF1doqFZSs9+RobAzjVIfb6AmjyLpUYhQGha17+fjvdncUHFJqFZ08V/hAfAYLTRY
-         LUxD0xmfoFTlz2aL5ji2sKFVHinBESErAOIULtICYbvBydG5/2IQjeEAp0TnS7s4HSN5
-         0hwpAlVvA29C6F4sk2Y5gjd276dTxR+wT9LoQS1LuPXetbJ0a/K0uyyjeEtFddy8LWaY
-         KW86gNcwFy2kH010aYfRCQRfjGW0n5sT9D8YmoYjCdM/evxitrYyYRBE21dyxIoWv5EW
-         n6ug==
-X-Gm-Message-State: APjAAAVGU7tobtPmRX+UVlnbJPkbMubOWRpuN4PpWuTUkvOQpwYyXd/M
-        BDMmNddoQzwwTcjBAfVYfG4SpA==
-X-Google-Smtp-Source: APXvYqxTssA/J+9V16+D44hORYBVXWzyfYlD4b0eRTXEkb7pd189qJsIUW5hoWZ7PNVmk1rzS/3Kzg==
-X-Received: by 2002:a0d:ea10:: with SMTP id t16mr32493125ywe.221.1560432617677;
-        Thu, 13 Jun 2019 06:30:17 -0700 (PDT)
-Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
-        by smtp.gmail.com with ESMTPSA id p12sm742658ywg.72.2019.06.13.06.30.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 06:30:17 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 09:30:15 -0400
-From:   Jon Mason <jdmason@kudzu.us>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>
-Subject: Re: [PATCH v5 00/10]  Support using MSI interrupts in ntb_transport
-Message-ID: <20190613133014.GE1572@kudzu.us>
-References: <20190523223100.5526-1-logang@deltatee.com>
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=fG7zTrGYhrTn2R8dicpGyyCWK8SjK6usqkrzLPnkewQ=;
+        b=lR3HNv61A9FiEl/Sjb8Y//uUMwgvG92aTa47APTMqr/eFRXXUwivi4LLdpuIbz3Nzb
+         ceitA22sbVQTQDXXmzg3LPhMBjD/LyJcufpB12cfzQSxP6v6mr5RYewf1qzr6jnmU/gf
+         1Ez4qH9iFZQeG5MWcOVIr2LvMYyjmSzh9JHBcaO/7QaKcU3HhAhl4m5Q3h8kvV4+bLFI
+         00evmIgttXAARaj7y1hYYJnQA4b9IF6oQ9lPTPhYe8zGkIcFXDD3r7FUEjjPqSM4qvea
+         1oba6sEiYzVRj8xTAxq128hxADIm6Nkzc0TfloMGIzaxItHpjXG1CqwAfua/YI2A7OWc
+         /TUg==
+X-Gm-Message-State: APjAAAVmZwmPqi1/kdDxziqTKXPygwolqptRqj/9UFrZp22JXU6hSyWV
+        Kfr9m3JUGRqHn6WNAnCT/3f23w==
+X-Google-Smtp-Source: APXvYqwwjn735ZcJh4RCTzzb2yvw+vbpmotjGHKxj/HsIfwbG5bEALE3PPpaQAxEGGSxu1SyzuhDOA==
+X-Received: by 2002:a7b:cb4b:: with SMTP id v11mr3844073wmj.103.1560432624540;
+        Thu, 13 Jun 2019 06:30:24 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id j189sm4337413wmb.48.2019.06.13.06.30.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 06:30:24 -0700 (PDT)
+Message-ID: <5d024ff0.1c69fb81.749d7.81a6@mx.google.com>
+Date:   Thu, 13 Jun 2019 06:30:24 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523223100.5526-1-logang@deltatee.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.19.50-119-g94ea812871ce
+X-Kernelci-Branch: linux-4.19.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 000/118] 4.19.51-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 04:30:50PM -0600, Logan Gunthorpe wrote:
-> This is another resend as there has been no feedback since v4.
-> Seems Jon has been MIA this past cycle so hopefully he appears on the
-> list soon.
-> 
-> I've addressed the feedback so far and rebased on the latest kernel
-> and would like this to be considered for merging this cycle.
-> 
-> The only outstanding issue I know of is that it still will not work
-> with IDT hardware, but ntb_transport doesn't work with IDT hardware
-> and there is still no sensible common infrastructure to support
-> ntb_peer_mw_set_trans(). Thus, I decline to consider that complication
-> in this patchset. However, I'll be happy to review work that adds this
-> feature in the future.
-> 
-> Also, as the port number and resource index stuff is a bit complicated,
-> I made a quick out of tree test fixture to ensure it's correct[1]. As
-> an excerise I also wrote some test code[2] using the upcomming KUnit
-> feature.
+stable-rc/linux-4.19.y boot: 123 boots: 0 failed, 122 passed with 1 untried=
+/unknown (v4.19.50-119-g94ea812871ce)
 
-Sorry for the delay.  The patch is now in the ntb-next branch.  We've
-missed window for 5.2, but it will be in the 5.3 pull request (barring
-last minute comments).
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.19.y/kernel/v4.19.50-119-g94ea812871ce/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
+y/kernel/v4.19.50-119-g94ea812871ce/
 
-Thanks,
-Jon
+Tree: stable-rc
+Branch: linux-4.19.y
+Git Describe: v4.19.50-119-g94ea812871ce
+Git Commit: 94ea812871ceac0a190ded80c3272a779dfb101e
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 69 unique boards, 24 SoC families, 15 builds out of 206
 
-> 
-> Logan
-> 
-> [1] https://repl.it/repls/ExcitingPresentFile
-> [2] https://github.com/sbates130272/linux-p2pmem/commits/ntb_kunit
-> 
-> --
-> 
-> Changes in v5:
-> 
-> * Rebased onto v5.2-rc1 (plus the patches in ntb-next)
-> 
-> --
-> 
-> Changes in v4:
-> 
-> * Rebased onto v5.1-rc6 (No changes)
-> 
-> * Numerous grammar and spelling mistakes spotted by Bjorn
-> 
-> --
-> 
-> Changes in v3:
-> 
-> * Rebased onto v5.1-rc1 (Dropped the first two patches as they have
->   been merged, and cleaned up some minor conflicts in the PCI tree)
-> 
-> * Added a new patch (#3) to calculate logical port numbers that
->   are port numbers from 0 to (number of ports - 1). This is
->   then used in ntb_peer_resource_idx() to fix the issues brought
->   up by Serge.
-> 
-> * Fixed missing __iomem and iowrite calls (as noticed by Serge)
-> 
-> * Added patch 10 which describes ntb_msi_test in the documentation
->   file (as requested by Serge)
-> 
-> * A couple other minor nits and documentation fixes
-> 
-> --
-> 
-> Changes in v2:
-> 
-> * Cleaned up the changes in intel_irq_remapping.c to make them
->   less confusing and add a comment. (Per discussion with Jacob and
->   Joerg)
-> 
-> * Fixed a nit from Bjorn and collected his Ack
-> 
-> * Added a Kconfig dependancy on CONFIG_PCI_MSI for CONFIG_NTB_MSI
->   as the Kbuild robot hit a random config that didn't build
->   without it.
-> 
-> * Worked in a callback for when the MSI descriptor changes so that
->   the clients can resend the new address and data values to the peer.
->   On my test system this was never necessary, but there may be
->   other platforms where this can occur. I tested this by hacking
->   in a path to rewrite the MSI descriptor when I change the cpu
->   affinity of an IRQ. There's a bit of uncertainty over the latency
->   of the change, but without hardware this can acctually occur on
->   we can't test this. This was the result of a discussion with Dave.
-> 
-> --
-> 
-> This patch series adds optional support for using MSI interrupts instead
-> of NTB doorbells in ntb_transport. This is desirable seeing doorbells on
-> current hardware are quite slow and therefore switching to MSI interrupts
-> provides a significant performance gain. On switchtec hardware, a simple
-> apples-to-apples comparison shows ntb_netdev/iperf numbers going from
-> 3.88Gb/s to 14.1Gb/s when switching to MSI interrupts.
-> 
-> To do this, a couple changes are required outside of the NTB tree:
-> 
-> 1) The IOMMU must know to accept MSI requests from aliased bused numbers
-> seeing NTB hardware typically sends proxied request IDs through
-> additional requester IDs. The first patch in this series adds support
-> for the Intel IOMMU. A quirk to add these aliases for switchtec hardware
-> was already accepted. See commit ad281ecf1c7d ("PCI: Add DMA alias quirk
-> for Microsemi Switchtec NTB") for a description of NTB proxy IDs and why
-> this is necessary.
-> 
-> 2) NTB transport (and other clients) may often need more MSI interrupts
-> than the NTB hardware actually advertises support for. However, seeing
-> these interrupts will not be triggered by the hardware but through an
-> NTB memory window, the hardware does not actually need support or need
-> to know about them. Therefore we add the concept of Virtual MSI
-> interrupts which are allocated just like any other MSI interrupt but
-> are not programmed into the hardware's MSI table. This is done in
-> Patch 2 and then made use of in Patch 3.
-> 
-> The remaining patches in this series add a library for dealing with MSI
-> interrupts, a test client and finally support in ntb_transport.
-> 
-> The series is based off of v5.1-rc6 plus the patches in ntb-next.
-> A git repo is available here:
-> 
-> https://github.com/sbates130272/linux-p2pmem/ ntb_transport_msi_v4
-> 
-> Thanks,
-> 
-> Logan
-> 
-> --
-> 
-> Logan Gunthorpe (10):
->   PCI/MSI: Support allocating virtual MSI interrupts
->   PCI/switchtec: Add module parameter to request more interrupts
->   NTB: Introduce helper functions to calculate logical port number
->   NTB: Introduce functions to calculate multi-port resource index
->   NTB: Rename ntb.c to support multiple source files in the module
->   NTB: Introduce MSI library
->   NTB: Introduce NTB MSI Test Client
->   NTB: Add ntb_msi_test support to ntb_test
->   NTB: Add MSI interrupt support to ntb_transport
->   NTB: Describe the ntb_msi_test client in the documentation.
-> 
->  Documentation/ntb.txt                   |  27 ++
->  drivers/ntb/Kconfig                     |  11 +
->  drivers/ntb/Makefile                    |   3 +
->  drivers/ntb/{ntb.c => core.c}           |   0
->  drivers/ntb/msi.c                       | 415 +++++++++++++++++++++++
->  drivers/ntb/ntb_transport.c             | 169 ++++++++-
->  drivers/ntb/test/Kconfig                |   9 +
->  drivers/ntb/test/Makefile               |   1 +
->  drivers/ntb/test/ntb_msi_test.c         | 433 ++++++++++++++++++++++++
->  drivers/pci/msi.c                       |  54 ++-
->  drivers/pci/switch/switchtec.c          |  12 +-
->  include/linux/msi.h                     |   8 +
->  include/linux/ntb.h                     | 196 ++++++++++-
->  include/linux/pci.h                     |   9 +
->  tools/testing/selftests/ntb/ntb_test.sh |  54 ++-
->  15 files changed, 1386 insertions(+), 15 deletions(-)
->  rename drivers/ntb/{ntb.c => core.c} (100%)
->  create mode 100644 drivers/ntb/msi.c
->  create mode 100644 drivers/ntb/test/ntb_msi_test.c
-> 
-> --
-> 2.20.1
+---
+For more info write to <info@kernelci.org>
