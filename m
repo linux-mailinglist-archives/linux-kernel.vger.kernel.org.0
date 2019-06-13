@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BD143BFB
+	by mail.lfdr.de (Postfix) with ESMTP id 7E46A43BFA
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732548AbfFMPdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:33:07 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41116 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728427AbfFMKpu (ORCPT
+        id S1731959AbfFMPdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:33:04 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36876 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728434AbfFMKp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:45:50 -0400
-Received: by mail-pl1-f194.google.com with SMTP id s24so7959788plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:45:49 -0700 (PDT)
+        Thu, 13 Jun 2019 06:45:59 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bh12so7981453plb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=f93IclPUPcs3Bt3TjEqqUNMcFkImDI5CNRnqLCqc+P8=;
-        b=BYU4x/H5A/U1vDb2iAJXDaxX8mJ03+iBLBS2s7wEPWjYRW/6/REj+tyFh+ON5yPvJo
-         tiCoiYOkqYP+kp556mYNnSX3QOkg5moTm3N6xbZw/Yrrj8L8vCoFdZF01ln2Kg1TSJ20
-         l8yyAkVj8u1bv0D1tNhG8nVVbabbFkU6NKgh91Yw/+sfinCHWixpfmjN3+L8OCqLFdT5
-         QtU1EFgQvcT1b2S+3dIO4h7MkzFXjGN/IczhQ4oDdb75vFwLc5ZAgem35ipiyzKI9zPX
-         VpM54MBVxi/MPr7DE9sfD6fGln7FmUlJGPt2eA9X1qTtZGyKbN356+9p/3dkHHqR5suj
-         WN0A==
+        bh=uCwWLrWN30s9tONuGry7ZPwH/e/7xLPMQjqyo7O5eBk=;
+        b=OP0W8yRlUthFREqCxHMZcGfrR7ObjX7GSg3sDYQOctNsRHbm2Lqcb/opmbujosV95J
+         Kh99aG4N5q3cD8Qe5BzWR9WJEMlx27hM+S6fiT/SGbKF6lFXXfH5hU2LKUg7g4jKajV7
+         i+CpumuA89UHiI+0KEwM0sEc8xCFxvGVPnOo/wSJ+eHrjcMmDLkXIKzRiOrMhUlW3xX2
+         0j2845eItLsOowqgOEDPMtCStDCTisuEjva0X94eD9UD6KLLzhjtMkuZ7kqhppDiaS4C
+         nwXrzRFqbHigTy4SOi86TzPaELfID3cNgUHIFdnNBPTaW8jZPP1i+VQqes+JkhBDgzO0
+         JNAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=f93IclPUPcs3Bt3TjEqqUNMcFkImDI5CNRnqLCqc+P8=;
-        b=kFQD353c4tlw35rjoaoE/D0nblkY5yRkoPFzhAlg52T68NQLviJKl0XYcniwN/7Mcd
-         HtPfEedgSANYO/p5lgVsAS6jp6/Yl3Ps9MbWhAxl2SwFyH2ta7hx0+8ec19S7ujzMs1I
-         SKgppusRECtyidBhCVsMmQhbcr+JModV01gZxQAd7sX7A2lkZh1WdmACZM34HBxV/kNV
-         jrYKjXOzIe0zLusfZ1sLW6Xv59QaQ751RexUsg0Jb/OmjS/mNro3Y+6+w6hdWM+MaRbh
-         Us7dzWul7KTcbjG/AJui2c5+lBtd1KluoO6W4yJN6QpSjLJUKUevTcQJOvSojZrJnjm+
-         06bw==
-X-Gm-Message-State: APjAAAVo87VRlt/TE1FlBXw7WoANaH/4tt47pgkmdBvsbs4iMv0Hv/AQ
-        ZeRQsMi8zqp9mb2tOvzqzw==
-X-Google-Smtp-Source: APXvYqzjzG1IExx5QhEFhc3PhY3IWUPkhfXxSPgDIyhVJDO97u6bC7ct5htX5h5CIaSIaAPehBv3WA==
-X-Received: by 2002:a17:902:b695:: with SMTP id c21mr34964938pls.160.1560422749562;
-        Thu, 13 Jun 2019 03:45:49 -0700 (PDT)
+        bh=uCwWLrWN30s9tONuGry7ZPwH/e/7xLPMQjqyo7O5eBk=;
+        b=txuhHFlXMOL7Wyj+JgexdUvajS8CoU/nBr842TiNLMnWVOYzh5qXof8RgR4ze2SuBU
+         6ib9yeYRlxs0/EUpdlnLvIFPwBWvMPoE7CDSKIPoWHBwyQgtjHpVYA1lb/21j/9BgkaY
+         oFSU+QWZLVxJOloIlXZD4sOfeHwkJz/NwkGuSl+s86ctcjSFxPM1z/SdjHR1IVKHdh6I
+         qzLrk0IVng5+pQsLExfuSj6scFxyexk6/JcAvSuup0aE8KzZGuPVbSQyXpeBjztiqQ7J
+         SPABW9ZS8fV9izCkGuuyaVuxznkkDbDDpZc3p1DoRC5qVyz8VUcwxkt5+5VM44Ec46xd
+         UVvg==
+X-Gm-Message-State: APjAAAUsvPHGaIDCYTLvZiqQSidLYf6FjoFfCrTnhfbVvpKtcoYDrNaK
+        JhdAYW33I1HobhhQPNvZaA==
+X-Google-Smtp-Source: APXvYqz9LfQKa/wrOUIWnFUFZ/wGYmdDsdGq/Xe0dgLwb9nKtqXnSonygBcQvBArP0L1tEzTp904NA==
+X-Received: by 2002:a17:902:a506:: with SMTP id s6mr12547789plq.87.1560422758789;
+        Thu, 13 Jun 2019 03:45:58 -0700 (PDT)
 Received: from mylaptop.redhat.com ([2408:8207:7825:dd90:9051:d949:55f9:678b])
-        by smtp.gmail.com with ESMTPSA id a13sm2813285pgh.6.2019.06.13.03.45.40
+        by smtp.gmail.com with ESMTPSA id a13sm2813285pgh.6.2019.06.13.03.45.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 03:45:48 -0700 (PDT)
+        Thu, 13 Jun 2019 03:45:58 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-mm@kvack.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -57,9 +57,9 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Keith Busch <keith.busch@intel.com>,
         Christoph Hellwig <hch@infradead.org>,
         Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCHv4 1/3] mm/gup: rename nr as nr_pinned in get_user_pages_fast()
-Date:   Thu, 13 Jun 2019 18:45:00 +0800
-Message-Id: <1560422702-11403-2-git-send-email-kernelfans@gmail.com>
+Subject: [PATCHv4 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in gup fast path
+Date:   Thu, 13 Jun 2019 18:45:01 +0800
+Message-Id: <1560422702-11403-3-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1560422702-11403-1-git-send-email-kernelfans@gmail.com>
 References: <1560422702-11403-1-git-send-email-kernelfans@gmail.com>
@@ -68,8 +68,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To better reflect the held state of pages and make code self-explaining,
-rename nr as nr_pinned.
+FOLL_LONGTERM suggests a pin which is going to be given to hardware and
+can't move. It would truncate CMA permanently and should be excluded.
+
+FOLL_LONGTERM has already been checked in the slow path, but not checked in
+the fast path, which means a possible leak of CMA page to longterm pinned
+requirement through this crack.
+
+Place a check in gup_pte_range() in the fast path.
 
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 Cc: Ira Weiny <ira.weiny@intel.com>
@@ -84,57 +90,67 @@ Cc: Christoph Hellwig <hch@infradead.org>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: linux-kernel@vger.kernel.org
 ---
- mm/gup.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ mm/gup.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/mm/gup.c b/mm/gup.c
-index f173fcb..766ae54 100644
+index 766ae54..de1b03f 100644
 --- a/mm/gup.c
 +++ b/mm/gup.c
-@@ -2216,7 +2216,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
- 			unsigned int gup_flags, struct page **pages)
- {
- 	unsigned long addr, len, end;
--	int nr = 0, ret = 0;
-+	int nr_pinned = 0, ret = 0;
+@@ -1757,6 +1757,14 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
  
- 	start &= PAGE_MASK;
- 	addr = start;
-@@ -2231,25 +2231,25 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
++		/*
++		 * FOLL_LONGTERM suggests a pin given to hardware. Prevent it
++		 * from truncating CMA area
++		 */
++		if (unlikely(flags & FOLL_LONGTERM) &&
++			is_migrate_cma_page(page))
++			goto pte_unmap;
++
+ 		head = try_get_compound_head(page, 1);
+ 		if (!head)
+ 			goto pte_unmap;
+@@ -1900,6 +1908,12 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
- 	if (gup_fast_permitted(start, nr_pages)) {
- 		local_irq_disable();
--		gup_pgd_range(addr, end, gup_flags, pages, &nr);
-+		gup_pgd_range(addr, end, gup_flags, pages, &nr_pinned);
- 		local_irq_enable();
--		ret = nr;
-+		ret = nr_pinned;
- 	}
++	if (unlikely(flags & FOLL_LONGTERM) &&
++		is_migrate_cma_page(page)) {
++		*nr -= refs;
++		return 0;
++	}
++
+ 	head = try_get_compound_head(pmd_page(orig), refs);
+ 	if (!head) {
+ 		*nr -= refs;
+@@ -1941,6 +1955,12 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
--	if (nr < nr_pages) {
-+	if (nr_pinned < nr_pages) {
- 		/* Try to get the remaining pages with get_user_pages */
--		start += nr << PAGE_SHIFT;
--		pages += nr;
-+		start += nr_pinned << PAGE_SHIFT;
-+		pages += nr_pinned;
++	if (unlikely(flags & FOLL_LONGTERM) &&
++		is_migrate_cma_page(page)) {
++		*nr -= refs;
++		return 0;
++	}
++
+ 	head = try_get_compound_head(pud_page(orig), refs);
+ 	if (!head) {
+ 		*nr -= refs;
+@@ -1978,6 +1998,12 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
--		ret = __gup_longterm_unlocked(start, nr_pages - nr,
-+		ret = __gup_longterm_unlocked(start, nr_pages - nr_pinned,
- 					      gup_flags, pages);
- 
- 		/* Have to be a bit careful with return values */
--		if (nr > 0) {
-+		if (nr_pinned > 0) {
- 			if (ret < 0)
--				ret = nr;
-+				ret = nr_pinned;
- 			else
--				ret += nr;
-+				ret += nr_pinned;
- 		}
- 	}
- 
++	if (unlikely(flags & FOLL_LONGTERM) &&
++		is_migrate_cma_page(page)) {
++		*nr -= refs;
++		return 0;
++	}
++
+ 	head = try_get_compound_head(pgd_page(orig), refs);
+ 	if (!head) {
+ 		*nr -= refs;
 -- 
 2.7.5
 
