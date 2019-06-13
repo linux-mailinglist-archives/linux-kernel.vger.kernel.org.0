@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 699A344139
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6649C442BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391685AbfFMQMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:12:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60210 "EHLO mail.kernel.org"
+        id S2392199AbfFMQZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:25:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731217AbfFMInF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:43:05 -0400
+        id S1730980AbfFMIgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:36:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15CDB2063F;
-        Thu, 13 Jun 2019 08:43:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 780E620851;
+        Thu, 13 Jun 2019 08:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415384;
-        bh=uclTob9GQIPP+edHPJZx/gJnRps5nzkGS7uvws+ioa0=;
+        s=default; t=1560415005;
+        bh=WWG29t6l9B1S5X0Ig0x7C6SGZJ4CFaWjnDt4Xe+nbD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HAf1hfEGzqwPQ8tFYmxHs4WqxEZJPZbv+7f/vIvH/Em0922koj9SvxMDO39Od+GdH
-         yfccolNKoEWFit7yV497O7D9l/iEA2ZholZNRsy7T3GtCznYqKHxUGuQ+NVaioyP0m
-         g5/xCYmeuRtigy4Y6XPm3Ap1SZkhNdtuJ7UddFfE=
+        b=JQJt3ecmj8nlRyspdoDsiae8ZNl0Crldti3+4+3PGCNdALxLoPoBHMhwGYumJwMdc
+         xacPaiH417SMP29OdkpGNKqZzqANVk0SL/ultIvNR2PpgsqBgJMaYU3Be8kQrE144k
+         7VwJz+WO1E6T8dLzsYUe1OkPre+Tp23My4Dmsh3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/118] PCI: keystone: Prevent ARM32 specific code to be compiled for ARM64
-Date:   Thu, 13 Jun 2019 10:33:34 +0200
-Message-Id: <20190613075648.289807017@linuxfoundation.org>
+Subject: [PATCH 4.14 52/81] ARM: dts: imx51: Specify IMX5_CLK_IPG as "ahb" clock to SDMA
+Date:   Thu, 13 Jun 2019 10:33:35 +0200
+Message-Id: <20190613075653.058097260@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f316a2b53cd7f37963ae20ec7072eb27a349a4ce ]
+[ Upstream commit 918bbde8085ae147a43dcb491953e0dd8f3e9d6a ]
 
-hook_fault_code() is an ARM32 specific API for hooking into data abort.
+Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
+clock to determine if it needs to configure the IP block as operating
+at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
+clocks as IMX5_CLK_SDMA results in driver incorrectly thinking that
+ratio is 1:1 which results in broken SDMA funtionality. Fix the code
+to specify IMX5_CLK_AHB as "ahb" clock for SDMA, to avoid detecting
+incorrect clock ratio.
 
-AM65X platforms (that integrate ARM v8 cores and select CONFIG_ARM64 as
-arch) rely on pci-keystone.c but on them the enumeration of a
-non-present BDF does not trigger a bus error, so the fixup exception
-provided by calling hook_fault_code() is not needed and can be guarded
-with CONFIG_ARM.
-
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-[lorenzo.pieralisi@arm.com: commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Angus Ainslie (Purism) <angus@akkea.ca>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/imx51.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index e88bd221fffe..5e199e7d2d4f 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -237,6 +237,7 @@ static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
- 		ks_dw_pcie_enable_error_irq(ks_pcie);
- }
- 
-+#ifdef CONFIG_ARM
- /*
-  * When a PCI device does not exist during config cycles, keystone host gets a
-  * bus error instead of returning 0xffffffff. This handler always returns 0
-@@ -256,6 +257,7 @@ static int keystone_pcie_fault(unsigned long addr, unsigned int fsr,
- 
- 	return 0;
- }
-+#endif
- 
- static int __init ks_pcie_host_init(struct pcie_port *pp)
- {
-@@ -279,12 +281,14 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
- 	val |= BIT(12);
- 	writel(val, pci->dbi_base + PCIE_CAP_BASE + PCI_EXP_DEVCTL);
- 
-+#ifdef CONFIG_ARM
- 	/*
- 	 * PCIe access errors that result into OCP errors are caught by ARM as
- 	 * "External aborts"
- 	 */
- 	hook_fault_code(17, keystone_pcie_fault, SIGBUS, 0,
- 			"Asynchronous external abort");
-+#endif
- 
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/imx51.dtsi b/arch/arm/boot/dts/imx51.dtsi
+index 1ee1d542d9ad..29c965126817 100644
+--- a/arch/arm/boot/dts/imx51.dtsi
++++ b/arch/arm/boot/dts/imx51.dtsi
+@@ -476,7 +476,7 @@
+ 				reg = <0x83fb0000 0x4000>;
+ 				interrupts = <6>;
+ 				clocks = <&clks IMX5_CLK_SDMA_GATE>,
+-					 <&clks IMX5_CLK_SDMA_GATE>;
++					 <&clks IMX5_CLK_AHB>;
+ 				clock-names = "ipg", "ahb";
+ 				#dma-cells = <3>;
+ 				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx51.bin";
 -- 
 2.20.1
 
