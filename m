@@ -2,70 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFE143983
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A83A343978
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732783AbfFMPOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:14:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:6702 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732260AbfFMPON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:14:13 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:13:54 -0700
-X-ExtLoop1: 1
-Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
-  by orsmga004.jf.intel.com with ESMTP; 13 Jun 2019 08:13:53 -0700
-Date:   Thu, 13 Jun 2019 18:13:52 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1732635AbfFMPN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:13:58 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46259 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732315AbfFMPN4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:13:56 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so22918081qtn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:13:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KkKhR2elMbqIQhtMNyRPKfFVISR0bn0T2g34f2r/Vr8=;
+        b=SfHInPm3DzZYLPoEmUVQqUjB5LScF9DsUpJ4xj+NyGtlotEBCDOd7k0OAiLknLgpy1
+         UwRMpQmGSzJF0gJD/kcFMjRmesoOZkKPKtk3EWMStIXtk1BSmgVZYNk1p6EKmXc4imPv
+         1V1hEuNESlphnwH9Ffq42vPqvIo/88Zh85Tr1f4Tsa8YuL7Uls35977s64dpr/1WcL8J
+         ZbYx/FYbcjhIEQbbmhQgdZInCU3g7QIDiBsNO/6qOPrD5yA2TBMRXmDe20WR5bhjdxVZ
+         hMtmCv3lKFvdGH4OgmFjKOdFtkKSEmGywoQe1a2KSSYQTb19JMjkAlD66sOEA23ZLtm9
+         d4ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KkKhR2elMbqIQhtMNyRPKfFVISR0bn0T2g34f2r/Vr8=;
+        b=i3om2b77zIPV2HscCy9lSflJqbofEkR4IBTL8Kg40c1F8JkKE2SV6OsT/JdG0qq/l/
+         ohAZMIrFOD9PsHQ11uxaMrePV4vZQbcPwBK4kh1vrANtm6kQSvm+/lJK9HriphT+BC8N
+         YA4chEt1W3qbLu7eg7EvMhMxyL176bgU+qyZUE8bn66JGR1i7+n8T3cLHisaiRt4HTJ1
+         vG2FoR8CamP+4XJzynW3DUFiUBU9vrpzFKmAxPWvsdLmi4AhjiUaSUmOOy8+2Rc9x5Fh
+         wJlj4jh0Wv+RpluOD4K4JVeFEyWitCQsqOzTFwJDI0GGOQ13h1sZGpaulfjobOWq3SPW
+         t2ng==
+X-Gm-Message-State: APjAAAWKMVvWMhUDI8YMyfMkwhhYXgbSkDiEUt98fFjjAF4DrS3mp5jT
+        T6QLQWpT8rsiysdeVLyU2Rv2jA==
+X-Google-Smtp-Source: APXvYqxrIgS7SEgThFO4xWkROTtAeKu9gS/7k/Y8mWYSTA6O8BjyUZUk4XGZHPcLg6c7oSu9BznGCA==
+X-Received: by 2002:ac8:2f90:: with SMTP id l16mr60699198qta.12.1560438835818;
+        Thu, 13 Jun 2019 08:13:55 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id c18sm1546907qkk.73.2019.06.13.08.13.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 08:13:55 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hbRQI-0001rX-U0; Thu, 13 Jun 2019 12:13:54 -0300
+Date:   Thu, 13 Jun 2019 12:13:54 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: linux-next: build warning after merge of the tpmdd tree
-Message-ID: <20190613151352.GB18488@linux.intel.com>
-References: <20190611145255.68682629@canb.auug.org.au>
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613151354.GC22901@ziepe.ca>
+References: <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+ <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca>
+ <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca>
+ <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
+ <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611145255.68682629@canb.auug.org.au>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matthew, can you provide a fixup for this?
+On Wed, Jun 12, 2019 at 06:14:46PM -0700, Dan Williams wrote:
+> > Effectively, we would need a way for an admin to close a specific file
+> > descriptor (or set of fds) which point to that file.  AFAIK there is no way to
+> > do that at all, is there?
+> 
+> Even if there were that gets back to my other question, does RDMA
+> teardown happen at close(fd), or at final fput() of the 'struct
+> file'?
 
-/Jarkko
+AFAIK there is no kernel side driver hook for close(fd). 
 
-On Tue, Jun 11, 2019 at 02:52:55PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tpmdd tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/firmware/efi/tpm.c: In function 'efi_tpm_eventlog_init':
-> drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of 'tpm2_calc_event_log_size' makes pointer from integer without a cast [-Wint-conversion]
->   tbl_size = tpm2_calc_event_log_size(efi.tpm_final_log
->                                       ~~~~~~~~~~~~~~~~~
->           + sizeof(final_tbl->version)
->           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->           + sizeof(final_tbl->nr_events),
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/firmware/efi/tpm.c:19:43: note: expected 'void *' but argument is of type 'long unsigned int'
->  static int tpm2_calc_event_log_size(void *data, int count, void *size_info)
->                                      ~~~~~~^~~~
-> 
-> Introduced by commit
-> 
->   a537b15c54a3 ("tpm: Reserve the TPM final events table")
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+rdma uses a normal chardev so it's lifetime is linked to the file_ops
+release, which is called on last fput. So all the mmaps, all the dups,
+everything must go before it releases its resources.
 
-
+Jason
