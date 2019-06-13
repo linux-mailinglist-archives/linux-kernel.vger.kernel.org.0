@@ -2,184 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD25144E9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDDEF44E9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:37:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfFMVi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49820 "EHLO mail.kernel.org"
+        id S1727483AbfFMVh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:37:56 -0400
+Received: from mga07.intel.com ([134.134.136.100]:44112 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfFMVi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:38:26 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E703721537;
-        Thu, 13 Jun 2019 21:38:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560461905;
-        bh=M6myfQdWWELGGbpAI4gL7Nt7LV9Ty3oKQkl8fFDTXBo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GiOEXmkQohC5GhiHicscoDbvsQnf1y6heSN7wKnwrYQrCz878j+fqKZhH5xjnDUtK
-         HhOJKhXv2jJryT0/NZONEpoeKAfuYHFAaB9cSSFQfosZn4xl0zVA4fUuKHkiM7ydu1
-         90kKhgggnzfRc1MHJRuCVCOy+GoZO/RJA7zEt05k=
-Date:   Thu, 13 Jun 2019 16:38:23 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: Re: [PATCH] PCI: PM: Skip devices in D0 for suspend-to-idle
-Message-ID: <20190613213823.GM13533@google.com>
-References: <2513600.jR9RdVMSR0@kreacher>
+        id S1726806AbfFMVhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 17:37:55 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:37:55 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2019 14:37:54 -0700
+Date:   Thu, 13 Jun 2019 14:39:16 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in
+ gup fast path
+Message-ID: <20190613213915.GE32404@iweiny-DESK2.sc.intel.com>
+References: <1560422702-11403-1-git-send-email-kernelfans@gmail.com>
+ <1560422702-11403-3-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2513600.jR9RdVMSR0@kreacher>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1560422702-11403-3-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 12:14:02AM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Jun 13, 2019 at 06:45:01PM +0800, Pingfan Liu wrote:
+> FOLL_LONGTERM suggests a pin which is going to be given to hardware and
+> can't move. It would truncate CMA permanently and should be excluded.
 > 
-> Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
-> attempted to avoid a problem with devices whose drivers want them to
-> stay in D0 over suspend-to-idle and resume, but it did not go as far
-> as it should with that.
+> FOLL_LONGTERM has already been checked in the slow path, but not checked in
+> the fast path, which means a possible leak of CMA page to longterm pinned
+> requirement through this crack.
 > 
-> Namely, first of all, it is questionable to change the power state
-> of a PCI bridge with a device in D0 under it, but that is not
-> actively prevented from happening during system-wide PM transitions,
-> so use the skip_bus_pm flag introduced by commit d491f2b75237 for
-> that.
-
-I think it's more than questionable.  I think a bridge is *required*
-to be in D0 if any downstream device is in D0.  Based on the PCI PM
-spec r1.2, sec 6, table 6-1, if the bridge is not in D0, there can be
-no PCI transactions on its secondary bus.
-
-> Second, the configuration of devices left in D0 (whatever the reason)
-> during suspend-to-idle need not be changed and attempting to put them
-> into D0 again by force may confuse some firmware, so explicitly avoid
-> doing that.
-
-I don't know what to do with "may confuse some firmware"; it doesn't
-say what firmware is affected or why, so it sort of leads to "we can
-never touch this code because we don't know what might break."
-
-But IMO the first reason by itself is more than enough to keep a
-bridge in D0 if any downstream device is in D0.
-
-> Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
-> Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Place a check in gup_pte_range() in the fast path.
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mike Rapoport <rppt@linux.ibm.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
 > ---
+>  mm/gup.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> Tested on Dell XPS13 9360 with no issues.
-> 
-> ---
->  drivers/pci/pci-driver.c |   47 +++++++++++++++++++++++++++++++++++------------
->  1 file changed, 35 insertions(+), 12 deletions(-)
-> 
-> Index: linux-pm/drivers/pci/pci-driver.c
-> ===================================================================
-> --- linux-pm.orig/drivers/pci/pci-driver.c
-> +++ linux-pm/drivers/pci/pci-driver.c
-> @@ -524,7 +524,6 @@ static void pci_pm_default_resume_early(
->  	pci_power_up(pci_dev);
->  	pci_restore_state(pci_dev);
->  	pci_pme_restore(pci_dev);
-> -	pci_fixup_device(pci_fixup_resume_early, pci_dev);
->  }
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 766ae54..de1b03f 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1757,6 +1757,14 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+>  		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+>  		page = pte_page(pte);
 >  
->  /*
-> @@ -842,18 +841,16 @@ static int pci_pm_suspend_noirq(struct d
->  
->  	if (pci_dev->skip_bus_pm) {
->  		/*
-> -		 * The function is running for the second time in a row without
-> +		 * Either the device is a bridge with a child in D0 below it, or
-> +		 * the function is running for the second time in a row without
->  		 * going through full resume, which is possible only during
-> -		 * suspend-to-idle in a spurious wakeup case.  Moreover, the
-> -		 * device was originally left in D0, so its power state should
-> -		 * not be changed here and the device register values saved
-> -		 * originally should be restored on resume again.
-> +		 * suspend-to-idle in a spurious wakeup case.  The device should
-> +		 * be in D0 at this point, but if it is a bridge, it may be
-> +		 * necessary to save its state.
->  		 */
-> -		pci_dev->state_saved = true;
-> -	} else if (pci_dev->state_saved) {
-> -		if (pci_dev->current_state == PCI_D0)
-> -			pci_dev->skip_bus_pm = true;
-> -	} else {
-> +		if (!pci_dev->state_saved)
-> +			pci_save_state(pci_dev);
-> +	} else if (!pci_dev->state_saved) {
->  		pci_save_state(pci_dev);
->  		if (pci_power_manageable(pci_dev))
->  			pci_prepare_to_sleep(pci_dev);
-> @@ -862,6 +859,22 @@ static int pci_pm_suspend_noirq(struct d
->  	dev_dbg(dev, "PCI PM: Suspend power state: %s\n",
->  		pci_power_name(pci_dev->current_state));
->  
-> +	if (pci_dev->current_state == PCI_D0) {
-> +		pci_dev->skip_bus_pm = true;
 > +		/*
-> +		 * Changing the power state of a PCI bridge with a device in D0
-> +		 * below it is questionable, so avoid doing that by setting the
-> +		 * skip_bus_pm flag for the parent bridge.
-
-Maybe "Per PCI PM r1.2, table 6-1, a bridge must be in D0 if any
-downstream device is in D0"?
-
+> +		 * FOLL_LONGTERM suggests a pin given to hardware. Prevent it
+> +		 * from truncating CMA area
 > +		 */
-> +		if (pci_dev->bus->self)
-> +			pci_dev->bus->self->skip_bus_pm = true;
+> +		if (unlikely(flags & FOLL_LONGTERM) &&
+> +			is_migrate_cma_page(page))
+> +			goto pte_unmap;
+> +
+>  		head = try_get_compound_head(page, 1);
+>  		if (!head)
+>  			goto pte_unmap;
+> @@ -1900,6 +1908,12 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>  		refs++;
+>  	} while (addr += PAGE_SIZE, addr != end);
+>  
+> +	if (unlikely(flags & FOLL_LONGTERM) &&
+> +		is_migrate_cma_page(page)) {
+> +		*nr -= refs;
+> +		return 0;
 > +	}
 > +
-> +	if (pci_dev->skip_bus_pm && !pm_suspend_via_firmware()) {
-> +		dev_dbg(dev, "PCI PM: Skipped\n");
-> +		goto Fixup;
+
+Why can't we place this check before the while loop and skip subtracting the
+page count?
+
+Can is_migrate_cma_page() operate on any "subpage" of a compound page? 
+
+Here this calls is_magrate_cma_page() on the tail page of the compound page.
+
+I'm not an expert on compound pages nor cma handling so is this ok?
+
+It seems like you need to call is_migrate_cma_page() on each page within the
+while loop?
+
+>  	head = try_get_compound_head(pmd_page(orig), refs);
+>  	if (!head) {
+>  		*nr -= refs;
+> @@ -1941,6 +1955,12 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+>  		refs++;
+>  	} while (addr += PAGE_SIZE, addr != end);
+>  
+> +	if (unlikely(flags & FOLL_LONGTERM) &&
+> +		is_migrate_cma_page(page)) {
+> +		*nr -= refs;
+> +		return 0;
 > +	}
 > +
->  	pci_pm_set_unknown_state(pci_dev);
+
+Same comment here.
+
+>  	head = try_get_compound_head(pud_page(orig), refs);
+>  	if (!head) {
+>  		*nr -= refs;
+> @@ -1978,6 +1998,12 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
+>  		refs++;
+>  	} while (addr += PAGE_SIZE, addr != end);
 >  
->  	/*
-> @@ -909,7 +922,16 @@ static int pci_pm_resume_noirq(struct de
->  	if (dev_pm_smart_suspend_and_suspended(dev))
->  		pm_runtime_set_active(dev);
->  
-> -	pci_pm_default_resume_early(pci_dev);
-> +	/*
-> +	 * In the suspend-to-idle case, devices left in D0 during suspend will
-> +	 * stay in D0, so it is not necessary to restore or update their
-> +	 * configuration here and attempting to put them into D0 again may
-> +	 * confuse some firmware, so avoid doing that.
-> +	 */
-> +	if (!pci_dev->skip_bus_pm || pm_suspend_via_firmware())
-> +		pci_pm_default_resume_early(pci_dev);
+> +	if (unlikely(flags & FOLL_LONGTERM) &&
+> +		is_migrate_cma_page(page)) {
+> +		*nr -= refs;
+> +		return 0;
+> +	}
 > +
-> +	pci_fixup_device(pci_fixup_resume_early, pci_dev);
->  
->  	if (pci_has_legacy_pm_support(pci_dev))
->  		return pci_legacy_resume_early(dev);
-> @@ -1200,6 +1222,7 @@ static int pci_pm_restore_noirq(struct d
->  	}
->  
->  	pci_pm_default_resume_early(pci_dev);
-> +	pci_fixup_device(pci_fixup_resume_early, pci_dev);
->  
->  	if (pci_has_legacy_pm_support(pci_dev))
->  		return pci_legacy_resume_early(dev);
-> 
-> 
+
+And here.
+
+Ira
+
+>  	head = try_get_compound_head(pgd_page(orig), refs);
+>  	if (!head) {
+>  		*nr -= refs;
+> -- 
+> 2.7.5
 > 
