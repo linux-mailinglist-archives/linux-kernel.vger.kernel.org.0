@@ -2,112 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2EAE43A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA1543997
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:15:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388780AbfFMPSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:18:07 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42700 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732165AbfFMNOX (ORCPT
+        id S1733049AbfFMPOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:14:47 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:44661 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732243AbfFMN0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:14:23 -0400
-Received: by mail-vs1-f65.google.com with SMTP id 190so8986209vsf.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CR4I31iRpJNzMeDmL877t0ARvDi8UmH6xTDgLBUKOEU=;
-        b=ELoOMPni1y0S2Eeu4CKg+k17whALIizetT7cvmiVzng2ASoWY/zEf4QCF5Q4OCkG4r
-         lLSK1k41lMROJ+CxzlSyxs4V908CnVex3CA8jzK+NeJYcm9x2tEsn3yAQP+XWphKFejP
-         JnPcJGVuzsD2hPED5Rx4zSlBDEMa4cgvvknreVnW5pBkqU20fs0btRzAemvxo5UuMhXw
-         g5QinFv6WnqFTkUUnCvRl6n9kN9cK8l6xbWlCP4F+wdmQWWeftsL/0JGcradgEWeJSzp
-         QWxvGdPrSOdP1tTXeg1zxynQFa/LfRm4TmZHofWD2iwya+qc8IzJc2B3hZq6Tq0/OBz1
-         lEYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CR4I31iRpJNzMeDmL877t0ARvDi8UmH6xTDgLBUKOEU=;
-        b=LOtOVhe02p90+TctR4h9EbdJJ0tfhVpHY2YF0a9Rh3QKWSPkInH94s/DYdRJ/o9l4c
-         en3ksHzcIArWo1rtD+g8wnKxQME8rOOMGhMwA/tKNePKduMhku8lynv4DEYbKK7vPrzq
-         J4YFasiI4xJFDEDz6TFdGvKfqbhpwG4v53ZbClZyTOv7YT5gAyPWSZ31JCQe/6agrOn1
-         LAdAZZ+LY7PONybrLyvHWUa1+Av3W6XjEuCWGaRLzzNHMG9jue13zMbjHH1qxLsegL/Y
-         tPqaZo6Pw1WkadyABtMbgFQKdfB3vQ4UqQXoPtJi5F4k9Grpv1WCxmcVsGv6PHPneYG6
-         CD/A==
-X-Gm-Message-State: APjAAAWrXavGIL0l9bWRZEpdMA3rk/g2dFI+8fePMHDP8XD8rz0137Uu
-        6YskM+oyrYscDfpOmJzzIw1+VaxzQOLp6txtwSOjBQ==
-X-Google-Smtp-Source: APXvYqwbXxtKhJhPoMfm6hW9bmujkyqa7UqRJRkTixkWhWXjnp1ugr9ACSLRfaX8ICyv+pkIWZG5c6+bqjRTtP+mu6A=
-X-Received: by 2002:a67:ee5b:: with SMTP id g27mr15041407vsp.165.1560431662796;
- Thu, 13 Jun 2019 06:14:22 -0700 (PDT)
+        Thu, 13 Jun 2019 09:26:34 -0400
+Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 5F7D624000F;
+        Thu, 13 Jun 2019 13:26:30 +0000 (UTC)
+Date:   Thu, 13 Jun 2019 15:14:11 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bhushan Shah <bshah@mykolab.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        =?utf-8?B?5Z2a5a6a5YmN6KGM?= <powerpan@qq.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v10 09/11] drm/sun4i: sun6i_mipi_dsi: Add VCC-DSI
+ regulator support
+Message-ID: <20190613131411.m5noowniybmy2iwb@flea>
+References: <20190520090318.27570-1-jagan@amarulasolutions.com>
+ <20190520090318.27570-10-jagan@amarulasolutions.com>
+ <20190603134907.lh5rdpucbrzrsdps@flea>
+ <CAMty3ZC5-y8RJcLjFP_G8i7=9-BuOQWdnxoo66TO4mrrOxqDLg@mail.gmail.com>
 MIME-Version: 1.0
-References: <1559577325-19266-1-git-send-email-ludovic.Barre@st.com> <5b7e1ae5-c97e-5a21-fc3e-7cc328087f04@st.com>
-In-Reply-To: <5b7e1ae5-c97e-5a21-fc3e-7cc328087f04@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 13 Jun 2019 15:13:46 +0200
-Message-ID: <CAPDyKFrULRk=cHzVodU9aa6LDX9ip-VPHNwG7QXhmNZrMpPjGw@mail.gmail.com>
-Subject: Re: [PATCH V3 0/3] mmc: mmci: add busy detect for stm32 sdmmc variant
-To:     Ludovic BARRE <ludovic.barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="67h24wqq3644zbtr"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZC5-y8RJcLjFP_G8i7=9-BuOQWdnxoo66TO4mrrOxqDLg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Jun 2019 at 15:02, Ludovic BARRE <ludovic.barre@st.com> wrote:
->
-> hi Ulf
->
-> Just a "gentleman ping" about this series.
-> I know you are busy, it's just to be sure you do not forget me :-)
 
-Thanks! I started briefly to review, but got distracted again. I will
-come to it, but it just seems to take more time than it should, my
-apologies.
+--67h24wqq3644zbtr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Br
-Uffe
+On Thu, Jun 13, 2019 at 01:25:52PM +0530, Jagan Teki wrote:
+> On Mon, Jun 3, 2019 at 7:19 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Mon, May 20, 2019 at 02:33:16PM +0530, Jagan Teki wrote:
+> > > Allwinner MIPI DSI controllers are supplied with SoC
+> > > DSI power rails via VCC-DSI pin.
+> > >
+> > > Add support for this supply pin by adding voltage
+> > > regulator handling code to MIPI DSI driver.
+> > >
+> > > Tested-by: Merlijn Wajer <merlijn@wizzup.org>
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >
+> > This creates a lot of warnings at boot time on my board this is
+> > missing vcc-dsi-supply.
+>
+> Is it about regulator_put or similar, would you provide the log.
 
->
-> Regards
-> Ludo
->
-> On 6/3/19 5:55 PM, Ludovic Barre wrote:
-> > From: Ludovic Barre <ludovic.barre@st.com>
-> >
-> > This patch series adds busy detect for stm32 sdmmc variant.
-> > Some adaptations are required:
-> > -Clear busy status bit if busy_detect_flag and busy_detect_mask are
-> >   different.
-> > -Add hardware busy timeout with MMCIDATATIMER register.
-> >
-> > V3:
-> > -rebase on latest mmc next
-> > -replace re-read by status parameter.
-> >
-> > V2:
-> > -mmci_cmd_irq cleanup in separate patch.
-> > -simplify the busy_detect_flag exclude
-> > -replace sdmmc specific comment in
-> > "mmc: mmci: avoid fake busy polling in mmci_irq"
-> > to focus on common behavior
-> >
-> > Ludovic Barre (3):
-> >    mmc: mmci: fix read status for busy detect
-> >    mmc: mmci: add hardware busy timeout feature
-> >    mmc: mmci: add busy detect for stm32 sdmmc variant
-> >
-> >   drivers/mmc/host/mmci.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
-> >   drivers/mmc/host/mmci.h |  3 +++
-> >   2 files changed, 44 insertions(+), 8 deletions(-)
-> >
+Sure
+http://code.bulix.org/whiea9-769551?raw
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--67h24wqq3644zbtr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQJMIwAKCRDj7w1vZxhR
+xWegAQDwSoUtcUAwaJhKm16aerVWYEQ/+xe+Ju5225zohnNd/QD9EENvHyaxAOv5
+b+bUdFuORnm+O681sZh0ILOpLSLMjQE=
+=Md8P
+-----END PGP SIGNATURE-----
+
+--67h24wqq3644zbtr--
