@@ -2,94 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94A244267
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F1E442B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392074AbfFMQWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:22:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34275 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731137AbfFMQV4 (ORCPT
+        id S2391793AbfFMQZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:25:01 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38720 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730984AbfFMQY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:21:56 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s49so2264791edb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:21:55 -0700 (PDT)
+        Thu, 13 Jun 2019 12:24:58 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f97so8382128plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:24:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=globallogic.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mz6GIPKtlkGerT/pt6ZWWFPZs8Zmg5qBehaRfeC+EUo=;
-        b=EhoeFLRHnBhKbWvy9HbsUZYnmSqkMjgbw/4JBVzBmKwtC2BYciZon/sGwYlwxD2ArB
-         820lhaGvsyDxIQBlup+5VKFfAjqc0UgL0AndVHVEjCUhxyB6MYwWpt9rVeipesbYJm9O
-         9LctzS/TEIahM6LL9VOCpzIV8wbDeIGYc6LpG/4Ag9cMHwzd7NIdHtF03n3uFJ5oSCsa
-         3G8seNu4kPRGCTWh5OLMltNpswqlywnH6ctZu426ea1q3OKYycClQ4ZPMg8bCkDfv5pf
-         qrUMZwVvDtNADcRslOs9acphTWeWGkYvfzJ9d44UO3i9kqBf746dXPNN4G9zYO82urgl
-         cWsw==
+         :cc:content-transfer-encoding;
+        bh=hDoQf8XVMWB4WIjEfgbzeZ3Sc8iH6yn9VUuCEmnDaKw=;
+        b=q/iO2g/3m+0dJFISoxCPlF7W5Fu4zwu37pr6P69r1zZkoab7K9d7LcVmNE+c356Ylh
+         jQ/X2I6FlbFLefEO7W2cB0Uc5m+csgWwoZuLgvUnImrKA1cXtztX1m4ENH/e7iHKygXv
+         pOZ+YEPAlchXUS7dW8E2lytG1MYHLHToL4avmP/yHbRRpPjhLvNubF7x5MTLYtldc80U
+         s4+E1JgsGsjTuzr4FRoaFinD6oKCINDkJTtcEcYXyh3HfAEIpbgVF0X1fN6vXO8THeWk
+         oQzgrjtFGbdCJw5Qc5vpannCM+5VPabA5X7BDUKksY8INYMsJxOD+acwjLlk4yGQYmK4
+         hM1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mz6GIPKtlkGerT/pt6ZWWFPZs8Zmg5qBehaRfeC+EUo=;
-        b=lMcdXlQcu644DiusZQ19IIczNb+Ys4QgQBkHOeMOiXoM+gUbV4NVzRF0Xp9+EbUpNM
-         EbcTKjrE7LFN8PjT3QR4nsxLvoP3x0ESDDs6blmnihrNu5y6bosKpYD0+yr+sp2JyncP
-         tqvWB87PAuO/F6hV9FZQPOhgQG2EUaFTeUBX7WZ1LZjK+Fqkh7IdFyJkceR+5gB4lmom
-         o6Vs1ClxGxmL7kI/azwfRKcdN4gbMnCntrejKtmJmubqCANtvmEnd3V7y2gIxhryhAgh
-         xW8Il3tuPTP2nBLo85/LyeaL5Gpber+2vCGWTYwkWMW8jQ887Bev+ORUgINnlaMdeCJx
-         +Uzg==
-X-Gm-Message-State: APjAAAXnfDdLKxp8bRK1XSqEz2A5Cf4KNi3u8ye0z90y0B1FQziSsDhO
-        qW9sYbQJaB8lhcYKFwy5CZpImf0MhfuZuSK1Y/auRf69HUQ=
-X-Google-Smtp-Source: APXvYqxuWVuyBpuxXeXaLydjVhfXhrVUHymBl4vNZ13Z3Lq3A6ZwUrJo9f7zawIdyv/dg+ZkFHQ0nrTO50sHeOAATfU=
-X-Received: by 2002:a17:906:3948:: with SMTP id g8mr45653628eje.168.1560442914546;
- Thu, 13 Jun 2019 09:21:54 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hDoQf8XVMWB4WIjEfgbzeZ3Sc8iH6yn9VUuCEmnDaKw=;
+        b=cpPdLlemUauGxDrMfFCr1soxZpNqvNIj5ssPebbNBBa+i6RALQO+cgZ+6gMIYdPevf
+         S7CO4CN+7w23rjmd9ehApXHy9edJceVeI+tbBqLLK81LaUQiU8KIiryptu9b7ZxgGon0
+         vj4tkOTJ+orChhzx4TMtoGY0BNbH4ZT0LHyvfE6HIjEbDxpIFUn+NbHSk7vs177NHdOQ
+         iAPrM5gCeS+GM6vxpemx1xZs7O71TIcz1T+kIJ2MTyA3qYjl+qXA+7N14oPiNOM5C3EQ
+         zeO5+Osd/FTKoV+oLvb9G9OU2heJBtqyUBnPW/JRoAESrLNL/RJyUyuv9+GzjgyN2hNW
+         1/kA==
+X-Gm-Message-State: APjAAAVi9+8VYCiqIC57nkz03XDdnbUK/fJ3Sijqb/mj3rtL9e0W+N9c
+        6cZN4wz4hg+BuvZ2u8UYax3C3wR0dlg3Lovsien3WLlx728=
+X-Google-Smtp-Source: APXvYqz2N6YseMc2JaVVByd10s1wHIsddE686w1OjgTzOcY7ejuEdMag4oB/EBVylQXKWw3u8PJ6+J5CVfKXwKUfxDE=
+X-Received: by 2002:a17:902:44f:: with SMTP id 73mr30807143ple.192.1560443098024;
+ Thu, 13 Jun 2019 09:24:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190612163144.18486-1-roman.stratiienko@globallogic.com>
- <20190612163144.18486-2-roman.stratiienko@globallogic.com>
- <20190613135241.aghcrrz7rg2au3bw@MacBook-Pro-91.local> <CAODwZ7v=RSsmVj5GjcvGn2dn+ejLRBHZ79x-+S9DrX4GoXuVaQ@mail.gmail.com>
- <20190613145535.tdesq3y2xy6ycpw7@MacBook-Pro-91.local>
-In-Reply-To: <20190613145535.tdesq3y2xy6ycpw7@MacBook-Pro-91.local>
-From:   Roman Stratiienko <roman.stratiienko@globallogic.com>
-Date:   Thu, 13 Jun 2019 19:21:43 +0300
-Message-ID: <CAODwZ7so4cVVJmPHXGGOxKRO_0L2NjZJac73wfaHPV7ZN6ce1g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] nbd: add support for nbd as root device
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        Aleksandr Bulyshchenko <A.Bulyshchenko@globallogic.com>,
-        linux-block@vger.kernel.org, axboe@kernel.dkn.org
+References: <20190612095828.17936-1-gregkh@linuxfoundation.org>
+In-Reply-To: <20190612095828.17936-1-gregkh@linuxfoundation.org>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Fri, 14 Jun 2019 01:24:46 +0900
+Message-ID: <CAC5umyhSiOo6aN=cy09MdH3R3qpWiaqk+b-1Onrc_Byqc19dAQ@mail.gmail.com>
+Subject: Re: [PATCH] fault-inject: clean up debugfs file creation logic
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I don't doubt you have a good reason to want it, I'm just not clear on why an
-> initramfs isn't an option?  You have this special kernel with your special
-> option, and you manage to get these things to boot your special kernel right?
-> So why is a initramfs with a tiny nbd-client binary in there not an option?
+2019=E5=B9=B46=E6=9C=8812=E6=97=A5(=E6=B0=B4) 18:58 Greg Kroah-Hartman <gre=
+gkh@linuxfoundation.org>:
 >
-> Also I mean that there are a bunch of different nbd servers out there.  We have
-> our own here at Facebook, qemu has one, IIRC there's a ceph one.  They all have
-> their own connection protocols.  The beauty of NBD is that it doesn't have to
-> know about that part, it just does the block device part, and I'd really rather
-> leave it that way.  Thanks,
+> There is no need to check the return value of a debugfs_create_file
+> call, a caller should never change what they do depending on if debugfs
+> is working properly or not, so remove the checks, simplifying the logic
+> in the file a lot.
 >
-> Josef
+> Also fix up the error check for debugfs_create_dir() which was not
+> returning NULL for an error, but rather a error pointer.
+>
+> Cc: Akinobu Mita <akinobu.mita@gmail.com>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+Looks good.
 
-The only reason I prefer embed client into the kernel is to save
-valuable engineering time creating and supporting custom initramfs,
-that is not so easy especially on Android-based systems.
-
-Taking into account that if using NBD and creating custom initramfs
-required only for automated testing, many companies would choose
-manual deployment instead, that is bad for the human progress.
-
-I believe that all users of non-standard NBD handshake protocols could
-continue to use custom nbd-clients.
-
-Either you accept this patch or not I would like to pass review from
-maintainers and other persons that was involved in NBD development,
-thus making a step closer to get this mainlined in some future.
-
---
-Regards,
-Roman
+Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
