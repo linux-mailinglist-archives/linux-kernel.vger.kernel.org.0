@@ -2,219 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1A443C95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A897B43C8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfFMPg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:36:28 -0400
-Received: from mail-eopbgr760072.outbound.protection.outlook.com ([40.107.76.72]:1620
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1732406AbfFMPgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:36:20 -0400
+Received: from app2.whu.edu.cn ([202.114.64.89]:50524 "EHLO whu.edu.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727205AbfFMKSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:18:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CrIeVn+nUkqIe3O0L9yJM3lkBCAlzxedB/cahtwPIZc=;
- b=WJahQ7oSJsn4HkkLlNpsmBqcaaCSVwqcz06e9cu/omOt8s9+QhbRreNutiNaSKx8lMQaV2rSYWEsEywNSxhLPNegGLtFjKFMviUgG8Bhx0SKBUBU2pSIbhgxH8lvhYAtAOKmcLdegFCAvT3R1w60uUFLSFkIBIVDj2OYRXlK624=
-Received: from BYAPR02MB4776.namprd02.prod.outlook.com (52.135.232.145) by
- BYAPR02MB4533.namprd02.prod.outlook.com (52.135.239.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Thu, 13 Jun 2019 10:18:00 +0000
-Received: from BYAPR02MB4776.namprd02.prod.outlook.com
- ([fe80::3184:2890:c7e6:744a]) by BYAPR02MB4776.namprd02.prod.outlook.com
- ([fe80::3184:2890:c7e6:744a%6]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
- 10:18:00 +0000
-From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
-To:     Helmut Grohne <helmut.grohne@intenta.de>
-CC:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
-Subject: RE: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for arm
- pl353 smc nand interface
-Thread-Topic: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for arm
- pl353 smc nand interface
-Thread-Index: AQHU83vggkxmg2rBCEyEcIHuXS/Vp6ZMy7GAgAFFM5CABRNXAIBGkizg
-Date:   Thu, 13 Jun 2019 10:18:00 +0000
-Message-ID: <BYAPR02MB4776C0226F9A9F55C9A6DE44AFEF0@BYAPR02MB4776.namprd02.prod.outlook.com>
-References: <1555326613-26739-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <20190425112338.dipgmqqfuj45gx6s@laureti-dev>
- <DM6PR02MB4779EE37978EC0E6475C55D7AF390@DM6PR02MB4779.namprd02.prod.outlook.com>
- <20190429121804.4jzspv4goehwdpez@laureti-dev>
-In-Reply-To: <20190429121804.4jzspv4goehwdpez@laureti-dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nagasure@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e5ac365a-def6-4ea5-cd45-08d6efe869ca
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR02MB4533;
-x-ms-traffictypediagnostic: BYAPR02MB4533:
-x-microsoft-antispam-prvs: <BYAPR02MB453318B1CC8864D43AE5446BAFEF0@BYAPR02MB4533.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(366004)(39860400002)(376002)(199004)(189003)(129404003)(13464003)(478600001)(26005)(7696005)(476003)(76176011)(446003)(6506007)(102836004)(186003)(53546011)(53936002)(9686003)(25786009)(55016002)(6436002)(6246003)(6916009)(4326008)(561944003)(71190400001)(71200400001)(229853002)(14444005)(33656002)(256004)(486006)(99286004)(2906002)(11346002)(54906003)(8676002)(52536014)(7736002)(305945005)(74316002)(5660300002)(81156014)(81166006)(14454004)(8936002)(66476007)(66556008)(64756008)(66446008)(7416002)(76116006)(66946007)(73956011)(6116002)(3846002)(316002)(66066001)(68736007)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4533;H:BYAPR02MB4776.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BkcVO+CnUpPMLVK7ILgX1UZDnqnDhZ0juHUJ6SWOigk5Ebe2iE/CrrqpgwjEBtEHDLijAf9OSMwPuuFaDWh+ubLKwGb+WWEvp87BxEFybRMv+83qV2VVySARHC4urQMDxutPQ7rqDW8DIzhObIoBE+ZvodoGS6TTyju7PDUjXcVLPT4NKvc1onHial2Zf7mx3hXvNBKD3/0lfUwUo4ATkbNvuWHhexgtKBh7sM75VI+VxmurOLYvZj6QapOfFRFTtDj7zvCMl2bjqdmS5HOii5i0YNDmu7zBTyvdwf4SOz+UbFLLPBxJaVPb/r7nPzWO2C9mS0GhTgPLxZYvB1pbD1Civ3VNLGmRRXi7kWkiJmMeL0e9vk/M7FusyT6HDmOQb67PB/3/r7ZT4u16ohCSoGtDwkj9gnIvGb/gL4IWezo=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727379AbfFMKUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:20:09 -0400
+Received: from localhost (unknown [111.202.192.3])
+        by email2 (Coremail) with SMTP id AgBjCgBHTvZJIwJdy3VkAQ--.48697S2;
+        Thu, 13 Jun 2019 18:19:59 +0800 (CST)
+From:   Peng Wang <rocking@whu.edu.cn>
+To:     peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com
+Cc:     linux-kernel@vger.kernel.org, Peng Wang <rocking@whu.edu.cn>
+Subject: [PATCH] locking/rwsem: save unnecessary rwsem_set_owner() after slow path
+Date:   Thu, 13 Jun 2019 18:18:09 +0800
+Message-Id: <20190613101809.16231-1-rocking@whu.edu.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5ac365a-def6-4ea5-cd45-08d6efe869ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 10:18:00.3734
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nagasure@xilinx.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4533
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AgBjCgBHTvZJIwJdy3VkAQ--.48697S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4ftr17GFWDCrWxJr4kCrg_yoW8JFy7pr
+        1FkFyqkr9FqFy7WrZrJa10va15Aw10yr97GanxCrW8AFnxAF4xJFs8Wr17tFy8GFyIkrWY
+        qF4fCFWF9ayxKrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkq14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+        JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_Gw1l
+        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
+        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+        0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUboKZJUUUUU==
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helmut,
+rwsem_down_write_failed() and rwsem_down_write_failed_killable() return
+with sem->owner set if acquire semaphore successfully, so we can skip
+rwsem_set_owner() to keep pace with reading.
 
-> -----Original Message-----
-> From: Helmut Grohne <helmut.grohne@intenta.de>
-> Sent: Monday, April 29, 2019 5:48 PM
-> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> Cc: bbrezillon@kernel.org; miquel.raynal@bootlin.com; richard@nod.at;
-> dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com; =
-linux-
-> mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek <mich=
-als@xilinx.com>;
-> nagasureshkumarrelli@gmail.com
-> Subject: Re: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for =
-arm pl353 smc
-> nand interface
->=20
-> On Mon, Apr 29, 2019 at 11:31:14AM +0000, Naga Sureshkumar Relli wrote:
-> > But just wanted to know, do you see issues with these __force and __iom=
-em castings?
->=20
-> I only see a minor issue: They're (deliberately) lengthy. Using many of t=
-hem diverts attention
-> of the reader. Therefore, my proposal attempted to reduce their frequency=
-. The only issue I see
-> here is readability.
->=20
-> > >
-> > > > +	u8 addr_cycles;
-> > > > +	struct clk *mclk;
-> > >
-> > > All you need here is the memory clock frequency. Wouldn't it be
-> > > easier to extract that frequency once during probe and store it
-> > > here? That assumes a constant frequency, but if the frequency isn't c=
-onstant, you have a
-> race condition.
-> > That is what we are doing in the probe.
-> > In the probe, we are getting mclk using of_clk_get() and then we are
-> > getting the actual frequency Using clk_get_rate().
-> > And this is constant frequency only(getting from dts)
->=20
-> Not quite. You're getting a clock reference in probe and then repeatedly =
-access the frequency
-> elswhere. I am suggesting that you get the clock frequency during probe a=
-nd never save the
-> clock reference to a struct.
->=20
-> > > > +		case NAND_OP_ADDR_INSTR:
-> > > > +			offset =3D nand_subop_get_addr_start_off(subop, op_id);
-> > > > +			naddrs =3D nand_subop_get_num_addr_cyc(subop, op_id);
-> > > > +			addrs =3D &instr->ctx.addr.addrs[offset];
-> > > > +			nfc_op->addrs =3D instr->ctx.addr.addrs[offset];
-> > > > +			for (i =3D 0; i < min_t(unsigned int, 4, naddrs); i++) {
-> > > > +				nfc_op->addrs |=3D instr->ctx.addr.addrs[i] <<
-> > >
-> > > I don't quite understand what this code does, but it looks strange
-> > > to me. I compared it to other drivers. The code here is quite
-> > > similar to marvell_nand.c. It seems like we are copying a varying
-> > > number (0 to 6) of addresses from the buffer instr->ctx.addr.addrs.
-> > > However their indices are special: 0, 1, 2, 3, offset + 4, offset + 5=
-. This is non-consecutive
-> and different from marvell_nand.c in this regard. Could it be that you re=
-ally meant index
-> offset+i here?
-> > I didn't get, what you are saying here.
-> > It is about updating page and column addresses.
-> > Are you asking me to remove nfc_op->addrs =3D instr->ctx.addr.addrs[off=
-set]; before for
-> loop?
->=20
-> I compared this code to marvell_nand.c and noticed a subtle difference.
-> Both snippets read 6 address bytes and consume them in a driver-specific =
-way. Now which
-> address bytes are consumed differs.
->=20
-> marvell_nand.c consumes instr->ctx.addr.addrs at indices offset,
-> offset+1, offset+2, offset+3, offset+4, offset+5. pl353_nand.c consumes
-> instr->ctx.addr.addrs at indices 0, 1, 2, 3, offset, offset+4, offset+5.
-> (In my previous mail, I didn't notice that it was also consuming the offs=
-et index.)
->=20
-> I would have expected this behaviour to be consistent between different d=
-rivers. If I assume
-> marvell_nand.c to do the right thing and pl353_nand.c to be wrong (which =
-is not necessarily a
-> correct assumption), then the code woule likely becom:
->=20
-> 	addrs =3D &instr->ctx.addr.addrs[offset];
-> 	for (i =3D 0; i < min_t(unsigned int, 4, naddrs); i++) {
-> 		nfc_op->addrs |=3D addrs[i] << (8 * i);
-> 		              // ^^^^^
-> 	}
->=20
-> Hope this helps.
-I spent much of time to address all your comments.
-All are addressed and tested. except the above one(address offset calculati=
-on)
-I didn't see any issue with the address calculation.
-for (i =3D 0; i < min_t(unsigned int, 4, naddrs); i++) {
-	nfc_op->addrs |=3D instr->ctx.addr.addrs[i] <<
-			 (8 * i);
-}
-If you go through the nand_base.c, there nand_fill_column_cycles() API, fil=
-ls the first two or one address cycle
-Based on bus width and page size.
-That means, addrs[0]/[1] will be updated here.
-And the page is updated to the next offsets.
-In the similar way we have to extract the offsets in driver.
-So the first four address bytes are stored using the above for() loop and i=
-f the
-Address cycles are more than 4, then store the remaining offsets as well.
+Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+---
+ kernel/locking/rwsem.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I just compared the offsets that are updated in driver with the offsets(pag=
-e and column) that the frame work(nand_base.c) is sending, and the offsets =
-are same.
-I have also checked these offsets with older driver(not exec_op() implement=
-ed) and both are matching.
+diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
+index 64877f5294e3..4fa21f737151 100644
+--- a/kernel/locking/rwsem.h
++++ b/kernel/locking/rwsem.h
+@@ -225,7 +225,8 @@ static inline void __down_write(struct rw_semaphore *sem)
+ 					     &sem->count);
+ 	if (unlikely(tmp != RWSEM_ACTIVE_WRITE_BIAS))
+ 		rwsem_down_write_failed(sem);
+-	rwsem_set_owner(sem);
++	else
++		rwsem_set_owner(sem);
+ }
+ 
+ static inline int __down_write_killable(struct rw_semaphore *sem)
+@@ -234,10 +235,12 @@ static inline int __down_write_killable(struct rw_semaphore *sem)
+ 
+ 	tmp = atomic_long_add_return_acquire(RWSEM_ACTIVE_WRITE_BIAS,
+ 					     &sem->count);
+-	if (unlikely(tmp != RWSEM_ACTIVE_WRITE_BIAS))
++	if (unlikely(tmp != RWSEM_ACTIVE_WRITE_BIAS)) {
+ 		if (IS_ERR(rwsem_down_write_failed_killable(sem)))
+ 			return -EINTR;
+-	rwsem_set_owner(sem);
++	} else {
++		rwsem_set_owner(sem);
++	}
+ 	return 0;
+ }
+ 
+-- 
+2.19.1
 
-So I didn't see any issue with this addrs calculation.
-As per the statement mentioned by you, this driver consumes addr[0], addr[1=
-], addr[2], addr[3] and
-If more address cycles needed, then addr[4] and addr[5]. This is correct.
-
-Please let me know, what exactly I am missing.
-
-Thank you for your inputs and sorry for the delay, as I am on leave for som=
-e days.
-
-Regards,
-Naga Sureshkumar Relli
->=20
-> Helmut
