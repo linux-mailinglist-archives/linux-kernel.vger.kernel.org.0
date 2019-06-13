@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B2243F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92894411C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390234AbfFMP6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:58:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37972 "EHLO mail.kernel.org"
+        id S2391370AbfFMQL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:11:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731500AbfFMIuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:50:24 -0400
+        id S1731226AbfFMInT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:43:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ABAC21473;
-        Thu, 13 Jun 2019 08:50:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ED9F20851;
+        Thu, 13 Jun 2019 08:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415823;
-        bh=dOXVFBwfFnjr6mtGpP9lPz0BOq2tVCzrhnbNIxx+j28=;
+        s=default; t=1560415398;
+        bh=9tJ+brvphG5FqZPXRCL6Jx/bGVwLJgT8YJU7aFRnTVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fIIgD+IiixlMiT9Y3mxC9YdAqaPtUBl/Plp00WPPbV8b3JWaNPAmAmvt/hkAuGNCP
-         9DJQ18N7s7tpLJVaBneDB7uDhvylxMsyWik15fEW2M3UiGoT4Un1CQJf+roQ0wvpUV
-         Z2RyFmK2MQ9blu4chl/jW2QBGuDEoultW1orxsT4=
+        b=jM3gDyvVzdXW0ylSwh8wOagnSQjQb+HPDMzM/05vLLF1omIAyn0kcmjc65f+TbW5n
+         kc5pUNtTqNFFoXe4Jitx2cKKj4mitnslnJbdTWe307uK8d1OugCcFh3FKlmU5gWRMc
+         v4heU+KD8r2AKCVELTZGSqgX55a0Tr4Qxs0UVPIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brett Creeley <brett.creeley@intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 136/155] ice: Add missing case in print_link_msg for printing flow control
-Date:   Thu, 13 Jun 2019 10:34:08 +0200
-Message-Id: <20190613075700.329220104@linuxfoundation.org>
+Subject: [PATCH 4.19 111/118] soc: renesas: Identify R-Car M3-W ES1.3
+Date:   Thu, 13 Jun 2019 10:34:09 +0200
+Message-Id: <20190613075650.703857246@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +46,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 203a068ac9e2722e4d118116acaa3a5586f9468a ]
+[ Upstream commit 15160f6de0bba712fcea078c5ac7571fe33fcd5d ]
 
-Currently we aren't checking for the ICE_FC_NONE case for the current
-flow control mode. This is causing "Unknown" to be printed for the
-current flow control method if flow control is disabled. Fix this by
-adding the case for ICE_FC_NONE to print "None".
+The Product Register of R-Car M3-W ES1.3 incorrectly identifies the SoC
+revision as ES2.1. Add a workaround to fix this.
 
-Signed-off-by: Brett Creeley <brett.creeley@intel.com>
-Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice_main.c | 3 +++
+ drivers/soc/renesas/renesas-soc.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index 6ec73864019c..b562476b1251 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -528,6 +528,9 @@ void ice_print_link_msg(struct ice_vsi *vsi, bool isup)
- 	case ICE_FC_RX_PAUSE:
- 		fc = "RX";
- 		break;
-+	case ICE_FC_NONE:
-+		fc = "None";
-+		break;
- 	default:
- 		fc = "Unknown";
- 		break;
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index d44d0e687ab8..2a43d6e99962 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -285,6 +285,9 @@ static int __init renesas_soc_init(void)
+ 		/* R-Car M3-W ES1.1 incorrectly identifies as ES2.0 */
+ 		if ((product & 0x7fff) == 0x5210)
+ 			product ^= 0x11;
++		/* R-Car M3-W ES1.3 incorrectly identifies as ES2.1 */
++		if ((product & 0x7fff) == 0x5211)
++			product ^= 0x12;
+ 		if (soc->id && ((product >> 8) & 0xff) != soc->id) {
+ 			pr_warn("SoC mismatch (product = 0x%x)\n", product);
+ 			return -ENODEV;
 -- 
 2.20.1
 
