@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BCE44170
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0017244278
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391797AbfFMQOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:14:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59552 "EHLO mail.kernel.org"
+        id S2389592AbfFMQWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:22:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731190AbfFMImX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:23 -0400
+        id S1731039AbfFMIiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:38:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37C7121479;
-        Thu, 13 Jun 2019 08:42:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 641412146F;
+        Thu, 13 Jun 2019 08:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415341;
-        bh=1Xvyej120jzAEw8ZdqMdUjBYsdzqfM30Il+iZxiARLs=;
+        s=default; t=1560415088;
+        bh=OwZ0qLFkEiHNIobShGBggg/4oh/hdfHyky43omuQniU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EOY14euBJhXtewDfIbIfU+xom38quIE8JaHKMS90aLARBn4CSZiuGhI17/GrnUY0q
-         CATY5xoFzS3GHUgaUgP1HmcOvj28HpHMc5irXnw8Ib3Q/KQvwkKtAzBUA3vlyNuRPJ
-         MtKViDstmpsZKzbxwHJOxn6grE1RxdcC8LKae3Cg=
+        b=crWU+xNBkyEZeF0jAVTIS6/5jtRhlwm+l1VYnCcvPFIo0gWnZAN2UTOONuzzgSicy
+         LdyrX6GDeir7iGIz4hEg79tDNGS9EhAKb3FH2s9rBmhTTQq7crL7L0WdxO0XK4GDv3
+         AD5A3yypzroYLBOjHDcKs1Pzwbp5ItBIUnOH1xz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Sun peng Li <Sunpeng.Li@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Aditya Pakki <pakki001@umn.edu>,
+        Ferenc Bakonyi <fero@drama.obuda.kando.hu>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 090/118] drm/amd/display: Use plane->color_space for dpp if specified
-Date:   Thu, 13 Jun 2019 10:33:48 +0200
-Message-Id: <20190613075649.099323956@linuxfoundation.org>
+Subject: [PATCH 4.14 66/81] video: hgafb: fix potential NULL pointer dereference
+Date:   Thu, 13 Jun 2019 10:33:49 +0200
+Message-Id: <20190613075653.864033891@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,69 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a1e07ba89d49581471d64c48152dbe03b42bd025 ]
+[ Upstream commit ec7f6aad57ad29e4e66cc2e18e1e1599ddb02542 ]
 
-[Why]
-The input color space for the plane was previously ignored even if it
-was set.
+When ioremap fails, hga_vram should not be dereferenced. The fix
+check the failure to avoid NULL pointer dereference.
 
-If a limited range YUV format was given to DC then the
-wrong color transformation matrix was being used since DC assumed that
-it was full range instead.
-
-[How]
-Respect the given color_space format for the plane if it isn't
-COLOR_SPACE_UNKNOWN. Otherwise, use the implicit default since DM
-didn't specify.
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Sun peng Li <Sunpeng.Li@amd.com>
-Acked-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Cc: Aditya Pakki <pakki001@umn.edu>
+Cc: Ferenc Bakonyi <fero@drama.obuda.kando.hu>
+[b.zolnierkie: minor patch summary fixup]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c          | 6 +++++-
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/hgafb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c
-index bf8b68f8db4f..bce5741f2952 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c
-@@ -388,6 +388,10 @@ void dpp1_cnv_setup (
- 	default:
- 		break;
- 	}
-+
-+	/* Set default color space based on format if none is given. */
-+	color_space = input_color_space ? input_color_space : color_space;
-+
- 	REG_SET(CNVC_SURFACE_PIXEL_FORMAT, 0,
- 			CNVC_SURFACE_PIXEL_FORMAT, pixel_format);
- 	REG_UPDATE(FORMAT_CONTROL, FORMAT_CONTROL__ALPHA_EN, alpha_en);
-@@ -399,7 +403,7 @@ void dpp1_cnv_setup (
- 		for (i = 0; i < 12; i++)
- 			tbl_entry.regval[i] = input_csc_color_matrix.matrix[i];
+diff --git a/drivers/video/fbdev/hgafb.c b/drivers/video/fbdev/hgafb.c
+index 463028543173..59e1cae57948 100644
+--- a/drivers/video/fbdev/hgafb.c
++++ b/drivers/video/fbdev/hgafb.c
+@@ -285,6 +285,8 @@ static int hga_card_detect(void)
+ 	hga_vram_len  = 0x08000;
  
--		tbl_entry.color_space = input_color_space;
-+		tbl_entry.color_space = color_space;
+ 	hga_vram = ioremap(0xb0000, hga_vram_len);
++	if (!hga_vram)
++		goto error;
  
- 		if (color_space >= COLOR_SPACE_YCBCR601)
- 			select = INPUT_CSC_SELECT_ICSC;
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index a0355709abd1..7736ef123e9b 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1890,7 +1890,7 @@ static void update_dpp(struct dpp *dpp, struct dc_plane_state *plane_state)
- 			plane_state->format,
- 			EXPANSION_MODE_ZERO,
- 			plane_state->input_csc_color_matrix,
--			COLOR_SPACE_YCBCR601_LIMITED);
-+			plane_state->color_space);
- 
- 	//set scale and bias registers
- 	build_prescale_params(&bns_params, plane_state);
+ 	if (request_region(0x3b0, 12, "hgafb"))
+ 		release_io_ports = 1;
 -- 
 2.20.1
 
