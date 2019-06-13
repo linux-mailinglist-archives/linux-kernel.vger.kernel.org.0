@@ -2,91 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD1A44048
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D95C44054
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390775AbfFMQEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:04:53 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:42792 "EHLO ns.iliad.fr"
+        id S2388483AbfFMQFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:05:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390588AbfFMQEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:04:43 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 6CBC320AC3;
-        Thu, 13 Jun 2019 18:04:42 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id ED4C220514;
-        Thu, 13 Jun 2019 18:04:41 +0200 (CEST)
-Subject: Re: [PATCH v1] iopoll: Tweak readx_poll_timeout sleep range
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-References: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr>
- <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <a732f522-5e65-3ac4-de04-802ef5455747@free.fr>
-Date:   Thu, 13 Jun 2019 18:04:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun 13 18:04:42 2019 +0200 (CEST)
+        id S1732591AbfFMQFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:05:09 -0400
+Subject: Re: [GIT PULL] HID fixes for 5.2-rc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560441908;
+        bh=YRL+3yXsjxbpg+1zG3QoQsx7tN81Q8VQg2j27pXpieQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=acYjJNVtdGI4LC586P9Xkp0cy6g2N0ExiizGusy12CE27gamsozZENpbuDq//6DGz
+         gK8R/mAIeoMMmkgZSjEPhgktEAS3mki4539nm43GaVPTmtAw3l+W/0JpZg4wbzhCF3
+         TeM4/LUxrMxdgOZrqOMDKvOxZU/dtmbVESTXcN0U=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <nycvar.YFH.7.76.1906131632070.27227@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1906131632070.27227@cbobk.fhfr.pm>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.1906131632070.27227@cbobk.fhfr.pm>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+X-PR-Tracked-Commit-Id: 3ed224e273ac5880eeab4c3043a6b06b0478dd56
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c11fb13a117e5a6736481c779cb971249ed96016
+Message-Id: <156044190877.6802.10583406698611497279.pr-tracker-bot@kernel.org>
+Date:   Thu, 13 Jun 2019 16:05:08 +0000
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2019 14:42, Arnd Bergmann wrote:
+The pull request you sent on Thu, 13 Jun 2019 16:37:20 +0200 (CEST):
 
-> On Thu, Jun 13, 2019 at 2:16 PM Marc Gonzalez wrote:
->
->> Chopping max delay in 4 seems excessive. Let's just cut it in half.
->>
->> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
->> ---
->> When max_us=100, old_min was 26 us; new_min would be 50 us
->> Was there a good reason for the 1/4th?
->> Is new_min=0 a problem? (for max=1)
-> 
-> You normally want a large enough range between min and max. I don't
-> see anything wrong with a factor of four.
+> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
 
-Hmmm, I expect the typical use-case to be:
-"HW manual states operation X completes in 100 µs.
-Let's call usleep_range(100, foo); before hitting the reg."
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c11fb13a117e5a6736481c779cb971249ed96016
 
-And foo needs to be a "reasonable" value: big enough to be able
-to merge several requests, low enough not to wait too long after
-the HW is ready.
+Thank you!
 
-In this case, I'd say usleep_range(100, 200); makes sense.
-
-Come to think of it, I'm not sure min=26 (or min=50) makes sense...
-Why wait *less* than what the user specified?
-
->> @@ -47,7 +47,7 @@
->>                         break; \
->>                 } \
->>                 if (__sleep_us) \
->> -                       usleep_range((__sleep_us >> 2) + 1, __sleep_us); \
->> +                       usleep_range(__sleep_us / 2, __sleep_us); \
->>         } \
-> 
-> You are also missing the '+1' now, so this breaks with __sleep_us=1.
-
-It was on purpose.
-
-usleep_range(0, 1); is not well-defined?
-(I tried looking at the source, got lost down the rabbit hole.)
-
-Regards.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
