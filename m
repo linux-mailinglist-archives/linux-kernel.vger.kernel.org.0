@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A024426A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6765C44158
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731798AbfFMQWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:22:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55896 "EHLO mail.kernel.org"
+        id S2391732AbfFMQNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:13:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731048AbfFMIi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:26 -0400
+        id S1731205AbfFMIms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A3FC20851;
-        Thu, 13 Jun 2019 08:38:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E3E121479;
+        Thu, 13 Jun 2019 08:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415105;
-        bh=HbA5eCN6xurGIQ6BGkFFfMgHr7GRTlSAQnHbchCGmoY=;
+        s=default; t=1560415367;
+        bh=Rr5mg9fg85M46vDGUr8i07bvXIQUBUKS7QRutZEt8Xw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qut/aBVCB+5QUB0it8ZxTCkflOaOQ1MEXKUknL6BoerTuHRNKu9l9P6pw0/2WOS5s
-         1Nm4SHA1KSJ0EUUYdgyktLU8zihKaga3N2LDi/eefXj0VYLfniHtxG9EG9W2Tg1ni6
-         bUVXqG6LOTjasKBQXbsa6IZaSdET3fXPRwkwiH9w=
+        b=g1N7E8jIXW135MWVkAvkjVC4PUfAC7b4J2IvwWQ81D95J1GS0Lb9Y7pSeHdGRdfhW
+         s84lliGvRthwK0wPjHo15vrZ2Y8q00hdUlc5wJnUT028nFwBAO54MkNKgCHGLrA0dq
+         1YEdnn/gOl35jmWHNBXBns+UVYQhly9PM2uA498c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christoph=20Vogtl=C3=A4nder?= 
-        <c.vogtlaender@sigma-surface-science.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        stable@vger.kernel.org, Giridhar Malavali <gmalavali@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 72/81] pwm: tiehrpwm: Update shadow register for disabling PWMs
-Date:   Thu, 13 Jun 2019 10:33:55 +0200
-Message-Id: <20190613075654.232458019@linuxfoundation.org>
+Subject: [PATCH 4.19 098/118] scsi: qla2xxx: Reset the FCF_ASYNC_{SENT|ACTIVE} flags
+Date:   Thu, 13 Jun 2019 10:33:56 +0200
+Message-Id: <20190613075649.645249428@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,41 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b00ef53053191d3025c15e8041699f8c9d132daf ]
+[ Upstream commit 0257eda08e806b82ee1fc90ef73583b6f022845c ]
 
-It must be made sure that immediate mode is not already set, when
-modifying shadow register value in ehrpwm_pwm_disable(). Otherwise
-modifications to the action-qualifier continuous S/W force
-register(AQSFRC) will be done in the active register.
-This may happen when both channels are being disabled. In this case,
-only the first channel state will be recorded as disabled in the shadow
-register. Later, when enabling the first channel again, the second
-channel would be enabled as well. Setting RLDCSF to zero, first, ensures
-that the shadow register is updated as desired.
+Driver maintains state machine for processing and completing switch
+commands. This patch resets FCF_ASYNC_{SENT|ACTIVE} flag to indicate if the
+previous command is active or sent, in order for next GPSC command to
+advance the state machine.
 
-Fixes: 38dabd91ff0b ("pwm: tiehrpwm: Fix disabling of output of PWMs")
-Signed-off-by: Christoph Vogtländer <c.vogtlaender@sigma-surface-science.com>
-[vigneshr@ti.com: Improve commit message]
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+[mkp: commit desc typo]
+
+Signed-off-by: Giridhar Malavali <gmalavali@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pwm/pwm-tiehrpwm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/qla2xxx/qla_gs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index f7b8a86fa5c5..ad4a40c0f27c 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -382,6 +382,8 @@ static void ehrpwm_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	}
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index de3f2a097451..1f1a05a90d3d 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3261,6 +3261,8 @@ static void qla24xx_async_gpsc_sp_done(void *s, int res)
+ 	    "Async done-%s res %x, WWPN %8phC \n",
+ 	    sp->name, res, fcport->port_name);
  
- 	/* Update shadow register first before modifying active register */
-+	ehrpwm_modify(pc->mmio_base, AQSFRC, AQSFRC_RLDCSF_MASK,
-+		      AQSFRC_RLDCSF_ZRO);
- 	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
- 	/*
- 	 * Changes to immediate action on Action Qualifier. This puts
++	fcport->flags &= ~(FCF_ASYNC_SENT | FCF_ASYNC_ACTIVE);
++
+ 	if (res == QLA_FUNCTION_TIMEOUT)
+ 		return;
+ 
+@@ -4604,6 +4606,7 @@ int qla24xx_async_gnnid(scsi_qla_host_t *vha, fc_port_t *fcport)
+ 
+ done_free_sp:
+ 	sp->free(sp);
++	fcport->flags &= ~FCF_ASYNC_SENT;
+ done:
+ 	return rval;
+ }
 -- 
 2.20.1
 
