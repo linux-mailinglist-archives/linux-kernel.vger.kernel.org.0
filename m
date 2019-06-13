@@ -2,90 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6419143E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C95143E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732634AbfFMPsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:48:32 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:60802 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731732AbfFMJTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:19:30 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id EB8E320A52;
-        Thu, 13 Jun 2019 11:19:28 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id D33D420732;
-        Thu, 13 Jun 2019 11:19:28 +0200 (CEST)
-Subject: Re: msm8996: qcom-qmp: apq8096-db820c fails to boot, reset back to
- fastboot and locks up
-To:     Paolo Pisati <p.pisati@gmail.com>
-References: <20190610134401.GA12964@harukaze>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <8cc440fd-9fd2-97a6-42e1-0a0b9c456d10@free.fr>
-Date:   Thu, 13 Jun 2019 11:19:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726653AbfFMPs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:48:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52409 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731612AbfFMJUT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:20:19 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s3so9377936wms.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 02:20:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kotA5N9EoUxhGkMwLE3/QhHcmiICXj1ka23TDvB3rSM=;
+        b=FJ8biDWxyeoMYEpxvOrTcrucGhSnQZXA9kUvxSyUo6V4DerOufEcXA7Z1ssTQwCwpS
+         bsMvySOAoDvKrrCgCPIAOT9GsWHNT1Lp06Gmqoh0hYboenGzdtTEFPxoJI7TkX5RvpFv
+         Qcvq3eguvfL78hi5YEQeX5T+wEB4ZO5EMX3tN5H0VT6SIwcmPEmdzNfEDwT0AphM03M/
+         US3ZxjNlsuUuoZTu9OUJOUVj6a7Y5rBQuqnHbssIC91vYa45GPMIhTkUZ6g4Gi+1DhR9
+         DEx4zragsgMC8MkmxzjP2O2ZA9dE/1drWvrKZd1Z4kNecJK8UGR90l/mp7hMMVCxo5jS
+         lkwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kotA5N9EoUxhGkMwLE3/QhHcmiICXj1ka23TDvB3rSM=;
+        b=s5qdMHFBDL6ecwlxPTrkDd46wY07BL0kvtWhpeWnwA32OeDlV2JRBW+qp0g1swWYLA
+         0GLvc3baUsBHQC+dhpFQHWQit0riE4K5Z7lUr1qG2s/koEiPrD9AwkFzPKgqs06YlVWu
+         /suKGDXkEhN1CsXD26ihEmQSXKWBs6HdbH/zx3Z2rs04cYJSZ7N5JCV2bWduoE0O2YzF
+         n6dnvrNwQXdKEFsu2scsbXW1Npl/ctDqzkNeLP3aAW2OPxqrZwaVO3mE4I5hrDbB1VZk
+         u8YDshX4qRhhyTcK+p5RHCCUFk9feUXN4A8U1V0EL9aJufz5mkj48JbvnTSiqJ4zfHxX
+         ygiA==
+X-Gm-Message-State: APjAAAUMRBXLPI6N1t4+OS3j2+ME95G/7x5420Ufcmhis995SKwkuGAB
+        KI4hsqiKpUt5sxvD9fee0a0cOclg5NW/IXWfwNZtpA==
+X-Google-Smtp-Source: APXvYqyF4beCFeHK+yRlaCF2vVGkbOQNCZTufPhtT/Uyk+odeT53Xmpq+5vVT2nuqZWItux6aLxsRUiBbqTIUkv7Yv8=
+X-Received: by 2002:a1c:6c08:: with SMTP id h8mr2990087wmc.62.1560417618124;
+ Thu, 13 Jun 2019 02:20:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190610134401.GA12964@harukaze>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun 13 11:19:28 2019 +0200 (CEST)
+References: <20190612144218.26149-1-colin.king@canonical.com>
+In-Reply-To: <20190612144218.26149-1-colin.king@canonical.com>
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Thu, 13 Jun 2019 11:20:07 +0200
+Message-ID: <CAMO6naxDNmsqUVgAJ2uMBsQPUjsYK6zLhgubNfeEB-GEdD7sOw@mail.gmail.com>
+Subject: Re: [PATCH][next] staging: media: meson: remove redundant
+ initialization of mpeg12
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-media@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/06/2019 15:44, Paolo Pisati wrote:
+Hi Colin,
+On Wed, Jun 12, 2019 at 4:42 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The pointer mpeg12 is being initialized however that value is never
+> read and mpeg12 is being re-assigned almost immediately afterwards.
+> Remove the redundant initialization.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/media/meson/vdec/codec_mpeg12.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/media/meson/vdec/codec_mpeg12.c b/drivers/staging/media/meson/vdec/codec_mpeg12.c
+> index 5398fbf7ce20..48869cc3d973 100644
+> --- a/drivers/staging/media/meson/vdec/codec_mpeg12.c
+> +++ b/drivers/staging/media/meson/vdec/codec_mpeg12.c
+> @@ -63,7 +63,7 @@ static void codec_mpeg12_recycle(struct amvdec_core *core, u32 buf_idx)
+>  static int codec_mpeg12_start(struct amvdec_session *sess)
+>  {
+>         struct amvdec_core *core = sess->core;
+> -       struct codec_mpeg12 *mpeg12 = sess->priv;
+> +       struct codec_mpeg12 *mpeg12;
+>         int ret;
+>
+>         mpeg12 = kzalloc(sizeof(*mpeg12), GFP_KERNEL);
+> --
+> 2.20.1
+>
 
-> From time to time, my apq8096-db820c fails to boot to userspace, reset back to
-> fastboot and locks up: to easily reproduce the issue, i'm boot looping using a
-> cron job with a 1 min reboot entry on the board while leaving a "while 1; do
-> fastboot boot boot.img; done" on the host pc.
-> 
-> The issue is present in mainline up to 5.2-rc4, using defconfig and:
-> 
-> CONFIG_SCSI_UFS_QCOM=y
-> CONFIG_PHY_QCOM_QMP=y
-> CONFIG_PHY_QCOM_UFS=y
-> 
-> but was present in previous releases too (e.g. 4.14., 4.19, etc qcom-lt or
-> mainline), where it's even easier to reproduce (e.g. takes way less reboots to
-> trigger it).
-> 
-> These are the last lines printed out:
-> ...
-> [    7.407209] qcom-qmp-phy 34000.phy: Registered Qcom-QMP phy
-> [    7.448058] qcom-qmp-phy 7410000.phy: Registered Qcom-QMP phy
-> [    7.461859] ufs_qcom_phy_qmp_14nm 627000.phy: invalid resource
-> [    7.535434] qcom-qmp-phy 34000.phy: phy common block init timed-out
-> [    7.538596] phy phy-34000.phy.0: phy init failed --> -110
-> [    7.550891] qcom-pcie: probe of 600000.pcie failed with error -110
-> [    7.619008] qcom-pcie 608000.pcie: 608000.pcie supply vddpe-3v3 not found,
-> using dummy regulator
-> 
-> Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
-> S - QC_IMAGE_VERSION_STRING=BOOT.XF.1.0-00301
-> S - IMAGE_VARIANT_STRING=M8996LAB
-> S - OEM_IMAGE_VERSION_STRING=crm-ubuntu68
-> S - Boot Interface: UFS
-> S - Secure Boot: Off
-> ...
-> 
-> Full boot here: https://pastebin.ubuntu.com/p/rtjVrD3yzk/
-> 
-> Any idea what is going on? Am i doing something wrong?
+Thank you for the patch.
 
-Hmmm... this might be related to:
-
-https://patchwork.kernel.org/patch/10976217/
-
-Regards.
+Acked-by: Maxime Jourdan <mjourdan@baylibre.com>
