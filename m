@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE999438E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE756438E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387443AbfFMPJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:09:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49632 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732355AbfFMN5S (ORCPT
+        id S1733183AbfFMPJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:09:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38958 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732352AbfFMN5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:57:18 -0400
+        Thu, 13 Jun 2019 09:57:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aA/1aavt7PUWSaIskCoz28ksgW1vXkhEJ5m3Kuwr3l8=; b=qcg6Ug1WPjYlxYYRQxdpB/bZTv
-        vHZEXWUVOrTiZYbvHLCUSqEL2HAyPK31aPWTrupesw2zcqa1HP+CF9KzobIm2fs+HBwFiRcObhSYu
-        ZmQMp08l3ErOF+lCuRXy5HS4ke0Gx7u5hJhdHLB2JQLyct/YsoDX3d79y+KotCgE2L9+HouvvAolj
-        V5lUISewZLecs5hNWuFFh+GmbBJdaqo6C7qhLDcGj9EPXu1XOquGConKyIP4Q+SkISgxWTfqnmRgE
-        zP2H6JBIq+h0BWwJjB9rVoTHhIvnl1aKmzYxdFMfp6HnSFTA60IUemg1hgE8kFjloIovnYI7Zp1VM
-        n2dkEYVQ==;
+        bh=mLSldcVcVz9TAKo5kEex8eRnPnqh+Wg+iTyVmwvGgcI=; b=oKVNvJa5qFzq78yIg/hrGZqbbD
+        BGcX3F8BxJIB6nAOd8vlcGqp0meSUGJDuYrhPfVEsLFuPKwXMW/1gFUF+WSkMc2vj2F6FCfD74xxe
+        1498iLobQ8ULuS2SW/HmYre9qfVGsDQ5Xa6wRssQCvK974yP0/7cj76SP1iuox7D1shWnVjehUZPW
+        +cCW14iIK0S+ECCcloVJ3DV8IR7kY+z9+EnvFocNPBRH5qqhY3EnOPpG3aTU9pKdQqrJrkjZfDyf0
+        D0rxJuA+S29ObyoPl3Tz95Tm6kA1fJfAFRtHLXycL13Pk3H8jAKbSyrTMC7Yf9urV5sjSpR3x7XXf
+        o32A0fNw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbQDy-0004GD-7v; Thu, 13 Jun 2019 13:57:06 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbQDy-0005lL-HU; Thu, 13 Jun 2019 13:57:06 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 079A2202C9D74; Thu, 13 Jun 2019 15:57:05 +0200 (CEST)
-Message-Id: <20190613135653.212248581@infradead.org>
+        id 0E78320435AA0; Thu, 13 Jun 2019 15:57:05 +0200 (CEST)
+Message-Id: <20190613135653.310055383@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 13 Jun 2019 15:54:46 +0200
+Date:   Thu, 13 Jun 2019 15:54:47 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de,
         tglx@linutronix.de, luto@kernel.org, namit@vmware.com,
         peterz@infradead.org
 Cc:     linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH v2 1/5] x86/percpu: Differentiate this_cpu_{}() and __this_cpu_{}()
+Subject: [PATCH v2 2/5] x86/percpu: Relax smp_processor_id()
 References: <20190613135445.318096781@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,523 +46,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nadav Amit reported that commit:
+Nadav reported that since this_cpu_read() became asm-volatile, many
+smp_processor_id() users generated worse code due to the extra
+constraints.
 
-  b59167ac7baf ("x86/percpu: Fix this_cpu_read()")
+However since smp_processor_id() is reading a stable value, we can use
+__this_cpu_read().
 
-added a bunch of constraints to all sorts of code; and while some of
-that was correct and desired, some of that seems superfluous.
+While this does reduce text size somewhat, this mostly results in code
+movement to .text.unlikely as a result of more/larger .cold.
+subfunctions. Less text on the hotpath is good for I$.
 
-The thing is, the this_cpu_*() operations are defined IRQ-safe, this
-means the values are subject to change from IRQs, and thus must be
-reloaded.
-
-Also, the generic form:
-
-  local_irq_save()
-  __this_cpu_read()
-  local_irq_restore()
-
-would not allow the re-use of previous values; if by nothing else,
-then the barrier()s implied by local_irq_*().
-
-Which raises the point that percpu_from_op() and the others also need
-that volatile.
-
-OTOH __this_cpu_*() operations are not IRQ-safe and assume external
-preempt/IRQ disabling and could thus be allowed more room for
-optimization.
-
-This makes the this_cpu_*() vs __this_cpu_*() behaviour more
-consistent with other architectures.
-
-$ ./compare.sh defconfig-build defconfig-build1 vmlinux.o
-x86_pmu_cancel_txn                                         80         71   -9,+0
-__text_poke                                               919        964   +45,+0
-do_user_addr_fault                                       1082       1058   -24,+0
-__do_page_fault                                          1194       1178   -16,+0
-do_exit                                                  2995       3027   -43,+75
-process_one_work                                         1008        989   -67,+48
-finish_task_switch                                        524        505   -19,+0
-__schedule_bug                                            103         98   -59,+54
-__schedule_bug                                            103         98   -59,+54
-__sched_setscheduler                                     2015       2030   +15,+0
-freeze_processes                                          203        230   +31,-4
-rcu_gp_kthread_wake                                       106         99   -7,+0
-rcu_core                                                 1841       1834   -7,+0
-call_timer_fn                                             298        286   -12,+0
-can_stop_idle_tick                                        146        139   -31,+24
-perf_pending_event                                        253        239   -14,+0
-shmem_alloc_page                                          209        213   +4,+0
-__alloc_pages_slowpath                                   3284       3269   -15,+0
-umount_tree                                               671        694   +23,+0
-advance_transaction                                       803        798   -5,+0
-con_put_char                                               71         51   -20,+0
-xhci_urb_enqueue                                         1302       1295   -7,+0
-xhci_urb_enqueue                                         1302       1295   -7,+0
-tcp_sacktag_write_queue                                  2130       2075   -55,+0
-tcp_try_undo_loss                                         229        208   -21,+0
-tcp_v4_inbound_md5_hash                                   438        411   -31,+4
-tcp_v4_inbound_md5_hash                                   438        411   -31,+4
-tcp_v6_inbound_md5_hash                                   469        411   -33,-25
-tcp_v6_inbound_md5_hash                                   469        411   -33,-25
-restricted_pointer                                        434        420   -14,+0
-irq_exit                                                  162        154   -8,+0
-get_perf_callchain                                        638        624   -14,+0
-rt_mutex_trylock                                          169        156   -13,+0
-avc_has_extended_perms                                   1092       1089   -3,+0
-avc_has_perm_noaudit                                      309        306   -3,+0
-__perf_sw_event                                           138        122   -16,+0
-perf_swevent_get_recursion_context                        116        102   -14,+0
-__local_bh_enable_ip                                       93         72   -21,+0
-xfrm_input                                               4175       4161   -14,+0
-avc_has_perm                                              446        443   -3,+0
-vm_events_fold_cpu                                         57         56   -1,+0
-vfree                                                      68         61   -7,+0
-freeze_processes                                          203        230   +31,-4
-_local_bh_enable                                           44         30   -14,+0
-ip_do_fragment                                           1982       1944   -38,+0
-do_exit                                                  2995       3027   -43,+75
-__do_softirq                                              742        724   -18,+0
-cpu_init                                                 1510       1489   -21,+0
-account_system_time                                        80         79   -1,+0
-                                             total   12985281   12984819   -742,+280
+$ ./compare.sh defconfig-build1 defconfig-build2 vmlinux.o
+setup_APIC_ibs                                             90         98   -12,+20
+force_ibs_eilvt_setup                                     400        413   -57,+70
+pci_serr_error                                            109        104   -54,+49
+pci_serr_error                                            109        104   -54,+49
+unknown_nmi_error                                         125        120   -76,+71
+unknown_nmi_error                                         125        120   -76,+71
+io_check_error                                            125        132   -97,+104
+intel_thermal_interrupt                                   730        822   +92,+0
+intel_init_thermal                                        951        945   -6,+0
+generic_get_mtrr                                          301        294   -7,+0
+generic_get_mtrr                                          301        294   -7,+0
+generic_set_all                                           749        754   -44,+49
+get_fixed_ranges                                          352        360   -41,+49
+x86_acpi_suspend_lowlevel                                 369        363   -6,+0
+check_tsc_sync_source                                     412        412   -71,+71
+irq_migrate_all_off_this_cpu                              662        674   -14,+26
+clocksource_watchdog                                      748        748   -113,+113
+__perf_event_account_interrupt                            204        197   -7,+0
+attempt_merge                                            1748       1741   -7,+0
+intel_guc_send_ct                                        1424       1409   -15,+0
+__fini_doorbell                                           235        231   -4,+0
+bdw_set_cdclk                                             928        923   -5,+0
+gen11_dsi_disable                                        1571       1556   -15,+0
+gmbus_wait                                                493        488   -5,+0
+md_make_request                                           376        369   -7,+0
+__split_and_process_bio                                   543        536   -7,+0
+delay_tsc                                                  96         89   -7,+0
+hsw_disable_pc8                                           696        691   -5,+0
+tsc_verify_tsc_adjust                                     215        228   -22,+35
+cpuidle_driver_unref                                       56         49   -7,+0
+blk_account_io_completion                                 159        148   -11,+0
+mtrr_wrmsr                                                 95         99   -29,+33
+__intel_wait_for_register_fw                              401        419   +18,+0
+cpuidle_driver_ref                                         43         36   -7,+0
+cpuidle_get_driver                                         15          8   -7,+0
+blk_account_io_done                                       535        528   -7,+0
+irq_migrate_all_off_this_cpu                              662        674   -14,+26
+check_tsc_sync_source                                     412        412   -71,+71
+irq_wait_for_poll                                         170        163   -7,+0
+generic_end_io_acct                                       329        322   -7,+0
+x86_acpi_suspend_lowlevel                                 369        363   -6,+0
+nohz_balance_enter_idle                                   198        191   -7,+0
+generic_start_io_acct                                     254        247   -7,+0
+blk_account_io_start                                      341        334   -7,+0
+perf_event_task_tick                                      682        675   -7,+0
+intel_init_thermal                                        951        945   -6,+0
+amd_e400_c1e_apic_setup                                    47         51   -28,+32
+setup_APIC_eilvt                                          350        328   -22,+0
+hsw_enable_pc8                                           1611       1605   -6,+0
+                                             total   12985947   12985892   -994,+939
 
 Reported-by: Nadav Amit <nadav.amit@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20181206112433.GB13675@hirez.programming.kicks-ass.net
 ---
- arch/x86/include/asm/percpu.h |  224 +++++++++++++++++++++---------------------
- 1 file changed, 112 insertions(+), 112 deletions(-)
+ arch/x86/include/asm/smp.h |    3 ++-
+ include/linux/smp.h        |   45 +++++++++++++++++++++++++++++++--------------
+ 2 files changed, 33 insertions(+), 15 deletions(-)
 
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -87,7 +87,7 @@
-  * don't give an lvalue though). */
- extern void __bad_percpu_size(void);
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -162,7 +162,8 @@ __visible void smp_call_function_single_
+  * from the initial startup. We map APIC_BASE very early in page_setup(),
+  * so this is correct in the x86 case.
+  */
+-#define raw_smp_processor_id() (this_cpu_read(cpu_number))
++#define raw_smp_processor_id()  this_cpu_read(cpu_number)
++#define __smp_processor_id() __this_cpu_read(cpu_number)
  
--#define percpu_to_op(op, var, val)			\
-+#define percpu_to_op(qual, op, var, val)		\
- do {							\
- 	typedef typeof(var) pto_T__;			\
- 	if (0) {					\
-@@ -97,22 +97,22 @@ do {							\
- 	}						\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm(op "b %1,"__percpu_arg(0)		\
-+		asm qual (op "b %1,"__percpu_arg(0)	\
- 		    : "+m" (var)			\
- 		    : "qi" ((pto_T__)(val)));		\
- 		break;					\
- 	case 2:						\
--		asm(op "w %1,"__percpu_arg(0)		\
-+		asm qual (op "w %1,"__percpu_arg(0)	\
- 		    : "+m" (var)			\
- 		    : "ri" ((pto_T__)(val)));		\
- 		break;					\
- 	case 4:						\
--		asm(op "l %1,"__percpu_arg(0)		\
-+		asm qual (op "l %1,"__percpu_arg(0)	\
- 		    : "+m" (var)			\
- 		    : "ri" ((pto_T__)(val)));		\
- 		break;					\
- 	case 8:						\
--		asm(op "q %1,"__percpu_arg(0)		\
-+		asm qual (op "q %1,"__percpu_arg(0)	\
- 		    : "+m" (var)			\
- 		    : "re" ((pto_T__)(val)));		\
- 		break;					\
-@@ -124,7 +124,7 @@ do {							\
-  * Generate a percpu add to memory instruction and optimize code
-  * if one is added or subtracted.
-  */
--#define percpu_add_op(var, val)						\
-+#define percpu_add_op(qual, var, val)					\
- do {									\
- 	typedef typeof(var) pao_T__;					\
- 	const int pao_ID__ = (__builtin_constant_p(val) &&		\
-@@ -138,41 +138,41 @@ do {									\
- 	switch (sizeof(var)) {						\
- 	case 1:								\
- 		if (pao_ID__ == 1)					\
--			asm("incb "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("incb "__percpu_arg(0) : "+m" (var));	\
- 		else if (pao_ID__ == -1)				\
--			asm("decb "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("decb "__percpu_arg(0) : "+m" (var));	\
- 		else							\
--			asm("addb %1, "__percpu_arg(0)			\
-+			asm qual ("addb %1, "__percpu_arg(0)		\
- 			    : "+m" (var)				\
- 			    : "qi" ((pao_T__)(val)));			\
- 		break;							\
- 	case 2:								\
- 		if (pao_ID__ == 1)					\
--			asm("incw "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("incw "__percpu_arg(0) : "+m" (var));	\
- 		else if (pao_ID__ == -1)				\
--			asm("decw "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("decw "__percpu_arg(0) : "+m" (var));	\
- 		else							\
--			asm("addw %1, "__percpu_arg(0)			\
-+			asm qual ("addw %1, "__percpu_arg(0)		\
- 			    : "+m" (var)				\
- 			    : "ri" ((pao_T__)(val)));			\
- 		break;							\
- 	case 4:								\
- 		if (pao_ID__ == 1)					\
--			asm("incl "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("incl "__percpu_arg(0) : "+m" (var));	\
- 		else if (pao_ID__ == -1)				\
--			asm("decl "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("decl "__percpu_arg(0) : "+m" (var));	\
- 		else							\
--			asm("addl %1, "__percpu_arg(0)			\
-+			asm qual ("addl %1, "__percpu_arg(0)		\
- 			    : "+m" (var)				\
- 			    : "ri" ((pao_T__)(val)));			\
- 		break;							\
- 	case 8:								\
- 		if (pao_ID__ == 1)					\
--			asm("incq "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("incq "__percpu_arg(0) : "+m" (var));	\
- 		else if (pao_ID__ == -1)				\
--			asm("decq "__percpu_arg(0) : "+m" (var));	\
-+			asm qual ("decq "__percpu_arg(0) : "+m" (var));	\
- 		else							\
--			asm("addq %1, "__percpu_arg(0)			\
-+			asm qual ("addq %1, "__percpu_arg(0)		\
- 			    : "+m" (var)				\
- 			    : "re" ((pao_T__)(val)));			\
- 		break;							\
-@@ -180,27 +180,27 @@ do {									\
- 	}								\
- } while (0)
+ #ifdef CONFIG_X86_32
+ extern int safe_smp_processor_id(void);
+--- a/include/linux/smp.h
++++ b/include/linux/smp.h
+@@ -181,29 +181,46 @@ static inline int get_boot_cpu_id(void)
  
--#define percpu_from_op(op, var)				\
-+#define percpu_from_op(qual, op, var)			\
- ({							\
- 	typeof(var) pfo_ret__;				\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm volatile(op "b "__percpu_arg(1)",%0"\
-+		asm qual (op "b "__percpu_arg(1)",%0"	\
- 		    : "=q" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 2:						\
--		asm volatile(op "w "__percpu_arg(1)",%0"\
-+		asm qual (op "w "__percpu_arg(1)",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 4:						\
--		asm volatile(op "l "__percpu_arg(1)",%0"\
-+		asm qual (op "l "__percpu_arg(1)",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
- 	case 8:						\
--		asm volatile(op "q "__percpu_arg(1)",%0"\
-+		asm qual (op "q "__percpu_arg(1)",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "m" (var));			\
- 		break;					\
-@@ -238,23 +238,23 @@ do {									\
- 	pfo_ret__;					\
- })
+ #endif /* !SMP */
  
--#define percpu_unary_op(op, var)			\
-+#define percpu_unary_op(qual, op, var)			\
- ({							\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm(op "b "__percpu_arg(0)		\
-+		asm qual (op "b "__percpu_arg(0)	\
- 		    : "+m" (var));			\
- 		break;					\
- 	case 2:						\
--		asm(op "w "__percpu_arg(0)		\
-+		asm qual (op "w "__percpu_arg(0)	\
- 		    : "+m" (var));			\
- 		break;					\
- 	case 4:						\
--		asm(op "l "__percpu_arg(0)		\
-+		asm qual (op "l "__percpu_arg(0)	\
- 		    : "+m" (var));			\
- 		break;					\
- 	case 8:						\
--		asm(op "q "__percpu_arg(0)		\
-+		asm qual (op "q "__percpu_arg(0)	\
- 		    : "+m" (var));			\
- 		break;					\
- 	default: __bad_percpu_size();			\
-@@ -264,27 +264,27 @@ do {									\
- /*
-  * Add return operation
+-/*
+- * smp_processor_id(): get the current CPU ID.
++/**
++ * raw_processor_id() - get the current (unstable) CPU id
++ *
++ * For then you know what you are doing and need an unstable
++ * CPU id.
++ */
++
++/**
++ * smp_processor_id() - get the current (stable) CPU id
++ *
++ * This is the normal accessor to the CPU id and should be used
++ * whenever possible.
+  *
+- * if DEBUG_PREEMPT is enabled then we check whether it is
+- * used in a preemption-safe way. (smp_processor_id() is safe
+- * if it's used in a preemption-off critical section, or in
+- * a thread that is bound to the current CPU.)
++ * The CPU id is stable when:
++ *
++ *  - IRQs are disabled;
++ *  - preemption is disabled;
++ *  - the task is CPU affine.
+  *
+- * NOTE: raw_smp_processor_id() is for internal use only
+- * (smp_processor_id() is the preferred variant), but in rare
+- * instances it might also be used to turn off false positives
+- * (i.e. smp_processor_id() use that the debugging code reports but
+- * which use for some reason is legal). Don't use this to hack around
+- * the warning message, as your code might not work under PREEMPT.
++ * When CONFIG_DEBUG_PREEMPT; we verify these assumption and WARN
++ * when smp_processor_id() is used when the CPU id is not stable.
   */
--#define percpu_add_return_op(var, val)					\
-+#define percpu_add_return_op(qual, var, val)				\
- ({									\
- 	typeof(var) paro_ret__ = val;					\
- 	switch (sizeof(var)) {						\
- 	case 1:								\
--		asm("xaddb %0, "__percpu_arg(1)				\
-+		asm qual ("xaddb %0, "__percpu_arg(1)			\
- 			    : "+q" (paro_ret__), "+m" (var)		\
- 			    : : "memory");				\
- 		break;							\
- 	case 2:								\
--		asm("xaddw %0, "__percpu_arg(1)				\
-+		asm qual ("xaddw %0, "__percpu_arg(1)			\
- 			    : "+r" (paro_ret__), "+m" (var)		\
- 			    : : "memory");				\
- 		break;							\
- 	case 4:								\
--		asm("xaddl %0, "__percpu_arg(1)				\
-+		asm qual ("xaddl %0, "__percpu_arg(1)			\
- 			    : "+r" (paro_ret__), "+m" (var)		\
- 			    : : "memory");				\
- 		break;							\
- 	case 8:								\
--		asm("xaddq %0, "__percpu_arg(1)				\
-+		asm qual ("xaddq %0, "__percpu_arg(1)			\
- 			    : "+re" (paro_ret__), "+m" (var)		\
- 			    : : "memory");				\
- 		break;							\
-@@ -299,13 +299,13 @@ do {									\
-  * expensive due to the implied lock prefix.  The processor cannot prefetch
-  * cachelines if xchg is used.
-  */
--#define percpu_xchg_op(var, nval)					\
-+#define percpu_xchg_op(qual, var, nval)					\
- ({									\
- 	typeof(var) pxo_ret__;						\
- 	typeof(var) pxo_new__ = (nval);					\
- 	switch (sizeof(var)) {						\
- 	case 1:								\
--		asm("\n\tmov "__percpu_arg(1)",%%al"			\
-+		asm qual ("\n\tmov "__percpu_arg(1)",%%al"		\
- 		    "\n1:\tcmpxchgb %2, "__percpu_arg(1)		\
- 		    "\n\tjnz 1b"					\
- 			    : "=&a" (pxo_ret__), "+m" (var)		\
-@@ -313,7 +313,7 @@ do {									\
- 			    : "memory");				\
- 		break;							\
- 	case 2:								\
--		asm("\n\tmov "__percpu_arg(1)",%%ax"			\
-+		asm qual ("\n\tmov "__percpu_arg(1)",%%ax"		\
- 		    "\n1:\tcmpxchgw %2, "__percpu_arg(1)		\
- 		    "\n\tjnz 1b"					\
- 			    : "=&a" (pxo_ret__), "+m" (var)		\
-@@ -321,7 +321,7 @@ do {									\
- 			    : "memory");				\
- 		break;							\
- 	case 4:								\
--		asm("\n\tmov "__percpu_arg(1)",%%eax"			\
-+		asm qual ("\n\tmov "__percpu_arg(1)",%%eax"		\
- 		    "\n1:\tcmpxchgl %2, "__percpu_arg(1)		\
- 		    "\n\tjnz 1b"					\
- 			    : "=&a" (pxo_ret__), "+m" (var)		\
-@@ -329,7 +329,7 @@ do {									\
- 			    : "memory");				\
- 		break;							\
- 	case 8:								\
--		asm("\n\tmov "__percpu_arg(1)",%%rax"			\
-+		asm qual ("\n\tmov "__percpu_arg(1)",%%rax"		\
- 		    "\n1:\tcmpxchgq %2, "__percpu_arg(1)		\
- 		    "\n\tjnz 1b"					\
- 			    : "=&a" (pxo_ret__), "+m" (var)		\
-@@ -345,32 +345,32 @@ do {									\
-  * cmpxchg has no such implied lock semantics as a result it is much
-  * more efficient for cpu local operations.
-  */
--#define percpu_cmpxchg_op(var, oval, nval)				\
-+#define percpu_cmpxchg_op(qual, var, oval, nval)			\
- ({									\
- 	typeof(var) pco_ret__;						\
- 	typeof(var) pco_old__ = (oval);					\
- 	typeof(var) pco_new__ = (nval);					\
- 	switch (sizeof(var)) {						\
- 	case 1:								\
--		asm("cmpxchgb %2, "__percpu_arg(1)			\
-+		asm qual ("cmpxchgb %2, "__percpu_arg(1)		\
- 			    : "=a" (pco_ret__), "+m" (var)		\
- 			    : "q" (pco_new__), "0" (pco_old__)		\
- 			    : "memory");				\
- 		break;							\
- 	case 2:								\
--		asm("cmpxchgw %2, "__percpu_arg(1)			\
-+		asm qual ("cmpxchgw %2, "__percpu_arg(1)		\
- 			    : "=a" (pco_ret__), "+m" (var)		\
- 			    : "r" (pco_new__), "0" (pco_old__)		\
- 			    : "memory");				\
- 		break;							\
- 	case 4:								\
--		asm("cmpxchgl %2, "__percpu_arg(1)			\
-+		asm qual ("cmpxchgl %2, "__percpu_arg(1)		\
- 			    : "=a" (pco_ret__), "+m" (var)		\
- 			    : "r" (pco_new__), "0" (pco_old__)		\
- 			    : "memory");				\
- 		break;							\
- 	case 8:								\
--		asm("cmpxchgq %2, "__percpu_arg(1)			\
-+		asm qual ("cmpxchgq %2, "__percpu_arg(1)		\
- 			    : "=a" (pco_ret__), "+m" (var)		\
- 			    : "r" (pco_new__), "0" (pco_old__)		\
- 			    : "memory");				\
-@@ -391,58 +391,58 @@ do {									\
-  */
- #define this_cpu_read_stable(var)	percpu_stable_op("mov", var)
++
++/*
++ * Allow the architecture to differentiate between a stable and unstable read.
++ * For example, x86 uses an IRQ-safe asm-volatile read for the unstable but a
++ * regular asm read for the stable.
++ */
++#ifndef __smp_processor_id
++#define __smp_processor_id(x) raw_smp_processor_id(x)
++#endif
++
+ #ifdef CONFIG_DEBUG_PREEMPT
+   extern unsigned int debug_smp_processor_id(void);
+ # define smp_processor_id() debug_smp_processor_id()
+ #else
+-# define smp_processor_id() raw_smp_processor_id()
++# define smp_processor_id() __smp_processor_id()
+ #endif
  
--#define raw_cpu_read_1(pcp)		percpu_from_op("mov", pcp)
--#define raw_cpu_read_2(pcp)		percpu_from_op("mov", pcp)
--#define raw_cpu_read_4(pcp)		percpu_from_op("mov", pcp)
--
--#define raw_cpu_write_1(pcp, val)	percpu_to_op("mov", (pcp), val)
--#define raw_cpu_write_2(pcp, val)	percpu_to_op("mov", (pcp), val)
--#define raw_cpu_write_4(pcp, val)	percpu_to_op("mov", (pcp), val)
--#define raw_cpu_add_1(pcp, val)		percpu_add_op((pcp), val)
--#define raw_cpu_add_2(pcp, val)		percpu_add_op((pcp), val)
--#define raw_cpu_add_4(pcp, val)		percpu_add_op((pcp), val)
--#define raw_cpu_and_1(pcp, val)		percpu_to_op("and", (pcp), val)
--#define raw_cpu_and_2(pcp, val)		percpu_to_op("and", (pcp), val)
--#define raw_cpu_and_4(pcp, val)		percpu_to_op("and", (pcp), val)
--#define raw_cpu_or_1(pcp, val)		percpu_to_op("or", (pcp), val)
--#define raw_cpu_or_2(pcp, val)		percpu_to_op("or", (pcp), val)
--#define raw_cpu_or_4(pcp, val)		percpu_to_op("or", (pcp), val)
--#define raw_cpu_xchg_1(pcp, val)	percpu_xchg_op(pcp, val)
--#define raw_cpu_xchg_2(pcp, val)	percpu_xchg_op(pcp, val)
--#define raw_cpu_xchg_4(pcp, val)	percpu_xchg_op(pcp, val)
--
--#define this_cpu_read_1(pcp)		percpu_from_op("mov", pcp)
--#define this_cpu_read_2(pcp)		percpu_from_op("mov", pcp)
--#define this_cpu_read_4(pcp)		percpu_from_op("mov", pcp)
--#define this_cpu_write_1(pcp, val)	percpu_to_op("mov", (pcp), val)
--#define this_cpu_write_2(pcp, val)	percpu_to_op("mov", (pcp), val)
--#define this_cpu_write_4(pcp, val)	percpu_to_op("mov", (pcp), val)
--#define this_cpu_add_1(pcp, val)	percpu_add_op((pcp), val)
--#define this_cpu_add_2(pcp, val)	percpu_add_op((pcp), val)
--#define this_cpu_add_4(pcp, val)	percpu_add_op((pcp), val)
--#define this_cpu_and_1(pcp, val)	percpu_to_op("and", (pcp), val)
--#define this_cpu_and_2(pcp, val)	percpu_to_op("and", (pcp), val)
--#define this_cpu_and_4(pcp, val)	percpu_to_op("and", (pcp), val)
--#define this_cpu_or_1(pcp, val)		percpu_to_op("or", (pcp), val)
--#define this_cpu_or_2(pcp, val)		percpu_to_op("or", (pcp), val)
--#define this_cpu_or_4(pcp, val)		percpu_to_op("or", (pcp), val)
--#define this_cpu_xchg_1(pcp, nval)	percpu_xchg_op(pcp, nval)
--#define this_cpu_xchg_2(pcp, nval)	percpu_xchg_op(pcp, nval)
--#define this_cpu_xchg_4(pcp, nval)	percpu_xchg_op(pcp, nval)
--
--#define raw_cpu_add_return_1(pcp, val)		percpu_add_return_op(pcp, val)
--#define raw_cpu_add_return_2(pcp, val)		percpu_add_return_op(pcp, val)
--#define raw_cpu_add_return_4(pcp, val)		percpu_add_return_op(pcp, val)
--#define raw_cpu_cmpxchg_1(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
--#define raw_cpu_cmpxchg_2(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
--#define raw_cpu_cmpxchg_4(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
--
--#define this_cpu_add_return_1(pcp, val)		percpu_add_return_op(pcp, val)
--#define this_cpu_add_return_2(pcp, val)		percpu_add_return_op(pcp, val)
--#define this_cpu_add_return_4(pcp, val)		percpu_add_return_op(pcp, val)
--#define this_cpu_cmpxchg_1(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
--#define this_cpu_cmpxchg_2(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
--#define this_cpu_cmpxchg_4(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
-+#define raw_cpu_read_1(pcp)		percpu_from_op(, "mov", pcp)
-+#define raw_cpu_read_2(pcp)		percpu_from_op(, "mov", pcp)
-+#define raw_cpu_read_4(pcp)		percpu_from_op(, "mov", pcp)
-+
-+#define raw_cpu_write_1(pcp, val)	percpu_to_op(, "mov", (pcp), val)
-+#define raw_cpu_write_2(pcp, val)	percpu_to_op(, "mov", (pcp), val)
-+#define raw_cpu_write_4(pcp, val)	percpu_to_op(, "mov", (pcp), val)
-+#define raw_cpu_add_1(pcp, val)		percpu_add_op(, (pcp), val)
-+#define raw_cpu_add_2(pcp, val)		percpu_add_op(, (pcp), val)
-+#define raw_cpu_add_4(pcp, val)		percpu_add_op(, (pcp), val)
-+#define raw_cpu_and_1(pcp, val)		percpu_to_op(, "and", (pcp), val)
-+#define raw_cpu_and_2(pcp, val)		percpu_to_op(, "and", (pcp), val)
-+#define raw_cpu_and_4(pcp, val)		percpu_to_op(, "and", (pcp), val)
-+#define raw_cpu_or_1(pcp, val)		percpu_to_op(, "or", (pcp), val)
-+#define raw_cpu_or_2(pcp, val)		percpu_to_op(, "or", (pcp), val)
-+#define raw_cpu_or_4(pcp, val)		percpu_to_op(, "or", (pcp), val)
-+#define raw_cpu_xchg_1(pcp, val)	percpu_xchg_op(, pcp, val)
-+#define raw_cpu_xchg_2(pcp, val)	percpu_xchg_op(, pcp, val)
-+#define raw_cpu_xchg_4(pcp, val)	percpu_xchg_op(, pcp, val)
-+
-+#define this_cpu_read_1(pcp)		percpu_from_op(volatile, "mov", pcp)
-+#define this_cpu_read_2(pcp)		percpu_from_op(volatile, "mov", pcp)
-+#define this_cpu_read_4(pcp)		percpu_from_op(volatile, "mov", pcp)
-+#define this_cpu_write_1(pcp, val)	percpu_to_op(volatile, "mov", (pcp), val)
-+#define this_cpu_write_2(pcp, val)	percpu_to_op(volatile, "mov", (pcp), val)
-+#define this_cpu_write_4(pcp, val)	percpu_to_op(volatile, "mov", (pcp), val)
-+#define this_cpu_add_1(pcp, val)	percpu_add_op(volatile, (pcp), val)
-+#define this_cpu_add_2(pcp, val)	percpu_add_op(volatile, (pcp), val)
-+#define this_cpu_add_4(pcp, val)	percpu_add_op(volatile, (pcp), val)
-+#define this_cpu_and_1(pcp, val)	percpu_to_op(volatile, "and", (pcp), val)
-+#define this_cpu_and_2(pcp, val)	percpu_to_op(volatile, "and", (pcp), val)
-+#define this_cpu_and_4(pcp, val)	percpu_to_op(volatile, "and", (pcp), val)
-+#define this_cpu_or_1(pcp, val)		percpu_to_op(volatile, "or", (pcp), val)
-+#define this_cpu_or_2(pcp, val)		percpu_to_op(volatile, "or", (pcp), val)
-+#define this_cpu_or_4(pcp, val)		percpu_to_op(volatile, "or", (pcp), val)
-+#define this_cpu_xchg_1(pcp, nval)	percpu_xchg_op(volatile, pcp, nval)
-+#define this_cpu_xchg_2(pcp, nval)	percpu_xchg_op(volatile, pcp, nval)
-+#define this_cpu_xchg_4(pcp, nval)	percpu_xchg_op(volatile, pcp, nval)
-+
-+#define raw_cpu_add_return_1(pcp, val)		percpu_add_return_op(, pcp, val)
-+#define raw_cpu_add_return_2(pcp, val)		percpu_add_return_op(, pcp, val)
-+#define raw_cpu_add_return_4(pcp, val)		percpu_add_return_op(, pcp, val)
-+#define raw_cpu_cmpxchg_1(pcp, oval, nval)	percpu_cmpxchg_op(, pcp, oval, nval)
-+#define raw_cpu_cmpxchg_2(pcp, oval, nval)	percpu_cmpxchg_op(, pcp, oval, nval)
-+#define raw_cpu_cmpxchg_4(pcp, oval, nval)	percpu_cmpxchg_op(, pcp, oval, nval)
-+
-+#define this_cpu_add_return_1(pcp, val)		percpu_add_return_op(volatile, pcp, val)
-+#define this_cpu_add_return_2(pcp, val)		percpu_add_return_op(volatile, pcp, val)
-+#define this_cpu_add_return_4(pcp, val)		percpu_add_return_op(volatile, pcp, val)
-+#define this_cpu_cmpxchg_1(pcp, oval, nval)	percpu_cmpxchg_op(volatile, pcp, oval, nval)
-+#define this_cpu_cmpxchg_2(pcp, oval, nval)	percpu_cmpxchg_op(volatile, pcp, oval, nval)
-+#define this_cpu_cmpxchg_4(pcp, oval, nval)	percpu_cmpxchg_op(volatile, pcp, oval, nval)
- 
- #ifdef CONFIG_X86_CMPXCHG64
- #define percpu_cmpxchg8b_double(pcp1, pcp2, o1, o2, n1, n2)		\
-@@ -466,23 +466,23 @@ do {									\
-  * 32 bit must fall back to generic operations.
-  */
- #ifdef CONFIG_X86_64
--#define raw_cpu_read_8(pcp)			percpu_from_op("mov", pcp)
--#define raw_cpu_write_8(pcp, val)		percpu_to_op("mov", (pcp), val)
--#define raw_cpu_add_8(pcp, val)			percpu_add_op((pcp), val)
--#define raw_cpu_and_8(pcp, val)			percpu_to_op("and", (pcp), val)
--#define raw_cpu_or_8(pcp, val)			percpu_to_op("or", (pcp), val)
--#define raw_cpu_add_return_8(pcp, val)		percpu_add_return_op(pcp, val)
--#define raw_cpu_xchg_8(pcp, nval)		percpu_xchg_op(pcp, nval)
--#define raw_cpu_cmpxchg_8(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
--
--#define this_cpu_read_8(pcp)			percpu_from_op("mov", pcp)
--#define this_cpu_write_8(pcp, val)		percpu_to_op("mov", (pcp), val)
--#define this_cpu_add_8(pcp, val)		percpu_add_op((pcp), val)
--#define this_cpu_and_8(pcp, val)		percpu_to_op("and", (pcp), val)
--#define this_cpu_or_8(pcp, val)			percpu_to_op("or", (pcp), val)
--#define this_cpu_add_return_8(pcp, val)		percpu_add_return_op(pcp, val)
--#define this_cpu_xchg_8(pcp, nval)		percpu_xchg_op(pcp, nval)
--#define this_cpu_cmpxchg_8(pcp, oval, nval)	percpu_cmpxchg_op(pcp, oval, nval)
-+#define raw_cpu_read_8(pcp)			percpu_from_op(, "mov", pcp)
-+#define raw_cpu_write_8(pcp, val)		percpu_to_op(, "mov", (pcp), val)
-+#define raw_cpu_add_8(pcp, val)			percpu_add_op(, (pcp), val)
-+#define raw_cpu_and_8(pcp, val)			percpu_to_op(, "and", (pcp), val)
-+#define raw_cpu_or_8(pcp, val)			percpu_to_op(, "or", (pcp), val)
-+#define raw_cpu_add_return_8(pcp, val)		percpu_add_return_op(, pcp, val)
-+#define raw_cpu_xchg_8(pcp, nval)		percpu_xchg_op(, pcp, nval)
-+#define raw_cpu_cmpxchg_8(pcp, oval, nval)	percpu_cmpxchg_op(, pcp, oval, nval)
-+
-+#define this_cpu_read_8(pcp)			percpu_from_op(volatile, "mov", pcp)
-+#define this_cpu_write_8(pcp, val)		percpu_to_op(volatile, "mov", (pcp), val)
-+#define this_cpu_add_8(pcp, val)		percpu_add_op(volatile, (pcp), val)
-+#define this_cpu_and_8(pcp, val)		percpu_to_op(volatile, "and", (pcp), val)
-+#define this_cpu_or_8(pcp, val)			percpu_to_op(volatile, "or", (pcp), val)
-+#define this_cpu_add_return_8(pcp, val)		percpu_add_return_op(volatile, pcp, val)
-+#define this_cpu_xchg_8(pcp, nval)		percpu_xchg_op(volatile, pcp, nval)
-+#define this_cpu_cmpxchg_8(pcp, oval, nval)	percpu_cmpxchg_op(volatile, pcp, oval, nval)
+-#define get_cpu()		({ preempt_disable(); smp_processor_id(); })
++#define get_cpu()		({ preempt_disable(); __smp_processor_id(); })
+ #define put_cpu()		preempt_enable()
  
  /*
-  * Pretty complex macro to generate cmpxchg16 instruction.  The instruction
 
 
