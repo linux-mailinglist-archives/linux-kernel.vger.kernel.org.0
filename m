@@ -2,63 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D75243ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AEE43AC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732512AbfFMPXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:23:44 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:41120 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731814AbfFMMZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:25:00 -0400
-Received: by mail-qk1-f180.google.com with SMTP id c11so12545885qkk.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 05:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mail-followup-to:mime-version
-         :content-disposition:user-agent;
-        bh=g3zLYH4xKxcPrHOD18z9YfpQcnk/GaJedfustWU5uGs=;
-        b=n8w5elDi7uCKMhOPdM6ERl7CJU1aLgOi8O0V488xQIN0zK6rqMjTlnRLSWv+ssjCVv
-         aE33MvYxoV2+e073mJy3ugB77qdAUcvbWfqyk9F/LfXSjQ4VmT2pY2Sx9DefarPqPi8c
-         ZDLSiFRXfNt/rw8kDBQLk+ttsLGc1ep/ynLfMoro+Zi5vHFOTk6mWwujc8pdC1fDY7Yp
-         MnPCrO3bddRRLi5u7emZSZJjTuI3YemTcBqcXQ2wLhayRFcPKJeMzo/TYlXkgEsWuqHK
-         M1H8xArEhcGI869BB8vyUcr9wkN8ozCO8SPODT+pgzimLDq8bTjKcEKbtN/1Gh/O1r7/
-         1llg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :mime-version:content-disposition:user-agent;
-        bh=g3zLYH4xKxcPrHOD18z9YfpQcnk/GaJedfustWU5uGs=;
-        b=ozooKdD1fTgEWigH3lCRQoNfgkdytNMOZok0xKiMMJWOTr441a6J3w84tIEJjLLS1M
-         chWSM+QVAQwt7bTBX4Qgw5BOBOLr2CFY6qTWBD4BXWKx+mDDMaJJa6ZMo0ZOt2BIw6jP
-         RTF72ZYkKH/fezUDse+wyesjctKbxyzfgyYgZofmD0SoSb+0qVZDbT/2WiYmqP5deuQa
-         hVRX8YwJko3VCztDRdCk2KObiEN2lVkIP+omjkBJNrMiHHJNIPWP4ZwP/jas0Awj1L9N
-         1TlAdW/ufqctbliPiGdqN7rslFfM37im9cXoyvuUhHI061Yl1n2mp0CH4Z5XPH78AeOs
-         Iu2Q==
-X-Gm-Message-State: APjAAAXU5YoH9/+CxrEJ9z9OdqKjX2KKTupGOeMiqf9pL1rsQuiJz7y8
-        i2bZF1O9cvS6zXzCg/5xMgw4X98kuPk=
-X-Google-Smtp-Source: APXvYqz92fpQemGJ4+0XT18bWrKPqWrd1JsvCfxSuIhLiuAKFM3fmMYl1AYxaywOHsg4twE5+bfOyA==
-X-Received: by 2002:a37:7c05:: with SMTP id x5mr68506760qkc.313.1560428699522;
-        Thu, 13 Jun 2019 05:24:59 -0700 (PDT)
-Received: from freebsd.route53-aws-cloud.de (ec2-3-95-91-234.compute-1.amazonaws.com. [3.95.91.234])
-        by smtp.gmail.com with ESMTPSA id j66sm1572364qkf.86.2019.06.13.05.24.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 05:24:59 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 14:24:57 +0200
-From:   Damian Tometzki <damian.tometzki@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Subject: test
-Message-ID: <20190613122455.GA45502@freebsd.route53-aws-cloud.de>
-Mail-Followup-To: linux-kernel@vger.kernel.org
+        id S2389197AbfFMPXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:23:35 -0400
+Received: from relay.sw.ru ([185.231.240.75]:43558 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731838AbfFMM1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:27:16 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hbOol-000152-4t; Thu, 13 Jun 2019 15:26:59 +0300
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+To:     Walter Wu <walter-zh.wu@mediatek.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Cc:     kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+Date:   Thu, 13 Jun 2019 15:27:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-test
+
+
+On 6/13/19 11:13 AM, Walter Wu wrote:
+> This patch adds memory corruption identification at bug report for
+> software tag-based mode, the report show whether it is "use-after-free"
+> or "out-of-bound" error instead of "invalid-access" error.This will make
+> it easier for programmers to see the memory corruption problem.
+> 
+> Now we extend the quarantine to support both generic and tag-based kasan.
+> For tag-based kasan, the quarantine stores only freed object information
+> to check if an object is freed recently. When tag-based kasan reports an
+> error, we can check if the tagged addr is in the quarantine and make a
+> good guess if the object is more like "use-after-free" or "out-of-bound".
+> 
+
+
+We already have all the information and don't need the quarantine to make such guess.
+Basically if shadow of the first byte of object has the same tag as tag in pointer than it's out-of-bounds,
+otherwise it's use-after-free.
+
+In pseudo-code it's something like this:
+
+u8 object_tag = *(u8 *)kasan_mem_to_shadow(nearest_object(cacche, page, access_addr));
+
+if (access_addr_tag == object_tag && object_tag != KASAN_TAG_INVALID)
+	// out-of-bounds
+else
+	// use-after-free
