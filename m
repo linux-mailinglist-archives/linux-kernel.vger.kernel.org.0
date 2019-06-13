@@ -2,75 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFFC3439C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF5F439D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387703AbfFMPQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:16:13 -0400
-Received: from mail-vs1-f52.google.com ([209.85.217.52]:46522 "EHLO
-        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732214AbfFMNXx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:23:53 -0400
-Received: by mail-vs1-f52.google.com with SMTP id l125so12572842vsl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IpdX1rIhn/1Lk8TZ4g/8IVbNpyTArq72nZxCv7jiCEo=;
-        b=iCcOgYbWClI74T8LsWilhPOboTshwxc7nWtBvvK8Z7ywJ/r+FATaJHnGW4MyMnvh4y
-         jUk7j+7+CY44jsMrY3m5tGIRuT67dJ6MwiEBmUW2puE+7W8OGkW6NyYnJjz8Wfu57MF9
-         tr5iFsez+1s52JVknUcrrcublDgoBc03Sv0dTTzYZMicYz6pQjqYUb82KCRNuG9SRLtl
-         2RSzBD+X98xoNhqjtPtg/L4mDXicIA6OpG3eJwUST9rSNzXbmMyWUp6pNf0wiZvKnwW2
-         DvxHyhE6zon70y/pcwFSJAFmGr/DEXc5Zp7XyutonkaJmcBVo1bJp1otzRo6lOT0Qrwm
-         6izA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IpdX1rIhn/1Lk8TZ4g/8IVbNpyTArq72nZxCv7jiCEo=;
-        b=XCkvMmC+DruCaaBuVU+VreJEQgKRrZgxbG7o8eEjbA2nkjKSbsZvgzXGiYFdGJGR0J
-         xuLxurPDz4wPD9u2tZDUxAODUxckObwzP3R2vcj2RuEIetKT9wn76XgFYWXmzvRHUFGB
-         iuYwLLpn2Jytm/+bCAZ4cFPyn+RdZlA3oj6/7qy9lf/HTHpbIq10MgqkZXvcB1X1Yf5O
-         hFMuvsbvIn8OEjw9RPboDhDLO0g63Kz5bAI0Ob+IvBWqnvAa39l+/gwI29X0eSRI5P4u
-         xe6Tca5f1njJLP594c/z3auoRNlrYKk0row6XrE8nYr5Ved58/6GoPIE2/4Tc0cJAdkg
-         n+Pw==
-X-Gm-Message-State: APjAAAXtp6Spu28+zeStgYM1gFEEvxds5kvaDx+R5GN9ljkoQEMdKdJc
-        xvxy1rX46Fi+pDo1lsoZmWNDeeuv8zqKZsNQNR5n+A==
-X-Google-Smtp-Source: APXvYqwN8czoMioCoFYKKJ0HxRg3Skkt2+83tzAgsp1qG20DYQ44UvNFXUtP89dTXn1ua69Avn0x1vk4+P+YzCnp5ek=
-X-Received: by 2002:a67:f795:: with SMTP id j21mr996812vso.226.1560432232846;
- Thu, 13 Jun 2019 06:23:52 -0700 (PDT)
+        id S1733094AbfFMPQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:16:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:39810 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732205AbfFMNXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:23:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E6A63EF;
+        Thu, 13 Jun 2019 06:23:47 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A51833F73C;
+        Thu, 13 Jun 2019 06:23:45 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 14:23:43 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kselftest@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/2] arm64: Define
+ Documentation/arm64/tagged-address-abi.txt
+Message-ID: <20190613132342.GZ28398@e103592.cambridge.arm.com>
+References: <cover.1560339705.git.andreyknvl@google.com>
+ <20190612142111.28161-1-vincenzo.frascino@arm.com>
+ <20190612142111.28161-2-vincenzo.frascino@arm.com>
+ <20190612153538.GL28951@C02TF0J2HF1T.local>
+ <141c740a-94c2-2243-b6d1-b44ffee43791@arm.com>
+ <20190613113731.GY28398@e103592.cambridge.arm.com>
+ <20190613122821.GS28951@C02TF0J2HF1T.local>
 MIME-Version: 1.0
-References: <20190611125904.1013-1-cai@lca.pw> <CAK8P3a1rK79aj38H0i9vnzeycv6YZ0iUhBFz4giAFc7COTnmWQ@mail.gmail.com>
- <CABLO=+kZnpBm8W9MmSkSf=18R5fLMFe65+_YWw1-of46B+B1dA@mail.gmail.com> <CAK8P3a1xhaxBc+N=VXRDZyjUQ+W+=fkeDTUcZqeorsyDCTewZg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1xhaxBc+N=VXRDZyjUQ+W+=fkeDTUcZqeorsyDCTewZg@mail.gmail.com>
-From:   Bartosz Szczepanek <bsz@semihalf.com>
-Date:   Thu, 13 Jun 2019 15:23:42 +0200
-Message-ID: <CABLO=+kNiyLZ5gcSLwGtrXPpnWjutLpaAgE8D0rWGLmkJ15PtA@mail.gmail.com>
-Subject: Re: [PATCH -next] efi/tpm: fix a compilation warning
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Qian Cai <cai@lca.pw>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613122821.GS28951@C02TF0J2HF1T.local>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 2:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Would it be correct to change that to 'false' then (or completely remove
-> the additional remap, given that the other two callers pass false
-> already) and pass final_tbl?
+On Thu, Jun 13, 2019 at 01:28:21PM +0100, Catalin Marinas wrote:
+> On Thu, Jun 13, 2019 at 12:37:32PM +0100, Dave P Martin wrote:
+> > On Thu, Jun 13, 2019 at 11:15:34AM +0100, Vincenzo Frascino wrote:
+> > > On 12/06/2019 16:35, Catalin Marinas wrote:
+> > > > On Wed, Jun 12, 2019 at 03:21:10PM +0100, Vincenzo Frascino wrote:
+> > > >> +  - PR_GET_TAGGED_ADDR_CTRL: can be used to check the status of the Tagged
+> > > >> +                             Address ABI.
+> [...]
+> > Is there a canonical way to detect whether this whole API/ABI is
+> > available?  (i.e., try to call this prctl / check for an HWCAP bit,
+> > etc.)
+> 
+> The canonical way is a prctl() call. HWCAP doesn't make sense since it's
+> not a hardware feature. If you really want a different way of detecting
+> this (which I don't think it's worth), we can reinstate the AT_FLAGS
+> bit.
 
-The problem is that we don't know the final_tbl size before running
-tpm2_calc_event_log_size on it, so we cannot map it's entire content.
-Only table header is mapped at the beginning.
+Sure, I think this probably makes sense -- I'm still getting my around
+which parts of the design are directly related to MTE and which aren't.
 
-After size of entire table is calculated it can be mapped as a whole
-and no additional remap is needed, hence the calls with do_mapping =
-false.
+I was a bit concerned about the interaction between
+PR_SET_TAGGED_ADDR_CTRL and the sysctl: the caller might conclude that
+this API is unavailable when actually tagged addresses are stuck on.
+
+I'm not sure whether this matters, but it's a bit weird.
+
+One option would be to change the semantics, so that the sysctl just
+forbids turning tagging from off to on.  Alternatively, we could return
+a different error code to distinguish this case.
+
+Or we just leave it as proposed.
+
+Cheers
+---Dave
