@@ -2,184 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90447444CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D98A444F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392712AbfFMQjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:39:41 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44220 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392609AbfFMQjd (ORCPT
+        id S2392624AbfFMQkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:40:41 -0400
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com ([66.163.189.152]:37585
+        "EHLO sonic314-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392833AbfFMQkP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:39:33 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5DGd8ns038871;
-        Thu, 13 Jun 2019 11:39:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560443948;
-        bh=oAxd7WsqqxVifhcKmMTYcuvBXH5GAfbEq6A7S7y01t4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=CZadsBz6yW6A12cVWwuWQ8fd4z6F8QjnHIBMKdvs/T3a7WcevNTwMybpYoHQ+gGtB
-         eC+dAIp+qMlCEhaeq6BWlNwb51tH5CUKzIJB1ePSyXV1elfUtEvx3H0KKb0aqsk0Cp
-         xNa5RMpgq62tJz990OtcijyQjsdod/99wmTKRVuI=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5DGd8CM108463
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Jun 2019 11:39:08 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 13
- Jun 2019 11:39:08 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 13 Jun 2019 11:39:08 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5DGd8wc055409;
-        Thu, 13 Jun 2019 11:39:08 -0500
-Subject: Re: [PATCH 03/10] iommu/omap: convert to SPDX license tags
-To:     Yangtao Li <tiny.windzz@gmail.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "kgene@kernel.org" <kgene@kernel.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "agross@kernel.org" <agross@kernel.org>,
-        "david.brown@linaro.org" <david.brown@linaro.org>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>
-CC:     "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190613162703.986-1-tiny.windzz@gmail.com>
- <20190613162703.986-3-tiny.windzz@gmail.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <ac67e363-70cf-af64-d634-c3b0b6d408fa@ti.com>
-Date:   Thu, 13 Jun 2019 11:39:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 13 Jun 2019 12:40:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560444014; bh=qhQvElX9cqqhv1EQCDi2FsHJE3Lx6OfUHHqmZGhpaWk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=DjxNOGjaPR+2kmCZlCsqqxEr8gtubLUhk+Hu/g4qLAoWQHApjiuNw5nzHXDvsL6Gp2v2X62Xn14cI+DvBen7JlKwGHduEMCNjKqTNFAD7iEpzuY+OUoWIsL8kqeivhzhcoJbgmV8o+tG+aRt1CUHx9Dv/yPcdV5WSBRgycF+Qsm5qJyWUnx7Hyb7/Mea1YUAqznOmER4te0dLQgAx3I3TwB82edl2daAQuHE0rIB3BUYjLfkaZNszOcVG5xLRKlkpth+QEeMzK6TxjEZsR0CvoPkclhwHp7Aymqc71o9ZpQx9UoT+tesrNfOspXnz5m7kM8HfLrn8gkey/qSd8LHbg==
+X-YMail-OSG: 7MqIT1wVM1mRvXBIyd8i1VIEtUyWmTypwIVZr6pNeaZdahOI6u2QpFrGS2U4Mg2
+ o5lkTtQ6M2gydaRhTMFfW5H5dcsNYgqB2WS9l87MPWXiZ6UZ83Khj5tPbAcFk5LQ4QTfbsmb3q_P
+ bybxHp6Wt3kxAS1daC9nyaiXtdcZMbRFSVsetBL35dIpKNRAGUU0np0_8Wktk4tuaRJmxsbpkItk
+ FLzdfme8noFUJuECmYAXp3g6m0P_xUrQ2prf22SK9WuDm3ZqUXzsmUwfuVMZeHHMJ6sKUrFGd7El
+ 1F5MYo7XLu1TtZu2nEaikBrwjA9cgz2nowD9lzErhi4V1SbcASaRFkNZl5G7X2hIKEzGMYXitsfm
+ Cf4Rk3a5HVNQ3J.32_uUuCzmymkcyLVTBfWpX8kNRjsBpw0A6HsrZQ9Ff.w8uAySo89OWtBCegrm
+ cZ2GqjDQpMtcYOsNo1EDwYn1alcTNOiRLSb66A35R5pHazwRZoOYUjwfJijlK11oYTgqi5NQsZnG
+ sWnYB3d4cBCoFeKnxoW1V_AXs61WoZ49jVdBmW4yufK7mNH0PosaJBkGqay8owOueMT.pgTMD_pw
+ YYPdnFcR3kuPLooGMlIxUzHU.7Wbos06dG6lghS0TtR7bpBpRETlG0wefnqu5DRu2ZWwMKrEanq7
+ kJuaF3AI3cbmVXKLc4WuYtD6A2lwKEUX8edVrpb4QWJrVrys3bb1UxlCCTUX6GdV38EM2DFiyy4_
+ Rj8lFKJruFb_REiRaZl_lKrj4m9T.1AIJBXBqLm7zE9rq4EriYNIEeVtoJlmxeyXX2UKpMeZHmA8
+ Xzz_xompaumneVVKd18xaqFBW4vO.J02We76HLrW5u6JOyZiPStcq7WVzyF9.pV6Vz0pioXH23oH
+ Wk9aVCCYfhOQe2eILhwkwGXSRZ9yEjuTQee.N6hElIaJcnhtgeMbaYSf2gNtqViL5iYm2IWtUWAI
+ _PA26rIgfOlWmBYcND0U6xrPoYO6didYLqwdzi72ZbD48h6cdvlnzq95DK_I64mGgsp4jbKy4rCa
+ zHmFouLe3hzxrJ2OcmgP12mZWvDAHp9N0b2C3b1Km_KHmTsAdWG3iY5SSUK7D3wcnui.2CI0FIzl
+ p7MKQJO9DCl1UjGuagUYpiIUpG9XsR0l8N0iMM.uikgQcSyPza2ucT7utrnGxdgxh2rm4M7Oft1B
+ SnbzdGOCUmzaglGi32kAbcjd6yr0uOJcECCm7d7tAb.fsYnQHqCLD7Y4AmsvUplkREAKg3x3oOyA
+ R3ZeMBwgxUcdOiyRpw4mpnapjhQqPGcU4DbLzSSqQfYCfhA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 13 Jun 2019 16:40:14 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp424.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a8206ee583332d833244e3bfe406edd8;
+          Thu, 13 Jun 2019 16:40:11 +0000 (UTC)
+Subject: Re: [RFC 0/7] Introduce TEE based Trusted Keys support
+To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     jens.wiklander@linaro.org, corbet@lwn.net, dhowells@redhat.com,
+        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <d803283e-5e69-5deb-fe94-3f2e45fb95af@schaufler-ca.com>
+Date:   Thu, 13 Jun 2019 09:40:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190613162703.986-3-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yangtao,
+On 6/13/2019 3:30 AM, Sumit Garg wrote:
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key. Also, this is
+> an alternative in case platform doesn't possess a TPM device.
+>
+> This series also adds some TEE features like:
 
-On 6/13/19 11:26 AM, Yangtao Li wrote:
-> Updates license to use SPDX-License-Identifier.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Please expand the acronym TEE on first use. That will
+help people who don't work with it on a daily basis
+understand what you're going on about.
 
-Thanks for the patch. Can you also update another related file
-while at this. Will leave it to Joerg if he prefers it as a separate
-patch, or folded into this patch.
-
-include/linux/platform_data/iommu-omap.h
-
-Acked-by: Suman Anna <s-anna@ti.com>
-
-regards
-Suman
-
-> ---
->  drivers/iommu/omap-iommu-debug.c | 5 +----
->  drivers/iommu/omap-iommu.c       | 5 +----
->  drivers/iommu/omap-iommu.h       | 5 +----
->  drivers/iommu/omap-iopgtable.h   | 5 +----
->  4 files changed, 4 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/iommu/omap-iommu-debug.c b/drivers/iommu/omap-iommu-debug.c
-> index 4abc0ef522a8..55ec67a45101 100644
-> --- a/drivers/iommu/omap-iommu-debug.c
-> +++ b/drivers/iommu/omap-iommu-debug.c
-> @@ -1,13 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * omap iommu: debugfs interface
->   *
->   * Copyright (C) 2008-2009 Nokia Corporation
->   *
->   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->  
->  #include <linux/err.h>
-> diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-> index d2fb347aa4ff..e6442876913f 100644
-> --- a/drivers/iommu/omap-iommu.c
-> +++ b/drivers/iommu/omap-iommu.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * omap iommu: tlb and pagetable primitives
->   *
-> @@ -6,10 +7,6 @@
->   *
->   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>,
->   *		Paul Mundt and Toshihiro Kobayashi
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->  
->  #include <linux/dma-mapping.h>
-> diff --git a/drivers/iommu/omap-iommu.h b/drivers/iommu/omap-iommu.h
-> index 1703159ef5af..5256e17d86a7 100644
-> --- a/drivers/iommu/omap-iommu.h
-> +++ b/drivers/iommu/omap-iommu.h
-> @@ -1,13 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * omap iommu: main structures
->   *
->   * Copyright (C) 2008-2009 Nokia Corporation
->   *
->   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->  
->  #ifndef _OMAP_IOMMU_H
-> diff --git a/drivers/iommu/omap-iopgtable.h b/drivers/iommu/omap-iopgtable.h
-> index 01a315227bf0..871c2a38f453 100644
-> --- a/drivers/iommu/omap-iopgtable.h
-> +++ b/drivers/iommu/omap-iopgtable.h
-> @@ -1,13 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * omap iommu: pagetable definitions
->   *
->   * Copyright (C) 2008-2010 Nokia Corporation
->   *
->   * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->  
->  #ifndef _OMAP_IOPGTABLE_H
-> 
-
+>
+> Patch #1, #2 enables support for registered kernel shared memory with TEE.
+>
+> Patch #3 enables support for private kernel login method required for
+> cases like trusted keys where we don't wan't user-space to directly access
+> TEE service to retrieve trusted key contents.
+>
+> Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
+>
+> This patch-set has been tested with OP-TEE based pseudo TA which can be
+> found here [1].
+>
+> Looking forward to your valuable feedback/suggestions.
+>
+> [1] https://github.com/OP-TEE/optee_os/pull/3082
+>
+> Sumit Garg (7):
+>   tee: optee: allow kernel pages to register as shm
+>   tee: enable support to register kernel memory
+>   tee: add private login method for kernel clients
+>   KEYS: trusted: Introduce TEE based Trusted Keys
+>   KEYS: encrypted: Allow TEE based trusted master keys
+>   doc: keys: Document usage of TEE based Trusted Keys
+>   MAINTAINERS: Add entry for TEE based Trusted Keys
+>
+>  Documentation/security/keys/tee-trusted.rst      |  93 +++++
+>  MAINTAINERS                                      |   9 +
+>  drivers/tee/optee/call.c                         |   7 +
+>  drivers/tee/tee_core.c                           |   6 +
+>  drivers/tee/tee_shm.c                            |  16 +-
+>  include/keys/tee_trusted.h                       |  84 ++++
+>  include/keys/trusted-type.h                      |   1 +
+>  include/linux/tee_drv.h                          |   1 +
+>  include/uapi/linux/tee.h                         |   2 +
+>  security/keys/Kconfig                            |   3 +
+>  security/keys/Makefile                           |   3 +
+>  security/keys/encrypted-keys/masterkey_trusted.c |  10 +-
+>  security/keys/tee_trusted.c                      | 506 +++++++++++++++++++++++
+>  13 files changed, 737 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/security/keys/tee-trusted.rst
+>  create mode 100644 include/keys/tee_trusted.h
+>  create mode 100644 security/keys/tee_trusted.c
+>
