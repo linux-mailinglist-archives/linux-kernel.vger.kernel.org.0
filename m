@@ -2,313 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C86243C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B4343C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732624AbfFMPdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:33:39 -0400
-Received: from mga14.intel.com ([192.55.52.115]:40396 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728375AbfFMKhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:37:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 03:37:44 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jun 2019 03:37:41 -0700
-Subject: Re: [PATCH 3/3] mmc: sdhci-of-arasan: Add support for ZynqMP Platform
- Tap Delays Setup
-To:     Manish Narani <manish.narani@xilinx.com>, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
-        rajan.vaja@xilinx.com, jolly.shah@xilinx.com,
-        nava.manne@xilinx.com, olof@lixom.net
-Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1560247011-26369-1-git-send-email-manish.narani@xilinx.com>
- <1560247011-26369-4-git-send-email-manish.narani@xilinx.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <45b805fa-ce1d-98af-a53e-ebbb028bbe02@intel.com>
-Date:   Thu, 13 Jun 2019 13:36:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727433AbfFMPdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:33:31 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4692 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbfFMKlc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:41:32 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d02285a0000>; Thu, 13 Jun 2019 03:41:30 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 13 Jun 2019 03:41:30 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 13 Jun 2019 03:41:30 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 10:41:30 +0000
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 10:41:29 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 13 Jun 2019 10:41:29 +0000
+Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d0228570000>; Thu, 13 Jun 2019 03:41:29 -0700
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v5 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+Date:   Thu, 13 Jun 2019 16:11:16 +0530
+Message-ID: <1560422477-11242-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1560247011-26369-4-git-send-email-manish.narani@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560422490; bh=cOJX5hfv8uGUxCWBjGx50IGoRT5V5NnF5v3cAnHJXNo=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=MN/1+jsmXNCVpeaH5cIMkk3UgD9VeQmTX1j+k1fhfCACR+Qf8iiLLkEL6XtmQzmjp
+         cO+ZywnZbQp8v/PrX5I7Nd+q9wfKSeIeqJJvHQKBlQUH3dcvECJTocKUMssRoxh+AD
+         amqQithB74eBNN/qXlQB2VwoyJMoM8lomjfcmrmRzveqIQl/FhKpE9p9GUF0EjyAY9
+         +I0ahDUh64TrBYPOJ7kx0FZcEyEyTFLa8IHYuFsr2q6Y0wWjhsPir5aCXOv/wgCgKL
+         iWgKdzhea8l/RB1vXuM5Ox68C4nDysBWsGaUGs/ersqbgctIHRnoWdX8ftmoAtqPOb
+         LHrehJjnwYXUA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/19 12:56 PM, Manish Narani wrote:
-> Apart from taps set by auto tuning, ZynqMP platform has feature to set
-> the tap values manually. Add support to read tap delay values from
-> DT and set the same in HW via ZynqMP SoC framework. Reading Tap
-> Delays from DT is optional, if the property is not available in DT the
-> driver will use the pre-defined Tap Delay Values.
-> 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+Add DT nodes for following devices on Tegra186 and Tegra194
+ * ACONNECT
+ * ADMA
+ * AGIC
 
-OK for SDHCI:
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ changes from previous revision
+  * fixed size value for ranges property in aconnect
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
 
-
-> ---
->  drivers/mmc/host/sdhci-of-arasan.c | 173 ++++++++++++++++++++++++++++++++++++-
->  1 file changed, 172 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index b12abf9..7af6cec 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -22,6 +22,7 @@
->  #include <linux/phy/phy.h>
->  #include <linux/regmap.h>
->  #include <linux/of.h>
-> +#include <linux/firmware/xlnx-zynqmp.h>
->  
->  #include "cqhci.h"
->  #include "sdhci-pltfm.h"
-> @@ -32,6 +33,10 @@
->  
->  #define PHY_CLK_TOO_SLOW_HZ		400000
->  
-> +/* Default settings for ZynqMP Tap Delays */
-> +#define ZYNQMP_ITAP_DELAYS {0, 0x15, 0x15, 0, 0x15, 0, 0, 0x3D, 0x12, 0, 0}
-> +#define ZYNQMP_OTAP_DELAYS {0, 0x5, 0x6, 0, 0x5, 0x3, 0x3, 0x4, 0x6, 0x3, 0}
-> +
->  /*
->   * On some SoCs the syscon area has a feature where the upper 16-bits of
->   * each 32-bit register act as a write mask for the lower 16-bits.  This allows
-> @@ -81,6 +86,7 @@ struct sdhci_arasan_soc_ctl_map {
->   * @sdcardclk:		Pointer to normal 'struct clock' for sdcardclk_hw.
->   * @soc_ctl_base:	Pointer to regmap for syscon for soc_ctl registers.
->   * @soc_ctl_map:	Map to get offsets into soc_ctl registers.
-> + * @of_data:		Platform specific runtime data storage pointer
->   */
->  struct sdhci_arasan_data {
->  	struct sdhci_host *host;
-> @@ -101,6 +107,15 @@ struct sdhci_arasan_data {
->  /* Controller immediately reports SDHCI_CLOCK_INT_STABLE after enabling the
->   * internal clock even when the clock isn't stable */
->  #define SDHCI_ARASAN_QUIRK_CLOCK_UNSTABLE BIT(1)
-> +
-> +	void *of_data;
-> +};
-> +
-> +struct sdhci_arasan_zynqmp_data {
-> +	void (*set_tap_delay)(struct sdhci_host *host);
-> +	const struct zynqmp_eemi_ops *eemi_ops;
-> +	u8 tapdly[MMC_TIMING_MMC_HS400 + 1][2]; /* [0] for input delay, */
-> +						/* [1] for output delay */
->  };
->  
->  struct sdhci_arasan_of_data {
-> @@ -209,6 +224,16 @@ static void sdhci_arasan_set_clock(struct sdhci_host *host, unsigned int clock)
->  		sdhci_arasan->is_phy_on = false;
->  	}
->  
-> +	/* Set the Input and Output Tap Delays */
-> +	if (host->version >= SDHCI_SPEC_300 &&
-> +	    host->timing != MMC_TIMING_LEGACY &&
-> +	    host->timing != MMC_TIMING_UHS_SDR12) {
-> +		struct sdhci_arasan_zynqmp_data *zynqmp_data =
-> +			sdhci_arasan->of_data;
-> +		if (zynqmp_data && zynqmp_data->set_tap_delay)
-> +			zynqmp_data->set_tap_delay(host);
-> +	}
-> +
->  	sdhci_set_clock(host, clock);
->  
->  	if (sdhci_arasan->quirks & SDHCI_ARASAN_QUIRK_CLOCK_UNSTABLE)
-> @@ -487,6 +512,10 @@ static const struct of_device_id sdhci_arasan_of_match[] = {
->  		.compatible = "arasan,sdhci-4.9a",
->  		.data = &sdhci_arasan_data,
->  	},
-> +	{
-> +		.compatible = "xlnx,zynqmp-8.9a",
-> +		.data = &sdhci_arasan_data,
-> +	},
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, sdhci_arasan_of_match);
-> @@ -517,6 +546,37 @@ static const struct clk_ops arasan_sdcardclk_ops = {
->  };
->  
->  /**
-> + * sdhci_zynqmp_sdcardclk_set_phase - Set the SD Clock Tap Delays
-> + *
-> + * Set the SD Clock Tap Delays for Input and Output paths
-> + *
-> + * @hw:			Pointer to the hardware clock structure.
-> + * @degrees		The clock phase shift between 0 - 359.
-> + * Return: 0 on success and error value on error
-> + */
-> +static int sdhci_zynqmp_sdcardclk_set_phase(struct clk_hw *hw, int degrees)
-> +
-> +{
-> +	struct sdhci_arasan_data *sdhci_arasan =
-> +		container_of(hw, struct sdhci_arasan_data, sdcardclk_hw);
-> +	struct sdhci_arasan_zynqmp_data *zynqmp_data = sdhci_arasan->of_data;
-> +	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_data->eemi_ops;
-> +	const char *clk_name = clk_hw_get_name(hw);
-> +	u32 device_id = !strcmp(clk_name, "clk_sd0") ? 0 : 1;
-> +
-> +	if (!eemi_ops->sdio_setphase)
-> +		return -ENODEV;
-> +
-> +	/* Set the Clock Phase */
-> +	return eemi_ops->sdio_setphase(device_id, degrees);
-> +}
-> +
-> +static const struct clk_ops zynqmp_sdcardclk_ops = {
-> +	.recalc_rate = sdhci_arasan_sdcardclk_recalc_rate,
-> +	.set_phase = sdhci_zynqmp_sdcardclk_set_phase,
-> +};
-> +
-> +/**
->   * sdhci_arasan_update_clockmultiplier - Set corecfg_clockmultiplier
->   *
->   * The corecfg_clockmultiplier is supposed to contain clock multiplier
-> @@ -638,7 +698,10 @@ static int sdhci_arasan_register_sdclk(struct sdhci_arasan_data *sdhci_arasan,
->  	sdcardclk_init.parent_names = &parent_clk_name;
->  	sdcardclk_init.num_parents = 1;
->  	sdcardclk_init.flags = CLK_GET_RATE_NOCACHE;
-> -	sdcardclk_init.ops = &arasan_sdcardclk_ops;
-> +	if (of_device_is_compatible(np, "xlnx,zynqmp-8.9a"))
-> +		sdcardclk_init.ops = &zynqmp_sdcardclk_ops;
-> +	else
-> +		sdcardclk_init.ops = &arasan_sdcardclk_ops;
->  
->  	sdhci_arasan->sdcardclk_hw.init = &sdcardclk_init;
->  	sdhci_arasan->sdcardclk =
-> @@ -714,6 +777,108 @@ static int sdhci_arasan_add_host(struct sdhci_arasan_data *sdhci_arasan)
->  	return ret;
->  }
->  
-> +static void sdhci_arasan_zynqmp_set_tap_delay(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
-> +	struct sdhci_arasan_zynqmp_data *zynqmp_data = sdhci_arasan->of_data;
-> +
-> +	clk_set_phase(sdhci_arasan->sdcardclk,
-> +		      (int)zynqmp_data->tapdly[host->timing][0]);
-> +	clk_set_phase(sdhci_arasan->sdcardclk,
-> +		      (int)zynqmp_data->tapdly[host->timing][1] +
-> +		      INPUT_TAP_BOUNDARY);
-> +}
-> +
-> +static void arasan_dt_read_tap_delay(struct device *dev, u8 *tapdly,
-> +				     const char *prop, u8 itap_def, u8 otap_def)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +
-> +	tapdly[0] = itap_def;
-> +	tapdly[1] = otap_def;
-> +
-> +	/*
-> +	 * Read Tap Delay values from DT, if the DT does not contain the
-> +	 * Tap Values then use the pre-defined values.
-> +	 */
-> +	if (of_property_read_variable_u8_array(np, prop, &tapdly[0], 2, 0)) {
-> +		dev_dbg(dev, "Using predefined tapdly for %s = %d %d\n",
-> +			prop, tapdly[0], tapdly[1]);
-> +	}
-> +}
-> +
-> +/**
-> + * arasan_dt_parse_tap_delays - Read Tap Delay values from DT
-> + *
-> + * Called at initialization to parse the values of Tap Delays.
-> + *
-> + * @dev:		Pointer to our struct device.
-> + */
-> +static int arasan_dt_parse_tap_delays(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct sdhci_host *host = platform_get_drvdata(pdev);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
-> +	struct sdhci_arasan_zynqmp_data zynqmp_data;
-> +	const struct zynqmp_eemi_ops *eemi_ops;
-> +	u8 *itapdly, *otapdly;
-> +	u32 mio_bank = 0;
-> +
-> +	eemi_ops = zynqmp_pm_get_eemi_ops();
-> +	if (IS_ERR(eemi_ops))
-> +		return PTR_ERR(eemi_ops);
-> +
-> +	itapdly = (u8 [MMC_TIMING_MMC_HS400 + 1]) ZYNQMP_ITAP_DELAYS;
-> +	otapdly = (u8 [MMC_TIMING_MMC_HS400 + 1]) ZYNQMP_OTAP_DELAYS;
-> +
-> +	of_property_read_u32(pdev->dev.of_node, "xlnx,mio-bank", &mio_bank);
-> +	if (mio_bank == 2) {
-> +		otapdly[MMC_TIMING_UHS_SDR104] = 0x2;
-> +		otapdly[MMC_TIMING_MMC_HS200] = 0x2;
-> +	}
-> +
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_MMC_HS],
-> +				 "xlnx,tap-delay-mmc-hsd",
-> +				 itapdly[MMC_TIMING_MMC_HS],
-> +				 otapdly[MMC_TIMING_MMC_HS]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_SD_HS],
-> +				 "xlnx,tap-delay-sd-hsd",
-> +				 itapdly[MMC_TIMING_SD_HS],
-> +				 otapdly[MMC_TIMING_SD_HS]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_UHS_SDR25],
-> +				 "xlnx,tap-delay-sdr25",
-> +				 itapdly[MMC_TIMING_UHS_SDR25],
-> +				 otapdly[MMC_TIMING_UHS_SDR25]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_UHS_SDR50],
-> +				 "xlnx,tap-delay-sdr50",
-> +				 itapdly[MMC_TIMING_UHS_SDR50],
-> +				 otapdly[MMC_TIMING_UHS_SDR50]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_UHS_SDR104],
-> +				 "xlnx,tap-delay-sdr104",
-> +				 itapdly[MMC_TIMING_UHS_SDR104],
-> +				 otapdly[MMC_TIMING_UHS_SDR104]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_UHS_DDR50],
-> +				 "xlnx,tap-delay-sd-ddr50",
-> +				 itapdly[MMC_TIMING_UHS_DDR50],
-> +				 otapdly[MMC_TIMING_UHS_DDR50]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_MMC_DDR52],
-> +				 "xlnx,tap-delay-mmc-ddr52",
-> +				 itapdly[MMC_TIMING_MMC_DDR52],
-> +				 otapdly[MMC_TIMING_MMC_DDR52]);
-> +	arasan_dt_read_tap_delay(dev, zynqmp_data.tapdly[MMC_TIMING_MMC_HS200],
-> +				 "xlnx,tap-delay-mmc-hs200",
-> +				 itapdly[MMC_TIMING_MMC_HS200],
-> +				 otapdly[MMC_TIMING_MMC_HS200]);
-> +
-> +	zynqmp_data.set_tap_delay = sdhci_arasan_zynqmp_set_tap_delay;
-> +	zynqmp_data.eemi_ops = eemi_ops;
-> +	sdhci_arasan->of_data = &zynqmp_data;
-> +
-> +	return 0;
-> +}
-> +
->  static int sdhci_arasan_probe(struct platform_device *pdev)
->  {
->  	int ret;
-> @@ -806,6 +971,12 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
->  		goto unreg_clk;
->  	}
->  
-> +	if (of_device_is_compatible(pdev->dev.of_node, "xlnx,zynqmp-8.9a")) {
-> +		ret = arasan_dt_parse_tap_delays(&pdev->dev);
-> +		if (ret)
-> +			goto unreg_clk;
-> +	}
-> +
->  	sdhci_arasan->phy = ERR_PTR(-ENODEV);
->  	if (of_device_is_compatible(pdev->dev.of_node,
->  				    "arasan,sdhci-5.1")) {
-> 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 426ac0b..5e9fe7e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1295,4 +1295,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA186_CLK_APE>,
++			 <&bpmp TEGRA186_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x02900000 0x0 0x02900000 0x200000>;
++		status = "disabled";
++
++		dma-controller@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x02930000 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA186_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: interrupt-controller@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x02a41000 0x1000>,
++			      <0x02a42000 0x2000>;
++			interrupts = <GIC_SPI 145
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA186_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c77ca21..a60ed5f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1054,4 +1054,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA194_CLK_APE>,
++			 <&bpmp TEGRA194_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_AUD>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x02900000 0x0 0x02900000 0x200000>;
++		status = "disabled";
++
++		dma-controller@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x02930000 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA194_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: interrupt-controller@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x02a41000 0x1000>,
++			      <0x02a42000 0x2000>;
++			interrupts = <GIC_SPI 145
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA194_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+-- 
+2.7.4
 
