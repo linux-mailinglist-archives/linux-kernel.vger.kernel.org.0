@@ -2,104 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8651C44BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 21:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03C3744BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 21:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729695AbfFMTGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 15:06:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37840 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbfFMTGR (ORCPT
+        id S1728887AbfFMTId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 15:08:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55765 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfFMTId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 15:06:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=7mmi4XPUb9kweIO/XutIMTWP+evApFPSoJxpuHGkTcc=; b=cb0JioMRBD/O
-        0uvo8szUOLwgbD7dmI8lG90EGWlfjX2l7KbRrOvYpkfYgQE/VJYJi9RGtVOTiYjeKg5aN94VLnKeV
-        CrLXkqVOUmYnSkchdk+cKiM0E/8+7jP2geSmGX9ZZZLtsjMyWd2sIHw4RCC+DvnnYa1dpECOEBMBG
-        oBUXg=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hbV36-0005Sy-Tz; Thu, 13 Jun 2019 19:06:12 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 671D7440046; Thu, 13 Jun 2019 20:06:12 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: axg-tdmin: right_j is not supported" to the asoc tree
-In-Reply-To: <20190613114233.21130-2-jbrunet@baylibre.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190613190612.671D7440046@finisterre.sirena.org.uk>
-Date:   Thu, 13 Jun 2019 20:06:12 +0100 (BST)
+        Thu, 13 Jun 2019 15:08:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5DJ7DmZ1314171
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 13 Jun 2019 12:07:13 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5DJ7DmZ1314171
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560452834;
+        bh=agiqwfohILXjIImlF3CLGf5swTtJl1GxmhuS2kIPfEI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=MLGchTjn5cspHXoUZ6XRKkwn7NiVjtKWQIqPuvmN4svsovldsNVyiwcVqk26uDl39
+         y0V9nab27SLfXRWcBt5t65k8pfEsgmqTlavw7pCg8hYUOA7ICGjwjatTcH76u7GGpZ
+         KLhI4fExnY606XyMA7bQD/5zyHrTiOoKd65dXBaZtY+pUxPwJuVB/6LGEj2McTMmpf
+         jnlVJUmpRxWRFfFgJJ/o2hMHSgtqpyU4jxnDTR0i1+u+FvY9gdY6Zk5H7fPoLTJHKV
+         7HJDTXh2xherMPQpWgXKHolVYfRbeZOMdfKd+lRH3E4HdNxDb+uKKN2sC0LlwIWaxO
+         DNz0+3X4Ik8ig==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5DJ7D2p1314168;
+        Thu, 13 Jun 2019 12:07:13 -0700
+Date:   Thu, 13 Jun 2019 12:07:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Christoph Hellwig <tipbot@zytor.com>
+Message-ID: <tip-8d3289f2fa1e0c7e2f72c7352f1efb75d2ad7c76@git.kernel.org>
+Cc:     bigeasy@linutronix.de, hch@lst.de, jannh@google.com, bp@suse.de,
+        mingo@redhat.com, aubrey.li@intel.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
+        tglx@linutronix.de, riel@surriel.com, mingo@kernel.org,
+        nstange@suse.de, peterz@infradead.org
+Reply-To: tglx@linutronix.de, riel@surriel.com, x86@kernel.org,
+          nstange@suse.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, peterz@infradead.org, hch@lst.de,
+          jannh@google.com, bp@suse.de, bigeasy@linutronix.de,
+          dave.hansen@intel.com, mingo@redhat.com, aubrey.li@intel.com
+In-Reply-To: <20190604175411.GA27477@lst.de>
+References: <20190604175411.GA27477@lst.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/fpu: Don't use current->mm to check for a
+ kthread
+Git-Commit-ID: 8d3289f2fa1e0c7e2f72c7352f1efb75d2ad7c76
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Commit-ID:  8d3289f2fa1e0c7e2f72c7352f1efb75d2ad7c76
+Gitweb:     https://git.kernel.org/tip/8d3289f2fa1e0c7e2f72c7352f1efb75d2ad7c76
+Author:     Christoph Hellwig <hch@lst.de>
+AuthorDate: Tue, 4 Jun 2019 19:54:12 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Thu, 13 Jun 2019 20:57:49 +0200
 
-   ASoC: meson: axg-tdmin: right_j is not supported
+x86/fpu: Don't use current->mm to check for a kthread
 
-has been applied to the asoc tree at
+current->mm can be non-NULL if a kthread calls use_mm(). Check for
+PF_KTHREAD instead to decide when to store user mode FP state.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 47c317b786b6c1efc2cb3cdb894fd323422fe5ea Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 13 Jun 2019 13:42:30 +0200
-Subject: [PATCH] ASoC: meson: axg-tdmin: right_j is not supported
-
-Right justified format is actually not supported by the amlogic tdm input
-decoder.
-
-Fixes: 13a22e6a98f8 ("ASoC: meson: add tdm input driver")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 2722146eb784 ("x86/fpu: Remove fpu->initialized")
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Aubrey Li <aubrey.li@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190604175411.GA27477@lst.de
 ---
- sound/soc/meson/axg-tdmin.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/include/asm/fpu/internal.h | 6 +++---
+ arch/x86/kernel/fpu/core.c          | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/meson/axg-tdmin.c b/sound/soc/meson/axg-tdmin.c
-index a790f925a4ef..cb87f17f3e95 100644
---- a/sound/soc/meson/axg-tdmin.c
-+++ b/sound/soc/meson/axg-tdmin.c
-@@ -121,7 +121,6 @@ static int axg_tdmin_prepare(struct regmap *map,
- 		break;
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 9e27fa05a7ae..4c95c365058a 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -536,7 +536,7 @@ static inline void __fpregs_load_activate(void)
+ 	struct fpu *fpu = &current->thread.fpu;
+ 	int cpu = smp_processor_id();
  
- 	case SND_SOC_DAIFMT_LEFT_J:
--	case SND_SOC_DAIFMT_RIGHT_J:
- 	case SND_SOC_DAIFMT_DSP_B:
- 		break;
+-	if (WARN_ON_ONCE(current->mm == NULL))
++	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
+ 		return;
  
--- 
-2.20.1
-
+ 	if (!fpregs_state_valid(fpu, cpu)) {
+@@ -567,11 +567,11 @@ static inline void __fpregs_load_activate(void)
+  * otherwise.
+  *
+  * The FPU context is only stored/restored for a user task and
+- * ->mm is used to distinguish between kernel and user threads.
++ * PF_KTHREAD is used to distinguish between kernel and user threads.
+  */
+ static inline void switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+ {
+-	if (static_cpu_has(X86_FEATURE_FPU) && current->mm) {
++	if (static_cpu_has(X86_FEATURE_FPU) && !(current->flags & PF_KTHREAD)) {
+ 		if (!copy_fpregs_to_fpstate(old_fpu))
+ 			old_fpu->last_cpu = -1;
+ 		else
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 466fca686fb9..649fbc3fcf9f 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -102,7 +102,7 @@ static void __kernel_fpu_begin(void)
+ 
+ 	kernel_fpu_disable();
+ 
+-	if (current->mm) {
++	if (!(current->flags & PF_KTHREAD)) {
+ 		if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
+ 			set_thread_flag(TIF_NEED_FPU_LOAD);
+ 			/*
