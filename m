@@ -2,93 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AADC143D24
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B655043D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388628AbfFMPjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:39:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387794AbfFMPjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:39:47 -0400
-Received: from localhost (unknown [131.107.160.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6198206BB;
-        Thu, 13 Jun 2019 15:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560440386;
-        bh=SdYvcvpIuDk/s3wACj+cbm+YTXw5nIkTLv69krDYaXI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2n72pz+sLhZE7niX4Y8ETQpvE5PXK7IK+1WxN/bH1xg6F8HTXfM27lUR/1P0obGyt
-         YDsSttnAymHBVaW20g5sGzM3TKwRiv8bMG9YTMlyg7sA/eVPHTwR0Q3K/VMaO73y9d
-         /X8unpBrVDXNfQzOT7xIUbw8lFTA+TyXGHMpYptU=
-Date:   Thu, 13 Jun 2019 11:39:46 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
-Subject: Re: [PATCH 4.14 61/81] ALSA: seq: Protect in-kernel ioctl calls with
- mutex
-Message-ID: <20190613153946.GG1513@sasha-vm>
-References: <20190613075649.074682929@linuxfoundation.org>
- <20190613075653.581995283@linuxfoundation.org>
- <s5hzhmlluwx.wl-tiwai@suse.de>
- <20190613091122.GA31122@kroah.com>
- <s5hv9x9luek.wl-tiwai@suse.de>
+        id S1728726AbfFMPkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:40:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34206 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388619AbfFMPkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:40:05 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p10so5319135pgn.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BtWWHY6GZ+irdemUSJWfYrXBvNRLu0hF7sjwfuTufnI=;
+        b=aNrHcY49yqaTJyE6Q+tcq+ByCZETc9h8PDkWq0+W++gEKy7j2NPlZU6hV1EbcwU5JD
+         syMpCXwkWs5TvSjhBj0dlJ8OXOaPSIsvf+OeD+GtfT3U268ILHAHQv/IX5IenGtrARRe
+         mw+Ixy3ns7L4JoriCdM9WDixKKSjBC1QwWOzr04uPPGdniZZ20O9mJrXgTFfJEgih5Gq
+         xsZhXhsh3x6OiapwDDjUOYQy93/jGkxq9tl2mVQ9P8CLhEp+jPdJrfN163CeRm/3rsoz
+         TFjq6hvlCZNEg2z5CsU7QsTd45nxBa2cAmJybVe9j+wsW1GqeFwLtlvc1VgptDh06dal
+         us+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BtWWHY6GZ+irdemUSJWfYrXBvNRLu0hF7sjwfuTufnI=;
+        b=gavhkDGls9JA78IajtGI6UcGWKlQiAdmVVl15edngqK8hsMhkxP17qRAgkXah6SCFy
+         tSp+f4yEmikUr2AdzY9BT8magCAEGEjVafI5wPwFqVRO97USUSBbEIVlg1JUe1r4w4Pp
+         e5BUjXt2A47ntTaDk44PNY/X6lmpjDq3eMeZ3GsmKvYwkm6y+4caEw6yAeZpeDwilxGw
+         vgXKsRGnBlqsDccJK9Qx0SZTBGPmHwBrMjgiLUEAkXmhrg4JV8TOR44zR4OBClXYqdDU
+         EqMUhrk74GEyB3gekaitflXDU1KDjOYa7/zpKcjtks48u5zzLMPeS4xRerbpi3ETqPFW
+         qOgA==
+X-Gm-Message-State: APjAAAUUndCvDQLIwVfWSv0yNFjwyuGVpXP9IsnacU4J14n+sV0TwDS9
+        IlWbXaOyOR3//iL6lXKRt7+PAg==
+X-Google-Smtp-Source: APXvYqxpwqyIFRk1hDuFYbqTrSYVOaA6be2OguON7QeZLUcNj0n7XkLaM6Wv3ud0JFfz6qT8pE7nUw==
+X-Received: by 2002:aa7:8083:: with SMTP id v3mr15241596pff.69.1560440405094;
+        Thu, 13 Jun 2019 08:40:05 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id u20sm54807pfm.145.2019.06.13.08.40.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 08:40:04 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 08:40:02 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     robh+dt@kernel.org, agross@kernel.org, vkoul@kernel.org,
+        evgreen@chromium.org, daidavid1@codeaurora.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] soc: qcom: smd-rpm: Create RPM interconnect proxy
+ child device
+Message-ID: <20190613154002.GH6792@builder>
+References: <20190613151323.10850-1-georgi.djakov@linaro.org>
+ <20190613151323.10850-3-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <s5hv9x9luek.wl-tiwai@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190613151323.10850-3-georgi.djakov@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 11:13:55AM +0200, Takashi Iwai wrote:
->On Thu, 13 Jun 2019 11:11:22 +0200,
->Greg Kroah-Hartman wrote:
->>
->> On Thu, Jun 13, 2019 at 11:02:54AM +0200, Takashi Iwai wrote:
->> > On Thu, 13 Jun 2019 10:33:44 +0200,
->> > Greg Kroah-Hartman wrote:
->> > >
->> > > [ Upstream commit feb689025fbb6f0aa6297d3ddf97de945ea4ad32 ]
->> > >
->> > > ALSA OSS sequencer calls the ioctl function indirectly via
->> > > snd_seq_kernel_client_ctl().  While we already applied the protection
->> > > against races between the normal ioctls and writes via the client's
->> > > ioctl_mutex, this code path was left untouched.  And this seems to be
->> > > the cause of still remaining some rare UAF as spontaneously triggered
->> > > by syzkaller.
->> > >
->> > > For the sake of robustness, wrap the ioctl_mutex also for the call via
->> > > snd_seq_kernel_client_ctl(), too.
->> > >
->> > > Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
->> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
->> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
->> >
->> > This commit is reverted later by commit f0654ba94e33.
->> > So please drop this.  The proper fix is done later by commit
->> > 7c32ae35fbf9 ("ALSA: seq: Cover unsubscribe_port() in list_mutex")
->> >
->> > Ditto for 4.19.y and 5.1.y.
->>
->> Now dropped everywhere, and I added 7c32ae35fbf9 ("ALSA: seq: Cover
->> unsubscribe_port() in list_mutex") everywhere instead.
->
->Thanks!
->
->BTW, do we have a systematic check whether the selected stable commit
->is reverted in a later commit?  At least, you can track it as long as
->Fixes tag is properly set.
+On Thu 13 Jun 08:13 PDT 2019, Georgi Djakov wrote:
 
-I have that scripting in place, and I usually check it once before I
-send the initial reviews and then once Greg does the -rc release.
+> Register a platform device to handle the communication of bus bandwidth
+> requests with the remote processor. The interconnect proxy device is part
+> of this remote processor (RPM) hardware. Let's create a icc-smd-rpm proxy
+> child device to represent the bus throughput functionality that is provided
+> by the RPM.
+> 
 
---
-Thanks,
-Sasha
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+> 
+> v4:
+> - Return error if platform_device_register_data() fails
+> - Remove platform_set_drvdata() on the child device.
+> 
+> v3:
+> - New patch.
+> 
+>  drivers/soc/qcom/smd-rpm.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+> index fa9dd12b5e39..34cdd638a6c1 100644
+> --- a/drivers/soc/qcom/smd-rpm.c
+> +++ b/drivers/soc/qcom/smd-rpm.c
+> @@ -19,12 +19,14 @@
+>  /**
+>   * struct qcom_smd_rpm - state of the rpm device driver
+>   * @rpm_channel:	reference to the smd channel
+> + * @icc:		interconnect proxy device
+>   * @ack:		completion for acks
+>   * @lock:		mutual exclusion around the send/complete pair
+>   * @ack_status:		result of the rpm request
+>   */
+>  struct qcom_smd_rpm {
+>  	struct rpmsg_endpoint *rpm_channel;
+> +	struct platform_device *icc;
+>  	struct device *dev;
+>  
+>  	struct completion ack;
+> @@ -193,6 +195,7 @@ static int qcom_smd_rpm_callback(struct rpmsg_device *rpdev,
+>  static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+>  {
+>  	struct qcom_smd_rpm *rpm;
+> +	int ret;
+>  
+>  	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
+>  	if (!rpm)
+> @@ -205,11 +208,23 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+>  	rpm->rpm_channel = rpdev->ept;
+>  	dev_set_drvdata(&rpdev->dev, rpm);
+>  
+> -	return of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
+> +	rpm->icc = platform_device_register_data(&rpdev->dev, "icc_smd_rpm", -1,
+> +						 NULL, 0);
+> +	if (IS_ERR(rpm->icc))
+> +		return PTR_ERR(rpm->icc);
+> +
+> +	ret = of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
+> +	if (ret)
+> +		platform_device_unregister(rpm->icc);
+> +
+> +	return ret;
+>  }
+>  
+>  static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
+>  {
+> +	struct qcom_smd_rpm *rpm = dev_get_drvdata(&rpdev->dev);
+> +
+> +	platform_device_unregister(rpm->icc);
+>  	of_platform_depopulate(&rpdev->dev);
+>  }
+>  
