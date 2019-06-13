@@ -2,85 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 289A04449B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 149FC444C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392687AbfFMQhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:37:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41922 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730625AbfFMHKM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:10:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zrvKpljxrRXoMw3me5BR8AhqFJrBrP/RLB7FSk6JjTg=; b=sym0TmWILor5t14LMyRnRqvkg0
-        EOM5U4fBRbAa0sCPMtQ8ondzb4A68BVEImqRwMpoyI7tlXAKyHWV9CS8ErDRu7VWWa44KABjarLVb
-        VgqTswe7YRcNNyOeDe2IqZcFoRCNaiFQAuVnv1UlipmjTa3S4bZrtHUN4r4kgo0wdhn/oxozXDYay
-        ZTZpyhoPoVnxMUEWo6bbYN5gOkyVrsZM/6ToihFSA/GsfP9iGX8eW2cC8KZGn4tTBMUz3KVZm6Wcx
-        hl6UrDUinSCN0VsCzOGZZw7eXTSdocwgC0nh+6qPuC9EQgUJsuXWFFLvAuBkTi2uwXC7J8+CWk5NK
-        SZYOIDZw==;
-Received: from mpp-cp1-natpool-1-013.ethz.ch ([82.130.71.13] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbJs1-0004Zl-6O; Thu, 13 Jun 2019 07:10:02 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 17/17] riscv: add binfmt_flat support
-Date:   Thu, 13 Jun 2019 09:09:03 +0200
-Message-Id: <20190613070903.17214-18-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190613070903.17214-1-hch@lst.de>
-References: <20190613070903.17214-1-hch@lst.de>
+        id S2392790AbfFMQjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:39:16 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730600AbfFMHJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:09:30 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1ABB06BE73A68DD261B2;
+        Thu, 13 Jun 2019 15:09:28 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
+ 2019 15:09:25 +0800
+Subject: Re: [PATCH] f2fs: add boundary check in inline_data_addr
+To:     Randall Huang <huangrandall@google.com>, <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20190612085800.11947-1-huangrandall@google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <e54b84ee-39a3-c518-8c9b-192fb9a92d27@huawei.com>
+Date:   Thu, 13 Jun 2019 15:09:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190612085800.11947-1-huangrandall@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just use the generic definitions.
+Hi Randall,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/Kconfig            | 1 +
- arch/riscv/include/asm/Kbuild | 1 +
- 2 files changed, 2 insertions(+)
+On 2019/6/12 16:58, Randall Huang wrote:
+> Add boundary check in case of extra_size is larger
+> than sizeof array "i_addr"
+> 
+> Signed-off-by: Randall Huang <huangrandall@google.com>
+> ---
+>  fs/f2fs/f2fs.h | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 760390f380b6..17f3858a00c3 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2660,11 +2660,25 @@ static inline bool f2fs_is_drop_cache(struct inode *inode)
+>  	return is_inode_flag_set(inode, FI_DROP_CACHE);
+>  }
+>  
+> +#define F2FS_TOTAL_EXTRA_ATTR_SIZE			\
+> +	(offsetof(struct f2fs_inode, i_extra_end) -	\
+> +	offsetof(struct f2fs_inode, i_extra_isize))	\
+> +
+>  static inline void *inline_data_addr(struct inode *inode, struct page *page)
+>  {
+>  	struct f2fs_inode *ri = F2FS_INODE(page);
+>  	int extra_size = get_extra_isize(inode);
+>  
+> +	if (extra_size < 0 || extra_size > F2FS_TOTAL_EXTRA_ATTR_SIZE ||
+> +		extra_size % sizeof(__le32)) {
+> +		f2fs_msg(F2FS_I_SB(inode)->sb, KERN_ERR,
+> +			"%s: inode (ino=%lx) has corrupted i_extra_isize: %d, "
+> +			"max: %zu",
+> +			__func__, inode->i_ino, extra_size,
+> +			F2FS_TOTAL_EXTRA_ATTR_SIZE);
+> +		extra_size = 0;
+> +	}
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0c4b12205632..2c19baa8d6c3 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -17,6 +17,7 @@ config RISCV
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select OF_IRQ
-+	select ARCH_HAS_BINFMT_FLAT
- 	select ARCH_WANT_FRAME_POINTERS
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
-diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-index 5ee646619cc3..1efaeddf1e4b 100644
---- a/arch/riscv/include/asm/Kbuild
-+++ b/arch/riscv/include/asm/Kbuild
-@@ -5,6 +5,7 @@ generic-y += compat.h
- generic-y += device.h
- generic-y += div64.h
- generic-y += extable.h
-+generic-y += flat.h
- generic-y += dma.h
- generic-y += dma-contiguous.h
- generic-y += dma-mapping.h
--- 
-2.20.1
+Oh, we have already did the sanity check on .i_extra_isize field in
+sanity_check_inode(), why can it be changed after that? bit-transition of cache
+or memory overflow?
 
+Thanks,
+
+> +
+>  	return (void *)&(ri->i_addr[extra_size + DEF_INLINE_RESERVED_SIZE]);
+>  }
+>  
+> @@ -2817,10 +2831,6 @@ static inline int get_inline_xattr_addrs(struct inode *inode)
+>  	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
+>  	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
+>  
+> -#define F2FS_TOTAL_EXTRA_ATTR_SIZE			\
+> -	(offsetof(struct f2fs_inode, i_extra_end) -	\
+> -	offsetof(struct f2fs_inode, i_extra_isize))	\
+> -
+>  #define F2FS_OLD_ATTRIBUTE_SIZE	(offsetof(struct f2fs_inode, i_addr))
+>  #define F2FS_FITS_IN_INODE(f2fs_inode, extra_isize, field)		\
+>  		((offsetof(typeof(*(f2fs_inode)), field) +	\
+> 
