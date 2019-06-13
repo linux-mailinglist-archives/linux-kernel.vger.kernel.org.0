@@ -2,61 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129AE445B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AA5A445B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392980AbfFMQp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:45:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726059AbfFMFlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:41:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 561782053B;
-        Thu, 13 Jun 2019 05:41:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560404499;
-        bh=8Xh4IPVPSoQJv7GWld73+9V0oaBZe8Mpmmz/mKLN+rQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ByZS4yI0t6Lw+NdGjH9a07AeUUIjvk1cJGDzyfIrJViTGTIERIRZJL73c1qIokMUC
-         kT69jwfWNhHdI09f8E0yIK0aUZ+KzXE4TbSXQvD9JCQDWMDp6umh59lH1N+nTQhdeL
-         M/gOrFkfIXjo0IPpGalbyOsvg9YOy3Os1OrJnBOY=
-Date:   Thu, 13 Jun 2019 07:41:36 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Todd Kjos <tkjos@android.com>
-Cc:     tkjos@google.com, arve@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, maco@google.com,
-        joel@joelfernandes.org, kernel-team@android.com
-Subject: Re: [PATCH] binder: fix possible UAF when freeing buffer
-Message-ID: <20190613054136.GA19717@kroah.com>
-References: <20190612202927.54518-1-tkjos@google.com>
+        id S2392969AbfFMQp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:45:57 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:47215 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730319AbfFMFoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 01:44:21 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id bIX1hL32N5qKabIX4hDxVJ; Thu, 13 Jun 2019 07:44:19 +0200
+Subject: Re: [PATCH 0/2] Use Media Dev Allocator to fix vimc dev lifetime bugs
+To:     helen.koike@collabora.com
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1558667245.git.skhan@linuxfoundation.org>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <c9160fe7-e880-4070-3959-b9e9177acf54@xs4all.nl>
+Date:   Thu, 13 Jun 2019 07:44:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612202927.54518-1-tkjos@google.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <cover.1558667245.git.skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfDwxpIXPhJN75Jw4Kp1rhsRbTfMtOhFu8gNd1BX+22wfx+C4LbiSCZR9QW2IynSwuVRELuLWlzdy123Z9GqnH8K5Ut/QIsYFRlAz8e0zn4l6PAyDEFF/
+ 8e5YMZHzequKkwwJdLY6CDvGb6f67csd4nqD0iAmn5DG+zJOYvS2GJhtfMdwRNhsusrA9doOHJSgntKDjUYCKH3PYUxKW3v7DiivRZS2/2y5kkIK/M9krJ3w
+ nAjQl97buif4pFG7oZdhdmwC0o4QazU2MJ2AM5aYGV0Ex+YrIZPXv2BRycaklV+EvDc/9SX4cMhE95rGSGmURw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 01:29:27PM -0700, Todd Kjos wrote:
-> There is a race between the binder driver cleaning
-> up a completed transaction via binder_free_transaction()
-> and a user calling binder_ioctl(BC_FREE_BUFFER) to
-> release a buffer. It doesn't matter which is first but
-> they need to be protected against running concurrently
-> which can result in a UAF.
+On 5/24/19 5:31 AM, Shuah Khan wrote:
+> media_device is embedded in struct vimc_device and when vimc is removed
+> vimc_device and the embedded media_device goes with it, while the active
+> stream and vimc_capture continue to access it.
 > 
-> Signed-off-by: Todd Kjos <tkjos@google.com>
-> ---
->  drivers/android/binder.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
+> Fix the media_device lifetime problem by changing vimc to create shared
+> media_device using Media Device Allocator API and vimc_capture getting
+> a reference to vimc module. With this change, vimc module can be removed
+> only when the references are gone. vimc can be removed after vimc_capture
+> is removed.
+> 
+> Media Device Allocator API supports just USB devices. Enhance it
+> adding a genetic device allocate interface to support other media
+> drivers.
+> 
+> The new interface takes pointer to struct device instead and creates
+> media device. This interface allows a group of drivers that have a
+> common root device to share media device resource and ensure media
+> device doesn't get deleted as long as one of the drivers holds its
+> reference.
+> 
+> The new interface has been tested with vimc component driver to fix
+> panics when vimc module is removed while streaming is in progress.
 
-Does this also need to go to the stable kernels?
+Helen, can you review this series? I'm not sure this is the right approach
+for a driver like vimc, and even if it is, then it is odd that vimc-capture
+is the only vimc module that's handled here.
 
-thanks,
+My gut feeling is that this should be handled inside vimc directly and not
+using the media-dev-allocator.
 
-greg k-h
+Regards,
+
+	Hans
+
+> 
+> Shuah Khan (2):
+>   media: add generic device allocate interface to media-dev-allocator
+>   vimc: fix BUG: unable to handle kernel NULL pointer dereference
+> 
+>  drivers/media/Makefile                     |  4 +-
+>  drivers/media/media-dev-allocator.c        | 39 ++++++++++++++
+>  drivers/media/platform/vimc/vimc-capture.c | 17 +++++-
+>  drivers/media/platform/vimc/vimc-core.c    | 60 ++++++++++++----------
+>  include/media/media-dev-allocator.h        | 46 ++++++++++++++---
+>  5 files changed, 130 insertions(+), 36 deletions(-)
+> 
+
