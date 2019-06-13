@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E8D44282
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A7243F56
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:56:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391478AbfFMQXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:23:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55420 "EHLO mail.kernel.org"
+        id S2389341AbfFMP4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:56:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731034AbfFMIh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:37:59 -0400
+        id S1731527AbfFMIvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:51:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC89C21473;
-        Thu, 13 Jun 2019 08:37:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C723F206BA;
+        Thu, 13 Jun 2019 08:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415078;
-        bh=X+R5vzI3sP3DJBHPZdTdhePeFCbETwqSZUEN09NkQjo=;
+        s=default; t=1560415877;
+        bh=OwZ0qLFkEiHNIobShGBggg/4oh/hdfHyky43omuQniU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HCDCczUYgm6G+WxEidmZKZqp97q9ZIqXtIatdAeICyHm4jb+VRqSeCU7ZxGhiOQvb
-         BjzEEQijYQ6J7mJCF+A+nvr/XGWVp7eZ+rvrop53dm+xxulUOb1wg75oInEPiFiWcs
-         Itgy6CC3TaSkMgAFhski253d1KxhbbZhFo6ANdzY=
+        b=SxUlaMUgNedUocdk7KfXx80JUdR64wWUjgV1weOhkzFXpLmC3hyKHEjrLMXvUFo39
+         txjSg+wXkYoPoSZF7PLyxBW0RprvmnqT/kQzfS/QbBQk813HwugR3K/IRm5n79SsG8
+         EoINzAtcEriwXpE59VAMmy6XzZ9o8xBxgKwWdBZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dennis Zhou <dennis@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 78/81] percpu: do not search past bitmap when allocating an area
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Aditya Pakki <pakki001@umn.edu>,
+        Ferenc Bakonyi <fero@drama.obuda.kando.hu>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 129/155] video: hgafb: fix potential NULL pointer dereference
 Date:   Thu, 13 Jun 2019 10:34:01 +0200
-Message-Id: <20190613075654.739666493@linuxfoundation.org>
+Message-Id: <20190613075700.013319542@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c43004af01635cc9fbb11031d070e5e0d327ef2 ]
+[ Upstream commit ec7f6aad57ad29e4e66cc2e18e1e1599ddb02542 ]
 
-pcpu_find_block_fit() guarantees that a fit is found within
-PCPU_BITMAP_BLOCK_BITS. Iteration is used to determine the first fit as
-it compares against the block's contig_hint. This can lead to
-incorrectly scanning past the end of the bitmap. The behavior was okay
-given the check after for bit_off >= end and the correctness of the
-hints from pcpu_find_block_fit().
+When ioremap fails, hga_vram should not be dereferenced. The fix
+check the failure to avoid NULL pointer dereference.
 
-This patch fixes this by bounding the end offset by the number of bits
-in a chunk.
-
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Cc: Aditya Pakki <pakki001@umn.edu>
+Cc: Ferenc Bakonyi <fero@drama.obuda.kando.hu>
+[b.zolnierkie: minor patch summary fixup]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/percpu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/hgafb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index bc58bcbe4b60..9beb84800d8d 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -984,7 +984,8 @@ static int pcpu_alloc_area(struct pcpu_chunk *chunk, int alloc_bits,
- 	/*
- 	 * Search to find a fit.
- 	 */
--	end = start + alloc_bits + PCPU_BITMAP_BLOCK_BITS;
-+	end = min_t(int, start + alloc_bits + PCPU_BITMAP_BLOCK_BITS,
-+		    pcpu_chunk_map_bits(chunk));
- 	bit_off = bitmap_find_next_zero_area(chunk->alloc_map, end, start,
- 					     alloc_bits, align_mask);
- 	if (bit_off >= end)
+diff --git a/drivers/video/fbdev/hgafb.c b/drivers/video/fbdev/hgafb.c
+index 463028543173..59e1cae57948 100644
+--- a/drivers/video/fbdev/hgafb.c
++++ b/drivers/video/fbdev/hgafb.c
+@@ -285,6 +285,8 @@ static int hga_card_detect(void)
+ 	hga_vram_len  = 0x08000;
+ 
+ 	hga_vram = ioremap(0xb0000, hga_vram_len);
++	if (!hga_vram)
++		goto error;
+ 
+ 	if (request_region(0x3b0, 12, "hgafb"))
+ 		release_io_ports = 1;
 -- 
 2.20.1
 
