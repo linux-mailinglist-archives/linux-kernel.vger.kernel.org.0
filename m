@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2327E43F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 452A444164
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389935AbfFMP4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38804 "EHLO mail.kernel.org"
+        id S2391756AbfFMQOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:14:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731529AbfFMIvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:51:20 -0400
+        id S1731200AbfFMImh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D369A20851;
-        Thu, 13 Jun 2019 08:51:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3CA52147A;
+        Thu, 13 Jun 2019 08:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415880;
-        bh=JuA+z/E8J/GcS987WlH7req4HxY+VEuIEI+xBM47yDg=;
+        s=default; t=1560415356;
+        bh=/IMbikxRv8tv9hKiJzmRlZz3kER9v/NyBLeLBn/W8KI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qTseQMrNAVhEHbQ4M/oFJP7goWiyUu1E1pOWo+9MaSXHvWKFLxNchHho8UYsLpVUy
-         m9lHZhUr0G0q3gJm0/RwGdDICe0cdWYBJRYG1ojdtcRRAuQTNk2/rN+94hqTXhEydF
-         m6nC3XSTi4KxkU92fQIoWNJwJxR1v/4IxA15hG18=
+        b=g528rEXwFvTKqc2iMrOPLxKPJsF05zteK5ZGMlgff/xZ8yW2skDcv5C+QYO8thl67
+         u1jirAvgR7fPeMbzAdli3tAqB8R9todlom9d8FpUZjEdTsOmwV8sOx8/KeiMx3tYXP
+         BwieR2Lta8Zhnb7EzaYAmgRRIS3+ptdudHKKnB7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Chang <junxiao.chang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 120/155] platform/x86: intel_pmc_ipc: adding error handling
-Date:   Thu, 13 Jun 2019 10:33:52 +0200
-Message-Id: <20190613075659.589229049@linuxfoundation.org>
+Subject: [PATCH 4.19 095/118] net: hns3: return 0 and print warning when hit duplicate MAC
+Date:   Thu, 13 Jun 2019 10:33:53 +0200
+Message-Id: <20190613075649.440852957@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e61985d0550df8c2078310202aaad9b41049c36c ]
+[ Upstream commit 72110b567479f0282489a9b3747e76d8c67d75f5 ]
 
-If punit or telemetry device initialization fails, pmc driver should
-unregister and return failure.
+When set 2 same MAC to different function of one port, IMP
+will return error as the later one may modify the origin one.
+This will cause bond fail for 2 VFs of one port.
 
-This change is to fix a kernel panic when removing kernel module
-intel_pmc_ipc.
+Driver just print warning and return 0 with this patch, so
+if set same MAC address, it will return 0 but do not really
+configure HW.
 
-Fixes: 48c1917088ba ("platform:x86: Add Intel telemetry platform device")
-Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index 7964ba22ef8d..d37cbd1cf58c 100644
---- a/drivers/platform/x86/intel_pmc_ipc.c
-+++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -771,13 +771,17 @@ static int ipc_create_pmc_devices(void)
- 	if (ret) {
- 		dev_err(ipcdev.dev, "Failed to add punit platform device\n");
- 		platform_device_unregister(ipcdev.tco_dev);
-+		return ret;
- 	}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 340baf6a470c..4648c6a9d9e8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -4300,8 +4300,11 @@ int hclge_add_uc_addr_common(struct hclge_vport *vport,
+ 		return hclge_add_mac_vlan_tbl(vport, &req, NULL);
  
- 	if (!ipcdev.telem_res_inval) {
- 		ret = ipc_create_telemetry_device();
--		if (ret)
-+		if (ret) {
- 			dev_warn(ipcdev.dev,
- 				"Failed to add telemetry platform device\n");
-+			platform_device_unregister(ipcdev.punit_dev);
-+			platform_device_unregister(ipcdev.tco_dev);
-+		}
- 	}
+ 	/* check if we just hit the duplicate */
+-	if (!ret)
+-		ret = -EINVAL;
++	if (!ret) {
++		dev_warn(&hdev->pdev->dev, "VF %d mac(%pM) exists\n",
++			 vport->vport_id, addr);
++		return 0;
++	}
  
- 	return ret;
+ 	dev_err(&hdev->pdev->dev,
+ 		"PF failed to add unicast entry(%pM) in the MAC table\n",
 -- 
 2.20.1
 
