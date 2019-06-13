@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96E2A43F4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 266A2440F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390381AbfFMP4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:56:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38744 "EHLO mail.kernel.org"
+        id S1731372AbfFMQKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:10:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731523AbfFMIvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:51:15 -0400
+        id S1731248AbfFMInp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:43:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2250120851;
-        Thu, 13 Jun 2019 08:51:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D22332063F;
+        Thu, 13 Jun 2019 08:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415874;
-        bh=egVTssJezJuO5TTf/IN4qmOTXmAMMqK8Ii9LVI6I2sU=;
+        s=default; t=1560415424;
+        bh=MnKqCTK/ZivzHkgWy0cWDkIFkgCjtPA4GqUCvKyIVF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JwSiMmYZU0yT7dPqo1RMEWuysB3pn0qqn/Eenre/Rc0xDudMUYsqP8m5+SHjvsh+i
-         e4TKa/JJvETu0J1WNnr4m3J5VVdmy6GWj/P0YljKovx7JqITpYnHx/c/MuhqB7eRUM
-         7eQ8SZFCOXathOk4qiG8D7oHxOiDmDzTI4Gw+qMQ=
+        b=2UTUS71vPn/tnrfr9FfcJAqQo16AVnHz2rhoOrbp0zDBe1szTxARshRNmOml80jQ1
+         dVo6DuNMkDzyiwX+QUhmhFZT4gN/ibDoLOB9QI3ikJGnFwPpfD+lgIi7jY5YoYhaKe
+         Ub0GRIK0wHg9S05025mERPWC1kS+WcmU6pk+UjyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
-        Rob Herring <robh@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Steven Price <steven.price@arm.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 128/155] Input: goodix - add GT5663 CTP support
+Subject: [PATCH 4.19 102/118] PCI: xilinx: Check for __get_free_pages() failure
 Date:   Thu, 13 Jun 2019 10:34:00 +0200
-Message-Id: <20190613075659.968440813@linuxfoundation.org>
+Message-Id: <20190613075649.949825607@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a5f50c501321249d67611353dde6d68d48c5b959 ]
+[ Upstream commit 699ca30162686bf305cdf94861be02eb0cf9bda2 ]
 
-GT5663 is capacitive touch controller with customized smart
-wakeup gestures.
+If __get_free_pages() fails, return -ENOMEM to avoid a NULL pointer
+dereference.
 
-Add support for it by adding compatible and supported chip data.
-
-The chip data on GT5663 is similar to GT1151, like
-- config data register has 0x8050 address
-- config data register max len is 240
-- config data checksum has 16-bit
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Steven Price <steven.price@arm.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
- drivers/input/touchscreen/goodix.c                             | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/pci/controller/pcie-xilinx.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-index 8cf0b4d38a7e..109cc0cebaa2 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-@@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
- Required properties:
- 
-  - compatible		: Should be "goodix,gt1151"
-+				 or "goodix,gt5663"
- 				 or "goodix,gt5688"
- 				 or "goodix,gt911"
- 				 or "goodix,gt9110"
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index f57d82220a88..dd029e689903 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -216,6 +216,7 @@ static const struct goodix_chip_data *goodix_get_chip_data(u16 id)
+diff --git a/drivers/pci/controller/pcie-xilinx.c b/drivers/pci/controller/pcie-xilinx.c
+index 7b1389d8e2a5..ea48cba5480b 100644
+--- a/drivers/pci/controller/pcie-xilinx.c
++++ b/drivers/pci/controller/pcie-xilinx.c
+@@ -336,14 +336,19 @@ static const struct irq_domain_ops msi_domain_ops = {
+  * xilinx_pcie_enable_msi - Enable MSI support
+  * @port: PCIe port information
+  */
+-static void xilinx_pcie_enable_msi(struct xilinx_pcie_port *port)
++static int xilinx_pcie_enable_msi(struct xilinx_pcie_port *port)
  {
- 	switch (id) {
- 	case 1151:
-+	case 5663:
- 	case 5688:
- 		return &gt1x_chip_data;
+ 	phys_addr_t msg_addr;
  
-@@ -945,6 +946,7 @@ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
- #ifdef CONFIG_OF
- static const struct of_device_id goodix_of_match[] = {
- 	{ .compatible = "goodix,gt1151" },
-+	{ .compatible = "goodix,gt5663" },
- 	{ .compatible = "goodix,gt5688" },
- 	{ .compatible = "goodix,gt911" },
- 	{ .compatible = "goodix,gt9110" },
+ 	port->msi_pages = __get_free_pages(GFP_KERNEL, 0);
++	if (!port->msi_pages)
++		return -ENOMEM;
++
+ 	msg_addr = virt_to_phys((void *)port->msi_pages);
+ 	pcie_write(port, 0x0, XILINX_PCIE_REG_MSIBASE1);
+ 	pcie_write(port, msg_addr, XILINX_PCIE_REG_MSIBASE2);
++
++	return 0;
+ }
+ 
+ /* INTx Functions */
+@@ -498,6 +503,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
+ 	struct device *dev = port->dev;
+ 	struct device_node *node = dev->of_node;
+ 	struct device_node *pcie_intc_node;
++	int ret;
+ 
+ 	/* Setup INTx */
+ 	pcie_intc_node = of_get_next_child(node, NULL);
+@@ -526,7 +532,9 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
+ 			return -ENODEV;
+ 		}
+ 
+-		xilinx_pcie_enable_msi(port);
++		ret = xilinx_pcie_enable_msi(port);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
