@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEC804403F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDC64403B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391152AbfFMQEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35362 "EHLO mail.kernel.org"
+        id S2390742AbfFMQEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:04:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731358AbfFMIrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:01 -0400
+        id S1731360AbfFMIrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:47:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78040215EA;
-        Thu, 13 Jun 2019 08:47:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AC3F2173C;
+        Thu, 13 Jun 2019 08:47:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415621;
-        bh=O14EuGScVRRw8sDwQe7zivTNfu0JwiQRnOIzLkAJJkA=;
+        s=default; t=1560415624;
+        bh=T2azg12apvWS++HL4vLtMOF4yjNH/5aptvXET4B6RXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=npG9AmhuGOE44Cmr64OhIoKejyef47r8MUr7iYvceETLZXflhqkHKdmukZR9DYXA4
-         5j33yOyVjxstdfs9zc3OzemVY6bSd3hGXLfLIpZNaBBerwhg3xubGWBMKFpR6Rfb/y
-         rMNPJyMcuzqSlajk11xj7rO6vI/pUPvngp96D1EY=
+        b=ppuRKiTkiNNHSPLxE1wPtEc+xfNYKFpQOTOMeUd+4BdF0jJhhhKGANAC1S+je+UwP
+         C8p+GUYZald2/1RrcCveSHjmWAgymlG5s+8L9ky9CLBgMQdgTLCsLNq1xTcwC691HE
+         hJIlFTofE/rha7RT7lOHpWVP4EFYBNg6D2MccvVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 042/155] f2fs: fix to avoid panic in do_recover_data()
-Date:   Thu, 13 Jun 2019 10:32:34 +0200
-Message-Id: <20190613075655.455891561@linuxfoundation.org>
+Subject: [PATCH 5.1 043/155] f2fs: fix to avoid panic in f2fs_inplace_write_data()
+Date:   Thu, 13 Jun 2019 10:32:35 +0200
+Message-Id: <20190613075655.517378170@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
 References: <20190613075652.691765927@linuxfoundation.org>
@@ -44,15 +44,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 22d61e286e2d9097dae36f75ed48801056b77cac ]
+[ Upstream commit 05573d6ccf702df549a7bdeabef31e4753df1a90 ]
 
 As Jungyeon reported in bugzilla:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203227
+https://bugzilla.kernel.org/show_bug.cgi?id=203239
 
 - Overview
-When mounting the attached crafted image, following errors are reported.
-Additionally, it hangs on sync after trying to mount it.
+When mounting the attached crafted image and running program, following errors are reported.
+Additionally, it hangs on sync after running program.
 
 The image is intentionally fuzzed from a normal f2fs image for testing.
 Compile options for F2FS are as follows.
@@ -63,57 +63,66 @@ CONFIG_F2FS_FS_POSIX_ACL=y
 CONFIG_F2FS_CHECK_FS=y
 
 - Reproduces
-mkdir test
-mount -t f2fs tmp.img test
+cc poc_15.c
+./run.sh f2fs
 sync
 
-- Messages
- kernel BUG at fs/f2fs/recovery.c:549!
- RIP: 0010:recover_data+0x167a/0x1780
+- Kernel messages
+ ------------[ cut here ]------------
+ kernel BUG at fs/f2fs/segment.c:3162!
+ RIP: 0010:f2fs_inplace_write_data+0x12d/0x160
  Call Trace:
-  f2fs_recover_fsync_data+0x613/0x710
-  f2fs_fill_super+0x1043/0x1aa0
-  mount_bdev+0x16d/0x1a0
-  mount_fs+0x4a/0x170
-  vfs_kern_mount+0x5d/0x100
-  do_mount+0x200/0xcf0
-  ksys_mount+0x79/0xc0
-  __x64_sys_mount+0x1c/0x20
+  f2fs_do_write_data_page+0x3c1/0x820
+  __write_data_page+0x156/0x720
+  f2fs_write_cache_pages+0x20d/0x460
+  f2fs_write_data_pages+0x1b4/0x300
+  do_writepages+0x15/0x60
+  __filemap_fdatawrite_range+0x7c/0xb0
+  file_write_and_wait_range+0x2c/0x80
+  f2fs_do_sync_file+0x102/0x810
+  do_fsync+0x33/0x60
+  __x64_sys_fsync+0xb/0x10
   do_syscall_64+0x43/0xf0
   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-During recovery, if ofs_of_node is inconsistent in between recovered
-node page and original checkpointed node page, let's just fail recovery
-instead of making kernel panic.
+The reason is f2fs_inplace_write_data() will trigger kernel panic due
+to data block locates in node type segment.
+
+To avoid panic, let's just return error code and set SBI_NEED_FSCK to
+give a hint to fsck for latter repairing.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/f2fs/segment.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index e3883db868d8..73338c432e7e 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -546,7 +546,15 @@ retry_dn:
- 		goto err;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ddfa2eb7ec58..3d6efbfe180f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3188,13 +3188,18 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ {
+ 	int err;
+ 	struct f2fs_sb_info *sbi = fio->sbi;
++	unsigned int segno;
  
- 	f2fs_bug_on(sbi, ni.ino != ino_of_node(page));
--	f2fs_bug_on(sbi, ofs_of_node(dn.node_page) != ofs_of_node(page));
+ 	fio->new_blkaddr = fio->old_blkaddr;
+ 	/* i/o temperature is needed for passing down write hints */
+ 	__get_segment_type(fio);
+ 
+-	f2fs_bug_on(sbi, !IS_DATASEG(get_seg_entry(sbi,
+-			GET_SEGNO(sbi, fio->new_blkaddr))->type));
++	segno = GET_SEGNO(sbi, fio->new_blkaddr);
 +
-+	if (ofs_of_node(dn.node_page) != ofs_of_node(page)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
-+			inode->i_ino, ofs_of_node(dn.node_page),
-+			ofs_of_node(page));
-+		err = -EFAULT;
-+		goto err;
++	if (!IS_DATASEG(get_seg_entry(sbi, segno)->type)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		return -EFAULT;
 +	}
  
- 	for (; start < end; start++, dn.ofs_in_node++) {
- 		block_t src, dest;
+ 	stat_inc_inplace_blocks(fio->sbi);
+ 
 -- 
 2.20.1
 
