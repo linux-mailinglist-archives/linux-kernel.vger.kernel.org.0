@@ -2,103 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C20543B20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D32343B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfFMP0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:26:25 -0400
-Received: from mail.intenta.de ([178.249.25.132]:34947 "EHLO mail.intenta.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729176AbfFMLoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:44:02 -0400
-X-Greylist: delayed 359 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Jun 2019 07:44:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=QQPcew8OO4uWb22KfzOtVt5mqOvY+NBIVgehiNO+p5g=;
-        b=MeM9nY7f3cZ90lL4rVQxYVufUJWVijCGsM8VNa570Vmemc9Y+dPh2CCk5QfPO4GgEQUkL4OOlgOR4WhNgsmBoKs2WpSYk3Kg5aXldYB6IXl7JmJyoCOrpFeuO25V4zrTlJCrDErXf//tD2uVv+ns67OSh4os0L8yg52I4x1CGatCTdyIUC7XBlk0KBce244jX/LJEfkIb3Y+6aEnWG0PJBoDtWLmtDZDhY4Z5g4BCxHFamAOkk/A8HFC8oIWvFrfWAICoZf0GmntVxKisUifc3lPHOQV3USodD50SuOMP3ZkMXbNipcN+pxWQTz5pOJt2kmnNMJxxVROtECIevg8xg==;
-X-CTCH-RefID: str=0001.0A0C0201.5D023595.00A2,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Date:   Thu, 13 Jun 2019 13:37:57 +0200
-From:   Helmut Grohne <helmut.grohne@intenta.de>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-CC:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
-Subject: Re: [LINUX PATCH v14] mtd: rawnand: pl353: Add basic driver for arm
- pl353 smc nand interface
-Message-ID: <20190613113756.53nzb6o2vuurep2a@laureti-dev>
-References: <1555326613-26739-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <20190425112338.dipgmqqfuj45gx6s@laureti-dev>
- <DM6PR02MB4779EE37978EC0E6475C55D7AF390@DM6PR02MB4779.namprd02.prod.outlook.com>
- <20190429121804.4jzspv4goehwdpez@laureti-dev>
- <BYAPR02MB4776C0226F9A9F55C9A6DE44AFEF0@BYAPR02MB4776.namprd02.prod.outlook.com>
+        id S1729037AbfFMP1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:27:20 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35143 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729050AbfFMLjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:39:47 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p26so26709139edr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 04:39:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2xaaGMG7No2zQ7VPLAPzQ32rj+gGmBMPzXcN5RQJnF8=;
+        b=w9LAj5XFY3ophQ4DwkbtNeEFNYTxLX2X5OdCVXnqnO3uj/VWYQ7iJfD888INwOAkyj
+         0BB3q5T5bJea3946DH84lSLMeNeqV0RqrMsWryk4vyz07gNhLZ+xO9Gc7Ya9acqsvQir
+         lmxxyDCm2sg4r6cj1gW51A9ku4YV1DJPROEeyiN7XoD00wvUn8tVxatQYIBRJyhGxPax
+         hBSqiTLMnE9fXLPEcQ0rgzrh19vAcRiiEGtHraSy7nma6MHE2ewccw10WPd+GrVUCwmJ
+         Rb60/5vDUddTfedPvHIZZE7qDEx2Xns7fcz97/+iv2Y+hSKU0gSZCCB9kVsDwnRlOfJ1
+         ogRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2xaaGMG7No2zQ7VPLAPzQ32rj+gGmBMPzXcN5RQJnF8=;
+        b=pII3OaJLYlChY+N13Bh4sucmPNU6op4zyIEhl3gKXQr44wWhKk0BxS6qzR3ZY2tm+J
+         5EI6LyAnBx7CKm0MwCqMDXVyfnEzCpixBJ1u+s+Z4UFyuLrgndi5Q+F7WCuxeL4VXbAF
+         VHqKBgRQInepfWKe+05RmfFA9MotX9A9YRhPtoOmS35U0oeD+PhSrCJbQpCD47YZiuWM
+         ZpspqfUH0dlh39+fK122rC0UZIPl2azJkT6pw2mqbygyACQeAfmzZHUWampGi3Mc6izv
+         3cTC+ixe7eBs+NFwKavQsc2b+W51AvlK9l/gJ8H1vdZox3eCUmAewVCovqUlzTsapSpG
+         vx1A==
+X-Gm-Message-State: APjAAAU+juSux4o+I/cpTncIc8aGqUrszVMA4NrWG6YJTk3aS0qbwsNy
+        idp/jBvvGVCQkKzkF70tbEwtRQ==
+X-Google-Smtp-Source: APXvYqy7Xsp8FQwiuXe2lfvRN1vozauF321WOLdOmtipAcKk82HAFQY/JTpoxC5Z6nYOM32/iIsHSA==
+X-Received: by 2002:a17:906:308b:: with SMTP id 11mr15873396ejv.39.1560425985036;
+        Thu, 13 Jun 2019 04:39:45 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id d12sm841728edp.16.2019.06.13.04.39.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 04:39:44 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 9479410087F; Thu, 13 Jun 2019 14:39:43 +0300 (+03)
+Date:   Thu, 13 Jun 2019 14:39:43 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
+        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
+        shakeelb@google.com, rientjes@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH 2/4] mm: move mem_cgroup_uncharge out of
+ __page_cache_release()
+Message-ID: <20190613113943.ahmqpezemdbwgyax@box>
+References: <1560376609-113689-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1560376609-113689-3-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BYAPR02MB4776C0226F9A9F55C9A6DE44AFEF0@BYAPR02MB4776.namprd02.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
- (10.10.16.48)
+In-Reply-To: <1560376609-113689-3-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
-
-On Thu, Jun 13, 2019 at 10:18:00AM +0000, Naga Sureshkumar Relli wrote:
-> I spent much of time to address all your comments.
-> All are addressed and tested. except the above one(address offset calculation)
-> I didn't see any issue with the address calculation.
-
-Let me first point out that this comment was not trying to imply a bug.
-I was trying to understand the code by comparing it to similar code and
-that turned up an inconsistency, which can be intentional or a bug in
-either of the sides being compared.
-
-> for (i = 0; i < min_t(unsigned int, 4, naddrs); i++) {
-> 	nfc_op->addrs |= instr->ctx.addr.addrs[i] <<
-> 			 (8 * i);
-> }
-> If you go through the nand_base.c, there nand_fill_column_cycles() API, fills the first two or one address cycle
-> Based on bus width and page size.
-> That means, addrs[0]/[1] will be updated here.
-
-The problem at hand is that `addrs` is imprecise. In this code, there
-are `instr->ctx.addr.addrs`, `addrs`, and `nfc_op->addrs`. All of them
-are different. My original remark was targeting the possible confusion
-of these different `addrs`.
-
-> And the page is updated to the next offsets.
-> In the similar way we have to extract the offsets in driver.
-> So the first four address bytes are stored using the above for() loop and if the
-> Address cycles are more than 4, then store the remaining offsets as well.
+On Thu, Jun 13, 2019 at 05:56:47AM +0800, Yang Shi wrote:
+> The later patch would make THP deferred split shrinker memcg aware, but
+> it needs page->mem_cgroup information in THP destructor, which is called
+> after mem_cgroup_uncharge() now.
 > 
-> I just compared the offsets that are updated in driver with the offsets(page and column) that the frame work(nand_base.c) is sending, and the offsets are same.
-> I have also checked these offsets with older driver(not exec_op() implemented) and both are matching.
-> 
-> So I didn't see any issue with this addrs calculation.
-> As per the statement mentioned by you, this driver consumes addr[0], addr[1], addr[2], addr[3] and
-> If more address cycles needed, then addr[4] and addr[5]. This is correct.
+> So, move mem_cgroup_uncharge() from __page_cache_release() to compound
+> page destructor, which is called by both THP and other compound pages
+> except HugeTLB.  And call it in __put_single_page() for single order
+> page.
 
-Again, the lack of precision makes it difficult to discuss the matter.
-You refer to `addr`, but there is no `addr`. I assume that you meant
-`addrs` here. Based on that assumption, your second last statement is
-wrong. The driver consumes `addrs[0]|addrs[-offset]` rather than
-`addrs[0]` as the first byte.  Then it proceeds consuming
-`addrs[1-offset]` instead of `addrs[1]`, `addrs[2-offset]` instead of
-`addrs[2]`, and `addrs[3-offset]` instead of `addrs[3]`. Finally it
-consumes `addrs[4]` and `addrs[5]` if more cycles are needed.
 
-I would not have commented the code if it were actually using `addrs[0]`
-through `addrs[5]`. Your description looks reasonable to me, but it
-doesn't match the code.
+If I read the patch correctly, it will change behaviour for pages with
+NULL_COMPOUND_DTOR. Have you considered it? Are you sure it will not break
+anything?
 
-I'm looking forward to the next version of the patch.
-
-Helmut
+-- 
+ Kirill A. Shutemov
