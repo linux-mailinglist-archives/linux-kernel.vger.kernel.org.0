@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE41442B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120AC43FD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391493AbfFMQYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:24:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54428 "EHLO mail.kernel.org"
+        id S1731523AbfFMQAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:00:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730985AbfFMIhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:37:01 -0400
+        id S1731460AbfFMIsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:48:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0498C20851;
-        Thu, 13 Jun 2019 08:36:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EC2520851;
+        Thu, 13 Jun 2019 08:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415020;
-        bh=A6B0aOpUumJgDILwWqICquAEkjGnKFd2qeNglV0Fj48=;
+        s=default; t=1560415732;
+        bh=1VYTss3DUZnvcOvubZtWzUDzOLn+kn01EugPZXhZC5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GiwfIJRW6htTOCYz4vY83oBu4yX9wW+6WIa38njBEM52kljg2M66ios/115sU9km/
-         CIcNiVu85V7RAfWiFFhuSRYG/bUup4EERSMDMH7m35CNiRqbChpG3Vdq5gETsURnsI
-         pUrURk0fJ57nRAzhHYheMN7zP6vrTFP5k5hV5vyc=
+        b=JOnAEHxzR/NdKlH3vTMGle9zD22xg0Hj+TwDd+NVdkRkT1TprhqL04yvgrluUeRBh
+         TcDxQszBOjdbLTfBJcbBhyKunW2wqOhOfDwXmd5aZY+hQiJbpPv3WROEV3+n8P8YH1
+         LNMkB3pzaud8naetUkYev8DNGPOqk801eVrjsApQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,12 +34,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Shawn Guo <shawnguo@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 56/81] ARM: dts: imx7d: Specify IMX7D_CLK_IPG as "ipg" clock to SDMA
+Subject: [PATCH 5.1 107/155] ARM: dts: imx53: Specify IMX5_CLK_IPG as "ahb" clock to SDMA
 Date:   Thu, 13 Jun 2019 10:33:39 +0200
-Message-Id: <20190613075653.291109838@linuxfoundation.org>
+Message-Id: <20190613075658.982430442@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,14 +49,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 412b032a1dc72fc9d1c258800355efa6671b6315 ]
+[ Upstream commit 28c168018e0902c67eb9c60d0fc4c8aa166c4efe ]
 
 Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
 clock to determine if it needs to configure the IP block as operating
 at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
-clocks as IMX7D_CLK_SDMA results in driver incorrectly thinking that
+clocks as IMX5_CLK_SDMA results in driver incorrectly thinking that
 ratio is 1:1 which results in broken SDMA funtionality. Fix the code
-to specify IMX7D_CLK_IPG as "ipg" clock for SDMA, to avoid detecting
+to specify IMX5_CLK_AHB as "ahb" clock for SDMA, to avoid detecting
 incorrect clock ratio.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
@@ -70,24 +70,22 @@ Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx7s.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx53.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 82ad26e766eb..bf15efbe8a71 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -997,8 +997,8 @@
- 				compatible = "fsl,imx7d-sdma", "fsl,imx35-sdma";
- 				reg = <0x30bd0000 0x10000>;
- 				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_SDMA_CORE_CLK>,
--					 <&clks IMX7D_AHB_CHANNEL_ROOT_CLK>;
-+				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-+					 <&clks IMX7D_SDMA_CORE_CLK>;
+diff --git a/arch/arm/boot/dts/imx53.dtsi b/arch/arm/boot/dts/imx53.dtsi
+index b3300300aabe..9b672ed2486d 100644
+--- a/arch/arm/boot/dts/imx53.dtsi
++++ b/arch/arm/boot/dts/imx53.dtsi
+@@ -702,7 +702,7 @@
+ 				reg = <0x63fb0000 0x4000>;
+ 				interrupts = <6>;
+ 				clocks = <&clks IMX5_CLK_SDMA_GATE>,
+-					 <&clks IMX5_CLK_SDMA_GATE>;
++					 <&clks IMX5_CLK_AHB>;
  				clock-names = "ipg", "ahb";
  				#dma-cells = <3>;
- 				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+ 				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx53.bin";
 -- 
 2.20.1
 
