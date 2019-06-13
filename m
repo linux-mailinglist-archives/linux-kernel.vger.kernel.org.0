@@ -2,207 +2,687 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B1543C90
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B560B43C5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732997AbfFMPgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:36:31 -0400
-Received: from outgoing2.flk.host-h.net ([188.40.0.84]:39967 "EHLO
-        outgoing2.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbfFMKRn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:17:43 -0400
-Received: from www31.flk1.host-h.net ([188.40.1.173])
-        by antispam3-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.89)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1hbMnb-0004gv-Eh; Thu, 13 Jun 2019 12:17:40 +0200
-Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
-        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1hbMna-0003Pi-J5; Thu, 13 Jun 2019 12:17:38 +0200
-From:   Justin Swartz <justin.swartz@risingedge.co.za>
-To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: rockchip: add display nodes for rk322x
-Date:   Thu, 13 Jun 2019 10:13:04 +0000
-Message-Id: <20190613101305.30491-1-justin.swartz@risingedge.co.za>
-X-Mailer: git-send-email 2.11.0
-X-Authenticated-Sender: justin.swartz@risingedge.co.za
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25478/Wed Jun 12 10:14:54 2019)
-X-Originating-IP: 188.40.1.173
-X-SpamExperts-Domain: risingedge.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.0014064279395)
-X-Recommended-Action: accept
-X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0aEcKiGOen0TgGQo14QTNxSpSDasLI4SayDByyq9LIhVm8Lp0RDH9p9e
- zSXjVPBY3UTNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
- mAX8Bxy/iUu0ThNZg0jxJtcVJProrT987X1VDPOqN+OoDzRTdku7DidYUZdNf38Sp7Of4wP429AA
- f49baR+f3He7jw4SoVhmTJ/3eP9ORQWVx8ds1M4qmk3/bYr2p8zbg4Paoa3pNVQ0zl7t/+UfQLYB
- qEPnp1U88kqVD8AM2G81dFO0E3gi+MOI1foZYzDggRXhpvoPtF3cVkniFXU3qJSqpdJudO6+rkiw
- E5i8Wl78Q18OeOfsy4h7jF1Uv9lnibl3vcBqVmvQB4A18aeE+j/fKO/vV3jpic9houk2mH6eQvWp
- DWTULXV1jJ5bfceEJeNruLKdflVX7oFNsdHVhnpudkCyIg6Nob+f0OfCg2lBMt3xu9nbye2CdJLN
- jSo1M+TSg3TNDI3/M5s9/ot3ko3rrae7IifWc6pL546YUVQwaYLh3di89W/ji5iahyCgJgyv93tC
- 61cbiLYl3RCqADG/Ryndzp4OfbK7c6EqHwlqvaI+zok/BsKQK4gft4+8sY8CNaDDoRMm0CGce/fp
- WUXurEbGCiZ0ePvZjCuJdbYb9IXfYGRpVS/0hA4Mwkg/wxsjmSXwdCAtc5U5IMGqr3wBwEeX6Ai5
- 5FPRpzhbYqsuNEW45+y/2kiUpWy9c957+6R4kroQiAThpzOdFqFvbdRuq0FZjQOwDKXnhaC6dkwF
- 9ybSMhHO+IPM0C985aNe1vwE2plJLdOGZ2rsAWflnmUXwJv1R9bnj+xoJG4VhUotTJ0/e5GmrorL
- FK/ZMMaOhB24kmiXsKh2uc6NbILRjdK3JtbOY4V5u4SqNrbdxyGLEIoLEuuC4P/fyEEgA3CnflZn
- bjDB2+RGRgaXth2/9YEbMsGSn6owqJN0kS7MUpAEhFoAxikOdx3ALFboD0vMokt+4lO8Qp33tUy6
- u+yS6WEpzRkYYh+Rxc/2mS1yCppcnKmI4dLjaezH/hFXJzwJWw42swm4bO6gacpMpzJ5RNWFoIkg
- vLC7uMZSLKkLPlzqsPnNmrTFfBI+gCHkFgyh9jAE9PwtDurXCCybWAnihjA708Lg3Y2gXyaf+rIt
- vvthbyiMZOAfvJjwL84MO4Vozqbzv/NmqBexmg1oMlu3UCyNNO7qENlLqkRemjF1A1q3g0ZrubFa
- n/xi+AGXOIO97ttnHrPmGyC6rR21+9c=
-X-Report-Abuse-To: spam@antispammaster.host-h.net
+        id S1727196AbfFMPfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:35:38 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53708 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727564AbfFMKW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:22:28 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E68451A0384;
+        Thu, 13 Jun 2019 12:22:23 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BB08F1A0386;
+        Thu, 13 Jun 2019 12:22:20 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A84924029F;
+        Thu, 13 Jun 2019 18:22:16 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com, leoyang.li@nxp.com
+Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [V4 1/2] dmaengine: fsl-dpaa2-qdma: Add the DPDMAI(Data Path DMA Interface) support
+Date:   Thu, 13 Jun 2019 10:13:40 +0000
+Message-Id: <20190613101341.21169-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add display_subsystem, hdmi_phy, vop, and hdmi device nodes plus
-a few hdmi pinctrl entries to allow for HDMI output.
+The MC(Management Complex) exports the DPDMAI(Data Path DMA Interface)
+object as an interface to operate the DPAA2(Data Path Acceleration
+Architecture 2) qDMA Engine. The DPDMAI enables sending frame-based
+requests to qDMA and receiving back confirmation response on transaction
+completion, utilizing the DPAA2 QBMan(Queue Manager and Buffer Manager
+hardware) infrastructure. DPDMAI object provides up to two priorities for
+processing qDMA requests.
+The following list summarizes the DPDMAI main features and capabilities:
+	1. Supports up to two scheduling priorities for processing
+	service requests.
+	- Each DPDMAI transmit queue is mapped to one of two service
+	priorities, allowing further prioritization in hardware between
+	requests from different DPDMAI objects.
+	2. Supports up to two receive queues for incoming transaction
+	completion confirmations.
+	- Each DPDMAI receive queue is mapped to one of two receive
+	priorities, allowing further prioritization between other
+	interfaces when associating the DPDMAI receive queues to DPIO
+	or DPCON(Data Path Concentrator) objects.
+	3. Supports different scheduling options for processing received
+	packets:
+	- Queues can be configured either in 'parked' mode (default),
+	oattached to a DPIO object, or attached to DPCON object.
+	4. Allows interaction with one or more DPIO objects for
+	dequeueing/enqueueing frame descriptors(FD) and for
+	acquiring/releasing buffers.
+	5. Supports enable, disable, and reset operations.
 
-Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+Add dpdmai to support some platforms with dpaa2 qdma engine.
+
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
- arch/arm/boot/dts/rk322x.dtsi | 83 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 82 insertions(+), 1 deletion(-)
+changed for v4:
+	- Delete dpdmai_cmd.h.
+	- Remove some useless functions.
+	- Clean up the format.
+	- Update Copyright.
 
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index da102fff96a2..7eb883eec126 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -143,6 +143,11 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	display_subsystem: display-subsystem {
-+		compatible = "rockchip,display-subsystem";
-+		ports = <&vop_out>;
+ drivers/dma/fsl-dpaa2-qdma/dpdmai.c |  275 ++++++++++++++++++++++++++++++
+ drivers/dma/fsl-dpaa2-qdma/dpdmai.h |  318 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 593 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+ create mode 100644 drivers/dma/fsl-dpaa2-qdma/dpdmai.h
+
+diff --git a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+new file mode 100644
+index 0000000..4dba154
+--- /dev/null
++++ b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+@@ -0,0 +1,275 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright 2019 NXP
++
++#include <linux/types.h>
++#include <linux/io.h>
++#include <linux/fsl/mc.h>
++#include "dpdmai.h"
++
++struct dpdmai_cmd_open {
++	__le32 dpdmai_id;
++};
++
++struct dpdmai_rsp_get_attributes {
++	__le32 id;
++	u8 num_of_priorities;
++	u8 pad0[3];
++	__le16 major;
++	__le16 minor;
++};
++
++struct dpdmai_cmd_queue {
++	__le32 dest_id;
++	u8 priority;
++	u8 queue;
++	u8 dest_type;
++	u8 pad;
++	__le64 user_ctx;
++	union {
++		__le32 options;
++		__le32 fqid;
 +	};
++};
 +
- 	i2s1: i2s1@100b0000 {
- 		compatible = "rockchip,rk3228-i2s", "rockchip,rk3066-i2s";
- 		reg = <0x100b0000 0x4000>;
-@@ -529,6 +534,17 @@
- 		status = "disabled";
- 	};
- 
-+	hdmi_phy: hdmi-phy@12030000 {
-+		compatible = "rockchip,rk3228-hdmi-phy";
-+		reg = <0x12030000 0x10000>;
-+		clocks = <&cru PCLK_HDMI_PHY>, <&xin24m>, <&cru DCLK_HDMI_PHY>;
-+		clock-names = "sysclk", "refoclk", "refpclk";
-+		#clock-cells = <0>;
-+		clock-output-names = "hdmiphy_phy";
-+		#phy-cells = <0>;
-+		status = "disabled";
-+	};
++struct dpdmai_rsp_get_tx_queue {
++	__le64 pad;
++	__le32 fqid;
++};
 +
- 	gpu: gpu@20000000 {
- 		compatible = "rockchip,rk3228-mali", "arm,mali-400";
- 		reg = <0x20000000 0x10000>;
-@@ -572,6 +588,28 @@
- 		status = "disabled";
- 	};
- 
-+	vop: vop@20050000 {
-+		compatible = "rockchip,rk3228-vop";
-+		reg = <0x20050000 0x1ffc>;
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_VOP>, <&cru DCLK_VOP>, <&cru HCLK_VOP>;
-+		clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
-+		resets = <&cru SRST_VOP_A>, <&cru SRST_VOP_H>, <&cru SRST_VOP_D>;
-+		reset-names = "axi", "ahb", "dclk";
-+		iommus = <&vop_mmu>;
-+		status = "disabled";
++#define MC_CMD_OP(_cmd, _param, _offset, _width, _type, _arg) \
++	((_cmd).params[_param] |= mc_enc((_offset), (_width), _arg))
 +
-+		vop_out: port {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++#define MC_CMD_HDR_READ_TOKEN(_hdr) \
++	((u16)mc_dec((_hdr), MC_CMD_HDR_TOKEN_O, MC_CMD_HDR_TOKEN_S))
 +
-+			vop_out_hdmi: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&hdmi_in_vop>;
-+			};
-+		};
-+	};
++/* cmd, param, offset, width, type, arg_name */
++#define DPDMAI_CMD_CREATE(_cmd, _cfg) \
++do { \
++	typeof(_cmd) (cmd) = (_cmd); \
++	typeof(_cfg) (cfg) = (_cfg); \
++	MC_CMD_OP(cmd, 0, 8,  8,  u8,  (cfg)->priorities[0]);\
++	MC_CMD_OP(cmd, 0, 16, 8,  u8,  (cfg)->priorities[1]);\
++} while (0)
 +
- 	vop_mmu: iommu@20053f00 {
- 		compatible = "rockchip,iommu";
- 		reg = <0x20053f00 0x100>;
-@@ -579,7 +617,7 @@
- 		interrupt-names = "vop_mmu";
- 		clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
- 		clock-names = "aclk", "iface";
--		iommu-cells = <0>;
-+		#iommu-cells = <0>;
- 		status = "disabled";
- 	};
- 
-@@ -594,6 +632,34 @@
- 		status = "disabled";
- 	};
- 
-+	hdmi: hdmi@200a0000 {
-+		compatible = "rockchip,rk3228-dw-hdmi";
-+		reg = <0x200a0000 0x20000>;
-+		reg-io-width = <4>;
-+		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_HDMI_HDCP>, <&cru PCLK_HDMI_CTRL>, <&cru SCLK_HDMI_CEC>;
-+		clock-names = "isfr", "iahb", "cec";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hdmii2c_xfer &hdmi_hpd &hdmi_cec>;
-+		resets = <&cru SRST_HDMI_P>;
-+		reset-names = "hdmi";
-+		phys = <&hdmi_phy>;
-+		phy-names = "hdmi";
-+		rockchip,grf = <&grf>;
-+		status = "disabled";
++static inline u64 mc_enc(int lsoffset, int width, u64 val)
++{
++	return (u64)(((u64)val & MAKE_UMASK64(width)) << lsoffset);
++}
 +
-+		ports {
-+			hdmi_in: port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				hdmi_in_vop: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&vop_out_hdmi>;
-+				};
-+			};
-+		};
-+	};
++static inline u64 mc_dec(u64 val, int lsoffset, int width)
++{
++	return (u64)((val >> lsoffset) & MAKE_UMASK64(width));
++}
 +
- 	sdmmc: dwmmc@30000000 {
- 		compatible = "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		reg = <0x30000000 0x4000>;
-@@ -922,6 +988,21 @@
- 			};
- 		};
- 
-+		hdmi {
-+			hdmi_hpd: hdmi-hpd {
-+				rockchip,pins = <0 RK_PB7 1 &pcfg_pull_down>;
-+			};
++int dpdmai_open(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		int dpdmai_id, u16 *token)
++{
++	struct fsl_mc_command cmd = { 0 };
++	struct dpdmai_cmd_open *cmd_params;
++	int err;
 +
-+			hdmii2c_xfer: hdmii2c-xfer {
-+				rockchip,pins = <0 RK_PA6 2 &pcfg_pull_none>,
-+						<0 RK_PA7 2 &pcfg_pull_none>;
-+			};
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_OPEN,
++					  cmd_flags, 0);
 +
-+			hdmi_cec: hdmi-cec {
-+				rockchip,pins = <0 RK_PC4 1 &pcfg_pull_none>;
-+			};
-+		};
++	cmd_params = (struct dpdmai_cmd_open *)cmd.params;
++	cmd_params->dpdmai_id = cpu_to_le32(dpdmai_id);
 +
- 		i2c0 {
- 			i2c0_xfer: i2c0-xfer {
- 				rockchip,pins = <0 RK_PA0 1 &pcfg_pull_none>,
++	/* send command to mc*/
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	/* retrieve response parameters */
++	*token = mc_cmd_hdr_read_token(&cmd);
++	return 0;
++}
++
++int dpdmai_close(struct fsl_mc_io *mc_io, u32 cmd_flags, u16 token)
++{
++	struct fsl_mc_command cmd = { 0 };
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_CLOSE,
++					  cmd_flags, token);
++
++	/* send command to mc*/
++	return mc_send_command(mc_io, &cmd);
++}
++
++int dpdmai_create(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		  const struct dpdmai_cfg *cfg, u16 *token)
++{
++	struct fsl_mc_command cmd = { 0 };
++	int err;
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_CREATE,
++					  cmd_flags,
++					  0);
++	DPDMAI_CMD_CREATE(cmd, cfg);
++
++	/* send command to mc*/
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	/* retrieve response parameters */
++	*token = MC_CMD_HDR_READ_TOKEN(cmd.header);
++
++	return 0;
++}
++
++int dpdmai_enable(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		  u16 token)
++{
++	struct fsl_mc_command cmd = { 0 };
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_ENABLE,
++					  cmd_flags,
++					  token);
++
++	/* send command to mc*/
++	return mc_send_command(mc_io, &cmd);
++}
++
++int dpdmai_disable(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		   u16 token)
++{
++	struct fsl_mc_command cmd = { 0 };
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_DISABLE,
++					  cmd_flags,
++					  token);
++
++	/* send command to mc*/
++	return mc_send_command(mc_io, &cmd);
++}
++
++int dpdmai_reset(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		 u16 token)
++{
++	struct fsl_mc_command cmd = { 0 };
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_RESET,
++					  cmd_flags,
++					  token);
++
++	/* send command to mc*/
++	return mc_send_command(mc_io, &cmd);
++}
++
++int dpdmai_get_attributes(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			  u16 token, struct dpdmai_attr *attr)
++{
++	struct fsl_mc_command cmd = { 0 };
++	int err;
++	struct dpdmai_rsp_get_attributes *rsp_params;
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_GET_ATTR,
++					  cmd_flags,
++					  token);
++
++	/* send command to mc*/
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	/* retrieve response parameters */
++	rsp_params = (struct dpdmai_rsp_get_attributes *)cmd.params;
++	attr->id = le32_to_cpu(rsp_params->id);
++	attr->version.major = le16_to_cpu(rsp_params->major);
++	attr->version.minor = le16_to_cpu(rsp_params->minor);
++	attr->num_of_priorities = rsp_params->num_of_priorities;
++
++	return 0;
++}
++
++int dpdmai_set_rx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			u16 token, u8 priority,
++			const struct dpdmai_rx_queue_cfg *cfg)
++{
++	struct fsl_mc_command cmd = { 0 };
++	struct dpdmai_cmd_queue *cmd_params;
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_SET_RX_QUEUE,
++					  cmd_flags,
++					  token);
++
++	cmd_params = (struct dpdmai_cmd_queue *)cmd.params;
++	cmd_params->dest_id = cpu_to_le32(cfg->dest_cfg.dest_id);
++	cmd_params->priority = cfg->dest_cfg.priority;
++	cmd_params->queue = priority;
++	cmd_params->dest_type = cfg->dest_cfg.dest_type;
++	cmd_params->user_ctx = cpu_to_le64(cfg->user_ctx);
++	cmd_params->options = cpu_to_le32(cfg->options);
++
++	/* send command to mc*/
++	return mc_send_command(mc_io, &cmd);
++}
++
++int dpdmai_get_rx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			u16 token, u8 priority,
++			struct dpdmai_rx_queue_attr *attr)
++{
++	struct fsl_mc_command cmd = { 0 };
++	struct dpdmai_cmd_queue *cmd_params;
++	int err;
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_GET_RX_QUEUE,
++					  cmd_flags,
++					  token);
++
++	cmd_params = (struct dpdmai_cmd_queue *)cmd.params;
++	cmd_params->queue = priority;
++
++	/* send command to mc*/
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	/* retrieve response parameters */
++	attr->dest_cfg.dest_id = le32_to_cpu(cmd_params->dest_id);
++	attr->dest_cfg.priority = cmd_params->priority;
++	attr->dest_cfg.dest_type = cmd_params->dest_type;
++	attr->user_ctx = le64_to_cpu(cmd_params->user_ctx);
++	attr->fqid = le32_to_cpu(cmd_params->fqid);
++
++	return 0;
++}
++
++int dpdmai_get_tx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			u16 token, u8 priority,
++			struct dpdmai_tx_queue_attr *attr)
++{
++	struct fsl_mc_command cmd = { 0 };
++	struct dpdmai_cmd_queue *cmd_params;
++	struct dpdmai_rsp_get_tx_queue *rsp_params;
++	int err;
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_GET_TX_QUEUE,
++					  cmd_flags,
++					  token);
++
++	cmd_params = (struct dpdmai_cmd_queue *)cmd.params;
++	cmd_params->queue = priority;
++
++	/* send command to mc*/
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	/* retrieve response parameters */
++
++	rsp_params = (struct dpdmai_rsp_get_tx_queue *)cmd.params;
++	attr->fqid = le32_to_cpu(rsp_params->fqid);
++
++	return 0;
++}
+diff --git a/drivers/dma/fsl-dpaa2-qdma/dpdmai.h b/drivers/dma/fsl-dpaa2-qdma/dpdmai.h
+new file mode 100644
+index 0000000..54d26bb
+--- /dev/null
++++ b/drivers/dma/fsl-dpaa2-qdma/dpdmai.h
+@@ -0,0 +1,318 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright 2019 NXP */
++
++#ifndef __FSL_DPDMAI_H
++#define __FSL_DPDMAI_H
++
++/* DPDMAI Version */
++#define DPDMAI_VER_MAJOR	2
++#define DPDMAI_VER_MINOR	2
++
++#define DPDMAI_CMD_BASE_VERSION	0
++#define DPDMAI_CMD_ID_OFFSET	4
++
++#define DPDMAI_CMDID_FORMAT(x)	(((x) << DPDMAI_CMD_ID_OFFSET) | \
++				DPDMAI_CMD_BASE_VERSION)
++
++/* Command IDs */
++#define DPDMAI_CMDID_CLOSE		DPDMAI_CMDID_FORMAT(0x800)
++#define DPDMAI_CMDID_OPEN               DPDMAI_CMDID_FORMAT(0x80E)
++#define DPDMAI_CMDID_CREATE             DPDMAI_CMDID_FORMAT(0x90E)
++
++#define DPDMAI_CMDID_ENABLE             DPDMAI_CMDID_FORMAT(0x002)
++#define DPDMAI_CMDID_DISABLE            DPDMAI_CMDID_FORMAT(0x003)
++#define DPDMAI_CMDID_GET_ATTR           DPDMAI_CMDID_FORMAT(0x004)
++#define DPDMAI_CMDID_RESET              DPDMAI_CMDID_FORMAT(0x005)
++#define DPDMAI_CMDID_IS_ENABLED         DPDMAI_CMDID_FORMAT(0x006)
++
++#define DPDMAI_CMDID_SET_IRQ            DPDMAI_CMDID_FORMAT(0x010)
++#define DPDMAI_CMDID_GET_IRQ            DPDMAI_CMDID_FORMAT(0x011)
++#define DPDMAI_CMDID_SET_IRQ_ENABLE     DPDMAI_CMDID_FORMAT(0x012)
++#define DPDMAI_CMDID_GET_IRQ_ENABLE     DPDMAI_CMDID_FORMAT(0x013)
++#define DPDMAI_CMDID_SET_IRQ_MASK       DPDMAI_CMDID_FORMAT(0x014)
++#define DPDMAI_CMDID_GET_IRQ_MASK       DPDMAI_CMDID_FORMAT(0x015)
++#define DPDMAI_CMDID_GET_IRQ_STATUS     DPDMAI_CMDID_FORMAT(0x016)
++#define DPDMAI_CMDID_CLEAR_IRQ_STATUS	DPDMAI_CMDID_FORMAT(0x017)
++
++#define DPDMAI_CMDID_SET_RX_QUEUE	DPDMAI_CMDID_FORMAT(0x1A0)
++#define DPDMAI_CMDID_GET_RX_QUEUE       DPDMAI_CMDID_FORMAT(0x1A1)
++#define DPDMAI_CMDID_GET_TX_QUEUE       DPDMAI_CMDID_FORMAT(0x1A2)
++
++#define MC_CMD_HDR_TOKEN_O 32  /* Token field offset */
++#define MC_CMD_HDR_TOKEN_S 16  /* Token field size */
++
++#define MAKE_UMASK64(_width) \
++	((u64)((_width) < 64 ? ((u64)1 << (_width)) - 1 : (u64)-1))
++
++/* Data Path DMA Interface API
++ * Contains initialization APIs and runtime control APIs for DPDMAI
++ */
++
++/**
++ * Maximum number of Tx/Rx priorities per DPDMAI object
++ */
++#define DPDMAI_PRIO_NUM		2
++
++/* DPDMAI queue modification options */
++
++/**
++ * Select to modify the user's context associated with the queue
++ */
++#define DPDMAI_QUEUE_OPT_USER_CTX	0x1
++
++/**
++ * Select to modify the queue's destination
++ */
++#define DPDMAI_QUEUE_OPT_DEST		0x2
++
++/**
++ * dpdmai_open() - Open a control session for the specified object
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @dpdmai_id:	DPDMAI unique ID
++ * @token:	Returned token; use in subsequent API calls
++ *
++ * This function can be used to open a control session for an
++ * already created object; an object may have been declared in
++ * the DPL or by calling the dpdmai_create() function.
++ * This function returns a unique authentication token,
++ * associated with the specific object ID and the specific MC
++ * portal; this token must be used in all subsequent commands for
++ * this specific object.
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_open(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		int dpdmai_id, u16 *token);
++
++/**
++ * dpdmai_close() - Close the control session of the object
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ *
++ * After this function is called, no further operations are
++ * allowed on the object without opening a new control session.
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_close(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		 u16 token);
++
++/**
++ * struct dpdmai_cfg - Structure representing DPDMAI configuration
++ * @priorities: Priorities for the DMA hardware processing; valid priorities are
++ *	configured with values 1-8; the entry following last valid entry
++ *	should be configured with 0
++ */
++struct dpdmai_cfg {
++	u8 priorities[DPDMAI_PRIO_NUM];
++};
++
++/**
++ * dpdmai_create() - Create the DPDMAI object
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @cfg:	Configuration structure
++ * @token:	Returned token; use in subsequent API calls
++ *
++ * Create the DPDMAI object, allocate required resources and
++ * perform required initialization.
++ *
++ * The object can be created either by declaring it in the
++ * DPL file, or by calling this function.
++ *
++ * This function returns a unique authentication token,
++ * associated with the specific object ID and the specific MC
++ * portal; this token must be used in all subsequent calls to
++ * this specific object. For objects that are created using the
++ * DPL file, call dpdmai_open() function to get an authentication
++ * token first.
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_create(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		  const struct dpdmai_cfg *cfg, u16 *token);
++
++/**
++ * dpdmai_enable() - Enable the DPDMAI, allow sending and receiving frames.
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_enable(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		  u16 token);
++
++/**
++ * dpdmai_disable() - Disable the DPDMAI, stop sending and receiving frames.
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_disable(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		   u16 token);
++
++/**
++ * dpdmai_reset() - Reset the DPDMAI, returns the object to initial state.
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_reset(struct fsl_mc_io *mc_io, u32 cmd_flags,
++		 u16 token);
++
++/**
++ * struct dpdmai_attr - Structure representing DPDMAI attributes
++ * @id: DPDMAI object ID
++ * @version: DPDMAI version
++ * @num_of_priorities: number of priorities
++ */
++struct dpdmai_attr {
++	int	id;
++	/**
++	 * struct version - DPDMAI version
++	 * @major: DPDMAI major version
++	 * @minor: DPDMAI minor version
++	 */
++	struct {
++		u16 major;
++		u16 minor;
++	} version;
++	u8 num_of_priorities;
++};
++
++/**
++ * dpdmai_get_attributes() - Retrieve DPDMAI attributes.
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ * @attr:	Returned object's attributes
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_get_attributes(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			  u16 token, struct dpdmai_attr	*attr);
++
++/**
++ * enum dpdmai_dest - DPDMAI destination types
++ * @DPDMAI_DEST_NONE: Unassigned destination; The queue is set in parked mode
++ *	and does not generate FQDAN notifications; user is expected to dequeue
++ *	from the queue based on polling or other user-defined method
++ * @DPDMAI_DEST_DPIO: The queue is set in schedule mode and generates FQDAN
++ *	notifications to the specified DPIO; user is expected to dequeue
++ *	from the queue only after notification is received
++ * @DPDMAI_DEST_DPCON: The queue is set in schedule mode and does not generate
++ *	FQDAN notifications, but is connected to the specified DPCON object;
++ *	user is expected to dequeue from the DPCON channel
++ */
++enum dpdmai_dest {
++	DPDMAI_DEST_NONE = 0,
++	DPDMAI_DEST_DPIO = 1,
++	DPDMAI_DEST_DPCON = 2
++};
++
++/**
++ * struct dpdmai_dest_cfg - Structure representing DPDMAI destination parameters
++ * @dest_type: Destination type
++ * @dest_id: Either DPIO ID or DPCON ID, depending on the destination type
++ * @priority: Priority selection within the DPIO or DPCON channel; valid values
++ *	are 0-1 or 0-7, depending on the number of priorities in that
++ *	channel; not relevant for 'DPDMAI_DEST_NONE' option
++ */
++struct dpdmai_dest_cfg {
++	enum dpdmai_dest dest_type;
++	int dest_id;
++	u8 priority;
++};
++
++/**
++ * struct dpdmai_rx_queue_cfg - DPDMAI RX queue configuration
++ * @options: Flags representing the suggested modifications to the queue;
++ *	Use any combination of 'DPDMAI_QUEUE_OPT_<X>' flags
++ * @user_ctx: User context value provided in the frame descriptor of each
++ *	dequeued frame;
++ *	valid only if 'DPDMAI_QUEUE_OPT_USER_CTX' is contained in 'options'
++ * @dest_cfg: Queue destination parameters;
++ *	valid only if 'DPDMAI_QUEUE_OPT_DEST' is contained in 'options'
++ */
++struct dpdmai_rx_queue_cfg {
++	struct dpdmai_dest_cfg dest_cfg;
++	u32 options;
++	u64 user_ctx;
++
++};
++
++/**
++ * dpdmai_set_rx_queue() - Set Rx queue configuration
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ * @priority:	Select the queue relative to number of
++ *		priorities configured at DPDMAI creation
++ * @cfg:	Rx queue configuration
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_set_rx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			u16 token, u8 priority,
++			const struct dpdmai_rx_queue_cfg *cfg);
++
++/**
++ * struct dpdmai_rx_queue_attr - Structure representing attributes of Rx queues
++ * @user_ctx:  User context value provided in the frame descriptor of each
++ *	 dequeued frame
++ * @dest_cfg: Queue destination configuration
++ * @fqid: Virtual FQID value to be used for dequeue operations
++ */
++struct dpdmai_rx_queue_attr {
++	struct dpdmai_dest_cfg	dest_cfg;
++	u64 user_ctx;
++	u32 fqid;
++};
++
++/**
++ * dpdmai_get_rx_queue() - Retrieve Rx queue attributes.
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ * @priority:	Select the queue relative to number of
++ *				priorities configured at DPDMAI creation
++ * @attr:	Returned Rx queue attributes
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_get_rx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			u16 token, u8 priority,
++			struct dpdmai_rx_queue_attr *attr);
++
++/**
++ * struct dpdmai_tx_queue_attr - Structure representing attributes of Tx queues
++ * @fqid: Virtual FQID to be used for sending frames to DMA hardware
++ */
++
++struct dpdmai_tx_queue_attr {
++	u32 fqid;
++};
++
++/**
++ * dpdmai_get_tx_queue() - Retrieve Tx queue attributes.
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPDMAI object
++ * @priority:	Select the queue relative to number of
++ *			priorities configured at DPDMAI creation
++ * @attr:	Returned Tx queue attributes
++ *
++ * Return:	'0' on Success; Error code otherwise.
++ */
++int dpdmai_get_tx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
++			u16 token, u8 priority,
++			struct dpdmai_tx_queue_attr *attr);
++
++#endif /* __FSL_DPDMAI_H */
 -- 
-2.11.0
+1.7.1
 
