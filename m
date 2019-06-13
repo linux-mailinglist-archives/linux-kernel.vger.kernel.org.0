@@ -2,136 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0CC43F37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3984643F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:57:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389579AbfFMPzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:55:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:44084 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731540AbfFMPze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:55:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45004367;
-        Thu, 13 Jun 2019 08:55:33 -0700 (PDT)
-Received: from [10.1.196.120] (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 410F63F246;
-        Thu, 13 Jun 2019 08:55:32 -0700 (PDT)
-Subject: Re: [RFC V2 00/16] objtool: Add support for Arm64
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Julien Thierry <Julien.Thierry@arm.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-References: <20190516103655.5509-1-raphael.gault@arm.com>
- <20190516142917.nuhh6dmfiufxqzls@treble>
- <26692833-0e5b-cfe0-0ffd-c2c2f0815935@arm.com>
- <20190528222415.x63qw55ujm33dozb@treble>
-From:   Raphael Gault <raphael.gault@arm.com>
-Message-ID: <09745535-2782-fa11-ed65-3119b9455e79@arm.com>
-Date:   Thu, 13 Jun 2019 16:55:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190528222415.x63qw55ujm33dozb@treble>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2390108AbfFMP5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:57:07 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58202 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390390AbfFMP4w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:56:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=XLqrwinvOXCmZNr3g6KRL6b7QVnkHmhZzUuw0O8ojyg=; b=SaxSvMD/lzXK
+        u0MH8GdScn9rjHBQ4uQl+cJ12vzEMW48eiwYteFfVGmgyKtYcsZdZv/cdjnBVfKayHFeVwMDwIZUF
+        s+gp54h4XX+BXtdS/kEBfjYx+6+HMuN2BeI2ksYTP/6FRk10OfLAzvfd4AQevijcOfzD9xZ4uGmKh
+        Pv3Zw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hbS5m-0005HL-Gm; Thu, 13 Jun 2019 15:56:46 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 0AF3C440046; Thu, 13 Jun 2019 16:56:46 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>
+Subject: Applied "regulator: max8952: Convert to use GPIO descriptors" to the regulator tree
+In-Reply-To: <20190609114812.28375-1-linus.walleij@linaro.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190613155646.0AF3C440046@finisterre.sirena.org.uk>
+Date:   Thu, 13 Jun 2019 16:56:45 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Josh,
+The patch
 
-On 5/28/19 11:24 PM, Josh Poimboeuf wrote:
-> On Tue, May 21, 2019 at 12:50:57PM +0000, Raphael Gault wrote:
->> Hi Josh,
->>
->> Thanks for offering your help and sorry for the late answer.
->>
->> My understanding is that a table of offsets is built by GCC, those
->> offsets being scaled by 4 before adding them to the base label.
->> I believe the offsets are stored in the .rodata section. To find the
->> size of that table, it is needed to find a comparison, which can be
->> optimized out apprently. In that case the end of the array can be found
->> by locating labels pointing to data behind it (which is not 100% safe).
->>
->> On 5/16/19 3:29 PM, Josh Poimboeuf wrote:
->>> On Thu, May 16, 2019 at 11:36:39AM +0100, Raphael Gault wrote:
->>>> Noteworthy points:
->>>> * I still haven't figured out how to detect switch-tables on arm64. I
->>>> have a better understanding of them but still haven't implemented checks
->>>> as it doesn't look trivial at all.
->>>
->>> Switch tables were tricky to get right on x86.  If you share an example
->>> (or even just a .o file) I can take a look.  Hopefully they're somewhat
->>> similar to x86 switch tables.  Otherwise we may want to consider a
->>> different approach (for example maybe a GCC plugin could help annotate
->>> them).
->>>
->>
->> The case which made me realize the issue is the one of
->> arch/arm64/kernel/module.o:apply_relocate_add:
->>
->> ```
->> What seems to happen in the case of module.o is:
->>    334:   90000015        adrp    x21, 0 <do_reloc>
->> which retrieves the location of an offset in the rodata section, and a
->> bit later we do some extra computation with it in order to compute the
->> jump destination:
->>    3e0:   78625aa0        ldrh    w0, [x21, w2, uxtw #1]
->>    3e4:   10000061        adr     x1, 3f0 <apply_relocate_add+0xf8>
->>    3e8:   8b20a820        add     x0, x1, w0, sxth #2
->>    3ec:   d61f0000        br      x0
->> ```
->>
->> Please keep in mind that the actual offsets might vary.
->>
->> I'm happy to provide more details about what I have identified if you
->> want me to.
-> 
-> I get the feeling this is going to be trickier than x86 switch tables
-> (which have already been tricky enough).
-> 
-> On x86, there's a .rela.rodata section which applies relocations to
-> .rodata.  The presence of those relocations makes it relatively easy to
-> differentiate switch tables from other read-only data.  For example, we
-> can tell that a switch table ends when either a) there's not a text
-> relocation or b) another switch table begins.
-> 
-> But with arm64 I don't see a deterministic way to do that, because the
-> table offsets are hard-coded in .rodata, with no relocations.
-> 
->  From talking with Kamalesh I got the impression that we might have a
-> similar issue for powerpc.
-> 
-> So I'm beginning to think we'll need compiler help.  Like a GCC plugin
-> that annotates at least the following switch table metadata:
-> 
-> - Branch instruction address
-> - Switch table address
-> - Switch table entry size
-> - Switch table size
-> 
-> The GCC plugin could write all the above metadata into a special section
-> which gets discarded at link time.  I can look at implementing it,
-> though I'll be traveling for two out of the next three weeks so it may
-> be a while before I can get to it.
-> 
+   regulator: max8952: Convert to use GPIO descriptors
 
-I am completely new to GCC plugins but I had a look and I think I found 
-a possible solution to retrieve at least part of this information using 
-the RTL representation in GCC. I can't say it will work for sure but I 
-would be happy to discuss it with you if you want.
-Although there are still some area I need to investigate related to 
-interacting with the RTL representation and storing info into the ELF
-I'd be interested in giving it a try, if you are okay with that.
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
+
+From fd742eaab827b47c5f2de6c1811a17075608da60 Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 9 Jun 2019 13:48:12 +0200
+Subject: [PATCH] regulator: max8952: Convert to use GPIO descriptors
+
+This finalizes the descriptor conversion of the MAX8952 driver
+by letting the VID0 and VID1 GPIOs be fetched from descriptors.
+
+Both VID0 and VID1 must be supplied for the VID selection to work,
+I add some code to preserve the semantics that if only one of
+the two VID gpios is supplied, it will be initialized to low.
+This might be a bit overzealous, but I want to preserve any
+implicit semantics.
+
+This is currently only used by device tree in-kernel but it is
+still also possible to supply the same GPIOs using a machine
+descriptor table if a board file is used.
+
+Ideally this should be phased over to using gpio-regulator.c
+that does the same thing, but it might require some refactoring
+and needs testing on real hardware.
+
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/max8952.c       | 62 ++++++++++++++-----------------
+ include/linux/regulator/max8952.h |  3 --
+ 2 files changed, 28 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
+index 451237efb359..8f0e4dc810f0 100644
+--- a/drivers/regulator/max8952.c
++++ b/drivers/regulator/max8952.c
+@@ -26,11 +26,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/max8952.h>
+-#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/slab.h>
+ 
+@@ -50,7 +48,8 @@ enum {
+ struct max8952_data {
+ 	struct i2c_client	*client;
+ 	struct max8952_platform_data *pdata;
+-
++	struct gpio_desc *vid0_gpiod;
++	struct gpio_desc *vid1_gpiod;
+ 	bool vid0;
+ 	bool vid1;
+ };
+@@ -100,16 +99,15 @@ static int max8952_set_voltage_sel(struct regulator_dev *rdev,
+ {
+ 	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
+ 
+-	if (!gpio_is_valid(max8952->pdata->gpio_vid0) ||
+-			!gpio_is_valid(max8952->pdata->gpio_vid1)) {
++	if (!max8952->vid0_gpiod || !max8952->vid1_gpiod) {
+ 		/* DVS not supported */
+ 		return -EPERM;
+ 	}
+ 
+ 	max8952->vid0 = selector & 0x1;
+ 	max8952->vid1 = (selector >> 1) & 0x1;
+-	gpio_set_value(max8952->pdata->gpio_vid0, max8952->vid0);
+-	gpio_set_value(max8952->pdata->gpio_vid1, max8952->vid1);
++	gpiod_set_value(max8952->vid0_gpiod, max8952->vid0);
++	gpiod_set_value(max8952->vid1_gpiod, max8952->vid1);
+ 
+ 	return 0;
+ }
+@@ -147,9 +145,6 @@ static struct max8952_platform_data *max8952_parse_dt(struct device *dev)
+ 	if (!pd)
+ 		return NULL;
+ 
+-	pd->gpio_vid0 = of_get_named_gpio(np, "max8952,vid-gpios", 0);
+-	pd->gpio_vid1 = of_get_named_gpio(np, "max8952,vid-gpios", 1);
+-
+ 	if (of_property_read_u32(np, "max8952,default-mode", &pd->default_mode))
+ 		dev_warn(dev, "Default mode not specified, assuming 0\n");
+ 
+@@ -200,7 +195,7 @@ static int max8952_pmic_probe(struct i2c_client *client,
+ 	struct gpio_desc *gpiod;
+ 	enum gpiod_flags gflags;
+ 
+-	int ret = 0, err = 0;
++	int ret = 0;
+ 
+ 	if (client->dev.of_node)
+ 		pdata = max8952_parse_dt(&client->dev);
+@@ -253,32 +248,31 @@ static int max8952_pmic_probe(struct i2c_client *client,
+ 	max8952->vid0 = pdata->default_mode & 0x1;
+ 	max8952->vid1 = (pdata->default_mode >> 1) & 0x1;
+ 
+-	if (gpio_is_valid(pdata->gpio_vid0) &&
+-			gpio_is_valid(pdata->gpio_vid1)) {
+-		unsigned long gpio_flags;
+-
+-		gpio_flags = max8952->vid0 ?
+-			     GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW;
+-		if (devm_gpio_request_one(&client->dev, pdata->gpio_vid0,
+-					  gpio_flags, "MAX8952 VID0"))
+-			err = 1;
+-
+-		gpio_flags = max8952->vid1 ?
+-			     GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW;
+-		if (devm_gpio_request_one(&client->dev, pdata->gpio_vid1,
+-					  gpio_flags, "MAX8952 VID1"))
+-			err = 2;
+-	} else
+-		err = 3;
+-
+-	if (err) {
++	/* Fetch vid0 and vid1 GPIOs if available */
++	gflags = max8952->vid0 ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
++	max8952->vid0_gpiod = devm_gpiod_get_index_optional(&client->dev,
++							    "max8952,vid",
++							    0, gflags);
++	if (IS_ERR(max8952->vid0_gpiod))
++		return PTR_ERR(max8952->vid0_gpiod);
++	gflags = max8952->vid1 ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
++	max8952->vid1_gpiod = devm_gpiod_get_index_optional(&client->dev,
++							    "max8952,vid",
++							    1, gflags);
++	if (IS_ERR(max8952->vid1_gpiod))
++		return PTR_ERR(max8952->vid1_gpiod);
++
++	/* If either VID GPIO is missing just disable this */
++	if (!max8952->vid0_gpiod || !max8952->vid1_gpiod) {
+ 		dev_warn(&client->dev, "VID0/1 gpio invalid: "
+-				"DVS not available.\n");
++			 "DVS not available.\n");
+ 		max8952->vid0 = 0;
+ 		max8952->vid1 = 0;
+-		/* Mark invalid */
+-		pdata->gpio_vid0 = -1;
+-		pdata->gpio_vid1 = -1;
++		/* Make sure if we have any descriptors they get set to low */
++		if (max8952->vid0_gpiod)
++			gpiod_set_value(max8952->vid0_gpiod, 0);
++		if (max8952->vid1_gpiod)
++			gpiod_set_value(max8952->vid1_gpiod, 0);
+ 
+ 		/* Disable Pulldown of EN only */
+ 		max8952_write_reg(max8952, MAX8952_REG_CONTROL, 0x60);
+diff --git a/include/linux/regulator/max8952.h b/include/linux/regulator/max8952.h
+index 686c42c041b5..33b6e2c09c05 100644
+--- a/include/linux/regulator/max8952.h
++++ b/include/linux/regulator/max8952.h
+@@ -118,9 +118,6 @@ enum {
+ #define MAX8952_NUM_DVS_MODE	4
+ 
+ struct max8952_platform_data {
+-	int gpio_vid0;
+-	int gpio_vid1;
+-
+ 	u32 default_mode;
+ 	u32 dvs_mode[MAX8952_NUM_DVS_MODE]; /* MAX8952_DVS_MODEx_XXXXmV */
+ 
 -- 
-Raphael Gault
+2.20.1
+
