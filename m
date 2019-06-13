@@ -2,166 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B14443CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF3A443CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730935AbfFMQcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:32:32 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:43382 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730849AbfFMIP7 (ORCPT
+        id S2392191AbfFMQcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:32:16 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33527 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730853AbfFMIRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:15:59 -0400
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 2D01A2E0DEC;
-        Thu, 13 Jun 2019 11:15:53 +0300 (MSK)
-Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
-        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id r33Oi2NKnn-FpIOJvba;
-        Thu, 13 Jun 2019 11:15:53 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1560413753; bh=3Pp0FZ+SZZPig9cVc4N4kq00quoG1v3rR/FRnc5nQlo=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=Z3ugz+Ff549FVPYbsW1FwYyvrcEZnCU0PtHmVPrvXyN4Lwa+e0Ncw0EPOZxhQcz1O
-         k69Sg5wa/tGpn+qp7b9yMZ/YcGaHrZ4YTLLl0asqjhVGNUXzHC+405WiI7iP38ZC3h
-         78oUFV1856+tDNRRZcBk4TrEGY0so2vdR+NqmNSc=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:a1b1:2ca9:8cc0:4c56])
-        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id ued3RSeVec-FoYS30hb;
-        Thu, 13 Jun 2019 11:15:51 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for
- /proc/pid/map_files
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>
-References: <156007465229.3335.10259979070641486905.stgit@buzz>
- <156007493995.3335.9595044802115356911.stgit@buzz>
- <20190612231426.GA3639@gmail.com>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <f15478b5-098f-e1be-0928-62f46cff77e7@yandex-team.ru>
-Date:   Thu, 13 Jun 2019 11:15:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Jun 2019 04:17:33 -0400
+Received: by mail-ed1-f66.google.com with SMTP id i11so1947456edq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 01:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BQUUVEbQBU82PrsMmM0DVRQxiyyQyaOoAc/ZkL7aGuo=;
+        b=X+b6N9AQTQnv51mbGk3cs5WE9bgrZHoAhFo/kUpYWZ5C1X+XPaJBiRSZKXyXhgfLAB
+         FquWhUU5SR0q1mI/n9p3wd5IYCOydO54EL5R4arx/NUINxsBTIzuZTrrx5APCrgoL6ng
+         2M72ZA4ZKI9vl4v+mSrRECRt2QmkMtBH1G6Kk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=BQUUVEbQBU82PrsMmM0DVRQxiyyQyaOoAc/ZkL7aGuo=;
+        b=W5roHRgDMLEtNy77BYFKjbQhpLaTqaJORUTgAeEwTcIP/V7JwydrbdP62W7WJuwroX
+         +zL6PK+KB6gOa8YfYy961w4fIpFx1tU9rSZVleCs3/O3D9KgPUhnpsCwPq2AzPoNluz1
+         BZ2fpAHIpRqB0eTecGiSv2OHWP5OToK6ScArj29rO0q6p+0jKelgJ7tWqC2XOVkKprLy
+         +Phi93nGCrwPK8Chx9zy0joBxgJDbgHR0xLlNAa6aqhWriOOy9F9Ov9bZVZRj835vixE
+         D5kNTWIksTwWCGifdTeWP255Ri8tTzBPWsck/hP5kxkdRCrLtJaci9fEiqj03y7ClaWZ
+         GxkA==
+X-Gm-Message-State: APjAAAU4RxCm/CS6H/+VYNp6uKIn2FdB29fEpENLdp/7169dsWEYfx8E
+        yqRubEuNthkDlfb/jscbXu3l3g==
+X-Google-Smtp-Source: APXvYqzgj3ZvvCytyIQC8/KS9smhGXs83JUHZmiFa8ECETskNRubggCMXyfzSoJlw0thCAu3tcjhGg==
+X-Received: by 2002:a17:906:610:: with SMTP id s16mr74446842ejb.108.1560413851058;
+        Thu, 13 Jun 2019 01:17:31 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id t54sm681937edd.17.2019.06.13.01.17.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 01:17:30 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:17:27 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Cc:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH v2 2/2] drm/komeda: Adds komeda_kms_drop_master
+Message-ID: <20190613081727.GE23020@phenom.ffwll.local>
+Mail-Followup-To: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        nd <nd@arm.com>
+References: <1560251589-31827-1-git-send-email-lowry.li@arm.com>
+ <1560251589-31827-3-git-send-email-lowry.li@arm.com>
+ <20190611123038.GC2458@phenom.ffwll.local>
+ <20190612022617.GA8595@james-ThinkStation-P300>
 MIME-Version: 1.0
-In-Reply-To: <20190612231426.GA3639@gmail.com>
-Content-Type: text/plain; charset=koi8-r; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612022617.GA8595@james-ThinkStation-P300>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.06.2019 2:14, Andrei Vagin wrote:
-> On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
->> Do not stuck forever if something wrong.
->> Killable lock allows to cleanup stuck tasks and simplifies investigation.
+On Wed, Jun 12, 2019 at 02:26:24AM +0000, james qian wang (Arm Technology China) wrote:
+> On Tue, Jun 11, 2019 at 02:30:38PM +0200, Daniel Vetter wrote:
+> > On Tue, Jun 11, 2019 at 11:13:45AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+> > >
+> > > The komeda internal resources (pipelines) are shared between crtcs,
+> > > and resources release by disable_crtc. This commit is working for once
+> > > user forgot disabling crtc like app quit abnomally, and then the
+> > > resources can not be used by another crtc. Adds drop_master to
+> > > shutdown the device and make sure all the komeda resources have been
+> > > released and can be used for the next usage.
+> > >
+> > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> > > ---
+> > >  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > index 8543860..647bce5 100644
+> > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > @@ -54,11 +54,24 @@ static irqreturn_t komeda_kms_irq_handler(int irq, void *data)
+> > >  return status;
+> > >  }
+> > >
+> > > +/* Komeda internal resources (pipelines) are shared between crtcs, and resources
+> > > + * are released by disable_crtc. But if user forget disabling crtc like app quit
+> > > + * abnormally, the resources can not be used by another crtc.
+> > > + * Use drop_master to shutdown the device and make sure all the komeda resources
+> > > + * have been released, and can be used for the next usage.
+> > > + */
+> >
+> > No. If we want this, we need to implement this across drivers, not with
+> > per-vendor hacks.
+> >
+> > The kerneldoc should have been a solid hint: "Only used by vmwgfx."
+> > -Daniel
 > 
-> This patch breaks the CRIU project, because stat() returns EINTR instead
-> of ENOENT:
-> 
-> [root@fc24 criu]# stat /proc/self/map_files/0-0
-> stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
+> Hi Daniel:
+> This drop_master is really what we want, can we update the doc and
+> add komeda as a user of this hacks like "used by vmwfgx and komeda",
+> or maybe directly promote this per-vendor hacks as an optional chip
+> function ?
 
-Good catch.
+Still no, because it would mean different behaviour for arm/komeda
+compared to everyone else. And we really don't want this, because this
+would completely break flicker-less vt-switching.
 
-It seems CRIU tests has good coverage for darkest corners of kernel API.
-Kernel CI projects should use it. I suppose you know how to promote this. =)
+Currently the only fallback for this case is the lastclose handler, which
+atm just restores fbcon/fbdev. If you want to change/extend that to work
+without fbdev, then that's the place to do the change. And across _all_
+drm kms drivers, so that we have consistent behaviour.
+
+kms is a cross-vendor api, vendor hacks are very, very much not cool.
+-Daniel
 
 > 
-> Here is one inline comment with the fix for this issue.
+> James
 > 
->>
->> It seems ->d_revalidate() could return any error (except ECHILD) to
->> abort validation and pass error as result of lookup sequence.
->>
->> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->> Reviewed-by: Roman Gushchin <guro@fb.com>
->> Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
->> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> 
-> It was nice to see all four of you in one place :).
-> 
->> Acked-by: Michal Hocko <mhocko@suse.com>
->> ---
->>   fs/proc/base.c |   27 +++++++++++++++++++++------
->>   1 file changed, 21 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index 9c8ca6cd3ce4..515ab29c2adf 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -1962,9 +1962,12 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
->>   		goto out;
->>   
->>   	if (!dname_to_vma_addr(dentry, &vm_start, &vm_end)) {
->> -		down_read(&mm->mmap_sem);
->> -		exact_vma_exists = !!find_exact_vma(mm, vm_start, vm_end);
->> -		up_read(&mm->mmap_sem);
->> +		status = down_read_killable(&mm->mmap_sem);
->> +		if (!status) {
->> +			exact_vma_exists = !!find_exact_vma(mm, vm_start,
->> +							    vm_end);
->> +			up_read(&mm->mmap_sem);
->> +		}
->>   	}
->>   
->>   	mmput(mm);
->> @@ -2010,8 +2013,11 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
->>   	if (rc)
->>   		goto out_mmput;
->>   
->> +	rc = down_read_killable(&mm->mmap_sem);
->> +	if (rc)
->> +		goto out_mmput;
->> +
->>   	rc = -ENOENT;
->> -	down_read(&mm->mmap_sem);
->>   	vma = find_exact_vma(mm, vm_start, vm_end);
->>   	if (vma && vma->vm_file) {
->>   		*path = vma->vm_file->f_path;
->> @@ -2107,7 +2113,10 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
->>   	if (!mm)
->>   		goto out_put_task;
->>   
->> -	down_read(&mm->mmap_sem);
->> +	result = ERR_PTR(-EINTR);
->> +	if (down_read_killable(&mm->mmap_sem))
->> +		goto out_put_mm;
->> +
-> 
-> 	result = ERR_PTR(-ENOENT);
-> 
->>   	vma = find_exact_vma(mm, vm_start, vm_end);
->>   	if (!vma)
->>   		goto out_no_vma;
->> @@ -2118,6 +2127,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
->>   
->>   out_no_vma:
->>   	up_read(&mm->mmap_sem);
->> +out_put_mm:
->>   	mmput(mm);
->>   out_put_task:
->>   	put_task_struct(task);
->> @@ -2160,7 +2170,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
->>   	mm = get_task_mm(task);
->>   	if (!mm)
->>   		goto out_put_task;
->> -	down_read(&mm->mmap_sem);
->> +
->> +	ret = down_read_killable(&mm->mmap_sem);
->> +	if (ret) {
->> +		mmput(mm);
->> +		goto out_put_task;
->> +	}
->>   
->>   	nr_files = 0;
->>   
+> > > +static void komeda_kms_drop_master(struct drm_device *dev,
+> > > +   struct drm_file *file_priv)
+> > > +{
+> > > +drm_atomic_helper_shutdown(dev);
+> > > +}
+> > > +
+> > >  static struct drm_driver komeda_kms_driver = {
+> > >  .driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
+> > >     DRIVER_PRIME | DRIVER_HAVE_IRQ,
+> > >  .lastclose= drm_fb_helper_lastclose,
+> > >  .irq_handler= komeda_kms_irq_handler,
+> > > +.master_drop= komeda_kms_drop_master,
+> > >  .gem_free_object_unlocked= drm_gem_cma_free_object,
+> > >  .gem_vm_ops= &drm_gem_cma_vm_ops,
+> > >  .dumb_create= komeda_gem_cma_dumb_create,
+> > > --
+> > > 1.9.1
+> > >
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+> IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
