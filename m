@@ -2,172 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B90A6444A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA9B444DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392716AbfFMQiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:38:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40670 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730614AbfFMHJt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:09:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ZKKYxE8PDildEC+WSGZOMu4mmTaXt2I48+eQ6Q0nrvI=; b=QalyGpbO4l1GBpnatFVfntumWw
-        4OA1RktorhR3BpskJKeIj/+ZzT/j3wF9NykgbJbaEvtfpFbyktPUM8ayUzsNFgo6lortV079x8Zv9
-        eDAK6r/NrHj6iqW4LWMLi8tjZ/vCBJ1gBLwwR8r6YSaZ21qtmPt3Xye+zUoHSouuaSiSEMMi2+iD5
-        ut9acyLbEOKwi7OsjaYrjDpLDOXGf2mgGIMoQ4649/lfLRehPdZ9rYya4WNO2RmEzxwgAH2YdfYBq
-        pb95UI0CfII3OE5+38Z71ji/6MvaJeqnz7tP7IpZjgTvi8ZhCAx3phUCnEbd+qwln6d1bY2HfZt9r
-        gw+3mM2A==;
-Received: from mpp-cp1-natpool-1-013.ethz.ch ([82.130.71.13] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbJrj-0004Nt-9P; Thu, 13 Jun 2019 07:09:44 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Murzin <vladimir.murzin@arm.com>
-Subject: [PATCH 11/17] binfmt_flat: add a ARCH_HAS_BINFMT_FLAT option
-Date:   Thu, 13 Jun 2019 09:08:57 +0200
-Message-Id: <20190613070903.17214-12-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190613070903.17214-1-hch@lst.de>
-References: <20190613070903.17214-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1730669AbfFMQkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:40:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730589AbfFMHJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:09:02 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC3192084D;
+        Thu, 13 Jun 2019 07:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560409741;
+        bh=TSrEDnX7Ga+OT/0BXEKx34O47oo4LLPfMWp6E0aFb3U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OJXhLljb1L/cW2VX/Ik35Ba7g2+83Db325bkvBGIZQ2eR9wJHabo6wF2PTU/NsKh+
+         ZtrhhtVTSv8f2pR1zJWNPdAr2syS+UAQ2RZnJt/E3Ucgo3njwDgZcig/7ASmgg+bOF
+         A3cFXOFkxxKxolFbE1pEHSk1ThdbsG1FmoUKvL0Y=
+Date:   Thu, 13 Jun 2019 16:08:57 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: Fix to init kprobes in subsys_initcall
+Message-Id: <20190613160857.9db38d1cb32996b8c4e0ddc3@kernel.org>
+In-Reply-To: <20190612094729.40106a28@gandalf.local.home>
+References: <20190603214105.715a4072472ef4946123dc20@kernel.org>
+        <155956708268.12228.10363800793132214198.stgit@devnote2>
+        <20190612165947.ba696696dac0faa3aa35a501@kernel.org>
+        <20190612094729.40106a28@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow architectures to opt into ARCH_HAS_BINFMT_FLAT support instead of
-assuming that all nommu ports support the format.
+On Wed, 12 Jun 2019 09:47:29 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
----
- arch/arm/Kconfig        | 1 +
- arch/c6x/Kconfig        | 1 +
- arch/h8300/Kconfig      | 1 +
- arch/m68k/Kconfig       | 1 +
- arch/microblaze/Kconfig | 1 +
- arch/sh/Kconfig         | 1 +
- arch/xtensa/Kconfig     | 1 +
- fs/Kconfig.binfmt       | 5 ++++-
- 8 files changed, 11 insertions(+), 1 deletion(-)
+> On Wed, 12 Jun 2019 16:59:47 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hi Steve,
+> > 
+> > Could you pick this to your ftrace/core branch?
+> 
+> "core" or should this go to "urgent"? The difference is that core is
+> scheduled for the next merge window, and urgent is for the rc releases
+> (ie. bug fixes).
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index b1b48c0bde76..695a26c68064 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -4,6 +4,7 @@ config ARM
- 	default y
- 	select ARCH_32BIT_OFF_T
- 	select ARCH_CLOCKSOURCE_DATA
-+	select ARCH_HAS_BINFMT_FLAT
- 	select ARCH_HAS_DEBUG_VIRTUAL if MMU
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_ELF_RANDOMIZE
-diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
-index eeb0471268a0..78dfe186d708 100644
---- a/arch/c6x/Kconfig
-+++ b/arch/c6x/Kconfig
-@@ -7,6 +7,7 @@
- config C6X
- 	def_bool y
- 	select ARCH_32BIT_OFF_T
-+	select ARCH_HAS_BINFMT_FLAT
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select CLKDEV_LOOKUP
-diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
-index 7457f190caaa..ec800e9d5aad 100644
---- a/arch/h8300/Kconfig
-+++ b/arch/h8300/Kconfig
-@@ -2,6 +2,7 @@
- config H8300
-         def_bool y
- 	select ARCH_32BIT_OFF_T
-+	select ARCH_HAS_BINFMT_FLAT
- 	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
- 	select BINFMT_FLAT_OLD_ALWAYS_RAM
- 	select GENERIC_ATOMIC64
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index fd69ee5ad6ab..c0c43c624afa 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -3,6 +3,7 @@ config M68K
- 	bool
- 	default y
- 	select ARCH_32BIT_OFF_T
-+	select ARCH_HAS_BINFMT_FLAT
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
- 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index f11433daab4a..d411de05b628 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -3,6 +3,7 @@ config MICROBLAZE
- 	def_bool y
- 	select ARCH_32BIT_OFF_T
- 	select ARCH_NO_SWAP
-+	select ARCH_HAS_BINFMT_FLAT if !MMU
- 	select ARCH_HAS_DMA_COHERENT_TO_PFN if MMU
- 	select ARCH_HAS_GCOV_PROFILE_ALL
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index b77f512bb176..df3e6215b78c 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config SUPERH
- 	def_bool y
-+	select ARCH_HAS_BINFMT_FLAT if !MMU
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index 6ec1b75eabc5..ebc135bda921 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -2,6 +2,7 @@
- config XTENSA
- 	def_bool y
- 	select ARCH_32BIT_OFF_T
-+	select ARCH_HAS_BINFMT_FLAT if !MMU
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index 82f7d7f234f3..286b425b30b9 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -91,9 +91,12 @@ config BINFMT_SCRIPT
- 
- 	  Most systems will not boot if you say M or N here.  If unsure, say Y.
- 
-+config ARCH_HAS_BINFMT_FLAT
-+	bool
-+
- config BINFMT_FLAT
- 	bool "Kernel support for flat binaries"
--	depends on !MMU || ARM || M68K
-+	depends on ARCH_HAS_BINFMT_FLAT
- 	help
- 	  Support uClinux FLAT format binaries.
- 
+If the previous one (b5f8b32c93b2) has already gone to rc, yes
+this should be in urgent, since this always crashes arm64 kernel
+if we enables CONFIG_KPROBES_SANITY_TEST.
+
+Thank you,
+
+
 -- 
-2.20.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
