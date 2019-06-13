@@ -2,58 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B97B5443CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A94A244267
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392370AbfFMQcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:32:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:35368 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730851AbfFMIQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:16:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 01:16:56 -0700
-X-ExtLoop1: 1
-Received: from pslai-z620.png.intel.com ([10.221.79.142])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Jun 2019 01:16:54 -0700
-From:   "Lai, Poey Seng" <poey.seng.lai@intel.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: hda: Add Elkhart Lake PCI ID
-Date:   Fri, 14 Jun 2019 00:21:39 +0800
-Message-Id: <1560442899-11169-2-git-send-email-poey.seng.lai@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560442899-11169-1-git-send-email-poey.seng.lai@intel.com>
-References: <1560442899-11169-1-git-send-email-poey.seng.lai@intel.com>
+        id S2392074AbfFMQWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:22:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34275 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731137AbfFMQV4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:21:56 -0400
+Received: by mail-ed1-f67.google.com with SMTP id s49so2264791edb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=globallogic.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mz6GIPKtlkGerT/pt6ZWWFPZs8Zmg5qBehaRfeC+EUo=;
+        b=EhoeFLRHnBhKbWvy9HbsUZYnmSqkMjgbw/4JBVzBmKwtC2BYciZon/sGwYlwxD2ArB
+         820lhaGvsyDxIQBlup+5VKFfAjqc0UgL0AndVHVEjCUhxyB6MYwWpt9rVeipesbYJm9O
+         9LctzS/TEIahM6LL9VOCpzIV8wbDeIGYc6LpG/4Ag9cMHwzd7NIdHtF03n3uFJ5oSCsa
+         3G8seNu4kPRGCTWh5OLMltNpswqlywnH6ctZu426ea1q3OKYycClQ4ZPMg8bCkDfv5pf
+         qrUMZwVvDtNADcRslOs9acphTWeWGkYvfzJ9d44UO3i9kqBf746dXPNN4G9zYO82urgl
+         cWsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mz6GIPKtlkGerT/pt6ZWWFPZs8Zmg5qBehaRfeC+EUo=;
+        b=lMcdXlQcu644DiusZQ19IIczNb+Ys4QgQBkHOeMOiXoM+gUbV4NVzRF0Xp9+EbUpNM
+         EbcTKjrE7LFN8PjT3QR4nsxLvoP3x0ESDDs6blmnihrNu5y6bosKpYD0+yr+sp2JyncP
+         tqvWB87PAuO/F6hV9FZQPOhgQG2EUaFTeUBX7WZ1LZjK+Fqkh7IdFyJkceR+5gB4lmom
+         o6Vs1ClxGxmL7kI/azwfRKcdN4gbMnCntrejKtmJmubqCANtvmEnd3V7y2gIxhryhAgh
+         xW8Il3tuPTP2nBLo85/LyeaL5Gpber+2vCGWTYwkWMW8jQ887Bev+ORUgINnlaMdeCJx
+         +Uzg==
+X-Gm-Message-State: APjAAAXnfDdLKxp8bRK1XSqEz2A5Cf4KNi3u8ye0z90y0B1FQziSsDhO
+        qW9sYbQJaB8lhcYKFwy5CZpImf0MhfuZuSK1Y/auRf69HUQ=
+X-Google-Smtp-Source: APXvYqxuWVuyBpuxXeXaLydjVhfXhrVUHymBl4vNZ13Z3Lq3A6ZwUrJo9f7zawIdyv/dg+ZkFHQ0nrTO50sHeOAATfU=
+X-Received: by 2002:a17:906:3948:: with SMTP id g8mr45653628eje.168.1560442914546;
+ Thu, 13 Jun 2019 09:21:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190612163144.18486-1-roman.stratiienko@globallogic.com>
+ <20190612163144.18486-2-roman.stratiienko@globallogic.com>
+ <20190613135241.aghcrrz7rg2au3bw@MacBook-Pro-91.local> <CAODwZ7v=RSsmVj5GjcvGn2dn+ejLRBHZ79x-+S9DrX4GoXuVaQ@mail.gmail.com>
+ <20190613145535.tdesq3y2xy6ycpw7@MacBook-Pro-91.local>
+In-Reply-To: <20190613145535.tdesq3y2xy6ycpw7@MacBook-Pro-91.local>
+From:   Roman Stratiienko <roman.stratiienko@globallogic.com>
+Date:   Thu, 13 Jun 2019 19:21:43 +0300
+Message-ID: <CAODwZ7so4cVVJmPHXGGOxKRO_0L2NjZJac73wfaHPV7ZN6ce1g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] nbd: add support for nbd as root device
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-kernel@vger.kernel.org, nbd@other.debian.org,
+        Aleksandr Bulyshchenko <A.Bulyshchenko@globallogic.com>,
+        linux-block@vger.kernel.org, axboe@kernel.dkn.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add HD Audio Device PCI ID for the Intel Elkhart Lake
-platform.
+> I don't doubt you have a good reason to want it, I'm just not clear on why an
+> initramfs isn't an option?  You have this special kernel with your special
+> option, and you manage to get these things to boot your special kernel right?
+> So why is a initramfs with a tiny nbd-client binary in there not an option?
+>
+> Also I mean that there are a bunch of different nbd servers out there.  We have
+> our own here at Facebook, qemu has one, IIRC there's a ceph one.  They all have
+> their own connection protocols.  The beauty of NBD is that it doesn't have to
+> know about that part, it just does the block device part, and I'd really rather
+> leave it that way.  Thanks,
+>
+> Josef
 
-Signed-off-by: Lai, Poey Seng <poey.seng.lai@intel.com>
----
- sound/pci/hda/hda_intel.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 0741eae..1f37789 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2387,6 +2387,9 @@ static const struct pci_device_id azx_ids[] = {
- 	/* Icelake */
- 	{ PCI_DEVICE(0x8086, 0x34c8),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
-+	/* Elkhart Lake */
-+	{ PCI_DEVICE(0x8086, 0x4b55),
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
- 	/* Broxton-P(Apollolake) */
- 	{ PCI_DEVICE(0x8086, 0x5a98),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
--- 
-2.7.4
+The only reason I prefer embed client into the kernel is to save
+valuable engineering time creating and supporting custom initramfs,
+that is not so easy especially on Android-based systems.
 
+Taking into account that if using NBD and creating custom initramfs
+required only for automated testing, many companies would choose
+manual deployment instead, that is bad for the human progress.
+
+I believe that all users of non-standard NBD handshake protocols could
+continue to use custom nbd-clients.
+
+Either you accept this patch or not I would like to pass review from
+maintainers and other persons that was involved in NBD development,
+thus making a step closer to get this mainlined in some future.
+
+--
+Regards,
+Roman
