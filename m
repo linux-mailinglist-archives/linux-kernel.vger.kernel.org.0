@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C894452E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E427144528
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbfFMQma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:42:30 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40445 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730511AbfFMGs6 (ORCPT
+        id S2392803AbfFMQmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:42:32 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40228 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730512AbfFMGtA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:48:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so7894205pfp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:48:58 -0700 (PDT)
+        Thu, 13 Jun 2019 02:49:00 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a93so7696603pla.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:49:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VV+hwkRWfuJlEKYhE1hDz5poWY2znmOsLTaK/SE+bvA=;
-        b=kOUn0cxOh7Yqs6ziW0ZhYjjb2t0LQC9MeY1aiGiGaaB+GKWYxMMmFIcPut3Xy82In6
-         K2loiGx6n17l/uetBE9ik6TqYuJt5MYBM+U1UYx7kGBbWFU33ZOeEPBsX07Bu2WpKYO8
-         U5Ga/54QrtgmWWfRrWw5Wn+kV7WK/rGBQcL/fKQzoTQBVwVfoPoqFnPW5iZ7ZZlYtzEM
-         2UBVheZjnHBrk6lhwgMmZO7WxGIiQef3HGc8+AURw5rqePl+pY2LBiNMhFMsTub2UUkk
-         l1I+0oUHj4zCVNUghaj5ZhjzW/QDno6wXoJo4SkKpGDMnengJ3nqsG+xXZENwnVbIANT
-         pNEw==
-X-Gm-Message-State: APjAAAVYh0UfzYnm7fumsS4BNqIDJOQVJ6owofw2azC89upLVauVvEgR
-        3QLzo2MWHgwo3OG599zPYuI=
-X-Google-Smtp-Source: APXvYqzMh2iyv/DW+QulW2gDoHdukmthpxVlfstKodVPUw40ZhhVgpuyry4Y/fdry7yB/Useu2j44Q==
-X-Received: by 2002:a63:5247:: with SMTP id s7mr11254107pgl.29.1560408537348;
-        Wed, 12 Jun 2019 23:48:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GtS1L1Cau8wt7/YNHNdWpl6JeZfXJCQRCyB2oBfLgDA=;
+        b=GCna/WUZr0eKIy7TeVpkvMGFTELDlZcl70/0A9Vs+O4b4n8GEVt7AFpRMelcqGkBx8
+         Z9YmCwrtR0eOnIohdSFa7vBl/BZaKU74FPCwQM1uGnGhopQn4NM0DP8LjRqktX0p9wby
+         grPVepyyQ7YD7CoC8lo4HVQVk44ElgPTS2hImtvw+yl0SEKhePC2Z/xm+F6jdGgXbpTE
+         mAKzuXcXMIdHL9dA8Tz3Kesq/eRjkx/QfXeJBjbE/wvvO5zaeTdBYNS3djfrlvTjxFOp
+         mMo2yUdgv3NQiS5SNcuxS4f/Au4QfkhcQvheswuEYqc/pXYKj1W4Es7FvXkYTX644KcV
+         YKDg==
+X-Gm-Message-State: APjAAAVSRtS7zyvJxaC2jX4GciX9WLcBoK9relq5X3NkviDkwfyCnRdS
+        5jDxYVAwxXvwjaaxqhZsiHA=
+X-Google-Smtp-Source: APXvYqwlE+MgtScPkFZ9rPjhvHlAjBEqEPD4E/JqZlFPw1b+a8SR0XeGkAJOWhit4ipHI/V+puuMzQ==
+X-Received: by 2002:a17:902:9885:: with SMTP id s5mr8596943plp.102.1560408539623;
+        Wed, 12 Jun 2019 23:48:59 -0700 (PDT)
 Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id i3sm1559973pfa.175.2019.06.12.23.48.41
+        by smtp.gmail.com with ESMTPSA id i3sm1559973pfa.175.2019.06.12.23.48.57
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 23:48:56 -0700 (PDT)
+        Wed, 12 Jun 2019 23:48:58 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
@@ -47,14 +47,13 @@ Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
         Matt Turner <mattst88@gmail.com>,
         Tony Luck <tony.luck@intel.com>,
         Fenghua Yu <fenghua.yu@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 0/9] x86: Concurrent TLB flushes and other improvements
-Date:   Wed, 12 Jun 2019 23:48:04 -0700
-Message-Id: <20190613064813.8102-1-namit@vmware.com>
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 1/9] smp: Remove smp_call_function() and on_each_cpu() return values
+Date:   Wed, 12 Jun 2019 23:48:05 -0700
+Message-Id: <20190613064813.8102-2-namit@vmware.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190613064813.8102-1-namit@vmware.com>
+References: <20190613064813.8102-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,45 +61,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, local and remote TLB flushes are not performed concurrently,
-which introduces unnecessary overhead - each INVLPG can take 100s of
-cycles. This patch-set allows TLB flushes to be run concurrently: first
-request the remote CPUs to initiate the flush, then run it locally, and
-finally wait for the remote CPUs to finish their work.
-
-In addition, there are various small optimizations to avoid unwarranted
-false-sharing and atomic operations.
-
-The proposed changes should also improve the performance of other
-invocations of on_each_cpu(). Hopefully, no one has relied on this
-behavior of on_each_cpu() that invoked functions first remotely and only
-then locally [Peter says he remembers someone might do so, but without
-further information it is hard to know how to address it].
-
-Running sysbench on dax w/emulated-pmem, write-cache disabled, and
-various mitigations (PTI, Spectre, MDS) disabled on Haswell:
-
- sysbench fileio --file-total-size=3G --file-test-mode=rndwr \
-  --file-io-mode=mmap --threads=4 --file-fsync-mode=fdatasync run
-
-			events (avg/stddev)
-			-------------------
-  5.2-rc3:		1247669.0000/16075.39
-  +patchset:		1290607.0000/13617.56 (+3.4%)
-
-Patch 1 does small cleanup. Patches 2-5 implement the concurrent
-execution of TLB flushes. Patches 6-9 deal with false-sharing and
-unnecessary atomic operations. There is still no implementation that
-uses the concurrent TLB flushes by Xen and Hyper-V. 
-
-There are various additional possible optimizations that were sent or
-are in development (async flushes, x2apic shorthands, fewer mm_tlb_gen
-accesses, etc.), but based on Andy's feedback, they will be sent later.
-
-RFCv2 -> v1:
-* Fix comment on flush_tlb_multi [Juergen]
-* Removing async invalidation optimizations [Andy]
-* Adding KVM support [Paolo]
+The return value is fixed. Remove it and amend the callers.
 
 Cc: Richard Henderson <rth@twiddle.net>
 Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
@@ -108,48 +69,291 @@ Cc: Matt Turner <mattst88@gmail.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/alpha/kernel/smp.c      | 19 +++++--------------
+ arch/alpha/oprofile/common.c |  6 +++---
+ arch/ia64/kernel/perfmon.c   | 12 ++----------
+ arch/ia64/kernel/uncached.c  |  8 ++++----
+ arch/x86/lib/cache-smp.c     |  3 ++-
+ drivers/char/agp/generic.c   |  3 +--
+ include/linux/smp.h          |  7 +++----
+ kernel/smp.c                 | 10 +++-------
+ kernel/up.c                  |  3 +--
+ 9 files changed, 24 insertions(+), 47 deletions(-)
 
-Nadav Amit (9):
-  smp: Remove smp_call_function() and on_each_cpu() return values
-  smp: Run functions concurrently in smp_call_function_many()
-  x86/mm/tlb: Refactor common code into flush_tlb_on_cpus()
-  x86/mm/tlb: Flush remote and local TLBs concurrently
-  x86/mm/tlb: Optimize local TLB flushes
-  KVM: x86: Provide paravirtualized flush_tlb_multi()
-  smp: Do not mark call_function_data as shared
-  x86/tlb: Privatize cpu_tlbstate
-  x86/apic: Use non-atomic operations when possible
-
- arch/alpha/kernel/smp.c               |  19 +---
- arch/alpha/oprofile/common.c          |   6 +-
- arch/ia64/kernel/perfmon.c            |  12 +--
- arch/ia64/kernel/uncached.c           |   8 +-
- arch/x86/hyperv/mmu.c                 |   2 +
- arch/x86/include/asm/paravirt.h       |   8 ++
- arch/x86/include/asm/paravirt_types.h |   6 ++
- arch/x86/include/asm/tlbflush.h       |  46 ++++----
- arch/x86/kernel/apic/apic_flat_64.c   |   4 +-
- arch/x86/kernel/apic/x2apic_cluster.c |   2 +-
- arch/x86/kernel/kvm.c                 |  11 +-
- arch/x86/kernel/paravirt.c            |   3 +
- arch/x86/kernel/smp.c                 |   2 +-
- arch/x86/lib/cache-smp.c              |   3 +-
- arch/x86/mm/init.c                    |   2 +-
- arch/x86/mm/tlb.c                     | 150 ++++++++++++++++++--------
- arch/x86/xen/mmu_pv.c                 |   2 +
- drivers/char/agp/generic.c            |   3 +-
- include/linux/smp.h                   |  32 ++++--
- kernel/smp.c                          | 141 +++++++++++-------------
- kernel/up.c                           |   3 +-
- 21 files changed, 272 insertions(+), 193 deletions(-)
-
+diff --git a/arch/alpha/kernel/smp.c b/arch/alpha/kernel/smp.c
+index d0dccae53ba9..5f90df30be20 100644
+--- a/arch/alpha/kernel/smp.c
++++ b/arch/alpha/kernel/smp.c
+@@ -614,8 +614,7 @@ void
+ smp_imb(void)
+ {
+ 	/* Must wait other processors to flush their icache before continue. */
+-	if (on_each_cpu(ipi_imb, NULL, 1))
+-		printk(KERN_CRIT "smp_imb: timed out\n");
++	on_each_cpu(ipi_imb, NULL, 1);
+ }
+ EXPORT_SYMBOL(smp_imb);
+ 
+@@ -630,9 +629,7 @@ flush_tlb_all(void)
+ {
+ 	/* Although we don't have any data to pass, we do want to
+ 	   synchronize with the other processors.  */
+-	if (on_each_cpu(ipi_flush_tlb_all, NULL, 1)) {
+-		printk(KERN_CRIT "flush_tlb_all: timed out\n");
+-	}
++	on_each_cpu(ipi_flush_tlb_all, NULL, 1);
+ }
+ 
+ #define asn_locked() (cpu_data[smp_processor_id()].asn_lock)
+@@ -667,9 +664,7 @@ flush_tlb_mm(struct mm_struct *mm)
+ 		}
+ 	}
+ 
+-	if (smp_call_function(ipi_flush_tlb_mm, mm, 1)) {
+-		printk(KERN_CRIT "flush_tlb_mm: timed out\n");
+-	}
++	smp_call_function(ipi_flush_tlb_mm, mm, 1);
+ 
+ 	preempt_enable();
+ }
+@@ -720,9 +715,7 @@ flush_tlb_page(struct vm_area_struct *vma, unsigned long addr)
+ 	data.mm = mm;
+ 	data.addr = addr;
+ 
+-	if (smp_call_function(ipi_flush_tlb_page, &data, 1)) {
+-		printk(KERN_CRIT "flush_tlb_page: timed out\n");
+-	}
++	smp_call_function(ipi_flush_tlb_page, &data, 1);
+ 
+ 	preempt_enable();
+ }
+@@ -772,9 +765,7 @@ flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
+ 		}
+ 	}
+ 
+-	if (smp_call_function(ipi_flush_icache_page, mm, 1)) {
+-		printk(KERN_CRIT "flush_icache_page: timed out\n");
+-	}
++	smp_call_function(ipi_flush_icache_page, mm, 1);
+ 
+ 	preempt_enable();
+ }
+diff --git a/arch/alpha/oprofile/common.c b/arch/alpha/oprofile/common.c
+index 310a4ce1dccc..1b1259c7d7d1 100644
+--- a/arch/alpha/oprofile/common.c
++++ b/arch/alpha/oprofile/common.c
+@@ -65,7 +65,7 @@ op_axp_setup(void)
+ 	model->reg_setup(&reg, ctr, &sys);
+ 
+ 	/* Configure the registers on all cpus.  */
+-	(void)smp_call_function(model->cpu_setup, &reg, 1);
++	smp_call_function(model->cpu_setup, &reg, 1);
+ 	model->cpu_setup(&reg);
+ 	return 0;
+ }
+@@ -86,7 +86,7 @@ op_axp_cpu_start(void *dummy)
+ static int
+ op_axp_start(void)
+ {
+-	(void)smp_call_function(op_axp_cpu_start, NULL, 1);
++	smp_call_function(op_axp_cpu_start, NULL, 1);
+ 	op_axp_cpu_start(NULL);
+ 	return 0;
+ }
+@@ -101,7 +101,7 @@ op_axp_cpu_stop(void *dummy)
+ static void
+ op_axp_stop(void)
+ {
+-	(void)smp_call_function(op_axp_cpu_stop, NULL, 1);
++	smp_call_function(op_axp_cpu_stop, NULL, 1);
+ 	op_axp_cpu_stop(NULL);
+ }
+ 
+diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
+index 58a6337c0690..7c52bd2695a2 100644
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -6390,11 +6390,7 @@ pfm_install_alt_pmu_interrupt(pfm_intr_handler_desc_t *hdl)
+ 	}
+ 
+ 	/* save the current system wide pmu states */
+-	ret = on_each_cpu(pfm_alt_save_pmu_state, NULL, 1);
+-	if (ret) {
+-		DPRINT(("on_each_cpu() failed: %d\n", ret));
+-		goto cleanup_reserve;
+-	}
++	on_each_cpu(pfm_alt_save_pmu_state, NULL, 1);
+ 
+ 	/* officially change to the alternate interrupt handler */
+ 	pfm_alt_intr_handler = hdl;
+@@ -6421,7 +6417,6 @@ int
+ pfm_remove_alt_pmu_interrupt(pfm_intr_handler_desc_t *hdl)
+ {
+ 	int i;
+-	int ret;
+ 
+ 	if (hdl == NULL) return -EINVAL;
+ 
+@@ -6435,10 +6430,7 @@ pfm_remove_alt_pmu_interrupt(pfm_intr_handler_desc_t *hdl)
+ 
+ 	pfm_alt_intr_handler = NULL;
+ 
+-	ret = on_each_cpu(pfm_alt_restore_pmu_state, NULL, 1);
+-	if (ret) {
+-		DPRINT(("on_each_cpu() failed: %d\n", ret));
+-	}
++	on_each_cpu(pfm_alt_restore_pmu_state, NULL, 1);
+ 
+ 	for_each_online_cpu(i) {
+ 		pfm_unreserve_session(NULL, 1, i);
+diff --git a/arch/ia64/kernel/uncached.c b/arch/ia64/kernel/uncached.c
+index edcdfc149311..16c6d377c502 100644
+--- a/arch/ia64/kernel/uncached.c
++++ b/arch/ia64/kernel/uncached.c
+@@ -121,8 +121,8 @@ static int uncached_add_chunk(struct uncached_pool *uc_pool, int nid)
+ 	status = ia64_pal_prefetch_visibility(PAL_VISIBILITY_PHYSICAL);
+ 	if (status == PAL_VISIBILITY_OK_REMOTE_NEEDED) {
+ 		atomic_set(&uc_pool->status, 0);
+-		status = smp_call_function(uncached_ipi_visibility, uc_pool, 1);
+-		if (status || atomic_read(&uc_pool->status))
++		smp_call_function(uncached_ipi_visibility, uc_pool, 1);
++		if (atomic_read(&uc_pool->status))
+ 			goto failed;
+ 	} else if (status != PAL_VISIBILITY_OK)
+ 		goto failed;
+@@ -143,8 +143,8 @@ static int uncached_add_chunk(struct uncached_pool *uc_pool, int nid)
+ 	if (status != PAL_STATUS_SUCCESS)
+ 		goto failed;
+ 	atomic_set(&uc_pool->status, 0);
+-	status = smp_call_function(uncached_ipi_mc_drain, uc_pool, 1);
+-	if (status || atomic_read(&uc_pool->status))
++	smp_call_function(uncached_ipi_mc_drain, uc_pool, 1);
++	if (atomic_read(&uc_pool->status))
+ 		goto failed;
+ 
+ 	/*
+diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
+index 1811fa4a1b1a..7c48ff4ae8d1 100644
+--- a/arch/x86/lib/cache-smp.c
++++ b/arch/x86/lib/cache-smp.c
+@@ -15,6 +15,7 @@ EXPORT_SYMBOL(wbinvd_on_cpu);
+ 
+ int wbinvd_on_all_cpus(void)
+ {
+-	return on_each_cpu(__wbinvd, NULL, 1);
++	on_each_cpu(__wbinvd, NULL, 1);
++	return 0;
+ }
+ EXPORT_SYMBOL(wbinvd_on_all_cpus);
+diff --git a/drivers/char/agp/generic.c b/drivers/char/agp/generic.c
+index 658664a5a5aa..df1edb5ec0ad 100644
+--- a/drivers/char/agp/generic.c
++++ b/drivers/char/agp/generic.c
+@@ -1311,8 +1311,7 @@ static void ipi_handler(void *null)
+ 
+ void global_cache_flush(void)
+ {
+-	if (on_each_cpu(ipi_handler, NULL, 1) != 0)
+-		panic(PFX "timed out waiting for the other CPUs!\n");
++	on_each_cpu(ipi_handler, NULL, 1);
+ }
+ EXPORT_SYMBOL(global_cache_flush);
+ 
+diff --git a/include/linux/smp.h b/include/linux/smp.h
+index a56f08ff3097..bb8b451ab01f 100644
+--- a/include/linux/smp.h
++++ b/include/linux/smp.h
+@@ -35,7 +35,7 @@ int smp_call_function_single(int cpuid, smp_call_func_t func, void *info,
+ /*
+  * Call a function on all processors
+  */
+-int on_each_cpu(smp_call_func_t func, void *info, int wait);
++void on_each_cpu(smp_call_func_t func, void *info, int wait);
+ 
+ /*
+  * Call a function on processors specified by mask, which might include
+@@ -101,7 +101,7 @@ extern void smp_cpus_done(unsigned int max_cpus);
+ /*
+  * Call a function on all other processors
+  */
+-int smp_call_function(smp_call_func_t func, void *info, int wait);
++void smp_call_function(smp_call_func_t func, void *info, int wait);
+ void smp_call_function_many(const struct cpumask *mask,
+ 			    smp_call_func_t func, void *info, bool wait);
+ 
+@@ -144,9 +144,8 @@ static inline void smp_send_stop(void) { }
+  *	These macros fold the SMP functionality into a single CPU system
+  */
+ #define raw_smp_processor_id()			0
+-static inline int up_smp_call_function(smp_call_func_t func, void *info)
++static inline void up_smp_call_function(smp_call_func_t func, void *info)
+ {
+-	return 0;
+ }
+ #define smp_call_function(func, info, wait) \
+ 			(up_smp_call_function(func, info))
+diff --git a/kernel/smp.c b/kernel/smp.c
+index d155374632eb..708d2ac1db72 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -487,13 +487,11 @@ EXPORT_SYMBOL(smp_call_function_many);
+  * You must not call this function with disabled interrupts or from a
+  * hardware interrupt handler or from a bottom half handler.
+  */
+-int smp_call_function(smp_call_func_t func, void *info, int wait)
++void smp_call_function(smp_call_func_t func, void *info, int wait)
+ {
+ 	preempt_disable();
+ 	smp_call_function_many(cpu_online_mask, func, info, wait);
+ 	preempt_enable();
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL(smp_call_function);
+ 
+@@ -594,18 +592,16 @@ void __init smp_init(void)
+  * early_boot_irqs_disabled is set.  Use local_irq_save/restore() instead
+  * of local_irq_disable/enable().
+  */
+-int on_each_cpu(void (*func) (void *info), void *info, int wait)
++void on_each_cpu(void (*func) (void *info), void *info, int wait)
+ {
+ 	unsigned long flags;
+-	int ret = 0;
+ 
+ 	preempt_disable();
+-	ret = smp_call_function(func, info, wait);
++	smp_call_function(func, info, wait);
+ 	local_irq_save(flags);
+ 	func(info);
+ 	local_irq_restore(flags);
+ 	preempt_enable();
+-	return ret;
+ }
+ EXPORT_SYMBOL(on_each_cpu);
+ 
+diff --git a/kernel/up.c b/kernel/up.c
+index 483c9962c999..862b460ab97a 100644
+--- a/kernel/up.c
++++ b/kernel/up.c
+@@ -35,14 +35,13 @@ int smp_call_function_single_async(int cpu, call_single_data_t *csd)
+ }
+ EXPORT_SYMBOL(smp_call_function_single_async);
+ 
+-int on_each_cpu(smp_call_func_t func, void *info, int wait)
++void on_each_cpu(smp_call_func_t func, void *info, int wait)
+ {
+ 	unsigned long flags;
+ 
+ 	local_irq_save(flags);
+ 	func(info);
+ 	local_irq_restore(flags);
+-	return 0;
+ }
+ EXPORT_SYMBOL(on_each_cpu);
+ 
 -- 
 2.20.1
 
