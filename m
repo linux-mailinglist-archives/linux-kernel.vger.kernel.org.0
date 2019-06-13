@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA1B441CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AD74400A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391947AbfFMQQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:16:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58620 "EHLO mail.kernel.org"
+        id S2390985AbfFMQC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:02:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731151AbfFMIlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:41:23 -0400
+        id S1731406AbfFMIrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:47:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6F2321479;
-        Thu, 13 Jun 2019 08:41:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9798F20851;
+        Thu, 13 Jun 2019 08:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415282;
-        bh=fAHFmWpy7DJEQLcgaUqGnW0UfQ15uY1xkUCH1UTMcn8=;
+        s=default; t=1560415672;
+        bh=6AsnjSp4I8XPLFUdtj4253p9jBp5YwDl72Dnx/K14u0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J+PczRLCT2mQvzsRRTfMEUYoCbVVFCOrZL83et5MZMMFANf4CQrEa9fpg2ks4aMBH
-         Vf0i1qzpWe9bIGbyvNju/06beUuZiGL+K6JBJcxEBZTZd792Fbr6HHQMWiC3yNk28v
-         VHCwj4w569LnWfQfEROpUGZRshdPvTky/U/3HESU=
+        b=10pfZn07hOgHGbiE3LLTnBgAxAr5vUoUeP6WP31MQvq2CQgXd1rSE1FEQ7MTNuRHH
+         Og+CrBpye8N+c/u1/59rEKZ0RDe52UIffbXP2dA5BgwTi+0I1SAYsKdlKb+z0DzeZE
+         mvywfJQ8FQlB2KTe3Yr3fanaDxbdvnJiLSOMr80M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 040/118] f2fs: fix to do sanity check on valid block count of segment
-Date:   Thu, 13 Jun 2019 10:32:58 +0200
-Message-Id: <20190613075645.912130539@linuxfoundation.org>
+Subject: [PATCH 5.1 067/155] netfilter: nf_tables: fix base chain stat rcu_dereference usage
+Date:   Thu, 13 Jun 2019 10:32:59 +0200
+Message-Id: <20190613075656.746734042@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,91 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e95bcdb2fefa129f37bd9035af1d234ca92ee4ef ]
+[ Upstream commit edbd82c5fba009f68d20b5db585be1e667c605f6 ]
 
-As Jungyeon reported in bugzilla:
+Following splat gets triggered when nfnetlink monitor is running while
+xtables-nft selftests are running:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203233
+net/netfilter/nf_tables_api.c:1272 suspicious rcu_dereference_check() usage!
+other info that might help us debug this:
 
-- Overview
-When mounting the attached crafted image and running program, following errors are reported.
-Additionally, it hangs on sync after running program.
+1 lock held by xtables-nft-mul/27006:
+ #0: 00000000e0f85be9 (&net->nft.commit_mutex){+.+.}, at: nf_tables_valid_genid+0x1a/0x50
+Call Trace:
+ nf_tables_fill_chain_info.isra.45+0x6cc/0x6e0
+ nf_tables_chain_notify+0xf8/0x1a0
+ nf_tables_commit+0x165c/0x1740
 
-The image is intentionally fuzzed from a normal f2fs image for testing.
-Compile options for F2FS are as follows.
-CONFIG_F2FS_FS=y
-CONFIG_F2FS_STAT_FS=y
-CONFIG_F2FS_FS_XATTR=y
-CONFIG_F2FS_FS_POSIX_ACL=y
-CONFIG_F2FS_CHECK_FS=y
+nf_tables_fill_chain_info() can be called both from dumps (rcu read locked)
+or from the transaction path if a userspace process subscribed to nftables
+notifications.
 
-- Reproduces
-cc poc_13.c
-mkdir test
-mount -t f2fs tmp.img test
-cp a.out test
-cd test
-sudo ./a.out
-sync
+In the 'table dump' case, rcu_access_pointer() cannot be used: We do not
+hold transaction mutex so the pointer can be NULLed right after the check.
+Just unconditionally fetch the value, then have the helper return
+immediately if its NULL.
 
-- Kernel messages
- F2FS-fs (sdb): Bitmap was wrongly set, blk:4608
- kernel BUG at fs/f2fs/segment.c:2102!
- RIP: 0010:update_sit_entry+0x394/0x410
- Call Trace:
-  f2fs_allocate_data_block+0x16f/0x660
-  do_write_page+0x62/0x170
-  f2fs_do_write_node_page+0x33/0xa0
-  __write_node_page+0x270/0x4e0
-  f2fs_sync_node_pages+0x5df/0x670
-  f2fs_write_checkpoint+0x372/0x1400
-  f2fs_sync_fs+0xa3/0x130
-  f2fs_do_sync_file+0x1a6/0x810
-  do_fsync+0x33/0x60
-  __x64_sys_fsync+0xb/0x10
-  do_syscall_64+0x43/0xf0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+In the notification case we don't hold the rcu read lock, but updates are
+prevented due to transaction mutex. Use rcu_dereference_check() to make lockdep
+aware of this.
 
-sit.vblocks and sum valid block count in sit.valid_map may be
-inconsistent, segment w/ zero vblocks will be treated as free
-segment, while allocating in free segment, we may allocate a
-free block, if its bitmap is valid previously, it can cause
-kernel crash due to bitmap verification failure.
-
-Anyway, to avoid further serious metadata inconsistence and
-corruption, it is necessary and worth to detect SIT
-inconsistence. So let's enable check_block_count() to verify
-vblocks and valid_map all the time rather than do it only
-CONFIG_F2FS_CHECK_FS is enabled.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/segment.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/netfilter/nf_tables_api.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index b3d9e317ff0c..5079532cb176 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -660,7 +660,6 @@ static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
- static inline int check_block_count(struct f2fs_sb_info *sbi,
- 		int segno, struct f2fs_sit_entry *raw_sit)
- {
--#ifdef CONFIG_F2FS_CHECK_FS
- 	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
- 	int valid_blocks = 0;
- 	int cur_pos = 0, next_pos;
-@@ -687,7 +686,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		return -EINVAL;
- 	}
--#endif
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 1606eaa5ae0d..aa5e7b00a581 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1190,6 +1190,9 @@ static int nft_dump_stats(struct sk_buff *skb, struct nft_stats __percpu *stats)
+ 	u64 pkts, bytes;
+ 	int cpu;
+ 
++	if (!stats)
++		return 0;
 +
- 	/* check segment usage, and check boundary of a given segment number */
- 	if (unlikely(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
- 					|| segno > TOTAL_SEGS(sbi) - 1)) {
+ 	memset(&total, 0, sizeof(total));
+ 	for_each_possible_cpu(cpu) {
+ 		cpu_stats = per_cpu_ptr(stats, cpu);
+@@ -1247,6 +1250,7 @@ static int nf_tables_fill_chain_info(struct sk_buff *skb, struct net *net,
+ 	if (nft_is_base_chain(chain)) {
+ 		const struct nft_base_chain *basechain = nft_base_chain(chain);
+ 		const struct nf_hook_ops *ops = &basechain->ops;
++		struct nft_stats __percpu *stats;
+ 		struct nlattr *nest;
+ 
+ 		nest = nla_nest_start(skb, NFTA_CHAIN_HOOK);
+@@ -1268,8 +1272,9 @@ static int nf_tables_fill_chain_info(struct sk_buff *skb, struct net *net,
+ 		if (nla_put_string(skb, NFTA_CHAIN_TYPE, basechain->type->name))
+ 			goto nla_put_failure;
+ 
+-		if (rcu_access_pointer(basechain->stats) &&
+-		    nft_dump_stats(skb, rcu_dereference(basechain->stats)))
++		stats = rcu_dereference_check(basechain->stats,
++					      lockdep_commit_lock_is_held(net));
++		if (nft_dump_stats(skb, stats))
+ 			goto nla_put_failure;
+ 	}
+ 
 -- 
 2.20.1
 
