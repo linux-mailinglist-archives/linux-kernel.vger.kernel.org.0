@@ -2,89 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 753074438C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E540443D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392554AbfFMQag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:30:36 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38432 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392530AbfFMQa1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:30:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d18so21472422wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=fbFJcCZogG4E0hVeCzNVPT+VFyUUm0Zv3ff/zggRHYY=;
-        b=nC26i9JZniQCZC/cxtHX3spCrKHdGQw/wG6eftGbeaFS50K26skje7xVYYal3QjLyy
-         hLPTDRtiG7DlPKoeF0lF9Er2i0uHz0iI2yNx+Av7Yo5iWpvLuFBDg6gl1/RPeIYTQScH
-         jm+6FxTaJ3K4otAkUwc4N3wDGrxixX0744FgmJbk7gkweXPsgWUu9UohbJ78CJAttij+
-         iq4WL7NW/oGdRcA1+xofjHY/zbBArzMk1Z87t421coV5fW0Q4O2XusJkXtXnm7A1p+EK
-         emVX2QhkmwlPGW841InmZBl/jmjOOUoF8u2cPvgoaDC9PCmj79rfozcL6jJbw5G7f5rh
-         cSSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=fbFJcCZogG4E0hVeCzNVPT+VFyUUm0Zv3ff/zggRHYY=;
-        b=Bf72k3Ta5bO5Q0pjluCGr5EupVfqLZSjR8y2oimkF6DzMLB6wcAGXPkH0tbEZtGgGo
-         B5La1lWIwqVUSenAbHJE4gRmLOeDIuQl8dVQASqVBSykMSvQACagfvwa0PHnK/l94wLk
-         +buZxYRKjmVuGQdYw2mPVPX7SGqR2pKbl5eamuVwxYHRTqAhVmf7T/XweQi8WBKEHjz9
-         OrRv94bRLTtt3gWcP0OPAZ5lhhuvmPnREMfmIIwOmg9OYsPeVDmypMKSwekMUZ84Pna5
-         6QcujJ49TgrQk4KOdbS923uGHAaEOyOBggWwaYdDK8xMrU+BELJiWpgwp78YJp2jaQml
-         +GCg==
-X-Gm-Message-State: APjAAAWZE1KTRuNPonQ0HMPikZ3E6N1cZsmqq31KzqBU9YJhEdmUoCQq
-        djI3vhVtuuT2ZVPzFrZS+iKrnQ==
-X-Google-Smtp-Source: APXvYqwNQCbkcJmm/T/NHKOZkmzfBzdL0AsrgI/bKFEd3JLelxC5l8wP46eIXBRintpzIwFqS6LM9Q==
-X-Received: by 2002:adf:fc91:: with SMTP id g17mr9205518wrr.194.1560443425582;
-        Thu, 13 Jun 2019 09:30:25 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f1sm180193wml.28.2019.06.13.09.30.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 09:30:24 -0700 (PDT)
-Message-ID: <5d027a20.1c69fb81.fcc4f.1023@mx.google.com>
-Date:   Thu, 13 Jun 2019 09:30:24 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S2392451AbfFMQcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:32:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392008AbfFMQcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:32:33 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5ABF2C04BE32;
+        Thu, 13 Jun 2019 16:32:28 +0000 (UTC)
+Received: from linux-ws.nc.xsintricity.com (ovpn-112-63.rdu2.redhat.com [10.10.112.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC65B5C5F3;
+        Thu, 13 Jun 2019 16:32:26 +0000 (UTC)
+Message-ID: <08deb91f7516b4c8911211499a00a58392d65a8b.camel@redhat.com>
+Subject: Re: [PATCH v2] RDMA/cma: Make CM response timeout and # CM retries
+ configurable
+From:   Doug Ledford <dledford@redhat.com>
+To:     Bart Van Assche <bvanassche@acm.org>,
+        =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 13 Jun 2019 12:32:24 -0400
+In-Reply-To: <2c114313-01fe-6d4d-5134-592d1a7b829b@acm.org>
+References: <20190226075722.1692315-1-haakon.bugge@oracle.com>
+         <174ccd37a9ffa05d0c7c03fe80ff7170a9270824.camel@redhat.com>
+         <2c114313-01fe-6d4d-5134-592d1a7b829b@acm.org>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-0AQ/OTcN7UdTwkCoV3sM"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.125-82-ge64912eac71b
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/81] 4.14.126-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 13 Jun 2019 16:32:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.14.y boot: 116 boots: 0 failed, 116 passed (v4.14.125-82-=
-ge64912eac71b)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.125-82-ge64912eac71b/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.125-82-ge64912eac71b/
+--=-0AQ/OTcN7UdTwkCoV3sM
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.125-82-ge64912eac71b
-Git Commit: e64912eac71ba57be3613c8fcc36e316fe8aa601
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 62 unique boards, 23 SoC families, 14 builds out of 201
+On Thu, 2019-06-13 at 08:28 -0700, Bart Van Assche wrote:
+> On 6/13/19 7:25 AM, Doug Ledford wrote:
+> > So, to revive this patch, what I'd like to see is some attempt to
+> > actually quantify a reasonable timeout for the default backlog
+> > depth,
+> > then the patch should actually change the default to that
+> > reasonable
+> > timeout, and then put in the ability to adjust the timeout with
+> > some
+> > sort of doc guidance on how to calculate a reasonable timeout based
+> > on
+> > configured backlog depth.
+>=20
+> How about following the approach of the SRP initiator driver? It
+> derives=20
+> the CM timeout from the subnet manager timeout. The assumption
+> behind=20
+> this is that in large networks the subnet manager timeout has to be
+> set=20
+> higher than its default to make communication work. See also=20
+> srp_get_subnet_timeout().
 
----
-For more info write to <info@kernelci.org>
+Theoretically, the subnet manager needs a longer timeout in a bigger
+network because it's handling more data as a single point of lookup for
+the entire subnet.  Individual machines, on the other hand, have the
+same backlog size (by default) regardless of the size of the network,
+and there is no guarantee that if the admin increased the subnet
+manager timeout, that they also increased the backlog queue depth size.
+So, while I like things that auto-tune like you are suggesting, the
+problem is that the one item does not directly correlate with the
+other.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57
+2FDD
+
+--=-0AQ/OTcN7UdTwkCoV3sM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl0CepgACgkQuCajMw5X
+L93+Mw/6A61mDk+ikAXS6vmFqzcWR0dtVmtxKeNB1/IKvTOJ4JZJxnaYaVIrCjzE
+dn3S3UH0Y3ulfyq90Rl3o9opmes7P0vuL+yvxV8Z75EfSObyrFddWfa3JubQ1j6+
+Qn5OygYPCpW6hL1xV8VjT9f4od+BKUglDkkD9SHIWPaZWVEwLzM1b3EDSLxLFX4u
+kk71uM2PEgxjc3ZSUOSGJrmWEQsM3G/nTshnDD47DJl9PcYx1CUQq6z4aouVQsD0
+IlBm6xnWjlfO5qNlCJDXEtKmZgKvI/r1r8+xdz8IicTtmDNaXxxoJX4kP5KNbo4l
+W0a9FogbmLhkpigzG0EqOkFUlJkvS/rPvancckDaNMX8YWh3uYrt1v+BKecgw0Rp
+tzGLkDJSoqsmsxZc2as0fUz4CmxA5cPypi+wPQ7LFc2JyfVpdYCGsoiwIwVP7r29
+R0dmZNfnVp78QEEcKHmRMVjaRNVzbEYiE2+4Y8MZ7IgB3YBqNgQqByhbha++wFry
+BXZlf8isVQdeZlYl1QFczlOENrPrYLcz8tPt4eFxheWy8mmLgBboX5otxI0nn4jQ
+jR7qBUtefDDwmDyOw1++jVg1TI9yTxtfD7W4avzg7Z7R7WlsipO3X91VZjWSFDXu
+qfE+tzXZx2jCudHaU5e4n0Hp8pE+f+GLERIhPcTAjr6RIuJl78k=
+=6Yw4
+-----END PGP SIGNATURE-----
+
+--=-0AQ/OTcN7UdTwkCoV3sM--
+
