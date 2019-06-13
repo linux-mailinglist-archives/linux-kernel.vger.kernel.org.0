@@ -2,122 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 073044449D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EA9444C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392708AbfFMQhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:37:55 -0400
-Received: from m15-111.126.com ([220.181.15.111]:58751 "EHLO m15-111.126.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730618AbfFMHKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:10:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pQt7H
-        gkGjDiOkh+wd5Sa+sRL4h8CMsOHEzAP3mBBeC8=; b=VKaOqZrlpaLx1J+5Bg/Cx
-        7ltBFnLNLNqG6vgB2T4PCQ7ZgqZbbzpbGeSOQQybU4a3oOJFvdKhWZODRoJPP0n0
-        It9lqYyN01oPi0970JeyUDIZniH0eP6Bz4gPgwudRCWlM5P2kw6DfmU4mlMybFU/
-        MfqzH8cLakatQT+rv0rdU8=
-Received: from localhost.localdomain (unknown [159.226.223.206])
-        by smtp1 (Coremail) with SMTP id C8mowADXoDSj9gFdCHxqCg--.49261S2;
-        Thu, 13 Jun 2019 15:09:23 +0800 (CST)
-From:   Lu Shuaibing <shuaibinglu@126.com>
-To:     ericvh@gmail.com
-Cc:     lucho@ionkov.net, asmadeus@codewreck.org, davem@davemloft.net,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lu Shuaibing <shuaibinglu@126.com>
-Subject: [PATCH] 9p: Transport error uninitialized
-Date:   Thu, 13 Jun 2019 15:08:54 +0800
-Message-Id: <20190613070854.10434-1-shuaibinglu@126.com>
-X-Mailer: git-send-email 2.19.1
+        id S2392787AbfFMQjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:39:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40372 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730610AbfFMHJl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:09:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=N8QXfZwivbN/UElGqGpKdzwCDnMqjA7ARQHaiJiVE0I=; b=WBMEN4gu+enMfO/mPhWlPZqPSD
+        XaGaWOnVp4/G3LLOxwOe++WDHhlwe/40O/ifcrp7EKZx7mR1fjQ0NVuADpwjLA95/GVCVCqft/H9V
+        yD/MXFJVuRFUJBNVaeP6LkebwGKE5R3IUhRWM74NRfgd0GXaocG+0KyXWTK17RGfRDBgHbA4S+Yo3
+        BazQVH6sDIa312lgsk0ibTINNjpOD9niYppjAdp68cx+nUPEiCJZXLTtGxnJatlc/OW7vLNfj9a2l
+        SMVMAT7f1sufpg+UqyuyAX9XlI9RHXbeNZx8cJ0UA3PItXAlSno+a9CjlxhIXSVOwT8oO7caS6MMn
+        BfpiZnDw==;
+Received: from mpp-cp1-natpool-1-013.ethz.ch ([82.130.71.13] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbJrY-0004IX-0J; Thu, 13 Jun 2019 07:09:34 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/17] binfmt_flat: consolidate two version of flat_v2_reloc_t
+Date:   Thu, 13 Jun 2019 09:08:54 +0200
+Message-Id: <20190613070903.17214-9-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190613070903.17214-1-hch@lst.de>
+References: <20190613070903.17214-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C8mowADXoDSj9gFdCHxqCg--.49261S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXrWrZr1fJr4UKFW5tw45GFg_yoW5XFW5pr
-        nIkrWxCr48tryUZF4Dtay8Ar18JF4DZ3W7XryIyr12yanrGr18Aa4UKrWUWFyUCr15AFy7
-        JF1qq3y5tr1UGaUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jJ6pPUUUUU=
-X-Originating-IP: [159.226.223.206]
-X-CM-SenderInfo: 5vkxtxpelqwzbx6rjloofrz/1tbiFxHSq1pD8kc0nAABs6
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The p9_tag_alloc() does not initialize the transport error t_err field.
-The struct p9_req_t *req is allocated and stored in a struct p9_client
-variable. The field t_err is never initialized before p9_conn_cancel()
-checks its value.
+Two branches of the ifdef maze actually have the same content, so merge
+them.
 
-KUMSAN(KernelUninitializedMemorySantizer, a new error detection tool)
-reports this bug.
-
-==================================================================
-BUG: KUMSAN: use of uninitialized memory in p9_conn_cancel+0x2d9/0x3b0
-Read of size 4 at addr ffff88805f9b600c by task kworker/1:2/1216
-
-CPU: 1 PID: 1216 Comm: kworker/1:2 Not tainted 5.2.0-rc4+ #28
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-Workqueue: events p9_write_work
-Call Trace:
- dump_stack+0x75/0xae
- __kumsan_report+0x17c/0x3e6
- kumsan_report+0xe/0x20
- p9_conn_cancel+0x2d9/0x3b0
- p9_write_work+0x183/0x4a0
- process_one_work+0x4d1/0x8c0
- worker_thread+0x6e/0x780
- kthread+0x1ca/0x1f0
- ret_from_fork+0x35/0x40
-
-Allocated by task 1979:
- save_stack+0x19/0x80
- __kumsan_kmalloc.constprop.3+0xbc/0x120
- kmem_cache_alloc+0xa7/0x170
- p9_client_prepare_req.part.9+0x3b/0x380
- p9_client_rpc+0x15e/0x880
- p9_client_create+0x3d0/0xac0
- v9fs_session_init+0x192/0xc80
- v9fs_mount+0x67/0x470
- legacy_get_tree+0x70/0xd0
- vfs_get_tree+0x4a/0x1c0
- do_mount+0xba9/0xf90
- ksys_mount+0xa8/0x120
- __x64_sys_mount+0x62/0x70
- do_syscall_64+0x6d/0x1e0
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Freed by task 0:
-(stack is not available)
-
-The buggy address belongs to the object at ffff88805f9b6008
- which belongs to the cache p9_req_t of size 144
-The buggy address is located 4 bytes inside of
- 144-byte region [ffff88805f9b6008, ffff88805f9b6098)
-The buggy address belongs to the page:
-page:ffffea00017e6d80 refcount:1 mapcount:0 mapping:ffff888068b63740 index:0xffff88805f9b7d90 compound_mapcount: 0
-flags: 0x100000000010200(slab|head)
-raw: 0100000000010200 ffff888068b66450 ffff888068b66450 ffff888068b63740
-raw: ffff88805f9b7d90 0000000000100001 00000001ffffffff 0000000000000000
-page dumped because: kumsan: bad access detected
-==================================================================
-
-Signed-off-by: Lu Shuaibing <shuaibinglu@126.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/9p/client.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/flat.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 9622f3e469f6..148acdcd0217 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -310,6 +310,7 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
- 	 */
- 	refcount_set(&req->refcount.refcount, 2);
- 
-+	req->t_err = 0;
- 	return req;
- 
- free:
+diff --git a/include/linux/flat.h b/include/linux/flat.h
+index 2b7cda6e9c1b..19c586b74b99 100644
+--- a/include/linux/flat.h
++++ b/include/linux/flat.h
+@@ -69,15 +69,13 @@ struct flat_hdr {
+ typedef union {
+ 	unsigned long	value;
+ 	struct {
+-# if defined(mc68000) && !defined(CONFIG_COLDFIRE)
++#if defined(__LITTLE_ENDIAN_BITFIELD) || \
++    (defined(mc68000) && !defined(CONFIG_COLDFIRE))
+ 		signed long offset : 30;
+ 		unsigned long type : 2;
+ # elif defined(__BIG_ENDIAN_BITFIELD)
+ 		unsigned long type : 2;
+ 		signed long offset : 30;
+-# elif defined(__LITTLE_ENDIAN_BITFIELD)
+-		signed long offset : 30;
+-		unsigned long type : 2;
+ # else
+ #   	error "Unknown bitfield order for flat files."
+ # endif
 -- 
-2.19.1
+2.20.1
 
