@@ -2,72 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F31445BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129AE445B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392699AbfFMQqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:46:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:34580 "EHLO foss.arm.com"
+        id S2392980AbfFMQp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:45:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730311AbfFMFhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:37:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C1A428;
-        Wed, 12 Jun 2019 22:37:15 -0700 (PDT)
-Received: from [10.162.40.191] (p8cg001049571a15.blr.arm.com [10.162.40.191])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5673F73C;
-        Wed, 12 Jun 2019 22:37:11 -0700 (PDT)
-Subject: Re: [PATCH V5 - Rebased] mm/hotplug: Reorder memblock_[free|remove]()
- calls in try_remove_memory()
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@arm.com, osalvador@suse.de,
-        mhocko@suse.com, mark.rutland@arm.com
-References: <36e0126f-e2d1-239c-71f3-91125a49e019@redhat.com>
- <1560252373-3230-1-git-send-email-anshuman.khandual@arm.com>
- <20190611151908.cdd6b73fd17fda09b1b3b65b@linux-foundation.org>
- <5b4f1f19-2f8d-9b8f-4240-7b728952b6fe@arm.com>
- <67f5c5ad-d753-77d8-8746-96cf4746b3e0@redhat.com>
- <20190612185450.73841b9f5af3a4189de6f910@linux-foundation.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <92ce901d-42dc-6872-1ff0-0ca13d5cefbe@arm.com>
-Date:   Thu, 13 Jun 2019 11:07:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726059AbfFMFlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 01:41:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 561782053B;
+        Thu, 13 Jun 2019 05:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560404499;
+        bh=8Xh4IPVPSoQJv7GWld73+9V0oaBZe8Mpmmz/mKLN+rQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ByZS4yI0t6Lw+NdGjH9a07AeUUIjvk1cJGDzyfIrJViTGTIERIRZJL73c1qIokMUC
+         kT69jwfWNhHdI09f8E0yIK0aUZ+KzXE4TbSXQvD9JCQDWMDp6umh59lH1N+nTQhdeL
+         M/gOrFkfIXjo0IPpGalbyOsvg9YOy3Os1OrJnBOY=
+Date:   Thu, 13 Jun 2019 07:41:36 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Todd Kjos <tkjos@android.com>
+Cc:     tkjos@google.com, arve@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, maco@google.com,
+        joel@joelfernandes.org, kernel-team@android.com
+Subject: Re: [PATCH] binder: fix possible UAF when freeing buffer
+Message-ID: <20190613054136.GA19717@kroah.com>
+References: <20190612202927.54518-1-tkjos@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190612185450.73841b9f5af3a4189de6f910@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612202927.54518-1-tkjos@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/13/2019 07:24 AM, Andrew Morton wrote:
-> On Wed, 12 Jun 2019 08:53:33 +0200 David Hildenbrand <david@redhat.com> wrote:
+On Wed, Jun 12, 2019 at 01:29:27PM -0700, Todd Kjos wrote:
+> There is a race between the binder driver cleaning
+> up a completed transaction via binder_free_transaction()
+> and a user calling binder_ioctl(BC_FREE_BUFFER) to
+> release a buffer. It doesn't matter which is first but
+> they need to be protected against running concurrently
+> which can result in a UAF.
 > 
->>>>> ...
->>>>>
->>>>>
->>>>> - Rebased on linux-next (next-20190611)
->>>>
->>>> Yet the patch you've prepared is designed for 5.3.  Was that
->>>> deliberate, or should we be targeting earlier kernels?
->>>
->>> It was deliberate for 5.3 as a preparation for upcoming reworked arm64 hot-remove.
->>>
->>
->> We should probably add to the patch description something like "This is
->> a preparation for arm64 memory hotremove. The described issue is not
->> relevant on other architectures."
-> 
-> Please.  And is there any reason to merge it separately?  Can it be
-> [patch 1/3] in the "arm64/mm: Enable memory hot remove" series?
+> Signed-off-by: Todd Kjos <tkjos@google.com>
+> ---
+>  drivers/android/binder.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 
-Sure it can be. I will make this [patch 1/3] in the next version for
-"arm64/mm: Enable memory hot remove". Apologies for the noise here.
+Does this also need to go to the stable kernels?
+
+thanks,
+
+greg k-h
