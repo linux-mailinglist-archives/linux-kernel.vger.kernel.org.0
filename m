@@ -2,69 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D2543BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A9743BC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730734AbfFMPbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:31:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728641AbfFMLGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:06:34 -0400
-Received: from localhost (unknown [122.167.115.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B0A221721;
-        Thu, 13 Jun 2019 11:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560423993;
-        bh=XDQr+qoInVgE+aU3q1x+Me+5mPriKhlcp+T0v66tN24=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kbIaeXp+vdvXnTR8du/ADgav63Wt6IyfifVXvc+ctveMuww6Bv2hPf0Rujo7CQpef
-         UpUNMStJma1uV7zaK0E723Fzrhay3rM0To+8T3uMKE43AHidiii+2Kg2CmGUqYtOEc
-         TsleUH3XXu9p1eikRsOp7D+fYd7mruK71+g0so60=
-Date:   Thu, 13 Jun 2019 16:33:25 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Peng Ma <peng.ma@nxp.com>
-Cc:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
-Subject: Re: [EXT] Re: [V3 2/2] dmaengine: fsl-dpaa2-qdma: Add NXP dpaa2 qDMA
- controller driver for Layerscape SoCs
-Message-ID: <20190613110325.GD9160@vkoul-mobl.Dlink>
-References: <20190409072212.15860-1-peng.ma@nxp.com>
- <20190409072212.15860-2-peng.ma@nxp.com>
- <20190429053203.GF3845@vkoul-mobl.Dlink>
- <VI1PR04MB4431B87A1F712DC232A46ECBED130@VI1PR04MB4431.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB4431B87A1F712DC232A46ECBED130@VI1PR04MB4431.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1732450AbfFMPbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:31:22 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35827 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728625AbfFMLDh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:03:37 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c6so9672731wml.0;
+        Thu, 13 Jun 2019 04:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=AAokdGbMPUTql2roL80hHEWTvMypuX8aD+4nP0eZhJg=;
+        b=CbPmIijfPXDoXV/6fdU9wdARXOaTCWwYTRdbNMPEmpkRZ8maFC/ZdmRxxGlMTQ/3hz
+         vUXJyE0vWGq3gDdSIM6WkaglYKFKaE419iDXt3fCi3zXgPf29om3qzrsNr92kK2jSsQ2
+         BltsDxjefMJJ+nrbROi8RUd4lB7Iwv7DZFvFaYg5NeTpQUd+9FOhwYyEuFNf5l1mnfJ9
+         Y+Z41fwXHawT+PMi33vBe4vP5SBDL9vYSVxgs49WI2WwtWgYCvyfIwad4xc2HdeKVoml
+         1Rv2+r97sz7/Xw/G23U2yGnckqm/7+spNmLhqzhrudiVYTHaGfI19r6vgEb8sY9w32tb
+         3m5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=AAokdGbMPUTql2roL80hHEWTvMypuX8aD+4nP0eZhJg=;
+        b=SJ3KaZIBpFybJBUXyU+rN0OHJsWahGZ+R2eQji7WdGq85ahtcZfSMJE4h2HKPIDFC0
+         B/KUxAjEVL6smdIpBYtsWu7q9i9+G9k7cr4X51kWmDsY0Wh7Yx9BszNL58vMpOphBPla
+         m4SwaKV3MSXD6v4kwoY/nwLQSex4w1eW9P6hkwLuN4/CHcytoZIMNXeFltZJezcZtfmT
+         WUaiG9O9EJteNL2P8Ba04ejZhjHDDCr1duRoC+k6r7GgfGDIOyvG1TF8VJeOomfjcBn4
+         NnZKdPUJl3XotIEUu20PL39cJtEq/VdAZnTAazb0m+IZSRBOnb6elwq9PuuHXCA77ji2
+         OoIg==
+X-Gm-Message-State: APjAAAVNHvYrbk8MoNNp1KvBWwLyDtbhAaQUpz+Wt1+wx+qTUThqxLKN
+        8oJs8HOH/Es4DjRCcwL8MvAh18vo
+X-Google-Smtp-Source: APXvYqxKn6FTCHsgUKeM+24rUe23nKUqGI6M4rYLebz+9Ii33fcE0iibfJ+k2hx4q/8/b5f3Bul8zw==
+X-Received: by 2002:a05:600c:228f:: with SMTP id 15mr3447006wmf.31.1560423813983;
+        Thu, 13 Jun 2019 04:03:33 -0700 (PDT)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id f21sm2596606wmb.2.2019.06.13.04.03.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 04:03:33 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH] KVM: x86: clean up conditions for asynchronous page fault handling
+Date:   Thu, 13 Jun 2019 13:03:32 +0200
+Message-Id: <1560423812-51166-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-06-19, 09:51, Peng Ma wrote:
+Even when asynchronous page fault is disabled, KVM does not want to pause
+the host if a guest triggers a page fault; instead it will put it into
+an artificial HLT state that allows running other host processes while
+allowing interrupt delivery into the guest.
 
-> >> +                     goto err;
-> >> +
-> >> +             comp_temp->fl_virt_addr =
-> >> +                     (void *)((struct dpaa2_fd *)
-> >> +                             comp_temp->fd_virt_addr + 1);
-> >
-> >casts and pointer math, what could go wrong!! This doesnt smell right!
-> >
-> >> +             comp_temp->fl_bus_addr = comp_temp->fd_bus_addr +
-> >> +                                     sizeof(struct dpaa2_fd);
-> >
-> >why not use fl_virt_addr and get the bus_address?
-> What you mean is I should use virt_to_phys to get the bus_address?
+However, the way this feature is triggered is a bit confusing.
+First, it is not used for page faults while a nested guest is
+running: but this is not an issue since the artificial halt
+is completely invisible to the guest, either L1 or L2.  Second,
+it is used even if kvm_halt_in_guest() returns true; in this case,
+the guest probably should not pay the additional latency cost of the
+artificial halt, and thus we should handle the page fault in a
+completely synchronous way.
 
-Yes instead of maintaining both pointers, just use one and then when
-required use one to get other. For bus address I would prefer
-dma_map_single rather than virt_to_phys()
+By introducing a new function kvm_can_deliver_async_pf, this patch
+commonizes the code that chooses whether to deliver an async page fault
+(kvm_arch_async_page_not_present) and the code that chooses whether a
+page fault should be handled synchronously (kvm_can_do_async_pf).
+
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/mmu.c | 13 ------------
+ arch/x86/kvm/x86.c | 59 ++++++++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 48 insertions(+), 24 deletions(-)
+
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 3384c539d150..771349e72d2a 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -4040,19 +4040,6 @@ static int kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gva_t gva, gfn_t gfn)
+ 	return kvm_setup_async_pf(vcpu, gva, kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
+ }
+ 
+-bool kvm_can_do_async_pf(struct kvm_vcpu *vcpu)
+-{
+-	if (unlikely(!lapic_in_kernel(vcpu) ||
+-		     kvm_event_needs_reinjection(vcpu) ||
+-		     vcpu->arch.exception.pending))
+-		return false;
+-
+-	if (!vcpu->arch.apf.delivery_as_pf_vmexit && is_guest_mode(vcpu))
+-		return false;
+-
+-	return kvm_x86_ops->interrupt_allowed(vcpu);
+-}
+-
+ static bool try_async_pf(struct kvm_vcpu *vcpu, bool prefault, gfn_t gfn,
+ 			 gva_t gva, kvm_pfn_t *pfn, bool write, bool *writable)
+ {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 6200d5a51f13..2fe53b931b72 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9775,6 +9775,36 @@ static int apf_get_user(struct kvm_vcpu *vcpu, u32 *val)
+ 				      sizeof(u32));
+ }
+ 
++static bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
++{
++	if (!vcpu->arch.apf.delivery_as_pf_vmexit && is_guest_mode(vcpu))
++		return false;
++
++	if (!(vcpu->arch.apf.msr_val & KVM_ASYNC_PF_ENABLED) ||
++	    (vcpu->arch.apf.send_user_only &&
++	     kvm_x86_ops->get_cpl(vcpu) == 0))
++		return false;
++
++	return true;
++}
++
++bool kvm_can_do_async_pf(struct kvm_vcpu *vcpu)
++{
++	if (unlikely(!lapic_in_kernel(vcpu) ||
++		     kvm_event_needs_reinjection(vcpu) ||
++		     vcpu->arch.exception.pending))
++		return false;
++
++	if (kvm_hlt_in_guest(vcpu->kvm) && !kvm_can_deliver_async_pf(vcpu))
++		return false;
++
++	/*
++	 * If interrupts are off we cannot even use an artificial
++	 * halt state.
++	 */
++	return kvm_x86_ops->interrupt_allowed(vcpu);
++}
++
+ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
+ 				     struct kvm_async_pf *work)
+ {
+@@ -9783,19 +9813,26 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
+ 	trace_kvm_async_pf_not_present(work->arch.token, work->gva);
+ 	kvm_add_async_pf_gfn(vcpu, work->arch.gfn);
+ 
+-	if (!(vcpu->arch.apf.msr_val & KVM_ASYNC_PF_ENABLED) ||
+-	    (vcpu->arch.apf.send_user_only &&
+-	     kvm_x86_ops->get_cpl(vcpu) == 0))
++	if (!kvm_can_deliver_async_pf(vcpu) ||
++	    apf_put_user(vcpu, KVM_PV_REASON_PAGE_NOT_PRESENT)) {
++		/*
++		 * It is not possible to deliver a paravirtualized asynchronous
++		 * page fault, but putting the guest in an artificial halt state
++		 * can be beneficial nevertheless: if an interrupt arrives, we
++		 * can deliver it timely and perhaps the guest will schedule
++		 * another process.  When the instruction that triggered a page
++		 * fault is retried, hopefully the page will be ready in the host.
++		 */
+ 		kvm_make_request(KVM_REQ_APF_HALT, vcpu);
+-	else if (!apf_put_user(vcpu, KVM_PV_REASON_PAGE_NOT_PRESENT)) {
+-		fault.vector = PF_VECTOR;
+-		fault.error_code_valid = true;
+-		fault.error_code = 0;
+-		fault.nested_page_fault = false;
+-		fault.address = work->arch.token;
+-		fault.async_page_fault = true;
+-		kvm_inject_page_fault(vcpu, &fault);
+ 	}
++
++	fault.vector = PF_VECTOR;
++	fault.error_code_valid = true;
++	fault.error_code = 0;
++	fault.nested_page_fault = false;
++	fault.address = work->arch.token;
++	fault.async_page_fault = true;
++	kvm_inject_page_fault(vcpu, &fault);
+ }
+ 
+ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
 -- 
-~Vinod
+1.8.3.1
+
