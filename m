@@ -2,152 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DBAF43B6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1E9743B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfFMP3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:29:04 -0400
-Received: from ou.quest-ce.net ([195.154.187.82]:36476 "EHLO ou.quest-ce.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728892AbfFML0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:26:22 -0400
-Received: from [2a01:e35:39f2:1220:9dd7:c176:119b:4c9d] (helo=test.quest-ce.net)
-        by ou.quest-ce.net with esmtpsa (TLS1.1:RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <ydroneaud@opteya.com>)
-        id 1hbNs2-00087D-OI; Thu, 13 Jun 2019 13:26:19 +0200
-From:   Yann Droneaud <ydroneaud@opteya.com>
-To:     linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Yann Droneaud <ydroneaud@opteya.com>,
-        Elena Reshetova <elena.reshetova@intel.com>
-Date:   Thu, 13 Jun 2019 13:26:06 +0200
-Message-Id: <cbabb2af40e5f0bdb516cf07aea6e8269d1df89a.1560423331.git.ydroneaud@opteya.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1560423331.git.ydroneaud@opteya.com>
-References: <cover.1560423331.git.ydroneaud@opteya.com>
+        id S1730947AbfFMP2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:28:47 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33758 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727014AbfFML1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:27:12 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3EE9C84A0E22CFC1DCFB;
+        Thu, 13 Jun 2019 19:27:10 +0800 (CST)
+Received: from [127.0.0.1] (10.177.131.64) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
+ 19:26:59 +0800
+Subject: Re: [PATCH 1/4] x86: kdump: move reserve_crashkernel_low() into
+ kexec_core.c
+To:     James Morse <james.morse@arm.com>
+References: <20190507035058.63992-1-chenzhou10@huawei.com>
+ <20190507035058.63992-2-chenzhou10@huawei.com>
+ <6585f047-063c-6d6c-4967-1d8a472f30f4@arm.com>
+CC:     <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <akpm@linux-foundation.org>, <ard.biesheuvel@linaro.org>,
+        <rppt@linux.ibm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <bp@alien8.de>, <ebiederm@xmission.com>, <horms@verge.net.au>,
+        <takahiro.akashi@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
+        <linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
+From:   Chen Zhou <chenzhou10@huawei.com>
+Message-ID: <4716a864-9560-f198-5899-9a5dee1fac20@huawei.com>
+Date:   Thu, 13 Jun 2019 19:26:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a01:e35:39f2:1220:9dd7:c176:119b:4c9d
-X-SA-Exim-Mail-From: ydroneaud@opteya.com
-X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on ou.quest-ce.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        URIBL_BLOCKED autolearn=ham version=3.3.2
-Subject: [PATCH 3/3] binfmt/elf: randomize padding between ELF interp info
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-SA-Exim-Scanned: Yes (on ou.quest-ce.net)
+In-Reply-To: <6585f047-063c-6d6c-4967-1d8a472f30f4@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.131.64]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As AT_RANDOM is on top of the stack, retrieving AT_RANDOM value
-through getauxval() could help, if needed, an attacker accesses
-interesting locations in program stack, if offset from top of the
-stack is fixed/known beforehand.
+Hi James,
 
-As a pure cargo-cult feature, inspired by "x86/entry/64: randomize
-kernel stack offset upon syscall" [1], this patch adds small
-random offsets between the top of the stack, AT_RANDOM array,
-AT_PLAFORM strings, AT_BASE_PLATFORM strings, and the auxiliary
-vector (aka. ELF interpretor info)
+Thanks for your review.
 
-It introduces 16 possible different locations for AT_RANDOM array,
-16 possible different locations for AT_PLATFORM, same for AT_BASE_PLATFORM,
-and 16 more for the auxiliary vector.
+On 2019/6/6 0:29, James Morse wrote:
+> Hello,
+> 
+> On 07/05/2019 04:50, Chen Zhou wrote:
+>> In preparation for supporting reserving crashkernel above 4G
+>> in arm64 as x86_64 does, move reserve_crashkernel_low() into
+>> kexec/kexec_core.c.
+> 
+> 
+>> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+>> index 905dae8..9ee33b6 100644
+>> --- a/arch/x86/kernel/setup.c
+>> +++ b/arch/x86/kernel/setup.c
+>> @@ -463,59 +460,6 @@ static void __init memblock_x86_reserve_range_setup_data(void)
+>>  # define CRASH_ADDR_HIGH_MAX	MAXMEM
+>>  #endif
+>>  
+>> -static int __init reserve_crashkernel_low(void)
+>> -{
+>> -#ifdef CONFIG_X86_64
+> 
+> The behaviour of this #ifdef has disappeared, won't 32bit x86 now try and reserve a chunk
+> of unnecessary 'low' memory?
+> 
+> [...]
 
-Thus, at most 544 bytes (256 + 16 + 16 + 256) can be wasted in
-padding.
+At present, reserve_crashkernel_low() is called only when reserving crashkernel above 4G, so i deleted
+this #ifdef.
+If we called reserve_crashkernel_low() at the beginning of reserve_crashkernel(), i need to add it back.
 
-This patch also enforces an 16bytes aligned AT_RANDOM array as
-elf_stack_align() is used, regardless of arch_align_stack().
+> 
+> 
+>> @@ -579,9 +523,13 @@ static void __init reserve_crashkernel(void)
+>>  		return;
+>>  	}
+>>  
+>> -	if (crash_base >= (1ULL << 32) && reserve_crashkernel_low()) {
+>> -		memblock_free(crash_base, crash_size);
+>> -		return;
+>> +	if (crash_base >= (1ULL << 32)) {
+>> +		if (reserve_crashkernel_low()) {
+>> +			memblock_free(crash_base, crash_size);
+>> +			return;
+>> +		}
+>> +
+>> +		insert_resource(&iomem_resource, &crashk_low_res);
+> 
+> 
+> Previously reserve_crashkernel_low() was #ifdefed to do nothing if !CONFIG_X86_64, I don't
+> see how 32bit is skipping this reservation...
+> 
+> 
+>>  	}
+>>  
+>>  	pr_info("Reserving %ldMB of memory at %ldMB for crashkernel (System RAM: %ldMB)\n",
+>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>> index b9b1bc5..096ad63 100644
+>> --- a/include/linux/kexec.h
+>> +++ b/include/linux/kexec.h
+>> @@ -63,6 +63,10 @@
+>>  
+>>  #define KEXEC_CORE_NOTE_NAME	CRASH_CORE_NOTE_NAME
+>>  
+>> +#ifndef CRASH_ALIGN
+>> +#define CRASH_ALIGN SZ_128M
+>> +#endif
+> 
+> Why 128M? Wouldn't we rather each architecture tells us its minimum alignment?
 
-It should be noted, per ABI, it's not possible to insert random
-padding between auxiliary vector and environment variables, nor
-between environment variables and program arguments, nor before
-programs arguments. (It should be possible to shuffle values
-within auxillay and environment variables, if someone want to
-scare userspace).
+Yeah, each architecture should tells us its minimum alignment. I added this default size to
+fix compiling error on some architecture which didn't define it. I will add x86_64 and arm64
+restriction on reserve_crashkernel_low() and delete this define.
 
-[1] https://www.openwall.com/lists/kernel-hardening/2019/03/29/3
+> 
+> 
+>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>> index d714044..3492abd 100644
+>> --- a/kernel/kexec_core.c
+>> +++ b/kernel/kexec_core.c
+>> @@ -39,6 +39,8 @@
+>>  #include <linux/compiler.h>
+>>  #include <linux/hugetlb.h>
+>>  #include <linux/frame.h>
+>> +#include <linux/memblock.h>
+>> +#include <linux/swiotlb.h>
+>>  
+>>  #include <asm/page.h>
+>>  #include <asm/sections.h>
+>> @@ -96,6 +98,60 @@ int kexec_crash_loaded(void)
+>>  }
+>>  EXPORT_SYMBOL_GPL(kexec_crash_loaded);
+>>  
+>> +int __init reserve_crashkernel_low(void)
+>> +{
+>> +	unsigned long long base, low_base = 0, low_size = 0;
+>> +	unsigned long total_low_mem;
+>> +	int ret;
+>> +
+>> +	total_low_mem = memblock_mem_size(1UL << (32 - PAGE_SHIFT));
+>> +
+>> +	/* crashkernel=Y,low */
+>> +	ret = parse_crashkernel_low(boot_command_line, total_low_mem,
+>> +			&low_size, &base);
+>> +	if (ret) {
+>> +		/*
+>> +		 * two parts from lib/swiotlb.c:
+>> +		 * -swiotlb size: user-specified with swiotlb= or default.
+>> +		 *
+>> +		 * -swiotlb overflow buffer: now hardcoded to 32k. We round it
+>> +		 * to 8M for other buffers that may need to stay low too. Also
+>> +		 * make sure we allocate enough extra low memory so that we
+>> +		 * don't run out of DMA buffers for 32-bit devices.
+>> +		 */
+>> +		low_size = max(swiotlb_size_or_default() + (8UL << 20),
+> 
+> SZ_8M?
+> 
+>> +				256UL << 20);
+> 
+> SZ_256M?
+> 
 
-Link: https://lore.kernel.org/lkml/cover.1560423331.git.ydroneaud@opteya.com
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Signed-off-by: Yann Droneaud <ydroneaud@opteya.com>
----
- fs/binfmt_elf.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+There is compiling warning "warning: comparison of distinct pointer types lacks a cast" if just use
+SZ_8M or SZ_256M. We need cast swiotlb_size_or_default() to type int,so i kept the old as in x86_64.
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index cfcc01fff4ae..c84ef81f0639 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -182,6 +182,26 @@ static inline elf_addr_t __user *elf_stack_alloc(unsigned long *pp,
- 	return sp;
- }
- 
-+static inline void elf_stack_randomize(unsigned long *pp, size_t range)
-+{
-+	u32 offset;
-+	unsigned long p;
-+
-+	if (!(current->flags & PF_RANDOMIZE))
-+		return;
-+
-+	offset = prandom_u32() % range;
-+	p = *pp;
-+
-+#ifdef CONFIG_STACK_GROWSUP
-+	p += offset;
-+#else
-+	p -= offset;
-+#endif
-+
-+	*pp = p;
-+}
-+
- #ifndef ELF_BASE_PLATFORM
- /*
-  * AT_BASE_PLATFORM indicates the "real" hardware/microarchitecture.
-@@ -219,6 +239,9 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 
- 	p = arch_align_stack(p);
- 
-+	elf_stack_randomize(&p, 256);
-+	elf_stack_align(&p);
-+
- 	/*
- 	 * Generate 16 random bytes for userspace PRNG seeding.
- 	 */
-@@ -237,6 +260,8 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	if (k_platform) {
- 		size_t len = strlen(k_platform) + 1;
- 
-+		elf_stack_randomize(&p, 16);
-+
- 		u_platform = elf_stack_alloc(&p, len);
- 		if (__copy_to_user(u_platform, k_platform, len))
- 			return -EFAULT;
-@@ -250,11 +275,16 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	if (k_base_platform) {
- 		size_t len = strlen(k_base_platform) + 1;
- 
-+		elf_stack_randomize(&p, 16);
-+
- 		u_base_platform = elf_stack_alloc(&p, len);
- 		if (__copy_to_user(u_base_platform, k_base_platform, len))
- 			return -EFAULT;
- 	}
- 
-+	elf_stack_randomize(&p, 256);
-+	elf_stack_align(&p);
-+
- 	/* Create the ELF interpreter info */
- 	elf_info = (elf_addr_t *)current->mm->saved_auxv;
- 	/* update AT_VECTOR_SIZE_BASE if the number of NEW_AUX_ENT() changes */
--- 
-2.21.0
+> 
+>> +	} else {
+>> +		/* passed with crashkernel=0,low ? */
+>> +		if (!low_size)
+>> +			return 0;
+>> +	}
+>> +
+>> +	low_base = memblock_find_in_range(0, 1ULL << 32, low_size, CRASH_ALIGN);
+>> +	if (!low_base) {
+>> +		pr_err("Cannot reserve %ldMB crashkernel low memory, please try smaller size.\n",
+>> +		       (unsigned long)(low_size >> 20));
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	ret = memblock_reserve(low_base, low_size);
+>> +	if (ret) {
+>> +		pr_err("%s: Error reserving crashkernel low memblock.\n",
+>> +				__func__);
+>> +		return ret;
+>> +	}
+>> +
+>> +	pr_info("Reserving %ldMB of low memory at %ldMB for crashkernel (System low RAM: %ldMB)\n",
+>> +		(unsigned long)(low_size >> 20),
+>> +		(unsigned long)(low_base >> 20),
+>> +		(unsigned long)(total_low_mem >> 20));
+>> +
+>> +	crashk_low_res.start = low_base;
+>> +	crashk_low_res.end   = low_base + low_size - 1;
+>> +
+>> +	return 0;
+>> +}
+> 
+> 
+> Thanks,
+> 
+> James
+> 
+> .
+> 
+
+Thanks,
+Chen Zhou
 
