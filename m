@@ -2,53 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9454844462
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D27454445E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392606AbfFMQgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:36:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54954 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730674AbfFMH2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:28:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RWs47MlEw6q4mhAqwnkkTjDMHRGkSPNW49ybL3tYviI=; b=EPdR4Uv2CiGNsnqefLIJy0soy
-        LuZo/5qJ+nSAnqBeloRkXbnC8QkRnvDaOnLLGlEyPfjV7rKDb+2IsSDnGpPPwR5YN+JsJZvE6Nzih
-        h4bh6Hhrspi61r0s/Hu4diTce8cxLQZOlmsN8GF3gvQLewUG5UZZnnds/KRNZrSzpBBd2tlrz/+8z
-        ZaOWCIT5Vq3o9xcR44US4mqjTGAzEYvXYCQMxeOJQ1RDU8UxVl8E9B0/2tTmgBOs4Vl4f4Kg35qtg
-        BBXzZrj3MYp5SLkYoyyZ/9b1hHXnW1olZVdW8mjqDD1Jt3ArD9oGoZJO0zuuD4ObY35lWyRjv42XX
-        Kkuaol0Ug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbKA5-0002CN-VA; Thu, 13 Jun 2019 07:28:41 +0000
-Date:   Thu, 13 Jun 2019 00:28:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcache@vger.kernel.org
-Subject: Re: [PATCH 10/12] bcache: move closures to lib/
-Message-ID: <20190613072841.GA7996@infradead.org>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <20190610191420.27007-11-kent.overstreet@gmail.com>
+        id S2403834AbfFMQgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:36:32 -0400
+Received: from verein.lst.de ([213.95.11.211]:36328 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730679AbfFMHaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:30:09 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 504D068B02; Thu, 13 Jun 2019 09:29:37 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 09:29:37 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Christoph Hellwig <hch@lst.de>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [BISECTED REGRESSION] b43legacy broken on G4 PowerBook
+Message-ID: <20190613072937.GA12093@lst.de>
+References: <73da300c-871c-77ac-8a3a-deac226743ef@lwfinger.net> <20190607172902.GA8183@lst.de> <30000803-3772-3edf-f4a9-55122d504f3f@lwfinger.net> <20190610081825.GA16534@lst.de> <153c13f5-a829-1eab-a3c5-fecfb84127ff@lwfinger.net> <20190611060521.GA19512@lst.de> <5aaa600b-5b59-1f68-454f-20403c318f1a@lwfinger.net> <20190612065558.GA19585@lst.de> <d6d82c0d-4a40-a191-0414-6b9a64547f65@lwfinger.net> <05db995c55ad7c1002124374c139d2c0812ad034.camel@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610191420.27007-11-kent.overstreet@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <05db995c55ad7c1002124374c139d2c0812ad034.camel@kernel.crashing.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 03:14:18PM -0400, Kent Overstreet wrote:
-> Prep work for bcachefs - being a fork of bcache it also uses closures
+On Thu, Jun 13, 2019 at 07:59:51AM +1000, Benjamin Herrenschmidt wrote:
+> > With the patch for Kconfig above, and the original patch setting 
+> > ARCH_ZONE_DMA_BITS to 30, everything works.
+> > 
+> > Do you have any ideas on what should trigger the change in ARCH_ZONE_BITS? 
+> > Should it be CONFIG_PPC32 defined, or perhaps CONFIG_G4_CPU defined?
+> 
+> I think CONFIG_PPC32 is fine
 
-NAK.  This obsfucation needs to go away from bcache and not actually be
-spread further, especially not as an API with multiple users which will
-make it even harder to get rid of it.
+I'll cook up a patch unless someone beats me to it.
