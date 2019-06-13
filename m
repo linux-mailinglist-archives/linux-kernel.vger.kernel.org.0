@@ -2,89 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A2343961
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C523243954
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387982AbfFMPN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:13:29 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35721 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732261AbfFMNa0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:30:26 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c6so10171602wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:30:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=fG7zTrGYhrTn2R8dicpGyyCWK8SjK6usqkrzLPnkewQ=;
-        b=uCQaZyzX5/SinctvqDo8dFQ4w2Na8NlIkQzusQo9dViadlKq9VIwX02tHVDXpjt4UR
-         fYujjVWR+GnxCIFsUXKKCUYndPnCBEjxUIs2osCBcFFPiDFaGFkiVwLpQL8MRUx0mQVG
-         fky6mP+/FcwwBHuHGg0OugYptaDJ6jxyDi4FJ9ezUVV45icwJMINKGmeL3bpq2QzWf+w
-         JE8RGTmqYYAYoSuQxa77CxEyRBZYjTbAyubo+2xxZDptGnS9RUsilnhteU+tnRrcZWBH
-         Af8codS/S6Of1r9oDANWmAu8EYIfLzPbSj8PuC7XApzPdWOUsUkaC4qOQeRqd1PueFKj
-         kZ4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=fG7zTrGYhrTn2R8dicpGyyCWK8SjK6usqkrzLPnkewQ=;
-        b=lR3HNv61A9FiEl/Sjb8Y//uUMwgvG92aTa47APTMqr/eFRXXUwivi4LLdpuIbz3Nzb
-         ceitA22sbVQTQDXXmzg3LPhMBjD/LyJcufpB12cfzQSxP6v6mr5RYewf1qzr6jnmU/gf
-         1Ez4qH9iFZQeG5MWcOVIr2LvMYyjmSzh9JHBcaO/7QaKcU3HhAhl4m5Q3h8kvV4+bLFI
-         00evmIgttXAARaj7y1hYYJnQA4b9IF6oQ9lPTPhYe8zGkIcFXDD3r7FUEjjPqSM4qvea
-         1oba6sEiYzVRj8xTAxq128hxADIm6Nkzc0TfloMGIzaxItHpjXG1CqwAfua/YI2A7OWc
-         /TUg==
-X-Gm-Message-State: APjAAAVmZwmPqi1/kdDxziqTKXPygwolqptRqj/9UFrZp22JXU6hSyWV
-        Kfr9m3JUGRqHn6WNAnCT/3f23w==
-X-Google-Smtp-Source: APXvYqwwjn735ZcJh4RCTzzb2yvw+vbpmotjGHKxj/HsIfwbG5bEALE3PPpaQAxEGGSxu1SyzuhDOA==
-X-Received: by 2002:a7b:cb4b:: with SMTP id v11mr3844073wmj.103.1560432624540;
-        Thu, 13 Jun 2019 06:30:24 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id j189sm4337413wmb.48.2019.06.13.06.30.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 06:30:24 -0700 (PDT)
-Message-ID: <5d024ff0.1c69fb81.749d7.81a6@mx.google.com>
-Date:   Thu, 13 Jun 2019 06:30:24 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1732846AbfFMPNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:13:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39916 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732268AbfFMNfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:35:01 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C97C330C7E65;
+        Thu, 13 Jun 2019 13:34:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B8B695C3F8;
+        Thu, 13 Jun 2019 13:34:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org>
+References: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org> <20190607151228.GA1872258@magnolia> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk> <29222.1559922719@warthog.procyon.org.uk>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     dhowells@redhat.com, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver #4]
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.19.50-119-g94ea812871ce
-X-Kernelci-Branch: linux-4.19.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 000/118] 4.19.51-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30225.1560432885.1@warthog.procyon.org.uk>
+Date:   Thu, 13 Jun 2019 14:34:45 +0100
+Message-ID: <30226.1560432885@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Jun 2019 13:35:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 123 boots: 0 failed, 122 passed with 1 untried=
-/unknown (v4.19.50-119-g94ea812871ce)
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.50-119-g94ea812871ce/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.50-119-g94ea812871ce/
+> What is the problem with inline functions in UAPI headers?
 
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.50-119-g94ea812871ce
-Git Commit: 94ea812871ceac0a190ded80c3272a779dfb101e
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 69 unique boards, 24 SoC families, 15 builds out of 206
+It makes compiler problems more likely; it increases the potential for name
+collisions with userspace; it makes for more potential problems if the headers
+are imported into some other language; and it's not easy to fix a bug in one
+if userspace uses it, just in case fixing the bug breaks userspace.
 
----
-For more info write to <info@kernelci.org>
+Further, in this case, the first of Darrick's functions (calculating the
+length) is probably reasonable, but the second is not.  It should crank the
+tail pointer and then use that, but that requires 
+
+> >> Also, weird multiline comment style.
+> > 
+> > Not really.
+> 
+> Yes really.
+
+No.  It's not weird.  If anything, the default style is less good for several
+reasons.  I'm going to deal with this separately as I need to generate some
+stats first.
+
+David
