@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34DFF438FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A0F43906
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387594AbfFMPKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:10:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49582 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732306AbfFMNvW (ORCPT
+        id S1733269AbfFMPLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:11:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54344 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732302AbfFMNvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:51:22 -0400
+        Thu, 13 Jun 2019 09:51:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l04+nuc8FItMhrlUdke+dDyeO4FcnJ4DLhxtL7h4uWw=; b=Dyedfdz8cqa1qtwMp4kxTOjis
-        yz6nEYshl3JJmNB6VXPpJNo560qsMGykCHEhUrEl7UPK5q7gjLymIqN7dbMKW/6p6oiEZXDRetq9L
-        BppDMIVPaY/ATTg4tP2vaIFm1d/pSCPSwX9JpZO5Fvzth8PbuQomyeC6xv+yn7yARxVU7LTnaWwqZ
-        WcCeaOQlpgze1p3Qi/vrSeYF9FfL8gE/U/l8jsxtuGp+MK1aOdqaGcZzvQJgOmYzOPpdqjvVisGny
-        iGzfeLgu2nOeGsTY6xQ0oCN0JJGNn8sr1MrsG918wFRehWQjHgCSMHkOksRUXU8G0ZAzVd9OKhsBj
-        nYMSOBLPw==;
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=e/95LaWQsIjh/CQjR8ISIdEucc0o3duu6IK91Iv8lFA=; b=oqCGas35MVTnFD9x8QE56vHl0U
+        VUV+nd1h1RwWCVWXNE0R9Rd2psoES5L3wRRUDmbc6/EYjD7n6LwmUTNmjcLpjr7Fl/4GTX8Z9Mbq9
+        Ei6ResJ3Sr1TnzNm5W8WYfFMpho8j246zEGUtXZsfS3+Fo4YKV9ZDEukfN/u06NibgXUY/cBlcvqa
+        NT57jkIzuZUIwziqiN/MrU3agq8Wpvx7rKubZ12SvjzQXjXiNEYq3rnxb3Sw24bzIBc90Y+47jM6e
+        NR122gvgbWVf1vSRSIvv0mNtRVWPfssIujkUFt6cDl6NJU6YuxjbKNg5hayNxGVoTFNf0alezuxyD
+        LdMBa8Fg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbQ7z-0004Bn-KB; Thu, 13 Jun 2019 13:50:55 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbQ80-0001Gc-2x; Thu, 13 Jun 2019 13:50:56 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id EE15520316592; Thu, 13 Jun 2019 15:50:53 +0200 (CEST)
-Message-Id: <20190613134317.734881240@infradead.org>
+        id F36F3202C9D74; Thu, 13 Jun 2019 15:50:53 +0200 (CEST)
+Message-Id: <20190613134932.853419066@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 13 Jun 2019 15:43:17 +0200
+Date:   Thu, 13 Jun 2019 15:43:18 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     stern@rowland.harvard.edu, akiyks@gmail.com,
         andrea.parri@amarulasolutions.com, boqun.feng@gmail.com,
@@ -39,49 +39,41 @@ To:     stern@rowland.harvard.edu, akiyks@gmail.com,
         luc.maranget@inria.fr, npiggin@gmail.com, paulmck@linux.ibm.com,
         peterz@infradead.org, will.deacon@arm.com, paul.burton@mips.com
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: [PATCH v2 0/4] atomic: Fixes to smp_mb__{before,after}_atomic() and mips.
+Subject: [PATCH v2 1/4] mips/atomic: Fix cmpxchg64 barriers
+References: <20190613134317.734881240@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+There were no memory barriers on the 32bit implementation of
+cmpxchg64(). Fix this.
 
-This all started when Andrea Parri found a 'surprising' behaviour for x86:
+Cc: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/mips/include/asm/cmpxchg.h |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-  http://lkml.kernel.org/r/20190418125412.GA10817@andrea
+--- a/arch/mips/include/asm/cmpxchg.h
++++ b/arch/mips/include/asm/cmpxchg.h
+@@ -290,10 +290,13 @@ static inline unsigned long __cmpxchg64(
+ 	 * will cause a build error unless cpu_has_64bits is a		\
+ 	 * compile-time constant 1.					\
+ 	 */								\
+-	if (cpu_has_64bits && kernel_uses_llsc)				\
++	if (cpu_has_64bits && kernel_uses_llsc) {			\
++		smp_mb__before_llsc();					\
+ 		__res = __cmpxchg64((ptr), __old, __new);		\
+-	else								\
++		smp_llsc_mb();						\
++	} else {							\
+ 		__res = __cmpxchg64_unsupported();			\
++	}								\
+ 									\
+ 	__res;								\
+ })
 
-Basically we fail for:
-
-	*x = 1;
-	atomic_inc(u);
-	smp_mb__after_atomic();
-	r0 = *y;
-
-Because, while the atomic_inc() implies memory order, it
-(surprisingly) does not provide a compiler barrier. This then allows
-the compiler to re-order like so:
-
-	atomic_inc(u);
-	*x = 1;
-	smp_mb__after_atomic();
-	r0 = *y;
-
-Which the CPU is then allowed to re-order (under TSO rules) like:
-
-	atomic_inc(u);
-	r0 = *y;
-	*x = 1;
-
-And this very much was not intended.
-
-This had me audit all the (strong) architectures that had weak
-smp_mb__{before,after}_atomic: ia64, mips, sparc, s390, x86, xtensa.
-
-Of those, only x86 and mips were affected. Looking at MIPS to solve this, led
-to the other MIPS patches.
-
-All these patches have been through 0day for quite a while.
-
-Paul, how do you want to route the MIPS bits?
 
