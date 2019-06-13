@@ -2,124 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5DE143F40
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5904044373
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389958AbfFMPzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:55:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731536AbfFMIvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:51:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9686D2173C;
-        Thu, 13 Jun 2019 08:51:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415900;
-        bh=Y1WnJruasGRm3U9AQ0OHPrzS3NNHvnFoLXqzcfF6xUc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bCjvZ1MYthnhtcslLp5cUd09V9fHFxJ4A/YMW8sVaKmrAZPh4h3+hLg1kpTcgU8MF
-         wbMKN1MGB2hiyudSoCtnvh8+KuNn1P/lO/Z1Gr6nJGXBCVg0Q43LHZK31fTXDczhsq
-         M21/fGu6z8bUc7j4pCWUxiHAxE0qWcz1I/m/4uak=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eddie Horng <eddiehorng.tw@gmail.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.1 155/155] ovl: support stacked SEEK_HOLE/SEEK_DATA
-Date:   Thu, 13 Jun 2019 10:34:27 +0200
-Message-Id: <20190613075701.414067445@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2388093AbfFMQ31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:29:27 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37644 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730925AbfFMIfS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:18 -0400
+Received: by mail-vs1-f65.google.com with SMTP id v6so12118840vsq.4;
+        Thu, 13 Jun 2019 01:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M/j512S8iNawEe8Fwmcxi5za0FB/PptLS7JGUaidYWg=;
+        b=OxnRIln/sM87E9yAMKkBvxzTuS55PzqwilzIiUk16/vzQLB+YOVGxrkEOMI/1T0fef
+         Tjz9MlXar7WzM/oRrPg8KIGEA5YlpiPcjw/e2QqsyG5dYc2SqlOwKu3q5+itA54IALWn
+         i96hlCvrcOOhMadLxROp27+OUusTMbi4nQ115G/RCUC6eYXU8ff6zsvwdCqPbhqW0EgS
+         m7zoVLxR8BXVvsqTQF04zStHGjY9yKdLJQEaxG2TAM44GxQitJ+n+Dyw+5dYgvENw2u8
+         PiEQV5fuRzvkDr6D0I8omoYJl4DVMhg+0BqBmwJKtbxT/nznxzjNEtJil+Csn25bB3et
+         cbFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M/j512S8iNawEe8Fwmcxi5za0FB/PptLS7JGUaidYWg=;
+        b=LSkFMlSIR2q7+qqD8Sx/v34wjavq/hJ6nu0QV6B9FuOdg8xlLEVq43iez72S58PTo5
+         XvVsaKlhYGomWO0OzyzzRbQCaOiHFoO1mCuUzE9+/MC7k5W8G3VTMTLyL9si90CIgtyQ
+         UdgEKH1lh2GM7AIfojwD+8wZnuXpEP5Fp6/lWlrvtseUDVIs0N7hkp3d/2L+yeVd2X2p
+         xlkDbfeQn0eByq6b5fijvNEATjGY4jVB4bF4cdGn4uX5SgeTwNhW2rSaapyf2/Z9rOjc
+         UQDyRe82kFx96qumUGUGYTolFLF/3hn3AXqGpKagO+lLDXsu3V7xEdR0yO/X3EtqS/yN
+         YFmw==
+X-Gm-Message-State: APjAAAWRmi7aEEHndzryzvc9ReAvx5KPlzokErywysDEHjEYSHilwSKi
+        jUrXLJP+i0EU77ELYlYCjj/UPsdbFQ4fd6gJ9RE=
+X-Google-Smtp-Source: APXvYqzXlBh2rBUbKHiKWqg1RIV3kUDnHNMsS0QRYDwTtb3AQTQI4zniACIqmZ18a8Q2qK+cPo7L2dtUQdc3qhiJdAo=
+X-Received: by 2002:a67:fb8d:: with SMTP id n13mr32198844vsr.46.1560414917499;
+ Thu, 13 Jun 2019 01:35:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe> <20190612060328.GQ4797@dell>
+In-Reply-To: <20190612060328.GQ4797@dell>
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+Date:   Thu, 13 Jun 2019 11:35:06 +0300
+Message-ID: <CANhJrGNM7fBXa8cY6ybF8WsaigwcREMvbGN0K4pdUVKck4POzw@mail.gmail.com>
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+To:     Lee Jones <lee.jones@linaro.org>,
+        "Vaittinen, Matti" <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+On Wed, Jun 12, 2019 at 9:03 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Tue, 11 Jun 2019, Sebastian Reichel wrote:
+>
+> > Hi,
+> >
+> > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > > Patch series introducing support for ROHM BD70528 PMIC
+> > > [...]
+> >
+> > I think all patches have been reviewed by the respective subsystem
+> > maintainers. Lee, can you provide an immutable branch with the MFD
+> > patches (1, 2, 4)? Looks like the other patches only depend on those
+> > and can go through their respective subsystems.
+>
+> Yes.  It's on my TODO list.
+>
+> Would you prefer this method over me just taking them all and sending
+> out a PR?  The latter is my usual flow, but I'm happy with either.
 
-commit 9e46b840c7053b5f7a245e98cd239b60d189a96c upstream.
+Thanks guys for taking care of this! :)
 
-Overlay file f_pos is the master copy that is preserved
-through copy up and modified on read/write, but only real
-fs knows how to SEEK_HOLE/SEEK_DATA and real fs may impose
-limitations that are more strict than ->s_maxbytes for specific
-files, so we use the real file to perform seeks.
-
-We do not call real fs for SEEK_CUR:0 query and for SEEK_SET:0
-requests.
-
-Fixes: d1d04ef8572b ("ovl: stack file ops")
-Reported-by: Eddie Horng <eddiehorng.tw@gmail.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/overlayfs/file.c |   44 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 40 insertions(+), 4 deletions(-)
-
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -146,11 +146,47 @@ static int ovl_release(struct inode *ino
- 
- static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
- {
--	struct inode *realinode = ovl_inode_real(file_inode(file));
-+	struct inode *inode = file_inode(file);
-+	struct fd real;
-+	const struct cred *old_cred;
-+	ssize_t ret;
- 
--	return generic_file_llseek_size(file, offset, whence,
--					realinode->i_sb->s_maxbytes,
--					i_size_read(realinode));
-+	/*
-+	 * The two special cases below do not need to involve real fs,
-+	 * so we can optimizing concurrent callers.
-+	 */
-+	if (offset == 0) {
-+		if (whence == SEEK_CUR)
-+			return file->f_pos;
-+
-+		if (whence == SEEK_SET)
-+			return vfs_setpos(file, 0, 0);
-+	}
-+
-+	ret = ovl_real_fdget(file, &real);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Overlay file f_pos is the master copy that is preserved
-+	 * through copy up and modified on read/write, but only real
-+	 * fs knows how to SEEK_HOLE/SEEK_DATA and real fs may impose
-+	 * limitations that are more strict than ->s_maxbytes for specific
-+	 * files, so we use the real file to perform seeks.
-+	 */
-+	inode_lock(inode);
-+	real.file->f_pos = file->f_pos;
-+
-+	old_cred = ovl_override_creds(inode->i_sb);
-+	ret = vfs_llseek(real.file, offset, whence);
-+	revert_creds(old_cred);
-+
-+	file->f_pos = real.file->f_pos;
-+	inode_unlock(inode);
-+
-+	fdput(real);
-+
-+	return ret;
- }
- 
- static void ovl_file_accessed(struct file *file)
-
-
+--Matti
