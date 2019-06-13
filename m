@@ -2,139 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A29244375
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 753074438C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392517AbfFMQ3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:29:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:45746 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730925AbfFMQ33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:29:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2B293EF;
-        Thu, 13 Jun 2019 09:29:28 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ED963F694;
-        Thu, 13 Jun 2019 09:29:28 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 4867E682577; Thu, 13 Jun 2019 17:29:27 +0100 (BST)
-Date:   Thu, 13 Jun 2019 17:29:27 +0100
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Ayan Halder <Ayan.Halder@arm.com>
-Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH v2] drm/komeda: Make Komeda interrupts shareable
-Message-ID: <20190613162927.GS4173@e110455-lin.cambridge.arm.com>
-References: <20190613151257.32297-1-ayan.halder@arm.com>
+        id S2392554AbfFMQag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:30:36 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38432 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392530AbfFMQa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:30:27 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d18so21472422wrs.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=fbFJcCZogG4E0hVeCzNVPT+VFyUUm0Zv3ff/zggRHYY=;
+        b=nC26i9JZniQCZC/cxtHX3spCrKHdGQw/wG6eftGbeaFS50K26skje7xVYYal3QjLyy
+         hLPTDRtiG7DlPKoeF0lF9Er2i0uHz0iI2yNx+Av7Yo5iWpvLuFBDg6gl1/RPeIYTQScH
+         jm+6FxTaJ3K4otAkUwc4N3wDGrxixX0744FgmJbk7gkweXPsgWUu9UohbJ78CJAttij+
+         iq4WL7NW/oGdRcA1+xofjHY/zbBArzMk1Z87t421coV5fW0Q4O2XusJkXtXnm7A1p+EK
+         emVX2QhkmwlPGW841InmZBl/jmjOOUoF8u2cPvgoaDC9PCmj79rfozcL6jJbw5G7f5rh
+         cSSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=fbFJcCZogG4E0hVeCzNVPT+VFyUUm0Zv3ff/zggRHYY=;
+        b=Bf72k3Ta5bO5Q0pjluCGr5EupVfqLZSjR8y2oimkF6DzMLB6wcAGXPkH0tbEZtGgGo
+         B5La1lWIwqVUSenAbHJE4gRmLOeDIuQl8dVQASqVBSykMSvQACagfvwa0PHnK/l94wLk
+         +buZxYRKjmVuGQdYw2mPVPX7SGqR2pKbl5eamuVwxYHRTqAhVmf7T/XweQi8WBKEHjz9
+         OrRv94bRLTtt3gWcP0OPAZ5lhhuvmPnREMfmIIwOmg9OYsPeVDmypMKSwekMUZ84Pna5
+         6QcujJ49TgrQk4KOdbS923uGHAaEOyOBggWwaYdDK8xMrU+BELJiWpgwp78YJp2jaQml
+         +GCg==
+X-Gm-Message-State: APjAAAWZE1KTRuNPonQ0HMPikZ3E6N1cZsmqq31KzqBU9YJhEdmUoCQq
+        djI3vhVtuuT2ZVPzFrZS+iKrnQ==
+X-Google-Smtp-Source: APXvYqwNQCbkcJmm/T/NHKOZkmzfBzdL0AsrgI/bKFEd3JLelxC5l8wP46eIXBRintpzIwFqS6LM9Q==
+X-Received: by 2002:adf:fc91:: with SMTP id g17mr9205518wrr.194.1560443425582;
+        Thu, 13 Jun 2019 09:30:25 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id f1sm180193wml.28.2019.06.13.09.30.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 09:30:24 -0700 (PDT)
+Message-ID: <5d027a20.1c69fb81.fcc4f.1023@mx.google.com>
+Date:   Thu, 13 Jun 2019 09:30:24 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190613151257.32297-1-ayan.halder@arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.14.125-82-ge64912eac71b
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/81] 4.14.126-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 04:13:10PM +0100, Ayan Halder wrote:
-> Komeda interrupts may be shared with other hardware blocks.
-> One needs to use devm_request_irq() with IRQF_SHARED to create a shared
->  interrupt handler.
-> As a result of not using drm_irq_install() api, one needs to set
-> "(struct drm_device *)->irq_enabled = true/false" to enable/disable
-> vblank interrupts.
-> 
-> Changes from v1:-
-> 1. Squashed the following two patches into one (as the second patch is a
-> consequence of the first one):-
->    drm/komeda: Avoid using DRIVER_IRQ_SHARED
->    drm/komeda: Enable/Disable vblank interrupts
-> 2. Fixed the commit message (as pointed by Daniel Vetter)
-> 3. Removed calls to 'drm_irq_uninstall()' as we are no longer using
-> drm_irq_install()
-> 4. Removed the struct member 'komeda_kms_driver.irq_handler' as it is not
-> used anywhere.
-> 
-> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+stable-rc/linux-4.14.y boot: 116 boots: 0 failed, 116 passed (v4.14.125-82-=
+ge64912eac71b)
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.125-82-ge64912eac71b/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.125-82-ge64912eac71b/
 
-> ---
->  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> index 86f6542afb40..bb2bffc0e022 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> @@ -58,7 +58,6 @@ static struct drm_driver komeda_kms_driver = {
->  	.driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
->  			   DRIVER_PRIME | DRIVER_HAVE_IRQ,
->  	.lastclose			= drm_fb_helper_lastclose,
-> -	.irq_handler			= komeda_kms_irq_handler,
->  	.gem_free_object_unlocked	= drm_gem_cma_free_object,
->  	.gem_vm_ops			= &drm_gem_cma_vm_ops,
->  	.dumb_create			= komeda_gem_cma_dumb_create,
-> @@ -194,23 +193,26 @@ struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev)
->  
->  	drm_mode_config_reset(drm);
->  
-> -	err = drm_irq_install(drm, mdev->irq);
-> +	err = devm_request_irq(drm->dev, mdev->irq,
-> +			       komeda_kms_irq_handler, IRQF_SHARED,
-> +			       drm->driver->name, drm);
->  	if (err)
->  		goto cleanup_mode_config;
->  
->  	err = mdev->funcs->enable_irq(mdev);
->  	if (err)
-> -		goto uninstall_irq;
-> +		goto cleanup_mode_config;
-> +
-> +	drm->irq_enabled = true;
->  
->  	err = drm_dev_register(drm, 0);
->  	if (err)
-> -		goto uninstall_irq;
-> +		goto cleanup_mode_config;
->  
->  	return kms;
->  
-> -uninstall_irq:
-> -	drm_irq_uninstall(drm);
->  cleanup_mode_config:
-> +	drm->irq_enabled = false;
->  	drm_mode_config_cleanup(drm);
->  	komeda_kms_cleanup_private_objs(kms);
->  free_kms:
-> @@ -223,9 +225,9 @@ void komeda_kms_detach(struct komeda_kms_dev *kms)
->  	struct drm_device *drm = &kms->base;
->  	struct komeda_dev *mdev = drm->dev_private;
->  
-> +	drm->irq_enabled = false;
->  	mdev->funcs->disable_irq(mdev);
->  	drm_dev_unregister(drm);
-> -	drm_irq_uninstall(drm);
->  	component_unbind_all(mdev->dev, drm);
->  	komeda_kms_cleanup_private_objs(kms);
->  	drm_mode_config_cleanup(drm);
-> -- 
-> 2.21.0
-> 
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.125-82-ge64912eac71b
+Git Commit: e64912eac71ba57be3613c8fcc36e316fe8aa601
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 62 unique boards, 23 SoC families, 14 builds out of 201
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+---
+For more info write to <info@kernelci.org>
