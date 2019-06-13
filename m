@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E460E43912
+	by mail.lfdr.de (Postfix) with ESMTP id 7A6F443911
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388004AbfFMPLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:11:14 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48788 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732298AbfFMNui (ORCPT
+        id S1733171AbfFMPLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:11:11 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:61223 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732299AbfFMNut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:50:38 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DDkxMc019851;
-        Thu, 13 Jun 2019 15:50:24 +0200
+        Thu, 13 Jun 2019 09:50:49 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DDkN54026656;
+        Thu, 13 Jun 2019 15:50:34 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=k3/ECH5XcUZOXRvixEpZeLk28W6/a2P91oQPfmM+on4=;
- b=rCROcdPucgEEK8Og12r5AdA4GASFXBx9Ick3SEOTTep/lObGdZD8wh2AaDcOwYA1dnV/
- omdUnVUwfXhtyMh8BHYL0DLkXw5VBBC/q5nOJrlFeB5EFsbiUnNgAAV3f7PWjrsjQuCJ
- 0mBJwqb53dGuInbHhYdqsxO3WjtvtENXitA6y8nbBZjkCzUWz4uNTF0/oQknNcYYZqnP
- wHg/fsePpkl7PzMb9qQblCsDBe3cumvvunDsuw+1ufFoxzcx/KiMe8pyhDsJRcgkAr0m
- FGdBcgS34VBJshdEA0Q5bhDRTRdYaYBljsMLZkm1VCCcRUJCuecBuU15d6PqQUicUPh4 6w== 
+ bh=Bc+KS/X3joAnx5lC8TCpo/aZhNkGuBuIX5CpxV56wqo=;
+ b=gq4i08DOwlwSyQQAcJAADFPkS8X6ru1H9mDxHINRTP+nb3qtO7AnKbsYwjJqrzvcW5np
+ gOiXUMOKziaAPWfUUHjQtyqd/QWM8AGgR0suEFyLkiBmRdUip4yNsSZeQLY+66N1Z/4A
+ aVj2F20dULsj9o3jLnELfkiJ4KaFxoI2nSIFpp1VE4x5oDDwDwjuzWXtmgD3xZBLV5Qb
+ 97IsgOocdSJYiHPc6IW3E9JP0JAXxStbl0Jr+/q5CHkIcG/G1GIXi2K5rLJOJdgGj6br
+ 3pZULPju+85cgusd7QpeGlGi9k1K/ZZpSm5xl0ugQklNNMTYTZDcYkmhrukPObKpcWoZ Yg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t2gxec01y-1
+        by mx07-00178001.pphosted.com with ESMTP id 2t2k3cb6fh-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 13 Jun 2019 15:50:24 +0200
+        Thu, 13 Jun 2019 15:50:34 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9299338;
-        Thu, 13 Jun 2019 13:50:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 747B12BC2;
-        Thu, 13 Jun 2019 13:50:23 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
- 2019 15:50:23 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CDFAA3A;
+        Thu, 13 Jun 2019 13:50:33 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A584D2BC2;
+        Thu, 13 Jun 2019 13:50:33 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
+ 2019 15:50:33 +0200
 Received: from localhost (10.201.23.31) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun 2019 15:50:23
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun 2019 15:50:24
  +0200
 From:   Erwan Le Ray <erwan.leray@st.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -52,11 +52,10 @@ CC:     <linux-serial@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Erwan Le Ray <erwan.leray@st.com>,
-        "Fabrice Gasnier" <fabrice.gasnier@st.com>,
-        Bich Hemon <bich.hemon@st.com>
-Subject: [PATCH v3 09/10] ARM: dts: stm32: Update UART4 pin states on stm32mp157a-dk1
-Date:   Thu, 13 Jun 2019 15:49:59 +0200
-Message-ID: <1560433800-12255-10-git-send-email-erwan.leray@st.com>
+        "Fabrice Gasnier" <fabrice.gasnier@st.com>
+Subject: [PATCH v3 10/10] ARM: dts: stm32: add wakeup capability on each usart/uart on stm32mp157c
+Date:   Thu, 13 Jun 2019 15:50:00 +0200
+Message-ID: <1560433800-12255-11-git-send-email-erwan.leray@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560433800-12255-1-git-send-email-erwan.leray@st.com>
 References: <1560433800-12255-1-git-send-email-erwan.leray@st.com>
@@ -70,29 +69,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bich Hemon <bich.hemon@st.com>
+- Mark all usart/uart devices as wakeup source.
+- Identify all dedicated interrupts with a specific interrupt name (either
+ "event" or "wakeup").
+- add interrupts-extended wakeup interrupt
 
-Add idle and no_console_suspend states to uart4 pin configuration.
-
-Signed-off-by: Bich Hemon <bich.hemon@st.com>
 Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 098dbfb..b851f80 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -244,7 +244,10 @@
- };
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 2afeee6..de5b1bf 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -395,32 +395,44 @@
+ 		usart2: serial@4000e000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x4000e000 0x400>;
+-			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 27 1>;
+ 			clocks = <&rcc USART2_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
  
- &uart4 {
--	pinctrl-names = "default";
-+	pinctrl-names = "default", "sleep", "idle", "no_console_suspend";
- 	pinctrl-0 = <&uart4_pins_a>;
-+	pinctrl-1 = <&uart4_sleep_pins_a>;
-+	pinctrl-2 = <&uart4_idle_pins_a>;
-+	pinctrl-3 = <&uart4_pins_a>;
- 	status = "okay";
- };
+ 		usart3: serial@4000f000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x4000f000 0x400>;
+-			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 28 1>;
+ 			clocks = <&rcc USART3_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart4: serial@40010000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x40010000 0x400>;
+-			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 30 1>;
+ 			clocks = <&rcc UART4_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart5: serial@40011000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x40011000 0x400>;
+-			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 31 1>;
+ 			clocks = <&rcc UART5_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
+@@ -512,16 +524,22 @@
+ 		uart7: serial@40018000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x40018000 0x400>;
+-			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 32 1>;
+ 			clocks = <&rcc UART7_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart8: serial@40019000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x40019000 0x400>;
+-			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 33 1>;
+ 			clocks = <&rcc UART8_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
+@@ -588,8 +606,11 @@
+ 		usart6: serial@44003000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x44003000 0x400>;
+-			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 29 1>;
+ 			clocks = <&rcc USART6_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1201,8 +1222,11 @@
+ 		usart1: serial@5c000000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x5c000000 0x400>;
+-			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "event", "wakeup";
++			interrupts-extended = <&intc GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++					      <&exti 26 1>;
+ 			clocks = <&rcc USART1_K>;
++			wakeup-source;
+ 			status = "disabled";
+ 		};
+ 
 -- 
 1.9.1
 
