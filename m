@@ -2,130 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C03F6443D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B14443CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392481AbfFMQcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:32:51 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50090 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730846AbfFMIOl (ORCPT
+        id S1730935AbfFMQcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:32:32 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:43382 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730849AbfFMIP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:14:41 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D8DfAM085841;
-        Thu, 13 Jun 2019 08:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=XWdgxTdniwntkEIDG2SNziPX1t3Vu0D1U5JGNb+EuBs=;
- b=sbTI5GJvuNfhg+vQQX93BC3rr5+LeVu+HtdQCRpT6KUFsNzMYFyYfSulOJnK8BLOvIdN
- 9TbbR+fhcBsihhhbl27k+jgrC4MaR7EFmJM8bRBwLq3FdelgrJBRJv9ZfgW8Ca6aK73m
- X033eS14x6vpcygJ+POCRb5yq2o0eQJsF0vZks29ygQqIK9Dio+twQvGcDHqFVgMJ744
- Q5uqJBtChxFcFkkJIcJTGKp99+9FsKrTVfadOCtPou4eiYGcCR5b4wWyWBNcbXn29oa6
- gl9+2NJUhdJXX7uko787YvsrqrJ86WuvfyTGhIHUt4QB54VT6+U8BNLuhPrMaA41kvdd 9A== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2t05nqywkn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 08:14:30 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D8DA6s066457;
-        Thu, 13 Jun 2019 08:14:30 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2t1jpje2vk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 08:14:30 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5D8EStP004671;
-        Thu, 13 Jun 2019 08:14:29 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Jun 2019 01:14:28 -0700
-Date:   Thu, 13 Jun 2019 11:14:19 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coresight: potential uninitialized variable in probe()
-Message-ID: <20190613081419.GG1893@kadam>
-References: <20190613065815.GF16334@mwanda>
- <20190613074922.GB21113@leoy-ThinkPad-X240s>
+        Thu, 13 Jun 2019 04:15:59 -0400
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 2D01A2E0DEC;
+        Thu, 13 Jun 2019 11:15:53 +0300 (MSK)
+Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id r33Oi2NKnn-FpIOJvba;
+        Thu, 13 Jun 2019 11:15:53 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1560413753; bh=3Pp0FZ+SZZPig9cVc4N4kq00quoG1v3rR/FRnc5nQlo=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=Z3ugz+Ff549FVPYbsW1FwYyvrcEZnCU0PtHmVPrvXyN4Lwa+e0Ncw0EPOZxhQcz1O
+         k69Sg5wa/tGpn+qp7b9yMZ/YcGaHrZ4YTLLl0asqjhVGNUXzHC+405WiI7iP38ZC3h
+         78oUFV1856+tDNRRZcBk4TrEGY0so2vdR+NqmNSc=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:a1b1:2ca9:8cc0:4c56])
+        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id ued3RSeVec-FoYS30hb;
+        Thu, 13 Jun 2019 11:15:51 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for
+ /proc/pid/map_files
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>
+References: <156007465229.3335.10259979070641486905.stgit@buzz>
+ <156007493995.3335.9595044802115356911.stgit@buzz>
+ <20190612231426.GA3639@gmail.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <f15478b5-098f-e1be-0928-62f46cff77e7@yandex-team.ru>
+Date:   Thu, 13 Jun 2019 11:15:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613074922.GB21113@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906130066
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906130066
+In-Reply-To: <20190612231426.GA3639@gmail.com>
+Content-Type: text/plain; charset=koi8-r; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 03:49:22PM +0800, Leo Yan wrote:
-> Hi Dan,
+On 13.06.2019 2:14, Andrei Vagin wrote:
+> On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
+>> Do not stuck forever if something wrong.
+>> Killable lock allows to cleanup stuck tasks and simplifies investigation.
 > 
-> On Wed, Jun 12, 2019 at 11:58:15PM -0700, Dan Carpenter wrote:
-> > The "drvdata->atclk" clock is optional, but if it gets set to an error
-> > pointer then we're accidentally return an uninitialized variable instead
-> > of success.
+> This patch breaks the CRIU project, because stat() returns EINTR instead
+> of ENOENT:
 > 
-> You are right, thanks a lot for pointing out.
+> [root@fc24 criu]# stat /proc/self/map_files/0-0
+> stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
+
+Good catch.
+
+It seems CRIU tests has good coverage for darkest corners of kernel API.
+Kernel CI projects should use it. I suppose you know how to promote this. =)
+
 > 
-> I'd like to initialize 'ret = 0' at the head of function, so we can
-> has the same fashion with other CoreSight drivers (e.g. replicator).
+> Here is one inline comment with the fix for this issue.
 > 
->  static int funnel_probe(struct device *dev, struct resource *res)
->  {
-> -	int ret;
-> +	int ret = 0;
+>>
+>> It seems ->d_revalidate() could return any error (except ECHILD) to
+>> abort validation and pass error as result of lookup sequence.
+>>
+>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>> Reviewed-by: Roman Gushchin <guro@fb.com>
+>> Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+>> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 > 
-> If you agree, could you send a new patch for this?
-
-Obviously that's an option I considered...  The reason I didn't go with
-that is that a common bug that I see is:
-
-	int ret = 0;
-
-	p = kmalloc();
-	if (!p)
-		goto free_whatever;
-
-In my experience it's better to initialize the return as late as
-possible so that you get static checker warnings when you forget to set
-the error code.
-
-Also I think my way is more readable.  I like to make the success path
-as explicit as possible.  I hate when people do things like:
-
-	if (!ret)
-		return ret;
-
-About 10% of the time when you see this it is a bug, but it's hard to
-tell because it's not readable like it would be if people did:
-
-	if (!ret)
-		return 0;
-
-Or sometimes you see things like:
-
-	if (corner_case)
-		goto free; /* success path */
-
-Without the "/* success path */ comment explaining why we're returning
-zero most readers will assume it's a mistake.
-
-regards,
-dan carpenter
+> It was nice to see all four of you in one place :).
+> 
+>> Acked-by: Michal Hocko <mhocko@suse.com>
+>> ---
+>>   fs/proc/base.c |   27 +++++++++++++++++++++------
+>>   1 file changed, 21 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index 9c8ca6cd3ce4..515ab29c2adf 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -1962,9 +1962,12 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
+>>   		goto out;
+>>   
+>>   	if (!dname_to_vma_addr(dentry, &vm_start, &vm_end)) {
+>> -		down_read(&mm->mmap_sem);
+>> -		exact_vma_exists = !!find_exact_vma(mm, vm_start, vm_end);
+>> -		up_read(&mm->mmap_sem);
+>> +		status = down_read_killable(&mm->mmap_sem);
+>> +		if (!status) {
+>> +			exact_vma_exists = !!find_exact_vma(mm, vm_start,
+>> +							    vm_end);
+>> +			up_read(&mm->mmap_sem);
+>> +		}
+>>   	}
+>>   
+>>   	mmput(mm);
+>> @@ -2010,8 +2013,11 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
+>>   	if (rc)
+>>   		goto out_mmput;
+>>   
+>> +	rc = down_read_killable(&mm->mmap_sem);
+>> +	if (rc)
+>> +		goto out_mmput;
+>> +
+>>   	rc = -ENOENT;
+>> -	down_read(&mm->mmap_sem);
+>>   	vma = find_exact_vma(mm, vm_start, vm_end);
+>>   	if (vma && vma->vm_file) {
+>>   		*path = vma->vm_file->f_path;
+>> @@ -2107,7 +2113,10 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+>>   	if (!mm)
+>>   		goto out_put_task;
+>>   
+>> -	down_read(&mm->mmap_sem);
+>> +	result = ERR_PTR(-EINTR);
+>> +	if (down_read_killable(&mm->mmap_sem))
+>> +		goto out_put_mm;
+>> +
+> 
+> 	result = ERR_PTR(-ENOENT);
+> 
+>>   	vma = find_exact_vma(mm, vm_start, vm_end);
+>>   	if (!vma)
+>>   		goto out_no_vma;
+>> @@ -2118,6 +2127,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+>>   
+>>   out_no_vma:
+>>   	up_read(&mm->mmap_sem);
+>> +out_put_mm:
+>>   	mmput(mm);
+>>   out_put_task:
+>>   	put_task_struct(task);
+>> @@ -2160,7 +2170,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+>>   	mm = get_task_mm(task);
+>>   	if (!mm)
+>>   		goto out_put_task;
+>> -	down_read(&mm->mmap_sem);
+>> +
+>> +	ret = down_read_killable(&mm->mmap_sem);
+>> +	if (ret) {
+>> +		mmput(mm);
+>> +		goto out_put_task;
+>> +	}
+>>   
+>>   	nr_files = 0;
+>>   
