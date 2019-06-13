@@ -2,73 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 184034490C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E754492F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404668AbfFMRNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:13:31 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:38186 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404760AbfFMRN2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:13:28 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TU55.Xp_1560446003;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TU55.Xp_1560446003)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 14 Jun 2019 01:13:26 +0800
-Subject: Re: [v3 PATCH 2/4] mm: move mem_cgroup_uncharge out of
- __page_cache_release()
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
-        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
-        shakeelb@google.com, rientjes@google.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1560376609-113689-1-git-send-email-yang.shi@linux.alibaba.com>
- <1560376609-113689-3-git-send-email-yang.shi@linux.alibaba.com>
- <20190613113943.ahmqpezemdbwgyax@box>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <2909ce59-86ba-ea0b-479f-756020fb32af@linux.alibaba.com>
-Date:   Thu, 13 Jun 2019 10:13:19 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S2393641AbfFMRPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:15:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:47980 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393288AbfFMROx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:14:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7263F367;
+        Thu, 13 Jun 2019 10:14:53 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01EA73F694;
+        Thu, 13 Jun 2019 10:14:51 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 18:14:44 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Anisse Astier <aastier@freebox.fr>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Rich Felker <dalias@aerifal.cx>, linux-kernel@vger.kernel.org,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Ricardo Salveti <ricardo@foundries.io>
+Subject: Re: [PATCH] arm64/sve: <uapi/asm/ptrace.h> should not depend on
+ <uapi/linux/prctl.h>
+Message-ID: <20190613171432.GA2790@e103592.cambridge.arm.com>
+References: <20190613163801.21949-1-aastier@freebox.fr>
 MIME-Version: 1.0
-In-Reply-To: <20190613113943.ahmqpezemdbwgyax@box>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613163801.21949-1-aastier@freebox.fr>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 13, 2019 at 06:38:01PM +0200, Anisse Astier wrote:
+> Otherwise this will create userspace build issues for any program
+> (strace, qemu) that includes both <sys/prctl.h> (with musl libc) and
+> <linux/ptrace.h> (which then includes <asm/ptrace.h>), like this:
+> 
+> 	error: redefinition of 'struct prctl_mm_map'
+> 	 struct prctl_mm_map {
+> 
+> See https://github.com/foundriesio/meta-lmp/commit/6d4a106e191b5d79c41b9ac78fd321316d3013c0
+> for a public example of people working around this issue.
+> 
+> This fixes an UAPI regression introduced in commit 43d4da2c45b2
+> ("arm64/sve: ptrace and ELF coredump support").
+> 
+> Cc: stable@vger.kernel.org
 
+Consider adding a Fixes: tag.
 
-On 6/13/19 4:39 AM, Kirill A. Shutemov wrote:
-> On Thu, Jun 13, 2019 at 05:56:47AM +0800, Yang Shi wrote:
->> The later patch would make THP deferred split shrinker memcg aware, but
->> it needs page->mem_cgroup information in THP destructor, which is called
->> after mem_cgroup_uncharge() now.
->>
->> So, move mem_cgroup_uncharge() from __page_cache_release() to compound
->> page destructor, which is called by both THP and other compound pages
->> except HugeTLB.  And call it in __put_single_page() for single order
->> page.
->
-> If I read the patch correctly, it will change behaviour for pages with
-> NULL_COMPOUND_DTOR. Have you considered it? Are you sure it will not break
-> anything?
+> Signed-off-by: Anisse Astier <aastier@freebox.fr>
+> ---
+>  arch/arm64/include/uapi/asm/ptrace.h | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+> index d78623acb649..03b6d6f029fc 100644
+> --- a/arch/arm64/include/uapi/asm/ptrace.h
+> +++ b/arch/arm64/include/uapi/asm/ptrace.h
+> @@ -65,8 +65,6 @@
+>  
+>  #ifndef __ASSEMBLY__
+>  
+> -#include <linux/prctl.h>
+> -
+>  /*
+>   * User structures for general purpose, floating point and debug registers.
+>   */
+> @@ -113,10 +111,10 @@ struct user_sve_header {
+>  
+>  /*
+>   * Common SVE_PT_* flags:
+> - * These must be kept in sync with prctl interface in <linux/ptrace.h>
+> + * These must be kept in sync with prctl interface in <linux/prctl.h>
 
-So far a quick search shows NULL_COMPOUND_DTOR is not used by any type 
-of compound page. The HugeTLB code sets destructor to NULL_COMPOUND_DTOR 
-when freeing hugetlb pages via hugetlb specific destructor.
+Ack
 
-The prep_new_page() would call prep_compound_page() if __GFP_COMP is 
-used, which sets dtor to COMPOUND_PAGE_DTOR by default.  Just hugetlb 
-and THP set their specific dtors.
+>   */
+> -#define SVE_PT_VL_INHERIT		(PR_SVE_VL_INHERIT >> 16)
+> -#define SVE_PT_VL_ONEXEC		(PR_SVE_SET_VL_ONEXEC >> 16)
+> +#define SVE_PT_VL_INHERIT		(1 << 1) /* PR_SVE_VL_INHERIT */
+> +#define SVE_PT_VL_ONEXEC		(1 << 2) /* PR_SVE_SET_VL_ONEXEC */
 
-And, it looks __put_compound_page() doesn't check if dtor is NULL or not 
-at all.
+Makes sense, but...
 
->
+Since sve_context.h was already introduced to solve a closely related
+problem, I wonder whether we can provide shadow definitions there,
+similarly to way the arm64/include/uapi/asm/ptrace.h definitions are
+derived.  Although it's a slight abuse of that header, I think that
+would be my preferred approach.
 
+Otherwise, at least make the required relationship between ptrace.h and
+prctl.h constants a bit more obvious, say,
+
+	#define SVE_PT_VL_INHERIT ((1 << 17) /* PR_SVE_SET_VL_INHERIT */ >> 16)
+
+etc.
+
+Cheers
+---Dave
