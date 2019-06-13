@@ -2,77 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E0443BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED43E43BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfFMPby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:31:54 -0400
-Received: from gate.crashing.org ([63.228.1.57]:47095 "EHLO gate.crashing.org"
+        id S1732646AbfFMPb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:31:28 -0400
+Received: from foss.arm.com ([217.140.110.172]:37938 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728593AbfFMK46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:56:58 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x5DAuVOr010532;
-        Thu, 13 Jun 2019 05:56:32 -0500
-Message-ID: <5e3e3f21b53f45cb115b4c04e04dc7557c63982d.camel@kernel.crashing.org>
-Subject: Re: [PATCH+DISCUSSION] irqchip: armada-370-xp: Remove redundant ops
- assignment
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 13 Jun 2019 20:56:31 +1000
-In-Reply-To: <86muilc012.wl-marc.zyngier@arm.com>
-References: <e4c7b434452775d00b6621012ad5e263076b3fcf.camel@kernel.crashing.org>
-         <86muilc012.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        id S1728612AbfFMLCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:02:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4927367;
+        Thu, 13 Jun 2019 04:02:24 -0700 (PDT)
+Received: from [10.1.196.120] (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0326E3F694;
+        Thu, 13 Jun 2019 04:04:06 -0700 (PDT)
+Subject: Re: [PATCH 3/7] perf: arm64: Use rseq to test userspace access to pmu
+ counters
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20190611125315.18736-1-raphael.gault@arm.com>
+ <20190611125315.18736-4-raphael.gault@arm.com>
+ <20190611143346.GB28689@kernel.org>
+ <20190611165755.GG29008@lakrids.cambridge.arm.com>
+ <1620360283.42036.1560281622707.JavaMail.zimbra@efficios.com>
+From:   Raphael Gault <raphael.gault@arm.com>
+Message-ID: <b3a5c6d6-5827-36e1-f9ef-9602eaa5741d@arm.com>
+Date:   Thu, 13 Jun 2019 12:02:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1620360283.42036.1560281622707.JavaMail.zimbra@efficios.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-13 at 10:22 +0100, Marc Zyngier wrote:
+Hi Mathieu, Mark,
+
+On 6/11/19 8:33 PM, Mathieu Desnoyers wrote:
+> ----- On Jun 11, 2019, at 6:57 PM, Mark Rutland mark.rutland@arm.com wrote:
 > 
-> It looks to me that masking at the PCI level is rather superfluous as
-> long as the MSI controller HW has the capability to mask the interrupt
-> on a per MSI basis. After all, most non MSI-X endpoint lack support
-> for masking of individual vectors, so I think that we should just mask
-> things at the irqchip level. This is also consistent with what you'd
-> have to do for non-PCI MSI, where nothing standardises the MSI
-> masking.
+>> Hi Arnaldo,
+>>
+>> On Tue, Jun 11, 2019 at 11:33:46AM -0300, Arnaldo Carvalho de Melo wrote:
+>>> Em Tue, Jun 11, 2019 at 01:53:11PM +0100, Raphael Gault escreveu:
+>>>> Add an extra test to check userspace access to pmu hardware counters.
+>>>> This test doesn't rely on the seqlock as a synchronisation mechanism but
+>>>> instead uses the restartable sequences to make sure that the thread is
+>>>> not interrupted when reading the index of the counter and the associated
+>>>> pmu register.
+>>>>
+>>>> In addition to reading the pmu counters, this test is run several time
+>>>> in order to measure the ratio of failures:
+>>>> I ran this test on the Juno development platform, which is big.LITTLE
+>>>> with 4 Cortex A53 and 2 Cortex A57. The results vary quite a lot
+>>>> (running it with 100 tests is not so long and I did it several times).
+>>>> I ran it once with 10000 iterations:
+>>>> `runs: 10000, abort: 62.53%, zero: 34.93%, success: 2.54%`
+>>>>
+>>>> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+>>>> ---
+>>>>   tools/perf/arch/arm64/include/arch-tests.h    |   5 +-
+>>>>   tools/perf/arch/arm64/include/rseq-arm64.h    | 220 ++++++++++++++++++
+>>>
+>>> So, I applied the first patch in this series, but could you please break
+>>> this patch into at least two, one introducing the facility
+>>> (include/rseq*) and the second adding the test?
+>>>
+>>> We try to enforce this kind of granularity as down the line we may want
+>>> to revert one part while the other already has other uses and thus
+>>> wouldn't allow a straight revert.
+>>>
+>>> Also, can this go to tools/arch/ instead? Is this really perf specific?
+>>> Isn't there any arch/arm64/include files for the kernel that we could
+>>> mirror and have it checked for drift in tools/perf/check-headers.sh?
+>>
+>> The rseq bits aren't strictly perf specific, and I think the existing
+>> bits under tools/testing/selftests/rseq/ could be factored out to common
+>> locations under tools/include/ and tools/arch/*/include/.
 > 
-> I think this is in effect a split in responsibilities:
+> Hi Mark,
 > 
-> - the end-point driver should (directly or indirectly) control the
->   interrupt generation at the end-point level,
+> Thanks for CCing me!
 > 
-> - the MSI controller driver should control the signalling of the MSI
->   to the CPU.
+> Or into a stand-alone librseq project:
 > 
-> The only case where we should rely on masking interrupts at the
-> end-point level is when the MSI controller doesn't provide a method to
-> do so (hopefully a rare exception).
+> https://github.com/compudj/librseq (currently a development branch in
+> my own github)
+> 
+> I don't see why this user-space code should sit in the kernel tree.
+> It is not tooling-specific.
+> 
 
-While I would tend to agree, I'm also wary of standardizing on
-something which isn't what x86 does today :-)
+I understand your point but I have to admit that I don't really see how 
+to make it work together with the test which require those definitions.
 
-You know what happens when we break them... interestingly enough they
-(like quite a few other drivers) don't even bother trying to mask at
-the APIC level unless I misread the code. That means that for endpoints
-that don't support masking, they just get those MSIs and
-"ignore" them...
+>>
+>>  From a scan, those already duplicate barriers and other helpers which
+>> already have definitions under tools/, which seems unfortunate. :/
+>>
 
-But I'll look into it, see what the patch looks like.
+Also I realize that there is a duplicate with definitions introduced in 
+the selftests but I kind of simplified the macros I'm using to get rid 
+of what wasn't useful to me at the moment. (mainly the loop labels and 
+parameter injections in the asm statement)
+I understand what both Mark and Arnaldo are saying about moving it out 
+of perf so that it is not duplicated but my question is whether it is a 
+good thing to do as is since it is not exactly the same content as 
+what's in the selftests.
 
-I've also looked at trying to make the "inner domain" more generic but
-that's looking a tad trickier... not giving up yet though :-)
+I hope you can understand my concerns and I'd like to hear your opinions 
+on that matter.
 
-Cheers,
-Ben.
+Thanks,
 
-
+-- 
+Raphael Gault
