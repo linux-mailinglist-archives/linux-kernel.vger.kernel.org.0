@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25ACC44002
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A0F143FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390571AbfFMQB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:01:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36196 "EHLO mail.kernel.org"
+        id S2390395AbfFMP67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:58:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731419AbfFMIsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:48:12 -0400
+        id S1731489AbfFMIuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:50:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E096321743;
-        Thu, 13 Jun 2019 08:48:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0FAA20851;
+        Thu, 13 Jun 2019 08:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415692;
-        bh=8M7Ht7uR3C8y+ng4cJglq02l4gO9fdwxHm6+doxQks8=;
+        s=default; t=1560415800;
+        bh=76D3vaAouJvHGGAHeFdnU7ReK0evbpdCzSUXWh05FYc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xMYmxM+XYY5Ybg1TTGGmCUIyVNjP3/kViE+oEwBEpBbU+vxcCaYWqY5umGmW1dpYj
-         eUV5kYHClaShHcG/+1GRLPJ8S26TEpSkFxPwopHb/cKa3uglyfPeoMT58ChJU+W8ag
-         R3XOLft53yq4nW93Y7i6XWai7rlpwidtPx1Uy2jI=
+        b=Ed9x4pwJzF9lSzdTHbJ3Li2XuCibqMiJna+QyI25fcY7IooGi/3fv+aUx09r+AZOj
+         hBmO6DGNu70DWyarUC21v6RGRJiRWatg1VgpVSQd8ittNpSHxXVQvG5Yw04r2bD9c0
+         E0rFHVkrK7YjZS/NoGkKvU3I3WoWPPl/iclEYB7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 091/155] net: thunderbolt: Unregister ThunderboltIP protocol handler when suspending
-Date:   Thu, 13 Jun 2019 10:33:23 +0200
-Message-Id: <20190613075658.184288472@linuxfoundation.org>
+Subject: [PATCH 5.1 092/155] x86/PCI: Fix PCI IRQ routing table memory leak
+Date:   Thu, 13 Jun 2019 10:33:24 +0200
+Message-Id: <20190613075658.239152949@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
 References: <20190613075652.691765927@linuxfoundation.org>
@@ -45,45 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9872760eb7b1d4f6066ad8b560714a5d0a728fdb ]
+[ Upstream commit ea094d53580f40c2124cef3d072b73b2425e7bfd ]
 
-The XDomain protocol messages may start as soon as Thunderbolt control
-channel is started. This means that if the other host starts sending
-ThunderboltIP packets early enough they will be passed to the network
-driver which then gets confused because its resume hook is not called
-yet.
+In pcibios_irq_init(), the PCI IRQ routing table 'pirq_table' is first
+found through pirq_find_routing_table().  If the table is not found and
+CONFIG_PCI_BIOS is defined, the table is then allocated in
+pcibios_get_irq_routing_table() using kmalloc().  Later, if the I/O APIC is
+used, this table is actually not used.  In that case, the allocated table
+is not freed, which is a memory leak.
 
-Fix this by unregistering the ThunderboltIP protocol handler when
-suspending and registering it back on resume.
+Free the allocated table if it is not used.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+[bhelgaas: added Ingo's reviewed-by, since the only change since v1 was to
+use the irq_routing_table local variable name he suggested]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/thunderbolt.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/pci/irq.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/thunderbolt.c b/drivers/net/thunderbolt.c
-index c48c3a1eb1f8..fcf31335a8b6 100644
---- a/drivers/net/thunderbolt.c
-+++ b/drivers/net/thunderbolt.c
-@@ -1282,6 +1282,7 @@ static int __maybe_unused tbnet_suspend(struct device *dev)
- 		tbnet_tear_down(net, true);
+diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
+index 52e55108404e..d3a73f9335e1 100644
+--- a/arch/x86/pci/irq.c
++++ b/arch/x86/pci/irq.c
+@@ -1119,6 +1119,8 @@ static const struct dmi_system_id pciirq_dmi_table[] __initconst = {
+ 
+ void __init pcibios_irq_init(void)
+ {
++	struct irq_routing_table *rtable = NULL;
++
+ 	DBG(KERN_DEBUG "PCI: IRQ init\n");
+ 
+ 	if (raw_pci_ops == NULL)
+@@ -1129,8 +1131,10 @@ void __init pcibios_irq_init(void)
+ 	pirq_table = pirq_find_routing_table();
+ 
+ #ifdef CONFIG_PCI_BIOS
+-	if (!pirq_table && (pci_probe & PCI_BIOS_IRQ_SCAN))
++	if (!pirq_table && (pci_probe & PCI_BIOS_IRQ_SCAN)) {
+ 		pirq_table = pcibios_get_irq_routing_table();
++		rtable = pirq_table;
++	}
+ #endif
+ 	if (pirq_table) {
+ 		pirq_peer_trick();
+@@ -1145,8 +1149,10 @@ void __init pcibios_irq_init(void)
+ 		 * If we're using the I/O APIC, avoid using the PCI IRQ
+ 		 * routing table
+ 		 */
+-		if (io_apic_assign_pci_irqs)
++		if (io_apic_assign_pci_irqs) {
++			kfree(rtable);
+ 			pirq_table = NULL;
++		}
  	}
  
-+	tb_unregister_protocol_handler(&net->handler);
- 	return 0;
- }
- 
-@@ -1290,6 +1291,8 @@ static int __maybe_unused tbnet_resume(struct device *dev)
- 	struct tb_service *svc = tb_to_service(dev);
- 	struct tbnet *net = tb_service_get_drvdata(svc);
- 
-+	tb_register_protocol_handler(&net->handler);
-+
- 	netif_carrier_off(net->dev);
- 	if (netif_running(net->dev)) {
- 		netif_device_attach(net->dev);
+ 	x86_init.pci.fixup_irqs();
 -- 
 2.20.1
 
