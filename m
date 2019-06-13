@@ -2,193 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D39BF43905
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C2F43944
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733096AbfFMPLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:11:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49580 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732303AbfFMNvV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:51:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HRF/3AX8o8Cht6q46ZJt/8caFnGvzQXVBegIDPyawvg=; b=JiOGmKzoZYrFvFX2yZnHmwoEOg
-        TxOlMehL5LWbqXnXEG79sqHkBay/tCwJdA83i38WaxXRexPGL0aLnJxnatA5Q4Vh+4C4NVz2jI/FD
-        v92gWbhKBu2bN+Dhp8HyNQYrJokQzcjcI5Ai4Pugeezw38cCMJweDcB3SVk6j3NrFnlCbjm1w6NZi
-        lyrA2xIexfr8TJLIzbCP5Gvphv75QMD84j/+NyKTvVMdCSXI09GakWywLoEooOywKgje8Bzf6kyTa
-        zRzdJ385piS+5XkMWL8ruVeG+gpargHi97aM/sAwTJEozKDhk/blNxgySp3k1kxh9xfwgpoOYZDte
-        JlPYSqeQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbQ7z-0004Bm-KI; Thu, 13 Jun 2019 13:50:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 0EDC220435AA9; Thu, 13 Jun 2019 15:50:54 +0200 (CEST)
-Message-Id: <20190613134933.141230706@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 13 Jun 2019 15:43:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     stern@rowland.harvard.edu, akiyks@gmail.com,
-        andrea.parri@amarulasolutions.com, boqun.feng@gmail.com,
-        dlustig@nvidia.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, npiggin@gmail.com, paulmck@linux.ibm.com,
-        peterz@infradead.org, will.deacon@arm.com, paul.burton@mips.com
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: [PATCH v2 4/4] x86/atomic: Fix smp_mb__{before,after}_atomic()
-References: <20190613134317.734881240@infradead.org>
+        id S2388228AbfFMPMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:12:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48108 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732278AbfFMNpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:45:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 097D1AE12;
+        Thu, 13 Jun 2019 13:45:24 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 5E34FDA897; Thu, 13 Jun 2019 15:46:12 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 15:46:12 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <Naohiro.Aota@wdc.com>
+Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v2 00/19] btrfs zoned block device support
+Message-ID: <20190613134612.GU3563@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190612175138.GT3563@twin.jikos.cz>
+ <SN6PR04MB5231E2F482B8D794950058FF8CEF0@SN6PR04MB5231.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR04MB5231E2F482B8D794950058FF8CEF0@SN6PR04MB5231.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent probing at the Linux Kernel Memory Model uncovered a
-'surprise'. Strongly ordered architectures where the atomic RmW
-primitive implies full memory ordering and
-smp_mb__{before,after}_atomic() are a simple barrier() (such as x86)
-fail for:
+On Thu, Jun 13, 2019 at 04:59:23AM +0000, Naohiro Aota wrote:
+> On 2019/06/13 2:50, David Sterba wrote:
+> > On Fri, Jun 07, 2019 at 10:10:06PM +0900, Naohiro Aota wrote:
+> >> btrfs zoned block device support
+> >>
+> >> This series adds zoned block device support to btrfs.
+> > 
+> > The overall design sounds ok.
+> > 
+> > I skimmed through the patches and the biggest task I see is how to make
+> > the hmzoned adjustments and branches less visible, ie. there are too
+> > many if (hmzoned) { do something } standing out. But that's merely a
+> > matter of wrappers and maybe an abstraction here and there.
+> 
+> Sure. I'll add some more abstractions in the next version.
 
-	*x = 1;
-	atomic_inc(u);
-	smp_mb__after_atomic();
-	r0 = *y;
+Ok, I'll reply to the patches with specific things.
 
-Because, while the atomic_inc() implies memory order, it
-(surprisingly) does not provide a compiler barrier. This then allows
-the compiler to re-order like so:
+> > How can I test the zoned devices backed by files (or regular disks)? I
+> > searched for some concrete example eg. for qemu or dm-zoned, but closest
+> > match was a text description in libzbc README that it's possible to
+> > implement. All other howtos expect a real zoned device.
+> 
+> You can use tcmu-runer [1] to create an emulated zoned device backed by 
+> a regular file. Here is a setup how-to:
+> http://zonedstorage.io/projects/tcmu-runner/#compilation-and-installation
 
-	atomic_inc(u);
-	*x = 1;
-	smp_mb__after_atomic();
-	r0 = *y;
+That looks great, thanks. I wonder why there's no way to find that, all
+I got were dead links to linux-iscsi.org or tutorials of targetcli that
+were years old and not working.
 
-Which the CPU is then allowed to re-order (under TSO rules) like:
+Feeding the textual commands to targetcli is not exactly what I'd
+expect for scripting, but at least it seems to work.
 
-	atomic_inc(u);
-	r0 = *y;
-	*x = 1;
-
-And this very much was not intended. Therefore strengthen the atomic
-RmW ops to include a compiler barrier.
-
-NOTE: atomic_{or,and,xor} and the bitops already had the compiler
-barrier.
-
-Reported-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- Documentation/atomic_t.txt         |    3 +++
- arch/x86/include/asm/atomic.h      |    8 ++++----
- arch/x86/include/asm/atomic64_64.h |    8 ++++----
- arch/x86/include/asm/barrier.h     |    4 ++--
- 4 files changed, 13 insertions(+), 10 deletions(-)
-
---- a/Documentation/atomic_t.txt
-+++ b/Documentation/atomic_t.txt
-@@ -194,6 +194,9 @@ These helper barriers exist because arch
- ordering on their SMP atomic primitives. For example our TSO architectures
- provide full ordered atomics and these barriers are no-ops.
- 
-+NOTE: when the atomic RmW ops are fully ordered, they should also imply a
-+compiler barrier.
-+
- Thus:
- 
-   atomic_fetch_add();
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -54,7 +54,7 @@ static __always_inline void arch_atomic_
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0"
- 		     : "+m" (v->counter)
--		     : "ir" (i));
-+		     : "ir" (i) : "memory");
- }
- 
- /**
-@@ -68,7 +68,7 @@ static __always_inline void arch_atomic_
- {
- 	asm volatile(LOCK_PREFIX "subl %1,%0"
- 		     : "+m" (v->counter)
--		     : "ir" (i));
-+		     : "ir" (i) : "memory");
- }
- 
- /**
-@@ -95,7 +95,7 @@ static __always_inline bool arch_atomic_
- static __always_inline void arch_atomic_inc(atomic_t *v)
- {
- 	asm volatile(LOCK_PREFIX "incl %0"
--		     : "+m" (v->counter));
-+		     : "+m" (v->counter) :: "memory");
- }
- #define arch_atomic_inc arch_atomic_inc
- 
-@@ -108,7 +108,7 @@ static __always_inline void arch_atomic_
- static __always_inline void arch_atomic_dec(atomic_t *v)
- {
- 	asm volatile(LOCK_PREFIX "decl %0"
--		     : "+m" (v->counter));
-+		     : "+m" (v->counter) :: "memory");
- }
- #define arch_atomic_dec arch_atomic_dec
- 
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -45,7 +45,7 @@ static __always_inline void arch_atomic6
- {
- 	asm volatile(LOCK_PREFIX "addq %1,%0"
- 		     : "=m" (v->counter)
--		     : "er" (i), "m" (v->counter));
-+		     : "er" (i), "m" (v->counter) : "memory");
- }
- 
- /**
-@@ -59,7 +59,7 @@ static inline void arch_atomic64_sub(lon
- {
- 	asm volatile(LOCK_PREFIX "subq %1,%0"
- 		     : "=m" (v->counter)
--		     : "er" (i), "m" (v->counter));
-+		     : "er" (i), "m" (v->counter) : "memory");
- }
- 
- /**
-@@ -87,7 +87,7 @@ static __always_inline void arch_atomic6
- {
- 	asm volatile(LOCK_PREFIX "incq %0"
- 		     : "=m" (v->counter)
--		     : "m" (v->counter));
-+		     : "m" (v->counter) : "memory");
- }
- #define arch_atomic64_inc arch_atomic64_inc
- 
-@@ -101,7 +101,7 @@ static __always_inline void arch_atomic6
- {
- 	asm volatile(LOCK_PREFIX "decq %0"
- 		     : "=m" (v->counter)
--		     : "m" (v->counter));
-+		     : "m" (v->counter) : "memory");
- }
- #define arch_atomic64_dec arch_atomic64_dec
- 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -80,8 +80,8 @@ do {									\
- })
- 
- /* Atomic operations are already serializing on x86 */
--#define __smp_mb__before_atomic()	barrier()
--#define __smp_mb__after_atomic()	barrier()
-+#define __smp_mb__before_atomic()	do { } while (0)
-+#define __smp_mb__after_atomic()	do { } while (0)
- 
- #include <asm-generic/barrier.h>
- 
-
-
+I tried to pass an emulated ZBC device on host to KVM guest (as a scsi
+device) but lsscsi does not recognize that it as a zonde device (just a
+QEMU harddisk). So this seems the emulation must be done inside the VM.
