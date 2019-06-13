@@ -2,95 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB03243A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84AC43A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388804AbfFMPWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:22:12 -0400
-Received: from foss.arm.com ([217.140.110.172]:39268 "EHLO foss.arm.com"
+        id S2388763AbfFMPWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:22:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56618 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731988AbfFMMnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:43:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E04BE2B;
-        Thu, 13 Jun 2019 05:43:20 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 76DA33F694;
-        Thu, 13 Jun 2019 05:43:18 -0700 (PDT)
-Subject: Re: [PATCH 0/4] support reserving crashkernel above 4G on arm64 kdump
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        rppt@linux.ibm.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, ebiederm@xmission.com, horms@verge.net.au,
-        takahiro.akashi@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-mm@kvack.org, wangkefeng.wang@huawei.com
-References: <20190507035058.63992-1-chenzhou10@huawei.com>
- <51995efd-8469-7c15-0d5e-935b63fe2d9f@arm.com>
- <638a5d22-8d51-8d63-2d8a-a38bbb8fb1d6@huawei.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <72a9c52b-1b24-57e8-e29f-b5a53524744b@arm.com>
-Date:   Thu, 13 Jun 2019 13:43:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731989AbfFMMoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:44:09 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B5DF330860AE;
+        Thu, 13 Jun 2019 12:43:54 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3080C1001B1A;
+        Thu, 13 Jun 2019 12:43:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 13 Jun 2019 14:43:54 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 14:43:48 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'arnd@arndb.de'" <arnd@arndb.de>,
+        "'dbueso@suse.de'" <dbueso@suse.de>,
+        "'axboe@kernel.dk'" <axboe@kernel.dk>,
+        "'dave@stgolabs.net'" <dave@stgolabs.net>,
+        "'e@80x24.org'" <e@80x24.org>,
+        "'jbaron@akamai.com'" <jbaron@akamai.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
+        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        'Al Viro' <viro@ZenIV.linux.org.uk>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Message-ID: <20190613124347.GB12506@redhat.com>
+References: <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com>
+ <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+ <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
+ <20190613094324.GA12506@redhat.com>
+ <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
 MIME-Version: 1.0
-In-Reply-To: <638a5d22-8d51-8d63-2d8a-a38bbb8fb1d6@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Jun 2019 12:44:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen Zhou,
+On 06/13, David Laight wrote:
+>
+> > And you interpret this as if a pending signal should be delivered in any case,
+> > even if pselect succeeds. Again, perhaps you are right, but to me this is simply
+> > undocumented.
+>
+> This text (from http://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html) is moderately clear:
+>     ... if all threads within the process block delivery of the signal, the signal shall
+>     remain pending on the process until a thread calls a sigwait() function selecting that
+>     signal, a thread unblocks delivery of the signal, or the action associated with the signal
+>     is set to ignore the signal.
+>
+> So when pselect() 'replaces the signal mask' any pending signals should be delivered.
 
-On 13/06/2019 12:27, Chen Zhou wrote:
-> On 2019/6/6 0:32, James Morse wrote:
->> On 07/05/2019 04:50, Chen Zhou wrote:
->>> We use crashkernel=X to reserve crashkernel below 4G, which will fail
->>> when there is no enough memory. Currently, crashkernel=Y@X can be used
->>> to reserve crashkernel above 4G, in this case, if swiotlb or DMA buffers
->>> are requierd, capture kernel will boot failure because of no low memory.
->>
->>> When crashkernel is reserved above 4G in memory, kernel should reserve
->>> some amount of low memory for swiotlb and some DMA buffers. So there may
->>> be two crash kernel regions, one is below 4G, the other is above 4G.
->>
->> This is a good argument for supporting the 'crashkernel=...,low' version.
->> What is the 'crashkernel=...,high' version for?
->>
->> Wouldn't it be simpler to relax the ARCH_LOW_ADDRESS_LIMIT if we see 'crashkernel=...,low'
->> in the kernel cmdline?
->>
->> I don't see what the 'crashkernel=...,high' variant is giving us, it just complicates the
->> flow of reserve_crashkernel().
->>
->> If we called reserve_crashkernel_low() at the beginning of reserve_crashkernel() we could
->> use crashk_low_res.end to change some limit variable from ARCH_LOW_ADDRESS_LIMIT to
->> memblock_end_of_DRAM().
->> I think this is a simpler change that gives you what you want.
-> 
-> According to your suggestions, we should do like this:
-> 1. call reserve_crashkernel_low() at the beginning of reserve_crashkernel()
-> 2. mark the low region as 'nomap'
-> 3. use crashk_low_res.end to change some limit variable from ARCH_LOW_ADDRESS_LIMIT to
-> memblock_end_of_DRAM()
-> 4. rename crashk_low_res as "Crash kernel (low)" for arm64
-
-> 5. add an 'linux,low-memory-range' node in DT
-
-(This bit would happen in kexec-tools)
+I fail to understand this logic.
 
 
-> Do i understand correctly?
+> > However, linux never did this. Until the commit 854a6ed56839 ("signal: Add
+> > restore_user_sigmask()"). This commit caused regression. We had to revert it.
+>
+> That change wasn't expected to change the behaviour...
 
-Yes, I think this is simpler and still gives you what you want.
-It also leaves the existing behaviour unchanged, which helps with keeping compatibility
-with existing user-space and older kdump kernels.
+Yes.
 
+And the changed behaviour matched your understanding of standard. We had to
+change it back.
 
-Thanks,
+So what do you want from me? ;)
 
-James
+Oleg.
+
