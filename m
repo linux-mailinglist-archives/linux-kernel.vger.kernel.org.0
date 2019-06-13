@@ -2,233 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C14EA439B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18EB8439BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388039AbfFMPPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:15:36 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37555 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732220AbfFMNZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:25:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v14so20774303wrr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H/XDzYueXffv1rUyJx1oEFA1jQkKQnEoAqI3KBmpQNQ=;
-        b=keerC7oubO4xWDPqVdCuDXHlcwDp1ZGxBs6OtO0Jg9F0rB7opUoNZfaXAywrlZu5nM
-         I+zPjctobOUMBWt7rFEArKp/IUuJNRdB1ulWSYXLeVdokX5WmkPYMWrbdMbkyTKUHevZ
-         7GdZskEhnLXcF6vcGs9LuGOSp+WrsAhmO4RsU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H/XDzYueXffv1rUyJx1oEFA1jQkKQnEoAqI3KBmpQNQ=;
-        b=PYoLfo+ATt+dmeCe8Cj3GLfUORmrqXJZVXKfkTeP7wIgrhiVQHxd9hb5m7SueY5A4v
-         iq81DdAxVpzZFSM1D6P+Z+w8S6frRgM7Y9yS8IKDKYywrCYtdUtztf+VLFVVDkRO3WzL
-         z6DN/MI1Y5xxQ5Z4JfGzexbgGUVNpRK8FjeZGVADTAAjHw++uze3wg96Gsb509nd4MPV
-         7mZx4CmfoilKhALzm1cc4kd4PBCaXa3XGp2XVMQ79HyH4eLATZn6b5MM46yr80VCKAX3
-         DvRfFQTOVAi25HC5MZ0eA4T6TMyNB4PspieUPZRziuNtZV0rgT+72sK7yg7OeYqBwkvG
-         8qOQ==
-X-Gm-Message-State: APjAAAXVkqittZLxnkku0QnDUMilYBPvZgknDeN6CzyUrFzQf2O4NxmQ
-        PNdgfvkGuL4CqGb/rA9JjRModQ==
-X-Google-Smtp-Source: APXvYqwDEPlruy2eVqw9ZQATbv3Dsj0ZxtvE79jIaKuGvWhxiukBuyyX3IRiItW0qa3pl3HgnhuzQA==
-X-Received: by 2002:adf:c5c1:: with SMTP id v1mr41961383wrg.129.1560432313294;
-        Thu, 13 Jun 2019 06:25:13 -0700 (PDT)
-Received: from localhost.localdomain ([147.12.216.9])
-        by smtp.gmail.com with ESMTPSA id d10sm3324109wrp.74.2019.06.13.06.25.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 06:25:12 -0700 (PDT)
-From:   Arthur Fabre <afabre@cloudflare.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Arthur Fabre <afabre@cloudflare.com>
-Subject: [PATCH bpf-next] bpf: sk_storage: Fix out of bounds memory access
-Date:   Thu, 13 Jun 2019 14:24:34 +0100
-Message-Id: <20190613132433.17213-1-afabre@cloudflare.com>
-X-Mailer: git-send-email 2.20.1
+        id S2388246AbfFMPPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:15:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:39842 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732218AbfFMNYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:24:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 973282B;
+        Thu, 13 Jun 2019 06:24:38 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BD033F73C;
+        Thu, 13 Jun 2019 06:24:38 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 1DEE2682412; Thu, 13 Jun 2019 14:24:37 +0100 (BST)
+Date:   Thu, 13 Jun 2019 14:24:37 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH v2 2/2] drm/komeda: Adds komeda_kms_drop_master
+Message-ID: <20190613132436.GN4173@e110455-lin.cambridge.arm.com>
+References: <1560251589-31827-1-git-send-email-lowry.li@arm.com>
+ <1560251589-31827-3-git-send-email-lowry.li@arm.com>
+ <20190611123038.GC2458@phenom.ffwll.local>
+ <20190612022617.GA8595@james-ThinkStation-P300>
+ <20190613081727.GE23020@phenom.ffwll.local>
+ <20190613082813.GM4173@e110455-lin.cambridge.arm.com>
+ <20190613090814.GJ23020@phenom.ffwll.local>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613090814.GJ23020@phenom.ffwll.local>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bpf_sk_storage maps use multiple spin locks to reduce contention.
-The number of locks to use is determined by the number of possible CPUs.
-With only 1 possible CPU, bucket_log == 0, and 2^0 = 1 locks are used.
+On Thu, Jun 13, 2019 at 11:08:14AM +0200, Daniel Vetter wrote:
+> On Thu, Jun 13, 2019 at 09:28:13AM +0100, Liviu Dudau wrote:
+> > On Thu, Jun 13, 2019 at 10:17:27AM +0200, Daniel Vetter wrote:
+> > > On Wed, Jun 12, 2019 at 02:26:24AM +0000, james qian wang (Arm Technology China) wrote:
+> > > > On Tue, Jun 11, 2019 at 02:30:38PM +0200, Daniel Vetter wrote:
+> > > > > On Tue, Jun 11, 2019 at 11:13:45AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > > > > From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+> > > > > >
+> > > > > > The komeda internal resources (pipelines) are shared between crtcs,
+> > > > > > and resources release by disable_crtc. This commit is working for once
+> > > > > > user forgot disabling crtc like app quit abnomally, and then the
+> > > > > > resources can not be used by another crtc. Adds drop_master to
+> > > > > > shutdown the device and make sure all the komeda resources have been
+> > > > > > released and can be used for the next usage.
+> > > > > >
+> > > > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> > > > > > ---
+> > > > > >  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 13 +++++++++++++
+> > > > > >  1 file changed, 13 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > > > > index 8543860..647bce5 100644
+> > > > > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > > > > @@ -54,11 +54,24 @@ static irqreturn_t komeda_kms_irq_handler(int irq, void *data)
+> > > > > >  return status;
+> > > > > >  }
+> > > > > >
+> > > > > > +/* Komeda internal resources (pipelines) are shared between crtcs, and resources
+> > > > > > + * are released by disable_crtc. But if user forget disabling crtc like app quit
+> > > > > > + * abnormally, the resources can not be used by another crtc.
+> > > > > > + * Use drop_master to shutdown the device and make sure all the komeda resources
+> > > > > > + * have been released, and can be used for the next usage.
+> > > > > > + */
+> > > > >
+> > > > > No. If we want this, we need to implement this across drivers, not with
+> > > > > per-vendor hacks.
+> > > > >
+> > > > > The kerneldoc should have been a solid hint: "Only used by vmwgfx."
+> > > > > -Daniel
+> > > > 
+> > > > Hi Daniel:
+> > > > This drop_master is really what we want, can we update the doc and
+> > > > add komeda as a user of this hacks like "used by vmwfgx and komeda",
+> > > > or maybe directly promote this per-vendor hacks as an optional chip
+> > > > function ?
+> > > 
+> > > Still no, because it would mean different behaviour for arm/komeda
+> > > compared to everyone else. And we really don't want this, because this
+> > > would completely break flicker-less vt-switching.
+> > > 
+> > > Currently the only fallback for this case is the lastclose handler, which
+> > > atm just restores fbcon/fbdev. If you want to change/extend that to work
+> > > without fbdev, then that's the place to do the change. And across _all_
+> > > drm kms drivers, so that we have consistent behaviour.
+> > 
+> > Slightly unrelated, just thinking of a solution and wanted confirmation/double
+> > checking: can a CRTC be instantiated without any planes (or without a primary
+> > plane)?
+> 
+> Without a primary plane maybe not so recommended, because it would break
+> all the legacy userspace. Might even result in some oopses, not sure we
+> check for crtc->primary != NULL.
+> 
+> I'm not sure what you mean about instantiating it without any plane at
+> all. That would be rather useless.
 
-When updating elements, the correct lock is determined with hash_ptr().
-Calling hash_ptr() with 0 bits is undefined behavior, as it does:
+Agree, and I think I have one way of solving the scenario Lowry and James are
+trying to cover. Basically, komeda has 2 pipelines that are exposed as 2 crtcs.
+However, layers (planes in DRM) can be associated with any of the pipelines and
+it is possible to have a DRM master open up crtc0 and enable all possible planes,
+which would leave crtc1 with no available layer to use (but technically still visible to
+userspace, as it has been drm_crtc_init-ed. James and Lowry are trying to give
+another master a chance of enabling crtc1 if previous master drops the
+ownership of crtc0 without disabling it. So one solution I'm thinking of is to
+tie one of the layers/planes to crtc1 regardless if that pipeline is enabled or
+not.
 
-x >> (64 - bits)
+Alternatively, we need a more generic solution for re-allocating resources
+between CRTCs that might be enabled at different times. Ideas on how userspace
+should handle it first are welcome as well.
 
-Using the value results in an out of bounds memory access.
-In my case, this manifested itself as a page fault when raw_spin_lock_bh()
-is called later, when running the self tests:
+Best regards,
+Liviu
 
-./tools/testing/selftests/bpf/test_verifier 773 775
+> -Daniel
+> 
+> > 
+> > Best regards,
+> > Liviu
+> > 
+> > > 
+> > > kms is a cross-vendor api, vendor hacks are very, very much not cool.
+> > > -Daniel
+> > > 
+> > > > 
+> > > > James
+> > > > 
+> > > > > > +static void komeda_kms_drop_master(struct drm_device *dev,
+> > > > > > +   struct drm_file *file_priv)
+> > > > > > +{
+> > > > > > +drm_atomic_helper_shutdown(dev);
+> > > > > > +}
+> > > > > > +
+> > > > > >  static struct drm_driver komeda_kms_driver = {
+> > > > > >  .driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
+> > > > > >     DRIVER_PRIME | DRIVER_HAVE_IRQ,
+> > > > > >  .lastclose= drm_fb_helper_lastclose,
+> > > > > >  .irq_handler= komeda_kms_irq_handler,
+> > > > > > +.master_drop= komeda_kms_drop_master,
+> > > > > >  .gem_free_object_unlocked= drm_gem_cma_free_object,
+> > > > > >  .gem_vm_ops= &drm_gem_cma_vm_ops,
+> > > > > >  .dumb_create= komeda_gem_cma_dumb_create,
+> > > > > > --
+> > > > > > 1.9.1
+> > > > > >
+> > > > > > _______________________________________________
+> > > > > > dri-devel mailing list
+> > > > > > dri-devel@lists.freedesktop.org
+> > > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > > >
+> > > > > --
+> > > > > Daniel Vetter
+> > > > > Software Engineer, Intel Corporation
+> > > > > http://blog.ffwll.ch
+> > > > IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+> > > > _______________________________________________
+> > > > dri-devel mailing list
+> > > > dri-devel@lists.freedesktop.org
+> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > 
+> > > -- 
+> > > Daniel Vetter
+> > > Software Engineer, Intel Corporation
+> > > http://blog.ffwll.ch
+> > 
+> > -- 
+> > ====================
+> > | I would like to |
+> > | fix the world,  |
+> > | but they're not |
+> > | giving me the   |
+> >  \ source code!  /
+> >   ---------------
+> >     ¯\_(ツ)_/¯
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-[   16.366342] BUG: unable to handle page fault for address: ffff8fe7a66f93f8
-[   16.367139] #PF: supervisor write access in kernel mode
-[   16.367751] #PF: error_code(0x0002) - not-present page
-[   16.368323] PGD 35a01067 P4D 35a01067 PUD 0
-[   16.368796] Oops: 0002 [#1] SMP PTI
-[   16.369175] CPU: 0 PID: 189 Comm: test_verifier Not tainted 5.2.0-rc2+ #10
-[   16.369960] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-[   16.371021] RIP: 0010:_raw_spin_lock_bh (/home/afabre/linux/./include/trace/events/initcall.h:48)
-[ 16.371571] Code: 02 00 00 31 c0 ba ff 00 00 00 3e 0f b1 17 75 01 c3 e9 82 12 5f ff 66 90 65 81 05 ad 14 6f 41 00 02 00 00 31 c0 ba 01 00 00 00 <3e> 0f b1 17 75 01 c3 89 c6 e9 f0 02 5f ff b8 00 02 00 00 3e 0f c1
-All code
-========
-   0:	02 00                	add    (%rax),%al
-   2:	00 31                	add    %dh,(%rcx)
-   4:	c0 ba ff 00 00 00 3e 	sarb   $0x3e,0xff(%rdx)
-   b:	0f b1 17             	cmpxchg %edx,(%rdi)
-   e:	75 01                	jne    0x11
-  10:	c3                   	retq
-  11:	e9 82 12 5f ff       	jmpq   0xffffffffff5f1298
-  16:	66 90                	xchg   %ax,%ax
-  18:	65 81 05 ad 14 6f 41 	addl   $0x200,%gs:0x416f14ad(%rip)        # 0x416f14d0
-  1f:	00 02 00 00
-  23:	31 c0                	xor    %eax,%eax
-  25:	ba 01 00 00 00       	mov    $0x1,%edx
-  2a:	3e 0f b1 17          	cmpxchg %edx,%ds:*(%rdi)		<-- trapping instruction
-  2e:	75 01                	jne    0x31
-  30:	c3                   	retq
-  31:	89 c6                	mov    %eax,%esi
-  33:	e9 f0 02 5f ff       	jmpq   0xffffffffff5f0328
-  38:	b8 00 02 00 00       	mov    $0x200,%eax
-  3d:	3e                   	ds
-  3e:	0f                   	.byte 0xf
-  3f:	c1                   	.byte 0xc1
-
-Code starting with the faulting instruction
-===========================================
-   0:	3e 0f b1 17          	cmpxchg %edx,%ds:(%rdi)
-   4:	75 01                	jne    0x7
-   6:	c3                   	retq
-   7:	89 c6                	mov    %eax,%esi
-   9:	e9 f0 02 5f ff       	jmpq   0xffffffffff5f02fe
-   e:	b8 00 02 00 00       	mov    $0x200,%eax
-  13:	3e                   	ds
-  14:	0f                   	.byte 0xf
-  15:	c1                   	.byte 0xc1
-[   16.373398] RSP: 0018:ffffa759809d3be0 EFLAGS: 00010246
-[   16.373954] RAX: 0000000000000000 RBX: ffff8fe7a66f93f0 RCX: 0000000000000040
-[   16.374645] RDX: 0000000000000001 RSI: ffff8fdaf9f0d180 RDI: ffff8fe7a66f93f8
-[   16.375338] RBP: ffff8fdaf9f0d180 R08: ffff8fdafba2c320 R09: ffff8fdaf9f0d0c0
-[   16.376028] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8fdafa346700
-[   16.376719] R13: ffff8fe7a66f93f8 R14: ffff8fdaf9f0d0c0 R15: 0000000000000001
-[   16.377413] FS:  00007fda724c0740(0000) GS:ffff8fdafba00000(0000) knlGS:0000000000000000
-[   16.378204] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   16.378763] CR2: ffff8fe7a66f93f8 CR3: 0000000139d1c006 CR4: 0000000000360ef0
-[   16.379453] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   16.380144] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   16.380864] Call Trace:
-[   16.381112] selem_link_map (/home/afabre/linux/./include/linux/compiler.h:221 /home/afabre/linux/net/core/bpf_sk_storage.c:243)
-[   16.381476] sk_storage_update (/home/afabre/linux/net/core/bpf_sk_storage.c:355 /home/afabre/linux/net/core/bpf_sk_storage.c:414)
-[   16.381888] bpf_sk_storage_get (/home/afabre/linux/net/core/bpf_sk_storage.c:760 /home/afabre/linux/net/core/bpf_sk_storage.c:741)
-[   16.382285] ___bpf_prog_run (/home/afabre/linux/kernel/bpf/core.c:1447)
-[   16.382679] ? __bpf_prog_run32 (/home/afabre/linux/kernel/bpf/core.c:1603)
-[   16.383074] ? alloc_file_pseudo (/home/afabre/linux/fs/file_table.c:232)
-[   16.383486] ? kvm_clock_get_cycles (/home/afabre/linux/arch/x86/kernel/kvmclock.c:98)
-[   16.383906] ? ktime_get (/home/afabre/linux/kernel/time/timekeeping.c:265 /home/afabre/linux/kernel/time/timekeeping.c:369 /home/afabre/linux/kernel/time/timekeeping.c:754)
-[   16.384243] ? bpf_test_run (/home/afabre/linux/net/bpf/test_run.c:47)
-[   16.384613] ? bpf_prog_test_run_skb (/home/afabre/linux/net/bpf/test_run.c:313)
-[   16.385065] ? security_capable (/home/afabre/linux/security/security.c:696 (discriminator 19))
-[   16.385460] ? __do_sys_bpf (/home/afabre/linux/kernel/bpf/syscall.c:2072 /home/afabre/linux/kernel/bpf/syscall.c:2848)
-[   16.385854] ? __handle_mm_fault (/home/afabre/linux/mm/memory.c:3507 /home/afabre/linux/mm/memory.c:3532 /home/afabre/linux/mm/memory.c:3666 /home/afabre/linux/mm/memory.c:3897 /home/afabre/linux/mm/memory.c:4021)
-[   16.386273] ? __dentry_kill (/home/afabre/linux/fs/dcache.c:595)
-[   16.386652] ? do_syscall_64 (/home/afabre/linux/arch/x86/entry/common.c:301)
-[   16.387031] ? entry_SYSCALL_64_after_hwframe (/home/afabre/linux/./include/trace/events/initcall.h:10 /home/afabre/linux/./include/trace/events/initcall.h:10)
-[   16.387541] Modules linked in:
-[   16.387846] CR2: ffff8fe7a66f93f8
-[   16.388175] ---[ end trace 891cf27b5b9c9cc6 ]---
-[   16.388628] RIP: 0010:_raw_spin_lock_bh (/home/afabre/linux/./include/trace/events/initcall.h:48)
-[ 16.389089] Code: 02 00 00 31 c0 ba ff 00 00 00 3e 0f b1 17 75 01 c3 e9 82 12 5f ff 66 90 65 81 05 ad 14 6f 41 00 02 00 00 31 c0 ba 01 00 00 00 <3e> 0f b1 17 75 01 c3 89 c6 e9 f0 02 5f ff b8 00 02 00 00 3e 0f c1
-All code
-========
-   0:	02 00                	add    (%rax),%al
-   2:	00 31                	add    %dh,(%rcx)
-   4:	c0 ba ff 00 00 00 3e 	sarb   $0x3e,0xff(%rdx)
-   b:	0f b1 17             	cmpxchg %edx,(%rdi)
-   e:	75 01                	jne    0x11
-  10:	c3                   	retq
-  11:	e9 82 12 5f ff       	jmpq   0xffffffffff5f1298
-  16:	66 90                	xchg   %ax,%ax
-  18:	65 81 05 ad 14 6f 41 	addl   $0x200,%gs:0x416f14ad(%rip)        # 0x416f14d0
-  1f:	00 02 00 00
-  23:	31 c0                	xor    %eax,%eax
-  25:	ba 01 00 00 00       	mov    $0x1,%edx
-  2a:	3e 0f b1 17          	cmpxchg %edx,%ds:*(%rdi)		<-- trapping instruction
-  2e:	75 01                	jne    0x31
-  30:	c3                   	retq
-  31:	89 c6                	mov    %eax,%esi
-  33:	e9 f0 02 5f ff       	jmpq   0xffffffffff5f0328
-  38:	b8 00 02 00 00       	mov    $0x200,%eax
-  3d:	3e                   	ds
-  3e:	0f                   	.byte 0xf
-  3f:	c1                   	.byte 0xc1
-
-Code starting with the faulting instruction
-===========================================
-   0:	3e 0f b1 17          	cmpxchg %edx,%ds:(%rdi)
-   4:	75 01                	jne    0x7
-   6:	c3                   	retq
-   7:	89 c6                	mov    %eax,%esi
-   9:	e9 f0 02 5f ff       	jmpq   0xffffffffff5f02fe
-   e:	b8 00 02 00 00       	mov    $0x200,%eax
-  13:	3e                   	ds
-  14:	0f                   	.byte 0xf
-  15:	c1                   	.byte 0xc1
-[   16.390899] RSP: 0018:ffffa759809d3be0 EFLAGS: 00010246
-[   16.391410] RAX: 0000000000000000 RBX: ffff8fe7a66f93f0 RCX: 0000000000000040
-[   16.392102] RDX: 0000000000000001 RSI: ffff8fdaf9f0d180 RDI: ffff8fe7a66f93f8
-[   16.392795] RBP: ffff8fdaf9f0d180 R08: ffff8fdafba2c320 R09: ffff8fdaf9f0d0c0
-[   16.393481] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8fdafa346700
-[   16.394169] R13: ffff8fe7a66f93f8 R14: ffff8fdaf9f0d0c0 R15: 0000000000000001
-[   16.394870] FS:  00007fda724c0740(0000) GS:ffff8fdafba00000(0000) knlGS:0000000000000000
-[   16.395641] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   16.396193] CR2: ffff8fe7a66f93f8 CR3: 0000000139d1c006 CR4: 0000000000360ef0
-[   16.396876] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   16.397557] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   16.398246] Kernel panic - not syncing: Fatal exception in interrupt
-[   16.399067] Kernel Offset: 0x3ce00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[   16.400098] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-
-Signed-off-by: Arthur Fabre <afabre@cloudflare.com>
-Fixes: 6ac99e8f23d4 ("bpf: Introduce bpf sk local storage")
----
- net/core/bpf_sk_storage.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
-index f40e3d35fd9c..7ae0686c5418 100644
---- a/net/core/bpf_sk_storage.c
-+++ b/net/core/bpf_sk_storage.c
-@@ -90,7 +90,13 @@ struct bpf_sk_storage {
- static struct bucket *select_bucket(struct bpf_sk_storage_map *smap,
- 				    struct bpf_sk_storage_elem *selem)
- {
--	return &smap->buckets[hash_ptr(selem, smap->bucket_log)];
-+	/* hash_ptr is undefined behavior with 0 bits */
-+	int bucket = 0;
-+	if (smap->bucket_log != 0) {
-+		bucket = hash_ptr(selem, smap->bucket_log);
-+	}
-+
-+	return &smap->buckets[bucket];
- }
- 
- static int omem_charge(struct sock *sk, unsigned int size)
 -- 
-2.20.1
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
