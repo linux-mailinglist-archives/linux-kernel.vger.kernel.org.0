@@ -2,154 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971D544EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D2544EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 00:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbfFMV7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:59:49 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49658 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728025AbfFMV7s (ORCPT
+        id S1729108AbfFMWA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 18:00:58 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38273 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfFMWA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:59:48 -0400
-Received: from 79.184.253.190.ipv4.supernova.orange.pl (79.184.253.190) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 0423c3e6485434c2; Thu, 13 Jun 2019 23:59:45 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] PCI: PM: Skip devices in D0 for suspend-to-idle
-Date:   Thu, 13 Jun 2019 23:59:45 +0200
-Message-ID: <1668247.RaJIPSxJUN@kreacher>
+        Thu, 13 Jun 2019 18:00:57 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a186so95570pfa.5;
+        Thu, 13 Jun 2019 15:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o0Xxr326HdVBxJMQJ7yuDvuInC+0DtTaN16E8H3a2bk=;
+        b=iwg9vvI8CIMUZnifphfNAi7MMdiXb5tLze1Wjdtzn7ptvajN7YJIN73rJAnv2SrorO
+         jaB81fzQaDK+JMuvGQwsEE4jwIY44z/DGTKqHsx1Kk/FS9iP+UWfZMMBxHTRuP8CxTpv
+         lE2+2k9L/W9bUVM85tyuyWEiDqRKBGK360DmIiwCIMI03BRlU/cATpcM5f3pZFwONuJG
+         +ECxR2b/P1pdEt88fbls+/HzpMYKTj6mRovaUUUBvLBgzOv5x8mAEGF7A6fKy964hfVf
+         o6Nkds204NQYzmDXEZSD927Lq0tTL+Rk8JstUF21VPd7LrycvbiyHEYwZ81t0J47QGr/
+         9Upg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o0Xxr326HdVBxJMQJ7yuDvuInC+0DtTaN16E8H3a2bk=;
+        b=FqMKztGuUftCBfuks53GPnwMQDNYPsvqfdyR0p25JyET5RA/XH3NCyskIC87SNLlJN
+         iXrIBKBchbiqzg1Yn6i+/PbVyG73tidckRgfCP+CxwoS3+fzjWyxc8HT6VBzg40doTOQ
+         JbnanzHlVZt1saEkPQYXAPSuVj59KyBHlrbh++rnrYzfO4VNrqT5e6LuEQuLYJDeBKpP
+         vYmkGwm57eLHYFAdT2lwjGUQmEScPIK5cSIw/qPuU8NHVZOOjAnxsgIs/lyylfpbwtOR
+         OTMnXQCl7m3YLZj9sbmk8f/UNr7czFJgOQrpWrJ6/QkeVD5hcAI0/6lflzzc1+s120iJ
+         5F6w==
+X-Gm-Message-State: APjAAAUpzARKrZr5wKItpaFWL2XpAODXi5IT35DyrDbGbkzeEeLx05v2
+        NfRzxjZiuU9g8N/vVqc7/OA=
+X-Google-Smtp-Source: APXvYqwyywNqJkHJDH2mvO+bvRmgBxFaFgJmncdf/zEQvCUIGwjF1LxvkA+ZwyfyqgkYoFfmqTWUOw==
+X-Received: by 2002:a62:82c2:: with SMTP id w185mr75108171pfd.202.1560463257135;
+        Thu, 13 Jun 2019 15:00:57 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:e034])
+        by smtp.gmail.com with ESMTPSA id g8sm723759pgd.29.2019.06.13.15.00.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 15:00:56 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 15:00:55 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Kairui Song <kasong@redhat.com>
+Subject: Re: [PATCH 7/9] x86/unwind/orc: Fall back to using frame pointers
+ for generated code
+Message-ID: <20190613220054.tmonrgfdeie2kl74@ast-mbp.dhcp.thefacebook.com>
+References: <cover.1560431531.git.jpoimboe@redhat.com>
+ <4f536ec4facda97406273a22a4c2677f7cb22148.1560431531.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f536ec4facda97406273a22a4c2677f7cb22148.1560431531.git.jpoimboe@redhat.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Jun 13, 2019 at 08:21:04AM -0500, Josh Poimboeuf wrote:
+> The ORC unwinder can't unwind through BPF JIT generated code because
+> there are no ORC entries associated with the code.
+> 
+> If an ORC entry isn't available, try to fall back to frame pointers.  If
+> BPF and other generated code always do frame pointer setup (even with
+> CONFIG_FRAME_POINTERS=n) then this will allow ORC to unwind through most
+> generated code despite there being no corresponding ORC entries.
+> 
+> Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+> Reported-by: Song Liu <songliubraving@fb.com>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>  arch/x86/kernel/unwind_orc.c | 26 ++++++++++++++++++++++----
+>  1 file changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+> index 33b66b5c5aec..72b997eaa1fc 100644
+> --- a/arch/x86/kernel/unwind_orc.c
+> +++ b/arch/x86/kernel/unwind_orc.c
+> @@ -82,9 +82,9 @@ static struct orc_entry *orc_find(unsigned long ip);
+>   * But they are copies of the ftrace entries that are static and
+>   * defined in ftrace_*.S, which do have orc entries.
+>   *
+> - * If the undwinder comes across a ftrace trampoline, then find the
+> + * If the unwinder comes across a ftrace trampoline, then find the
+>   * ftrace function that was used to create it, and use that ftrace
+> - * function's orc entrie, as the placement of the return code in
+> + * function's orc entry, as the placement of the return code in
+>   * the stack will be identical.
+>   */
+>  static struct orc_entry *orc_ftrace_find(unsigned long ip)
+> @@ -128,6 +128,16 @@ static struct orc_entry null_orc_entry = {
+>  	.type = ORC_TYPE_CALL
+>  };
+>  
+> +/* Fake frame pointer entry -- used as a fallback for generated code */
+> +static struct orc_entry orc_fp_entry = {
+> +	.type		= ORC_TYPE_CALL,
+> +	.sp_reg		= ORC_REG_BP,
+> +	.sp_offset	= 16,
+> +	.bp_reg		= ORC_REG_PREV_SP,
+> +	.bp_offset	= -16,
+> +	.end		= 0,
+> +};
+> +
+>  static struct orc_entry *orc_find(unsigned long ip)
+>  {
+>  	static struct orc_entry *orc;
+> @@ -392,8 +402,16 @@ bool unwind_next_frame(struct unwind_state *state)
+>  	 * calls and calls to noreturn functions.
+>  	 */
+>  	orc = orc_find(state->signal ? state->ip : state->ip - 1);
+> -	if (!orc)
+> -		goto err;
+> +	if (!orc) {
+> +		/*
+> +		 * As a fallback, try to assume this code uses a frame pointer.
+> +		 * This is useful for generated code, like BPF, which ORC
+> +		 * doesn't know about.  This is just a guess, so the rest of
+> +		 * the unwind is no longer considered reliable.
+> +		 */
+> +		orc = &orc_fp_entry;
+> +		state->error = true;
 
-Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
-attempted to avoid a problem with devices whose drivers want them to
-stay in D0 over suspend-to-idle and resume, but it did not go as far
-as it should with that.
-
-Namely, first of all, the power state of a PCI bridge with a
-downstream device in D0 must be D0 (based on the PCI PM spec r1.2,
-sec 6, table 6-1, if the bridge is not in D0, there can be no PCI
-transactions on its secondary bus), but that is not actively enforced
-during system-wide PM transitions, so use the skip_bus_pm flag
-introduced by commit d491f2b75237 for that.
-
-Second, the configuration of devices left in D0 (whatever the reason)
-during suspend-to-idle need not be changed and attempting to put them
-into D0 again by force is pointless, so explicitly avoid doing that.
-
-Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
-Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/pci/pci-driver.c |   47 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 12 deletions(-)
-
-Index: linux-pm/drivers/pci/pci-driver.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci-driver.c
-+++ linux-pm/drivers/pci/pci-driver.c
-@@ -524,7 +524,6 @@ static void pci_pm_default_resume_early(
- 	pci_power_up(pci_dev);
- 	pci_restore_state(pci_dev);
- 	pci_pme_restore(pci_dev);
--	pci_fixup_device(pci_fixup_resume_early, pci_dev);
- }
- 
- /*
-@@ -842,18 +841,16 @@ static int pci_pm_suspend_noirq(struct d
- 
- 	if (pci_dev->skip_bus_pm) {
- 		/*
--		 * The function is running for the second time in a row without
-+		 * Either the device is a bridge with a child in D0 below it, or
-+		 * the function is running for the second time in a row without
- 		 * going through full resume, which is possible only during
--		 * suspend-to-idle in a spurious wakeup case.  Moreover, the
--		 * device was originally left in D0, so its power state should
--		 * not be changed here and the device register values saved
--		 * originally should be restored on resume again.
-+		 * suspend-to-idle in a spurious wakeup case.  The device should
-+		 * be in D0 at this point, but if it is a bridge, it may be
-+		 * necessary to save its state.
- 		 */
--		pci_dev->state_saved = true;
--	} else if (pci_dev->state_saved) {
--		if (pci_dev->current_state == PCI_D0)
--			pci_dev->skip_bus_pm = true;
--	} else {
-+		if (!pci_dev->state_saved)
-+			pci_save_state(pci_dev);
-+	} else if (!pci_dev->state_saved) {
- 		pci_save_state(pci_dev);
- 		if (pci_power_manageable(pci_dev))
- 			pci_prepare_to_sleep(pci_dev);
-@@ -862,6 +859,22 @@ static int pci_pm_suspend_noirq(struct d
- 	dev_dbg(dev, "PCI PM: Suspend power state: %s\n",
- 		pci_power_name(pci_dev->current_state));
- 
-+	if (pci_dev->current_state == PCI_D0) {
-+		pci_dev->skip_bus_pm = true;
-+		/*
-+		 * Per PCI PM r1.2, table 6-1, a bridge must be in D0 if any
-+		 * downstream device is in D0, so avoid changing the power state
-+		 * of the parent bridge by setting the skip_bus_pm flag for it.
-+		 */
-+		if (pci_dev->bus->self)
-+			pci_dev->bus->self->skip_bus_pm = true;
-+	}
-+
-+	if (pci_dev->skip_bus_pm && !pm_suspend_via_firmware()) {
-+		dev_dbg(dev, "PCI PM: Skipped\n");
-+		goto Fixup;
-+	}
-+
- 	pci_pm_set_unknown_state(pci_dev);
- 
- 	/*
-@@ -909,7 +922,16 @@ static int pci_pm_resume_noirq(struct de
- 	if (dev_pm_smart_suspend_and_suspended(dev))
- 		pm_runtime_set_active(dev);
- 
--	pci_pm_default_resume_early(pci_dev);
-+	/*
-+	 * In the suspend-to-idle case, devices left in D0 during suspend will
-+	 * stay in D0, so it is not necessary to restore or update their
-+	 * configuration here and attempting to put them into D0 again may
-+	 * confuse some firmware, so avoid doing that.
-+	 */
-+	if (!pci_dev->skip_bus_pm || pm_suspend_via_firmware())
-+		pci_pm_default_resume_early(pci_dev);
-+
-+	pci_fixup_device(pci_fixup_resume_early, pci_dev);
- 
- 	if (pci_has_legacy_pm_support(pci_dev))
- 		return pci_legacy_resume_early(dev);
-@@ -1200,6 +1222,7 @@ static int pci_pm_restore_noirq(struct d
- 	}
- 
- 	pci_pm_default_resume_early(pci_dev);
-+	pci_fixup_device(pci_fixup_resume_early, pci_dev);
- 
- 	if (pci_has_legacy_pm_support(pci_dev))
- 		return pci_legacy_resume_early(dev);
-
-
+That seems fragile.
+Can't we populate orc_unwind tables after JIT ?
 
