@@ -2,1119 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B7E43C66
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3F543CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733108AbfFMPfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:35:34 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:49420 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727589AbfFMKWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:22:32 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EAC4E200DF7;
-        Thu, 13 Jun 2019 12:22:24 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8EBC0200A3B;
-        Thu, 13 Jun 2019 12:22:21 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BCE1402A0;
-        Thu, 13 Jun 2019 18:22:17 +0800 (SGT)
-From:   Peng Ma <peng.ma@nxp.com>
-To:     vkoul@kernel.org, dan.j.williams@intel.com, leoyang.li@nxp.com
-Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        Peng Ma <peng.ma@nxp.com>
-Subject: [V4 2/2] dmaengine: fsl-dpaa2-qdma: Add NXP dpaa2 qDMA controller driver for Layerscape SoCs
-Date:   Thu, 13 Jun 2019 10:13:41 +0000
-Message-Id: <20190613101341.21169-2-peng.ma@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190613101341.21169-1-peng.ma@nxp.com>
-References: <20190613101341.21169-1-peng.ma@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729328AbfFMPg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:36:58 -0400
+Received: from mail-eopbgr00063.outbound.protection.outlook.com ([40.107.0.63]:2210
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726864AbfFMKQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:16:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JsnuP9uN7znKdLcsYUNs05zri06zOnYXJFfiQuCxCzo=;
+ b=6fP79K0Zd+t5ZKKUDbW1RQE05uDoAkqMGosfl0o7LTUl5dqQdvo+vV2jcn0IogKP8q1p1OAf2ccZ2nHoHSIicjO64jDyv6obG9SEEYWue70MC7l+EQNzmeSEoNekcrqBs1wT4qH1ZRM87GjnW3oTYj8u6YgLJHuitK58LSQxK20=
+Received: from VE1PR08MB4637.eurprd08.prod.outlook.com (10.255.27.14) by
+ VE1PR08MB4880.eurprd08.prod.outlook.com (10.255.113.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.15; Thu, 13 Jun 2019 10:14:39 +0000
+Received: from VE1PR08MB4637.eurprd08.prod.outlook.com
+ ([fe80::6574:1efb:6972:2b37]) by VE1PR08MB4637.eurprd08.prod.outlook.com
+ ([fe80::6574:1efb:6972:2b37%6]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
+ 10:14:39 +0000
+From:   Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+To:     Catalin Marinas <Catalin.Marinas@arm.com>
+CC:     nd <nd@arm.com>, Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 1/2] arm64: Define
+ Documentation/arm64/tagged-address-abi.txt
+Thread-Topic: [PATCH v4 1/2] arm64: Define
+ Documentation/arm64/tagged-address-abi.txt
+Thread-Index: AQHVIS/jNTMPiNHftkW5Mto9lMl3oKaYRrOAgAEJjYCAAA78gA==
+Date:   Thu, 13 Jun 2019 10:14:39 +0000
+Message-ID: <dee7f192-d0f0-558e-3007-eba805c6f2da@arm.com>
+References: <cover.1560339705.git.andreyknvl@google.com>
+ <20190612142111.28161-1-vincenzo.frascino@arm.com>
+ <20190612142111.28161-2-vincenzo.frascino@arm.com>
+ <a90da586-8ff6-4bed-d940-9306d517a18c@arm.com>
+ <20190613092054.GO28951@C02TF0J2HF1T.local>
+In-Reply-To: <20190613092054.GO28951@C02TF0J2HF1T.local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+x-originating-ip: [217.140.106.51]
+x-clientproxiedby: LNXP265CA0031.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5c::19) To VE1PR08MB4637.eurprd08.prod.outlook.com
+ (2603:10a6:802:b1::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Szabolcs.Nagy@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8fe878f3-90c3-40d7-96ad-08d6efe7f18d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB4880;
+x-ms-traffictypediagnostic: VE1PR08MB4880:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VE1PR08MB4880FE3C5989AB8E22672E57EDEF0@VE1PR08MB4880.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(346002)(136003)(376002)(189003)(199004)(37006003)(99286004)(316002)(44832011)(81166006)(65826007)(478600001)(6512007)(26005)(2906002)(486006)(6436002)(31696002)(14454004)(71190400001)(7736002)(58126008)(72206003)(64126003)(54906003)(81156014)(229853002)(86362001)(53936002)(8936002)(8676002)(66476007)(66446008)(65956001)(305945005)(6246003)(186003)(5660300002)(36756003)(66066001)(66556008)(65806001)(64756008)(66946007)(76176011)(6486002)(68736007)(2616005)(14444005)(25786009)(386003)(3846002)(52116002)(71200400001)(6116002)(6506007)(31686004)(53546011)(73956011)(446003)(11346002)(6636002)(256004)(6862004)(102836004)(4326008)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4880;H:VE1PR08MB4637.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: n1uLWJnaW6tml/Jq1ihcLP5qMpaj60lgri3jTuf0WS1WvifIOe04A/mowWrlwipNbODswYGcpWlTUrD5s5DFzmNbvkT8BhDUBoM8B7I+gQQAlpaN05GaWQVZXtLV0dKbjwb+ItE5iJFcgoGTW+9lYboILJi7/IiW43XE51v1nNQjCDHkvrtIZeGj/Ihpjgv0ZR5UTrGn1WT1Zj5kgqsInPeZZggpKQ+baQOpa8d3dtzfE/4zy6/lVoKULtmbCU5l4E6TMQ4K1eDVs9YZ843FlL4FRmVtXrglr7wopao4oujhlhEr6H/vsdJ1sjxq4Rch0acPTdhrgeuiBpppkNjYj6CAfd/2mR2jOMlZxPzHP+a5ueMuIdbcs/3wrZidsvmJiZAPnNZ6z1hYrBpkQ3dHxIbAzcayZsyaP4Vix0DX0/o=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <50012C68520D6547A2B2174AAC3FFA16@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fe878f3-90c3-40d7-96ad-08d6efe7f18d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 10:14:39.1554
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Szabolcs.Nagy@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4880
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DPPA2(Data Path Acceleration Architecture 2) qDMA
-supports channel virtualization by allowing DMA
-jobs to be enqueued into different frame queues.
-Core can initiate a DMA transaction by preparing a frame
-descriptor(FD) for each DMA job and enqueuing this job to
-a frame queue. through a hardware portal. The qDMA
-prefetches DMA jobs from the frame queues. It then
-schedules and dispatches to internal DMA hardware engines,
-which generate read and write requests. Both qDMA source
-data and destination data can be either contiguous or
-non-contiguous using one or more scatter/gather tables.
-The qDMA supports global bandwidth flow control where all
-DMA transactions are stalled if the bandwidth threshold
-has been reached. Also supported are transaction based
-read throttling.
-
-Add NXP dppa2 qDMA to support some of Layerscape SoCs.
-such as: LS1088A, LS208xA, LX2, etc.
-
-Signed-off-by: Peng Ma <peng.ma@nxp.com>
----
-changed for v4:
-	- Delete casts. 
-	- Add dma pool for each descriptor.
-	- Improve clean up for qdma init.
-	- Update Copyright.
-
- drivers/dma/Kconfig                     |    2 +
- drivers/dma/Makefile                    |    1 +
- drivers/dma/fsl-dpaa2-qdma/Kconfig      |    9 +
- drivers/dma/fsl-dpaa2-qdma/Makefile     |    3 +
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c |  826 +++++++++++++++++++++++++++++++
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h |  153 ++++++
- 6 files changed, 994 insertions(+), 0 deletions(-)
- create mode 100644 drivers/dma/fsl-dpaa2-qdma/Kconfig
- create mode 100644 drivers/dma/fsl-dpaa2-qdma/Makefile
- create mode 100644 drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
- create mode 100644 drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h
-
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index eaf78f4..08aae01 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -671,6 +671,8 @@ source "drivers/dma/sh/Kconfig"
- 
- source "drivers/dma/ti/Kconfig"
- 
-+source "drivers/dma/fsl-dpaa2-qdma/Kconfig"
-+
- # clients
- comment "DMA Clients"
- 	depends on DMA_ENGINE
-diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
-index 6126e1c..2499ed8 100644
---- a/drivers/dma/Makefile
-+++ b/drivers/dma/Makefile
-@@ -75,6 +75,7 @@ obj-$(CONFIG_UNIPHIER_MDMAC) += uniphier-mdmac.o
- obj-$(CONFIG_XGENE_DMA) += xgene-dma.o
- obj-$(CONFIG_ZX_DMA) += zx_dma.o
- obj-$(CONFIG_ST_FDMA) += st_fdma.o
-+obj-$(CONFIG_FSL_DPAA2_QDMA) += fsl-dpaa2-qdma/
- 
- obj-y += mediatek/
- obj-y += qcom/
-diff --git a/drivers/dma/fsl-dpaa2-qdma/Kconfig b/drivers/dma/fsl-dpaa2-qdma/Kconfig
-new file mode 100644
-index 0000000..258ed6b
---- /dev/null
-+++ b/drivers/dma/fsl-dpaa2-qdma/Kconfig
-@@ -0,0 +1,9 @@
-+menuconfig FSL_DPAA2_QDMA
-+	tristate "NXP DPAA2 QDMA"
-+	depends on ARM64
-+	depends on FSL_MC_BUS && FSL_MC_DPIO
-+	select DMA_ENGINE
-+	select DMA_VIRTUAL_CHANNELS
-+	help
-+	  NXP Data Path Acceleration Architecture 2 QDMA driver,
-+	  using the NXP MC bus driver.
-diff --git a/drivers/dma/fsl-dpaa2-qdma/Makefile b/drivers/dma/fsl-dpaa2-qdma/Makefile
-new file mode 100644
-index 0000000..c1d0226
---- /dev/null
-+++ b/drivers/dma/fsl-dpaa2-qdma/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Makefile for the NXP DPAA2 qDMA controllers
-+obj-$(CONFIG_FSL_DPAA2_QDMA) += dpaa2-qdma.o dpdmai.o
-diff --git a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
-new file mode 100644
-index 0000000..a5fbf55
---- /dev/null
-+++ b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
-@@ -0,0 +1,826 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright 2019 NXP
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/dmapool.h>
-+#include <linux/of_irq.h>
-+#include <linux/iommu.h>
-+#include <linux/sys_soc.h>
-+#include <linux/fsl/mc.h>
-+#include <soc/fsl/dpaa2-io.h>
-+
-+#include "../virt-dma.h"
-+#include "dpdmai.h"
-+#include "dpaa2-qdma.h"
-+
-+static bool smmu_disable = true;
-+
-+static struct dpaa2_qdma_chan *to_dpaa2_qdma_chan(struct dma_chan *chan)
-+{
-+	return container_of(chan, struct dpaa2_qdma_chan, vchan.chan);
-+}
-+
-+static struct dpaa2_qdma_comp *to_fsl_qdma_comp(struct virt_dma_desc *vd)
-+{
-+	return container_of(vd, struct dpaa2_qdma_comp, vdesc);
-+}
-+
-+static int dpaa2_qdma_alloc_chan_resources(struct dma_chan *chan)
-+{
-+	struct dpaa2_qdma_chan *dpaa2_chan = to_dpaa2_qdma_chan(chan);
-+	struct dpaa2_qdma_engine *dpaa2_qdma = dpaa2_chan->qdma;
-+	struct device *dev = &dpaa2_qdma->priv->dpdmai_dev->dev;
-+
-+	dpaa2_chan->fd_pool = dma_pool_create("fd_pool", dev,
-+					      sizeof(struct dpaa2_fd),
-+					      sizeof(struct dpaa2_fd), 0);
-+	if (!dpaa2_chan->fd_pool)
-+		goto err;
-+
-+	dpaa2_chan->fl_pool = dma_pool_create("fl_pool", dev,
-+					      sizeof(struct dpaa2_fl_entry),
-+					      sizeof(struct dpaa2_fl_entry), 0);
-+	if (!dpaa2_chan->fl_pool)
-+		goto err_fd;
-+
-+	dpaa2_chan->sdd_pool =
-+		dma_pool_create("sdd_pool", dev,
-+				sizeof(struct dpaa2_qdma_sd_d),
-+				sizeof(struct dpaa2_qdma_sd_d), 0);
-+	if (!dpaa2_chan->sdd_pool)
-+		goto err_fl;
-+
-+	return dpaa2_qdma->desc_allocated++;
-+err_fl:
-+	dma_pool_destroy(dpaa2_chan->fl_pool);
-+err_fd:
-+	dma_pool_destroy(dpaa2_chan->fd_pool);
-+err:
-+	return -ENOMEM;
-+}
-+
-+static void dpaa2_qdma_free_chan_resources(struct dma_chan *chan)
-+{
-+	struct dpaa2_qdma_chan *dpaa2_chan = to_dpaa2_qdma_chan(chan);
-+	struct dpaa2_qdma_engine *dpaa2_qdma = dpaa2_chan->qdma;
-+	unsigned long flags;
-+
-+	LIST_HEAD(head);
-+
-+	spin_lock_irqsave(&dpaa2_chan->vchan.lock, flags);
-+	vchan_get_all_descriptors(&dpaa2_chan->vchan, &head);
-+	spin_unlock_irqrestore(&dpaa2_chan->vchan.lock, flags);
-+
-+	vchan_dma_desc_free_list(&dpaa2_chan->vchan, &head);
-+
-+	dpaa2_dpdmai_free_comp(dpaa2_chan, &dpaa2_chan->comp_used);
-+	dpaa2_dpdmai_free_comp(dpaa2_chan, &dpaa2_chan->comp_free);
-+
-+	dma_pool_destroy(dpaa2_chan->fd_pool);
-+	dma_pool_destroy(dpaa2_chan->fl_pool);
-+	dma_pool_destroy(dpaa2_chan->sdd_pool);
-+	dpaa2_qdma->desc_allocated--;
-+}
-+
-+/*
-+ * Request a command descriptor for enqueue.
-+ */
-+static struct dpaa2_qdma_comp *
-+dpaa2_qdma_request_desc(struct dpaa2_qdma_chan *dpaa2_chan)
-+{
-+	struct dpaa2_qdma_comp *comp_temp = NULL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dpaa2_chan->queue_lock, flags);
-+	if (list_empty(&dpaa2_chan->comp_free)) {
-+		spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
-+		comp_temp = kzalloc(sizeof(*comp_temp), GFP_NOWAIT);
-+		if (!comp_temp)
-+			goto err;
-+		comp_temp->fd_virt_addr =
-+			dma_pool_alloc(dpaa2_chan->fd_pool, GFP_NOWAIT,
-+				       &comp_temp->fd_bus_addr);
-+		if (!comp_temp->fd_virt_addr)
-+			goto err_comp;
-+
-+		comp_temp->fl_virt_addr =
-+			dma_pool_alloc(dpaa2_chan->fl_pool, GFP_NOWAIT,
-+				       &comp_temp->fl_bus_addr);
-+		if (!comp_temp->fl_virt_addr)
-+			goto err_fd_virt;
-+
-+		comp_temp->desc_virt_addr =
-+			dma_pool_alloc(dpaa2_chan->sdd_pool, GFP_NOWAIT,
-+				       &comp_temp->desc_bus_addr);
-+		if (!comp_temp->desc_virt_addr)
-+			goto err_fl_virt;
-+
-+		comp_temp->qchan = dpaa2_chan;
-+		return comp_temp;
-+	}
-+
-+	comp_temp = list_first_entry(&dpaa2_chan->comp_free,
-+				     struct dpaa2_qdma_comp, list);
-+	list_del(&comp_temp->list);
-+	spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
-+
-+	comp_temp->qchan = dpaa2_chan;
-+
-+	return comp_temp;
-+
-+err_fl_virt:
-+		dma_pool_free(dpaa2_chan->fl_pool,
-+			      comp_temp->fl_virt_addr,
-+			      comp_temp->fl_bus_addr);
-+err_fd_virt:
-+		dma_pool_free(dpaa2_chan->fd_pool,
-+			      comp_temp->fd_virt_addr,
-+			      comp_temp->fd_bus_addr);
-+err_comp:
-+	kfree(comp_temp);
-+err:
-+	return NULL;
-+}
-+
-+static void
-+dpaa2_qdma_populate_fd(u32 format, struct dpaa2_qdma_comp *dpaa2_comp)
-+{
-+	struct dpaa2_fd *fd;
-+
-+	fd = dpaa2_comp->fd_virt_addr;
-+	memset(fd, 0, sizeof(struct dpaa2_fd));
-+
-+	/* fd populated */
-+	dpaa2_fd_set_addr(fd, dpaa2_comp->fl_bus_addr);
-+
-+	/*
-+	 * Bypass memory translation, Frame list format, short length disable
-+	 * we need to disable BMT if fsl-mc use iova addr
-+	 */
-+	if (smmu_disable)
-+		dpaa2_fd_set_bpid(fd, QMAN_FD_BMT_ENABLE);
-+	dpaa2_fd_set_format(fd, QMAN_FD_FMT_ENABLE | QMAN_FD_SL_DISABLE);
-+
-+	dpaa2_fd_set_frc(fd, format | QDMA_SER_CTX);
-+}
-+
-+/* first frame list for descriptor buffer */
-+static void
-+dpaa2_qdma_populate_first_framel(struct dpaa2_fl_entry *f_list,
-+				 struct dpaa2_qdma_comp *dpaa2_comp,
-+				 bool wrt_changed)
-+{
-+	struct dpaa2_qdma_sd_d *sdd;
-+
-+	sdd = dpaa2_comp->desc_virt_addr;
-+	memset(sdd, 0, 2 * (sizeof(*sdd)));
-+
-+	/* source descriptor CMD */
-+	sdd->cmd = cpu_to_le32(QDMA_SD_CMD_RDTTYPE_COHERENT);
-+	sdd++;
-+
-+	/* dest descriptor CMD */
-+	if (wrt_changed)
-+		sdd->cmd = cpu_to_le32(LX2160_QDMA_DD_CMD_WRTTYPE_COHERENT);
-+	else
-+		sdd->cmd = cpu_to_le32(QDMA_DD_CMD_WRTTYPE_COHERENT);
-+
-+	memset(f_list, 0, sizeof(struct dpaa2_fl_entry));
-+
-+	/* first frame list to source descriptor */
-+	dpaa2_fl_set_addr(f_list, dpaa2_comp->desc_bus_addr);
-+	dpaa2_fl_set_len(f_list, 0x20);
-+	dpaa2_fl_set_format(f_list, QDMA_FL_FMT_SBF | QDMA_FL_SL_LONG);
-+
-+	/* bypass memory translation */
-+	if (smmu_disable)
-+		f_list->bpid = cpu_to_le16(QDMA_FL_BMT_ENABLE);
-+}
-+
-+/* source and destination frame list */
-+static void
-+dpaa2_qdma_populate_frames(struct dpaa2_fl_entry *f_list,
-+			   dma_addr_t dst, dma_addr_t src,
-+			   size_t len, uint8_t fmt)
-+{
-+	/* source frame list to source buffer */
-+	memset(f_list, 0, sizeof(struct dpaa2_fl_entry));
-+
-+	dpaa2_fl_set_addr(f_list, src);
-+	dpaa2_fl_set_len(f_list, len);
-+
-+	/* single buffer frame or scatter gather frame */
-+	dpaa2_fl_set_format(f_list, (fmt | QDMA_FL_SL_LONG));
-+
-+	/* bypass memory translation */
-+	if (smmu_disable)
-+		f_list->bpid = cpu_to_le16(QDMA_FL_BMT_ENABLE);
-+
-+	f_list++;
-+
-+	/* destination frame list to destination buffer */
-+	memset(f_list, 0, sizeof(struct dpaa2_fl_entry));
-+
-+	dpaa2_fl_set_addr(f_list, dst);
-+	dpaa2_fl_set_len(f_list, len);
-+	dpaa2_fl_set_format(f_list, (fmt | QDMA_FL_SL_LONG));
-+	/* single buffer frame or scatter gather frame */
-+	dpaa2_fl_set_final(f_list, QDMA_FL_F);
-+	/* bypass memory translation */
-+	if (smmu_disable)
-+		f_list->bpid = cpu_to_le16(QDMA_FL_BMT_ENABLE);
-+}
-+
-+static struct dma_async_tx_descriptor
-+*dpaa2_qdma_prep_memcpy(struct dma_chan *chan, dma_addr_t dst,
-+			dma_addr_t src, size_t len, ulong flags)
-+{
-+	struct dpaa2_qdma_chan *dpaa2_chan = to_dpaa2_qdma_chan(chan);
-+	struct dpaa2_qdma_engine *dpaa2_qdma;
-+	struct dpaa2_qdma_comp *dpaa2_comp;
-+	struct dpaa2_fl_entry *f_list;
-+	bool wrt_changed;
-+
-+	dpaa2_qdma = dpaa2_chan->qdma;
-+	dpaa2_comp = dpaa2_qdma_request_desc(dpaa2_chan);
-+	if (!dpaa2_comp)
-+		return NULL;
-+
-+	wrt_changed = (bool)dpaa2_qdma->qdma_wrtype_fixup;
-+
-+	/* populate Frame descriptor */
-+	dpaa2_qdma_populate_fd(QDMA_FD_LONG_FORMAT, dpaa2_comp);
-+
-+	f_list = dpaa2_comp->fl_virt_addr;
-+
-+	/* first frame list for descriptor buffer (logn format) */
-+	dpaa2_qdma_populate_first_framel(f_list, dpaa2_comp, wrt_changed);
-+
-+	f_list++;
-+
-+	dpaa2_qdma_populate_frames(f_list, dst, src, len, QDMA_FL_FMT_SBF);
-+
-+	return vchan_tx_prep(&dpaa2_chan->vchan, &dpaa2_comp->vdesc, flags);
-+}
-+
-+static enum
-+dma_status dpaa2_qdma_tx_status(struct dma_chan *chan,
-+				dma_cookie_t cookie,
-+				struct dma_tx_state *txstate)
-+{
-+	return dma_cookie_status(chan, cookie, txstate);
-+}
-+
-+static void dpaa2_qdma_issue_pending(struct dma_chan *chan)
-+{
-+	struct dpaa2_qdma_chan *dpaa2_chan = to_dpaa2_qdma_chan(chan);
-+	struct dpaa2_qdma_comp *dpaa2_comp;
-+	struct virt_dma_desc *vdesc;
-+	struct dpaa2_fd *fd;
-+	unsigned long flags;
-+	int err;
-+
-+	spin_lock_irqsave(&dpaa2_chan->queue_lock, flags);
-+	spin_lock(&dpaa2_chan->vchan.lock);
-+	if (vchan_issue_pending(&dpaa2_chan->vchan)) {
-+		vdesc = vchan_next_desc(&dpaa2_chan->vchan);
-+		if (!vdesc)
-+			goto err_enqueue;
-+		dpaa2_comp = to_fsl_qdma_comp(vdesc);
-+
-+		fd = dpaa2_comp->fd_virt_addr;
-+
-+		list_del(&vdesc->node);
-+		list_add_tail(&dpaa2_comp->list, &dpaa2_chan->comp_used);
-+
-+		err = dpaa2_io_service_enqueue_fq(NULL, dpaa2_chan->fqid, fd);
-+		if (err) {
-+			list_del(&dpaa2_comp->list);
-+			list_add_tail(&dpaa2_comp->list,
-+				      &dpaa2_chan->comp_free);
-+		}
-+	}
-+err_enqueue:
-+	spin_unlock(&dpaa2_chan->vchan.lock);
-+	spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
-+}
-+
-+static int __cold dpaa2_qdma_setup(struct fsl_mc_device *ls_dev)
-+{
-+	struct dpaa2_qdma_priv_per_prio *ppriv;
-+	struct device *dev = &ls_dev->dev;
-+	struct dpaa2_qdma_priv *priv;
-+	u8 prio_def = DPDMAI_PRIO_NUM;
-+	int err = -EINVAL;
-+	int i;
-+
-+	priv = dev_get_drvdata(dev);
-+
-+	priv->dev = dev;
-+	priv->dpqdma_id = ls_dev->obj_desc.id;
-+
-+	/* Get the handle for the DPDMAI this interface is associate with */
-+	err = dpdmai_open(priv->mc_io, 0, priv->dpqdma_id, &ls_dev->mc_handle);
-+	if (err) {
-+		dev_err(dev, "dpdmai_open() failed\n");
-+		return err;
-+	}
-+	dev_info(dev, "Opened dpdmai object successfully\n");
-+
-+	err = dpdmai_get_attributes(priv->mc_io, 0, ls_dev->mc_handle,
-+				    &priv->dpdmai_attr);
-+	if (err) {
-+		dev_err(dev, "dpdmai_get_attributes() failed\n");
-+		goto exit;
-+	}
-+
-+	if (priv->dpdmai_attr.version.major > DPDMAI_VER_MAJOR) {
-+		dev_err(dev, "DPDMAI major version mismatch\n"
-+			     "Found %u.%u, supported version is %u.%u\n",
-+				priv->dpdmai_attr.version.major,
-+				priv->dpdmai_attr.version.minor,
-+				DPDMAI_VER_MAJOR, DPDMAI_VER_MINOR);
-+		goto exit;
-+	}
-+
-+	if (priv->dpdmai_attr.version.minor > DPDMAI_VER_MINOR) {
-+		dev_err(dev, "DPDMAI minor version mismatch\n"
-+			     "Found %u.%u, supported version is %u.%u\n",
-+				priv->dpdmai_attr.version.major,
-+				priv->dpdmai_attr.version.minor,
-+				DPDMAI_VER_MAJOR, DPDMAI_VER_MINOR);
-+		goto exit;
-+	}
-+
-+	priv->num_pairs = min(priv->dpdmai_attr.num_of_priorities, prio_def);
-+	ppriv = kcalloc(priv->num_pairs, sizeof(*ppriv), GFP_KERNEL);
-+	if (!ppriv) {
-+		err = -ENOMEM;
-+		goto exit;
-+	}
-+	priv->ppriv = ppriv;
-+
-+	for (i = 0; i < priv->num_pairs; i++) {
-+		err = dpdmai_get_rx_queue(priv->mc_io, 0, ls_dev->mc_handle,
-+					  i, &priv->rx_queue_attr[i]);
-+		if (err) {
-+			dev_err(dev, "dpdmai_get_rx_queue() failed\n");
-+			goto exit;
-+		}
-+		ppriv->rsp_fqid = priv->rx_queue_attr[i].fqid;
-+
-+		err = dpdmai_get_tx_queue(priv->mc_io, 0, ls_dev->mc_handle,
-+					  i, &priv->tx_queue_attr[i]);
-+		if (err) {
-+			dev_err(dev, "dpdmai_get_tx_queue() failed\n");
-+			goto exit;
-+		}
-+		ppriv->req_fqid = priv->tx_queue_attr[i].fqid;
-+		ppriv->prio = i;
-+		ppriv->priv = priv;
-+		ppriv++;
-+	}
-+
-+	return 0;
-+exit:
-+	dpdmai_close(priv->mc_io, 0, ls_dev->mc_handle);
-+	return err;
-+}
-+
-+static void dpaa2_qdma_fqdan_cb(struct dpaa2_io_notification_ctx *ctx)
-+{
-+	struct dpaa2_qdma_priv_per_prio *ppriv = container_of(ctx,
-+			struct dpaa2_qdma_priv_per_prio, nctx);
-+	struct dpaa2_qdma_comp *dpaa2_comp, *_comp_tmp;
-+	struct dpaa2_qdma_priv *priv = ppriv->priv;
-+	u32 n_chans = priv->dpaa2_qdma->n_chans;
-+	struct dpaa2_qdma_chan *qchan;
-+	const struct dpaa2_fd *fd_eq;
-+	const struct dpaa2_fd *fd;
-+	struct dpaa2_dq *dq;
-+	int is_last = 0;
-+	int found;
-+	u8 status;
-+	int err;
-+	int i;
-+
-+	do {
-+		err = dpaa2_io_service_pull_fq(NULL, ppriv->rsp_fqid,
-+					       ppriv->store);
-+	} while (err);
-+
-+	while (!is_last) {
-+		do {
-+			dq = dpaa2_io_store_next(ppriv->store, &is_last);
-+		} while (!is_last && !dq);
-+		if (!dq) {
-+			dev_err(priv->dev, "FQID returned no valid frames!\n");
-+			continue;
-+		}
-+
-+		/* obtain FD and process the error */
-+		fd = dpaa2_dq_fd(dq);
-+
-+		status = dpaa2_fd_get_ctrl(fd) & 0xff;
-+		if (status)
-+			dev_err(priv->dev, "FD error occurred\n");
-+		found = 0;
-+		for (i = 0; i < n_chans; i++) {
-+			qchan = &priv->dpaa2_qdma->chans[i];
-+			spin_lock(&qchan->queue_lock);
-+			if (list_empty(&qchan->comp_used)) {
-+				spin_unlock(&qchan->queue_lock);
-+				continue;
-+			}
-+			list_for_each_entry_safe(dpaa2_comp, _comp_tmp,
-+						 &qchan->comp_used, list) {
-+				fd_eq = dpaa2_comp->fd_virt_addr;
-+
-+				if (le64_to_cpu(fd_eq->simple.addr) ==
-+				    le64_to_cpu(fd->simple.addr)) {
-+					spin_lock(&qchan->vchan.lock);
-+					vchan_cookie_complete(&
-+							dpaa2_comp->vdesc);
-+					spin_unlock(&qchan->vchan.lock);
-+					found = 1;
-+					break;
-+				}
-+			}
-+			spin_unlock(&qchan->queue_lock);
-+			if (found)
-+				break;
-+		}
-+	}
-+
-+	dpaa2_io_service_rearm(NULL, ctx);
-+}
-+
-+static int __cold dpaa2_qdma_dpio_setup(struct dpaa2_qdma_priv *priv)
-+{
-+	struct dpaa2_qdma_priv_per_prio *ppriv;
-+	struct device *dev = priv->dev;
-+	int err = -EINVAL;
-+	int i, num;
-+
-+	num = priv->num_pairs;
-+	ppriv = priv->ppriv;
-+	for (i = 0; i < num; i++) {
-+		ppriv->nctx.is_cdan = 0;
-+		ppriv->nctx.desired_cpu = DPAA2_IO_ANY_CPU;
-+		ppriv->nctx.id = ppriv->rsp_fqid;
-+		ppriv->nctx.cb = dpaa2_qdma_fqdan_cb;
-+		err = dpaa2_io_service_register(NULL, &ppriv->nctx, dev);
-+		if (err) {
-+			dev_err(dev, "Notification register failed\n");
-+			goto err_service;
-+		}
-+
-+		ppriv->store =
-+			dpaa2_io_store_create(DPAA2_QDMA_STORE_SIZE, dev);
-+		if (!ppriv->store) {
-+			dev_err(dev, "dpaa2_io_store_create() failed\n");
-+			goto err_store;
-+		}
-+
-+		ppriv++;
-+	}
-+	return 0;
-+
-+err_store:
-+	dpaa2_io_service_deregister(NULL, &ppriv->nctx, dev);
-+err_service:
-+	ppriv--;
-+	while (ppriv >= priv->ppriv) {
-+		dpaa2_io_service_deregister(NULL, &ppriv->nctx, dev);
-+		dpaa2_io_store_destroy(ppriv->store);
-+		ppriv--;
-+	}
-+	return err;
-+}
-+
-+static void dpaa2_dpmai_store_free(struct dpaa2_qdma_priv *priv)
-+{
-+	struct dpaa2_qdma_priv_per_prio *ppriv = priv->ppriv;
-+	int i;
-+
-+	for (i = 0; i < priv->num_pairs; i++) {
-+		dpaa2_io_store_destroy(ppriv->store);
-+		ppriv++;
-+	}
-+}
-+
-+static void dpaa2_dpdmai_dpio_free(struct dpaa2_qdma_priv *priv)
-+{
-+	struct dpaa2_qdma_priv_per_prio *ppriv = priv->ppriv;
-+	struct device *dev = priv->dev;
-+	int i;
-+
-+	for (i = 0; i < priv->num_pairs; i++) {
-+		dpaa2_io_service_deregister(NULL, &ppriv->nctx, dev);
-+		ppriv++;
-+	}
-+}
-+
-+static int __cold dpaa2_dpdmai_bind(struct dpaa2_qdma_priv *priv)
-+{
-+	int err;
-+	int i, num;
-+	struct device *dev = priv->dev;
-+	struct dpaa2_qdma_priv_per_prio *ppriv;
-+	struct dpdmai_rx_queue_cfg rx_queue_cfg;
-+	struct fsl_mc_device *ls_dev = to_fsl_mc_device(dev);
-+
-+	num = priv->num_pairs;
-+	ppriv = priv->ppriv;
-+	for (i = 0; i < num; i++) {
-+		rx_queue_cfg.options = DPDMAI_QUEUE_OPT_USER_CTX |
-+					DPDMAI_QUEUE_OPT_DEST;
-+		rx_queue_cfg.user_ctx = ppriv->nctx.qman64;
-+		rx_queue_cfg.dest_cfg.dest_type = DPDMAI_DEST_DPIO;
-+		rx_queue_cfg.dest_cfg.dest_id = ppriv->nctx.dpio_id;
-+		rx_queue_cfg.dest_cfg.priority = ppriv->prio;
-+		err = dpdmai_set_rx_queue(priv->mc_io, 0, ls_dev->mc_handle,
-+					  rx_queue_cfg.dest_cfg.priority,
-+					  &rx_queue_cfg);
-+		if (err) {
-+			dev_err(dev, "dpdmai_set_rx_queue() failed\n");
-+			return err;
-+		}
-+
-+		ppriv++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __cold dpaa2_dpdmai_dpio_unbind(struct dpaa2_qdma_priv *priv)
-+{
-+	int i;
-+	int err = 0;
-+	struct device *dev = priv->dev;
-+	struct fsl_mc_device *ls_dev = to_fsl_mc_device(dev);
-+	struct dpaa2_qdma_priv_per_prio *ppriv = priv->ppriv;
-+
-+	for (i = 0; i < priv->num_pairs; i++) {
-+		ppriv->nctx.qman64 = 0;
-+		ppriv->nctx.dpio_id = 0;
-+		ppriv++;
-+	}
-+
-+	err = dpdmai_reset(priv->mc_io, 0, ls_dev->mc_handle);
-+	if (err)
-+		dev_err(dev, "dpdmai_reset() failed\n");
-+
-+	return err;
-+}
-+
-+static void dpaa2_dpdmai_free_comp(struct dpaa2_qdma_chan *qchan,
-+				   struct list_head *head)
-+{
-+	struct dpaa2_qdma_comp *comp_tmp, *_comp_tmp;
-+	unsigned long flags;
-+
-+	list_for_each_entry_safe(comp_tmp, _comp_tmp,
-+				 head, list) {
-+		spin_lock_irqsave(&qchan->queue_lock, flags);
-+		list_del(&comp_tmp->list);
-+		spin_unlock_irqrestore(&qchan->queue_lock, flags);
-+		dma_pool_free(qchan->fd_pool,
-+			      comp_tmp->fd_virt_addr,
-+			      comp_tmp->fd_bus_addr);
-+		dma_pool_free(qchan->fl_pool,
-+			      comp_tmp->fl_virt_addr,
-+			      comp_tmp->fl_bus_addr);
-+		dma_pool_free(qchan->sdd_pool,
-+			      comp_tmp->desc_virt_addr,
-+			      comp_tmp->desc_bus_addr);
-+		kfree(comp_tmp);
-+	}
-+}
-+
-+static void dpaa2_dpdmai_free_channels(struct dpaa2_qdma_engine *dpaa2_qdma)
-+{
-+	struct dpaa2_qdma_chan *qchan;
-+	int num, i;
-+
-+	num = dpaa2_qdma->n_chans;
-+	for (i = 0; i < num; i++) {
-+		qchan = &dpaa2_qdma->chans[i];
-+		dpaa2_dpdmai_free_comp(qchan, &qchan->comp_used);
-+		dpaa2_dpdmai_free_comp(qchan, &qchan->comp_free);
-+		dma_pool_destroy(qchan->fd_pool);
-+		dma_pool_destroy(qchan->fl_pool);
-+		dma_pool_destroy(qchan->sdd_pool);
-+	}
-+}
-+
-+static void dpaa2_qdma_free_desc(struct virt_dma_desc *vdesc)
-+{
-+	struct dpaa2_qdma_comp *dpaa2_comp;
-+	struct dpaa2_qdma_chan *qchan;
-+	unsigned long flags;
-+
-+	dpaa2_comp = to_fsl_qdma_comp(vdesc);
-+	qchan = dpaa2_comp->qchan;
-+	spin_lock_irqsave(&qchan->queue_lock, flags);
-+	list_del(&dpaa2_comp->list);
-+	list_add_tail(&dpaa2_comp->list, &qchan->comp_free);
-+	spin_unlock_irqrestore(&qchan->queue_lock, flags);
-+}
-+
-+static int dpaa2_dpdmai_init_channels(struct dpaa2_qdma_engine *dpaa2_qdma)
-+{
-+	struct dpaa2_qdma_chan *dpaa2_chan;
-+	struct dpaa2_qdma_priv *priv = dpaa2_qdma->priv;
-+	int num = priv->num_pairs;
-+	int i;
-+
-+	INIT_LIST_HEAD(&dpaa2_qdma->dma_dev.channels);
-+	for (i = 0; i < dpaa2_qdma->n_chans; i++) {
-+		dpaa2_chan = &dpaa2_qdma->chans[i];
-+		dpaa2_chan->qdma = dpaa2_qdma;
-+		dpaa2_chan->fqid = priv->tx_queue_attr[i % num].fqid;
-+		dpaa2_chan->vchan.desc_free = dpaa2_qdma_free_desc;
-+		vchan_init(&dpaa2_chan->vchan, &dpaa2_qdma->dma_dev);
-+		spin_lock_init(&dpaa2_chan->queue_lock);
-+		INIT_LIST_HEAD(&dpaa2_chan->comp_used);
-+		INIT_LIST_HEAD(&dpaa2_chan->comp_free);
-+	}
-+	return 0;
-+}
-+
-+static int dpaa2_qdma_probe(struct fsl_mc_device *dpdmai_dev)
-+{
-+	struct dpaa2_qdma_priv *priv;
-+	struct device *dev = &dpdmai_dev->dev;
-+	struct dpaa2_qdma_engine *dpaa2_qdma;
-+	int err;
-+
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	dev_set_drvdata(dev, priv);
-+	priv->dpdmai_dev = dpdmai_dev;
-+
-+	priv->iommu_domain = iommu_get_domain_for_dev(dev);
-+	if (priv->iommu_domain)
-+		smmu_disable = false;
-+
-+	/* obtain a MC portal */
-+	err = fsl_mc_portal_allocate(dpdmai_dev, 0, &priv->mc_io);
-+	if (err) {
-+		if (err == -ENXIO)
-+			err = -EPROBE_DEFER;
-+		else
-+			dev_err(dev, "MC portal allocation failed\n");
-+		goto err_mcportal;
-+	}
-+
-+	/* DPDMAI initialization */
-+	err = dpaa2_qdma_setup(dpdmai_dev);
-+	if (err) {
-+		dev_err(dev, "dpaa2_dpdmai_setup() failed\n");
-+		goto err_dpdmai_setup;
-+	}
-+
-+	/* DPIO */
-+	err = dpaa2_qdma_dpio_setup(priv);
-+	if (err) {
-+		dev_err(dev, "dpaa2_dpdmai_dpio_setup() failed\n");
-+		goto err_dpio_setup;
-+	}
-+
-+	/* DPDMAI binding to DPIO */
-+	err = dpaa2_dpdmai_bind(priv);
-+	if (err) {
-+		dev_err(dev, "dpaa2_dpdmai_bind() failed\n");
-+		goto err_bind;
-+	}
-+
-+	/* DPDMAI enable */
-+	err = dpdmai_enable(priv->mc_io, 0, dpdmai_dev->mc_handle);
-+	if (err) {
-+		dev_err(dev, "dpdmai_enable() faile\n");
-+		goto err_enable;
-+	}
-+
-+	dpaa2_qdma = kzalloc(sizeof(*dpaa2_qdma), GFP_KERNEL);
-+	if (!dpaa2_qdma) {
-+		err = -ENOMEM;
-+		goto err_eng;
-+	}
-+
-+	priv->dpaa2_qdma = dpaa2_qdma;
-+	dpaa2_qdma->priv = priv;
-+
-+	dpaa2_qdma->desc_allocated = 0;
-+	dpaa2_qdma->n_chans = NUM_CH;
-+
-+	dpaa2_dpdmai_init_channels(dpaa2_qdma);
-+
-+	if (soc_device_match(soc_fixup_tuning))
-+		dpaa2_qdma->qdma_wrtype_fixup = true;
-+	else
-+		dpaa2_qdma->qdma_wrtype_fixup = false;
-+
-+	dma_cap_set(DMA_PRIVATE, dpaa2_qdma->dma_dev.cap_mask);
-+	dma_cap_set(DMA_SLAVE, dpaa2_qdma->dma_dev.cap_mask);
-+	dma_cap_set(DMA_MEMCPY, dpaa2_qdma->dma_dev.cap_mask);
-+
-+	dpaa2_qdma->dma_dev.dev = dev;
-+	dpaa2_qdma->dma_dev.device_alloc_chan_resources =
-+		dpaa2_qdma_alloc_chan_resources;
-+	dpaa2_qdma->dma_dev.device_free_chan_resources =
-+		dpaa2_qdma_free_chan_resources;
-+	dpaa2_qdma->dma_dev.device_tx_status = dpaa2_qdma_tx_status;
-+	dpaa2_qdma->dma_dev.device_prep_dma_memcpy = dpaa2_qdma_prep_memcpy;
-+	dpaa2_qdma->dma_dev.device_issue_pending = dpaa2_qdma_issue_pending;
-+
-+	err = dma_async_device_register(&dpaa2_qdma->dma_dev);
-+	if (err) {
-+		dev_err(dev, "Can't register NXP QDMA engine.\n");
-+		goto err_dpaa2_qdma;
-+	}
-+
-+	return 0;
-+
-+err_dpaa2_qdma:
-+	kfree(dpaa2_qdma);
-+err_eng:
-+	dpdmai_disable(priv->mc_io, 0, dpdmai_dev->mc_handle);
-+err_enable:
-+	dpaa2_dpdmai_dpio_unbind(priv);
-+err_bind:
-+	dpaa2_dpmai_store_free(priv);
-+	dpaa2_dpdmai_dpio_free(priv);
-+err_dpio_setup:
-+	kfree(priv->ppriv);
-+	dpdmai_close(priv->mc_io, 0, dpdmai_dev->mc_handle);
-+err_dpdmai_setup:
-+	fsl_mc_portal_free(priv->mc_io);
-+err_mcportal:
-+	kfree(priv);
-+	dev_set_drvdata(dev, NULL);
-+	return err;
-+}
-+
-+static int dpaa2_qdma_remove(struct fsl_mc_device *ls_dev)
-+{
-+	struct device *dev;
-+	struct dpaa2_qdma_priv *priv;
-+	struct dpaa2_qdma_engine *dpaa2_qdma;
-+
-+	dev = &ls_dev->dev;
-+	priv = dev_get_drvdata(dev);
-+	dpaa2_qdma = priv->dpaa2_qdma;
-+
-+	dpdmai_disable(priv->mc_io, 0, ls_dev->mc_handle);
-+	dpaa2_dpdmai_dpio_unbind(priv);
-+	dpaa2_dpmai_store_free(priv);
-+	dpaa2_dpdmai_dpio_free(priv);
-+	dpdmai_close(priv->mc_io, 0, ls_dev->mc_handle);
-+	fsl_mc_portal_free(priv->mc_io);
-+	dev_set_drvdata(dev, NULL);
-+	dpaa2_dpdmai_free_channels(dpaa2_qdma);
-+
-+	dma_async_device_unregister(&dpaa2_qdma->dma_dev);
-+	kfree(priv);
-+	kfree(dpaa2_qdma);
-+
-+	return 0;
-+}
-+
-+static const struct fsl_mc_device_id dpaa2_qdma_id_table[] = {
-+	{
-+		.vendor = FSL_MC_VENDOR_FREESCALE,
-+		.obj_type = "dpdmai",
-+	},
-+	{ .vendor = 0x0 }
-+};
-+
-+static struct fsl_mc_driver dpaa2_qdma_driver = {
-+	.driver		= {
-+		.name	= "dpaa2-qdma",
-+		.owner  = THIS_MODULE,
-+	},
-+	.probe          = dpaa2_qdma_probe,
-+	.remove		= dpaa2_qdma_remove,
-+	.match_id_table	= dpaa2_qdma_id_table
-+};
-+
-+static int __init dpaa2_qdma_driver_init(void)
-+{
-+	return fsl_mc_driver_register(&(dpaa2_qdma_driver));
-+}
-+late_initcall(dpaa2_qdma_driver_init);
-+
-+static void __exit fsl_qdma_exit(void)
-+{
-+	fsl_mc_driver_unregister(&(dpaa2_qdma_driver));
-+}
-+module_exit(fsl_qdma_exit);
-+
-+MODULE_ALIAS("platform:fsl-dpaa2-qdma");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("NXP Layerscape DPAA2 qDMA engine driver");
-diff --git a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h
-new file mode 100644
-index 0000000..bb243a2
---- /dev/null
-+++ b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h
-@@ -0,0 +1,153 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright 2019 NXP */
-+
-+#ifndef __DPAA2_QDMA_H
-+#define __DPAA2_QDMA_H
-+
-+#define DPAA2_QDMA_STORE_SIZE 16
-+#define NUM_CH 8
-+
-+struct dpaa2_qdma_sd_d {
-+	u32 rsv:32;
-+	union {
-+		struct {
-+			u32 ssd:12; /* souce stride distance */
-+			u32 sss:12; /* souce stride size */
-+			u32 rsv1:8;
-+		} sdf;
-+		struct {
-+			u32 dsd:12; /* Destination stride distance */
-+			u32 dss:12; /* Destination stride size */
-+			u32 rsv2:8;
-+		} ddf;
-+	} df;
-+	u32 rbpcmd;	/* Route-by-port command */
-+	u32 cmd;
-+} __attribute__((__packed__));
-+
-+/* Source descriptor command read transaction type for RBP=0: */
-+/* coherent copy of cacheable memory */
-+#define QDMA_SD_CMD_RDTTYPE_COHERENT (0xb << 28)
-+/* Destination descriptor command write transaction type for RBP=0: */
-+/* coherent copy of cacheable memory */
-+#define QDMA_DD_CMD_WRTTYPE_COHERENT (0x6 << 28)
-+#define LX2160_QDMA_DD_CMD_WRTTYPE_COHERENT (0xb << 28)
-+
-+#define QMAN_FD_FMT_ENABLE	BIT(0) /* frame list table enable */
-+#define QMAN_FD_BMT_ENABLE	BIT(15) /* bypass memory translation */
-+#define QMAN_FD_BMT_DISABLE	(0) /* bypass memory translation */
-+#define QMAN_FD_SL_DISABLE	(0) /* short lengthe disabled */
-+#define QMAN_FD_SL_ENABLE	BIT(14) /* short lengthe enabled */
-+
-+#define QDMA_FINAL_BIT_DISABLE	(0) /* final bit disable */
-+#define QDMA_FINAL_BIT_ENABLE	BIT(31) /* final bit enable */
-+
-+#define QDMA_FD_SHORT_FORMAT	BIT(11) /* short format */
-+#define QDMA_FD_LONG_FORMAT	(0) /* long format */
-+#define QDMA_SER_DISABLE	(8) /* no notification */
-+#define QDMA_SER_CTX		BIT(8) /* notification by FQD_CTX[fqid] */
-+#define QDMA_SER_DEST		(2 << 8) /* notification by destination desc */
-+#define QDMA_SER_BOTH		(3 << 8) /* soruce and dest notification */
-+#define QDMA_FD_SPF_ENALBE	BIT(30) /* source prefetch enable */
-+
-+#define QMAN_FD_VA_ENABLE	BIT(14) /* Address used is virtual address */
-+#define QMAN_FD_VA_DISABLE	(0)/* Address used is a real address */
-+/* Flow Context: 49bit physical address */
-+#define QMAN_FD_CBMT_ENABLE	BIT(15)
-+#define QMAN_FD_CBMT_DISABLE	(0) /* Flow Context: 64bit virtual address */
-+#define QMAN_FD_SC_DISABLE	(0) /* stashing control */
-+
-+#define QDMA_FL_FMT_SBF		(0x0) /* Single buffer frame */
-+#define QDMA_FL_FMT_SGE		(0x2) /* Scatter gather frame */
-+#define QDMA_FL_BMT_ENABLE	BIT(15) /* enable bypass memory translation */
-+#define QDMA_FL_BMT_DISABLE	(0x0) /* enable bypass memory translation */
-+#define QDMA_FL_SL_LONG		(0x0)/* long length */
-+#define QDMA_FL_SL_SHORT	(0x1) /* short length */
-+#define QDMA_FL_F		(0x1)/* last frame list bit */
-+
-+/*Description of Frame list table structure*/
-+struct dpaa2_qdma_chan {
-+	struct dpaa2_qdma_engine	*qdma;
-+	struct virt_dma_chan		vchan;
-+	struct virt_dma_desc		vdesc;
-+	enum dma_status			status;
-+	u32				fqid;
-+
-+	/* spinlock used by dpaa2 qdma driver */
-+	spinlock_t			queue_lock;
-+	struct dma_pool			*fd_pool;
-+	struct dma_pool			*fl_pool;
-+	struct dma_pool			*sdd_pool;
-+
-+	struct list_head		comp_used;
-+	struct list_head		comp_free;
-+
-+};
-+
-+struct dpaa2_qdma_comp {
-+	dma_addr_t		fd_bus_addr;
-+	dma_addr_t		fl_bus_addr;
-+	dma_addr_t		desc_bus_addr;
-+	struct dpaa2_fd		*fd_virt_addr;
-+	struct dpaa2_fl_entry	*fl_virt_addr;
-+	struct dpaa2_qdma_sd_d	*desc_virt_addr;
-+	struct dpaa2_qdma_chan	*qchan;
-+	struct virt_dma_desc	vdesc;
-+	struct list_head	list;
-+};
-+
-+struct dpaa2_qdma_engine {
-+	struct dma_device	dma_dev;
-+	u32			n_chans;
-+	struct dpaa2_qdma_chan	chans[NUM_CH];
-+	int			qdma_wrtype_fixup;
-+	int			desc_allocated;
-+
-+	struct dpaa2_qdma_priv *priv;
-+};
-+
-+/*
-+ * dpaa2_qdma_priv - driver private data
-+ */
-+struct dpaa2_qdma_priv {
-+	int dpqdma_id;
-+
-+	struct iommu_domain	*iommu_domain;
-+	struct dpdmai_attr	dpdmai_attr;
-+	struct device		*dev;
-+	struct fsl_mc_io	*mc_io;
-+	struct fsl_mc_device	*dpdmai_dev;
-+	u8			num_pairs;
-+
-+	struct dpaa2_qdma_engine	*dpaa2_qdma;
-+	struct dpaa2_qdma_priv_per_prio	*ppriv;
-+
-+	struct dpdmai_rx_queue_attr rx_queue_attr[DPDMAI_PRIO_NUM];
-+	struct dpdmai_tx_queue_attr tx_queue_attr[DPDMAI_PRIO_NUM];
-+};
-+
-+struct dpaa2_qdma_priv_per_prio {
-+	int req_fqid;
-+	int rsp_fqid;
-+	int prio;
-+
-+	struct dpaa2_io_store *store;
-+	struct dpaa2_io_notification_ctx nctx;
-+
-+	struct dpaa2_qdma_priv *priv;
-+};
-+
-+static struct soc_device_attribute soc_fixup_tuning[] = {
-+	{ .family = "QorIQ LX2160A"},
-+	{ },
-+};
-+
-+/* FD pool size: one FD + 3 Frame list + 2 source/destination descriptor */
-+#define FD_POOL_SIZE (sizeof(struct dpaa2_fd) + \
-+		sizeof(struct dpaa2_fl_entry) * 3 + \
-+		sizeof(struct dpaa2_qdma_sd_d) * 2)
-+
-+static void dpaa2_dpdmai_free_channels(struct dpaa2_qdma_engine *dpaa2_qdma);
-+static void dpaa2_dpdmai_free_comp(struct dpaa2_qdma_chan *qchan,
-+				   struct list_head *head);
-+#endif /* __DPAA2_QDMA_H */
--- 
-1.7.1
-
+T24gMTMvMDYvMjAxOSAxMDoyMCwgQ2F0YWxpbiBNYXJpbmFzIHdyb3RlOg0KPiBIaSBTemFib2xj
+cywNCj4gDQo+IE9uIFdlZCwgSnVuIDEyLCAyMDE5IGF0IDA1OjMwOjM0UE0gKzAxMDAsIFN6YWJv
+bGNzIE5hZ3kgd3JvdGU6DQo+PiBPbiAxMi8wNi8yMDE5IDE1OjIxLCBWaW5jZW56byBGcmFzY2lu
+byB3cm90ZToNCj4+PiArMi4gQVJNNjQgVGFnZ2VkIEFkZHJlc3MgQUJJDQo+Pj4gKy0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQ0KPj4+ICsNCj4+PiArRnJvbSB0aGUga2VybmVsIHN5c2NhbGwg
+aW50ZXJmYWNlIHByb3NwZWN0aXZlLCB3ZSBkZWZpbmUsIGZvciB0aGUgcHVycG9zZXMNCj4+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeXl5eXl5eXl5eXg0KPj4gcGVyc3Bl
+Y3RpdmUNCj4+DQo+Pj4gK29mIHRoaXMgZG9jdW1lbnQsIGEgInZhbGlkIHRhZ2dlZCBwb2ludGVy
+IiBhcyBhIHBvaW50ZXIgdGhhdCBlaXRoZXIgaXQgaGFzDQo+Pj4gK2EgemVybyB2YWx1ZSBzZXQg
+aW4gdGhlIHRvcCBieXRlIG9yIGl0IGhhcyBhIG5vbi16ZXJvIHZhbHVlLCBpdCBpcyBpbiBtZW1v
+cnkNCj4+PiArcmFuZ2VzIHByaXZhdGVseSBvd25lZCBieSBhIHVzZXJzcGFjZSBwcm9jZXNzIGFu
+ZCBpdCBpcyBvYnRhaW5lZCBpbiBvbmUgb2YNCj4+PiArdGhlIGZvbGxvd2luZyB3YXlzOg0KPj4+
+ICsgIC0gbW1hcCgpIGRvbmUgYnkgdGhlIHByb2Nlc3MgaXRzZWxmLCB3aGVyZSBlaXRoZXI6DQo+
+Pj4gKyAgICAqIGZsYWdzID0gTUFQX1BSSVZBVEUgfCBNQVBfQU5PTllNT1VTDQo+Pj4gKyAgICAq
+IGZsYWdzID0gTUFQX1BSSVZBVEUgYW5kIHRoZSBmaWxlIGRlc2NyaXB0b3IgcmVmZXJzIHRvIGEg
+cmVndWxhcg0KPj4+ICsgICAgICBmaWxlIG9yICIvZGV2L3plcm8iDQo+Pg0KPj4gdGhpcyBkb2Vz
+IG5vdCBtYWtlIGl0IGNsZWFyIGlmIE1BUF9GSVhFRCBvciBvdGhlciBmbGFncyBhcmUgdmFsaWQN
+Cj4+ICh0aGVyZSBhcmUgbWFueSBtYXAgZmxhZ3MgaSBkb24ndCBrbm93LCBidXQgYXQgbGVhc3Qg
+Zml4ZWQgc2hvdWxkIHdvcmsNCj4+IGFuZCBzdGFjay9ncm93c2Rvd24uIGknZCBleHBlY3QgYW55
+dGhpbmcgdGhhdCdzIG5vdCBpbmNvbXBhdGlibGUgd2l0aA0KPj4gcHJpdmF0ZXxhbm9uIHRvIHdv
+cmspLg0KPiANCj4gSnVzdCB0byBjbGFyaWZ5LCB0aGlzIGRvY3VtZW50IHRyaWVzIHRvIGRlZmlu
+ZSB0aGUgbWVtb3J5IHJhbmdlcyBmcm9tDQo+IHdoZXJlIHRhZ2dlZCBhZGRyZXNzZXMgY2FuIGJl
+IHBhc3NlZCBpbnRvIHRoZSBrZXJuZWwgaW4gdGhlIGNvbnRleHQNCj4gb2YgVEJJIG9ubHkgKG5v
+dCBNVEUpOyB0aGF0IGlzIGZvciBod2FzYW4gc3VwcG9ydC4gRklYRUQgb3IgR1JPV1NET1dODQo+
+IHNob3VsZCBub3QgYWZmZWN0IHRoaXMuDQoNCnllcywgc28gZWl0aGVyIHRoZSB0ZXh0IHNob3Vs
+ZCBsaXN0IE1BUF8qIGZsYWdzIHRoYXQgZG9uJ3QgYWZmZWN0DQp0aGUgcG9pbnRlciB0YWdnaW5n
+IHNlbWFudGljcyBvciBzcGVjaWZ5IHByaXZhdGV8YW5vbiBtYXBwaW5nDQp3aXRoIGRpZmZlcmVu
+dCB3b3JkaW5nLg0KDQo+Pj4gKyAgLSBhIG1hcHBpbmcgYmVsb3cgc2JyaygwKSBkb25lIGJ5IHRo
+ZSBwcm9jZXNzIGl0c2VsZg0KPj4NCj4+IGRvZXNuJ3QgdGhlIG1tYXAgcnVsZSBjb3ZlciB0aGlz
+Pw0KPiANCj4gSUlVQyBpdCBkb2Vzbid0IGNvdmVyIGl0IGFzIHRoYXQncyBtZW1vcnkgbWFwcGVk
+IGJ5IHRoZSBrZXJuZWwNCj4gYXV0b21hdGljYWxseSBvbiBhY2Nlc3MgdnMgYSBwb2ludGVyIHJl
+dHVybmVkIGJ5IG1tYXAoKS4gVGhlIHN0YXRlbWVudA0KPiBhYm92ZSB0YWxrcyBhYm91dCBob3cg
+dGhlIGFkZHJlc3MgaXMgb2J0YWluZWQgYnkgdGhlIHVzZXIuDQoNCm9rIGkgcmVhZCAnbWFwcGlu
+ZyBiZWxvdyBzYnJrJyBhcyBhbiBtbWFwIChwb3NzaWJseSBNQVBfRklYRUQpDQp0aGF0IGhhcHBl
+bnMgdG8gYmUgYmVsb3cgdGhlIGhlYXAgYXJlYS4NCg0KaSB0aGluayAiYmVsb3cgc2JyaygwKSIg
+aXMgbm90IHRoZSBiZXN0IHRlcm0gdG8gdXNlOiB0aGVyZQ0KbWF5IGJlIGFkZHJlc3MgcmFuZ2Ug
+YmVsb3cgdGhlIGhlYXAgYXJlYSB0aGF0IGNhbiBiZSBtbWFwcGVkDQphbmQgdGh1cyBiZWxvdyBz
+YnJrKDApIGFuZCBzYnJrIGlzIGEgcG9zaXggYXBpIG5vdCBhIGxpbnV4DQpzeXNjYWxsLCB0aGUg
+bGliYyBjYW4gaW1wbGVtZW50IGl0IHdpdGggbW1hcCBvciB3aGF0ZXZlci4NCg0KaSdtIG5vdCBz
+dXJlIHdoYXQgdGhlIHJpZ2h0IHRlcm0gZm9yICdoZWFwIGFyZWEnIGlzDQoodGhlIGFkZHJlc3Mg
+cmFuZ2UgYmV0d2VlbiBzeXNjYWxsKF9fTlJfYnJrLDApIGF0DQpwcm9ncmFtIHN0YXJ0dXAgYW5k
+IGl0cyBjdXJyZW50IHZhbHVlPykNCg0KPj4+ICsgIC0gYW55IG1lbW9yeSBtYXBwZWQgYnkgdGhl
+IGtlcm5lbCBpbiB0aGUgcHJvY2VzcydzIGFkZHJlc3Mgc3BhY2UgZHVyaW5nDQo+Pj4gKyAgICBj
+cmVhdGlvbiBhbmQgZm9sbG93aW5nIHRoZSByZXN0cmljdGlvbnMgcHJlc2VudGVkIGFib3ZlIChp
+LmUuIGRhdGEsIGJzcywNCj4+PiArICAgIHN0YWNrKS4NCj4+DQo+PiBPSy4NCj4+DQo+PiBDYW4g
+YSBudWxsIHBvaW50ZXIgaGF2ZSBhIHRhZz8NCj4+IChpbiBjYXNlIE5VTEwgaXMgdmFsaWQgdG8g
+cGFzcyB0byBhIHN5c2NhbGwpDQo+IA0KPiBHb29kIHBvaW50LiBJIGRvbid0IHRoaW5rIGl0IGNh
+bi4gV2UgbWF5IGNoYW5nZSB0aGlzIGZvciBNVEUgd2hlcmUgd2UNCj4gZ2l2ZSBhIGhpbnQgdGFn
+IGJ1dCBubyBoaW50IGFkZHJlc3MsIGhvd2V2ZXIsIHRoaXMgZG9jdW1lbnQgb25seSBjb3ZlcnMN
+Cj4gVEJJIGZvciBub3cuDQoNCk9LLg0KDQo+Pj4gK1RoZSBBUk02NCBUYWdnZWQgQWRkcmVzcyBB
+QkkgaXMgYW4gb3B0LWluIGZlYXR1cmUsIGFuZCBhbiBhcHBsaWNhdGlvbiBjYW4NCj4+PiArY29u
+dHJvbCBpdCB1c2luZyB0aGUgZm9sbG93aW5nIHByY3RsKClzOg0KPj4+ICsgIC0gUFJfU0VUX1RB
+R0dFRF9BRERSX0NUUkw6IGNhbiBiZSB1c2VkIHRvIGVuYWJsZSB0aGUgVGFnZ2VkIEFkZHJlc3Mg
+QUJJLg0KPj4+ICsgIC0gUFJfR0VUX1RBR0dFRF9BRERSX0NUUkw6IGNhbiBiZSB1c2VkIHRvIGNo
+ZWNrIHRoZSBzdGF0dXMgb2YgdGhlIFRhZ2dlZA0KPj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIEFkZHJlc3MgQUJJLg0KPj4+ICsNCj4+PiArQXMgYSBjb25zZXF1ZW5jZSBvZiBpbnZv
+a2luZyBQUl9TRVRfVEFHR0VEX0FERFJfQ1RSTCBwcmN0bCgpIGJ5IGFuIGFwcGxpY2F0aW9ucywN
+Cj4+PiArdGhlIEFCSSBndWFyYW50ZWVzIHRoZSBmb2xsb3dpbmcgYmVoYXZpb3VyczoNCj4+PiAr
+DQo+Pj4gKyAgLSBFdmVyeSBjdXJyZW50IG9yIG5ld2x5IGludHJvZHVjZWQgc3lzY2FsbCBjYW4g
+YWNjZXB0IGFueSB2YWxpZCB0YWdnZWQNCj4+PiArICAgIHBvaW50ZXJzLg0KPj4+ICsNCj4+PiAr
+ICAtIElmIGEgbm9uIHZhbGlkIHRhZ2dlZCBwb2ludGVyIGlzIHBhc3NlZCB0byBhIHN5c2NhbGwg
+dGhlbiB0aGUgYmVoYXZpb3VyDQo+Pj4gKyAgICBpcyB1bmRlZmluZWQuDQo+Pj4gKw0KPj4+ICsg
+IC0gRXZlcnkgdmFsaWQgdGFnZ2VkIHBvaW50ZXIgaXMgZXhwZWN0ZWQgdG8gd29yayBhcyBhbiB1
+bnRhZ2dlZCBvbmUuDQo+Pj4gKw0KPj4+ICsgIC0gVGhlIGtlcm5lbCBwcmVzZXJ2ZXMgYW55IHZh
+bGlkIHRhZ2dlZCBwb2ludGVycyBhbmQgcmV0dXJucyB0aGVtIHRvIHRoZQ0KPj4+ICsgICAgdXNl
+cnNwYWNlIHVuY2hhbmdlZCBpbiBhbGwgdGhlIGNhc2VzIGV4Y2VwdCB0aGUgb25lcyBkb2N1bWVu
+dGVkIGluIHRoZQ0KPj4+ICsgICAgIlByZXNlcnZpbmcgdGFncyIgcGFyYWdyYXBoIG9mIHRhZ2dl
+ZC1wb2ludGVycy50eHQuDQo+Pg0KPj4gT0suDQo+Pg0KPj4gaSBndWVzcyBwb2ludGVycyBvZiBh
+bm90aGVyIHByb2Nlc3MgYXJlIG5vdCAidmFsaWQgdGFnZ2VkIHBvaW50ZXJzIg0KPj4gZm9yIHRo
+ZSBjdXJyZW50IG9uZSwgc28gZS5nLiBpbiBwdHJhY2UgdGhlIHB0cmFjZXIgaGFzIHRvIGNsZWFy
+IHRoZQ0KPj4gdGFncyBiZWZvcmUgUEVFSyBldGMuDQo+IA0KPiBBbm90aGVyIGdvb2QgcG9pbnQu
+IEFyZSB0aGVyZSBhbnkgcHJvcy9jb25zIGhlcmUgb3IgdXNlLWNhc2VzPyBXaGVuIHdlDQo+IGFk
+ZCBNVEUgc3VwcG9ydCwgc2hvdWxkIHdlIGhhbmRsZSB0aGlzIGRpZmZlcmVudGx5Pw0KDQppJ20g
+bm90IHN1cmUgd2hhdCBnZGIgZG9lcyBjdXJyZW50bHksIGJ1dCBpdCBoYXMNCmFuICdhZGRyZXNz
+X3NpZ25pZmljYW50JyBob29rIHVzZWQgYXQgYSBmZXcgcGxhY2VzDQp0aGF0IGRyb3BzIHRoZSB0
+YWcgb24gYWFyY2g2NCwgc28gaXQgcHJvYmFibHkNCmF2b2lkcyBwYXNzaW5nIHRhZ2dlZCBwb2lu
+dGVyIHRvIHB0cmFjZS4NCg0KaSB3YXMgd29ycmllZCBhYm91dCBzdHJhY2Ugd2hpY2ggdHJpZXMg
+dG8gcHJpbnQNCnN0cnVjdHMgcGFzc2VkIHRvIHN5c2NhbGxzIGFuZCBmb2xsb3cgcG9pbnRlcnMg
+aW4NCnRoZW0gd2hpY2ggY3VycmVudGx5IHdvdWxkIHdvcmssIGJ1dCBpZiB3ZSBhbGxvdw0KdGFn
+cyBpbiBzeXNjYWxscyB0aGVuIGl0IG5lZWRzIHNvbWUgdXBkYXRlLg0KKGkgaGF2ZW4ndCBjaGVj
+a2VkIHRoZSBzdHJhY2UgY29kZSB0aG91Z2gpDQoNCj4+PiArQSBkZWZpbml0aW9uIG9mIHRoZSBt
+ZWFuaW5nIG9mIHRhZ2dlZCBwb2ludGVycyBvbiBhcm02NCBjYW4gYmUgZm91bmQgaW46DQo+Pj4g
+K0RvY3VtZW50YXRpb24vYXJtNjQvdGFnZ2VkLXBvaW50ZXJzLnR4dC4NCj4+PiArDQo+Pj4gKzMu
+IEFSTTY0IFRhZ2dlZCBBZGRyZXNzIEFCSSBFeGNlcHRpb25zDQo+Pj4gKy0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+Pj4gKw0KPj4+ICtUaGUgYmVoYXZpb3VycyBkZXNj
+cmliZWQgaW4gcGFyYWdyYXBoIDIsIHdpdGggcGFydGljdWxhciByZWZlcmVuY2UgdG8gdGhlDQo+
+Pj4gK2FjY2VwdGFuY2UgYnkgdGhlIHN5c2NhbGxzIG9mIGFueSB2YWxpZCB0YWdnZWQgcG9pbnRl
+ciBhcmUgbm90IGFwcGxpY2FibGUNCj4+PiArdG8gdGhlIGZvbGxvd2luZyBjYXNlczoNCj4+PiAr
+ICAtIG1tYXAoKSBhZGRyIHBhcmFtZXRlci4NCj4+PiArICAtIG1yZW1hcCgpIG5ld19hZGRyZXNz
+IHBhcmFtZXRlci4NCj4+PiArICAtIHByY3RsX3NldF9tbSgpIHN0cnVjdCBwcmN0bF9tYXAgZmll
+bGRzLg0KPj4+ICsgIC0gcHJjdGxfc2V0X21tX21hcCgpIHN0cnVjdCBwcmN0bF9tYXAgZmllbGRz
+Lg0KPj4NCj4+IGkgZG9uJ3QgdW5kZXJzdGFuZCB0aGUgZXhjZXB0aW9uOiBkb2VzIGl0IG1lYW4g
+dGhhdCBwYXNzaW5nIGEgdGFnZ2VkDQo+PiBhZGRyZXNzIHRvIHRoZXNlIHN5c2NhbGxzIGlzIHVu
+ZGVmaW5lZD8NCj4gDQo+IEknZCBzYXkgaXQncyBhcyB1bmRlZmluZWQgYXMgaXQgaXMgcmlnaHQg
+bm93IHdpdGhvdXQgdGhlc2UgcGF0Y2hlcy4gV2UNCj4gbWF5IGJlIGFibGUgdG8gZXhwbGFpbiB0
+aGlzIGJldHRlciBpbiB0aGUgZG9jdW1lbnQuDQo+IA0KDQo=
