@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A0F143FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA0B4429B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390395AbfFMP67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:58:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
+        id S2403980AbfFMQXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731489AbfFMIuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:50:01 -0400
+        id S1731008AbfFMIh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:37:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0FAA20851;
-        Thu, 13 Jun 2019 08:49:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8020820851;
+        Thu, 13 Jun 2019 08:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415800;
-        bh=76D3vaAouJvHGGAHeFdnU7ReK0evbpdCzSUXWh05FYc=;
+        s=default; t=1560415049;
+        bh=3OEXiAs75ff7vu4u0tXJhZvD+5HKzFh2qQAAOpwAB7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ed9x4pwJzF9lSzdTHbJ3Li2XuCibqMiJna+QyI25fcY7IooGi/3fv+aUx09r+AZOj
-         hBmO6DGNu70DWyarUC21v6RGRJiRWatg1VgpVSQd8ittNpSHxXVQvG5Yw04r2bD9c0
-         E0rFHVkrK7YjZS/NoGkKvU3I3WoWPPl/iclEYB7c=
+        b=EkjR69eKLOUNCXs5dikj9hioB+RV2x00rIoz2aY8Jn6cCYvM8j93zgSzk1iH8WCuY
+         uXVLGQJVyEWaFcH0zqjiaDGejHekWKm25p1+nIuJzXHiSkvjrX35Ed608YZA9kDDoI
+         1vE7wbNkC93DzJwEnUV34ezBIRPJMuDOfEgpK6b0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 092/155] x86/PCI: Fix PCI IRQ routing table memory leak
+        stable@vger.kernel.org, Liwei Song <liwei.song@windriver.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 41/81] ALSA: hda - Register irq handler after the chip initialization
 Date:   Thu, 13 Jun 2019 10:33:24 +0200
-Message-Id: <20190613075658.239152949@linuxfoundation.org>
+Message-Id: <20190613075652.365131244@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,65 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ea094d53580f40c2124cef3d072b73b2425e7bfd ]
+[ Upstream commit f495222e28275222ab6fd93813bd3d462e16d340 ]
 
-In pcibios_irq_init(), the PCI IRQ routing table 'pirq_table' is first
-found through pirq_find_routing_table().  If the table is not found and
-CONFIG_PCI_BIOS is defined, the table is then allocated in
-pcibios_get_irq_routing_table() using kmalloc().  Later, if the I/O APIC is
-used, this table is actually not used.  In that case, the allocated table
-is not freed, which is a memory leak.
+Currently the IRQ handler in HD-audio controller driver is registered
+before the chip initialization.  That is, we have some window opened
+between the azx_acquire_irq() call and the CORB/RIRB setup.  If an
+interrupt is triggered in this small window, the IRQ handler may
+access to the uninitialized RIRB buffer, which leads to a NULL
+dereference Oops.
 
-Free the allocated table if it is not used.
+This is usually no big problem since most of Intel chips do register
+the IRQ via MSI, and we've already fixed the order of the IRQ
+enablement and the CORB/RIRB setup in the former commit b61749a89f82
+("sound: enable interrupt after dma buffer initialization"), hence the
+IRQ won't be triggered in that room.  However, some platforms use a
+shared IRQ, and this may allow the IRQ trigger by another source.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-[bhelgaas: added Ingo's reviewed-by, since the only change since v1 was to
-use the irq_routing_table local variable name he suggested]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Another possibility is the kdump environment: a stale interrupt might
+be present in there, the IRQ handler can be falsely triggered as well.
+
+For covering this small race, let's move the azx_acquire_irq() call
+after hda_intel_init_chip() call.  Although this is a bit radical
+change, it can cover more widely than checking the CORB/RIRB setup
+locally in the callee side.
+
+Reported-by: Liwei Song <liwei.song@windriver.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/pci/irq.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_intel.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
-index 52e55108404e..d3a73f9335e1 100644
---- a/arch/x86/pci/irq.c
-+++ b/arch/x86/pci/irq.c
-@@ -1119,6 +1119,8 @@ static const struct dmi_system_id pciirq_dmi_table[] __initconst = {
- 
- void __init pcibios_irq_init(void)
- {
-+	struct irq_routing_table *rtable = NULL;
-+
- 	DBG(KERN_DEBUG "PCI: IRQ init\n");
- 
- 	if (raw_pci_ops == NULL)
-@@ -1129,8 +1131,10 @@ void __init pcibios_irq_init(void)
- 	pirq_table = pirq_find_routing_table();
- 
- #ifdef CONFIG_PCI_BIOS
--	if (!pirq_table && (pci_probe & PCI_BIOS_IRQ_SCAN))
-+	if (!pirq_table && (pci_probe & PCI_BIOS_IRQ_SCAN)) {
- 		pirq_table = pcibios_get_irq_routing_table();
-+		rtable = pirq_table;
-+	}
- #endif
- 	if (pirq_table) {
- 		pirq_peer_trick();
-@@ -1145,8 +1149,10 @@ void __init pcibios_irq_init(void)
- 		 * If we're using the I/O APIC, avoid using the PCI IRQ
- 		 * routing table
- 		 */
--		if (io_apic_assign_pci_irqs)
-+		if (io_apic_assign_pci_irqs) {
-+			kfree(rtable);
- 			pirq_table = NULL;
-+		}
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index afa591cf840a..65fb1e7edb9c 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1839,9 +1839,6 @@ static int azx_first_init(struct azx *chip)
+ 			chip->msi = 0;
  	}
  
- 	x86_init.pci.fixup_irqs();
+-	if (azx_acquire_irq(chip, 0) < 0)
+-		return -EBUSY;
+-
+ 	pci_set_master(pci);
+ 	synchronize_irq(bus->irq);
+ 
+@@ -1956,6 +1953,9 @@ static int azx_first_init(struct azx *chip)
+ 		return -ENODEV;
+ 	}
+ 
++	if (azx_acquire_irq(chip, 0) < 0)
++		return -EBUSY;
++
+ 	strcpy(card->driver, "HDA-Intel");
+ 	strlcpy(card->shortname, driver_short_names[chip->driver_type],
+ 		sizeof(card->shortname));
 -- 
 2.20.1
 
