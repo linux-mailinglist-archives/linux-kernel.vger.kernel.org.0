@@ -2,117 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E465F44121
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B8644123
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391626AbfFMQMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:12:13 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43051 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731223AbfFMQMK (ORCPT
+        id S2391253AbfFMQMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:12:21 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48476 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390977AbfFMQMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:12:10 -0400
-Received: by mail-io1-f67.google.com with SMTP id k20so18143373ios.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6v/23h74yo3j/zUughy0wFFC9yfO7oR+qGcuy0DJBZk=;
-        b=DuXyWXqHXbK8HuFNvok5v3l44KGSaXUZ1sTcFqSZMnKszMlUEbzqFaaqQKvrgWdt46
-         YYkGsl/GqHupyJpXzDqjbJB5SvCmaNd07MaC3gtGS19OoCkNrhvVaEi1/Fyj0w5IwK10
-         NYvTsRGyh722FTs2L1AN0LF1/jyu/pNUmRZsU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6v/23h74yo3j/zUughy0wFFC9yfO7oR+qGcuy0DJBZk=;
-        b=dCtYgCVlT8ky252gKgYoh7H3wyf3vbG0YA+LApifCsmIs7xhF35j9Jd8HNGhjQqXGl
-         ncSvFxiAWCflKBH/7QhhDIQX4ZFiCOSg6gLso3LV0D+oB1Xuew4K7f/rp1LEaWajLhfi
-         IYfKQO0drovSqOEp+/WwU5YMQWlymwz23D+83id2CBicJ0M02eCDorNLselih6SjTSqQ
-         tzYWYxwe4jsvWjAcHNSAt2HuoS6EsAivU9Y38soSpzqOWoWll+zgawjeSbYIUB/m+CAJ
-         aXpKt+w+OPFcmSZojrL0fHDCdDWOMch37o22tCuECibPKhOS7MXLOS+l/nS69uzuWZ4f
-         GF8Q==
-X-Gm-Message-State: APjAAAVxcmWxu6+iUH/PmgnJqAlXSGNFwTM9k8SYFtslMtukA8HRNBAj
-        I0E+m+n/InrprFHOQminfv8nc3WgsbI=
-X-Google-Smtp-Source: APXvYqyXg0pDc+TvjpEgv1yZrMXS6g+2xKTjSDahD0IMW0IM3A7LIg+f0J0HLX08p0YXKKjN/9Jckg==
-X-Received: by 2002:a02:a806:: with SMTP id f6mr61450916jaj.74.1560442329423;
-        Thu, 13 Jun 2019 09:12:09 -0700 (PDT)
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
-        by smtp.gmail.com with ESMTPSA id t133sm502930iof.21.2019.06.13.09.12.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 09:12:08 -0700 (PDT)
-Received: by mail-io1-f49.google.com with SMTP id u13so18174364iop.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:12:08 -0700 (PDT)
-X-Received: by 2002:a5e:db0a:: with SMTP id q10mr11718339iop.168.1560442328298;
- Thu, 13 Jun 2019 09:12:08 -0700 (PDT)
+        Thu, 13 Jun 2019 12:12:16 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6DAE552B;
+        Thu, 13 Jun 2019 18:12:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1560442334;
+        bh=MDH6/vK3lmQEB1yXnrBhx9bgNlNkvKRT+GvpqLMcQf0=;
+        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
+        b=tH2xvhXjuEMzf4zdBEwlAvfY2JBdUFSH44OnRgHh8Q8RMgmlPbakCco5RzRNqi/GD
+         +aX/JGtbTi9sHrxEbXYsrsGhyrHAKasUQrQ6uHItZkpjVjLwG5x4tloXKZaVgiy9BB
+         qT6QzQGT0F927yg19zhqDFzwpLcW+4nlaHjWPz5Q=
+Subject: Re: [PATCH 3/4] media: mn88473: don't check retval after our own
+ assignemt
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
+ <20190613155421.16408-4-wsa+renesas@sang-engineering.com>
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <d4440370-3927-931c-9202-c32eeddf405f@ideasonboard.com>
+Date:   Thu, 13 Jun 2019 17:12:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr> <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
- <a732f522-5e65-3ac4-de04-802ef5455747@free.fr>
-In-Reply-To: <a732f522-5e65-3ac4-de04-802ef5455747@free.fr>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 13 Jun 2019 09:11:56 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U+Ky1bAuAuuY+eBdTP9U3kbuH0tfwyN0Zs-iw0GNUFyQ@mail.gmail.com>
-Message-ID: <CAD=FV=U+Ky1bAuAuuY+eBdTP9U3kbuH0tfwyN0Zs-iw0GNUFyQ@mail.gmail.com>
-Subject: Re: [PATCH v1] iopoll: Tweak readx_poll_timeout sleep range
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190613155421.16408-4-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Wolfram,
 
-On Thu, Jun 13, 2019 at 9:04 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wro=
-te:
->
-> On 13/06/2019 14:42, Arnd Bergmann wrote:
->
-> > On Thu, Jun 13, 2019 at 2:16 PM Marc Gonzalez wrote:
-> >
-> >> Chopping max delay in 4 seems excessive. Let's just cut it in half.
-> >>
-> >> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> >> ---
-> >> When max_us=3D100, old_min was 26 us; new_min would be 50 us
-> >> Was there a good reason for the 1/4th?
-> >> Is new_min=3D0 a problem? (for max=3D1)
-> >
-> > You normally want a large enough range between min and max. I don't
-> > see anything wrong with a factor of four.
->
-> Hmmm, I expect the typical use-case to be:
-> "HW manual states operation X completes in 100 =C2=B5s.
-> Let's call usleep_range(100, foo); before hitting the reg."
->
-> And foo needs to be a "reasonable" value: big enough to be able
-> to merge several requests, low enough not to wait too long after
-> the HW is ready.
->
-> In this case, I'd say usleep_range(100, 200); makes sense.
->
-> Come to think of it, I'm not sure min=3D26 (or min=3D50) makes sense...
-> Why wait *less* than what the user specified?
+On 13/06/2019 16:54, Wolfram Sang wrote:
+> No need to check a retval after we assigned a constant to it.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-IIRC usleep_range() nearly always tries to sleep for the max.  My
-recollection of the design is that you only end up with something less
-than the max if the system was going to wake up anyway.  In such a
-case it seems like it wouldn't be insane to go and check if the
-condition is already true if 25% of the time has passed.  Maybe you'll
-get lucky and you can return early.
+With title fixed.
 
-Are you actually seeing problems with the / 4, or is this patch just a
-result of code inspection?
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
--Doug
+> ---
+>  drivers/media/dvb-frontends/mn88473.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/mn88473.c b/drivers/media/dvb-frontends/mn88473.c
+> index 08118b38533b..d1b11909825c 100644
+> --- a/drivers/media/dvb-frontends/mn88473.c
+> +++ b/drivers/media/dvb-frontends/mn88473.c
+> @@ -661,8 +661,7 @@ static int mn88473_probe(struct i2c_client *client,
+>  	if (dev->client[1] == NULL) {
+>  		ret = -ENODEV;
+>  		dev_err(&client->dev, "I2C registration failed\n");
+> -		if (ret)
+> -			goto err_regmap_0_regmap_exit;
+> +		goto err_regmap_0_regmap_exit;
+>  	}
+>  	dev->regmap[1] = regmap_init_i2c(dev->client[1], &regmap_config);
+>  	if (IS_ERR(dev->regmap[1])) {
+> @@ -675,8 +674,7 @@ static int mn88473_probe(struct i2c_client *client,
+>  	if (dev->client[2] == NULL) {
+>  		ret = -ENODEV;
+>  		dev_err(&client->dev, "2nd I2C registration failed\n");
+> -		if (ret)
+> -			goto err_regmap_1_regmap_exit;
+> +		goto err_regmap_1_regmap_exit;
+>  	}
+>  	dev->regmap[2] = regmap_init_i2c(dev->client[2], &regmap_config);
+>  	if (IS_ERR(dev->regmap[2])) {
+> 
+
