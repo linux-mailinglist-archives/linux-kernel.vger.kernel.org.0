@@ -2,117 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64DA744D56
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D463344D59
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbfFMUYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:24:30 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59714 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbfFMUY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:24:29 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hbWGl-00047r-81; Thu, 13 Jun 2019 14:24:24 -0600
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        nouveau@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>, linux-pci@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190613094326.24093-1-hch@lst.de>
- <CAPcyv4jBdwYaiVwkhy6kP78OBAs+vJme1UTm47dX4Eq_5=JgSg@mail.gmail.com>
- <283e87e8-20b6-0505-a19b-5d18e057f008@deltatee.com>
- <CAPcyv4hx=ng3SxzAWd8s_8VtAfoiiWhiA5kodi9KPc=jGmnejg@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d0da4c86-ef52-b981-06af-b37e3e0515ee@deltatee.com>
-Date:   Thu, 13 Jun 2019 14:24:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729874AbfFMUYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:24:46 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41953 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbfFMUYp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 16:24:45 -0400
+Received: from 79.184.253.190.ipv4.supernova.orange.pl (79.184.253.190) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id a46fe18529be701e; Thu, 13 Jun 2019 22:24:42 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Furquan Shaikh <furquan@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rajatja@google.com
+Subject: Re: [PATCH] ACPI: PM: Clear wake-up device GPEs before enabling
+Date:   Thu, 13 Jun 2019 22:24:41 +0200
+Message-ID: <13361760.nMXA0SR1Mq@kreacher>
+In-Reply-To: <20190516193616.252788-1-furquan@google.com>
+References: <20190516193616.252788-1-furquan@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hx=ng3SxzAWd8s_8VtAfoiiWhiA5kodi9KPc=jGmnejg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: akpm@linux-foundation.org, linux-pci@vger.kernel.org, bskeggs@redhat.com, jgg@mellanox.com, jglisse@redhat.com, linux-mm@kvack.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, linux-nvdimm@lists.01.org, hch@lst.de, dan.j.williams@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: dev_pagemap related cleanups
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-06-13 2:21 p.m., Dan Williams wrote:
-> On Thu, Jun 13, 2019 at 1:18 PM Logan Gunthorpe <logang@deltatee.com> wrote:
->>
->>
->>
->> On 2019-06-13 12:27 p.m., Dan Williams wrote:
->>> On Thu, Jun 13, 2019 at 2:43 AM Christoph Hellwig <hch@lst.de> wrote:
->>>>
->>>> Hi Dan, Jérôme and Jason,
->>>>
->>>> below is a series that cleans up the dev_pagemap interface so that
->>>> it is more easily usable, which removes the need to wrap it in hmm
->>>> and thus allowing to kill a lot of code
->>>>
->>>> Diffstat:
->>>>
->>>>  22 files changed, 245 insertions(+), 802 deletions(-)
->>>
->>> Hooray!
->>>
->>>> Git tree:
->>>>
->>>>     git://git.infradead.org/users/hch/misc.git hmm-devmem-cleanup
->>>
->>> I just realized this collides with the dev_pagemap release rework in
->>> Andrew's tree (commit ids below are from next.git and are not stable)
->>>
->>> 4422ee8476f0 mm/devm_memremap_pages: fix final page put race
->>> 771f0714d0dc PCI/P2PDMA: track pgmap references per resource, not globally
->>> af37085de906 lib/genalloc: introduce chunk owners
->>> e0047ff8aa77 PCI/P2PDMA: fix the gen_pool_add_virt() failure path
->>> 0315d47d6ae9 mm/devm_memremap_pages: introduce devm_memunmap_pages
->>> 216475c7eaa8 drivers/base/devres: introduce devm_release_action()
->>>
->>> CONFLICT (content): Merge conflict in tools/testing/nvdimm/test/iomap.c
->>> CONFLICT (content): Merge conflict in mm/hmm.c
->>> CONFLICT (content): Merge conflict in kernel/memremap.c
->>> CONFLICT (content): Merge conflict in include/linux/memremap.h
->>> CONFLICT (content): Merge conflict in drivers/pci/p2pdma.c
->>> CONFLICT (content): Merge conflict in drivers/nvdimm/pmem.c
->>> CONFLICT (content): Merge conflict in drivers/dax/device.c
->>> CONFLICT (content): Merge conflict in drivers/dax/dax-private.h
->>>
->>> Perhaps we should pull those out and resend them through hmm.git?
->>
->> Hmm, I've been waiting for those patches to get in for a little while now ;(
+On Thursday, May 16, 2019 9:36:16 PM CEST Furquan Shaikh wrote:
+> This change clears GPE status for wake-up devices before enabling that
+> GPE. This is required to ensure that stale GPE status does
+> not result in pre-mature wake on enabling GPE for wake-up devices.
 > 
-> Unless Andrew was going to submit as v5.2-rc fixes I think I should
-> rebase / submit them on current hmm.git and then throw these cleanups
-> from Christoph on top?
+> Without this change, here is the sequence of events that is causing
+> suspend aborts on recent chrome books:
+> 
+> 1. System decides to enter sleep.
+> 2. All devices in the system are put into low power mode.
+> 3. This results in acpi_dev_suspend being called for each ACPI
+> device.
+> 4. If the device is wake capable, then acpi_dev_suspend calls
+> acpi_device_wakeup_enable to enable GPE for the device.
+> 5. If GPE status is already set, enabling GPE for the wakeup device
+> results in generating a SCI which is handled by acpi_ev_detect_gpe
+> ultimately calling wakeup_source_activate that increments wakeup
+> events, and thus aborting the suspend attempt.
+> 
+> Signed-off-by: Furquan Shaikh <furquan@google.com>
+> ---
+>  drivers/acpi/device_pm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
+> index b859d75eaf9f6..e05ee3ff45683 100644
+> --- a/drivers/acpi/device_pm.c
+> +++ b/drivers/acpi/device_pm.c
+> @@ -721,6 +721,8 @@ static int __acpi_device_wakeup_enable(struct acpi_device *adev,
+>  	if (error)
+>  		goto out;
+>  
+> +	acpi_clear_gpe(wakeup->gpe_device, wakeup->gpe_number);
+> +
+>  	status = acpi_enable_gpe(wakeup->gpe_device, wakeup->gpe_number);
+>  	if (ACPI_FAILURE(status)) {
+>  		acpi_disable_wakeup_device_power(adev);
+> 
 
-Whatever you feel is best. I'm just hoping they get in sooner rather
-than later. They do fix a bug after all. Let me know if you want me to
-retest the P2PDMA stuff after the rebase.
+This patch may cause events to be missed if the GPE.  I guess what you reall mean is
+something like the patch below.
 
-Thanks,
+This should allow the kernel to see the events generated before the GPEs are
+implicitly enabled, but it should clear them for the explicit users of acpi_enable_gpe().
 
-Logan
+Mika, what do you think?
+
+---
+ drivers/acpi/acpica/acevents.h |    3 ++-
+ drivers/acpi/acpica/evgpe.c    |    8 +++++++-
+ drivers/acpi/acpica/evgpeblk.c |    2 +-
+ drivers/acpi/acpica/evxface.c  |    2 +-
+ drivers/acpi/acpica/evxfgpe.c  |    2 +-
+ 5 files changed, 12 insertions(+), 5 deletions(-)
+
+Index: linux-pm/drivers/acpi/acpica/acevents.h
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/acevents.h
++++ linux-pm/drivers/acpi/acpica/acevents.h
+@@ -69,7 +69,8 @@ acpi_status
+ acpi_ev_mask_gpe(struct acpi_gpe_event_info *gpe_event_info, u8 is_masked);
+ 
+ acpi_status
+-acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info);
++acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info,
++			  u8 clear_on_enable);
+ 
+ acpi_status
+ acpi_ev_remove_gpe_reference(struct acpi_gpe_event_info *gpe_event_info);
+Index: linux-pm/drivers/acpi/acpica/evgpe.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/evgpe.c
++++ linux-pm/drivers/acpi/acpica/evgpe.c
+@@ -146,6 +146,7 @@ acpi_ev_mask_gpe(struct acpi_gpe_event_i
+  * FUNCTION:    acpi_ev_add_gpe_reference
+  *
+  * PARAMETERS:  gpe_event_info          - Add a reference to this GPE
++ *              clear_on_enable         - Clear GPE status before enabling it
+  *
+  * RETURN:      Status
+  *
+@@ -155,7 +156,8 @@ acpi_ev_mask_gpe(struct acpi_gpe_event_i
+  ******************************************************************************/
+ 
+ acpi_status
+-acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info)
++acpi_ev_add_gpe_reference(struct acpi_gpe_event_info *gpe_event_info,
++			  u8 clear_on_enable)
+ {
+ 	acpi_status status = AE_OK;
+ 
+@@ -170,6 +172,10 @@ acpi_ev_add_gpe_reference(struct acpi_gp
+ 
+ 		/* Enable on first reference */
+ 
++		if (clear_on_enable) {
++			(void)acpi_hw_clear_gpe(gpe_event_info);
++		}
++
+ 		status = acpi_ev_update_gpe_enable_mask(gpe_event_info);
+ 		if (ACPI_SUCCESS(status)) {
+ 			status = acpi_ev_enable_gpe(gpe_event_info);
+Index: linux-pm/drivers/acpi/acpica/evgpeblk.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/evgpeblk.c
++++ linux-pm/drivers/acpi/acpica/evgpeblk.c
+@@ -453,7 +453,7 @@ acpi_ev_initialize_gpe_block(struct acpi
+ 				continue;
+ 			}
+ 
+-			status = acpi_ev_add_gpe_reference(gpe_event_info);
++			status = acpi_ev_add_gpe_reference(gpe_event_info, FALSE);
+ 			if (ACPI_FAILURE(status)) {
+ 				ACPI_EXCEPTION((AE_INFO, status,
+ 					"Could not enable GPE 0x%02X",
+Index: linux-pm/drivers/acpi/acpica/evxface.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/evxface.c
++++ linux-pm/drivers/acpi/acpica/evxface.c
+@@ -971,7 +971,7 @@ acpi_remove_gpe_handler(acpi_handle gpe_
+ 	      ACPI_GPE_DISPATCH_METHOD) ||
+ 	     (ACPI_GPE_DISPATCH_TYPE(handler->original_flags) ==
+ 	      ACPI_GPE_DISPATCH_NOTIFY)) && handler->originally_enabled) {
+-		(void)acpi_ev_add_gpe_reference(gpe_event_info);
++		(void)acpi_ev_add_gpe_reference(gpe_event_info, FALSE);
+ 		if (ACPI_GPE_IS_POLLING_NEEDED(gpe_event_info)) {
+ 
+ 			/* Poll edge triggered GPEs to handle existing events */
+Index: linux-pm/drivers/acpi/acpica/evxfgpe.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/evxfgpe.c
++++ linux-pm/drivers/acpi/acpica/evxfgpe.c
+@@ -108,7 +108,7 @@ acpi_status acpi_enable_gpe(acpi_handle
+ 	if (gpe_event_info) {
+ 		if (ACPI_GPE_DISPATCH_TYPE(gpe_event_info->flags) !=
+ 		    ACPI_GPE_DISPATCH_NONE) {
+-			status = acpi_ev_add_gpe_reference(gpe_event_info);
++			status = acpi_ev_add_gpe_reference(gpe_event_info, TRUE);
+ 			if (ACPI_SUCCESS(status) &&
+ 			    ACPI_GPE_IS_POLLING_NEEDED(gpe_event_info)) {
+ 
+
+
+
