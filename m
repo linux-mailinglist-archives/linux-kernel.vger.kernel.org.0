@@ -2,61 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B564443BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E59DB43BDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731319AbfFMPbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:31:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52448 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728306AbfFMPbp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:31:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f/0g5Z9NCQMhWfThA5zJkOmPa2ERnbPBpaXYsJjVOvs=; b=rrUSOFkA3S2in8Oua2Q2eIa5p
-        6vhNTVYFFi/ghkWdgxaCW0yJp0jbeyCulDj+Nn+PUaRBMr5xamODS2KwatiQV94wvOAyx3eXbN6Rj
-        ZaMWu1gO/mRtKncIIT45SX0x4ifL7b7W4wWa2kRkcN7oTJOm9FZC+sTjzvQd8JBYwByl1A9YcXAjq
-        GKTcXlQklPDdbSO1giVKuIfu+HyxDIQrX5SnMNAMSj+2u5vnKQEW315RLfzh/6t++MYIPh6MSCFgf
-        +Ka/ICJfh2gvI3eTBnvav7r2GMPVXweED7fJ9HpNfXBNOmkAlYDQTI+7/2WorUMzc4iZYm08fcm32
-        9mXFyZ4ig==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbRhW-0004n9-0S; Thu, 13 Jun 2019 15:31:42 +0000
-Date:   Thu, 13 Jun 2019 08:31:41 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Roman Penyaev <rpenyaev@suse.de>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm/vmalloc: Check absolute error return from
- vmap_[p4d|pud|pmd|pte]_range()
-Message-ID: <20190613153141.GJ32656@bombadil.infradead.org>
-References: <1560413551-17460-1-git-send-email-anshuman.khandual@arm.com>
- <7cc6a46c50c2008bfb968c5e48af5a49@suse.de>
- <406afc57-5a77-a77c-7f71-df1e6837dae1@arm.com>
+        id S1731516AbfFMPcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:32:10 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59856 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727134AbfFMPcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:32:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:32:07 -0700
+X-ExtLoop1: 1
+Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
+  by orsmga004.jf.intel.com with ESMTP; 13 Jun 2019 08:32:03 -0700
+Date:   Thu, 13 Jun 2019 18:32:02 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jens.wiklander@linaro.org,
+        corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+Subject: Re: [RFC 4/7] KEYS: trusted: Introduce TEE based Trusted Keys
+Message-ID: <20190613153202.GF18488@linux.intel.com>
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+ <1560421833-27414-5-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <406afc57-5a77-a77c-7f71-df1e6837dae1@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1560421833-27414-5-git-send-email-sumit.garg@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 08:51:17PM +0530, Anshuman Khandual wrote:
-> acceptable ? What we have currently is wrong where vmap_pmd_range() could
-> just wrap EBUSY as ENOMEM and send up the call chain.
+On Thu, Jun 13, 2019 at 04:00:30PM +0530, Sumit Garg wrote:
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key.
+> 
+> Refer to Documentation/tee.txt for detailed information about TEE.
+> 
+> Approach taken in this patch acts as an alternative to a TPM device in case
+> platform doesn't possess one.
+> 
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-It's not wrong.  We do it in lots of places.  Unless there's a caller
-which really needs to know the difference, it's often better than
-returning the "real error".
+How does this interact with the trusted module? Why there is no update
+to security/keys/trusted-encrypted.txt?
+
+Somehow the existing trusted module needs to be re-architected to work
+with either. Otherwise, this will turn out to be a mess.
+
+/Jarkko
