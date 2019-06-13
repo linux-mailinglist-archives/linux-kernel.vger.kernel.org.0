@@ -2,100 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3ECD4395D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B910143B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:29:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388259AbfFMPNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:13:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46238 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732270AbfFMNfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:35:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 072DDAD08;
-        Thu, 13 Jun 2019 13:35:16 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 3FE5ADA897; Thu, 13 Jun 2019 15:36:05 +0200 (CEST)
-From:   David Sterba <dsterba@suse.com>
-To:     peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH] lockdep: introduce lockdep_assert_not_held()
-Date:   Thu, 13 Jun 2019 15:36:04 +0200
-Message-Id: <20190613133604.9889-1-dsterba@suse.com>
-X-Mailer: git-send-email 2.21.0
+        id S1729271AbfFMP3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:29:43 -0400
+Received: from smtp2.ono.com ([62.42.230.179]:47113 "EHLO smtp2.ono.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729434AbfFMP3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:29:35 -0400
+X-Junkmail-Premium-Raw: score=36/50,refid=2.7.2:2019.6.13.124216:17:36.586,ip=62.42.230.133,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, SUBJ_STARTS_IN_SPACE,
+ __SUBJ_ALPHA_END, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
+ MISSING_HEADERS, __ANY_URI, __FRAUD_BODY_WEBMAIL, __URI_NO_WWW,
+ __FRAUD_INTRO, __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
+ __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS,
+ BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_300_399, __MIME_TEXT_P1,
+ __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
+ __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
+ __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
+ WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __MIME_TEXT_P,
+ FRAUD_LITTLE_BODY, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS,
+ BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY,
+ NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
+Received: from resprs03 (62.42.230.133) by smtp2.ono.com (9.0.019.09-1)
+        id 5CAF0F5D03208A45; Thu, 13 Jun 2019 15:36:46 +0200
+Received: from (149.126.75.7) by webmailcpr03n.ono.com;  Thu, 13 Jun 2019 15:36:43 +0200
+Message-ID: <8981845.485281560433003643.JavaMail.defaultUser@defaultHost>
+Date:   Thu, 13 Jun 2019 15:36:43 +0200 (CEST)
+From:   "Mrs.Patricia Lugan" <o0fit@ono.com>
+Reply-To: mrs.patricialugan@gmail.com
+Subject:  Mrs patricia lugan
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an assertion that a lock is not held, suitable for the following
-(simplified) usecase in filesystems:
+Dear Friend,
 
-- filesystem write
-  - lock(&big_filesystem_lock)
-  - kmalloc(GFP_KERNEL)
-    - trigger dirty data write to get more memory
-      - find dirty pages
-      - call filesystem write
-        - lock(&big_filesystem_lock)
-	  deadlock
+ I am Mrs Patricia lugan.am sending you this brief letter to solicit 
+your
+ partnership to transfer $18.5 million US Dollars.I shall send you more
+ information and procedures when I receive positive response from you.
+ please send me a message in my Email box(mrs.patricialugan@gmail.com)
+ as i wait to hear from you.
 
-The cause here is the use of GFP_KERNEL that does not exclude poking
-filesystems to allow freeing some memory. Such scenario is a bug, so the
-use of GFP_NOFS is the right flag.
-
-The annotation can help catch such bugs during development because
-the actual deadlock could be hard to hit in practice.
-
-Signed-off-by: David Sterba <dsterba@suse.com>
----
- Documentation/locking/lockdep-design.txt | 5 +++++
- include/linux/lockdep.h                  | 5 +++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.txt
-index 39fae143c9cb..8b3013aaf518 100644
---- a/Documentation/locking/lockdep-design.txt
-+++ b/Documentation/locking/lockdep-design.txt
-@@ -211,6 +211,11 @@ that nobody tampered with the lock, e.g. kernel/sched/sched.h
- 	lockdep_unpin_lock(&rq->lock, rf->cookie);
-   }
- 
-+In some contexts it is useful to assert that a given lock is not held.  A
-+typical example are filesystems that must avoid recursion to their code when
-+a memory allocation triggers write of dirty data. When the allocation is done
-+with a lock taken, re-entering the code would cause a deadlock.
-+
- While comments about locking requirements might provide useful information,
- the runtime checks performed by annotations are invaluable when debugging
- locking problems and they carry the same level of details when inspecting
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 6e2377e6c1d6..a6682104bd95 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -397,6 +397,10 @@ extern void lock_unpin_lock(struct lockdep_map *lock, struct pin_cookie);
- 		WARN_ON_ONCE(debug_locks && !lockdep_is_held(l));	\
- 	} while (0)
- 
-+#define lockdep_assert_not_held(l)	do {			\
-+		WARN_ON(debug_locks && lockdep_is_held(l));	\
-+	} while (0)
-+
- #define lockdep_recursing(tsk)	((tsk)->lockdep_recursion)
- 
- #define lockdep_pin_lock(l)	lock_pin_lock(&(l)->dep_map)
-@@ -469,6 +473,7 @@ struct lockdep_map { };
- #define lockdep_assert_held_exclusive(l)	do { (void)(l); } while (0)
- #define lockdep_assert_held_read(l)		do { (void)(l); } while (0)
- #define lockdep_assert_held_once(l)		do { (void)(l); } while (0)
-+#define lockdep_assert_not_held(l)		do { (void)(l); } while (0)
- 
- #define lockdep_recursing(tsk)			(0)
- 
--- 
-2.21.0
+ Best regard
+ Mrs patricia lugan
 
