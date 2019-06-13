@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E424844207
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E237B44372
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391925AbfFMQSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:18:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57718 "EHLO mail.kernel.org"
+        id S2392495AbfFMQ3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:29:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731113AbfFMIkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:40:15 -0400
+        id S1730926AbfFMIfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E947620851;
-        Thu, 13 Jun 2019 08:40:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D9DC20851;
+        Thu, 13 Jun 2019 08:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415214;
-        bh=j5w28E3klWyw4CPlY2bADWeTaIatMocL/9pnRrsXdJo=;
+        s=default; t=1560414918;
+        bh=soxBsKMW4Jv4niIPGiv6RKPFrE6/htODN+ez2BEi8/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kVS+itW3LQf+lBcPQ/7WIxbnLYkMCkPcOu9jGw39hSNoocK5VFllaO1QzzdAgsGr/
-         7pDDJg1YBaEojsdK9bu8Tir5Rht4sdrrOMX73FVy0UQukgJww7MrOtWlQ7S7zkiEV5
-         rH0fpokJnGD9ARzmfOJhxL3jogj1o+ljaJd1g5JY=
+        b=K498kQUa1BtM5kM7QLpVUZAay2NNtWZLc/tyFoPr4/dok7w+THiXo1Ryy7vK26uwR
+         ycEmJbQ0iG/iPOsdr7wbftA7xvilFIF5ul9Tlj4J7oRIJs2o05hewTh2ZX2rPUEkGu
+         QA4fTfSZN1ZuGsdpxcfGIWTPQTWQ0avQ8UmYnv2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 045/118] PCI: dwc: Free MSI in dw_pcie_host_init() error path
+        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, jolsa@redhat.com,
+        kan.liang@intel.com, vincent.weaver@maine.edu,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 20/81] perf/x86/intel: Allow PEBS multi-entry in watermark mode
 Date:   Thu, 13 Jun 2019 10:33:03 +0200
-Message-Id: <20190613075646.368348067@linuxfoundation.org>
+Message-Id: <20190613075650.601940431@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,64 +47,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9e2b5de5604a6ff2626c51e77014d92c9299722c ]
+[ Upstream commit c7a286577d7592720c2f179aadfb325a1ff48c95 ]
 
-If we ever did MSI-related initializations, we need to call
-dw_pcie_free_msi() in the error code path.
+This patch fixes a restriction/bug introduced by:
 
-Remove the IS_ENABLED(CONFIG_PCI_MSI) check for MSI init because
-pci_msi_enabled() already has a stub for !CONFIG_PCI_MSI.
+   583feb08e7f7 ("perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS")
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+The original patch prevented using multi-entry PEBS when wakeup_events != 0.
+However given that wakeup_events is part of a union with wakeup_watermark, it
+means that in watermark mode, PEBS multi-entry is also disabled which is not the
+intent. This patch fixes this by checking is watermark mode is enabled.
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: jolsa@redhat.com
+Cc: kan.liang@intel.com
+Cc: vincent.weaver@maine.edu
+Fixes: 583feb08e7f7 ("perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS")
+Link: http://lkml.kernel.org/r/20190514003400.224340-1-eranian@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/events/intel/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index b56e22262a77..4eedb2c54ab3 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -439,7 +439,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	if (ret)
- 		pci->num_viewport = 2;
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 0b93f5519dda..d44bb077c6cf 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3051,7 +3051,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		return ret;
  
--	if (IS_ENABLED(CONFIG_PCI_MSI) && pci_msi_enabled()) {
-+	if (pci_msi_enabled()) {
- 		/*
- 		 * If a specific SoC driver needs to change the
- 		 * default number of vectors, it needs to implement
-@@ -477,7 +477,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	if (pp->ops->host_init) {
- 		ret = pp->ops->host_init(pp);
- 		if (ret)
--			goto error;
-+			goto err_free_msi;
- 	}
- 
- 	pp->root_bus_nr = pp->busn->start;
-@@ -491,7 +491,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 
- 	ret = pci_scan_root_bus_bridge(bridge);
- 	if (ret)
--		goto error;
-+		goto err_free_msi;
- 
- 	bus = bridge->bus;
- 
-@@ -507,6 +507,9 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	pci_bus_add_devices(bus);
- 	return 0;
- 
-+err_free_msi:
-+	if (pci_msi_enabled() && !pp->ops->msi_host_init)
-+		dw_pcie_free_msi(pp);
- error:
- 	pci_free_host_bridge(bridge);
- 	return ret;
+ 	if (event->attr.precise_ip) {
+-		if (!(event->attr.freq || event->attr.wakeup_events)) {
++		if (!(event->attr.freq || (event->attr.wakeup_events && !event->attr.watermark))) {
+ 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
+ 			if (!(event->attr.sample_type &
+ 			      ~intel_pmu_free_running_flags(event)))
 -- 
 2.20.1
 
