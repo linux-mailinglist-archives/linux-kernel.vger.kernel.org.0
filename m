@@ -2,61 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8F943E23
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD32C43E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387734AbfFMPro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:47:44 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:39764 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731751AbfFMJ0m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:26:42 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id A335925B7FA;
-        Thu, 13 Jun 2019 19:26:39 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 91846940483; Thu, 13 Jun 2019 11:26:37 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 11:26:37 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     David Miller <davem@davemloft.net>
-Cc:     fabrizio.castro@bp.renesas.com, wg@grandegger.com,
-        mkl@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert+renesas@glider.be, Chris.Paterson2@renesas.com,
-        biju.das@bp.renesas.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH repost 0/5] Repost CAN and CANFD dt-bindings
-Message-ID: <20190613092635.ztm4k34o5jrxmadd@verge.net.au>
-References: <1557429622-31676-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <TY1PR01MB1770D2AAF2ED748575CA4CBFC0100@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20190612122020.sgp5q427ilh6bbbg@verge.net.au>
- <20190612.094908.1957141510166169801.davem@davemloft.net>
+        id S2389465AbfFMPrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:47:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55346 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731750AbfFMJ1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:27:42 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2AD9430A6986;
+        Thu, 13 Jun 2019 09:27:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8457E600C0;
+        Thu, 13 Jun 2019 09:27:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
+References: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com> <20190612225431.p753mzqynxpsazb7@brauner.io>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: Regression for MS_MOVE on kernel v5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612.094908.1957141510166169801.davem@davemloft.net>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9382.1560418050.1@warthog.procyon.org.uk>
+Date:   Thu, 13 Jun 2019 10:27:30 +0100
+Message-ID: <9383.1560418050@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Jun 2019 09:27:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 09:49:08AM -0700, David Miller wrote:
-> From: Simon Horman <horms@verge.net.au>
-> Date: Wed, 12 Jun 2019 14:20:20 +0200
-> 
-> > are you comfortable with me taking these patches
-> > through the renesas tree? Or perhaps should they be reposted
-> > to you for inclusion in net-next?
-> > 
-> > They have been stuck for a long time now.
-> 
-> They can go through the renesas tree, no problem.
-> 
-> Acked-by: David S. Miller <davem@davemloft.net>
+[Adding Eric to the cc list since he implemented MNT_LOCKED]
 
-Thanks Dave,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-I have applied these to the renesas tree for inclusion in v5.3.
+> > The commit changes the internal logic to lock mounts when propagating
+> > mounts (user+)mount namespaces and - I believe - causes do_mount_move()
+> > to fail at:
+> 
+> You mean 'do_move_mount()'.
+> 
+> > if (old->mnt.mnt_flags & MNT_LOCKED)
+> >         goto out;
+> >
+> > If that's indeed the case we should either revert this commit (reverts
+> > cleanly, just tested it) or find a fix.
+> 
+> Hmm.. I'm not entirely sure of the logic here, and just looking at
+> that commit 3bd045cc9c4b ("separate copying and locking mount tree on
+> cross-userns copies") doesn't make me go "Ahh" either.
+> 
+> Al? My gut feel is that we need to just revert, since this was in 5.1
+> and it's getting reasonably late in 5.2 too. But maybe you go "guys,
+> don't be silly, this is easily fixed with this one-liner".
