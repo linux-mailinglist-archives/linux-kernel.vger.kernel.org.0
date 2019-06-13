@@ -2,151 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7913C44775
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E565B44778
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393202AbfFMQ7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:59:52 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41553 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729799AbfFMAHK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:07:10 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g7so9878537oia.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 17:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Tkriq+76AVHAvWoxrGme0DZvQ0r/bAVgHuOCgkIGtnY=;
-        b=l8XwoOhrF8eV64+8QPkXsyAB77xTxH5+1FeNQoAuo2IunkQvtG1vuCWbxf61GiESpY
-         fQIRFrAiJkW+IrDOfUaKnJbZt9tIC32l6Xy4ybZd5y3ZF5SAN9+oleOeFWzdpXuE5tAV
-         RC4eULNdvWPH93o14WsX9bo0OmW/YIpmbKuQu5yM5Yf06EOJ8i9vnZaZodDO+7FagV71
-         Vn5z9fSnD8ksqLo4LFbc1Dao5jxA7SYmjVUULSHTYmYSmk2sRZLdxHWS6v14AiSxFZzW
-         tg1S2yelMDIEm5tB1fuWa71m73rK7k/ukBJ9OjAtcguxhkgnJ/jKbGZv9vMCqeRRtAHT
-         0UtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Tkriq+76AVHAvWoxrGme0DZvQ0r/bAVgHuOCgkIGtnY=;
-        b=sx2OeFHf1ZmgdpXxvqILAwHTgmJVW5xdXSUlFmbCXeYQxkH31CjkjD+SldH3sBcUbj
-         6NMr2+7EEXY7lHNrTzzccFfuFWVG31xHom/cVWPEK3bfNoSImV+t/onDqBu8ROMfd6hU
-         2c3CWq8jz17AAKGf3Qn+yuA/M1kXRCwX4hJSdq38+WjWI57uPhjjdu0I5U/mfRryJqAG
-         ShuVNnLvbYSQCRhOtIz+qvvtRSittFzod6QICdGUHcEI98AoKHhleaxKvbm/X2VZbobw
-         kyGeVc2MpgQaOB+mZVmcKERKElDxQ2mIhLY5hRYRBQlLh86qVf9Y4n6pMf1GURHUkvbw
-         dLsQ==
-X-Gm-Message-State: APjAAAUETOc+CibhMVaj/3mqurbd/3YwjA7rQdSx0x+Xiq+PXRJz9Btr
-        2q1xOzLNBzgKLIo0nHm650Ezhmt/EJZV0Oyr7yyvYA==
-X-Google-Smtp-Source: APXvYqw2VZtovLNG6JskbLITjxABP/AQIL/VRraLlLfxmhWXh1G3n3MX02RIzNA0cPbyuLQPJ9zagbpHOtrvb+hDjn0=
-X-Received: by 2002:aca:ec82:: with SMTP id k124mr1180994oih.73.1560384429638;
- Wed, 12 Jun 2019 17:07:09 -0700 (PDT)
+        id S1731816AbfFMQ7s convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Jun 2019 12:59:48 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22262 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729804AbfFMAKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 20:10:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2019 17:10:38 -0700
+X-ExtLoop1: 1
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2019 17:10:38 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.166]) by
+ ORSMSX103.amr.corp.intel.com ([169.254.5.232]) with mapi id 14.03.0415.000;
+ Wed, 12 Jun 2019 17:10:37 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>
+CC:     Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "pmccallum@redhat.com" <pmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: RE: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
+ SELinux
+Thread-Topic: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks
+ in SELinux
+Thread-Index: AQHVH1ilvNGS2ZisK0eWTCWidam/YaaW7RmAgACMWICAAWfBAIAAKpIA//+YzvA=
+Date:   Thu, 13 Jun 2019 00:10:37 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F65503261@ORSMSX116.amr.corp.intel.com>
+References: <cover.1560131039.git.cedric.xing@intel.com>
+ <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
+ <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
+ <20190611220243.GB3416@linux.intel.com>
+ <CALCETrWQT3AG+-OKBOzuw-a6VPApkNYsKqZiBmS56-b-72bfYQ@mail.gmail.com>
+ <20190612220242.GJ20308@linux.intel.com>
+In-Reply-To: <20190612220242.GJ20308@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDhmOWQxYWItZGYxOC00NDE5LWI5YmQtMjdkNDE0ZTdmYjVmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYmM4cGFEMU03UU9yd1pLVSs0bEU5czk2RUNacmxySk1RU2w5b1puWjlWTkRIQ3BLdnZJeEVoa1VsTHdMV2pJMiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <1560366952-10660-1-git-send-email-cai@lca.pw> <CAPcyv4hn0Vz24s5EWKr39roXORtBTevZf7dDutH+jwapgV3oSw@mail.gmail.com>
- <CAPcyv4iuNYXmF0-EMP8GF5aiPsWF+pOFMYKCnr509WoAQ0VNUA@mail.gmail.com> <1560376072.5154.6.camel@lca.pw>
-In-Reply-To: <1560376072.5154.6.camel@lca.pw>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 12 Jun 2019 17:06:57 -0700
-Message-ID: <CAPcyv4hevCNgajrw7STXH4N5_heEOBz_-SzxcSB83DKDNacP9Q@mail.gmail.com>
-Subject: Re: [PATCH -next] mm/hotplug: skip bad PFNs from pfn_to_online_page()
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 2:47 PM Qian Cai <cai@lca.pw> wrote:
->
-> On Wed, 2019-06-12 at 12:38 -0700, Dan Williams wrote:
-> > On Wed, Jun 12, 2019 at 12:37 PM Dan Williams <dan.j.williams@intel.com>
-> > wrote:
+> From: Christopherson, Sean J
+> Sent: Wednesday, June 12, 2019 3:03 PM
+> 
+> > I think this model works quite well in an SGX1 world.  The main thing
+> > that makes me uneasy about this model is that, in SGX2, it requires
+> > that an SGX2-compatible enclave loader must pre-declare to the kernel
+> > whether it intends for its dynamically allocated memory to be
+> > ALLOW_EXEC.  If ALLOW_EXEC is set but not actually needed, it will
+> > still fail if DENY_X_IF_ALLOW_WRITE ends up being set.  The other
+> > version below does not have this limitation.
+> 
+> I'm not convinced this will be a meaningful limitation in practice,
+> though that's probably obvious from my RFCs :-).  That being said, the
+> UAPI quirk is essentially a dealbreaker for multiple people, so let's
+> drop #1.
+> 
+> I discussed the options with Cedric offline, and he is ok with option #2
+> *if* the idea actually translates to acceptable code and doesn't present
+> problems for userspace and/or future SGX features.
+> 
+> So, I'll work on an RFC series to implement #2 as described below.  If
+> it works out, yay!  If not, i.e. option #2 is fundamentally broken, I'll
+> shift my focus to Cedric's code (option #3).
+> 
+> > >   2. Pre-check LSM permissions and dynamically track mappings to
+> enclave
+> > >      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
+> > >      based on the pre-checked permissions.
 > > >
-> > > On Wed, Jun 12, 2019 at 12:16 PM Qian Cai <cai@lca.pw> wrote:
-> > > >
-> > > > The linux-next commit "mm/sparsemem: Add helpers track active portions
-> > > > of a section at boot" [1] causes a crash below when the first kmemleak
-> > > > scan kthread kicks in. This is because kmemleak_scan() calls
-> > > > pfn_to_online_page(() which calls pfn_valid_within() instead of
-> > > > pfn_valid() on x86 due to CONFIG_HOLES_IN_ZONE=n.
-> > > >
-> > > > The commit [1] did add an additional check of pfn_section_valid() in
-> > > > pfn_valid(), but forgot to add it in the above code path.
-> > > >
-> > > > page:ffffea0002748000 is uninitialized and poisoned
-> > > > raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> > > > raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> > > > page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-> > > > ------------[ cut here ]------------
-> > > > kernel BUG at include/linux/mm.h:1084!
-> > > > invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-> > > > CPU: 5 PID: 332 Comm: kmemleak Not tainted 5.2.0-rc4-next-20190612+ #6
-> > > > Hardware name: Lenovo ThinkSystem SR530 -[7X07RCZ000]-/-[7X07RCZ000]-,
-> > > > BIOS -[TEE113T-1.00]- 07/07/2017
-> > > > RIP: 0010:kmemleak_scan+0x6df/0xad0
-> > > > Call Trace:
-> > > >  kmemleak_scan_thread+0x9f/0xc7
-> > > >  kthread+0x1d2/0x1f0
-> > > >  ret_from_fork+0x35/0x4
-> > > >
-> > > > [1] https://patchwork.kernel.org/patch/10977957/
-> > > >
-> > > > Signed-off-by: Qian Cai <cai@lca.pw>
-> > > > ---
-> > > >  include/linux/memory_hotplug.h | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/include/linux/memory_hotplug.h
-> > > > b/include/linux/memory_hotplug.h
-> > > > index 0b8a5e5ef2da..f02be86077e3 100644
-> > > > --- a/include/linux/memory_hotplug.h
-> > > > +++ b/include/linux/memory_hotplug.h
-> > > > @@ -28,6 +28,7 @@
-> > > >         unsigned long ___nr = pfn_to_section_nr(___pfn);           \
-> > > >                                                                    \
-> > > >         if (___nr < NR_MEM_SECTIONS && online_section_nr(___nr) && \
-> > > > +           pfn_section_valid(__nr_to_section(___nr), pfn) &&      \
-> > > >             pfn_valid_within(___pfn))                              \
-> > > >                 ___page = pfn_to_page(___pfn);                     \
-> > > >         ___page;                                                   \
-> > >
-> > > Looks ok to me:
-> > >
-> > > Acked-by: Dan Williams <dan.j.williams@intel.com>
-> > >
-> > > ...but why is pfn_to_online_page() a multi-line macro instead of a
-> > > static inline like all the helper routines it invokes?
+> > >      Pros: Does not impact SGX UAPI, medium kernel complexity
+> > >      Cons: Auditing is complex/weird, requires taking enclave-
+> specific
+> > >            lock during mprotect() to query/update tracking.
 > >
-> > I do need to send out a refreshed version of the sub-section patchset,
-> > so I'll fold this in and give you a Reported-by credit.
->
-> BTW, not sure if your new version will fix those two problem below due to the
-> same commit.
->
-> https://patchwork.kernel.org/patch/10977957/
->
-> 1) offline is busted [1]. It looks like test_pages_in_a_zone() missed the same
-> pfn_section_valid() check.
+> > Here's how this looks in my mind.  It's quite similar, except that
+> > ALLOW_READ, ALLOW_WRITE, and ALLOW_EXEC are replaced with a little
+> > state machine.
+> >
+> > EADD does not take any special flags.  It calls this LSM hook:
+> >
+> >   int security_enclave_load(struct vm_area_struct *source);
+> >
+> > This hook can return -EPERM.  Otherwise it 0 or
+> > ALLOC_EXEC_IF_UNMODIFIED (i.e. 1).  This hook enforces permissions (a)
+> and (b).
+> >
+> > The driver tracks a state for each page, and the possible states are:
+> >
+> >  - CLEAN_MAYEXEC /* no W or X VMAs have existed, but X is okay */
+> >  - CLEAN_NOEXEC /* no W or X VMAs have existed, and X is not okay */
+> >  - CLEAN_EXEC /* no W VMA has existed, but an X VMA has existed */
+> >  - DIRTY /* a W VMA has existed */
+> >
+> > The initial state for a page is CLEAN_MAYEXEC if the hook said
+> > ALLOW_EXEC_IF_UNMODIFIED and CLEAN_NOEXEC otherwise.
+> >
+> > The future EAUG does not call a hook at all and puts pages into the
+> > state CLEAN_NOEXEC.  If SGX3 or later ever adds EAUG-but-don't-clear,
+> > it can call security_enclave_load() and add CLEAN_MAYEXEC pages if
+> appropriate.
+> >
+> > EINIT takes a sigstruct pointer.  SGX calls a new hook:
+> >
+> >   unsigned int security_enclave_init(struct sigstruct *sigstruct,
+> > struct vm_area_struct *source, unsigned int flags);
+> >
+> > This hook can return -EPERM.  Otherwise it returns 0 or a combination
+> > of flags DENY_WX and DENY_X_DIRTY.  The driver saves this value.
+> > These represent permissions (c) and (d).
+> >
+> > If we want to have a permission for "execute code supplied from
+> > outside the enclave that was not measured", we could have a flag like
+> > HAS_UNMEASURED_CLEAN_EXEC_PAGE that the LSM could consider.
+> >
+> > mmap() and mprotect() enforce the following rules:
+> >
+> >  - If VM_EXEC is requested and (either the page is DIRTY or VM_WRITE
+> is
+> >    requested) and DENY_X_DIRTY, then deny.
+> >
+> >  - If VM_WRITE and VM_EXEC are both requested and DENY_WX, then deny.
+> >
+> >  - If VM_WRITE is requested, we need to update the state.  If it was
+> >    CLEAN_EXEC, then we reject if DENY_X_DIRTY.  Otherwise we change
+> the
+> >    state to DIRTY.
+> >
+> >  - If VM_EXEC is requested and the page is CLEAN_NOEXEC, then deny.
+> >
+> > mprotect() and mmap() do *not* call SGX-specific LSM hooks to ask for
+> > permission, although they can optionally call an LSM hook if they hit
+> > one of the -EPERM cases for auditing purposes.
+> >
+> > Before the SIGSTRUCT is provided to the driver, the driver acts as
+> > though DENY_X_DIRTY and DENY_WX are both set.
 
-All online memory is to be onlined as a complete section, so I think
-the issue is more related to vmemmap_populated() not establishing the
-mem_map for all pages in a section.
+I think we've been discussing 2 topics simultaneously, one is the state machine that accepts/rejects mmap/mprotect requests, while the other is where is the best place to put it. I think we have an agreement on the former, and IMO option #2 and #3 differ only in the latter.
 
-I take back my suggestions about pfn_valid_within() that operation
-should always be scoped to a section when validating online memory.
+Option #2 keeps the state machine inside SGX subsystem, so it could reuse existing data structures for page tracking/locking to some extent. Sean may have smarter ideas, but it looks to me like the existing 'struct sgx_encl_page' tracks individual enclave pages while the FSM states apply to ranges. So in order *not* to test page by page in mmap/mprotect, I guess some new range oriented structures are still necessary. But I don't think it very important anyway. 
 
->
-> 2) powerpc booting is generating endless warnings [2]. In vmemmap_populated() at
-> arch/powerpc/mm/init_64.c, I tried to change PAGES_PER_SECTION to
-> PAGES_PER_SUBSECTION, but it alone seems not enough.
+My major concern is more from the architecture/modularity perspective. Specifically, the state machine is defined by LSM but SGX does the state transitions. That's a brittle relationship that'd break easily if the state machine changes in future, or if different LSM modules want to define different FSMs (comprised of different set of states and/or triggers). After all, what's needed by the SGX subsystem is just the decision, not the FSM definition. I think we should take a closer look at this area once Sean's patch comes out.
 
-On PowerPC PAGES_PER_SECTION == PAGES_PER_SUBSECTION because the
-PowerPC section size was already small. Instead I think the issue is
-that PowerPC is partially populating sections, but still expecting
-pfn_valid() to succeed. I.e. prior to the subsection patches
-pfn_valid() would still work for those holes, but now that it is more
-precise it is failing.
