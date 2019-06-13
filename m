@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E712B43EFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09128441AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:16:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733014AbfFMPyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:54:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
+        id S2391897AbfFMQQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731569AbfFMIx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:53:28 -0400
+        id S1731160AbfFMIle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:41:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EC5D215EA;
-        Thu, 13 Jun 2019 08:53:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1404621473;
+        Thu, 13 Jun 2019 08:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560416008;
-        bh=id9fzv7nyH1zGmy4h3HEUh/wcEv+8VdU11in07z9XYI=;
+        s=default; t=1560415293;
+        bh=61GBweix5UTf8kAg2xGTzl6CpAUhZk7wGiUDyCDQ2sA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W605ZCzfzg5X2UVloHAskRMdeqLYvM86aLzb7QNZYXkePZuGqf2AkhGJugu2MNPJr
-         jWUUnLvqm/qFA7JgfoSKDbTQQ6Gtb5BgYDDesZd6/lhZqSfa8AC3y9QjrDs6hP31cn
-         IPbRKaoJPsqSOPESmvJlqDJuAGXHeFB1mW8yAMKg=
+        b=PRqTWbyQP2BXLAvx7+SrCP5m940i8tdswAeGeQcWQs1cFnxuBqVuKnC4Je69jnPYK
+         bW/f09Qw+l+qbscEww78Z7be1fdxN+8XVRNwi1gzYXmQ+763nLJ8VfSDXjtg6H0sRc
+         ksYNLGU6XSJgV1plB3wpa9a0NQ4k8CICVrGUHhpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 069/155] watchdog: fix compile time error of pretimeout governors
-Date:   Thu, 13 Jun 2019 10:33:01 +0200
-Message-Id: <20190613075656.842528232@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        linux-um@lists.infradead.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 044/118] uml: fix a boot splat wrt use of cpu_all_mask
+Date:   Thu, 13 Jun 2019 10:33:02 +0200
+Message-Id: <20190613075646.294833490@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +47,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a223770bfa7b6647f3a70983257bd89f9cafce46 ]
+[ Upstream commit 689a58605b63173acb0a8cf954af6a8f60440c93 ]
 
-CONFIG_WATCHDOG_PRETIMEOUT_GOV build symbol adds watchdog_pretimeout.o
-object to watchdog.o, the latter is compiled only if CONFIG_WATCHDOG_CORE
-is selected, so it rightfully makes sense to add it as a dependency.
+Memory: 509108K/542612K available (3835K kernel code, 919K rwdata, 1028K rodata, 129K init, 211K bss, 33504K reserved, 0K cma-reserved)
+NR_IRQS: 15
+clocksource: timer: mask: 0xffffffffffffffff max_cycles: 0x1cd42e205, max_idle_ns: 881590404426 ns
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/time/clockevents.c:458 clockevents_register_device+0x72/0x140
+posix-timer cpumask == cpu_all_mask, using cpu_possible_mask instead
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 5.1.0-rc4-00048-ged79cc87302b #4
+Stack:
+ 604ebda0 603c5370 604ebe20 6046fd17
+ 00000000 6006fcbb 604ebdb0 603c53b5
+ 604ebe10 6003bfc4 604ebdd0 9000001ca
+Call Trace:
+ [<6006fcbb>] ? printk+0x0/0x94
+ [<60083160>] ? clockevents_register_device+0x72/0x140
+ [<6001f16e>] show_stack+0x13b/0x155
+ [<603c5370>] ? dump_stack_print_info+0xe2/0xeb
+ [<6006fcbb>] ? printk+0x0/0x94
+ [<603c53b5>] dump_stack+0x2a/0x2c
+ [<6003bfc4>] __warn+0x10e/0x13e
+ [<60070320>] ? vprintk_func+0xc8/0xcf
+ [<60030fd6>] ? block_signals+0x0/0x16
+ [<6006fcbb>] ? printk+0x0/0x94
+ [<6003c08b>] warn_slowpath_fmt+0x97/0x99
+ [<600311a1>] ? set_signals+0x0/0x3f
+ [<6003bff4>] ? warn_slowpath_fmt+0x0/0x99
+ [<600842cb>] ? tick_oneshot_mode_active+0x44/0x4f
+ [<60030fd6>] ? block_signals+0x0/0x16
+ [<6006fcbb>] ? printk+0x0/0x94
+ [<6007d2d5>] ? __clocksource_select+0x20/0x1b1
+ [<60030fd6>] ? block_signals+0x0/0x16
+ [<6006fcbb>] ? printk+0x0/0x94
+ [<60083160>] clockevents_register_device+0x72/0x140
+ [<60031192>] ? get_signals+0x0/0xf
+ [<60030fd6>] ? block_signals+0x0/0x16
+ [<6006fcbb>] ? printk+0x0/0x94
+ [<60002eec>] um_timer_setup+0xc8/0xca
+ [<60001b59>] start_kernel+0x47f/0x57e
+ [<600035bc>] start_kernel_proc+0x49/0x4d
+ [<6006c483>] ? kmsg_dump_register+0x82/0x8a
+ [<6001de62>] new_thread_handler+0x81/0xb2
+ [<60003571>] ? kmsg_dumper_stdout_init+0x1a/0x1c
+ [<60020c75>] uml_finishsetup+0x54/0x59
 
-The change fixes the next compilation errors, if CONFIG_WATCHDOG_CORE=n
-and CONFIG_WATCHDOG_PRETIMEOUT_GOV=y are selected:
+random: get_random_bytes called from init_oops_id+0x27/0x34 with crng_init=0
+---[ end trace 00173d0117a88acb ]---
+Calibrating delay loop... 6941.90 BogoMIPS (lpj=34709504)
 
-  drivers/watchdog/pretimeout_noop.o: In function `watchdog_gov_noop_register':
-  drivers/watchdog/pretimeout_noop.c:35: undefined reference to `watchdog_register_governor'
-  drivers/watchdog/pretimeout_noop.o: In function `watchdog_gov_noop_unregister':
-  drivers/watchdog/pretimeout_noop.c:40: undefined reference to `watchdog_unregister_governor'
+Signed-off-by: Maciej Żenczykowski <maze@google.com>
+Cc: Jeff Dike <jdike@addtoit.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: linux-um@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 
-  drivers/watchdog/pretimeout_panic.o: In function `watchdog_gov_panic_register':
-  drivers/watchdog/pretimeout_panic.c:35: undefined reference to `watchdog_register_governor'
-  drivers/watchdog/pretimeout_panic.o: In function `watchdog_gov_panic_unregister':
-  drivers/watchdog/pretimeout_panic.c:40: undefined reference to `watchdog_unregister_governor'
-
-Reported-by: Kuo, Hsuan-Chi <hckuo2@illinois.edu>
-Fixes: ff84136cb6a4 ("watchdog: add watchdog pretimeout governor framework")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/um/kernel/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 1d3b4bfbbc4d..d4d6c5b2bef3 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -2028,6 +2028,7 @@ comment "Watchdog Pretimeout Governors"
- 
- config WATCHDOG_PRETIMEOUT_GOV
- 	bool "Enable watchdog pretimeout governors"
-+	depends on WATCHDOG_CORE
- 	help
- 	  The option allows to select watchdog pretimeout governors.
- 
+diff --git a/arch/um/kernel/time.c b/arch/um/kernel/time.c
+index 052de4c8acb2..0c572a48158e 100644
+--- a/arch/um/kernel/time.c
++++ b/arch/um/kernel/time.c
+@@ -56,7 +56,7 @@ static int itimer_one_shot(struct clock_event_device *evt)
+ static struct clock_event_device timer_clockevent = {
+ 	.name			= "posix-timer",
+ 	.rating			= 250,
+-	.cpumask		= cpu_all_mask,
++	.cpumask		= cpu_possible_mask,
+ 	.features		= CLOCK_EVT_FEAT_PERIODIC |
+ 				  CLOCK_EVT_FEAT_ONESHOT,
+ 	.set_state_shutdown	= itimer_shutdown,
 -- 
 2.20.1
 
