@@ -2,81 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1E943B51
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E7043B5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfFMP2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:28:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52048 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfFMP17 (ORCPT
+        id S1727667AbfFMP2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:28:21 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38228 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727555AbfFMP2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:27:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vn04L/39CxGmnFvWZbLFG3AukuBPlzgMR3HJ4g3XYMs=; b=tHlQpyqzo7ZQBVB5wRrQJI46t
-        aGvrn7sclf7JSvki0K76DhAQ9grt++rr3RsyMukb0ZOE6ao5QkZuVltTGW0kSmf01kovvUtAmSiMC
-        FRCnkWcmo+pTrNeUZtpZy52SEQbCrGAv6HRyCq081N6v+J6AluX52Ap/rjGwfAbZNww9f9q25CrJ4
-        2/28x8clrMHc5fH8S/5jQZoozJIYzfzvecMqlkikJzXv1MdjRaDtLgMF0+C/+TZhLxUqIdCboLufF
-        QARq/0WKMHCQBh07+I4aQgQBCb/hzuiZZD053C7PNwE5NpsajGwqxDMtci1Q9lcRzIGXjOlZwRRQS
-        8bRUD+XPw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbRdr-0002TD-Ht; Thu, 13 Jun 2019 15:27:55 +0000
-Date:   Thu, 13 Jun 2019 08:27:55 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613152755.GI32656@bombadil.infradead.org>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
+        Thu, 13 Jun 2019 11:28:19 -0400
+Received: by mail-io1-f66.google.com with SMTP id k13so17807416iop.5;
+        Thu, 13 Jun 2019 08:28:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gs6NoMzyTUTgpt3NkLyMgRheVG07G/duNOUEUDS36y4=;
+        b=oLxsJPOAaVS9zcsx7BtVviCTfEK+f2WaSDX0FvUnPZJm8bRUy6g8IKUUYANmdRPx25
+         GlxF9A6wqxJb4BkTGtlliTe53U4GHvRRyGJAmFt2EkUuVV+GnKoUBT1bGxYwDAIWVPw0
+         8ggxG6XAW8qNM1/oDUILaVEQjuiQBthr7i8Z6IlMv8JkY34tN5VH9Yia/yFv17X/LPOp
+         U4QDpkMrUWcCHu7MLe3EDiq5Rp5h6Yhog5ToBSls+odpCG02s0ydNenpzwdzLCRqFWrT
+         SY4uNh3WCAYYHaDpaBT0ftJ5zmEt+nsfxNYafuisDbUqrmlMfoWRJwBA250P3HkPh9sl
+         QYsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gs6NoMzyTUTgpt3NkLyMgRheVG07G/duNOUEUDS36y4=;
+        b=EGhu7zWQ0rEsn/BmTM++xn8xfRU0dx1vuKGEM+jIlpbSmGlY9nYQj1wRQOp+hWEDu8
+         mHq2SLfQCPn3M1hh6EIdqQKy43JotN3r0yTUNSuSeIt7sGwiKagZdmG9wTc68MUYTg6U
+         Z6BN2p3QpVuhbPKzSxGDYEyZVOzoGRjt+z7IOzYgTWWGXekq0YZd5HqJk7tPM1gEwvSx
+         hcHRgmgg4HI6lHZc+qHyC9AkXZ9WyUjop0kb9eO6e5SIthlTr6cb0Msgsb4+xTEZs8rB
+         LdoRdlM/ElspquelbjQzXhGo/Cd3UFU/54tQiRNanCKXdnA1ceJpMYx4P/nyI23SoIqR
+         dnMw==
+X-Gm-Message-State: APjAAAVIpOKWqdJOWXscoJY4lub9bvZ1UVJjYIQBBjDGfX9tP5n67xX3
+        ld9aLGcfzjmNvtMFYb7Gv+zBo2mjR4CKQxWlALI=
+X-Google-Smtp-Source: APXvYqyf6LHpg96PPrivEyxWZaBVyeZfqd9X/N0jd2g0ZnMTEvKkgMdTLq0AsVbn/YwxOs1DD5G3n9mLN0Y6vRenUhk=
+X-Received: by 2002:a02:bca:: with SMTP id 193mr57475365jad.46.1560439698047;
+ Thu, 13 Jun 2019 08:28:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613002555.GH14363@dread.disaster.area>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
+ <20190613142231.8728-1-jeffrey.l.hugo@gmail.com> <20190613151008.GA6792@builder>
+In-Reply-To: <20190613151008.GA6792@builder>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Thu, 13 Jun 2019 09:28:06 -0600
+Message-ID: <CAOCk7NpPkcFLR9HWQmfx+9heHs6KCPCZo9mSa_ibezdMUMXNFg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] drivers: regulator: qcom_spmi: enable linear range info
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> e.g. Process A has an exclusive layout lease on file F. It does an
-> IO to file F. The filesystem IO path checks that Process A owns the
-> lease on the file and so skips straight through layout breaking
-> because it owns the lease and is allowed to modify the layout. It
-> then takes the inode metadata locks to allocate new space and write
-> new data.
-> 
-> Process B now tries to write to file F. The FS checks whether
-> Process B owns a layout lease on file F. It doesn't, so then it
-> tries to break the layout lease so the IO can proceed. The layout
-> breaking code sees that process A has an exclusive layout lease
-> granted, and so returns -ETXTBSY to process B - it is not allowed to
-> break the lease and so the IO fails with -ETXTBSY.
+On Thu, Jun 13, 2019 at 9:10 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 13 Jun 07:22 PDT 2019, Jeffrey Hugo wrote:
+>
+> > From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> >
+> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > ---
+> >  drivers/regulator/qcom_spmi-regulator.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+> > index 53a61fb65642..fd55438c25d6 100644
+> > --- a/drivers/regulator/qcom_spmi-regulator.c
+> > +++ b/drivers/regulator/qcom_spmi-regulator.c
+> > @@ -1744,6 +1744,7 @@ MODULE_DEVICE_TABLE(of, qcom_spmi_regulator_match);
+> >  static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+> >  {
+> >       const struct spmi_regulator_data *reg;
+> > +     const struct spmi_voltage_range *range;
+> >       const struct of_device_id *match;
+> >       struct regulator_config config = { };
+> >       struct regulator_dev *rdev;
+> > @@ -1833,6 +1834,12 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+> >                       }
+> >               }
+> >
+> > +             if (vreg->logical_type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430) {
+>
+> This doesn't compile, because HFS430 isn't defined until patch 7.
+>
+> But in patch 2 you replace this with a check to see if there's just a
+> single range, which is a better solution. So squash the last hunk of
+> patch 2 into this.
 
-This description doesn't match the behaviour that RDMA wants either.
-Even if Process A has a lease on the file, an IO from Process A which
-results in blocks being freed from the file is going to result in the
-RDMA device being able to write to blocks which are now freed (and
-potentially reallocated to another file).
+Huh, I did botch that.  The patch 2 hunk was intended to be in patch
+1.  Will fix.
+
+>
+> Regards,
+> Bjorn
+>
+> > +                     /* since there is only one range */
+> > +                     range = spmi_regulator_find_range(vreg);
+> > +                     vreg->desc.uV_step = range->step_uV;
+> > +             }
+> > +
+> >               config.dev = dev;
+> >               config.driver_data = vreg;
+> >               config.regmap = regmap;
+> > --
+> > 2.17.1
+> >
