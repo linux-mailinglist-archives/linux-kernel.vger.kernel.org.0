@@ -2,94 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0679438EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754AE438E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387921AbfFMPJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:09:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38952 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbfFMN5N (ORCPT
+        id S2387880AbfFMPJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:09:53 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40281 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732351AbfFMN5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:57:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bd69/laib4ueRDoZQxDoYXylA7gMlrMbtlENzcoL9jQ=; b=Op23Dvp56wQdaroDRYr1A84rcU
-        t+TGZeORM7+U+jB5nkmAfG87tgn8/N7O5dIrHFyNHc2/7EsPv0q1nSlVn9wXNJgRCjdemVX8rH1Xf
-        vDMu2f6oFkbFo7NlFml6PUMeQyO7067xPG+EiaK2Zxk7YszJxLL0UFkxNx8rfMCTorDF/8Jsri/jD
-        95CjvztcTeYvUWYbFWi3yldIWHWiqTs8gTGObfQr5Xd2LWtAgp4LoTBEmh1M7W11F2sF9ZcUFKrrv
-        74P/3ilmh4vatIO8cJH30A87n7o3VCZq6hWBihCI+zdvbl12/q2kmlyI2NV1k8X0QlaCGV3QjYK7M
-        eRjKCdww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbQE0-0005la-0t; Thu, 13 Jun 2019 13:57:08 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 1F2DE20435AA9; Thu, 13 Jun 2019 15:57:05 +0200 (CEST)
-Message-Id: <20190613135653.623354057@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 13 Jun 2019 15:54:50 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, luto@kernel.org, namit@vmware.com,
-        peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] x86/percpu: Optimize raw_cpu_xchg()
-References: <20190613135445.318096781@infradead.org>
+        Thu, 13 Jun 2019 09:57:14 -0400
+Received: by mail-qk1-f194.google.com with SMTP id c70so12754403qkg.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=f8oWkNqIH/DyMOHXpAxjAXd9mO+eys1GPI1tYBrhm3o=;
+        b=slju5Mk6NV/PybHINi/s0pm6qI/7D6HmQM7KjmNLHuc4tFszrsyyy2yzDtVxHIyZXU
+         D16qWNlslGJsEDu9eDPf3JwbhandiXXH++FTeppARL3Qd/NiqI5Pp2oCtFEZhIAwLyUv
+         yeeTLdKcReDi3yCS+hpmrO9v6m1Cue5zcQwZ7NMqUeGI09kjehpUfvP/YAp+4+5/1aHs
+         yJCLWDijzSXk/Vb0zuf0I0T+fN/Axvx4dP/JbBiWZxiHsw8xEqHo/XuCklQnd+DUeRQn
+         bvbiuPQMt6+MjmCX57lD2xIeNihagvn8rpuGrrJSKJkTh66ndPXMZmwj2z7rOEgjWcLW
+         UvbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f8oWkNqIH/DyMOHXpAxjAXd9mO+eys1GPI1tYBrhm3o=;
+        b=DijbktqvZOqIM+9T5eLYWm4Dvt5jzIvNItv0BftfuaKl7DoOHyVQSQD7j6fcnk3pe5
+         gZg3us9LN7OA9ef5KehcQ0vnsx/jRWckbZsHIOci3hsu+K68YOcWkmDj2VUhW31OkAe+
+         g9cUzh1eep0bKCB+8LQUfiqgLzv1nVmPWRCVXOtq/1K/e/GB+CbC0i8HYnjZAaBKAejU
+         N7K9q6fRQHuQgT94Lofx7HOM/lFSc6dJZaPNCSmet89R12TIQ+jLjVcDg8nUjgdUlDLE
+         Dw+cSEHhCrDq1DXE7SPdD7yaCpZqQcQWpmSDxi/qty7OhHawy5vIJkxzU9S5r49Kjumr
+         PHFA==
+X-Gm-Message-State: APjAAAWUHG7fl7OUCnzu3Iq+Rsn0FKPfMvQsm3qtUDOYn+Y/KjzjdtQa
+        zLJGSuPu3aytgbQ6ozaIaGiPZfFx1InhhjQd
+X-Google-Smtp-Source: APXvYqxGT1il2X6VOFbyz2RJsVGEMTFswkGE2VcTUWavs7aHJ61x1eQsmlCA1IQqdvrv4u7hG1Ld+w==
+X-Received: by 2002:ae9:f303:: with SMTP id p3mr5719058qkg.320.1560434233077;
+        Thu, 13 Jun 2019 06:57:13 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::9d6b])
+        by smtp.gmail.com with ESMTPSA id m44sm1846636qtm.54.2019.06.13.06.57.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 06:57:12 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 09:57:11 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 03/19] btrfs: Check and enable HMZONED mode
+Message-ID: <20190613135710.nu5r5bpcwdm4we2w@MacBook-Pro-91.local>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-4-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607131025.31996-4-naohiro.aota@wdc.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since raw_cpu_xchg() doesn't need to be IRQ-safe, like
-this_cpu_xchg(), we can use a simple load-store instead of the cmpxchg
-loop.
+On Fri, Jun 07, 2019 at 10:10:09PM +0900, Naohiro Aota wrote:
+> HMZONED mode cannot be used together with the RAID5/6 profile for now.
+> Introduce the function btrfs_check_hmzoned_mode() to check this. This
+> function will also check if HMZONED flag is enabled on the file system and
+> if the file system consists of zoned devices with equal zone size.
+> 
+> Additionally, as updates to the space cache are in-place, the space cache
+> cannot be located over sequential zones and there is no guarantees that the
+> device will have enough conventional zones to store this cache. Resolve
+> this problem by disabling completely the space cache.  This does not
+> introduces any problems with sequential block groups: all the free space is
+> located after the allocation pointer and no free space before the pointer.
+> There is no need to have such cache.
+> 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/ctree.h       |  3 ++
+>  fs/btrfs/dev-replace.c |  7 +++
+>  fs/btrfs/disk-io.c     |  7 +++
+>  fs/btrfs/super.c       | 12 ++---
+>  fs/btrfs/volumes.c     | 99 ++++++++++++++++++++++++++++++++++++++++++
+>  fs/btrfs/volumes.h     |  1 +
+>  6 files changed, 124 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index b81c331b28fa..6c00101407e4 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -806,6 +806,9 @@ struct btrfs_fs_info {
+>  	struct btrfs_root *uuid_root;
+>  	struct btrfs_root *free_space_root;
+>  
+> +	/* Zone size when in HMZONED mode */
+> +	u64 zone_size;
+> +
+>  	/* the log root tree is a directory of all the other log roots */
+>  	struct btrfs_root *log_root_tree;
+>  
+> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+> index ee0989c7e3a9..fbe5ea2a04ed 100644
+> --- a/fs/btrfs/dev-replace.c
+> +++ b/fs/btrfs/dev-replace.c
+> @@ -201,6 +201,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
+>  		return PTR_ERR(bdev);
+>  	}
+>  
+> +	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
+> +	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
+> +	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/percpu.h |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+You do this in a few places, turn this into a helper please.
 
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -407,9 +407,21 @@ do {									\
- #define raw_cpu_or_1(pcp, val)		percpu_to_op(, "or", (pcp), val)
- #define raw_cpu_or_2(pcp, val)		percpu_to_op(, "or", (pcp), val)
- #define raw_cpu_or_4(pcp, val)		percpu_to_op(, "or", (pcp), val)
--#define raw_cpu_xchg_1(pcp, val)	percpu_xchg_op(, pcp, val)
--#define raw_cpu_xchg_2(pcp, val)	percpu_xchg_op(, pcp, val)
--#define raw_cpu_xchg_4(pcp, val)	percpu_xchg_op(, pcp, val)
-+
-+/*
-+ * raw_cpu_xchg() can use a load-store since it is not required to be
-+ * IRQ-safe.
-+ */
-+#define raw_percpu_xchg_op(var, nval)					\
-+({									\
-+	typeof(var) pxo_ret__ = raw_cpu_read(var);			\
-+	raw_cpu_write(var, (nval));					\
-+	pxo_ret__;							\
-+})
-+
-+#define raw_cpu_xchg_1(pcp, val)	raw_percpu_xchg_op(pcp, val)
-+#define raw_cpu_xchg_2(pcp, val)	raw_percpu_xchg_op(pcp, val)
-+#define raw_cpu_xchg_4(pcp, val)	raw_percpu_xchg_op(pcp, val)
- 
- #define this_cpu_read_1(pcp)		percpu_from_op(volatile, "mov", pcp)
- #define this_cpu_read_2(pcp)		percpu_from_op(volatile, "mov", pcp)
-@@ -472,7 +484,7 @@ do {									\
- #define raw_cpu_and_8(pcp, val)			percpu_to_op(, "and", (pcp), val)
- #define raw_cpu_or_8(pcp, val)			percpu_to_op(, "or", (pcp), val)
- #define raw_cpu_add_return_8(pcp, val)		percpu_add_return_op(, pcp, val)
--#define raw_cpu_xchg_8(pcp, nval)		percpu_xchg_op(, pcp, nval)
-+#define raw_cpu_xchg_8(pcp, nval)		raw_percpu_xchg_op(pcp, nval)
- #define raw_cpu_cmpxchg_8(pcp, oval, nval)	percpu_cmpxchg_op(, pcp, oval, nval)
- 
- #define this_cpu_read_8(pcp)			percpu_from_op(volatile, "mov", pcp)
+> +		ret = -EINVAL;
+> +		goto error;
+> +	}
+> +
+>  	filemap_write_and_wait(bdev->bd_inode->i_mapping);
+>  
+>  	devices = &fs_info->fs_devices->devices;
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 663efce22d98..7c1404c76768 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -3086,6 +3086,13 @@ int open_ctree(struct super_block *sb,
+>  
+>  	btrfs_free_extra_devids(fs_devices, 1);
+>  
+> +	ret = btrfs_check_hmzoned_mode(fs_info);
+> +	if (ret) {
+> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
+> +				ret);
+> +		goto fail_block_groups;
+> +	}
+> +
+>  	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
+>  	if (ret) {
+>  		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 2c66d9ea6a3b..740a701f16c5 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -435,11 +435,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  	bool saved_compress_force;
+>  	int no_compress = 0;
+>  
+> -	cache_gen = btrfs_super_cache_generation(info->super_copy);
+> -	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+> -		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> -	else if (cache_gen)
+> -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> +	if (!btrfs_fs_incompat(info, HMZONED)) {
+> +		cache_gen = btrfs_super_cache_generation(info->super_copy);
+> +		if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+> +			btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> +		else if (cache_gen)
+> +			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> +	}
+>  
 
+This disables the free space tree as well as the cache, sounds like you only
+need to disable the free space cache?  Thanks,
 
+Josef
