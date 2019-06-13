@@ -2,691 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 163CB4473A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60ED4472D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:57:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389845AbfFMQ6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:58:01 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35872 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729912AbfFMAwx (ORCPT
+        id S2393234AbfFMQ5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:57:44 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:60111 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729738AbfFMA4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:52:53 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d21so7327839plr.3;
-        Wed, 12 Jun 2019 17:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6W5EP8+sawSDsDn1xOP+DUkij78RQpXnfdMMGdqsm+U=;
-        b=doNDKSN/EMJVd7SdJF5658/rVYpK6MbE3L7iRqRH6cB/S8Yjne1Af2pziErZGVA/w1
-         U3OXTWcsZvaIFMq/jEMju4YBREd5YVyvwDZrKHviRQwGUTSIDCKnXUJLL6S2SVktm2S8
-         MCxqf4xa1qGJj3tAoqnGGmPjQQZ/brMghEh9u6yCrE6DxPqxs+HafEpeWCvJBNq0kMLX
-         P+5FS3NjH302pP/c8sNaLuTXhkwZnljDMmEl4mSlpyY7Hmy/6XtSdU2uMtFAQDJhNUIc
-         kWA5FuEEbYFeOrAglVTC+HhrMwGEezPcMOl/mZMjdOLsxjgkF7dlpqBvmmLiFxbUqt5w
-         Wmqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6W5EP8+sawSDsDn1xOP+DUkij78RQpXnfdMMGdqsm+U=;
-        b=FGd6xEKeLLUtA1C4nwa02dtIFvIV/9jWVFYspEI2M0S5gnYXmNa1FwgShmaref5NYD
-         H003vVsZNpd01dKxksRScD2PjkuJiWgRIZBuJL5b8THkLbtggbBwZTAIAmsWBuWF3c1O
-         xLNp6mQAYZ/adY/vDbdyjghG4v+h9uU+fWhsjQ8Ice0FvBCWN3idRXS4txzMlKQx7+vQ
-         179BRTdM6j4NzD3HLkrzEpBL/AMiHMYli9yYybQWZPPxdj7bOBeVtB4TjrjK5OTUY3iS
-         eceNC4NAQFE+UhrPC8MY8hmrVD4ypAPvb6igMSuCihQ1OHBhi6lIPnOlo3huV2hqgTNO
-         sthA==
-X-Gm-Message-State: APjAAAVxivhYeyDTgIpVS2b388Ei3soTuyVyS2RhB8IFX8A+Bky9OuV6
-        /qXVSptTmQ0SbEmbQuyHN3a/chwv
-X-Google-Smtp-Source: APXvYqx2DcPyWn620KOnixELIVQnvtIPZkzHnx0hYZFGwvR5PNNbhxDbM8TLjSssy7Aetc1SAe/uIg==
-X-Received: by 2002:a17:902:1486:: with SMTP id k6mr20172216pla.177.1560387172076;
-        Wed, 12 Jun 2019 17:52:52 -0700 (PDT)
-Received: from localhost.localdomain ([2604:3d09:b080:d00:7990:5eb3:9633:9569])
-        by smtp.gmail.com with ESMTPSA id o11sm486167pjp.31.2019.06.12.17.52.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 17:52:51 -0700 (PDT)
-From:   jassisinghbrar@gmail.com
-To:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     vkoul@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        orito.takao@socionext.com, masami.hiramatsu@linaro.org,
-        kasai.kazuhiro@socionext.com,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: [PATCH 2/2] dmaengine: milbeaut-hdmac: Add HDMAC driver for Milbeaut platforms
-Date:   Wed, 12 Jun 2019 19:52:47 -0500
-Message-Id: <20190613005247.2048-1-jassisinghbrar@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190613005109.1867-1-jassisinghbrar@gmail.com>
-References: <20190613005109.1867-1-jassisinghbrar@gmail.com>
+        Wed, 12 Jun 2019 20:56:55 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 3CE4F105FED4;
+        Thu, 13 Jun 2019 10:56:50 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hbE1w-0004JV-Dn; Thu, 13 Jun 2019 10:55:52 +1000
+Date:   Thu, 13 Jun 2019 10:55:52 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613005552.GI14363@dread.disaster.area>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
+ <20190612233024.GD14336@iweiny-DESK2.sc.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612233024.GD14336@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=S7HuRrsnkTe4mrBiyeoA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jassi Brar <jaswinder.singh@linaro.org>
+On Wed, Jun 12, 2019 at 04:30:24PM -0700, Ira Weiny wrote:
+> On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
+> > On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
+> > > On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
+> > > > Are you suggesting that we have something like this from user space?
+> > > > 
+> > > > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
+> > > 
+> > > Rather than "unbreakable", perhaps a clearer description of the
+> > > policy it entails is "exclusive"?
+> > > 
+> > > i.e. what we are talking about here is an exclusive lease that
+> > > prevents other processes from changing the layout. i.e. the
+> > > mechanism used to guarantee a lease is exclusive is that the layout
+> > > becomes "unbreakable" at the filesystem level, but the policy we are
+> > > actually presenting to uses is "exclusive access"...
+> > 
+> > That's rather different from the normal meaning of 'exclusive' in the
+> > context of locks, which is "only one user can have access to this at
+> > a time".  As I understand it, this is rather more like a 'shared' or
+> > 'read' lock.  The filesystem would be the one which wants an exclusive
+> > lock, so it can modify the mapping of logical to physical blocks.
+> > 
+> > The complication being that by default the filesystem has an exclusive
+> > lock on the mapping, and what we're trying to add is the ability for
+> > readers to ask the filesystem to give up its exclusive lock.
+> 
+> This is an interesting view...
+> 
+> And after some more thought, exclusive does not seem like a good name for this
+> because technically F_WRLCK _is_ an exclusive lease...
+> 
+> In addition, the user does not need to take the "exclusive" write lease to be
+> notified of (broken by) an unexpected truncate.  A "read" lease is broken by
+> truncate.  (And "write" leases really don't do anything different WRT the
+> interaction of the FS and the user app.  Write leases control "exclusive"
+> access between other file descriptors.)
 
-Driver for Socionext Milbeaut HDMAC controller. The controller has
-upto 8 floating channels, that need a predefined slave-id to work
-from a set of slaves.
+I've been assuming that there is only one type of layout lease -
+there is no use case I've heard of for read/write layout leases, and
+like you say there is zero difference in behaviour at the filesystem
+level - they all have to be broken to allow a non-lease truncate to
+proceed.
 
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
----
- drivers/dma/Kconfig          |  10 +
- drivers/dma/Makefile         |   1 +
- drivers/dma/milbeaut-hdmac.c | 572 +++++++++++++++++++++++++++++++++++
- 3 files changed, 583 insertions(+)
- create mode 100644 drivers/dma/milbeaut-hdmac.c
+IMO, taking a "read lease" to be able to modify and write to the
+underlying mapping of a file makes absolutely no sense at all.
+IOWs, we're talking exaclty about a revokable layout lease vs an
+exclusive layout lease here, and so read/write really doesn't match
+the policy or semantics we are trying to provide.
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 703275cc29de..15a1d5263ca1 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -347,6 +347,16 @@ config MCF_EDMA
- 	  minimal intervention from a host processor.
- 	  This module can be found on Freescale ColdFire mcf5441x SoCs.
- 
-+config MILBEAUT_HDMAC
-+	tristate "Milbeaut AHB DMA support"
-+	depends on ARCH_MILBEAUT || COMPILE_TEST
-+	depends on OF
-+	select DMA_ENGINE
-+	select DMA_VIRTUAL_CHANNELS
-+	help
-+	  Say yes here to support the Socionext Milbeaut
-+	  HDMAC device.
-+
- config MMP_PDMA
- 	bool "MMP PDMA support"
- 	depends on ARCH_MMP || ARCH_PXA || COMPILE_TEST
-diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
-index 6126e1c3a875..d0a9f46726e8 100644
---- a/drivers/dma/Makefile
-+++ b/drivers/dma/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_INTEL_IOP_ADMA) += iop-adma.o
- obj-$(CONFIG_INTEL_MIC_X100_DMA) += mic_x100_dma.o
- obj-$(CONFIG_K3_DMA) += k3dma.o
- obj-$(CONFIG_LPC18XX_DMAMUX) += lpc18xx-dmamux.o
-+obj-$(CONFIG_MILBEAUT_HDMAC) += milbeaut-hdmac.o
- obj-$(CONFIG_MMP_PDMA) += mmp_pdma.o
- obj-$(CONFIG_MMP_TDMA) += mmp_tdma.o
- obj-$(CONFIG_MOXART_DMA) += moxart-dma.o
-diff --git a/drivers/dma/milbeaut-hdmac.c b/drivers/dma/milbeaut-hdmac.c
-new file mode 100644
-index 000000000000..9c9fabdf8cdc
---- /dev/null
-+++ b/drivers/dma/milbeaut-hdmac.c
-@@ -0,0 +1,572 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2019 Linaro Ltd.
-+// Copyright (C) 2019 Socionext Inc.
-+
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_dma.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/bitfield.h>
-+
-+#include "virt-dma.h"
-+
-+#define MLB_HDMAC_DMACR		0x0	/* global */
-+#define MLB_HDMAC_DE		BIT(31)
-+#define MLB_HDMAC_DS		BIT(30)
-+#define MLB_HDMAC_PR		BIT(28)
-+#define MLB_HDMAC_DH		GENMASK(27, 24)
-+
-+#define MLB_HDMAC_CH_STRIDE	0x10
-+
-+#define MLB_HDMAC_DMACA		0x0	/* channel */
-+#define MLB_HDMAC_EB		BIT(31)
-+#define MLB_HDMAC_PB		BIT(30)
-+#define MLB_HDMAC_ST		BIT(29)
-+#define MLB_HDMAC_IS		GENMASK(28, 24)
-+#define MLB_HDMAC_BT		GENMASK(23, 20)
-+#define MLB_HDMAC_BC		GENMASK(19, 16)
-+#define MLB_HDMAC_TC		GENMASK(15, 0)
-+#define MLB_HDMAC_DMACB		0x4
-+#define MLB_HDMAC_TT		GENMASK(31, 30)
-+#define MLB_HDMAC_MS		GENMASK(29, 28)
-+#define MLB_HDMAC_TW		GENMASK(27, 26)
-+#define MLB_HDMAC_FS		BIT(25)
-+#define MLB_HDMAC_FD		BIT(24)
-+#define MLB_HDMAC_RC		BIT(23)
-+#define MLB_HDMAC_RS		BIT(22)
-+#define MLB_HDMAC_RD		BIT(21)
-+#define MLB_HDMAC_EI		BIT(20)
-+#define MLB_HDMAC_CI		BIT(19)
-+#define MLB_HDMAC_SS		GENMASK(18, 16)
-+#define MLB_HDMAC_SP		GENMASK(15, 12)
-+#define MLB_HDMAC_DP		GENMASK(11, 8)
-+#define MLB_HDMAC_DMACSA	0x8
-+#define MLB_HDMAC_DMACDA	0xc
-+
-+#define MLB_HDMAC_BUSWIDTHS		(BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) | \
-+					BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) | \
-+					BIT(DMA_SLAVE_BUSWIDTH_4_BYTES))
-+
-+struct milbeaut_hdmac_desc {
-+	struct virt_dma_desc vd;
-+	struct scatterlist *sgl;
-+	unsigned int sg_len;
-+	unsigned int sg_cur;
-+	enum dma_transfer_direction dir;
-+};
-+
-+struct milbeaut_hdmac_chan {
-+	struct virt_dma_chan vc;
-+	struct milbeaut_hdmac_device *mdev;
-+	struct milbeaut_hdmac_desc *md;
-+	void __iomem *reg_ch_base;
-+	unsigned int slave_id;
-+	struct dma_slave_config	cfg;
-+};
-+
-+struct milbeaut_hdmac_device {
-+	struct dma_device ddev;
-+	struct clk *clk;
-+	void __iomem *reg_base;
-+	struct milbeaut_hdmac_chan channels[0];
-+};
-+
-+static struct milbeaut_hdmac_chan *
-+to_milbeaut_hdmac_chan(struct virt_dma_chan *vc)
-+{
-+	return container_of(vc, struct milbeaut_hdmac_chan, vc);
-+}
-+
-+static struct milbeaut_hdmac_desc *
-+to_milbeaut_hdmac_desc(struct virt_dma_desc *vd)
-+{
-+	return container_of(vd, struct milbeaut_hdmac_desc, vd);
-+}
-+
-+/* mc->vc.lock must be held by caller */
-+static struct milbeaut_hdmac_desc *
-+milbeaut_hdmac_next_desc(struct milbeaut_hdmac_chan *mc)
-+{
-+	struct virt_dma_desc *vd;
-+
-+	vd = vchan_next_desc(&mc->vc);
-+	if (!vd) {
-+		mc->md = NULL;
-+		return NULL;
-+	}
-+
-+	list_del(&vd->node);
-+
-+	mc->md = to_milbeaut_hdmac_desc(vd);
-+
-+	return mc->md;
-+}
-+
-+/* mc->vc.lock must be held by caller */
-+static void milbeaut_chan_start(struct milbeaut_hdmac_chan *mc,
-+				struct milbeaut_hdmac_desc *md)
-+{
-+	struct scatterlist *sg;
-+	u32  cb, ca, src_addr, dest_addr, len;
-+	u32 width, burst;
-+
-+	sg = &md->sgl[md->sg_cur];
-+	len = sg_dma_len(sg);
-+
-+	cb = MLB_HDMAC_CI | MLB_HDMAC_EI;
-+	if (md->dir == DMA_MEM_TO_DEV) {
-+		cb |= MLB_HDMAC_FD;
-+		width = mc->cfg.dst_addr_width;
-+		burst = mc->cfg.dst_maxburst;
-+		src_addr = sg_dma_address(sg);
-+		dest_addr = mc->cfg.dst_addr;
-+	} else {
-+		cb |= MLB_HDMAC_FS;
-+		width = mc->cfg.src_addr_width;
-+		burst = mc->cfg.src_maxburst;
-+		src_addr = mc->cfg.src_addr;
-+		dest_addr = sg_dma_address(sg);
-+	}
-+	cb |= FIELD_PREP(MLB_HDMAC_TW, (width >> 1));
-+	cb |= FIELD_PREP(MLB_HDMAC_MS, 2);
-+
-+	writel_relaxed(src_addr, mc->reg_ch_base + MLB_HDMAC_DMACSA);
-+	writel_relaxed(dest_addr, mc->reg_ch_base + MLB_HDMAC_DMACDA);
-+	writel_relaxed(cb, mc->reg_ch_base + MLB_HDMAC_DMACB);
-+
-+	ca = FIELD_PREP(MLB_HDMAC_IS, mc->slave_id);
-+	if (burst == 16)
-+		ca |= FIELD_PREP(MLB_HDMAC_BT, 0xf);
-+	else if (burst == 8)
-+		ca |= FIELD_PREP(MLB_HDMAC_BT, 0xd);
-+	else if (burst == 4)
-+		ca |= FIELD_PREP(MLB_HDMAC_BT, 0xb);
-+	burst *= width;
-+	ca |= FIELD_PREP(MLB_HDMAC_TC, (len / burst - 1));
-+	writel_relaxed(ca, mc->reg_ch_base + MLB_HDMAC_DMACA);
-+	ca |= MLB_HDMAC_EB;
-+	writel_relaxed(ca, mc->reg_ch_base + MLB_HDMAC_DMACA);
-+}
-+
-+/* mc->vc.lock must be held by caller */
-+static void milbeaut_hdmac_start(struct milbeaut_hdmac_chan *mc)
-+{
-+	struct milbeaut_hdmac_desc *md;
-+
-+	md = milbeaut_hdmac_next_desc(mc);
-+	if (md)
-+		milbeaut_chan_start(mc, md);
-+}
-+
-+static irqreturn_t milbeaut_hdmac_interrupt(int irq, void *dev_id)
-+{
-+	struct milbeaut_hdmac_chan *mc = dev_id;
-+	struct milbeaut_hdmac_desc *md;
-+	irqreturn_t ret = IRQ_HANDLED;
-+	u32 val;
-+
-+	spin_lock(&mc->vc.lock);
-+
-+	/* Ack and Disable irqs */
-+	val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACB);
-+	val &= ~(FIELD_PREP(MLB_HDMAC_SS, 0x7));
-+	writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACB);
-+	val &= ~MLB_HDMAC_EI;
-+	val &= ~MLB_HDMAC_CI;
-+	writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACB);
-+
-+	md = mc->md;
-+	if (!md)
-+		goto out;
-+
-+	md->sg_cur++;
-+
-+	if (md->sg_cur >= md->sg_len) {
-+		vchan_cookie_complete(&md->vd);
-+		md = milbeaut_hdmac_next_desc(mc);
-+		if (!md)
-+			goto out;
-+	}
-+
-+	milbeaut_chan_start(mc, md);
-+
-+out:
-+	spin_unlock(&mc->vc.lock);
-+	return ret;
-+}
-+
-+static void milbeaut_hdmac_free_chan_resources(struct dma_chan *chan)
-+{
-+	vchan_free_chan_resources(to_virt_chan(chan));
-+}
-+
-+static int
-+milbeaut_hdmac_chan_config(struct dma_chan *chan, struct dma_slave_config *cfg)
-+{
-+	struct virt_dma_chan *vc = to_virt_chan(chan);
-+	struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
-+
-+	spin_lock(&mc->vc.lock);
-+	mc->cfg = *cfg;
-+	spin_unlock(&mc->vc.lock);
-+
-+	return 0;
-+}
-+
-+static int milbeaut_hdmac_chan_pause(struct dma_chan *chan)
-+{
-+	struct virt_dma_chan *vc = to_virt_chan(chan);
-+	struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
-+	u32 val;
-+
-+	spin_lock(&mc->vc.lock);
-+	val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACA);
-+	val |= MLB_HDMAC_PB;
-+	writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACA);
-+	spin_unlock(&mc->vc.lock);
-+
-+	return 0;
-+}
-+
-+static int milbeaut_hdmac_chan_resume(struct dma_chan *chan)
-+{
-+	struct virt_dma_chan *vc = to_virt_chan(chan);
-+	struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
-+	u32 val;
-+
-+	spin_lock(&mc->vc.lock);
-+	val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACA);
-+	val &= ~MLB_HDMAC_PB;
-+	writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACA);
-+	spin_unlock(&mc->vc.lock);
-+
-+	return 0;
-+}
-+
-+static struct dma_async_tx_descriptor *
-+milbeaut_hdmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
-+			     unsigned int sg_len,
-+			     enum dma_transfer_direction direction,
-+			     unsigned long flags, void *context)
-+{
-+	struct virt_dma_chan *vc = to_virt_chan(chan);
-+	struct milbeaut_hdmac_desc *md;
-+
-+	if (!is_slave_direction(direction))
-+		return NULL;
-+
-+	md = kzalloc(sizeof(*md), GFP_NOWAIT);
-+	if (!md)
-+		return NULL;
-+
-+	md->sgl = sgl;
-+	md->sg_len = sg_len;
-+	md->dir = direction;
-+
-+	return vchan_tx_prep(vc, &md->vd, flags);
-+}
-+
-+static int milbeaut_hdmac_terminate_all(struct dma_chan *chan)
-+{
-+	struct virt_dma_chan *vc = to_virt_chan(chan);
-+	struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
-+	unsigned long flags;
-+	int ret = 0;
-+	u32 val;
-+
-+	LIST_HEAD(head);
-+
-+	spin_lock_irqsave(&vc->lock, flags);
-+
-+	val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACA);
-+	val &= ~MLB_HDMAC_EB; /* disable the channel */
-+	writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACA);
-+
-+	if (mc->md) {
-+		vchan_terminate_vdesc(&mc->md->vd);
-+		mc->md = NULL;
-+	}
-+
-+	vchan_get_all_descriptors(vc, &head);
-+
-+	spin_unlock_irqrestore(&vc->lock, flags);
-+
-+	vchan_dma_desc_free_list(vc, &head);
-+
-+	return ret;
-+}
-+
-+static void milbeaut_hdmac_synchronize(struct dma_chan *chan)
-+{
-+	vchan_synchronize(to_virt_chan(chan));
-+}
-+
-+static enum dma_status milbeaut_hdmac_tx_status(struct dma_chan *chan,
-+						dma_cookie_t cookie,
-+						struct dma_tx_state *txstate)
-+{
-+	struct virt_dma_chan *vc;
-+	struct virt_dma_desc *vd;
-+	struct milbeaut_hdmac_chan *mc;
-+	struct milbeaut_hdmac_desc *md = NULL;
-+	enum dma_status stat;
-+	unsigned long flags;
-+	int i;
-+
-+	stat = dma_cookie_status(chan, cookie, txstate);
-+	/* Return immediately if we do not need to compute the residue. */
-+	if (stat == DMA_COMPLETE || !txstate)
-+		return stat;
-+
-+	vc = to_virt_chan(chan);
-+
-+	spin_lock_irqsave(&vc->lock, flags);
-+
-+	mc = to_milbeaut_hdmac_chan(vc);
-+
-+	/* residue from the on-flight chunk */
-+	if (mc->md && mc->md->vd.tx.cookie == cookie) {
-+		struct scatterlist *sg;
-+		u32 done;
-+
-+		md = mc->md;
-+		sg = &md->sgl[md->sg_cur];
-+
-+		if (md->dir == DMA_DEV_TO_MEM)
-+			done = readl_relaxed(mc->reg_ch_base
-+					     + MLB_HDMAC_DMACDA);
-+		else
-+			done = readl_relaxed(mc->reg_ch_base
-+					     + MLB_HDMAC_DMACSA);
-+		done -= sg_dma_address(sg);
-+
-+		txstate->residue = -done;
-+	}
-+
-+	if (!md) {
-+		vd = vchan_find_desc(vc, cookie);
-+		if (vd)
-+			md = to_milbeaut_hdmac_desc(vd);
-+	}
-+
-+	if (md) {
-+		/* residue from the queued chunks */
-+		for (i = md->sg_cur; i < md->sg_len; i++)
-+			txstate->residue += sg_dma_len(&md->sgl[i]);
-+	}
-+
-+	spin_unlock_irqrestore(&vc->lock, flags);
-+
-+	return stat;
-+}
-+
-+static void milbeaut_hdmac_issue_pending(struct dma_chan *chan)
-+{
-+	struct virt_dma_chan *vc = to_virt_chan(chan);
-+	struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&vc->lock, flags);
-+
-+	if (vchan_issue_pending(vc) && !mc->md)
-+		milbeaut_hdmac_start(mc);
-+
-+	spin_unlock_irqrestore(&vc->lock, flags);
-+}
-+
-+static void milbeaut_hdmac_desc_free(struct virt_dma_desc *vd)
-+{
-+	kfree(to_milbeaut_hdmac_desc(vd));
-+}
-+
-+static struct dma_chan *
-+milbeaut_hdmac_xlate(struct of_phandle_args *dma_spec, struct of_dma *of_dma)
-+{
-+	struct milbeaut_hdmac_device *mdev = of_dma->of_dma_data;
-+	struct milbeaut_hdmac_chan *mc;
-+	struct virt_dma_chan *vc;
-+	struct dma_chan *chan;
-+
-+	if (dma_spec->args_count != 1)
-+		return NULL;
-+
-+	chan = dma_get_any_slave_channel(&mdev->ddev);
-+	if (!chan)
-+		return NULL;
-+
-+	vc = to_virt_chan(chan);
-+	mc = to_milbeaut_hdmac_chan(vc);
-+	mc->slave_id = dma_spec->args[0];
-+
-+	return chan;
-+}
-+
-+static int milbeaut_hdmac_chan_init(struct platform_device *pdev,
-+				    struct milbeaut_hdmac_device *mdev,
-+				    int chan_id)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct milbeaut_hdmac_chan *mc = &mdev->channels[chan_id];
-+	char *irq_name;
-+	int irq, ret;
-+
-+	irq = platform_get_irq(pdev, chan_id);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "failed to get IRQ number for ch%d\n",
-+			chan_id);
-+		return irq;
-+	}
-+
-+	irq_name = devm_kasprintf(dev, GFP_KERNEL, "milbeaut-hdmac-%d",
-+				  chan_id);
-+	if (!irq_name)
-+		return -ENOMEM;
-+
-+	ret = devm_request_irq(dev, irq, milbeaut_hdmac_interrupt,
-+			       IRQF_SHARED, irq_name, mc);
-+	if (ret)
-+		return ret;
-+
-+	mc->mdev = mdev;
-+	mc->reg_ch_base = mdev->reg_base + MLB_HDMAC_CH_STRIDE * (chan_id + 1);
-+	mc->vc.desc_free = milbeaut_hdmac_desc_free;
-+	vchan_init(&mc->vc, &mdev->ddev);
-+
-+	return 0;
-+}
-+
-+static int milbeaut_hdmac_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct milbeaut_hdmac_device *mdev;
-+	struct dma_device *ddev;
-+	struct resource *res;
-+	int nr_chans, ret, i;
-+
-+	nr_chans = platform_irq_count(pdev);
-+	if (nr_chans < 0)
-+		return nr_chans;
-+
-+	ret = dma_set_mask(dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		return ret;
-+
-+	mdev = devm_kzalloc(dev, struct_size(mdev, channels, nr_chans),
-+			    GFP_KERNEL);
-+	if (!mdev)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	mdev->reg_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(mdev->reg_base))
-+		return PTR_ERR(mdev->reg_base);
-+
-+	mdev->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(mdev->clk)) {
-+		dev_err(dev, "failed to get clock\n");
-+		return PTR_ERR(mdev->clk);
-+	}
-+
-+	ret = clk_prepare_enable(mdev->clk);
-+	if (ret)
-+		return ret;
-+
-+	ddev = &mdev->ddev;
-+	ddev->dev = dev;
-+	dma_cap_set(DMA_PRIVATE, ddev->cap_mask);
-+	ddev->src_addr_widths = MLB_HDMAC_BUSWIDTHS;
-+	ddev->dst_addr_widths = MLB_HDMAC_BUSWIDTHS;
-+	ddev->directions = BIT(DMA_MEM_TO_DEV) | BIT(DMA_DEV_TO_MEM);
-+	ddev->device_free_chan_resources = milbeaut_hdmac_free_chan_resources;
-+	ddev->device_config = milbeaut_hdmac_chan_config;
-+	ddev->device_pause = milbeaut_hdmac_chan_pause;
-+	ddev->device_resume = milbeaut_hdmac_chan_resume;
-+	ddev->device_prep_slave_sg = milbeaut_hdmac_prep_slave_sg;
-+	ddev->device_terminate_all = milbeaut_hdmac_terminate_all;
-+	ddev->device_synchronize = milbeaut_hdmac_synchronize;
-+	ddev->device_tx_status = milbeaut_hdmac_tx_status;
-+	ddev->device_issue_pending = milbeaut_hdmac_issue_pending;
-+	INIT_LIST_HEAD(&ddev->channels);
-+
-+	for (i = 0; i < nr_chans; i++) {
-+		ret = milbeaut_hdmac_chan_init(pdev, mdev, i);
-+		if (ret)
-+			goto disable_clk;
-+	}
-+
-+	ret = dma_async_device_register(ddev);
-+	if (ret)
-+		goto disable_clk;
-+
-+	ret = of_dma_controller_register(dev->of_node,
-+					 milbeaut_hdmac_xlate, mdev);
-+	if (ret)
-+		goto unregister_dmac;
-+
-+	platform_set_drvdata(pdev, mdev);
-+
-+	return 0;
-+
-+unregister_dmac:
-+	dma_async_device_unregister(ddev);
-+disable_clk:
-+	clk_disable_unprepare(mdev->clk);
-+
-+	return ret;
-+}
-+
-+static int milbeaut_hdmac_remove(struct platform_device *pdev)
-+{
-+	struct milbeaut_hdmac_device *mdev = platform_get_drvdata(pdev);
-+	struct dma_chan *chan;
-+	int ret;
-+
-+	/*
-+	 * Before reaching here, almost all descriptors have been freed by the
-+	 * ->device_free_chan_resources() hook. However, each channel might
-+	 * be still holding one descriptor that was on-flight at that moment.
-+	 * Terminate it to make sure this hardware is no longer running. Then,
-+	 * free the channel resources once again to avoid memory leak.
-+	 */
-+	list_for_each_entry(chan, &mdev->ddev.channels, device_node) {
-+		ret = dmaengine_terminate_sync(chan);
-+		if (ret)
-+			return ret;
-+		milbeaut_hdmac_free_chan_resources(chan);
-+	}
-+
-+	of_dma_controller_free(pdev->dev.of_node);
-+	dma_async_device_unregister(&mdev->ddev);
-+	clk_disable_unprepare(mdev->clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id milbeaut_hdmac_match[] = {
-+	{ .compatible = "socionext,milbeaut-m10v-hdmac" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, milbeaut_hdmac_match);
-+
-+static struct platform_driver milbeaut_hdmac_driver = {
-+	.probe = milbeaut_hdmac_probe,
-+	.remove = milbeaut_hdmac_remove,
-+	.driver = {
-+		.name = "milbeaut-m10v-hdmac",
-+		.of_match_table = milbeaut_hdmac_match,
-+	},
-+};
-+module_platform_driver(milbeaut_hdmac_driver);
-+
-+MODULE_DESCRIPTION("Milbeaut HDMAC DmaEngine driver");
-+MODULE_LICENSE("GPL v2");
+> Another thing to consider is that this patch set _allows_ a truncate/hole punch
+> to proceed _if_ the pages being affected are not actually pinned.  So the
+> unbreakable/exclusive nature of the lease is not absolute.
+
+If you're talking about the process that owns the layout lease
+running the truncate, then that is fine.
+
+However, if you are talking about a process that does not own the
+layout lease being allowed to truncate a file without first breaking
+the layout lease, then that is fundamentally broken.
+
+i.e. If you don't own a layout lease, the layout leases must be
+broken before the truncate can proceed. If it's an exclusive lease,
+then you cannot break the lease and the truncate *must fail before
+it is started*. i.e.  the layout lease state must be correctly
+resolved before we start an operation that may modify a file layout.
+
+Determining if we can actually do the truncate based on page state
+occurs /after/ the lease says the truncate can proceed....
+
+Cheers,
+
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
