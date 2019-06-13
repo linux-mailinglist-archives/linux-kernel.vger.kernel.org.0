@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC59D4426E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2327E43F4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:56:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392216AbfFMQW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:22:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55730 "EHLO mail.kernel.org"
+        id S2389935AbfFMP4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731043AbfFMIiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:17 -0400
+        id S1731529AbfFMIvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:51:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA1D421473;
-        Thu, 13 Jun 2019 08:38:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D369A20851;
+        Thu, 13 Jun 2019 08:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415097;
-        bh=kUI4Ey98f9c4Iojg9qzUYMcrgvXf+9czDL3HOV3FGKQ=;
+        s=default; t=1560415880;
+        bh=JuA+z/E8J/GcS987WlH7req4HxY+VEuIEI+xBM47yDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OUs73mncoQyV7kJx3tswNRZVJWvQQSe7SD4jAr+Jc2yvWNLC0Cpy28udhWmuA6q+N
-         8iiqU6ayy4s+PDQNm49QzwaAp3vnI1v8ObTFS1yOF/JMe3WUS1aPYM0wZ9HH67iRQf
-         IiazGqx7ws/3bp7kaTiAx35Qof3er07xjPhgrz+8=
+        b=qTseQMrNAVhEHbQ4M/oFJP7goWiyUu1E1pOWo+9MaSXHvWKFLxNchHho8UYsLpVUy
+         m9lHZhUr0G0q3gJm0/RwGdDICe0cdWYBJRYG1ojdtcRRAuQTNk2/rN+94hqTXhEydF
+         m6nC3XSTi4KxkU92fQIoWNJwJxR1v/4IxA15hG18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Steven Price <steven.price@arm.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
+        stable@vger.kernel.org, Junxiao Chang <junxiao.chang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 69/81] PCI: xilinx: Check for __get_free_pages() failure
+Subject: [PATCH 5.1 120/155] platform/x86: intel_pmc_ipc: adding error handling
 Date:   Thu, 13 Jun 2019 10:33:52 +0200
-Message-Id: <20190613075654.047460645@linuxfoundation.org>
+Message-Id: <20190613075659.589229049@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 699ca30162686bf305cdf94861be02eb0cf9bda2 ]
+[ Upstream commit e61985d0550df8c2078310202aaad9b41049c36c ]
 
-If __get_free_pages() fails, return -ENOMEM to avoid a NULL pointer
-dereference.
+If punit or telemetry device initialization fails, pmc driver should
+unregister and return failure.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Steven Price <steven.price@arm.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+This change is to fix a kernel panic when removing kernel module
+intel_pmc_ipc.
+
+Fixes: 48c1917088ba ("platform:x86: Add Intel telemetry platform device")
+Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/host/pcie-xilinx.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/platform/x86/intel_pmc_ipc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
-index 29f024f0ed7f..a8a44afa81ec 100644
---- a/drivers/pci/host/pcie-xilinx.c
-+++ b/drivers/pci/host/pcie-xilinx.c
-@@ -338,14 +338,19 @@ static const struct irq_domain_ops msi_domain_ops = {
-  * xilinx_pcie_enable_msi - Enable MSI support
-  * @port: PCIe port information
-  */
--static void xilinx_pcie_enable_msi(struct xilinx_pcie_port *port)
-+static int xilinx_pcie_enable_msi(struct xilinx_pcie_port *port)
- {
- 	phys_addr_t msg_addr;
- 
- 	port->msi_pages = __get_free_pages(GFP_KERNEL, 0);
-+	if (!port->msi_pages)
-+		return -ENOMEM;
-+
- 	msg_addr = virt_to_phys((void *)port->msi_pages);
- 	pcie_write(port, 0x0, XILINX_PCIE_REG_MSIBASE1);
- 	pcie_write(port, msg_addr, XILINX_PCIE_REG_MSIBASE2);
-+
-+	return 0;
- }
- 
- /* INTx Functions */
-@@ -500,6 +505,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
- 	struct device *dev = port->dev;
- 	struct device_node *node = dev->of_node;
- 	struct device_node *pcie_intc_node;
-+	int ret;
- 
- 	/* Setup INTx */
- 	pcie_intc_node = of_get_next_child(node, NULL);
-@@ -528,7 +534,9 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
- 			return -ENODEV;
- 		}
- 
--		xilinx_pcie_enable_msi(port);
-+		ret = xilinx_pcie_enable_msi(port);
-+		if (ret)
-+			return ret;
+diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
+index 7964ba22ef8d..d37cbd1cf58c 100644
+--- a/drivers/platform/x86/intel_pmc_ipc.c
++++ b/drivers/platform/x86/intel_pmc_ipc.c
+@@ -771,13 +771,17 @@ static int ipc_create_pmc_devices(void)
+ 	if (ret) {
+ 		dev_err(ipcdev.dev, "Failed to add punit platform device\n");
+ 		platform_device_unregister(ipcdev.tco_dev);
++		return ret;
  	}
  
- 	return 0;
+ 	if (!ipcdev.telem_res_inval) {
+ 		ret = ipc_create_telemetry_device();
+-		if (ret)
++		if (ret) {
+ 			dev_warn(ipcdev.dev,
+ 				"Failed to add telemetry platform device\n");
++			platform_device_unregister(ipcdev.punit_dev);
++			platform_device_unregister(ipcdev.tco_dev);
++		}
+ 	}
+ 
+ 	return ret;
 -- 
 2.20.1
 
