@@ -2,214 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B2D344D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F5A044D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730066AbfFMUdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:33:24 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42444 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfFMUdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:33:23 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5DKX9mU095248;
-        Thu, 13 Jun 2019 15:33:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560457989;
-        bh=Iw66ZlMG9g4IKHXricwFmXq3+LquUzDHIWFykeidiDU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=fMe8BuJPRnWf59pXtSPpXfH1rrGsEQFEuhYqEI6j8x9PtLxDwvrF+03GmkkBhRKzq
-         UKLqYX8TZ/xO726R6wAJymbubg4NOj3KWikf6wfcR9hS9VPCa8qlEO9E7OJG0EPgsT
-         tLyB5Tc3cVsP7kfvIG/gtc/+qHjOGTFpPAKriSnU=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5DKX9lv093210
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Jun 2019 15:33:09 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 13
- Jun 2019 15:33:09 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 13 Jun 2019 15:33:09 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5DKX5AS026254;
-        Thu, 13 Jun 2019 15:33:06 -0500
-Subject: Re: [PATCH 09/16] dt-bindings: dma: ti: Add document for K3 UDMA
-To:     Rob Herring <robh@kernel.org>
-CC:     <vkoul@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>
-References: <20190506123456.6777-1-peter.ujfalusi@ti.com>
- <20190506123456.6777-10-peter.ujfalusi@ti.com> <20190613181626.GA7039@bogus>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <e0d6a264-96b5-31a6-e70b-3b1c2d863988@ti.com>
-Date:   Thu, 13 Jun 2019 23:33:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729841AbfFMUcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:32:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:5160 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbfFMUco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 16:32:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 13:32:43 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Jun 2019 13:32:43 -0700
+Date:   Thu, 13 Jun 2019 13:34:05 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613203404.GA30404@iweiny-DESK2.sc.intel.com>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
+ <20190613002555.GH14363@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20190613181626.GA7039@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613002555.GH14363@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob,
-
-On 13/06/2019 21.16, Rob Herring wrote:
->> +Remote PSI-L endpoint
->> +
->> +Required properties:
->> +--------------------
->> +- ti,psil-base:		PSI-L thread ID base of the endpoint
->> +
->> +Within the PSI-L endpoint node thread configuration subnodes must present with:
->> +ti,psil-configX naming convention, where X is the thread ID offset.
+On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
+> On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
+> > On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
+> > > On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
+> > > > Are you suggesting that we have something like this from user space?
+> > > > 
+> > > > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
+> > > 
+> > > Rather than "unbreakable", perhaps a clearer description of the
+> > > policy it entails is "exclusive"?
+> > > 
+> > > i.e. what we are talking about here is an exclusive lease that
+> > > prevents other processes from changing the layout. i.e. the
+> > > mechanism used to guarantee a lease is exclusive is that the layout
+> > > becomes "unbreakable" at the filesystem level, but the policy we are
+> > > actually presenting to uses is "exclusive access"...
+> > 
+> > That's rather different from the normal meaning of 'exclusive' in the
+> > context of locks, which is "only one user can have access to this at
+> > a time".
 > 
-> Don't use vendor prefixes on node names.
-
-OK.
-
->> +
->> +Configuration node Required properties:
->> +--------------------
->> +- linux,udma-mode:	Channel mode, can be:
->> +			- UDMA_PKT_MODE: for Packet mode channels (peripherals)
->> +			- UDMA_TR_MODE: for Third-Party mode
 > 
-> This is hardly a common linux thing. What determines the value here.
-
-Unfortunately it is.
-Each channel can be configured to Packet or TR mode. For some
-peripherals it is true that they only support packet mode, these are the
-newer PSI-L native peripherals.
-For these channels a udma-mode property would be correct.
-
-But we have legacy peripherals as well and they are serviced by PDMA
-(which is a native peripheral designed to talk to the given legacy IP).
-We can use either packet or TR mode in UDMAP to talk to PDMAs, it is in
-most cases clear what to use, but for example for audio (McASP) channels
-Linux is using TR channel because we need cyclic DMA while for example
-RTOS is using Packet mode as it fits their needs better.
-
-Here I need to prefix the udma-mode with linux as the mode is used by
-Linux, but other OS might opt to use different channel mode.
-
-The reason why this needs to be in the DT is that when the channel is
-requested we need to configure the mode and it can not be swapped
-runtime easily between Packet and TR mode.
-
->> +
->> +Configuration node Optional properties:
->> +--------------------
->> +- statictr-type:	In case the remote endpoint requires StaticTR
->> +			configuration:
->> +			- PSIL_STATIC_TR_XY: XY type of StaticTR
->> +			- PSIL_STATIC_TR_MCAN: MCAN type of StaticTR
->> +- ti,channel-tpl:	Channel Throughput level:
->> +			0 / or not present - normal channel
->> +			1 - High Throughput channel
->> +- ti,needs-epib:	If the endpoint require EPIB to be present in the
->> +			descriptor.
->> +- ti,psd-size:		Size of the Protocol Specific Data section of the
->> +			descriptor.
+> Layout leases are not locks, they are a user access policy object.
+> It is the process/fd which holds the lease and it's the process/fd
+> that is granted exclusive access.  This is exactly the same semantic
+> as O_EXCL provides for granting exclusive access to a block device
+> via open(), yes?
 > 
-> You've got a lot of properties and child nodes here, but not in the 
-> example. Please make the example more complete.
-
-Sure, I'll extend the example with other peripheral which uses more
-properties.
-
+> > As I understand it, this is rather more like a 'shared' or
+> > 'read' lock.  The filesystem would be the one which wants an exclusive
+> > lock, so it can modify the mapping of logical to physical blocks.
 > 
->> +
->> +Example:
->> +
->> +main_navss: main_navss {
->> +	compatible = "simple-bus";
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +	dma-coherent;
->> +	dma-ranges;
->> +	ranges;
->> +
->> +	ti,sci = <&dmsc>;
->> +	ti,sci-dev-id = <118>;
->> +
->> +	main_udmap: udmap@31150000 {
+> ISTM that you're conflating internal filesystem implementation with
+> application visible semantics. Yes, the filesystem uses internal
+> locks to serialise the modification of the things the lease manages
+> access too, but that has nothing to do with the access policy the
+> lease provides to users.
 > 
-> dma-controller@...
-
-OK
-
->> +		compatible = "ti,am654-navss-main-udmap";
->> +		reg =	<0x0 0x31150000 0x0 0x100>,
->> +			<0x0 0x34000000 0x0 0x100000>,
->> +			<0x0 0x35000000 0x0 0x100000>;
->> +		reg-names = "gcfg", "rchanrt", "tchanrt";
->> +		#dma-cells = <3>;
->> +
->> +		ti,ringacc = <&ringacc>;
->> +		ti,psil-base = <0x1000>;
->> +
->> +		interrupt-parent = <&main_udmass_inta>;
->> +
->> +		ti,sci = <&dmsc>;
->> +		ti,sci-dev-id = <188>;
->> +
->> +		ti,sci-rm-range-tchan = <0x6 0x1>, /* TX_HCHAN */
->> +					<0x6 0x2>; /* TX_CHAN */
->> +		ti,sci-rm-range-rchan = <0x6 0x4>, /* RX_HCHAN */
->> +					<0x6 0x5>; /* RX_CHAN */
->> +		ti,sci-rm-range-rflow = <0x6 0x6>; /* GP RFLOW */
->> +	};
->> +};
->> +
->> +pdma0: pdma@2a41000 {
->> +	compatible = "ti,am654-pdma";
->> +	reg = <0x0 0x02A41000 0x0 0x400>;
->> +	reg-names = "eccaggr_cfg";
->> +
->> +	ti,psil-base = <0x4400>;
->> +
->> +	/* ti,psil-config0-2 */
->> +	UDMA_PDMA_TR_XY(0);
+> e.g. Process A has an exclusive layout lease on file F. It does an
+> IO to file F. The filesystem IO path checks that Process A owns the
+> lease on the file and so skips straight through layout breaking
+> because it owns the lease and is allowed to modify the layout. It
+> then takes the inode metadata locks to allocate new space and write
+> new data.
 > 
-> What is this? Don't abuse defines with stuff like this. Generally only 
-> defines of single values should be used.
+> Process B now tries to write to file F. The FS checks whether
+> Process B owns a layout lease on file F. It doesn't, so then it
+> tries to break the layout lease so the IO can proceed. The layout
+> breaking code sees that process A has an exclusive layout lease
+> granted, and so returns -ETXTBSY to process B - it is not allowed to
+> break the lease and so the IO fails with -ETXTBSY.
+> 
+> i.e. the exclusive layout lease prevents other processes from
+> performing operations that may need to modify the layout from
+> performing those operations. It does not "lock" the file/inode in
+> any way, it just changes how the layout lease breaking behaves.
 
-The reason I have used define to build the psil-config sections is that
-we have some PDMAs with 22 threads and it makes the DT explode when
-writing out all of the thread configurations.
+Question: Do we expect Process A to get notified that Process B was attempting
+to change the layout?
 
-Within one PDMA we can have a mix of different modes, so I can not say
-that all of the threads in the PDMA is the same.
+This changes the exclusivity semantics.  While Process A has an exclusive lease
+it could release it if notified to allow process B temporary exclusivity.
+
+Question 2: Do we expect other process' (say Process C) to also be able to map
+and pin the file?  I believe users will need this and for layout purposes it is
+ok to do so.  But this means that Process A does not have "exclusive" access to
+the lease.
+
+So given Process C has also placed a layout lease on the file.  Indicating
+that it does not want the layout to change.  Both A and C need to be "broken"
+by Process B to change the layout.  If there is no Process B; A and C can run
+just fine with a "locked" layout.
+
+Ira
 
 > 
->> +	UDMA_PDMA_TR_XY(1);
->> +	UDMA_PDMA_TR_XY(2);
->> +};
->> +
->> +mcasp0: mcasp@02B00000 {
->> +...
->> +	/* tx: pdma0-0, rx: pdma0-0 */
->> +	dmas = <&main_udmap &pdma0 0 UDMA_DIR_TX>,
->> +	       <&main_udmap &pdma0 0 UDMA_DIR_RX>;
->> +	dma-names = "tx", "rx";
->> +...
->> +};
->> -- 
-
-Thanks,
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Further, the "exclusiveness" of a layout lease is completely
+> irrelevant to the filesystem that is indicating that an operation
+> that may need to modify the layout is about to be performed. All the
+> filesystem has to do is handle failures to break the lease
+> appropriately.  Yes, XFS serialises the layout lease validation
+> against other IO to the same file via it's IO locks, but that's an
+> internal data IO coherency requirement, not anything to do with
+> layout lease management.
+> 
+> Note that I talk about /writes/ here. This is interchangable with
+> any other operation that may need to modify the extent layout of the
+> file, be it truncate, fallocate, etc: the attempt to break the
+> layout lease by a non-owner should fail if the lease is "exclusive"
+> to the owner.
+> 
+> > The complication being that by default the filesystem has an exclusive
+> > lock on the mapping, and what we're trying to add is the ability for
+> > readers to ask the filesystem to give up its exclusive lock.
+> 
+> The filesystem doesn't even lock the "mapping" until after the
+> layout lease has been validated or broken.
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
