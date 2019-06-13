@@ -2,59 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6AA44729
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D0F44723
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393195AbfFMQ51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:57:27 -0400
-Received: from smtp2.ono.com ([62.42.230.179]:6902 "EHLO smtp2.ono.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729927AbfFMBCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:02:48 -0400
-X-Junkmail-Premium-Raw: score=35/50,refid=2.7.2:2019.6.13.5416:17:35.434,ip=62.42.230.133,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO,
- __PHISH_SPEAR_SUBJ_ALERT, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
- MISSING_HEADERS, __ANY_URI, __FRAUD_BODY_WEBMAIL, __URI_NO_WWW,
- __FRAUD_INTRO, __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
- __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS,
- BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_300_399, __MIME_TEXT_P1,
- __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
- __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __MIME_TEXT_P,
- FRAUD_LITTLE_BODY, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS,
- BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY,
- NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs03 (62.42.230.133) by smtp2.ono.com (9.0.019.09-1)
-        id 5CAF0F5D0311C993; Thu, 13 Jun 2019 03:02:41 +0200
-Received: from (149.126.75.14) by webmailcpr03n.ono.com;  Thu, 13 Jun 2019 03:02:41 +0200
-Message-ID: <2263859.453591560387761564.JavaMail.defaultUser@defaultHost>
-Date:   Thu, 13 Jun 2019 03:02:41 +0200 (CEST)
-From:   Mrs Alice Johnson <o0fit@ono.com>
-Reply-To: mrsalicejohnson4@gmail.com
-Subject: Dear Friend,
-MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+        id S2393188AbfFMQ5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:57:16 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54334 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729932AbfFMBGR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 21:06:17 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2FC2720B7186;
+        Wed, 12 Jun 2019 18:06:16 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
+        mpatocka@redhat.com, jaskarankhurana@linux.microsoft.com
+Subject: [RFC PATCH v4 0/1] Add dm verity root hash pkcs7 sig validation.
+Date:   Wed, 12 Jun 2019 18:06:09 -0700
+Message-Id: <20190613010610.4364-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch set adds in-kernel pkcs7 signature checking for the roothash of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
+Why we are doing validation in the Kernel?
 
---
-Dear Friend,
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so we
+can trust it.
 
-I am Mrs Alice Johnson.am sending you this brief letter to solicit your
-partnership to transfer $18.5 million US Dollars.I shall send you more
-information and procedures when I receive positive response from you.
-please send me a message in my Email box (mrsalicejohnson4@gmail.com)
-as i wait to hear from you.
+What about attacker mounting non dm-verity volumes to run executable
+code?
 
-Best regard
-Mrs Alice Johnson
---
+This verification can be used to have a security architecture where a LSM
+can enforce this verification for all the volumes and by doing this it can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
+
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
+
+How are these changes tested?
+
+To generate and sign the roothash just dump the roothash returned by veritysetup
+format in a text file and then sign using the tool in the topic branch here:
+(fsverity uses the tool for signing, I just added a parameter there for testing)
+
+https://github.com/jaskarankhurana/fsverity-sign/tree/fs_verity_detached_pkcs7_for_dm_verity
+
+fsverity sign-dm-verity <ROOTHASH_IN_A_FILE>  <OUTSIG> --key=<KEYFILE>
+--cert=<CERTFILE>
+
+veritysetup part of cryptsetup library was modified to take a optional
+root-hash-sig parameter.
+
+Commandline used to test the changes:
+
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
+
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+Changelog:
+
+v4:
+  - Code review feedback given by Milan Broz.
+  - Add documentation about the root hash signature parameter.
+  - Bump up the dm-verity target version.
+  - Provided way to sign and test with veritysetup in cover letter.
+
+v3:
+  - Code review feedback given by Sasha Levin.
+  - Removed EXPORT_SYMBOL_GPL since this was not required.
+  - Removed "This file is released under the GPLv2" since we have SPDX
+    identifier.
+  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
+    descriptor is not specified but due to force option being set it is
+    expected.
+  - Moved CONFIG check to inside verity_verify_get_sig_from_key.
+     (Did not move the sig_opts_cleanup to inside verity_dtr as the
+     sig_opts do not need to be allocated for the entire duration the block
+     device is active unlike the verity structure, note verity_dtr is called
+     only if verity_ctr fails or after the lifetime of the block device.)
+
+v2:
+  - Code review feedback to pass the signature binary blob as a key that can be
+    looked up in the kernel and be used to verify the roothash.
+    [Suggested by Milan Broz]
+  - Made the code related change suggested in review of v1.
+    [Suggested by Balbir Singh]
+
+v1:
+  - Add kconfigs to control dm-verity root has signature verification and
+    use the signature if specified to verify the root hash.
+
+Jaskaran Khurana (1):
+  Adds in-kernel pkcs7 sig checking the roothash of the dm-verity hash
+    tree
+
+ Documentation/device-mapper/verity.txt |   7 ++
+ drivers/md/Kconfig                     |  23 +++++
+ drivers/md/Makefile                    |   2 +-
+ drivers/md/dm-verity-target.c          |  36 ++++++-
+ drivers/md/dm-verity-verify-sig.c      | 132 +++++++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h      |  30 ++++++
+ 6 files changed, 224 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
+
+-- 
+2.17.1
 
