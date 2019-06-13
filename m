@@ -2,84 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E634441F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F6F4441A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404033AbfFMQe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:34:57 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44039 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730748AbfFMHsJ (ORCPT
+        id S2403961AbfFMQeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:34:50 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35999 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730750AbfFMHtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:48:09 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x47so21444044qtk.11;
-        Thu, 13 Jun 2019 00:48:08 -0700 (PDT)
+        Thu, 13 Jun 2019 03:49:35 -0400
+Received: by mail-qt1-f195.google.com with SMTP id p15so2104002qtl.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 00:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xROEx50vg3PrTIRbBL87vn9xq3zmqd182DXiss4gqbM=;
+        b=q3wHpbh5ZcLjlQW7kj7YYZuO2MWWre3rKFc1xRiJRLPzhfF+0X6mVWIIMfzvS7Rsiu
+         qlPzgPoi0qh7StRWKqeJwocEpa4r/p/0lRP7wTbxbWhwGRycC1XHHnsa7tARYuIaHZnm
+         j4fLn76lVPiHH7mJirtdmCF6+fHru+SnN8zCtaQN7+7PoewJmPVd16kR6ZrQZ/OpXdP8
+         klOVVdV4cUYSIuz7trkXErJMZt7wxUdrHLY+SR+Rc+VfJ21s3amIh7TVMbdmHYZLN7gZ
+         hdO61fuW89DO1MElkjaiiN2Xw4u7bb1mVsfdNf85byeAIDhSG0GKhEeZ38Xl8sFqqo2p
+         a21A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fgT/YI2hhlyXpTA69Z5TLJrfk51LKe8sjqrg92sPdsE=;
-        b=SQg+yqsmEG8/rbL5s56YYblBFrLfmJsiBXHa7ZXVgyIP0tRoUXtNYQ0UIPH/XazFfA
-         L3GC1hyyy/kLMqwWeF4XpEiubJ2IzjM/pyZgoFCQX94B2q0GuqAHB0ApLWeB59IO7P1v
-         AnyS4noenqQKVv6dzMO4etLQ1mVb1wdkmCuI4rwxqz14UZBvSmrtbAATR3g9MjHNw/pb
-         eBzyywIV9piCmHE0zkCOuCnpQcQyl4Yshq5H5pJC6D8shazQfBM8x1Hghse9rJ9V3uey
-         tbUmq81JX+mUo3MPmYHLyPxq/VrrzEfQGdWuKjKyWFW+JjD54whb/J++843Ajdw8IjGB
-         Bl3A==
-X-Gm-Message-State: APjAAAUiAqQlL7dK/5SpbrLTm8uDGOtFJAlWU24Cksm5CXLW7FUz6SYG
-        usyGCQ/fpyaR/pUC+FF6UyNIc39dKcn/RNzAD1Q=
-X-Google-Smtp-Source: APXvYqxrrnzKo+F21ENjug1XYtPxZtDHIGQHLWn6kMjV5ZWTGO0RqR8XpwT1uM7DX/d/KwMCFvP6KDGEjgTJk97GDCA=
-X-Received: by 2002:ac8:3ff5:: with SMTP id v50mr69703766qtk.142.1560412088101;
- Thu, 13 Jun 2019 00:48:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xROEx50vg3PrTIRbBL87vn9xq3zmqd182DXiss4gqbM=;
+        b=FEZS+3kDPJqRY3qlWF2WF9gsZ4vVG6uadQP/yj7Oorp1CF9DVGsZaS4sWQMkUog7e2
+         qVypk/iPN2CF+ddTZruCu7l/FXh/R1i/mnXDU4pmgsyB17llATg1Yh0f0uAYTcJtV1ba
+         jP4CEqUrIiMIFNId9LRY1JkRS0BPhPNr8v2RRg0102/hGaSPqI1+C49zXiq+WP0lgd0E
+         YS+tYKK5NX3DN/CnbtkjYGAQsvi+Pt0AKGzRz66UXYgbhuQfQeVoFvVAt5XZVppN8Ka5
+         RdDPslFhypvH9GTnqY33NLpZ17FlhjVNvwJ3PrM/uJrBG9v1ud7xK2IzqUvV/kqmGdWt
+         9LNg==
+X-Gm-Message-State: APjAAAWEg0kJCLo3OKEFHQ8ve+ItT4UCuqXBrA/avIO8qEb7g+f8MpGJ
+        v0se2Tuh6pGxB2NbufhYj9hO0w==
+X-Google-Smtp-Source: APXvYqwEurFoZHKAEhOSIDN36DqZuW8gdc1FPaANBB2DIiStrJOy1JF8fsQVRp2blw4EqjOl1eZlsQ==
+X-Received: by 2002:ac8:3668:: with SMTP id n37mr29172383qtb.236.1560412174396;
+        Thu, 13 Jun 2019 00:49:34 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
+        by smtp.gmail.com with ESMTPSA id s44sm1537967qtc.8.2019.06.13.00.49.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 00:49:33 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 15:49:22 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] coresight: potential uninitialized variable in probe()
+Message-ID: <20190613074922.GB21113@leoy-ThinkPad-X240s>
+References: <20190613065815.GF16334@mwanda>
 MIME-Version: 1.0
-References: <1560262374-67875-1-git-send-email-john.garry@huawei.com>
- <1560262374-67875-3-git-send-email-john.garry@huawei.com> <20190613032034.GE13533@google.com>
-In-Reply-To: <20190613032034.GE13533@google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 13 Jun 2019 09:47:51 +0200
-Message-ID: <CAK8P3a0C010LEs3HmyQKHWx4EVpVH1NUtFwYkoF16syFQ9hd8w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] lib: logic_pio: Reject accesses to unregistered
- CPU MMIO regions
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     John Garry <john.garry@huawei.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613065815.GF16334@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 5:20 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Tue, Jun 11, 2019 at 10:12:53PM +0800, John Garry wrote:
-> > Currently when accessing logical indirect PIO addresses in
-> > logic_{in, out}{,s}, we first ensure that the region is registered.
->
-> I think logic_pio is specifically concerned with I/O port space, so
-> it's a little bit unfortunate that we named this "PIO".
->
-> PIO is a general term for "Programmed I/O", which just means the CPU
-> is involved in each transfer, as opposed to DMA.  The transfers can be
-> to either MMIO or I/O port space.
->
-> So this ends up being a little confusing because I think you mean
-> "Port I/O", not "Programmed I/O".
+Hi Dan,
 
-I think the terms that John uses are more common: I would also
-assume that "PIO" (regardless of whether you expand it as Port
-or Programmed I/O) refers only to inb/outb and PCI/ISA/LPC
-I/O space, and is distinct from "MMIO", which refers to the readl/writel
-accessors and PCI memory space.
+On Wed, Jun 12, 2019 at 11:58:15PM -0700, Dan Carpenter wrote:
+> The "drvdata->atclk" clock is optional, but if it gets set to an error
+> pointer then we're accidentally return an uninitialized variable instead
+> of success.
 
-That is consistent with the usage across at least the x86, powerpc
-and ia64 architectures when they refer to PIO.
+You are right, thanks a lot for pointing out.
 
-        Arnd
+I'd like to initialize 'ret = 0' at the head of function, so we can
+has the same fashion with other CoreSight drivers (e.g. replicator).
+
+ static int funnel_probe(struct device *dev, struct resource *res)
+ {
+-	int ret;
++	int ret = 0;
+
+If you agree, could you send a new patch for this?
+
+Thanks,
+Leo Yan
+
+> Fixes: 78e6427b4e7b ("coresight: funnel: Support static funnel")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-funnel.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+> index 5867fcb4503b..fa97cb9ab4f9 100644
+> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+> @@ -244,6 +244,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
+>  	}
+>  
+>  	pm_runtime_put(dev);
+> +	ret = 0;
+>  
+>  out_disable_clk:
+>  	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
+> -- 
+> 2.20.1
+> 
