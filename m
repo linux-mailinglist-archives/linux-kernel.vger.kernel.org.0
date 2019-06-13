@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 423C74402A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 951664435E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391098AbfFMQDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:03:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35662 "EHLO mail.kernel.org"
+        id S2392473AbfFMQ25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:28:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731382AbfFMIrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:24 -0400
+        id S1730938AbfFMIfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18F9A206BA;
-        Thu, 13 Jun 2019 08:47:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 836A9206E0;
+        Thu, 13 Jun 2019 08:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415643;
-        bh=LC8O5udZCLaZ8jZmYSRFYyGAk/b9k69zvK5jhojZ45M=;
+        s=default; t=1560414932;
+        bh=3vPlgZNd7nYVW3NeAqRwuF3YuCgseMLE4XA7E4HD1mQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=buU4YLTSt5zhyrfPOigYjvq4cRy9jWVYUoktXlHP5ptStykvBShpzNyHMAjMnkxNU
-         3/8K9dy6zfkZfavbRFdYoPW/BlEoUBY66nSNCV22Hp1uaLgvOgXTSzR+4e9uz+DaY0
-         2a+Yagf7TBSe0ClsuMPulcvoHuoPGQi9XZBoROps=
+        b=LXCXlstGx5n0tK1aNPqYoEyGDq8FP/Qt9kb4KeFZpH4dKAb7FOvoUWMBBPlObYEXZ
+         IvkvWiRlQtKUtmJdzMXuk6nm4KkDiDOxndG7tsRSCYo5t27n7M7J7lB1YVSTapJMyp
+         16Svozn0KY2mnvxtJHYvdER5KID9F+TYslwZP+lc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 075/155] nvme-pci: unquiesce admin queue on shutdown
-Date:   Thu, 13 Jun 2019 10:33:07 +0200
-Message-Id: <20190613075657.179216321@linuxfoundation.org>
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 25/81] ntp: Allow TAI-UTC offset to be set to zero
+Date:   Thu, 13 Jun 2019 10:33:08 +0200
+Message-Id: <20190613075650.991287714@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c8e9e9b7646ebe1c5066ddc420d7630876277eb4 ]
+[ Upstream commit fdc6bae940ee9eb869e493990540098b8c0fd6ab ]
 
-Just like IO queues, the admin queue also will not be restarted after a
-controller shutdown. Unquiesce this queue so that we do not block
-request dispatch on a permanently disabled controller.
+The ADJ_TAI adjtimex mode sets the TAI-UTC offset of the system clock.
+It is typically set by NTP/PTP implementations and it is automatically
+updated by the kernel on leap seconds. The initial value is zero (which
+applications may interpret as unknown), but this value cannot be set by
+adjtimex. This limitation seems to go back to the original "nanokernel"
+implementation by David Mills.
 
-Reported-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Change the ADJ_TAI check to accept zero as a valid TAI-UTC offset in
+order to allow setting it back to the initial value.
+
+Fixes: 153b5d054ac2 ("ntp: support for TAI")
+Suggested-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Link: https://lkml.kernel.org/r/20190417084833.7401-1-mlichvar@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/time/ntp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index a90cf5d63aac..e5dcc769ab8f 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2438,8 +2438,11 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 	 * must flush all entered requests to their failed completion to avoid
- 	 * deadlocking blk-mq hot-cpu notifier.
- 	 */
--	if (shutdown)
-+	if (shutdown) {
- 		nvme_start_queues(&dev->ctrl);
-+		if (dev->ctrl.admin_q && !blk_queue_dying(dev->ctrl.admin_q))
-+			blk_mq_unquiesce_queue(dev->ctrl.admin_q);
-+	}
- 	mutex_unlock(&dev->shutdown_lock);
- }
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index 99e03bec68e4..4bb9b66338be 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -640,7 +640,7 @@ static inline void process_adjtimex_modes(struct timex *txc,
+ 		time_constant = max(time_constant, 0l);
+ 	}
  
+-	if (txc->modes & ADJ_TAI && txc->constant > 0)
++	if (txc->modes & ADJ_TAI && txc->constant >= 0)
+ 		*time_tai = txc->constant;
+ 
+ 	if (txc->modes & ADJ_OFFSET)
 -- 
 2.20.1
 
