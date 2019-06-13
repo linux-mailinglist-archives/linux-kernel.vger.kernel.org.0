@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B54043923
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F17843919
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387483AbfFMPLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:11:50 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:21676 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732293AbfFMNuf (ORCPT
+        id S2388048AbfFMPLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:11:36 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48770 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732294AbfFMNuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Jun 2019 09:50:35 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DDlOWe027710;
-        Thu, 13 Jun 2019 15:50:20 +0200
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DDkxYm019850;
+        Thu, 13 Jun 2019 15:50:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=mYJnSWfIFR4+WLkww3slp9IvUAAakD/AdP/cHIRY5Pw=;
- b=U5yjCulr8ekVyZY428PPhpiVoWBPhkteY9OmW2ZaJ6bt1RZ3VfHgFp+idF77FC/NszNY
- W385oaNRcracm1+t/fPyfpYaq93ssuu/LfJIdZErxOQAg5lmOQQy+nqna+coLPPrhcZI
- qiLqSxhLRnlN2ksiQi6jZma89hCDPEN9hD5fdmt5YRUKoF0YwbL/wB/g/JMcEY1aHPm/
- TipvqCl09jXeKmLihy0Lf34PBG+m8CJl+9+Q3CmnhWb4CHcPV+W3hDi6RykP9PYwSzq/
- ytEIad46R2/TQXBLQFgiIh9UCwZB4IAgovjyP+dhrfbmS3vPAvVmY2zHoSUrEFc0nvN/ Sw== 
+ bh=7dQ+9lqtmTtedvp/b3rgO/AqPLUdhqousiUICsfwmlU=;
+ b=ijH4AZveed8r4NRn2xYB5nDS0pakBJfLjvIf0GqKUmFnV/7y+itrFb9RfIPwRF9a3sA1
+ CRawx/Ss7DilL/8/TriOLtNJRsBGOvkirJquY7FdK907Ctabg73A+xw9rf4C7LW+7RAt
+ eyGHhz6CAlJvEtQgYYxR09sKR2NoQgLRPsaSFOdjTx1z4YTpE8BVVQvtDz+Frp310hHJ
+ 1/oatkRyxqaKhX9PUb/CLU1KxRYKzf6PCOAoowWF0DwSoI37XrMgzSAhHDYGItgAWEpE
+ vE3rVEzkS0P3QKLxpVcnfkGE1/tVpvF6fu/KPAYJ3X5Z1/1p2lTHbw7Qmru+EK0Rpxs5 sA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t2f8c49ar-1
+        by mx08-00178001.pphosted.com with ESMTP id 2t2gxec01t-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 13 Jun 2019 15:50:20 +0200
+        Thu, 13 Jun 2019 15:50:22 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C454446;
-        Thu, 13 Jun 2019 13:50:19 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A30C32BC2;
-        Thu, 13 Jun 2019 13:50:19 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
- 2019 15:50:19 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 588373F;
+        Thu, 13 Jun 2019 13:50:21 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3C5A02BC0;
+        Thu, 13 Jun 2019 13:50:21 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
+ 2019 15:50:20 +0200
 Received: from localhost (10.201.23.31) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun 2019 15:50:19
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun 2019 15:50:20
  +0200
 From:   Erwan Le Ray <erwan.leray@st.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,9 +54,9 @@ CC:     <linux-serial@vger.kernel.org>,
         Erwan Le Ray <erwan.leray@st.com>,
         "Fabrice Gasnier" <fabrice.gasnier@st.com>,
         Bich Hemon <bich.hemon@st.com>
-Subject: [PATCH v3 06/10] serial: stm32: add support for no_console_suspend
-Date:   Thu, 13 Jun 2019 15:49:56 +0200
-Message-ID: <1560433800-12255-7-git-send-email-erwan.leray@st.com>
+Subject: [PATCH v3 07/10] ARM: dts: stm32: update uart4 pin configurations for low power
+Date:   Thu, 13 Jun 2019 15:49:57 +0200
+Message-ID: <1560433800-12255-8-git-send-email-erwan.leray@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560433800-12255-1-git-send-email-erwan.leray@st.com>
 References: <1560433800-12255-1-git-send-email-erwan.leray@st.com>
@@ -70,101 +70,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to display console messages in low power mode, console pins
-must be kept active after suspend call.
+Currently, pinctrl states defines only one "sleep" configuration for pins,
+no matter the possible uart low power modes (Rx pin always kept active).
+
+Sleep pin configuration is refined for low power modes:
+- "sleep" (no wakeup & console suspend enabled): put pins in analog state
+  to optimize power
+- "idle" (wakeup capability): keep Rx pin in alternate function
+- "default" state remains untouched, to be used while the UART is active
+  or in case the no_console_suspend mode is enabled
 
 Signed-off-by: Bich Hemon <bich.hemon@st.com>
 Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
 
-Conflicts:
-	drivers/tty/serial/stm32-usart.c
-
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index b0fb420..00e4d7a 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -25,6 +25,7 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/devinfo.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/pm_wakeirq.h>
-@@ -847,6 +848,7 @@ static int stm32_init_port(struct stm32_port *stm32port,
- {
- 	struct uart_port *port = &stm32port->port;
- 	struct resource *res;
-+	struct pinctrl *uart_pinctrl;
- 	int ret;
- 
- 	port->iotype	= UPIO_MEM;
-@@ -880,6 +882,24 @@ static int stm32_init_port(struct stm32_port *stm32port,
- 
- 	stm32port->fifoen = stm32port->info->cfg.has_fifo;
- 
-+	uart_pinctrl = devm_pinctrl_get(&pdev->dev);
-+	if (IS_ERR(uart_pinctrl)) {
-+		ret = PTR_ERR(uart_pinctrl);
-+		if (ret != -ENODEV) {
-+			dev_err(&pdev->dev, "Can't get pinctrl, error %d\n",
-+				ret);
-+			return ret;
-+		}
-+		stm32port->console_pins = ERR_PTR(-ENODEV);
-+	} else {
-+		stm32port->console_pins = pinctrl_lookup_state
-+			(uart_pinctrl, "no_console_suspend");
-+	}
+diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+index 85c417d..2e1ab1b 100644
+--- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+@@ -599,6 +599,23 @@
+ 					bias-disable;
+ 				};
+ 			};
 +
-+	if (IS_ERR(stm32port->console_pins) && PTR_ERR(stm32port->console_pins)
-+	    != -ENODEV)
-+		return PTR_ERR(stm32port->console_pins);
++			uart4_idle_pins_a: uart4-idle-0 {
++				pins1 {
++					pinmux = <STM32_PINMUX('G', 11, ANALOG)>; /* UART4_TX */
++				};
++				pins2 {
++					pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
++					bias-disable;
++				};
++			};
 +
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	port->membase = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(port->membase))
-@@ -1304,6 +1324,7 @@ static void __maybe_unused stm32_serial_enable_wakeup(struct uart_port *port,
- static int __maybe_unused stm32_serial_suspend(struct device *dev)
- {
- 	struct uart_port *port = dev_get_drvdata(dev);
-+	struct stm32_port *stm32_port = to_stm32_port(port);
++			uart4_sleep_pins_a: uart4-sleep-0 {
++				pins {
++					pinmux = <STM32_PINMUX('G', 11, ANALOG)>, /* UART4_TX */
++						 <STM32_PINMUX('B', 2, ANALOG)>; /* UART4_RX */
++				};
++			};
+ 		};
  
- 	uart_suspend_port(&stm32_usart_driver, port);
- 
-@@ -1312,7 +1333,19 @@ static int __maybe_unused stm32_serial_suspend(struct device *dev)
- 	else
- 		stm32_serial_enable_wakeup(port, false);
- 
--	pinctrl_pm_select_sleep_state(dev);
-+	if (uart_console(port) && !console_suspend_enabled) {
-+		if (IS_ERR(stm32_port->console_pins)) {
-+			dev_err(dev, "no_console_suspend pinctrl not found\n");
-+			return PTR_ERR(stm32_port->console_pins);
-+		}
-+
-+		pinctrl_select_state(dev->pins->p, stm32_port->console_pins);
-+	} else {
-+		if (device_may_wakeup(dev))
-+			pinctrl_pm_select_idle_state(dev);
-+		else
-+			pinctrl_pm_select_sleep_state(dev);
-+	}
- 
- 	return 0;
- }
-diff --git a/drivers/tty/serial/stm32-usart.h b/drivers/tty/serial/stm32-usart.h
-index 30d2433..050fe04 100644
---- a/drivers/tty/serial/stm32-usart.h
-+++ b/drivers/tty/serial/stm32-usart.h
-@@ -255,6 +255,7 @@ struct stm32_port {
- 	bool fifoen;
- 	int wakeirq;
- 	int rdr_mask;		/* receive data register mask */
-+	struct pinctrl_state *console_pins;
- };
- 
- static struct stm32_port stm32_ports[STM32_MAX_PORTS];
+ 		pinctrl_z: pin-controller-z@54004000 {
 -- 
 1.9.1
 
