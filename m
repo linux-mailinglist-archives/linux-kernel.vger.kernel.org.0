@@ -2,93 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A2943920
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BBA443932
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388071AbfFMPLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:11:39 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35324 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732294AbfFMPLh (ORCPT
+        id S2388147AbfFMPMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:12:14 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35629 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732330AbfFMPMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:11:37 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s27so11134547pgl.2;
-        Thu, 13 Jun 2019 08:11:36 -0700 (PDT)
+        Thu, 13 Jun 2019 11:12:12 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p1so8292504plo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j6uLYgb9QUdzdOV+EOdPf7OIqvEJL4woU3/ylFU7b/E=;
-        b=AUUE0h4mfwO+9oLPVlcfntVXYuJjpD/YvgN/OCriJDEhw6YWT9XSyFNOpC6eVIGC/X
-         EzOUR7LqN+yMEDzKNgyRFJ13yD8V/WiPtupw1/OhZBuvumEn2A0tPD7ZJimwBNnlJvez
-         loJQbFqwUbtO2IqiajTQU0I7EGYDI1WPRayuKt1LXPUPda3QO3ctpwahDc/bj9U4EDrK
-         5O+2yzU3fC/ajDh92fJpVU608LH//GJKBoIT84FJcYuiBh+szce99d70cDvaz3jOh7BH
-         zOPuOQ+xZt0AyplE7XzElpcSur9TZTmasyswP2RWEBQfAQWOustFJzoj9CjcQsIJXztn
-         dA+A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=whmO4VHJLH3yhLw88WoBAtjYDYrD7FKUhcW2qIhfTgQ=;
+        b=tlOOQm+9yvPlQK5EZ1zeDGAddCr36NZ94jYyPKZ2ztLXivCoKRdHBC4dlDcTC1Kgyu
+         7wUgtEAItK8J1ttV38DaXqd1byZFOAlM3SOVfIhRI87d8nVKSamRrYK/633Yoc3gOwYv
+         6K1MvQl0ZwpenunM3yUjBHCbWwLtr/cArA3DdXKVRtquu4ggCw3uFe6dDA0Ox1IQ0fq6
+         8KIvoLHQL0h3iVJrtkjs+HTv3CsLOkbQysUKhYw9b7qq9+FlZ9jS4l3cEfRL+4QfkA+U
+         CdUw8GAVk/5jcOTaxtyXMQjnGWNPM/D0H8KoEd52ir+7EhvqwI7XmxhwXYfypKtPBCB2
+         +RYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j6uLYgb9QUdzdOV+EOdPf7OIqvEJL4woU3/ylFU7b/E=;
-        b=TW2Qrdj28KEJzmKiBX+wvDbDJJGD//+31nts9/kZwGwah8AN8tix3jzFHh3lU/400e
-         O+jOgfiaPqH7SibfIrGRZmq5uWlTNqN94snZiNYnjNjQBX4W5KVLyF3caelpWYpdrCB5
-         STuyDF1qWWCu6qRZipPFuPHwJ+vyc1t2KcL+J1bXK1ytlgMvAEM3sqkOFdRluIWXTM/e
-         8xlFUYLRLse3Fch0q0IwM2qCFB0tsRDsM0pT41wwB6EOnqgC/U1ARFMnpIJRyf8078IO
-         t09qkn6qI+V0OC2MtkYv7ENR0gjAKiDGZqfy2nkOtC15KKgbl/9mPtVDvCjxkBbgUceK
-         yZIQ==
-X-Gm-Message-State: APjAAAUgU4rCkR21/shgtwrm2v3UPl+Tl0EUQ4qhT8F47vSVN7XwIlxn
-        Vez7GumMH+HV+9cGpHeznUOeFkY8
-X-Google-Smtp-Source: APXvYqyoOI8zf5byMPkbdIwPwjTQvGI4rR/4FIYmFfGEuz1rg6rJfAIcEmG/zEHXT2m8mYaSrsFR8A==
-X-Received: by 2002:a63:3381:: with SMTP id z123mr1470380pgz.164.1560438696218;
-        Thu, 13 Jun 2019 08:11:36 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d5sm22655pfn.25.2019.06.13.08.11.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 08:11:35 -0700 (PDT)
-Subject: Re: [PATCH 4.14 00/81] 4.14.126-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20190613075649.074682929@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <1139f9d4-1a0a-b422-276d-546e7cb1bc85@roeck-us.net>
-Date:   Thu, 13 Jun 2019 08:11:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=whmO4VHJLH3yhLw88WoBAtjYDYrD7FKUhcW2qIhfTgQ=;
+        b=lK5bFHWcQwobDeIWYk1lnKJzC1+GuScxEPLqA73VOhX3WU10Jf+OIXOe33g2hc4atr
+         UrPkdJVghKBc6IViEQVkHI1WvRuTrGDhYl2U3H7SYGdmah0rajieSgAu/V4nQqUwoxur
+         ElJGvXPvIQi4HRUXQQgKf4mLyhq2uH1h61VwRSzPyBDTD6f4bdL6sJNFGUZGs9e2hhwI
+         ifZ6oBA2vvIaD9lCAAkOZIDHItaHCh94kI179cU24DDQS99+7p7NQqQCan0MgCGUzVMU
+         //ARMzLuJ5d8x7CGM2QPEP5aVXruxLEsQNpvx2A3uRusi4KTTJn7tfFARCqC3NjGasTP
+         nZSw==
+X-Gm-Message-State: APjAAAUKuqObNG9ugRpNv5XHpUjZBTywf9GdMIo6ABJ6RyXaFtPrWS5O
+        Zu7D86nqMXENjf8x5CGfNMXZE0WI4xI=
+X-Google-Smtp-Source: APXvYqzoiQTYF5wmclAxV+dqIhBAbzCFcTV5+wZZW09rVWJlA/V7DDkAGzQio4XBdDOyOMf2OvBGdA==
+X-Received: by 2002:a17:902:868b:: with SMTP id g11mr85657934plo.183.1560438732172;
+        Thu, 13 Jun 2019 08:12:12 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m24sm117215pgh.75.2019.06.13.08.12.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 08:12:11 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 08:12:09 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] drivers: regulator: qcom_spmi: Refactor
+ get_mode/set_mode
+Message-ID: <20190613151209.GB6792@builder>
+References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
+ <20190613142239.8779-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613142239.8779-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/13/19 1:32 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.126 release.
-> There are 81 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu 13 Jun 07:22 PDT 2019, Jeffrey Hugo wrote:
+
+> spmi_regulator_common_get_mode and spmi_regulator_common_set_mode use
+> multi-level ifs which mirror a switch statement.  Refactor to use a switch
+> statement to make the code flow more clear.
 > 
-> Responses should be made by Sat 15 Jun 2019 07:54:51 AM UTC.
-> Anything received after that time might be too late.
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+>  drivers/regulator/qcom_spmi-regulator.c | 28 ++++++++++++++++---------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
 > 
+> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+> index fd55438c25d6..1c18fe5969b5 100644
+> --- a/drivers/regulator/qcom_spmi-regulator.c
+> +++ b/drivers/regulator/qcom_spmi-regulator.c
+> @@ -911,13 +911,14 @@ static unsigned int spmi_regulator_common_get_mode(struct regulator_dev *rdev)
+>  
+>  	spmi_vreg_read(vreg, SPMI_COMMON_REG_MODE, &reg, 1);
+>  
+> -	if (reg & SPMI_COMMON_MODE_HPM_MASK)
+> +	switch (reg) {
+> +	case SPMI_COMMON_MODE_HPM_MASK:
+>  		return REGULATOR_MODE_NORMAL;
+> -
+> -	if (reg & SPMI_COMMON_MODE_AUTO_MASK)
+> +	case SPMI_COMMON_MODE_AUTO_MASK:
+>  		return REGULATOR_MODE_FAST;
+> -
+> -	return REGULATOR_MODE_IDLE;
+> +	default:
+> +		return REGULATOR_MODE_IDLE;
+> +	}
+>  }
+>  
+>  static int
+> @@ -925,12 +926,19 @@ spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
+>  {
+>  	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
+>  	u8 mask = SPMI_COMMON_MODE_HPM_MASK | SPMI_COMMON_MODE_AUTO_MASK;
+> -	u8 val = 0;
+> +	u8 val;
+>  
+> -	if (mode == REGULATOR_MODE_NORMAL)
+> +	switch (mode) {
+> +	case REGULATOR_MODE_NORMAL:
+>  		val = SPMI_COMMON_MODE_HPM_MASK;
+> -	else if (mode == REGULATOR_MODE_FAST)
+> +		break;
+> +	case REGULATOR_MODE_FAST:
+>  		val = SPMI_COMMON_MODE_AUTO_MASK;
+> +		break;
+> +	default:
+> +		val = 0;
+> +		break;
+> +	}
 
-[early feedback]
+For this part:
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>  
+>  	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
+>  }
+> @@ -1834,9 +1842,9 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+>  			}
+>  		}
+>  
+> -		if (vreg->logical_type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430) {
 
-Building mips:nlm_xlp_defconfig ... failed (and other mips builds)
---------------
-Error log:
-/opt/buildbot/slave/stable-queue-4.14/build/arch/mips/kernel/prom.c: In function 'early_init_dt_add_memory_arch':
-/opt/buildbot/slave/stable-queue-4.14/build/arch/mips/kernel/prom.c:44:14: error: 'PHYS_ADDR_MAX' undeclared
+Squash this into patch 1.
 
-The problem affects v4.14.y and all earlier branches.
-PHYS_ADDR_MAX is indeed undeclared in those branches. It was introduced
-with commit 1c4bc43ddfd52 ("mm/memblock: introduce PHYS_ADDR_MAX").
+Regards,
+Bjorn
 
-Guenter
+> +		if (vreg->set_points->count == 1) {
+>  			/* since there is only one range */
+> -			range = spmi_regulator_find_range(vreg);
+> +			range = vreg->set_points->range;
+>  			vreg->desc.uV_step = range->step_uV;
+>  		}
+>  
+> -- 
+> 2.17.1
+> 
