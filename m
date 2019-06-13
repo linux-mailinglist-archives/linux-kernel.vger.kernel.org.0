@@ -2,110 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F6F4441A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E785144405
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403961AbfFMQeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:34:50 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35999 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730750AbfFMHtf (ORCPT
+        id S2392498AbfFMQeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:34:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39944 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730771AbfFMHv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:49:35 -0400
-Received: by mail-qt1-f195.google.com with SMTP id p15so2104002qtl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 00:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xROEx50vg3PrTIRbBL87vn9xq3zmqd182DXiss4gqbM=;
-        b=q3wHpbh5ZcLjlQW7kj7YYZuO2MWWre3rKFc1xRiJRLPzhfF+0X6mVWIIMfzvS7Rsiu
-         qlPzgPoi0qh7StRWKqeJwocEpa4r/p/0lRP7wTbxbWhwGRycC1XHHnsa7tARYuIaHZnm
-         j4fLn76lVPiHH7mJirtdmCF6+fHru+SnN8zCtaQN7+7PoewJmPVd16kR6ZrQZ/OpXdP8
-         klOVVdV4cUYSIuz7trkXErJMZt7wxUdrHLY+SR+Rc+VfJ21s3amIh7TVMbdmHYZLN7gZ
-         hdO61fuW89DO1MElkjaiiN2Xw4u7bb1mVsfdNf85byeAIDhSG0GKhEeZ38Xl8sFqqo2p
-         a21A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xROEx50vg3PrTIRbBL87vn9xq3zmqd182DXiss4gqbM=;
-        b=FEZS+3kDPJqRY3qlWF2WF9gsZ4vVG6uadQP/yj7Oorp1CF9DVGsZaS4sWQMkUog7e2
-         qVypk/iPN2CF+ddTZruCu7l/FXh/R1i/mnXDU4pmgsyB17llATg1Yh0f0uAYTcJtV1ba
-         jP4CEqUrIiMIFNId9LRY1JkRS0BPhPNr8v2RRg0102/hGaSPqI1+C49zXiq+WP0lgd0E
-         YS+tYKK5NX3DN/CnbtkjYGAQsvi+Pt0AKGzRz66UXYgbhuQfQeVoFvVAt5XZVppN8Ka5
-         RdDPslFhypvH9GTnqY33NLpZ17FlhjVNvwJ3PrM/uJrBG9v1ud7xK2IzqUvV/kqmGdWt
-         9LNg==
-X-Gm-Message-State: APjAAAWEg0kJCLo3OKEFHQ8ve+ItT4UCuqXBrA/avIO8qEb7g+f8MpGJ
-        v0se2Tuh6pGxB2NbufhYj9hO0w==
-X-Google-Smtp-Source: APXvYqwEurFoZHKAEhOSIDN36DqZuW8gdc1FPaANBB2DIiStrJOy1JF8fsQVRp2blw4EqjOl1eZlsQ==
-X-Received: by 2002:ac8:3668:: with SMTP id n37mr29172383qtb.236.1560412174396;
-        Thu, 13 Jun 2019 00:49:34 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
-        by smtp.gmail.com with ESMTPSA id s44sm1537967qtc.8.2019.06.13.00.49.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 00:49:33 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 15:49:22 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coresight: potential uninitialized variable in probe()
-Message-ID: <20190613074922.GB21113@leoy-ThinkPad-X240s>
-References: <20190613065815.GF16334@mwanda>
+        Thu, 13 Jun 2019 03:51:26 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5D7lmBw123485
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:51:25 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t3j5agw72-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:51:24 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Thu, 13 Jun 2019 08:51:22 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Jun 2019 08:51:20 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5D7pJMr42270804
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 07:51:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A80BA4053;
+        Thu, 13 Jun 2019 07:51:19 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6F43A4040;
+        Thu, 13 Jun 2019 07:51:18 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.21])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 13 Jun 2019 07:51:18 +0000 (GMT)
+Date:   Thu, 13 Jun 2019 09:51:17 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [PATCH v3 0/4] s390/crypto: Use -ENODEV instead of -EOPNOTSUPP
+References: <20190612133306.10231-1-david@redhat.com>
+ <20190612150850.GA4038@osiris>
+ <20190613031355.7vya4vwhr3eia5g4@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613065815.GF16334@mwanda>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190613031355.7vya4vwhr3eia5g4@gondor.apana.org.au>
+X-TM-AS-GCONF: 00
+x-cbid: 19061307-0012-0000-0000-00000328BBCE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061307-0013-0000-0000-00002161C685
+Message-Id: <20190613075117.GA4292@osiris>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=898 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906130062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-
-On Wed, Jun 12, 2019 at 11:58:15PM -0700, Dan Carpenter wrote:
-> The "drvdata->atclk" clock is optional, but if it gets set to an error
-> pointer then we're accidentally return an uninitialized variable instead
-> of success.
-
-You are right, thanks a lot for pointing out.
-
-I'd like to initialize 'ret = 0' at the head of function, so we can
-has the same fashion with other CoreSight drivers (e.g. replicator).
-
- static int funnel_probe(struct device *dev, struct resource *res)
- {
--	int ret;
-+	int ret = 0;
-
-If you agree, could you send a new patch for this?
-
-Thanks,
-Leo Yan
-
-> Fixes: 78e6427b4e7b ("coresight: funnel: Support static funnel")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/hwtracing/coresight/coresight-funnel.c | 1 +
->  1 file changed, 1 insertion(+)
+On Thu, Jun 13, 2019 at 11:13:55AM +0800, Herbert Xu wrote:
+> On Wed, Jun 12, 2019 at 05:08:50PM +0200, Heiko Carstens wrote:
+> > On Wed, Jun 12, 2019 at 03:33:02PM +0200, David Hildenbrand wrote:
+> > > s390x crypto is one of the rare modules that returns -EOPNOTSUPP instead of
+> > > -ENODEV in case HW support is not available.
+> > > 
+> > > Convert to -ENODEV, so e.g., systemd's systemd-modules-load.service
+> > > ignores this error properly.
+> > > 
+> > > v2 -> v3:
+> > > - "s390/pkey: Use -ENODEV instead of -EOPNOTSUPP"
+> > > -- Also convert pkey_clr2protkey() as requested by Harald
+> > > - Add r-b's (thanks!)
+> > > 
+> > > v1 -> v2:
+> > > - Include
+> > > -- "s390/crypto: ghash: Use -ENODEV instead of -EOPNOTSUPP"
+> > > -- "s390/crypto: prng: Use -ENODEV instead of -EOPNOTSUPP"
+> > > -- "s390/crypto: sha: Use -ENODEV instead of -EOPNOTSUPP"
+> > > 
+> > > Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> > > Cc: "David S. Miller" <davem@davemloft.net>
+> > > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > > Cc: Vasily Gorbik <gor@linux.ibm.com>
+> > > Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> > > Cc: Harald Freudenberger <freude@linux.ibm.com>
+> > > Cc: Cornelia Huck <cohuck@redhat.com>
+> > > 
+> > > David Hildenbrand (4):
+> > >   s390/pkey: Use -ENODEV instead of -EOPNOTSUPP
+> > >   s390/crypto: ghash: Use -ENODEV instead of -EOPNOTSUPP
+> > >   s390/crypto: prng: Use -ENODEV instead of -EOPNOTSUPP
+> > >   s390/crypto: sha: Use -ENODEV instead of -EOPNOTSUPP
+> > 
+> > Should I pick these up so they can go upstream via the s390 tree?
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-> index 5867fcb4503b..fa97cb9ab4f9 100644
-> --- a/drivers/hwtracing/coresight/coresight-funnel.c
-> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
-> @@ -244,6 +244,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
->  	}
->  
->  	pm_runtime_put(dev);
-> +	ret = 0;
->  
->  out_disable_clk:
->  	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
-> -- 
-> 2.20.1
-> 
+> Sure Heiko.  Thanks!
+
+Ok, all applied. Thanks!
+
