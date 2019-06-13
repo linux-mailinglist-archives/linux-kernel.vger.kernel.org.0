@@ -2,185 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3B7044D7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C0944D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbfFMUcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:32:53 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54105 "EHLO mga01.intel.com"
+        id S1727605AbfFMUeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:34:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57492 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbfFMUcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:32:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 13:32:46 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jun 2019 13:32:45 -0700
-Date:   Thu, 13 Jun 2019 13:34:06 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613203406.GB32404@iweiny-DESK2.sc.intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190612233024.GD14336@iweiny-DESK2.sc.intel.com>
- <20190613005552.GI14363@dread.disaster.area>
+        id S1725789AbfFMUeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 16:34:22 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 655A5356DB;
+        Thu, 13 Jun 2019 20:34:21 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-33.phx2.redhat.com [10.3.112.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 59377600C0;
+        Thu, 13 Jun 2019 20:34:20 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id EF9F4115; Thu, 13 Jun 2019 17:34:16 -0300 (BRT)
+Date:   Thu, 13 Jun 2019 17:34:16 -0300
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: perf build failure with newer glibc headers
+Message-ID: <20190613203416.GD2834@redhat.com>
+References: <4c0a4264-7142-2e6d-540d-aa354700e0bb@redhat.com>
+ <20190612205611.GA2149@redhat.com>
+ <20190613151925.GA2834@redhat.com>
+ <a3ac5f0b-9255-155c-5151-d234890f4562@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190613005552.GI14363@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a3ac5f0b-9255-155c-5151-d234890f4562@redhat.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 13 Jun 2019 20:34:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:55:52AM +1000, Dave Chinner wrote:
-> On Wed, Jun 12, 2019 at 04:30:24PM -0700, Ira Weiny wrote:
-> > On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> > > On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
-> > > > On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
-> > > > > Are you suggesting that we have something like this from user space?
-> > > > > 
-> > > > > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
-> > > > 
-> > > > Rather than "unbreakable", perhaps a clearer description of the
-> > > > policy it entails is "exclusive"?
-> > > > 
-> > > > i.e. what we are talking about here is an exclusive lease that
-> > > > prevents other processes from changing the layout. i.e. the
-> > > > mechanism used to guarantee a lease is exclusive is that the layout
-> > > > becomes "unbreakable" at the filesystem level, but the policy we are
-> > > > actually presenting to uses is "exclusive access"...
-> > > 
-> > > That's rather different from the normal meaning of 'exclusive' in the
-> > > context of locks, which is "only one user can have access to this at
-> > > a time".  As I understand it, this is rather more like a 'shared' or
-> > > 'read' lock.  The filesystem would be the one which wants an exclusive
-> > > lock, so it can modify the mapping of logical to physical blocks.
-> > > 
-> > > The complication being that by default the filesystem has an exclusive
-> > > lock on the mapping, and what we're trying to add is the ability for
-> > > readers to ask the filesystem to give up its exclusive lock.
-> > 
-> > This is an interesting view...
-> > 
-> > And after some more thought, exclusive does not seem like a good name for this
-> > because technically F_WRLCK _is_ an exclusive lease...
-> > 
-> > In addition, the user does not need to take the "exclusive" write lease to be
-> > notified of (broken by) an unexpected truncate.  A "read" lease is broken by
-> > truncate.  (And "write" leases really don't do anything different WRT the
-> > interaction of the FS and the user app.  Write leases control "exclusive"
-> > access between other file descriptors.)
+Em Thu, Jun 13, 2019 at 03:24:41PM -0400, Laura Abbott escreveu:
+> On 6/13/19 11:19 AM, Arnaldo Carvalho de Melo wrote:
+> >Em Wed, Jun 12, 2019 at 05:56:11PM -0300, Arnaldo Carvalho de Melo escreveu:
+> >>So, we'll have to have a feature test, that defines some HAVE_GETTID
+> >>that then ifdefs out our inline copy, working on it.
+> >
+> >This should take care of it, please check, perhaps providing a
+> >Tested-by: to add to this,
+> >
 > 
-> I've been assuming that there is only one type of layout lease -
-> there is no use case I've heard of for read/write layout leases, and
-> like you say there is zero difference in behaviour at the filesystem
-> level - they all have to be broken to allow a non-lease truncate to
-> proceed.
+> built okay on the tree that previously failed
 > 
-> IMO, taking a "read lease" to be able to modify and write to the
-> underlying mapping of a file makes absolutely no sense at all.
-> IOWs, we're talking exaclty about a revokable layout lease vs an
-> exclusive layout lease here, and so read/write really doesn't match
-> the policy or semantics we are trying to provide.
+> Tested-by: Laura Abbott <labbott@redhat.com>
 
-I humbly disagree, at least depending on how you look at it...  :-D
+Thanks for checking!
 
-The patches as they stand expect the user to take a "read" layout lease which
-indicates they are currently using "reading" the layout as is.  They are not
-changing ("writing" to) the layout.  They then pin pages which locks parts of
-the layout and therefore they expect no "writers" to change the layout.
-
-The "write" layout lease breaks the "read" layout lease indicating that the
-layout is being written to.  Should the layout be pinned in such a way that the
-layout can't be changed the "layout writer" (truncate) fails.
-
-In fact, this is what NFS does right now.  The lease it puts on the file is of
-"read" type.
-
-nfs4layouts.c:
-static int
-nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
-{
-...
-        fl->fl_flags = FL_LAYOUT;
-        fl->fl_type = F_RDLCK;
-...
-}
-
-I was not changing that much from the NFS patter which meant the break lease
-code worked.
-
-Jans proposal is solid but it means that there is no breaking of the lease.  I
-tried to add an "exclusive" flag to the "write" lease but the __break_lease()
-code gets weird.  I'm not saying it is not possible.  Just that I have not
-seen a good way to do it.
-
-> 
-> > Another thing to consider is that this patch set _allows_ a truncate/hole punch
-> > to proceed _if_ the pages being affected are not actually pinned.  So the
-> > unbreakable/exclusive nature of the lease is not absolute.
-> 
-> If you're talking about the process that owns the layout lease
-> running the truncate, then that is fine.
-> 
-> However, if you are talking about a process that does not own the
-> layout lease being allowed to truncate a file without first breaking
-> the layout lease, then that is fundamentally broken.
-
-In both cases (local or remote process) the lease is broken prior to the
-attempt to truncate.
-
-> 
-> i.e. If you don't own a layout lease, the layout leases must be
-> broken before the truncate can proceed.
-
-Agreed.
-
->
-> If it's an exclusive lease,
-> then you cannot break the lease and the truncate *must fail before
-> it is started*. i.e.  the layout lease state must be correctly
-> resolved before we start an operation that may modify a file layout.
-> 
-> Determining if we can actually do the truncate based on page state
-> occurs /after/ the lease says the truncate can proceed....
-
-That makes a lot of sense and that is the way the patch currently works.
-
-I need to think on this some more.  Keeping the lease may not be critical.  As
-discussed with Jan; dealing with close() is best dealt with by tracking the
-actual pins on the file.  If that works then we could potentially keep the
-lease semantics closer to what you and I are talking about here.
-
-Ira
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+- Arnaldo
+ 
+> >Thanks,
+> >
+> >- Arnaldo
+> >
+> >commit a04ef2eb0a66d9479e75e536d919c8c9cd618ee3
+> >Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >Date:   Thu Jun 13 12:04:19 2019 -0300
+> >
+> >     tools build: Check if gettid() is available before providing helper
+> >     Laura reported that the perf build failed in fedora when we got a glibc
+> >     that provides gettid(), which I reproduced using fedora rawhide with the
+> >     glibc-devel-2.29.9000-26.fc31.x86_64 package.
+> >     Add a feature check to avoid providing a gettid() helper in such
+> >     systems.
+> >     On a fedora rawhide system with this patch applied we now get:
+> >       [root@7a5f55352234 perf]# grep gettid /tmp/build/perf/FEATURE-DUMP
+> >       feature-gettid=1
+> >       [root@7a5f55352234 perf]# cat /tmp/build/perf/feature/test-gettid.make.output
+> >       [root@7a5f55352234 perf]# ldd /tmp/build/perf/feature/test-gettid.bin
+> >               linux-vdso.so.1 (0x00007ffc6b1f6000)
+> >               libc.so.6 => /lib64/libc.so.6 (0x00007f04e0a74000)
+> >               /lib64/ld-linux-x86-64.so.2 (0x00007f04e0c47000)
+> >       [root@7a5f55352234 perf]# nm /tmp/build/perf/feature/test-gettid.bin | grep -w gettid
+> >                        U gettid@@GLIBC_2.30
+> >       [root@7a5f55352234 perf]#
+> >     While on a fedora:29 system:
+> >       [acme@quaco perf]$ grep gettid /tmp/build/perf/FEATURE-DUMP
+> >       feature-gettid=0
+> >       [acme@quaco perf]$ cat /tmp/build/perf/feature/test-gettid.make.output
+> >       test-gettid.c: In function ‘main’:
+> >       test-gettid.c:8:9: error: implicit declaration of function ‘gettid’; did you mean ‘getgid’? [-Werror=implicit-function-declaration]
+> >         return gettid();
+> >                ^~~~~~
+> >                getgid
+> >       cc1: all warnings being treated as errors
+> >       [acme@quaco perf]$
+> >     Reported-by: Laura Abbott <labbott@redhat.com>
+> >     Cc: Adrian Hunter <adrian.hunter@intel.com>
+> >     Cc: Florian Weimer <fweimer@redhat.com>
+> >     Cc: Jiri Olsa <jolsa@kernel.org>
+> >     Cc: Namhyung Kim <namhyung@kernel.org>
+> >     Cc: Stephane Eranian <eranian@google.com>
+> >     Link: https://lkml.kernel.org/n/tip-yfy3ch53agmklwu9o7rlgf9c@git.kernel.org
+> >     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >
+> >diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+> >index 3b24231c58a2..50377cc2f5f9 100644
+> >--- a/tools/build/Makefile.feature
+> >+++ b/tools/build/Makefile.feature
+> >@@ -36,6 +36,7 @@ FEATURE_TESTS_BASIC :=                  \
+> >          fortify-source                  \
+> >          sync-compare-and-swap           \
+> >          get_current_dir_name            \
+> >+        gettid				\
+> >          glibc                           \
+> >          gtk2                            \
+> >          gtk2-infobar                    \
+> >diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+> >index 4b8244ee65ce..523ee42db0c8 100644
+> >--- a/tools/build/feature/Makefile
+> >+++ b/tools/build/feature/Makefile
+> >@@ -54,6 +54,7 @@ FILES=                                          \
+> >           test-get_cpuid.bin                     \
+> >           test-sdt.bin                           \
+> >           test-cxx.bin                           \
+> >+         test-gettid.bin			\
+> >           test-jvmti.bin				\
+> >           test-jvmti-cmlr.bin			\
+> >           test-sched_getcpu.bin			\
+> >@@ -267,6 +268,9 @@ $(OUTPUT)test-sdt.bin:
+> >  $(OUTPUT)test-cxx.bin:
+> >  	$(BUILDXX) -std=gnu++11
+> >+$(OUTPUT)test-gettid.bin:
+> >+	$(BUILD)
+> >+
+> >  $(OUTPUT)test-jvmti.bin:
+> >  	$(BUILD)
+> >diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+> >index a59c53705093..3b3d5d72124a 100644
+> >--- a/tools/build/feature/test-all.c
+> >+++ b/tools/build/feature/test-all.c
+> >@@ -38,6 +38,10 @@
+> >  # include "test-get_current_dir_name.c"
+> >  #undef main
+> >+#define main main_test_gettid
+> >+# include "test-gettid.c"
+> >+#undef main
+> >+
+> >  #define main main_test_glibc
+> >  # include "test-glibc.c"
+> >  #undef main
+> >@@ -195,6 +199,7 @@ int main(int argc, char *argv[])
+> >  	main_test_libelf();
+> >  	main_test_libelf_mmap();
+> >  	main_test_get_current_dir_name();
+> >+	main_test_gettid();
+> >  	main_test_glibc();
+> >  	main_test_dwarf();
+> >  	main_test_dwarf_getlocations();
+> >diff --git a/tools/build/feature/test-gettid.c b/tools/build/feature/test-gettid.c
+> >new file mode 100644
+> >index 000000000000..ef24e42d3f1b
+> >--- /dev/null
+> >+++ b/tools/build/feature/test-gettid.c
+> >@@ -0,0 +1,11 @@
+> >+// SPDX-License-Identifier: GPL-2.0
+> >+// Copyright (C) 2019, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+> >+#define _GNU_SOURCE
+> >+#include <unistd.h>
+> >+
+> >+int main(void)
+> >+{
+> >+	return gettid();
+> >+}
+> >+
+> >+#undef _GNU_SOURCE
+> >diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> >index 51dd00f65709..5f16a20cae86 100644
+> >--- a/tools/perf/Makefile.config
+> >+++ b/tools/perf/Makefile.config
+> >@@ -332,6 +332,10 @@ ifeq ($(feature-get_current_dir_name), 1)
+> >    CFLAGS += -DHAVE_GET_CURRENT_DIR_NAME
+> >  endif
+> >+ifeq ($(feature-gettid), 1)
+> >+  CFLAGS += -DHAVE_GETTID
+> >+endif
+> >+
+> >  ifdef NO_LIBELF
+> >    NO_DWARF := 1
+> >    NO_DEMANGLE := 1
+> >diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+> >index f7eb63cbbc65..88108598d6e9 100644
+> >--- a/tools/perf/jvmti/jvmti_agent.c
+> >+++ b/tools/perf/jvmti/jvmti_agent.c
+> >@@ -45,10 +45,12 @@
+> >  static char jit_path[PATH_MAX];
+> >  static void *marker_addr;
+> >+#ifndef HAVE_GETTID
+> >  static inline pid_t gettid(void)
+> >  {
+> >  	return (pid_t)syscall(__NR_gettid);
+> >  }
+> >+#endif
+> >  static int get_e_machine(struct jitheader *hdr)
+> >  {
+> >
 > 
