@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B2B43F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D266A44159
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390423AbfFMP44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:56:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
+        id S2391739AbfFMQNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:13:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731519AbfFMIvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:51:00 -0400
+        id S1731204AbfFMImp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE5212147A;
-        Thu, 13 Jun 2019 08:50:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A59472147A;
+        Thu, 13 Jun 2019 08:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415860;
-        bh=NkvYkHH1ztt54sihZDdAYjoebvpnl72dDMTE10hznJY=;
+        s=default; t=1560415364;
+        bh=lrKXsr2OjonUOOQWsPIwOl6T08bXjYyq3cI+FJ7ZUYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hi2R35PWq8xvdXgppdoHi7ADwwcqlxWnlIVfGomwv2lFIdT0Ke6FpxM9JzeralAyV
-         P+6aZopcK0MLTpS1Jm9Jsz+5KU7N36zLtYZCPYKDLJX0lqcOOcGN5JM7LEi1zdEzRm
-         XTbdDRyKDz6uOwCD1nZgIXwqPKAV/+J5cFnq0DGU=
+        b=lgjXhlNsQxGV6vQb32VwTPIkIP7pkTiFNfxz/EPuMQr3h8/JjH4WUsEYaYsQlMaW4
+         YE0yRLjc7K7Ompkt9rvalMNkHqyVStAjmdHP8ve9laV6rxWQXJfpN7EqRcrzI+opG3
+         kuh6xuTerqlt/b42lyZUkKjB5uT6zOb0upMpsuHs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 123/155] net: hns3: return 0 and print warning when hit duplicate MAC
+        stable@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 097/118] PCI: rcar: Fix 64bit MSI message address handling
 Date:   Thu, 13 Jun 2019 10:33:55 +0200
-Message-Id: <20190613075659.732694888@linuxfoundation.org>
+Message-Id: <20190613075649.581113343@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +49,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 72110b567479f0282489a9b3747e76d8c67d75f5 ]
+[ Upstream commit 954b4b752a4c4e963b017ed8cef4c453c5ed308d ]
 
-When set 2 same MAC to different function of one port, IMP
-will return error as the later one may modify the origin one.
-This will cause bond fail for 2 VFs of one port.
+The MSI message address in the RC address space can be 64 bit. The
+R-Car PCIe RC supports such a 64bit MSI message address as well.
+The code currently uses virt_to_phys(__get_free_pages()) to obtain
+a reserved page for the MSI message address, and the return value
+of which can be a 64 bit physical address on 64 bit system.
 
-Driver just print warning and return 0 with this patch, so
-if set same MAC address, it will return 0 but do not really
-configure HW.
+However, the driver only programs PCIEMSIALR register with the bottom
+32 bits of the virt_to_phys(__get_free_pages()) return value and does
+not program the top 32 bits into PCIEMSIAUR, but rather programs the
+PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
+SoCs, however may fail on new 64 bit R-Car SoCs.
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Since from a PCIe controller perspective, an inbound MSI is a memory
+write to a special address (in case of this controller, defined by
+the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
+never hits the DRAM _and_ because allocation of an MSI by a PCIe card
+driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
+in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
+cause memory corruption or other issues.
+
+There is however the possibility that if virt_to_phys(__get_free_pages())
+returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
+to 0x0 _and_ if the system had physical RAM at the address matching the
+value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
+physical address matching the value of PCIEMSIALR and a remote write to
+such a buffer by a PCIe card would trigger a spurious MSI.
+
+Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pcie-rcar.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index deda606c51e7..6d4d5a470163 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5942,8 +5942,11 @@ int hclge_add_uc_addr_common(struct hclge_vport *vport,
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index 765c39911c0c..9b9c677ad3a0 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -892,7 +892,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+ 	struct rcar_msi *msi = &pcie->msi;
+-	unsigned long base;
++	phys_addr_t base;
+ 	int err, i;
+ 
+ 	mutex_init(&msi->lock);
+@@ -937,8 +937,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
  	}
+ 	base = virt_to_phys((void *)msi->pages);
  
- 	/* check if we just hit the duplicate */
--	if (!ret)
--		ret = -EINVAL;
-+	if (!ret) {
-+		dev_warn(&hdev->pdev->dev, "VF %d mac(%pM) exists\n",
-+			 vport->vport_id, addr);
-+		return 0;
-+	}
+-	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
+-	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
++	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
++	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
  
- 	dev_err(&hdev->pdev->dev,
- 		"PF failed to add unicast entry(%pM) in the MAC table\n",
+ 	/* enable all MSI interrupts */
+ 	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
 -- 
 2.20.1
 
