@@ -2,220 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E9743B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:29:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06DCE43B4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730947AbfFMP2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:28:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33758 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727014AbfFML1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:27:12 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3EE9C84A0E22CFC1DCFB;
-        Thu, 13 Jun 2019 19:27:10 +0800 (CST)
-Received: from [127.0.0.1] (10.177.131.64) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
- 19:26:59 +0800
-Subject: Re: [PATCH 1/4] x86: kdump: move reserve_crashkernel_low() into
- kexec_core.c
-To:     James Morse <james.morse@arm.com>
-References: <20190507035058.63992-1-chenzhou10@huawei.com>
- <20190507035058.63992-2-chenzhou10@huawei.com>
- <6585f047-063c-6d6c-4967-1d8a472f30f4@arm.com>
-CC:     <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <akpm@linux-foundation.org>, <ard.biesheuvel@linaro.org>,
-        <rppt@linux.ibm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <bp@alien8.de>, <ebiederm@xmission.com>, <horms@verge.net.au>,
-        <takahiro.akashi@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
-        <linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
-From:   Chen Zhou <chenzhou10@huawei.com>
-Message-ID: <4716a864-9560-f198-5899-9a5dee1fac20@huawei.com>
-Date:   Thu, 13 Jun 2019 19:26:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1729902AbfFMP1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:27:51 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37798 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728990AbfFMLc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:32:59 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v14so20368646wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 04:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AF1205N89OZNViaP6acWXh6mHKPDql5m0Yi3tu1T8h8=;
+        b=TbGt75o/WSp1OSUJTHNYCciigYJKAYY6solbnb+OPu7egwRHpZFyTp57t0BC1acpgS
+         TAPKFVoWfjLIyWlG5lM6ccnEx04BY1qZTdskF0iD/gBFok1EC4Jb4k98qIWfHxkzKXFg
+         UCMZerFSt04ZfSvT63r76NMFvJdbfCUTVST3Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AF1205N89OZNViaP6acWXh6mHKPDql5m0Yi3tu1T8h8=;
+        b=ZQI7oA+bIQ9cJMuJqgRYU5xqlmoAOhwhCTiQt0NJey/ktFB99uj5kA+NfhT9Q777v/
+         21g5ql12z1vYxkCiSTbc40rpS5e2zNPX6vjJpgcyDk0trXraTY2jyw2B72QY/fYMbL4h
+         7TqJV+opDBoaGb9E4t02Gh0plbrnRejpmJKtmTvUHtKTqpuWG+EcGMdg0FQblMJCgVeS
+         gNRlPPg+Gtu2PvqdXHP0A0+lv6oP5wS0FEBYo4VtQbrAo3x1GS84rGU2mQ/e7mgTpn2D
+         9QtiAbg2rVmuh+GDVymw570dVXNfZKAMcsN7O1ObJvGt2tBsz9maQLGCBAP+PhdVAOBA
+         n6zg==
+X-Gm-Message-State: APjAAAUDWFQ7f/BpdWqU2KKGRhQ1OORt+k/5timQHVBfuwnYT6EkU6np
+        kmt/yt2O4x0KPGCW0Mo/hjGGtw==
+X-Google-Smtp-Source: APXvYqyrdLnXSnjStU6hbkGo3KfeeAceiBKHAZw2YLa7AT/MAbzkQIg0WRzmMIvQXvl4kd3Mo2rHUA==
+X-Received: by 2002:a05:6000:128f:: with SMTP id f15mr5748511wrx.196.1560425577814;
+        Thu, 13 Jun 2019 04:32:57 -0700 (PDT)
+Received: from localhost.localdomain ([147.12.216.9])
+        by smtp.gmail.com with ESMTPSA id f2sm2646740wmc.34.2019.06.13.04.32.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 04:32:57 -0700 (PDT)
+From:   Arthur Fabre <afabre@cloudflare.com>
+To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Arthur Fabre <afabre@cloudflare.com>
+Subject: [PATCH] bpf: selftests: Fix warning in flow_dissector
+Date:   Thu, 13 Jun 2019 12:27:09 +0100
+Message-Id: <20190613112709.7215-1-afabre@cloudflare.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <6585f047-063c-6d6c-4967-1d8a472f30f4@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.131.64]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Building the userspace part of the flow_dissector resulted in:
 
-Thanks for your review.
+prog_tests/flow_dissector.c: In function ‘tx_tap’:
+prog_tests/flow_dissector.c:176:9: warning: implicit declaration
+of function ‘writev’; did you mean ‘write’? [-Wimplicit-function-declaration]
+  return writev(fd, iov, ARRAY_SIZE(iov));
+         ^~~~~~
+         write
 
-On 2019/6/6 0:29, James Morse wrote:
-> Hello,
-> 
-> On 07/05/2019 04:50, Chen Zhou wrote:
->> In preparation for supporting reserving crashkernel above 4G
->> in arm64 as x86_64 does, move reserve_crashkernel_low() into
->> kexec/kexec_core.c.
-> 
-> 
->> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
->> index 905dae8..9ee33b6 100644
->> --- a/arch/x86/kernel/setup.c
->> +++ b/arch/x86/kernel/setup.c
->> @@ -463,59 +460,6 @@ static void __init memblock_x86_reserve_range_setup_data(void)
->>  # define CRASH_ADDR_HIGH_MAX	MAXMEM
->>  #endif
->>  
->> -static int __init reserve_crashkernel_low(void)
->> -{
->> -#ifdef CONFIG_X86_64
-> 
-> The behaviour of this #ifdef has disappeared, won't 32bit x86 now try and reserve a chunk
-> of unnecessary 'low' memory?
-> 
-> [...]
+Include <sys/uio.h> to fix this.
 
-At present, reserve_crashkernel_low() is called only when reserving crashkernel above 4G, so i deleted
-this #ifdef.
-If we called reserve_crashkernel_low() at the beginning of reserve_crashkernel(), i need to add it back.
+Signed-off-by: Arthur Fabre <afabre@cloudflare.com>
+---
+ tools/testing/selftests/bpf/prog_tests/flow_dissector.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> 
->> @@ -579,9 +523,13 @@ static void __init reserve_crashkernel(void)
->>  		return;
->>  	}
->>  
->> -	if (crash_base >= (1ULL << 32) && reserve_crashkernel_low()) {
->> -		memblock_free(crash_base, crash_size);
->> -		return;
->> +	if (crash_base >= (1ULL << 32)) {
->> +		if (reserve_crashkernel_low()) {
->> +			memblock_free(crash_base, crash_size);
->> +			return;
->> +		}
->> +
->> +		insert_resource(&iomem_resource, &crashk_low_res);
-> 
-> 
-> Previously reserve_crashkernel_low() was #ifdefed to do nothing if !CONFIG_X86_64, I don't
-> see how 32bit is skipping this reservation...
-> 
-> 
->>  	}
->>  
->>  	pr_info("Reserving %ldMB of memory at %ldMB for crashkernel (System RAM: %ldMB)\n",
->> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
->> index b9b1bc5..096ad63 100644
->> --- a/include/linux/kexec.h
->> +++ b/include/linux/kexec.h
->> @@ -63,6 +63,10 @@
->>  
->>  #define KEXEC_CORE_NOTE_NAME	CRASH_CORE_NOTE_NAME
->>  
->> +#ifndef CRASH_ALIGN
->> +#define CRASH_ALIGN SZ_128M
->> +#endif
-> 
-> Why 128M? Wouldn't we rather each architecture tells us its minimum alignment?
-
-Yeah, each architecture should tells us its minimum alignment. I added this default size to
-fix compiling error on some architecture which didn't define it. I will add x86_64 and arm64
-restriction on reserve_crashkernel_low() and delete this define.
-
-> 
-> 
->> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
->> index d714044..3492abd 100644
->> --- a/kernel/kexec_core.c
->> +++ b/kernel/kexec_core.c
->> @@ -39,6 +39,8 @@
->>  #include <linux/compiler.h>
->>  #include <linux/hugetlb.h>
->>  #include <linux/frame.h>
->> +#include <linux/memblock.h>
->> +#include <linux/swiotlb.h>
->>  
->>  #include <asm/page.h>
->>  #include <asm/sections.h>
->> @@ -96,6 +98,60 @@ int kexec_crash_loaded(void)
->>  }
->>  EXPORT_SYMBOL_GPL(kexec_crash_loaded);
->>  
->> +int __init reserve_crashkernel_low(void)
->> +{
->> +	unsigned long long base, low_base = 0, low_size = 0;
->> +	unsigned long total_low_mem;
->> +	int ret;
->> +
->> +	total_low_mem = memblock_mem_size(1UL << (32 - PAGE_SHIFT));
->> +
->> +	/* crashkernel=Y,low */
->> +	ret = parse_crashkernel_low(boot_command_line, total_low_mem,
->> +			&low_size, &base);
->> +	if (ret) {
->> +		/*
->> +		 * two parts from lib/swiotlb.c:
->> +		 * -swiotlb size: user-specified with swiotlb= or default.
->> +		 *
->> +		 * -swiotlb overflow buffer: now hardcoded to 32k. We round it
->> +		 * to 8M for other buffers that may need to stay low too. Also
->> +		 * make sure we allocate enough extra low memory so that we
->> +		 * don't run out of DMA buffers for 32-bit devices.
->> +		 */
->> +		low_size = max(swiotlb_size_or_default() + (8UL << 20),
-> 
-> SZ_8M?
-> 
->> +				256UL << 20);
-> 
-> SZ_256M?
-> 
-
-There is compiling warning "warning: comparison of distinct pointer types lacks a cast" if just use
-SZ_8M or SZ_256M. We need cast swiotlb_size_or_default() to type int,so i kept the old as in x86_64.
-
-> 
->> +	} else {
->> +		/* passed with crashkernel=0,low ? */
->> +		if (!low_size)
->> +			return 0;
->> +	}
->> +
->> +	low_base = memblock_find_in_range(0, 1ULL << 32, low_size, CRASH_ALIGN);
->> +	if (!low_base) {
->> +		pr_err("Cannot reserve %ldMB crashkernel low memory, please try smaller size.\n",
->> +		       (unsigned long)(low_size >> 20));
->> +		return -ENOMEM;
->> +	}
->> +
->> +	ret = memblock_reserve(low_base, low_size);
->> +	if (ret) {
->> +		pr_err("%s: Error reserving crashkernel low memblock.\n",
->> +				__func__);
->> +		return ret;
->> +	}
->> +
->> +	pr_info("Reserving %ldMB of low memory at %ldMB for crashkernel (System low RAM: %ldMB)\n",
->> +		(unsigned long)(low_size >> 20),
->> +		(unsigned long)(low_base >> 20),
->> +		(unsigned long)(total_low_mem >> 20));
->> +
->> +	crashk_low_res.start = low_base;
->> +	crashk_low_res.end   = low_base + low_size - 1;
->> +
->> +	return 0;
->> +}
-> 
-> 
-> Thanks,
-> 
-> James
-> 
-> .
-> 
-
-Thanks,
-Chen Zhou
+diff --git a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
+index fbd1d88a6095..c938283ac232 100644
+--- a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
++++ b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
+@@ -3,6 +3,7 @@
+ #include <error.h>
+ #include <linux/if.h>
+ #include <linux/if_tun.h>
++#include <sys/uio.h>
+ 
+ #define CHECK_FLOW_KEYS(desc, got, expected)				\
+ 	CHECK_ATTR(memcmp(&got, &expected, sizeof(got)) != 0,		\
+-- 
+2.20.1
 
