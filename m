@@ -2,282 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 855E9437F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F020C437E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733158AbfFMPCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:02:19 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45230 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732518AbfFMOaO (ORCPT
+        id S1733125AbfFMPB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:01:58 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:57327 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732525AbfFMOdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:30:14 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a14so29650639edv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:30:12 -0700 (PDT)
+        Thu, 13 Jun 2019 10:33:10 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,369,1557212400"; 
+   d="scan'208";a="35701288"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Jun 2019 07:33:10 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 13 Jun 2019 07:33:08 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 13 Jun 2019 07:33:07 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=oVRvqGAJLCqtggjxP8ZfAYvArrXiZbY8dJkI7Luwcsc=;
-        b=i3Cb/pxtaFuJB59OOds7nZfbeZKTr03wdxZIiBVwGz7ICL9yEAP7mnHGW1iBJ4KQ3N
-         fr0f6RNoe5b9dXHTySrlYpYQfCwpSiwD6eUhZQRlqzq0EJGjtssgL/E1VOg8usGtXPKm
-         AiEZxfzO/JzzksLBIKfaLTkriITluSuxwFnWo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=oVRvqGAJLCqtggjxP8ZfAYvArrXiZbY8dJkI7Luwcsc=;
-        b=nx82rgOiSQK4JlHRGMnQ4E6w9NfKDw0c1n9Y+ZfWh6HKFSlQ/hgXtnZ0wfpFshhQ2t
-         XWxCZqs/LmulYE0QxF3l1UCQgG29VkCB4TQbKm+nmaGiJASLITSeK4v8mCAoqssnRGbU
-         7fXrMa9v4sjwHIB1HY78mHDliauseGWISspdd+Vl8SId+XeIE64mJ27ghXGjMs8gzdms
-         FxQc+N9h2vTrDvDPcS+hXF1kPp2AegFMAoryu8+Vp64igULCNvKheaqnA15NMzfY1xOJ
-         i48FFRWAyueMMRBYFG+dM++4KYDkfc4uwkw3AK/njSnB/kBf488Y7D+AnVN0anOjY0hE
-         BMhg==
-X-Gm-Message-State: APjAAAUFaKpIfxx4RZL3tFY4V0YPTlPco+k95WZnEP1R4AhKUDCkFOZL
-        BwuhGW/i98fmODnM5f7bxCw4oQ==
-X-Google-Smtp-Source: APXvYqzeg08unydG54M7oLjG/tREPQWls5h88JGmR4VVB+vdqul/l6H6z/yW9pFV0W4BENDfwJhfzA==
-X-Received: by 2002:a17:906:9149:: with SMTP id y9mr16298345ejw.98.1560436211357;
-        Thu, 13 Jun 2019 07:30:11 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id v6sm923205eds.23.2019.06.13.07.30.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 07:30:10 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 16:30:08 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>
-Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH v2 2/2] drm/komeda: Adds komeda_kms_drop_master
-Message-ID: <20190613143008.GO23020@phenom.ffwll.local>
-Mail-Followup-To: Liviu Dudau <Liviu.Dudau@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        nd <nd@arm.com>
-References: <1560251589-31827-1-git-send-email-lowry.li@arm.com>
- <1560251589-31827-3-git-send-email-lowry.li@arm.com>
- <20190611123038.GC2458@phenom.ffwll.local>
- <20190612022617.GA8595@james-ThinkStation-P300>
- <20190613081727.GE23020@phenom.ffwll.local>
- <20190613082813.GM4173@e110455-lin.cambridge.arm.com>
- <20190613090814.GJ23020@phenom.ffwll.local>
- <20190613132436.GN4173@e110455-lin.cambridge.arm.com>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RpMElIIPeAmVZNSUsuGG2pRHWS3F1XUZRafJUVk6erE=;
+ b=etfGOLWVVsZ3MpwS3nBPn1jNeJJxmOhbKxCCVoXDpKH298KilQDH3Fn8ISuyACHakZvI9VVt+bo9DL4ViSxhfMPXzhHfXkPhAlEG0JfzdoV39yZdU8lpXPykYwZBKcOriO7THJXML/qGSxDzBVgQnxYLazVfwBSc1QvmuMojRRw=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
+ BN6PR11MB1970.namprd11.prod.outlook.com (10.175.98.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Thu, 13 Jun 2019 14:33:06 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::e581:f807:acdc:cb36]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::e581:f807:acdc:cb36%9]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
+ 14:33:06 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <robimarko@gmail.com>
+CC:     <bbrezillon@kernel.org>, <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>, <marek.vasut@gmail.com>,
+        <linux-mtd@lists.infradead.org>, <computersforpeace@gmail.com>,
+        <dwmw2@infradead.org>, <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: Add Winbond w25q16jv support
+Thread-Topic: [PATCH] mtd: spi-nor: Add Winbond w25q16jv support
+Thread-Index: AQHUxKf5P1ZBDcn1LEmHy4bSCo3uraXpLIAAgAGaqYCAr5lSgA==
+Date:   Thu, 13 Jun 2019 14:33:06 +0000
+Message-ID: <113ffb44-b5a4-be63-d75e-0c5819f65604@microchip.com>
+References: <20190214205723.9011-1-robimarko@gmail.com>
+ <97e48e85-9700-53e3-0f7a-eeac6f93f721@microchip.com>
+ <CAOX2RU5MsnNLseBRqcp1KqbmQ+5_KzRyTQ_rGQB2DsrW_v-3iA@mail.gmail.com>
+In-Reply-To: <CAOX2RU5MsnNLseBRqcp1KqbmQ+5_KzRyTQ_rGQB2DsrW_v-3iA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR09CA0066.eurprd09.prod.outlook.com
+ (2603:10a6:802:28::34) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:101::18)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 18026400-8710-4c4c-b415-08d6f00c0c5b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR11MB1970;
+x-ms-traffictypediagnostic: BN6PR11MB1970:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <BN6PR11MB1970AA8A67625BC596E3F6AEF0EF0@BN6PR11MB1970.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39860400002)(136003)(366004)(189003)(199004)(6246003)(8936002)(52116002)(76176011)(1411001)(14444005)(66066001)(54906003)(11346002)(81166006)(305945005)(446003)(256004)(316002)(81156014)(8676002)(5660300002)(99286004)(86362001)(66946007)(73956011)(2616005)(66446008)(7736002)(66476007)(476003)(71190400001)(31686004)(36756003)(71200400001)(6916009)(72206003)(31696002)(6306002)(2906002)(966005)(229853002)(64756008)(6436002)(14454004)(68736007)(6116002)(53936002)(26005)(4326008)(186003)(6486002)(25786009)(386003)(6506007)(53546011)(102836004)(3846002)(486006)(66556008)(478600001)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1970;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pr+drSv8UncacVA4VVPmY5qs3vtwWca05DC8BCGfVSU/3Gqb1S43Un6bqvljLpjLAYquYbm50dig3LbuSJZZT1MlFKGjE5fzcqPggNyKkMS2GsOKXix6rJxikclqY2zOp2jTMedJRvd1pK45wSJGlPf4WgN6/PRqr8kvde1/RG8MxVmv7PY6lqIF5J+DB7WkPeyiGxSVF11XSVbjOPqXY24ZEqJKWU0al2s/fKwluvztsfNQlAD588XW0z8RcNIR6vYGwWWSoy8Qs++ZlmowQVkNmOIZRxxlMhsZqhbqWYyNKd7TC5uRUNgR2JUlf2TziV+b6KPkN+KunRgLTB04ygqzb/gO09gbkyfkUzx1XWJFXBSQMBpYxeiH0hfG6vFRaLIGbI84fn/MehBjGZ2pSXQ0KTU+XCbKWU/UiWhiKXU=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DEE4C4B6D51A4D44B8AF53A23A4484FF@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190613132436.GN4173@e110455-lin.cambridge.arm.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18026400-8710-4c4c-b415-08d6f00c0c5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 14:33:06.0957
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tudor.ambarus@microchip.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1970
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 02:24:37PM +0100, Liviu Dudau wrote:
-> On Thu, Jun 13, 2019 at 11:08:14AM +0200, Daniel Vetter wrote:
-> > On Thu, Jun 13, 2019 at 09:28:13AM +0100, Liviu Dudau wrote:
-> > > On Thu, Jun 13, 2019 at 10:17:27AM +0200, Daniel Vetter wrote:
-> > > > On Wed, Jun 12, 2019 at 02:26:24AM +0000, james qian wang (Arm Technology China) wrote:
-> > > > > On Tue, Jun 11, 2019 at 02:30:38PM +0200, Daniel Vetter wrote:
-> > > > > > On Tue, Jun 11, 2019 at 11:13:45AM +0000, Lowry Li (Arm Technology China) wrote:
-> > > > > > > From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-> > > > > > >
-> > > > > > > The komeda internal resources (pipelines) are shared between crtcs,
-> > > > > > > and resources release by disable_crtc. This commit is working for once
-> > > > > > > user forgot disabling crtc like app quit abnomally, and then the
-> > > > > > > resources can not be used by another crtc. Adds drop_master to
-> > > > > > > shutdown the device and make sure all the komeda resources have been
-> > > > > > > released and can be used for the next usage.
-> > > > > > >
-> > > > > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
-> > > > > > > ---
-> > > > > > >  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 13 +++++++++++++
-> > > > > > >  1 file changed, 13 insertions(+)
-> > > > > > >
-> > > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > > > > > index 8543860..647bce5 100644
-> > > > > > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > > > > > @@ -54,11 +54,24 @@ static irqreturn_t komeda_kms_irq_handler(int irq, void *data)
-> > > > > > >  return status;
-> > > > > > >  }
-> > > > > > >
-> > > > > > > +/* Komeda internal resources (pipelines) are shared between crtcs, and resources
-> > > > > > > + * are released by disable_crtc. But if user forget disabling crtc like app quit
-> > > > > > > + * abnormally, the resources can not be used by another crtc.
-> > > > > > > + * Use drop_master to shutdown the device and make sure all the komeda resources
-> > > > > > > + * have been released, and can be used for the next usage.
-> > > > > > > + */
-> > > > > >
-> > > > > > No. If we want this, we need to implement this across drivers, not with
-> > > > > > per-vendor hacks.
-> > > > > >
-> > > > > > The kerneldoc should have been a solid hint: "Only used by vmwgfx."
-> > > > > > -Daniel
-> > > > > 
-> > > > > Hi Daniel:
-> > > > > This drop_master is really what we want, can we update the doc and
-> > > > > add komeda as a user of this hacks like "used by vmwfgx and komeda",
-> > > > > or maybe directly promote this per-vendor hacks as an optional chip
-> > > > > function ?
-> > > > 
-> > > > Still no, because it would mean different behaviour for arm/komeda
-> > > > compared to everyone else. And we really don't want this, because this
-> > > > would completely break flicker-less vt-switching.
-> > > > 
-> > > > Currently the only fallback for this case is the lastclose handler, which
-> > > > atm just restores fbcon/fbdev. If you want to change/extend that to work
-> > > > without fbdev, then that's the place to do the change. And across _all_
-> > > > drm kms drivers, so that we have consistent behaviour.
-> > > 
-> > > Slightly unrelated, just thinking of a solution and wanted confirmation/double
-> > > checking: can a CRTC be instantiated without any planes (or without a primary
-> > > plane)?
-> > 
-> > Without a primary plane maybe not so recommended, because it would break
-> > all the legacy userspace. Might even result in some oopses, not sure we
-> > check for crtc->primary != NULL.
-> > 
-> > I'm not sure what you mean about instantiating it without any plane at
-> > all. That would be rather useless.
-> 
-> Agree, and I think I have one way of solving the scenario Lowry and James are
-> trying to cover. Basically, komeda has 2 pipelines that are exposed as 2 crtcs.
-> However, layers (planes in DRM) can be associated with any of the pipelines and
-> it is possible to have a DRM master open up crtc0 and enable all possible planes,
-> which would leave crtc1 with no available layer to use (but technically still visible to
-> userspace, as it has been drm_crtc_init-ed. James and Lowry are trying to give
-> another master a chance of enabling crtc1 if previous master drops the
-> ownership of crtc0 without disabling it. So one solution I'm thinking of is to
-> tie one of the layers/planes to crtc1 regardless if that pipeline is enabled or
-> not.
-> 
-> Alternatively, we need a more generic solution for re-allocating resources
-> between CRTCs that might be enabled at different times. Ideas on how userspace
-> should handle it first are welcome as well.
-
-Uh, you can't have more than one active master. And that other master
-needs to clean up the mess left behind by the previous one. Generally that
-means disabling all the planes, like e.g. fbdev emulation does (but
-there's a lot more we should probably clean up, current code is kinda just
-good enough).
-
-If you want multiple concurrent masters on the same hw, then you need drm
-leases, and there you can limit the leases to however many planes you
-think they need.
--Daniel
-
-> 
-> Best regards,
-> Liviu
-> 
-> > -Daniel
-> > 
-> > > 
-> > > Best regards,
-> > > Liviu
-> > > 
-> > > > 
-> > > > kms is a cross-vendor api, vendor hacks are very, very much not cool.
-> > > > -Daniel
-> > > > 
-> > > > > 
-> > > > > James
-> > > > > 
-> > > > > > > +static void komeda_kms_drop_master(struct drm_device *dev,
-> > > > > > > +   struct drm_file *file_priv)
-> > > > > > > +{
-> > > > > > > +drm_atomic_helper_shutdown(dev);
-> > > > > > > +}
-> > > > > > > +
-> > > > > > >  static struct drm_driver komeda_kms_driver = {
-> > > > > > >  .driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
-> > > > > > >     DRIVER_PRIME | DRIVER_HAVE_IRQ,
-> > > > > > >  .lastclose= drm_fb_helper_lastclose,
-> > > > > > >  .irq_handler= komeda_kms_irq_handler,
-> > > > > > > +.master_drop= komeda_kms_drop_master,
-> > > > > > >  .gem_free_object_unlocked= drm_gem_cma_free_object,
-> > > > > > >  .gem_vm_ops= &drm_gem_cma_vm_ops,
-> > > > > > >  .dumb_create= komeda_gem_cma_dumb_create,
-> > > > > > > --
-> > > > > > > 1.9.1
-> > > > > > >
-> > > > > > > _______________________________________________
-> > > > > > > dri-devel mailing list
-> > > > > > > dri-devel@lists.freedesktop.org
-> > > > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > > > >
-> > > > > > --
-> > > > > > Daniel Vetter
-> > > > > > Software Engineer, Intel Corporation
-> > > > > > http://blog.ffwll.ch
-> > > > > IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
-> > > > > _______________________________________________
-> > > > > dri-devel mailing list
-> > > > > dri-devel@lists.freedesktop.org
-> > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > > 
-> > > > -- 
-> > > > Daniel Vetter
-> > > > Software Engineer, Intel Corporation
-> > > > http://blog.ffwll.ch
-> > > 
-> > > -- 
-> > > ====================
-> > > | I would like to |
-> > > | fix the world,  |
-> > > | but they're not |
-> > > | giving me the   |
-> > >  \ source code!  /
-> > >   ---------------
-> > >     ¯\_(ツ)_/¯
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > 
-> > -- 
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
-> 
-> -- 
-> ====================
-> | I would like to |
-> | fix the world,  |
-> | but they're not |
-> | giving me the   |
->  \ source code!  /
->   ---------------
->     ¯\_(ツ)_/¯
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+SGksIFJvYmVydCwNCg0KT24gMDIvMjEvMjAxOSAxMDo1OCBQTSwgUm9iZXJ0IE1hcmtvIHdyb3Rl
+Og0KPiBPbiBXZWQsIDIwIEZlYiAyMDE5IGF0IDIxOjI5LCA8VHVkb3IuQW1iYXJ1c0BtaWNyb2No
+aXAuY29tPiB3cm90ZTo+Pg0KPiBIaSwgUm9iZXJ0LD4+IE9uIDAyLzE0LzIwMTkgMTA6NTcgUE0s
+IFJvYmVydCBNYXJrbyB3cm90ZTo+ID4NCj4gRGF0YXNoZWV0OiBodHRwczovL3d3dy53aW5ib25k
+LmNvbS9yZXNvdXJjZS1maWxlcy93MjVxMTZqdiUyMHNwaSUyMHJldmclMjAwMzIyMjAxOCUyMHBs
+dXMucGRmPg0KPj4+PiBUZXN0aW5nIGRvbmUgb24gTWlrcm90aWsgUm91dGVyYm9hcmQgUkI0NTBH
+eDQgYm9hcmQgdW5kZXIgNC4xOS4xOQ0KPiBrZXJuZWwuPj4gSXQgaXMgcHJlZmVyYWJsZSB0byBk
+byB0aGUgdGVzdCBvbiBzcGktbm9yL25leHRVbmZvcnR1bmF0ZWx5DQo+IEkgY2FudCBkbyB0aGF0
+IGFzIE9wZW5XcnQgaGFzIGEgY29uc2lkZXJhYmxlIGFtb3VudCBvZiBwYXRjaGVzIHRoYXQNCj4g
+d291bGQgbmVlZCB0byBiZSBwb3J0ZWQgYW5kIHdlIGFyZSBvbmx5IG1vdmluZyBmcm9tIExUUyB0
+byBMVFMgdmVyc2lvbg0KPiBhbmQgd2UgYXJlIGN1cnJlbnRseSBvbiA0LjE5Lg0KPj4+DQo+Pj4g
+VGVzdCBib2FyZCBkb2VzIG5vdCBzdXBwb3J0IER1YWwgb3IgUXVhZCBtb2Rlcy4NCj4+Pg0KPj4+
+IFNpZ25lZC1vZmYtYnk6IFJvYmVydCBNYXJrbyA8cm9iaW1hcmtvQGdtYWlsLmNvbT4NCj4+PiAt
+LS0NCj4+PiAgZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMgfCA1ICsrKysrDQo+Pj4gIDEg
+ZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykNCj4+Pg0KPj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5j
+DQo+Pj4gaW5kZXggNmUxM2JiZDFhYWE1Li4wZTk1OGY0OGRiMWIgMTAwNjQ0DQo+Pj4gLS0tIGEv
+ZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4+PiArKysgYi9kcml2ZXJzL210ZC9zcGkt
+bm9yL3NwaS1ub3IuYw0KPj4+IEBAIC0xOTc1LDYgKzE5NzUsMTEgQEAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBmbGFzaF9pbmZvIHNwaV9ub3JfaWRzW10gPSB7DQo+Pj4gICAgICAgICAgICAgICAgICAg
+ICAgIFNFQ1RfNEsgfCBTUElfTk9SX0RVQUxfUkVBRCB8IFNQSV9OT1JfUVVBRF9SRUFEIHwNCj4+
+PiAgICAgICAgICAgICAgICAgICAgICAgU1BJX05PUl9IQVNfTE9DSyB8IFNQSV9OT1JfSEFTX1RC
+KQ0KPj4+ICAgICAgIH0sDQo+Pj4gKyAgICAgew0KPj4+ICsgICAgICAgICAgICAgIncyNXExNmp2
+IiwgSU5GTygweGVmNzAxNSwgMCwgNjQgKiAxMDI0LCAgMzIsDQo+Pj4gKyAgICAgICAgICAgICAg
+ICAgICAgIFNFQ1RfNEsgfCBTUElfTk9SX0RVQUxfUkVBRCB8IFNQSV9OT1JfUVVBRF9SRUFEIHwN
+Cj4+PiArICAgICAgICAgICAgICAgICAgICAgU1BJX05PUl9IQVNfTE9DSyB8IFNQSV9OT1JfSEFT
+X1RCKQ0KPj4NCj4+IFlvdSdsbCBuZWVkIGEgd2F5IHRvIGRpZmZlcmVudGlhdGUgYmV0d2VlbiBX
+MjVRMTZKVi1JUS9KUSBhbmQgVzI1UTE2SlYtSU0vSk0uDQo+IEhtLCBmcm9tIHdoYXQgSSB1bmRl
+cnN0b29kIEpWIGlzIHRoZSBzZXJpZXMgYW5kIHN1ZmZpeCBvbmx5IGluZGljdGVzDQo+IHRoZSBw
+YWNrYWdlLg0KPiBUaGV5IHNob3VsZCBhbGwgaGF2ZSB0aGUgc2FtZSBKRURFQyBJRCBhbmQgZmVh
+dHVyZXMuDQo+Pg0KDQpXMjVRMTZKVi1JUS9KUSBhbmQgVzI1UTE2SlYtSU0vSk0gaGF2ZSBkaWZm
+ZXJlbnQgamVkZWMgaWRzLCBzZWUgdGFibGUgIjkuMS4xDQpNYW51ZmFjdHVyZXIgYW5kIERldmlj
+ZSBJZGVudGlmaWNhdGlvbiIgZnJvbSB0aGUgZGF0YXNoZWV0IHRoYXQgeW91IGluZGljYXRlZCBp
+bg0KdGhlIGNvbW1pdCBtZXNzYWdlLg0KDQpMb29raW5nIGF0ICIxMi4gT1JERVJJTkcgSU5GT1JN
+QVRJT04iLCBJIHNlZSB0aGF0Og0KLSBRIHZlcnNpb24gaGFzIFFFID0gMSAoZml4ZWQpIGFuZCBp
+dCdzIGJhY2t3YXJkIGNvbXBhdGlibGUgdG8gRlYgZmFtaWx5DQotIE0gdmVyc2lvbiBoYXMgUUUg
+PSAwIChwcm9ncmFtbWFibGUpIGFuZCBoYXMgYSBuZXcgZGV2aWNlIElEDQpUaGUgc2FtZSBpcyBk
+ZXNjcmliZWQgaW4gIjguIFFVQUQgRU5BQkxFIChRRSkg4oCTIFZvbGF0aWxlL05vbi1Wb2xhdGls
+ZSBXcml0YWJsZSIuDQoNCkkgd291bGQgc3VnZ2VzdCB0byBuYW1lIHRoZSBmbGFzaCAidzI1cTE2
+anYtaW0vam0iLg0KDQpXaGF0IGRvIHlvdSB0aGluaz8NCnRhDQo=
