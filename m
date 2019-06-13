@@ -2,92 +2,293 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8CE43AE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6286643AE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfFMPYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:24:36 -0400
-Received: from mail-eopbgr10059.outbound.protection.outlook.com ([40.107.1.59]:40612
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731692AbfFMMNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:13:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pv69o6ZuYfDc5tqvervHiRSdpbKRGL/jmvkvv1MTHkw=;
- b=mw7lqDtH/qgnwCtHpwK5UCtmfVfLR9iKe9OE38W8i7nEdELbXd6UbdWGIDtVywdrGSM+F8mRa2o8a2JWiLbn4mJNayJHUw2yk4XH5jkKs3GZbJZ+pWOFSCf7j42YkUIr917NIIgmwr9ST73Uq6fZQYLfIgjVdwL0u1J+Qd0QVCo=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3581.eurprd04.prod.outlook.com (52.134.4.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Thu, 13 Jun 2019 12:13:30 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745%4]) with mapi id 15.20.1987.012; Thu, 13 Jun 2019
- 12:13:30 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 1/4] crypto: talitos - move struct talitos_edesc into
- talitos.h
-Thread-Topic: [PATCH v2 1/4] crypto: talitos - move struct talitos_edesc into
- talitos.h
-Thread-Index: AQHVIGOHWjiLuJ/iA0u2rV751i1YWQ==
-Date:   Thu, 13 Jun 2019 12:13:30 +0000
-Message-ID: <VI1PR0402MB3485C0F4CB13F8674B8B5A5598EF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <cover.1560263641.git.christophe.leroy@c-s.fr>
- <d9b5fade242f0806a587392d31c272709949479f.1560263641.git.christophe.leroy@c-s.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [78.96.98.22]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7f215663-958c-4a03-700d-08d6eff88c39
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3581;
-x-ms-traffictypediagnostic: VI1PR0402MB3581:
-x-microsoft-antispam-prvs: <VI1PR0402MB3581E0EE7B459D9995FD171998EF0@VI1PR0402MB3581.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(366004)(346002)(199004)(189003)(76116006)(6436002)(66476007)(66066001)(446003)(53936002)(5660300002)(186003)(316002)(26005)(54906003)(6246003)(110136005)(55016002)(99286004)(486006)(71190400001)(64756008)(73956011)(71200400001)(66556008)(66946007)(478600001)(7736002)(66446008)(68736007)(91956017)(229853002)(6506007)(44832011)(8676002)(53546011)(81156014)(81166006)(8936002)(86362001)(256004)(25786009)(33656002)(102836004)(9686003)(4326008)(305945005)(14454004)(3846002)(52536014)(476003)(7696005)(76176011)(2906002)(74316002)(6116002)(4744005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3581;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BDUcSMVCA3EhwEB5tA2oqCNhihgKWsKdIw+dxzNg+LRxFERORmViQyRiy+LglFTG5NFlUCxF4XffLWQUkGDnAuhuvfzrTvCI9+4fNew6hP7iY5LGULqGu6QBTOtxw3iX08axOng9WiLhG4L7aOwTKVMz+GQUcnuExFVpL2E4l6/PHW+7Dzu2Q5TXWCxdfvTzEzxBMBZem4DnQDO/KBsP3+y00cf62URdI96w0pOiHeF3rAbKDkdO4gkG4SwrNSniKb8EWbX7TMimGinUpxPsmFyZHLNfIjDoCWx8TXeMtPnibRsy7h68o8DETVwmUYXiyLrYSQuX+BaKrUeShGJ+YE7vbLyUWWzTiQKX0ov9mCuojWsjvMs9qH1HSMTweg8eSF9o8HADUYnCvBmDwP8YN62ezvl9gTy9TqkD3jC0zJQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1732100AbfFMPYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:24:33 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45044 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731713AbfFMMOh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:14:37 -0400
+Received: by mail-lf1-f65.google.com with SMTP id r15so14888791lfm.11;
+        Thu, 13 Jun 2019 05:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Di51b04bROtCX/vuM0wVqtGuQS1eHeWTyN72NZcfLpI=;
+        b=ueZi6C9BckqIlGM9iOCyBVB/ob1mEPQQTEbO4hF0ltPPZ+zczG4ZT8Ce/4iUWi7aKx
+         BtE3HaG4HFWrGaO4fH14CVa+al4wdbPhiRf7YRoBiGmM/YA/RNrjdB2IbykgMjsxb4Ax
+         fjltvV2mUrXX6WgmWs5LXa9phBp4LYUZFR+3R5B2cVFv1/8pxpVuRZ8f1p14SxkurgY1
+         nE+WVZFVq3yZY3DExW5hM6SJZ76kjMmCmpMfgqvenYHe0v3UinsJj41aqxgxjqXv1SjR
+         wkL922OC6EEQOmKLCX45W8CZOK8cmq3vpOVhKNMOHrBFY6akrOiAsqA3tsglyqQzpMc5
+         E/RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Di51b04bROtCX/vuM0wVqtGuQS1eHeWTyN72NZcfLpI=;
+        b=N3miRoCVDK0UbDUHmDQdWOR42ZtQNn6L+rK0Bcsl/j1w2P+O6PUkGzv/JAEZ/SR37B
+         oZ84++pO8qy3nVNrPs+t2Sb7KOkpToMRSZoXskC+8SvamQiub+oF8EBQkK0dUlGdzyzT
+         R2Dfhoe2XD6/VwXC+gwq/58juxwPNOrf9nQXrfFsSqnFRZTu7krm/R7Y/6J0qoJfrbDP
+         6VYJLn58da6q73ohOmiSl+2j8v2wIorhocGHDip1Z+33LQIfaT4D5xvdfUUzyN6dbLWf
+         q40zX7hFm8f1Z/7zvJ8e5BM+hk6578LlJaIlRI5q4GCV64o/tvTECyBvgoX5V/fZc4kg
+         fSgg==
+X-Gm-Message-State: APjAAAXOyK8A7DfJiMebh36cM5giq2gZg53mULVufwOJDmOU3iWD/CM8
+        XaIFaBxJxGTTiaFVe+JXCjDkZTHC
+X-Google-Smtp-Source: APXvYqzUTRSIUmi6E6J8xTlzxDOIGnHtfLC3lcEsJusM8CQrI3hBqsHFcNFaS71aOXiZXgh2DQVf5w==
+X-Received: by 2002:ac2:499b:: with SMTP id f27mr19467015lfl.88.1560428073517;
+        Thu, 13 Jun 2019 05:14:33 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id i5sm566913lfo.55.2019.06.13.05.14.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 05:14:32 -0700 (PDT)
+Subject: Re: [PATCH v3 1/8] clk: tegra20/30: Add custom EMC clock
+ implementation
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190524172353.29087-1-digetx@gmail.com>
+ <20190524172353.29087-2-digetx@gmail.com>
+ <20190613104945.GJ29894@pdeschrijver-desktop.Nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9c4af080-89d1-84a3-d909-b5595b8a6959@gmail.com>
+Date:   Thu, 13 Jun 2019 15:14:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f215663-958c-4a03-700d-08d6eff88c39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 12:13:30.2046
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3581
+In-Reply-To: <20190613104945.GJ29894@pdeschrijver-desktop.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/2019 5:39 PM, Christophe Leroy wrote:=0A=
-> Next patch will require struct talitos_edesc to be defined=0A=
-> earlier in talitos.c=0A=
-> =0A=
-> This patch moves it into talitos.h so that it can be used=0A=
-> from any place in talitos.c=0A=
-> =0A=
-> Fixes: 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash =
-on SEC1")=0A=
-> Cc: stable@vger.kernel.org=0A=
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>=0A=
-Again, this patch does not qualify as a fix.=0A=
-=0A=
-Horia=0A=
+13.06.2019 13:49, Peter De Schrijver пишет:
+> On Fri, May 24, 2019 at 08:23:46PM +0300, Dmitry Osipenko wrote:
+>> A proper External Memory Controller clock rounding and parent selection
+>> functionality is required by the EMC drivers. It is not available using
+>> the generic clock implementation, hence add a custom one. The clock rate
+>> rounding shall be done by the EMC drivers because they have information
+>> about available memory timings, so the drivers will have to register a
+>> callback that will round the requested rate. EMC clock users won't be able
+>> to request EMC clock by getting -EPROBE_DEFER until EMC driver is probed
+>> and the callback is set up. The functionality is somewhat similar to the
+>> clk-emc.c which serves Tegra124+ SoC's, the later HW generations support
+>> more parent clock sources and the HW configuration and integration with
+>> the EMC drivers differs a tad from the older gens, hence it's not really
+>> worth to try to squash everything into a single source file.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/clk/tegra/Makefile          |   2 +
+>>  drivers/clk/tegra/clk-tegra20-emc.c | 299 ++++++++++++++++++++++++++++
+>>  drivers/clk/tegra/clk-tegra20.c     |  55 ++---
+>>  drivers/clk/tegra/clk-tegra30.c     |  38 +++-
+>>  drivers/clk/tegra/clk.h             |   6 +
+>>  include/linux/clk/tegra.h           |  14 ++
+>>  6 files changed, 362 insertions(+), 52 deletions(-)
+>>  create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+>>
+>> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+>> index 4812e45c2214..df966ca06788 100644
+>> --- a/drivers/clk/tegra/Makefile
+>> +++ b/drivers/clk/tegra/Makefile
+>> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
+>>  obj-y					+= clk-tegra-super-gen4.o
+>>  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
+>>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+>> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
+>>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+>> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
+>>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+>>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+>>  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
+>> diff --git a/drivers/clk/tegra/clk-tegra20-emc.c b/drivers/clk/tegra/clk-tegra20-emc.c
+>> new file mode 100644
+>> index 000000000000..d971b5425ce3
+>> --- /dev/null
+>> +++ b/drivers/clk/tegra/clk-tegra20-emc.c
+>> @@ -0,0 +1,299 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/bits.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clk/tegra.h>
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "clk.h"
+>> +
+>> +#define CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK	GENMASK(7, 0)
+>> +#define CLK_SOURCE_EMC_2X_CLK_SRC_MASK		GENMASK(31, 30)
+>> +#define CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT		30
+>> +
+>> +#define MC_EMC_SAME_FREQ	BIT(16)
+>> +#define USE_PLLM_UD		BIT(29)
+>> +
+>> +#define EMC_SRC_PLL_M		0
+>> +#define EMC_SRC_PLL_C		1
+>> +#define EMC_SRC_PLL_P		2
+>> +#define EMC_SRC_CLK_M		3
+>> +
+>> +static const char * const emc_parent_clk_names[] = {
+>> +	"pll_m", "pll_c", "pll_p", "clk_m",
+>> +};
+>> +
+>> +struct tegra_clk_emc {
+>> +	struct clk_hw hw;
+>> +	void __iomem *reg;
+>> +	bool mc_same_freq;
+>> +	bool want_low_jitter;
+>> +
+>> +	tegra20_clk_emc_round_cb *round_cb;
+>> +	void *cb_arg;
+>> +};
+>> +
+>> +static inline struct tegra_clk_emc *to_tegra_clk_emc(struct clk_hw *hw)
+>> +{
+>> +	return container_of(hw, struct tegra_clk_emc, hw);
+>> +}
+>> +
+>> +static unsigned long emc_recalc_rate(struct clk_hw *hw,
+>> +				     unsigned long parent_rate)
+>> +{
+>> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+>> +	u32 val, div;
+>> +
+>> +	val = readl_relaxed(emc->reg);
+>> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+>> +
+>> +	return DIV_ROUND_UP(parent_rate * 2, div + 2);
+>> +}
+>> +
+>> +static u8 emc_get_parent(struct clk_hw *hw)
+>> +{
+>> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+>> +
+>> +	return readl_relaxed(emc->reg) >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+>> +}
+>> +
+>> +static int emc_set_parent(struct clk_hw *hw, u8 index)
+>> +{
+>> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+>> +	u32 val, div;
+>> +
+>> +	val = readl_relaxed(emc->reg);
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
+>> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+>> +
+>> +	div = val & CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+>> +
+>> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+>> +		val |= USE_PLLM_UD;
+>> +	else
+>> +		val &= ~USE_PLLM_UD;
+>> +
+>> +	if (emc->mc_same_freq)
+>> +		val |= MC_EMC_SAME_FREQ;
+>> +	else
+>> +		val &= ~MC_EMC_SAME_FREQ;
+>> +
+>> +	writel_relaxed(val, emc->reg);
+>> +
+> 
+> I think technically you need a fence_udelay(1) here, but in practice
+> this is probably not needed because you will poll some EMC register for
+> the frequency completion anyway. Maybe add a comment about this?
+> 
+>> +	return 0;
+>> +}
+>> +
+>> +static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +			unsigned long parent_rate)
+>> +{
+>> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+>> +	unsigned int index;
+>> +	u32 val, div;
+>> +
+>> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
+>> +
+>> +	val = readl_relaxed(emc->reg);
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+>> +	val |= div;
+>> +
+>> +	index = val >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+>> +
+>> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+>> +		val |= USE_PLLM_UD;
+>> +	else
+>> +		val &= ~USE_PLLM_UD;
+>> +
+>> +	if (emc->mc_same_freq)
+>> +		val |= MC_EMC_SAME_FREQ;
+>> +	else
+>> +		val &= ~MC_EMC_SAME_FREQ;
+>> +
+>> +	writel_relaxed(val, emc->reg);
+>> +
+> 
+> Same here.
+> 
+>> +	return 0;
+>> +}
+>> +
+>> +static int emc_set_rate_and_parent(struct clk_hw *hw,
+>> +				   unsigned long rate,
+>> +				   unsigned long parent_rate,
+>> +				   u8 index)
+>> +{
+>> +	struct tegra_clk_emc *emc = to_tegra_clk_emc(hw);
+>> +	u32 val, div;
+>> +
+>> +	div = div_frac_get(rate, parent_rate, 8, 1, 0);
+>> +
+>> +	val = readl_relaxed(emc->reg);
+>> +
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
+>> +	val |= index << CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT;
+>> +
+>> +	val &= ~CLK_SOURCE_EMC_2X_CLK_DIVISOR_MASK;
+>> +	val |= div;
+>> +
+>> +	if (index == EMC_SRC_PLL_M && div == 0 && emc->want_low_jitter)
+>> +		val |= USE_PLLM_UD;
+>> +	else
+>> +		val &= ~USE_PLLM_UD;
+>> +
+>> +	if (emc->mc_same_freq)
+>> +		val |= MC_EMC_SAME_FREQ;
+>> +	else
+>> +		val &= ~MC_EMC_SAME_FREQ;
+>> +
+>> +	writel_relaxed(val, emc->reg);
+>> +
+> 
+> And here.
+> 
+>> +	return 0;
+>> +}
+> 
+> Peter.
+> 
+
+Thank you very much for the feedback! Indeed, it will be a bit more
+robust to add fence_udelay() since one microsecond is practically
+nothing and then it will be a part of the clk-change awaiting anyway
+(note that EMC driver waits for the interrupt event and doesn't poll the
+status), we also don't really care about the EMC rate-change performance
+much because it won't happen frequently.
