@@ -2,114 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5F544529
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58E86444DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfFMQme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:42:34 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:37507 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730509AbfFMGs1 (ORCPT
+        id S2392603AbfFMQkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:40:18 -0400
+Received: from mailout41.telekom.de ([194.25.225.151]:58351 "EHLO
+        mailout41.telekom.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730581AbfFMHBo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:48:27 -0400
-Received: from [192.168.2.10] ([46.9.252.75])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id bJX2hLTZJ5qKabJX5hEEZ8; Thu, 13 Jun 2019 08:48:25 +0200
-Subject: Re: [PATCHv4 0/2] Document memory-to-memory video codec interfaces
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-To:     linux-media@vger.kernel.org
-Cc:     Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Pawel Osciak <posciak@chromium.org>
-References: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
-Message-ID: <259bb812-9cc9-8fe7-8fc6-2cbd5ef44ac3@xs4all.nl>
-Date:   Thu, 13 Jun 2019 08:48:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
+        Thu, 13 Jun 2019 03:01:44 -0400
+X-Greylist: delayed 591 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Jun 2019 03:01:41 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=telekom.de; i=@telekom.de; q=dns/txt; s=dtag1;
+  t=1560409300; x=1591945300;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=nRT5A4BOCigKt/CJPzf6Dd1bvDtB6M9sLgzli8jFXXQ=;
+  b=fofUkg4E8mVuj/711x+aFdnDkKZXypt0XB2LpP7VJ5fpjtqbieivrAAK
+   VN6LaLw4pBeA2/EJxWsOGhl8wBI6rs8jCloa45HDk6hsh+vUEcUfs9h2X
+   IHUvn7qlMeErSvBUl7gVDLuJSQCbDztVoKA5PL/PeEgCj+dV025kYQk7C
+   OZEwnOgetDgSdByKyRPDRe2FQDuIqI3r8veHjVTk/u33BokZEXD13DKdA
+   BaOEqXoeCJF6Uuuyh6IncxzAjrs+CAvajChQFDZm+Qhl+MXGKHfQC4doT
+   lLvKGCiNa0Bke9vSSv7V4utU4HMmSxzUIcUtx5eC08qdW8hIoX9FXe/MB
+   A==;
+Received: from qde8e4.de.t-internal.com ([10.171.255.33])
+  by MAILOUT41.dmznet.de.t-internal.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:51:47 +0200
+X-IronPort-AV: E=Sophos;i="5.63,368,1557180000"; 
+   d="scan'208";a="558044997"
+X-MGA-submission: =?us-ascii?q?MDHC1rrIcAjntsWRCRfIx0s0XoBWc+1elqhHWn?=
+ =?us-ascii?q?EP/ZMmzTuwUn8UPMKXKeLg1dlxyWbwfw0gRSKHEnCvGkPchNM6qInt5G?=
+ =?us-ascii?q?qyakdshclRUWMT7550SXVLQWSNOZEQsEh4HFqXwN694A+nkl6d/cuvdw?=
+ =?us-ascii?q?vItwNlbr54aNHYkwOH+UvKbw=3D=3D?=
+Received: from he105717.emea1.cds.t-internal.com ([10.169.118.53])
+  by QDE8PP.de.t-internal.com with ESMTP/TLS/AES256-SHA; 13 Jun 2019 08:51:49 +0200
+Received: from HE105664.EMEA1.cds.t-internal.com (10.169.118.61) by
+ HE105717.emea1.cds.t-internal.com (10.169.118.53) with Microsoft SMTP Server
+ (TLS) id 15.0.1473.3; Thu, 13 Jun 2019 08:51:35 +0200
+Received: from HE106564.emea1.cds.t-internal.com (10.171.40.16) by
+ HE105664.EMEA1.cds.t-internal.com (10.169.118.61) with Microsoft SMTP Server
+ (TLS) id 15.0.1473.3 via Frontend Transport; Thu, 13 Jun 2019 08:51:35 +0200
+Received: from GER01-FRA-obe.outbound.protection.outlook.de (51.4.80.16) by
+ O365mail01.telekom.de (172.30.0.234) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Thu, 13 Jun 2019 08:51:29 +0200
+Received: from FRAPR01MB1170.DEUPRD01.PROD.OUTLOOK.DE (10.158.133.21) by
+ FRAPR01MB0899.DEUPRD01.PROD.OUTLOOK.DE (10.158.135.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.16; Thu, 13 Jun 2019 06:51:34 +0000
+Received: from FRAPR01MB1170.DEUPRD01.PROD.OUTLOOK.DE
+ ([fe80::d969:b29f:d3b6:e1bb]) by FRAPR01MB1170.DEUPRD01.PROD.OUTLOOK.DE
+ ([fe80::d969:b29f:d3b6:e1bb%5]) with mapi id 15.20.1965.018; Thu, 13 Jun 2019
+ 06:51:34 +0000
+From:   <Markus.Amend@telekom.de>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <dccp@vger.kernel.org>
+Subject: RE: [PATCH v3] net: dccp: Checksum verification enhancement
+Thread-Topic: [PATCH v3] net: dccp: Checksum verification enhancement
+Thread-Index: AdT/bWC4cN8MoIp5SSiDAcCedYQ21wD9aPSAB5EDExA=
+Date:   Thu, 13 Jun 2019 06:51:34 +0000
+Message-ID: <FRAPR01MB117066D965524B71A7E18FA0FAEF0@FRAPR01MB1170.DEUPRD01.PROD.OUTLOOK.DE>
+References: <FRAPR01MB11707401056D4D6C95D8C615FA3A0@FRAPR01MB1170.DEUPRD01.PROD.OUTLOOK.DE>
+ <20190505.095309.439816991626967361.davem@davemloft.net>
+In-Reply-To: <20190505.095309.439816991626967361.davem@davemloft.net>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfBCxlUJmg0N4Q2GZyAqhrK28SVHEKjholBSkcw0ri9bw/4dzuQ6WLxdOkaY5QJhKT0zRJOS3uHj/eYNmaeeEd4Ntdvjp+hSVMACqP4G2VehyWwS7LffX
- WLvBeAxh/OZHl5XXelSW9XYy2hQMjgsD4B/oQGt22WTlo/nxj/qgoeGJ7ZGZNmrQn19oMAFoP42UBJ80/eTDP9+SgBcKk2zsdCb8NH4ohcsBf4x6f6WSYLZq
- x509Z7B+g+2ZT826iSTaXj5BJn1qQYwaKfVoqz6f3hhxyPVn8C8raJd+at+hs0c4wDI1v+CTgBZnqJ2tFsrIpW4MkCg8g3S4FnYxHlRxDbPS9JhEyxGN1Qi3
- /QAdo9ZXRph+Np6JyVIWgZxBJaiQYM4FywX21BHNbjlKcqmr+hybLBGpA/4jYxVyWimN4wMHjSwV7BauBCKY6UM88w8MY6HwMMhgoT+stF3q1FRxgtuuiXwg
- BATUeIxK9k96WB5T
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Markus.Amend@telekom.de; 
+x-originating-ip: [212.201.104.11]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e8a08c9a-0a57-44a4-23a0-08d6efcb9324
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:FRAPR01MB0899;
+x-ms-traffictypediagnostic: FRAPR01MB0899:
+x-microsoft-antispam-prvs: <FRAPR01MB08991FC8434BAD3983AD191FFAEF0@FRAPR01MB0899.DEUPRD01.PROD.OUTLOOK.DE>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(346002)(366004)(13464003)(199004)(189003)(2906002)(186003)(26005)(5660300002)(476003)(11346002)(446003)(72206003)(478600001)(14454004)(66066001)(15650500001)(66556008)(66476007)(64756008)(73956011)(68736007)(76116006)(66446008)(66946007)(53546011)(7696005)(76176011)(75402003)(52396003)(6916009)(486006)(74482002)(54906003)(102836004)(53936002)(6116002)(3846002)(6246003)(4326008)(86362001)(7736002)(305945005)(229853002)(316002)(55016002)(9686003)(81166006)(81156014)(8936002)(71190400001)(71200400001)(14444005)(256004)(8676002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:FRAPR01MB0899;H:FRAPR01MB1170.DEUPRD01.PROD.OUTLOOK.DE;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: telekom.de does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LCahYJiTI76PjoTUUgxBiblSw/2oSRZi50y4tHU5C+6pNiZ6TX6t4O6J+zVabMIazIQqzlhB7Jky4z3SQEGDytYyzYl4g85bxnXDE1NYjWvB1B81xO8PRyGIBBU+pw9L/8HFk3DzeZ2B7CYylH/1+HrUVhDkmjhKklcqnHzH5qwsn8usQMSs4ZQqUYbH82Mq/O2SJKXM73aeGjWZkxOxA0lhHx8v5ZGbECZDdYO9iG/2YTyMONEFtML1zu0BMEzstvMdKzpKXYdk9VSHpq9qlCRjIAw6JfZaN8Mk8FKWt2ohqVHfizDoeTYpoIe3CmMbAV/ZRitUlPFygeTR3n2SnwYyiZ1FbDux4/ctnTA0OP94zNxgexTJ1HxXfdRNZG4XJ5o7lE2xt6WWUI4Ibx9Z060RxWY2+cmLHKwu2frRE0k=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8a08c9a-0a57-44a4-23a0-08d6efcb9324
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 06:51:34.4992
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bde4dffc-4b60-4cf6-8b04-a5eeb25f5c4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Markus.Amend@telekom.de
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRAPR01MB0899
+X-OriginatorOrg: telekom.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/3/19 1:28 PM, Hans Verkuil wrote:
-> Since Tomasz was very busy with other things, I've taken over this
-> patch series. This v4 includes his draft changes and additional changes
-> from me.
-> 
-> This series attempts to add the documentation of what was discussed
-> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
-> later Embedded Linux Conference Europe 2014 in Düsseldorf and then
-> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
-> video team (but mostly in a cosmetic way or making the document more
-> precise), during the several years of Chrome OS using the APIs in
-> production.
-> 
-> Note that most, if not all, of the API is already implemented in
-> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
-> this series is just to formalize what we already have.
-> 
-> Thanks everyone for the huge amount of useful comments to previous
-> versions of this series. Much of the credits should go to Pawel Osciak
-> too, for writing most of the original text of the initial RFC.
-> 
-> This v4 incorporates all known comments (let me know if I missed
-> something!) and should be complete for the decoder.
-> 
-> For the encoder there are two remaining TODOs for the API:
-> 
-> 1) Setting the frame rate so bitrate control can make sense, since
->    they need to know this information.
-> 
->    Suggested solution: require support for ENUM_FRAMEINTERVALS for the
->    coded pixelformats and S_PARM(OUTPUT). Open question: some drivers
->    (mediatek, hva, coda) require S_PARM(OUTPUT), some (venus) allow both
->    S_PARM(CAPTURE) and S_PARM(OUTPUT). I am inclined to allow both since
->    this is not a CAPTURE vs OUTPUT thing, it is global to both queues.
+Hi David,
 
-Alternative proposal:
+Yes, you are right, I overlooked this. Unfortunately the current receive pr=
+ocess in the DCCP layer does from my view not properly support the skb->ip_=
+summed flag verification, because the checksum validation takes place at di=
+fferent places. This would require some dirty hacks...
 
-1) Add support for fractions (struct v4l2_fract) as a control type:
-   V4L2_CTRL_TYPE_FRACT.
+I see two options.
 
-2) Add a new V4L2_CID_MPEG_FRAME_INTERVAL control.
+1. Adding the ip_summed flag verification=20
 
-Encoders shall support this control.
 
-3) For backwards compatibility reasons encoder drivers still have to
-support G/S_PARM, but this can now be implemented by standard helpers
-that query this control. Drivers also have to implement ENUM_FRAMEINTERVALS.
-If the range of intervals is always the same regardless of the frame size,
-then a helper can be used that queries the min/max/step of the control, but
-if it is dependent on the frame size, then it has to be implemented in the
-driver itself.
+or 2. Learn from the UDP stack
 
-I'm sticking to frame intervals instead of frame rates for the simple reason
-that that's what V4L2 has used since the beginning. I think it is too confusing
-to change this to a frame rate. This is just my opinion, though.
+Since UDP/UDP-Lite are very similar to DCCP, at least from a checksum verif=
+ication point, I ask myself if it would make sense to re-work DCCP's receiv=
+e process according to the one of UDP/UDP-Lite?=20
+The relevant process in the udp stack (for IPv4) I identified therefore, ca=
+n be found in /net/ipv4/udp.c, within the function __udp4_lib_rcv. There it=
+ is done, compared to DCCP, the other way round it starts with an udp4_csum=
+_init and most likely a later udp_lib_checksum_complete. Both consider skb-=
+>ip_summed. If we would implement similar functions into the DCCP stack and=
+ adapt the DCCP rcv checksum validation process to the one in UDP could mak=
+e probably more sense?!
 
-I also chose to make this a codec control, not a generic user control: this
-value together with the bit rate control(s) determine the compression size,
-it does not determine the actual time it takes for the encoder to compress
-the raw frames. Hence it is really not the same thing as the frame interval
-of a video capture device. If we want to use a control for that as well in
-the future as a replacement for G/S_PARM, then that should be a new control.
-And we would like need per-pad controls as well in order to implement that.
-Which is a lot more work.
 
-Regards,
+Personally I prefer the second option, what do you think?
 
-	Hans
+BR
+
+Markus
+
+
+> -----Original Message-----
+> From: David Miller <davem@davemloft.net>
+> Sent: Sonntag, 5. Mai 2019 18:53
+> To: Amend, Markus <Markus.Amend@telekom.de>
+> Cc: linux-kernel@vger.kernel.org; netdev@vger.kernel.org;
+> dccp@vger.kernel.org
+> Subject: Re: [PATCH v3] net: dccp: Checksum verification enhancement
+>=20
+> From: <Markus.Amend@telekom.de>
+> Date: Tue, 30 Apr 2019 16:11:07 +0000
+>=20
+> > The current patch modifies the checksum verification of a received
+> > DCCP packet, by adding the function __skb_checksum_validate into the
+> > dccp_vX_rcv routine. The purpose of the modification is to allow the
+> > verification of the skb->ip_summed flags during the checksum
+> > validation process (for checksum offload purposes). As
+> > __skb_checksum_validate covers the functionalities of skb_checksum and
+> > dccp_vX_csum_finish they are needless and therefore removed.
+> >
+> > Signed-off-by: Nathalie Romo Moreno <natha.ro.moreno@gmail.com>
+> > Signed-off-by: Markus Amend <markus.amend@telekom.de>
+>=20
+> I don't see how this can be correct as you're not taking the csum coverag=
+e
+> value into consideration at all.
