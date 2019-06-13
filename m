@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C88CF441CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:19:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF52441B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:16:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391679AbfFMQQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:16:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58686 "EHLO mail.kernel.org"
+        id S2391918AbfFMQQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:16:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731156AbfFMIl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:41:28 -0400
+        id S1731157AbfFMIlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:41:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B3D621473;
-        Thu, 13 Jun 2019 08:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25E5E20851;
+        Thu, 13 Jun 2019 08:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415288;
-        bh=RU0Dj0bLcsSY0WCp9Reg/k2K5zJQCM59YDxeeaSjJTI=;
+        s=default; t=1560415290;
+        bh=18wzUWk6vtXWeMXaSdeph3KAvIGdLqp7KsjidCRJrq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxTze1vdlaHa/peARoTd+gJwOrh7XDeZYKfwULf1V+EriXFuLg28SbhhoOc2uYXY6
-         i5s4OGjmdX/D+V/uCZ748/PLmB2CjerbSe+52rU8SQ4fmf9ul6OeknsvrSdwbSEYQW
-         B1C5GXMaxdrcBllpAauvAXTPS2ul/J8jKQuS9NWE=
+        b=Tz9hlzQbuzeyLrJ2wYfcRLLEYcp+7kIM+W0IyEVujm/EqeHxDTpx4D1BJoPeKtv52
+         j6wkePLO7qZ3N2/3pjgRYqjXTpYXNZ6n5TM1BpF8072GMOtdfeLWxg0l+wHKCaq8xp
+         vy8Sfcum+yGAG06jCNBcHkUKYOT4aC54ssvEZGmE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Sperbeck <jsperbeck@google.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 042/118] percpu: remove spurious lock dependency between percpu and sched
-Date:   Thu, 13 Jun 2019 10:33:00 +0200
-Message-Id: <20190613075646.099950168@linuxfoundation.org>
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 043/118] configfs: fix possible use-after-free in configfs_register_group
+Date:   Thu, 13 Jun 2019 10:33:01 +0200
+Message-Id: <20190613075646.249722929@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
 References: <20190613075643.642092651@linuxfoundation.org>
@@ -44,176 +44,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 198790d9a3aeaef5792d33a560020861126edc22 ]
+[ Upstream commit 35399f87e271f7cf3048eab00a421a6519ac8441 ]
 
-In free_percpu() we sometimes call pcpu_schedule_balance_work() to
-queue a work item (which does a wakeup) while holding pcpu_lock.
-This creates an unnecessary lock dependency between pcpu_lock and
-the scheduler's pi_lock.  There are other places where we call
-pcpu_schedule_balance_work() without hold pcpu_lock, and this case
-doesn't need to be different.
+In configfs_register_group(), if create_default_group() failed, we
+forget to unlink the group. It will left a invalid item in the parent list,
+which may trigger the use-after-free issue seen below:
 
-Moving the call outside the lock prevents the following lockdep splat
-when running tools/testing/selftests/bpf/{test_maps,test_progs} in
-sequence with lockdep enabled:
+BUG: KASAN: use-after-free in __list_add_valid+0xd4/0xe0 lib/list_debug.c:26
+Read of size 8 at addr ffff8881ef61ae20 by task syz-executor.0/5996
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.1.0-dbg-DEV #1 Not tainted
-------------------------------------------------------
-kworker/23:255/18872 is trying to acquire lock:
-000000000bc79290 (&(&pool->lock)->rlock){-.-.}, at: __queue_work+0xb2/0x520
-
-but task is already holding lock:
-00000000e3e7a6aa (pcpu_lock){..-.}, at: free_percpu+0x36/0x260
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (pcpu_lock){..-.}:
-       lock_acquire+0x9e/0x180
-       _raw_spin_lock_irqsave+0x3a/0x50
-       pcpu_alloc+0xfa/0x780
-       __alloc_percpu_gfp+0x12/0x20
-       alloc_htab_elem+0x184/0x2b0
-       __htab_percpu_map_update_elem+0x252/0x290
-       bpf_percpu_hash_update+0x7c/0x130
-       __do_sys_bpf+0x1912/0x1be0
-       __x64_sys_bpf+0x1a/0x20
-       do_syscall_64+0x59/0x400
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #3 (&htab->buckets[i].lock){....}:
-       lock_acquire+0x9e/0x180
-       _raw_spin_lock_irqsave+0x3a/0x50
-       htab_map_update_elem+0x1af/0x3a0
-
--> #2 (&rq->lock){-.-.}:
-       lock_acquire+0x9e/0x180
-       _raw_spin_lock+0x2f/0x40
-       task_fork_fair+0x37/0x160
-       sched_fork+0x211/0x310
-       copy_process.part.43+0x7b1/0x2160
-       _do_fork+0xda/0x6b0
-       kernel_thread+0x29/0x30
-       rest_init+0x22/0x260
-       arch_call_rest_init+0xe/0x10
-       start_kernel+0x4fd/0x520
-       x86_64_start_reservations+0x24/0x26
-       x86_64_start_kernel+0x6f/0x72
-       secondary_startup_64+0xa4/0xb0
-
--> #1 (&p->pi_lock){-.-.}:
-       lock_acquire+0x9e/0x180
-       _raw_spin_lock_irqsave+0x3a/0x50
-       try_to_wake_up+0x41/0x600
-       wake_up_process+0x15/0x20
-       create_worker+0x16b/0x1e0
-       workqueue_init+0x279/0x2ee
-       kernel_init_freeable+0xf7/0x288
-       kernel_init+0xf/0x180
-       ret_from_fork+0x24/0x30
-
--> #0 (&(&pool->lock)->rlock){-.-.}:
-       __lock_acquire+0x101f/0x12a0
-       lock_acquire+0x9e/0x180
-       _raw_spin_lock+0x2f/0x40
-       __queue_work+0xb2/0x520
-       queue_work_on+0x38/0x80
-       free_percpu+0x221/0x260
-       pcpu_freelist_destroy+0x11/0x20
-       stack_map_free+0x2a/0x40
-       bpf_map_free_deferred+0x3c/0x50
-       process_one_work+0x1f7/0x580
-       worker_thread+0x54/0x410
-       kthread+0x10f/0x150
-       ret_from_fork+0x24/0x30
-
-other info that might help us debug this:
-
-Chain exists of:
-  &(&pool->lock)->rlock --> &htab->buckets[i].lock --> pcpu_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(pcpu_lock);
-                               lock(&htab->buckets[i].lock);
-                               lock(pcpu_lock);
-  lock(&(&pool->lock)->rlock);
-
- *** DEADLOCK ***
-
-3 locks held by kworker/23:255/18872:
- #0: 00000000b36a6e16 ((wq_completion)events){+.+.},
-     at: process_one_work+0x17a/0x580
- #1: 00000000dfd966f0 ((work_completion)(&map->work)){+.+.},
-     at: process_one_work+0x17a/0x580
- #2: 00000000e3e7a6aa (pcpu_lock){..-.},
-     at: free_percpu+0x36/0x260
-
-stack backtrace:
-CPU: 23 PID: 18872 Comm: kworker/23:255 Not tainted 5.1.0-dbg-DEV #1
-Hardware name: ...
-Workqueue: events bpf_map_free_deferred
+CPU: 1 PID: 5996 Comm: syz-executor.0 Tainted: G         C        5.0.0+ #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
 Call Trace:
- dump_stack+0x67/0x95
- print_circular_bug.isra.38+0x1c6/0x220
- check_prev_add.constprop.50+0x9f6/0xd20
- __lock_acquire+0x101f/0x12a0
- lock_acquire+0x9e/0x180
- _raw_spin_lock+0x2f/0x40
- __queue_work+0xb2/0x520
- queue_work_on+0x38/0x80
- free_percpu+0x221/0x260
- pcpu_freelist_destroy+0x11/0x20
- stack_map_free+0x2a/0x40
- bpf_map_free_deferred+0x3c/0x50
- process_one_work+0x1f7/0x580
- worker_thread+0x54/0x410
- kthread+0x10f/0x150
- ret_from_fork+0x24/0x30
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xa9/0x10e lib/dump_stack.c:113
+ print_address_description+0x65/0x270 mm/kasan/report.c:187
+ kasan_report+0x149/0x18d mm/kasan/report.c:317
+ __list_add_valid+0xd4/0xe0 lib/list_debug.c:26
+ __list_add include/linux/list.h:60 [inline]
+ list_add_tail include/linux/list.h:93 [inline]
+ link_obj+0xb0/0x190 fs/configfs/dir.c:759
+ link_group+0x1c/0x130 fs/configfs/dir.c:784
+ configfs_register_group+0x56/0x1e0 fs/configfs/dir.c:1751
+ configfs_register_default_group+0x72/0xc0 fs/configfs/dir.c:1834
+ ? 0xffffffffc1be0000
+ iio_sw_trigger_init+0x23/0x1000 [industrialio_sw_trigger]
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f494ecbcc58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
+RBP: 00007f494ecbcc70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f494ecbd6bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
 
-Signed-off-by: John Sperbeck <jsperbeck@google.com>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Allocated by task 5987:
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:497
+ kmalloc include/linux/slab.h:545 [inline]
+ kzalloc include/linux/slab.h:740 [inline]
+ configfs_register_default_group+0x4c/0xc0 fs/configfs/dir.c:1829
+ 0xffffffffc1bd0023
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 5987:
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
+ slab_free_hook mm/slub.c:1429 [inline]
+ slab_free_freelist_hook mm/slub.c:1456 [inline]
+ slab_free mm/slub.c:3003 [inline]
+ kfree+0xe1/0x270 mm/slub.c:3955
+ configfs_register_default_group+0x9a/0xc0 fs/configfs/dir.c:1836
+ 0xffffffffc1bd0023
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881ef61ae00
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 32 bytes inside of
+ 192-byte region [ffff8881ef61ae00, ffff8881ef61aec0)
+The buggy address belongs to the page:
+page:ffffea0007bd8680 count:1 mapcount:0 mapping:ffff8881f6c03000 index:0xffff8881ef61a700
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0007ca4740 0000000500000005 ffff8881f6c03000
+raw: ffff8881ef61a700 000000008010000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8881ef61ad00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8881ef61ad80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>ffff8881ef61ae00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ ffff8881ef61ae80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8881ef61af00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+Fixes: 5cf6a51e6062 ("configfs: allow dynamic group creation")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/percpu.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/configfs/dir.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 41e58f3d8fbf..c66149ce1fe6 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1721,6 +1721,7 @@ void free_percpu(void __percpu *ptr)
- 	struct pcpu_chunk *chunk;
- 	unsigned long flags;
- 	int off;
-+	bool need_balance = false;
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index 39843fa7e11b..920d350df37b 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -1755,12 +1755,19 @@ int configfs_register_group(struct config_group *parent_group,
  
- 	if (!ptr)
- 		return;
-@@ -1742,7 +1743,7 @@ void free_percpu(void __percpu *ptr)
- 
- 		list_for_each_entry(pos, &pcpu_slot[pcpu_nr_slots - 1], list)
- 			if (pos != chunk) {
--				pcpu_schedule_balance_work();
-+				need_balance = true;
- 				break;
- 			}
- 	}
-@@ -1750,6 +1751,9 @@ void free_percpu(void __percpu *ptr)
- 	trace_percpu_free_percpu(chunk->base_addr, off, ptr);
- 
- 	spin_unlock_irqrestore(&pcpu_lock, flags);
+ 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+ 	ret = create_default_group(parent_group, group);
+-	if (!ret) {
+-		spin_lock(&configfs_dirent_lock);
+-		configfs_dir_set_ready(group->cg_item.ci_dentry->d_fsdata);
+-		spin_unlock(&configfs_dirent_lock);
+-	}
++	if (ret)
++		goto err_out;
 +
-+	if (need_balance)
-+		pcpu_schedule_balance_work();
++	spin_lock(&configfs_dirent_lock);
++	configfs_dir_set_ready(group->cg_item.ci_dentry->d_fsdata);
++	spin_unlock(&configfs_dirent_lock);
++	inode_unlock(d_inode(parent));
++	return 0;
++err_out:
+ 	inode_unlock(d_inode(parent));
++	mutex_lock(&subsys->su_mutex);
++	unlink_group(group);
++	mutex_unlock(&subsys->su_mutex);
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(free_percpu);
- 
+ EXPORT_SYMBOL(configfs_register_group);
 -- 
 2.20.1
 
