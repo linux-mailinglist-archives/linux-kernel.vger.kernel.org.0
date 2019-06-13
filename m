@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ACDB44051
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:05:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 238634437B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390887AbfFMQFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:05:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35094 "EHLO mail.kernel.org"
+        id S2392382AbfFMQ34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:29:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731344AbfFMIqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:46:39 -0400
+        id S1730920AbfFMIfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A027F2147A;
-        Thu, 13 Jun 2019 08:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C54A2146F;
+        Thu, 13 Jun 2019 08:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415598;
-        bh=61GBweix5UTf8kAg2xGTzl6CpAUhZk7wGiUDyCDQ2sA=;
+        s=default; t=1560414908;
+        bh=k4KIIKBmTdJpZsgj98E2YxWt84jw6FsN7REwjULm4SA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u1JKSl7KlOvZvAq0kfIJ0y2kyKzlNPLEAI23ly7lvAGQNutVLPxbHy6u0eU1aNQqj
-         KhIR4LAneK87dhHYFpBwEeCvmR1LH1KqrUktwiN9apvTYpincylifu+j7Vc9VE7DMc
-         mVSfdHixZ1j+YD5hn6DT2rQciDbqaZoFPjURtTVc=
+        b=tFdyArpRYQr9yC3OV6oXdloKjXlGYd96B94rjoM1nSUiGY7SlNtusGHMd5Eb3KpaH
+         /3WPhFK5MEZe9yAhHj0EK6DwKwsUc9TRnhY4RrlPgQYHOpJF98f21UYkuPiRvPPJMR
+         W2Xy6EW+FIlgg/XqgJGvfM8vnCRFJuPO/1X1COh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        linux-um@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 058/155] uml: fix a boot splat wrt use of cpu_all_mask
-Date:   Thu, 13 Jun 2019 10:32:50 +0200
-Message-Id: <20190613075656.336802452@linuxfoundation.org>
+        stable@vger.kernel.org, Linxu Fang <fanglinxu@huawei.com>,
+        Taku Izumi <izumi.taku@jp.fujitsu.com>,
+        Xishi Qiu <qiuxishi@huawei.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 08/81] mem-hotplug: fix node spanned pages when we have a node with only ZONE_MOVABLE
+Date:   Thu, 13 Jun 2019 10:32:51 +0200
+Message-Id: <20190613075649.663475244@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,82 +51,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 689a58605b63173acb0a8cf954af6a8f60440c93 ]
+[ Upstream commit 299c83dce9ea3a79bb4b5511d2cb996b6b8e5111 ]
 
-Memory: 509108K/542612K available (3835K kernel code, 919K rwdata, 1028K rodata, 129K init, 211K bss, 33504K reserved, 0K cma-reserved)
-NR_IRQS: 15
-clocksource: timer: mask: 0xffffffffffffffff max_cycles: 0x1cd42e205, max_idle_ns: 881590404426 ns
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/time/clockevents.c:458 clockevents_register_device+0x72/0x140
-posix-timer cpumask == cpu_all_mask, using cpu_possible_mask instead
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper Not tainted 5.1.0-rc4-00048-ged79cc87302b #4
-Stack:
- 604ebda0 603c5370 604ebe20 6046fd17
- 00000000 6006fcbb 604ebdb0 603c53b5
- 604ebe10 6003bfc4 604ebdd0 9000001ca
-Call Trace:
- [<6006fcbb>] ? printk+0x0/0x94
- [<60083160>] ? clockevents_register_device+0x72/0x140
- [<6001f16e>] show_stack+0x13b/0x155
- [<603c5370>] ? dump_stack_print_info+0xe2/0xeb
- [<6006fcbb>] ? printk+0x0/0x94
- [<603c53b5>] dump_stack+0x2a/0x2c
- [<6003bfc4>] __warn+0x10e/0x13e
- [<60070320>] ? vprintk_func+0xc8/0xcf
- [<60030fd6>] ? block_signals+0x0/0x16
- [<6006fcbb>] ? printk+0x0/0x94
- [<6003c08b>] warn_slowpath_fmt+0x97/0x99
- [<600311a1>] ? set_signals+0x0/0x3f
- [<6003bff4>] ? warn_slowpath_fmt+0x0/0x99
- [<600842cb>] ? tick_oneshot_mode_active+0x44/0x4f
- [<60030fd6>] ? block_signals+0x0/0x16
- [<6006fcbb>] ? printk+0x0/0x94
- [<6007d2d5>] ? __clocksource_select+0x20/0x1b1
- [<60030fd6>] ? block_signals+0x0/0x16
- [<6006fcbb>] ? printk+0x0/0x94
- [<60083160>] clockevents_register_device+0x72/0x140
- [<60031192>] ? get_signals+0x0/0xf
- [<60030fd6>] ? block_signals+0x0/0x16
- [<6006fcbb>] ? printk+0x0/0x94
- [<60002eec>] um_timer_setup+0xc8/0xca
- [<60001b59>] start_kernel+0x47f/0x57e
- [<600035bc>] start_kernel_proc+0x49/0x4d
- [<6006c483>] ? kmsg_dump_register+0x82/0x8a
- [<6001de62>] new_thread_handler+0x81/0xb2
- [<60003571>] ? kmsg_dumper_stdout_init+0x1a/0x1c
- [<60020c75>] uml_finishsetup+0x54/0x59
+342332e6a925 ("mm/page_alloc.c: introduce kernelcore=mirror option") and
+later patches rewrote the calculation of node spanned pages.
 
-random: get_random_bytes called from init_oops_id+0x27/0x34 with crng_init=0
----[ end trace 00173d0117a88acb ]---
-Calibrating delay loop... 6941.90 BogoMIPS (lpj=34709504)
+e506b99696a2 ("mem-hotplug: fix node spanned pages when we have a movable
+node"), but the current code still has problems,
 
-Signed-off-by: Maciej Żenczykowski <maze@google.com>
-Cc: Jeff Dike <jdike@addtoit.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: linux-um@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+When we have a node with only zone_movable and the node id is not zero,
+the size of node spanned pages is double added.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
+That's because we have an empty normal zone, and zone_start_pfn or
+zone_end_pfn is not between arch_zone_lowest_possible_pfn and
+arch_zone_highest_possible_pfn, so we need to use clamp to constrain the
+range just like the commit <96e907d13602> (bootmem: Reimplement
+__absent_pages_in_range() using for_each_mem_pfn_range()).
+
+e.g.
+Zone ranges:
+  DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+  DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+  Normal   [mem 0x0000000100000000-0x000000023fffffff]
+Movable zone start for each node
+  Node 0: 0x0000000100000000
+  Node 1: 0x0000000140000000
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x00000000bffdffff]
+  node   0: [mem 0x0000000100000000-0x000000013fffffff]
+  node   1: [mem 0x0000000140000000-0x000000023fffffff]
+
+node 0 DMA	spanned:0xfff   present:0xf9e   absent:0x61
+node 0 DMA32	spanned:0xff000 present:0xbefe0	absent:0x40020
+node 0 Normal	spanned:0	present:0	absent:0
+node 0 Movable	spanned:0x40000 present:0x40000 absent:0
+On node 0 totalpages(node_present_pages): 1048446
+node_spanned_pages:1310719
+node 1 DMA	spanned:0	    present:0		absent:0
+node 1 DMA32	spanned:0	    present:0		absent:0
+node 1 Normal	spanned:0x100000    present:0x100000	absent:0
+node 1 Movable	spanned:0x100000    present:0x100000	absent:0
+On node 1 totalpages(node_present_pages): 2097152
+node_spanned_pages:2097152
+Memory: 6967796K/12582392K available (16388K kernel code, 3686K rwdata,
+4468K rodata, 2160K init, 10444K bss, 5614596K reserved, 0K
+cma-reserved)
+
+It shows that the current memory of node 1 is double added.
+After this patch, the problem is fixed.
+
+node 0 DMA	spanned:0xfff   present:0xf9e   absent:0x61
+node 0 DMA32	spanned:0xff000 present:0xbefe0	absent:0x40020
+node 0 Normal	spanned:0	present:0	absent:0
+node 0 Movable	spanned:0x40000 present:0x40000 absent:0
+On node 0 totalpages(node_present_pages): 1048446
+node_spanned_pages:1310719
+node 1 DMA	spanned:0	    present:0		absent:0
+node 1 DMA32	spanned:0	    present:0		absent:0
+node 1 Normal	spanned:0	    present:0		absent:0
+node 1 Movable	spanned:0x100000    present:0x100000	absent:0
+On node 1 totalpages(node_present_pages): 1048576
+node_spanned_pages:1048576
+memory: 6967796K/8388088K available (16388K kernel code, 3686K rwdata,
+4468K rodata, 2160K init, 10444K bss, 1420292K reserved, 0K
+cma-reserved)
+
+Link: http://lkml.kernel.org/r/1554178276-10372-1-git-send-email-fanglinxu@huawei.com
+Signed-off-by: Linxu Fang <fanglinxu@huawei.com>
+Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
+Cc: Xishi Qiu <qiuxishi@huawei.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/kernel/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/page_alloc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/um/kernel/time.c b/arch/um/kernel/time.c
-index 052de4c8acb2..0c572a48158e 100644
---- a/arch/um/kernel/time.c
-+++ b/arch/um/kernel/time.c
-@@ -56,7 +56,7 @@ static int itimer_one_shot(struct clock_event_device *evt)
- static struct clock_event_device timer_clockevent = {
- 	.name			= "posix-timer",
- 	.rating			= 250,
--	.cpumask		= cpu_all_mask,
-+	.cpumask		= cpu_possible_mask,
- 	.features		= CLOCK_EVT_FEAT_PERIODIC |
- 				  CLOCK_EVT_FEAT_ONESHOT,
- 	.set_state_shutdown	= itimer_shutdown,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 923deb33bf34..6f71518a4558 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5727,13 +5727,15 @@ static unsigned long __meminit zone_spanned_pages_in_node(int nid,
+ 					unsigned long *zone_end_pfn,
+ 					unsigned long *ignored)
+ {
++	unsigned long zone_low = arch_zone_lowest_possible_pfn[zone_type];
++	unsigned long zone_high = arch_zone_highest_possible_pfn[zone_type];
+ 	/* When hotadd a new node from cpu_up(), the node should be empty */
+ 	if (!node_start_pfn && !node_end_pfn)
+ 		return 0;
+ 
+ 	/* Get the start and end of the zone */
+-	*zone_start_pfn = arch_zone_lowest_possible_pfn[zone_type];
+-	*zone_end_pfn = arch_zone_highest_possible_pfn[zone_type];
++	*zone_start_pfn = clamp(node_start_pfn, zone_low, zone_high);
++	*zone_end_pfn = clamp(node_end_pfn, zone_low, zone_high);
+ 	adjust_zone_range_for_zone_movable(nid, zone_type,
+ 				node_start_pfn, node_end_pfn,
+ 				zone_start_pfn, zone_end_pfn);
 -- 
 2.20.1
 
