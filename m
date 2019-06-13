@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01D1344012
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 935114434D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388002AbfFMQCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
+        id S2392452AbfFMQ21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731399AbfFMIrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:45 -0400
+        id S1730948AbfFMIfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FEFA206BA;
-        Thu, 13 Jun 2019 08:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54BC520851;
+        Thu, 13 Jun 2019 08:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415663;
-        bh=AXb6EU2GB5BRD6fGsLpTHyi2PsV9MWzq0YfS1oREoqA=;
+        s=default; t=1560414951;
+        bh=JjirYGXUv8mewQAK8/hJWQMtYb4TOmiPwyCZFXcWwUc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JbljTN3rCClHhh3OYuU+IpjZ8F3e7d2I/4QRScNChrstsmgfzNo+JcnWD7SOgfAlt
-         1Bi3SQqiYYyvszbtxNsOEK1jh003gOCZIRpg8RC61FFdNiRCCi7kddm1M0MvSF+Eb/
-         OxKJlrSf/2Oj3F7kvl42NvUtNurBWIs+tg5LN0is=
+        b=Ci4tHkeWoTchd3v3idET6V0hG9pdW+X5Y+l8ZpODsxV1Wiw+Ux8p/8Ylf69ITaCxp
+         DRLQTR9r7XaTgQj+tQshtUiIp1F4JiP3ndIKwLySEEvsAw6LUE6MB5v0IPL1xE0Tue
+         VP7uYY1HJg5Yxqhbbp43Nu+zWRBYGYQK4wxI3Es0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 082/155] iommu/vt-d: Dont request page request irq under dmar_global_lock
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 31/81] configfs: fix possible use-after-free in configfs_register_group
 Date:   Thu, 13 Jun 2019 10:33:14 +0200
-Message-Id: <20190613075657.638162064@linuxfoundation.org>
+Message-Id: <20190613075651.444290417@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,104 +44,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a7755c3cfa5df755e39447b08c28203e011fb98c ]
+[ Upstream commit 35399f87e271f7cf3048eab00a421a6519ac8441 ]
 
-Requesting page reqest irq under dmar_global_lock could cause
-potential lock race condition (caught by lockdep).
+In configfs_register_group(), if create_default_group() failed, we
+forget to unlink the group. It will left a invalid item in the parent list,
+which may trigger the use-after-free issue seen below:
 
-[    4.100055] ======================================================
-[    4.100063] WARNING: possible circular locking dependency detected
-[    4.100072] 5.1.0-rc4+ #2169 Not tainted
-[    4.100078] ------------------------------------------------------
-[    4.100086] swapper/0/1 is trying to acquire lock:
-[    4.100094] 000000007dcbe3c3 (dmar_lock){+.+.}, at: dmar_alloc_hwirq+0x35/0x140
-[    4.100112] but task is already holding lock:
-[    4.100120] 0000000060bbe946 (dmar_global_lock){++++}, at: intel_iommu_init+0x191/0x1438
-[    4.100136] which lock already depends on the new lock.
-[    4.100146] the existing dependency chain (in reverse order) is:
-[    4.100155]
-               -> #2 (dmar_global_lock){++++}:
-[    4.100169]        down_read+0x44/0xa0
-[    4.100178]        intel_irq_remapping_alloc+0xb2/0x7b0
-[    4.100186]        mp_irqdomain_alloc+0x9e/0x2e0
-[    4.100195]        __irq_domain_alloc_irqs+0x131/0x330
-[    4.100203]        alloc_isa_irq_from_domain.isra.4+0x9a/0xd0
-[    4.100212]        mp_map_pin_to_irq+0x244/0x310
-[    4.100221]        setup_IO_APIC+0x757/0x7ed
-[    4.100229]        x86_late_time_init+0x17/0x1c
-[    4.100238]        start_kernel+0x425/0x4e3
-[    4.100247]        secondary_startup_64+0xa4/0xb0
-[    4.100254]
-               -> #1 (irq_domain_mutex){+.+.}:
-[    4.100265]        __mutex_lock+0x7f/0x9d0
-[    4.100273]        __irq_domain_add+0x195/0x2b0
-[    4.100280]        irq_domain_create_hierarchy+0x3d/0x40
-[    4.100289]        msi_create_irq_domain+0x32/0x110
-[    4.100297]        dmar_alloc_hwirq+0x111/0x140
-[    4.100305]        dmar_set_interrupt.part.14+0x1a/0x70
-[    4.100314]        enable_drhd_fault_handling+0x2c/0x6c
-[    4.100323]        apic_bsp_setup+0x75/0x7a
-[    4.100330]        x86_late_time_init+0x17/0x1c
-[    4.100338]        start_kernel+0x425/0x4e3
-[    4.100346]        secondary_startup_64+0xa4/0xb0
-[    4.100352]
-               -> #0 (dmar_lock){+.+.}:
-[    4.100364]        lock_acquire+0xb4/0x1c0
-[    4.100372]        __mutex_lock+0x7f/0x9d0
-[    4.100379]        dmar_alloc_hwirq+0x35/0x140
-[    4.100389]        intel_svm_enable_prq+0x61/0x180
-[    4.100397]        intel_iommu_init+0x1128/0x1438
-[    4.100406]        pci_iommu_init+0x16/0x3f
-[    4.100414]        do_one_initcall+0x5d/0x2be
-[    4.100422]        kernel_init_freeable+0x1f0/0x27c
-[    4.100431]        kernel_init+0xa/0x110
-[    4.100438]        ret_from_fork+0x3a/0x50
-[    4.100444]
-               other info that might help us debug this:
+BUG: KASAN: use-after-free in __list_add_valid+0xd4/0xe0 lib/list_debug.c:26
+Read of size 8 at addr ffff8881ef61ae20 by task syz-executor.0/5996
 
-[    4.100454] Chain exists of:
-                 dmar_lock --> irq_domain_mutex --> dmar_global_lock
-[    4.100469]  Possible unsafe locking scenario:
+CPU: 1 PID: 5996 Comm: syz-executor.0 Tainted: G         C        5.0.0+ #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xa9/0x10e lib/dump_stack.c:113
+ print_address_description+0x65/0x270 mm/kasan/report.c:187
+ kasan_report+0x149/0x18d mm/kasan/report.c:317
+ __list_add_valid+0xd4/0xe0 lib/list_debug.c:26
+ __list_add include/linux/list.h:60 [inline]
+ list_add_tail include/linux/list.h:93 [inline]
+ link_obj+0xb0/0x190 fs/configfs/dir.c:759
+ link_group+0x1c/0x130 fs/configfs/dir.c:784
+ configfs_register_group+0x56/0x1e0 fs/configfs/dir.c:1751
+ configfs_register_default_group+0x72/0xc0 fs/configfs/dir.c:1834
+ ? 0xffffffffc1be0000
+ iio_sw_trigger_init+0x23/0x1000 [industrialio_sw_trigger]
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f494ecbcc58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
+RBP: 00007f494ecbcc70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f494ecbd6bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
 
-[    4.100476]        CPU0                    CPU1
-[    4.100483]        ----                    ----
-[    4.100488]   lock(dmar_global_lock);
-[    4.100495]                                lock(irq_domain_mutex);
-[    4.100503]                                lock(dmar_global_lock);
-[    4.100512]   lock(dmar_lock);
-[    4.100518]
-                *** DEADLOCK ***
+Allocated by task 5987:
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:497
+ kmalloc include/linux/slab.h:545 [inline]
+ kzalloc include/linux/slab.h:740 [inline]
+ configfs_register_default_group+0x4c/0xc0 fs/configfs/dir.c:1829
+ 0xffffffffc1bd0023
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Reported-by: Dave Jiang <dave.jiang@intel.com>
-Fixes: a222a7f0bb6c9 ("iommu/vt-d: Implement page request handling")
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Freed by task 5987:
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
+ slab_free_hook mm/slub.c:1429 [inline]
+ slab_free_freelist_hook mm/slub.c:1456 [inline]
+ slab_free mm/slub.c:3003 [inline]
+ kfree+0xe1/0x270 mm/slub.c:3955
+ configfs_register_default_group+0x9a/0xc0 fs/configfs/dir.c:1836
+ 0xffffffffc1bd0023
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881ef61ae00
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 32 bytes inside of
+ 192-byte region [ffff8881ef61ae00, ffff8881ef61aec0)
+The buggy address belongs to the page:
+page:ffffea0007bd8680 count:1 mapcount:0 mapping:ffff8881f6c03000 index:0xffff8881ef61a700
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0007ca4740 0000000500000005 ffff8881f6c03000
+raw: ffff8881ef61a700 000000008010000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8881ef61ad00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8881ef61ad80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>ffff8881ef61ae00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ ffff8881ef61ae80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8881ef61af00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+Fixes: 5cf6a51e6062 ("configfs: allow dynamic group creation")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/configfs/dir.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 10a45092d062..cb656f503604 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3496,7 +3496,13 @@ domains_done:
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index d2a1a79fa324..d7955dc56737 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -1755,12 +1755,19 @@ int configfs_register_group(struct config_group *parent_group,
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 		if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
-+			/*
-+			 * Call dmar_alloc_hwirq() with dmar_global_lock held,
-+			 * could cause possible lock race condition.
-+			 */
-+			up_write(&dmar_global_lock);
- 			ret = intel_svm_enable_prq(iommu);
-+			down_write(&dmar_global_lock);
- 			if (ret)
- 				goto free_iommu;
- 		}
+ 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+ 	ret = create_default_group(parent_group, group);
+-	if (!ret) {
+-		spin_lock(&configfs_dirent_lock);
+-		configfs_dir_set_ready(group->cg_item.ci_dentry->d_fsdata);
+-		spin_unlock(&configfs_dirent_lock);
+-	}
++	if (ret)
++		goto err_out;
++
++	spin_lock(&configfs_dirent_lock);
++	configfs_dir_set_ready(group->cg_item.ci_dentry->d_fsdata);
++	spin_unlock(&configfs_dirent_lock);
++	inode_unlock(d_inode(parent));
++	return 0;
++err_out:
+ 	inode_unlock(d_inode(parent));
++	mutex_lock(&subsys->su_mutex);
++	unlink_group(group);
++	mutex_unlock(&subsys->su_mutex);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(configfs_register_group);
 -- 
 2.20.1
 
