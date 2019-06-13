@@ -2,75 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC5444A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D837144A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbfFMSJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 14:09:46 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38246 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728830AbfFMSJm (ORCPT
+        id S1729176AbfFMSKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 14:10:06 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43520 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbfFMSKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:09:42 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n11so21504828qtl.5;
-        Thu, 13 Jun 2019 11:09:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=byG1DV+SoKVQRZ27UyZDVXVCyKyLBhM0+1OWg3TXATI=;
-        b=ICc6e6ayMI4tJQpDEv6T+ULFWUsJcvMuR3iLKrePyaOiSQWYTNL9UgQQbZ73xUi31X
-         KQtWufxTRqVfSDH/BPwAP4dtTHi7eU4aXcwAlXyHFprNQpmZaWe8B8AzeqKIV4N9LTvI
-         VG08nz+q0t75yMKBtEARa7jrnRrboCj/ogGyITd0jNEVwTz7lmhWBFeNkrinzouuXQ/a
-         9vUUHFUuCXgNhv022NU9Z1WKBySeufSM8Axo31HE/rEJshTv9E07XlRMtkdwHzJKq711
-         o9cy07Jp8A0rqtJOkGNM9LtZPm/eNfKQ2XI6fqyLdKLyCTuYw7GQjLjDVGDj1HVZgQBI
-         M4ig==
-X-Gm-Message-State: APjAAAV6V7LYGJBoNgWPOo4xPvLNkOQ1RD5/bg/tHY1ahwPKlAGA2YAk
-        TqOtFi8ku7psyUJ+6ow4Ow==
-X-Google-Smtp-Source: APXvYqyEaSvDNTf8H7iXKdq/akmJoa4ONV459oM3gCr7ZXgwysR2Do7HLe/sAVmwb/5+dG6pTTj5OA==
-X-Received: by 2002:a0c:9214:: with SMTP id a20mr4763658qva.195.1560449381341;
-        Thu, 13 Jun 2019 11:09:41 -0700 (PDT)
-Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id w30sm230529qtb.28.2019.06.13.11.09.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 11:09:40 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 12:09:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     vkoul@kernel.org, robh+dt@kernel.org, nm@ti.com,
-        ssantosh@kernel.org, dan.j.williams@intel.com,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        grygorii.strashko@ti.com, lokeshvutla@ti.com, t-kristo@ti.com,
-        tony@atomide.com
-Subject: Re: [PATCH 02/16] bindings: soc: ti: add documentation for k3 ringacc
-Message-ID: <20190613180939.GA6840@bogus>
-References: <20190506123456.6777-1-peter.ujfalusi@ti.com>
- <20190506123456.6777-3-peter.ujfalusi@ti.com>
+        Thu, 13 Jun 2019 14:10:03 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5DIA1vi100822;
+        Thu, 13 Jun 2019 13:10:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560449401;
+        bh=Y4+K2Ii/3LdHFb7cPsa8bj2j7YViNwCxC73g7obaPGI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iN0M3mVhc7mJQwiHtPFJ9mS3mUC72Qq26u/vZy+SxL10KN8tO9hrntjIUFc/TlilB
+         KzyM0VmXo3znhaZnx1E5J3jcSHnlJ+TawVqgdIgz1d04S+ciyY62YtcGQwi+oYriPE
+         Zc3C50eT0Q7dtO+YNJrPPry2MhZGYRsPg6upI3TE=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5DIA1YS050562
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Jun 2019 13:10:01 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 13
+ Jun 2019 13:10:01 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 13 Jun 2019 13:10:01 -0500
+Received: from [172.22.216.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5DI9uVb012725;
+        Thu, 13 Jun 2019 13:09:57 -0500
+Subject: Re: [RESEND PATCH v2 3/3] regulator: lp87565: Add 4-phase lp87561
+ regulator support
+To:     Mark Brown <broonie@kernel.org>
+CC:     <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <t-kristo@ti.com>
+References: <20190612144620.28331-1-j-keerthy@ti.com>
+ <20190613154552.GL5316@sirena.org.uk>
+ <bfb19336-fbe9-06d8-25d3-f2e0b8ea6c9b@ti.com>
+ <20190613173248.GP5316@sirena.org.uk>
+From:   keerthy <j-keerthy@ti.com>
+Message-ID: <7b500f5d-9ea0-0135-7174-b7a34db23d28@ti.com>
+Date:   Thu, 13 Jun 2019 23:39:55 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190506123456.6777-3-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190613173248.GP5316@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 May 2019 15:34:42 +0300, Peter Ujfalusi wrote:
-> From: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
-> The Ring Accelerator (RINGACC or RA) provides hardware acceleration to
-> enable straightforward passing of work between a producer and a consumer.
-> There is one RINGACC module per NAVSS on TI AM65x SoCs.
-> 
-> This patch introduces RINGACC device tree bindings.
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
->  .../devicetree/bindings/soc/ti/k3-ringacc.txt | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/ti/k3-ringacc.txt
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On 6/13/2019 11:02 PM, Mark Brown wrote:
+> On Thu, Jun 13, 2019 at 10:32:45PM +0530, keerthy wrote:
+>> On 6/13/2019 9:15 PM, Mark Brown wrote:
+>>> On Wed, Jun 12, 2019 at 08:16:20PM +0530, Keerthy wrote:
+> 
+>>>> patches 1/3 2/3 are already applied to linux-next.
+> 
+>>> This doesn't build without those patches:
+> 
+>> They are already on next. Do you want me to resend them as well?
+> 
+> That's no good, it still breaks the build of my tree.  I can't apply
+> this until the code is in my tree, either through a shared branch or
+> through Lihus' tree.  I see I acked the patch, I'll have been expecting
+> the patch to be applied to Lee's tree.  If that's not possible or
+> there's no branch then please resend after the merge window.
+
+Lee Jones,
+
+Could you please pull this patch?
+
+- Keerthy
+> 
