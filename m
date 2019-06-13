@@ -2,74 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C1E4489E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17060448A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:10:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393499AbfFMRJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:09:44 -0400
-Received: from mail-qk1-f174.google.com ([209.85.222.174]:44975 "EHLO
-        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393453AbfFMRJ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:09:29 -0400
-Received: by mail-qk1-f174.google.com with SMTP id p144so1112038qke.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 10:09:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=bkktTI29Mprq/WraaWR/iipIfzJhh3C703MvSQ8ZEuo=;
-        b=SH6nMieXOV6x0XG3n36Q1FY3qs3vmVq92SmZudcVjmFRsbibFR0lsmi2u3vHELAUO5
-         wZ137JahP55hpbb3NlKXidQhNhOZBHgWuyFLJkmdPdPiLSFe7FUO3GjyFfQcQUOsIAQW
-         dvY8qQY+MOKXy3dRGh6BaBiH8mo+xTMqboB2hgbA728HU60TA7iZvPPJjL7t+PR4C6kC
-         cdRUNupYDfO+ZUdqvkyelEyX2BMjeWyYZBVdwnWZntxiLKy4pS4l4M3bILvFHx2J50rI
-         9JLRCFNev6/EJBAq5ZpzQ2S9430pT2PC8KW9zSOgoqokzZUFQpi0Y4mRITuj+JGNjicE
-         zofQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=bkktTI29Mprq/WraaWR/iipIfzJhh3C703MvSQ8ZEuo=;
-        b=beGf5H/F2eldWG53jxLRliOWGa5CvHis2KC271o5WUXLMk7e/RJpV12wziOLprxIKk
-         WomdulW29hB4yVzBwa/7LOhihRqNMQ9EPeCVJiQ5ZdH+MsaMTW4bwhLf/foNDRnpIumB
-         AmQyynSgHcA+IGP+hRBwbBrFDqopRpRrBOzT7iVBB2KVyx2TKpni6dofml1aNe+T5yiN
-         c7xzOD8srQK/o+kO4Ykj5igU5YvxVUfJqwW5rD2s47qsnKzGRJHj7tDXsIcKO6VUA7Kk
-         7FB2byJYPKwaSgSoS3AMQFPyLs5qVu89lKWpdZ/1tOwQZfPXIdEopo50RLwmY0pRrqoW
-         JnYQ==
-X-Gm-Message-State: APjAAAWNHBTmqu9eESShOVDfHLf0kuy4qZfCIWjh5Qax1Wn8fvkZxuvS
-        muhdhQEzMLBR4yjwjVlayrQxwA==
-X-Google-Smtp-Source: APXvYqxOtlsJBNr4RXkYgj3XdzHIOqikXnzMKvAi6Mz6sFxjcG+k9LyFuV8RHHVv9ENQS6UdATtSwQ==
-X-Received: by 2002:a37:9a50:: with SMTP id c77mr72065503qke.12.1560445767909;
-        Thu, 13 Jun 2019 10:09:27 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id h4sm72458qkk.39.2019.06.13.10.09.26
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 10:09:27 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:09:23 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     peterz@infradead.org, netdev@vger.kernel.org, davem@davemloft.net,
-        edumazet@google.com, linux-kernel@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH net-next 0/2] enable and use static_branch_deferred_inc
-Message-ID: <20190613100923.397a6081@cakuba.netronome.com>
-In-Reply-To: <20190613150816.83198-1-willemdebruijn.kernel@gmail.com>
-References: <20190613150816.83198-1-willemdebruijn.kernel@gmail.com>
-Organization: Netronome Systems, Ltd.
+        id S2393528AbfFMRKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:10:22 -0400
+Received: from foss.arm.com ([217.140.110.172]:47772 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404622AbfFMRKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:10:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAB03367;
+        Thu, 13 Jun 2019 10:10:19 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D59783F694;
+        Thu, 13 Jun 2019 10:10:18 -0700 (PDT)
+Subject: Re: [PATCH 1/2] arm64/mm: check cpu cache line size with non-coherent
+ device
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org,
+        Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>,
+        Zhang Lei <zhang.lei@jp.fujitsu.com>
+References: <20190611151731.6135-1-msys.mizuma@gmail.com>
+ <20190611151731.6135-2-msys.mizuma@gmail.com>
+ <20190611180007.him7md7gdcjs5cg6@mbp>
+ <20190611220246.lyhcqahsxyxuhqjk@gabell>
+ <20190613155434.GW28951@C02TF0J2HF1T.local>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <d832009b-93b5-8ac3-03eb-8e6e92a5b206@arm.com>
+Date:   Thu, 13 Jun 2019 18:10:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190613155434.GW28951@C02TF0J2HF1T.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Jun 2019 11:08:14 -0400, Willem de Bruijn wrote:
-> From: Willem de Bruijn <willemb@google.com>
+On 13/06/2019 16:54, Catalin Marinas wrote:
+> On Tue, Jun 11, 2019 at 06:02:47PM -0400, Masayoshi Mizuma wrote:
+>> On Tue, Jun 11, 2019 at 07:00:07PM +0100, Catalin Marinas wrote:
+>>> On Tue, Jun 11, 2019 at 11:17:30AM -0400, Masayoshi Mizuma wrote:
+>>>> --- a/arch/arm64/mm/dma-mapping.c
+>>>> +++ b/arch/arm64/mm/dma-mapping.c
+>>>> @@ -91,10 +91,6 @@ static int __swiotlb_mmap_pfn(struct vm_area_struct *vma,
+>>>>   
+>>>>   static int __init arm64_dma_init(void)
+>>>>   {
+>>>> -	WARN_TAINT(ARCH_DMA_MINALIGN < cache_line_size(),
+>>>> -		   TAINT_CPU_OUT_OF_SPEC,
+>>>> -		   "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
+>>>> -		   ARCH_DMA_MINALIGN, cache_line_size());
+>>>>   	return dma_atomic_pool_init(GFP_DMA32, __pgprot(PROT_NORMAL_NC));
+>>>>   }
+>>>>   arch_initcall(arm64_dma_init);
+>>>> @@ -473,6 +469,11 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>>>>   			const struct iommu_ops *iommu, bool coherent)
+>>>>   {
+>>>>   	dev->dma_coherent = coherent;
+>>>> +
+>>>> +	if (!coherent && (cache_line_size() > ARCH_DMA_MINALIGN))
+>>>> +		dev_WARN(dev, "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
+>>>> +				ARCH_DMA_MINALIGN, cache_line_size());
+>>>
+>>> I'm ok in principle with this patch, with the minor issue that since
+>>> commit 7b8c87b297a7 ("arm64: cacheinfo: Update cache_line_size detected
+>>> from DT or PPTT") queued for 5.3 cache_line_size() gets the information
+>>> from DT or ACPI. The reason for this change is that the information is
+>>> used for performance tuning rather than DMA coherency.
+>>>
+>>> You can go for a direct cache_type_cwg() check in here, unless Robin
+>>> (cc'ed) has a better idea.
+>>
+>> Got it, thanks.
+>> I believe coherency_max_size is zero in case of coherent is false,
+>> so I'll modify the patch as following. Does it make sense?
 > 
-> 1. make static_branch_deferred_inc available if !CONFIG_JUMP_LABEL
-> 2. convert the existing STATIC_KEY_DEFERRED_FALSE user to this api
+> The coherency_max_size gives you the largest cache line in the system,
+> independent of whether a device is coherent or not. You may have a
+> device that does not snoop L1/L2 but there is a transparent L3 (system
+> cache) with a larger cache line that the device may be able to snoop.
+> The coherency_max_size and therefore cache_line_size() would give you
+> this L3 value but the device would work fine since CWG <=
+> ARCH_DMA_MINALIGN.
+> 
+>>
+>> @@ -57,6 +53,11 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>>                          const struct iommu_ops *iommu, bool coherent)
+>>   {
+>>          dev->dma_coherent = coherent;
+>> +
+>> +       if (!coherent && (cache_line_size() > ARCH_DMA_MINALIGN))
+>> +               dev_WARN(dev, "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
+>> +                               ARCH_DMA_MINALIGN, (4 << cache_type_cwg()));
+>> +
+>>          if (iommu)
+>>                  iommu_setup_dma_ops(dev, dma_base, size);
+> 
+> I think the easiest here is to add a local variable:
+> 
+> 	int cls = 4 << cache_type_cwg();
+> 
+> and check it against ARCH_DMA_MINALIGN.
+> 
 
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Agreed, and I'd say we should keep the taint too, since if this 
+situation ever was hit the potential crashes would be weird and random 
+and not obviously DMA-related.
 
-Thanks/sorry :)
+Robin.
