@@ -2,108 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D0243B61
+	by mail.lfdr.de (Postfix) with ESMTP id 7DEB043B60
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbfFMP2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:28:30 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9343 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728936AbfFMLa2 (ORCPT
+        id S1730606AbfFMP2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:28:31 -0400
+Received: from sonic302-2.consmr.mail.bf2.yahoo.com ([74.6.135.41]:45825 "EHLO
+        sonic302-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728935AbfFMLa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:30:28 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0233d40000>; Thu, 13 Jun 2019 04:30:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Jun 2019 04:30:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Jun 2019 04:30:27 -0700
-Received: from [10.19.65.14] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
- 2019 11:30:23 +0000
-Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
- <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
- <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
-From:   Bitan Biswas <bbiswas@nvidia.com>
-Message-ID: <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
-Date:   Thu, 13 Jun 2019 04:30:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Jun 2019 07:30:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560425425; bh=M+2BQM2x3GSy/dmtDG0o07y3ZYWK28QOQCLRz1DcS2Q=; h=Date:From:Reply-To:Subject:References:From:Subject; b=mUZQO9wBzaPRbIIhxUQRmh6eLT2VU+vOg22XjArIwTuJ07AFc3gMpyNJenNQN00zW+ltZLfSSR8NAbX6wxfGA74LVzLROmS1EnWmzZ3OZnFzMC54Ug7Cj2V1uRCCCE808zMsRFXP6frHrpgWpKaMMJF6St2kGvrwsxfX5mzpIFRsqMXs8EUcRyXAApJWTgGe0KElljleE3r32oMbC13qg/avJLOAeDQIf/hqQHq2TpsoUkE4hPoL7An8A/v8wepyeAQwXyXDWmguBtNTJ+k6iCDAl8It9KkUCc/zPL987evHkHVCnNhB9/5AMScqNpdloUBHuMYqKfLMmGlieRVEVQ==
+X-YMail-OSG: kCAF9iUVM1nhH_QHfv7Y_AvOrcVUkr0ClfwcllKn9L0sxfGhq5qB3PKAxO82Jnj
+ Er43QqmyRBvzqbdHLxX4vAz8ijtDSFUg1pcBG18jbn44VwmWY9BeveqfPmUl6bcFWG2nAo.Z.vUy
+ 4twcZv0wPjAO6LlmDClzG2NMjTh6suaiw.CjBmL9FbDUhpat_uHwxq.uIOC7PqcjfOHjemm5zquE
+ SbysU4P5hsDzkwlx_ayHpJ6lAY6z75nFUolJ3ZUZttz.yVl.6JOjbUqiqUBUHu2UIqRD6mXOPtK1
+ lknUz6iWfJkTFZI9IcPYFzEr_m6VI_NaHBNE6UFq0e9oiKSnw1794gHSpE7bKZ3T.Q4zUCJpZIF.
+ xWk_j0wdKZUsooAdk68G74V59vVOoZNFeyy9o6W.gzeVY.l8FCUX_iLwspZwVRPPtq.919WorHUu
+ NCPDgPA2_zNaMB5P4cNuEmynRfNSJWIMdmhD5UiJXGS77HOVs7H1QccIpJb0dHrah1nO3w8Fh_LH
+ 0TZTasI3h9X95y_9Rf2bdI.Z.ixY2bWaNyNaJIwmCWtSx.RSZxZflBoOU4XaJmH9eQFtjHHzFq1e
+ LpLK5ExsEeZaaCjbbK_zL4AHSDYsrF1eViWsee2moeBjEKAQjiwRzjAcokx3zyOHx2.iNepgp3uu
+ KQHelgrcDUQX7kdf1n2KAAI7_T0uVju41cVo_vT_k4BDCzQ4fC.o4_NKu3K7BHW6hBOdpdjheRWk
+ Zzm_bjEb4MKkTSB2xXJ2SKRISxAwBLy6qZHTk2W0vv2nvoyzANPTCYv4r.pQr1Dl5sQgzhNa_0MU
+ Opek4zkyynPt.xwOuhFG0Rao.UB_bSjYurZM_U5PRdhRTPw8aLOYp8HqmwYPjGH4xnk0fZh9JY6X
+ vdFTMB57Kk3JCPGX2tRJAkfmwimrHXEm.UEFiA3_nPDeTLzIGN2y0VS0PWOdZ3ZP10QR7TvrfVwL
+ 83vTnP2qrqE_gk2vTbEF5fQpBuAAHScjKllCZXCVH5eCWS.AA0rBnA9y9iEaxgmQuxynWC0oZe7g
+ AoeQLesb2XKVRvXg01RxwHUpZP7QFIhN8wVGebjOZBtrv.7dD2UjsMyNSgl7IFONaaQWcSGDpiiC
+ JypkTy_vu_5YVnEOvqqXZ2oy_78Jg557kyMAkSPIabWVEQgizCKUtZDxSKiybEmGKDmQf0XEiUDM
+ lO4yRkfHMfJP3ScD_bEXtyzaoCxoeWZS0Jr1_MU3Z8z611C105QA-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Thu, 13 Jun 2019 11:30:25 +0000
+Date:   Thu, 13 Jun 2019 11:30:21 +0000 (UTC)
+From:   Aisha Gaddafi <aishag637@gmail.com>
+Reply-To: Aisha Gaddafi <gaisha983@gmail.com>
+Message-ID: <507712907.595920.1560425421058@mail.yahoo.com>
+Subject: Hello My Beloved One, i need your assistance
 MIME-Version: 1.0
-In-Reply-To: <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560425428; bh=YYG3Tiz4rxKMT21cs3lh3b9nrormbWQ/O0K+STrBpY0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=WicijuZIUdky2TxWRGDNdLYw5f+XPpq9+IJWigt6YGcFEw+JTIqNN7VFtVrqLyRzG
-         nksSrkAyy6ONVoyxEw4LSdl1aQT0QcRCMErxjB6BQBjRfz0sEVa8wU0y3VXH/sfxKg
-         tdceaCN51wM1X4284IZmL//MefuZGpvhbX+UlK7Dv1RLICFNooy/F2dwEP0k0OTQ7n
-         4khH4FFvjkB3t1gBxB7ysDEoYXlxM+RLqwz+MdXjqNE3mTwAIHFU24ccNQ9HJZqyus
-         sKnCsh1eh8FFqi/jojAb+D67oOznkYH7fpE6UmPYUboDGP4C5LX0Wy+yLWaqBLmUgD
-         OnHi38FN0Fq8A==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <507712907.595920.1560425421058.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13837 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; rv:67.0) Gecko/20100101 Firefox/67.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Friend,
 
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
-On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
-> 11.06.2019 13:51, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Fix expression for residual bytes(less than word) transfer
->> in I2C PIO mode RX/TX.
->>
->> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->> ---
->=20
-> [snip]
->=20
->>   		/*
->> -		 * Update state before writing to FIFO.  If this casues us
->> +		 * Update state before writing to FIFO.  If this causes us
->>   		 * to finish writing all bytes (AKA buf_remaining goes to 0) we
->>   		 * have a potential for an interrupt (PACKET_XFER_COMPLETE is
->> -		 * not maskable).  We need to make sure that the isr sees
->> -		 * buf_remaining as 0 and doesn't call us back re-entrantly.
->> +		 * not maskable).
->>   		 */
->>   		buf_remaining -=3D words_to_transfer * BYTES_PER_FIFO_WORD;
->=20
-> Looks like the comment could be removed altogether because it doesn't
-> make sense since interrupt handler is under xfer_lock which is kept
-> locked during of tegra_i2c_xfer_msg().
-I would push a separate patch to remove this comment because of=20
-xfer_lock in ISR now.
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
 
->=20
-> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable",
-> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
->=20
-I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips=20
-newer than Tegra30 allows one to not see interrupt after Packet transfer=20
-complete. With the xfer_lock in ISR the scenario discussed in comment=20
-can be ignored.
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
 
--regards,
-  Bitan
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
 
+Your Urgent Reply Will Be Appreciated.
+
+Best Regards
+Mrs Aisha Gaddafi
