@@ -2,90 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B37244467C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 194C544677
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393042AbfFMQwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:52:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60620 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730127AbfFMDX2 (ORCPT
+        id S1730582AbfFMQwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:52:05 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46896 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730128AbfFMDZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:23:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QaIPZk5fG08PMipK2ZOjFgNMkP7/mE5EU+2hsa7y6lY=; b=VCF/wqwvWCkPBIrvCaL/D3G8l
-        tHqc/P5TR0jF4odv4tFa+eZycXtANJYw8npQGw1u7+6Uv8D3dPL6PSPWSss02vOD3RMl8SN9UE9tE
-        pgdev89Cvk50mX8MdLQMFzWKjT9ybPnHlvymKlhrDcAdtq9BjKibIVkW+vernB9b/39/CVM/w8KPZ
-        7eNO6yjjUerdEhluGAkQcubSLK9G/8N4d5w54XxHTAPHR/5HqmRB4lPvHLnyja2+Z1QV2Pr2MBWyz
-        OHrDRVCwX8aCx5s1LcyskUetCbhRrlq1e3Hk4+o+Gp2Qi2Fokqvsf6H+CAZFG91Ylp4HPDaT6v01i
-        r9dkL+CUQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbGKe-0003os-RJ; Thu, 13 Jun 2019 03:23:20 +0000
-Date:   Wed, 12 Jun 2019 20:23:20 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613032320.GG32656@bombadil.infradead.org>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
+        Wed, 12 Jun 2019 23:25:12 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 81so10855852pfy.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 20:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=na+M1IgMGaM0aP15I3XbgNE1q19snWq8SHI4WbjnUi8=;
+        b=ayqIIySKl6kes4w9jYHEywIJSvRDA1zi9AMajnhKYpTxcdVuBdAgsWgJaGqrz7xwF+
+         9RC/evdpHaaIJEqxagLrwVocrWh3UMlFyW9tMnoHoIj67T2hZWr+R1JYWozCB1qocR0C
+         cgnBD4a+F5VS9acKQF05CqFm3K2gf7BOYvzfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=na+M1IgMGaM0aP15I3XbgNE1q19snWq8SHI4WbjnUi8=;
+        b=MfXiRFDKoduUZNyQbs9MDpN6hj9vxAfxDLsLBzBTl3cC9C/ac0XMorBt4Vx6WHyaCg
+         2MwXyhMmX/W+YfNA5ADtOaYOXxN6memxlLzouojHPokNeVo8clO9jqYvTIMBdFtIFa5I
+         QcPrGGJ+Jfy6o0AQRKdEoppJV0zCR7a39nL0njWFv52JLkEzABK4w6h3WIvnqeHEe8Tu
+         ylrH67BsnXSOHhkTVdlFWE2vs8WDkmcNhextxbobjME507kTjsTqawTYvzGCiXGm7jIh
+         324gQfyKkHEIQimL9llJDRgUsEMFQbE0IiAA9Apf0kbMIHN0/jmg27F0KSRW0KpFD57k
+         OFow==
+X-Gm-Message-State: APjAAAUG2YirNVjvTnhQon2wMGRZnBjyPtqWPDfy+nx0cPAyn5ewAo78
+        Y6oqc40BeBtGg8pnnVyldq/gYL2dIMw=
+X-Google-Smtp-Source: APXvYqyM53aFUeG9U9Tc6RAfzM93Fkh7XJF4rWPgPyOYiilGDKKp1+at7vv7zLSJgsW+VMFEfd9C/Q==
+X-Received: by 2002:a17:90a:1951:: with SMTP id 17mr2512798pjh.79.1560396311357;
+        Wed, 12 Jun 2019 20:25:11 -0700 (PDT)
+Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
+        by smtp.gmail.com with ESMTPSA id w132sm959398pfd.78.2019.06.12.20.25.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 20:25:10 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Pawel Dembicki <paweldembicki@gmail.com>
+Cc:     Pawel Dembicki <paweldembicki@gmail.com>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Enable kernel XZ compression option on PPC_85xx
+In-Reply-To: <20190603164115.27471-1-paweldembicki@gmail.com>
+References: <20190603164115.27471-1-paweldembicki@gmail.com>
+Date:   Thu, 13 Jun 2019 13:25:05 +1000
+Message-ID: <877e9qp3ou.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613002555.GH14363@dread.disaster.area>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> > That's rather different from the normal meaning of 'exclusive' in the
-> > context of locks, which is "only one user can have access to this at
-> > a time".
-> 
-> Layout leases are not locks, they are a user access policy object.
-> It is the process/fd which holds the lease and it's the process/fd
-> that is granted exclusive access.  This is exactly the same semantic
-> as O_EXCL provides for granting exclusive access to a block device
-> via open(), yes?
+Pawel Dembicki <paweldembicki@gmail.com> writes:
 
-This isn't my understanding of how RDMA wants this to work, so we should
-probably clear that up before we get too far down deciding what name to
-give it.
+> Enable kernel XZ compression option on PPC_85xx. Tested with
+> simpleImage on TP-Link TL-WDR4900 (Freescale P1014 processor).
+>
+> Suggested-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> ---
+>  arch/powerpc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 8c1c636308c8..daf4cb968922 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -196,7 +196,7 @@ config PPC
+>  	select HAVE_IOREMAP_PROT
+>  	select HAVE_IRQ_EXIT_ON_IRQ_STACK
+>  	select HAVE_KERNEL_GZIP
+> -	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x
+> +	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x || PPC_85xx
 
-For the RDMA usage case, it is entirely possible that both process A
-and process B which don't know about each other want to perform RDMA to
-file F.  So there will be two layout leases active on this file at the
-same time.  It's fine for IOs to simultaneously be active to both leases.
-But if the filesystem wants to move blocks around, it has to break
-both leases.
+(I'm not super well versed in the compression stuff, so apologies if
+this is a dumb question.) If it's this simple, is there any reason we
+can't turn it on generally, or convert it to a blacklist of platforms
+known not to work?
 
-If Process C tries to do a write to file F without a lease, there's no
-problem, unless a side-effect of the write would be to change the block
-mapping, in which case either the leases must break first, or the write
-must be denied.
+Regards,
+Daniel
 
-Jason, please correct me if I've misunderstood the RDMA needs here.
+>  	select HAVE_KPROBES
+>  	select HAVE_KPROBES_ON_FTRACE
+>  	select HAVE_KRETPROBES
+> -- 
+> 2.20.1
