@@ -2,119 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2D043D08
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90AE543CF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfFMPjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:39:02 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:45653 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731940AbfFMJ5q (ORCPT
+        id S2388433AbfFMPif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:38:35 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:41128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731946AbfFMJ6k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:57:46 -0400
-Received: by mail-vs1-f67.google.com with SMTP id n21so12223572vsp.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 02:57:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xbxjq+/UWnkmz/Lz2NuZarwVK3ifkKHPS3ppszMgh6E=;
-        b=fEqFpleuGhOamNp5m2EH71DOiuFlFeO8LAoM/7Lp8TSo2eVpZ9KPxeKGpTLl5GjcwV
-         S3d/AsmOzAXn2VmPPGGFecfnZaHbXbcxYJ+UVbXEz+fkjYrgIs2yGsUVg9uCX7fQmPrd
-         Vshj30LgbeysHLD1OUon+3yIb+M7yDp2isl3Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xbxjq+/UWnkmz/Lz2NuZarwVK3ifkKHPS3ppszMgh6E=;
-        b=VBEliNNxkrbCUerilVhqn8kKiPuc/D5PmhSGvMlwkXLAN4ml9ahq9l0ZojIDSZKhcV
-         E3//5QdaQVtG5uSrpt9kwSgQfnMRGPLBlz740TGBB70s7/V8/gIapjwHf/7tD+Lv3WdY
-         Pcie3CbYj3vIa9kkhQL+Hrjgw9lRmBvSXne9NJk4pRuzG1JOrhEyNJQhzbR+TwkHKIUY
-         1z7vO/ZjgNSTPm16UCW6lL0j3EttDXH01s+20ZPBaHXvmDWTRRQS+Cxzl/LSTAU5LBSR
-         zyxdkO8rnwQIqRAyEg58hox1hrQPUZl7HQWwXH2ZX8n0cF+QUcxJZcKZXMaT90BxSE3n
-         4Abw==
-X-Gm-Message-State: APjAAAXVXzKXquy8+bvy+uNxt5qUhpVN5/gXtbqhvL/E8kKQVX6b9+2J
-        ZTdTKorKkFYQFGJC3dtkhGX53Xd+7YVbwec0oOrjdg==
-X-Google-Smtp-Source: APXvYqy8eW2B7bGa1hDxGrsKEeZEhxQC13lqGDOpm+tCyesLdD1fgE55BDfcTpopDHtmpo3xBKwWIrlu4iHQQYmeJtk=
-X-Received: by 2002:a67:ebcb:: with SMTP id y11mr8620799vso.138.1560419865266;
- Thu, 13 Jun 2019 02:57:45 -0700 (PDT)
+        Thu, 13 Jun 2019 05:58:40 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4697725B7FA;
+        Thu, 13 Jun 2019 19:58:38 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 45C56940483; Thu, 13 Jun 2019 11:58:36 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 11:58:36 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-renesas-soc@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip: Enable compile-testing for Renesas drivers
+Message-ID: <20190613095835.p3hjztlesr4pqwvj@verge.net.au>
+References: <20190607095036.9466-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20190607184053.GA11513@embeddedor>
-In-Reply-To: <20190607184053.GA11513@embeddedor>
-From:   Sumit Saxena <sumit.saxena@broadcom.com>
-Date:   Thu, 13 Jun 2019 15:27:33 +0530
-Message-ID: <CAL2rwxpUyVE5T2QBT7ze5QoeH3KgkXCWPwjgQKuAUrd4VxHEOg@mail.gmail.com>
-Subject: Re: [PATCH] scsi: megaraid_sas: Use struct_size() helper
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607095036.9466-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 8, 2019 at 12:10 AM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->
-> struct MR_PD_CFG_SEQ_NUM_SYNC {
->         ...
->         struct MR_PD_CFG_SEQ seq[1];
-> } __packed;
->
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes.
->
-> So, replace the following form:
->
-> sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) + (sizeof(struct MR_PD_CFG_SEQ) * (MAX_PHYSICAL_DEVICES - 1))
->
-> with:
->
-> struct_size(pd_sync, seq, MAX_PHYSICAL_DEVICES - 1)
->
-> This code was detected with the help of Coccinelle.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+On Fri, Jun 07, 2019 at 11:50:36AM +0200, Geert Uytterhoeven wrote:
+> Enable compile-testing for all Renesas interrupt controller drivers,
+> except for RENESAS_H8300H_INTC.  The latter relies on a function
+> (ctrl_bclr()) that is not available on other architectures.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
 > ---
->  drivers/scsi/megaraid/megaraid_sas_fusion.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> index a25b6b4b6548..56bd524dddbf 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> @@ -1191,7 +1191,7 @@ megasas_ioc_init_fusion(struct megasas_instance *instance)
->  int
->  megasas_sync_pd_seq_num(struct megasas_instance *instance, bool pend) {
->         int ret = 0;
-> -       u32 pd_seq_map_sz;
-> +       size_t pd_seq_map_sz;
->         struct megasas_cmd *cmd;
->         struct megasas_dcmd_frame *dcmd;
->         struct fusion_context *fusion = instance->ctrl_context;
-> @@ -1200,9 +1200,7 @@ megasas_sync_pd_seq_num(struct megasas_instance *instance, bool pend) {
->
->         pd_sync = (void *)fusion->pd_seq_sync[(instance->pd_seq_map_id & 1)];
->         pd_seq_h = fusion->pd_seq_phys[(instance->pd_seq_map_id & 1)];
-> -       pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
-> -                       (sizeof(struct MR_PD_CFG_SEQ) *
-> -                       (MAX_PHYSICAL_DEVICES - 1));
-> +       pd_seq_map_sz = struct_size(pd_sync, seq, MAX_PHYSICAL_DEVICES - 1);
->
->         cmd = megasas_get_cmd(instance);
->         if (!cmd) {
-> --
-> 2.21.0
->
+>  drivers/irqchip/Kconfig | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 2d3b5a27cc988ab6..fe509b88f99a8f10 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -217,17 +217,26 @@ config RDA_INTC
+>  	select IRQ_DOMAIN
+>  
+>  config RENESAS_INTC_IRQPIN
+> -	bool
+> +	bool "Renesas INTC External IRQ Pin Support" if COMPILE_TEST
+>  	select IRQ_DOMAIN
+> +	help
+> +	  Enable support for the Renesas Interrupt Controller for external
+> +	  interrupt pins, as found on SH/R-Mobile and R-Car Gen1 SoCs.
+>  
+>  config RENESAS_IRQC
+> -	bool
+> +	bool "Renesas R-Mobile APE6 and R-Car IRQC support" if COMPILE_TEST
+>  	select GENERIC_IRQ_CHIP
+>  	select IRQ_DOMAIN
+> +	help
+> +	  Enable support for the Renesas Interrupt Controller for external
+> +	  devices, as found on R-Mobile APE6, R-Car Gen2, and R-Car Gen3 SoCs.
+>  
+>  config RENESAS_RZA1_IRQC
+> -	bool
+> +	bool "Renesas RZ/A1 IRQC support" if COMPILE_TEST
+>  	select IRQ_DOMAIN_HIERARCHY
+> +	help
+> +	  Enable support for the Renesas RZ/A1 Interrupt Controller, to use up
+> +	  to 8 external interrupts with configurable sense select.
+>  
+>  config ST_IRQCHIP
+>  	bool
+> @@ -303,8 +312,11 @@ config RENESAS_H8300H_INTC
+>  	select IRQ_DOMAIN
+>  
+>  config RENESAS_H8S_INTC
+> -        bool
+> +	bool "Renesas H8S Interrupt Controller Support" if COMPILE_TEST
+>  	select IRQ_DOMAIN
+> +	help
+> +	  Enable support for the Renesas H8/300 Interrupt Controller, as found
+> +	  on Renesas H8S SoCs.
+>  
+>  config IMX_GPCV2
+>  	bool
+> -- 
+> 2.17.1
+> 
