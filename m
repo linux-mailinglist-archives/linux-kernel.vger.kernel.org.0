@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A2B645009
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E95F4500B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfFMXa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 19:30:29 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:56663 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726535AbfFMXaC (ORCPT
+        id S1727662AbfFMXai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 19:30:38 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:46326 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727515AbfFMXah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:30:02 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TU6DYEz_1560468591;
+        Thu, 13 Jun 2019 19:30:37 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TU6DYEz_1560468591;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TU6DYEz_1560468591)
           by smtp.aliyun-inc.com(127.0.0.1);
           Fri, 14 Jun 2019 07:30:00 +0800
@@ -24,9 +24,9 @@ To:     mhocko@suse.com, mgorman@techsingularity.net, riel@surriel.com,
         ying.huang@intel.com, ziy@nvidia.com
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 6/9] mm: vmscan: don't demote for memcg reclaim
-Date:   Fri, 14 Jun 2019 07:29:34 +0800
-Message-Id: <1560468577-101178-7-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [v3 PATCH 7/9] mm: vmscan: check if the demote target node is contended or not
+Date:   Fri, 14 Jun 2019 07:29:35 +0800
+Message-Id: <1560468577-101178-8-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -35,112 +35,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memcg reclaim happens when the limit is breached, but demotion just
-migrate pages to the other node instead of reclaiming them.  This sounds
-pointless to memcg reclaim since the usage is not reduced at all.
+When demoting to the migration target node, the target node may have
+memory pressure, then the memory pressure may cause migrate_pages()
+fail.
+
+If the failure is caused by memory pressure (i.e. returning -ENOMEM),
+tag the node with PGDAT_CONTENDED.  The tag would be cleared once the
+target node is balanced again.
+
+Check if the target node is PGDAT_CONTENDED or not, if it is just skip
+demotion.
 
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- mm/vmscan.c | 38 +++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ include/linux/mmzone.h |  3 +++
+ mm/vmscan.c            | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 70394ca..d4e05c5 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -573,6 +573,9 @@ enum pgdat_flags {
+ 					 * many pages under writeback
+ 					 */
+ 	PGDAT_RECLAIM_LOCKED,		/* prevents concurrent reclaim */
++	PGDAT_CONTENDED,		/* the node has not enough free memory
++					 * available
++					 */
+ };
+ 
+ enum zone_flags {
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 428a83b..fb931ded 100644
+index fb931ded..9ec55d7 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -1126,12 +1126,16 @@ static inline struct page *alloc_demote_page(struct page *page,
+@@ -1126,6 +1126,21 @@ static inline struct page *alloc_demote_page(struct page *page,
  }
  #endif
  
--static inline bool is_demote_ok(int nid)
-+static inline bool is_demote_ok(int nid, struct scan_control *sc)
++static inline bool is_migration_target_contended(int nid)
++{
++	int node;
++	nodemask_t used_mask;
++
++
++	nodes_clear(used_mask);
++	node = find_next_best_node(nid, &used_mask, true);
++
++	if (test_bit(PGDAT_CONTENDED, &NODE_DATA(node)->flags))
++		return true;
++
++	return false;
++}
++
+ static inline bool is_demote_ok(int nid, struct scan_control *sc)
  {
  	/* Just do demotion with migrate mode of node reclaim */
- 	if (!(node_reclaim_mode & RECLAIM_MIGRATE))
+@@ -1144,6 +1159,10 @@ static inline bool is_demote_ok(int nid, struct scan_control *sc)
+ 	if (!has_migration_target_node_online())
  		return false;
  
-+	/* It is pointless to do demotion in memcg reclaim */
-+	if (!global_reclaim(sc))
++	/* Check if the demote target node is contended or not */
++	if (is_migration_target_contended(nid))
 +		return false;
 +
- 	/* Current node is cpuless node */
- 	if (!node_state(nid, N_CPU_MEM))
- 		return false;
-@@ -1326,7 +1330,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 				 * Demotion only happen from primary nodes
- 				 * to cpuless nodes.
- 				 */
--				if (is_demote_ok(page_to_nid(page))) {
-+				if (is_demote_ok(page_to_nid(page), sc)) {
- 					list_add(&page->lru, &demote_pages);
- 					unlock_page(page);
- 					continue;
-@@ -2226,7 +2230,7 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
- 	 * anonymous page deactivation is pointless.
- 	 */
- 	if (!file && !total_swap_pages &&
--	    !is_demote_ok(pgdat->node_id))
-+	    !is_demote_ok(pgdat->node_id, sc))
- 		return false;
+ 	return true;
+ }
  
- 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
-@@ -2307,7 +2311,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 	 *
- 	 * If current node is already PMEM node, demotion is not applicable.
- 	 */
--	if (!is_demote_ok(pgdat->node_id)) {
-+	if (!is_demote_ok(pgdat->node_id, sc)) {
- 		/*
- 		 * If we have no swap space, do not bother scanning
- 		 * anon pages.
-@@ -2316,18 +2320,18 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			scan_balance = SCAN_FILE;
- 			goto out;
- 		}
-+	}
+@@ -1564,6 +1583,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		nr_reclaimed += nr_succeeded;
  
--		/*
--		 * Global reclaim will swap to prevent OOM even with no
--		 * swappiness, but memcg users want to use this knob to
--		 * disable swapping for individual groups completely when
--		 * using the memory controller's swap limit feature would be
--		 * too expensive.
--		 */
--		if (!global_reclaim(sc) && !swappiness) {
--			scan_balance = SCAN_FILE;
--			goto out;
--		}
-+	/*
-+	 * Global reclaim will swap to prevent OOM even with no
-+	 * swappiness, but memcg users want to use this knob to
-+	 * disable swapping for individual groups completely when
-+	 * using the memory controller's swap limit feature would be
-+	 * too expensive.
-+	 */
-+	if (!global_reclaim(sc) && !swappiness) {
-+		scan_balance = SCAN_FILE;
-+		goto out;
- 	}
+ 		if (err) {
++			if (err == -ENOMEM)
++				set_bit(PGDAT_CONTENDED,
++					&NODE_DATA(target_nid)->flags);
++
+ 			putback_movable_pages(&demote_pages);
  
- 	/*
-@@ -2676,7 +2680,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 	 */
- 	pages_for_compaction = compact_gap(sc->order);
- 	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
--	if (get_nr_swap_pages() > 0 || is_demote_ok(pgdat->node_id))
-+	if (get_nr_swap_pages() > 0 || is_demote_ok(pgdat->node_id, sc))
- 		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
- 	if (sc->nr_reclaimed < pages_for_compaction &&
- 			inactive_lru_pages > pages_for_compaction)
-@@ -3362,7 +3366,7 @@ static void age_active_anon(struct pglist_data *pgdat,
- 	struct mem_cgroup *memcg;
+ 			list_splice(&ret_pages, &demote_pages);
+@@ -2597,6 +2620,19 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 		 * scan target and the percentage scanning already complete
+ 		 */
+ 		lru = (lru == LRU_FILE) ? LRU_BASE : LRU_FILE;
++
++		/*
++		 * The shrink_page_list() may find the demote target node is
++		 * contended, if so it doesn't make sense to scan anonymous
++		 * LRU again.
++		 *
++		 * Need check if swap is available or not too since demotion
++		 * may happen on swapless system.
++		 */
++		if (!is_demote_ok(pgdat->node_id, sc) &&
++		    (!sc->may_swap || mem_cgroup_get_nr_swap_pages(memcg) <= 0))
++			lru = LRU_FILE;
++
+ 		nr_scanned = targets[lru] - nr[lru];
+ 		nr[lru] = targets[lru] * (100 - percentage) / 100;
+ 		nr[lru] -= min(nr[lru], nr_scanned);
+@@ -3447,6 +3483,7 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
+ 	clear_bit(PGDAT_CONGESTED, &pgdat->flags);
+ 	clear_bit(PGDAT_DIRTY, &pgdat->flags);
+ 	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
++	clear_bit(PGDAT_CONTENDED, &pgdat->flags);
+ }
  
- 	/* Aging anon page as long as demotion is fine */
--	if (!total_swap_pages && !is_demote_ok(pgdat->node_id))
-+	if (!total_swap_pages && !is_demote_ok(pgdat->node_id, sc))
- 		return;
- 
- 	memcg = mem_cgroup_iter(NULL, NULL, NULL);
+ /*
 -- 
 1.8.3.1
 
