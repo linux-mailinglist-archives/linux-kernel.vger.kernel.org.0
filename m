@@ -2,237 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7EC44790
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 003BD447E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392843AbfFMRAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:00:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53356 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729075AbfFMRAR (ORCPT
+        id S1729690AbfFMRCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:02:45 -0400
+Received: from ucol19pa11.eemsg.mail.mil ([214.24.24.84]:25123 "EHLO
+        UCOL19PA11.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729649AbfFMRCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:00:17 -0400
-Received: by mail-wm1-f65.google.com with SMTP id x15so10982203wmj.3;
-        Thu, 13 Jun 2019 10:00:14 -0700 (PDT)
+        Thu, 13 Jun 2019 13:02:40 -0400
+X-EEMSG-check-017: 685646050|UCOL19PA11_EEMSG_MP9.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.63,369,1557187200"; 
+   d="scan'208";a="685646050"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UCOL19PA11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jun 2019 17:02:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3Ke2PcNpMKdQyf5iH4DjOeFjzYLX1u7eL3b0acZ61kc=;
-        b=hXq0/pK2h7R3bcBV6Xp/+Xt6pV7CUx/cq/JspzC4TlkWiv62tTxAv+r7Z76IR1NFSX
-         aa/swXxCp6sN6ZeK142FCfiW0UcVnpwMSCKiv8VeTVOKUR3frYnKc9QaiGkFN+4450I7
-         h62/JzZI5339rjqoeQfn3oLMSs67aGVroxuI9xA5HTKlz3O5VYVi3p3r08tCa2U/lzDi
-         NsecWORtpLTMIss4M72J73P7LL9aROJAzweFy2HHhU/T5dtzvJoFadvLS5m3X+xSkyO+
-         r4BAqNe4oiHZ08d27gHXcQd+J2Qi7o7lIV/Z36XrsLCoV4LSHiGyBN2k+BTOyCHFVWyV
-         FRLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3Ke2PcNpMKdQyf5iH4DjOeFjzYLX1u7eL3b0acZ61kc=;
-        b=gvDCVYEVuV72oXgUJD8T5Wy26+QxPRr/KxLH1k17w/fBdD3ddwqPAz0WqDlhH757oP
-         SiMhxA3yHPPumRhQrR25b2FjaeI/I+3hxO26FWQnzBqK6iODjjL/fjxKhFn09seod0UR
-         otNfxBrWSFIkGDNxdH9X2b2qYeQLO1wII4/YJvx1ZXa/UNnLZDNBg8+4ezNn5nY8A2Dr
-         evNvUbq75Ewm4yrHEXkb4HM71im38ve+vRGQTJ4ICS8xn8yFeuDKTqE6sTGwa+MHUNhz
-         Ex9//GlhzR1Bk/3CixuRydbfxXPw+YMhohMNN8aM/qqu0hCTAA8hpdGtwDWXIdj/id3b
-         BQHw==
-X-Gm-Message-State: APjAAAWTQdZlxtEDg6WFVCeabhWBunDI+trfEox9DUbLSgIJ1psmc7xB
-        AI46dCjcia7CUs1rttA32/GskmdU
-X-Google-Smtp-Source: APXvYqy66jM0+WZcaVOd83NWcqoVLopT1hGCGUmaFIIHKvurJEGUGEJICIcI5ORKjAzHYDz3y2+WVQ==
-X-Received: by 2002:a1c:448b:: with SMTP id r133mr4746705wma.114.1560445213643;
-        Thu, 13 Jun 2019 10:00:13 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id x6sm425324wru.0.2019.06.13.10.00.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 10:00:12 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] driver: core: Allow subsystems to continue deferring probe
-Date:   Thu, 13 Jun 2019 19:00:11 +0200
-Message-Id: <20190613170011.9647-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.21.0
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1560445348; x=1591981348;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=fQPJBLSkf3ACIUxeaWnbhS8tEqmnVpDGMg9YbwW47Vk=;
+  b=OK3uTvI9WKtHpetpMpEzs+xv0rL8UFFSG2LSI0p/winYWw6mB7sdG34s
+   ChuE3rHnyKzgY+erPHoqsQsj9ozQD87bZqyUPAYbLeo+SO8ip7MFtKc81
+   xpypRpP/hnu2w03QLA1k3Ak3D76x/EGZJr1uv7EdEdZ1tSlxJIpY+DP/w
+   KxbnpK63Z+dKQBOZPTbE+0JUVzczk5sozdEnjr+svy5kklTrWUXurbnUw
+   JoDu7+82GMKrDZo5khf20e5aSUl8VwKV/hR99o3Ki00jCqfphJAAMI2tL
+   5d3DHLxzcGV8C1rgCooqr5sktlZxLSmofljatNss/riNZnIRuVBdDgPnb
+   g==;
+X-IronPort-AV: E=Sophos;i="5.63,369,1557187200"; 
+   d="scan'208";a="24719124"
+IronPort-PHdr: =?us-ascii?q?9a23=3ANIZgoheuzXyOjmxu8feBRPdqlGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxc68Zx2N2/xhgRfzUJnB7Loc0qyK6vmmADFRqs/Z7TgrS99lb1?=
+ =?us-ascii?q?c9k8IYnggtUoauKHbQC7rUVRE8B9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUh?=
+ =?us-ascii?q?rwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9IRmrsAndrNQajItmJ6o+1x?=
+ =?us-ascii?q?fFvntFcPlKyG11Il6egwzy7dqq8p559CRQtfMh98peXqj/Yq81U79WAik4Pm?=
+ =?us-ascii?q?4s/MHkugXNQgWJ5nsHT2UZiQFIDBTf7BH7RZj+rC33vfdg1SaAPM32Sbc0WS?=
+ =?us-ascii?q?m+76puVRTlhjsLOyI//WrKkcF7kr5Vrwy9qBx+247UYZ+aNPxifqPGYNgWQX?=
+ =?us-ascii?q?NNUttNWyBdB4+xaYUAD/AFPe1FsYfzoVUApga6CQW1Cu7izjpEi3nr1qM4zu?=
+ =?us-ascii?q?shCxnL0hE+EdIAsHrar9v7O6kdXu+30KbGwi7Ob+9U1Drn9ITEbh4srPOKUL?=
+ =?us-ascii?q?ltccTR004vFwbdg1uNtYzqISuV1uQTvGid8uFuSOevhHQjqwF1vDeuxtonh4?=
+ =?us-ascii?q?7Sho0I0VDJ7jl5wYYpKt24T053e9ikEIBKuC2AOIt2Rd0iTnhutS0nxLMGvp?=
+ =?us-ascii?q?u7czILyJQh3xPfaOKIc5KO4h39UOadOzB4hGhqeL+5mh288lCgx/XhWsS731?=
+ =?us-ascii?q?tGtCpInsTWunwT2BHf9NKLRuZ780y8wziAzRrT5ftBIU0skKrbLIMuzaAom5?=
+ =?us-ascii?q?oItETDAjf2mELrjK+Kbkkk+van6+DgYrj+up+TLZV0igDjMqQ1gMC/HeQ5PR?=
+ =?us-ascii?q?QOX2ic4+i80qHs/VblT7lQi/02k63ZvIjbJcQduKG5HxdY3pss5huwFTur0M?=
+ =?us-ascii?q?kUkWMZIF9KZh6LlZXlN0nLIP/iDPe/h1qskC1sx/DDJrDhGYjCLmPYnbf9fb?=
+ =?us-ascii?q?dy905cyA0pwdBZ/JJbEKsNIP30Wk/vrNDYFAM2MxSow+b7D9VwzpgeVnyVDa?=
+ =?us-ascii?q?+fKq/Ss0WE6f4vI+mWZY8Voyr9K/895/7uk3A5g0Qdfa6v3ZYMaXC4GOhmLF?=
+ =?us-ascii?q?udYXb2ntgBFmIKtBIkTOP2kF2CTSJTZ3GqUq0g+D40FZimDYbfSYy3j72B3S?=
+ =?us-ascii?q?G7HpJNa2BHDFCMDWnnd4GeV/gQbyKSJ9drkiYYWri5V48hyRauuRf+y7pmKO?=
+ =?us-ascii?q?rU5yIZuYv41Ndr++LTiAsy9T1oD8Wdym2NSmZ0kX4VRz8ywq9yulJ9ylid3q?=
+ =?us-ascii?q?himfBYFsJc5+lPUggkMZ7Q1et6C8r9WgjZZNeGVE6mQsm6ATE2Vt8x2MEBY0?=
+ =?us-ascii?q?J8G9WkkxDC0DGnA6Eal7OVHpw46KHc0GbrJ8Z71XnG0LMtj148QstALWemnL?=
+ =?us-ascii?q?Jw9xDPB47VlEWUj6KqdaUa3C7Q+2aP1GmOs19CUA52T6rFWWsSZlXZrdvn/E?=
+ =?us-ascii?q?POVbyuBqo9MgtH18GCLrFGatrzjVVJXP3jIsjRY3qtm2esAhaF3reMbIvse2?=
+ =?us-ascii?q?UA0yTREVMEkw8c/HudKwg+CTmuo3jEADxtC13veUXs/vd6qH+hSU801Q6KZV?=
+ =?us-ascii?q?V717Wp4h4VmeCcS/QL07IGoighsTZ0HFW6397MENqPvQlhfKZdYdM7/lhH03?=
+ =?us-ascii?q?nUtwh8PpymMqBjiUQScwVxv0PyyRp3Dp9MntQtrHMv1AByM76X0EtddzOE2p?=
+ =?us-ascii?q?D9IrnXKnTu/BCocKPW2U/R0MyQ+qgR7PQ0sVLjvBumFkA66XVoz8FV02eA5p?=
+ =?us-ascii?q?XNFAcSU5fxUkEt9xhgprHaeTIw54XO2n1pL6a0syXO29UzBOsq0hygZctQML?=
+ =?us-ascii?q?uYFA/uFM0XH9OuJ/Iwm1imcB0JJ+BS+7QwP8Oid/qG3rSnM/pnnDKjlW5H+p?=
+ =?us-ascii?q?xy0lqQ9ypgTe7Fx44FzOuF3guDTDr8lE2ust3zmYxdYDESGW2/yTL6C4JLeq?=
+ =?us-ascii?q?JyeoMLA3+0I8Kr3tV+m4LtW3lA+VG9H1MJwtWpeRuJb1HmxQ1fz14XoX28mS?=
+ =?us-ascii?q?ugyzx7iS0mobSF0CzJ2eTiewINOnRXS2l6kVfsPY+0gsgYXEe2cwgplAGl5U?=
+ =?us-ascii?q?HhyqhVo6R/NXXTTl1Ofyj3IGBuSLe/tr2HY8RX8pMnrT1XUPigYVCdUrPyvg?=
+ =?us-ascii?q?EV0z39EGdExDA0bTequo7nkBx8k2+dLXBzrGbHdsF03xvQ+NvcRftJ1DocWC?=
+ =?us-ascii?q?Z4kSXXBkS7P9Sx4dWUmJPDs++lWmKlV51TdzTrzZ+atCu8421qABK+k+quld?=
+ =?us-ascii?q?L5CQI6yzP018F2VSXUqxbxepXr16OgMeJ5ZEZoAELz69FhF4F6k4swgowQ2H?=
+ =?us-ascii?q?cDipWb+noHjGHzPshB1qLibXoNQjgLz8TS4Aj/101pNmiJyJ7hVnWB3sthYM?=
+ =?us-ascii?q?G3bXkV2iIl6sBHE6OU7L1CnStorVu0tAzRYf9gnjcb1PQh8mIag+AOuAor1C?=
+ =?us-ascii?q?mdBaoSHUZANyz2ixuI98y+rLlQZGu3d7iw1E1+ncqkDL6YpAFRQ2z5dYk/Ei?=
+ =?us-ascii?q?9w9Mp/LEjA32H06oHhYNPQd84ctgWIkxfciOhYMIoxlv8WiiV7I239uXkly/?=
+ =?us-ascii?q?M+jRF1x5G1opWIK2V386KlGBJXKjr1Z8YL8DH3kalehtqW35yoHph5ATUEQo?=
+ =?us-ascii?q?HoTf22Hz4Ir/vmNwGOECA6qnqAGLrfGxOf51lir37VD5+rMHSXLmEDzdp+XB?=
+ =?us-ascii?q?mdOFBfgAcMUTUhnp42DACryNbicEhj+jAQ50f0qxpWxeJtNhn/SHzSpAauaj?=
+ =?us-ascii?q?coVpefKABa4R1F50fQKcae9P58HzlE/p29qwyAMmybaB5JDWEVQEOEAErvPr?=
+ =?us-ascii?q?mz5dba9eiYCfGzL/rIYbWSt+NeU+2Eyo6o0otj5zyMLNmAPmF+D/0n3UpORW?=
+ =?us-ascii?q?p2G8LElDUVSiwWlzjBb9WbpBii5C14ssC//+rtWALs4ouCEL9SMdRp+xCrjq?=
+ =?us-ascii?q?aPLe+QhCBlKTlG0pMA32PHyL8a3FQKkSFhayGtEagctS7KVK/QmbVYDx8BZy?=
+ =?us-ascii?q?NoKstH9aI83g9WNM7ajNP1yqB3jvovB1hZUlzhn9mjZdYWLGGlKFPHGEGLOa?=
+ =?us-ascii?q?ydKj3T2Mz4e6e8SbxOg+VStBC8oyuUHFH7NDSZizbpTwyvMf1LjCyDPhxev5?=
+ =?us-ascii?q?q9chZ2BGjhS9LmcR27MMNtjT032b00gm3FNXIAMTRmdENNtLKQ5ztCgvpjA2?=
+ =?us-ascii?q?xB8mZlLe6cliaa9ebYK4wasft2AitukeJa7283y7pT7CFYWvN1nDHeocJpo1?=
+ =?us-ascii?q?GjiuOP0CZoUAJSqjZXg4KGpV9iOaTH+ZlGRXbE/gwC7X6LBhQFoNtlDdLvu6?=
+ =?us-ascii?q?ROxdTViK3zLzJC+crO/cQAH8jUNN6HMH05PBvnGT7UCA8FTT+xOmHanUBSjO?=
+ =?us-ascii?q?ue9meSrpchtJfsgoYOSqRAWVw0EPMaFlpqHNgYLJhrWTMklKaRjNQU6nqmsB?=
+ =?us-ascii?q?nRWMJas4jfVvKSAPXvLDeZjaFeaxQT27/4MZ4TNozn1EN+cFZ3h4XKG0zMXd?=
+ =?us-ascii?q?9Tpi1tdBM7oEJI8Cs2cmpm4E/sbEuG4GUSDuKzhh47kBB5Z6x57zrl5RE1YF?=
+ =?us-ascii?q?HKviorjE4pmdj/mjeXWD/3MKq0G4pRDnynmVI2N8bAXwttbQC01XdhPTPASq?=
+ =?us-ascii?q?MZ26Bsbkh3mQTcvt1JAvcaQqpaNkxDjcqLbuklhAwP4h6swlVKsK6cUspv?=
+X-IPAS-Result: =?us-ascii?q?A2CoCAD5gAJd/wHyM5BlHAEBAQQBAQcEAQGBZYFiBSpqU?=
+ =?us-ascii?q?QEyKIQWknZMAQIBAQEGgTWJUZELCQEBAQEBAQEBAS0HAQIBAYRAAoJJIzgTA?=
+ =?us-ascii?q?QMBAQEEAQEBAQMBAWwcDII6KQGCZwEFIwQROAkQCxgCAiYCAlcGDQYCAQGCX?=
+ =?us-ascii?q?z8BgXYUD6sBfjOEMgGBFIMjgUAGgQwoi10XeIEHgTiCaz6HToJYBItViEmVL?=
+ =?us-ascii?q?gmCEoIbhCyMfwYbgiaVBo5GhW+RRiGBWCsIAhgIIQ+DJxOLAIVbIwMwAQEBA?=
+ =?us-ascii?q?YECAQGQLQEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Jun 2019 17:02:21 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5DH2HFM005493;
+        Thu, 13 Jun 2019 13:02:17 -0400
+Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
+ SELinux
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Cedric Xing <cedric.xing@intel.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
+        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, nhorman@redhat.com,
+        pmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
+        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
+        rientjes@google.com, william.c.roberts@intel.com,
+        philip.b.tricca@intel.com
+References: <cover.1560131039.git.cedric.xing@intel.com>
+ <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
+ <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
+ <20190611220243.GB3416@linux.intel.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
+Date:   Thu, 13 Jun 2019 13:02:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190611220243.GB3416@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 6/11/19 6:02 PM, Sean Christopherson wrote:
+> On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
+>> I haven't looked at this code closely, but it feels like a lot of
+>> SGX-specific logic embedded into SELinux that will have to be repeated or
+>> reused for every security module.  Does SGX not track this state itself?
+> 
+> SGX does track equivalent state.
+> 
+> There are three proposals on the table (I think):
+> 
+>    1. Require userspace to explicitly specificy (maximal) enclave page
+>       permissions at build time.  The enclave page permissions are provided
+>       to, and checked by, LSMs at enclave build time.
+> 
+>       Pros: Low-complexity kernel implementation, straightforward auditing
+>       Cons: Sullies the SGX UAPI to some extent, may increase complexity of
+>             SGX2 enclave loaders.
+> 
+>    2. Pre-check LSM permissions and dynamically track mappings to enclave
+>       pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
+>       based on the pre-checked permissions.
+> 
+>       Pros: Does not impact SGX UAPI, medium kernel complexity
+>       Cons: Auditing is complex/weird, requires taking enclave-specific
+>             lock during mprotect() to query/update tracking.
+> 
+>    3. Implement LSM hooks in SGX to allow LSMs to track enclave regions
+>       from cradle to grave, but otherwise defer everything to LSMs.
+> 
+>       Pros: Does not impact SGX UAPI, maximum flexibility, precise auditing
+>       Cons: Most complex and "heaviest" kernel implementation of the three,
+>             pushes more SGX details into LSMs.
+> 
+> My RFC series[1] implements #1.  My understanding is that Andy (Lutomirski)
+> prefers #2.  Cedric's RFC series implements #3.
+> 
+> Perhaps the easiest way to make forward progress is to rule out the
+> options we absolutely *don't* want by focusing on the potentially blocking
+> issue with each option:
+> 
+>    #1 - SGX UAPI funkiness
+> 
+>    #2 - Auditing complexity, potential enclave lock contention
+> 
+>    #3 - Pushing SGX details into LSMs and complexity of kernel implementation
+> 
+> 
+> [1] https://lkml.kernel.org/r/20190606021145.12604-1-sean.j.christopherson@intel.com
 
-Some subsystems, such as pinctrl, allow continuing to defer probe
-indefinitely. This is useful for devices that depend on resources
-provided by devices that are only probed after the init stage.
-
-One example of this can be seen on Tegra, where the DPAUX hardware
-contains pinmuxing controls for pins that it shares with an I2C
-controller. The I2C controller is typically used for communication
-with a monitor over HDMI (DDC). However, other instances of the I2C
-controller are used to access system critical components, such as a
-PMIC. The I2C controller driver will therefore usually be a builtin
-driver, whereas the DPAUX driver is part of the display driver that
-is loaded from a module to avoid bloating the kernel image with all
-of the DRM/KMS subsystem.
-
-In this particular case the pins used by this I2C/DDC controller
-become accessible very late in the boot process. However, since the
-controller is only used in conjunction with display, that's not an
-issue.
-
-Unfortunately the driver core currently outputs a warning message
-when a device fails to get the pinctrl before the end of the init
-stage. That can be confusing for the user because it may sound like
-an unwanted error occurred, whereas it's really an expected and
-harmless situation.
-
-In order to eliminate this warning, this patch allows callers of the
-driver_deferred_probe_check_state() helper to specify that they want
-to continue deferring probe, regardless of whether we're past the
-init stage or not. All of the callers of that function are updated
-for the new signature, but only the pinctrl subsystem passes a true
-value in the new persist parameter if appropriate.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- pass persist flag via flags parameter to make the function call easier
-  to understand
-
- drivers/base/dd.c            | 19 ++++++++++++++-----
- drivers/base/power/domain.c  |  2 +-
- drivers/iommu/of_iommu.c     |  2 +-
- drivers/pinctrl/devicetree.c |  9 +++++----
- include/linux/device.h       | 18 +++++++++++++++++-
- 5 files changed, 38 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 0df9b4461766..0399a6f6c479 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -238,23 +238,32 @@ __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
- /**
-  * driver_deferred_probe_check_state() - Check deferred probe state
-  * @dev: device to check
-+ * @flags: Flags used to control the behavior of this function. Drivers can
-+ *   set the DRIVER_DEFER_PROBE_PERSIST flag to indicate that they want to
-+ *   keep trying to probe after built-in drivers have had a chance to probe.
-+ *   This is useful for built-in drivers that rely on resources provided by
-+ *   modular drivers.
-  *
-  * Returns -ENODEV if init is done and all built-in drivers have had a chance
-- * to probe (i.e. initcalls are done), -ETIMEDOUT if deferred probe debug
-- * timeout has expired, or -EPROBE_DEFER if none of those conditions are met.
-+ * to probe (i.e. initcalls are done) and unless the DRIVER_DEFER_PROBE_PERSIST
-+ * flag is set, -ETIMEDOUT if deferred probe debug timeout has expired, or
-+ * -EPROBE_DEFER if none of those conditions are met.
-  *
-  * Drivers or subsystems can opt-in to calling this function instead of directly
-  * returning -EPROBE_DEFER.
-  */
--int driver_deferred_probe_check_state(struct device *dev)
-+int driver_deferred_probe_check_state(struct device *dev, unsigned long flags)
- {
- 	if (initcalls_done) {
- 		if (!deferred_probe_timeout) {
- 			dev_WARN(dev, "deferred probe timeout, ignoring dependency");
- 			return -ETIMEDOUT;
- 		}
--		dev_warn(dev, "ignoring dependency for device, assuming no driver");
--		return -ENODEV;
-+
-+		if ((flags & DRIVER_DEFER_PROBE_PERSIST) == 0) {
-+			dev_warn(dev, "ignoring dependency for device, assuming no driver");
-+			return -ENODEV;
-+		}
- 	}
- 	return -EPROBE_DEFER;
- }
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 33c30c1e6a30..6198c6a30fe2 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2423,7 +2423,7 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
- 		mutex_unlock(&gpd_list_lock);
- 		dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
- 			__func__, PTR_ERR(pd));
--		return driver_deferred_probe_check_state(base_dev);
-+		return driver_deferred_probe_check_state(base_dev, 0);
- 	}
- 
- 	dev_dbg(dev, "adding to PM domain %s\n", pd->name);
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index 614a93aa5305..b95d4342e414 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -105,7 +105,7 @@ static int of_iommu_xlate(struct device *dev,
- 	 * a proper probe-ordering dependency mechanism in future.
- 	 */
- 	if (!ops)
--		return driver_deferred_probe_check_state(dev);
-+		return driver_deferred_probe_check_state(dev, 0);
- 
- 	return ops->of_xlate(dev, iommu_spec);
- }
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index f7e354f85518..43c0183fa23f 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -111,13 +111,14 @@ static int dt_to_map_one_config(struct pinctrl *p,
- 
- 		np_pctldev = of_get_next_parent(np_pctldev);
- 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
-+			unsigned long flags = 0;
-+
- 			of_node_put(np_pctldev);
--			ret = driver_deferred_probe_check_state(p->dev);
- 			/* keep deferring if modules are enabled unless we've timed out */
--			if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret == -ENODEV)
--				ret = -EPROBE_DEFER;
-+			if (IS_ENABLED(CONFIG_MODULES) && !allow_default)
-+				flags |= DRIVER_DEFER_PROBE_PERSIST;
- 
--			return ret;
-+			return driver_deferred_probe_check_state(p->dev, flags);
- 		}
- 		/* If we're creating a hog we can use the passed pctldev */
- 		if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
-diff --git a/include/linux/device.h b/include/linux/device.h
-index e0649f6adf2e..d364656a920c 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -340,7 +340,23 @@ struct device *driver_find_device(struct device_driver *drv,
- 				  int (*match)(struct device *dev, void *data));
- 
- void driver_deferred_probe_add(struct device *dev);
--int driver_deferred_probe_check_state(struct device *dev);
-+
-+/*
-+ * This can be use to continue to defer probe after the init stage and after
-+ * all the built-in drivers have had a chance to probe. This is useful if a
-+ * built-in driver requires resources provided by a modular driver.
-+ *
-+ * One such example is the pinctrl subsystem, where for example the DPAUX
-+ * hardware on Tegra provides pinmuxing controls for pins shared between DPAUX
-+ * and I2C controllers. Only a subset of I2C controllers need the DPAUX
-+ * pinmuxing, and some I2C controllers are used during early boot for critical
-+ * tasks (such as communicating with the system PMIC). The I2C controllers
-+ * that don't share pins with a DPAUX block will want to be driven by a built-
-+ * in driver to make sure they are available early on.
-+ */
-+#define DRIVER_DEFER_PROBE_PERSIST (1 << 0)
-+
-+int driver_deferred_probe_check_state(struct device *dev, unsigned long flags);
- 
- /**
-  * struct subsys_interface - interfaces to device functions
--- 
-2.21.0
-
+Given the complexity tradeoff, what is the clear motivating example for 
+why #1 isn't the obvious choice? That the enclave loader has no way of 
+knowing a priori whether the enclave will require W->X or WX?  But 
+aren't we better off requiring enclaves to be explicitly marked as 
+needing such so that we can make a more informed decision about whether 
+to load them in the first place?
