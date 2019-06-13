@@ -2,104 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90AE543CF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 538C743CF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388433AbfFMPif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:38:35 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:41128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731946AbfFMJ6k (ORCPT
+        id S2388329AbfFMPie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:38:34 -0400
+Received: from casper.infradead.org ([85.118.1.10]:33510 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731947AbfFMJ7G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:58:40 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 4697725B7FA;
-        Thu, 13 Jun 2019 19:58:38 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 45C56940483; Thu, 13 Jun 2019 11:58:36 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 11:58:36 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: Enable compile-testing for Renesas drivers
-Message-ID: <20190613095835.p3hjztlesr4pqwvj@verge.net.au>
-References: <20190607095036.9466-1-geert+renesas@glider.be>
+        Thu, 13 Jun 2019 05:59:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=X6go1h+qBvd8UqStxDka25oSP1lwn219vXM1njzftqM=; b=st/cCkCW17JvfhPcMMlIiWlWs7
+        IjzbMHLeCgNGoALijV6IG+3mBu2hWh+zDF/ixgeztGRJFvKYWEb/k1hwDtOuJEM+LaN5VPyeL2Nyt
+        pUW3p7YE7JRXzR5AqF9H3+IiwxYWckQCRps/QFoMco8bS1sS+v518UWrrJXO7ml5NcscdFDSXeQVX
+        ZKduv2MoYrDVAMjIkypzrzv1fDu9De18EdqyKnVmVA/jtlt3lbqFtvB/kKq3/UdhRk448WORt2zGk
+        vyVeBQhaltTvjNhKaj4bDz1fJNL7g5eIVBQzyzZatNVk3zR46pfOQJ6fi4X1Ul2gzhVbF7Xgp5Fcx
+        8jdm6Tow==;
+Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbMVS-0000iN-9Z; Thu, 13 Jun 2019 09:58:54 +0000
+Date:   Thu, 13 Jun 2019 06:58:43 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v4 18/28] docs: convert docs to ReST and rename to *.rst
+Message-ID: <20190613065843.100f72dd@coco.lan>
+In-Reply-To: <7dc94cb4-ebf1-22ab-29c9-fcb2b875a9ac@csail.mit.edu>
+References: <cover.1560361364.git.mchehab+samsung@kernel.org>
+        <fac44e1fbab5ea755a93601a4fdfa34fcc57ae9e.1560361364.git.mchehab+samsung@kernel.org>
+        <7dc94cb4-ebf1-22ab-29c9-fcb2b875a9ac@csail.mit.edu>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607095036.9466-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 11:50:36AM +0200, Geert Uytterhoeven wrote:
-> Enable compile-testing for all Renesas interrupt controller drivers,
-> except for RENESAS_H8300H_INTC.  The latter relies on a function
-> (ctrl_bclr()) that is not available on other architectures.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Em Wed, 12 Jun 2019 17:25:39 -0700
+"Srivatsa S. Bhat" <srivatsa@csail.mit.edu> escreveu:
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> On 6/12/19 10:52 AM, Mauro Carvalho Chehab wrote:
+> > Convert the PM documents to ReST, in order to allow them to
+> > build with Sphinx.
+> > 
+> > The conversion is actually:
+> >   - add blank lines and identation in order to identify paragraphs;
+> >   - fix tables markups;
+> >   - add some lists markups;
+> >   - mark literal blocks;
+> >   - adjust title markups.
+> > 
+> > At its new index.rst, let's add a :orphan: while this is not linked to
+> > the main index.rst file, in order to avoid build warnings.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > Acked-by: Mark Brown <broonie@kernel.org>
+> > ---  
+> 
+> [...]
+> 
+> > diff --git a/Documentation/power/suspend-and-cpuhotplug.txt b/Documentation/power/suspend-and-cpuhotplug.rst
+> > similarity index 90%
+> > rename from Documentation/power/suspend-and-cpuhotplug.txt
+> > rename to Documentation/power/suspend-and-cpuhotplug.rst
+> > index a8751b8df10e..9df664f5423a 100644
+> > --- a/Documentation/power/suspend-and-cpuhotplug.txt
+> > +++ b/Documentation/power/suspend-and-cpuhotplug.rst
+> > @@ -1,10 +1,15 @@
+> > +====================================================================
+> >  Interaction of Suspend code (S3) with the CPU hotplug infrastructure
+> > +====================================================================
+> >  
+> > -     (C) 2011 - 2014 Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+> > +(C) 2011 - 2014 Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+> >  
+> >  
+> > -I. How does the regular CPU hotplug code differ from how the Suspend-to-RAM
+> > -   infrastructure uses it internally? And where do they share common code?
+> > +I. Differences between CPU hotplug and Suspend-to-RAM
+> > +======================================================
+> > +
+> > +How does the regular CPU hotplug code differ from how the Suspend-to-RAM
+> > +infrastructure uses it internally? And where do they share common code?
+> >  
+> >  Well, a picture is worth a thousand words... So ASCII art follows :-)
+> >    
+> 
+> [...]
+> 
+> > @@ -101,7 +108,7 @@ execution during resume):
+> >  
+> >  It is to be noted here that the system_transition_mutex lock is acquired at the very
+> >  beginning, when we are just starting out to suspend, and then released only
+> > -after the entire cycle is complete (i.e., suspend + resume).
+> > +after the entire cycle is complete (i.e., suspend + resume)::
+> >    
+> 
+> I think that should be a period, not a colon, because it is clarifying
+> the text above it (as opposed to referring to the example below it).
+> 
+> Other than that, for suspend-and-cpuhotplug.txt:
+> 
+> Acked-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 
-> ---
->  drivers/irqchip/Kconfig | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index 2d3b5a27cc988ab6..fe509b88f99a8f10 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -217,17 +217,26 @@ config RDA_INTC
->  	select IRQ_DOMAIN
+Ah, ok. I'll change it to:
+
+	after the entire cycle is complete (i.e., suspend + resume).
+
+	::
+
+and add your acked-by.
+
 >  
->  config RENESAS_INTC_IRQPIN
-> -	bool
-> +	bool "Renesas INTC External IRQ Pin Support" if COMPILE_TEST
->  	select IRQ_DOMAIN
-> +	help
-> +	  Enable support for the Renesas Interrupt Controller for external
-> +	  interrupt pins, as found on SH/R-Mobile and R-Car Gen1 SoCs.
->  
->  config RENESAS_IRQC
-> -	bool
-> +	bool "Renesas R-Mobile APE6 and R-Car IRQC support" if COMPILE_TEST
->  	select GENERIC_IRQ_CHIP
->  	select IRQ_DOMAIN
-> +	help
-> +	  Enable support for the Renesas Interrupt Controller for external
-> +	  devices, as found on R-Mobile APE6, R-Car Gen2, and R-Car Gen3 SoCs.
->  
->  config RENESAS_RZA1_IRQC
-> -	bool
-> +	bool "Renesas RZ/A1 IRQC support" if COMPILE_TEST
->  	select IRQ_DOMAIN_HIERARCHY
-> +	help
-> +	  Enable support for the Renesas RZ/A1 Interrupt Controller, to use up
-> +	  to 8 external interrupts with configurable sense select.
->  
->  config ST_IRQCHIP
->  	bool
-> @@ -303,8 +312,11 @@ config RENESAS_H8300H_INTC
->  	select IRQ_DOMAIN
->  
->  config RENESAS_H8S_INTC
-> -        bool
-> +	bool "Renesas H8S Interrupt Controller Support" if COMPILE_TEST
->  	select IRQ_DOMAIN
-> +	help
-> +	  Enable support for the Renesas H8/300 Interrupt Controller, as found
-> +	  on Renesas H8S SoCs.
->  
->  config IMX_GPCV2
->  	bool
-> -- 
-> 2.17.1
-> 
+> Regards,
+> Srivatsa
+> VMware Photon OS
+
+
+
+Thanks,
+Mauro
