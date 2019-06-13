@@ -2,55 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5A56446B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69849446B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393020AbfFMQyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:54:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47274 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbfFMC56 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 22:57:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6MX8OED4iPuMUzZoWjHnMMsbyE6LcGoKSFwbgfasOio=; b=GWw1XCUedIoJbJcs7FUZ8an9a0
-        0s9R3NG9C9M6fMUKdEQAoDR5zyQerx6o6AEUC/WYsSt9TGPmBMul5NgSAH/Zwnxqri/zCiByTfoLu
-        0a73I2qMmJBbSas6+SNifAogFpvsegGVHQEwYC2Mh7LFwtaqFCIFavvWV/ixg5BWZRU/SHmsZoGeb
-        tM7RnFfg5YI2I8UM9EeIKvE733CyGRQWdFNvY2t6F4qfJEOnO0+mcmBiRmmdTcFlJjq9R/f7XKsMX
-        ElrP8QtekP4u+Fa0FJ26LK9XvUnq+RJ94ZuGsJcJWP6ZO8Y7Z4zfQYoLMn0Hp9THkyhAmgJB3KHNr
-        Eubx9G0g==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbFvw-0006F7-La; Thu, 13 Jun 2019 02:57:48 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: mmotm: objtool warning
-Message-ID: <5baaf9ec-8ea7-544c-49d1-dde519d919ca@infradead.org>
-Date:   Wed, 12 Jun 2019 19:57:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S2393093AbfFMQx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:53:57 -0400
+Received: from mail-eopbgr80078.outbound.protection.outlook.com ([40.107.8.78]:31054
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730074AbfFMDBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 23:01:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3yL5M61+dLVUgU5eb/obmOGKRpmvxkGFbVItjRbFhac=;
+ b=EtRqSs0z9Ocbth/pOfAdxMa2fapfDQKEEEXFB8fwzkC51+rU7K5ktM/ElG1nCtkei/WN86ufSbGmV8yIfRQwSUihJPHber1qoF70awH/6n0thjnj6fEgyEotRYLg2kFRfaScJ+5zjq286ilGmSmAZHFajzjWIm0wJUCmIHfjV9g=
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.233.80) by
+ VE1PR04MB6688.eurprd04.prod.outlook.com (20.179.235.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.17; Thu, 13 Jun 2019 03:00:58 +0000
+Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::a5b5:13f5:f89c:9a30]) by VE1PR04MB6479.eurprd04.prod.outlook.com
+ ([fe80::a5b5:13f5:f89c:9a30%7]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
+ 03:00:58 +0000
+From:   "S.j. Wang" <shengjiu.wang@nxp.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+CC:     "timur@kernel.org" <timur@kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC/RFT PATCH v2] ASoC: fsl_esai: Revert "ETDR and TX0~5
+ registers are non volatile"
+Thread-Topic: [RFC/RFT PATCH v2] ASoC: fsl_esai: Revert "ETDR and TX0~5
+ registers are non volatile"
+Thread-Index: AdUhkxXnpB3dbv39SZ66Nf7IqVutFQ==
+Date:   Thu, 13 Jun 2019 03:00:58 +0000
+Message-ID: <VE1PR04MB6479D4B1D5F00B07C5CECC5BE3EF0@VE1PR04MB6479.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shengjiu.wang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1cd8986e-c323-4144-5799-08d6efab5c32
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6688;
+x-ms-traffictypediagnostic: VE1PR04MB6688:
+x-microsoft-antispam-prvs: <VE1PR04MB6688C9F4D37529BF375514FEE3EF0@VE1PR04MB6688.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(136003)(366004)(189003)(199004)(14444005)(9686003)(256004)(305945005)(14454004)(99286004)(33656002)(486006)(7736002)(68736007)(478600001)(7696005)(186003)(6506007)(2501003)(26005)(8676002)(73956011)(229853002)(55016002)(6246003)(6116002)(81156014)(76116006)(66476007)(66066001)(52536014)(64756008)(316002)(66556008)(6436002)(8936002)(7416002)(4326008)(71190400001)(81166006)(74316002)(476003)(102836004)(54906003)(71200400001)(2906002)(5660300002)(66446008)(66946007)(25786009)(86362001)(3846002)(53936002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6688;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ooH8LHpVo4O/v4bkbKou+2a2d0xnpBiQceLog/d0JDl+Bjn318L1JLkwMbi6LxEIZWBmTRqYcoSmKwmoyrhfUWv3EsKXcjM9mJfIg9e7eJEBTXrjvdepvuCkmXxuSJyCOXclXH2A6XCIJkvxDs5hLg0DFjIJTBgmzplZKD9NO0lMthttOoVOUljlITxOHb/p4bU/r7wxMfkhIjja4oFxxMFPD/TJFQq5GBQdDKbG2Y6KAbscX0sfqZ752iN2PGMlG8+arDnMSr9lqNTBh5wQQ12Dszb/fFw5B9DsBz28KU0wh5TOJmY4q0zwT6fUpB54uIbO/aJHSQ8H1CY792RnXvXpu9i0jx3R0+sjS3ZSaumgq2Dc3PxFq4U5mcaC8SnETzjEmzIYl2oAsq7mhYVU/TkoFI5PhrrWRKFmnRTTCf0=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cd8986e-c323-4144-5799-08d6efab5c32
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 03:00:58.3573
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: shengjiu.wang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6688
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In yesterday's mmotm, I see this objtool warning:
+Hi
+>=20
+> Commit 8973112aa41b ("ASoC: fsl_esai: ETDR and TX0~5 registers are non
+> volatile") removed TX data registers from the volatile_reg list and appen=
+ded
+> default values for them. However, being data registers of TX, they should
+> not have been removed from the list because they should not be cached --
+> see the following reason.
+>=20
+> When doing regcache_sync(), this operation might accidentally write some
+> dirty data to these registers, in case that cached data happen to be
+> different from the default ones, which might also result in a channel shi=
+ft or
+> swap situation, since the number of write-via-sync operations at ETDR
+> would very unlikely match the channel number.
+>=20
+> So this patch reverts the original commit to keep TX data registers in
+> volatile_reg list in order to prevent them from being written by
+> regcache_sync().
+>=20
+> Note: this revert is not a complete revert as it keeps those macros of
+> registers remaining in the default value list while the original commit a=
+lso
+> changed other entries in the list. And this patch isn't very necessary to=
+ Cc
+> stable tree since there has been always a FIFO reset operation around the
+> regcache_sync() call, even prior to this reverted commit.
+>=20
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Cc: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+> Hi Mark,
+> In case there's no objection against the patch, I'd still like to wait fo=
+r a
+> Tested-by from NXP folks before submitting it. Thanks!
 
-arch/x86/entry/entry_64.o: warning: objtool: .entry.text+0x908: unreachable instruction
+bool regmap_volatile(struct regmap *map, unsigned int reg)
+{
+        if (!map->format.format_write && !regmap_readable(map, reg))
+                return false;
 
 
--- 
-~Randy
+Actually with this patch, the regcache_sync will write the 0 to ETDR, even
+It is declared volatile, the reason is that in regmap_volatile(), the first
+condition
+
+(!map->format.format_write && !regmap_readable(map, reg))  is true.
+
+So the regmap_volatile will return false.
+
+And in regcache_reg_needs_sync(), because there is no default value
+It will return true, then the ETDR need be synced, and be written 0.
+
+Here is the code for regcache_default_sync()
+
+static int regcache_default_sync(struct regmap *map, unsigned int min,
+                                 unsigned int max)
+{
+        unsigned int reg;
+
+        for (reg =3D min; reg <=3D max; reg +=3D map->reg_stride) {
+                unsigned int val;
+                int ret;
+
+                if (regmap_volatile(map, reg) ||
+                    !regmap_writeable(map, reg))
+                        continue;
+
+                ret =3D regcache_read(map, reg, &val);
+                if (ret)
+                        return ret;
+
+                if (!regcache_reg_needs_sync(map, reg, val))
+                        continue;
+
+                map->cache_bypass =3D true;
+                ret =3D _regmap_write(map, reg, val);
+                map->cache_bypass =3D false;
+
+Best regards
+Wang shengjiu
+
+
