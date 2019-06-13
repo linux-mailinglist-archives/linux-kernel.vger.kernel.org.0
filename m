@@ -2,63 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF94F444F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24F93444E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392683AbfFMQkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:40:52 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:50080 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730576AbfFMG5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:57:20 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hbJfc-0006Ec-SK; Thu, 13 Jun 2019 14:57:12 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hbJfc-000574-O0; Thu, 13 Jun 2019 14:57:12 +0800
-Date:   Thu, 13 Jun 2019 14:57:12 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon - Use the correct style for SPDX
- License Identifier
-Message-ID: <20190613065712.x4d7efi4mwcgam3l@gondor.apana.org.au>
-References: <20190606150612.GA4002@nishad>
+        id S2392847AbfFMQkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:40:21 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44478 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730516AbfFMHAA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:00:00 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D6xBJ1034408;
+        Thu, 13 Jun 2019 06:59:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=hAsqs/UCvL0W8EmDOxiao4xeBzroLyAyKeIw+Px3dyU=;
+ b=G6JCEkgrcQ+/dugNXKTSOwlOR1LC8mThLjNBJ0TneBYu8TfH6QXfVxGSem/fcXAnhNtX
+ gkcVfN0Z1LrIYC5kwB9rkYnjAT5j0sfggmGeibiQ0KKcNenVVX2JxC5NKMbfmbgW3rsz
+ +4TIXyWaO1A1MCjCTUa9kfz2WZNEdUccecK5RWOtTSxqKyAyaB64f9ookcJM4Wh4jUja
+ pJL13Msbj/tpTtOX7DndbhDF5oU0IVS4y59lD7ga96+/3SokDGViOxrmiLxuknQp/kWJ
+ iI/EXhaV1PmH3hQAXqPQM/p50mLcK3A38+XcN65m6Avk9RLj8qNWrQ+LDdms/NB5f6XK UQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2t02heysbs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 06:59:40 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D6xI24156856;
+        Thu, 13 Jun 2019 06:59:40 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2t04j0a375-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 06:59:40 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5D6xdHB014323;
+        Thu, 13 Jun 2019 06:59:39 GMT
+Received: from mwanda (/41.57.98.10) by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Wed, 12 Jun 2019 23:58:23 -0700
+USER-AGENT: Mutt/1.10.1 (2018-07-13)
 MIME-Version: 1.0
+Message-ID: <20190613065815.GF16334@mwanda>
+Date:   Wed, 12 Jun 2019 23:58:15 -0700 (PDT)
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] coresight: potential uninitialized variable in probe()
+X-Mailer: git-send-email haha only kidding
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606150612.GA4002@nishad>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906130056
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906130056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 08:36:17PM +0530, Nishad Kamdar wrote:
-> This patch corrects the SPDX License Identifier style
-> in header file related to Crypto Drivers for Hisilicon
-> SEC Engine in Hip06 and Hip07.
-> For C header files Documentation/process/license-rules.rst
-> mandates C-like comments (opposed to C source files where
-> C++ style should be used)
-> 
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46
-> 
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/crypto/hisilicon/sec/sec_drv.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The "drvdata->atclk" clock is optional, but if it gets set to an error
+pointer then we're accidentally return an uninitialized variable instead
+of success.
 
-Patch applied.  Thanks.
+Fixes: 78e6427b4e7b ("coresight: funnel: Support static funnel")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hwtracing/coresight/coresight-funnel.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index 5867fcb4503b..fa97cb9ab4f9 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -244,6 +244,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
+ 	}
+ 
+ 	pm_runtime_put(dev);
++	ret = 0;
+ 
+ out_disable_clk:
+ 	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.20.1
+
