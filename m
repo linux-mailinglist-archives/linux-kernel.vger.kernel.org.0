@@ -2,144 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B655043D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B22B143D3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbfFMPkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:40:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34206 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388619AbfFMPkF (ORCPT
+        id S2389002AbfFMPkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:40:41 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44143 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731898AbfFMPkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:40:05 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p10so5319135pgn.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BtWWHY6GZ+irdemUSJWfYrXBvNRLu0hF7sjwfuTufnI=;
-        b=aNrHcY49yqaTJyE6Q+tcq+ByCZETc9h8PDkWq0+W++gEKy7j2NPlZU6hV1EbcwU5JD
-         syMpCXwkWs5TvSjhBj0dlJ8OXOaPSIsvf+OeD+GtfT3U268ILHAHQv/IX5IenGtrARRe
-         mw+Ixy3ns7L4JoriCdM9WDixKKSjBC1QwWOzr04uPPGdniZZ20O9mJrXgTFfJEgih5Gq
-         xsZhXhsh3x6OiapwDDjUOYQy93/jGkxq9tl2mVQ9P8CLhEp+jPdJrfN163CeRm/3rsoz
-         TFjq6hvlCZNEg2z5CsU7QsTd45nxBa2cAmJybVe9j+wsW1GqeFwLtlvc1VgptDh06dal
-         us+g==
+        Thu, 13 Jun 2019 11:40:33 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x47so23036851qtk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:40:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BtWWHY6GZ+irdemUSJWfYrXBvNRLu0hF7sjwfuTufnI=;
-        b=gavhkDGls9JA78IajtGI6UcGWKlQiAdmVVl15edngqK8hsMhkxP17qRAgkXah6SCFy
-         tSp+f4yEmikUr2AdzY9BT8magCAEGEjVafI5wPwFqVRO97USUSBbEIVlg1JUe1r4w4Pp
-         e5BUjXt2A47ntTaDk44PNY/X6lmpjDq3eMeZ3GsmKvYwkm6y+4caEw6yAeZpeDwilxGw
-         vgXKsRGnBlqsDccJK9Qx0SZTBGPmHwBrMjgiLUEAkXmhrg4JV8TOR44zR4OBClXYqdDU
-         EqMUhrk74GEyB3gekaitflXDU1KDjOYa7/zpKcjtks48u5zzLMPeS4xRerbpi3ETqPFW
-         qOgA==
-X-Gm-Message-State: APjAAAUUndCvDQLIwVfWSv0yNFjwyuGVpXP9IsnacU4J14n+sV0TwDS9
-        IlWbXaOyOR3//iL6lXKRt7+PAg==
-X-Google-Smtp-Source: APXvYqxpwqyIFRk1hDuFYbqTrSYVOaA6be2OguON7QeZLUcNj0n7XkLaM6Wv3ud0JFfz6qT8pE7nUw==
-X-Received: by 2002:aa7:8083:: with SMTP id v3mr15241596pff.69.1560440405094;
-        Thu, 13 Jun 2019 08:40:05 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u20sm54807pfm.145.2019.06.13.08.40.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 08:40:04 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 08:40:02 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     robh+dt@kernel.org, agross@kernel.org, vkoul@kernel.org,
-        evgreen@chromium.org, daidavid1@codeaurora.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] soc: qcom: smd-rpm: Create RPM interconnect proxy
- child device
-Message-ID: <20190613154002.GH6792@builder>
-References: <20190613151323.10850-1-georgi.djakov@linaro.org>
- <20190613151323.10850-3-georgi.djakov@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T9Bh0y6llVHLrmkzGyw8fJ40ri5A3xFgDIXdEH8E2Z8=;
+        b=Tl0ceeHn9Kzch5IQDtL0Doau9m7lFaO55OIzbcJpIlaW6UB5jd12518l9bWuwfBstE
+         5MobdrQOZYPP1BS4hpuFQ+GhTm6NiMeOTJZyms4dPpDfYzsR+rmr5OB3gJ71Ne2cG7yz
+         Z+9WcF/6qdRxQr6NNjgeFftgR0RTEPHtU9JHb2PJbIer/Sz+Ur/WFOb0hyMsb6rQboQr
+         I4rwNBdDGK0ikbt+n7ruXMH6ZMk+5r1QvA/JbN4UKB6fNwVYRz0cBOjNigMXzU05vRd0
+         0/kV4XmaofKZl2aIDeYGbb/USZgRRtahoLhpw48ie6ZA5OUNltZPUw41DMvaWDVFT0Ur
+         SVbQ==
+X-Gm-Message-State: APjAAAVjzN+J+BN5GO9/ueyIyW+mwzuDkULKN6A9WIB0CoqTObrF5TN1
+        j+CIoucLBA9saXKxDw2tE7JgeZPMK7O6Mj3ISWZwLzFm
+X-Google-Smtp-Source: APXvYqzHVbN7QKEMWI4A194SnnVJaJ5iY1kJRDrkzrQNhViPOGlAqJxxo8BOjj26vsE1B9ojiXfPEZqw/pH3pBxhNf0=
+X-Received: by 2002:ac8:8dd:: with SMTP id y29mr10876958qth.304.1560440432692;
+ Thu, 13 Jun 2019 08:40:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613151323.10850-3-georgi.djakov@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
+ <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
+ <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
+ <CAK8P3a15NTV=njOjz-ccYL8=_q_MdEru0A+jeE=f7ufUTOOTgw@mail.gmail.com> <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com>
+In-Reply-To: <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 13 Jun 2019 17:40:15 +0200
+Message-ID: <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com>
+Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Sultan Alsawaf <sultan@kerneltoast.com>,
+        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13 Jun 08:13 PDT 2019, Georgi Djakov wrote:
+On Thu, Jun 13, 2019 at 5:19 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Hey Arnd, Peter,
+>
+> On Wed, Jun 12, 2019 at 4:01 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > Documentation/core-api/timekeeping.rst describes the timekeeping
+> > interfaces. I think what you want here is ktime_get_coarse_boottime().
+> >
+> > Note that "coarse" means "don't access the hardware clocksource"
+> > here, which is faster than "fast", but less accurate.
+> >
+> > This is updated as often as "jiffies_64", but is in nanosecond resolution
+> > and takes suspended time into account.
+>
+> Oh, thanks. Indeed ktime_get_coarse_boottime seems even better. It's
+> perhaps a bit slower, in that it has that seqlock, but that might give
+> better synchronization between CPUs as well.
 
-> Register a platform device to handle the communication of bus bandwidth
-> requests with the remote processor. The interconnect proxy device is part
-> of this remote processor (RPM) hardware. Let's create a icc-smd-rpm proxy
-> child device to represent the bus throughput functionality that is provided
-> by the RPM.
-> 
+A seqlock is a very cheap synchronization primitive, I would actually
+guess that this is faster than most implementations of sched_clock()
+that access a hardware register for reading the time.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
-> 
-> v4:
-> - Return error if platform_device_register_data() fails
-> - Remove platform_set_drvdata() on the child device.
-> 
-> v3:
-> - New patch.
-> 
->  drivers/soc/qcom/smd-rpm.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
-> index fa9dd12b5e39..34cdd638a6c1 100644
-> --- a/drivers/soc/qcom/smd-rpm.c
-> +++ b/drivers/soc/qcom/smd-rpm.c
-> @@ -19,12 +19,14 @@
->  /**
->   * struct qcom_smd_rpm - state of the rpm device driver
->   * @rpm_channel:	reference to the smd channel
-> + * @icc:		interconnect proxy device
->   * @ack:		completion for acks
->   * @lock:		mutual exclusion around the send/complete pair
->   * @ack_status:		result of the rpm request
->   */
->  struct qcom_smd_rpm {
->  	struct rpmsg_endpoint *rpm_channel;
-> +	struct platform_device *icc;
->  	struct device *dev;
->  
->  	struct completion ack;
-> @@ -193,6 +195,7 @@ static int qcom_smd_rpm_callback(struct rpmsg_device *rpdev,
->  static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
->  {
->  	struct qcom_smd_rpm *rpm;
-> +	int ret;
->  
->  	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
->  	if (!rpm)
-> @@ -205,11 +208,23 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
->  	rpm->rpm_channel = rpdev->ept;
->  	dev_set_drvdata(&rpdev->dev, rpm);
->  
-> -	return of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
-> +	rpm->icc = platform_device_register_data(&rpdev->dev, "icc_smd_rpm", -1,
-> +						 NULL, 0);
-> +	if (IS_ERR(rpm->icc))
-> +		return PTR_ERR(rpm->icc);
-> +
-> +	ret = of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
-> +	if (ret)
-> +		platform_device_unregister(rpm->icc);
-> +
-> +	return ret;
->  }
->  
->  static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
->  {
-> +	struct qcom_smd_rpm *rpm = dev_get_drvdata(&rpdev->dev);
-> +
-> +	platform_device_unregister(rpm->icc);
->  	of_platform_depopulate(&rpdev->dev);
->  }
->  
+       Arnd
