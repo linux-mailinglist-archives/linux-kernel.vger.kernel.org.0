@@ -2,134 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4635443955
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C9B643962
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733247AbfFMPNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:13:18 -0400
-Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:29504
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732567AbfFMPNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:13:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nzj6MzH2pmOXiTX7PZgRezf7afByiP578fSn+fcp0PM=;
- b=my07G9XgfGoIzq81PKv6TN0PMPMjv/U+xTj9K+LgyTYR51+teuXgTQsmLTGwHVkuWrVCN5ebf9GTvGBBhBGS5LsX/Ml4/3Pk17tT1QldbQa540MELh/2FjPotHrpVZ7JVFcpRsqG9if9ngZLSVLumFheHewTw0P+SJVksv0R2b0=
-Received: from AM0PR08MB4226.eurprd08.prod.outlook.com (20.179.36.17) by
- AM0PR08MB4468.eurprd08.prod.outlook.com (20.179.35.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Thu, 13 Jun 2019 15:13:10 +0000
-Received: from AM0PR08MB4226.eurprd08.prod.outlook.com
- ([fe80::bc0c:5148:629e:1a31]) by AM0PR08MB4226.eurprd08.prod.outlook.com
- ([fe80::bc0c:5148:629e:1a31%6]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
- 15:13:10 +0000
-From:   Ayan Halder <Ayan.Halder@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     nd <nd@arm.com>
-Subject: [PATCH v2] drm/komeda: Make Komeda interrupts shareable
-Thread-Topic: [PATCH v2] drm/komeda: Make Komeda interrupts shareable
-Thread-Index: AQHVIfqDLdXCjTdCoUOWEBxFONS5qQ==
-Date:   Thu, 13 Jun 2019 15:13:10 +0000
-Message-ID: <20190613151257.32297-1-ayan.halder@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0245.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8a::17) To AM0PR08MB4226.eurprd08.prod.outlook.com
- (2603:10a6:208:147::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ayan.Halder@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.21.0
-x-originating-ip: [217.140.106.51]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5bb68c40-2942-459d-a13c-08d6f011a561
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR08MB4468;
-x-ms-traffictypediagnostic: AM0PR08MB4468:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB4468FC61808D39073CF414FFE4EF0@AM0PR08MB4468.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:56;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(376002)(39860400002)(366004)(189003)(199004)(66066001)(72206003)(110136005)(316002)(2906002)(486006)(73956011)(66946007)(66476007)(66556008)(64756008)(81166006)(4326008)(8936002)(50226002)(44832011)(66446008)(476003)(6116002)(3846002)(2501003)(68736007)(2616005)(14454004)(36756003)(478600001)(6486002)(6512007)(53936002)(6436002)(81156014)(2201001)(71190400001)(71200400001)(6506007)(386003)(5024004)(14444005)(256004)(5660300002)(52116002)(1076003)(305945005)(86362001)(8676002)(7736002)(25786009)(26005)(186003)(102836004)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB4468;H:AM0PR08MB4226.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dgS8jc7D6j/3ixr+u1JZoB6Qi0AyHIMvgqFl8k5MWHn/PPQwEyV1kBQFUMrPgTFSMXw48n0vYT6P9Uqcj6kHHWrKW5rwEWGDzhdrTIQ4X/BpL8K/yEjo6S9zBZPnOGMu31xkQBmdvvDE3gzB8FBrfyObY28vHs6kVgqYCml4MY5LA2k1kl36cXfBai31frDo+0HZfJJZ+4aqZqkcg1+1X+/ltFmGjUf2GkuDy2ndbGvFW/lTonZM3SuYfA+of3IDzduNt10tvGE/sQGQwbVaOxCZy0xn250E8CgREWS3rc6ugqCEoVQYIh/ZQWxOTU2QMvoLLO7F/YSUYiR3e24XJQ5qMFp8pQjY8Oit8ZBtYTIuk0lELSlMr/Kzvc1pNjpmWXe0kO9vO+vpctF3RWNcTaFw17OS0wAC5Fq0fLBxeXI=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1733165AbfFMPNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:13:32 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40835 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732842AbfFMPN2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:13:28 -0400
+Received: by mail-lf1-f68.google.com with SMTP id a9so15379463lff.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oy4WRzt4oy7DKEhEUsk8mM+TKtbIR/SxiJkzCANc2S0=;
+        b=jMyVNjAHR90qecUAhRrWQnYr3j5JfbQWsYrzQvWMbwWRPL0Z7nP94qt24V2i/E3l+a
+         ZIvy9FmxmrQ2duSB2wqLIJDUZtCMYd07SgfkxP/rrJsQY5NilBYJej4YfiPEshJT52Lw
+         mbC4J9qi3ZrY9C9o3nloY8heK6ApIxvZcz3KVAkBbGHPjnVjUCOdxZ+t3JVxn+dLbgDB
+         rZoDDcp1kQykVvuwSqmhTgqgMlqyntHU71iS6oJVCAUd6/QQvjkYi8VZu+O5LpEmeSE7
+         Jeoao2k+CmmIvF3A7/aq407OY7qRgIb9NEu2ypnge/Bou2ibNgLJNZ+0CNSmKd/W1/Ml
+         Q80w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oy4WRzt4oy7DKEhEUsk8mM+TKtbIR/SxiJkzCANc2S0=;
+        b=MexuEA83KtHvBis9Ra9HgrtYogJgX6tPB0dZ9xscnVTsHNuDgKxasLmUmXkEOK4C2e
+         0h68MStYDC/LYYr6118M8I3PJblevCHxfpNcf4BSHRdl1gCwnp8IeUSSUgsayt7tliYb
+         4wEA1juoJybHKrvCMmXdwAyRL1r8aWKbIW4VsvONDn5ah8b8+nGiS57+Xj0JEUC5gXzm
+         we58GdysTnNzNEUWS1IQde+l6XdK58VzRfAGDy1ErHYAF5TXV4LnAVDgx7+DUI5IYOxM
+         LVCua4UdmmrqxrQZcfIsASno0YTst7Vpd03zeg6gCb0ypzKiIpGDaKrMwyiYC5EIzfuc
+         mJ+A==
+X-Gm-Message-State: APjAAAXTk/bathNVD+mfL5BcXb1jxYt6ROgGQQkLJQkwXLFE7RJAIccT
+        AngfVx03D+1htfC6OxXycqhXOw==
+X-Google-Smtp-Source: APXvYqw2pOxAB+cTtgkqIYSoU5XivAmb3YXGBRWP38d8Pc5gb206woR1gl2jQ2aHzJG36QtgigSvNQ==
+X-Received: by 2002:a19:e619:: with SMTP id d25mr1335729lfh.34.1560438806327;
+        Thu, 13 Jun 2019 08:13:26 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id k4sm42923ljj.41.2019.06.13.08.13.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 13 Jun 2019 08:13:25 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     robh+dt@kernel.org, bjorn.andersson@linaro.org, agross@kernel.org,
+        georgi.djakov@linaro.org
+Cc:     vkoul@kernel.org, evgreen@chromium.org, daidavid1@codeaurora.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH v4 0/5] Add QCS404 interconnect provider driver
+Date:   Thu, 13 Jun 2019 18:13:18 +0300
+Message-Id: <20190613151323.10850-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5bb68c40-2942-459d-a13c-08d6f011a561
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 15:13:10.5039
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ayan.Halder@arm.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB4468
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-S29tZWRhIGludGVycnVwdHMgbWF5IGJlIHNoYXJlZCB3aXRoIG90aGVyIGhhcmR3YXJlIGJsb2Nr
-cy4NCk9uZSBuZWVkcyB0byB1c2UgZGV2bV9yZXF1ZXN0X2lycSgpIHdpdGggSVJRRl9TSEFSRUQg
-dG8gY3JlYXRlIGEgc2hhcmVkDQogaW50ZXJydXB0IGhhbmRsZXIuDQpBcyBhIHJlc3VsdCBvZiBu
-b3QgdXNpbmcgZHJtX2lycV9pbnN0YWxsKCkgYXBpLCBvbmUgbmVlZHMgdG8gc2V0DQoiKHN0cnVj
-dCBkcm1fZGV2aWNlICopLT5pcnFfZW5hYmxlZCA9IHRydWUvZmFsc2UiIHRvIGVuYWJsZS9kaXNh
-YmxlDQp2YmxhbmsgaW50ZXJydXB0cy4NCg0KQ2hhbmdlcyBmcm9tIHYxOi0NCjEuIFNxdWFzaGVk
-IHRoZSBmb2xsb3dpbmcgdHdvIHBhdGNoZXMgaW50byBvbmUgKGFzIHRoZSBzZWNvbmQgcGF0Y2gg
-aXMgYQ0KY29uc2VxdWVuY2Ugb2YgdGhlIGZpcnN0IG9uZSk6LQ0KICAgZHJtL2tvbWVkYTogQXZv
-aWQgdXNpbmcgRFJJVkVSX0lSUV9TSEFSRUQNCiAgIGRybS9rb21lZGE6IEVuYWJsZS9EaXNhYmxl
-IHZibGFuayBpbnRlcnJ1cHRzDQoyLiBGaXhlZCB0aGUgY29tbWl0IG1lc3NhZ2UgKGFzIHBvaW50
-ZWQgYnkgRGFuaWVsIFZldHRlcikNCjMuIFJlbW92ZWQgY2FsbHMgdG8gJ2RybV9pcnFfdW5pbnN0
-YWxsKCknIGFzIHdlIGFyZSBubyBsb25nZXIgdXNpbmcNCmRybV9pcnFfaW5zdGFsbCgpDQo0LiBS
-ZW1vdmVkIHRoZSBzdHJ1Y3QgbWVtYmVyICdrb21lZGFfa21zX2RyaXZlci5pcnFfaGFuZGxlcicg
-YXMgaXQgaXMgbm90DQp1c2VkIGFueXdoZXJlLg0KDQpTaWduZWQtb2ZmLWJ5OiBBeWFuIEt1bWFy
-IGhhbGRlciA8YXlhbi5oYWxkZXJAYXJtLmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9hcm0v
-ZGlzcGxheS9rb21lZGEva29tZWRhX2ttcy5jIHwgMTYgKysrKysrKysrLS0tLS0tLQ0KIDEgZmls
-ZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9rbXMuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2ttcy5jDQppbmRleCA4NmY2NTQy
-YWZiNDAuLmJiMmJmZmMwZTAyMiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlz
-cGxheS9rb21lZGEva29tZWRhX2ttcy5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3Bs
-YXkva29tZWRhL2tvbWVkYV9rbXMuYw0KQEAgLTU4LDcgKzU4LDYgQEAgc3RhdGljIHN0cnVjdCBk
-cm1fZHJpdmVyIGtvbWVkYV9rbXNfZHJpdmVyID0gew0KIAkuZHJpdmVyX2ZlYXR1cmVzID0gRFJJ
-VkVSX0dFTSB8IERSSVZFUl9NT0RFU0VUIHwgRFJJVkVSX0FUT01JQyB8DQogCQkJICAgRFJJVkVS
-X1BSSU1FIHwgRFJJVkVSX0hBVkVfSVJRLA0KIAkubGFzdGNsb3NlCQkJPSBkcm1fZmJfaGVscGVy
-X2xhc3RjbG9zZSwNCi0JLmlycV9oYW5kbGVyCQkJPSBrb21lZGFfa21zX2lycV9oYW5kbGVyLA0K
-IAkuZ2VtX2ZyZWVfb2JqZWN0X3VubG9ja2VkCT0gZHJtX2dlbV9jbWFfZnJlZV9vYmplY3QsDQog
-CS5nZW1fdm1fb3BzCQkJPSAmZHJtX2dlbV9jbWFfdm1fb3BzLA0KIAkuZHVtYl9jcmVhdGUJCQk9
-IGtvbWVkYV9nZW1fY21hX2R1bWJfY3JlYXRlLA0KQEAgLTE5NCwyMyArMTkzLDI2IEBAIHN0cnVj
-dCBrb21lZGFfa21zX2RldiAqa29tZWRhX2ttc19hdHRhY2goc3RydWN0IGtvbWVkYV9kZXYgKm1k
-ZXYpDQogDQogCWRybV9tb2RlX2NvbmZpZ19yZXNldChkcm0pOw0KIA0KLQllcnIgPSBkcm1faXJx
-X2luc3RhbGwoZHJtLCBtZGV2LT5pcnEpOw0KKwllcnIgPSBkZXZtX3JlcXVlc3RfaXJxKGRybS0+
-ZGV2LCBtZGV2LT5pcnEsDQorCQkJICAgICAgIGtvbWVkYV9rbXNfaXJxX2hhbmRsZXIsIElSUUZf
-U0hBUkVELA0KKwkJCSAgICAgICBkcm0tPmRyaXZlci0+bmFtZSwgZHJtKTsNCiAJaWYgKGVycikN
-CiAJCWdvdG8gY2xlYW51cF9tb2RlX2NvbmZpZzsNCiANCiAJZXJyID0gbWRldi0+ZnVuY3MtPmVu
-YWJsZV9pcnEobWRldik7DQogCWlmIChlcnIpDQotCQlnb3RvIHVuaW5zdGFsbF9pcnE7DQorCQln
-b3RvIGNsZWFudXBfbW9kZV9jb25maWc7DQorDQorCWRybS0+aXJxX2VuYWJsZWQgPSB0cnVlOw0K
-IA0KIAllcnIgPSBkcm1fZGV2X3JlZ2lzdGVyKGRybSwgMCk7DQogCWlmIChlcnIpDQotCQlnb3Rv
-IHVuaW5zdGFsbF9pcnE7DQorCQlnb3RvIGNsZWFudXBfbW9kZV9jb25maWc7DQogDQogCXJldHVy
-biBrbXM7DQogDQotdW5pbnN0YWxsX2lycToNCi0JZHJtX2lycV91bmluc3RhbGwoZHJtKTsNCiBj
-bGVhbnVwX21vZGVfY29uZmlnOg0KKwlkcm0tPmlycV9lbmFibGVkID0gZmFsc2U7DQogCWRybV9t
-b2RlX2NvbmZpZ19jbGVhbnVwKGRybSk7DQogCWtvbWVkYV9rbXNfY2xlYW51cF9wcml2YXRlX29i
-anMoa21zKTsNCiBmcmVlX2ttczoNCkBAIC0yMjMsOSArMjI1LDkgQEAgdm9pZCBrb21lZGFfa21z
-X2RldGFjaChzdHJ1Y3Qga29tZWRhX2ttc19kZXYgKmttcykNCiAJc3RydWN0IGRybV9kZXZpY2Ug
-KmRybSA9ICZrbXMtPmJhc2U7DQogCXN0cnVjdCBrb21lZGFfZGV2ICptZGV2ID0gZHJtLT5kZXZf
-cHJpdmF0ZTsNCiANCisJZHJtLT5pcnFfZW5hYmxlZCA9IGZhbHNlOw0KIAltZGV2LT5mdW5jcy0+
-ZGlzYWJsZV9pcnEobWRldik7DQogCWRybV9kZXZfdW5yZWdpc3Rlcihkcm0pOw0KLQlkcm1faXJx
-X3VuaW5zdGFsbChkcm0pOw0KIAljb21wb25lbnRfdW5iaW5kX2FsbChtZGV2LT5kZXYsIGRybSk7
-DQogCWtvbWVkYV9rbXNfY2xlYW51cF9wcml2YXRlX29ianMoa21zKTsNCiAJZHJtX21vZGVfY29u
-ZmlnX2NsZWFudXAoZHJtKTsNCi0tIA0KMi4yMS4wDQoNCg==
+Add drivers to support scaling of the on-chip interconnects on QCS404-based
+platforms. Also add the necessary device-tree nodes, so that the driver for
+each NoC can probe and register as interconnect-provider.
+
+v4:
+- Move DT headers into the dt-bindings patch (Bjorn)
+- Pick Bjorn's r-b on some patches.
+- Return error if platform_device_register_data() fails (Bjorn)
+- Use platform_set_drvdata() only in the child device. (Bjorn)
+- Hide the smd-rpm proxy driver from config menu. (Bjorn)
+- Add remove() function to zero out the rpm handle. (Bjorn)
+- Move move the qcs404 driver patch later in the serie. (Bjorn)
+- Insert the DT nodes after rng to keep the list sorted by address. (Bjorn)
+
+v3: https://lore.kernel.org/lkml/20190611164157.24656-1-georgi.djakov@linaro.org/
+- Drop the patch introducing the qcom,qos DT property.
+- Add two new patches to create an interconnect proxy device. This device is
+  part of the RPM hardware and handles the communication of the bus bandwidth
+  requests.
+- Add a DT reg property and move the interconnect nodes under the "soc" node.
+
+v2: https://lore.kernel.org/lkml/20190415104357.5305-1-georgi.djakov@linaro.org/
+- Use the clk_bulk API. (Bjorn)
+- Move the port IDs into the provider file. (Bjorn)
+- Use ARRAY_SIZE in the macro to automagically count the num_links. (Bjorn)
+- Improve code readability. (Bjorn)
+- Add patch [4/4] introducing a qcom,qos DT property to represent the link to
+  the MMIO QoS registers HW block.
+
+v1: https://lore.kernel.org/lkml/20190405035446.31886-1-georgi.djakov@linaro.org/
+
+Bjorn Andersson (1):
+  interconnect: qcom: Add QCS404 interconnect provider driver
+
+Georgi Djakov (4):
+  dt-bindings: interconnect: Add Qualcomm QCS404 DT bindings
+  soc: qcom: smd-rpm: Create RPM interconnect proxy child device
+  interconnect: qcom: Add interconnect SMD over SMD driver
+  arm64: dts: qcs404: Add interconnect provider DT nodes
+
+ .../bindings/interconnect/qcom,qcs404.txt     |  46 ++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  28 +
+ drivers/interconnect/qcom/Kconfig             |  12 +
+ drivers/interconnect/qcom/Makefile            |   4 +
+ drivers/interconnect/qcom/qcs404.c            | 539 ++++++++++++++++++
+ drivers/interconnect/qcom/smd-rpm.c           |  80 +++
+ drivers/interconnect/qcom/smd-rpm.h           |  15 +
+ drivers/soc/qcom/smd-rpm.c                    |  17 +-
+ .../dt-bindings/interconnect/qcom,qcs404.h    |  88 +++
+ 9 files changed, 828 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+ create mode 100644 drivers/interconnect/qcom/qcs404.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,qcs404.h
+
