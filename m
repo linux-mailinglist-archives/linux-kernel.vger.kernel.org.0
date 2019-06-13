@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0017244278
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3894416F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389592AbfFMQWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:22:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
+        id S2391675AbfFMQO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:14:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731039AbfFMIiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:09 -0400
+        id S1731191AbfFMImZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 641412146F;
-        Thu, 13 Jun 2019 08:38:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A9E32063F;
+        Thu, 13 Jun 2019 08:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415088;
-        bh=OwZ0qLFkEiHNIobShGBggg/4oh/hdfHyky43omuQniU=;
+        s=default; t=1560415344;
+        bh=gwdxi5AAuoYgp387IoGFEKVh/fyMbDmAvT1oM3iYpVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=crWU+xNBkyEZeF0jAVTIS6/5jtRhlwm+l1VYnCcvPFIo0gWnZAN2UTOONuzzgSicy
-         LdyrX6GDeir7iGIz4hEg79tDNGS9EhAKb3FH2s9rBmhTTQq7crL7L0WdxO0XK4GDv3
-         AD5A3yypzroYLBOjHDcKs1Pzwbp5ItBIUnOH1xz4=
+        b=xuCYaYRIFn5Ls3DKSSdtVPltYNnS3UDuk9dgzzCkuTwzwXN0/0msSYL3DzRTjXnN+
+         CU/6rrqJmpA3v5JFPYYXEsknsJnIcEruxCB/yMGiXlSRVRl46S6aBDZrrFCw8UBaHM
+         seWpWnJnbUGVM6Q1Ps+SSffaMfZzwqA8cogNG+Bs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Aditya Pakki <pakki001@umn.edu>,
-        Ferenc Bakonyi <fero@drama.obuda.kando.hu>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 66/81] video: hgafb: fix potential NULL pointer dereference
+        stable@vger.kernel.org,
+        syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 091/118] ALSA: seq: Protect in-kernel ioctl calls with mutex
 Date:   Thu, 13 Jun 2019 10:33:49 +0200
-Message-Id: <20190613075653.864033891@linuxfoundation.org>
+Message-Id: <20190613075649.164602254@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,34 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ec7f6aad57ad29e4e66cc2e18e1e1599ddb02542 ]
+[ Upstream commit feb689025fbb6f0aa6297d3ddf97de945ea4ad32 ]
 
-When ioremap fails, hga_vram should not be dereferenced. The fix
-check the failure to avoid NULL pointer dereference.
+ALSA OSS sequencer calls the ioctl function indirectly via
+snd_seq_kernel_client_ctl().  While we already applied the protection
+against races between the normal ioctls and writes via the client's
+ioctl_mutex, this code path was left untouched.  And this seems to be
+the cause of still remaining some rare UAF as spontaneously triggered
+by syzkaller.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Cc: Aditya Pakki <pakki001@umn.edu>
-Cc: Ferenc Bakonyi <fero@drama.obuda.kando.hu>
-[b.zolnierkie: minor patch summary fixup]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+For the sake of robustness, wrap the ioctl_mutex also for the call via
+snd_seq_kernel_client_ctl(), too.
+
+Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/hgafb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/core/seq/seq_clientmgr.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/hgafb.c b/drivers/video/fbdev/hgafb.c
-index 463028543173..59e1cae57948 100644
---- a/drivers/video/fbdev/hgafb.c
-+++ b/drivers/video/fbdev/hgafb.c
-@@ -285,6 +285,8 @@ static int hga_card_detect(void)
- 	hga_vram_len  = 0x08000;
+diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
+index b55cb96d1fed..40ae8f67efde 100644
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -2343,14 +2343,19 @@ int snd_seq_kernel_client_ctl(int clientid, unsigned int cmd, void *arg)
+ {
+ 	const struct ioctl_handler *handler;
+ 	struct snd_seq_client *client;
++	int err;
  
- 	hga_vram = ioremap(0xb0000, hga_vram_len);
-+	if (!hga_vram)
-+		goto error;
+ 	client = clientptr(clientid);
+ 	if (client == NULL)
+ 		return -ENXIO;
  
- 	if (request_region(0x3b0, 12, "hgafb"))
- 		release_io_ports = 1;
+ 	for (handler = ioctl_handlers; handler->cmd > 0; ++handler) {
+-		if (handler->cmd == cmd)
+-			return handler->func(client, arg);
++		if (handler->cmd == cmd) {
++			mutex_lock(&client->ioctl_mutex);
++			err = handler->func(client, arg);
++			mutex_unlock(&client->ioctl_mutex);
++			return err;
++		}
+ 	}
+ 
+ 	pr_debug("ALSA: seq unknown ioctl() 0x%x (type='%c', number=0x%02x)\n",
 -- 
 2.20.1
 
