@@ -2,50 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2B944381
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD60B44052
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392527AbfFMQaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:30:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52834 "EHLO mail.kernel.org"
+        id S2391218AbfFMQFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730917AbfFMIfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:35:04 -0400
+        id S1731341AbfFMIqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:46:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE96620B7C;
-        Thu, 13 Jun 2019 08:35:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A7E2147A;
+        Thu, 13 Jun 2019 08:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560414903;
-        bh=BNbxu4zfrw+e3UY+/tqBh1L4CBa6pxKcFjnrA7DapY4=;
+        s=default; t=1560415592;
+        bh=18wzUWk6vtXWeMXaSdeph3KAvIGdLqp7KsjidCRJrq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m+Yj2Kg7n17EuyZyyv+O7Qnlok+lwD6LwyNgAZyyRFGV7AID8Z1x23v0f3jxIA9tS
-         6Mvy8I3kYxDJLbBjj0lT18qPAiGwLEdmyDHK2ixWtPLkaqah3p7tutRkWPHCJIxdVm
-         xh3zHhO2Vm+t9UmetJnK5t2awPMtEWCxOMiQq6Ho=
+        b=FT5W4YpMCNWfptVayQvCBD+lpXTK/K0E5OcqiCl6EFkpDqWXe4IVzDUhTEkqVD9Rk
+         xTQFmGUTyJnIT+1bvEK7b97YroQhQ3NR5NRKr1UarThDjurM/zPyDCsKu2osR6mgdH
+         gyTB0LJWNUQborxuHEZaBVxLZwyt36MTzpmjELQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 06/81] mm/hmm: select mmu notifier when selecting HMM
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 057/155] configfs: fix possible use-after-free in configfs_register_group
 Date:   Thu, 13 Jun 2019 10:32:49 +0200
-Message-Id: <20190613075649.529301482@linuxfoundation.org>
+Message-Id: <20190613075656.290200647@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,48 +44,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 734fb89968900b5c5f8edd5038bd4cdeab8c61d2 ]
+[ Upstream commit 35399f87e271f7cf3048eab00a421a6519ac8441 ]
 
-To avoid random config build issue, select mmu notifier when HMM is
-selected.  In any cases when HMM get selected it will be by users that
-will also wants the mmu notifier.
+In configfs_register_group(), if create_default_group() failed, we
+forget to unlink the group. It will left a invalid item in the parent list,
+which may trigger the use-after-free issue seen below:
 
-Link: http://lkml.kernel.org/r/20190403193318.16478-2-jglisse@redhat.com
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+BUG: KASAN: use-after-free in __list_add_valid+0xd4/0xe0 lib/list_debug.c:26
+Read of size 8 at addr ffff8881ef61ae20 by task syz-executor.0/5996
+
+CPU: 1 PID: 5996 Comm: syz-executor.0 Tainted: G         C        5.0.0+ #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xa9/0x10e lib/dump_stack.c:113
+ print_address_description+0x65/0x270 mm/kasan/report.c:187
+ kasan_report+0x149/0x18d mm/kasan/report.c:317
+ __list_add_valid+0xd4/0xe0 lib/list_debug.c:26
+ __list_add include/linux/list.h:60 [inline]
+ list_add_tail include/linux/list.h:93 [inline]
+ link_obj+0xb0/0x190 fs/configfs/dir.c:759
+ link_group+0x1c/0x130 fs/configfs/dir.c:784
+ configfs_register_group+0x56/0x1e0 fs/configfs/dir.c:1751
+ configfs_register_default_group+0x72/0xc0 fs/configfs/dir.c:1834
+ ? 0xffffffffc1be0000
+ iio_sw_trigger_init+0x23/0x1000 [industrialio_sw_trigger]
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f494ecbcc58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
+RBP: 00007f494ecbcc70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f494ecbd6bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
+
+Allocated by task 5987:
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:497
+ kmalloc include/linux/slab.h:545 [inline]
+ kzalloc include/linux/slab.h:740 [inline]
+ configfs_register_default_group+0x4c/0xc0 fs/configfs/dir.c:1829
+ 0xffffffffc1bd0023
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 5987:
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
+ slab_free_hook mm/slub.c:1429 [inline]
+ slab_free_freelist_hook mm/slub.c:1456 [inline]
+ slab_free mm/slub.c:3003 [inline]
+ kfree+0xe1/0x270 mm/slub.c:3955
+ configfs_register_default_group+0x9a/0xc0 fs/configfs/dir.c:1836
+ 0xffffffffc1bd0023
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881ef61ae00
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 32 bytes inside of
+ 192-byte region [ffff8881ef61ae00, ffff8881ef61aec0)
+The buggy address belongs to the page:
+page:ffffea0007bd8680 count:1 mapcount:0 mapping:ffff8881f6c03000 index:0xffff8881ef61a700
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0007ca4740 0000000500000005 ffff8881f6c03000
+raw: ffff8881ef61a700 000000008010000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8881ef61ad00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8881ef61ad80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>ffff8881ef61ae00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ ffff8881ef61ae80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8881ef61af00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+Fixes: 5cf6a51e6062 ("configfs: allow dynamic group creation")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/configfs/dir.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 59efbd3337e0..cc4d633947bf 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -708,12 +708,12 @@ config MIGRATE_VMA_HELPER
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index 39843fa7e11b..920d350df37b 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -1755,12 +1755,19 @@ int configfs_register_group(struct config_group *parent_group,
  
- config HMM
- 	bool
-+	select MMU_NOTIFIER
- 	select MIGRATE_VMA_HELPER
- 
- config HMM_MIRROR
- 	bool "HMM mirror CPU page table into a device page table"
- 	depends on ARCH_HAS_HMM
--	select MMU_NOTIFIER
- 	select HMM
- 	help
- 	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
+ 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+ 	ret = create_default_group(parent_group, group);
+-	if (!ret) {
+-		spin_lock(&configfs_dirent_lock);
+-		configfs_dir_set_ready(group->cg_item.ci_dentry->d_fsdata);
+-		spin_unlock(&configfs_dirent_lock);
+-	}
++	if (ret)
++		goto err_out;
++
++	spin_lock(&configfs_dirent_lock);
++	configfs_dir_set_ready(group->cg_item.ci_dentry->d_fsdata);
++	spin_unlock(&configfs_dirent_lock);
++	inode_unlock(d_inode(parent));
++	return 0;
++err_out:
+ 	inode_unlock(d_inode(parent));
++	mutex_lock(&subsys->su_mutex);
++	unlink_group(group);
++	mutex_unlock(&subsys->su_mutex);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(configfs_register_group);
 -- 
 2.20.1
 
