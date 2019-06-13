@@ -2,370 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB9CE43B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 659E843B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388638AbfFMPZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:25:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43467 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387404AbfFMPZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:25:22 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i189so12048338pfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1l+mlQKavcUarVEpPnOPtdAlkYZp032eTcvrbr+7PcU=;
-        b=oyyTmmVLNcdXiYRgJuvDjaFmohkymY9IZxl/dz0JtYt1SyU+hS7kqWKKjTLRKpv/sL
-         Xc1Gv0WFm/yF6RsqhWTkI7Mm8rxkEBdzlbQkQk+bTyO5K6PBUZTrm1BjJZ1f7Eym4ODV
-         LTG2cFipgMSNZTFmFvL3HTxlTg6stkENzr5031Vt/gDKaozyDanCBeI0xTJ/4XScE5qG
-         qLEFS4Nunc0QE+bIo167Ch6165xGMShIN0pDLxqnYhtrot1O/K0NK6U6XAQVDbYZiJ/o
-         q218z9hg1rjvtpyhTHb8hgmNuct8dVq2gKB8l3dsvGJeD0Vg3t0rYVBmBJaNi33XAkn1
-         YPrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1l+mlQKavcUarVEpPnOPtdAlkYZp032eTcvrbr+7PcU=;
-        b=IldNCQ0kiP2D+kTcc/KT/9zsPEz2X0ZvzVQKOiceB9kVfh5m2pF20+kUigs7FNSSJe
-         zQ/kouCWQcUNvTak+z5IXTzW7JHI2NTDoRnyqhlZ8x9UmzjoL+W+y4b3QdzymV7pHTI1
-         lrPIL/viQVNE1TTlk0CASF9KS/2Ji80nBlM5Dj7nipJfw4M2JsP1z/3tnXtkITSFCicA
-         lAj7Y9wROfZoxuCCgpm46VbGiMjHMzYzZIgMGMkO5xpLsKMObPioHdIIJwpN6mYDufun
-         ewop9iLqO8fMCuUi3o4sg3Tirx+L4oSN/yVqPWWKTtcZDHqN1qt3G2u3eEvONahc3Vom
-         u3YA==
-X-Gm-Message-State: APjAAAURn98g0TL586M90FREJfzyE+jjj1l1dJItWiqVhv8MQ/fK8OU2
-        LSPIuwU4VBCWad9figF61AVQhg==
-X-Google-Smtp-Source: APXvYqy/hd5IZGIW+xKrGr1+v92aXYQfBgKI8TtNGZuZbGTQbRMdJGovoY2XjizQ0HdUuaZwjXXr5Q==
-X-Received: by 2002:a62:5387:: with SMTP id h129mr96255380pfb.6.1560439522048;
-        Thu, 13 Jun 2019 08:25:22 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h12sm396229pje.12.2019.06.13.08.25.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 08:25:21 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 08:25:19 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] regulator: qcom_spmi: Add support for PM8005
-Message-ID: <20190613152519.GD6792@builder>
-References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
- <20190613142334.8882-1-jeffrey.l.hugo@gmail.com>
+        id S1728030AbfFMP0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:26:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:42552 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727351AbfFMP0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:26:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A46BD3EF;
+        Thu, 13 Jun 2019 08:26:49 -0700 (PDT)
+Received: from C02TF0J2HF1T.local (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FA233F718;
+        Thu, 13 Jun 2019 08:26:36 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 16:26:32 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        enh <enh@google.com>, Robin Murphy <robin.murphy@arm.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: Re: [PATCH v17 03/15] arm64: Introduce prctl() options to control
+ the tagged user addresses ABI
+Message-ID: <20190613152632.GT28951@C02TF0J2HF1T.local>
+References: <cover.1560339705.git.andreyknvl@google.com>
+ <a7a2933bea5fe57e504891b7eec7e9432e5e1c1a.1560339705.git.andreyknvl@google.com>
+ <20190613110235.GW28398@e103592.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613142334.8882-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20190613110235.GW28398@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13 Jun 07:23 PDT 2019, Jeffrey Hugo wrote:
+Hi Dave,
 
-> The PM8005 is used on the msm8998 MTP.  The S1 regulator is VDD_GFX, ie
-> it needs to be on and controlled inorder to use the GPU.  Add support to
-> drive the PM8005 regulators so that we can bring up the GPU on msm8998.
+On Thu, Jun 13, 2019 at 12:02:35PM +0100, Dave P Martin wrote:
+> On Wed, Jun 12, 2019 at 01:43:20PM +0200, Andrey Konovalov wrote:
+> > +/*
+> > + * Global sysctl to disable the tagged user addresses support. This control
+> > + * only prevents the tagged address ABI enabling via prctl() and does not
+> > + * disable it for tasks that already opted in to the relaxed ABI.
+> > + */
+> > +static int zero;
+> > +static int one = 1;
 > 
+> !!!
+> 
+> And these can't even be const without a cast.  Yuk.
+> 
+> (Not your fault though, but it would be nice to have a proc_dobool() to
+> avoid this.)
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+I had the same reaction. Maybe for another patch sanitising this pattern
+across the kernel.
 
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  drivers/regulator/qcom_spmi-regulator.c | 169 ++++++++++++++++++++++++
->  1 file changed, 169 insertions(+)
+> > --- a/include/uapi/linux/prctl.h
+> > +++ b/include/uapi/linux/prctl.h
+> > @@ -229,4 +229,9 @@ struct prctl_mm_map {
+> >  # define PR_PAC_APDBKEY			(1UL << 3)
+> >  # define PR_PAC_APGAKEY			(1UL << 4)
+> >  
+> > +/* Tagged user address controls for arm64 */
+> > +#define PR_SET_TAGGED_ADDR_CTRL		55
+> > +#define PR_GET_TAGGED_ADDR_CTRL		56
+> > +# define PR_TAGGED_ADDR_ENABLE		(1UL << 0)
+> > +
 > 
-> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-> index 1c18fe5969b5..c7880c1d4bcd 100644
-> --- a/drivers/regulator/qcom_spmi-regulator.c
-> +++ b/drivers/regulator/qcom_spmi-regulator.c
-> @@ -104,6 +104,7 @@ enum spmi_regulator_logical_type {
->  	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LO_SMPS,
->  	SPMI_REGULATOR_LOGICAL_TYPE_ULT_HO_SMPS,
->  	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LDO,
-> +	SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426,
->  };
->  
->  enum spmi_regulator_type {
-> @@ -150,6 +151,7 @@ enum spmi_regulator_subtype {
->  	SPMI_REGULATOR_SUBTYPE_5V_BOOST		= 0x01,
->  	SPMI_REGULATOR_SUBTYPE_FTS_CTL		= 0x08,
->  	SPMI_REGULATOR_SUBTYPE_FTS2p5_CTL	= 0x09,
-> +	SPMI_REGULATOR_SUBTYPE_FTS426_CTL	= 0x0a,
->  	SPMI_REGULATOR_SUBTYPE_BB_2A		= 0x01,
->  	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL1	= 0x0d,
->  	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL2	= 0x0e,
-> @@ -170,6 +172,18 @@ enum spmi_common_regulator_registers {
->  	SPMI_COMMON_REG_STEP_CTRL		= 0x61,
->  };
->  
-> +/*
-> + * Second common register layout used by newer devices starting with ftsmps426
-> + * Note that some of the registers from the first common layout remain
-> + * unchanged and their definition is not duplicated.
-> + */
-> +enum spmi_ftsmps426_regulator_registers {
-> +	SPMI_FTSMPS426_REG_VOLTAGE_LSB		= 0x40,
-> +	SPMI_FTSMPS426_REG_VOLTAGE_MSB		= 0x41,
-> +	SPMI_FTSMPS426_REG_VOLTAGE_ULS_LSB	= 0x68,
-> +	SPMI_FTSMPS426_REG_VOLTAGE_ULS_MSB	= 0x69,
-> +};
-> +
->  enum spmi_vs_registers {
->  	SPMI_VS_REG_OCP				= 0x4a,
->  	SPMI_VS_REG_SOFT_START			= 0x4c,
-> @@ -229,6 +243,14 @@ enum spmi_common_control_register_index {
->  #define SPMI_COMMON_MODE_FOLLOW_HW_EN0_MASK	0x01
->  #define SPMI_COMMON_MODE_FOLLOW_ALL_MASK	0x1f
->  
-> +#define SPMI_FTSMPS426_MODE_BYPASS_MASK		3
-> +#define SPMI_FTSMPS426_MODE_RETENTION_MASK	4
-> +#define SPMI_FTSMPS426_MODE_LPM_MASK		5
-> +#define SPMI_FTSMPS426_MODE_AUTO_MASK		6
-> +#define SPMI_FTSMPS426_MODE_HPM_MASK		7
-> +
-> +#define SPMI_FTSMPS426_MODE_MASK		0x07
-> +
->  /* Common regulator pull down control register layout */
->  #define SPMI_COMMON_PULL_DOWN_ENABLE_MASK	0x80
->  
-> @@ -274,6 +296,23 @@ enum spmi_common_control_register_index {
->  #define SPMI_FTSMPS_STEP_MARGIN_NUM	4
->  #define SPMI_FTSMPS_STEP_MARGIN_DEN	5
->  
-> +#define SPMI_FTSMPS426_STEP_CTRL_DELAY_MASK	0x03
-> +#define SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT	0
-> +
-> +/* Clock rate in kHz of the FTSMPS426 regulator reference clock. */
-> +#define SPMI_FTSMPS426_CLOCK_RATE		4800
-> +
-> +/* Minimum voltage stepper delay for each step. */
-> +#define SPMI_FTSMPS426_STEP_DELAY		2
-> +
-> +/*
-> + * The ratio SPMI_FTSMPS426_STEP_MARGIN_NUM/SPMI_FTSMPS426_STEP_MARGIN_DEN is
-> + * used to adjust the step rate in order to account for oscillator variance.
-> + */
-> +#define SPMI_FTSMPS426_STEP_MARGIN_NUM	10
-> +#define SPMI_FTSMPS426_STEP_MARGIN_DEN	11
-> +
-> +
->  /* VSET value to decide the range of ULT SMPS */
->  #define ULT_SMPS_RANGE_SPLIT 0x60
->  
-> @@ -447,6 +486,10 @@ static struct spmi_voltage_range ftsmps2p5_ranges[] = {
->  	SPMI_VOLTAGE_RANGE(1,  160000, 1360000, 2200000, 2200000, 10000),
->  };
->  
-> +static struct spmi_voltage_range ftsmps426_ranges[] = {
-> +	SPMI_VOLTAGE_RANGE(0,       0,  320000, 1352000, 1352000,  4000),
-> +};
-> +
->  static struct spmi_voltage_range boost_ranges[] = {
->  	SPMI_VOLTAGE_RANGE(0, 4000000, 4000000, 5550000, 5550000, 50000),
->  };
-> @@ -480,6 +523,7 @@ static DEFINE_SPMI_SET_POINTS(ln_ldo);
->  static DEFINE_SPMI_SET_POINTS(smps);
->  static DEFINE_SPMI_SET_POINTS(ftsmps);
->  static DEFINE_SPMI_SET_POINTS(ftsmps2p5);
-> +static DEFINE_SPMI_SET_POINTS(ftsmps426);
->  static DEFINE_SPMI_SET_POINTS(boost);
->  static DEFINE_SPMI_SET_POINTS(boost_byp);
->  static DEFINE_SPMI_SET_POINTS(ult_lo_smps);
-> @@ -747,6 +791,23 @@ spmi_regulator_common_set_voltage(struct regulator_dev *rdev, unsigned selector)
->  	return spmi_vreg_write(vreg, SPMI_COMMON_REG_VOLTAGE_RANGE, buf, 2);
->  }
->  
-> +static int spmi_regulator_common_list_voltage(struct regulator_dev *rdev,
-> +					      unsigned selector);
-> +
-> +static int spmi_regulator_ftsmps426_set_voltage(struct regulator_dev *rdev,
-> +					      unsigned selector)
-> +{
-> +	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-> +	u8 buf[2];
-> +	int mV;
-> +
-> +	mV = spmi_regulator_common_list_voltage(rdev, selector) / 1000;
-> +
-> +	buf[0] = mV & 0xff;
-> +	buf[1] = mV >> 8;
-> +	return spmi_vreg_write(vreg, SPMI_FTSMPS426_REG_VOLTAGE_LSB, buf, 2);
-> +}
-> +
->  static int spmi_regulator_set_voltage_time_sel(struct regulator_dev *rdev,
->  		unsigned int old_selector, unsigned int new_selector)
->  {
-> @@ -778,6 +839,16 @@ static int spmi_regulator_common_get_voltage(struct regulator_dev *rdev)
->  	return spmi_hw_selector_to_sw(vreg, voltage_sel, range);
->  }
->  
-> +static int spmi_regulator_ftsmps426_get_voltage(struct regulator_dev *rdev)
-> +{
-> +	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-> +	u8 buf[2];
-> +
-> +	spmi_vreg_read(vreg, SPMI_FTSMPS426_REG_VOLTAGE_LSB, buf, 2);
-> +
-> +	return (((unsigned int)buf[1] << 8) | (unsigned int)buf[0]) * 1000;
-> +}
-> +
->  static int spmi_regulator_single_map_voltage(struct regulator_dev *rdev,
->  		int min_uV, int max_uV)
->  {
-> @@ -921,6 +992,23 @@ static unsigned int spmi_regulator_common_get_mode(struct regulator_dev *rdev)
->  	}
->  }
->  
-> +static unsigned int spmi_regulator_ftsmps426_get_mode(struct regulator_dev *rdev)
-> +{
-> +	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-> +	u8 reg;
-> +
-> +	spmi_vreg_read(vreg, SPMI_COMMON_REG_MODE, &reg, 1);
-> +
-> +	switch (reg) {
-> +	case SPMI_FTSMPS426_MODE_HPM_MASK:
-> +		return REGULATOR_MODE_NORMAL;
-> +	case SPMI_FTSMPS426_MODE_AUTO_MASK:
-> +		return REGULATOR_MODE_FAST;
-> +	default:
-> +		return REGULATOR_MODE_IDLE;
-> +	}
-> +}
-> +
->  static int
->  spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
->  {
-> @@ -943,6 +1031,28 @@ spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
->  	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
->  }
->  
-> +static int
-> +spmi_regulator_ftsmps426_set_mode(struct regulator_dev *rdev, unsigned int mode)
-> +{
-> +	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-> +	u8 mask = SPMI_FTSMPS426_MODE_MASK;
-> +	u8 val;
-> +
-> +	switch (mode) {
-> +	case REGULATOR_MODE_NORMAL:
-> +		val = SPMI_FTSMPS426_MODE_HPM_MASK;
-> +		break;
-> +	case REGULATOR_MODE_FAST:
-> +		val = SPMI_FTSMPS426_MODE_AUTO_MASK;
-> +		break;
-> +	default:
-> +		val = SPMI_FTSMPS426_MODE_LPM_MASK;
-> +		break;
-> +	}
-> +
-> +	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
-> +}
-> +
->  static int
->  spmi_regulator_common_set_load(struct regulator_dev *rdev, int load_uA)
->  {
-> @@ -1272,6 +1382,21 @@ static struct regulator_ops spmi_ult_ldo_ops = {
->  	.set_soft_start		= spmi_regulator_common_set_soft_start,
->  };
->  
-> +static struct regulator_ops spmi_ftsmps426_ops = {
-> +	.enable			= regulator_enable_regmap,
-> +	.disable		= regulator_disable_regmap,
-> +	.is_enabled		= regulator_is_enabled_regmap,
-> +	.set_voltage_sel	= spmi_regulator_ftsmps426_set_voltage,
-> +	.set_voltage_time_sel	= spmi_regulator_set_voltage_time_sel,
-> +	.get_voltage		= spmi_regulator_ftsmps426_get_voltage,
-> +	.map_voltage		= spmi_regulator_single_map_voltage,
-> +	.list_voltage		= spmi_regulator_common_list_voltage,
-> +	.set_mode		= spmi_regulator_ftsmps426_set_mode,
-> +	.get_mode		= spmi_regulator_ftsmps426_get_mode,
-> +	.set_load		= spmi_regulator_common_set_load,
-> +	.set_pull_down		= spmi_regulator_common_set_pull_down,
-> +};
-> +
->  /* Maximum possible digital major revision value */
->  #define INF 0xFF
->  
-> @@ -1307,6 +1432,7 @@ static const struct spmi_regulator_mapping supported_regulators[] = {
->  	SPMI_VREG(BOOST, 5V_BOOST, 0, INF, BOOST,  boost,  boost,       0),
->  	SPMI_VREG(FTS,   FTS_CTL,  0, INF, FTSMPS, ftsmps, ftsmps, 100000),
->  	SPMI_VREG(FTS, FTS2p5_CTL, 0, INF, FTSMPS, ftsmps, ftsmps2p5, 100000),
-> +	SPMI_VREG(FTS, FTS426_CTL, 0, INF, FTSMPS426, ftsmps426, ftsmps426, 100000),
->  	SPMI_VREG(BOOST_BYP, BB_2A, 0, INF, BOOST_BYP, boost, boost_byp, 0),
->  	SPMI_VREG(ULT_BUCK, ULT_HF_CTL1, 0, INF, ULT_LO_SMPS, ult_lo_smps,
->  						ult_lo_smps,   100000),
-> @@ -1444,6 +1570,34 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
->  	return ret;
->  }
->  
-> +static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
-> +{
-> +	int ret;
-> +	u8 reg = 0;
-> +	int delay, slew_rate;
-> +	const struct spmi_voltage_range *range = &vreg->set_points->range[0];
-> +
-> +	ret = spmi_vreg_read(vreg, SPMI_COMMON_REG_STEP_CTRL, &reg, 1);
-> +	if (ret) {
-> +		dev_err(vreg->dev, "spmi read failed, ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	delay = reg & SPMI_FTSMPS426_STEP_CTRL_DELAY_MASK;
-> +	delay >>= SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT;
-> +
-> +	/* slew_rate has units of uV/us */
-> +	slew_rate = SPMI_FTSMPS426_CLOCK_RATE * range->step_uV;
-> +	slew_rate /= 1000 * (SPMI_FTSMPS426_STEP_DELAY << delay);
-> +	slew_rate *= SPMI_FTSMPS426_STEP_MARGIN_NUM;
-> +	slew_rate /= SPMI_FTSMPS426_STEP_MARGIN_DEN;
-> +
-> +	/* Ensure that the slew rate is greater than 0 */
-> +	vreg->slew_rate = max(slew_rate, 1);
-> +
-> +	return ret;
-> +}
-> +
->  static int spmi_regulator_init_registers(struct spmi_regulator *vreg,
->  				const struct spmi_regulator_init_data *data)
->  {
-> @@ -1583,6 +1737,12 @@ static int spmi_regulator_of_parse(struct device_node *node,
->  		ret = spmi_regulator_init_slew_rate(vreg);
->  		if (ret)
->  			return ret;
-> +		break;
-> +	case SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426:
-> +		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg);
-> +		if (ret)
-> +			return ret;
-> +		break;
->  	default:
->  		break;
->  	}
-> @@ -1739,7 +1899,16 @@ static const struct spmi_regulator_data pmi8994_regulators[] = {
->  	{ }
->  };
->  
-> +static const struct spmi_regulator_data pm8005_regulators[] = {
-> +	{ "s1", 0x1400, "vdd_s1", },
-> +	{ "s2", 0x1700, "vdd_s2", },
-> +	{ "s3", 0x1a00, "vdd_s3", },
-> +	{ "s4", 0x1d00, "vdd_s4", },
-> +	{ }
-> +};
-> +
->  static const struct of_device_id qcom_spmi_regulator_match[] = {
-> +	{ .compatible = "qcom,pm8005-regulators", .data = &pm8005_regulators },
->  	{ .compatible = "qcom,pm8841-regulators", .data = &pm8841_regulators },
->  	{ .compatible = "qcom,pm8916-regulators", .data = &pm8916_regulators },
->  	{ .compatible = "qcom,pm8941-regulators", .data = &pm8941_regulators },
-> -- 
-> 2.17.1
+> Do we expect this prctl to be applicable to other arches, or is it
+> strictly arm64-specific?
+
+I kept it generic, at least the tagged address part. The MTE bits later
+on would be arm64-specific.
+
+> > @@ -2492,6 +2498,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+> >  			return -EINVAL;
+> >  		error = PAC_RESET_KEYS(me, arg2);
+> >  		break;
+> > +	case PR_SET_TAGGED_ADDR_CTRL:
+> > +		if (arg3 || arg4 || arg5)
 > 
+> <bikeshed>
+> 
+> How do you anticipate these arguments being used in the future?
+
+I don't expect them to be used at all. But since I'm not sure, I'd force
+them as zero for now rather than ignored. The GET is supposed to return
+the SET arg2, hence I'd rather not used the other arguments.
+
+> For the SVE prctls I took the view that "get" could only ever mean one
+> thing, and "put" already had a flags argument with spare bits for future
+> expansion anyway, so forcing the extra arguments to zero would be
+> unnecessary.
+> 
+> Opinions seem to differ on whether requiring surplus arguments to be 0
+> is beneficial for hygiene, but the glibc prototype for prctl() is
+> 
+> 	int prctl (int __option, ...);
+> 
+> so it seemed annoying to have to pass extra arguments to it just for the
+> sake of it.  IMHO this also makes the code at the call site less
+> readable, since it's not immediately apparent that all those 0s are
+> meaningless.
+
+It's fine by me to ignore the other arguments. I just followed the
+pattern of some existing prctl options. I don't have a strong opinion
+either way.
+
+> > +			return -EINVAL;
+> > +		error = SET_TAGGED_ADDR_CTRL(arg2);
+> > +		break;
+> > +	case PR_GET_TAGGED_ADDR_CTRL:
+> > +		if (arg2 || arg3 || arg4 || arg5)
+> > +			return -EINVAL;
+> > +		error = GET_TAGGED_ADDR_CTRL();
+> 
+> Having a "get" prctl is probably a good idea, but is there a clear
+> usecase for it?
+
+Not sure, maybe some other library (e.g. a JIT compiler) would like to
+check whether tagged addresses have been enabled during application
+start and decide to generate tagged pointers for itself. It seemed
+pretty harmless, unless we add more complex things to the prctl() that
+cannot be returned in one request).
+
+-- 
+Catalin
