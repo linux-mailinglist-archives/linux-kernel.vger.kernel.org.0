@@ -2,118 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC92443C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A4F443BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403986AbfFMQcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:32:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44398 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730862AbfFMIU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:20:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E8C92AD5C;
-        Thu, 13 Jun 2019 08:20:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 255091E4328; Thu, 13 Jun 2019 10:20:53 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 10:20:53 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Cc:     Jan Kara <jack@suse.cz>, Paolo Valente <paolo.valente@linaro.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>, amakhalov@vmware.com,
-        anishs@vmware.com, srivatsab@vmware.com,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stable <stable@vger.kernel.org>
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-Message-ID: <20190613082053.GD26505@quack2.suse.cz>
-References: <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
- <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
- <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
- <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
- <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
- <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
- <6a6f4aa4-fc95-f132-55b2-224ff52bd2d8@csail.mit.edu>
- <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
- <20190612130446.GD14578@quack2.suse.cz>
- <dd32ed59-a543-fc76-9a9a-2462f0119270@csail.mit.edu>
+        id S1731782AbfFMQbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:31:50 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41294 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730865AbfFMIVw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:21:52 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p15so29927377eds.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 01:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=/5Q5aUaRAcEEPNriaL09NE2LBrtuC+UfFWkB6hD3AL0=;
+        b=CNPZ9BSaAlskYq9oJPK3nw+RHvlOS+kmhCaPVmRqdv2KGR7tiu8aOdrFbya1btWYrV
+         /LL4gCUeCIqqlSTrQRyon/4otVWW808zDERPOuLa1zZ/UvAr46hYZgQ5D+TFonXqs0e5
+         6FRikD9geEaT5shYlUm40D03a+O3W7C6AcYwE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=/5Q5aUaRAcEEPNriaL09NE2LBrtuC+UfFWkB6hD3AL0=;
+        b=OuRrZmrY6OGj6TzpY1rK/PztSonddOSzDsINl9yHBQ8WFXVfejBfLLrmXdSNpurAyY
+         nvhSmht3LzhFKtfgICnX6q1+mTHmnYz66zdoyk4MlQp08zVGi7ENS7lCP8MzmGJEhO6Z
+         XzILWKWQtmtgLSSyuQrb/zQfINU/fbeq6QC/2hqbntt86dtxztOwLcCzDXl/6OG3zKks
+         5gbo1hE2kF3CKXTAijS+vLgP8XtSQQFh9fSHqd8OP+Y2GIbsjpFoxg/33tMirbJ2xcMG
+         V++YASkZshgj7JT5pwrqNEyXtTtRZZIG3qtJD6V4nvxExQFJosvmMkuCOBkU9Pg8aKHx
+         zzig==
+X-Gm-Message-State: APjAAAWm4uOfxd1FR5pcxwW7cGvPrFS2njLbGBm2BFpLcLSi8cdL1/AX
+        01xNmlLPRcAiXwCSLw/5goQw+Q==
+X-Google-Smtp-Source: APXvYqyuHNHI3b36rm4k6jVjf5YQ4S6ebCAH64O/yrmvhY4OJMhpcxY3jnmxNU5QJu6XRHEVCYxqiw==
+X-Received: by 2002:a50:97c8:: with SMTP id f8mr45283000edb.176.1560414110413;
+        Thu, 13 Jun 2019 01:21:50 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id z10sm684614edl.35.2019.06.13.01.21.49
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 01:21:49 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:21:47 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [RESEND PATCH V3] drm/drm_vblank: Change EINVAL by the correct
+ errno
+Message-ID: <20190613082147.GG23020@phenom.ffwll.local>
+Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org
+References: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dd32ed59-a543-fc76-9a9a-2462f0119270@csail.mit.edu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-06-19 12:36:53, Srivatsa S. Bhat wrote:
+On Wed, Jun 12, 2019 at 11:10:54PM -0300, Rodrigo Siqueira wrote:
+> For historical reason, the function drm_wait_vblank_ioctl always return
+> -EINVAL if something gets wrong. This scenario limits the flexibility
+> for the userspace make detailed verification of the problem and take
+> some action. In particular, the validation of “if (!dev->irq_enabled)”
+> in the drm_wait_vblank_ioctl is responsible for checking if the driver
+> support vblank or not. If the driver does not support VBlank, the
+> function drm_wait_vblank_ioctl returns EINVAL which does not represent
+> the real issue; this patch changes this behavior by return EOPNOTSUPP.
+> Additionally, some operations are unsupported by this function, and
+> returns EINVAL; this patch also changes the return value to EOPNOTSUPP
+> in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
+> libdrm, which is used by many compositors; because of this, it is
+> important to check if this change breaks any compositor. In this sense,
+> the following projects were examined:
 > 
-> [ Adding Greg to CC ]
+> * Drm-hwcomposer
+> * Kwin
+> * Sway
+> * Wlroots
+> * Wayland-core
+> * Weston
+> * Xorg (67 different drivers)
 > 
-> On 6/12/19 6:04 AM, Jan Kara wrote:
-> > On Tue 11-06-19 15:34:48, Srivatsa S. Bhat wrote:
-> >> On 6/2/19 12:04 AM, Srivatsa S. Bhat wrote:
-> >>> On 5/30/19 3:45 AM, Paolo Valente wrote:
-> >>>>
-> >> [...]
-> >>>> At any rate, since you pointed out that you are interested in
-> >>>> out-of-the-box performance, let me complete the context: in case
-> >>>> low_latency is left set, one gets, in return for this 12% loss,
-> >>>> a) at least 1000% higher responsiveness, e.g., 1000% lower start-up
-> >>>> times of applications under load [1];
-> >>>> b) 500-1000% higher throughput in multi-client server workloads, as I
-> >>>> already pointed out [2].
-> >>>>
-> >>>
-> >>> I'm very happy that you could solve the problem without having to
-> >>> compromise on any of the performance characteristics/features of BFQ!
-> >>>
-> >>>
-> >>>> I'm going to prepare complete patches.  In addition, if ok for you,
-> >>>> I'll report these results on the bug you created.  Then I guess we can
-> >>>> close it.
-> >>>>
-> >>>
-> >>> Sounds great!
-> >>>
-> >>
-> >> Hi Paolo,
-> >>
-> >> Hope you are doing great!
-> >>
-> >> I was wondering if you got a chance to post these patches to LKML for
-> >> review and inclusion... (No hurry, of course!)
-> >>
-> >> Also, since your fixes address the performance issues in BFQ, do you
-> >> have any thoughts on whether they can be adapted to CFQ as well, to
-> >> benefit the older stable kernels that still support CFQ?
-> > 
-> > Since CFQ doesn't exist in current upstream kernel anymore, I seriously
-> > doubt you'll be able to get any performance improvements for it in the
-> > stable kernels...
-> > 
+> For each repository the verification happened in three steps:
 > 
-> I suspected as much, but that seems unfortunate though. The latest LTS
-> kernel is based on 4.19, which still supports CFQ. It would have been
-> great to have a process to address significant issues on older
-> kernels too.
+> * Update the main branch
+> * Look for any occurrence "drmWaitVBlank" with the command:
+>   git grep -n "drmWaitVBlank"
+> * Look in the git history of the project with the command:
+>   git log -SdrmWaitVBlank
+> 
+> Finally, none of the above projects validate the use of EINVAL which
+> make safe, at least for these projects, to change the return values.
+> 
+> Change since V2:
+>  Daniel Vetter and Chris Wilson
+>  - Replace ENOTTY by EOPNOTSUPP
+>  - Return EINVAL if the parameters are wrong
+> 
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> ---
+> Update:
+>   Now IGT has a way to validate if a driver has vblank support or not.
+>   See: https://gitlab.freedesktop.org/drm/igt-gpu-tools/commit/2d244aed69165753f3adbbd6468db073dc1acf9A
+> 
+>  drivers/gpu/drm/drm_vblank.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 0d704bddb1a6..d76a783a7d4b 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1578,10 +1578,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+>  	unsigned int flags, pipe, high_pipe;
+>  
+>  	if (!dev->irq_enabled)
+> -		return -EINVAL;
+> +		return -EOPNOTSUPP;
+>  
+>  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> -		return -EINVAL;
+> +		return -EOPNOTSUPP;
 
-Well, you could still tune the performance difference by changing
-slice_idle and group_idle tunables for CFQ (in
-/sys/block/<device>/queue/iosched/).  Changing these to lower values will
-reduce the throughput loss when switching between cgroups at the cost of
-lower accuracy of enforcing configured IO proportions among cgroups.
+Not sure we want EINVAL here, that's kinda a "parameters are wrong"
+version too. With that changed:
 
-								Honza
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+>  
+>  	if (vblwait->request.type &
+>  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
+> -- 
+> 2.21.0
+
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
