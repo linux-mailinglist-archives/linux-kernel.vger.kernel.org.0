@@ -2,171 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5590A44697
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D84F446BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbfFMQxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:53:12 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38810 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFMQxL (ORCPT
+        id S2393101AbfFMQyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:54:11 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37269 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbfFMQyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:53:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f97so8414639plb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:53:11 -0700 (PDT)
+        Thu, 13 Jun 2019 12:54:09 -0400
+Received: by mail-oi1-f196.google.com with SMTP id t76so14954930oih.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:54:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2HSyqLuA62fmX26BujT/9wqw7NfTPaJ58H9IBnHqPR8=;
-        b=Fluc7UHZgtrOSv48l3jODB7SJVkjZk5yCoE+1wfUSMQimt3UMruLylStkmXn4JtV/D
-         VkWSX4zWn820Xuc9juOV3UG5yEyX5E0GTTloV7TdeyhJWYKCXRBQIXyVDJ2zyDQ5rwdd
-         dSxVKQxrZjW7JsjWPwGCeIW3pKpFttvkTQgsi4KBjPun3xyzWYzSjbHVc1PZbGhlg5Ix
-         JkGdyKUj2hB3aG6mzCYa9p+of1y7m4SuR9GFj5cQ7kiY4TXJR0x7Q1LHMBQKjN8h23Xn
-         9ww0GexfFjqpFR43m/6seVS1p53rGZ2WJPNy7RMxiYErT8kl3xWlVpTkhS7Y266vnH7r
-         qnZw==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K5QgKSw4Z6Xg8aYYXT+LBjYPe44CbIinLwHH3dcmWHs=;
+        b=JPkB0BV6X6JhIXM15mmuE6WMYycZpu9oR7r0I7K/LQCBr9DwAP6ai9HZjnhDeAYv4q
+         TiZo9rDNmnnfaiz17BD3uxFdbeSL7Y/8LOiTSNry6at9hQCVwGCeToNG6Ex+J8u5/KQP
+         rSeVmghdMiyUulN3yC6UXoG+jamCw6Iq9RQa6hVQWk/7tpob4VyGK5isoLBgPG5+8CMc
+         oA3+NEhNWRx5DhX8fFS+ibJYngtPEXnpdgd2MSVqUjHZLmRvj+vJ+ceFOp5MLrQ4oEX/
+         0Rx8uu+6IN2lNuQ5sNTppCrMvyeKhRIg9ncvGbzO5FXYhJ6K3FlfiHQBnhAn2M8BLSYe
+         /S4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2HSyqLuA62fmX26BujT/9wqw7NfTPaJ58H9IBnHqPR8=;
-        b=qfBtBMV1qpYIbQRdVRR9elKy3MDyviAtPXea5aDjMW7oydzHAhiLYDbzN8lwIdwnvQ
-         SD3nXFrsaN5i5/gDsNFFvOFm1mbAG5nCoNhETXaJgl2cEqgh41C/YTVLygc1AMPuvrjn
-         icvf2MlFLfTXZlaN/xau8accMxB2bjeYMm2bgFgNMOyYUuhn2uUCr+oouM1UWP5p8CXT
-         hostBFm6m5c1VLhsbXmOiT2JHup6NJRe3ly5+Nsj1S7q9t5+Qhvv4SZeMYAWCQy3F8hj
-         AeW9lLFNZSURKezq6SLniyNHrPHDKLagDi/JMWOjEPdL7wCMd3tpmKdKsayJGamXulFd
-         JMww==
-X-Gm-Message-State: APjAAAWtSxXBJKXImgsZm8KhLsIpN+Xzd9ySrI3tbEuFtAqIlbEyy/Uj
-        ng13djxkHz7UetnVNATqaBI=
-X-Google-Smtp-Source: APXvYqxGJS5iyGw3xreG2M23XcLYW2TbjhbEYU/AXfDGmkWeX5kocrJKp1hcZcn6qQNw0CB5X1EJvA==
-X-Received: by 2002:a17:902:a81:: with SMTP id 1mr88073076plp.287.1560444790802;
-        Thu, 13 Jun 2019 09:53:10 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id c12sm197500pfn.104.2019.06.13.09.53.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 09:53:10 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     joro@8bytes.org, s-anna@ti.com
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v2] iommu/omap: convert to SPDX license tags
-Date:   Thu, 13 Jun 2019 12:53:03 -0400
-Message-Id: <20190613165303.1219-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K5QgKSw4Z6Xg8aYYXT+LBjYPe44CbIinLwHH3dcmWHs=;
+        b=iR1uGi0AOMvIsqowG3CWZqJtSQZbWzMrnTdyqVQd4CU9UleVX0vw+Iyt/5MLYTbEUz
+         ZT9eq7DXF2J7QrTrYmQ+T3dyV7ktopvYa2feh2RXb4RnR8LgJC1AM8ZTOVdx5tNcwTnR
+         RONSKdDguo19aqrkPbpYbiJzijisNE0yr/OqA/uBCK8obSQnpS/g4ZwGmZ3MfRodg0oW
+         zC8lY27jZ2oqfVyMKx300a3gTWoukUv4Zr4lsWVJR5whN8brAQP9hz4288ZaTAlsl5pE
+         tah/IFjWoKfIP6p6OCVpZvqSfrjlyO5PHuDihoWXEuGZHlSGxmD+y09r/HCJqW6LaAzN
+         qpdQ==
+X-Gm-Message-State: APjAAAX3xiDAbEsWEZHKjv3/fJUcc8MxEuy+S6lSUGG0KlHs7BI04XhM
+        igHYZYiirvGgRkX4rgT3ZKFrIICnM8HVBdBD1I2Gbg==
+X-Google-Smtp-Source: APXvYqw1WkLu6931wraGkR43kxA852RaajLizs6v5Jy3HNf2qRKdqa2zWoPAYJUPvBUNSayLXHYwfeMfsWWcQaOonts=
+X-Received: by 2002:aca:4208:: with SMTP id p8mr3752304oia.105.1560444848738;
+ Thu, 13 Jun 2019 09:54:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca> <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca> <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com> <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 13 Jun 2019 09:53:57 -0700
+Message-ID: <CAPcyv4hKw7owf+Jpxiu+V7DE+U4GkQ1Hr3korZvgSve-LPexNA@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updates license to use SPDX-License-Identifier.
+On Wed, Jun 12, 2019 at 4:32 PM Ira Weiny <ira.weiny@intel.com> wrote:
+>
+> On Wed, Jun 12, 2019 at 03:54:19PM -0700, Dan Williams wrote:
+> > On Wed, Jun 12, 2019 at 3:12 PM Ira Weiny <ira.weiny@intel.com> wrote:
+> > >
+> > > On Wed, Jun 12, 2019 at 04:14:21PM -0300, Jason Gunthorpe wrote:
+> > > > On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
+> > > > > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > > > > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> > > > > >
+> > > > > > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > > > > > little HW can actually implement it, having the alternative still
+> > > > > > > > > require HW support doesn't seem like progress.
+> > > > > > > > >
+> > > > > > > > > I think we will eventually start seein some HW be able to do this
+> > > > > > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > > > > > on fire, I need to unplug it).
+> > > > > > > >
+> > > > > > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > > > > > with such an "invalidate".
+> > > > > > >
+> > > > > > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > > > > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > > > > > everything that's going on... And I wanted similar behavior here.
+> > > > > >
+> > > > > > It aborts *everything* connected to that file descriptor. Destroying
+> > > > > > everything avoids creating inconsistencies that destroying a subset
+> > > > > > would create.
+> > > > > >
+> > > > > > What has been talked about for lease break is not destroying anything
+> > > > > > but very selectively saying that one memory region linked to the GUP
+> > > > > > is no longer functional.
+> > > > >
+> > > > > OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> > > > > and closes the file with existing pins (and thus layout lease) we would
+> > > > > force it to abort everything. Yes, it is disruptive but then the app didn't
+> > > > > obey the rule that it has to maintain file lease while holding pins. Thus
+> > > > > such situation should never happen unless the app is malicious / buggy.
+> > > >
+> > > > We do have the infrastructure to completely revoke the entire
+> > > > *content* of a FD (this is called device disassociate). It is
+> > > > basically close without the app doing close. But again it only works
+> > > > with some drivers. However, this is more likely something a driver
+> > > > could support without a HW change though.
+> > > >
+> > > > It is quite destructive as it forcibly kills everything RDMA related
+> > > > the process(es) are doing, but it is less violent than SIGKILL, and
+> > > > there is perhaps a way for the app to recover from this, if it is
+> > > > coded for it.
+> > >
+> > > I don't think many are...  I think most would effectively be "killed" if this
+> > > happened to them.
+> > >
+> > > >
+> > > > My preference would be to avoid this scenario, but if it is really
+> > > > necessary, we could probably build it with some work.
+> > > >
+> > > > The only case we use it today is forced HW hot unplug, so it is rarely
+> > > > used and only for an 'emergency' like use case.
+> > >
+> > > I'd really like to avoid this as well.  I think it will be very confusing for
+> > > RDMA apps to have their context suddenly be invalid.  I think if we have a way
+> > > for admins to ID who is pinning a file the admin can take more appropriate
+> > > action on those processes.   Up to and including killing the process.
+> >
+> > Can RDMA context invalidation, "device disassociate", be inflicted on
+> > a process from the outside? Identifying the pid of a pin holder only
+> > leaves SIGKILL of the entire process as the remediation for revoking a
+> > pin, and I assume admins would use the finer grained invalidation
+> > where it was available.
+>
+> No not in the way you are describing it.  As Jason said you can hotplug the
+> device which is "from the outside" but this would affect all users of that
+> device.
+>
+> Effectively, we would need a way for an admin to close a specific file
+> descriptor (or set of fds) which point to that file.  AFAIK there is no way to
+> do that at all, is there?
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Suman Anna <s-anna@ti.com>
----
-v2:
--add include/linux/platform_data/iommu-omap.h
----
- drivers/iommu/omap-iommu-debug.c         | 5 +----
- drivers/iommu/omap-iommu.c               | 5 +----
- drivers/iommu/omap-iommu.h               | 5 +----
- drivers/iommu/omap-iopgtable.h           | 5 +----
- include/linux/platform_data/iommu-omap.h | 5 +----
- 5 files changed, 5 insertions(+), 20 deletions(-)
+You can certainly give the lease holder the option to close the file
+voluntarily via the siginfo_t that can be attached to a lease break
+signal. But it's not really "close" you want as much as a finer
+grained disassociate.
 
-diff --git a/drivers/iommu/omap-iommu-debug.c b/drivers/iommu/omap-iommu-debug.c
-index 4abc0ef522a8..55ec67a45101 100644
---- a/drivers/iommu/omap-iommu-debug.c
-+++ b/drivers/iommu/omap-iommu-debug.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * omap iommu: debugfs interface
-  *
-  * Copyright (C) 2008-2009 Nokia Corporation
-  *
-  * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/err.h>
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index d2fb347aa4ff..e6442876913f 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * omap iommu: tlb and pagetable primitives
-  *
-@@ -6,10 +7,6 @@
-  *
-  * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>,
-  *		Paul Mundt and Toshihiro Kobayashi
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/dma-mapping.h>
-diff --git a/drivers/iommu/omap-iommu.h b/drivers/iommu/omap-iommu.h
-index 1703159ef5af..5256e17d86a7 100644
---- a/drivers/iommu/omap-iommu.h
-+++ b/drivers/iommu/omap-iommu.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * omap iommu: main structures
-  *
-  * Copyright (C) 2008-2009 Nokia Corporation
-  *
-  * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #ifndef _OMAP_IOMMU_H
-diff --git a/drivers/iommu/omap-iopgtable.h b/drivers/iommu/omap-iopgtable.h
-index 01a315227bf0..871c2a38f453 100644
---- a/drivers/iommu/omap-iopgtable.h
-+++ b/drivers/iommu/omap-iopgtable.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * omap iommu: pagetable definitions
-  *
-  * Copyright (C) 2008-2010 Nokia Corporation
-  *
-  * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #ifndef _OMAP_IOPGTABLE_H
-diff --git a/include/linux/platform_data/iommu-omap.h b/include/linux/platform_data/iommu-omap.h
-index e8b12dbf6170..a6cbca5406e0 100644
---- a/include/linux/platform_data/iommu-omap.h
-+++ b/include/linux/platform_data/iommu-omap.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * omap iommu: main structures
-  *
-  * Copyright (C) 2008-2009 Nokia Corporation
-  *
-  * Written by Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/platform_device.h>
--- 
-2.17.0
-
+All that said you could require the lease taker opt-in to SIGKILL via
+F_SETSIG before marking the lease "exclusive". That effectively
+precludes failing truncate, but it's something we can enforce today
+and work on finer grained / less drastic escalations over time for
+something that should "never" happen.
