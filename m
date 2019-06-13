@@ -2,123 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBA844E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B2644E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbfFMVhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:37:35 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45453 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfFMVhf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:37:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so50652pfq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 14:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=niNFpI11vAhO44einRqdwjoLItCHCO9233XjZiHQyaU=;
-        b=VWyAXGKPO54EkkT6Acgj6BARkOxK/OgPKM3aZWm6CrPwTOzh/4dYYrimLWKWD5MXBJ
-         24BEnzOE63HwDTRVWtdrcjwSpPMZlyjmJr7KetSeIdAMGYJs9F8OP4q1novWdQ8K8cW1
-         WwQpCkm8ucq8sd542QexKKxYVSSjHAtSuJmrAIx8C1OQgLDyvJKIcR07VCwDOMbqYeMf
-         SMV7kBZeeQ9evI6W03njns5230yNm1tzOFusuYUI9C8BVYr25D3VDv8bTVRUt9VQaPfv
-         QsM+uaj2wS3gTO8XivsweLS3MNzzPfzJgHAWpfZ4LcfxL+OELhLK0ijI5CuQo+slWcRX
-         ZUlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=niNFpI11vAhO44einRqdwjoLItCHCO9233XjZiHQyaU=;
-        b=eZVmeZrGYoDRSfwIuj4h00s5bbIsGsO3gE7wvN35H2NIVugSBC7ZMcipK4vTB5SJ/y
-         CJKM2mpkpBhCdeJhcZkMv3zIn8KqJ4/LJZIXzZTsYjLz4r9Y/LBADiEp0QgK/yFbtbTE
-         +Dp6kqTMCKSTxjiE2FTzCDJAtMtwxeTdI59gamET5ghnkUa9zhgY3X9nT+GU5VyvRt+8
-         v5kMuWyMyX8U6SSSaF8EBwB2/C4cl36cQ5wjNr6oqgnrRDIEQOhBxDSLNMlkS+d2jw31
-         7NiSPvmqo9P9DjaabqfCKuuWVvg201ShsJPZV/L/DWz5vk+WLhDsJ4atvNROlul1gYiW
-         Lw9A==
-X-Gm-Message-State: APjAAAXqUCXAgtH0yuG8+1AEDo6tM/MBRVF3OlFkpH4Ud+cRw8AGK+gO
-        pckGTuXLK27gPGn/skb1vlaEmQ==
-X-Google-Smtp-Source: APXvYqwglE0/Cp+VMXnR+2NH92CcA2NClSyW42CnUhdnh1P+GPivZY9958ihtWBtbHS5dJMCg0Xw4A==
-X-Received: by 2002:aa7:8d98:: with SMTP id i24mr27224795pfr.199.1560461854321;
-        Thu, 13 Jun 2019 14:37:34 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p27sm667708pfq.136.2019.06.13.14.37.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 14:37:33 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 14:37:31 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Subject: Re: [PATCH v4 6/7] dt-bindings: qcom_spmi: Document pms405 support
-Message-ID: <20190613213731.GE4814@minitux>
-References: <20190613212436.6940-1-jeffrey.l.hugo@gmail.com>
- <20190613212707.5966-1-jeffrey.l.hugo@gmail.com>
+        id S1727622AbfFMViH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:38:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726806AbfFMViH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 17:38:07 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA86208CA;
+        Thu, 13 Jun 2019 21:38:05 +0000 (UTC)
+Date:   Thu, 13 Jun 2019 17:38:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        Johannes Erdfelt <johannes@erdfelt.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] livepatch: Fix ftrace module text permissions race
+Message-ID: <20190613173804.37cd37f8@gandalf.local.home>
+In-Reply-To: <20190531222527.535zt6qzqmad34ss@treble>
+References: <bb69d4ac34111bbd9cb16180a6fafe471a88d80b.1559156299.git.jpoimboe@redhat.com>
+        <20190530135414.taftuprranwtowry@pathway.suse.cz>
+        <20190531191256.z5fm4itxewagd5xc@treble>
+        <20190531222527.535zt6qzqmad34ss@treble>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613212707.5966-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13 Jun 14:27 PDT 2019, Jeffrey Hugo wrote:
+On Fri, 31 May 2019 17:25:27 -0500
+Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-> From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+> On Fri, May 31, 2019 at 02:12:56PM -0500, Josh Poimboeuf wrote:
+> > > Anyway, the above is a separate problem. This patch looks
+> > > fine for the original problem.  
+> > 
+> > Thanks for the review.  I'll post another version, with the above
+> > changes and with the patches split up like Miroslav suggested.  
 > 
-> The PMS405 supports 5 SMPS and 13 LDO regulators.
+> The latest patches are here:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/log/?h=fix-livepatch-ftrace-race
+> 
+> If the bot likes them, I'll post them properly soon.
 > 
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Was this ever posted?
 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  .../bindings/regulator/qcom,spmi-regulator.txt | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-> index ba94bc2d407a..430b8622bda1 100644
-> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-> @@ -10,6 +10,7 @@ Qualcomm SPMI Regulators
->  			"qcom,pm8941-regulators"
->  			"qcom,pm8994-regulators"
->  			"qcom,pmi8994-regulators"
-> +			"qcom,pms405-regulators"
->  
->  - interrupts:
->  	Usage: optional
-> @@ -111,6 +112,23 @@ Qualcomm SPMI Regulators
->  	Definition: Reference to regulator supplying the input pin, as
->  		    described in the data sheet.
->  
-> +- vdd_l1_l2-supply:
-> +- vdd_l3_l8-supply:
-> +- vdd_l4-supply:
-> +- vdd_l5_l6-supply:
-> +- vdd_l10_l11_l12_l13-supply:
-> +- vdd_l7-supply:
-> +- vdd_l9-supply:
-> +- vdd_s1-supply:
-> +- vdd_s2-supply:
-> +- vdd_s3-supply:
-> +- vdd_s4-supply:
-> +- vdd_s5-supply
-> +	Usage: optional (pms405 only)
-> +	Value type: <phandle>
-> +	Definition: Reference to regulator supplying the input pin, as
-> +		    described in the data sheet.
-> +
->  - qcom,saw-reg:
->  	Usage: optional
->  	Value type: <phandle>
-> -- 
-> 2.17.1
-> 
+-- Steve
