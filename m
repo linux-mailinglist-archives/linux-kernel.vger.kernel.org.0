@@ -2,176 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754AE438E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A9E438E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387880AbfFMPJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:09:53 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40281 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732351AbfFMN5O (ORCPT
+        id S1732394AbfFMPJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:09:32 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42368 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732357AbfFMN5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:57:14 -0400
-Received: by mail-qk1-f194.google.com with SMTP id c70so12754403qkg.7
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:57:13 -0700 (PDT)
+        Thu, 13 Jun 2019 09:57:37 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x17so5614171wrl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:57:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f8oWkNqIH/DyMOHXpAxjAXd9mO+eys1GPI1tYBrhm3o=;
-        b=slju5Mk6NV/PybHINi/s0pm6qI/7D6HmQM7KjmNLHuc4tFszrsyyy2yzDtVxHIyZXU
-         D16qWNlslGJsEDu9eDPf3JwbhandiXXH++FTeppARL3Qd/NiqI5Pp2oCtFEZhIAwLyUv
-         yeeTLdKcReDi3yCS+hpmrO9v6m1Cue5zcQwZ7NMqUeGI09kjehpUfvP/YAp+4+5/1aHs
-         yJCLWDijzSXk/Vb0zuf0I0T+fN/Axvx4dP/JbBiWZxiHsw8xEqHo/XuCklQnd+DUeRQn
-         bvbiuPQMt6+MjmCX57lD2xIeNihagvn8rpuGrrJSKJkTh66ndPXMZmwj2z7rOEgjWcLW
-         UvbA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mF/t8Vc3YmpUfAcfOp8dmky92LVPXpVO+34OWoDYALY=;
+        b=JPlduTHaMif6czcMYjH+iK3zHDfuBg7MK5yig5ap/g7Ag1fTaFELEs+YoZW0y+d87C
+         CU7htdxBFUN1SyhltslOLJT6dQoJReGZO+5fNgwDQI95qKOnCCY/9os6cBZXB/Re8G1u
+         CnHQ2fKTzh8PM+cRx6udFksTDCI7/Bx2Eu8mAKwp9/usIFA8uMSXxtTaE5XcFpmVGg49
+         vQGf6oOAXmZTw/dzqRwarMDvsm57qIcYj59YYrXGQi50dmU/glilhfLvp+dxsbqxM867
+         zGtdcpKV6rNx8TbP0n1cvTETY/aZHlFHXGfq0agJBMWutPMajKINRzxMxQVtrBfQjjoh
+         ovWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f8oWkNqIH/DyMOHXpAxjAXd9mO+eys1GPI1tYBrhm3o=;
-        b=DijbktqvZOqIM+9T5eLYWm4Dvt5jzIvNItv0BftfuaKl7DoOHyVQSQD7j6fcnk3pe5
-         gZg3us9LN7OA9ef5KehcQ0vnsx/jRWckbZsHIOci3hsu+K68YOcWkmDj2VUhW31OkAe+
-         g9cUzh1eep0bKCB+8LQUfiqgLzv1nVmPWRCVXOtq/1K/e/GB+CbC0i8HYnjZAaBKAejU
-         N7K9q6fRQHuQgT94Lofx7HOM/lFSc6dJZaPNCSmet89R12TIQ+jLjVcDg8nUjgdUlDLE
-         Dw+cSEHhCrDq1DXE7SPdD7yaCpZqQcQWpmSDxi/qty7OhHawy5vIJkxzU9S5r49Kjumr
-         PHFA==
-X-Gm-Message-State: APjAAAWUHG7fl7OUCnzu3Iq+Rsn0FKPfMvQsm3qtUDOYn+Y/KjzjdtQa
-        zLJGSuPu3aytgbQ6ozaIaGiPZfFx1InhhjQd
-X-Google-Smtp-Source: APXvYqxGT1il2X6VOFbyz2RJsVGEMTFswkGE2VcTUWavs7aHJ61x1eQsmlCA1IQqdvrv4u7hG1Ld+w==
-X-Received: by 2002:ae9:f303:: with SMTP id p3mr5719058qkg.320.1560434233077;
-        Thu, 13 Jun 2019 06:57:13 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::9d6b])
-        by smtp.gmail.com with ESMTPSA id m44sm1846636qtm.54.2019.06.13.06.57.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 06:57:12 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 09:57:11 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 03/19] btrfs: Check and enable HMZONED mode
-Message-ID: <20190613135710.nu5r5bpcwdm4we2w@MacBook-Pro-91.local>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-4-naohiro.aota@wdc.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mF/t8Vc3YmpUfAcfOp8dmky92LVPXpVO+34OWoDYALY=;
+        b=Xh3S2EGeEL5MHkhqDir2n/ZeSC8aPIOfNV2eWTphERIlh8virXkGcYTwC5diuUOyuH
+         4713BBK6Ul/aqJzV+gB1ox83GjnQA3gba415Lh+7DqJ/93rdcTLy4VjouadZXnMC/52B
+         Q+zEBpFrdXgifvI3DF0rc14C0qe6x4BDOCJcxsTAxmJmSnSBoOQQ/m5j6TlmnUrCiNs0
+         ZxVuzDuQrpkE8TOhbUjeIxFRH/NUKnYU8g3lx7dc2RR0reKaBx5ZLPvyoZvyVduEylSY
+         FTrloWU4EUtEOYf71mM/t6FoFmtloq3KNo99lDd/WO5dIFAh3xpXKR0TFwSAZfJrv7w3
+         cb2w==
+X-Gm-Message-State: APjAAAWnpPW6arMPSfhsKmuqhZKQg8HI6b3TwVs2MRjbYJPBUZvxa22N
+        wIYfZgNRbKF7XAMlNEQ5kYo8wZBRWLi+drqV9PX7z04F
+X-Google-Smtp-Source: APXvYqyGOk8mUWlcXn6d0r8IOUWdlMmLErqfMy6ExuXDc0C9puukqfkBOpVqz/zUvE5BpXaMuiDvB5XAxpVkVRjDQ7Q=
+X-Received: by 2002:adf:f68f:: with SMTP id v15mr9752218wrp.4.1560434256044;
+ Thu, 13 Jun 2019 06:57:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-4-naohiro.aota@wdc.com>
-User-Agent: NeoMutt/20180716
+References: <20190530000819.GA25416@obi-wan> <20190604202149.GA20116@obi-wan>
+In-Reply-To: <20190604202149.GA20116@obi-wan>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 13 Jun 2019 09:57:24 -0400
+Message-ID: <CADnq5_OqVSz7Vfo0zP88i=wJur=wtz6Jd99ZTiQSbFNBcc3j7w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/powerplay/smu7_hwmgr: replace blocking delay with non-blocking
+To:     Yrjan Skrimstad <yrjan@skrimstad.net>
+Cc:     Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Evan Quan <evan.quan@amd.com>, Rex Zhu <rex.zhu@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:09PM +0900, Naohiro Aota wrote:
-> HMZONED mode cannot be used together with the RAID5/6 profile for now.
-> Introduce the function btrfs_check_hmzoned_mode() to check this. This
-> function will also check if HMZONED flag is enabled on the file system and
-> if the file system consists of zoned devices with equal zone size.
-> 
-> Additionally, as updates to the space cache are in-place, the space cache
-> cannot be located over sequential zones and there is no guarantees that the
-> device will have enough conventional zones to store this cache. Resolve
-> this problem by disabling completely the space cache.  This does not
-> introduces any problems with sequential block groups: all the free space is
-> located after the allocation pointer and no free space before the pointer.
-> There is no need to have such cache.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  fs/btrfs/ctree.h       |  3 ++
->  fs/btrfs/dev-replace.c |  7 +++
->  fs/btrfs/disk-io.c     |  7 +++
->  fs/btrfs/super.c       | 12 ++---
->  fs/btrfs/volumes.c     | 99 ++++++++++++++++++++++++++++++++++++++++++
->  fs/btrfs/volumes.h     |  1 +
->  6 files changed, 124 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index b81c331b28fa..6c00101407e4 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -806,6 +806,9 @@ struct btrfs_fs_info {
->  	struct btrfs_root *uuid_root;
->  	struct btrfs_root *free_space_root;
->  
-> +	/* Zone size when in HMZONED mode */
-> +	u64 zone_size;
-> +
->  	/* the log root tree is a directory of all the other log roots */
->  	struct btrfs_root *log_root_tree;
->  
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index ee0989c7e3a9..fbe5ea2a04ed 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -201,6 +201,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
->  		return PTR_ERR(bdev);
->  	}
->  
-> +	if ((bdev_zoned_model(bdev) == BLK_ZONED_HM &&
-> +	     !btrfs_fs_incompat(fs_info, HMZONED)) ||
-> +	    (!bdev_is_zoned(bdev) && btrfs_fs_incompat(fs_info, HMZONED))) {
+On Tue, Jun 4, 2019 at 4:22 PM Yrjan Skrimstad <yrjan@skrimstad.net> wrote:
+>
+> On Thu, May 30, 2019 at 02:08:21AM +0200, Yrjan Skrimstad wrote:
+> > This driver currently contains a repeated 500ms blocking delay call
+> > which causes frequent major buffer underruns in PulseAudio. This patch
+> > fixes this issue by replacing the blocking delay with a non-blocking
+> > sleep call.
+>
+> I see that I have not explained this bug well enough, and I hope that is
+> the reason for the lack of replies on this patch. I will here attempt to
+> explain the situation better.
+>
+> To start with some hardware description I am here using an AMD R9 380
+> GPU, an AMD Ryzen 7 1700 Eight-Core Processor and an AMD X370 chipset.
+> If any more hardware or software specifications are necessary, please
+> ask.
+>
+> The bug is as follows: When playing audio I will regularly have major
+> audio issues, similar to that of a skipping CD. This is reported by
+> PulseAudio as scheduling delays and buffer underruns when running
+> PulseAudio verbosely and these scheduling delays are always just under
+> 500ms, typically around 490ms. This makes listening to any music quite
+> the horrible experience as PulseAudio constantly will attempt to rewind
+> and catch up. It is not a great situation, and seems to me to quite
+> clearly be a case where regular user space behaviour has been broken.
+>
+> I want to note that this audio problem was not something I experienced
+> until recently, it is therefore a new bug.
+>
+> I have bisected the kernel to find out where the problem originated and
+> found the following commit:
+>
+> # first bad commit: [f5742ec36422a39b57f0256e4847f61b3c432f8c] drm/amd/powerplay: correct power reading on fiji
+>
+> This commit introduces a blocking delay (mdelay) of 500ms, whereas the
+> old behaviour was a smaller blocking delay of only 1ms. This seems to me
+> to be very curious as the scheduling delays of PulseAudio are always
+> almost 500ms. I have therefore with the previous patch replaced the
+> scheduling delay with a non-blocking sleep (msleep).
+>
+> The results of the patch seems promising as I have yet to encounter any
+> of the old <500ms scheduling delays when using it and I have also not
+> encountered any kernel log messages regarding sleeping in an atomic
+> context.
 
-You do this in a few places, turn this into a helper please.
+The patch is fine and I can apply it (I don't think there are any
+restrictions on sleeping in sysfs), but this code only gets executed
+when you actually read the power status from the card (e.g., via sysfs
+or debugfs).  Presumably you have something in userspace polling one
+of those files on a regular basis?
 
-> +		ret = -EINVAL;
-> +		goto error;
-> +	}
-> +
->  	filemap_write_and_wait(bdev->bd_inode->i_mapping);
->  
->  	devices = &fs_info->fs_devices->devices;
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 663efce22d98..7c1404c76768 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3086,6 +3086,13 @@ int open_ctree(struct super_block *sb,
->  
->  	btrfs_free_extra_devids(fs_devices, 1);
->  
-> +	ret = btrfs_check_hmzoned_mode(fs_info);
-> +	if (ret) {
-> +		btrfs_err(fs_info, "failed to init hmzoned mode: %d",
-> +				ret);
-> +		goto fail_block_groups;
-> +	}
-> +
->  	ret = btrfs_sysfs_add_fsid(fs_devices, NULL);
->  	if (ret) {
->  		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index 2c66d9ea6a3b..740a701f16c5 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -435,11 +435,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
->  	bool saved_compress_force;
->  	int no_compress = 0;
->  
-> -	cache_gen = btrfs_super_cache_generation(info->super_copy);
-> -	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
-> -		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
-> -	else if (cache_gen)
-> -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
-> +	if (!btrfs_fs_incompat(info, HMZONED)) {
-> +		cache_gen = btrfs_super_cache_generation(info->super_copy);
-> +		if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
-> +			btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
-> +		else if (cache_gen)
-> +			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
-> +	}
->  
-
-This disables the free space tree as well as the cache, sounds like you only
-need to disable the free space cache?  Thanks,
-
-Josef
+Alex
