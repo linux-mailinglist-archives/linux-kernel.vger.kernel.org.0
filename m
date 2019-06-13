@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27A744105
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB7443F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391543AbfFMQLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:11:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60720 "EHLO mail.kernel.org"
+        id S2390496AbfFMP5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:57:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731242AbfFMInd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:43:33 -0400
+        id S1731509AbfFMIur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:50:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9AF2147A;
-        Thu, 13 Jun 2019 08:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF009206BA;
+        Thu, 13 Jun 2019 08:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415413;
-        bh=PH6dG94hNLWF7W1sTLFFWbqMCAI3bu5OdGA+wHUVEiA=;
+        s=default; t=1560415846;
+        bh=vHSQZIwXtZosShzoxpKcKbWrLhesbOIeQYP0cPMcoSw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tDAX8zpQNngusszD0XcthOBBZ28+2UfSSU/YjkFws+72+EucQrLbHjLFU39AA0j1j
-         Q6nry/WXOT5F/w4ejCc1gJOUGLP5v/J70Gp4QCfiEnk++hyOsanVrnd4Som62t5bTu
-         eBdVvJZvhYHFd6y2IPzeZvRyJheetsuh/UMsPE7I=
+        b=cBe8Nu7z7xW/it7W2+WPNvkGtHctw7XvY48OTFdDG1QiUUqoGRij7bteD9sFmmQiU
+         utrXwSMHU1mKz7Z0JP34spQoUqHs9R6pQ+BO6lKcDxFBtsKhbwLh4zZvp7ikrff6o6
+         4rsES6HmK3RB48fzxAmIP1nyAeqcEdBe8F7uoW60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH 4.19 116/118] ovl: check the capability before cred overridden
-Date:   Thu, 13 Jun 2019 10:34:14 +0200
-Message-Id: <20190613075651.066987620@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 143/155] media: v4l2-fwnode: Defaults may not override endpoint configuration in firmware
+Date:   Thu, 13 Jun 2019 10:34:15 +0200
+Message-Id: <20190613075701.021874674@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,141 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+[ Upstream commit 9d3863736a267068a0ae67c6695af8770ef330b7 ]
 
-commit 98487de318a6f33312471ae1e2afa16fbf8361fe upstream.
+The lack of defaults provided by the caller to
+v4l2_fwnode_endpoint_parse() signals the use of the default lane mapping.
+The default lane mapping must not be used however if the firmmare contains
+the lane mapping. Disable the default lane mapping in that case, and
+improve the debug messages telling of the use of the defaults.
 
-We found that it return success when we set IMMUTABLE_FL flag to a file in
-docker even though the docker didn't have the capability
-CAP_LINUX_IMMUTABLE.
+This was missed previously since the default mapping will only unsed in
+this case if the bus type is set, and no driver did both while still
+needing the lane mapping configuration.
 
-The commit d1d04ef8572b ("ovl: stack file ops") and dab5ca8fd9dd ("ovl: add
-lsattr/chattr support") implemented chattr operations on a regular overlay
-file. ovl_real_ioctl() overridden the current process's subjective
-credentials with ofs->creator_cred which have the capability
-CAP_LINUX_IMMUTABLE so that it will return success in
-vfs_ioctl()->cap_capable().
+Fixes: b4357d21d674 ("media: v4l: fwnode: Support default CSI-2 lane mapping for drivers")
 
-Fix this by checking the capability before cred overridden. And here we
-only care about APPEND_FL and IMMUTABLE_FL, so get these information from
-inode.
-
-[SzM: move check and call to underlying fs inside inode locked region to
-prevent two such calls from racing with each other]
-
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/overlayfs/file.c |   79 ++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 61 insertions(+), 18 deletions(-)
+ drivers/media/v4l2-core/v4l2-fwnode.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -11,6 +11,7 @@
- #include <linux/mount.h>
- #include <linux/xattr.h>
- #include <linux/uio.h>
-+#include <linux/uaccess.h>
- #include "overlayfs.h"
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 7495f8323147..ccefa55813ad 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -163,7 +163,7 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
+ 		}
  
- static char ovl_whatisit(struct inode *inode, struct inode *realinode)
-@@ -372,10 +373,68 @@ static long ovl_real_ioctl(struct file *
- 	return ret;
- }
+ 		if (use_default_lane_mapping)
+-			pr_debug("using default lane mapping\n");
++			pr_debug("no lane mapping given, using defaults\n");
+ 	}
  
--static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+static unsigned int ovl_get_inode_flags(struct inode *inode)
-+{
-+	unsigned int flags = READ_ONCE(inode->i_flags);
-+	unsigned int ovl_iflags = 0;
-+
-+	if (flags & S_SYNC)
-+		ovl_iflags |= FS_SYNC_FL;
-+	if (flags & S_APPEND)
-+		ovl_iflags |= FS_APPEND_FL;
-+	if (flags & S_IMMUTABLE)
-+		ovl_iflags |= FS_IMMUTABLE_FL;
-+	if (flags & S_NOATIME)
-+		ovl_iflags |= FS_NOATIME_FL;
-+
-+	return ovl_iflags;
-+}
-+
-+static long ovl_ioctl_set_flags(struct file *file, unsigned long arg)
- {
- 	long ret;
- 	struct inode *inode = file_inode(file);
-+	unsigned int flags;
-+	unsigned int old_flags;
-+
-+	if (!inode_owner_or_capable(inode))
-+		return -EACCES;
-+
-+	if (get_user(flags, (int __user *) arg))
-+		return -EFAULT;
-+
-+	ret = mnt_want_write_file(file);
-+	if (ret)
-+		return ret;
-+
-+	inode_lock(inode);
-+
-+	/* Check the capability before cred override */
-+	ret = -EPERM;
-+	old_flags = ovl_get_inode_flags(inode);
-+	if (((flags ^ old_flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL)) &&
-+	    !capable(CAP_LINUX_IMMUTABLE))
-+		goto unlock;
-+
-+	ret = ovl_maybe_copy_up(file_dentry(file), O_WRONLY);
-+	if (ret)
-+		goto unlock;
-+
-+	ret = ovl_real_ioctl(file, FS_IOC_SETFLAGS, arg);
-+
-+	ovl_copyflags(ovl_inode_real(inode), inode);
-+unlock:
-+	inode_unlock(inode);
-+
-+	mnt_drop_write_file(file);
-+
-+	return ret;
-+
-+}
-+
-+static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	long ret;
+ 	rval = fwnode_property_read_u32_array(fwnode, "data-lanes", NULL, 0);
+@@ -175,6 +175,10 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
+ 					       num_data_lanes);
  
- 	switch (cmd) {
- 	case FS_IOC_GETFLAGS:
-@@ -383,23 +442,7 @@ static long ovl_ioctl(struct file *file,
- 		break;
+ 		have_data_lanes = true;
++		if (use_default_lane_mapping) {
++			pr_debug("data-lanes property exists; disabling default mapping\n");
++			use_default_lane_mapping = false;
++		}
+ 	}
  
- 	case FS_IOC_SETFLAGS:
--		if (!inode_owner_or_capable(inode))
--			return -EACCES;
--
--		ret = mnt_want_write_file(file);
--		if (ret)
--			return ret;
--
--		ret = ovl_maybe_copy_up(file_dentry(file), O_WRONLY);
--		if (!ret) {
--			ret = ovl_real_ioctl(file, cmd, arg);
--
--			inode_lock(inode);
--			ovl_copyflags(ovl_inode_real(inode), inode);
--			inode_unlock(inode);
--		}
--
--		mnt_drop_write_file(file);
-+		ret = ovl_ioctl_set_flags(file, arg);
- 		break;
- 
- 	default:
+ 	for (i = 0; i < num_data_lanes; i++) {
+-- 
+2.20.1
+
 
 
