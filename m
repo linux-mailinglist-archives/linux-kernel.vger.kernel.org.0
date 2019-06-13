@@ -2,71 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DEB043B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 510C243B5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbfFMP2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:28:31 -0400
-Received: from sonic302-2.consmr.mail.bf2.yahoo.com ([74.6.135.41]:45825 "EHLO
-        sonic302-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728935AbfFMLa0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:30:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560425425; bh=M+2BQM2x3GSy/dmtDG0o07y3ZYWK28QOQCLRz1DcS2Q=; h=Date:From:Reply-To:Subject:References:From:Subject; b=mUZQO9wBzaPRbIIhxUQRmh6eLT2VU+vOg22XjArIwTuJ07AFc3gMpyNJenNQN00zW+ltZLfSSR8NAbX6wxfGA74LVzLROmS1EnWmzZ3OZnFzMC54Ug7Cj2V1uRCCCE808zMsRFXP6frHrpgWpKaMMJF6St2kGvrwsxfX5mzpIFRsqMXs8EUcRyXAApJWTgGe0KElljleE3r32oMbC13qg/avJLOAeDQIf/hqQHq2TpsoUkE4hPoL7An8A/v8wepyeAQwXyXDWmguBtNTJ+k6iCDAl8It9KkUCc/zPL987evHkHVCnNhB9/5AMScqNpdloUBHuMYqKfLMmGlieRVEVQ==
-X-YMail-OSG: kCAF9iUVM1nhH_QHfv7Y_AvOrcVUkr0ClfwcllKn9L0sxfGhq5qB3PKAxO82Jnj
- Er43QqmyRBvzqbdHLxX4vAz8ijtDSFUg1pcBG18jbn44VwmWY9BeveqfPmUl6bcFWG2nAo.Z.vUy
- 4twcZv0wPjAO6LlmDClzG2NMjTh6suaiw.CjBmL9FbDUhpat_uHwxq.uIOC7PqcjfOHjemm5zquE
- SbysU4P5hsDzkwlx_ayHpJ6lAY6z75nFUolJ3ZUZttz.yVl.6JOjbUqiqUBUHu2UIqRD6mXOPtK1
- lknUz6iWfJkTFZI9IcPYFzEr_m6VI_NaHBNE6UFq0e9oiKSnw1794gHSpE7bKZ3T.Q4zUCJpZIF.
- xWk_j0wdKZUsooAdk68G74V59vVOoZNFeyy9o6W.gzeVY.l8FCUX_iLwspZwVRPPtq.919WorHUu
- NCPDgPA2_zNaMB5P4cNuEmynRfNSJWIMdmhD5UiJXGS77HOVs7H1QccIpJb0dHrah1nO3w8Fh_LH
- 0TZTasI3h9X95y_9Rf2bdI.Z.ixY2bWaNyNaJIwmCWtSx.RSZxZflBoOU4XaJmH9eQFtjHHzFq1e
- LpLK5ExsEeZaaCjbbK_zL4AHSDYsrF1eViWsee2moeBjEKAQjiwRzjAcokx3zyOHx2.iNepgp3uu
- KQHelgrcDUQX7kdf1n2KAAI7_T0uVju41cVo_vT_k4BDCzQ4fC.o4_NKu3K7BHW6hBOdpdjheRWk
- Zzm_bjEb4MKkTSB2xXJ2SKRISxAwBLy6qZHTk2W0vv2nvoyzANPTCYv4r.pQr1Dl5sQgzhNa_0MU
- Opek4zkyynPt.xwOuhFG0Rao.UB_bSjYurZM_U5PRdhRTPw8aLOYp8HqmwYPjGH4xnk0fZh9JY6X
- vdFTMB57Kk3JCPGX2tRJAkfmwimrHXEm.UEFiA3_nPDeTLzIGN2y0VS0PWOdZ3ZP10QR7TvrfVwL
- 83vTnP2qrqE_gk2vTbEF5fQpBuAAHScjKllCZXCVH5eCWS.AA0rBnA9y9iEaxgmQuxynWC0oZe7g
- AoeQLesb2XKVRvXg01RxwHUpZP7QFIhN8wVGebjOZBtrv.7dD2UjsMyNSgl7IFONaaQWcSGDpiiC
- JypkTy_vu_5YVnEOvqqXZ2oy_78Jg557kyMAkSPIabWVEQgizCKUtZDxSKiybEmGKDmQf0XEiUDM
- lO4yRkfHMfJP3ScD_bEXtyzaoCxoeWZS0Jr1_MU3Z8z611C105QA-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Thu, 13 Jun 2019 11:30:25 +0000
-Date:   Thu, 13 Jun 2019 11:30:21 +0000 (UTC)
-From:   Aisha Gaddafi <aishag637@gmail.com>
-Reply-To: Aisha Gaddafi <gaisha983@gmail.com>
-Message-ID: <507712907.595920.1560425421058@mail.yahoo.com>
-Subject: Hello My Beloved One, i need your assistance
+        id S1727831AbfFMP2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:28:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728956AbfFMLbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:31:50 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FC31208CA;
+        Thu, 13 Jun 2019 11:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560425509;
+        bh=z3Dn3El1yjq4ZvN1Ri3867ZpWWj2G37nsF3RYxODv08=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GFYVhGQ3k33CajiXZk+jbxVz7EZ3Rz+ks8Pa5+6chQG+Btl/GPCbJoELkp/mAXOHi
+         bTV8mobxXxFEM5yKFgRgfVZ9W05srC52Od/N7jzgg5NhmGqAZptmHahcxgCRTAMQyo
+         0hF15okOvub9atx5RxaZDDDIDD8T8E426aBTEVWg=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-mtd@lists.infradead.org
+Cc:     dinguyen@kernel.org, marex@denx.de, tudor.ambarus@microchip.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        bbrezillon@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv6 1/2] dt-bindings: cadence-quadspi: add options reset property
+Date:   Thu, 13 Jun 2019 06:31:37 -0500
+Message-Id: <20190613113138.8280-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <507712907.595920.1560425421058.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13837 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; rv:67.0) Gecko/20100101 Firefox/67.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+The QSPI module can have an optional reset signals that will hold the
+module in a reset state.
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v6: no change
+v5: document reset-names
+v4: no change
+v3: created base on review comments
+v2: did not exist
+v1: did not exist
+---
+ Documentation/devicetree/bindings/mtd/cadence-quadspi.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+diff --git a/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt b/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+index 4345c3a6f530..945be7d5b236 100644
+--- a/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
++++ b/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+@@ -35,6 +35,9 @@ custom properties:
+ 		  (qspi_n_ss_out).
+ - cdns,tslch-ns : Delay in nanoseconds between setting qspi_n_ss_out low
+                   and first bit transfer.
++- resets	: Must contain an entry for each entry in reset-names.
++		  See ../reset/reset.txt for details.
++- reset-names	: Must include either "qspi" and/or "qspi-ocp".
+ 
+ Example:
+ 
+@@ -50,6 +53,8 @@ Example:
+ 		cdns,fifo-depth = <128>;
+ 		cdns,fifo-width = <4>;
+ 		cdns,trigger-address = <0x00000000>;
++		resets = <&rst QSPI_RESET>, <&rst QSPI_OCP_RESET>;
++		reset-names = "qspi", "qspi-ocp";
+ 
+ 		flash0: n25q00@0 {
+ 			...
+-- 
+2.20.0
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated.
-
-Best Regards
-Mrs Aisha Gaddafi
