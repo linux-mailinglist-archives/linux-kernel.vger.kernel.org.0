@@ -2,68 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55AF144D1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AADBC44D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:13:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbfFMUMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:12:32 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59552 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727083AbfFMUMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:12:32 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hbW5G-00040b-8N; Thu, 13 Jun 2019 14:12:31 -0600
-To:     Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, nouveau@lists.freedesktop.org
-References: <20190613094326.24093-1-hch@lst.de>
- <20190613094326.24093-9-hch@lst.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d9e24f8e-986d-e7b8-cf1d-9344ba51719e@deltatee.com>
-Date:   Thu, 13 Jun 2019 14:12:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729681AbfFMUNY convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Jun 2019 16:13:24 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33966 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727682AbfFMUNY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 16:13:24 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y198so105517lfa.1;
+        Thu, 13 Jun 2019 13:13:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WyzKJThMrvfYdU5AiRz/a/lZbGM/BDuNcJRJenL7TFM=;
+        b=CKZJaXBb1KtJlFabyzzovT8D71vouF72S1FIqgt6UNEyaC4SE0HJYgbJ14gkYjE9Ga
+         pB7O7uayoJuZlElJq021JyPoydU3wc2A8oahm57E+6iJ/lQ2fYignJzpxCuvlmJHD2+n
+         9rsFppOnIWXEPvk234MeAALq1vHB1fa6tvfnTiU8D1FAM6KMri2B9u8SR9yGtBWjr1Sx
+         0X6x9CU+drxkBJ57Gm/Rr7gAbqrgNxrM3EdYDJlBBIMIn+34L8LLAka8xDxZ4vxAP0JC
+         k9JiN1zfqUCKC6nCJIjavBGmoGJ48Vf+gSuOJGeS1WBq2vjOAhiqfQiZDoWKOLYbacyP
+         zAcw==
+X-Gm-Message-State: APjAAAXV5D8BmPA2MWFSlYmca1hIgmytiF9DVu3vrGvBUYVEpYWMGW7y
+        kiWHU49Ux6zQ73fh6GijWemYDVfa6nhqkJtw+60=
+X-Google-Smtp-Source: APXvYqz0FHOGO7r59qR/V6uklYqF+Nt5DNTmVC4uhdi5vTG1EcR+FFpaX0vy5eaklu3BGnvQOrUHFKsK9/Q0h7NpaHY=
+X-Received: by 2002:ac2:597c:: with SMTP id h28mr7020435lfp.90.1560456801790;
+ Thu, 13 Jun 2019 13:13:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190613094326.24093-9-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: nouveau@lists.freedesktop.org, linux-mm@kvack.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvdimm@lists.01.org, bskeggs@redhat.com, jgg@mellanox.com, jglisse@redhat.com, dan.j.williams@intel.com, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 08/22] memremap: pass a struct dev_pagemap to ->kill
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190613180824.6ajwjelzr5fmjnie@debie>
+In-Reply-To: <20190613180824.6ajwjelzr5fmjnie@debie>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 13 Jun 2019 22:13:07 +0200
+Message-ID: <CAMuHMdWVbPVRp3tFMVA6HLLESMBp3qdEFUftPGK=Sd8pF_GorA@mail.gmail.com>
+Subject: Re: [PATCH] serial: sh-sci: fix uninitialized variable warning
+To:     Charles <18oliveira.charles@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rodrigosiqueiramelo@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Charles,
 
+On Thu, Jun 13, 2019 at 8:09 PM Charles <18oliveira.charles@gmail.com> wrote:
+> Avoid following compiler warning on uninitialized variable
+>
+> In file included from ./include/linux/rwsem.h:16:0,
+>                  from ./include/linux/notifier.h:15,
+>                  from ./include/linux/clk.h:17,
+>                  from drivers/tty/serial/sh-sci.c:24:
+> drivers/tty/serial/sh-sci.c: In function ‘sci_dma_rx_submit’:
+> ./include/linux/spinlock.h:288:3: warning: ‘flags’ may be used
+> uninitialized in this function [-Wmaybe-uninitialized]
+>    _raw_spin_unlock_irqrestore(lock, flags); \
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/tty/serial/sh-sci.c:1353:16: note: ‘flags’ was declared here
+>   unsigned long flags;
+>                 ^~~~~
+>
+> Signed-off-by: Charles Oliveira <18oliveira.charles@gmail.com>
 
-On 2019-06-13 3:43 a.m., Christoph Hellwig wrote:
-> Passing the actual typed structure leads to more understandable code
-> vs the actual references.
+Thanks for your patch, but this is a false positive: the compiler is not
+smart enough to realize that both initialization and use depend on
+the same condition.
 
-Ha, ok, I originally suggested this to Dan when he introduced the
-callback[1].
+Gr{oetje,eeting}s,
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+                        Geert
 
-Logan
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-[1]
-https://lore.kernel.org/lkml/8f0cae82-130f-8a64-cfbd-fda5fd76bb79@deltatee.com/T/#u
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
