@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF5344739
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC3D4472E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:57:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbfFMQ6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:58:00 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41898 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729917AbfFMA40 (ORCPT
+        id S2393238AbfFMQ5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:57:47 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50295 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729920AbfFMA4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:56:26 -0400
-Received: by mail-io1-f67.google.com with SMTP id w25so14564514ioc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 17:56:25 -0700 (PDT)
+        Wed, 12 Jun 2019 20:56:55 -0400
+Received: by mail-it1-f193.google.com with SMTP id j194so14052275ite.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 17:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jkcj3BQbpEkEnqOK+uHZ7nr7fw6gEDD/oUsx/9wwTd4=;
-        b=LqRWBI0hJrcjJzYAivHAYqULbk0CIycXU6i0jDc7csOonzYn6F/eeIy4evS/8Rw+EA
-         sOzowtAp8cRe2oAXrmK2oANmfRCc1RlcIo4SgG47KhoiW2isPpYm/15picKHGP1JLbbD
-         KvSfq6QRyOmULADX6DtLp/hFsQeg/7lf+TwiQ=
+        bh=vDoai9FCo61ADmdBZ301WDQL6Wz5//hlF5tMXgOfZE0=;
+        b=X/LiudSWZp9Iz25IabKtdWZDyYAscHnEUIFCfxzHs9cUGv1j9qo6qqxWbJfs/+G08i
+         Sq7r3p3PIqX0Y2Eos/c9kZaZYXo1fBG+uQw9FUSZVtdAt6vpKKOs1yXFsbp/Kcap4dg7
+         eAI0nH2TLtBVVYwfhxxYXwWVepai9QC2cqdBw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jkcj3BQbpEkEnqOK+uHZ7nr7fw6gEDD/oUsx/9wwTd4=;
-        b=X+xSCO/tZYKOXN9a8zCe9HJwQWty9nVC8fDzvbYdBC4JYAi0oEjCjtYE6o69uvIjxC
-         MBVihZzZqp+RMaMC9MwTfIRPTk8ks3dczEokrLU+bEui6oGPR/v5gEXh5pPdJiwCRD5n
-         n/LZMSMpC5FJYPD3OrXL/NEmGGkIvpUdJqGEgsJ1SzqWhPhVd8FWFcWGfZwDoMMY8TAU
-         gANOIH/5BDkDFsEp71zTyb0nZJH2jOu5JZYQgWUvZ/wt4jP8zC8GU3K3V3G1fyv6z+5J
-         3Bi7+IDyj5t+Urtdqq8bOTuwrZFGUqHeVIRZVjL8kwocULJcIx+uoAxn3rKMCkgCvlOe
-         NiaA==
-X-Gm-Message-State: APjAAAVew/uswqBNqA/oJUvmdhMTYQGyDb2YLIUyku2SI5OpiJCs7G6V
-        HLrjZyH+fMWXfMU4hpBVZOWwNQ==
-X-Google-Smtp-Source: APXvYqxvC3zECoViy2agAnshwbumcqgc2CkHnX9zeTiVO5ngljLDWmHjYttKZ6NbHlppewno3l4rFA==
-X-Received: by 2002:a5d:9047:: with SMTP id v7mr34272949ioq.18.1560387385204;
-        Wed, 12 Jun 2019 17:56:25 -0700 (PDT)
+        bh=vDoai9FCo61ADmdBZ301WDQL6Wz5//hlF5tMXgOfZE0=;
+        b=MthKC0kJ/kCfnitESOWi1XeQuHSms3bLOH2bPO6jcqHdhzDN9i8q3W09Iogi4ktP5X
+         iOuHAvJjCeW3cgGGb72QscthzvEgpYJID4RV3xXtlTHMub4Asun73vzqtEMxRAnPXDMw
+         U/h2PsCgOd9cmdXygbBULjQDI4LawknZyOO/zbcGssq7ewzEZ1nbDr1D52y3weTtab1W
+         q5cY9YbaluQr2bwJGFxQn6rKyYfffX4KwLBo/26W6La2tJFZ7HENLIprRtNEEP91tExo
+         OzlRxLggC6sqeQhYdrU1yCySjQv4HkLchODrGmlSw2ZtsqZH21wmB26YUwybCnK3Ky1D
+         ySZQ==
+X-Gm-Message-State: APjAAAVE/B0+P+9O4BmaI/+hHKVmBG6MM+54d0c9L8TJmZ+376Hy6M6y
+        SR8AyMyzBBj2j8UIO+rsE/x7Fuz8zs8=
+X-Google-Smtp-Source: APXvYqxWUG4rZuOF4BB6tuA67BAXPogoGWe0YzMR4tUPqlrcc1Ht7bmCaKoHBSC2CaY/YVkfC9LRFw==
+X-Received: by 2002:a24:4084:: with SMTP id n126mr1693248ita.16.1560387414768;
+        Wed, 12 Jun 2019 17:56:54 -0700 (PDT)
 Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id f71sm723185itc.5.2019.06.12.17.56.23
+        by smtp.gmail.com with ESMTPSA id c2sm551310iok.53.2019.06.12.17.56.54
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 17:56:24 -0700 (PDT)
+        Wed, 12 Jun 2019 17:56:54 -0700 (PDT)
 From:   Shuah Khan <skhan@linuxfoundation.org>
 To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl
 Cc:     Shuah Khan <skhan@linuxfoundation.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: media.h: Fix shifting signed 32-bit value by 31 bits problem
-Date:   Wed, 12 Jun 2019 18:56:20 -0600
-Message-Id: <20190613005620.7362-1-skhan@linuxfoundation.org>
+Subject: [PATCH] media: videodev2.h: Fix shifting signed 32-bit value by 31 bits problem
+Date:   Wed, 12 Jun 2019 18:56:52 -0600
+Message-Id: <20190613005652.7423-1-skhan@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -57,9 +57,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix MEDIA_ENT_ID_FLAG_NEXT to use "U" cast to avoid shifting signed
-32-bit value by 31 bits problem. This isn't a problem for kernel builds
-with gcc.
+Fix v4l2_fourcc define to use "U" cast to avoid shifting signed 32-bit
+value by 31 bits problem. This isn't a problem for kernel builds with
+gcc.
 
 This could be problem since this header is part of public API which
 could be included for builds using compilers that don't handle this
@@ -67,22 +67,22 @@ condition safely resulting in undefined behavior.
 
 Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 ---
- include/uapi/linux/media.h | 2 +-
+ include/uapi/linux/videodev2.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index 9aedb187bc48..383ac7b7d8f0 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -146,7 +146,7 @@ struct media_device_info {
- #define MEDIA_ENT_FL_CONNECTOR			(1 << 1)
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 1050a75fb7ef..9d9705ceda76 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -80,7 +80,7 @@
+ /*  Four-character-code (FOURCC) */
+ #define v4l2_fourcc(a, b, c, d)\
+ 	((__u32)(a) | ((__u32)(b) << 8) | ((__u32)(c) << 16) | ((__u32)(d) << 24))
+-#define v4l2_fourcc_be(a, b, c, d)	(v4l2_fourcc(a, b, c, d) | (1 << 31))
++#define v4l2_fourcc_be(a, b, c, d)	(v4l2_fourcc(a, b, c, d) | (1U << 31))
  
- /* OR with the entity id value to find the next entity */
--#define MEDIA_ENT_ID_FLAG_NEXT			(1 << 31)
-+#define MEDIA_ENT_ID_FLAG_NEXT			(1U << 31)
- 
- struct media_entity_desc {
- 	__u32 id;
+ /*
+  *	E N U M S
 -- 
 2.17.1
 
