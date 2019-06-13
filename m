@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC2FD44114
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B8943F77
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391571AbfFMQL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:11:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
+        id S2390076AbfFMP52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:57:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731234AbfFMInb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:43:31 -0400
+        id S1731507AbfFMIun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:50:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7222821479;
-        Thu, 13 Jun 2019 08:43:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B54F620851;
+        Thu, 13 Jun 2019 08:50:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415410;
-        bh=A5Xx2Aqh1hWg4dfyiMJoC0wgEqYFNJwUMovmGBOQ3ok=;
+        s=default; t=1560415843;
+        bh=HbA5eCN6xurGIQ6BGkFFfMgHr7GRTlSAQnHbchCGmoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G8Wh0avhjzYaBwiRc27MgGeJuAQwB/VZh2Eu2Y5wQqKTqwAZKc4phYcSRjEfGu/Gm
-         g7RJt3HVDk6tLP8osLwg6BnU7u4k28+B8MGi5RF/MRm7ndDGVMiExW8feQAxfZFxR2
-         MzBYHOlaBLyaxkInSyuqHr4ZFRWQlpLI98zVpkqA=
+        b=cCGZ2vPbRH9HwfS7IYH49f07rNYN+mK9rXsM1kranHgaGwYxcGnawiPjy/2iT2yaT
+         /MTI7OG/3bxK5biuXMEcU5+Lb6GISQGI26vMXjcOHRxsSv4yee1ebVgEAHYpxu8qkl
+         mcQozC20dumXHIkcgTt5s/IlG6/OWXlBnx7KN/bk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Joachim <svenjoac@gmx.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
-        Thomas Backlund <tmb@mageia.org>
-Subject: [PATCH 4.19 115/118] Revert "drm/nouveau: add kconfig option to turn off nouveau legacy contexts. (v3)"
-Date:   Thu, 13 Jun 2019 10:34:13 +0200
-Message-Id: <20190613075651.001437991@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christoph=20Vogtl=C3=A4nder?= 
+        <c.vogtlaender@sigma-surface-science.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 142/155] pwm: tiehrpwm: Update shadow register for disabling PWMs
+Date:   Thu, 13 Jun 2019 10:34:14 +0200
+Message-Id: <20190613075700.967702423@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ Upstream commit b00ef53053191d3025c15e8041699f8c9d132daf ]
 
-This reverts commit 610382337557bd2057d9b47f996af0b6ff827a2b which is
-commit b30a43ac7132cdda833ac4b13dd1ebd35ace14b7 upstream.
+It must be made sure that immediate mode is not already set, when
+modifying shadow register value in ehrpwm_pwm_disable(). Otherwise
+modifications to the action-qualifier continuous S/W force
+register(AQSFRC) will be done in the active register.
+This may happen when both channels are being disabled. In this case,
+only the first channel state will be recorded as disabled in the shadow
+register. Later, when enabling the first channel again, the second
+channel would be enabled as well. Setting RLDCSF to zero, first, ensures
+that the shadow register is updated as desired.
 
-Sven reports:
-	Commit 1e07d63749 ("drm/nouveau: add kconfig option to turn off nouveau
-	legacy contexts. (v3)") has caused a build failure for me when I
-	actually tried that option (CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT=n):
-
-	,----
-	| Kernel: arch/x86/boot/bzImage is ready  (#1)
-	|   Building modules, stage 2.
-	|   MODPOST 290 modules
-	| ERROR: "drm_legacy_mmap" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-	| scripts/Makefile.modpost:91: recipe for target '__modpost' failed
-	`----
-
-	Upstream does not have that problem, as commit bed2dd8421 ("drm/ttm:
-	Quick-test mmap offset in ttm_bo_mmap()") has removed the use of
-	drm_legacy_mmap from nouveau_ttm.c.  Unfortunately that commit does not
-	apply in 5.1.9.
-
-The ensuing discussion proposed a number of one-off patches, but no
-solid agreement was made, so just revert the commit for now to get
-people's systems building again.
-
-Reported-by: Sven Joachim <svenjoac@gmx.de>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Thomas Backlund <tmb@mageia.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 38dabd91ff0b ("pwm: tiehrpwm: Fix disabling of output of PWMs")
+Signed-off-by: Christoph Vogtländer <c.vogtlaender@sigma-surface-science.com>
+[vigneshr@ti.com: Improve commit message]
+Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/Kconfig       |   13 +------------
- drivers/gpu/drm/nouveau/nouveau_drm.c |    7 ++-----
- 2 files changed, 3 insertions(+), 17 deletions(-)
+ drivers/pwm/pwm-tiehrpwm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/Kconfig
-+++ b/drivers/gpu/drm/nouveau/Kconfig
-@@ -16,20 +16,9 @@ config DRM_NOUVEAU
- 	select INPUT if ACPI && X86
- 	select THERMAL if ACPI && X86
- 	select ACPI_VIDEO if ACPI && X86
--	help
--	  Choose this option for open-source NVIDIA support.
--
--config NOUVEAU_LEGACY_CTX_SUPPORT
--	bool "Nouveau legacy context support"
--	depends on DRM_NOUVEAU
- 	select DRM_VM
--	default y
- 	help
--	  There was a version of the nouveau DDX that relied on legacy
--	  ctx ioctls not erroring out. But that was back in time a long
--	  ways, so offer a way to disable it now. For uapi compat with
--	  old nouveau ddx this should be on by default, but modern distros
--	  should consider turning it off.
-+	  Choose this option for open-source NVIDIA support.
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index f7b8a86fa5c5..ad4a40c0f27c 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -382,6 +382,8 @@ static void ehrpwm_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	}
  
- config NOUVEAU_PLATFORM_DRIVER
- 	bool "Nouveau (NVIDIA) SoC GPUs"
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1015,11 +1015,8 @@ nouveau_driver_fops = {
- static struct drm_driver
- driver_stub = {
- 	.driver_features =
--		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER
--#if defined(CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT)
--		| DRIVER_KMS_LEGACY_CONTEXT
--#endif
--		,
-+		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER |
-+		DRIVER_KMS_LEGACY_CONTEXT,
- 
- 	.load = nouveau_drm_load,
- 	.unload = nouveau_drm_unload,
+ 	/* Update shadow register first before modifying active register */
++	ehrpwm_modify(pc->mmio_base, AQSFRC, AQSFRC_RLDCSF_MASK,
++		      AQSFRC_RLDCSF_ZRO);
+ 	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
+ 	/*
+ 	 * Changes to immediate action on Action Qualifier. This puts
+-- 
+2.20.1
+
 
 
