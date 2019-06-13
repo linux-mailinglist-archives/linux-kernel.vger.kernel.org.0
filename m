@@ -2,88 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D32343B3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F5E243B39
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbfFMP1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:27:20 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35143 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729050AbfFMLjr (ORCPT
+        id S1728105AbfFMP1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:27:10 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:35076 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729075AbfFMLld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:39:47 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p26so26709139edr.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 04:39:45 -0700 (PDT)
+        Thu, 13 Jun 2019 07:41:33 -0400
+Received: by mail-ua1-f67.google.com with SMTP id r7so7188243ual.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 04:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2xaaGMG7No2zQ7VPLAPzQ32rj+gGmBMPzXcN5RQJnF8=;
-        b=w9LAj5XFY3ophQ4DwkbtNeEFNYTxLX2X5OdCVXnqnO3uj/VWYQ7iJfD888INwOAkyj
-         0BB3q5T5bJea3946DH84lSLMeNeqV0RqrMsWryk4vyz07gNhLZ+xO9Gc7Ya9acqsvQir
-         lmxxyDCm2sg4r6cj1gW51A9ku4YV1DJPROEeyiN7XoD00wvUn8tVxatQYIBRJyhGxPax
-         hBSqiTLMnE9fXLPEcQ0rgzrh19vAcRiiEGtHraSy7nma6MHE2ewccw10WPd+GrVUCwmJ
-         Rb60/5vDUddTfedPvHIZZE7qDEx2Xns7fcz97/+iv2Y+hSKU0gSZCCB9kVsDwnRlOfJ1
-         ogRA==
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H4VyKD+1E4l8WEL9xPMuwhvlmL4tX+kahUY4NzXzOPg=;
+        b=GEPuNeYcY/7A1PQYuYWpQnvhWJkLDdN+G4zM83miDSvxP35U8hvwvgmHn/DZ0jawal
+         M6EZ+qGxSyPscR3LXUy3gax36GEgVhXh5uNmFOHWDXVTzw5+JQBr7bSXc3k1BRJCp+Yj
+         eAohEXwqZSGCl+pkaevh8cWV8OnN72kHk9QghGe+Ry/zIfeFQhtgnYs9b0ZGXPfIxd1U
+         ivRWDapr3eGWpgcnnypxlaGxd0NuLbWsUg9G7NO573oSG1ILxKvuiBzs9LFESq0KXfP/
+         aja32Rib05Mnat8HtkFr23HtdsduG5Cp5HpirNXqmkLSTSD0Lpgy1ydq/hJVXkZLfLno
+         SipQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2xaaGMG7No2zQ7VPLAPzQ32rj+gGmBMPzXcN5RQJnF8=;
-        b=pII3OaJLYlChY+N13Bh4sucmPNU6op4zyIEhl3gKXQr44wWhKk0BxS6qzR3ZY2tm+J
-         5EI6LyAnBx7CKm0MwCqMDXVyfnEzCpixBJ1u+s+Z4UFyuLrgndi5Q+F7WCuxeL4VXbAF
-         VHqKBgRQInepfWKe+05RmfFA9MotX9A9YRhPtoOmS35U0oeD+PhSrCJbQpCD47YZiuWM
-         ZpspqfUH0dlh39+fK122rC0UZIPl2azJkT6pw2mqbygyACQeAfmzZHUWampGi3Mc6izv
-         3cTC+ixe7eBs+NFwKavQsc2b+W51AvlK9l/gJ8H1vdZox3eCUmAewVCovqUlzTsapSpG
-         vx1A==
-X-Gm-Message-State: APjAAAU+juSux4o+I/cpTncIc8aGqUrszVMA4NrWG6YJTk3aS0qbwsNy
-        idp/jBvvGVCQkKzkF70tbEwtRQ==
-X-Google-Smtp-Source: APXvYqy7Xsp8FQwiuXe2lfvRN1vozauF321WOLdOmtipAcKk82HAFQY/JTpoxC5Z6nYOM32/iIsHSA==
-X-Received: by 2002:a17:906:308b:: with SMTP id 11mr15873396ejv.39.1560425985036;
-        Thu, 13 Jun 2019 04:39:45 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id d12sm841728edp.16.2019.06.13.04.39.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 04:39:44 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 9479410087F; Thu, 13 Jun 2019 14:39:43 +0300 (+03)
-Date:   Thu, 13 Jun 2019 14:39:43 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
-        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
-        shakeelb@google.com, rientjes@google.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH 2/4] mm: move mem_cgroup_uncharge out of
- __page_cache_release()
-Message-ID: <20190613113943.ahmqpezemdbwgyax@box>
-References: <1560376609-113689-1-git-send-email-yang.shi@linux.alibaba.com>
- <1560376609-113689-3-git-send-email-yang.shi@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H4VyKD+1E4l8WEL9xPMuwhvlmL4tX+kahUY4NzXzOPg=;
+        b=BmNA8V4wK9co15vQlqHZcRHvtLLxQLKQuqoxwrxBj6NJ6eclJnKJr6UHeyOpXtdmXt
+         WGQ7dfCPpaDDQ1/M/k9a55VxBSIZk5KuEbTI7OaxyyTwLA+mhHAzpBC784l8EtuhDYuD
+         H12SX4WAAZ+VWnDE/NUWRwu/jLcd3JZ1YLZ4ae40e+dVc11Vt7cGQw/NYt9XAZOr/nSg
+         HkSXU42bA4M4/7s/NueWOO1vOLGfW1XlkS9RK9uPjmFJjgQMq0BqdABCfLyxVtn65GOS
+         MdBqgtNwYpQK28tm7Z9KVLpnNjaOCFcoEx9nY7/sYB0vX6mPp7D44vVmgaceqBbz55pt
+         HPcA==
+X-Gm-Message-State: APjAAAWHKlTGfGVRyZ1BxD+g7YQXjgA2IRGM1mPIfBOpAr7NgYs2h7nD
+        Zp+iLT31P+fzt+E3bJigtdr5NIvD/Ij6hjwpyOzOog==
+X-Google-Smtp-Source: APXvYqy0vis982DlAQpR8yglXZ8HB3wfAgsUSmQ72Boq9mcMDBp+XhU8TfZYqGzdegC8IM7YJTPUslblgiRFraos2vI=
+X-Received: by 2002:ab0:168a:: with SMTP id e10mr33043256uaf.87.1560426092549;
+ Thu, 13 Jun 2019 04:41:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1560376609-113689-3-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: NeoMutt/20180716
+References: <20190611125904.1013-1-cai@lca.pw> <CAK8P3a1rK79aj38H0i9vnzeycv6YZ0iUhBFz4giAFc7COTnmWQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a1rK79aj38H0i9vnzeycv6YZ0iUhBFz4giAFc7COTnmWQ@mail.gmail.com>
+From:   Bartosz Szczepanek <bsz@semihalf.com>
+Date:   Thu, 13 Jun 2019 13:41:21 +0200
+Message-ID: <CABLO=+kZnpBm8W9MmSkSf=18R5fLMFe65+_YWw1-of46B+B1dA@mail.gmail.com>
+Subject: Re: [PATCH -next] efi/tpm: fix a compilation warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Qian Cai <cai@lca.pw>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 05:56:47AM +0800, Yang Shi wrote:
-> The later patch would make THP deferred split shrinker memcg aware, but
-> it needs page->mem_cgroup information in THP destructor, which is called
-> after mem_cgroup_uncharge() now.
-> 
-> So, move mem_cgroup_uncharge() from __page_cache_release() to compound
-> page destructor, which is called by both THP and other compound pages
-> except HugeTLB.  And call it in __put_single_page() for single order
-> page.
+On Thu, Jun 13, 2019 at 10:55 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> - efi.tpm_final_log is a physical address that gets passed into
+>   memremap() to return a pointer
+> - tpm2_calc_event_log_size() takes a pointer argument and
+>   dereferences it.
 
+Where does it? It's passed with some added offset to
+__calc_tpm2_event_size, which does the remapping part. That's why
+physical address is used here.
 
-If I read the patch correctly, it will change behaviour for pages with
-NULL_COMPOUND_DTOR. Have you considered it? Are you sure it will not break
-anything?
+> My best guess is that we should pass the output of memremap()
+> here rather than the input:
+>
+> --- a/drivers/firmware/efi/tpm.c
+> +++ b/drivers/firmware/efi/tpm.c
+> @@ -75,7 +75,7 @@ int __init efi_tpm_eventlog_init(void)
+>                 goto out;
+>         }
+>
+> -       tbl_size = tpm2_calc_event_log_size(efi.tpm_final_log
+> +       tbl_size = tpm2_calc_event_log_size(final_tbl
+>                                             + sizeof(final_tbl->version)
+>                                             + sizeof(final_tbl->nr_events),
+>                                             final_tbl->nr_events,
+>
+> No idea if that is actually what was intended here, but it makes
+> the code look more plausible.
 
--- 
- Kirill A. Shutemov
+Passing final_tbl will lead to failure, as it will be remapped for
+second time. Cast is needed here. Changing the type from void* to
+unsigned long or phys_addr_t (and casting later) would also do the
+job. I'm fine with both options.
