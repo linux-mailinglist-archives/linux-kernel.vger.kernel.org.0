@@ -2,133 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B934445AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3CDE445A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392963AbfFMQpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:45:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:48185 "EHLO ozlabs.org"
+        id S2392895AbfFMQp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:45:29 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:46840 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729815AbfFMFxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:53:48 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45PXwm2j90z9s5c;
-        Thu, 13 Jun 2019 15:53:44 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560405224;
-        bh=XFQvhiLejuLfZHZHzD4qIdC0evQEitD0UMR+TBNmrDQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KFFB0qfKhX/dJwzPzGr+n/DMV/sIp3f7L+FcoVzFY8AG/tghV5n04tcw0WNeboPWa
-         Rq7JMLgzQEhno4YhgHmrGnOhPXdSjWFEEHt22gswO3ny4s/A+FlaxoK0ii3fZ2oSpl
-         ASgqPCR2bEBsT3A/ldlbIYTyJxbaor9xTSXwqlMH8jBr0BKVqJlKNclZzLE1Os1Fc+
-         w4Jf+w/wShS8e/oUAeTDu8tNuKNq0eUBX1Dpl/E1zZmYBiwH31d4C0H8jCahxQsvVA
-         xfzfc//lAsVc7OrexUCa1Krm+joaQ/Tdw2KrEvlsvuZ5Teskji4XA9Kw+YkLVoMC+J
-         b/Lt/x9D9auFA==
-Date:   Thu, 13 Jun 2019 15:53:44 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>
-Subject: linux-next: manual merge of the char-misc tree with the driver-core
- tree
-Message-ID: <20190613155344.64fce8b9@canb.auug.org.au>
+        id S1730369AbfFMGB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 02:01:59 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hbIo7-0005k6-E6; Thu, 13 Jun 2019 14:01:55 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hbIo1-0002AR-Pd; Thu, 13 Jun 2019 14:01:49 +0800
+Date:   Thu, 13 Jun 2019 14:01:49 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-crypto@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: Re: [PATCH] crypto: user - fix potential warnings in cryptouser.h
+Message-ID: <20190613060149.a66vdfyrxe356nr2@gondor.apana.org.au>
+References: <20190609065710.18735-1-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/U4N4kI9k/xWKLnuuvxrCEXi"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190609065710.18735-1-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/U4N4kI9k/xWKLnuuvxrCEXi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jun 09, 2019 at 03:57:10PM +0900, Masahiro Yamada wrote:
+>
+> diff --git a/include/crypto/internal/cryptouser.h b/include/crypto/internal/cryptouser.h
+> index 8c602b187c58..2339cb06dbf8 100644
+> --- a/include/crypto/internal/cryptouser.h
+> +++ b/include/crypto/internal/cryptouser.h
+> @@ -3,12 +3,15 @@
+>  
+>  extern struct sock *crypto_nlsk;
+>  
+> +struct crypto_user_alg;
 
-Hi all,
+Please change this to instead include <linux/cryptouser.h>.
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+In the crypto API the internal header file should always include the
+external header file.
 
-  drivers/misc/vmw_balloon.c
+You can also remove the inclusion of the external header file from
+the users of crypto/internal/cryptouser.h.
 
-between commit:
-
-  225afca60b8a ("vmw_balloon: no need to check return value of debugfs_crea=
-te functions")
-
-from the driver-core tree and commits:
-
-  83a8afa72e9c ("vmw_balloon: Compaction support")
-  5d1a86ecf328 ("vmw_balloon: Add memory shrinker")
-
-from the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/misc/vmw_balloon.c
-index fdf5ad757226,043eed845246..000000000000
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@@ -1553,15 -1942,26 +1932,24 @@@ static int __init vmballoon_init(void
-  	if (x86_hyper_type !=3D X86_HYPER_VMWARE)
-  		return -ENODEV;
- =20
-- 	for (page_size =3D VMW_BALLOON_4K_PAGE;
-- 	     page_size <=3D VMW_BALLOON_LAST_SIZE; page_size++)
-- 		INIT_LIST_HEAD(&balloon.page_sizes[page_size].pages);
--=20
--=20
-  	INIT_DELAYED_WORK(&balloon.dwork, vmballoon_work);
- =20
-+ 	error =3D vmballoon_register_shrinker(&balloon);
-+ 	if (error)
-+ 		goto fail;
-+=20
- -	error =3D vmballoon_debugfs_init(&balloon);
- -	if (error)
- -		goto fail;
- +	vmballoon_debugfs_init(&balloon);
- =20
-+ 	/*
-+ 	 * Initialization of compaction must be done after the call to
-+ 	 * balloon_devinfo_init() .
-+ 	 */
-+ 	balloon_devinfo_init(&balloon.b_dev_info);
-+ 	error =3D vmballoon_compaction_init(&balloon);
-+ 	if (error)
-+ 		goto fail;
-+=20
-+ 	INIT_LIST_HEAD(&balloon.huge_pages);
-  	spin_lock_init(&balloon.comm_lock);
-  	init_rwsem(&balloon.conf_sem);
-  	balloon.vmci_doorbell =3D VMCI_INVALID_HANDLE;
-
---Sig_/U4N4kI9k/xWKLnuuvxrCEXi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0B5OgACgkQAVBC80lX
-0GxkTgf/RYWZ6v9hX/MnklSXgcgWAgzRuGzVzUfYl9gfy3bW0KZI4wxdqbummx5m
-F/+Y6QsnOuLSwGjUBlR/Nk1bCAKTV7qPqY1SBJD9sFjt5Z5pGEAkDzI/flatV5tv
-jB96Wr3Z/5dkqDIycEeoAdM2241iSZx0rxYo1tUwWlBfoJ3xdC+7/rcJweoSvhgd
-c9DIDstLJJuHO82AcLqwYK+LdCRemVbywVU25LxgxVVcoEZQburqmpBv6BEmzXF3
-uiSdXBD68z583JYiZD5DN8Rtajzvdq96XDWxRxXTkjb4pcYO3EUMKRmYNWaIPKKv
-l4o8AbVhboykwOlx3/IgxDRTjwiqPw==
-=vazS
------END PGP SIGNATURE-----
-
---Sig_/U4N4kI9k/xWKLnuuvxrCEXi--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
