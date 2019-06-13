@@ -2,129 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A7243B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5AD43B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:28:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbfFMP1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:27:16 -0400
-Received: from 6.mo2.mail-out.ovh.net ([87.98.165.38]:40663 "EHLO
-        6.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729054AbfFMLkg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 07:40:36 -0400
-Received: from player728.ha.ovh.net (unknown [10.108.35.158])
-        by mo2.mail-out.ovh.net (Postfix) with ESMTP id 897B719F3A8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 13:34:43 +0200 (CEST)
-Received: from armadeus.com (lfbn-1-7591-179.w90-126.abo.wanadoo.fr [90.126.248.179])
-        (Authenticated sender: sebastien.szymanski@armadeus.com)
-        by player728.ha.ovh.net (Postfix) with ESMTPSA id 7FFDA6B6DE10;
-        Thu, 13 Jun 2019 11:34:32 +0000 (UTC)
-Subject: Re: [PATCH 1/1] ARM: dts: imx6ul: Add PXP node
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-References: <20190606164642.11539-1-sebastien.szymanski@armadeus.com>
- <20190612172103.gat3yrub2iyurai5@pengutronix.de>
-From:   =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Openpgp: preference=signencrypt
-Message-ID: <6802e25d-f12b-28e3-d975-7f21fe002a35@armadeus.com>
-Date:   Thu, 13 Jun 2019 13:34:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729644AbfFMP1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:27:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729011AbfFMLfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 07:35:06 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 32CB26EB81;
+        Thu, 13 Jun 2019 11:35:06 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0EBAC60FAB;
+        Thu, 13 Jun 2019 11:35:04 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] KVM: nVMX: use correct clean fields when copying from eVMCS
+Date:   Thu, 13 Jun 2019 13:35:02 +0200
+Message-Id: <20190613113502.9535-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190612172103.gat3yrub2iyurai5@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 3806386112924832978
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrudehledggedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 13 Jun 2019 11:35:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marco,
+Unfortunately, a couple of mistakes were made while implementing
+Enlightened VMCS support, in particular, wrong clean fields were
+used in copy_enlightened_to_vmcs12():
+- exception_bitmap is covered by CONTROL_EXCPN;
+- vm_exit_controls/pin_based_vm_exec_control/secondary_vm_exec_control
+  are covered by CONTROL_GRP1.
 
-On 6/12/19 7:21 PM, Marco Felsch wrote:
-> Hi Sébastien,
-> 
-> On 19-06-06 18:46, Sébastien Szymanski wrote:
->> Add PXP node for i.MX6UL/L SoC.
->>
->> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
->> ---
->>  arch/arm/boot/dts/imx6ul.dtsi  | 9 +++++++++
->>  arch/arm/boot/dts/imx6ull.dtsi | 6 ++++++
->>  2 files changed, 15 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
->> index f10012de5eb6..a3c005373ae1 100644
->> --- a/arch/arm/boot/dts/imx6ul.dtsi
->> +++ b/arch/arm/boot/dts/imx6ul.dtsi
->> @@ -971,6 +971,15 @@
->>  				status = "disabled";
->>  			};
->>  
->> +			pxp: pxp@21cc000 {
->> +				compatible = "fsl,imx6ul-pxp";
->> +				reg = <0x021cc000 0x4000>;
->> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
->> +				clocks = <&clks IMX6UL_CLK_PXP>;
->> +				clock-names = "axi";
->> +				status = "disabled";
-> 
-> Can you drop the status line because its a platform device and isn't
-> removeable.
+Fixes: 945679e301ea0 ("KVM: nVMX: add enlightened VMCS state")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/vmx/nested.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ok, done. thanks!
-
-Regards,
-
-> 
->> +			};
->> +
->>  			qspi: spi@21e0000 {
->>  				#address-cells = <1>;
->>  				#size-cells = <0>;
->> diff --git a/arch/arm/boot/dts/imx6ull.dtsi b/arch/arm/boot/dts/imx6ull.dtsi
->> index 22e4a307fa59..b017e925bd87 100644
->> --- a/arch/arm/boot/dts/imx6ull.dtsi
->> +++ b/arch/arm/boot/dts/imx6ull.dtsi
->> @@ -34,6 +34,12 @@
->>  	compatible = "fsl,imx6ull-ocotp", "syscon";
->>  };
->>  
->> +&pxp {
->> +	compatible = "fsl,imx6ull-pxp";
->> +	interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
->> +		     <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
->> +};
->> +
->>  &usdhc1 {
->>  	compatible = "fsl,imx6ull-usdhc", "fsl,imx6sx-usdhc";
->>  };
->> -- 
->> 2.19.2
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
-
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 1032f068f0b9..d3940da3d435 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -1397,7 +1397,7 @@ static int copy_enlightened_to_vmcs12(struct vcpu_vmx *vmx)
+ 	}
+ 
+ 	if (unlikely(!(evmcs->hv_clean_fields &
+-		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC))) {
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EXCPN))) {
+ 		vmcs12->exception_bitmap = evmcs->exception_bitmap;
+ 	}
+ 
+@@ -1437,7 +1437,7 @@ static int copy_enlightened_to_vmcs12(struct vcpu_vmx *vmx)
+ 	}
+ 
+ 	if (unlikely(!(evmcs->hv_clean_fields &
+-		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1))) {
++		       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP1))) {
+ 		vmcs12->pin_based_vm_exec_control =
+ 			evmcs->pin_based_vm_exec_control;
+ 		vmcs12->vm_exit_controls = evmcs->vm_exit_controls;
 -- 
-Sébastien Szymanski
-Software engineer, Armadeus Systems
-Tel: +33 (0)9 72 29 41 44
-Fax: +33 (0)9 72 28 79 26
+2.20.1
+
