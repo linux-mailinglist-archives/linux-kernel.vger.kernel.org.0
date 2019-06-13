@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99CBC43F9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D296F4427A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390582AbfFMP6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37718 "EHLO mail.kernel.org"
+        id S2392055AbfFMQWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:22:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731492AbfFMIuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:50:07 -0400
+        id S1731036AbfFMIiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:38:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB26721473;
-        Thu, 13 Jun 2019 08:50:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D3CD21473;
+        Thu, 13 Jun 2019 08:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415806;
-        bh=0iHPDu7N/ipPv7fFNejJe04jzUKCtwa1EnSarexpuew=;
+        s=default; t=1560415080;
+        bh=JlR8HdzcLiHyScAA35m007DD1WT4CMGpDisD1am2USg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z+3rUDk6HLRNi47i+qkNDlffVQkN1pKzCbCoMSh8LED2VGGc6ykJg6z4Ym/aDsLMv
-         ndgeDONJiJi6HZqPplRAwbuD5f9SBdXJQwcLaVleibUHr0k+HDhxtpqtkj9WQHEIk9
-         POVEkPPwT4jJvnHPywnB5M+tU9gnZl2HVK3pZWVg=
+        b=TqeNK4Fbmu+dNtrRak2/LKkeekDF8RHPYFYhHkTxt7abns7pvlkCbLMtzi1hJqEhj
+         7OTM7x2Jg2TyYjfmh6SqiAmJsU4RxtKclmLA4tBxDMQty1rfBE2+ip0P1cELaysvSi
+         sOgWtkmdn0ab3WXgsJXLieg57N+W5N9x06jWPKI4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Aditya Pakki <pakki001@umn.edu>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Rob Herring <robh@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 130/155] video: imsttfb: fix potential NULL pointer dereferences
+        stable@vger.kernel.org, Vasily Khoruzhick <anarsoul@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@intel.com>
+Subject: [PATCH 4.14 79/81] Revert "Bluetooth: Align minimum encryption key size for LE and BR/EDR connections"
 Date:   Thu, 13 Jun 2019 10:34:02 +0200
-Message-Id: <20190613075700.059278389@linuxfoundation.org>
+Message-Id: <20190613075654.815196365@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,41 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1d84353d205a953e2381044953b7fa31c8c9702d ]
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-In case ioremap fails, the fix releases resources and returns
--ENOMEM to avoid NULL pointer dereferences.
+This reverts commit 2fa7a155b25160696cd77cdd995536cf5e172e20 which is
+commit d5bb334a8e171b262e48f378bd2096c0ea458265 upstream.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Cc: Aditya Pakki <pakki001@umn.edu>
-Cc: Finn Thain <fthain@telegraphics.com.au>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[b.zolnierkie: minor patch summary fixup]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Lots of people have reported issues with this patch, and as there does
+not seem to be a fix going into Linus's kernel tree any time soon,
+revert the commit in the stable trees so as to get people's machines
+working properly again.
+
+Reported-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Cc: Jeremy Cline <jeremy@jcline.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/imsttfb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/net/bluetooth/hci_core.h |    3 ---
+ net/bluetooth/hci_conn.c         |    8 --------
+ 2 files changed, 11 deletions(-)
 
-diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
-index 4b9615e4ce74..35bba3c2036d 100644
---- a/drivers/video/fbdev/imsttfb.c
-+++ b/drivers/video/fbdev/imsttfb.c
-@@ -1515,6 +1515,11 @@ static int imsttfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	info->fix.smem_start = addr;
- 	info->screen_base = (__u8 *)ioremap(addr, par->ramdac == IBM ?
- 					    0x400000 : 0x800000);
-+	if (!info->screen_base) {
-+		release_mem_region(addr, size);
-+		framebuffer_release(info);
-+		return -ENOMEM;
-+	}
- 	info->fix.mmio_start = addr + 0x800000;
- 	par->dc_regs = ioremap(addr + 0x800000, 0x1000);
- 	par->cmap_regs_phys = addr + 0x840000;
--- 
-2.20.1
-
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -178,9 +178,6 @@ struct adv_info {
+ 
+ #define HCI_MAX_SHORT_NAME_LENGTH	10
+ 
+-/* Min encryption key size to match with SMP */
+-#define HCI_MIN_ENC_KEY_SIZE		7
+-
+ /* Default LE RPA expiry time, 15 minutes */
+ #define HCI_DEFAULT_RPA_TIMEOUT		(15 * 60)
+ 
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -1165,14 +1165,6 @@ int hci_conn_check_link_mode(struct hci_
+ 	    !test_bit(HCI_CONN_ENCRYPT, &conn->flags))
+ 		return 0;
+ 
+-	/* The minimum encryption key size needs to be enforced by the
+-	 * host stack before establishing any L2CAP connections. The
+-	 * specification in theory allows a minimum of 1, but to align
+-	 * BR/EDR and LE transports, a minimum of 7 is chosen.
+-	 */
+-	if (conn->enc_key_size < HCI_MIN_ENC_KEY_SIZE)
+-		return 0;
+-
+ 	return 1;
+ }
+ 
 
 
