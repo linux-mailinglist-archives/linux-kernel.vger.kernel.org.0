@@ -2,81 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41FB94439E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CF644222
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403942AbfFMQar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:30:47 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45379 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730905AbfFMIcz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:32:55 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u10so14368942lfm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 01:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=YgFzFJ06/QKzgJD5SKcgN3S8P0oOUl/+mRLSvohRX9E=;
-        b=vJR8u/sBGZZZhVg+ZNTn33HQtIWnfjG3vedHOGfvNqOeW2Gei0Aas2PVhbgZCMQavI
-         oX0voyHMYZWElA0cP8I5Mq0Umk6E79mTfXtF4qHClKkTMfU7XFBUMQN8iv5j00u6Qylo
-         q+0rsrpPpUfsZ6upjMW7mG1yJ5E1Ipj+99kKIe/FWC0urpaJfkkf6P2yJVXavNg8MJVg
-         4c3uHsyvbdx4fr5INT2EPg2bQOvs4xVRm6Da7gB3OJF7THmb/2ykM8Rmt4bMXgA4zp6m
-         1FRmb0nHVkYUo79sADJDERGjkGgGTNsHIyCjpsqKHpdoq5LFy9yOh0Epd/JjpVv/gS+V
-         /mVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:content-transfer-encoding;
-        bh=YgFzFJ06/QKzgJD5SKcgN3S8P0oOUl/+mRLSvohRX9E=;
-        b=ORFIop9ycuHbmmk32r3tbxcg/rzZ6yPHGd+H+6pVlZfRjwaOUn9GvjmhjjyZhFWf/B
-         /kzvdywl+ilueJJuUCGodsg+Vb8+f7W/ICJ5ckW2MYS/7mc8rHUSpraHokV+P/pRP5cO
-         xuxZqjLJfPbFTQl/ew3cPs7RnzVr/JZWTsWF4IDzat/oZyhsWCYcI/9kciCKwzyYq1K+
-         aoP9ZhRThYj4RzKNmDY7HDVUymIGgtCt0hoW8ebVhzk9/KQkGMKf5e1QOA4N8/CzWpow
-         bI0d8ITaAq4SjVpIsf0HSGj6xHMkwUP//jgqQ5goFWc63rwmR+mOSIm7aIuArZGVzNjE
-         CiKA==
-X-Gm-Message-State: APjAAAXeuzhjbqb/xPuuY+DUJXWfJQf9oHaZRU6b0TW4wooCS+zTBDNH
-        wuoZ0fQss7xkRbqXC12F1aBP2zTvstvBUm4YY70=
-X-Google-Smtp-Source: APXvYqwqJBjloFvqSAufhg+LijQTHqctOVB6rsDu7pOp1QFBQDmvmsb3eeko4JQiJyAoJn52GZ1iK0RgUTsrBkC912c=
-X-Received: by 2002:a19:2d51:: with SMTP id t17mr809551lft.77.1560414773038;
- Thu, 13 Jun 2019 01:32:53 -0700 (PDT)
+        id S2392078AbfFMQTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:19:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57262 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731091AbfFMIjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:39:48 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8512A215EA;
+        Thu, 13 Jun 2019 08:39:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560415188;
+        bh=Ry5kG4LSs4ruJ5FzBDwBjnPwQQIugtZ+8jpOlOMdvQs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KUxaPnMm9DkmT6BK7/BN0XiQKzJxYToYyYDVSerjWjUoK/egtD3aRcwNLO0eoSeMp
+         1NDqYYwElO4mIBioPtoRFINBrb9efZgVujK6vjvleprEeNxeyDWxTssUjTYk7Fgxok
+         NaXfyYVnfIDoTZEvjJ6zW0gNROUBczf1h4kwuMp4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 034/118] f2fs: fix to avoid panic in f2fs_inplace_write_data()
+Date:   Thu, 13 Jun 2019 10:32:52 +0200
+Message-Id: <20190613075645.482628218@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Received: by 2002:a2e:445b:0:0:0:0:0 with HTTP; Thu, 13 Jun 2019 01:32:52
- -0700 (PDT)
-From:   Ayesha Al-Qaddafi <aishagaddafi1056@gmail.com>
-Date:   Thu, 13 Jun 2019 08:32:52 +0000
-X-Google-Sender-Auth: 72fxgtFfAz8fze6jWsYlbNZUB5g
-Message-ID: <CA+F+MbYMnRhjsrd-V0S5_rwuiGv8_QmvwF9qtO4wBNTrXxvN3w@mail.gmail.com>
-Subject: Urgent assistance,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
+[ Upstream commit 05573d6ccf702df549a7bdeabef31e4753df1a90 ]
 
- It=E2=80=99s my pleasure to contact you through this medium as i am in nee=
-d
-of your urgent assistance. My names are Ms, Ayesha a single Mother and
-a Widow with three Children. I'm the only biological Daughter of late
-Libyan President (Late Al-Qaddafi ).
+As Jungyeon reported in bugzilla:
 
-I have an investment funds worth Twenty Eight Million Four Hundred
-Thousand United State Dollar {$28.400.000.00} and i need an investment
-Partner and because of the asylum status i will authorize you the
-ownership of the funds, however, I am interested in for the investment
-project assistance in your country, may be from there, we can build a
-business relationship.
+https://bugzilla.kernel.org/show_bug.cgi?id=203239
 
-I am willing to negotiate investment/business profit sharing ratio
-with you base on the future investment earning profits. If you are
-willing to handle this project kindly reply urgent to enable me
-provide you more information about the investment funds. I will be
-waiting for your prompt respons.
+- Overview
+When mounting the attached crafted image and running program, following errors are reported.
+Additionally, it hangs on sync after running program.
 
-Best Regards
-Mrs.Al-Qaddafi Ayesha.
+The image is intentionally fuzzed from a normal f2fs image for testing.
+Compile options for F2FS are as follows.
+CONFIG_F2FS_FS=y
+CONFIG_F2FS_STAT_FS=y
+CONFIG_F2FS_FS_XATTR=y
+CONFIG_F2FS_FS_POSIX_ACL=y
+CONFIG_F2FS_CHECK_FS=y
+
+- Reproduces
+cc poc_15.c
+./run.sh f2fs
+sync
+
+- Kernel messages
+ ------------[ cut here ]------------
+ kernel BUG at fs/f2fs/segment.c:3162!
+ RIP: 0010:f2fs_inplace_write_data+0x12d/0x160
+ Call Trace:
+  f2fs_do_write_data_page+0x3c1/0x820
+  __write_data_page+0x156/0x720
+  f2fs_write_cache_pages+0x20d/0x460
+  f2fs_write_data_pages+0x1b4/0x300
+  do_writepages+0x15/0x60
+  __filemap_fdatawrite_range+0x7c/0xb0
+  file_write_and_wait_range+0x2c/0x80
+  f2fs_do_sync_file+0x102/0x810
+  do_fsync+0x33/0x60
+  __x64_sys_fsync+0xb/0x10
+  do_syscall_64+0x43/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The reason is f2fs_inplace_write_data() will trigger kernel panic due
+to data block locates in node type segment.
+
+To avoid panic, let's just return error code and set SBI_NEED_FSCK to
+give a hint to fsck for latter repairing.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/segment.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 03fa2c4d3d79..8fc3edb6760c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3069,13 +3069,18 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ {
+ 	int err;
+ 	struct f2fs_sb_info *sbi = fio->sbi;
++	unsigned int segno;
+ 
+ 	fio->new_blkaddr = fio->old_blkaddr;
+ 	/* i/o temperature is needed for passing down write hints */
+ 	__get_segment_type(fio);
+ 
+-	f2fs_bug_on(sbi, !IS_DATASEG(get_seg_entry(sbi,
+-			GET_SEGNO(sbi, fio->new_blkaddr))->type));
++	segno = GET_SEGNO(sbi, fio->new_blkaddr);
++
++	if (!IS_DATASEG(get_seg_entry(sbi, segno)->type)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		return -EFAULT;
++	}
+ 
+ 	stat_inc_inplace_blocks(fio->sbi);
+ 
+-- 
+2.20.1
+
+
+
