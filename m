@@ -2,67 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465BD43AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76B843ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732133AbfFMPXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:23:22 -0400
-Received: from foss.arm.com ([217.140.110.172]:39168 "EHLO foss.arm.com"
+        id S2389142AbfFMPXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:23:17 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:61639 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731876AbfFMM2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:28:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1E6A2B;
-        Thu, 13 Jun 2019 05:28:38 -0700 (PDT)
-Received: from C02TF0J2HF1T.local (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3B393F694;
-        Thu, 13 Jun 2019 05:28:32 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 13:28:21 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kselftest@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/2] arm64: Define
- Documentation/arm64/tagged-address-abi.txt
-Message-ID: <20190613122821.GS28951@C02TF0J2HF1T.local>
-References: <cover.1560339705.git.andreyknvl@google.com>
- <20190612142111.28161-1-vincenzo.frascino@arm.com>
- <20190612142111.28161-2-vincenzo.frascino@arm.com>
- <20190612153538.GL28951@C02TF0J2HF1T.local>
- <141c740a-94c2-2243-b6d1-b44ffee43791@arm.com>
- <20190613113731.GY28398@e103592.cambridge.arm.com>
+        id S1731880AbfFMM24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:28:56 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45Pjhg5Y5nz9tyyr;
+        Thu, 13 Jun 2019 14:28:51 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=jjVrlzgZ; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id t1FmrBA-mTCn; Thu, 13 Jun 2019 14:28:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45Pjhg4W1Fz9tyyq;
+        Thu, 13 Jun 2019 14:28:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560428931; bh=2lgTds9Ez+Act/eI3r7EuN8KPltls6Liv5UATwaFdA8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jjVrlzgZziKbmWxq5pBLawp4u/+Sg06uDLfo9+LyyaU+ZuT6B3XImtsNMkkViP7ye
+         d4a3GOPqNr40JYGgAnJV0ZWBL4uKzi2lnfDx4gnUneZ/VhRilPO08zvcQetBEi3ZEl
+         loAfBcsePZojPB2MRZ86WxmtOfxd1JcPxfYjKUk0=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F0E208B8E3;
+        Thu, 13 Jun 2019 14:28:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id A89TBiKKs0oV; Thu, 13 Jun 2019 14:28:52 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 49A128B8B9;
+        Thu, 13 Jun 2019 14:28:52 +0200 (CEST)
+Subject: Re: [PATCH v2 4/4] crypto: talitos - drop icv_ool
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <cover.1560263641.git.christophe.leroy@c-s.fr>
+ <39be46fb40ad77e40ae5c1a979ca6a2ccfab244a.1560263641.git.christophe.leroy@c-s.fr>
+ <VI1PR0402MB34852F501B30A09A4E515B4798EF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <b2db68d5-d89b-2f38-d5b4-7b7eccf68204@c-s.fr>
+Date:   Thu, 13 Jun 2019 14:28:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613113731.GY28398@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <VI1PR0402MB34852F501B30A09A4E515B4798EF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 12:37:32PM +0100, Dave P Martin wrote:
-> On Thu, Jun 13, 2019 at 11:15:34AM +0100, Vincenzo Frascino wrote:
-> > On 12/06/2019 16:35, Catalin Marinas wrote:
-> > > On Wed, Jun 12, 2019 at 03:21:10PM +0100, Vincenzo Frascino wrote:
-> > >> +  - PR_GET_TAGGED_ADDR_CTRL: can be used to check the status of the Tagged
-> > >> +                             Address ABI.
-[...]
-> Is there a canonical way to detect whether this whole API/ABI is
-> available?  (i.e., try to call this prctl / check for an HWCAP bit,
-> etc.)
 
-The canonical way is a prctl() call. HWCAP doesn't make sense since it's
-not a hardware feature. If you really want a different way of detecting
-this (which I don't think it's worth), we can reinstate the AT_FLAGS
-bit.
 
--- 
-Catalin
+Le 13/06/2019 à 14:21, Horia Geanta a écrit :
+> On 6/11/2019 5:39 PM, Christophe Leroy wrote:
+>> icv_ool is not used anymore, drop it.
+>>
+>> Fixes: 9cc87bc3613b ("crypto: talitos - fix AEAD processing")
+> I can't find this SHA1.
+> 
+> Are you referring to commit e345177ded17 ("crypto: talitos - fix AEAD processing.")?
+> 
+> Horia
+> 
+
+Oops yes, that's the sha1 it had in my tree before it got merged.
+
+Do I have to resend it or can Herbert just drop the wrong reference and 
+take the following one:
+
+Fixes: e345177ded17 ("crypto: talitos - fix AEAD processing.")
+
+
+Christophe
