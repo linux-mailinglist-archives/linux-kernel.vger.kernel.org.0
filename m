@@ -2,159 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5AB44718
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD0344710
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392933AbfFMQ5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:57:06 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41091 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729947AbfFMBO6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:14:58 -0400
-Received: by mail-oi1-f194.google.com with SMTP id g7so9971454oia.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 18:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RcKUTNC1/Yaa+Z7YVTaDTsC+idf0Auxj860bjLfby9Y=;
-        b=pyVy5aBfnvmLd4LmS99NC7v2hHH+z4UZs9t88ZWrifMnyNQ1ntVXoql6oB68VhzVo1
-         F8hclQ0Wyg9MsOlwr7j9F9a5FwakzRc0cX63T9oeseLCkWGBIj3OBaI1LL2HQs2XiGNX
-         ETH5Cv/Dp91sVJ4t+YsWm75tFBfI5P44fYs8oiCUlHe8OHYW0zmCh+Jz3mI3juP3eG0d
-         bwg8PkQXV/rh9Ruhio4gTK3UfuitZunT8jlU1uJv5ynSJJDHBTJWHqmmDp1yyxN5HdDN
-         3nC3in/UilzgUI6FwH3DI0lKZs/DXkSb6pM0DXEBpGmyHzzfZCjAONw9LI5SpclpGpd3
-         Jyhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RcKUTNC1/Yaa+Z7YVTaDTsC+idf0Auxj860bjLfby9Y=;
-        b=UIJB9Yv/M6iyFvHG4LDsg8g0+pXcVFn+Aob91E0AkwIMDkVspHLNm5jOFiFo68stk+
-         HDLsDjhLKXrbYzV/SL2XE/Sz4B02erV+3Teu7smfTuypDmURnqi6IEm2zbIo7Aq68ZaQ
-         QEeox+yao3fR0gHMxJSKw/Lcwuf+7YTgON6UFpDswHRWCJeX4ZptnVUmy7ZvrRQr+wX/
-         NZnAq6hYACCyuUQkokx36fQLzop8w7bB/gMiAeGiPU7G4soYzRgfGaJj7oriLa61ldqL
-         2m23yTQOm/uhJoMAz96+KAsWChKwX17TSuBjF3q6fAJlt2FVMPZ3fLbGrwakYLiK+Z7b
-         WlHw==
-X-Gm-Message-State: APjAAAVFz3ShahMp+uyP8lrN2RQTb0G7Rdqj1m4jvgzUUVDk3r6YRgpm
-        3vA6cpMkaudP/8/pbs4mRFnAHpEhY8huaPGwuL7B1w==
-X-Google-Smtp-Source: APXvYqykCVdxD0fjMiZ7EZWZAtb82hdqz1hJdJILcfFTKlDzRoucvcWvFMaxGMog6wRYrJg2D1GBjocrrJhQVeNNqcs=
-X-Received: by 2002:aca:fc50:: with SMTP id a77mr1431023oii.0.1560388497122;
- Wed, 12 Jun 2019 18:14:57 -0700 (PDT)
+        id S2393165AbfFMQ4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:56:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729955AbfFMBSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 21:18:14 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B6C07307C940;
+        Thu, 13 Jun 2019 01:18:13 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-87.pek2.redhat.com [10.72.12.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 88DD65C298;
+        Thu, 13 Jun 2019 01:18:08 +0000 (UTC)
+Date:   Thu, 13 Jun 2019 09:18:04 +0800
+From:   "dyoung@redhat.com" <dyoung@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Baoquan He <bhe@redhat.com>, lijiang <lijiang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>
+Subject: Re: [PATCH 0/3 v11] add reserved e820 ranges to the kdump kernel
+ e820 table
+Message-ID: <20190613011804.GA27786@dhcp-128-65.nay.redhat.com>
+References: <20190608035451.GB26148@MiWiFi-R3L-srv>
+ <20190608091030.GB32464@zn.tnic>
+ <20190608100139.GC26148@MiWiFi-R3L-srv>
+ <20190608100623.GA9138@zn.tnic>
+ <20190608102659.GA9130@MiWiFi-R3L-srv>
+ <20190610113747.GD5488@zn.tnic>
+ <20190612015549.GI26148@MiWiFi-R3L-srv>
+ <20190612151033.GJ32652@zn.tnic>
+ <3dfa5985-008a-20d8-5171-cfe96807c303@amd.com>
+ <20190612180724.GP32652@zn.tnic>
 MIME-Version: 1.0
-References: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
- <20190612114721.GB3876@ziepe.ca> <20190612120907.GC14578@quack2.suse.cz>
- <20190612191421.GM3876@ziepe.ca> <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
- <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com> <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
-In-Reply-To: <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 12 Jun 2019 18:14:46 -0700
-Message-ID: <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612180724.GP32652@zn.tnic>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Jun 2019 01:18:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 4:32 PM Ira Weiny <ira.weiny@intel.com> wrote:
->
-> On Wed, Jun 12, 2019 at 03:54:19PM -0700, Dan Williams wrote:
-> > On Wed, Jun 12, 2019 at 3:12 PM Ira Weiny <ira.weiny@intel.com> wrote:
-> > >
-> > > On Wed, Jun 12, 2019 at 04:14:21PM -0300, Jason Gunthorpe wrote:
-> > > > On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
-> > > > > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
-> > > > > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
-> > > > > >
-> > > > > > > > > The main objection to the current ODP & DAX solution is that very
-> > > > > > > > > little HW can actually implement it, having the alternative still
-> > > > > > > > > require HW support doesn't seem like progress.
-> > > > > > > > >
-> > > > > > > > > I think we will eventually start seein some HW be able to do this
-> > > > > > > > > invalidation, but it won't be universal, and I'd rather leave it
-> > > > > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
-> > > > > > > > > on fire, I need to unplug it).
-> > > > > > > >
-> > > > > > > > Agreed.  I think software wise there is not much some of the devices can do
-> > > > > > > > with such an "invalidate".
-> > > > > > >
-> > > > > > > So out of curiosity: What does RDMA driver do when userspace just closes
-> > > > > > > the file pointing to RDMA object? It has to handle that somehow by aborting
-> > > > > > > everything that's going on... And I wanted similar behavior here.
-> > > > > >
-> > > > > > It aborts *everything* connected to that file descriptor. Destroying
-> > > > > > everything avoids creating inconsistencies that destroying a subset
-> > > > > > would create.
-> > > > > >
-> > > > > > What has been talked about for lease break is not destroying anything
-> > > > > > but very selectively saying that one memory region linked to the GUP
-> > > > > > is no longer functional.
-> > > > >
-> > > > > OK, so what I had in mind was that if RDMA app doesn't play by the rules
-> > > > > and closes the file with existing pins (and thus layout lease) we would
-> > > > > force it to abort everything. Yes, it is disruptive but then the app didn't
-> > > > > obey the rule that it has to maintain file lease while holding pins. Thus
-> > > > > such situation should never happen unless the app is malicious / buggy.
-> > > >
-> > > > We do have the infrastructure to completely revoke the entire
-> > > > *content* of a FD (this is called device disassociate). It is
-> > > > basically close without the app doing close. But again it only works
-> > > > with some drivers. However, this is more likely something a driver
-> > > > could support without a HW change though.
-> > > >
-> > > > It is quite destructive as it forcibly kills everything RDMA related
-> > > > the process(es) are doing, but it is less violent than SIGKILL, and
-> > > > there is perhaps a way for the app to recover from this, if it is
-> > > > coded for it.
-> > >
-> > > I don't think many are...  I think most would effectively be "killed" if this
-> > > happened to them.
-> > >
-> > > >
-> > > > My preference would be to avoid this scenario, but if it is really
-> > > > necessary, we could probably build it with some work.
-> > > >
-> > > > The only case we use it today is forced HW hot unplug, so it is rarely
-> > > > used and only for an 'emergency' like use case.
-> > >
-> > > I'd really like to avoid this as well.  I think it will be very confusing for
-> > > RDMA apps to have their context suddenly be invalid.  I think if we have a way
-> > > for admins to ID who is pinning a file the admin can take more appropriate
-> > > action on those processes.   Up to and including killing the process.
-> >
-> > Can RDMA context invalidation, "device disassociate", be inflicted on
-> > a process from the outside? Identifying the pid of a pin holder only
-> > leaves SIGKILL of the entire process as the remediation for revoking a
-> > pin, and I assume admins would use the finer grained invalidation
-> > where it was available.
->
-> No not in the way you are describing it.  As Jason said you can hotplug the
-> device which is "from the outside" but this would affect all users of that
-> device.
->
-> Effectively, we would need a way for an admin to close a specific file
-> descriptor (or set of fds) which point to that file.  AFAIK there is no way to
-> do that at all, is there?
+On 06/12/19 at 08:07pm, Borislav Petkov wrote:
+> On Wed, Jun 12, 2019 at 04:52:22PM +0000, Lendacky, Thomas wrote:
+> > I think the discussion ended up being that debuginfo wasn't being stripped
+> > from the kernel and initrd (mainly the initrd).  What are the sizes of
+> > the kernel and initrd that you are loading for kdump via kexec?
+> > 
+> > From previous post:
+> >   kexec -s -p /boot/vmlinuz-5.2.0-rc3+ --initrd=/boot/initrd.img-5.2.0-rc3+
+> 
+> You mean those sizes?
+> 
+> $ ls -lh /boot/vmlinuz-5.2.0-rc3+ /boot/initrd.img-5.2.0-rc3+
+> -rw-r--r-- 1 root root 7.8M Jun 10 12:53 /boot/initrd.img-5.2.0-rc3+
+> -rw-r--r-- 1 root root 6.7M Jun 10 12:53 /boot/vmlinuz-5.2.0-rc3+
+> 
+> That should fit easily in 256M :)
 
-Even if there were that gets back to my other question, does RDMA
-teardown happen at close(fd), or at final fput() of the 'struct file'?
-I.e. does it also need munmap() to get the vma to drop its reference?
-Perhaps a pointer to the relevant code would help me wrap my head
-around this mechanism.
+The final used size is uncompressed size, for example in my case:
+
+$ ls -lth arch/x86/boot/bzImage 
+-rw-rw-r-- 1 dyoung dyoung 6.3M May 24 11:19 arch/x86/boot/bzImage
+$ ls -lth arch/x86/boot/compressed/vmlinux.bin
+-rwxrwxr-x 1 dyoung dyoung 25M May 24 11:19 arch/x86/boot/compressed/vmlinux.bin
+
+The vmlinuz is 6.3M, uncompressed kernel is about 25M, since yours
+bzImage is 7.8M, I would expect the final size is around 29M
+
+for initramfs, you can check it by:
+
+$ ls -lth /boot/initramfs-5.0.9-301.fc30.x86_64kdump.img
+-rw------- 1 root root 16M May 28 08:59 /boot/initramfs-5.0.9-301.fc30.x86_64kdump.img
+$ mkdir tmp
+$ cd tmp
+$ sudo lsinitrd --unpack /boot/initramfs-5.0.9-301.fc30.x86_64kdump.img
+$ du -hs .
+46M	.
+
+You can see my kdump initrd is 46M after unpacking.
+
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
+
+Thanks
+Dave
