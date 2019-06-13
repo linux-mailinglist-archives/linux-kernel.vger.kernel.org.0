@@ -2,263 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D736343DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11EC843DF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389442AbfFMPqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:46:40 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18159 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731784AbfFMJjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:39:39 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C3BCD401283C5328100B;
-        Thu, 13 Jun 2019 17:39:29 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
- 17:39:18 +0800
-From:   John Garry <john.garry@huawei.com>
-Subject: Re: [PATCH v4 1/3] lib: logic_pio: Use logical PIO low-level
- accessors for !CONFIG_INDIRECT_PIO
-To:     Bjorn Helgaas <helgaas@kernel.org>
-References: <1560262374-67875-1-git-send-email-john.garry@huawei.com>
- <1560262374-67875-2-git-send-email-john.garry@huawei.com>
- <20190613023947.GD13533@google.com>
-CC:     <lorenzo.pieralisi@arm.com>, <arnd@arndb.de>,
-        <linux-pci@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <linux-arm-kernel@lists.infradead.org>, <will.deacon@arm.com>,
-        <wangkefeng.wang@huawei.com>, <linuxarm@huawei.com>,
-        <andriy.shevchenko@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, <catalin.marinas@arm.com>
-Message-ID: <8ef228f8-97cb-e40e-ea6b-410b80a845cf@huawei.com>
-Date:   Thu, 13 Jun 2019 10:39:12 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1732533AbfFMPq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:46:29 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17146 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731789AbfFMJm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:42:57 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d021a9f0000>; Thu, 13 Jun 2019 02:42:55 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 13 Jun 2019 02:42:55 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 13 Jun 2019 02:42:55 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 09:42:53 +0000
+Subject: Re: [PATCH v3 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+To:     Sameer Pujar <spujar@nvidia.com>, <thierry.reding@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1560417053-2966-1-git-send-email-spujar@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <8a71e670-7943-6bce-ba61-3f020fd9450d@nvidia.com>
+Date:   Thu, 13 Jun 2019 10:42:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190613023947.GD13533@google.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1560417053-2966-1-git-send-email-spujar@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560418975; bh=NXHlTe3GaS+Cy5onlPwUV0gn1UM6F+0x2c5imipRZvo=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=L/Zq2yHgLKt0kM4/qRYcmL28PCijfoXShKeeU7UnR9fh0fOf3V1rH9Ye1R7oL3zmI
+         Xbbkp+BFBb4UfWqQ8kr5l1RgcPAmLMFW0bqafXnf2IgmwyJqvEJZEfKFguZVW7rrG0
+         +Bhg4AANFJPH+eX4x32pkt9EJcokxjB+7VHChVbAOKIRknk49SfyflTKWX6B3LffCS
+         ibib2hNQWASNeiuOwbCBwUjAH+lJbcgpNEki6qCtWL1m83ww3/dXDhVdpUG7EVVprq
+         IEzdI9/J884aAP2jw8apMeTCUyhHzUnm3x5RS84CiumO6ZRyYoliVmkdBT11sMmBSo
+         OMbBF4k2sO44Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2019 03:39, Bjorn Helgaas wrote:
-> On Tue, Jun 11, 2019 at 10:12:52PM +0800, John Garry wrote:
->> Currently we only use logical PIO low-level accessors for when
->> CONFIG_INDIRECT_PIO is enabled.
->>
->> Otherwise we just use inb/out et all directly.
->>
 
-Hi Bjorn,
+On 13/06/2019 10:10, Sameer Pujar wrote:
+> Add DT nodes for following devices on Tegra186 and Tegra194
+>  * ACONNECT
+>  * ADMA
+>  * AGIC
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  changes in current revision
+>   * use single address range for all APE modules
+>   * fix address range for agic
+> 
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
+>  2 files changed, 134 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 426ac0b..b4d735e 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -1295,4 +1295,71 @@
+>  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>  		interrupt-parent = <&gic>;
+>  	};
+> +
+> +	aconnect@2a41000 {
 
-thanks for checking this.
+This address does not look correct. This appears to be the address of
+the AGIC. I think it should be 2900000, however, I also wonder if we
+should even bother with an address for the aconnect as this is just a
+bus and we don't specific a 'reg' property.
 
->> It is useful to now use logical PIO accessors for all cases, so we can add
->> legality checks to accesses. Such a check would be for ensuring that the
->> PCI IO port has been IO remapped prior to the access.
->
-> IIUC, *this* patch doesn't actually add any
+> +		compatible = "nvidia,tegra210-aconnect";
+> +		clocks = <&bpmp TEGRA186_CLK_APE>,
+> +			 <&bpmp TEGRA186_CLK_APB2APE>;
+> +		clock-names = "ape", "apb2ape";
+> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x02900000 0x0 0x02900000 0x1FFFFF>;
 
-ok, fine. I suppose that the subsequent patches in the series describe 
-the motivation.
+This should be 0x1fffff.
 
-   additional checks, so no
-> need to mention that in this commit log.
->
-> One thing this patch *does* do is "#define inb logic_inb" whenever
-> PCI_IOBASE is defined (we used to do that #define only when
-> CONFIG_INDIRECT_PIO was defined).
+> +		status = "disabled";
+> +
+> +		dma-controller@2930000 {
+> +			compatible = "nvidia,tegra186-adma";
+> +			reg = <0x02930000 0x50000>;
+> +			interrupt-parent = <&agic>;
+> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
+> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+> +			#dma-cells = <1>;
+> +			clocks = <&bpmp TEGRA186_CLK_AHUB>;
+> +			clock-names = "d_audio";
+> +			status = "disabled";
+> +		};
+> +
+> +		agic: agic@2a41000 {
 
-Yes, right.
+I think that this should also be "agic: interrupt-controller@xxxx" to
+conform with standard names. Sorry the Tegra210 version is not the best
+reference!
 
- >  That's a pretty important change and needs to be very clear in the 
-commit log.
+Cheers
+Jon
 
-ok
-
->
-> I'm not sure it's even safe, because CONFIG_INDIRECT_PIO depends on
-> ARM64,  but PCI_IOBASE is defined on most arches via asm-generic/io.h,
-> so this potentially affects arches other than ARM64.
-
-It would do. It would affect any arch which defines PCI_IOBASE and does 
-not have arch-specific definition of inb et all.
-
->
-> If possible, split out the cleanup patches as below and make the patch
-> that does this PCI_IOBASE change as small as possible so we can
-> evaluate that change by itself.
->
-
-Fine
-
->> Using the logical PIO accesses will add a little processing overhead, but
->> that's ok as IO port accesses are relatively slow anyway.
->>
->> Some changes are also made to stop spilling so many lines under
->> CONFIG_INDIRECT_PIO.
->
-> "Some changes are also made" is a good hint to me that this patch
-> might be able to be split up :)
->
->> Signed-off-by: John Garry <john.garry@huawei.com>
->> ---
->>  include/linux/logic_pio.h |  7 ++--
->>  lib/logic_pio.c           | 83 ++++++++++++++++++++++++++++-----------
->>  2 files changed, 63 insertions(+), 27 deletions(-)
->>
->> diff --git a/include/linux/logic_pio.h b/include/linux/logic_pio.h
->> index cbd9d8495690..06d22b2ec99f 100644
->> --- a/include/linux/logic_pio.h
->> +++ b/include/linux/logic_pio.h
->> @@ -37,7 +37,7 @@ struct logic_pio_host_ops {
->>  		     size_t dwidth, unsigned int count);
->>  };
->>
->> -#ifdef CONFIG_INDIRECT_PIO
->> +#if defined(PCI_IOBASE)
->
-> Why change the #ifdef style?  I understand these are equivalent, but
-> unless there's a movement to change from "#ifdef X" to "#if defined(X)"
-> I wouldn't bother.
-
-Not intentional. I can keep this style.
-
->
->>  u8 logic_inb(unsigned long addr);
->>  void logic_outb(u8 value, unsigned long addr);
->>  void logic_outw(u16 value, unsigned long addr);
->> @@ -102,6 +102,7 @@ void logic_outsl(unsigned long addr, const void *buffer, unsigned int count);
->>  #define outsl logic_outsl
->>  #endif
->>
->> +#if defined(CONFIG_INDIRECT_PIO)
->>  /*
->>   * We reserve 0x4000 bytes for Indirect IO as so far this library is only
->>   * used by the HiSilicon LPC Host. If needed, we can reserve a wider IO
->> @@ -109,10 +110,10 @@ void logic_outsl(unsigned long addr, const void *buffer, unsigned int count);
->>   */
->>  #define PIO_INDIRECT_SIZE 0x4000
->>  #define MMIO_UPPER_LIMIT (IO_SPACE_LIMIT - PIO_INDIRECT_SIZE)
->> -#else
->> +#else /* CONFIG_INDIRECT_PIO */
->>  #define MMIO_UPPER_LIMIT IO_SPACE_LIMIT
->>  #endif /* CONFIG_INDIRECT_PIO */
->> -
->> +#endif /* PCI_IOBASE */
->>  struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode);
->>  unsigned long logic_pio_trans_hwaddr(struct fwnode_handle *fwnode,
->>  			resource_size_t hw_addr, resource_size_t size);
->> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
->> index feea48fd1a0d..40d9428010e1 100644
->> --- a/lib/logic_pio.c
->> +++ b/lib/logic_pio.c
->> @@ -191,7 +191,8 @@ unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
->>  	return ~0UL;
->>  }
->>
->> -#if defined(CONFIG_INDIRECT_PIO) && defined(PCI_IOBASE)
->> +#if defined(PCI_IOBASE)
->> +#if defined(CONFIG_INDIRECT_PIO)
->>  #define BUILD_LOGIC_IO(bw, type)					\
->>  type logic_in##bw(unsigned long addr)					\
->>  {									\
->> @@ -200,11 +201,11 @@ type logic_in##bw(unsigned long addr)					\
->>  	if (addr < MMIO_UPPER_LIMIT) {					\
->>  		ret = read##bw(PCI_IOBASE + addr);			\
->>  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) { \
->> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
->> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
->> +		size_t sz = sizeof(type);				\
->
-> I don't mind changing "entry" to "range" and adding "sz".  But that
-> could be done in a separate "no functional change" patch that is
-> trivial to review, which would make *this* patch smaller and easier to
-> review.
-
-ok
-
->
-> Another "no functional change" simplification patch would be to
-> replace this:
->
->   type ret = (type)~0;
->
->   if (addr < MMIO_UPPER_LIMIT) {
->     ret = read##bw(...);
->   } else if (...) {
->     if (range && range->ops)
->       ret = range->ops->in(...);
->     else
->       WARN_ON_ONCE();
->   }
->   return ret;
->
-> with this:
->
->   if (addr < MMIO_UPPER_LIMIT)
->     return read##bw(...);
->
->   if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {
->     if (range && range->ops)
->       return range->ops->in(...);
->     else
->       WARN_ON_ONCE();
->   }
->
->   return (type)~0;
->
-> Finally, I think the end result would be a little easier to read if
-> you restructured the #ifdefs like this:
->
->   #ifdef PCI_IOBASE
->   #define BUILD_LOGIC_IO(...)
->   type logic_in##bw(...)
->   {
->     if (addr < MMIO_UPPER_LIMIT)
->       return read##bw(...);
->
->   #ifdef CONFIG_INDIRECT_PIO
-
-I get your idea, but I don't think that that we can have an ifdef in 
-macros (BUILD_LOGIC_IO) like this.
-
->     if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {
->       if (range && range->ops)
-> 	return range->ops->in(...);
->       else
-> 	WARN_ON_ONCE();
->     }
->   #endif
->
->     return (type)~0;
->   }
->
-> That does mean a CONFIG_INDIRECT_PIO #ifdef in each in/out/ins/outs
-> builder, but it's more localized so I think it's easier to understand
-> that INDIRECT_PIO is just adding a new case to the default path.
-
-I'll see what I can do to improve the flow. But any change would also 
-depend on your idea in response to patch v2, to unify the 2 types of 
-logic_inb.
-
->
->> -		if (entry && entry->ops)				\
->> -			ret = entry->ops->in(entry->hostdata,		\
->> -					addr, sizeof(type));		\
->> +		if (range && range->ops)				\
->> +			ret = range->ops->in(range->hostdata, addr, sz);\
->>  		else							\
->>  			WARN_ON_ONCE(1);				\
->>  	}								\
->> @@ -216,49 +217,83 @@ void logic_out##bw(type value, unsigned long addr)			\
->>  	if (addr < MMIO_UPPER_LIMIT) {					\
->>  		write##bw(value, PCI_IOBASE + addr);			\
-
-
-thanks again
-
+-- 
+nvpublic
