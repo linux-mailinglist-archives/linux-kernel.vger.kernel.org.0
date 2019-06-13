@@ -2,73 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11C9743A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C639543A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732734AbfFMPVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:21:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:42282 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732104AbfFMPVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:21:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77F3B367;
-        Thu, 13 Jun 2019 08:21:02 -0700 (PDT)
-Received: from [10.162.40.191] (p8cg001049571a15.blr.arm.com [10.162.40.191])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15B0F3F718;
-        Thu, 13 Jun 2019 08:20:58 -0700 (PDT)
-Subject: Re: [PATCH] mm/vmalloc: Check absolute error return from
- vmap_[p4d|pud|pmd|pte]_range()
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <1560413551-17460-1-git-send-email-anshuman.khandual@arm.com>
- <7cc6a46c50c2008bfb968c5e48af5a49@suse.de>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <406afc57-5a77-a77c-7f71-df1e6837dae1@arm.com>
-Date:   Thu, 13 Jun 2019 20:51:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2388752AbfFMPV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:21:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47402 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731992AbfFMPVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:21:55 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5B032930F6C48A56E290;
+        Thu, 13 Jun 2019 23:21:51 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
+ 23:21:42 +0800
+Subject: Re: [PATCH v4 1/3] lib: logic_pio: Use logical PIO low-level
+ accessors for !CONFIG_INDIRECT_PIO
+To:     Bjorn Helgaas <helgaas@kernel.org>
+References: <1560262374-67875-1-git-send-email-john.garry@huawei.com>
+ <1560262374-67875-2-git-send-email-john.garry@huawei.com>
+ <20190613135825.GG13533@google.com>
+CC:     <lorenzo.pieralisi@arm.com>, <arnd@arndb.de>,
+        <linux-pci@vger.kernel.org>, <rjw@rjwysocki.net>,
+        <linux-arm-kernel@lists.infradead.org>, <will.deacon@arm.com>,
+        <wangkefeng.wang@huawei.com>, <linuxarm@huawei.com>,
+        <andriy.shevchenko@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, <catalin.marinas@arm.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <5b03c093-26fb-0e01-6104-5f92eef7956e@huawei.com>
+Date:   Thu, 13 Jun 2019 16:21:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <7cc6a46c50c2008bfb968c5e48af5a49@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613135825.GG13533@google.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13/06/2019 14:58, Bjorn Helgaas wrote:
+> On Tue, Jun 11, 2019 at 10:12:52PM +0800, John Garry wrote:
+> Another thought here:
+>
+>>  	if (addr < MMIO_UPPER_LIMIT) {					\
+>>  		ret = read##bw(PCI_IOBASE + addr);			\
+>>  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) { \
+>> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
+>> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
+>> +		size_t sz = sizeof(type);				\
+>>  									\
+>> -		if (entry && entry->ops)				\
+>> -			ret = entry->ops->in(entry->hostdata,		\
+>> -					addr, sizeof(type));		\
+>> +		if (range && range->ops)				\
+>> +			ret = range->ops->in(range->hostdata, addr, sz);\
+>>  		else							\
+>>  			WARN_ON_ONCE(1);
+
+Hi Bjorn,
+				\
+>
+> Could this be simplified a little by requiring callers to set
+> range->ops for LOGIC_PIO_INDIRECT ranges *before* calling
+> logic_pio_register_range()?  E.g.,
+>
+>   hisi_lpc_probe(...)
+>   {
+>     range = devm_kzalloc(...);
+>     range->flags = LOGIC_PIO_INDIRECT;
+>     range->ops = &hisi_lpc_ops;
+>     logic_pio_register_range(range);
+>     ...
+>
+> and
+>
+>   logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>   {
+>     if (new_range->flags == LOGIC_PIO_INDIRECT && !new_range->ops)
+>       return -EINVAL;
+>     ...
+>
+> Then maybe you wouldn't need to check range->ops in the accessors.
+>
+
+I think I know the reason why it was done this way.
+
+So currently there is no method to unregister a logical PIO region (the 
+old code leaked ranges as well). As such, if hisi_lpc_probe() fails 
+after we register the logical PIO range, there would be a range 
+registered but no actual host backing it. So we set the ops at the point 
+at which the probe cannot fail to avoid a potential problem.
+
+And now I realise that there is a bug in the code - range is allocated 
+with devm_kzalloc and is passed to logic_pio_register_range(). As such, 
+if the hisi_lpc_probe() goes on to fail, then this memory would be 
+free'd and we have an issue.
+
+PCI code should be ok as it uses kzalloc().
+
+The simplest solution is to not change the logical PIO API to allocate 
+this memory itself, but rather make hisi_lpc_probe() use kzalloc(). And, 
+if we go this way, we can use your idea to set the ops.
+
+I'll spin a separate patch for this.
+
+Thanks,
+John
+
+> Bjorn
+>
+> .
+>
 
 
-On 06/13/2019 03:03 PM, Roman Penyaev wrote:
-> On 2019-06-13 10:12, Anshuman Khandual wrote:
->> vmap_pte_range() returns an -EBUSY when it encounters a non-empty PTE. But
->> currently vmap_pmd_range() unifies both -EBUSY and -ENOMEM return code as
->> -ENOMEM and send it up the call chain which is wrong. Interestingly enough
->> vmap_page_range_noflush() tests for the absolute error return value from
->> vmap_p4d_range() but it does not help because -EBUSY has been merged with
->> -ENOMEM. So all it can return is -ENOMEM. Fix this by testing for absolute
->> error return from vmap_pmd_range() all the way up to vmap_p4d_range().
-> 
-> I could not find any real external caller of vmap API who really cares
-> about the errno, and frankly why they should?  This is allocation path,
-
-map_vm_area() which is an exported symbol suppose to provide the right
-error code regardless whether it's current users care for it or not.
-
-> allocation failed - game over.  When you step on -EBUSY case something
-> has gone completely wrong in your kernel, you get a big warning in
-> your dmesg and it is already does not matter what errno you get.
-
-Its true that vmap_pte_range() does warn during error conditions. But if
-we really dont care about error return code then we should just remove
-specific error details (ENOMEM/EBUSY) and instead replace them with simple
-boolean false/true or (0/1/-1) return values at each level. Will that be
-acceptable ? What we have currently is wrong where vmap_pmd_range() could
-just wrap EBUSY as ENOMEM and send up the call chain.
