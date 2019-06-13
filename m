@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6608C44272
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9FA444165
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388916AbfFMQWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:22:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
+        id S2391776AbfFMQOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:14:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731042AbfFMIiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:15 -0400
+        id S1731199AbfFMImd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19F092064A;
-        Thu, 13 Jun 2019 08:38:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8757921479;
+        Thu, 13 Jun 2019 08:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415094;
-        bh=hB0qPcv1bOLL0EP6nUoOqmHaJ0lna32eXvP9pNC7aNM=;
+        s=default; t=1560415353;
+        bh=ZPH16qG/Ca5t+j0juJTeNqQ9wDqZdh+nyOxINpzAyb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WSX0BaLBnPvb1BiVOxljiLtLedSFQxCkhpJpfKMLVBCycNjRlsTb49pRvJLpKJa9o
-         yyYpaeiIyM4Y39iC3pv87k86BxFVVMuLK8ApmF8rQ5CCVuahsX+lv+q7mBSwyOvWGs
-         SMK4O9WTu4RI7dGikr7CTahlpX+FD1q5c1oTHO3A=
+        b=tep264qEiFZ2fM9sRw7qG+CZG5uA477mnArmM2UuNUDtruv41QCvr/Kvioju/0VP9
+         peTuHbzUGSuanC8iRgB4i1fV7AHrZKNI58SVFIWRz3PVDiXrQLUflyID8roPdFAq5/
+         whVdQPBdiiISRRtnuGyetEtCVsGS8xnwIAZM4Hl8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= 
-        <holger@applied-asynchrony.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 68/81] block, bfq: increase idling for weight-raised queues
-Date:   Thu, 13 Jun 2019 10:33:51 +0200
-Message-Id: <20190613075653.988319178@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Kurz <akurz@blala.de>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 094/118] power: supply: max14656: fix potential use-before-alloc
+Date:   Thu, 13 Jun 2019 10:33:52 +0200
+Message-Id: <20190613075649.370367610@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,61 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 778c02a236a8728bb992de10ed1f12c0be5b7b0e ]
+[ Upstream commit 0cd0e49711556d2331a06b1117b68dd786cb54d2 ]
 
-If a sync bfq_queue has a higher weight than some other queue, and
-remains temporarily empty while in service, then, to preserve the
-bandwidth share of the queue, it is necessary to plug I/O dispatching
-until a new request arrives for the queue. In addition, a timeout
-needs to be set, to avoid waiting for ever if the process associated
-with the queue has actually finished its I/O.
+Call order on probe():
+- max14656_hw_init() enables interrupts on the chip
+- devm_request_irq() starts processing interrupts, isr
+  could be called immediately
+-    isr: schedules delayed work (irq_work)
+-    irq_work: calls power_supply_changed()
+- devm_power_supply_register() registers the power supply
 
-Even with the above timeout, the device is however not fed with new
-I/O for a while, if the process has finished its I/O. If this happens
-often, then throughput drops and latencies grow. For this reason, the
-timeout is kept rather low: 8 ms is the current default.
+Depending on timing, it's possible that power_supply_changed()
+is called on an unregistered power supply structure.
 
-Unfortunately, such a low value may cause, on the opposite end, a
-violation of bandwidth guarantees for a process that happens to issue
-new I/O too late. The higher the system load, the higher the
-probability that this happens to some process. This is a problem in
-scenarios where service guarantees matter more than throughput. One
-important case are weight-raised queues, which need to be granted a
-very high fraction of the bandwidth.
+Fix by registering the power supply before requesting the irq.
 
-To address this issue, this commit lower-bounds the plugging timeout
-for weight-raised queues to 20 ms. This simple change provides
-relevant benefits. For example, on a PLEXTOR PX-256M5S, with which
-gnome-terminal starts in 0.6 seconds if there is no other I/O in
-progress, the same applications starts in
-- 0.8 seconds, instead of 1.2 seconds, if ten files are being read
-  sequentially in parallel
-- 1 second, instead of 2 seconds, if, in parallel, five files are
-  being read sequentially, and five more files are being written
-  sequentially
-
-Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Kurz <akurz@blala.de>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-iosched.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/power/supply/max14656_charger_detector.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 3b44bd28fc45..7d45ac451745 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -2282,6 +2282,8 @@ static void bfq_arm_slice_timer(struct bfq_data *bfqd)
- 	if (BFQQ_SEEKY(bfqq) && bfqq->wr_coeff == 1 &&
- 	    bfq_symmetric_scenario(bfqd))
- 		sl = min_t(u64, sl, BFQ_MIN_TT);
-+	else if (bfqq->wr_coeff > 1)
-+		sl = max_t(u32, sl, 20ULL * NSEC_PER_MSEC);
+diff --git a/drivers/power/supply/max14656_charger_detector.c b/drivers/power/supply/max14656_charger_detector.c
+index b91b1d2999dc..d19307f791c6 100644
+--- a/drivers/power/supply/max14656_charger_detector.c
++++ b/drivers/power/supply/max14656_charger_detector.c
+@@ -280,6 +280,13 @@ static int max14656_probe(struct i2c_client *client,
  
- 	bfqd->last_idling_start = ktime_get();
- 	hrtimer_start(&bfqd->idle_slice_timer, ns_to_ktime(sl),
+ 	INIT_DELAYED_WORK(&chip->irq_work, max14656_irq_worker);
+ 
++	chip->detect_psy = devm_power_supply_register(dev,
++		       &chip->psy_desc, &psy_cfg);
++	if (IS_ERR(chip->detect_psy)) {
++		dev_err(dev, "power_supply_register failed\n");
++		return -EINVAL;
++	}
++
+ 	ret = devm_request_irq(dev, chip->irq, max14656_irq,
+ 			       IRQF_TRIGGER_FALLING,
+ 			       MAX14656_NAME, chip);
+@@ -289,13 +296,6 @@ static int max14656_probe(struct i2c_client *client,
+ 	}
+ 	enable_irq_wake(chip->irq);
+ 
+-	chip->detect_psy = devm_power_supply_register(dev,
+-		       &chip->psy_desc, &psy_cfg);
+-	if (IS_ERR(chip->detect_psy)) {
+-		dev_err(dev, "power_supply_register failed\n");
+-		return -EINVAL;
+-	}
+-
+ 	schedule_delayed_work(&chip->irq_work, msecs_to_jiffies(2000));
+ 
+ 	return 0;
 -- 
 2.20.1
 
