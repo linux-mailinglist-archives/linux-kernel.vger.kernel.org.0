@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 288AF4434C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D167441E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392430AbfFMQ2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:28:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53558 "EHLO mail.kernel.org"
+        id S2391765AbfFMQRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:17:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730951AbfFMIf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:35:57 -0400
+        id S1731136AbfFMIkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:40:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5B2B20851;
-        Thu, 13 Jun 2019 08:35:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6B7821479;
+        Thu, 13 Jun 2019 08:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560414957;
-        bh=KTYwFNXC65erFkC52u6lAn4MC/MEmY1aflFaJEosUxI=;
+        s=default; t=1560415255;
+        bh=+fBCc4T2sa2o2oZwGHz5Caw3GFcd0By+aiDsHNq+esM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fAFxCcGWNLnJX0dqQaGwIE/2WCGUbHJGYUHlwWI5F2kx9/gv1LXB/tLKV+kIbCULP
-         PY7zIJUyF79l1fc5H5SzXsaAyNvXBMpX5IJ+T2T+rVN7ZCkJW1TyMRqZDZ+dWYgG8B
-         Cwcg1wUDnPdkNsr4n2bBTKwA9S33/jCs/4+kOFy0=
+        b=tybY7xmXlPALpNWuyF7RR9JClj3CF7VQ8ww05CRy+SH53aHksU5YxBLPdN1TeMmfU
+         8TJzQbebd4q2WANZ+kWO9U0KveXGzt9dbyPCRX4YkEVLogr6gI+G4nVSKLutTIojh8
+         8Sm/zsvxc8P7Jlkj84Mj5UOfo968lJlwD/g48itI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 33/81] mmc: mmci: Prevent polling for busy detection in IRQ context
-Date:   Thu, 13 Jun 2019 10:33:16 +0200
-Message-Id: <20190613075651.591963361@linuxfoundation.org>
+        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 059/118] nvme-pci: unquiesce admin queue on shutdown
+Date:   Thu, 13 Jun 2019 10:33:17 +0200
+Message-Id: <20190613075647.242796357@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8520ce1e17799b220ff421d4f39438c9c572ade3 ]
+[ Upstream commit c8e9e9b7646ebe1c5066ddc420d7630876277eb4 ]
 
-The IRQ handler, mmci_irq(), loops until all status bits have been cleared.
-However, the status bit signaling busy in variant->busy_detect_flag, may be
-set even if busy detection isn't monitored for the current request.
+Just like IO queues, the admin queue also will not be restarted after a
+controller shutdown. Unquiesce this queue so that we do not block
+request dispatch on a permanently disabled controller.
 
-This may be the case for the CMD11 when switching the I/O voltage, which
-leads to that mmci_irq() busy loops in IRQ context. Fix this problem, by
-clearing the status bit for busy, before continuing to validate the
-condition for the loop. This is safe, because the busy status detection has
-already been taken care of by mmci_cmd_irq().
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reported-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/mmci.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/nvme/host/pci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index f1f54a818489..77f18729ee96 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1320,9 +1320,10 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
- 		}
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 7b9ef8e734e7..377f6fff420d 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2187,8 +2187,11 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 	 * must flush all entered requests to their failed completion to avoid
+ 	 * deadlocking blk-mq hot-cpu notifier.
+ 	 */
+-	if (shutdown)
++	if (shutdown) {
+ 		nvme_start_queues(&dev->ctrl);
++		if (dev->ctrl.admin_q && !blk_queue_dying(dev->ctrl.admin_q))
++			blk_mq_unquiesce_queue(dev->ctrl.admin_q);
++	}
+ 	mutex_unlock(&dev->shutdown_lock);
+ }
  
- 		/*
--		 * Don't poll for busy completion in irq context.
-+		 * Busy detection has been handled by mmci_cmd_irq() above.
-+		 * Clear the status bit to prevent polling in IRQ context.
- 		 */
--		if (host->variant->busy_detect && host->busy_status)
-+		if (host->variant->busy_detect_flag)
- 			status &= ~host->variant->busy_detect_flag;
- 
- 		ret = 1;
 -- 
 2.20.1
 
