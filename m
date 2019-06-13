@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6050344264
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EAB440AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391893AbfFMQWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:22:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56064 "EHLO mail.kernel.org"
+        id S2390939AbfFMQIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:08:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731052AbfFMIie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:34 -0400
+        id S1731290AbfFMIpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:45:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B32482147A;
-        Thu, 13 Jun 2019 08:38:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EDCA20851;
+        Thu, 13 Jun 2019 08:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415114;
-        bh=HTx1fHVj5uezsO/DXs83fYpWV86qC1ZT8ZkQv5D7U4A=;
+        s=default; t=1560415513;
+        bh=geU8Noc3OKP6QPHS3c2vzNUSMaOjch3D55wecvpIVKs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RtFcGM4ViSvrgMEx9zoWFeRvvRn5aP2UXfXO3tnN7PxxbeP3Y2xeHnibbp0N4boLj
-         NqxUQQMGWv0LOuTeMXwa3A2UCkGXLqUptgtIpYrxi+eRVEcRQFfEZKXLYeaq+M027Q
-         i6ry6pnfh7ISWbJE73DtNCBsY7ZXdjmWBV72D0eg=
+        b=IQfsbjCsAujRHg54ytrrcYm7w6Y+7um5nKFvPgPI8OwyD22VFTe/yAmw72PxGn8H2
+         lTNy2Q1kUmo+wEQ4n7CnFD81LEvlvKAkgQmuf7VwpTQehQov3J3o8zMtyPQ7jChTex
+         Rzw0qN/xEHVU3+nbJcHE6PXBFDzW9ifMFGVoJ1/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Binbin Wu <binbin.wu@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 001/118] rapidio: fix a NULL pointer dereference when create_workqueue() fails
-Date:   Thu, 13 Jun 2019 10:32:19 +0200
-Message-Id: <20190613075643.733402894@linuxfoundation.org>
+Subject: [PATCH 5.1 028/155] mfd: intel-lpss: Set the device in reset state when init
+Date:   Thu, 13 Jun 2019 10:32:20 +0200
+Message-Id: <20190613075654.455713449@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -49,40 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 23015b22e47c5409620b1726a677d69e5cd032ba ]
+[ Upstream commit dad06532292d77f37fbe831a02948a593500f682 ]
 
-In case create_workqueue fails, the fix releases resources and returns
--ENOMEM to avoid NULL pointer dereference.
+In virtualized setup, when system reboots due to warm
+reset interrupt storm is seen.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Acked-by: Alexandre Bounine <alex.bou9@gmail.com>
-Cc: Matt Porter <mporter@kernel.crashing.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Call Trace:
+<IRQ>
+dump_stack+0x70/0xa5
+__report_bad_irq+0x2e/0xc0
+note_interrupt+0x248/0x290
+? add_interrupt_randomness+0x30/0x220
+handle_irq_event_percpu+0x54/0x80
+handle_irq_event+0x39/0x60
+handle_fasteoi_irq+0x91/0x150
+handle_irq+0x108/0x180
+do_IRQ+0x52/0xf0
+common_interrupt+0xf/0xf
+</IRQ>
+RIP: 0033:0x76fc2cfabc1d
+Code: 24 28 bf 03 00 00 00 31 c0 48 8d 35 63 77 0e 00 48 8d 15 2e
+94 0e 00 4c 89 f9 49 89 d9 4c 89 d3 e8 b8 e2 01 00 48 8b 54 24 18
+<48> 89 ef 48 89 de 4c 89 e1 e8 d5 97 01 00 84 c0 74 2d 48 8b 04
+24
+RSP: 002b:00007ffd247c1fc0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffffda
+RAX: 0000000000000000 RBX: 00007ffd247c1ff0 RCX: 000000000003d3ce
+RDX: 0000000000000000 RSI: 00007ffd247c1ff0 RDI: 000076fc2cbb6010
+RBP: 000076fc2cded010 R08: 00007ffd247c2210 R09: 00007ffd247c22a0
+R10: 000076fc29465470 R11: 0000000000000000 R12: 00007ffd247c1fc0
+R13: 000076fc2ce8e470 R14: 000076fc27ec9960 R15: 0000000000000414
+handlers:
+[<000000000d3fa913>] idma64_irq
+Disabling IRQ #27
+
+To avoid interrupt storm, set the device in reset state
+before bringing out the device from reset state.
+
+Changelog v2:
+- correct the subject line by adding "mfd: "
+
+Signed-off-by: Binbin Wu <binbin.wu@intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rapidio/rio_cm.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/mfd/intel-lpss.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-index bad0e0ea4f30..ef989a15aefc 100644
---- a/drivers/rapidio/rio_cm.c
-+++ b/drivers/rapidio/rio_cm.c
-@@ -2145,6 +2145,14 @@ static int riocm_add_mport(struct device *dev,
- 	mutex_init(&cm->rx_lock);
- 	riocm_rx_fill(cm, RIOCM_RX_RING_SIZE);
- 	cm->rx_wq = create_workqueue(DRV_NAME "/rxq");
-+	if (!cm->rx_wq) {
-+		riocm_error("failed to allocate IBMBOX_%d on %s",
-+			    cmbox, mport->name);
-+		rio_release_outb_mbox(mport, cmbox);
-+		kfree(cm);
-+		return -ENOMEM;
-+	}
-+
- 	INIT_WORK(&cm->rx_work, rio_ibmsg_handler);
+diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
+index 50bffc3382d7..ff3fba16e735 100644
+--- a/drivers/mfd/intel-lpss.c
++++ b/drivers/mfd/intel-lpss.c
+@@ -273,6 +273,9 @@ static void intel_lpss_init_dev(const struct intel_lpss *lpss)
+ {
+ 	u32 value = LPSS_PRIV_SSP_REG_DIS_DMA_FIN;
  
- 	cm->tx_slot = 0;
++	/* Set the device in reset state */
++	writel(0, lpss->priv + LPSS_PRIV_RESETS);
++
+ 	intel_lpss_deassert_reset(lpss);
+ 
+ 	intel_lpss_set_remap_addr(lpss);
 -- 
 2.20.1
 
