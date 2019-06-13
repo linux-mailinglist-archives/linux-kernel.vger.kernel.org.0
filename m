@@ -2,198 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F389438A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6B7E438B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbfFMPHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:07:22 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54504 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387679AbfFMPHS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:07:18 -0400
-Received: from turingmachine.home (unknown [IPv6:2804:431:d719:d9b5:d711:794d:1c68:5ed3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1732992AbfFMPIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:08:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53130 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726870AbfFMPH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:07:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: tonyk)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 18A252852D1;
-        Thu, 13 Jun 2019 16:07:13 +0100 (BST)
-From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-To:     linux-media@vger.kernel.org
-Cc:     mchehab@kernel.org, hverkuil@xs4all.nl, helen.koike@collabora.com,
-        kernel@collabora.com, lkcamp@lists.libreplanetbr.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-Subject: [PATCH 4/4] media: docs: create vimc documentation
-Date:   Thu, 13 Jun 2019 12:06:16 -0300
-Message-Id: <20190613150616.19336-5-andrealmeid@collabora.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613150616.19336-1-andrealmeid@collabora.com>
-References: <20190613150616.19336-1-andrealmeid@collabora.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 3666D30872C8;
+        Thu, 13 Jun 2019 15:07:58 +0000 (UTC)
+Received: from localhost (ovpn-12-28.pek2.redhat.com [10.72.12.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 944D061B7E;
+        Thu, 13 Jun 2019 15:07:47 +0000 (UTC)
+Date:   Thu, 13 Jun 2019 23:07:44 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc:     lijiang <lijiang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>
+Subject: Re: [PATCH 0/3 v11] add reserved e820 ranges to the kdump kernel
+ e820 table
+Message-ID: <20190613150744.GR26148@MiWiFi-R3L-srv>
+References: <20190608091030.GB32464@zn.tnic>
+ <20190608100139.GC26148@MiWiFi-R3L-srv>
+ <20190608100623.GA9138@zn.tnic>
+ <20190608102659.GA9130@MiWiFi-R3L-srv>
+ <20190610113747.GD5488@zn.tnic>
+ <20190612015549.GI26148@MiWiFi-R3L-srv>
+ <20190612151033.GJ32652@zn.tnic>
+ <3dfa5985-008a-20d8-5171-cfe96807c303@amd.com>
+ <20190612180724.GP32652@zn.tnic>
+ <d89ef4ef-b85a-ea94-acdf-2eed5666ed78@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d89ef4ef-b85a-ea94-acdf-2eed5666ed78@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 13 Jun 2019 15:07:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create vimc documentation file to explain it basics features, it's
-topology, how to configure it and to document vimc's subdevices.
+On 06/12/19 at 07:10pm, Lendacky, Thomas wrote:
+> On 6/12/19 1:07 PM, Borislav Petkov wrote:
+> > On Wed, Jun 12, 2019 at 04:52:22PM +0000, Lendacky, Thomas wrote:
+> >> I think the discussion ended up being that debuginfo wasn't being stripped
+> >> from the kernel and initrd (mainly the initrd).  What are the sizes of
+> >> the kernel and initrd that you are loading for kdump via kexec?
+> >>
+> >> From previous post:
+> >>   kexec -s -p /boot/vmlinuz-5.2.0-rc3+ --initrd=/boot/initrd.img-5.2.0-rc3+
+> > 
+> > You mean those sizes?
+> > 
+> > $ ls -lh /boot/vmlinuz-5.2.0-rc3+ /boot/initrd.img-5.2.0-rc3+
+> > -rw-r--r-- 1 root root 7.8M Jun 10 12:53 /boot/initrd.img-5.2.0-rc3+
+> > -rw-r--r-- 1 root root 6.7M Jun 10 12:53 /boot/vmlinuz-5.2.0-rc3+
+> > 
+> > That should fit easily in 256M :)
+> 
+> Certainly seems like they should. I know there are other things that are
+> loaded, but that should be plenty of room. I wonder if Baoquan or Lianbo
+> could track where things are being loaded to see if everything is being
+> calculated and placed properly.
 
-Signed-off-by: André Almeida <andrealmeid@collabora.com>
-Suggested-by: Helen Koike <helen.koike@collabora.com>
----
- Documentation/media/v4l-drivers/index.rst |  1 +
- Documentation/media/v4l-drivers/vimc.dot  | 22 +++++
- Documentation/media/v4l-drivers/vimc.rst  | 98 +++++++++++++++++++++++
- 3 files changed, 121 insertions(+)
- create mode 100644 Documentation/media/v4l-drivers/vimc.dot
- create mode 100644 Documentation/media/v4l-drivers/vimc.rst
+Today I did some investigations on speedway and another customer's
+machine with sme support. 
 
-diff --git a/Documentation/media/v4l-drivers/index.rst b/Documentation/media/v4l-drivers/index.rst
-index 33a055907258..c4c78a28654c 100644
---- a/Documentation/media/v4l-drivers/index.rst
-+++ b/Documentation/media/v4l-drivers/index.rst
-@@ -64,5 +64,6 @@ For more details see the file COPYING in the source distribution of Linux.
- 	si476x
- 	soc-camera
- 	uvcvideo
-+	vimc
- 	vivid
- 	zr364xx
-diff --git a/Documentation/media/v4l-drivers/vimc.dot b/Documentation/media/v4l-drivers/vimc.dot
-new file mode 100644
-index 000000000000..57863a13fa39
---- /dev/null
-+++ b/Documentation/media/v4l-drivers/vimc.dot
-@@ -0,0 +1,22 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+digraph board {
-+	rankdir=TB
-+	n00000001 [label="{{} | Sensor A\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000001:port0 -> n00000005:port0 [style=bold]
-+	n00000001:port0 -> n0000000b [style=bold]
-+	n00000003 [label="{{} | Sensor B\n/dev/v4l-subdev1 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000003:port0 -> n00000008:port0 [style=bold]
-+	n00000003:port0 -> n0000000f [style=bold]
-+	n00000005 [label="{{<port0> 0} | Debayer A\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000005:port1 -> n00000017:port0
-+	n00000008 [label="{{<port0> 0} | Debayer B\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000008:port1 -> n00000017:port0 [style=dashed]
-+	n0000000b [label="Raw Capture 0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-+	n0000000f [label="Raw Capture 1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-+	n00000013 [label="RGB/YUV Input\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
-+	n00000013 -> n00000017:port0 [style=dashed]
-+	n00000017 [label="{{<port0> 0} | Scaler\n/dev/v4l-subdev4 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000017:port1 -> n0000001a [style=bold]
-+	n0000001a [label="RGB/YUV Capture\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
-+}
-diff --git a/Documentation/media/v4l-drivers/vimc.rst b/Documentation/media/v4l-drivers/vimc.rst
-new file mode 100644
-index 000000000000..bd98c55a0025
---- /dev/null
-+++ b/Documentation/media/v4l-drivers/vimc.rst
-@@ -0,0 +1,98 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+The Virtual Media Controller Driver (vimc)
-+==========================================
-+
-+The Vimc driver emulates the V4L2 API and the Media API as well. Its goal is to
-+emulate complex devices and topologies. In the actual state, it has a capture
-+device and three subdevices: sensor, debayer and scaler.
-+
-+Topology
-+--------
-+
-+The topology is hardcoded, although you could modify it on vimc-core and
-+recompile the driver to achieve your own topology. This is the default topology:
-+
-+.. _vimc_topology_graph:
-+
-+.. kernel-figure:: vimc.dot
-+    :alt:   vimc.dot
-+    :align: center
-+
-+    Media pipeline graph on Vimc
-+
-+Configuring the topology
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+Each subdevice will come with its default configuration (pixelformat, height,
-+width, ...). One needs to configure the topology in order to match the
-+configuration on each linked subdevice to stream frames through the pipeline.
-+If the configuration doesn't match, the stream will fail. The ``v4l2-utils``
-+is a bundle of user-space applications, that comes with ``media-ctl`` and
-+``v4l2-clt`` that can be used in combination to configure. This sequence of
-+commands fits for the default topology:
-+
-+.. code-block:: bash
-+
-+        media-ctl -d platform:vimc -V '"Sensor A":0[fmt:SBGGR8_1X8/640x480]'
-+        media-ctl -d platform:vimc -V '"Debayer A":0[fmt:SBGGR8_1X8/640x480]'
-+        media-ctl -d platform:vimc -V '"Sensor B":0[fmt:SBGGR8_1X8/640x480]'
-+        media-ctl -d platform:vimc -V '"Debayer B":0[fmt:SBGGR8_1X8/640x480]'
-+        v4l2-ctl -z platform:vimc -d "RGB/YUV Capture" -v width=1920,height=1440
-+        v4l2-ctl -z platform:vimc -d "Raw Capture 0" -v pixelformat=BA81
-+        v4l2-ctl -z platform:vimc -d "Raw Capture 1" -v pixelformat=BA81
-+
-+Subdevices
-+----------
-+
-+Subdevices define the behavior of an entity in the topology. Depending on the
-+subdevice, the entity can have multiple pads of type source or sink.
-+
-+vimc-sensor:
-+	Generates images in several formats using video test pattern generator.
-+	Exposes:
-+
-+	* 1 Pad source
-+
-+vimc-debayer:
-+	Transforms images in bayer format into a non-bayer format.
-+	Exposes:
-+
-+	* 1 Pad sink
-+	* 1 Pad source
-+
-+vimc-scaler:
-+	Multiplies the size of the image by 9 (this value can be configured,
-+        see at `Modules options`_).
-+	Exposes:
-+
-+	* 1 Pad sink
-+	* 1 Pad source
-+
-+vimc-capture:
-+	Exposes node /dev/videoX to allow userspace to capture the stream.
-+	Exposes:
-+
-+	* 1 Pad sink
-+	* 1 Pad source
-+
-+Modules options
-+---------------
-+
-+Vimc has a few module parameters to configure the driver. You should pass
-+those arguments to each subdevice, not for the Vimc module. For example::
-+
-+        vimc_subvice.param=value
-+
-+* ``vimc_scaler.sca_mult=<unsigned int>``
-+
-+        Image size multiplier factor to be used to multiply both width and
-+        height, so the image size will be ``sca_mult^2`` bigger than the
-+        original one. Currently, only supports scaling up (the default value
-+        is 3).
-+
-+* ``vimc_debayer.deb_mean_win_size=<unsigned int>``
-+
-+        Window size to calculate the mean. Note: the window size needs to be an
-+        odd number, as the main pixel stays in the center of the window,
-+        otherwise the next odd number is considered (the default value is 3).
--- 
-2.22.0
+In kdump kernel boot log, we can see that it prints the memory usage as
+below from mem_init_print_info() of mem_init(). There it free all
+memblock memory into buddy. We can see kernel used (144828K reserved)
+before this, about 144M. This is for sure, and I got the same value form
+memblock=debug kernel parameter adding.
 
+[    2.109408] Kernel command line: BOOT_IMAGE=(hd0,gpt2)/vmlinuz-5.2.0-rc4+ ro mem_encrypt=on resume=/dev/mapper/rhel_amd--speedway--05-swap console=ttyS0,115200 earlyprintk=serial,0x6000,115200 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never nr_cpus=1 debug nokaslr disable_cpu_apicid=0 elfcorehdr=1899892K
+[    2.155433] Memory: 65572K/262128K available (12292K kernel code, 2047K rwdata, 3840K rodata, 2344K init, 6360K bss, 144828K reserved, 0K cma-reserved)
+
+The free memory in buddy is 65572K, about 65M. This confuses me. I added
+below code to print the free memory, it's about 64M. It seems not
+changed. I need read code and check further.
+
+[    5.775595] bhe: free:0x10304
+[    5.778612] Mem-Info:
+[    5.780923] active_anon:1818 inactive_anon:12837 isolated_anon:0
+[    5.780923]  active_file:0 inactive_file:0 isolated_file:0
+[    5.780923]  unevictable:0 dirty:0 writeback:0 unstable:0
+[    5.780923]  slab_reclaimable:1995 slab_unreclaimable:3347
+[    5.780923]  mapped:0 shmem:14662 pagetables:1 bounce:0
+[    5.780923]  free:16577 free_pcp:3 free_cma:0
+
+--- a/init/main.c
++++ b/init/main.c
+@@ -1168,6 +1168,8 @@ static noinline void __init kernel_init_freeable(void)
+ 
+        do_basic_setup();
+ 
++       pr_info("bhe: free:0x%lx\n", nr_free_pages() << (PAGE_SHIFT - 10));
++       show_mem(0, NULL);
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Above is about code debugging and analysis. From testing results, there
+are things impacting the memory usage of kdump kernel. 
+
+1)We need strip DEBUG INFO from kernel modules, otherwise it will bloat
+the initrd and its space.
+
+2)And some machines will consume more memory than other, because they own
+more pci devices or different devices and drivers. Before init process
+run, we will detect and init them, these will eat memory.
+
+With my testing, the speedway machine which has 128 cpus obvisouly consume
+more memory than one HP machine. On the HP machine, even 160M
+crashkernel memory with DEBUG INFO stripped, kdump kernel can work well.
+While 160M crashkernel doesn't satisfy speedway machine, it needs 256M.
+
+3)Some extra kernel parameters may impact memory usage. E.g in Boris's
+test, 'log_buf_len=16M' and 'debug' are added, this will cost extra
+memory.
+
+kexec -s -p /boot/vmlinuz-5.2.0-rc3+ --initrd=/boot/initrd.img-5.2.0-rc3+ --command-line="maxcpus=1 root=/dev/sda5 ro debug ignore_loglevel
+log_buf_len=16M no_console_suspend net.ifnames=0 systemd.log_target=null mem_encrypt=on kvm_amd.sev=1 nr_cpus=1 irqpoll reset_devices vga=normal
+LANG=en_US.UTF-8 earlyprintk=serial cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug
+transparent_hugepage=never disable_cpu_apicid=0"
+
+Anyway, I will continue investigating, see if I can get exact
+information from kernel printing or debugging.
+
+Thanks
+Baoquan
