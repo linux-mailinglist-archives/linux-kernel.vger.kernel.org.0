@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1CD143FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57ADC44362
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390615AbfFMQBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:01:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36420 "EHLO mail.kernel.org"
+        id S2392033AbfFMQ3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:29:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731434AbfFMIsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:48:31 -0400
+        id S1730933AbfFMIf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 264F5215EA;
-        Thu, 13 Jun 2019 08:48:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 113D120B7C;
+        Thu, 13 Jun 2019 08:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415710;
-        bh=qAdD09BxJHr5KfiNLtbxB2ua5fax0u7NJzfQYe0S4Rc=;
+        s=default; t=1560414926;
+        bh=r/cQdU2vJehPtLKTUxVZzWc4VnWDJsWbAZXWsJZuhBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBsE9tj5o9ed092yuHHrCFhomspzLTBTX8bBGQziKWAF8WWw7fK0hbKU6zA5p22eH
-         FfWiA+ER30ki64DcTpAlhQh1bKRK9CusjJ26ZhyXOGtU6uUzBwr9zAOsXRQp2XMqLJ
-         5p3r7CIVszMiTf5+E7odV3X8652VY66Xnd26DtZY=
+        b=EFa+4WGpWJc/koTHSq43Y2epWdWtqq6OPfQdBjI93XPa0fCROqOA0ZcftSPb9/zv+
+         OrrYvPIsQ2VQXCzdqxf96yCxTdvLucUspu0vkq8t17ozG45wbShSQeL1jox4WczzNV
+         QArYef2uYKZavSA/CedT2pY32wqzpMIgNdffaUck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 074/155] PCI: designware-ep: Use aligned ATU window for raising MSI interrupts
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Borislav Petkov <bp@suse.de>,
+        Johannes Thumshirn <jth@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>, linuxppc-dev@ozlabs.org,
+        morbidrsa@gmail.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 23/81] EDAC/mpc85xx: Prevent building as a module
 Date:   Thu, 13 Jun 2019 10:33:06 +0200
-Message-Id: <20190613075657.117145562@linuxfoundation.org>
+Message-Id: <20190613075650.845289943@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6b7330303a8186fb211357e6d379237fe9d2ece1 ]
+[ Upstream commit 2b8358a951b1e2a534a54924cd8245e58a1c5fb8 ]
 
-Certain platforms like K2G reguires the outbound ATU window to be
-aligned. The alignment size is already present in mem->page_size.
-Use the alignment size present in mem->page_size to configure an
-aligned ATU window. In order to raise an interrupt, CPU has to write
-to address offset from the start of the window unlike before where
-writes were always to the beginning of the ATU window.
+The mpc85xx EDAC driver can be configured as a module but then fails to
+build because it uses two unexported symbols:
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+  ERROR: ".pci_find_hose_for_OF_device" [drivers/edac/mpc85xx_edac_mod.ko] undefined!
+  ERROR: ".early_find_capability" [drivers/edac/mpc85xx_edac_mod.ko] undefined!
+
+We don't want to export those symbols just for this driver, so make the
+driver only configurable as a built-in.
+
+This seems to have been broken since at least
+
+  c92132f59806 ("edac/85xx: Add PCIe error interrupt edac support")
+
+(Nov 2013).
+
+ [ bp: make it depend on EDAC=y so that the EDAC core doesn't get built
+   as a module. ]
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Johannes Thumshirn <jth@kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: linuxppc-dev@ozlabs.org
+Cc: morbidrsa@gmail.com
+Link: https://lkml.kernel.org/r/20190502141941.12927-1-mpe@ellerman.id.au
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-designware-ep.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/edac/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 24f5a775ad34..e3cce5d203f3 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -397,6 +397,7 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct pci_epc *epc = ep->epc;
-+	unsigned int aligned_offset;
- 	u16 msg_ctrl, msg_data;
- 	u32 msg_addr_lower, msg_addr_upper, reg;
- 	u64 msg_addr;
-@@ -422,13 +423,15 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 		reg = ep->msi_cap + PCI_MSI_DATA_32;
- 		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	}
--	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
-+	aligned_offset = msg_addr_lower & (epc->mem->page_size - 1);
-+	msg_addr = ((u64)msg_addr_upper) << 32 |
-+			(msg_addr_lower & ~aligned_offset);
- 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
- 				  epc->mem->page_size);
- 	if (ret)
- 		return ret;
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 96afb2aeed18..aaaa8ce8d3fd 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -246,8 +246,8 @@ config EDAC_PND2
+ 	  micro-server but may appear on others in the future.
  
--	writel(msg_data | (interrupt_num - 1), ep->msi_mem);
-+	writel(msg_data | (interrupt_num - 1), ep->msi_mem + aligned_offset);
- 
- 	dw_pcie_ep_unmap_addr(epc, func_no, ep->msi_mem_phys);
- 
+ config EDAC_MPC85XX
+-	tristate "Freescale MPC83xx / MPC85xx"
+-	depends on FSL_SOC
++	bool "Freescale MPC83xx / MPC85xx"
++	depends on FSL_SOC && EDAC=y
+ 	help
+ 	  Support for error detection and correction on the Freescale
+ 	  MPC8349, MPC8560, MPC8540, MPC8548, T4240
 -- 
 2.20.1
 
