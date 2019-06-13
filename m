@@ -2,117 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD55438F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:10:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A2643902
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733157AbfFMPKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:10:14 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37560 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732379AbfFMPKL (ORCPT
+        id S2387892AbfFMPKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:10:51 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41562 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387703AbfFMPKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:10:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 20so11137235pgr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:10:11 -0700 (PDT)
+        Thu, 13 Jun 2019 11:10:49 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p15so31703605eds.8;
+        Thu, 13 Jun 2019 08:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JO9uQQwMbg5ivhzHd1CnAF++m72nEakKLp0osCcJQnQ=;
-        b=IPZYAtoyoFp3HvrHzCX1RIl4KYEYpG40khs6KFbup9TQk8z2GwOZdLAq9U6Dlgslh3
-         Ly2CwfcLpztz7OipPAimq5Rn4JKW4CCAS9+DK9hBsfh7Isg22X0s2Z5tk953041cuUbJ
-         ZM2f82JRLxr3Ofoxghz6bZ8lHkTkS9sRwYB/yZ3o0gb83r6sC10xnIJymDLluwc3Omfc
-         CjQHC2aH4lpljhIKO50mdS7P8r46QUHHVxoB4auFSLUWAV3dp1v11A3zDRLWQZABWyiU
-         7kr54U0PXOrbhK6k6ss2xiE9MN87j6QcAnRsHXpEzq+WAv9Vs3/0WTZI1Desb7UwKU5p
-         1TmQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mAbHERgF4sto4JY9qhor9hoPyVKuDFgaFK9ym+Lnfq4=;
+        b=IljlBi848cDotU9HAggCvYc2rtkmeLfV3n60dmhdsQxkIqED7ZzO/fLT6mA99lu4In
+         zjvUQ5rI4XEuna8pNvpVqUoUOzLC8JDkPUD7wz8hd/BRzzOouiCyKcRj+AiBFqzCvRHx
+         OM8BqnsIcsU01rhogxhFLydNIHsH2R/mP1HJ0s94lt07HvEoTXrnJ4hfE6sizBVokoSQ
+         c+si9G2TfRKZaWIlR1C+kJLNTmupqeCKm72of2ztxN9Y+NVhd2lPE0celODf7z4qiYOQ
+         usDebGD0eDinEPG2wdynqR9paBDGys1BuNAZiK7FjmLLkTk0oG5SSHhGFRJ90jNnUEeY
+         oJpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JO9uQQwMbg5ivhzHd1CnAF++m72nEakKLp0osCcJQnQ=;
-        b=ohdR4kIzY6KUgUbJbDm3d4y0tAl68U/LInlj2i9eaTzxgiffiWdlVE5UxMmF74NEnI
-         vM74xMyXdC8JS4NoanhBVFgRajj5s5BdYAl30EBByG0FK18u9LEAnec7QFgRbMHB3iaf
-         4y1WTbLEt8eCyP/t9vhl4jRChLgzus6Sqo5/HraKM3EFiGrucVScXmEY2qqHwOLVaPeF
-         xRzC6hqKCLV0QnO3VUsCQjhR4IU134fDFOhScFJYngZxG72SroVcEKshfuDLuKAT0+vp
-         ljcoy6SzQnW2YsA/VbXC8IR/eWbkkCAJmaO0GmAQToBV+lDIZ/Lpr7C9WT8TTHJRwqKS
-         1DrA==
-X-Gm-Message-State: APjAAAW05eVk2MAKbBAMXq22jdQ7HCqPOAjKtbF2yMFS4vusD1BiKXBn
-        lr1+zvj5U+FcLiYR6qSOJcl6Lw==
-X-Google-Smtp-Source: APXvYqwImb0dZOR+TBCaGd8bb0UVaGoam8pIQa5PBKA2pE708P62aKAe6vTGzNjGapg7p+mVArcn7Q==
-X-Received: by 2002:a17:90a:b298:: with SMTP id c24mr6096722pjr.18.1560438610952;
-        Thu, 13 Jun 2019 08:10:10 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b8sm19344pff.20.2019.06.13.08.10.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 08:10:10 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 08:10:08 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Subject: Re: [PATCH v3 1/7] drivers: regulator: qcom_spmi: enable linear
- range info
-Message-ID: <20190613151008.GA6792@builder>
-References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
- <20190613142231.8728-1-jeffrey.l.hugo@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mAbHERgF4sto4JY9qhor9hoPyVKuDFgaFK9ym+Lnfq4=;
+        b=cgVdN/0p3iGnO8L8Qxb58vz2yk5EEhljhv4YVxGTGtB+ouKhfgpjQx1eOf3iFPaiH8
+         36ZBPNajIIgyTZKP1VQQbXkeagcSRsHiapbGTkZJgOedWvv67CKAlFfBuwKZE3nWH5Fw
+         7hztVV0LqB0tVaGf0K5rrv+9ISZm8Owp4wz/upHaOiGrmKX72q5HBd9kGVce8PF9+YVI
+         qxEYkfve6eaKbjyb8y6Fp9BLvcZE+d47RsIr6hnfVNV2Z3EO4jEg8DTFIWm06nx/fukN
+         gSM1mtBW786aDUj6MmDjeGzh0xaoZzedz7D4cc1kPxQP/jLk5ZSw9C5Rhk0Wf0h37beM
+         MUXA==
+X-Gm-Message-State: APjAAAXzALqQ3SKxSzm/46m0VKJjBoDf/gFhFJTtaNBVuxAOLW0VvxCz
+        JV0G9esvHsaEV0Fm1as7mTZI562VhZdRKes4Ijs=
+X-Google-Smtp-Source: APXvYqz0k4MszdACORNyt1eXDvIYuQYDIn0HwkX2TGQG1YYgSqRHw8uiM55UW3Ynq1HDSf2znfG+IZfnuUrQo3ot3QM=
+X-Received: by 2002:a50:b1db:: with SMTP id n27mr50072785edd.62.1560438647208;
+ Thu, 13 Jun 2019 08:10:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613142231.8728-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20190612194409.197461-1-willemdebruijn.kernel@gmail.com>
+ <20190612125911.509d79f2@cakuba.netronome.com> <CAF=yD-JAZfEG5JoNEQn60gnucJB1gsrFeT38DieG12NQb9DFnQ@mail.gmail.com>
+ <20190612135627.5eac995d@cakuba.netronome.com> <20190613093345.GQ3402@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190613093345.GQ3402@hirez.programming.kicks-ass.net>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 13 Jun 2019 11:10:11 -0400
+Message-ID: <CAF=yD-+DO4Khnn64LqxWNVZpNSqtc81N5tFwEYtYOQ=x-Afnxw@mail.gmail.com>
+Subject: Re: [PATCH] locking/static_key: always define static_branch_deferred_inc
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Network Development <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13 Jun 07:22 PDT 2019, Jeffrey Hugo wrote:
+On Thu, Jun 13, 2019 at 5:33 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Jun 12, 2019 at 01:56:27PM -0700, Jakub Kicinski wrote:
+> > On Wed, 12 Jun 2019 16:25:16 -0400, Willem de Bruijn wrote:
+> > > On Wed, Jun 12, 2019 at 3:59 PM Jakub Kicinski
+> > > <jakub.kicinski@netronome.com> wrote:
+> > > >
+> > > > On Wed, 12 Jun 2019 15:44:09 -0400, Willem de Bruijn wrote:
+> > > > > From: Willem de Bruijn <willemb@google.com>
+> > > > >
+> > > > > This interface is currently only defined if CONFIG_JUMP_LABEL. Make it
+> > > > > available also when jump labels are disabled.
+> > > > >
+> > > > > Fixes: ad282a8117d50 ("locking/static_key: Add support for deferred static branches")
+> > > > > Signed-off-by: Willem de Bruijn <willemb@google.com>
+> > > > >
+> > > > > ---
+> > > > >
+> > > > > The original patch went into 5.2-rc1, but this interface is not yet
+> > > > > used, so this could target either 5.2 or 5.3.
+> > > >
+> > > > Can we drop the Fixes tag?  It's an ugly omission but not a bug fix.
+> > > >
+> > > > Are you planning to switch clean_acked_data_enable() to the helper once
+> > > > merged?
+> > >
+> > > Definitely, can do.
+> > >
+> > > Perhaps it's easiest to send both as a single patch set through net-next, then?
+> >
+> > I'd think so too, perhaps we can get a blessing from Peter for that :)
+>
+> Sure that works, I don't think there's anything else pending for this
+> file to conflict with.
+>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-> From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  drivers/regulator/qcom_spmi-regulator.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-> index 53a61fb65642..fd55438c25d6 100644
-> --- a/drivers/regulator/qcom_spmi-regulator.c
-> +++ b/drivers/regulator/qcom_spmi-regulator.c
-> @@ -1744,6 +1744,7 @@ MODULE_DEVICE_TABLE(of, qcom_spmi_regulator_match);
->  static int qcom_spmi_regulator_probe(struct platform_device *pdev)
->  {
->  	const struct spmi_regulator_data *reg;
-> +	const struct spmi_voltage_range *range;
->  	const struct of_device_id *match;
->  	struct regulator_config config = { };
->  	struct regulator_dev *rdev;
-> @@ -1833,6 +1834,12 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
->  			}
->  		}
->  
-> +		if (vreg->logical_type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430) {
+Great, thanks. Sent
 
-This doesn't compile, because HFS430 isn't defined until patch 7.
-
-But in patch 2 you replace this with a check to see if there's just a
-single range, which is a better solution. So squash the last hunk of
-patch 2 into this.
-
-Regards,
-Bjorn
-
-> +			/* since there is only one range */
-> +			range = spmi_regulator_find_range(vreg);
-> +			vreg->desc.uV_step = range->step_uV;
-> +		}
-> +
->  		config.dev = dev;
->  		config.driver_data = vreg;
->  		config.regmap = regmap;
-> -- 
-> 2.17.1
-> 
+http://patchwork.ozlabs.org/project/netdev/list/?series=113601
