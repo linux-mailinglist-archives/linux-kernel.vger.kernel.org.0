@@ -2,109 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A42F44013
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D025A43FDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391012AbfFMQCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:02:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40180 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731396AbfFMIrl (ORCPT
+        id S2390567AbfFMQBC convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Jun 2019 12:01:02 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:44498 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731454AbfFMIsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p11so19817477wre.7;
-        Thu, 13 Jun 2019 01:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wXnFbw2PnvR/3sq9KGlaSJyBR1d6hKrCN6HutVmQhHo=;
-        b=Xrc+XlYPouXlKqyLZADHlMsX4sJPL+nk1A5YiLSgf1IeAJ4uOp5GvZDKCYogM4W2jD
-         bHUq17sfziazSYJPcdPUPWl2bOV+4w2esMkk1cUJhuRfAGYsArKTpHg0T1K/Z1xL2DcN
-         1I7+yJmbMY3j3t62QlaAqlXE3EBmV4cqS+FEB7lUehQ7MkxbsPOMzmQXIc2pbuK+a4fI
-         Q7lVgeRNI+Ev0QsXDE/r+SRsaZVHh/oE1JyI+bHivqw1flFeF1aYyaK9ZU8ClYNI+xad
-         ZNuieNY3F/jQdjuOe/qQiWBRKBAvK70sq0SEITpFvagUCC2TwaXSoSWcwW+VOywtK5SE
-         pQNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wXnFbw2PnvR/3sq9KGlaSJyBR1d6hKrCN6HutVmQhHo=;
-        b=Y6zYBUZkU+1wAHoNnJ4XJHxgINvKrL8xeansXXw36tvedhPyq1PQI61+3NKk9Ey2sq
-         lVtVmCc+buqwzY7RVJJa0ElS5O+3EXHV4jv+FWNbm6XIVj0h/MxIwKmxlQW4Z4yArSuG
-         1GboxLQ678ilNazHb7d3uTEme3o6xKGkItk4V4wilT9f5wleG1gUziSvEWMn+8m7J8Oy
-         BKH1UjoNEayWWYeRDWoO3uIYMX5i2WdTGvfV+ZrvozM24Il2790wDFbLb+0aSsxaNx4y
-         pvWs9yYqQ3kAH8DofGhyo7jVWMdTufNnQD6KnxFmroKswQ/vz8zpVBzL1/O+vdh1iDH4
-         QaYg==
-X-Gm-Message-State: APjAAAWLpu9QahnsdP7WT6ZQIi/zPTYSIv76tv3YqthEazZ+rvnN5TwL
-        fvcjUsHjOl2YkyHK0xaAYzoX8m+w
-X-Google-Smtp-Source: APXvYqyieJMlQh1zYJusV9EMt5J3/JRv0A5KW6y2qJVYv7L+DGJAqn0xNHCGTaZ9cMqPUmEL2IM6TQ==
-X-Received: by 2002:adf:f7d0:: with SMTP id a16mr11798887wrq.246.1560415658589;
-        Thu, 13 Jun 2019 01:47:38 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id l12sm1882585wmj.22.2019.06.13.01.47.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 01:47:37 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:47:36 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     linus.walleij@linaro.org, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com,
-        ldewangan@nvidia.com, vidyas@nvidia.com
-Subject: Re: [PATCH V3 4/4] soc/tegra: select pinctrl for Tegra194
-Message-ID: <20190613084736.GA30664@ulmo>
-References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
- <1558007594-14824-4-git-send-email-kyarlagadda@nvidia.com>
+        Thu, 13 Jun 2019 04:48:47 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-77-sMo5MtksNjyrgFaEIWzQmA-1; Thu, 13 Jun 2019 09:48:42 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
+ 13 Jun 2019 09:48:41 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 13 Jun 2019 09:48:41 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Oleg Nesterov' <oleg@redhat.com>
+CC:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'arnd@arndb.de'" <arnd@arndb.de>,
+        "'dbueso@suse.de'" <dbueso@suse.de>,
+        "'axboe@kernel.dk'" <axboe@kernel.dk>,
+        "'dave@stgolabs.net'" <dave@stgolabs.net>,
+        "'e@80x24.org'" <e@80x24.org>,
+        "'jbaron@akamai.com'" <jbaron@akamai.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
+        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        'Al Viro' <viro@ZenIV.linux.org.uk>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
+Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31QgAHScICAABPkMIABOuaw
+Date:   Thu, 13 Jun 2019 08:48:41 +0000
+Message-ID: <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+In-Reply-To: <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
-Content-Disposition: inline
-In-Reply-To: <1558007594-14824-4-git-send-email-kyarlagadda@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-MC-Unique: sMo5MtksNjyrgFaEIWzQmA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: David Laight
+> Sent: 12 June 2019 15:18
+> From: Oleg Nesterov
+> > Sent: 12 June 2019 14:46
+> > On 06/11, David Laight wrote:
+> > >
+> > > If I have an application that has a loop with a pselect call that
+> > > enables SIGINT (without a handler) and, for whatever reason,
+> > > one of the fd is always 'ready' then I'd expect a SIGINT
+> > > (from ^C) to terminate the program.
+> >
+> > This was never true.
+> >
+> > Before Eric's patches SIGINT can kill a process or not, depending on timing.
+> > In particular, if SIGINT was already pending before pselect() and it finds
+> > an already ready fd, the program won't terminate.
+> 
+> Which matches what I see on a very old Linux system.
+> 
+> > After the Eric's patches SIGINT will only kill the program if pselect() does
+> > not find a ready fd.
+> >
+> > And this is much more consistent. Now we can simply say that the signal will
+> > be delivered only if pselect() fails and returns -EINTR. If it doesn't have
+> > a handler the process will be killed, otherwise the handler will be called.
+> 
+> But is it what the standards mandate?
+> Can anyone check how Solaris and any of the BSDs behave?
+> I don't have access to any solaris systems (I doubt I'll get the disk to
+> spin on the one in my garage).
+> I can check NetBSD when I get home.
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I tested NetBSD last night.
+pselect() always calls the signal handlers even when an fd is ready.
+I'm beginning to suspect that this is the 'standards conforming' behaviour.
+I don't remember when pselect() was added to the ToG specs, it didn't
+go through XNET while I  was going to the meetings.
 
-On Thu, May 16, 2019 at 05:23:14PM +0530, Krishna Yarlagadda wrote:
-> Select PINCTRL_TEGRA194 by default for Tegra194 SOC needed
-> for dynamically controlling PCIe pins
->=20
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> ---
->  drivers/soc/tegra/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+	David
 
-Applied to for-5.3/soc, thanks.
+> 
+> The ToG page for pselect() http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html
+> says:
+>     "If sigmask is not a null pointer, then the pselect() function shall replace
+>     the signal mask of the caller by the set of signals pointed to by sigmask
+>     before examining the descriptors, and shall restore the signal mask of the
+>     calling thread before returning."
+> Note that it says 'before examining the descriptors' not 'before blocking'.
+> Under the general description about signals it also says that the signal handler
+> will be called (or other action happen) when a pending signal is unblocked.
+> So unblocking SIGINT (set to SIG_DFL) prior to examining the descriptors
+> should be enough to cause the process to exit.
+> The fact that signal handlers are not called until 'return to user'
+> is really an implementation choice - but (IMHO) it should appear as if they
+> were called at the time they became unmasked.
+> 
+> If nothing else the man pages need a note about the standards and portability.
+> 
+> 	David
 
-Thierry
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
---SLDf9lqlvOQaIe6s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0CDaUACgkQ3SOs138+
-s6Gw+Q/9GEMCAGe1/osKqqMZNuojtuyy3aCNb+QVhJWlJVtLn/VtdBx0AqAuAf63
-2HPt17CnmoqKcToQFlPHma+uC0BEiNuPx7E0dPLCddNI9JrNxqNuU7JaPN81WsXi
-Spydy5O5ioyDK42BTkWtljUAVHT8KwUDuLDMlvoINV8pWGCRKmU6CuN4+7XraC5R
-kZRutq0uc0bILzcVxVbzbe449ZF3y2aZyHdayaEYwPWmpN0JXWkmFIr093TWK7li
-NE+KSHUQBxujoct5IkKzgDTHAHLn3edNlzxXDLM1aM3QVN1BIo0ADnybyyFBj69y
-bhiOeczT5iI74h8cuNGf5BwCsgk2CgeQX4M3DpQMXHfdkZchqC/xTbSuafI9BiAS
-X9sip1PaNzHJyPMrfefXtx2uZJFz8IU6LGUqKsOfomFS4JkvJ/DKJtBaTMU8C+yq
-U2FCfMJfm79zUe1Gii2dHK2BCjj2Op8LRW3vKOP9B+qL+EIdBk75VxwbJABAI2ly
-C7B2Rkjl4JZ/Q0Co8+vHQ6DSxjNPJB7xnaM0S4oF0TFz++ykcLrnEVZP5QsevWrk
-Hjdysh9Od2rXOKhr3NlFHlarY8ZcvQGg2KTLiKpa4IOrC8MAKabs2AmKlsCjxA24
-FgzBW5XkLVHGKkUy5SmJSgE2B2Xlb/k9denLDi1UotFiEAMBhZ8=
-=7+8+
------END PGP SIGNATURE-----
-
---SLDf9lqlvOQaIe6s--
