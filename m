@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8050144515
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8104451D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392806AbfFMQlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:41:49 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42251 "EHLO
+        id S2392782AbfFMQlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:41:47 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43529 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730531AbfFMGte (ORCPT
+        with ESMTP id S1730532AbfFMGtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:49:34 -0400
-Received: by mail-pl1-f194.google.com with SMTP id go2so7676051plb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:49:33 -0700 (PDT)
+        Thu, 13 Jun 2019 02:49:36 -0400
+Received: by mail-pl1-f194.google.com with SMTP id cl9so7673333plb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:49:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x9jaRDhy0GBwgyVjvnzwc8N26QAnkrBpLEwTplkGWe4=;
-        b=aX9/KM89WG6R+0vdMxbohlEYAMTnyamyLUW96oXRP+BZcjt09Ndom5/pYHRgUOFfAl
-         Eye6hnFwYlZ6yXr73W0n61g8oPlWfx2cJR38VwHL7AD+QbcGfxsQM1dnwQLRmKgDUQXb
-         3gaNzqlmoaY7dQyHrJBt7VpG6YWgdMn6RCzA26QGDV4SAB1g2ir7DxUHKxc/C1IdTViL
-         zZZD3eDpCdOkTTAi3UEyq4VqwvBRkTIh/MsvqwRvIdn7oPBlKEJhsupmr+kx58u2Ebdn
-         81L78zx25l2h9j7G8h7KBkx9I9n2HfHdyV7qnNSKg2aVW1SE8zxwJzkpyz2+yFKbIAi2
-         JJzQ==
-X-Gm-Message-State: APjAAAWDMwayAhrbDcZ1d/zxCFsZX4YElA/tVPuIBjBApfhIl0QvNYDY
-        qNl9oyvrjKNzLwt1j7Lbp7w=
-X-Google-Smtp-Source: APXvYqz9BDdymN8GHvIItiPZjQjyeRU5VzVnw1Hmnz9oQZpDmHeJN6SQK+VNLAAS2X0km1llz16Tzw==
-X-Received: by 2002:a17:902:4181:: with SMTP id f1mr82878144pld.22.1560408573419;
-        Wed, 12 Jun 2019 23:49:33 -0700 (PDT)
+        bh=fnertesbJ1ky5VNOHvy8V97q4rQRGGj1Ze6Uf+AOdXE=;
+        b=W8Lo0C7Gs+GD227+hKxWjrrCyoxSdFFMAAOKPgdCWcBDhAiCDd4aG8o6rOGngm/Z68
+         gm30tHgDkKhPJRJhy8ZEduWD5DpzmXD7NHl7imrqdkI1DjkGvFGNfNLG2r6sDCf4BiJM
+         AbzHEVeQwOvYrE4OdhbgR4ZLGd9T03kHNCS8MC88cCMUlTH7J4qLWDijGfQbf/OTnrMY
+         Sw5se10y+5cnfl5AyM52X2ANycLQ97ce7VHQ8Sv/Hu2WdA5ohoaMk+WNSmatKsOaqvYo
+         cJufpumy1ZVA0f8TyEVorylDJ4Fi8r8oIvXr2t06/rKhhRStuQDiy/SNUE0I+TSG1aRz
+         3Tcw==
+X-Gm-Message-State: APjAAAWxvnSpTb/Kx2ivCrDMA1Gq9DS5qrpi6LmFp7cK/906BstDeFgm
+        LcXSDqKX+co4zF1tHOyaa9k=
+X-Google-Smtp-Source: APXvYqyQIIzOjoK84w6LVe/4Kg2T/YnSP9C0HmlP/V6eto2AU/zC+lQAkgjrXqsiopngDqUen7UlYQ==
+X-Received: by 2002:a17:902:22e:: with SMTP id 43mr82630968plc.272.1560408575791;
+        Wed, 12 Jun 2019 23:49:35 -0700 (PDT)
 Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id i3sm1559973pfa.175.2019.06.12.23.49.32
+        by smtp.gmail.com with ESMTPSA id i3sm1559973pfa.175.2019.06.12.23.49.33
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 23:49:32 -0700 (PDT)
+        Wed, 12 Jun 2019 23:49:35 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
@@ -41,10 +41,10 @@ Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
         Borislav Petkov <bp@alien8.de>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <namit@vmware.com>, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 7/9] smp: Do not mark call_function_data as shared
-Date:   Wed, 12 Jun 2019 23:48:11 -0700
-Message-Id: <20190613064813.8102-8-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 8/9] x86/tlb: Privatize cpu_tlbstate
+Date:   Wed, 12 Jun 2019 23:48:12 -0700
+Message-Id: <20190613064813.8102-9-namit@vmware.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190613064813.8102-1-namit@vmware.com>
 References: <20190613064813.8102-1-namit@vmware.com>
@@ -55,31 +55,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cfd_data is marked as shared, but although it hold pointers to shared
-data structures, it is private per core.
+cpu_tlbstate is mostly private and only the variable is_lazy is shared.
+This causes some false-sharing when TLB flushes are performed.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rik van Riel <riel@surriel.com>
+Break cpu_tlbstate intro cpu_tlbstate and cpu_tlbstate_shared, and mark
+each one accordingly.
+
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/tlbflush.h | 40 ++++++++++++++++++---------------
+ arch/x86/mm/init.c              |  2 +-
+ arch/x86/mm/tlb.c               | 15 ++++++++-----
+ 3 files changed, 32 insertions(+), 25 deletions(-)
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index d9189e4d6464..d5d8dee8e3f3 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -34,7 +34,7 @@ struct call_function_data {
- 	cpumask_var_t		cpumask_ipi;
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 79272938cf79..a1fea36d5292 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -178,23 +178,6 @@ struct tlb_state {
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
+ 
+-	/*
+-	 * We can be in one of several states:
+-	 *
+-	 *  - Actively using an mm.  Our CPU's bit will be set in
+-	 *    mm_cpumask(loaded_mm) and is_lazy == false;
+-	 *
+-	 *  - Not using a real mm.  loaded_mm == &init_mm.  Our CPU's bit
+-	 *    will not be set in mm_cpumask(&init_mm) and is_lazy == false.
+-	 *
+-	 *  - Lazily using a real mm.  loaded_mm != &init_mm, our bit
+-	 *    is set in mm_cpumask(loaded_mm), but is_lazy == true.
+-	 *    We're heuristically guessing that the CR3 load we
+-	 *    skipped more than makes up for the overhead added by
+-	 *    lazy mode.
+-	 */
+-	bool is_lazy;
+-
+ 	/*
+ 	 * If set we changed the page tables in such a way that we
+ 	 * needed an invalidation of all contexts (aka. PCIDs / ASIDs).
+@@ -240,7 +223,27 @@ struct tlb_state {
+ 	 */
+ 	struct tlb_context ctxs[TLB_NR_DYN_ASIDS];
  };
+-DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
++DECLARE_PER_CPU_ALIGNED(struct tlb_state, cpu_tlbstate);
++
++struct tlb_state_shared {
++	/*
++	 * We can be in one of several states:
++	 *
++	 *  - Actively using an mm.  Our CPU's bit will be set in
++	 *    mm_cpumask(loaded_mm) and is_lazy == false;
++	 *
++	 *  - Not using a real mm.  loaded_mm == &init_mm.  Our CPU's bit
++	 *    will not be set in mm_cpumask(&init_mm) and is_lazy == false.
++	 *
++	 *  - Lazily using a real mm.  loaded_mm != &init_mm, our bit
++	 *    is set in mm_cpumask(loaded_mm), but is_lazy == true.
++	 *    We're heuristically guessing that the CR3 load we
++	 *    skipped more than makes up for the overhead added by
++	 *    lazy mode.
++	 */
++	bool is_lazy;
++};
++DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
  
--static DEFINE_PER_CPU_SHARED_ALIGNED(struct call_function_data, cfd_data);
-+static DEFINE_PER_CPU_ALIGNED(struct call_function_data, cfd_data);
+ /*
+  * Blindly accessing user memory from NMI context can be dangerous
+@@ -439,6 +442,7 @@ static inline void __native_flush_tlb_one_user(unsigned long addr)
+ {
+ 	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
  
- static DEFINE_PER_CPU_SHARED_ALIGNED(struct llist_head, call_single_queue);
++	//invpcid_flush_one(kern_pcid(loaded_mm_asid), addr);
+ 	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
  
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index fd10d91a6115..34027f36a944 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -951,7 +951,7 @@ void __init zone_sizes_init(void)
+ 	free_area_init_nodes(max_zone_pfns);
+ }
+ 
+-__visible DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate) = {
++__visible DEFINE_PER_CPU_ALIGNED(struct tlb_state, cpu_tlbstate) = {
+ 	.loaded_mm = &init_mm,
+ 	.next_asid = 1,
+ 	.cr4 = ~0UL,	/* fail hard if we screw up cr4 shadow initialization */
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index ceb03b8cad32..ffa3c94abe6a 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -145,7 +145,7 @@ void leave_mm(int cpu)
+ 		return;
+ 
+ 	/* Warn if we're not lazy. */
+-	WARN_ON(!this_cpu_read(cpu_tlbstate.is_lazy));
++	WARN_ON(!this_cpu_read(cpu_tlbstate_shared.is_lazy));
+ 
+ 	switch_mm(NULL, &init_mm, NULL);
+ }
+@@ -277,7 +277,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ {
+ 	struct mm_struct *real_prev = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+-	bool was_lazy = this_cpu_read(cpu_tlbstate.is_lazy);
++	bool was_lazy = this_cpu_read(cpu_tlbstate_shared.is_lazy);
+ 	unsigned cpu = smp_processor_id();
+ 	u64 next_tlb_gen;
+ 	bool need_flush;
+@@ -322,7 +322,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		__flush_tlb_all();
+ 	}
+ #endif
+-	this_cpu_write(cpu_tlbstate.is_lazy, false);
++	this_cpu_write(cpu_tlbstate_shared.is_lazy, false);
+ 
+ 	/*
+ 	 * The membarrier system call requires a full memory barrier and
+@@ -463,7 +463,7 @@ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
+ 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
+ 		return;
+ 
+-	this_cpu_write(cpu_tlbstate.is_lazy, true);
++	this_cpu_write(cpu_tlbstate_shared.is_lazy, true);
+ }
+ 
+ /*
+@@ -544,7 +544,7 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 	VM_WARN_ON(this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].ctx_id) !=
+ 		   loaded_mm->context.ctx_id);
+ 
+-	if (this_cpu_read(cpu_tlbstate.is_lazy)) {
++	if (this_cpu_read(cpu_tlbstate_shared.is_lazy)) {
+ 		/*
+ 		 * We're in lazy mode.  We need to at least flush our
+ 		 * paging-structure cache to avoid speculatively reading
+@@ -660,11 +660,14 @@ static void flush_tlb_func_remote(void *info)
+ 
+ static inline bool tlb_is_not_lazy(int cpu)
+ {
+-	return !per_cpu(cpu_tlbstate.is_lazy, cpu);
++	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
+ }
+ 
+ static DEFINE_PER_CPU(cpumask_t, flush_tlb_mask);
+ 
++DEFINE_PER_CPU_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
++EXPORT_PER_CPU_SYMBOL(cpu_tlbstate_shared);
++
+ void native_flush_tlb_multi(const struct cpumask *cpumask,
+ 			    const struct flush_tlb_info *info)
+ {
 -- 
 2.20.1
 
