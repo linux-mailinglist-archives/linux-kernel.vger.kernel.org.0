@@ -2,110 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5136D43937
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE644394E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388214AbfFMPMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:12:25 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:46306 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388158AbfFMPMV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:12:21 -0400
-Received: by mail-qk1-f194.google.com with SMTP id x18so975562qkn.13
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R4sEx9DRCkbOcqkLsi6Jkv1GflPMZb75UMnrOJnbtJI=;
-        b=JRz6imxOTGsNuMS76M162KvumiMVyYkKXhz/IAFwKjp3Igi0hICl/m4BUGOuw61YG6
-         Pf3He7hg9Kt6x6X1WZuq8bUrqc1a1W2UmAo8VaUwVPA2GdvPEx7a5YMbLY0nfJoFWaQM
-         YEbV9dRjW/drtmRraCujxYyThEP6QtwiSJs3iYcbutlXVk7Z5dASy1/Oy0G/oorjue0j
-         RzaH6Drn7BTg39I+BUiwTL6fije0cyR1reQqzW1AIca5v1agyVprI5RgkLHLmKlYW9Fi
-         0n1zTcJtV1luwZoUboeqFK2xDSzt81BhwHG/KONzmn78w16+WuqvsJOUxxwdcX8amTie
-         g0WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R4sEx9DRCkbOcqkLsi6Jkv1GflPMZb75UMnrOJnbtJI=;
-        b=XXXXCzVEkrtDz1iFPu7QFUDTWwNMRFsQSS6N8nIaY7R0UsFo1yZV5yio17/MLaUy8C
-         QdfXewudFIDpJxEVISbeoGy0xvNuO+1sQvh9ugCiehq9dq492wE/ShHxIsVwIoA+aJ24
-         2THISNkbmm3Qi7DVq3TfPHKh8KUwOjOC5pIRwN2qOf5NnoTecYyfCSG72R40kKWzGt4Z
-         hdS55m6RAMSiIKzPcZ3wvHK62HK6/weQzX+pKEg263CjzYFLD+VnnjJ9xniWoXcNswNW
-         942pzCLO4ptfZdUq1CwzLXYUS1swwZUSO9WPe9IPbUylEqCD+jOAVIlGQx4suTqIhRG3
-         z4Rw==
-X-Gm-Message-State: APjAAAWxD4ON0KYKdAumiO5sEqyU2GZnb59rwxUwWfuuL+FTthuUOpPA
-        5SSsKeei2heCXM/oWYRmVK0mLR90EuHSXg==
-X-Google-Smtp-Source: APXvYqzM9yCChTgMP3KlIhiG1BK19OOrfQlMOx6JZlNrolhLErYOjGfGuCWD8w4PBuxWllsDgHA6QA==
-X-Received: by 2002:a37:e506:: with SMTP id e6mr3810214qkg.229.1560438740039;
-        Thu, 13 Jun 2019 08:12:20 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id n10sm1577550qke.72.2019.06.13.08.12.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 08:12:19 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hbROk-0001qR-Po; Thu, 13 Jun 2019 12:12:18 -0300
-Date:   Thu, 13 Jun 2019 12:12:18 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613151218.GB22901@ziepe.ca>
-References: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz>
- <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
- <20190612102917.GB14578@quack2.suse.cz>
- <20190612114721.GB3876@ziepe.ca>
- <20190612120907.GC14578@quack2.suse.cz>
- <20190612191421.GM3876@ziepe.ca>
- <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
- <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
+        id S2388257AbfFMPNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:13:04 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6651 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732613AbfFMPND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:13:03 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:13:02 -0700
+X-ExtLoop1: 1
+Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
+  by orsmga006.jf.intel.com with ESMTP; 13 Jun 2019 08:12:58 -0700
+Date:   Thu, 13 Jun 2019 18:12:57 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jens.wiklander@linaro.org,
+        corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+Subject: Re: [RFC 1/7] tee: optee: allow kernel pages to register as shm
+Message-ID: <20190613151257.GA18488@linux.intel.com>
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+ <1560421833-27414-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1560421833-27414-2-git-send-email-sumit.garg@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 03:54:19PM -0700, Dan Williams wrote:
-> > > My preference would be to avoid this scenario, but if it is really
-> > > necessary, we could probably build it with some work.
-> > >
-> > > The only case we use it today is forced HW hot unplug, so it is rarely
-> > > used and only for an 'emergency' like use case.
-> >
-> > I'd really like to avoid this as well.  I think it will be very confusing for
-> > RDMA apps to have their context suddenly be invalid.  I think if we have a way
-> > for admins to ID who is pinning a file the admin can take more appropriate
-> > action on those processes.   Up to and including killing the process.
+On Thu, Jun 13, 2019 at 04:00:27PM +0530, Sumit Garg wrote:
+> Kernel pages are marked as normal type memory only so allow kernel pages
+> to be registered as shared memory with OP-TEE.
 > 
-> Can RDMA context invalidation, "device disassociate", be inflicted on
-> a process from the outside? 
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-Yes, but it is currently only applied to the entire device - ie you do
-'rmmod mlx5_ib' and all the running user space process see that their
-FD has moved to some error and the device is broken.
+Just out of pure interest why this was not allowed before?
 
-Targetting the disassociate of only a single FD would be a new thing.
-
-Jason
+/Jarkko
