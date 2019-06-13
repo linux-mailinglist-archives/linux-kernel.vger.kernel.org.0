@@ -2,95 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B573438C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9823438BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733271AbfFMPIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:08:22 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44769 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732378AbfFMOAO (ORCPT
+        id S1733092AbfFMPIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:08:06 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40650 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732381AbfFMOAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:00:14 -0400
-Received: by mail-pf1-f196.google.com with SMTP id t16so11897266pfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:00:14 -0700 (PDT)
+        Thu, 13 Jun 2019 10:00:24 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c70so12762321qkg.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=GBxc625eYrtbddlYla0FlNTwaicUbHuXFR8fhmI/WsI=;
-        b=CBU9AEBTYmLd35er+8PFQ18pl2PQp8t5kGKTFVsuBYsbkBnHUE/M7aS9QmVzELRdja
-         fFb31me7CHwIwDe6LOe8/XL/wE2msLCxddm2RQvyobGugc1Jp8Uc5ro2LY6dsCHsnzp/
-         5hRJ2/wq0x75/vUF9wTflq6djoES8pVomX4XVHsM49Ya0dksm6SGphGx0lD7McrSXTB2
-         uRx2aKTuX49aj8djKZcvktSMAgEKX6h5c9wenL+aQ9NKHOmI4O+v5QddB8q6H56IR67a
-         e1WVG850paFkZhNannCTksrAyFftBmeNap8YW3fdH9IHgAgMug5P1hF3nWPVI5tpy11F
-         zdqA==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GwTb9BI2f5ybKBNoF1NplcvQUpBaKVKJxwsFqjlRC1A=;
+        b=ijpb3i/2Lb+VobYX2DK9Gl2bviNpKkUKEJmTYoNVT8mhCwXaoODROQGCBSOhVMaNEk
+         q5kzmBF6PtK2inMDmzDMdFC2OqoKSLwbUJAXpEpNnnAtGbTKNarVK30V8dAcZvyaMevm
+         gLIwk058H9uouJGumsKfKwm5/ULAUJI+rnS4wMisCkm2lEOszCJ1EMwEYHedggQ4yOLW
+         arYoaw5eiROsQdWwF27px52osQKJNcaqUKsjuAYKRw0+yYqVC6cHpr1Ftei9BKDQsBUd
+         0R06Oa8c7s7RFdIbOpsBdaCEAOtFRvkWuBuzs90afQ6tsy81SVHNqpTVHa3MOgTOMJFj
+         pfOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=GBxc625eYrtbddlYla0FlNTwaicUbHuXFR8fhmI/WsI=;
-        b=Vv7nFvp6hpJiXf0GhoFdPB/ncqWNZB8h8xC/UNTpXQ7vwlMmGNPMH/GoQ5R+NwXG9C
-         pMZSMSbXrFeNSWQAclqmaCnW6+NjnywnxwUZV0QNKREWAGXLY6OM3zOkvzqyF7bKonrM
-         RqT1CROdiF/G7rhVHv4p01CLFRum+669TrFXMH2yj/jVZDq34YLs1mepWr9lOx/exmdb
-         f5EhveoEkRbNn2xLZYdz6ZJa98xOAduiCYuORkVUPV9LqeRenDf2K5Dfj0zTil+j4oIZ
-         4r+5Bqfm43xL+/CoS79SNeDivMQKP9De9A8A0k2xVkcduxcY/hK9Qzgy3G29GtVz9mbt
-         Pomg==
-X-Gm-Message-State: APjAAAX88jmNE1r2ADi4QmQb+Vd48O+6nxnu+oUa/RLhH2i+bbRvh2BP
-        +2QAQcZEMGD3LxqoZf4miUA=
-X-Google-Smtp-Source: APXvYqyf++okW1hlc0uB1CnomevfviZVVWkruPC1EhA1XU5eAKqFeMKP7a63Fgm/9Jl86UNNB9J7Fw==
-X-Received: by 2002:a65:5004:: with SMTP id f4mr31629723pgo.268.1560434414046;
-        Thu, 13 Jun 2019 07:00:14 -0700 (PDT)
-Received: from nishad (p3261240-ipngn21201hodogaya.kanagawa.ocn.ne.jp. [153.202.122.240])
-        by smtp.gmail.com with ESMTPSA id d9sm3515324pgj.34.2019.06.13.07.00.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 07:00:13 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 19:30:03 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: arm_scmi: Use the correct style for SPDX License
- Identifier
-Message-ID: <20190613135959.GA4819@nishad>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GwTb9BI2f5ybKBNoF1NplcvQUpBaKVKJxwsFqjlRC1A=;
+        b=QZBXk9emSgORwUje8e92euYwAGZjh0s39vu2tkaWDKo9ZO5fI96ZkgzOxg7mxSGDCO
+         9ITB291rL4X8EuRY0J8eynA9PhhcCAP4hSgXgg4IVq4HPcNzTTNwrN8qIFDgGA9vfoxK
+         kPbNiBie2Y5sZ7Rof/HcdgJl3M7A2X4dy4zx7EuDoo8pwhuMzyM0zgu9CQwFxu080GQq
+         oDINUY+zTkVmhbwihYoUbRFkMBhtrbB5TmU8O5djItUNBTAbyJNJySA5HIvp0Mxuvsgn
+         vKFwPF1hbDsrjpTAhy5DklBslx75uEPTjgEXYtjKRCgH/PpNkLn7HEpNFpQ/58H5iTa3
+         ff7g==
+X-Gm-Message-State: APjAAAWqYuoGH+w2EFcJLSH0FV7xrJahZpME1J/nvuClTuz5gVCNRs5u
+        7xPyPWPOigx5WHBezeWsV/7wXg==
+X-Google-Smtp-Source: APXvYqxh8vCM/pvzEH4tnahtRLzbEwsZyMCxbmxFAiZcArhDBtt/gl6tbxYPxtNzTPzgkdMswgkPIQ==
+X-Received: by 2002:ae9:e504:: with SMTP id w4mr52029967qkf.296.1560434423873;
+        Thu, 13 Jun 2019 07:00:23 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::9d6b])
+        by smtp.gmail.com with ESMTPSA id z21sm167500qto.48.2019.06.13.07.00.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 07:00:23 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:00:21 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 05/19] btrfs: disable direct IO in HMZONED mode
+Message-ID: <20190613140020.iiqzrkdztindfjyh@MacBook-Pro-91.local>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-6-naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190607131025.31996-6-naohiro.aota@wdc.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style
-in header file related to Firmware Drivers for ARM SCMI
-Message Protocol.
-For C header files Documentation/process/license-rules.rst
-mandates C-like comments (opposed to C source files where
-C++ style should be used)
+On Fri, Jun 07, 2019 at 10:10:11PM +0900, Naohiro Aota wrote:
+> Direct write I/Os can be directed at existing extents that have already
+> been written. Such write requests are prohibited on host-managed zoned
+> block devices. So disable direct IO support for a volume with HMZONED mode
+> enabled.
+> 
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46
+That's only if we're nocow, so seems like you only need to disable DIO into
+nocow regions with hmzoned?  Thanks,
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/firmware/arm_scmi/common.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index 937a930ce87d..44fd4f9404a9 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * System Control and Management Interface (SCMI) Message Protocol
-  * driver common header file containing some definitions, structures
--- 
-2.17.1
-
+Josef
