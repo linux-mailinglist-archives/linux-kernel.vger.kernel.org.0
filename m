@@ -2,155 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E70445C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DAC445BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393004AbfFMQqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:46:34 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49615 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730304AbfFMF3n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:29:43 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 30F5620007;
-        Thu, 13 Jun 2019 05:29:26 +0000 (UTC)
-Subject: Re: [PATCH v4 00/14] Provide generic top-down mmap layout functions
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20190526134746.9315-1-alex@ghiti.fr>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <bfb1565d-0468-8ea8-19f9-b862faa4f1d4@ghiti.fr>
-Date:   Thu, 13 Jun 2019 01:29:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1730864AbfFMQqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:46:23 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37939 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730306AbfFMFcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 01:32:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45PXS00jprz9s9y;
+        Thu, 13 Jun 2019 15:32:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560403937;
+        bh=v8IFBTO5V5TY7KGBZV751LEQxf/CeoT/DotZWwmhsSY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HRNcwqMfb95iDhut86ckDdIsIgvxHm6kZqCQq+zR8QyC/B+5cxPTVsj47Ru2+oq7v
+         Dyd/j0L2tL8Rou0Gyb2vzTKmFnh5lTabxJXu0vHneoGazhoeZW2eqi+3ZVhSsm6gBE
+         kgXHHHPZN9TSVeJVm/eEH6pnwkSP/QseBtl4OgxNA5SMGbFpmwU8RazxyZTvkQhALd
+         RhoRX/Ca4SPe0UNPT88n9UwYwfTyCMbDUv8cKZ7kiPJPVYMr3fW/JuljO6mva0g4+y
+         zuQHwOcbTj5HTcgkH+Xa8V8FW7/djYj454RZSqvIndJ99ibzVV9qqdOKxon4uwqpRF
+         MoOUwGj9zg0PA==
+Date:   Thu, 13 Jun 2019 15:32:15 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bich Hemon <bich.hemon@st.com>,
+        Erwan Le Ray <erwan.leray@st.com>
+Subject: linux-next: build failure after merge of the tty tree
+Message-ID: <20190613153215.0c99f252@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190526134746.9315-1-alex@ghiti.fr>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/S+Fa5fHjAM9HT=SW.URaEjA"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/26/19 9:47 AM, Alexandre Ghiti wrote:
-> This series introduces generic functions to make top-down mmap layout
-> easily accessible to architectures, in particular riscv which was
-> the initial goal of this series.
-> The generic implementation was taken from arm64 and used successively
-> by arm, mips and finally riscv.
->
-> Note that in addition the series fixes 2 issues:
-> - stack randomization was taken into account even if not necessary.
-> - [1] fixed an issue with mmap base which did not take into account
->    randomization but did not report it to arm and mips, so by moving
->    arm64 into a generic library, this problem is now fixed for both
->    architectures.
->
-> This work is an effort to factorize architecture functions to avoid
-> code duplication and oversights as in [1].
->
-> [1]: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1429066.html
->
-> Changes in v4:
->    - Make ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT select ARCH_HAS_ELF_RANDOMIZE
->      by default as suggested by Kees,
->    - ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT depends on MMU and defines the
->      functions needed by ARCH_HAS_ELF_RANDOMIZE => architectures that use
->      the generic mmap topdown functions cannot have ARCH_HAS_ELF_RANDOMIZE
->      selected without MMU, but I think it's ok since randomization without
->      MMU does not add much security anyway.
->    - There is no common API to determine if a process is 32b, so I came up with
->      !IS_ENABLED(CONFIG_64BIT) || is_compat_task() in [PATCH v4 12/14].
->    - Mention in the change log that x86 already takes care of not offseting mmap
->      base address if the task does not want randomization.
->    - Re-introduce a comment that should not have been removed.
->    - Add Reviewed/Acked-By from Paul, Christoph and Kees, thank you for that.
->    - I tried to minimize the changes from the commits in v3 in order to make
->      easier the review of the v4, the commits changed or added are:
->      - [PATCH v4 5/14]
->      - [PATCH v4 8/14]
->      - [PATCH v4 11/14]
->      - [PATCH v4 12/14]
->      - [PATCH v4 13/14]
+--Sig_/S+Fa5fHjAM9HT=SW.URaEjA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Greg,
 
-Compared to the previous version you already acked, patches 11, 12 and 13
-would need your feedback, do you have time to take a look at them ?
+After merging the tty tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Hope I don't bother you,
+drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_suspend':
+drivers/tty/serial/stm32-usart.c:1298:2: error: implicit declaration of fun=
+ction 'pinctrl_pm_select_sleep_state' [-Werror=3Dimplicit-function-declarat=
+ion]
+  pinctrl_pm_select_sleep_state(dev);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_resume':
+drivers/tty/serial/stm32-usart.c:1307:2: error: implicit declaration of fun=
+ction 'pinctrl_pm_select_default_state' [-Werror=3Dimplicit-function-declar=
+ation]
+  pinctrl_pm_select_default_state(dev);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Thanks,
+Caused by commit
 
-Alex
+  c70669ecef4e ("serial: stm32: select pinctrl state in each suspend/resume=
+ function")
 
+I have used the tty tree from next-20190612 for today.
+--=20
+Cheers,
+Stephen Rothwell
 
->
-> Changes in v3:
->    - Split into small patches to ease review as suggested by Christoph
->      Hellwig and Kees Cook
->    - Move help text of new config as a comment, as suggested by Christoph
->    - Make new config depend on MMU, as suggested by Christoph
->
-> Changes in v2 as suggested by Christoph Hellwig:
->    - Preparatory patch that moves randomize_stack_top
->    - Fix duplicate config in riscv
->    - Align #if defined on next line => this gives rise to a checkpatch
->      warning. I found this pattern all around the tree, in the same proportion
->      as the previous pattern which was less pretty:
->      git grep -C 1 -n -P "^#if defined.+\|\|.*\\\\$"
->
-> Alexandre Ghiti (14):
->    mm, fs: Move randomize_stack_top from fs to mm
->    arm64: Make use of is_compat_task instead of hardcoding this test
->    arm64: Consider stack randomization for mmap base only when necessary
->    arm64, mm: Move generic mmap layout functions to mm
->    arm64, mm: Make randomization selected by generic topdown mmap layout
->    arm: Properly account for stack randomization and stack guard gap
->    arm: Use STACK_TOP when computing mmap base address
->    arm: Use generic mmap top-down layout and brk randomization
->    mips: Properly account for stack randomization and stack guard gap
->    mips: Use STACK_TOP when computing mmap base address
->    mips: Adjust brk randomization offset to fit generic version
->    mips: Replace arch specific way to determine 32bit task with generic
->      version
->    mips: Use generic mmap top-down layout and brk randomization
->    riscv: Make mmap allocation top-down by default
->
->   arch/Kconfig                       |  11 +++
->   arch/arm/Kconfig                   |   2 +-
->   arch/arm/include/asm/processor.h   |   2 -
->   arch/arm/kernel/process.c          |   5 --
->   arch/arm/mm/mmap.c                 |  52 --------------
->   arch/arm64/Kconfig                 |   2 +-
->   arch/arm64/include/asm/processor.h |   2 -
->   arch/arm64/kernel/process.c        |   8 ---
->   arch/arm64/mm/mmap.c               |  72 -------------------
->   arch/mips/Kconfig                  |   2 +-
->   arch/mips/include/asm/processor.h  |   5 --
->   arch/mips/mm/mmap.c                |  84 ----------------------
->   arch/riscv/Kconfig                 |  11 +++
->   fs/binfmt_elf.c                    |  20 ------
->   include/linux/mm.h                 |   2 +
->   kernel/sysctl.c                    |   6 +-
->   mm/util.c                          | 107 ++++++++++++++++++++++++++++-
->   17 files changed, 137 insertions(+), 256 deletions(-)
->
+--Sig_/S+Fa5fHjAM9HT=SW.URaEjA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0B398ACgkQAVBC80lX
+0Gx8tAf+PbjxRIDVuW7/k9dlVEjJhGcbkXxePLiv5QzLBDt/O/AvO3ukdCKLK+jE
+RptwbGs+Vz+tZ13cvpvZurPAZ5PFbgTP2T+1ufhjFdVZP0irHHeQE0svHTyweltb
+DqpsYfeJKrV++rMHbGNQbPxsO+qhBxPGt/ZPKUObbi9MPUHa3Yh7P0kLAAxDIwLS
+zAr8B7QpC2iWP/APByW288RVSfVJZPWS6aktVPPkM5qVcl8oXuBzAtFWztinlV3q
+Z1GjPy1uF4psVSH+tzJOg/sdRupTW5gKI3oXG4HwAgXSNVoybxObzOvGie/YNNeE
+YgYxLIcFmJ2tX7E/NN6vhMhYzk3Zow==
+=AftU
+-----END PGP SIGNATURE-----
+
+--Sig_/S+Fa5fHjAM9HT=SW.URaEjA--
