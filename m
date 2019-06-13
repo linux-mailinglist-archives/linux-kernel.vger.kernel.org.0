@@ -2,116 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A4B43BEA
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2F843BE9
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731780AbfFMPcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:32:33 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:36735 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbfFMKs1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:48:27 -0400
-Received: by mail-io1-f54.google.com with SMTP id h6so15819034ioh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=r080oZfzTGw4PlNPynE57ID3Ar9Ahtv7iL/o1sb0dx0=;
-        b=ea1jZnItELWGPu6bHxAH/mmHocHpLmDlCmmIL2DjSC0Sx7VqH0Ol3gF4IcXRnmg9yM
-         aWTdWeTpwVEK5N9uUKAIwBKzkS7fWKmfEIRb4V668/k38X++IMjsYMDuE8rpvMNrJuD9
-         SClkbjfnhXP8mup6eWm/jU0ElYl3JLd+TbWXANcbeoSguFsZy3w4qGPngJy267Wcejx5
-         187akwnOcJwaH/eSOVrX0sKBU0vjA0jroIvFe1D6BMipVWVj5sRIyhYESsYCEq6n5n0J
-         xj2uKE6W4zMuksq/Co6nd2kNVQRx/U0czve+f4jvbuPoLaM87hVgS5WovV2HN3YRdQqk
-         RO4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=r080oZfzTGw4PlNPynE57ID3Ar9Ahtv7iL/o1sb0dx0=;
-        b=tMJhGGJLCmSbvHwvqd+zKN1nMPI5w/jV2vGYgR27XEardGEVuhWj93i8Z0Pt5qpvXs
-         X2/cZ3MZu3enW9hWY53GzXFoJIll370uqdEjVAnpB+mNQoKrcXXV5gjSnvQHmkyLa3r5
-         kTjbsVocXA5QQmPQRw9x9XJc0EmsTd5yddH17LFuOk3Nh61rjKOJ46mVf2zv6wTOVkPs
-         kz/oqF7413wnrRsnj+eh3za20Y2Wy5PZCOjzN8bgCFi+K0RheOC0z7ug9LasS+bfTdoW
-         ezsdZZXdxRIw6Jy9zfyTkM0zTpHzymgllzghBrDt6JT3sYMlU6U6MWGL72eB0mq66hsj
-         ZCXQ==
-X-Gm-Message-State: APjAAAUydCS8f9TCvIqc3erBWWwQ2xcocUGDq/Aqc4QBTImyAFU9dExI
-        ekG+49S4V6Kta3xnCgAXWJ18kJQuZHWrV0gGDg==
-X-Google-Smtp-Source: APXvYqzwF3HmOhVDJq8nYtvL9kM9vETJJiWfoMI/eBiNbY/jmRS0SgwDC9W3GIwckpCQG/bo7cqE02EF1cqQIUlZ06A=
-X-Received: by 2002:a6b:4107:: with SMTP id n7mr10681260ioa.12.1560422905974;
- Thu, 13 Jun 2019 03:48:25 -0700 (PDT)
+        id S1732161AbfFMPcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:32:23 -0400
+Received: from relay.sw.ru ([185.231.240.75]:40016 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728483AbfFMKtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:49:19 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hbNI7-0000bh-9J; Thu, 13 Jun 2019 13:49:11 +0300
+Subject: Re: [PATCH v3 1/3] lib/test_kasan: Add bitops tests
+To:     Marco Elver <elver@google.com>, peterz@infradead.org,
+        dvyukov@google.com, glider@google.com, andreyknvl@google.com,
+        mark.rutland@arm.com, hpa@zytor.com
+Cc:     corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        x86@kernel.org, arnd@arndb.de, jpoimboe@redhat.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+References: <20190531150828.157832-1-elver@google.com>
+ <20190531150828.157832-2-elver@google.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <5c35bc08-749f-dbc4-09d0-fcf14b1da1b3@virtuozzo.com>
+Date:   Thu, 13 Jun 2019 13:49:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <1559725820-26138-1-git-send-email-kernelfans@gmail.com>
- <87tvcwhzdo.fsf@linux.ibm.com> <2807E5FD2F6FDA4886F6618EAC48510E79D8D79B@CRSMSX101.amr.corp.intel.com>
- <20190612135458.GA19916@dhcp-128-55.nay.redhat.com> <20190612235031.GF14336@iweiny-DESK2.sc.intel.com>
-In-Reply-To: <20190612235031.GF14336@iweiny-DESK2.sc.intel.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Thu, 13 Jun 2019 18:48:14 +0800
-Message-ID: <CAFgQCTsO-C=Fy6im+VQnNwvyp74tV2dZ-0Pa8QfFyFrBX8Ohvg@mail.gmail.com>
-Subject: Re: [PATCHv3 1/2] mm/gup: fix omission of check on FOLL_LONGTERM in get_user_pages_fast()
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190531150828.157832-2-elver@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 7:49 AM Ira Weiny <ira.weiny@intel.com> wrote:
->
-> On Wed, Jun 12, 2019 at 09:54:58PM +0800, Pingfan Liu wrote:
-> > On Tue, Jun 11, 2019 at 04:29:11PM +0000, Weiny, Ira wrote:
-> > > > Pingfan Liu <kernelfans@gmail.com> writes:
-> > > >
-> > > > > As for FOLL_LONGTERM, it is checked in the slow path
-> > > > > __gup_longterm_unlocked(). But it is not checked in the fast path=
-,
-> > > > > which means a possible leak of CMA page to longterm pinned requir=
-ement
-> > > > > through this crack.
-> > > >
-> > > > Shouldn't we disallow FOLL_LONGTERM with get_user_pages fastpath? W=
-.r.t
-> > > > dax check we need vma to ensure whether a long term pin is allowed =
-or not.
-> > > > If FOLL_LONGTERM is specified we should fallback to slow path.
-> > >
-> > > Yes, the fastpath bails to the slowpath if FOLL_LONGTERM _and_ DAX.  =
-But it does this while walking the page tables.  I missed the CMA case and =
-Pingfan's patch fixes this.  We could check for CMA pages while walking the=
- page tables but most agreed that it was not worth it.  For DAX we already =
-had checks for *_devmap() so it was easier to put the FOLL_LONGTERM checks =
-there.
-> > >
-> > Then for CMA pages, are you suggesting something like:
->
-> I'm not suggesting this.
-OK, then I send out v4.
->
-> Sorry I wrote this prior to seeing the numbers in your other email.  Give=
-n
-> the numbers it looks like performing the check whilst walking the tables =
-is
-> worth the extra complexity.  I was just trying to summarize the thread.  =
-I
-> don't think we should disallow FOLL_LONGTERM because it only affects CMA =
-and
-> DAX.  Other pages will be fine with FOLL_LONGTERM.  Why penalize every ca=
-ll if
-> we don't have to.  Also in the case of DAX the use of vma will be going
-> away...[1]  Eventually...  ;-)
-A good feature. Trying to catch up.
 
-Thanks,
-Pingfan
+
+On 5/31/19 6:08 PM, Marco Elver wrote:
+> This adds bitops tests to the test_kasan module. In a follow-up patch,
+> support for bitops instrumentation will be added.
+> 
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+> Changes in v3:
+> * Use kzalloc instead of kmalloc.
+> * Use sizeof(*bits).
+> 
+> Changes in v2:
+> * Use BITS_PER_LONG.
+> * Use heap allocated memory for test, as newer compilers (correctly)
+>   warn on OOB stack access.
+> ---
+>  lib/test_kasan.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 72 insertions(+), 3 deletions(-)
+> 
+> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+> index 7de2702621dc..1ef9702327d2 100644
+> --- a/lib/test_kasan.c
+> +++ b/lib/test_kasan.c
+> @@ -11,16 +11,17 @@
+>  
+>  #define pr_fmt(fmt) "kasan test: %s " fmt, __func__
+>  
+> +#include <linux/bitops.h>
+>  #include <linux/delay.h>
+> +#include <linux/kasan.h>
+>  #include <linux/kernel.h>
+> -#include <linux/mman.h>
+>  #include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/module.h>
+>  #include <linux/printk.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+>  #include <linux/uaccess.h>
+> -#include <linux/module.h>
+> -#include <linux/kasan.h>
+>  
+>  /*
+>   * Note: test functions are marked noinline so that their names appear in
+> @@ -623,6 +624,73 @@ static noinline void __init kasan_strings(void)
+>  	strnlen(ptr, 1);
+>  }
+>  
+> +static noinline void __init kasan_bitops(void)
+> +{
+> +	long *bits = kzalloc(sizeof(*bits), GFP_KERNEL);
+
+It would be safer to do kzalloc(sizeof(*bits) + 1, GFP_KERNEL) and change tests accordingly to: set_bit(BITS_PER_LONG + 1, bits) ...
+kmalloc will internally round up allocation to 16-bytes, so we won't be actually corrupting someone elses memory.
+
+
+> +	if (!bits)
+> +		return;
+> +
+> +	pr_info("within-bounds in set_bit");
+> +	set_bit(0, bits);
+> +
+> +	pr_info("within-bounds in set_bit");
+> +	set_bit(BITS_PER_LONG - 1, bits);
+
+
+I'd remove these two. There are plenty of within bounds set_bit() in the kernel so they are well tested already.
