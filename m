@@ -2,91 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AFFB43BFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 603F743BFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfFMPdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:33:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42622 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728414AbfFMKpE (ORCPT
+        id S1728995AbfFMPdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:33:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44089 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbfFMKpk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:45:04 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so11576882pff.9;
-        Thu, 13 Jun 2019 03:45:03 -0700 (PDT)
+        Thu, 13 Jun 2019 06:45:40 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so11577161pfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=xTm8k6po7bjp3Ha8AosDhse0S/jiEFLFTIo5UOLT5jg=;
-        b=qMKJ1Nu0C1R8lwpK0IQ9vBQMP6/MGgzUZrbQqi8zl8uAjAjOSTpBUrS0ostsbDH2Nn
-         FoCnkKfzbCaQd5zNxOWhfwWwFJaSY1kc6OPZsIxrCzhYNXjdgeWIRshLbi+1gZki1WQC
-         tdXUazIntJ4w+8FKx6SOf3Jh9EkFJ8HoWzDXakbL5oTgiO0CvjCFx9JjHeOFYlHbzmWt
-         c3PKW23lGhSRwnnLw4M+ogCQvH4X/ZkGFtwGW12moRmVROJzkF5leihb8djdaIKJgm2i
-         x/K2+wUFVlOIiqzP6oUuRQRwoHyN42EKBIDCFER59PUSs49nA3SyFoo4DgdCMpdJrRv6
-         q5sw==
+        h=from:to:cc:subject:date:message-id;
+        bh=YHBzv4ECslLKpMkzoxjS6aoXKy/SFXtprHmV+JrqNk0=;
+        b=Gh2zOgr9bu+Tzr0HnGQ+mDT8OkUXS31CoKZCiImvLZkkl6q69mzX6Y9Hn3GwoO8JVf
+         dtnKcxCHRIlz5+dyReJS5fGrudHhR1zZynm80yuqVFRbEs+OiEX3gEGuTDcheVRn8aAJ
+         j02IfSd5WvBKV+C64bc+54++b3dRRFC/o446EASAeitsSlmTAJPqetf5dKkuiS8lch3L
+         6fVAuTFAbWTED9Nh4GT4TtWektafSz9Mn5YtET6Rvl1yoSmtTWSY2RZ2jBlZGpgqGWLU
+         vlFi7+o/YSBV+eCdzjBvwXH3WKZtd9XhuPGcxgmX+QM2DfIhEkp9bl8pREA7G5383mYx
+         Rvog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=xTm8k6po7bjp3Ha8AosDhse0S/jiEFLFTIo5UOLT5jg=;
-        b=s9Y+Y2FFYvie7FZfFw5D9WuvOTpsSrBb/ZRD7uP0j5TSJ3BwvUI2jg6chpdVh89HET
-         sX45oF1g9ZqF7sqx+dp9wtBUSlrPbojBjx8ls7GZ3ZpirIclxJh64cutZ+VwWg91trQ1
-         ZpnDmCaQAS7/IPZnxk4SPM2pYdKl7oWfmQlH6HNruNV4C9GxKNB6O6NYFHvVf+OUxhhw
-         GNPks7pGuTV33A2ZZZboVbyM/2Pld8blvc8IXBV5v/0F98sXmUeXYg5D1KZLCjhBrluO
-         9VbEs12hCIzS2smD0K753tuy1EqYn8Src7NlpatuKZjShhtc/VNHDvzb+JhQl80WVPtn
-         sQkA==
-X-Gm-Message-State: APjAAAWqC4eb6GnBd8OkQMa+4JmTfmwRZ48z4RxwTjoDcbAgrBFdek7r
-        QtTT+AIsbBE6F/8ssgEbjKKICoAeJe/C5g==
-X-Google-Smtp-Source: APXvYqyoFTjHlG0lG+mwUb84qwW3ZXILCiRfHcDzlhE9hUfa7FT3F5ONsJ527thEIuo3Y9HEf5dmBg==
-X-Received: by 2002:a63:5207:: with SMTP id g7mr29149456pgb.356.1560422703319;
-        Thu, 13 Jun 2019 03:45:03 -0700 (PDT)
-Received: from hjy-HP-Notebook ([2409:8900:2650:d5a2:b9ff:4ab3:d77c:10b3])
-        by smtp.gmail.com with ESMTPSA id m24sm2161452pgh.75.2019.06.13.03.45.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 03:45:02 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 18:44:57 +0800
-From:   JingYi Hou <houjingyi647@gmail.com>
-To:     davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fix double-fetch bug in sock_getsockopt()
-Message-ID: <20190613104457.GA6296@hjy-HP-Notebook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YHBzv4ECslLKpMkzoxjS6aoXKy/SFXtprHmV+JrqNk0=;
+        b=ZND9FqbcxSbC/gohOsH4lIFbTr9obrEBCUwjOjaiaLptbD4dFp5uLd8mfNTcjG9Rb7
+         Ydx+osO08Seq0AsXQRklF+7etNhZIw+24et/QeyrzyHx4YCXN3eAD+0HYFCFW6mM9+oe
+         cSId3/NKWtB/Knd+v34YaBIDUpBQRbtNqzTvbLrOeiSL0ij/oke+xdNX8UZMrqP0sCN9
+         JMNkpSE+cJA0FGnIsPKzfwvu3H30dznFpUyjX3hlNGbKH8LsnhZ5Q0xVrVw3heZza2M7
+         MMp/ENiCOkAIx1Q7ENzmLgMFo6wlhRibggbux9UmzLPhkPip2FDezs62EyAXdfKKruH+
+         OSnQ==
+X-Gm-Message-State: APjAAAWnAI5gkZ84gxOW6pWR1HVtBdFe5Vuwckgsxk7pMfc55qNsmqQo
+        KmPW9Y0ZOzPkAFcCZs+eYw==
+X-Google-Smtp-Source: APXvYqxCcyskfrhNoa8a6tvucCyA7BESJMT49IgekYmQ2ko0v0dbnBSjI4RkW++kqxhqfDThrA+ABQ==
+X-Received: by 2002:a65:42c3:: with SMTP id l3mr30267732pgp.372.1560422739999;
+        Thu, 13 Jun 2019 03:45:39 -0700 (PDT)
+Received: from mylaptop.redhat.com ([2408:8207:7825:dd90:9051:d949:55f9:678b])
+        by smtp.gmail.com with ESMTPSA id a13sm2813285pgh.6.2019.06.13.03.45.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 03:45:39 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-mm@kvack.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCHv4 0/3] mm/gup: fix omission of check on FOLL_LONGTERM in gup fast path
+Date:   Thu, 13 Jun 2019 18:44:59 +0800
+Message-Id: <1560422702-11403-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sock_getsockopt(), 'optlen' is fetched the first time from userspace.
-'len < 0' is then checked. Then in condition 'SO_MEMINFO', 'optlen' is
-fetched the second time from userspace without check.
+These three patches have no dependency of each other, but related with the same purpose
+to improve get_user_page_fast(), patch [2/3]. Put them together.
 
-if a malicious user can change it between two fetches may cause security
-problems or unexpected behaivor.
+v3->v4:
+  Place the check on FOLL_LONGTERM in gup_pte_range() instead of get_user_page_fast()
 
-To fix this, we need to recheck it in the second fetch.
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 
-Signed-off-by: JingYi Hou <houjingyi647@gmail.com>
----
- net/core/sock.c | 2 ++
- 1 file changed, 2 insertions(+)
+Pingfan Liu (3):
+  mm/gup: rename nr as nr_pinned in get_user_pages_fast()
+  mm/gup: fix omission of check on FOLL_LONGTERM in gup fast path
+  mm/gup_benchemark: add LONGTERM_BENCHMARK test in gup fast path
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 2b3701958486..577780c935ee 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1479,6 +1479,8 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
- 
- 		if (get_user(len, optlen))
- 			return -EFAULT;
-+		if (len < 0)
-+			return -EINVAL;
- 
- 		sk_get_meminfo(sk, meminfo);
- 
+ mm/gup.c                                   | 46 +++++++++++++++++++++++-------
+ mm/gup_benchmark.c                         | 11 +++++--
+ tools/testing/selftests/vm/gup_benchmark.c | 10 +++++--
+ 3 files changed, 52 insertions(+), 15 deletions(-)
+
 -- 
-2.20.1
+2.7.5
 
