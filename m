@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1232C44193
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9578442A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391830AbfFMQPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:15:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59298 "EHLO mail.kernel.org"
+        id S2390836AbfFMQYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731182AbfFMImI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:08 -0400
+        id S1730999AbfFMIhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:37:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27CC721479;
-        Thu, 13 Jun 2019 08:42:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F14D320851;
+        Thu, 13 Jun 2019 08:37:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415327;
-        bh=0NP3m5N8hUwnAnrMaptmgdmdiwHOiq/EkYyzRnMF+EQ=;
+        s=default; t=1560415037;
+        bh=tsq33OGpH8Ed+bhP/jNlUP6cW0WzhPE3CsVbsnYAJg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FXs/Pt9jPBNM+L0New346tz5qF88p/apT0U9fekGWOv3wkRnUCQfe6p246j6uKoVm
-         hcRuuFiZgKOeXvNdGBQ5IZz87dv+v7DprqmtS0fishys6HScoxj6/sucikdPNAh/dk
-         gAqSOehnqFP+rEspg6jjEJVFAJVnd/M2OxTD1R4o=
+        b=yCJ4ZEw8BPDlTPNl4QPGVleVaQ7HiIdJmyrqcyVaGRdZ9Qwl1t/vUMBaggHBk6HQ2
+         wAdKcm66eio52l2Ld2etXSS0HvVEZl04vX0PhAMs5k1TUWDk1dVXoRAkNG7Jpywc1F
+         x7bvpY+mbxLQkf07z/uWYHhmNyiIZ5EXBydXmZHA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
+        stable@vger.kernel.org, Junxiao Chang <junxiao.chang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/118] ARM: dts: imx6ul: Specify IMX6UL_CLK_IPG as "ipg" clock to SDMA
-Date:   Thu, 13 Jun 2019 10:33:44 +0200
-Message-Id: <20190613075648.825619386@linuxfoundation.org>
+Subject: [PATCH 4.14 62/81] platform/x86: intel_pmc_ipc: adding error handling
+Date:   Thu, 13 Jun 2019 10:33:45 +0200
+Message-Id: <20190613075653.637257140@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,43 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7b3132ecefdd1fcdf6b86e62021d0e55ea8034db ]
+[ Upstream commit e61985d0550df8c2078310202aaad9b41049c36c ]
 
-Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
-clock to determine if it needs to configure the IP block as operating
-at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
-clocks as IMX6UL_CLK_SDMA results in driver incorrectly thinking that
-ratio is 1:1 which results in broken SDMA funtionality. Fix the code
-to specify IMX6UL_CLK_IPG as "ipg" clock for SDMA, to avoid detecting
-incorrect clock ratio.
+If punit or telemetry device initialization fails, pmc driver should
+unregister and return failure.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+This change is to fix a kernel panic when removing kernel module
+intel_pmc_ipc.
+
+Fixes: 48c1917088ba ("platform:x86: Add Intel telemetry platform device")
+Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6ul.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/intel_pmc_ipc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 6dc0b569acdf..2366f093cc76 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -707,7 +707,7 @@
- 					     "fsl,imx35-sdma";
- 				reg = <0x020ec000 0x4000>;
- 				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX6UL_CLK_SDMA>,
-+				clocks = <&clks IMX6UL_CLK_IPG>,
- 					 <&clks IMX6UL_CLK_SDMA>;
- 				clock-names = "ipg", "ahb";
- 				#dma-cells = <3>;
+diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
+index e03fa31446ca..c9b3ef333743 100644
+--- a/drivers/platform/x86/intel_pmc_ipc.c
++++ b/drivers/platform/x86/intel_pmc_ipc.c
+@@ -747,13 +747,17 @@ static int ipc_create_pmc_devices(void)
+ 	if (ret) {
+ 		dev_err(ipcdev.dev, "Failed to add punit platform device\n");
+ 		platform_device_unregister(ipcdev.tco_dev);
++		return ret;
+ 	}
+ 
+ 	if (!ipcdev.telem_res_inval) {
+ 		ret = ipc_create_telemetry_device();
+-		if (ret)
++		if (ret) {
+ 			dev_warn(ipcdev.dev,
+ 				"Failed to add telemetry platform device\n");
++			platform_device_unregister(ipcdev.punit_dev);
++			platform_device_unregister(ipcdev.tco_dev);
++		}
+ 	}
+ 
+ 	return ret;
 -- 
 2.20.1
 
