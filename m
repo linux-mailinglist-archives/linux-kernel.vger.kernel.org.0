@@ -2,119 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A144448A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34F374446E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392652AbfFMQhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:37:32 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:5006 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730637AbfFMHNv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:13:51 -0400
-X-UUID: 51f25e94249049ff921656c0b66ba1cc-20190613
-X-UUID: 51f25e94249049ff921656c0b66ba1cc-20190613
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1922256054; Thu, 13 Jun 2019 15:13:36 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 13 Jun 2019 15:13:34 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Jun 2019 15:13:34 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Felix Fietkau <nbd@nbd.name>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-CC:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
-        Yiwei Chung <yiwei.chung@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-wireless@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v2 2/2] mt76: mt7615: update peer's bssid when state transition occurs
-Date:   Thu, 13 Jun 2019 15:13:31 +0800
-Message-ID: <75f5e467c6e7fc4187572977a8e1f5d4238d6354.1560330906.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <3065a01998dfa04a5d2d680e820a17cb5c110d0f.1560330906.git.ryder.lee@mediatek.com>
-References: <3065a01998dfa04a5d2d680e820a17cb5c110d0f.1560330906.git.ryder.lee@mediatek.com>
+        id S2392637AbfFMQhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:37:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35270 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730526AbfFMHRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:17:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 45815AF05;
+        Thu, 13 Jun 2019 07:17:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 051E71E4328; Thu, 13 Jun 2019 09:17:47 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 09:17:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Ira Weiny <ira.weiny@intel.com>, Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613071746.GA26505@quack2.suse.cz>
+References: <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca>
+ <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz>
+ <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+ <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca>
+ <20190612120907.GC14578@quack2.suse.cz>
+ <CAPcyv4ikn219XUgHwsPdYp06vBNAJB9Rk-hjZA-fYT4GB3gi+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4ikn219XUgHwsPdYp06vBNAJB9Rk-hjZA-fYT4GB3gi+w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes sure that the driver update peer's bssid when state
-transition occurs.
+On Wed 12-06-19 11:41:53, Dan Williams wrote:
+> On Wed, Jun 12, 2019 at 5:09 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> > >
+> > > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > > little HW can actually implement it, having the alternative still
+> > > > > > require HW support doesn't seem like progress.
+> > > > > >
+> > > > > > I think we will eventually start seein some HW be able to do this
+> > > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > > on fire, I need to unplug it).
+> > > > >
+> > > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > > with such an "invalidate".
+> > > >
+> > > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > > everything that's going on... And I wanted similar behavior here.
+> > >
+> > > It aborts *everything* connected to that file descriptor. Destroying
+> > > everything avoids creating inconsistencies that destroying a subset
+> > > would create.
+> > >
+> > > What has been talked about for lease break is not destroying anything
+> > > but very selectively saying that one memory region linked to the GUP
+> > > is no longer functional.
+> >
+> > OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> > and closes the file with existing pins (and thus layout lease) we would
+> > force it to abort everything. Yes, it is disruptive but then the app didn't
+> > obey the rule that it has to maintain file lease while holding pins. Thus
+> > such situation should never happen unless the app is malicious / buggy.
+> 
+> When you say 'close' do you mean the final release of the fd? The vma
+> keeps a reference to a 'struct file' live even after the fd is closed.
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
-Changes since v2 - remove unnecessary changes
----
- .../net/wireless/mediatek/mt76/mt7615/main.c  |  5 ++--
- .../net/wireless/mediatek/mt76/mt7615/mcu.c   | 27 ++++++++++---------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+When I say 'close', I mean a call to ->release file operation which happens
+when the last reference to struct file is dropped. I.e., when all file
+descriptors and vmas (and possibly other places holding struct file
+reference) are gone.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-index d21407ddda31..e0824392c019 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-@@ -283,9 +283,8 @@ static void mt7615_bss_info_changed(struct ieee80211_hw *hw,
- 
- 	mutex_lock(&dev->mt76.mutex);
- 
--	/* TODO: sta mode connect/disconnect
--	 * BSS_CHANGED_ASSOC | BSS_CHANGED_BSSID
--	 */
-+	if (changed & BSS_CHANGED_ASSOC)
-+		mt7615_mcu_set_bss_info(dev, vif, info->assoc);
- 
- 	/* TODO: update beacon content
- 	 * BSS_CHANGED_BEACON
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index e82086eb8aa4..52d89f3533bf 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -759,22 +759,23 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
- 		conn_type = CONNECTION_INFRA_AP;
- 		break;
- 	case NL80211_IFTYPE_STATION: {
--		struct ieee80211_sta *sta;
--		struct mt7615_sta *msta;
--
--		rcu_read_lock();
--
--		sta = ieee80211_find_sta(vif, vif->bss_conf.bssid);
--		if (!sta) {
-+		/* TODO: enable BSS_INFO_UAPSD & BSS_INFO_PM */
-+		if (en) {
-+			struct ieee80211_sta *sta;
-+			struct mt7615_sta *msta;
-+
-+			rcu_read_lock();
-+			sta = ieee80211_find_sta(vif, vif->bss_conf.bssid);
-+			if (!sta) {
-+				rcu_read_unlock();
-+				return -EINVAL;
-+			}
-+
-+			msta = (struct mt7615_sta *)sta->drv_priv;
-+			tx_wlan_idx = msta->wcid.idx;
- 			rcu_read_unlock();
--			return -EINVAL;
- 		}
--
--		msta = (struct mt7615_sta *)sta->drv_priv;
--		tx_wlan_idx = msta->wcid.idx;
- 		conn_type = CONNECTION_INFRA_STA;
--
--		rcu_read_unlock();
- 		break;
- 	}
- 	default:
+								Honza
 -- 
-2.18.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
