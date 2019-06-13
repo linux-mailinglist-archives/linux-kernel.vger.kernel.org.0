@@ -2,127 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EF77443B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9556A443B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403953AbfFMQb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:31:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59694 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730876AbfFMI0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:26:40 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 73FF830860C0;
-        Thu, 13 Jun 2019 08:26:39 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-87.pek2.redhat.com [10.72.12.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E3E960FB1;
-        Thu, 13 Jun 2019 08:26:31 +0000 (UTC)
-Date:   Thu, 13 Jun 2019 16:26:27 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>, vgoyal@redhat.com,
-        kexec <kexec@lists.infradead.org>
-Subject: Re: [PATCH V8 3/3] Call ima_kexec_cmdline to measure the cmdline args
-Message-ID: <20190613082627.GA30288@dhcp-128-65.nay.redhat.com>
-References: <20190612221549.28399-1-prsriva02@gmail.com>
- <20190612221549.28399-4-prsriva02@gmail.com>
- <1560378703.4578.91.camel@linux.ibm.com>
+        id S2392580AbfFMQbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:31:15 -0400
+Received: from mail.efficios.com ([167.114.142.138]:44030 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730889AbfFMI16 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:27:58 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id CB8B62489B9;
+        Thu, 13 Jun 2019 04:27:56 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id QHJmLqleYeRS; Thu, 13 Jun 2019 04:27:56 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 484792489B3;
+        Thu, 13 Jun 2019 04:27:56 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 484792489B3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1560414476;
+        bh=DKUdPP8QewPcULFHQ4nNVUH6OyOARFLzUileql0AfD4=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=RN6yQ/nRSeXb+h+A6bJAgudOIpsM4HOtI50An+x6EKgJr+9dVyIV9hEp5vJ0VXiwf
+         fZpgMAMgKKHzkVsVy8AcdE61opOS0vnwgZjhh9b344RQnmNE3s2sdvaGJKPpZZlBLk
+         2PKI0KwbZIQbmIe9vezfiPODrlV/T8k0KWNk1jL4FhURJAhRWl7rsq7Coiq4m0giSS
+         U047pKX1xNgT28cX6gPNFCQvEdtl256QaypkbIfXnhlY5O4hQy19Fqdvvgcx6nqkoQ
+         7TMwj8kNxjejvWFczXW0SSyT6cYTCidPH0cdBCRFlxAaLye0x7QbJiaOA7HKeP1bep
+         aUeWnNOBSs/Jw==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id g8HEodOTGNtd; Thu, 13 Jun 2019 04:27:56 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 2A60A2489A5;
+        Thu, 13 Jun 2019 04:27:56 -0400 (EDT)
+Date:   Thu, 13 Jun 2019 04:27:56 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Raphael Gault <raphael.gault@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Message-ID: <1209580932.46461.1560414476136.JavaMail.zimbra@efficios.com>
+In-Reply-To: <a99c41fb-40f6-a0e2-af6b-22d7e6ac9b3d@arm.com>
+References: <20190611125315.18736-1-raphael.gault@arm.com> <20190611125315.18736-4-raphael.gault@arm.com> <20190611143346.GB28689@kernel.org> <20190611165755.GG29008@lakrids.cambridge.arm.com> <1620360283.42036.1560281622707.JavaMail.zimbra@efficios.com> <a99c41fb-40f6-a0e2-af6b-22d7e6ac9b3d@arm.com>
+Subject: Re: [PATCH 3/7] perf: arm64: Use rseq to test userspace access to
+ pmu counters
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1560378703.4578.91.camel@linux.ibm.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Jun 2019 08:26:39 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
+Thread-Topic: perf: arm64: Use rseq to test userspace access to pmu counters
+Thread-Index: 9ubg2q5ItojJmCg9sl7e6XSnaMmSwg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/19 at 06:31pm, Mimi Zohar wrote:
-> [Cc: kexec mailing list]
-> 
-> Hi Eric, Dave,
-> 
-> On Wed, 2019-06-12 at 15:15 -0700, Prakhar Srivastava wrote:
-> > During soft reboot(kexec_file_load) boot cmdline args
-> > are not measured.Thus the new kernel on load boots with
-> > an assumption of cold reboot.
-> > 
-> > This patch makes a call to the ima hook ima_kexec_cmdline,
-> > added in "Define a new IMA hook to measure the boot command
-> > line arguments"
-> > to measure the boot cmdline args into the ima log.
-> > 
-> > - call ima_kexec_cmdline from kexec_file_load.
-> > - move the call ima_add_kexec_buffer after the cmdline
-> > args have been measured.
-> > 
-> > Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> 
-> Any chance we could get some Acks?
+----- On Jun 13, 2019, at 9:10 AM, Raphael Gault raphael.gault@arm.com wrote:
 
-The ima_* is blackbox functions to me, looks like this patch is trying
-to measure kexec cmdline buffer and save in some ima logs and then add all the
-measure results including those for kernel/initrd to a kexec_buf and pass to 2nd
-kernel.
+> Hi Mathieu,
+> 
+> On 6/11/19 8:33 PM, Mathieu Desnoyers wrote:
+>> ----- On Jun 11, 2019, at 6:57 PM, Mark Rutland mark.rutland@arm.com wrote:
+>> 
+>>> Hi Arnaldo,
+>>>
+>>> On Tue, Jun 11, 2019 at 11:33:46AM -0300, Arnaldo Carvalho de Melo wrote:
+>>>> Em Tue, Jun 11, 2019 at 01:53:11PM +0100, Raphael Gault escreveu:
+>>>>> Add an extra test to check userspace access to pmu hardware counters.
+>>>>> This test doesn't rely on the seqlock as a synchronisation mechanism but
+>>>>> instead uses the restartable sequences to make sure that the thread is
+>>>>> not interrupted when reading the index of the counter and the associated
+>>>>> pmu register.
+>>>>>
+>>>>> In addition to reading the pmu counters, this test is run several time
+>>>>> in order to measure the ratio of failures:
+>>>>> I ran this test on the Juno development platform, which is big.LITTLE
+>>>>> with 4 Cortex A53 and 2 Cortex A57. The results vary quite a lot
+>>>>> (running it with 100 tests is not so long and I did it several times).
+>>>>> I ran it once with 10000 iterations:
+>>>>> `runs: 10000, abort: 62.53%, zero: 34.93%, success: 2.54%`
+>>>>>
+>>>>> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+>>>>> ---
+>>>>>   tools/perf/arch/arm64/include/arch-tests.h    |   5 +-
+>>>>>   tools/perf/arch/arm64/include/rseq-arm64.h    | 220 ++++++++++++++++++
+>>>>
+>>>> So, I applied the first patch in this series, but could you please break
+>>>> this patch into at least two, one introducing the facility
+>>>> (include/rseq*) and the second adding the test?
+>>>>
+>>>> We try to enforce this kind of granularity as down the line we may want
+>>>> to revert one part while the other already has other uses and thus
+>>>> wouldn't allow a straight revert.
+>>>>
+>>>> Also, can this go to tools/arch/ instead? Is this really perf specific?
+>>>> Isn't there any arch/arm64/include files for the kernel that we could
+>>>> mirror and have it checked for drift in tools/perf/check-headers.sh?
+>>>
+>>> The rseq bits aren't strictly perf specific, and I think the existing
+>>> bits under tools/testing/selftests/rseq/ could be factored out to common
+>>> locations under tools/include/ and tools/arch/*/include/.
+>> 
+>> Hi Mark,
+>> 
+>> Thanks for CCing me!
+>> 
+>> Or into a stand-alone librseq project:
+>> 
+>> https://github.com/compudj/librseq (currently a development branch in
+>> my own github)
+>> 
+>> I don't see why this user-space code should sit in the kernel tree.
+>> It is not tooling-specific.
+>> 
+>>>
+>>>  From a scan, those already duplicate barriers and other helpers which
+>>> already have definitions under tools/, which seems unfortunate. :/
+>>>
+>>> Comments below are for Raphael and Matthieu.
+>>>
+>>> [...]
+>>>
+>>>>> +static u64 noinline mmap_read_self(void *addr, int cpu)
+>>>>> +{
+>>>>> +	struct perf_event_mmap_page *pc = addr;
+>>>>> +	u32 idx = 0;
+>>>>> +	u64 count = 0;
+>>>>> +
+>>>>> +	asm volatile goto(
+>>>>> +                     RSEQ_ASM_DEFINE_TABLE(0, 1f, 2f, 3f)
+>>>>> +		     "nop\n"
+>>>>> +                     RSEQ_ASM_STORE_RSEQ_CS(1, 0b, rseq_cs)
+>>>>> +		     RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 3f)
+>>>>> +                     RSEQ_ASM_OP_R_LOAD(pc_idx)
+>>>>> +                     RSEQ_ASM_OP_R_AND(0xFF)
+>>>>> +		     RSEQ_ASM_OP_R_STORE(idx)
+>>>>> +                     RSEQ_ASM_OP_R_SUB(0x1)
+>>>>> +		     RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 3f)
+>>>>> +                     "msr pmselr_el0, " RSEQ_ASM_TMP_REG "\n"
+>>>>> +                     "isb\n"
+>>>>> +		     RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 3f)
+>> 
+>> I really don't understand why the cpu_id needs to be compared 3 times
+>> here (?!?)
+>> 
+>> Explicit comparison of the cpu_id within the rseq critical section
+>> should be done _once_.
+>> 
+> 
+> I understand and that's what I thought as well but I got confused with a
+> comment in (src)/include/uapi/linux/rseq.h which states:
+> > This CPU number value should always be compared
+> > against the value of the cpu_id field before performing a rseq
+> > commit or returning a value read from a data structure indexed
+> > using the cpu_id_start value.
+> 
+> I'll remove the unnecessary testing.
 
-It should be good and only take effect when IMA enabled. If all the
-assumptions are right:
+It needs to be compared at least once, yes. But once is enough.
 
-Acked-by: Dave Young <dyoung@redhat.com>
-> 
-> thanks,
-> 
-> Mimi
-> 
-> > ---
-> >  kernel/kexec_file.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > index 072b6ee55e3f..b0c724e5d86c 100644
-> > --- a/kernel/kexec_file.c
-> > +++ b/kernel/kexec_file.c
-> > @@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
-> >  		return ret;
-> >  	image->kernel_buf_len = size;
-> >  
-> > -	/* IMA needs to pass the measurement list to the next kernel. */
-> > -	ima_add_kexec_buffer(image);
-> > -
-> >  	/* Call arch image probe handlers */
-> >  	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
-> >  					    image->kernel_buf_len);
-> > @@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
-> >  			ret = -EINVAL;
-> >  			goto out;
-> >  		}
-> > +
-> > +		ima_kexec_cmdline(image->cmdline_buf,
-> > +				  image->cmdline_buf_len - 1);
-> >  	}
-> >  
-> > +	/* IMA needs to pass the measurement list to the next kernel. */
-> > +	ima_add_kexec_buffer(image);
-> > +
-> >  	/* Call arch image load handlers */
-> >  	ldata = arch_kexec_kernel_image_load(image);
-> >  
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+Thanks,
 
-Thanks
-Dave
+Mathieu
+
+> 
+> 
+>> If the kernel happens to preempt and migrate the thread while in the
+>> critical section, it's the kernel's job to move user-space execution
+>> to the abort handler.
+>> 
+> [...]
+> 
+> Thanks,
+> 
+> --
+> Raphael Gault
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
