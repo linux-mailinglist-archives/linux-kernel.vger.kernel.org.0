@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D1D5441F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A40C54421C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732646AbfFMQSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:18:08 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:53807 "EHLO frisell.zx2c4.com"
+        id S2391852AbfFMQT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:19:27 -0400
+Received: from sauhun.de ([88.99.104.3]:42288 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731118AbfFMQSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:18:06 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0c2c6c51
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Jun 2019 15:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=ZtKcLIe9xSGOyWd+OOk7fGBXeNU=; b=bCpFEB
-        nrXKDiy8HwyxBJCTvQgIfnU+sHwPPWr1dWmCcU+JVdlZgjAyQucuQnBupJchfC4O
-        PeSRwHd4VkzQNhPKdTxX+dlCqyK+wT2+2x6ZqoZw1fu4fLYbiy3xSz76RAjPTlQ/
-        UPS8DCBMOEjbFLU84FSYgonE1/IoE+oLCuhktuOrTmOgbho517TMbh5GhZN2k4MB
-        VFEQ+dJgPf8KIPlgSoRj3KpVCAY68yoqIOgBg9M2ZTFrQuOWequ2rXUpGMG7uHPB
-        GPIhgK10bOUMoBjOJomWe3D0Kf+zJ11/SEEFz5FKWxoQ3L3S0Wx/bQHgI14CEM81
-        kdHyfMic7IZKGdig==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c2ec9c6f (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Jun 2019 15:45:40 +0000 (UTC)
-Received: by mail-ot1-f42.google.com with SMTP id r6so15235805oti.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:18:04 -0700 (PDT)
-X-Gm-Message-State: APjAAAWtEtugNpB9WyfKNcfG3Pfqs3ggL97C0/6hS3cukTqdwDua/kAB
-        cuH/LmjwDRhiSDpCBwqGZ7I7Thwcs9TcrIRN1/4=
-X-Google-Smtp-Source: APXvYqwUgln7TE6c+9UQAQp4xqQDgMD0g+/7+3FdAzVlYUyYUygDyqZxn5HHn1NcJhw91s6BCv8fynZ7MX3taRPvWIs=
-X-Received: by 2002:a9d:7a82:: with SMTP id l2mr8403770otn.120.1560442683162;
- Thu, 13 Jun 2019 09:18:03 -0700 (PDT)
+        id S1731137AbfFMQTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:19:24 -0400
+Received: from localhost (p5486CF99.dip0.t-ipconnect.de [84.134.207.153])
+        by pokefinder.org (Postfix) with ESMTPSA id B46C24A127B;
+        Thu, 13 Jun 2019 18:19:22 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 18:19:22 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] media: cxd2820r: don't check retval after our own
+ assignemt
+Message-ID: <20190613161922.GA5015@kunai>
+References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
+ <20190613155421.16408-2-wsa+renesas@sang-engineering.com>
+ <550e0dbf-1776-000b-27ca-40e40e317da2@ideasonboard.com>
 MIME-Version: 1.0
-References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
- <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
- <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
- <CAK8P3a15NTV=njOjz-ccYL8=_q_MdEru0A+jeE=f7ufUTOOTgw@mail.gmail.com>
- <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com> <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com>
-In-Reply-To: <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 13 Jun 2019 18:17:50 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com>
-Message-ID: <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com>
-Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Sultan Alsawaf <sultan@kerneltoast.com>,
-        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Content-Disposition: inline
+In-Reply-To: <550e0dbf-1776-000b-27ca-40e40e317da2@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Arnd,
 
-On Thu, Jun 13, 2019 at 5:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> A seqlock is a very cheap synchronization primitive, I would actually
-> guess that this is faster than most implementations of sched_clock()
-> that access a hardware register for reading the time.
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It appears to me that ktime_get_coarse_boottime() has a granularity of
-a whole second, which is a lot worse than jiffies. Looking at the
-source, you assign base but don't then add ns like the other
-functions. At first I thought this was an intentional quirk to avoid
-hitting the slow hardware paths. But noticing this poor granularity
-now and observing that there's actually a blank line (\n\n) where the
-nanosecond addition normally would be, I wonder if something was lost
-in cut-and-paste?
 
-I'm still poking around trying to see what's up. As a quick test,
-running this on every packet during a high speed test shows the left
-incrementing many times per second, whereas the right increments once
-per second:
+> In the title/subject:
+>=20
+> media: cxd2820r: don't check retval after our own assignemt
+>=20
+> s/assignemt/assignment/
 
-static int x = 0;
-if (!(x++ % 30000))
-     pr_err("%llu %llu\n", local_clock(), ktime_get_coarse_boottime());
+Eeeks, in deed :( Shall I resend? Sorry for the noise.
 
-Jason
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0Cd4YACgkQFA3kzBSg
+KbZgow//aNxohRzQcF1sIHDVxMCgP1WbXbfoU0g5CY4c8lZ+/ythaFlCOQ7pa5OF
+3CYujuPha//WElGBiD1DME/qXmdwNAAH2U2QqxuER/14vXW0jpHEoX7TIf2zuoxV
+72dW5Mt9XvBKX4rXpxQO0qucIR+F4Us2ayN3UrhkuG2gPrvtV+hHnp6zKxVam21S
+uqiodFXng2fRMympaV8LYaV/oUj8qWCsWbp5q1hOkT2iKjEyCkMjwVMLFn/onpaA
+eAEQ9MlGKA+hJfDjqMF9gcqoFGn0FYtL2KsptwrPAy8KLgldVuma4eIFIDTp9iwb
+UZMUqHIs1Xpf3xQEs/FVwvols+rDPSIAg1515+heM66WbHU3mLq+fc79v4ZHBdii
+JjvoJFN4EgAzqy6FL57GLYIZEezfwJ5sC55Rp7mL/dUrDg7oqrOOZJiQRFxXfMeF
+T1ZIkeAsFglARaXwFUopVUD4hw8vxMqe/EKhLau6jyp8Pw60j0LBwREAFCmPCqN3
+F6zTeLvwJfuzmPlBbVkxH2AeTStxPDvOlZ2O2YBh8FyizNCEzMabds2wqbif5IF9
+xju81GoMANuzx9G/Rb/W873e8s0KBTunTEw8coznK/XPcrZtKxUnyaHsF7PdXWD6
+ckAffB5GgNDqA+8sp3E0i+atD/Ajf/nFPLfCnrNP/FlNtwd7I5A=
+=iAmu
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
