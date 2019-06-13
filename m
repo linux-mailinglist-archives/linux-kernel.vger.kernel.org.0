@@ -2,81 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8B844667
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE564465D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:51:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404297AbfFMQvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:51:16 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:57892 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730150AbfFMDdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:33:52 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1ED301A030B;
-        Thu, 13 Jun 2019 05:33:51 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 91F9A1A02F9;
-        Thu, 13 Jun 2019 05:33:46 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B6D764030E;
-        Thu, 13 Jun 2019 11:33:36 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 6/6] ARM: dts: imx6sll: Enable SNVS poweroff according to board design
-Date:   Thu, 13 Jun 2019 11:35:27 +0800
-Message-Id: <20190613033527.40555-6-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190613033527.40555-1-Anson.Huang@nxp.com>
-References: <20190613033527.40555-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730843AbfFMQvK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 13 Jun 2019 12:51:10 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:42669 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730154AbfFMDgz (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:9:2>);
+        Wed, 12 Jun 2019 23:36:55 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Wed, 12 Jun 2019 21:36:53 -0600
+Message-Id: <5D01C4CD020000F90006C06A@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.1 
+Date:   Wed, 12 Jun 2019 21:36:45 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     "Randy Dunlap" <rdunlap@infradead.org>, <akpm@linux-foundation.org>
+Cc:     <sfr@canb.auug.org.au>, <broonie@kernel.org>, <linux-mm@kvack.org>,
+        "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+        <ocfs2-devel@oss.oracle.com>, <mhocko@suse.cz>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-next@vger.kernel.org>, <mm-commits@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] mmotm 2019-06-11-16-59 uploaded (ocfs2)
+References: <20190611235956.4FZF6%akpm@linux-foundation.org>
+ <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
+ <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+Hello Randy and Andrew,
 
-The SNVS poweroff depends on board design, by default it should
-be disabled in SoC DT and ONLY be enabled on board DT if it is
-wired up to external PMIC.
+>>> On 6/13/2019 at  9:18 am, in message
+<20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
+>> > The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
+>> > 
+>> >    
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_ 
+> mmotm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0
+> vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYme
+> DBOk3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
+>> > 
+>> > mmotm-readme.txt says
+>> > 
+>> > README for mm-of-the-moment:
+>> > 
+>> > 
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_mmo 
+> tm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU
+> 6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYmeDBO
+> k3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
+>> > 
+>> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> > more than once a week.
+>> 
+>> 
+>> on i386:
+>> 
+>> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
+>> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
+> 
+> Thanks.  This, I guess:
+> 
+> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
+> +++ a/fs/ocfs2/dlmglue.c
+> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
+>  		 * otherwise, only dump the last N seconds active lock
+>  		 * resources.
+>  		 */
+> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
+> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
+>  			return 0;
+>  	}
+>  #endif
+> 
+> review and test, please?
+Thank for this fix, the change is OK for my testing on x86_64.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6sll-evk.dts | 4 ++++
- arch/arm/boot/dts/imx6sll.dtsi    | 1 +
- 2 files changed, 5 insertions(+)
+Thanks
+Gang
 
-diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
-index 61aa074..3e1d32f 100644
---- a/arch/arm/boot/dts/imx6sll-evk.dts
-+++ b/arch/arm/boot/dts/imx6sll-evk.dts
-@@ -269,6 +269,10 @@
- 	vin-supply = <&sw2_reg>;
- };
- 
-+&snvs_poweroff {
-+	status = "okay";
-+};
-+
- &snvs_pwrkey {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
-index 4384023..b0a77ff 100644
---- a/arch/arm/boot/dts/imx6sll.dtsi
-+++ b/arch/arm/boot/dts/imx6sll.dtsi
-@@ -568,6 +568,7 @@
- 					regmap = <&snvs>;
- 					offset = <0x38>;
- 					mask = <0x61>;
-+					status = "disabled";
- 				};
- 
- 				snvs_pwrkey: snvs-powerkey {
--- 
-2.7.4
+> 
+> _______________________________________________
+> Ocfs2-devel mailing list
+> Ocfs2-devel@oss.oracle.com 
+> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
 
