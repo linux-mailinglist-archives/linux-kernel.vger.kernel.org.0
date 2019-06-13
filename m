@@ -2,185 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C20B438D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C793439F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733296AbfFMPJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:09:11 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:35703 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732366AbfFMN6e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:58:34 -0400
-Received: from localhost (aaubervilliers-681-1-40-246.w90-88.abo.wanadoo.fr [90.88.159.246])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 7B341240018;
-        Thu, 13 Jun 2019 13:58:29 +0000 (UTC)
-Date:   Thu, 13 Jun 2019 15:16:26 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bhushan Shah <bshah@mykolab.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        =?utf-8?B?5Z2a5a6a5YmN6KGM?= <powerpan@qq.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v10 04/11] drm/sun4i: tcon: Compute
- DCLK dividers based on format, lanes
-Message-ID: <20190613131626.7zbwvrvd4e7eafrc@flea>
-References: <20190520090318.27570-1-jagan@amarulasolutions.com>
- <20190520090318.27570-5-jagan@amarulasolutions.com>
- <20190523204823.mx7l4ozklzdh7npn@flea>
- <CAMty3ZA0S=+8NBrQZvP6sFdzSYWqhNZL_KjkJAQ0jTc2RVivrw@mail.gmail.com>
- <20190604143016.fcx3ezmga244xakp@flea>
- <CAMty3ZAAK4RoE6g_LAZ-Q38On_1s_TTOz65YG7PVd88mwp-+4Q@mail.gmail.com>
+        id S2388729AbfFMPRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:17:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732179AbfFMNTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:19:51 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A31EE217D7;
+        Thu, 13 Jun 2019 13:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560431989;
+        bh=tiOM6s1e3Yxb9Buj5nqBgGoEmTjuEMI0MPr9x1nrxwg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KSVrU877UOAyC6Zkr+pIM6BK1VRggfQ++RYMYuGtj8JbaIYyQOIBRZk/+/i42W6p4
+         kE1k0xgZ5EY2fiXXUP0XZViozP+qTwhDmIn3YHBViqS30J37Qx3IwRNCUqOgn8PAGs
+         D5dzPOyuTcUrzm5l3WmGukhzsH6KF44Cd/BpM3KE=
+Received: by mail-qk1-f170.google.com with SMTP id g18so12708195qkl.3;
+        Thu, 13 Jun 2019 06:19:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAUmKojIFn7lazvq9P+oDP0XoRJn2evwcT+ZmPW0W005cwaM0oXc
+        NeFv/x+nzZq0TPtsvSurbHQNNohj3vqj/vUV6Q==
+X-Google-Smtp-Source: APXvYqy4HLIEZMTKtHpWWUtJQ72uNV0Rwv6pVblqYItO2sXmSU2d/lB94Van4E7i3A34NFCBlMZMyjmpFcFsMo7Njvw=
+X-Received: by 2002:a37:a6c9:: with SMTP id p192mr73052442qke.184.1560431988769;
+ Thu, 13 Jun 2019 06:19:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d5j2vvukhnlirhvf"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZAAK4RoE6g_LAZ-Q38On_1s_TTOz65YG7PVd88mwp-+4Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20190604003218.241354-1-saravanak@google.com> <095b631b-155d-483e-5ffb-3a04b0db0245@gmail.com>
+In-Reply-To: <095b631b-155d-483e-5ffb-3a04b0db0245@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 13 Jun 2019 07:19:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLFTfAN5UZ8yy+z5fAXBa83JU0FGVDKzpu7pMLi10jvZQ@mail.gmail.com>
+Message-ID: <CAL_JsqLFTfAN5UZ8yy+z5fAXBa83JU0FGVDKzpu7pMLi10jvZQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v1 0/5] Solve postboot supplier cleanup and
+ optimize probe ordering
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---d5j2vvukhnlirhvf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jun 05, 2019 at 01:11:44PM +0530, Jagan Teki wrote:
-> On Tue, Jun 4, 2019 at 8:00 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Fri, May 24, 2019 at 03:37:36PM +0530, Jagan Teki wrote:
-> > > On Fri, May 24, 2019 at 2:18 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > >
-> > > > On Mon, May 20, 2019 at 02:33:11PM +0530, Jagan Teki wrote:
-> > > > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
-> > > > > MIPI clock topology in Allwinner DSI controller.
-> > > > >
-> > > > > TCON dotclock driver is computing the desired DCLK divider based on
-> > > > > panel pixel clock along with input DCLK min, max divider values from
-> > > > > tcon driver and that would eventually set the pll-mipi clock rate.
-> > > > >
-> > > > > The current code is passing dsi min and max divider value as 4 via
-> > > > > tcon driver which would ended-up triggering below vblank wait timed out
-> > > > > warning on "bananapi,s070wv20-ct16" panel.
-> > > > >
-> > > > >  WARNING: CPU: 0 PID: 31 at drivers/gpu/drm/drm_atomic_helper.c:1429 drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0
-> > > > >  [CRTC:46:crtc-0] vblank wait timed out
-> > > > >  Modules linked in:
-> > > > >  CPU: 0 PID: 31 Comm: kworker/0:1 Not tainted 5.1.0-next-20190514-00025-g5186cdf10757-dirty #6
-> > > > >  Hardware name: Allwinner sun8i Family
-> > > > >  Workqueue: events deferred_probe_work_func
-> > > > >  [<c010ed54>] (unwind_backtrace) from [<c010b76c>] (show_stack+0x10/0x14)
-> > > > >  [<c010b76c>] (show_stack) from [<c0688c70>] (dump_stack+0x84/0x98)
-> > > > >  [<c0688c70>] (dump_stack) from [<c011d9e4>] (__warn+0xfc/0x114)
-> > > > >  [<c011d9e4>] (__warn) from [<c011da40>] (warn_slowpath_fmt+0x44/0x68)
-> > > > >  [<c011da40>] (warn_slowpath_fmt) from [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0)
-> > > > >  [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1) from [<c040e694>] (drm_atomic_helper_commit_tail_rpm+0x5c/0x6c)
-> > > > >  [<c040e694>] (drm_atomic_helper_commit_tail_rpm) from [<c040e4dc>] (commit_tail+0x40/0x6c)
-> > > > >  [<c040e4dc>] (commit_tail) from [<c040e5cc>] (drm_atomic_helper_commit+0xbc/0x128)
-> > > > >  [<c040e5cc>] (drm_atomic_helper_commit) from [<c0411b64>] (restore_fbdev_mode_atomic+0x1cc/0x1dc)
-> > > > >  [<c0411b64>] (restore_fbdev_mode_atomic) from [<c04156f8>] (drm_fb_helper_restore_fbdev_mode_unlocked+0x54/0xa0)
-> > > > >  [<c04156f8>] (drm_fb_helper_restore_fbdev_mode_unlocked) from [<c0415774>] (drm_fb_helper_set_par+0x30/0x54)
-> > > > >  [<c0415774>] (drm_fb_helper_set_par) from [<c03ad450>] (fbcon_init+0x560/0x5ac)
-> > > > >  [<c03ad450>] (fbcon_init) from [<c03eb8a0>] (visual_init+0xbc/0x104)
-> > > > >  [<c03eb8a0>] (visual_init) from [<c03ed1b8>] (do_bind_con_driver+0x1b0/0x390)
-> > > > >  [<c03ed1b8>] (do_bind_con_driver) from [<c03ed780>] (do_take_over_console+0x13c/0x1c4)
-> > > > >  [<c03ed780>] (do_take_over_console) from [<c03ad800>] (do_fbcon_takeover+0x74/0xcc)
-> > > > >  [<c03ad800>] (do_fbcon_takeover) from [<c013c9c8>] (notifier_call_chain+0x44/0x84)
-> > > > >  [<c013c9c8>] (notifier_call_chain) from [<c013cd20>] (__blocking_notifier_call_chain+0x48/0x60)
-> > > > >  [<c013cd20>] (__blocking_notifier_call_chain) from [<c013cd50>] (blocking_notifier_call_chain+0x18/0x20)
-> > > > >  [<c013cd50>] (blocking_notifier_call_chain) from [<c03a6e44>] (register_framebuffer+0x1e0/0x2f8)
-> > > > >  [<c03a6e44>] (register_framebuffer) from [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock+0x2fc/0x50c)
-> > > > >  [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock) from [<c04158c8>] (drm_fbdev_client_hotplug+0xe8/0x1b8)
-> > > > >  [<c04158c8>] (drm_fbdev_client_hotplug) from [<c0415a20>] (drm_fbdev_generic_setup+0x88/0x118)
-> > > > >  [<c0415a20>] (drm_fbdev_generic_setup) from [<c043f060>] (sun4i_drv_bind+0x128/0x160)
-> > > > >  [<c043f060>] (sun4i_drv_bind) from [<c044b588>] (try_to_bring_up_master+0x164/0x1a0)
-> > > > >  [<c044b588>] (try_to_bring_up_master) from [<c044b658>] (__component_add+0x94/0x140)
-> > > > >  [<c044b658>] (__component_add) from [<c0445e0c>] (sun6i_dsi_probe+0x144/0x234)
-> > > > >  [<c0445e0c>] (sun6i_dsi_probe) from [<c0452ee4>] (platform_drv_probe+0x48/0x9c)
-> > > > >  [<c0452ee4>] (platform_drv_probe) from [<c04512bc>] (really_probe+0x1dc/0x2c8)
-> > > > >  [<c04512bc>] (really_probe) from [<c0451508>] (driver_probe_device+0x60/0x160)
-> > > > >  [<c0451508>] (driver_probe_device) from [<c044f794>] (bus_for_each_drv+0x74/0xb8)
-> > > > >  [<c044f794>] (bus_for_each_drv) from [<c045106c>] (__device_attach+0xd0/0x13c)
-> > > > >  [<c045106c>] (__device_attach) from [<c0450464>] (bus_probe_device+0x84/0x8c)
-> > > > >  [<c0450464>] (bus_probe_device) from [<c04508f0>] (deferred_probe_work_func+0x64/0x90)
-> > > > >  [<c04508f0>] (deferred_probe_work_func) from [<c0135970>] (process_one_work+0x204/0x420)
-> > > > >  [<c0135970>] (process_one_work) from [<c013690c>] (worker_thread+0x274/0x5a0)
-> > > > >  [<c013690c>] (worker_thread) from [<c013b3d8>] (kthread+0x11c/0x14c)
-> > > > >  [<c013b3d8>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> > > > >  Exception stack(0xde539fb0 to 0xde539ff8)
-> > > > >  9fa0:                                     00000000 00000000 00000000 00000000
-> > > > >  9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > > > >  9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > > > >  ---[ end trace 4017fea4906ab391 ]---
-> > > > >
-> > > > > But accordingly to Allwinner A33, A64 BSP codes [1] [2] this divider
-> > > > > is clearly using 'format/lanes' for dsi divider value, dsi_clk.clk_div
-> > > > >
-> > > > > Which would compute the pll_freq and set a clock rate for it in
-> > > > > [3] and [4] respectively.
-> > > > >
-> > > > > The same issue has reproduced in A33, A64 with 4-lane and 2-lane devices
-> > > > > and got fixed with this computation logic 'format/lanes', so this patch
-> > > > > using dclk min and max dividers as per BSP.
-> > > > >
-> > > > > [1] https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/disp_lcd.c#L1106
-> > > > > [2] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L213
-> > > > > [3] https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/disp_lcd.c#L1127
-> > > > > [4] https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/disp_lcd.c#L1161
-> > > >
-> > > > In that mail, I've pointed out that clk_div isn't used for the TCON dclk divider:
-> > > > http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629596.html
-> > > >
-> > > > The only reply you've sent is that you indeed see that the divider is
-> > > > set to 4 in the BSP, but you're now saying that the BSP can change
-> > > > it. If so, then please point exactly the flaw in the explanation in
-> > > > that mail.
-> > >
-> > > Frankly, I have explained these details in commit message and previous
-> > > version patch[1] with print messages on the code.
-> > >
-> > > BSP has tcon_div and dsi_div. dsi_div is dynamic which depends on
-> > > bpp/lanes and it indeed depends on PLL computation (not tcon_div),
-> > > anyway I have explained again on this initial link you mentioned.
-> > > Please have a look and get back.
-> >
-> > I'll have a look, thanks.
-> >
-> > I've given your patches a try on my setup though, and this patch
-> > breaks it with vblank timeouts and some horizontal lines that looks
-> > like what should be displayed, but blinking and on the right of the
-> > display. The previous ones are fine though.
+On Wed, Jun 12, 2019 at 3:21 PM Frank Rowand <frowand.list@gmail.com> wrote:
 >
-> Would you please send me the link of panel driver.
+> Adding cc: David Collins
+>
+> Plus my comments below.
+>
+> On 6/3/19 5:32 PM, Saravana Kannan wrote:
+> > Add a generic "depends-on" property that allows specifying mandatory
+> > functional dependencies between devices. Add device-links after the
+> > devices are created (but before they are probed) by looking at this
+> > "depends-on" property.
+> >
+> > This property is used instead of existing DT properties that specify
+> > phandles of other devices (Eg: clocks, pinctrl, regulators, etc). This
+> > is because not all resources referred to by existing DT properties are
+> > mandatory functional dependencies. Some devices/drivers might be able
+> > to operate with reduced functionality when some of the resources
+> > aren't available. For example, a device could operate in polling mode
+> > if no IRQ is available, a device could skip doing power management if
+> > clock or voltage control isn't available and they are left on, etc.
+> >
+> > So, adding mandatory functional dependency links between devices by
+> > looking at referred phandles in DT properties won't work as it would
+> > prevent probing devices that could be probed. By having an explicit
+> > depends-on property, we can handle these cases correctly.
+> >
+> > Having functional dependencies explicitly called out in DT and
+> > automatically added before the devices are probed, provides the
+> > following benefits:
+> >
+> > - Optimizes device probe order and avoids the useless work of
+> >   attempting probes of devices that will not probe successfully
+> >   (because their suppliers aren't present or haven't probed yet).
+> >
+> >   For example, in a commonly available mobile SoC, registering just
+> >   one consumer device's driver at an initcall level earlier than the
+> >   supplier device's driver causes 11 failed probe attempts before the
+> >   consumer device probes successfully. This was with a kernel with all
+> >   the drivers statically compiled in. This problem gets a lot worse if
+> >   all the drivers are loaded as modules without direct symbol
+> >   dependencies.
+> >
+> > - Supplier devices like clock providers, regulators providers, etc
+> >   need to keep the resources they provide active and at a particular
+> >   state(s) during boot up even if their current set of consumers don't
+> >   request the resource to be active. This is because the rest of the
+> >   consumers might not have probed yet and turning off the resource
+> >   before all the consumers have probed could lead to a hang or
+> >   undesired user experience.
+> >
+> >   Some frameworks (Eg: regulator) handle this today by turning off
+> >   "unused" resources at late_initcall_sync and hoping all the devices
+> >   have probed by then. This is not a valid assumption for systems with
+> >   loadable modules. Other frameworks (Eg: clock) just don't handle
+> >   this due to the lack of a clear signal for when they can turn off
+> >   resources. This leads to downstream hacks to handle cases like this
+> >   that can easily be solved in the upstream kernel.
+> >
+> >   By linking devices before they are probed, we give suppliers a clear
+> >   count of the number of dependent consumers. Once all of the
+> >   consumers are active, the suppliers can turn off the unused
+> >   resources without making assumptions about the number of consumers.
+> >
+> > By default we just add device-links to track "driver presence" (probe
+> > succeeded) of the supplier device. If any other functionality provided
+> > by device-links are needed, it is left to the consumer/supplier
+> > devices to change the link when they probe.
+> >
+> >
+> > Saravana Kannan (5):
+> >   of/platform: Speed up of_find_device_by_node()
+> >   driver core: Add device links support for pending links to suppliers
+> >   dt-bindings: Add depends-on property
+> >   of/platform: Add functional dependency link from "depends-on" property
+> >   driver core: Add sync_state driver/bus callback
+> >
+> >  .../devicetree/bindings/depends-on.txt        |  26 +++++
+> >  drivers/base/core.c                           | 106 ++++++++++++++++++
+> >  drivers/of/platform.c                         |  75 ++++++++++++-
+> >  include/linux/device.h                        |  24 ++++
+> >  include/linux/of.h                            |   3 +
+> >  5 files changed, 233 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/depends-on.txt
+> >
+>
+>
+> I don't think the above description adequately describes one key problem
+> that the patch set addresses.
+>
+> David Collins described the problem in an email late in the thread of
+> the first submission of this series.  Instead of providing a link to
+> that email, I am going to fully copy it here:
+>
+> On 5/31/19 4:27 PM, David Collins wrote:
+> > Hello Saravana,
+> >
+> > On 5/23/19 6:01 PM, Saravana Kannan wrote:
+> > ...
+> >> Having functional dependencies explicitly called out in DT and
+> >> automatically added before the devices are probed, provides the
+> >> following benefits:
+> > ...
+> >> - Supplier devices like clock providers, regulators providers, etc
+> >>   need to keep the resources they provide active and at a particular
+> >>   state(s) during boot up even if their current set of consumers don't
+> >>   request the resource to be active. This is because the rest of the
+> >>   consumers might not have probed yet and turning off the resource
+> >>   before all the consumers have probed could lead to a hang or
+> >>   undesired user experience.
+> > This benefit provided by the sync_state() callback function introduced in
+> > this series gives us a mechanism to solve a specific problem encountered
+> > on Qualcomm Technologies, Inc. (QTI) boards when booting with drivers
+> > compiled as modules.  QTI boards have a regulator that powers the PHYs for
+> > display, camera, USB, UFS, and PCIe.  When these boards boot up, the boot
+> > loader enables this regulator along with other resources in order to
+> > display a splash screen image.  The regulator must remain enabled until
+> > the Linux display driver has probed and made a request with the regulator
+> > framework to keep the regulator enabled.  If the regulator is disabled
+> > prematurely, then the screen image is corrupted and the display hardware
+> > enters a bad state.
+> >
+> > We have observed that when the camera driver probes before the display
+> > driver, it performs this sequence: regulator_enable(), camera register IO,
+> > regulator_disable().  Since it is the first consumer of the shared
+> > regulator, the regulator is physically disabled (even though display
+> > hardware still requires it to be enabled).  We have solved this problem
+> > when compiling drivers statically with a downstream regulator
+> > proxy-consumer driver.  This proxy-consumer is able to make an enable
+> > request for the shared regulator before any other consumer.  It then
+> > removes its request at late_initcall_sync.
+> >
+> > Unfortunately, when drivers are compiled as modules instead of compiled
+> > statically into the kernel image, late_initcall_sync is not a meaningful
+> > marker of driver probe completion.  This means that our existing proxy
+> > voting system will not work when drivers are compiled as modules.  The
+> > sync_state() callback resolves this issue by providing a notification that
+> > is guaranteed to arrive only after all consumers of the shared regulator
+> > have probed.
+> >
+> > QTI boards have other cases of shared resources such as bus bandwidth
+> > which must remain at least at a level set by boot loaders in order to
+> > properly support hardware blocks that are enabled before the Linux kernel
+> > starts booting.
+> >
+> > Take care,
+> > David
+> >
+>
+> To paraphrase, the problem is:
+>
+>    - bootloader enables a regulator for display
+>    - during Linux boot camera driver probes:
+>       * enable the regulator also used for display
+>       * disable the regulator
+>          + screen image is corrupted
+>          + display hardware enters bad state
+>    - later during Linux boot display driver probes:
+>       * enable the regulator, but too late
+>
+> So the problem is an ordering dependency between the camera driver probe
+> and the display driver probe.
+>
+> Or alternatively the problem could be seen as: the bootloader has enabled
+> a regulator for a device that the bootloader is aware of, but has not
+> communicated to the Linux regulator framework that the device requires
+> the regulator to remain enabled.
 
-It's drivers/gpu/drm/panel/panel-ronbo-rb070d30.c
+The bootloader should have communicated this information via the
+'simple-framebuffer' binding. The problem is I think we don't have any
+mechanism to ensure the simple-fb driver probes before other drivers
+(other than it's dependencies). Well, there are initcall levels, but
+I'd really like to get rid of any reliance on that. Anything that
+relies on initcall level ordering is not going to work as module
+unless userspace also ensures the ordering.
 
-Maximey
+The other case I've heard of is the serial port's clock getting
+disabled and killing the earlycon as we assume the bootloader left
+serial port dependencies configured.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Thinking about the problem this way could lead to an entirely different
+> solution.
 
---d5j2vvukhnlirhvf
-Content-Type: application/pgp-signature; name="signature.asc"
+I think the ordering issue is orthogonal to using modules. We need
+some way to prioritize probing of some devices. IMO, just prioritizing
+the 'stdout-path' device and 'simple-framebuffer' if present solves
+this. I don't think we need a general solution in this case. The may
+be a few other cases, but I think these are the exception. The state
+from the bootloader (and don't forget about kexec) needs to be well
+defined and minimal.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQJMqgAKCRDj7w1vZxhR
-xRG3AP9n+1pCjBcPrRsDr1o7h97ThO8ebt5vlC4/MVvIIycKCwD/VU98+wn1USHB
-92fNUkmfqy5nkiflXspg5losBrEDnQM=
-=mign
------END PGP SIGNATURE-----
-
---d5j2vvukhnlirhvf--
+Rob
