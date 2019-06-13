@@ -2,102 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CAD54468B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C6754468A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393000AbfFMQwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:52:49 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47294 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730102AbfFMDFy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:05:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5347sLkcqdCaDr4KbIIf3bKPXQaQU7AVUw40AwlLk0E=; b=gf4dv7WU5lUnCVxWX1b/VbhuEP
-        RpAMKwYyUlhgcAdDBmtQ/bz/ehU3elbdJn89YliwF//sPf0+wbq8mbjoMZbkAAQy3GEUTYilX4iSj
-        k/MtsOknTvg2JkzcbSuGPMoJIAd1IqE+0bhPaUj7Ck/jBLsepF1XEmo5T3V4WLhxVkr261JgfaI+q
-        kJdtOMZfu7WKBScGQVBpA4dS8b+VasmQTV9rhm1DmyISlPeT+ImRMVI4LVCJpBHXKH56hgyQZ+xL8
-        8Mm8BTD5aVCrnkDcvN3rqEi+H2BBxYlZt6vaok0WqL/4pL/2cGXo4h4qLmCehl6qYrFBo+IjcXnE5
-        8GXZHODg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbG3Y-0006L6-IB; Thu, 13 Jun 2019 03:05:40 +0000
-Subject: Re: mmotm 2019-06-11-16-59 uploaded (ocfs2)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-References: <20190611235956.4FZF6%akpm@linux-foundation.org>
- <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
- <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a412fca5-7204-7001-cc1a-f620ea6f64bd@infradead.org>
-Date:   Wed, 12 Jun 2019 20:05:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2393059AbfFMQwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:52:34 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:56480 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730117AbfFMDOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 23:14:00 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hbGBa-0004Tx-6t; Thu, 13 Jun 2019 11:13:58 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hbGBX-0001u2-TG; Thu, 13 Jun 2019 11:13:55 +0800
+Date:   Thu, 13 Jun 2019 11:13:55 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [PATCH v3 0/4] s390/crypto: Use -ENODEV instead of -EOPNOTSUPP
+Message-ID: <20190613031355.7vya4vwhr3eia5g4@gondor.apana.org.au>
+References: <20190612133306.10231-1-david@redhat.com>
+ <20190612150850.GA4038@osiris>
 MIME-Version: 1.0
-In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612150850.GA4038@osiris>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/19 6:18 PM, Andrew Morton wrote:
-> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+On Wed, Jun 12, 2019 at 05:08:50PM +0200, Heiko Carstens wrote:
+> On Wed, Jun 12, 2019 at 03:33:02PM +0200, David Hildenbrand wrote:
+> > s390x crypto is one of the rare modules that returns -EOPNOTSUPP instead of
+> > -ENODEV in case HW support is not available.
+> > 
+> > Convert to -ENODEV, so e.g., systemd's systemd-modules-load.service
+> > ignores this error properly.
+> > 
+> > v2 -> v3:
+> > - "s390/pkey: Use -ENODEV instead of -EOPNOTSUPP"
+> > -- Also convert pkey_clr2protkey() as requested by Harald
+> > - Add r-b's (thanks!)
+> > 
+> > v1 -> v2:
+> > - Include
+> > -- "s390/crypto: ghash: Use -ENODEV instead of -EOPNOTSUPP"
+> > -- "s390/crypto: prng: Use -ENODEV instead of -EOPNOTSUPP"
+> > -- "s390/crypto: sha: Use -ENODEV instead of -EOPNOTSUPP"
+> > 
+> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > Cc: Vasily Gorbik <gor@linux.ibm.com>
+> > Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> > Cc: Harald Freudenberger <freude@linux.ibm.com>
+> > Cc: Cornelia Huck <cohuck@redhat.com>
+> > 
+> > David Hildenbrand (4):
+> >   s390/pkey: Use -ENODEV instead of -EOPNOTSUPP
+> >   s390/crypto: ghash: Use -ENODEV instead of -EOPNOTSUPP
+> >   s390/crypto: prng: Use -ENODEV instead of -EOPNOTSUPP
+> >   s390/crypto: sha: Use -ENODEV instead of -EOPNOTSUPP
 > 
->> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>
->>
->> on i386:
->>
->> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
->> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
-> 
-> Thanks.  This, I guess:
-> 
-> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
-> +++ a/fs/ocfs2/dlmglue.c
-> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
->  		 * otherwise, only dump the last N seconds active lock
->  		 * resources.
->  		 */
-> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
-> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
->  			return 0;
->  	}
->  #endif
-> 
-> review and test, please?
-> 
+> Should I pick these up so they can go upstream via the s390 tree?
 
-Builds for me.  Thanks.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-
-
+Sure Heiko.  Thanks!
 -- 
-~Randy
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
