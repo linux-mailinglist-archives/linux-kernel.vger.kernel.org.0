@@ -2,75 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD1B44041
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD1A44048
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391174AbfFMQE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:04:29 -0400
-Received: from sauhun.de ([88.99.104.3]:42058 "EHLO pokefinder.org"
+        id S2390775AbfFMQEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:04:53 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:42792 "EHLO ns.iliad.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727721AbfFMQE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:04:27 -0400
-Received: from localhost (p5486CF99.dip0.t-ipconnect.de [84.134.207.153])
-        by pokefinder.org (Postfix) with ESMTPSA id EB38D4A127B;
-        Thu, 13 Jun 2019 18:04:25 +0200 (CEST)
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     alsa-devel@alsa-project.org
-Cc:     Wolfram Sang <wsa@the-dreams.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: pci: echoaudio: remove variable which is a constant
-Date:   Thu, 13 Jun 2019 18:04:23 +0200
-Message-Id: <20190613160423.17097-1-wsa@the-dreams.de>
-X-Mailer: git-send-email 2.20.1
+        id S2390588AbfFMQEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:04:43 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 6CBC320AC3;
+        Thu, 13 Jun 2019 18:04:42 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id ED4C220514;
+        Thu, 13 Jun 2019 18:04:41 +0200 (CEST)
+Subject: Re: [PATCH v1] iopoll: Tweak readx_poll_timeout sleep range
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+References: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr>
+ <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <a732f522-5e65-3ac4-de04-802ef5455747@free.fr>
+Date:   Thu, 13 Jun 2019 18:04:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun 13 18:04:42 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking a variable which is always '1' has no use.
+On 13/06/2019 14:42, Arnd Bergmann wrote:
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
+> On Thu, Jun 13, 2019 at 2:16 PM Marc Gonzalez wrote:
+>
+>> Chopping max delay in 4 seems excessive. Let's just cut it in half.
+>>
+>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>> ---
+>> When max_us=100, old_min was 26 us; new_min would be 50 us
+>> Was there a good reason for the 1/4th?
+>> Is new_min=0 a problem? (for max=1)
+> 
+> You normally want a large enough range between min and max. I don't
+> see anything wrong with a factor of four.
 
-Only build tested. Found by static code analysis of similar patterns.
+Hmmm, I expect the typical use-case to be:
+"HW manual states operation X completes in 100 µs.
+Let's call usleep_range(100, foo); before hitting the reg."
 
- sound/pci/echoaudio/echoaudio_dsp.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+And foo needs to be a "reasonable" value: big enough to be able
+to merge several requests, low enough not to wait too long after
+the HW is ready.
 
-diff --git a/sound/pci/echoaudio/echoaudio_dsp.c b/sound/pci/echoaudio/echoaudio_dsp.c
-index b181752b8481..50d4a87a6bb3 100644
---- a/sound/pci/echoaudio/echoaudio_dsp.c
-+++ b/sound/pci/echoaudio/echoaudio_dsp.c
-@@ -1058,7 +1058,6 @@ static int allocate_pipes(struct echoaudio *chip, struct audiopipe *pipe,
- {
- 	int i;
- 	u32 channel_mask;
--	char is_cyclic;
- 
- 	dev_dbg(chip->card->dev,
- 		"allocate_pipes: ch=%d int=%d\n", pipe_index, interleave);
-@@ -1066,8 +1065,6 @@ static int allocate_pipes(struct echoaudio *chip, struct audiopipe *pipe,
- 	if (chip->bad_board)
- 		return -EIO;
- 
--	is_cyclic = 1;	/* This driver uses cyclic buffers only */
--
- 	for (channel_mask = i = 0; i < interleave; i++)
- 		channel_mask |= 1 << (pipe_index + i);
- 	if (chip->pipe_alloc_mask & channel_mask) {
-@@ -1078,8 +1075,8 @@ static int allocate_pipes(struct echoaudio *chip, struct audiopipe *pipe,
- 
- 	chip->comm_page->position[pipe_index] = 0;
- 	chip->pipe_alloc_mask |= channel_mask;
--	if (is_cyclic)
--		chip->pipe_cyclic_mask |= channel_mask;
-+	/* This driver uses cyclic buffers only */
-+	chip->pipe_cyclic_mask |= channel_mask;
- 	pipe->index = pipe_index;
- 	pipe->interleave = interleave;
- 	pipe->state = PIPE_STATE_STOPPED;
--- 
-2.20.1
+In this case, I'd say usleep_range(100, 200); makes sense.
 
+Come to think of it, I'm not sure min=26 (or min=50) makes sense...
+Why wait *less* than what the user specified?
+
+>> @@ -47,7 +47,7 @@
+>>                         break; \
+>>                 } \
+>>                 if (__sleep_us) \
+>> -                       usleep_range((__sleep_us >> 2) + 1, __sleep_us); \
+>> +                       usleep_range(__sleep_us / 2, __sleep_us); \
+>>         } \
+> 
+> You are also missing the '+1' now, so this breaks with __sleep_us=1.
+
+It was on purpose.
+
+usleep_range(0, 1); is not well-defined?
+(I tried looking at the source, got lost down the rabbit hole.)
+
+Regards.
