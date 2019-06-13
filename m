@@ -2,64 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EA743949
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34DFF438FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732276AbfFMPMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:12:53 -0400
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:36188 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732277AbfFMNkn (ORCPT
+        id S2387594AbfFMPKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:10:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49582 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732306AbfFMNvW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:40:43 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 29BE13FBD2;
-        Thu, 13 Jun 2019 15:40:36 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 tagged_above=-999 required=6.31
-        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9] autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iDz7YgHRYd8m; Thu, 13 Jun 2019 15:40:35 +0200 (CEST)
-Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
-        (Authenticated sender: mb547485)
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 380643F48D;
-        Thu, 13 Jun 2019 15:40:33 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 15:40:33 +0200
-From:   Fredrik Noring <noring@nocrew.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     laurentiu.tudor@nxp.com, hch@lst.de, stern@rowland.harvard.edu,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        marex@denx.de, leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, JuergenUrban@gmx.de
-Subject: Re: [PATCH v7 3/5] usb: host: ohci-sm501: init genalloc for local
- memory
-Message-ID: <20190613134033.GA2489@sx9>
-References: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
- <20190529102843.13174-4-laurentiu.tudor@nxp.com>
- <20190605214622.GA22254@roeck-us.net>
- <20190611133223.GA30054@roeck-us.net>
- <20190611172654.GA2602@sx9>
- <20190611190343.GA18459@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190611190343.GA18459@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 13 Jun 2019 09:51:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l04+nuc8FItMhrlUdke+dDyeO4FcnJ4DLhxtL7h4uWw=; b=Dyedfdz8cqa1qtwMp4kxTOjis
+        yz6nEYshl3JJmNB6VXPpJNo560qsMGykCHEhUrEl7UPK5q7gjLymIqN7dbMKW/6p6oiEZXDRetq9L
+        BppDMIVPaY/ATTg4tP2vaIFm1d/pSCPSwX9JpZO5Fvzth8PbuQomyeC6xv+yn7yARxVU7LTnaWwqZ
+        WcCeaOQlpgze1p3Qi/vrSeYF9FfL8gE/U/l8jsxtuGp+MK1aOdqaGcZzvQJgOmYzOPpdqjvVisGny
+        iGzfeLgu2nOeGsTY6xQ0oCN0JJGNn8sr1MrsG918wFRehWQjHgCSMHkOksRUXU8G0ZAzVd9OKhsBj
+        nYMSOBLPw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbQ7z-0004Bn-KB; Thu, 13 Jun 2019 13:50:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id EE15520316592; Thu, 13 Jun 2019 15:50:53 +0200 (CEST)
+Message-Id: <20190613134317.734881240@infradead.org>
+User-Agent: quilt/0.65
+Date:   Thu, 13 Jun 2019 15:43:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     stern@rowland.harvard.edu, akiyks@gmail.com,
+        andrea.parri@amarulasolutions.com, boqun.feng@gmail.com,
+        dlustig@nvidia.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, npiggin@gmail.com, paulmck@linux.ibm.com,
+        peterz@infradead.org, will.deacon@arm.com, paul.burton@mips.com
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: [PATCH v2 0/4] atomic: Fixes to smp_mb__{before,after}_atomic() and mips.
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+Hi,
 
-> I don't think I'll have time to do that anytime soon. Not that I know what
-> exactly to look for in the first place.
+This all started when Andrea Parri found a 'surprising' behaviour for x86:
 
-I can confirm that there is a problem with mass storage devices and these
-local memory patches.
+  http://lkml.kernel.org/r/20190418125412.GA10817@andrea
 
-Fredrik
+Basically we fail for:
+
+	*x = 1;
+	atomic_inc(u);
+	smp_mb__after_atomic();
+	r0 = *y;
+
+Because, while the atomic_inc() implies memory order, it
+(surprisingly) does not provide a compiler barrier. This then allows
+the compiler to re-order like so:
+
+	atomic_inc(u);
+	*x = 1;
+	smp_mb__after_atomic();
+	r0 = *y;
+
+Which the CPU is then allowed to re-order (under TSO rules) like:
+
+	atomic_inc(u);
+	r0 = *y;
+	*x = 1;
+
+And this very much was not intended.
+
+This had me audit all the (strong) architectures that had weak
+smp_mb__{before,after}_atomic: ia64, mips, sparc, s390, x86, xtensa.
+
+Of those, only x86 and mips were affected. Looking at MIPS to solve this, led
+to the other MIPS patches.
+
+All these patches have been through 0day for quite a while.
+
+Paul, how do you want to route the MIPS bits?
+
