@@ -2,130 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB3643A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B1D43A87
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388486AbfFMPV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:21:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:39324 "EHLO foss.arm.com"
+        id S2387940AbfFMPVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:21:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:39319 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731990AbfFMMod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:44:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36E163EF;
-        Thu, 13 Jun 2019 05:44:32 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F5113F694;
-        Thu, 13 Jun 2019 05:44:29 -0700 (PDT)
-Subject: Re: [PATCH 2/4] arm64: kdump: support reserving crashkernel above 4G
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        rppt@linux.ibm.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, ebiederm@xmission.com, horms@verge.net.au,
-        takahiro.akashi@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-mm@kvack.org, wangkefeng.wang@huawei.com
-References: <20190507035058.63992-1-chenzhou10@huawei.com>
- <20190507035058.63992-3-chenzhou10@huawei.com>
- <df2b659d-7406-fbfd-597d-be3a3f69abcb@arm.com>
- <d15f334c-90cd-7c09-5e54-6501e822e7f1@huawei.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <b04f5578-4422-319c-da1f-62f7b465c9f6@arm.com>
-Date:   Thu, 13 Jun 2019 13:44:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731994AbfFMMss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:48:48 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45Pk7c3C35z9tyyl;
+        Thu, 13 Jun 2019 14:48:44 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=JtxVxN0Z; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ijpIqmAsa4gU; Thu, 13 Jun 2019 14:48:44 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45Pk7c28d9z9tyyY;
+        Thu, 13 Jun 2019 14:48:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560430124; bh=m9v/syJUwAcHZGCUPwHk7l5TNta5QwacZWNaxTvFrc8=;
+        h=From:Subject:To:Cc:Date:From;
+        b=JtxVxN0Zyv6Oa3kfTyge7crL8g9I/N2iKAyjjbaXmTfYPmM0Y10uq5T/XTLqidpa+
+         kKB1pgmf9ODXW8E6brPFHC7V2jB1h8M1Qvs44f6Pt7eEwi8Ao2jx+jZy2dqlAPpdQy
+         5TZRtTf36dt6C5PNRlXWUNiB1Nxd3eNSh60EYOT4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AA5388B8E4;
+        Thu, 13 Jun 2019 14:48:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id dokx723z3qzG; Thu, 13 Jun 2019 14:48:45 +0200 (CEST)
+Received: from po16838vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 590298B8B9;
+        Thu, 13 Jun 2019 14:48:45 +0200 (CEST)
+Received: by po16838vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id EC32368D71; Thu, 13 Jun 2019 12:48:44 +0000 (UTC)
+Message-Id: <cover.1560429844.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 0/4] Additional fixes on Talitos driver
 MIME-Version: 1.0
-In-Reply-To: <d15f334c-90cd-7c09-5e54-6501e822e7f1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 13 Jun 2019 12:48:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen Zhou,
+This series is the last set of fixes for the Talitos driver.
 
-On 13/06/2019 12:27, Chen Zhou wrote:
-> On 2019/6/6 0:29, James Morse wrote:
->> On 07/05/2019 04:50, Chen Zhou wrote:
->>> When crashkernel is reserved above 4G in memory, kernel should
->>> reserve some amount of low memory for swiotlb and some DMA buffers.
->>
->>> Meanwhile, support crashkernel=X,[high,low] in arm64. When use
->>> crashkernel=X parameter, try low memory first and fall back to high
->>> memory unless "crashkernel=X,high" is specified.
->>
->> What is the 'unless crashkernel=...,high' for? I think it would be simpler to relax the
->> ARCH_LOW_ADDRESS_LIMIT if reserve_crashkernel_low() allocated something.
->>
->> This way "crashkernel=1G" tries to allocate 1G below 4G, but fails if there isn't enough
->> memory. "crashkernel=1G crashkernel=16M,low" allocates 16M below 4G, which is more likely
->> to succeed, if it does it can then place the 1G block anywhere.
->>
-> Yeah, this is much simpler.
+We now get a fully clean boot on both SEC1 (SEC1.2 on mpc885) and
+SEC2 (SEC2.2 on mpc8321E) with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS:
 
->>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
->>> index 413d566..82cd9a0 100644
->>> --- a/arch/arm64/kernel/setup.c
->>> +++ b/arch/arm64/kernel/setup.c
->>> @@ -243,6 +243,9 @@ static void __init request_standard_resources(void)
->>>  			request_resource(res, &kernel_data);
->>>  #ifdef CONFIG_KEXEC_CORE
->>>  		/* Userspace will find "Crash kernel" region in /proc/iomem. */
->>> +		if (crashk_low_res.end && crashk_low_res.start >= res->start &&
->>> +		    crashk_low_res.end <= res->end)
->>> +			request_resource(res, &crashk_low_res);
->>>  		if (crashk_res.end && crashk_res.start >= res->start &&
->>>  		    crashk_res.end <= res->end)
->>>  			request_resource(res, &crashk_res);
->>
->> With both crashk_low_res and crashk_res, we end up with two entries in /proc/iomem called
->> "Crash kernel". Because its sorted by address, and kexec-tools stops searching when it
->> find "Crash kernel", you are always going to get the kernel placed in the lower portion.
->>
->> I suspect this isn't what you want, can we rename crashk_low_res for arm64 so that
->> existing kexec-tools doesn't use it?
+[    3.385197] bus: 'platform': really_probe: probing driver talitos with device ff020000.crypto
+[    3.450982] random: fast init done
+[   12.252548] alg: No test for authenc(hmac(md5),cbc(aes)) (authenc-hmac-md5-cbc-aes-talitos-hsna)
+[   12.262226] alg: No test for authenc(hmac(md5),cbc(des3_ede)) (authenc-hmac-md5-cbc-3des-talitos-hsna)
+[   43.310737] Bug in SEC1, padding ourself
+[   45.603318] random: crng init done
+[   54.612333] talitos ff020000.crypto: fsl,sec1.2 algorithms registered in /proc/crypto
+[   54.620232] driver: 'talitos': driver_bound: bound to device 'ff020000.crypto'
 
-> In my patchset, in addition to the kernel patches, i also modify the kexec-tools.
->   arm64: support more than one crash kernel regions(http://lists.infradead.org/pipermail/kexec/2019-April/022792.html).
-> In kexec-tools patch, we read all the "Crash kernel" entry and load crash kernel high.
+[    1.193721] bus: 'platform': really_probe: probing driver talitos with device b0030000.crypto
+[    1.229197] random: fast init done
+[    2.714920] alg: No test for authenc(hmac(sha224),cbc(aes)) (authenc-hmac-sha224-cbc-aes-talitos)
+[    2.724312] alg: No test for authenc(hmac(sha224),cbc(aes)) (authenc-hmac-sha224-cbc-aes-talitos-hsna)
+[    4.482045] alg: No test for authenc(hmac(md5),cbc(aes)) (authenc-hmac-md5-cbc-aes-talitos)
+[    4.490940] alg: No test for authenc(hmac(md5),cbc(aes)) (authenc-hmac-md5-cbc-aes-talitos-hsna)
+[    4.500280] alg: No test for authenc(hmac(md5),cbc(des3_ede)) (authenc-hmac-md5-cbc-3des-talitos)
+[    4.509727] alg: No test for authenc(hmac(md5),cbc(des3_ede)) (authenc-hmac-md5-cbc-3des-talitos-hsna)
+[    6.631781] random: crng init done
+[   11.521795] talitos b0030000.crypto: fsl,sec2.2 algorithms registered in /proc/crypto
+[   11.529803] driver: 'talitos': driver_bound: bound to device 'b0030000.crypto'
 
-But we can't rely on people updating user-space when they update the kernel!
+v2: dropped patch 1 which was irrelevant due to a rebase weirdness. Added Cc to stable on the 2 first patches.
 
-[...]
+v3:
+ - removed stable reference in patch 1
+ - reworded patch 1 to include name of patch 2 for the dependency.
+ - mentionned this dependency in patch 2 as well.
+ - corrected the Fixes: sha1 in patch 4
 
+Christophe Leroy (4):
+  crypto: talitos - move struct talitos_edesc into talitos.h
+  crypto: talitos - fix hash on SEC1.
+  crypto: talitos - eliminate unneeded 'done' functions at build time
+  crypto: talitos - drop icv_ool
 
->> I'm afraid you've missed the ugly bit of the crashkernel reservation...
->>
->> arch/arm64/mm/mmu.c::map_mem() marks the crashkernel as 'nomap' during the first pass of
->> page-table generation. This means it isn't mapped in the linear map. It then maps it with
->> page-size mappings, and removes the nomap flag.
->>
->> This is done so that arch_kexec_protect_crashkres() and
->> arch_kexec_unprotect_crashkres() can remove the valid bits of the crashkernel mapping.
->> This way the old-kernel can't accidentally overwrite the crashkernel. It also saves us if
->> the old-kernel and the crashkernel use different memory attributes for the mapping.
->>
->> As your low-memory reservation is intended to be used for devices, having it mapped by the
->> old-kernel as cacheable memory is going to cause problems if those CPUs aren't taken
->> offline and go corrupting this memory. (we did crash for a reason after all)
->>
->>
->> I think the simplest thing to do is mark the low region as 'nomap' in
->> reserve_crashkernel() and always leave it unmapped. We can then describe it via a
->> different string in /proc/iomem, something like "Crash kernel (low)". Older kexec-tools
->> shouldn't use it, (I assume its not using strncmp() in a way that would do this by
->> accident), and newer kexec-tools can know to describe it in the DT, but it can't write to it.
+ drivers/crypto/talitos.c | 98 ++++++++++++++++++++----------------------------
+ drivers/crypto/talitos.h | 28 ++++++++++++++
+ 2 files changed, 69 insertions(+), 57 deletions(-)
 
-> I did miss the bit of the crashkernel reservation.
-> I will fix this in next version.
+-- 
+2.13.3
 
-I think all that is needed is to make the low-region nmap, and describe it via /proc/iomem
-with a name where nothing will try and use it by accident.
-
-
-Thanks,
-
-James
