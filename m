@@ -2,114 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18AB044DBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4A844DC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbfFMUsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:48:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfFMUsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:48:04 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01294308427C;
-        Thu, 13 Jun 2019 20:48:04 +0000 (UTC)
-Received: from [10.10.120.121] (ovpn-120-121.rdu2.redhat.com [10.10.120.121])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 593B060FBD;
-        Thu, 13 Jun 2019 20:48:03 +0000 (UTC)
-Subject: Re: [PATCH v4 00/10] klp-convert livepatch build tooling
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-kbuild@vger.kernel.org
-References: <20190509143859.9050-1-joe.lawrence@redhat.com>
- <alpine.LSU.2.21.1906131451560.22698@pobox.suse.cz>
- <b1a627a4-3702-9689-6c03-0c2123c06a2d@redhat.com>
-Message-ID: <c9021573-11c6-b576-0aa6-97754c98a06e@redhat.com>
-Date:   Thu, 13 Jun 2019 16:48:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <b1a627a4-3702-9689-6c03-0c2123c06a2d@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1730078AbfFMUsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:48:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40160 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730002AbfFMUsh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 16:48:37 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DKklXP052765
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 16:48:36 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t3ufr5e73-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 16:48:35 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 13 Jun 2019 21:48:34 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Jun 2019 21:48:31 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5DKmUox30867460
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 20:48:30 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 507F7A4054;
+        Thu, 13 Jun 2019 20:48:30 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7600EA405B;
+        Thu, 13 Jun 2019 20:48:29 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.91])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jun 2019 20:48:29 +0000 (GMT)
+Subject: Re: [PATCH V8 0/3] Add support for measuring the boot command line
+ during kexec_file_load
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com
+Date:   Thu, 13 Jun 2019 16:48:18 -0400
+In-Reply-To: <20190612221549.28399-1-prsriva02@gmail.com>
+References: <20190612221549.28399-1-prsriva02@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 13 Jun 2019 20:48:04 +0000 (UTC)
+X-TM-AS-GCONF: 00
+x-cbid: 19061320-0012-0000-0000-00000328EE6B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061320-0013-0000-0000-00002161FC0C
+Message-Id: <1560458898.4805.76.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906130156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/13/19 9:15 AM, Joe Lawrence wrote:
-> On 6/13/19 9:00 AM, Miroslav Benes wrote:
->> Hi Joe,
->>
->> first, I'm sorry for the lack of response so far.
->>
->> Maybe you've already noticed but the selftests fail. Well, at least in
->> my VM. When test_klp_convert1.ko is loaded, the process is killed with
->>
->> [  518.041826] BUG: kernel NULL pointer dereference, address: 0000000000000000
->> [  518.042816] #PF: supervisor read access in kernel mode
->> [  518.043393] #PF: error_code(0x0000) - not-present page
->> [  518.043981] PGD 0 P4D 0
->> [  518.044185] Oops: 0000 [#1] SMP PTI
->> [  518.044518] CPU: 2 PID: 2255 Comm: insmod Tainted: G           O  K   5.1.0-klp_convert_v4-193435-g67748576637e #2
->> [  518.045784] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
->> [  518.046940] RIP: 0010:test_klp_convert_init+0x1c/0x40 [test_klp_convert1]
->> [  518.047611] Code: 1b a0 48 89 c6 e9 a8 c0 f4 e0 0f 1f 40 00 0f 1f 44 00 00 53 48 c7 c7 00 30 1b a0 e8 5e 33 f6 e0 85 c0 89 c3 74 04 89 d8 5b c3 <48> 8b 35 5d ef e4 5f 48 c7 c7 28 20 1b a0 e8 75 c0 f4 e0 e8 6c ff
->> [  518.049779] RSP: 0018:ffffc90000f37cc8 EFLAGS: 00010246
->> [  518.050243] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000027de0
->> [  518.050922] RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff88807ab54f40
->> [  518.051619] RBP: ffffffffa01b1080 R08: 0000000096efde7a R09: 0000000000000001
->> [  518.052332] R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffff
->> [  518.053012] R13: 0000000000000000 R14: ffff888078b55000 R15: ffffc90000f37ea0
->> [  518.053714] FS:  00007febece1fb80(0000) GS:ffff88807d400000(0000) knlGS:0000000000000000
->> [  518.054514] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [  518.055078] CR2: 0000000000000000 CR3: 000000007a56a000 CR4: 00000000000006e0
->> [  518.055818] Call Trace:
->> [  518.056007]  do_one_initcall+0x6a/0x2da
->> [  518.056340]  ? do_init_module+0x22/0x230
->> [  518.056702]  ? rcu_read_lock_sched_held+0x96/0xa0
->> [  518.057125]  ? kmem_cache_alloc_trace+0x284/0x2e0
->> [  518.057493]  do_init_module+0x5a/0x230
->> [  518.057900]  load_module+0x17bc/0x1f50
->> [  518.058214]  ? __symbol_put+0x40/0x40
->> [  518.058499]  ? vfs_read+0x12d/0x160
->> [  518.058766]  __do_sys_finit_module+0x83/0xc0
->> [  518.059122]  do_syscall_64+0x57/0x190
->> [  518.059407]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> ...
->>
->> It crashes right in test_klp_convert_init() when print_*() using
->> supposed-to-be-converted symbols are called. I'll debug it next week. Can
->> you reproduce it too?
-> 
-> Hey, thanks for the report..
-> 
-> I don't recall the tests crashing, but I had put this patchset on the
-> side for a few weeks now.  I'll try to fire up a VM and see what happens
-> today.
-> 
+On Wed, 2019-06-12 at 15:15 -0700, Prakhar Srivastava wrote:
 
-Hmm, I haven't been able to reproduce using my original base (Linux 5.1-rc6)
-or when rebased ontop of livepatching.git/master + 997a55f3fb6d("stacktrace: Unbreak stack_trace_save_tsk_reliable()")
+> The kexec cmdline hash is stored in the "d-ng" field of the template data.
+> and can be verified using
+> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | 
+>   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
 
+This information should also be included in one of the patches.
 
-FWIW, my test_klp_convert1.ko has these klp-converted relocations:
+Mimi
 
-Relocation section [36] '.klp.rela.vmlinux..text.unlikely' for section [ 5] '.text.unlikely' at offset 0x4a6b8 contains 1 entry:                                   
-  Offset              Type            Value               Addend Name                                                                                              
-  0x0000000000000003  X86_64_PC32     000000000000000000      -4 .klp.sym.vmlinux.saved_command_line,0 
-
-Relocation section [37] '.klp.rela.test_klp_convert_mod..text.unlikely' for section [ 5] '.text.unlikely' at offset 0x4a6d0 contains 4 entries:                    
-  Offset              Type            Value               Addend Name                                                                                              
-  0x000000000000004e  X86_64_PC32     000000000000000000      -4 .klp.sym.test_klp_convert_mod.get_homonym_string,1                                                
-  0x000000000000003d  X86_64_32S      000000000000000000      +0 .klp.sym.test_klp_convert_mod.homonym_string,1                                                    
-  0x0000000000000027  X86_64_PC32     000000000000000000      -4 .klp.sym.test_klp_convert_mod.get_driver_name,0                                                   
-  0x0000000000000016  X86_64_32S      000000000000000000      +0 .klp.sym.test_klp_convert_mod.driver_name,0
-
--- Joe
