@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1DAC4422A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B308544223
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392099AbfFMQT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:19:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57160 "EHLO mail.kernel.org"
+        id S2392088AbfFMQTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:19:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731088AbfFMIjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:39:40 -0400
+        id S1731089AbfFMIjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:39:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556AE21479;
-        Thu, 13 Jun 2019 08:39:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE51621473;
+        Thu, 13 Jun 2019 08:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415179;
-        bh=jI199WNTKiHrZNIkqpov24oygH7JLcTpsl/LaT297MA=;
+        s=default; t=1560415182;
+        bh=D80zUZagERK3VG96zY69ItG3mgc6LTMnoqeh+qlyOno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tRZ4P8WjNulYLRP6M5PnMO/HY6FM8p1Xdz/kUnWR4wgpMXS0quz8AuFTWhzQyJeRp
-         j3HZCpj0TFCJ0BouYPOJFeltd0tWb7aFeEB0boKHvhCp/7CmeprvkLmp+VLjQ3S/PI
-         dwZY/hfbVk21o2KL2IUpHpzHeDCZ2p/nRWnDyGM4=
+        b=sJHxyxOldmLmsLuFYIeuFVDfLyTZp24lS8wNkWa3ikOBiz4R4aNleh2nRmQ7uD3dS
+         Gib2XpGUWmVrNojBY8Wd+F1PZW4EwGB5CJVT1cxgWwCM272JCD8wBsD95/IElEFswl
+         C4SBaZwRD/+MkChKci1vF9nz9ThHj6fe95L48tOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/118] mailbox: stm32-ipcc: check invalid irq
-Date:   Thu, 13 Jun 2019 10:32:49 +0200
-Message-Id: <20190613075645.302463179@linuxfoundation.org>
+Subject: [PATCH 4.19 032/118] ntp: Allow TAI-UTC offset to be set to zero
+Date:   Thu, 13 Jun 2019 10:32:50 +0200
+Message-Id: <20190613075645.362258448@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
 References: <20190613075643.642092651@linuxfoundation.org>
@@ -44,63 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 68a1c8485cf83734d4da9d81cd3b5d2ae7c0339b ]
+[ Upstream commit fdc6bae940ee9eb869e493990540098b8c0fd6ab ]
 
-On failure of_irq_get() returns a negative value or zero, which is
-not handled as an error in the existing implementation.
-Instead of using this API, use platform_get_irq() that returns
-exclusively a negative value on failure.
-Also, do not output an error log in case of defer probe error.
+The ADJ_TAI adjtimex mode sets the TAI-UTC offset of the system clock.
+It is typically set by NTP/PTP implementations and it is automatically
+updated by the kernel on leap seconds. The initial value is zero (which
+applications may interpret as unknown), but this value cannot be set by
+adjtimex. This limitation seems to go back to the original "nanokernel"
+implementation by David Mills.
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Change the ADJ_TAI check to accept zero as a valid TAI-UTC offset in
+order to allow setting it back to the initial value.
+
+Fixes: 153b5d054ac2 ("ntp: support for TAI")
+Suggested-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Link: https://lkml.kernel.org/r/20190417084833.7401-1-mlichvar@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/stm32-ipcc.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ kernel/time/ntp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mailbox/stm32-ipcc.c b/drivers/mailbox/stm32-ipcc.c
-index 533b0da5235d..ca1f993c0de3 100644
---- a/drivers/mailbox/stm32-ipcc.c
-+++ b/drivers/mailbox/stm32-ipcc.c
-@@ -8,9 +8,9 @@
- #include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/interrupt.h>
-+#include <linux/io.h>
- #include <linux/mailbox_controller.h>
- #include <linux/module.h>
--#include <linux/of_irq.h>
- #include <linux/platform_device.h>
- #include <linux/pm_wakeirq.h>
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index c5e0cba3b39c..6b23cd584295 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -698,7 +698,7 @@ static inline void process_adjtimex_modes(const struct timex *txc, s32 *time_tai
+ 		time_constant = max(time_constant, 0l);
+ 	}
  
-@@ -240,9 +240,11 @@ static int stm32_ipcc_probe(struct platform_device *pdev)
+-	if (txc->modes & ADJ_TAI && txc->constant > 0)
++	if (txc->modes & ADJ_TAI && txc->constant >= 0)
+ 		*time_tai = txc->constant;
  
- 	/* irq */
- 	for (i = 0; i < IPCC_IRQ_NUM; i++) {
--		ipcc->irqs[i] = of_irq_get_byname(dev->of_node, irq_name[i]);
-+		ipcc->irqs[i] = platform_get_irq_byname(pdev, irq_name[i]);
- 		if (ipcc->irqs[i] < 0) {
--			dev_err(dev, "no IRQ specified %s\n", irq_name[i]);
-+			if (ipcc->irqs[i] != -EPROBE_DEFER)
-+				dev_err(dev, "no IRQ specified %s\n",
-+					irq_name[i]);
- 			ret = ipcc->irqs[i];
- 			goto err_clk;
- 		}
-@@ -263,9 +265,10 @@ static int stm32_ipcc_probe(struct platform_device *pdev)
- 
- 	/* wakeup */
- 	if (of_property_read_bool(np, "wakeup-source")) {
--		ipcc->wkp = of_irq_get_byname(dev->of_node, "wakeup");
-+		ipcc->wkp = platform_get_irq_byname(pdev, "wakeup");
- 		if (ipcc->wkp < 0) {
--			dev_err(dev, "could not get wakeup IRQ\n");
-+			if (ipcc->wkp != -EPROBE_DEFER)
-+				dev_err(dev, "could not get wakeup IRQ\n");
- 			ret = ipcc->wkp;
- 			goto err_clk;
- 		}
+ 	if (txc->modes & ADJ_OFFSET)
 -- 
 2.20.1
 
