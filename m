@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EBEC44152
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CEB043FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:00:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391726AbfFMQNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:13:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59988 "EHLO mail.kernel.org"
+        id S2390228AbfFMP7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:59:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731206AbfFMImv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:51 -0400
+        id S1731485AbfFMItq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:49:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9FDE20851;
-        Thu, 13 Jun 2019 08:42:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E43206BA;
+        Thu, 13 Jun 2019 08:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415370;
-        bh=0nF0E6OR/0/YkO50J1rU0QWN6hYYNx0848W/umyVxWs=;
+        s=default; t=1560415786;
+        bh=QXO6KMAi//p5OKgiiB8eqhvn4lP9izoheJSoNKegOUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pOOkmyUzHCYWMDGLhmselmHLtwyYJy81oUip+SPc3gWbcaS6PF1S3xcc0D3zgHbp1
-         RUs9i5MFzH0aV5dRPGP8KKXtayMnwbBDO/SKP2ekhWyuxkLHDCr8yg/78kb6UgGMTJ
-         Bqjkpt4CRiQ9TWwmSvIhy8xEdCpg+Khxh65BhbHI=
+        b=yH35c+8oPZBKgDpjwAxpCj7zKjxT2i98CFeTDUPGXWaKCfJktRjK5SdUnvfog0mvJ
+         2pvupFZiF5N0UbExLaUAvhngiZ1JuzaQhG2eKTj9DeFb0k7nXLlo9RN27bp/01dHme
+         od2GVhU8r1EPZTk5aZMbOWjH2Gx7hmR1coNani3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wesley Sheng <wesley.sheng@microchip.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/118] switchtec: Fix unintended mask of MRPC event
+Subject: [PATCH 5.1 097/155] PCI: keystone: Invoke phy_reset() API before enabling PHY
 Date:   Thu, 13 Jun 2019 10:33:29 +0200
-Message-Id: <20190613075648.043874764@linuxfoundation.org>
+Message-Id: <20190613075658.492671914@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 083c1b5e50b701899dc32445efa8b153685260d5 ]
+[ Upstream commit b22af42b3e57c3a49a4c4a54c7d8a1363af75e90 ]
 
-When running application tool switchtec-user's `firmware update` and `event
-wait` commands concurrently, sometimes the firmware update speed reduced
-significantly.
+SERDES connected to the PCIe controller in AM654 requires
+power on reset enable (POR_EN) to be set in the SERDES. The
+SERDES driver sets POR_EN in the reset ops and it has to be
+invoked before init or enable ops. In order for SERDES driver
+to set POR_EN, invoke the phy_reset() API in pci-keystone driver.
 
-It is because when the MRPC event happened after MRPC event occurrence
-check but before the event mask loop reaches its header register in event
-ISR, the MRPC event would be masked unintentionally.  Since there's no
-chance to enable it again except for a module reload, all the following
-MRPC execution completion checks time out.
-
-Fix this bug by skipping the mask operation for MRPC event in event ISR,
-same as what we already do for LINK event.
-
-Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
-Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/switch/switchtec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-index 37d0c15c9eeb..72db2e0ebced 100644
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -1116,7 +1116,8 @@ static int mask_event(struct switchtec_dev *stdev, int eid, int idx)
- 	if (!(hdr & SWITCHTEC_EVENT_OCCURRED && hdr & SWITCHTEC_EVENT_EN_IRQ))
- 		return 0;
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 14f2b0b4ed5e..94bd31b255a4 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -873,6 +873,10 @@ static int ks_pcie_enable_phy(struct keystone_pcie *ks_pcie)
+ 	int num_lanes = ks_pcie->num_lanes;
  
--	if (eid == SWITCHTEC_IOCTL_EVENT_LINK_STATE)
-+	if (eid == SWITCHTEC_IOCTL_EVENT_LINK_STATE ||
-+	    eid == SWITCHTEC_IOCTL_EVENT_MRPC_COMP)
- 		return 0;
- 
- 	dev_dbg(&stdev->dev, "%s: %d %d %x\n", __func__, eid, idx, hdr);
+ 	for (i = 0; i < num_lanes; i++) {
++		ret = phy_reset(ks_pcie->phy[i]);
++		if (ret < 0)
++			goto err_phy;
++
+ 		ret = phy_init(ks_pcie->phy[i]);
+ 		if (ret < 0)
+ 			goto err_phy;
 -- 
 2.20.1
 
