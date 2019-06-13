@@ -2,186 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D84E43A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D92E43A8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388933AbfFMPWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:22:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56912 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731985AbfFMMmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:42:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88D3A307CB37;
-        Thu, 13 Jun 2019 12:42:12 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-17.pek2.redhat.com [10.72.12.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C84855DE68;
-        Thu, 13 Jun 2019 12:41:59 +0000 (UTC)
-Subject: Re: [PATCH] x86/mm: Create an SME workarea in the kernel for early
- encryption
-To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>
-References: <d565e0c8e9867132c75648fe67416c3f51a0efbd.1560346329.git.thomas.lendacky@amd.com>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <36ef7018-953e-4a86-f678-e5b71a6ec247@redhat.com>
-Date:   Thu, 13 Jun 2019 20:41:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2388899AbfFMPWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:22:13 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34414 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731987AbfFMMnP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:43:15 -0400
+Received: by mail-qk1-f195.google.com with SMTP id t8so8914930qkt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 05:43:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M1sFURB9VOBy4jtZMrXEnFN+uXQmeakOQ9D7hQoU5Oo=;
+        b=T9EmV9kjsYqJ39gPZnIKbdvSuAT+EM3cAcG+cMogn6tPIRJFL3I5TUiZp3KOCvE76P
+         +M1XJ/JvC+P77QYrdXQBoEgqs8Cpv0Fkr+1F3eYK+IGXcEwfD8Mh36soHovgSGZyFXyM
+         NfVlG4daqbegTiBwC0B9MesxCBNuQLVVwEzq1DQ6aB1ZlMp5e6jDCasatrX3jrrII9x8
+         v7QZsjIL80EJHNjXtUB2PmoBx4iqvoYmcoHm4gXvYnlv4M1Ta7bsijabv1ThSRxw6u0B
+         UXBiYNEotxbaJ83Gbq+pO6jfxQcVtOicxAH9+U2Cpd8Ocm7dLOQjOCCz1kv+yCt9kKqy
+         Sc2g==
+X-Gm-Message-State: APjAAAUOcs/UEmcBiMKbSR17b+tzH52MHE7r8hpgHLdWlb/2HKtW6TDL
+        hSr0PeZLUufLdeFl9uFpJ56LR1e7dqYzJv2JhcY=
+X-Google-Smtp-Source: APXvYqx0GATfAKDHQiQUDbUvb9OL9pOZqSyQ28f3QUXB75XM3Ltr+LckmYh3837y9Za7XbZ5exY75L49164V4buSJ0g=
+X-Received: by 2002:a05:620a:16c1:: with SMTP id a1mr27974065qkn.269.1560429794286;
+ Thu, 13 Jun 2019 05:43:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d565e0c8e9867132c75648fe67416c3f51a0efbd.1560346329.git.thomas.lendacky@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Jun 2019 12:42:21 +0000 (UTC)
+References: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr>
+In-Reply-To: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 13 Jun 2019 14:42:57 +0200
+Message-ID: <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
+Subject: Re: [PATCH v1] iopoll: Tweak readx_poll_timeout sleep range
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Matt Wagantall <mattw@codeaurora.org>,
+        Mitchel Humpherys <mitchelh@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-After applied this patch, i made a test on the following machines. It works well.
-
-[a] HPE ProLiant DL385 Gen10 (878612-B21) AMD EPYC 7251 8-Core Processor
-
-[b] Dell PowerEdge R7425 AMD EPYC 7401 24-Core Processor
-
-[c] AMD Speedway AMD Eng Sample: 2S1405A3VIHF4_28/14_N
-
-[d] AMD Ethanol X AMD Eng Sample: 2S1402E2VJUG2_20/14_N
-
-On the [a] machine, it works well in the crashkernel=160M case, but need
-to remove the CONFIG_DEBUG_INFO from .config, otherwise it could happen the
-OOM. And it also works well in all >= 256M(crashkernel) cases(no need to
-remove the above option from .config).
-
-On the [b][c][d] machine, it also works fine in the crashkernel=256M cases,
-also need to remove the debug info, otherwise it could happen the OOM. And
-it also works well in all >= 320M(crashkernel) cases.
-
-Thanks.
-
-
-Tested-by: Lianbo Jiang <lijiang@redhat.com>
-
-
-在 2019年06月12日 21:32, Lendacky, Thomas 写道:
-> The SME workarea used during early encryption of the kernel during boot
-> is situated on a 2MB boundary after the end of the kernel text, data,
-> etc. sections (_end).  This works well during initial boot of a compressed
-> kernel because of the relocation used for decompression of the kernel.
-> But when performing a kexec boot, there's a chance that the SME workarea
-> may not be mapped by the kexec pagetables or that some of the other data
-> used by kexec could exist in this range.
-> 
-> Create a section for SME in the vmlinux.lds.S.  Position it after "_end"
-> so that the memory will be reclaimed during boot and, since it is all
-> zeroes, it compresses well.  Since this new section will be part of the
-> kernel, kexec will account for it in pagetable mappings and placement of
-> data after the kernel.
-> 
-> Here's an example of a kernel size without and with the SME section:
-> 	without:
-> 		vmlinux:	36,501,616
-> 		bzImage:	 6,497,344
-> 
-> 		100000000-47f37ffff : System RAM
-> 		  1e4000000-1e47677d4 : Kernel code	(0x7677d4)
-> 		  1e47677d5-1e4e2e0bf : Kernel data	(0x6c68ea)
-> 		  1e5074000-1e5372fff : Kernel bss	(0x2fefff)
-> 
-> 	with:
-> 		vmlinux:	44,419,408
-> 		bzImage:	 6,503,136
-> 
-> 		880000000-c7ff7ffff : System RAM
-> 		  8cf000000-8cf7677d4 : Kernel code	(0x7677d4)
-> 		  8cf7677d5-8cfe2e0bf : Kernel data	(0x6c68ea)
-> 		  8d0074000-8d0372fff : Kernel bss	(0x2fefff)
-> 
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Lianbo Jiang <lijiang@redhat.com>
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+On Thu, Jun 13, 2019 at 2:16 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+>
+> Chopping max delay in 4 seems excessive. Let's just cut it in half.
+>
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 > ---
->  arch/x86/kernel/vmlinux.lds.S      | 16 ++++++++++++++++
->  arch/x86/mm/mem_encrypt_identity.c | 22 ++++++++++++++++++++--
->  2 files changed, 36 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index 0850b5149345..8c4377983e54 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -379,6 +379,22 @@ SECTIONS
->  	. = ALIGN(PAGE_SIZE);		/* keep VO_INIT_SIZE page aligned */
->  	_end = .;
->  
-> +#ifdef CONFIG_AMD_MEM_ENCRYPT
-> +	/*
-> +	 * SME workarea section: Lives outside of the kernel proper
-> +	 * (_text - _end) for performing in-place encryption. Resides
-> +	 * on a 2MB boundary to simplify the pagetable setup used for
-> +	 * the encryption.
-> +	 */
-> +	. = ALIGN(HPAGE_SIZE);
-> +	.sme : AT(ADDR(.sme) - LOAD_OFFSET) {
-> +		__sme_begin = .;
-> +		*(.sme)
-> +		. = ALIGN(HPAGE_SIZE);
-> +		__sme_end = .;
-> +	}
-> +#endif
-> +
->  	STABS_DEBUG
->  	DWARF_DEBUG
->  
-> diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-> index 4aa9b1480866..c55c2ec8fb12 100644
-> --- a/arch/x86/mm/mem_encrypt_identity.c
-> +++ b/arch/x86/mm/mem_encrypt_identity.c
-> @@ -73,6 +73,19 @@ struct sme_populate_pgd_data {
->  	unsigned long vaddr_end;
->  };
->  
-> +/*
-> + * This work area lives in the .sme section, which lives outside of
-> + * the kernel proper. It is sized to hold the intermediate copy buffer
-> + * and more than enough pagetable pages.
-> + *
-> + * By using this section, the kernel can be encrypted in place and we
-> + * avoid any possibility of boot parameters or initramfs images being
-> + * placed such that the in-place encryption logic overwrites them.  This
-> + * section is 2MB aligned to allow for simple pagetable setup using only
-> + * PMD entries (see vmlinux.lds.S).
-> + */
-> +static char sme_workarea[2 * PMD_PAGE_SIZE] __section(.sme);
-> +
->  static char sme_cmdline_arg[] __initdata = "mem_encrypt";
->  static char sme_cmdline_on[]  __initdata = "on";
->  static char sme_cmdline_off[] __initdata = "off";
-> @@ -314,8 +327,13 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
->  	}
->  #endif
->  
-> -	/* Set the encryption workarea to be immediately after the kernel */
-> -	workarea_start = kernel_end;
-> +	/*
-> +	 * We're running identity mapped, so we must obtain the address to the
-> +	 * SME encryption workarea using rip-relative addressing.
-> +	 */
-> +	asm ("lea sme_workarea(%%rip), %0"
-> +	     : "=r" (workarea_start)
-> +	     : "p" (sme_workarea));
->  
->  	/*
->  	 * Calculate required number of workarea bytes needed:
-> 
+> When max_us=100, old_min was 26 us; new_min would be 50 us
+> Was there a good reason for the 1/4th?
+> Is new_min=0 a problem? (for max=1)
+
+You normally want a large enough range between min and max. I don't
+see anything wrong with a factor of four.
+
+> @@ -47,7 +47,7 @@
+>                         break; \
+>                 } \
+>                 if (__sleep_us) \
+> -                       usleep_range((__sleep_us >> 2) + 1, __sleep_us); \
+> +                       usleep_range(__sleep_us / 2, __sleep_us); \
+>         } \
+
+You are also missing the '+1' now, so this breaks with __sleep_us=1.
+
+        Arnd
