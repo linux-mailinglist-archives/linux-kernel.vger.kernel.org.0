@@ -2,94 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE6D438BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44208438CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733058AbfFMPIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:08:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:41740 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732381AbfFMPIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:08:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28E59367;
-        Thu, 13 Jun 2019 08:08:12 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E383A3F718;
-        Thu, 13 Jun 2019 08:08:10 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 16:08:04 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>
-Subject: Re: [PATCH 0/6] mailbox: arm_mhu: add support to use in doorbell mode
-Message-ID: <20190613150804.GA11854@e107155-lin>
-References: <20190531143320.8895-1-sudeep.holla@arm.com>
- <CABb+yY1u5zdocgV=HhQcHWQa_R7ArtFqndU5_T=NsPHJ=jwseA@mail.gmail.com>
- <20190531165326.GA18115@e107155-lin>
- <20190603193946.GC2456@sirena.org.uk>
- <20190604093827.GA31069@e107533-lin.cambridge.arm.com>
- <20190605194636.GW2456@sirena.org.uk>
- <CABb+yY27Xe7d5=drKUGg82rJXcRU3EfZkG9FygZoOiioY-BMyw@mail.gmail.com>
- <20190606125140.GB26273@e107155-lin>
- <CABb+yY06heJ5s5-2tvrDt9CdL+--YLG+P52e52YFPqTA=Nb3vw@mail.gmail.com>
- <20190606154045.GA2429@e107155-lin>
+        id S2387771AbfFMPIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:08:39 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33588 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732585AbfFMPIV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:08:21 -0400
+Received: by mail-qt1-f195.google.com with SMTP id x2so22040577qtr.0;
+        Thu, 13 Jun 2019 08:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VZDnfRfLaB+GhguIpLqDKJ0r2BOY0L5ZqvT0vtIQUws=;
+        b=FFIjYfDIbNt/f+AvqpOdChzf1Klyxb1vbw4NloHBTUIj6XN75XYA2RQSbzUH10Dr9J
+         ZHLIgIITBH3N/+mgicLgoIw7MlEd4kFjeP7cjO4ZRVCJPZ4JDfChe8sR8ids7N66P9/T
+         mPUdBkjk9abYpz/X16w33ijaVB+j/wcaROI2AwbgYMLztxyUPq9LZH0WvTIxjX/+kZeU
+         E3kDxd7dFjKQIt81p+8BV7P5FDs3z1Xo6aMaks4MOhpTwXi4//o2a58e9yjFp0olE/cc
+         VbqG6JvCou7ZwsVpBP3v13087blh9dANxGyZQlcNkRsdmQ4apm0ym2pO/bM9EBTqlpRM
+         //fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VZDnfRfLaB+GhguIpLqDKJ0r2BOY0L5ZqvT0vtIQUws=;
+        b=ftokQkFCtBliJ6lIaMJo2BFvd5QIXXUj0m01071MGPDhy8sFwfCvDFGp9KSK0Y6hUo
+         Zdx/SAfTpdUbq655DlUy3l3gJgTW8LjrRaY6Mj1cZEcvcsbx5psg5eHM/qAC6a0EZlXy
+         rrTawTGSYGhB1wjvcqwKBAOhvBSjNudnrST/sCuPyJ2WgyIB8W/FedmhLBREQe1ozKfb
+         qwBHr9nZmWmOAjhMhvUaVrNcrBwqvN8L6pt+tTKEqxJg74StsX1jR0gjc2F4+zdKyTDv
+         Em9QPqdejDp+kDssFVf/gTt2Lqdd90x4JjN+y7/OExMtyyfA6PjnC499OKZlNrc+fMtM
+         fKZg==
+X-Gm-Message-State: APjAAAUp8Jb9+E9WZJKwjdTnKz5TuAnwnw3zIfT7XSfuJLnXAa8Pm61N
+        preC5wv5UMV5LJ8AVu1CYwo=
+X-Google-Smtp-Source: APXvYqy2smAFADzejBvh7EFS77OX1/J51MN3dPTqRKbzhkdTYmQa8GB60KJXLWScjVWMojPwjQHkxQ==
+X-Received: by 2002:ad4:43e3:: with SMTP id f3mr4163862qvu.108.1560438499791;
+        Thu, 13 Jun 2019 08:08:19 -0700 (PDT)
+Received: from willemb1.nyc.corp.google.com ([2620:0:1003:315:3fa1:a34c:1128:1d39])
+        by smtp.gmail.com with ESMTPSA id d188sm1641989qkf.40.2019.06.13.08.08.18
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 08:08:19 -0700 (PDT)
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To:     jakub.kicinski@netronome.com, peterz@infradead.org
+Cc:     netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+        linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
+Subject: [PATCH net-next 0/2] enable and use static_branch_deferred_inc
+Date:   Thu, 13 Jun 2019 11:08:14 -0400
+Message-Id: <20190613150816.83198-1-willemdebruijn.kernel@gmail.com>
+X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606154045.GA2429@e107155-lin>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 04:40:45PM +0100, Sudeep Holla wrote:
-> On Thu, Jun 06, 2019 at 10:20:40AM -0500, Jassi Brar wrote:
-> > On Thu, Jun 6, 2019 at 7:51 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > >
-> > > > BTW, this is not going to be the end of SCMI troubles (I believe
-> > > > that's what his client is). SCMI will eventually have to be broken up
-> > > > in layers (protocol and transport) for many legit platforms to use it.
-> > > > That is mbox_send_message() will have to be replaced by, say,
-> > > > platform_mbox_send()  in drivers/firmware/arm_scmi/driver.c  OR  the
-> > > > platforms have to have shmem and each mailbox controller driver (that
-> > > > could ever be used under scmi) will have to implement "doorbell
-> > > > emulation" mode. That is the reason I am not letting the way paved for
-> > > > such emulations.
-> > > >
-> > >
-> > > While I don't dislike or disagree with separate transport in SCMI which
-> > > I have invested time and realised that I will duplicate mailbox framework
-> > > at the end.
-> > >
-> > Can you please share the code? Or is it no more available?
-> >
-> > > So I am against it only because of duplication and extra
-> > > layer of indirection which has performance impact(we have this seen in
-> > > sched governor for DVFS).
-> > >
-> > I don't see why the overhead should increase noticeably.
-> >
->
-> Simple, if 2 protocols share the same channel, then the requests are
-> serialised. E.g. if bits 0 and 1 are allocated for protocol#1
-> and bits 2 and 3 for protocol#2 and protocol#1 has higher latency
-> requirements like sched-governor DVFS and there are 3-4 pending requests
-> on protocol#2, then the incoming request for protocol#1 is blocked.
->
+From: Willem de Bruijn <willemb@google.com>
 
-Any idea on addressing the above with abstraction layer above the driver ?
-And the bit allotment without the virtual channel representation in DT.
-These 2 are main issues that needs to be resolved.
+1. make static_branch_deferred_inc available if !CONFIG_JUMP_LABEL
+2. convert the existing STATIC_KEY_DEFERRED_FALSE user to this api
 
---
-Regards,
-Sudeep
+Willem de Bruijn (2):
+  locking/static_key: always define static_branch_deferred_inc
+  tcp: use static_branch_deferred_inc for clean_acked_data_enabled
+
+ include/linux/jump_label_ratelimit.h | 5 +++--
+ net/ipv4/tcp_input.c                 | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+-- 
+2.22.0.rc2.383.gf4fbbf30c2-goog
+
