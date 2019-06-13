@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D7944E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF3744E00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730406AbfFMVBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:01:14 -0400
+        id S1730391AbfFMVBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:01:06 -0400
 Received: from mga05.intel.com ([192.55.52.43]:57146 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729530AbfFMVBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730164AbfFMVBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Jun 2019 17:01:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:01:01 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:01:02 -0700
 X-ExtLoop1: 1
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Jun 2019 14:01:01 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 13 Jun 2019 14:01:02 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
 To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
@@ -26,9 +26,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [RFC PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale directly from CPUID instead of cpuinfo_x86
-Date:   Thu, 13 Jun 2019 13:51:02 -0700
-Message-Id: <1560459064-195037-2-git-send-email-fenghua.yu@intel.com>
+Subject: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new scattered features word 11
+Date:   Thu, 13 Jun 2019 13:51:03 -0700
+Message-Id: <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
 References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
@@ -37,151 +37,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although x86_cache_max_rmid and x86_cache_occ_scale are read only once
-during resctrl initialization, they are always stored in cpuinfo_x86 on
-each CPU during run time even if resctrl is not configured.
+It's a waste for the four X86_FEATURE_CQM_* features to occupy two
+pure feature bits words. To better utilize feature words, re-define
+word 11 to host scattered features and move the four X86_FEATURE_CQM_*
+features into word 11. More scattered features can be added in word 11
+in the future.
 
-To save cpuinfo_x86 space and make CPU and resctrl initialization simpler,
-remove the two fields from cpuinfo_x86 and get max rmid and occupancy
-scale directly from CPUID during resctrl initialization. And since each
-known platform that supports resctrl has same max rmid on all CPUs, no
-need to scan all CPUs to find minimum of max rmid values, i.e. getting
-max rmid from CPUID on the current CPU is fine.
+KVM doesn't support resctrl now. So it's safe to move the
+X86_FEATURE_CQM_* features to scattered features word 11 for KVM.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/include/asm/processor.h       |  3 ---
- arch/x86/kernel/cpu/common.c           | 28 --------------------------
- arch/x86/kernel/cpu/resctrl/internal.h |  2 +-
- arch/x86/kernel/cpu/resctrl/monitor.c  | 28 +++++++++++++++++++++++---
- 4 files changed, 26 insertions(+), 35 deletions(-)
+ arch/x86/include/asm/cpufeature.h  |  3 +--
+ arch/x86/include/asm/cpufeatures.h | 17 ++++++++++-------
+ arch/x86/kernel/cpu/common.c       | 14 --------------
+ arch/x86/kernel/cpu/cpuid-deps.c   |  3 +++
+ arch/x86/kernel/cpu/scattered.c    |  4 ++++
+ arch/x86/kvm/cpuid.h               |  2 --
+ 6 files changed, 18 insertions(+), 25 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index c34a35c78618..27e875d4ca7d 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -99,9 +99,6 @@ struct cpuinfo_x86 {
- 	/* in KB - valid for CPUS which support this call: */
- 	unsigned int		x86_cache_size;
- 	int			x86_cache_alignment;	/* In bytes */
--	/* Cache QoS architectural values: */
--	int			x86_cache_max_rmid;	/* max index */
--	int			x86_cache_occ_scale;	/* scale to bytes */
- 	int			x86_power;
- 	unsigned long		loops_per_jiffy;
- 	/* cpuid returned max cores value: */
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 1d337c51f7e6..526619906305 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -22,8 +22,7 @@ enum cpuid_leafs
+ 	CPUID_LNX_3,
+ 	CPUID_7_0_EBX,
+ 	CPUID_D_1_EAX,
+-	CPUID_F_0_EDX,
+-	CPUID_F_1_EDX,
++	CPUID_LNX_4,
+ 	CPUID_8000_0008_EBX,
+ 	CPUID_6_EAX,
+ 	CPUID_8000_000A_EDX,
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 75f27ee2c263..4f0a3d093794 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -269,13 +269,16 @@
+ #define X86_FEATURE_XGETBV1		(10*32+ 2) /* XGETBV with ECX = 1 instruction */
+ #define X86_FEATURE_XSAVES		(10*32+ 3) /* XSAVES/XRSTORS instructions */
+ 
+-/* Intel-defined CPU QoS Sub-leaf, CPUID level 0x0000000F:0 (EDX), word 11 */
+-#define X86_FEATURE_CQM_LLC		(11*32+ 1) /* LLC QoS if 1 */
+-
+-/* Intel-defined CPU QoS Sub-leaf, CPUID level 0x0000000F:1 (EDX), word 12 */
+-#define X86_FEATURE_CQM_OCCUP_LLC	(12*32+ 0) /* LLC occupancy monitoring */
+-#define X86_FEATURE_CQM_MBM_TOTAL	(12*32+ 1) /* LLC Total MBM monitoring */
+-#define X86_FEATURE_CQM_MBM_LOCAL	(12*32+ 2) /* LLC Local MBM monitoring */
++/*
++ * Extended auxiliary flags: Linux defined - For features scattered in various
++ * CPUID levels like 0xf, word 11.
++ *
++ * Reuse free bits when adding new feature flags!
++ */
++#define X86_FEATURE_CQM_LLC		(11*32+ 0) /* LLC QoS if 1 */
++#define X86_FEATURE_CQM_OCCUP_LLC	(11*32+ 1) /* LLC occupancy monitoring */
++#define X86_FEATURE_CQM_MBM_TOTAL	(11*32+ 2) /* LLC Total MBM monitoring */
++#define X86_FEATURE_CQM_MBM_LOCAL	(11*32+ 3) /* LLC Local MBM monitoring */
+ 
+ /* AMD-defined CPU features, CPUID level 0x80000008 (EBX), word 13 */
+ #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2c57fffebf9b..38e4b1a9005e 100644
+index 38e4b1a9005e..5b0e9d869ce5 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -840,22 +840,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_F_0_EDX] = edx;
- 
- 		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
--			/* will be overridden if occupancy monitoring exists */
--			c->x86_cache_max_rmid = ebx;
--
- 			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
- 			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
- 			c->x86_capability[CPUID_F_1_EDX] = edx;
--
--			if ((cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC)) ||
--			      ((cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL)) ||
--			       (cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)))) {
--				c->x86_cache_max_rmid = ecx;
--				c->x86_cache_occ_scale = ebx;
--			}
--		} else {
--			c->x86_cache_max_rmid = -1;
--			c->x86_cache_occ_scale = -1;
- 		}
+@@ -832,20 +832,6 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_D_1_EAX] = eax;
  	}
  
-@@ -1269,20 +1256,6 @@ static void generic_identify(struct cpuinfo_x86 *c)
- #endif
- }
- 
--static void x86_init_cache_qos(struct cpuinfo_x86 *c)
--{
--	/*
--	 * The heavy lifting of max_rmid and cache_occ_scale are handled
--	 * in get_cpu_cap().  Here we just set the max_rmid for the boot_cpu
--	 * in case CQM bits really aren't there in this CPU.
--	 */
--	if (c != &boot_cpu_data) {
--		boot_cpu_data.x86_cache_max_rmid =
--			min(boot_cpu_data.x86_cache_max_rmid,
--			    c->x86_cache_max_rmid);
--	}
--}
+-	/* Additional Intel-defined flags: level 0x0000000F */
+-	if (c->cpuid_level >= 0x0000000F) {
 -
- /*
-  * Validate that ACPI/mptables have the same information about the
-  * effective APIC id and update the package map.
-@@ -1391,7 +1364,6 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- #endif
+-		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
+-		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
+-		c->x86_capability[CPUID_F_0_EDX] = edx;
+-
+-		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
+-			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
+-			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
+-			c->x86_capability[CPUID_F_1_EDX] = edx;
+-		}
+-	}
+-
+ 	/* AMD-defined flags: level 0x80000001 */
+ 	eax = cpuid_eax(0x80000000);
+ 	c->extended_cpuid_level = eax;
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index 2c0bd38a44ab..fa07a224e7b9 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -59,6 +59,9 @@ static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_AVX512_4VNNIW,	X86_FEATURE_AVX512F   },
+ 	{ X86_FEATURE_AVX512_4FMAPS,	X86_FEATURE_AVX512F   },
+ 	{ X86_FEATURE_AVX512_VPOPCNTDQ, X86_FEATURE_AVX512F   },
++	{ X86_FEATURE_CQM_OCCUP_LLC,	X86_FEATURE_CQM_LLC   },
++	{ X86_FEATURE_CQM_MBM_TOTAL,	X86_FEATURE_CQM_LLC   },
++	{ X86_FEATURE_CQM_MBM_LOCAL,	X86_FEATURE_CQM_LLC   },
+ 	{}
+ };
  
- 	x86_init_rdrand(c);
--	x86_init_cache_qos(c);
- 	setup_pku(c);
- 
- 	/*
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index e49b77283924..474a7090d2dd 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -579,7 +579,7 @@ int closids_supported(void);
- void closid_free(int closid);
- int alloc_rmid(void);
- void free_rmid(u32 rmid);
--int rdt_get_mon_l3_config(struct rdt_resource *r);
-+int __init rdt_get_mon_l3_config(struct rdt_resource *r);
- void mon_event_count(void *info);
- int rdtgroup_mondata_show(struct seq_file *m, void *arg);
- void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 1573a0a6b525..e9d876c25703 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -617,13 +617,35 @@ static void l3_mon_evt_init(struct rdt_resource *r)
- 		list_add_tail(&mbm_local_event.list, &r->evt_list);
- }
- 
--int rdt_get_mon_l3_config(struct rdt_resource *r)
-+static void __init get_cqm_info(struct rdt_resource *r)
-+{
-+	u32 eax, ebx, ecx, edx;
-+
-+	/*
-+	 * At this point, CQM LLC and one of occupancy, MBM total, and
-+	 * MBM local monitoring features must be supported.
-+	 */
-+	cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
-+	/* will be overridden if occupancy monitoring exists */
-+	r->num_rmid = ebx + 1;
-+
-+	cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
-+
-+	if (boot_cpu_has(X86_FEATURE_CQM_OCCUP_LLC))
-+		r->num_rmid = ecx + 1;
-+
-+	if (boot_cpu_has(X86_FEATURE_CQM_MBM_TOTAL) || boot_cpu_has(X86_FEATURE_CQM_MBM_LOCAL))
-+		r->mon_scale = ebx;
-+	else
-+		r->mon_scale = -1;
-+}
-+
-+int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- {
- 	unsigned int cl_size = boot_cpu_data.x86_cache_size;
- 	int ret;
- 
--	r->mon_scale = boot_cpu_data.x86_cache_occ_scale;
--	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
-+	get_cqm_info(r);
- 
- 	/*
- 	 * A reasonable upper limit on the max threshold is the number
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index 94aa1c72ca98..adf9b71386ef 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -26,6 +26,10 @@ struct cpuid_bit {
+ static const struct cpuid_bit cpuid_bits[] = {
+ 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
+ 	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
++	{ X86_FEATURE_CQM_LLC,		CPUID_EDX,  1, 0x0000000f, 0 },
++	{ X86_FEATURE_CQM_OCCUP_LLC,	CPUID_EDX,  0, 0x0000000f, 1 },
++	{ X86_FEATURE_CQM_MBM_TOTAL,	CPUID_EDX,  1, 0x0000000f, 1 },
++	{ X86_FEATURE_CQM_MBM_LOCAL,	CPUID_EDX,  2, 0x0000000f, 1 },
+ 	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
+ 	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
+ 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
+diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+index 9a327d5b6d1f..d78a61408243 100644
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -47,8 +47,6 @@ static const struct cpuid_reg reverse_cpuid[] = {
+ 	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
+ 	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
+ 	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
+-	[CPUID_F_0_EDX]       = {       0xf, 0, CPUID_EDX},
+-	[CPUID_F_1_EDX]       = {       0xf, 1, CPUID_EDX},
+ 	[CPUID_8000_0008_EBX] = {0x80000008, 0, CPUID_EBX},
+ 	[CPUID_6_EAX]         = {         6, 0, CPUID_EAX},
+ 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
 -- 
 2.19.1
 
