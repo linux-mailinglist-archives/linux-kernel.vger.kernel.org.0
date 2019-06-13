@@ -2,121 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C90A44513
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ADB54452F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731706AbfFMQln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:41:43 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33571 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730534AbfFMGts (ORCPT
+        id S2392929AbfFMQmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:42:37 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45321 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfFMGsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:49:48 -0400
-Received: by mail-pg1-f195.google.com with SMTP id k187so9860718pga.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:49:48 -0700 (PDT)
+        Thu, 13 Jun 2019 02:48:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m23so17351568lje.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:48:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lv9nqSLtCZiZ8ahiodoBv8WyJCmSbiyt0thoq18zE4o=;
+        b=nZ7PQjewhkNFLJJFS9CWkoOR/2SEzVmnFe8JrDQZP9WGcZpfUm4TWzaVR34kqgOkM6
+         PSejsxPi0NXyf4QlD5sX4JIbnQfXedVnig36j74X1SFYqDWGSabvXNjxjGVLIXkawcuU
+         FLxHCMmbItnJk/+HFhcv2buBYqTCBeda6PFTmID1zVJDHxvH+2FvmDkY//qUdtytA1rY
+         XAU372/eZO1vArF8Nvb3ESlmzJwhIz6vNWOMU+IhBUUih36nYQRORDh23Fhe5qPHSqz9
+         W5zZSLTxbnEjMPo5VqL3HJlKMAhbO5g/ZW2HDfLWl0duR2ldpc2FeL0NApW675/Lripg
+         kkbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KIxko3bf1UxU3S7PbsaO+3B/NsEEFkIHtCb9Hfmgcyw=;
-        b=TOYfETX6F5bKw9lboPakeznri0aHVmlDVHWi091PxJAFTpVR78EnbPAMK7GW0rW5ly
-         hmE6NBmsWBMyGoBvEmdNyxqyuiUFXTbC41VO2M+7kGWkmwMsa3WExYTmxu1+Qh7Wbc93
-         QnQGuQOZtM/AtuW4vNm7a6DGd6LC9GzNoIlQfkdfoAVeR/BWGKrdOvfKONhnpf1bu1iF
-         EFXP0Qe7LEIwqS9WxXLXWxFIWVbIozmeLXioDaUIw/JPs2VIEnsbrA5tubfw+eY/c4GK
-         C4Sp7iO/jEhEOwa2flTXzfo2FbzwWMWu1MgICyLvZFCQgG7IQq7n87tWv1o4Zcp6M+Mo
-         HTdA==
-X-Gm-Message-State: APjAAAW3au5/2evQVJicLjqEPJx3SchPENYjnCKUd1HhTB5/OwH1YzWi
-        /ZlJeo2giJXW1TyWaFrIbPggD6GntMR67g==
-X-Google-Smtp-Source: APXvYqzDzOtreUY7YRR9V7tGYNGpISPFRAnUuamjop3Z6f3UD2u43890vOAhKh5V2E1tNXkTB5njdQ==
-X-Received: by 2002:aa7:9203:: with SMTP id 3mr92952769pfo.123.1560408587399;
-        Wed, 12 Jun 2019 23:49:47 -0700 (PDT)
-Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id i3sm1559973pfa.175.2019.06.12.23.49.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lv9nqSLtCZiZ8ahiodoBv8WyJCmSbiyt0thoq18zE4o=;
+        b=FzuLvKCG9ECr7y2LfWAZZPa7TCXF9BUM4Zpq2CCzwpuymtVAui3ql/Hj7HGTsqZi7I
+         SWRqJl/VOOfvnkaOSD0XeajS+8tbfjoJ/xqCa24fWpMezHVMZDYg0J0ruzFC7W3gaeyf
+         gSWCXgt29xIRYAUMFA5tMtbjyssD9SK6pr8PwhguGr0Z/9ZY54dEyCDzTN3ODiAO8084
+         vSpLfgkGMM72Zx6/wkiGtTyUFCCIKoAXDXl+d2GDtgnj6wf6AXu7cz7h039SAjciQ0MA
+         uyLG4H4UiUe8DJPBa08dRpDaDN6lTUCZUtAcxXAlJcPpqfxIF6pMZ2U3taELr9c7o/8t
+         TQYw==
+X-Gm-Message-State: APjAAAWdEWfqq8SluT/OPYpfTbOtxDhhXF5tl2vL49uk915qaocVKwF3
+        tIiuqD1zF9qyBLT09tEXQr8=
+X-Google-Smtp-Source: APXvYqy6FpZw7RE8ERzs0oPq21ly6eN+8mWADKZTvCK7LLigk9bmBzrjxoFEZnOBRpHWrUPHGL4mfA==
+X-Received: by 2002:a2e:2c07:: with SMTP id s7mr6057511ljs.44.1560408498002;
+        Wed, 12 Jun 2019 23:48:18 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id y18sm396934ljh.1.2019.06.12.23.48.17
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 23:49:46 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 9/9] x86/apic: Use non-atomic operations when possible
-Date:   Wed, 12 Jun 2019 23:48:13 -0700
-Message-Id: <20190613064813.8102-10-namit@vmware.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190613064813.8102-1-namit@vmware.com>
-References: <20190613064813.8102-1-namit@vmware.com>
+        Wed, 12 Jun 2019 23:48:17 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id D702646019C; Thu, 13 Jun 2019 09:48:16 +0300 (MSK)
+Date:   Thu, 13 Jun 2019 09:48:16 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>
+Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for
+ /proc/pid/map_files
+Message-ID: <20190613064816.GF23535@uranus.lan>
+References: <156007465229.3335.10259979070641486905.stgit@buzz>
+ <156007493995.3335.9595044802115356911.stgit@buzz>
+ <20190612231426.GA3639@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612231426.GA3639@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using __clear_bit() and __cpumask_clear_cpu() is more efficient than
-using their atomic counterparts. Use them when atomicity is not needed,
-such as when manipulating bitmasks that are on the stack.
+On Wed, Jun 12, 2019 at 04:14:28PM -0700, Andrei Vagin wrote:
+> On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
+> > Do not stuck forever if something wrong.
+> > Killable lock allows to cleanup stuck tasks and simplifies investigation.
+> 
+> This patch breaks the CRIU project, because stat() returns EINTR instead
+> of ENOENT:
+> 
+> [root@fc24 criu]# stat /proc/self/map_files/0-0
+> stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
+> 
+> Here is one inline comment with the fix for this issue.
+> 
+> > 
+> > It seems ->d_revalidate() could return any error (except ECHILD) to
+> > abort validation and pass error as result of lookup sequence.
+> > 
+> > Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> > Reviewed-by: Roman Gushchin <guro@fb.com>
+> > Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+> > Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> 
+> It was nice to see all four of you in one place :).
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/kernel/apic/apic_flat_64.c   | 4 ++--
- arch/x86/kernel/apic/x2apic_cluster.c | 2 +-
- arch/x86/kernel/smp.c                 | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/apic_flat_64.c b/arch/x86/kernel/apic/apic_flat_64.c
-index bf083c3f1d73..bbdca603f94a 100644
---- a/arch/x86/kernel/apic/apic_flat_64.c
-+++ b/arch/x86/kernel/apic/apic_flat_64.c
-@@ -78,7 +78,7 @@ flat_send_IPI_mask_allbutself(const struct cpumask *cpumask, int vector)
- 	int cpu = smp_processor_id();
- 
- 	if (cpu < BITS_PER_LONG)
--		clear_bit(cpu, &mask);
-+		__clear_bit(cpu, &mask);
- 
- 	_flat_send_IPI_mask(mask, vector);
- }
-@@ -92,7 +92,7 @@ static void flat_send_IPI_allbutself(int vector)
- 			unsigned long mask = cpumask_bits(cpu_online_mask)[0];
- 
- 			if (cpu < BITS_PER_LONG)
--				clear_bit(cpu, &mask);
-+				__clear_bit(cpu, &mask);
- 
- 			_flat_send_IPI_mask(mask, vector);
- 		}
-diff --git a/arch/x86/kernel/apic/x2apic_cluster.c b/arch/x86/kernel/apic/x2apic_cluster.c
-index 7685444a106b..609e499387a1 100644
---- a/arch/x86/kernel/apic/x2apic_cluster.c
-+++ b/arch/x86/kernel/apic/x2apic_cluster.c
-@@ -50,7 +50,7 @@ __x2apic_send_IPI_mask(const struct cpumask *mask, int vector, int apic_dest)
- 	cpumask_copy(tmpmsk, mask);
- 	/* If IPI should not be sent to self, clear current CPU */
- 	if (apic_dest != APIC_DEST_ALLINC)
--		cpumask_clear_cpu(smp_processor_id(), tmpmsk);
-+		__cpumask_clear_cpu(smp_processor_id(), tmpmsk);
- 
- 	/* Collapse cpus in a cluster so a single IPI per cluster is sent */
- 	for_each_cpu(cpu, tmpmsk) {
-diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
-index 4693e2f3a03e..96421f97e75c 100644
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -144,7 +144,7 @@ void native_send_call_func_ipi(const struct cpumask *mask)
- 	}
- 
- 	cpumask_copy(allbutself, cpu_online_mask);
--	cpumask_clear_cpu(smp_processor_id(), allbutself);
-+	__cpumask_clear_cpu(smp_processor_id(), allbutself);
- 
- 	if (cpumask_equal(mask, allbutself) &&
- 	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
--- 
-2.20.1
-
+Holymoly ;) And we all managed to miss this error code.
+Thanks, Andrew!
