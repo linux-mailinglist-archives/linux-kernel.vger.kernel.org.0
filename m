@@ -2,91 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6DD43C11
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3E243C55
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732885AbfFMPdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:33:44 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:40766 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728361AbfFMKfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:35:52 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BFD9B1A0113;
-        Thu, 13 Jun 2019 12:35:49 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C74081A038B;
-        Thu, 13 Jun 2019 12:35:46 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C6079402A0;
-        Thu, 13 Jun 2019 18:35:42 +0800 (SGT)
-From:   Peng Ma <peng.ma@nxp.com>
-To:     dan.j.williams@intel.com, vkoul@kernel.org, leoyang.li@nxp.com
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Ma <peng.ma@nxp.com>
-Subject: [V2] dmaengine: fsl-edma: support little endian for edma driver
-Date:   Thu, 13 Jun 2019 10:27:08 +0000
-Message-Id: <20190613102708.21606-1-peng.ma@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1732338AbfFMPfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:35:21 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43918 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbfFMK25 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:28:57 -0400
+Received: from mail-wr1-f70.google.com ([209.85.221.70])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <po-hsu.lin@canonical.com>)
+        id 1hbMyW-0002n3-1k
+        for linux-kernel@vger.kernel.org; Thu, 13 Jun 2019 10:28:56 +0000
+Received: by mail-wr1-f70.google.com with SMTP id q16so8621725wrx.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 03:28:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3vJoe4QOYmSpzL3TX3nF/EcZqCXILy8LMNIEV2dPMlw=;
+        b=JhtA3jYZpgQ6M0FdqGTvwHGxguW2moCsmpkCrHaDKa6DIsUrdSZnHZQyhaUsIH5wI5
+         8dIzLAGaxJWMkU8lOstr61fC6gcbgb8a3zR8B0tQT7ga+hvsER/+aAYZSXdMvhh7apBv
+         9hYd+Em2gHHkVBaqEIjkh85Oi/dImXVLwlu3yfm/QeAcfXZvVZRyDmBJk3YwSoOxSjRH
+         ATSirKbcJhOl2MwgUbGi93HrsSRnVWTGdG4hHY7xIGJ+uN3gpK4d1Hdn6Av4+/qpysx5
+         B3gZRWO2worIwPxR3L/GtmZHu6sGdNM9xM5PtR+VFeYAMoGXjJqHvXquNTIr7x5eBYso
+         C0IQ==
+X-Gm-Message-State: APjAAAUAYGdONnCbMFA5Pk5N0iwgexpgVAxvenr033vNd9mcElRL0Tmt
+        0sSTT8wgGT8BnM/YD4K6MQJbs11DeZTAjrLhQydAyWQZrjUVQN3pGQx7dvAczPS/Xdei6RPBMsQ
+        cgR1G4DfuH37TBRH2GItqiJz4H89bgB7dBD4djIVZoXS9A4loe6uYM73Z
+X-Received: by 2002:a7b:c313:: with SMTP id k19mr3050160wmj.2.1560421735777;
+        Thu, 13 Jun 2019 03:28:55 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwgKUzFv9JlTv26cq3GlGgLVgjVoMCkwh6CKsBT7LawKThQzRDyIbi5mMPqn4/bfa1JwGFkSAyBv6iKEvpwYik=
+X-Received: by 2002:a7b:c313:: with SMTP id k19mr3050140wmj.2.1560421735553;
+ Thu, 13 Jun 2019 03:28:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190612064752.6701-1-po-hsu.lin@canonical.com> <20190612.092711.1626983045451710048.davem@davemloft.net>
+In-Reply-To: <20190612.092711.1626983045451710048.davem@davemloft.net>
+From:   Po-Hsu Lin <po-hsu.lin@canonical.com>
+Date:   Thu, 13 Jun 2019 18:28:44 +0800
+Message-ID: <CAMy_GT8YjDhRSHMYBALHeqDhKYhr2Z+--=imZ+T5WV0wCz_v6g@mail.gmail.com>
+Subject: Re: [PATCH] selftests/net: skip psock_tpacket test if KALLSYMS was
+ not enabled
+To:     David Miller <davem@davemloft.net>
+Cc:     shuah <shuah@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our platforms with below registers(CHCFG0 - CHCFG15) of eDMA
-*-----------------------------------------------------------*
-|     Offset   | Big endian Register| Little endian Register|
-|--------------|--------------------|-----------------------|
-|     0x0      |        CHCFG0      |           CHCFG3      |
-|--------------|--------------------|-----------------------|
-|     0x1      |        CHCFG1      |           CHCFG2      |
-|--------------|--------------------|-----------------------|
-|     0x2      |        CHCFG2      |           CHCFG1      |
-|--------------|--------------------|-----------------------|
-|     0x3      |        CHCFG3      |           CHCFG0      |
-|--------------|--------------------|-----------------------|
-|     ...      |        ......      |           ......      |
-|--------------|--------------------|-----------------------|
-|     0xC      |        CHCFG12     |           CHCFG15     |
-|--------------|--------------------|-----------------------|
-|     0xD      |        CHCFG13     |           CHCFG14     |
-|--------------|--------------------|-----------------------|
-|     0xE      |        CHCFG14     |           CHCFG13     |
-|--------------|--------------------|-----------------------|
-|     0xF      |        CHCFG15     |           CHCFG12     |
-*-----------------------------------------------------------*
+Hello,
 
-Current eDMA driver does not support Little endian, so this
-patch is to improve edma driver to support little endian.
+This issue was spotted on Ubuntu linux-kvm kernel, on which the
+CONFIG_KALLSYMS was disabled intentionally.
+I think this extra check could be helpful when running the net test directly.
+$ make -C tools/testing/selftests TARGETS=net run_tests
 
-Signed-off-by: Peng Ma <peng.ma@nxp.com>
----
-Changed fo v2:
-	- Add details fo comments.
+Also, there is an identical check implemented in the ftrace
+kprobe_args_symbol test.
 
- drivers/dma/fsl-edma-common.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+I can send V2 along with CONFIG_KALLSYMS appended to the "config" file
+if you agree with this.
 
-diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
-index 680b2a0..6bf238e 100644
---- a/drivers/dma/fsl-edma-common.c
-+++ b/drivers/dma/fsl-edma-common.c
-@@ -83,9 +83,14 @@ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
- 	u32 ch = fsl_chan->vchan.chan.chan_id;
- 	void __iomem *muxaddr;
- 	unsigned int chans_per_mux, ch_off;
-+	int endian_diff[4] = {3, 1, -1, -3};
- 
- 	chans_per_mux = fsl_chan->edma->n_chans / DMAMUX_NR;
- 	ch_off = fsl_chan->vchan.chan.chan_id % chans_per_mux;
-+
-+	if (!fsl_chan->edma->big_endian)
-+		ch_off += endian_diff[ch_off % 4];
-+
- 	muxaddr = fsl_chan->edma->muxbase[ch / chans_per_mux];
- 	slot = EDMAMUX_CHCFG_SOURCE(slot);
- 
--- 
-1.7.1
+Thanks
 
+On Thu, Jun 13, 2019 at 12:27 AM David Miller <davem@davemloft.net> wrote:
+>
+> From: Po-Hsu Lin <po-hsu.lin@canonical.com>
+> Date: Wed, 12 Jun 2019 14:47:52 +0800
+>
+> > The psock_tpacket test will need to access /proc/kallsyms, this would
+> > require the kernel config CONFIG_KALLSYMS to be enabled first.
+> >
+> > Check the file existence to determine if we can run this test.
+> >
+> > Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
+>
+> Please just add CONFIG_KALLSYMS to "config".
