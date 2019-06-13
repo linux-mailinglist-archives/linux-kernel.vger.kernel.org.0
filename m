@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97FD344298
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA7344186
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391235AbfFMQXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:23:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54974 "EHLO mail.kernel.org"
+        id S2391819AbfFMQPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:15:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731011AbfFMIhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:37:36 -0400
+        id S1731184AbfFMImM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E9CC2064A;
-        Thu, 13 Jun 2019 08:37:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB60520851;
+        Thu, 13 Jun 2019 08:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415054;
-        bh=JUTwg6JYVMcanXtm5O5FyNtXQi+NRAjPJmKWbUZPEa0=;
+        s=default; t=1560415330;
+        bh=BSFzQRo8N0sINq8WRgJw2JWDPfwq1yFnf4qcaQMjcbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WAqL5yGaOPZp4ECIXPbiO/qhy9EPBa/9JGPqjeA1H5k03KyXpy0b7g2T3kMyVnkcO
-         w5fpOjowoJnuvEomB0nPBurAEBxcYvr0OPzhxqmc/iM+XD2GPowSyDBhgWCcFVYAOO
-         eAQFwq9POwPglB70uRjIggZaJINUGB74Lv/tPvCs=
+        b=PJBOWGTjsvNjnAFASsLKrm18cmpXBjdaMzpnXGZJEyaCcErci0S30tiVlfvG/mIT9
+         +9bPOoODq9HzntwU2PE/2rZkL0lK/OAP9MmiT8qNKpnUEK8BbLKK6d6jHnjOi/jpKp
+         1mXFk3fUDajyZ+2Ba/PG10WQcXiUCN5+E+QSovDA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>,
-        Han-Wen Nienhuys <hanwen@google.com>,
-        Jakob Unterwurzacher <jakobunt@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 43/81] fuse: retrieve: cap requested size to negotiated max_write
-Date:   Thu, 13 Jun 2019 10:33:26 +0200
-Message-Id: <20190613075652.485457686@linuxfoundation.org>
+Subject: [PATCH 4.19 069/118] vfio: Fix WARNING "do not call blocking ops when !TASK_RUNNING"
+Date:   Thu, 13 Jun 2019 10:33:27 +0200
+Message-Id: <20190613075647.841395065@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,61 +44,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7640682e67b33cab8628729afec8ca92b851394f ]
+[ Upstream commit 41be3e2618174fdf3361e49e64f2bf530f40c6b0 ]
 
-FUSE filesystem server and kernel client negotiate during initialization
-phase, what should be the maximum write size the client will ever issue.
-Correspondingly the filesystem server then queues sys_read calls to read
-requests with buffer capacity large enough to carry request header + that
-max_write bytes. A filesystem server is free to set its max_write in
-anywhere in the range between [1*page, fc->max_pages*page]. In particular
-go-fuse[2] sets max_write by default as 64K, wheres default fc->max_pages
-corresponds to 128K. Libfuse also allows users to configure max_write, but
-by default presets it to possible maximum.
+vfio_dev_present() which is the condition to
+wait_event_interruptible_timeout(), will call vfio_group_get_device
+and try to acquire the mutex group->device_lock.
 
-If max_write is < fc->max_pages*page, and in NOTIFY_RETRIEVE handler we
-allow to retrieve more than max_write bytes, corresponding prepared
-NOTIFY_REPLY will be thrown away by fuse_dev_do_read, because the
-filesystem server, in full correspondence with server/client contract, will
-be only queuing sys_read with ~max_write buffer capacity, and
-fuse_dev_do_read throws away requests that cannot fit into server request
-buffer. In turn the filesystem server could get stuck waiting indefinitely
-for NOTIFY_REPLY since NOTIFY_RETRIEVE handler returned OK which is
-understood by clients as that NOTIFY_REPLY was queued and will be sent
-back.
+wait_event_interruptible_timeout() will set the state of the current
+task to TASK_INTERRUPTIBLE, before doing the condition check. This
+means that we will try to acquire the mutex while already in a
+sleeping state. The scheduler warns us by giving the following
+warning:
 
-Cap requested size to negotiate max_write to avoid the problem.  This
-aligns with the way NOTIFY_RETRIEVE handler works, which already
-unconditionally caps requested retrieve size to fuse_conn->max_pages.  This
-way it should not hurt NOTIFY_RETRIEVE semantic if we return less data than
-was originally requested.
+[ 4050.264464] ------------[ cut here ]------------
+[ 4050.264508] do not call blocking ops when !TASK_RUNNING; state=1 set at [<00000000b33c00e2>] prepare_to_wait_event+0x14a/0x188
+[ 4050.264529] WARNING: CPU: 12 PID: 35924 at kernel/sched/core.c:6112 __might_sleep+0x76/0x90
+....
 
-Please see [1] for context where the problem of stuck filesystem was hit
-for real, how the situation was traced and for more involving patch that
-did not make it into the tree.
+ 4050.264756] Call Trace:
+[ 4050.264765] ([<000000000017bbaa>] __might_sleep+0x72/0x90)
+[ 4050.264774]  [<0000000000b97edc>] __mutex_lock+0x44/0x8c0
+[ 4050.264782]  [<0000000000b9878a>] mutex_lock_nested+0x32/0x40
+[ 4050.264793]  [<000003ff800d7abe>] vfio_group_get_device+0x36/0xa8 [vfio]
+[ 4050.264803]  [<000003ff800d87c0>] vfio_del_group_dev+0x238/0x378 [vfio]
+[ 4050.264813]  [<000003ff8015f67c>] mdev_remove+0x3c/0x68 [mdev]
+[ 4050.264825]  [<00000000008e01b0>] device_release_driver_internal+0x168/0x268
+[ 4050.264834]  [<00000000008de692>] bus_remove_device+0x162/0x190
+[ 4050.264843]  [<00000000008daf42>] device_del+0x1e2/0x368
+[ 4050.264851]  [<00000000008db12c>] device_unregister+0x64/0x88
+[ 4050.264862]  [<000003ff8015ed84>] mdev_device_remove+0xec/0x130 [mdev]
+[ 4050.264872]  [<000003ff8015f074>] remove_store+0x6c/0xa8 [mdev]
+[ 4050.264881]  [<000000000046f494>] kernfs_fop_write+0x14c/0x1f8
+[ 4050.264890]  [<00000000003c1530>] __vfs_write+0x38/0x1a8
+[ 4050.264899]  [<00000000003c187c>] vfs_write+0xb4/0x198
+[ 4050.264908]  [<00000000003c1af2>] ksys_write+0x5a/0xb0
+[ 4050.264916]  [<0000000000b9e270>] system_call+0xdc/0x2d8
+[ 4050.264925] 4 locks held by sh/35924:
+[ 4050.264933]  #0: 000000001ef90325 (sb_writers#4){.+.+}, at: vfs_write+0x9e/0x198
+[ 4050.264948]  #1: 000000005c1ab0b3 (&of->mutex){+.+.}, at: kernfs_fop_write+0x1cc/0x1f8
+[ 4050.264963]  #2: 0000000034831ab8 (kn->count#297){++++}, at: kernfs_remove_self+0x12e/0x150
+[ 4050.264979]  #3: 00000000e152484f (&dev->mutex){....}, at: device_release_driver_internal+0x5c/0x268
+[ 4050.264993] Last Breaking-Event-Address:
+[ 4050.265002]  [<000000000017bbaa>] __might_sleep+0x72/0x90
+[ 4050.265010] irq event stamp: 7039
+[ 4050.265020] hardirqs last  enabled at (7047): [<00000000001cee7a>] console_unlock+0x6d2/0x740
+[ 4050.265029] hardirqs last disabled at (7054): [<00000000001ce87e>] console_unlock+0xd6/0x740
+[ 4050.265040] softirqs last  enabled at (6416): [<0000000000b8fe26>] __udelay+0xb6/0x100
+[ 4050.265049] softirqs last disabled at (6415): [<0000000000b8fe06>] __udelay+0x96/0x100
+[ 4050.265057] ---[ end trace d04a07d39d99a9f9 ]---
 
-[1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
-[2] https://github.com/hanwen/go-fuse
+Let's fix this as described in the article
+https://lwn.net/Articles/628628/.
 
-Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
-Cc: Han-Wen Nienhuys <hanwen@google.com>
-Cc: Jakob Unterwurzacher <jakobunt@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+[remove now redundant vfio_dev_present()]
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vfio/vfio.c | 30 ++++++++++--------------------
+ 1 file changed, 10 insertions(+), 20 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1678,7 +1678,7 @@ static int fuse_retrieve(struct fuse_con
- 	offset = outarg->offset & ~PAGE_MASK;
- 	file_size = i_size_read(inode);
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 64833879f75d..7a386fb30bf1 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -34,6 +34,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/vfio.h>
+ #include <linux/wait.h>
++#include <linux/sched/signal.h>
  
--	num = outarg->size;
-+	num = min(outarg->size, fc->max_write);
- 	if (outarg->offset > file_size)
- 		num = 0;
- 	else if (outarg->offset + num > file_size)
+ #define DRIVER_VERSION	"0.3"
+ #define DRIVER_AUTHOR	"Alex Williamson <alex.williamson@redhat.com>"
+@@ -904,30 +905,17 @@ void *vfio_device_data(struct vfio_device *device)
+ }
+ EXPORT_SYMBOL_GPL(vfio_device_data);
+ 
+-/* Given a referenced group, check if it contains the device */
+-static bool vfio_dev_present(struct vfio_group *group, struct device *dev)
+-{
+-	struct vfio_device *device;
+-
+-	device = vfio_group_get_device(group, dev);
+-	if (!device)
+-		return false;
+-
+-	vfio_device_put(device);
+-	return true;
+-}
+-
+ /*
+  * Decrement the device reference count and wait for the device to be
+  * removed.  Open file descriptors for the device... */
+ void *vfio_del_group_dev(struct device *dev)
+ {
++	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+ 	struct vfio_device *device = dev_get_drvdata(dev);
+ 	struct vfio_group *group = device->group;
+ 	void *device_data = device->device_data;
+ 	struct vfio_unbound_dev *unbound;
+ 	unsigned int i = 0;
+-	long ret;
+ 	bool interrupted = false;
+ 
+ 	/*
+@@ -964,6 +952,8 @@ void *vfio_del_group_dev(struct device *dev)
+ 	 * interval with counter to allow the driver to take escalating
+ 	 * measures to release the device if it has the ability to do so.
+ 	 */
++	add_wait_queue(&vfio.release_q, &wait);
++
+ 	do {
+ 		device = vfio_group_get_device(group, dev);
+ 		if (!device)
+@@ -975,12 +965,10 @@ void *vfio_del_group_dev(struct device *dev)
+ 		vfio_device_put(device);
+ 
+ 		if (interrupted) {
+-			ret = wait_event_timeout(vfio.release_q,
+-					!vfio_dev_present(group, dev), HZ * 10);
++			wait_woken(&wait, TASK_UNINTERRUPTIBLE, HZ * 10);
+ 		} else {
+-			ret = wait_event_interruptible_timeout(vfio.release_q,
+-					!vfio_dev_present(group, dev), HZ * 10);
+-			if (ret == -ERESTARTSYS) {
++			wait_woken(&wait, TASK_INTERRUPTIBLE, HZ * 10);
++			if (signal_pending(current)) {
+ 				interrupted = true;
+ 				dev_warn(dev,
+ 					 "Device is currently in use, task"
+@@ -989,8 +977,10 @@ void *vfio_del_group_dev(struct device *dev)
+ 					 current->comm, task_pid_nr(current));
+ 			}
+ 		}
+-	} while (ret <= 0);
+ 
++	} while (1);
++
++	remove_wait_queue(&vfio.release_q, &wait);
+ 	/*
+ 	 * In order to support multiple devices per group, devices can be
+ 	 * plucked from the group while other devices in the group are still
+-- 
+2.20.1
+
 
 
