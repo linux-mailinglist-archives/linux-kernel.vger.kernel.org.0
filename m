@@ -2,104 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9DD443E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F94F43E7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:50:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389539AbfFMPsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:48:18 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34632 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731751AbfFMPsC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:48:02 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y198so15500074lfa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MhxG2VWV0PUqNmkC6UYengHNix8YULmmoQX86iMuI1Q=;
-        b=HwzQ0rH3HntP0X1Ut+3aziFTUNyu7eZWshFffAcbuEQadz4P6sC2snoDJGp4KSyvu2
-         Kig7hRqtroYC7jNl67KKgqHxE423RPSnEeZfbHsd+gLto0eo7V3yt/GGwc+21qgO0c3A
-         GIH+62EGfN0eHFV/TMnqz5oJqV2MDDVZaYpN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MhxG2VWV0PUqNmkC6UYengHNix8YULmmoQX86iMuI1Q=;
-        b=gDBrR19XXVYiDcu/XfU1lSeFb+vmaNE5v85NVkD4sAarO0quEWGv2OIyUFGhVRsMoB
-         R7XG03HqwE+fAtAwXma9i5HgRAatx4xRpie9kpgaiUNQeGo/quOanj8YMwzDIV+jMoOa
-         evaawVB6DkSAdX5U9lxgsPAmMJP65ScxNOkQ3+jQ3mRiEACfH/s/x+M0sqS7D3WRwa3o
-         toy+91tHFTk5BGVyHWGE3rFuaFHq4hmW5x7LTrg4uZp7nOULOIFSg/eB8v/zeiyJHDff
-         qd1qEomaEsHisYAd0Ab3kD4sOMHkoh5JJzClwILxLgIqiBNFbomxk8O8cEm1G9QHgfrO
-         7OmQ==
-X-Gm-Message-State: APjAAAXWCQ5fsc0m3s/3tQ+Z3SdffuJy+oiLmcSJLlmgQ7ON92PGl9Lu
-        MD3PDL0YmjCMVUeKNMR8latoGTVghoJX20glTsXd+g==
-X-Google-Smtp-Source: APXvYqzrRigc/QwtHv0h+SK0yPrIqLoP/sTRt4T7cb0mR/3kmBMhY1s0fNVfrmh2vHW4vI1uCiYqipwR2/fMUdkpn8I=
-X-Received: by 2002:a19:c383:: with SMTP id t125mr38852030lff.89.1560440880394;
- Thu, 13 Jun 2019 08:48:00 -0700 (PDT)
+        id S1732442AbfFMPu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:50:28 -0400
+Received: from relay.sw.ru ([185.231.240.75]:52142 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726870AbfFMPu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:50:26 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hbRzR-0002en-B5; Thu, 13 Jun 2019 18:50:13 +0300
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Walter Wu <walter-zh.wu@mediatek.com>,
+        Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+ <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+ <CACT4Y+ZGEmGE2LFmRfPGgtUGwBqyL+s_CSp5DCpWGanTJCRcXw@mail.gmail.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <278bd641-7d74-b9ac-1549-1e630ef3d38c@virtuozzo.com>
+Date:   Thu, 13 Jun 2019 18:50:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190613112709.7215-1-afabre@cloudflare.com> <20190613154152.GA9636@mini-arch>
-In-Reply-To: <20190613154152.GA9636@mini-arch>
-From:   Arthur Fabre <afabre@cloudflare.com>
-Date:   Thu, 13 Jun 2019 16:47:49 +0100
-Message-ID: <CAOn4ftu8dv4rOei=Janw8bRMGLM5bganNGjp3nLUof82Z9vSiQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf: selftests: Fix warning in flow_dissector
-To:     Stanislav Fomichev <sdf@fomichev.me>
-Cc:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kselftest@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CACT4Y+ZGEmGE2LFmRfPGgtUGwBqyL+s_CSp5DCpWGanTJCRcXw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ah yes good catch. I guess it hasn't made it into bpf-next yet.
 
-On Thu, Jun 13, 2019 at 4:41 PM Stanislav Fomichev <sdf@fomichev.me> wrote:
->
-> On 06/13, Arthur Fabre wrote:
-> > Building the userspace part of the flow_dissector resulted in:
-> >
-> > prog_tests/flow_dissector.c: In function =E2=80=98tx_tap=E2=80=99:
-> > prog_tests/flow_dissector.c:176:9: warning: implicit declaration
-> > of function =E2=80=98writev=E2=80=99; did you mean =E2=80=98write=E2=80=
-=99? [-Wimplicit-function-declaration]
-> >   return writev(fd, iov, ARRAY_SIZE(iov));
-> >          ^~~~~~
-> >          write
-> >
-> > Include <sys/uio.h> to fix this.
-> Wasn't it fixed already?
->
-> See
-> https://lore.kernel.org/netdev/20190528190218.GA6950@ip-172-31-44-144.us-=
-west-2.compute.internal/
->
-> > Signed-off-by: Arthur Fabre <afabre@cloudflare.com>
-> > ---
-> >  tools/testing/selftests/bpf/prog_tests/flow_dissector.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c b/=
-tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-> > index fbd1d88a6095..c938283ac232 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-> > @@ -3,6 +3,7 @@
-> >  #include <error.h>
-> >  #include <linux/if.h>
-> >  #include <linux/if_tun.h>
-> > +#include <sys/uio.h>
-> >
-> >  #define CHECK_FLOW_KEYS(desc, got, expected)                         \
-> >       CHECK_ATTR(memcmp(&got, &expected, sizeof(got)) !=3D 0,          =
- \
-> > --
-> > 2.20.1
-> >
+
+On 6/13/19 4:05 PM, Dmitry Vyukov wrote:
+> On Thu, Jun 13, 2019 at 2:27 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>> On 6/13/19 11:13 AM, Walter Wu wrote:
+>>> This patch adds memory corruption identification at bug report for
+>>> software tag-based mode, the report show whether it is "use-after-free"
+>>> or "out-of-bound" error instead of "invalid-access" error.This will make
+>>> it easier for programmers to see the memory corruption problem.
+>>>
+>>> Now we extend the quarantine to support both generic and tag-based kasan.
+>>> For tag-based kasan, the quarantine stores only freed object information
+>>> to check if an object is freed recently. When tag-based kasan reports an
+>>> error, we can check if the tagged addr is in the quarantine and make a
+>>> good guess if the object is more like "use-after-free" or "out-of-bound".
+>>>
+>>
+>>
+>> We already have all the information and don't need the quarantine to make such guess.
+>> Basically if shadow of the first byte of object has the same tag as tag in pointer than it's out-of-bounds,
+>> otherwise it's use-after-free.
+>>
+>> In pseudo-code it's something like this:
+>>
+>> u8 object_tag = *(u8 *)kasan_mem_to_shadow(nearest_object(cacche, page, access_addr));
+>>
+>> if (access_addr_tag == object_tag && object_tag != KASAN_TAG_INVALID)
+>>         // out-of-bounds
+>> else
+>>         // use-after-free
+> 
+> But we don't have redzones in tag mode (intentionally), so unless I am
+> missing something we don't have the necessary info. Both cases look
+> the same -- we hit a different tag.
+
+We always have some redzone. We need a place to store 'struct kasan_alloc_meta',
+and sometimes also kasan_free_meta plus alignment to the next object.
+
+
+> There may only be a small trailer for kmalloc-allocated objects that
+> is painted with a different tag. I don't remember if we actually use a
+> different tag for the trailer. Since tag mode granularity is 16 bytes,
+> for smaller objects the trailer is impossible at all.
+> 
+
+Smaller that 16-bytes objects have 16 bytes of kasan_alloc_meta.
+Redzones and freed objects always painted with KASAN_TAG_INVALID.
