@@ -2,23 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDDEF44E9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3877344EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfFMVh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:37:56 -0400
-Received: from mga07.intel.com ([134.134.136.100]:44112 "EHLO mga07.intel.com"
+        id S1727093AbfFMVl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:41:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:59455 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbfFMVhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:37:55 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1725747AbfFMVl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 17:41:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:37:55 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:41:25 -0700
 X-ExtLoop1: 1
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2019 14:37:54 -0700
-Date:   Thu, 13 Jun 2019 14:39:16 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 13 Jun 2019 14:41:25 -0700
+Date:   Thu, 13 Jun 2019 14:42:47 -0700
 From:   Ira Weiny <ira.weiny@intel.com>
 To:     Pingfan Liu <kernelfans@gmail.com>
 Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
@@ -30,30 +31,24 @@ Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         Keith Busch <keith.busch@intel.com>,
         Christoph Hellwig <hch@infradead.org>,
         Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in
+Subject: Re: [PATCHv4 3/3] mm/gup_benchemark: add LONGTERM_BENCHMARK test in
  gup fast path
-Message-ID: <20190613213915.GE32404@iweiny-DESK2.sc.intel.com>
+Message-ID: <20190613214247.GF32404@iweiny-DESK2.sc.intel.com>
 References: <1560422702-11403-1-git-send-email-kernelfans@gmail.com>
- <1560422702-11403-3-git-send-email-kernelfans@gmail.com>
+ <1560422702-11403-4-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560422702-11403-3-git-send-email-kernelfans@gmail.com>
+In-Reply-To: <1560422702-11403-4-git-send-email-kernelfans@gmail.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 06:45:01PM +0800, Pingfan Liu wrote:
-> FOLL_LONGTERM suggests a pin which is going to be given to hardware and
-> can't move. It would truncate CMA permanently and should be excluded.
-> 
-> FOLL_LONGTERM has already been checked in the slow path, but not checked in
-> the fast path, which means a possible leak of CMA page to longterm pinned
-> requirement through this crack.
-> 
-> Place a check in gup_pte_range() in the fast path.
+On Thu, Jun 13, 2019 at 06:45:02PM +0800, Pingfan Liu wrote:
+> Introduce a GUP_LONGTERM_BENCHMARK ioctl to test longterm pin in gup fast
+> path.
 > 
 > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 > Cc: Ira Weiny <ira.weiny@intel.com>
@@ -68,88 +63,91 @@ On Thu, Jun 13, 2019 at 06:45:01PM +0800, Pingfan Liu wrote:
 > Cc: Shuah Khan <shuah@kernel.org>
 > Cc: linux-kernel@vger.kernel.org
 > ---
->  mm/gup.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>  mm/gup_benchmark.c                         | 11 +++++++++--
+>  tools/testing/selftests/vm/gup_benchmark.c | 10 +++++++---
+>  2 files changed, 16 insertions(+), 5 deletions(-)
 > 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 766ae54..de1b03f 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1757,6 +1757,14 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->  		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
->  		page = pte_page(pte);
+> diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+> index 7dd602d..83f3378 100644
+> --- a/mm/gup_benchmark.c
+> +++ b/mm/gup_benchmark.c
+> @@ -6,8 +6,9 @@
+>  #include <linux/debugfs.h>
 >  
-> +		/*
-> +		 * FOLL_LONGTERM suggests a pin given to hardware. Prevent it
-> +		 * from truncating CMA area
-> +		 */
-> +		if (unlikely(flags & FOLL_LONGTERM) &&
-> +			is_migrate_cma_page(page))
-> +			goto pte_unmap;
-> +
->  		head = try_get_compound_head(page, 1);
->  		if (!head)
->  			goto pte_unmap;
-> @@ -1900,6 +1908,12 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  		refs++;
->  	} while (addr += PAGE_SIZE, addr != end);
->  
-> +	if (unlikely(flags & FOLL_LONGTERM) &&
-> +		is_migrate_cma_page(page)) {
-> +		*nr -= refs;
-> +		return 0;
-> +	}
-> +
+>  #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
+> -#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
+> -#define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
+> +#define GUP_FAST_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
+> +#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 3, struct gup_benchmark)
+> +#define GUP_BENCHMARK		_IOWR('g', 4, struct gup_benchmark)
 
-Why can't we place this check before the while loop and skip subtracting the
-page count?
+But I really like this addition!  Thanks!
 
-Can is_migrate_cma_page() operate on any "subpage" of a compound page? 
-
-Here this calls is_magrate_cma_page() on the tail page of the compound page.
-
-I'm not an expert on compound pages nor cma handling so is this ok?
-
-It seems like you need to call is_migrate_cma_page() on each page within the
-while loop?
-
->  	head = try_get_compound_head(pmd_page(orig), refs);
->  	if (!head) {
->  		*nr -= refs;
-> @@ -1941,6 +1955,12 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
->  		refs++;
->  	} while (addr += PAGE_SIZE, addr != end);
->  
-> +	if (unlikely(flags & FOLL_LONGTERM) &&
-> +		is_migrate_cma_page(page)) {
-> +		*nr -= refs;
-> +		return 0;
-> +	}
-> +
-
-Same comment here.
-
->  	head = try_get_compound_head(pud_page(orig), refs);
->  	if (!head) {
->  		*nr -= refs;
-> @@ -1978,6 +1998,12 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
->  		refs++;
->  	} while (addr += PAGE_SIZE, addr != end);
->  
-> +	if (unlikely(flags & FOLL_LONGTERM) &&
-> +		is_migrate_cma_page(page)) {
-> +		*nr -= refs;
-> +		return 0;
-> +	}
-> +
-
-And here.
+But why not just add GUP_FAST_LONGTERM_BENCHMARK to the end of this list (value
+4)?  I know the user space test program is probably expected to be lock step
+with this code but it seems odd to redefine GUP_LONGTERM_BENCHMARK and
+GUP_BENCHMARK with this change.
 
 Ira
 
->  	head = try_get_compound_head(pgd_page(orig), refs);
->  	if (!head) {
->  		*nr -= refs;
+>  
+>  struct gup_benchmark {
+>  	__u64 get_delta_usec;
+> @@ -53,6 +54,11 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+>  			nr = get_user_pages_fast(addr, nr, gup->flags & 1,
+>  						 pages + i);
+>  			break;
+> +		case GUP_FAST_LONGTERM_BENCHMARK:
+> +			nr = get_user_pages_fast(addr, nr,
+> +					(gup->flags & 1) | FOLL_LONGTERM,
+> +					 pages + i);
+> +			break;
+>  		case GUP_LONGTERM_BENCHMARK:
+>  			nr = get_user_pages(addr, nr,
+>  					    (gup->flags & 1) | FOLL_LONGTERM,
+> @@ -96,6 +102,7 @@ static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
+>  
+>  	switch (cmd) {
+>  	case GUP_FAST_BENCHMARK:
+> +	case GUP_FAST_LONGTERM_BENCHMARK:
+>  	case GUP_LONGTERM_BENCHMARK:
+>  	case GUP_BENCHMARK:
+>  		break;
+> diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
+> index c0534e2..ade8acb 100644
+> --- a/tools/testing/selftests/vm/gup_benchmark.c
+> +++ b/tools/testing/selftests/vm/gup_benchmark.c
+> @@ -15,8 +15,9 @@
+>  #define PAGE_SIZE sysconf(_SC_PAGESIZE)
+>  
+>  #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
+> -#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
+> -#define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
+> +#define GUP_FAST_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
+> +#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 3, struct gup_benchmark)
+> +#define GUP_BENCHMARK		_IOWR('g', 4, struct gup_benchmark)
+>  
+>  struct gup_benchmark {
+>  	__u64 get_delta_usec;
+> @@ -37,7 +38,7 @@ int main(int argc, char **argv)
+>  	char *file = "/dev/zero";
+>  	char *p;
+>  
+> -	while ((opt = getopt(argc, argv, "m:r:n:f:tTLUSH")) != -1) {
+> +	while ((opt = getopt(argc, argv, "m:r:n:f:tTlLUSH")) != -1) {
+>  		switch (opt) {
+>  		case 'm':
+>  			size = atoi(optarg) * MB;
+> @@ -54,6 +55,9 @@ int main(int argc, char **argv)
+>  		case 'T':
+>  			thp = 0;
+>  			break;
+> +		case 'l':
+> +			cmd = GUP_FAST_LONGTERM_BENCHMARK;
+> +			break;
+>  		case 'L':
+>  			cmd = GUP_LONGTERM_BENCHMARK;
+>  			break;
 > -- 
 > 2.7.5
 > 
