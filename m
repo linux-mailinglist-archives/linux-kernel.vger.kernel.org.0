@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7076943F7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ECF94411A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390224AbfFMP5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:57:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38046 "EHLO mail.kernel.org"
+        id S2387404AbfFMQL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:11:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731502AbfFMIua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:50:30 -0400
+        id S1731228AbfFMInY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:43:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A767E206BA;
-        Thu, 13 Jun 2019 08:50:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80A1520851;
+        Thu, 13 Jun 2019 08:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415829;
-        bh=6M/ulVchJbvpWuNiGqvu5QrZX3gytPGmjM5m6y2GuoE=;
+        s=default; t=1560415404;
+        bh=hl24VVvg0WHnOQ8duYPgK3vulFrvc8liJAJzLpX4tUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0z6VDZn0cooJadPuvIJDmuLAMsZ0jtS9zBsMjUYmSgikse1lzQIWPGKAUQqoyg2wn
-         b4REgZJ5KyU5ZqgIVaASlwVQ1Zxj3O/iW7eYDs+2UyxmvQSu/SOHXZ3lBnrMR+oWLl
-         Z5DiP8VR/xkuKg1gSPp5ELwcT1HhQ242ofFLrUso=
+        b=A2oaWVYJXU8/lOdKa8EzjsRq6a+ZcBKecL3diZQBZwHdWvSwuyCYcXMZyqN1mssKi
+         2YzOeaW2A5bivQd/0zrywnPT/w3YUhKr0gWyeI/ry87zm1ZSnqmQbgWGC63wz07ol4
+         spfsHua3vZjw36rZCZjB7nVlTTwFeNA37xim4NLM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 138/155] batman-adv: Adjust name for batadv_dat_send_data
-Date:   Thu, 13 Jun 2019 10:34:10 +0200
-Message-Id: <20190613075700.420302795@linuxfoundation.org>
+        stable@vger.kernel.org, Dennis Zhou <dennis@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 113/118] percpu: do not search past bitmap when allocating an area
+Date:   Thu, 13 Jun 2019 10:34:11 +0200
+Message-Id: <20190613075650.852200846@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,90 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c2d8b9a6c17a3848136b3eb31f26d3c5880acd89 ]
+[ Upstream commit 8c43004af01635cc9fbb11031d070e5e0d327ef2 ]
 
-The send functions in batman-adv are expected to consume the skb when
-either the data is queued up for the underlying driver or when some
-precondition failed. batadv_dat_send_data didn't do this and instead
-created a copy of the skb, modified it and queued the copy up for
-transmission. The caller has to take care that the skb is handled correctly
-(for example free'd) when batadv_dat_send_data returns.
+pcpu_find_block_fit() guarantees that a fit is found within
+PCPU_BITMAP_BLOCK_BITS. Iteration is used to determine the first fit as
+it compares against the block's contig_hint. This can lead to
+incorrectly scanning past the end of the bitmap. The behavior was okay
+given the check after for bit_off >= end and the correctness of the
+hints from pcpu_find_block_fit().
 
-This unclear behavior already lead to memory leaks in the recent past.
-Renaming the function to batadv_dat_forward_data should make it easier to
-identify that the data is forwarded but the skb is not actually
-send+consumed.
+This patch fixes this by bounding the end offset by the number of bits
+in a chunk.
 
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/distributed-arp-table.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ mm/percpu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/batman-adv/distributed-arp-table.c b/net/batman-adv/distributed-arp-table.c
-index 8d290da0d596..9ba7b9bb198a 100644
---- a/net/batman-adv/distributed-arp-table.c
-+++ b/net/batman-adv/distributed-arp-table.c
-@@ -667,7 +667,7 @@ batadv_dat_select_candidates(struct batadv_priv *bat_priv, __be32 ip_dst,
- }
- 
- /**
-- * batadv_dat_send_data() - send a payload to the selected candidates
-+ * batadv_dat_forward_data() - copy and send payload to the selected candidates
-  * @bat_priv: the bat priv with all the soft interface information
-  * @skb: payload to send
-  * @ip: the DHT key
-@@ -680,9 +680,9 @@ batadv_dat_select_candidates(struct batadv_priv *bat_priv, __be32 ip_dst,
-  * Return: true if the packet is sent to at least one candidate, false
-  * otherwise.
-  */
--static bool batadv_dat_send_data(struct batadv_priv *bat_priv,
--				 struct sk_buff *skb, __be32 ip,
--				 unsigned short vid, int packet_subtype)
-+static bool batadv_dat_forward_data(struct batadv_priv *bat_priv,
-+				    struct sk_buff *skb, __be32 ip,
-+				    unsigned short vid, int packet_subtype)
- {
- 	int i;
- 	bool ret = false;
-@@ -1277,8 +1277,8 @@ bool batadv_dat_snoop_outgoing_arp_request(struct batadv_priv *bat_priv,
- 		ret = true;
- 	} else {
- 		/* Send the request to the DHT */
--		ret = batadv_dat_send_data(bat_priv, skb, ip_dst, vid,
--					   BATADV_P_DAT_DHT_GET);
-+		ret = batadv_dat_forward_data(bat_priv, skb, ip_dst, vid,
-+					      BATADV_P_DAT_DHT_GET);
- 	}
- out:
- 	if (dat_entry)
-@@ -1392,8 +1392,10 @@ void batadv_dat_snoop_outgoing_arp_reply(struct batadv_priv *bat_priv,
- 	/* Send the ARP reply to the candidates for both the IP addresses that
- 	 * the node obtained from the ARP reply
+diff --git a/mm/percpu.c b/mm/percpu.c
+index c66149ce1fe6..ff76fa0b7528 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -988,7 +988,8 @@ static int pcpu_alloc_area(struct pcpu_chunk *chunk, int alloc_bits,
+ 	/*
+ 	 * Search to find a fit.
  	 */
--	batadv_dat_send_data(bat_priv, skb, ip_src, vid, BATADV_P_DAT_DHT_PUT);
--	batadv_dat_send_data(bat_priv, skb, ip_dst, vid, BATADV_P_DAT_DHT_PUT);
-+	batadv_dat_forward_data(bat_priv, skb, ip_src, vid,
-+				BATADV_P_DAT_DHT_PUT);
-+	batadv_dat_forward_data(bat_priv, skb, ip_dst, vid,
-+				BATADV_P_DAT_DHT_PUT);
- }
- 
- /**
-@@ -1710,8 +1712,10 @@ static void batadv_dat_put_dhcp(struct batadv_priv *bat_priv, u8 *chaddr,
- 	batadv_dat_entry_add(bat_priv, yiaddr, chaddr, vid);
- 	batadv_dat_entry_add(bat_priv, ip_dst, hw_dst, vid);
- 
--	batadv_dat_send_data(bat_priv, skb, yiaddr, vid, BATADV_P_DAT_DHT_PUT);
--	batadv_dat_send_data(bat_priv, skb, ip_dst, vid, BATADV_P_DAT_DHT_PUT);
-+	batadv_dat_forward_data(bat_priv, skb, yiaddr, vid,
-+				BATADV_P_DAT_DHT_PUT);
-+	batadv_dat_forward_data(bat_priv, skb, ip_dst, vid,
-+				BATADV_P_DAT_DHT_PUT);
- 
- 	consume_skb(skb);
- 
+-	end = start + alloc_bits + PCPU_BITMAP_BLOCK_BITS;
++	end = min_t(int, start + alloc_bits + PCPU_BITMAP_BLOCK_BITS,
++		    pcpu_chunk_map_bits(chunk));
+ 	bit_off = bitmap_find_next_zero_area(chunk->alloc_map, end, start,
+ 					     alloc_bits, align_mask);
+ 	if (bit_off >= end)
 -- 
 2.20.1
 
