@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F7543FEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 871F444367
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390815AbfFMQBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:01:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36362 "EHLO mail.kernel.org"
+        id S1733016AbfFMQ3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:29:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731427AbfFMIsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:48:25 -0400
+        id S1730931AbfFMIfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C07B421473;
-        Thu, 13 Jun 2019 08:48:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D477206E0;
+        Thu, 13 Jun 2019 08:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415705;
-        bh=IqCO23bLOxZGkinFkV7sw2ebEJzfNo2BWSXEsk/kzfY=;
+        s=default; t=1560414924;
+        bh=ehFxs3Y45qn6MCgbminxHnbEpP6fju9VVBe5cF608wM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WtPsvqCRYcVIgDgcbejsIa3FtdoMnaEAXRpNk/bzYr0KJvfLWH6x1zynwaxj4iHiP
-         eFXFCHLGAm3TEB3XOSlF2JOdiHqRcsBcSdLk2qQEf3Iaed46cXoy+A+0mrioEN7Cmv
-         YJvyhBQYX1Tc2CpRhuB+QaONahy612YdvwzjEneE=
+        b=Fl24fKEXofJsY9HKPpZpOTVUkKeIRNc6kvidGBgFjtg8Zr8zpgYfDHcB6aan4spU+
+         VqHxqMJm6nfftKQNh3fy3TNjfdIkUvkOmdspm2iUGSUNe58fFR1J7TzO/XcQSwVV+k
+         H1cgXRsVNAVwOUP34fQjTmwVWaHPHMcHWzMVq+dk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 072/155] vfio-pci/nvlink2: Fix potential VMA leak
-Date:   Thu, 13 Jun 2019 10:33:04 +0200
-Message-Id: <20190613075657.001361799@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 22/81] objtool: Dont use ignore flag for fake jumps
+Date:   Thu, 13 Jun 2019 10:33:05 +0200
+Message-Id: <20190613075650.774016278@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2c85f2bd519457073444ec28bbb4743a4e4237a7 ]
+[ Upstream commit e6da9567959e164f82bc81967e0d5b10dee870b4 ]
 
-If vfio_pci_register_dev_region() fails then we should rollback
-previous changes, ie. unmap the ATSD registers.
+The ignore flag is set on fake jumps in order to keep
+add_jump_destinations() from setting their jump_dest, since it already
+got set when the fake jump was created.
 
-Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+But using the ignore flag is a bit of a hack.  It's normally used to
+skip validation of an instruction, which doesn't really make sense for
+fake jumps.
+
+Also, after the next patch, using the ignore flag for fake jumps can
+trigger a false "why am I validating an ignored function?" warning.
+
+Instead just add an explicit check in add_jump_destinations() to skip
+fake jumps.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/71abc072ff48b2feccc197723a9c52859476c068.1557766718.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci_nvlink2.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/objtool/check.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
-index 32f695ffe128..50fe3c4f7feb 100644
---- a/drivers/vfio/pci/vfio_pci_nvlink2.c
-+++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
-@@ -472,6 +472,8 @@ int vfio_pci_ibm_npu2_init(struct vfio_pci_device *vdev)
- 	return 0;
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index ae3446768181..95326c6a7a24 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -28,6 +28,8 @@
+ #include <linux/hashtable.h>
+ #include <linux/kernel.h>
  
- free_exit:
-+	if (data->base)
-+		memunmap(data->base);
- 	kfree(data);
++#define FAKE_JUMP_OFFSET -1
++
+ struct alternative {
+ 	struct list_head list;
+ 	struct instruction *insn;
+@@ -498,7 +500,7 @@ static int add_jump_destinations(struct objtool_file *file)
+ 		    insn->type != INSN_JUMP_UNCONDITIONAL)
+ 			continue;
  
- 	return ret;
+-		if (insn->ignore)
++		if (insn->ignore || insn->offset == FAKE_JUMP_OFFSET)
+ 			continue;
+ 
+ 		rela = find_rela_by_dest_range(insn->sec, insn->offset,
+@@ -645,10 +647,10 @@ static int handle_group_alt(struct objtool_file *file,
+ 		clear_insn_state(&fake_jump->state);
+ 
+ 		fake_jump->sec = special_alt->new_sec;
+-		fake_jump->offset = -1;
++		fake_jump->offset = FAKE_JUMP_OFFSET;
+ 		fake_jump->type = INSN_JUMP_UNCONDITIONAL;
+ 		fake_jump->jump_dest = list_next_entry(last_orig_insn, list);
+-		fake_jump->ignore = true;
++		fake_jump->func = orig_insn->func;
+ 	}
+ 
+ 	if (!special_alt->new_len) {
 -- 
 2.20.1
 
