@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6422C43FF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A80B44200
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390822AbfFMQBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:01:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36390 "EHLO mail.kernel.org"
+        id S2391862AbfFMQSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:18:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731429AbfFMIs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:48:28 -0400
+        id S1731098AbfFMIkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:40:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FBBE2147A;
-        Thu, 13 Jun 2019 08:48:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 605AA21479;
+        Thu, 13 Jun 2019 08:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415707;
-        bh=NSfnCWsnEwYOF78YfF5a/gJm9pDDENznCfhy0NlRJJU=;
+        s=default; t=1560415219;
+        bh=IGrnBpsP0i33l3t2cgMK4/7giRbzSp4stV1/BxbUVvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vz8unh1KzzC9DgxvFmJGIClwPgCysKbiWajjpuCaDSKdfW6XXoDtIJrCAq2mUFY5q
-         JfiSxJLsclS0dHFi0oajiPQ6NBBGlWXcgNyYNR2pr9upI++DSxhNzgtJv7f4wQ7u7S
-         484k1Uidnac173PEEyT/1LkAELnD/1DZqhxGZdJw=
+        b=iuPtQk8XG5JP+Eyv5pTZJ/FscAZcmpxLYzCvPZJbEJ2OWvZ8URqTXsehazsHnzSTX
+         Z1T6QE0k2Qqql2gSWkS90QAqv9FnwIdqUM57sFZtN6YteyfVEypun82u8DsrslAElP
+         03DfgLU4ez6kqN42/TUifNUlTE8RfZVtm+kXISFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org, Murphy Zhou <jencce.kernel@gmail.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 073/155] misc: pci_endpoint_test: Fix test_reg_bar to be updated in pci_endpoint_test
+Subject: [PATCH 4.19 047/118] ovl: do not generate duplicate fsnotify events for "fake" path
 Date:   Thu, 13 Jun 2019 10:33:05 +0200
-Message-Id: <20190613075657.055645459@linuxfoundation.org>
+Message-Id: <20190613075646.551213163@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8f220664570e755946db1282f48e07f26e1f2cb4 ]
+[ Upstream commit d989903058a83e8536cc7aadf9256a47d5c173fe ]
 
-commit 834b90519925 ("misc: pci_endpoint_test: Add support for
-PCI_ENDPOINT_TEST regs to be mapped to any BAR") while adding
-test_reg_bar in order to map PCI_ENDPOINT_TEST regs to be mapped to any
-BAR failed to update test_reg_bar in pci_endpoint_test, resulting in
-test_reg_bar having invalid value when used outside probe.
+Overlayfs "fake" path is used for stacked file operations on underlying
+files.  Operations on files with "fake" path must not generate fsnotify
+events with path data, because those events have already been generated at
+overlayfs layer and because the reported event->fd for fanotify marks on
+underlying inode/filesystem will have the wrong path (the overlayfs path).
 
-Fix it.
-
-Fixes: 834b90519925 ("misc: pci_endpoint_test: Add support for PCI_ENDPOINT_TEST regs to be mapped to any BAR")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Link: https://lore.kernel.org/linux-fsdevel/20190423065024.12695-1-jencce.kernel@gmail.com/
+Reported-by: Murphy Zhou <jencce.kernel@gmail.com>
+Fixes: d1d04ef8572b ("ovl: stack file ops")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/overlayfs/file.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 29582fe57151..733274a061dc 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -662,6 +662,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	data = (struct pci_endpoint_test_data *)ent->driver_data;
- 	if (data) {
- 		test_reg_bar = data->test_reg_bar;
-+		test->test_reg_bar = test_reg_bar;
- 		test->alignment = data->alignment;
- 		irq_type = data->irq_type;
- 	}
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 0c810f20f778..2c993937b784 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -29,10 +29,11 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 	struct inode *inode = file_inode(file);
+ 	struct file *realfile;
+ 	const struct cred *old_cred;
++	int flags = file->f_flags | O_NOATIME | FMODE_NONOTIFY;
+ 
+ 	old_cred = ovl_override_creds(inode->i_sb);
+-	realfile = open_with_fake_path(&file->f_path, file->f_flags | O_NOATIME,
+-				       realinode, current_cred());
++	realfile = open_with_fake_path(&file->f_path, flags, realinode,
++				       current_cred());
+ 	revert_creds(old_cred);
+ 
+ 	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+@@ -50,7 +51,7 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
+ 	int err;
+ 
+ 	/* No atime modificaton on underlying */
+-	flags |= O_NOATIME;
++	flags |= O_NOATIME | FMODE_NONOTIFY;
+ 
+ 	/* If some flag changed that cannot be changed then something's amiss */
+ 	if (WARN_ON((file->f_flags ^ flags) & ~OVL_SETFL_MASK))
 -- 
 2.20.1
 
