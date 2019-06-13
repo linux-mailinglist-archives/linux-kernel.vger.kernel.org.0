@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FFA44FC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEB544FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfFMXDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 19:03:48 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44327 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfFMXDs (ORCPT
+        id S1727607AbfFMXEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 19:04:46 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:38175 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfFMXEp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:03:48 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x47so353931qtk.11;
-        Thu, 13 Jun 2019 16:03:47 -0700 (PDT)
+        Thu, 13 Jun 2019 19:04:45 -0400
+Received: by mail-qk1-f194.google.com with SMTP id a27so512135qkk.5;
+        Thu, 13 Jun 2019 16:04:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Any9+xhgAdf8Tj2YQiAeCpNAF5TdMk3cjHofJsaCPp8=;
-        b=RBsd/kD11P6KMzthnpJYN124DqyUcnl14xQjo8w8DhgSxQCaSa1KfRkLTv6xfwoN7L
-         +Wyuv3i4nojZgm3Fjl7Ay26ybwidM3+eWLBdZmIyz8/C/Tloy/uJ1mxRUce4/SS8HY81
-         iPO8ikaKZ+xuSOS75Es6d5ZNwK028IuumI7JbmefRGirhaz5dR+ttgu2Rqx6MtE5R5ZV
-         HeV27BlkBL9oRJ1eD7tY0Gn54VkvF5aKWO73zY4gR6PWhdKnDf/4RQlCNJy8Yhzs13e4
-         f/7uNNHSwGVxnlGxFew0GXcAD9CQDdEPreekXS0tPhqD797OGf0V6lfiYSBd0kBLX4MY
-         nFHg==
-X-Gm-Message-State: APjAAAVcZTids1H2cYrguE4/a0sxWOyu1lQH3K1sGiDgnJ72RTn6hq/a
-        4DZAkrAtYXAUNhbGCuvsow==
-X-Google-Smtp-Source: APXvYqwP6BVE4QQ6PLKz0SdGsY6PHtqwDv2ToI4H2dca/xQK2tVqH95A1g32hz8XmVu9TPpzIdEW+A==
-X-Received: by 2002:ac8:4919:: with SMTP id e25mr9443342qtq.214.1560467026455;
-        Thu, 13 Jun 2019 16:03:46 -0700 (PDT)
+        bh=WvdSBZS6GY1RJhEJtYBVxaPueBDOjU15Kwk1F3xhAKw=;
+        b=pc1BpYSZsbFrAU8pADmT1ZwAQdJku8uNWDATtMleW4Ko+dgfX7Bl9NeLyI+X84bSFs
+         zL7e2CTwDETICIuQSb/1ngwmrqCr8H1SgVCw/LXkLuBdSp/CdO5p6CK2+G2EqPjED3qc
+         VsUThxn3PEWqYkN5Edps8KUnj/yiOq0o6F2RgcIq6IaA7sMl4Sltzq+TJevnObw50G/Z
+         XHAkidNgDKFDUoVA+OlNxR8vvT3wSBR1KJmNA0xTiBiTJjuFdUoEIhbmHGX6j7QGTcHs
+         Mwyr2DJTI6ijmP8XQ4zCrQtHa1z/ylftARw2Qx7aFjFq9P4kHwOE/vZeZlZ+VgA7g0c/
+         mCqg==
+X-Gm-Message-State: APjAAAUHMWJnjxZ6fkW9X5IezRsPte1fE9p21VZRHFYquIG7y0JvzF/I
+        e8A9wzvA4AuLqmyPr1FyKw==
+X-Google-Smtp-Source: APXvYqzScKZ4qE7itNJAlKiopqo9SW2cEVK0YP4JF71kRJYGkwf5iKWWerwdZXEFYIG+JjdrDheMmw==
+X-Received: by 2002:a37:aa8e:: with SMTP id t136mr6599276qke.222.1560467084536;
+        Thu, 13 Jun 2019 16:04:44 -0700 (PDT)
 Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id i17sm508437qkl.71.2019.06.13.16.03.45
+        by smtp.gmail.com with ESMTPSA id y20sm736495qka.14.2019.06.13.16.04.43
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 16:03:45 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 17:03:44 -0600
+        Thu, 13 Jun 2019 16:04:43 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 17:04:42 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Ran Wang <ran.wang_1@nxp.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: Re: [PATCH v4 2/3] Documentation: dt: binding: fsl: Add
- 'little-endian' and update Chassis define
-Message-ID: <20190613230344.GA6005@bogus>
-References: <20190520095238.29210-1-ran.wang_1@nxp.com>
- <20190520095238.29210-2-ran.wang_1@nxp.com>
+To:     Gerald BAEZA <gerald.baeza@st.com>
+Cc:     "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Gerald BAEZA <gerald.baeza@st.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: perf: stm32: ddrperfm support
+Message-ID: <20190613230442.GA7783@bogus>
+References: <1558366019-24214-1-git-send-email-gerald.baeza@st.com>
+ <1558366019-24214-3-git-send-email-gerald.baeza@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520095238.29210-2-ran.wang_1@nxp.com>
+In-Reply-To: <1558366019-24214-3-git-send-email-gerald.baeza@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 May 2019 17:52:37 +0800, Ran Wang wrote:
-> By default, QorIQ SoC's RCPM register block is Big Endian. But
-> there are some exceptions, such as LS1088A and LS2088A, are Little
-> Endian. So add this optional property to help identify them.
+On Mon, 20 May 2019 15:27:16 +0000, Gerald BAEZA wrote:
+> The DDRPERFM is the DDR Performance Monitor embedded in STM32MP1 SOC.
 > 
-> Actually LS2021A and other Layerscapes won't totally follow Chassis
-> 2.1, so separate them from powerpc SoC.
+> This documentation indicates how to enable stm32-ddr-pmu driver on
+> DDRPERFM peripheral, via the device tree.
 > 
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
 > ---
-> Change in v4:
-> 	- Adjust indectation of 'ls1021a, ls1012a, ls1043a, ls1046a'.
-> 
-> Change in v3:
-> 	- None.
-> 
-> Change in v2:
-> 	- None.
-> 
->  Documentation/devicetree/bindings/soc/fsl/rcpm.txt |    8 +++++++-
->  1 files changed, 7 insertions(+), 1 deletions(-)
+>  .../devicetree/bindings/perf/stm32-ddr-pmu.txt       | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/perf/stm32-ddr-pmu.txt
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
