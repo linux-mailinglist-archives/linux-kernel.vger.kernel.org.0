@@ -2,107 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BED439E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFC3439C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733103AbfFMPRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:17:07 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33519 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732199AbfFMNXS (ORCPT
+        id S2387703AbfFMPQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:16:13 -0400
+Received: from mail-vs1-f52.google.com ([209.85.217.52]:46522 "EHLO
+        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732214AbfFMNXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:23:18 -0400
-Received: by mail-yb1-f193.google.com with SMTP id h17so3034588ybm.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:23:18 -0700 (PDT)
+        Thu, 13 Jun 2019 09:23:53 -0400
+Received: by mail-vs1-f52.google.com with SMTP id l125so12572842vsl.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:23:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V2bYrhwljlJiLsRXLwerBDD4QlmICRm9Vh/5gWlUBlk=;
-        b=kLaRA7ADCVziNcQ5xyT8ZkcaFSjEOmx1+mMkQmrZmMrT7Yai8fpQswRzXPqg5aSlLM
-         hP1Gvwr8s5PNeI67HGGSgfTyuYs1cHY3fRCOzzjCfWsy6qdzXb7T1YhiFI5ql0SACW0N
-         ooQ1zDmRWhl3sCrKr5at+usUvQztNIQsEsp8owbn1subrhfw20uZdu+dDq3YijvzPn5r
-         Fz67MTiqskYjLu9k3cxC8yElqPEDVdy4ZBMYODEoLQBXzZSLceoiQkis/gIIreuZj48u
-         lyley80Es+2RAy79j4pn7j7v+EpBTtKYPkoj9emJLjidRY50WheQWrfRL0z4M7GQ8jlQ
-         mDQA==
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IpdX1rIhn/1Lk8TZ4g/8IVbNpyTArq72nZxCv7jiCEo=;
+        b=iCcOgYbWClI74T8LsWilhPOboTshwxc7nWtBvvK8Z7ywJ/r+FATaJHnGW4MyMnvh4y
+         jUk7j+7+CY44jsMrY3m5tGIRuT67dJ6MwiEBmUW2puE+7W8OGkW6NyYnJjz8Wfu57MF9
+         tr5iFsez+1s52JVknUcrrcublDgoBc03Sv0dTTzYZMicYz6pQjqYUb82KCRNuG9SRLtl
+         2RSzBD+X98xoNhqjtPtg/L4mDXicIA6OpG3eJwUST9rSNzXbmMyWUp6pNf0wiZvKnwW2
+         DvxHyhE6zon70y/pcwFSJAFmGr/DEXc5Zp7XyutonkaJmcBVo1bJp1otzRo6lOT0Qrwm
+         6izA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V2bYrhwljlJiLsRXLwerBDD4QlmICRm9Vh/5gWlUBlk=;
-        b=L70k4/darQjCt9QuqkDISvHCdENRaHea3LLea5BVTdkfyLLrMF2ghB1C1ZpCP3EMmi
-         BAAeLt06CiUw9/QDiQzXFrVP+AoFkjtiFdvNOazWZ2T98qc036xlT/W0Wk+Ru0LHdshL
-         krAsr74u8edm7w+5a19AoOk8J05dhDDoRGkf2p8ijv6F4L4n55OJ1YIJfep+cIN5uF5G
-         FdGPuuGYD4R64+HJFZRoNUonllRbosYT2A+XqNOTSE/vpTyzQ6Xxvym9o/0uGjnFDE+s
-         e2m4W1yC4/ZWdh19Pe1nNU1isHRa/WXProtsA/mvwPK3V/bcVprV/Rp2L0UfzgXI0Fq9
-         GZzA==
-X-Gm-Message-State: APjAAAU0bposGS0+tdTP9D5jnrVU4cntLXWgNcsEv2rikm/zs+Oixp5M
-        uepG2cF2TP6vz1+9NEu/so7LSg==
-X-Google-Smtp-Source: APXvYqwhOV2mRTVPLlJz1R6yR2FsD0maV5DS23FuJSwdVAzARRErIxfg5PsbQfiQvE0AmFXxz3tW4g==
-X-Received: by 2002:a25:94b:: with SMTP id u11mr44890805ybm.227.1560432197282;
-        Thu, 13 Jun 2019 06:23:17 -0700 (PDT)
-Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
-        by smtp.gmail.com with ESMTPSA id 193sm751896ywd.100.2019.06.13.06.23.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 06:23:16 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 09:23:15 -0400
-From:   Jon Mason <jdmason@kudzu.us>
-To:     Wesley Sheng <wesley.sheng@microchip.com>
-Cc:     dave.jiang@intel.com, allenbh@gmail.com,
-        linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
-        wesleyshenggit@sina.com, logang@deltatee.com
-Subject: Re: [PATCH] NTB: correct ntb_dev_ops and ntb_dev comment typos
-Message-ID: <20190613132314.GB1572@kudzu.us>
-References: <1556618669-2434-1-git-send-email-wesley.sheng@microchip.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IpdX1rIhn/1Lk8TZ4g/8IVbNpyTArq72nZxCv7jiCEo=;
+        b=XCkvMmC+DruCaaBuVU+VreJEQgKRrZgxbG7o8eEjbA2nkjKSbsZvgzXGiYFdGJGR0J
+         xuLxurPDz4wPD9u2tZDUxAODUxckObwzP3R2vcj2RuEIetKT9wn76XgFYWXmzvRHUFGB
+         iuYwLLpn2Jytm/+bCAZ4cFPyn+RdZlA3oj6/7qy9lf/HTHpbIq10MgqkZXvcB1X1Yf5O
+         hFMuvsbvIn8OEjw9RPboDhDLO0g63Kz5bAI0Ob+IvBWqnvAa39l+/gwI29X0eSRI5P4u
+         xe6Tca5f1njJLP594c/z3auoRNlrYKk0row6XrE8nYr5Ved58/6GoPIE2/4Tc0cJAdkg
+         n+Pw==
+X-Gm-Message-State: APjAAAXtp6Spu28+zeStgYM1gFEEvxds5kvaDx+R5GN9ljkoQEMdKdJc
+        xvxy1rX46Fi+pDo1lsoZmWNDeeuv8zqKZsNQNR5n+A==
+X-Google-Smtp-Source: APXvYqwN8czoMioCoFYKKJ0HxRg3Skkt2+83tzAgsp1qG20DYQ44UvNFXUtP89dTXn1ua69Avn0x1vk4+P+YzCnp5ek=
+X-Received: by 2002:a67:f795:: with SMTP id j21mr996812vso.226.1560432232846;
+ Thu, 13 Jun 2019 06:23:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556618669-2434-1-git-send-email-wesley.sheng@microchip.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190611125904.1013-1-cai@lca.pw> <CAK8P3a1rK79aj38H0i9vnzeycv6YZ0iUhBFz4giAFc7COTnmWQ@mail.gmail.com>
+ <CABLO=+kZnpBm8W9MmSkSf=18R5fLMFe65+_YWw1-of46B+B1dA@mail.gmail.com> <CAK8P3a1xhaxBc+N=VXRDZyjUQ+W+=fkeDTUcZqeorsyDCTewZg@mail.gmail.com>
+In-Reply-To: <CAK8P3a1xhaxBc+N=VXRDZyjUQ+W+=fkeDTUcZqeorsyDCTewZg@mail.gmail.com>
+From:   Bartosz Szczepanek <bsz@semihalf.com>
+Date:   Thu, 13 Jun 2019 15:23:42 +0200
+Message-ID: <CABLO=+kNiyLZ5gcSLwGtrXPpnWjutLpaAgE8D0rWGLmkJ15PtA@mail.gmail.com>
+Subject: Re: [PATCH -next] efi/tpm: fix a compilation warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Qian Cai <cai@lca.pw>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 06:04:29PM +0800, Wesley Sheng wrote:
-> The comment for ntb_dev_ops and ntb_dev incorrectly referred to
-> ntb_ctx_ops and ntb_device.
-> 
-> Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+On Thu, Jun 13, 2019 at 2:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Would it be correct to change that to 'false' then (or completely remove
+> the additional remap, given that the other two callers pass false
+> already) and pass final_tbl?
 
-Sorry for the delay.  The series is now in the ntb branch.  We've
-missed window for 5.2, but it will be in the 5.3 pull request.
+The problem is that we don't know the final_tbl size before running
+tpm2_calc_event_log_size on it, so we cannot map it's entire content.
+Only table header is mapped at the beginning.
 
-Thanks,
-Jon
-
-> ---
->  include/linux/ntb.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/ntb.h b/include/linux/ntb.h
-> index 56a92e3..604abc8 100644
-> --- a/include/linux/ntb.h
-> +++ b/include/linux/ntb.h
-> @@ -205,7 +205,7 @@ static inline int ntb_ctx_ops_is_valid(const struct ntb_ctx_ops *ops)
->  }
->  
->  /**
-> - * struct ntb_ctx_ops - ntb device operations
-> + * struct ntb_dev_ops - ntb device operations
->   * @port_number:	See ntb_port_number().
->   * @peer_port_count:	See ntb_peer_port_count().
->   * @peer_port_number:	See ntb_peer_port_number().
-> @@ -404,7 +404,7 @@ struct ntb_client {
->  #define drv_ntb_client(__drv) container_of((__drv), struct ntb_client, drv)
->  
->  /**
-> - * struct ntb_device - ntb device
-> + * struct ntb_dev - ntb device
->   * @dev:		Linux device object.
->   * @pdev:		PCI device entry of the ntb.
->   * @topo:		Detected topology of the ntb.
-> -- 
-> 2.7.4
-> 
+After size of entire table is calculated it can be mapped as a whole
+and no additional remap is needed, hence the calls with do_mapping =
+false.
