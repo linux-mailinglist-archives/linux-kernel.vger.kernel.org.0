@@ -2,70 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C523243954
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3ECD4395D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732846AbfFMPNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:13:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39916 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732268AbfFMNfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:35:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C97C330C7E65;
-        Thu, 13 Jun 2019 13:34:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B8B695C3F8;
-        Thu, 13 Jun 2019 13:34:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org>
-References: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org> <20190607151228.GA1872258@magnolia> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk> <29222.1559922719@warthog.procyon.org.uk>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     dhowells@redhat.com, "Darrick J. Wong" <darrick.wong@oracle.com>,
-        viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver #4]
+        id S2388259AbfFMPNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:13:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46238 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732270AbfFMNfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:35:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 072DDAD08;
+        Thu, 13 Jun 2019 13:35:16 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 3FE5ADA897; Thu, 13 Jun 2019 15:36:05 +0200 (CEST)
+From:   David Sterba <dsterba@suse.com>
+To:     peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH] lockdep: introduce lockdep_assert_not_held()
+Date:   Thu, 13 Jun 2019 15:36:04 +0200
+Message-Id: <20190613133604.9889-1-dsterba@suse.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <30225.1560432885.1@warthog.procyon.org.uk>
-Date:   Thu, 13 Jun 2019 14:34:45 +0100
-Message-ID: <30226.1560432885@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Jun 2019 13:35:01 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
+Add an assertion that a lock is not held, suitable for the following
+(simplified) usecase in filesystems:
 
-> What is the problem with inline functions in UAPI headers?
+- filesystem write
+  - lock(&big_filesystem_lock)
+  - kmalloc(GFP_KERNEL)
+    - trigger dirty data write to get more memory
+      - find dirty pages
+      - call filesystem write
+        - lock(&big_filesystem_lock)
+	  deadlock
 
-It makes compiler problems more likely; it increases the potential for name
-collisions with userspace; it makes for more potential problems if the headers
-are imported into some other language; and it's not easy to fix a bug in one
-if userspace uses it, just in case fixing the bug breaks userspace.
+The cause here is the use of GFP_KERNEL that does not exclude poking
+filesystems to allow freeing some memory. Such scenario is a bug, so the
+use of GFP_NOFS is the right flag.
 
-Further, in this case, the first of Darrick's functions (calculating the
-length) is probably reasonable, but the second is not.  It should crank the
-tail pointer and then use that, but that requires 
+The annotation can help catch such bugs during development because
+the actual deadlock could be hard to hit in practice.
 
-> >> Also, weird multiline comment style.
-> > 
-> > Not really.
-> 
-> Yes really.
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+ Documentation/locking/lockdep-design.txt | 5 +++++
+ include/linux/lockdep.h                  | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-No.  It's not weird.  If anything, the default style is less good for several
-reasons.  I'm going to deal with this separately as I need to generate some
-stats first.
+diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.txt
+index 39fae143c9cb..8b3013aaf518 100644
+--- a/Documentation/locking/lockdep-design.txt
++++ b/Documentation/locking/lockdep-design.txt
+@@ -211,6 +211,11 @@ that nobody tampered with the lock, e.g. kernel/sched/sched.h
+ 	lockdep_unpin_lock(&rq->lock, rf->cookie);
+   }
+ 
++In some contexts it is useful to assert that a given lock is not held.  A
++typical example are filesystems that must avoid recursion to their code when
++a memory allocation triggers write of dirty data. When the allocation is done
++with a lock taken, re-entering the code would cause a deadlock.
++
+ While comments about locking requirements might provide useful information,
+ the runtime checks performed by annotations are invaluable when debugging
+ locking problems and they carry the same level of details when inspecting
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 6e2377e6c1d6..a6682104bd95 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -397,6 +397,10 @@ extern void lock_unpin_lock(struct lockdep_map *lock, struct pin_cookie);
+ 		WARN_ON_ONCE(debug_locks && !lockdep_is_held(l));	\
+ 	} while (0)
+ 
++#define lockdep_assert_not_held(l)	do {			\
++		WARN_ON(debug_locks && lockdep_is_held(l));	\
++	} while (0)
++
+ #define lockdep_recursing(tsk)	((tsk)->lockdep_recursion)
+ 
+ #define lockdep_pin_lock(l)	lock_pin_lock(&(l)->dep_map)
+@@ -469,6 +473,7 @@ struct lockdep_map { };
+ #define lockdep_assert_held_exclusive(l)	do { (void)(l); } while (0)
+ #define lockdep_assert_held_read(l)		do { (void)(l); } while (0)
+ #define lockdep_assert_held_once(l)		do { (void)(l); } while (0)
++#define lockdep_assert_not_held(l)		do { (void)(l); } while (0)
+ 
+ #define lockdep_recursing(tsk)			(0)
+ 
+-- 
+2.21.0
 
-David
