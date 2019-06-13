@@ -2,95 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B894459B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB4644597
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392834AbfFMQpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:45:13 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:57977 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730379AbfFMGK3 (ORCPT
+        id S1730766AbfFMQpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:45:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39091 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730401AbfFMGNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:10:29 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7E3BB2099D;
-        Thu, 13 Jun 2019 02:10:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 13 Jun 2019 02:10:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=/cACM9Ddbiw1D+hTEKwzTopFWpx
-        8KO4E+LJszIQsNdc=; b=Ls6aBDLI1AmVMF60LseXTW+24p0XqbmMFOMQelPOwS3
-        /uiGop6DYdFW2Jkt6y1ZnphCXBicbcgYgNkuZSWm9emPWEE6Wad0nuymzJPNdDJ4
-        LjctQLXYLXEmVRWeDKN3izE6MfqTP4VAsutpB/2qPwXCnKTWOuJO6A8ChRTtKOxo
-        L6oFyNp146mLAqWen+c3yBkL9u8/5RFUZ/VU1IuEDfCHcCQ0P15XzgRxYXMQlZ6u
-        L3v2eIJzz44tMlQrmjM3KwQT+quvBnb+maRhijK1QFW/NbxsUonemLl2JFHOICog
-        Rql3y9iLutOwAoMfOQ69Fq4nPKmQVKPrHLW/8/BdI6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/cACM9
-        Ddbiw1D+hTEKwzTopFWpx8KO4E+LJszIQsNdc=; b=MKLJMkWts6ZeCZVfR60UIY
-        NVvZ5dJ5dTkGcFR070AiljDgvALU7VcSrVONIwveT1UHeGTfByYtnE0ck9yD7i32
-        r1UJFNjQ+YVcIGG2SOH/5ox9tgULneo9/0QKvUPPSnRFwKvUo0ijjv44jAs/dEct
-        53j5VINHNRRjR/OdQQE9giWKEjSk9hw1WPzJGPMfHXKt9knZC+0XqQIG+66VntQa
-        dHEUmQML6ESlQ27ntStdZvWS34LmqbRq6I7/BH4fsGwm9aRzrJLBNyvoDOqJT67d
-        kneBb+11WRQhgc+uCHYUE+zoOKHovKFLTIj6NzFqm1fhQqe+BocpfEY7RPRTGvyQ
-        ==
-X-ME-Sender: <xms:1OgBXbkyMoKyP65la4dal43mf2JvCUIf_NgasfBqALjMoU_6g2AksA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehkedguddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
-    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:1OgBXRcOc005a4vwDT_DIDC7XOV2MCXYeuQit5jwQtk-fhsx9os42g>
-    <xmx:1OgBXRJY86HdsAMo3mC0J3tjpa6atXxktvS95MV33jOUfdP2EhtrEg>
-    <xmx:1OgBXU6f2hFCHYn6hAGPmfgAsGu3UvjL2zMjFDbSVnBIXKBnboN6yw>
-    <xmx:1OgBXTdODUoflkwg0g_OBn6A4XopngURSUyaTACpM3BySsLoH-2J2g>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BE89A8005B;
-        Thu, 13 Jun 2019 02:10:27 -0400 (EDT)
-Date:   Thu, 13 Jun 2019 08:10:26 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bich Hemon <bich.hemon@st.com>,
-        Erwan Le Ray <erwan.leray@st.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Message-ID: <20190613061026.GB27058@kroah.com>
-References: <20190613153215.0c99f252@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613153215.0c99f252@canb.auug.org.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Thu, 13 Jun 2019 02:13:35 -0400
+Received: from mail-pf1-f200.google.com ([209.85.210.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hbIzN-0005Zc-0K
+        for linux-kernel@vger.kernel.org; Thu, 13 Jun 2019 06:13:33 +0000
+Received: by mail-pf1-f200.google.com with SMTP id a125so13748023pfa.13
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:13:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=xZMnfNxiIJQHgk6DTR2b96lSjKM+Cv557iMAiHl0otE=;
+        b=Br80ontxSdohpp7EXLDbRc8HByPEK2SyZky7oAP2nSLVk2f7s51GFFRLBiZC/yBf0N
+         QK2qlOdq8f5jmO+8uIAk9yDIuu7dXN90TDQzpXZmIJgW/BODPgfThaLFpr7a0NHkw0QC
+         IsBYW6daklCcKHq9Q+2qM0ckMlpI9MMSTELFIhC0KhoVfVNw5pCR3vGDvp/tM/84HTdl
+         BgcIugcYnFBSoQ9kxbY/SpKIpdvq07dolU1zTbDjoz0SAa2ma4CisVvBvh1eRp+TqkJ7
+         TiwOoP6jAsvoVmQ3/CS56DC/KeYHsjhM0S2qiMjRbeQ44CHfwsvNnaQtHLJ/ruZ2J6mT
+         ILCA==
+X-Gm-Message-State: APjAAAUdpLcQuolKH5Np2r5LFI1SfHl2D/weNIZu7slOtRBcZQV+Fxlm
+        kxUqzjrxvoHAE/dV/DndmAyMfn1wL5lbXlifBTm+7nYqrSk7JNA9+wciJMc4T48zOv5fIikJlS1
+        6IdCmZbT97sy8asO9Kw5pY4W8+j8kByioDmpCtx0kag==
+X-Received: by 2002:aa7:9407:: with SMTP id x7mr48714683pfo.163.1560406411622;
+        Wed, 12 Jun 2019 23:13:31 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqy/M4KOk8anUvleYe4Z0kHfP1YyeHtJEQFqJQMyjw20cPWdlOiaKzI0TiyHxZ0ofVL/cTvhMw==
+X-Received: by 2002:aa7:9407:: with SMTP id x7mr48714652pfo.163.1560406411293;
+        Wed, 12 Jun 2019 23:13:31 -0700 (PDT)
+Received: from [172.20.10.4] (223-136-183-91.emome-ip.hinet.net. [223.136.183.91])
+        by smtp.gmail.com with ESMTPSA id u123sm1554074pfu.67.2019.06.12.23.13.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 23:13:30 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] PCI: PM: Skip devices in D0 for suspend-to-idle
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <2513600.jR9RdVMSR0@kreacher>
+Date:   Thu, 13 Jun 2019 14:13:26 +0800
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Keith Busch <kbusch@kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <A0D09537-12D3-4466-945A-7D7F889A5472@canonical.com>
+References: <2513600.jR9RdVMSR0@kreacher>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 03:32:15PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the tty tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_suspend':
-> drivers/tty/serial/stm32-usart.c:1298:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
->   pinctrl_pm_select_sleep_state(dev);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/tty/serial/stm32-usart.c: In function 'stm32_serial_resume':
-> drivers/tty/serial/stm32-usart.c:1307:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
->   pinctrl_pm_select_default_state(dev);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   c70669ecef4e ("serial: stm32: select pinctrl state in each suspend/resume function")
+at 06:14, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 
-Yeah, I think I need to just go revert that patch now, thanks.
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Commit d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
+> attempted to avoid a problem with devices whose drivers want them to
+> stay in D0 over suspend-to-idle and resume, but it did not go as far
+> as it should with that.
+>
+> Namely, first of all, it is questionable to change the power state
+> of a PCI bridge with a device in D0 under it, but that is not
+> actively prevented from happening during system-wide PM transitions,
+> so use the skip_bus_pm flag introduced by commit d491f2b75237 for
+> that.
+>
+> Second, the configuration of devices left in D0 (whatever the reason)
+> during suspend-to-idle need not be changed and attempting to put them
+> into D0 again by force may confuse some firmware, so explicitly avoid
+> doing that.
+>
+> Fixes: d491f2b75237 ("PCI: PM: Avoid possible suspend-to-idle issue")
+> Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-greg k-h
+Thanks! This patch solves the issue I reported earlier.
+
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+
+> ---
+>
+> Tested on Dell XPS13 9360 with no issues.
+>
+> ---
+>  drivers/pci/pci-driver.c |   47 +++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 35 insertions(+), 12 deletions(-)
+>
+> Index: linux-pm/drivers/pci/pci-driver.c
+> ===================================================================
+> --- linux-pm.orig/drivers/pci/pci-driver.c
+> +++ linux-pm/drivers/pci/pci-driver.c
+> @@ -524,7 +524,6 @@ static void pci_pm_default_resume_early(
+>  	pci_power_up(pci_dev);
+>  	pci_restore_state(pci_dev);
+>  	pci_pme_restore(pci_dev);
+> -	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+>  }
+>
+>  /*
+> @@ -842,18 +841,16 @@ static int pci_pm_suspend_noirq(struct d
+>
+>  	if (pci_dev->skip_bus_pm) {
+>  		/*
+> -		 * The function is running for the second time in a row without
+> +		 * Either the device is a bridge with a child in D0 below it, or
+> +		 * the function is running for the second time in a row without
+>  		 * going through full resume, which is possible only during
+> -		 * suspend-to-idle in a spurious wakeup case.  Moreover, the
+> -		 * device was originally left in D0, so its power state should
+> -		 * not be changed here and the device register values saved
+> -		 * originally should be restored on resume again.
+> +		 * suspend-to-idle in a spurious wakeup case.  The device should
+> +		 * be in D0 at this point, but if it is a bridge, it may be
+> +		 * necessary to save its state.
+>  		 */
+> -		pci_dev->state_saved = true;
+> -	} else if (pci_dev->state_saved) {
+> -		if (pci_dev->current_state == PCI_D0)
+> -			pci_dev->skip_bus_pm = true;
+> -	} else {
+> +		if (!pci_dev->state_saved)
+> +			pci_save_state(pci_dev);
+> +	} else if (!pci_dev->state_saved) {
+>  		pci_save_state(pci_dev);
+>  		if (pci_power_manageable(pci_dev))
+>  			pci_prepare_to_sleep(pci_dev);
+> @@ -862,6 +859,22 @@ static int pci_pm_suspend_noirq(struct d
+>  	dev_dbg(dev, "PCI PM: Suspend power state: %s\n",
+>  		pci_power_name(pci_dev->current_state));
+>
+> +	if (pci_dev->current_state == PCI_D0) {
+> +		pci_dev->skip_bus_pm = true;
+> +		/*
+> +		 * Changing the power state of a PCI bridge with a device in D0
+> +		 * below it is questionable, so avoid doing that by setting the
+> +		 * skip_bus_pm flag for the parent bridge.
+> +		 */
+> +		if (pci_dev->bus->self)
+> +			pci_dev->bus->self->skip_bus_pm = true;
+> +	}
+> +
+> +	if (pci_dev->skip_bus_pm && !pm_suspend_via_firmware()) {
+> +		dev_dbg(dev, "PCI PM: Skipped\n");
+> +		goto Fixup;
+> +	}
+> +
+>  	pci_pm_set_unknown_state(pci_dev);
+>
+>  	/*
+> @@ -909,7 +922,16 @@ static int pci_pm_resume_noirq(struct de
+>  	if (dev_pm_smart_suspend_and_suspended(dev))
+>  		pm_runtime_set_active(dev);
+>
+> -	pci_pm_default_resume_early(pci_dev);
+> +	/*
+> +	 * In the suspend-to-idle case, devices left in D0 during suspend will
+> +	 * stay in D0, so it is not necessary to restore or update their
+> +	 * configuration here and attempting to put them into D0 again may
+> +	 * confuse some firmware, so avoid doing that.
+> +	 */
+> +	if (!pci_dev->skip_bus_pm || pm_suspend_via_firmware())
+> +		pci_pm_default_resume_early(pci_dev);
+> +
+> +	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+>
+>  	if (pci_has_legacy_pm_support(pci_dev))
+>  		return pci_legacy_resume_early(dev);
+> @@ -1200,6 +1222,7 @@ static int pci_pm_restore_noirq(struct d
+>  	}
+>
+>  	pci_pm_default_resume_early(pci_dev);
+> +	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+>
+>  	if (pci_has_legacy_pm_support(pci_dev))
+>  		return pci_legacy_resume_early(dev);
+
+
