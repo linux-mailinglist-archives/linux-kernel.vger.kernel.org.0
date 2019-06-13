@@ -2,114 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CC343BEE
+	by mail.lfdr.de (Postfix) with ESMTP id 2D55843BED
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfFMPcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:32:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45242 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728458AbfFMKr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:47:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C775AE4B;
-        Thu, 13 Jun 2019 10:47:25 +0000 (UTC)
-From:   =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-To:     mkoutny@suse.com
-Cc:     gorcunov@gmail.com, ktkhai@virtuozzo.com, ldufour@linux.ibm.com,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [RFC PATCH v2] binfmt_elf: Protect mm_struct access with mmap_sem
-Date:   Thu, 13 Jun 2019 12:47:15 +0200
-Message-Id: <20190613104715.22367-1-mkoutny@suse.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190612142811.24894-1-mkoutny@suse.com>
-References: <20190612142811.24894-1-mkoutny@suse.com>
+        id S1726784AbfFMPck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:32:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41576 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728462AbfFMKrr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:47:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GEs9TuIKz96lXRS7FnLGyqSMFlOm6a6Nuvp5RkrDbpg=; b=iMC2hvEIOcyryH8ttvBTFCIwJ
+        +/UTOZxleRRIx/Qk3yqPfUzPCOda7GErke13ZzFQak5ewSoRm8WulpfqNH7Zcz8Q/4E8j/T6eNEmH
+        zqn/a0VQTD+joB/VdqCU1xYbOG/t0Yt1iH7D4MVcM+JnmapUwUFZ9n9jOt8V0iESGcP+afyjOL9pH
+        +Z800XzTY/YS/+CM4flrqhchMwkDHfagPOomV5WMld5ChIy1boYvTjVntNNzTcy5LKpr/Bsx2mf7S
+        S446zK0y8A3V0fwGhTmnFSvXqbCAHfkut7f3C9ZExu7tOQe+5MbplKDwi6MAkqGaZIAtnEYCa3p8M
+        bMZjvH0qQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbNGh-0007DC-6o; Thu, 13 Jun 2019 10:47:43 +0000
+Date:   Thu, 13 Jun 2019 03:47:43 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613104743.GH32656@bombadil.infradead.org>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
+ <20190613002555.GH14363@dread.disaster.area>
+ <20190613032320.GG32656@bombadil.infradead.org>
+ <20190613043649.GJ14363@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613043649.GJ14363@dread.disaster.area>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_extend_vma assumes the caller holds mmap_sem as a reader (explained
-in expand_downwards()). The path when we are extending the stack VMA to
-accommodate argv[] pointers happens without the lock.
+On Thu, Jun 13, 2019 at 02:36:49PM +1000, Dave Chinner wrote:
+> On Wed, Jun 12, 2019 at 08:23:20PM -0700, Matthew Wilcox wrote:
+> > On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
+> > > On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
+> > > > That's rather different from the normal meaning of 'exclusive' in the
+> > > > context of locks, which is "only one user can have access to this at
+> > > > a time".
+> > > 
+> > > Layout leases are not locks, they are a user access policy object.
+> > > It is the process/fd which holds the lease and it's the process/fd
+> > > that is granted exclusive access.  This is exactly the same semantic
+> > > as O_EXCL provides for granting exclusive access to a block device
+> > > via open(), yes?
+> > 
+> > This isn't my understanding of how RDMA wants this to work, so we should
+> > probably clear that up before we get too far down deciding what name to
+> > give it.
+> > 
+> > For the RDMA usage case, it is entirely possible that both process A
+> > and process B which don't know about each other want to perform RDMA to
+> > file F.  So there will be two layout leases active on this file at the
+> > same time.  It's fine for IOs to simultaneously be active to both leases.
+> 
+> Yes, it is.
+> 
+> > But if the filesystem wants to move blocks around, it has to break
+> > both leases.
+> 
+> No, the _lease layer_ needs to break both leases when the filesystem
+> calls break_layout().
 
-I was not able to cause an mm_struct corruption but an inserted
-BUG_ON(!rwsem_is_locked(&mm->mmap_sem)) in find_extend_vma could be
-triggered as
+That's a distinction without a difference as far as userspace is
+concerned.  If process A asks for an exclusive lease (and gets it),
+then process B asks for an exclusive lease (and gets it), that lease
+isn't exclusive!  It's shared.
 
-    # <bigfile xargs echo
-    xargs: echo: terminated by signal 11
+I think the example you give of O_EXCL is more of a historical accident.
+It's a relatively recent Linuxism that O_EXCL on a block device means
+"this block device is not part of a filesystem", and I don't think
+most userspace programmers are aware of what it means when not paired
+with O_CREAT.
 
-(bigfile needs to have more than RLIMIT_STACK / sizeof(char *) rows)
+> > If Process C tries to do a write to file F without a lease, there's no
+> > problem, unless a side-effect of the write would be to change the block
+> > mapping,
+> 
+> That's a side effect we cannot predict ahead of time. But it's
+> also _completely irrelevant_ to the layout lease layer API and
+> implementation.(*)
 
-Other accesses to mm_struct in exec path are protected by mmap_sem, so
-conservatively, protect also this one.
-Besides that, explain in comments why we omit mm_struct.arg_lock in the
-exec(2) path and drop an obsolete comment about removed passed_fileno.
-
-v2: Updated changelog
-
-Cc: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- fs/binfmt_elf.c | 10 +++++++++-
- fs/exec.c       |  3 ++-
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 8264b468f283..48e169760a9c 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -299,7 +299,11 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	 * Grow the stack manually; some architectures have a limit on how
- 	 * far ahead a user-space access may be in order to grow the stack.
- 	 */
-+	if (down_read_killable(&current->mm->mmap_sem))
-+		return -EINTR;
- 	vma = find_extend_vma(current->mm, bprm->p);
-+	up_read(&current->mm->mmap_sem);
-+
- 	if (!vma)
- 		return -EFAULT;
- 
-@@ -1123,11 +1127,15 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		goto out;
- #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
- 
-+	/*
-+	 * Don't take mm->arg_lock. The concurrent change might happen only
-+	 * from prctl_set_mm but after de_thread we are certainly alone here.
-+	 */
- 	retval = create_elf_tables(bprm, &loc->elf_ex,
- 			  load_addr, interp_load_addr);
- 	if (retval < 0)
- 		goto out;
--	/* N.B. passed_fileno might not be initialized? */
-+
- 	current->mm->end_code = end_code;
- 	current->mm->start_code = start_code;
- 	current->mm->start_data = start_data;
-diff --git a/fs/exec.c b/fs/exec.c
-index 89a500bb897a..d5b55c92019a 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -212,7 +212,8 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
- 
- 	/*
- 	 * We are doing an exec().  'current' is the process
--	 * doing the exec and bprm->mm is the new process's mm.
-+	 * doing the exec and bprm->mm is the new process's mm that is not
-+	 * shared yet, so no synchronization on mmap_sem.
- 	 */
- 	ret = get_user_pages_remote(current, bprm->mm, pos, 1, gup_flags,
- 			&page, NULL, NULL);
--- 
-2.21.0
+It's irrelevant to the naming, but you brought it up as part of the
+semantics.
 
