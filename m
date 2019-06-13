@@ -2,120 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17060448A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA45F448CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393528AbfFMRKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:10:22 -0400
-Received: from foss.arm.com ([217.140.110.172]:47772 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404622AbfFMRKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:10:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAB03367;
-        Thu, 13 Jun 2019 10:10:19 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D59783F694;
-        Thu, 13 Jun 2019 10:10:18 -0700 (PDT)
-Subject: Re: [PATCH 1/2] arm64/mm: check cpu cache line size with non-coherent
- device
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org,
-        Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>,
-        Zhang Lei <zhang.lei@jp.fujitsu.com>
-References: <20190611151731.6135-1-msys.mizuma@gmail.com>
- <20190611151731.6135-2-msys.mizuma@gmail.com>
- <20190611180007.him7md7gdcjs5cg6@mbp>
- <20190611220246.lyhcqahsxyxuhqjk@gabell>
- <20190613155434.GW28951@C02TF0J2HF1T.local>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d832009b-93b5-8ac3-03eb-8e6e92a5b206@arm.com>
-Date:   Thu, 13 Jun 2019 18:10:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729342AbfFMRLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:11:15 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42425 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729166AbfFMRLL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:11:11 -0400
+Received: by mail-io1-f65.google.com with SMTP id u19so18586237ior.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 10:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=N3qDAZwZqxC4UyoOIhHYUwzcDbIARMSiLNJ2yGeLMdo=;
+        b=eh7V3O2aS38SAwQ5ws7fCcM7k/UGKK1pP/guCl6amGOoSv8xMO9mPsRkemReTxX0f8
+         xx2EFqshWI2oxUvWtdGYfHdPvA4wmPke6q3t7/A+3I3LDk7zsS9F7tRilD1IE3CCGdv+
+         Lcq6hOJvrpMk5XoUy+dh7WdmHsy5baVaSzp90=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=N3qDAZwZqxC4UyoOIhHYUwzcDbIARMSiLNJ2yGeLMdo=;
+        b=PG2Lju5M9tcjyVX4763jOXl2GZ/rzthdnh1y+fpFzcK9ff+L2aNSspCzWh55FmkDf7
+         LA63wba0B4LrcYFv1oz08QuzQicCEPJzOPiVBUfAuUKE7MMMsxNlqh/ZfKCKQqE/dnor
+         EYynYPgTnMkGcXw6xebuw+DnGAYN62JtGBwzj1oG9i4CWmjEjUTdZ+wD7pNSXueCrdK1
+         dSAd0d1b06lXIIDNW4HPc3SCEeulG3EBGAl6w9HCJrqLVpXZt3xEVzgDmVI/5EQV7Agm
+         xYxwqUaX0mNmV9UMPhJVu8Zd41RsrQW7M/GhdK5ehbIYhcWD73hPz6I92u+QBwXDR5nm
+         ujfA==
+X-Gm-Message-State: APjAAAXFiEZ/v+rYEkIeHZcSaqRhR4caBP9U515oko5urJF/vb61mE6O
+        +Mp2OXGJj+5TmGd45hUF2zkJQK5Aw9Q=
+X-Google-Smtp-Source: APXvYqwKI9JJlHH/Fd6aAVGToPH39afTm2kWuknhrq+yXwOVJD9dCOE3CeAlsc1z99HFNxEg8poLyA==
+X-Received: by 2002:a6b:6012:: with SMTP id r18mr9095233iog.241.1560445870261;
+        Thu, 13 Jun 2019 10:11:10 -0700 (PDT)
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com. [209.85.166.52])
+        by smtp.gmail.com with ESMTPSA id q1sm528722ios.86.2019.06.13.10.11.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 10:11:09 -0700 (PDT)
+Received: by mail-io1-f52.google.com with SMTP id m24so18611966ioo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 10:11:09 -0700 (PDT)
+X-Received: by 2002:a5e:8f08:: with SMTP id c8mr1658529iok.52.1560445869195;
+ Thu, 13 Jun 2019 10:11:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190613155434.GW28951@C02TF0J2HF1T.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr> <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
+ <a732f522-5e65-3ac4-de04-802ef5455747@free.fr> <CAD=FV=U+Ky1bAuAuuY+eBdTP9U3kbuH0tfwyN0Zs-iw0GNUFyQ@mail.gmail.com>
+ <13cb7357-0d10-fe43-bee1-b2142d01684c@free.fr>
+In-Reply-To: <13cb7357-0d10-fe43-bee1-b2142d01684c@free.fr>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 13 Jun 2019 10:10:57 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xb1kum3z72Gzt1ROMJWNkkscAMgMkcXEFqnovOVbv=5Q@mail.gmail.com>
+Message-ID: <CAD=FV=Xb1kum3z72Gzt1ROMJWNkkscAMgMkcXEFqnovOVbv=5Q@mail.gmail.com>
+Subject: Re: [PATCH v1] iopoll: Tweak readx_poll_timeout sleep range
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2019 16:54, Catalin Marinas wrote:
-> On Tue, Jun 11, 2019 at 06:02:47PM -0400, Masayoshi Mizuma wrote:
->> On Tue, Jun 11, 2019 at 07:00:07PM +0100, Catalin Marinas wrote:
->>> On Tue, Jun 11, 2019 at 11:17:30AM -0400, Masayoshi Mizuma wrote:
->>>> --- a/arch/arm64/mm/dma-mapping.c
->>>> +++ b/arch/arm64/mm/dma-mapping.c
->>>> @@ -91,10 +91,6 @@ static int __swiotlb_mmap_pfn(struct vm_area_struct *vma,
->>>>   
->>>>   static int __init arm64_dma_init(void)
->>>>   {
->>>> -	WARN_TAINT(ARCH_DMA_MINALIGN < cache_line_size(),
->>>> -		   TAINT_CPU_OUT_OF_SPEC,
->>>> -		   "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
->>>> -		   ARCH_DMA_MINALIGN, cache_line_size());
->>>>   	return dma_atomic_pool_init(GFP_DMA32, __pgprot(PROT_NORMAL_NC));
->>>>   }
->>>>   arch_initcall(arm64_dma_init);
->>>> @@ -473,6 +469,11 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->>>>   			const struct iommu_ops *iommu, bool coherent)
->>>>   {
->>>>   	dev->dma_coherent = coherent;
->>>> +
->>>> +	if (!coherent && (cache_line_size() > ARCH_DMA_MINALIGN))
->>>> +		dev_WARN(dev, "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
->>>> +				ARCH_DMA_MINALIGN, cache_line_size());
->>>
->>> I'm ok in principle with this patch, with the minor issue that since
->>> commit 7b8c87b297a7 ("arm64: cacheinfo: Update cache_line_size detected
->>> from DT or PPTT") queued for 5.3 cache_line_size() gets the information
->>> from DT or ACPI. The reason for this change is that the information is
->>> used for performance tuning rather than DMA coherency.
->>>
->>> You can go for a direct cache_type_cwg() check in here, unless Robin
->>> (cc'ed) has a better idea.
->>
->> Got it, thanks.
->> I believe coherency_max_size is zero in case of coherent is false,
->> so I'll modify the patch as following. Does it make sense?
-> 
-> The coherency_max_size gives you the largest cache line in the system,
-> independent of whether a device is coherent or not. You may have a
-> device that does not snoop L1/L2 but there is a transparent L3 (system
-> cache) with a larger cache line that the device may be able to snoop.
-> The coherency_max_size and therefore cache_line_size() would give you
-> this L3 value but the device would work fine since CWG <=
-> ARCH_DMA_MINALIGN.
-> 
->>
->> @@ -57,6 +53,11 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->>                          const struct iommu_ops *iommu, bool coherent)
->>   {
->>          dev->dma_coherent = coherent;
->> +
->> +       if (!coherent && (cache_line_size() > ARCH_DMA_MINALIGN))
->> +               dev_WARN(dev, "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
->> +                               ARCH_DMA_MINALIGN, (4 << cache_type_cwg()));
->> +
->>          if (iommu)
->>                  iommu_setup_dma_ops(dev, dma_base, size);
-> 
-> I think the easiest here is to add a local variable:
-> 
-> 	int cls = 4 << cache_type_cwg();
-> 
-> and check it against ARCH_DMA_MINALIGN.
-> 
+Hi,
 
-Agreed, and I'd say we should keep the taint too, since if this 
-situation ever was hit the potential crashes would be weird and random 
-and not obviously DMA-related.
 
-Robin.
+On Thu, Jun 13, 2019 at 9:37 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wro=
+te:
+>
+> On 13/06/2019 18:11, Doug Anderson wrote:
+>
+> > On Thu, Jun 13, 2019 at 9:04 AM Marc Gonzalez wrote:
+> >
+> >> Hmmm, I expect the typical use-case to be:
+> >> "HW manual states operation X completes in 100 =C2=B5s.
+> >> Let's call usleep_range(100, foo); before hitting the reg."
+> >>
+> >> And foo needs to be a "reasonable" value: big enough to be able
+> >> to merge several requests, low enough not to wait too long after
+> >> the HW is ready.
+> >>
+> >> In this case, I'd say usleep_range(100, 200); makes sense.
+> >>
+> >> Come to think of it, I'm not sure min=3D26 (or min=3D50) makes sense..=
+.
+> >> Why wait *less* than what the user specified?
+> >
+> > IIRC usleep_range() nearly always tries to sleep for the max.  My
+> > recollection of the design is that you only end up with something less
+> > than the max if the system was going to wake up anyway.  In such a
+> > case it seems like it wouldn't be insane to go and check if the
+> > condition is already true if 25% of the time has passed.  Maybe you'll
+> > get lucky and you can return early.
+> >
+> > Are you actually seeing problems with the / 4, or is this patch just a
+> > result of code inspection?
+>
+> No actual issue. I just ran into a driver calling:
+>
+>         readl_poll_timeout(status, val, val & mask, 1, 1000);
+>
+> and it seemed... unwise(?) to call usleep_range(1, 1);
+>
+> But if, as you say, usleep_range() aims for the max
+
+It was certainly what we found in:
+
+https://lkml.kernel.org/r/1444265321-16768-6-git-send-email-dianders@chromi=
+um.org
+
+...in fact, at one point in time I had a patch cooked up that would
+change the behavior during boot where (presumably) we'd rather boot
+faster.  ...but after fixing dwc2 it didn't actually have much of an
+impact elsewhere.
+
+
+> then I guess it's
+> not a big deal to issue an early read or 3... Meh
+
+IMO it seems like the driver should be fixed.  It should either specify:
+
+a) the (well defined) 0 for the delay, which means no delay.
+
+b) a more sane delay
+
+
+-Doug
