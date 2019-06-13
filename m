@@ -2,80 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 484BD43A09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EAE43A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732995AbfFMPSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:18:12 -0400
-Received: from sauhun.de ([88.99.104.3]:40378 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbfFMNN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:13:26 -0400
-Received: from localhost (p5486CF99.dip0.t-ipconnect.de [84.134.207.153])
-        by pokefinder.org (Postfix) with ESMTPSA id A828A4A1220;
-        Thu, 13 Jun 2019 15:13:24 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 15:13:21 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Laxman Dewangan <ldewangan@nvidia.com>
-Cc:     Bitan Biswas <bbiswas@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
-Message-ID: <20190613131321.GA6370@ninjato>
-References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
- <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
- <20190612102458.liieiohnprfyyvs6@ninjato>
- <5841fe57-fe68-aab3-670c-26b40a5d46ae@nvidia.com>
+        id S2388780AbfFMPSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:18:07 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42700 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732165AbfFMNOX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:14:23 -0400
+Received: by mail-vs1-f65.google.com with SMTP id 190so8986209vsf.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:14:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CR4I31iRpJNzMeDmL877t0ARvDi8UmH6xTDgLBUKOEU=;
+        b=ELoOMPni1y0S2Eeu4CKg+k17whALIizetT7cvmiVzng2ASoWY/zEf4QCF5Q4OCkG4r
+         lLSK1k41lMROJ+CxzlSyxs4V908CnVex3CA8jzK+NeJYcm9x2tEsn3yAQP+XWphKFejP
+         JnPcJGVuzsD2hPED5Rx4zSlBDEMa4cgvvknreVnW5pBkqU20fs0btRzAemvxo5UuMhXw
+         g5QinFv6WnqFTkUUnCvRl6n9kN9cK8l6xbWlCP4F+wdmQWWeftsL/0JGcradgEWeJSzp
+         QWxvGdPrSOdP1tTXeg1zxynQFa/LfRm4TmZHofWD2iwya+qc8IzJc2B3hZq6Tq0/OBz1
+         lEYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CR4I31iRpJNzMeDmL877t0ARvDi8UmH6xTDgLBUKOEU=;
+        b=LOtOVhe02p90+TctR4h9EbdJJ0tfhVpHY2YF0a9Rh3QKWSPkInH94s/DYdRJ/o9l4c
+         en3ksHzcIArWo1rtD+g8wnKxQME8rOOMGhMwA/tKNePKduMhku8lynv4DEYbKK7vPrzq
+         J4YFasiI4xJFDEDz6TFdGvKfqbhpwG4v53ZbClZyTOv7YT5gAyPWSZ31JCQe/6agrOn1
+         LAdAZZ+LY7PONybrLyvHWUa1+Av3W6XjEuCWGaRLzzNHMG9jue13zMbjHH1qxLsegL/Y
+         tPqaZo6Pw1WkadyABtMbgFQKdfB3vQ4UqQXoPtJi5F4k9Grpv1WCxmcVsGv6PHPneYG6
+         CD/A==
+X-Gm-Message-State: APjAAAWrXavGIL0l9bWRZEpdMA3rk/g2dFI+8fePMHDP8XD8rz0137Uu
+        6YskM+oyrYscDfpOmJzzIw1+VaxzQOLp6txtwSOjBQ==
+X-Google-Smtp-Source: APXvYqwbXxtKhJhPoMfm6hW9bmujkyqa7UqRJRkTixkWhWXjnp1ugr9ACSLRfaX8ICyv+pkIWZG5c6+bqjRTtP+mu6A=
+X-Received: by 2002:a67:ee5b:: with SMTP id g27mr15041407vsp.165.1560431662796;
+ Thu, 13 Jun 2019 06:14:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
-Content-Disposition: inline
-In-Reply-To: <5841fe57-fe68-aab3-670c-26b40a5d46ae@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1559577325-19266-1-git-send-email-ludovic.Barre@st.com> <5b7e1ae5-c97e-5a21-fc3e-7cc328087f04@st.com>
+In-Reply-To: <5b7e1ae5-c97e-5a21-fc3e-7cc328087f04@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 13 Jun 2019 15:13:46 +0200
+Message-ID: <CAPDyKFrULRk=cHzVodU9aa6LDX9ip-VPHNwG7QXhmNZrMpPjGw@mail.gmail.com>
+Subject: Re: [PATCH V3 0/3] mmc: mmci: add busy detect for stm32 sdmmc variant
+To:     Ludovic BARRE <ludovic.barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 13 Jun 2019 at 15:02, Ludovic BARRE <ludovic.barre@st.com> wrote:
+>
+> hi Ulf
+>
+> Just a "gentleman ping" about this series.
+> I know you are busy, it's just to be sure you do not forget me :-)
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks! I started briefly to review, but got distracted again. I will
+come to it, but it just seems to take more time than it should, my
+apologies.
 
+Br
+Uffe
 
-> Most of patches are coming from the downstream as part of upstream effort.
-> Hence not reviewing explicitly.
-
-It would help me a lot if you could ack the patches, then, once you are
-fine with them. I am really relying on driver maintainers these days. An
-ack or rev from them is kinda required and speeds up things
-significantly.
-
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0CS+0ACgkQFA3kzBSg
-Kba1RQ/9GWBeTxXEjL9VYaeijLQUznToGQszZUm59CLaUakBZ1U5zHv4Q1mXscqT
-nS5W/g+jehr+iveA57dhlj5S+QftqasQ6gSUS6esF5Un6PIDfpty4mwWPda4Rq0n
-DhPCALujwZD5BM4jSB4M2xLSypmMjOPpPQq1WfA1BhEJVLBW5hdf1lBbecBNcm4k
-TE3s0VFdZmzVdLQQKNsKNPfct1TyQiD+RzELa22ptlHDpMOIMudT0EHWpmXUNyID
-oN8ZGO6ygdlUjLDeCe3QgGLVJaEDndS8sgu4vPpRwnDHbOx5CLOT5zktN1YitupR
-fFvSxH1JSWu8mHJ/rsbu7vYv/NfiFvubaUucFexHUFuVHCEbV7Su7Zjy3NebcJyo
-RgHv3UtljdmL0QhOg4DoQJRQ3iMFEhRVDQ1iAcUubcr6mSpBF48/WpqvW0mOpEyd
-rAO75Lf0uW9Hdhbdmdb7Sb/p4z5QfMBOXstBB/79OiQOp1c3C7jmL4bxrbbEAcKq
-1hT/Q79CEm8snsH0vua4aQr37BTf+G7lMPKlGRfwd70Dk1P5gOBNdzZUb8PetReU
-lMSiE7DjkwHe6b5+UVJg7AScWLl78opLyMqrvnpBhihEqrg4tvvhMCgqwKbJR8gm
-pEq1e6OqggD9dsf4GU79FkqbgwX13ZJsDBRsndEMPEPxpk0zTiI=
-=VgqH
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
+>
+> Regards
+> Ludo
+>
+> On 6/3/19 5:55 PM, Ludovic Barre wrote:
+> > From: Ludovic Barre <ludovic.barre@st.com>
+> >
+> > This patch series adds busy detect for stm32 sdmmc variant.
+> > Some adaptations are required:
+> > -Clear busy status bit if busy_detect_flag and busy_detect_mask are
+> >   different.
+> > -Add hardware busy timeout with MMCIDATATIMER register.
+> >
+> > V3:
+> > -rebase on latest mmc next
+> > -replace re-read by status parameter.
+> >
+> > V2:
+> > -mmci_cmd_irq cleanup in separate patch.
+> > -simplify the busy_detect_flag exclude
+> > -replace sdmmc specific comment in
+> > "mmc: mmci: avoid fake busy polling in mmci_irq"
+> > to focus on common behavior
+> >
+> > Ludovic Barre (3):
+> >    mmc: mmci: fix read status for busy detect
+> >    mmc: mmci: add hardware busy timeout feature
+> >    mmc: mmci: add busy detect for stm32 sdmmc variant
+> >
+> >   drivers/mmc/host/mmci.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+> >   drivers/mmc/host/mmci.h |  3 +++
+> >   2 files changed, 44 insertions(+), 8 deletions(-)
+> >
