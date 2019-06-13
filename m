@@ -2,201 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 494D645006
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E5D4500E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbfFMXaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 19:30:14 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43559 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbfFMXaL (ORCPT
+        id S1726940AbfFMXcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 19:32:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44350 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726265AbfFMXcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:30:11 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z24so416794qtj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 16:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pJLICYTglbzJPuGB86NDclpe4urK1GOgVPmREq4CQrs=;
-        b=OLQvkfaqZC6x36zy3O3rMoCh3QAROZHzXSb/EkQ0SFP9cgARresQI3stMIAQ55+JmL
-         DTfXWpZES/CuK+t9DaBO4u3oKLtfI2Ih17Oxr/o51XN1xPeHv5eKR3Y/T54p99DFqgWz
-         JmaE5FNbOzChJWphkEZzpb3Z3699zMVMJfjhmitmxYYvutmZmQycgYzSlIrwQtEkeym5
-         2ddH9LUozbidDJ64jFRJOxVqPtHt/js+u+dk0QfX4NsDbFQ/98BSDbbS8TY8PXK248Yf
-         TjUsyVNplRwuWkICJOoXdhksOdI3EmtueQ/KQLTn2e2yVbM8WIFt0Tt4fo8b8ilb4xiT
-         6lEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pJLICYTglbzJPuGB86NDclpe4urK1GOgVPmREq4CQrs=;
-        b=gIuOzuEF48G1/mmPMeedV06FBrIh0zxN7wEsA4676iXR46GRgEalLfngtDtan9rL88
-         77mvaaKvoLgpIILCthu01cw6QtqMOcG8wvJm9PWKzpBIj06dGoan9pxL9DolIPCbskE8
-         2NwKKJxZfvKm+hcppZRBcF3IvLpVQVgV+j8XLdu9AtmudLWSHzptGFv0EQHVmqfmGhOo
-         CkIdL90m9mnfoFWfke5jHIi9v0otNc6Q6TFyvfXO8ZMQ5IjFdQb/6DwtsqkoSMnpRRW8
-         wpPahYzsUQ62qIoak8cATNYkS+SziFWUhP9zOSxVEIlYJzxipFI0NXTt/6qeh6+AZpzo
-         mMhA==
-X-Gm-Message-State: APjAAAUdANwNjEnKLpZ2ZPT7k8W8vCy5EMK6UhKnIyetvC1xpDudwA/B
-        pzX57VaBjKLfRbf2bwMf2j5zuw==
-X-Google-Smtp-Source: APXvYqxRvIeHPQ3mJIhV/SSN3uj9aCvA+F3iW/Y2iBb07jouEHhs9HOVTvK0OowWXe/szan495Hejg==
-X-Received: by 2002:ac8:1b64:: with SMTP id p33mr79729875qtk.62.1560468610772;
-        Thu, 13 Jun 2019 16:30:10 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id n124sm489580qkf.31.2019.06.13.16.30.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 16:30:10 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hbZAX-00013N-UU; Thu, 13 Jun 2019 20:30:09 -0300
-Date:   Thu, 13 Jun 2019 20:30:09 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, devicetree@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [PATCH 7/8] tpm: add sysfs attributes for tpm2
-Message-ID: <20190613233009.GI22901@ziepe.ca>
-References: <20190613180931.65445-1-swboyd@chromium.org>
- <20190613180931.65445-8-swboyd@chromium.org>
+        Thu, 13 Jun 2019 19:32:24 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DNC4fM061158;
+        Thu, 13 Jun 2019 19:32:23 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t3xb2kmr8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jun 2019 19:32:23 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5DNCwX7030472;
+        Thu, 13 Jun 2019 23:32:22 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 2t1x6frja6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jun 2019 23:32:22 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5DNWKSD34931114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 23:32:20 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C4177BE054;
+        Thu, 13 Jun 2019 23:32:20 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C088ABE058;
+        Thu, 13 Jun 2019 23:32:19 +0000 (GMT)
+Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.170])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jun 2019 23:32:19 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     linux-block@vger.kernel.org
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/1] block/cfq : Include check to avoid NULL Pointer
+Date:   Thu, 13 Jun 2019 20:31:58 -0300
+Message-Id: <20190613233159.26687-1-leonardo@linux.ibm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613180931.65445-8-swboyd@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=790 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906130176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 11:09:30AM -0700, Stephen Boyd wrote:
+I believe to have found a NULL pointer dereference on the code, but as
+I am new to this code I would like the opinion of more experienced people.
 
-> +static ssize_t tpm2_prop_flag_show(struct device *dev,
-> +				   struct device_attribute *attr,
-> +				   char *buf)
->  {
-> -	/* XXX: If you wish to remove this restriction, you must first update
-> -	 * tpm_sysfs to explicitly lock chip->ops.
-> -	 */
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> -		return;
-> +	struct tpm2_prop_flag_dev_attribute *pa =
-> +		container_of(attr, struct tpm2_prop_flag_dev_attribute, attr);
-> +	u32 flags;
-> +	ssize_t rc;
-> +
-> +	rc = tpm2_get_tpm_pt(to_tpm_chip(dev), pa->property_id, &flags,
-> +			     "reading property");
-> +	if (rc)
-> +		return 0;
-> +
-> +	return sprintf(buf, "%d\n", !!(flags & pa->flag_mask));
-> +}
-> +
-> +static ssize_t tpm2_prop_u32_show(struct device *dev,
-> +				  struct device_attribute *attr,
-> +				  char *buf)
-> +{
-> +	struct tpm2_prop_u32_dev_attribute *pa =
-> +		container_of(attr, struct tpm2_prop_u32_dev_attribute, attr);
-> +	u32 value;
-> +	ssize_t rc;
-> +
-> +	rc = tpm2_get_tpm_pt(to_tpm_chip(dev), pa->property_id, &value,
-> +			     "reading property");
-> +	if (rc)
-> +		return 0;
-> +
-> +	return sprintf(buf, "%u\n", value);
-> +}
->  
-> +#define TPM2_PROP_FLAG_ATTR(_name, _property_id, _flag_mask)           \
-> +	struct tpm2_prop_flag_dev_attribute attr_tpm2_prop_##_name = { \
-> +		__ATTR(_name, S_IRUGO, tpm2_prop_flag_show, NULL),     \
-> +		_property_id, _flag_mask                               \
-> +	}
-> +
-> +#define TPM2_PROP_U32_ATTR(_name, _property_id)                        \
-> +	struct tpm2_prop_u32_dev_attribute attr_tpm2_prop_##_name = {  \
-> +		__ATTR(_name, S_IRUGO, tpm2_prop_u32_show, NULL),      \
-> +		_property_id                                           \
-> +	}
-> +
-> +TPM2_PROP_FLAG_ATTR(owner_auth_set,
-> +		    TPM2_PT_PERMANENT, TPM2_ATTR_OWNER_AUTH_SET);
-> +TPM2_PROP_FLAG_ATTR(endorsement_auth_set,
-> +		    TPM2_PT_PERMANENT, TPM2_ATTR_ENDORSEMENT_AUTH_SET);
-> +TPM2_PROP_FLAG_ATTR(lockout_auth_set,
-> +		    TPM2_PT_PERMANENT, TPM2_ATTR_LOCKOUT_AUTH_SET);
-> +TPM2_PROP_FLAG_ATTR(disable_clear,
-> +		    TPM2_PT_PERMANENT, TPM2_ATTR_DISABLE_CLEAR);
-> +TPM2_PROP_FLAG_ATTR(in_lockout,
-> +		    TPM2_PT_PERMANENT, TPM2_ATTR_IN_LOCKOUT);
-> +TPM2_PROP_FLAG_ATTR(tpm_generated_eps,
-> +		    TPM2_PT_PERMANENT, TPM2_ATTR_TPM_GENERATED_EPS);
-> +
-> +TPM2_PROP_FLAG_ATTR(ph_enable,
-> +		    TPM2_PT_STARTUP_CLEAR, TPM2_ATTR_PH_ENABLE);
-> +TPM2_PROP_FLAG_ATTR(sh_enable,
-> +		    TPM2_PT_STARTUP_CLEAR, TPM2_ATTR_SH_ENABLE);
-> +TPM2_PROP_FLAG_ATTR(eh_enable,
-> +		    TPM2_PT_STARTUP_CLEAR, TPM2_ATTR_EH_ENABLE);
-> +TPM2_PROP_FLAG_ATTR(ph_enable_nv,
-> +		    TPM2_PT_STARTUP_CLEAR, TPM2_ATTR_PH_ENABLE_NV);
-> +TPM2_PROP_FLAG_ATTR(orderly,
-> +		    TPM2_PT_STARTUP_CLEAR, TPM2_ATTR_ORDERLY);
-> +
-> +TPM2_PROP_U32_ATTR(lockout_counter, TPM2_PT_LOCKOUT_COUNTER);
-> +TPM2_PROP_U32_ATTR(max_auth_fail, TPM2_PT_MAX_AUTH_FAIL);
-> +TPM2_PROP_U32_ATTR(lockout_interval, TPM2_PT_LOCKOUT_INTERVAL);
-> +TPM2_PROP_U32_ATTR(lockout_recovery, TPM2_PT_LOCKOUT_RECOVERY);
-> +
-> +#define ATTR_FOR_TPM2_PROP(_name) (&attr_tpm2_prop_##_name.attr.attr)
-> +static struct attribute *tpm2_dev_attrs[] = {
-> +	ATTR_FOR_TPM2_PROP(owner_auth_set),
-> +	ATTR_FOR_TPM2_PROP(endorsement_auth_set),
-> +	ATTR_FOR_TPM2_PROP(lockout_auth_set),
-> +	ATTR_FOR_TPM2_PROP(disable_clear),
-> +	ATTR_FOR_TPM2_PROP(in_lockout),
-> +	ATTR_FOR_TPM2_PROP(tpm_generated_eps),
-> +	ATTR_FOR_TPM2_PROP(ph_enable),
-> +	ATTR_FOR_TPM2_PROP(sh_enable),
-> +	ATTR_FOR_TPM2_PROP(eh_enable),
-> +	ATTR_FOR_TPM2_PROP(ph_enable_nv),
-> +	ATTR_FOR_TPM2_PROP(orderly),
-> +	ATTR_FOR_TPM2_PROP(lockout_counter),
-> +	ATTR_FOR_TPM2_PROP(max_auth_fail),
-> +	ATTR_FOR_TPM2_PROP(lockout_interval),
-> +	ATTR_FOR_TPM2_PROP(lockout_recovery),
-> +	&dev_attr_durations.attr,
-> +	&dev_attr_timeouts.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group tpm2_dev_group = {
-> +	.attrs = tpm2_dev_attrs,
-> +};
-> +
-> +void tpm_sysfs_add_device(struct tpm_chip *chip)
-> +{
->  	/* The sysfs routines rely on an implicit tpm_try_get_ops, device_del
->  	 * is called before ops is null'd and the sysfs core synchronizes this
->  	 * removal so that no callbacks are running or can run again
->  	 */
-> +	/* FIXME: update tpm_sysfs to explicitly lock chip->ops for TPM 2.0
-> +	 */
+I am not sure if it is the right procedure to send it here, since this file
+is not on the tree since v4.20. But as it still affects many stable releases,
+I think it's worth the try.
 
-What does the fixme mean? You cold add proper get_ops locking for the
-tpm2 callbacks, it is not so hard. 
+Please let me know if there is a better procedure on this.
 
-I actually think it is needed...
+Leonardo Bras (1):
+  block/cfq : Include check to avoid NULL Pointer Dereferencing
 
-Oh. Jarkko, this is why you can't set ops to null in the class
-shutdown, sysfs needs to be fixed first. ops can only go to null for
-TPM1 after device_del until someone fixes the locking.
+ block/cfq-iosched.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Jason
+-- 
+2.20.1
+
