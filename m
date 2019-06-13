@@ -2,95 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C46DF438E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76C2B438DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732882AbfFMPJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:09:28 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35806 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732362AbfFMN6D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:58:03 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d23so22638649qto.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yl3u9OHniWwozrwRg8MwFXqj/tcVXwxH/GoIuJ/+cgI=;
-        b=Pi7rcOcllDzY4YtuAORwjevLbfVYkp9i72ie6hKY1hOBpeYxeYRsynLD/r+GX+1WgH
-         9jmz/Q4qLoLPj8DMkRMmocG1HkWaTtBqtjIbD09vscOFJJ4QDtmbpw0e3U1fLQ4Phs/R
-         mm87AwBXyWcfet3drfxfBbP4UMYRvWbQj0PMUFxSthTBZjkcOo6tXgvizMr/hUkl/13I
-         aI0yGb3dmtIfyR9EUbCQqe1oj4prYz6e3G20ui0X2KQIm8ieYwI2Xg+7728d6x5yRuS6
-         FF+5aN9S5RAfYTLprSlp/cc73PjoMmLzraZlJPIxZSsVnzTk6h1W29S/oRgRORNWjD2Y
-         Kp4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yl3u9OHniWwozrwRg8MwFXqj/tcVXwxH/GoIuJ/+cgI=;
-        b=R4ZBXDLniDG2dK+0+OwSBpvqvF5XZCMR2VZTAvJaBBpqwUiM77XAhQU+a1u/NxMQmi
-         dKO5pyENMXHRVe5SRkTRYDSbasc87HTQJmDUceu85ymAfmCZdopajZTV9zUcYDzCufWl
-         SKRyGPX6/UlIXclDM/Ns1DTkBOCeNvewS7OYGq2wcrsWxCkoYUHraw6b5/k72tGcexTw
-         GCrDoZswJvWBSdWXqmj3cDvEQbEq4MdxaOGWQ/lu+VlSqOEGVI/6Po78YtCJ4WHYhQbd
-         r0i5KQcIdeBAyYlOz3M50UPSguSloBDG3RXDMeDb7wakyQsqPw6F91/Kxdd4MYjTgmo2
-         YI1A==
-X-Gm-Message-State: APjAAAUqR6XWNVVZcz5Q5/gOGZJSmtU8Kw/B/JFA/bzK7YZIo1EFQbhk
-        R1PmIEhkMl+XeQVVFkCQ4xrYXQ==
-X-Google-Smtp-Source: APXvYqyGSXoBxGa8QqcJkIXSj6Xo5CkCBbBgl8mWo01DB6W1NBo5ZdtvNDRttPqNV+iCW5y6FGjixA==
-X-Received: by 2002:ac8:38d5:: with SMTP id g21mr74358612qtc.52.1560434282173;
-        Thu, 13 Jun 2019 06:58:02 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::9d6b])
-        by smtp.gmail.com with ESMTPSA id v41sm1699059qta.78.2019.06.13.06.58.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 06:58:01 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 09:58:00 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 02/19] btrfs: Get zone information of zoned block devices
-Message-ID: <20190613135759.22siaadm7l4gz2ri@MacBook-Pro-91.local>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-3-naohiro.aota@wdc.com>
+        id S2387711AbfFMPJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:09:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51706 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732365AbfFMN6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:58:33 -0400
+Received: from zn.tnic (p200300EC2F06D50021762B7834B766B8.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:d500:2176:2b78:34b7:66b8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 24D161EC0235;
+        Thu, 13 Jun 2019 15:58:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560434311;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Maz4qhAv7CzEe1mERK2XkKpnUOaeRk1rwNJ3zxGQF7I=;
+        b=N7WXUKUIVx0KgZifoTbCmMOS7qM3sPGf7X/zw2AGmVlrIytZIXqgLLPwJHp3m0cCWg4JHi
+        nb53PKNfplx9ToP2i9o/CXOlul4FRsMK1FcqRDiH11isM00a4NU99UpEom0qVpZyXq3aL9
+        bVXYL6LJaKzUkImk+V2fOArCJJkqHuE=
+Date:   Thu, 13 Jun 2019 15:58:22 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/8] EDAC/amd64: Fix number of DIMMs and Chip Select
+ bases/masks on Family17h
+Message-ID: <20190613135822.GC11598@zn.tnic>
+References: <20190531234501.32826-1-Yazen.Ghannam@amd.com>
+ <20190531234501.32826-2-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-3-naohiro.aota@wdc.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190531234501.32826-2-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:08PM +0900, Naohiro Aota wrote:
-> If a zoned block device is found, get its zone information (number of zones
-> and zone size) using the new helper function btrfs_get_dev_zonetypes().  To
-> avoid costly run-time zone report commands to test the device zones type
-> during block allocation, attach the seqzones bitmap to the device structure
-> to indicate if a zone is sequential or accept random writes.
+On Fri, May 31, 2019 at 11:45:11PM +0000, Ghannam, Yazen wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
 > 
-> This patch also introduces the helper function btrfs_dev_is_sequential() to
-> test if the zone storing a block is a sequential write required zone.
+> ...because AMD Family 17h systems support 2 DIMMs, 4 CS bases, and 2 CS
+> masks per channel.
 > 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> Fixes: 07ed82ef93d6 ("EDAC, amd64: Add Fam17h debug output")
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 > ---
->  fs/btrfs/volumes.c | 143 +++++++++++++++++++++++++++++++++++++++++++++
->  fs/btrfs/volumes.h |  33 +++++++++++
->  2 files changed, 176 insertions(+)
+>  drivers/edac/amd64_edac.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 873437be86d9..9fa2f205f05c 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -810,7 +810,7 @@ static void debug_display_dimm_sizes_df(struct amd64_pvt *pvt, u8 ctrl)
+>  
+>  	edac_printk(KERN_DEBUG, EDAC_MC, "UMC%d chip selects:\n", ctrl);
+>  
+> -	for (dimm = 0; dimm < 4; dimm++) {
+> +	for (dimm = 0; dimm < 2; dimm++) {
+>  		size0 = 0;
+>  		cs0 = dimm * 2;
+>  
+> @@ -942,6 +942,9 @@ static void prep_chip_selects(struct amd64_pvt *pvt)
+>  	} else if (pvt->fam == 0x15 && pvt->model == 0x30) {
+>  		pvt->csels[0].b_cnt = pvt->csels[1].b_cnt = 4;
+>  		pvt->csels[0].m_cnt = pvt->csels[1].m_cnt = 2;
+> +	} else if (pvt->fam >= 0x17) {
+> +		pvt->csels[0].b_cnt = pvt->csels[1].b_cnt = 4;
+> +		pvt->csels[0].m_cnt = pvt->csels[1].m_cnt = 2;
 
-We have enough problems with giant files already, please just add a separate
-hmzoned.c or whatever and put all the zone specific code in there.  That'll save
-me time when I go and break a bunch of stuff out.  Thanks,
+I guess it is about time that function gets turned into a switch-case so
+that the assignment lines do not get duplicated.
 
-Josef
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
