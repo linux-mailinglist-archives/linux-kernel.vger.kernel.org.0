@@ -2,94 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496E143861
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2AA84384C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733276AbfFMPFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:05:19 -0400
-Received: from mail-eopbgr70040.outbound.protection.outlook.com ([40.107.7.40]:29637
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732455AbfFMOQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:16:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uRCtqGzjhJOBLRtVX0V/ZgSTkU8/jdLSuxxED8NJUIc=;
- b=TvGnXbEcjU6Lo/7/fJyphO+gcrunapqxGdLz+M17V8Za/VtKbSX2UybpfN/j0jOX9sC6Lm2xBxEh49cE0w5ymm9p5MQ2sS9TfXQk7dgCrfXyzRlkaSiH5uYLLNWjzlj4HWhvmzR09mBLA4vwuj9bks2IyeyCyk+IavPI2sL/+T0=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB4783.eurprd05.prod.outlook.com (20.176.4.32) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.14; Thu, 13 Jun 2019 14:16:27 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1%6]) with mapi id 15.20.1987.012; Thu, 13 Jun 2019
- 14:16:27 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: dev_pagemap related cleanups
-Thread-Topic: dev_pagemap related cleanups
-Thread-Index: AQHVIcx5DdVrUhs/HUiF5V2FmmsvzKaZoY4A
-Date:   Thu, 13 Jun 2019 14:16:27 +0000
-Message-ID: <20190613141622.GE22062@mellanox.com>
-References: <20190613094326.24093-1-hch@lst.de>
-In-Reply-To: <20190613094326.24093-1-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BL0PR02CA0048.namprd02.prod.outlook.com
- (2603:10b6:207:3d::25) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ce498060-eaaa-4cfc-43b2-08d6f009b931
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4783;
-x-ms-traffictypediagnostic: VI1PR05MB4783:
-x-microsoft-antispam-prvs: <VI1PR05MB47836CBE2730DE9B4A14468FCFEF0@VI1PR05MB4783.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3513;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(366004)(376002)(39860400002)(189003)(199004)(26005)(53936002)(81166006)(99286004)(52116002)(6486002)(7736002)(36756003)(305945005)(33656002)(6116002)(2906002)(6512007)(6436002)(229853002)(6506007)(478600001)(14454004)(3846002)(81156014)(8676002)(316002)(386003)(186003)(102836004)(76176011)(66446008)(486006)(2616005)(66556008)(476003)(86362001)(68736007)(54906003)(446003)(7416002)(11346002)(64756008)(1076003)(8936002)(5660300002)(71190400001)(6916009)(7116003)(71200400001)(66066001)(4326008)(66476007)(6246003)(73956011)(66946007)(256004)(25786009)(4744005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4783;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: V7MYS+Xi0yuEwrWiqQdFEyNmIo52ph6edRuO4tk6AgYuo0b1aNnoJUgJdJqY5OPp4z215xdSTIlif805KjTtwoDOCuQP1/9ok+E9ptw226a2wqHVsoDym8cU0BN91wSMfVOXKRek3zPXyZb9qhv022St0teR3Q7xiN1Ey+EgDtjktRjj7eyfPmSIEEQlR/j2pU5iBJDYEbJPX5zNx/rHf3Y9mW0Tfxat4lpIjDoEtlWlW6ETGh76wNSMBwBD+DPQwBTiiBueMm/wuC1Fj+LteWMELDHyIfiZDpZfwJ10/BIGmUIvXpKK5oEPjUqMazcbnVtK340VjdMxLPoD9di01Ku0wuSQafzVeLQ3c31x5f5B8aNtFynOUa4Gx3J12rS/WpKzcwm/1VF+kS/8oMXw9oAdlXksbr9nZCIzWk7EdFA=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3F56F1D2ECF2EA44ADBAB2BD95ADFE6F@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732616AbfFMPFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:05:02 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46734 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732461AbfFMORK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 10:17:10 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h21so22668784qtn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IdWKzce3sZz9+VK0mMGhceU7W1z4LrhQkC1c9OeYugc=;
+        b=oP6ERCa1F6T8r6pSHlZINu6LknBTF+UPLpwmpRJcH+T6FdeYawjrBm7oQ0iaSVxmjD
+         LZmwbZomBs1w1G2Z2uECjOVu4ctdMmjAbGswoZajXSueNHfNEi2kDdbB0eo5K/L6TPX7
+         gZDgT2bbG1XJxfKdQTmNc/rRjKzTRncWVcJVin9R+eQOLHXhMw81x04KLiHKKskUszQf
+         ZBhBJw5X9u7/w7EZhQAiKlEqEZsI6T8SkRldzr2n/0VkSPQGDovwNcD8pbdF8P8kD9fH
+         yrx5FvRP/YCxnPdJUo/PdMnD9HHxHisaI1pK2EJyShl5GyzSbTt0LN5tNALrEQUHkLxB
+         Gsyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IdWKzce3sZz9+VK0mMGhceU7W1z4LrhQkC1c9OeYugc=;
+        b=X/2g5K2wmsMXUfAWg0sDwKZwkaKO0LrgrrCGH9w0NZCJhO+ZvQW+4DN1jmoDedTrL1
+         YxIrItsUfMt5yzxO+ISgCr3nsux3vIAgptU4QOcm24Evbqgm1eFP78BoYcxQXk71xUxJ
+         KlxFpsVh+k2B8oGnvtN+OQ2zXwivFMMfVHSe0cRghGOWnoCsa8PXj9bJC1hg0dL0bvR5
+         PddPZRTEf/Mxj0HYRnQIyz8IVP3/kD16Ia8YdBEQqXMB6pVWnBb+c/evfOVT+wFFzpJD
+         WN6hwe1waFfAdkSma+jmGP+5ZsCcyd5W8KnjLeSBhVkyOBISt46LSyCyJzmR7G/+HM11
+         SXkA==
+X-Gm-Message-State: APjAAAX4WpGZ1PFc8u8ToKGUaPMBcG+wd2xr+Kh2sURikfPkrfAiCJkQ
+        SBklm/JvnxQ+0J8Ge7roR3b9fQ==
+X-Google-Smtp-Source: APXvYqx5jPsVPa9dGQd9Bui4/XGgLT6BOzvijxJlMoqU0XvFjHiv3oPKH2im4jOl3Wj+44uE9UzG2A==
+X-Received: by 2002:ac8:25dd:: with SMTP id f29mr66160028qtf.144.1560435429256;
+        Thu, 13 Jun 2019 07:17:09 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::9d6b])
+        by smtp.gmail.com with ESMTPSA id 102sm1338356qte.52.2019.06.13.07.17.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 07:17:09 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:17:07 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 13/19] btrfs: avoid sync IO prioritization on checksum in
+ HMZONED mode
+Message-ID: <20190613141706.tbxc5wufplfybfib@MacBook-Pro-91.local>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-14-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce498060-eaaa-4cfc-43b2-08d6f009b931
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 14:16:27.8375
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4783
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607131025.31996-14-naohiro.aota@wdc.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCBKdW4gMTMsIDIwMTkgYXQgMTE6NDM6MDNBTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
-aWcgd3JvdGU6DQo+IEhpIERhbiwgSsOpcsO0bWUgYW5kIEphc29uLA0KPiANCj4gYmVsb3cgaXMg
-YSBzZXJpZXMgdGhhdCBjbGVhbnMgdXAgdGhlIGRldl9wYWdlbWFwIGludGVyZmFjZSBzbyB0aGF0
-DQo+IGl0IGlzIG1vcmUgZWFzaWx5IHVzYWJsZSwgd2hpY2ggcmVtb3ZlcyB0aGUgbmVlZCB0byB3
-cmFwIGl0IGluIGhtbQ0KPiBhbmQgdGh1cyBhbGxvd2luZyB0byBraWxsIGEgbG90IG9mIGNvZGUN
-Cg0KRG8geW91IHdhbnQgc29tZSBvZiB0aGlzIHRvIHJ1biB0aHJvdWdoIGhtbS5naXQ/IEkgc2Vl
-IG1hbnkgcGF0Y2hlcw0KdGhhdCBkb24ndCBzZWVtIHRvIGhhdmUgaW50ZXItZGVwZW5kZW5jaWVz
-Li4NCg0KVGhhbmtzLA0KSmFzb24NCg==
+On Fri, Jun 07, 2019 at 10:10:19PM +0900, Naohiro Aota wrote:
+> Btrfs prioritize sync I/Os to be handled by async checksum worker earlier.
+> As a result, checksumming sync I/Os to larger logical extent address can
+> finish faster than checksumming non-sync I/Os to smaller logical extent
+> address.
+> 
+> Since we have upper limit of number of checksum worker, it is possible that
+> sync I/Os to wait forever for non-starting checksum of I/Os for smaller
+> address.
+> 
+> This situation can be reproduced by e.g. fstests btrfs/073.
+> 
+> To avoid such disordering, disable sync IO prioritization for now. Note
+> that sync I/Os anyway must wait for I/Os to smaller address to finish. So,
+> actually prioritization have no benefit in HMZONED mode.
+> 
+
+This stuff is going away once we finish the io.weight work anyway, I wouldn't
+worry about this.  Thanks,
+
+Josef
