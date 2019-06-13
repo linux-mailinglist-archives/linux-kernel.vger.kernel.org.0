@@ -2,96 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B7F43EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042B543EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389399AbfFMPyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:54:07 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44846 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731583AbfFMIzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:55:51 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x47so21609711qtk.11;
-        Thu, 13 Jun 2019 01:55:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n7PArDXUl7LOBVHDgdyyLrxHdLxjO1IqwghuUIhjgcI=;
-        b=d2hn+aLmeC3GeEaXUCxbRm6Xh48sTjGT+zTdVYxP/SpuxyOzTsD6eFLT8i3onuPGVH
-         S+oHZLiiY0FWVbHHfxY71k2+8X8wgQMpbPxUBwhivXFHxbv4jYVxKNGlH0cH+lW3uGRE
-         VkU1OlRcR5TOaKZRg3oFAI2n9LSV6S2CZlxT+cDsk0tQARhQB90oBdBsFQSXw+tMsZfg
-         HWy493u2K/yNlb52sMgGP8fi9hva6oZs57/Ra/me9pPfyyrLJqMNZkalvlWbagK3kqwq
-         R6Rf4nLrAKXT7iZzYvP5HjOZnmgo0I+guXW8zmo/p11iwEaORS6udSj5yjyY+80vzyk0
-         UZvQ==
-X-Gm-Message-State: APjAAAUuuM+/7gyAFr6WKLYUrtWBpJNWII/QKZ3VOG4wkXa4qykH05tj
-        PsJq2Tn2FHe0+TctyDgBJBGzx41TPewNwToPd1Q=
-X-Google-Smtp-Source: APXvYqyV757/8drEgvHANCu8E4/7UvtAUgKyhza7EAYxf/aJTGFuMfHORa+kSycX7K8zIro0bivSjBR0z6Hb1yOYhpU=
-X-Received: by 2002:a0c:8b49:: with SMTP id d9mr2445970qvc.63.1560416149917;
- Thu, 13 Jun 2019 01:55:49 -0700 (PDT)
+        id S1731813AbfFMPxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:53:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43880 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731597AbfFMI5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:57:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1179030872E7;
+        Thu, 13 Jun 2019 08:57:25 +0000 (UTC)
+Received: from [10.72.12.64] (ovpn-12-64.pek2.redhat.com [10.72.12.64])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9501880C0;
+        Thu, 13 Jun 2019 08:57:16 +0000 (UTC)
+Subject: Re: [PATCH 3/4] vsock/virtio: fix flush of works during the .remove()
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20190528105623.27983-1-sgarzare@redhat.com>
+ <20190528105623.27983-4-sgarzare@redhat.com>
+ <9ac9fc4b-5c39-2503-dfbb-660a7bdcfbfd@redhat.com>
+ <20190529105832.oz3sagbne5teq3nt@steredhat>
+ <8c9998c8-1b9c-aac6-42eb-135fcb966187@redhat.com>
+ <20190530101036.wnjphmajrz6nz6zc@steredhat.homenet.telecomitalia.it>
+ <4c881585-8fee-0a53-865c-05d41ffb8ed1@redhat.com>
+ <20190531081824.p6ylsgvkrbckhqpx@steredhat>
+ <dbc9964c-65b1-0993-488b-cb44aea55e90@redhat.com>
+ <20190606081109.gdx4rsly5i6gtg57@steredhat>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <b1fa0b2f-f7d0-8117-0bde-0cb78d1a3d07@redhat.com>
+Date:   Thu, 13 Jun 2019 16:57:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190611125904.1013-1-cai@lca.pw>
-In-Reply-To: <20190611125904.1013-1-cai@lca.pw>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 13 Jun 2019 10:55:33 +0200
-Message-ID: <CAK8P3a1rK79aj38H0i9vnzeycv6YZ0iUhBFz4giAFc7COTnmWQ@mail.gmail.com>
-Subject: Re: [PATCH -next] efi/tpm: fix a compilation warning
-To:     Qian Cai <cai@lca.pw>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, mjg59@google.com,
-        linux-efi <linux-efi@vger.kernel.org>, bsz@semihalf.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190606081109.gdx4rsly5i6gtg57@steredhat>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 13 Jun 2019 08:57:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 3:59 PM Qian Cai <cai@lca.pw> wrote:
+
+On 2019/6/6 下午4:11, Stefano Garzarella wrote:
+> On Fri, May 31, 2019 at 05:56:39PM +0800, Jason Wang wrote:
+>> On 2019/5/31 下午4:18, Stefano Garzarella wrote:
+>>> On Thu, May 30, 2019 at 07:59:14PM +0800, Jason Wang wrote:
+>>>> On 2019/5/30 下午6:10, Stefano Garzarella wrote:
+>>>>> On Thu, May 30, 2019 at 05:46:18PM +0800, Jason Wang wrote:
+>>>>>> On 2019/5/29 下午6:58, Stefano Garzarella wrote:
+>>>>>>> On Wed, May 29, 2019 at 11:22:40AM +0800, Jason Wang wrote:
+>>>>>>>> On 2019/5/28 下午6:56, Stefano Garzarella wrote:
+>>>>>>>>> @@ -690,6 +693,9 @@ static void virtio_vsock_remove(struct virtio_device *vdev)
+>>>>>>>>>       	vsock->event_run = false;
+>>>>>>>>>       	mutex_unlock(&vsock->event_lock);
+>>>>>>>>> +	/* Flush all pending works */
+>>>>>>>>> +	virtio_vsock_flush_works(vsock);
+>>>>>>>>> +
+>>>>>>>>>       	/* Flush all device writes and interrupts, device will not use any
+>>>>>>>>>       	 * more buffers.
+>>>>>>>>>       	 */
+>>>>>>>>> @@ -726,6 +732,11 @@ static void virtio_vsock_remove(struct virtio_device *vdev)
+>>>>>>>>>       	/* Delete virtqueues and flush outstanding callbacks if any */
+>>>>>>>>>       	vdev->config->del_vqs(vdev);
+>>>>>>>>> +	/* Other works can be queued before 'config->del_vqs()', so we flush
+>>>>>>>>> +	 * all works before to free the vsock object to avoid use after free.
+>>>>>>>>> +	 */
+>>>>>>>>> +	virtio_vsock_flush_works(vsock);
+>>>>>>>> Some questions after a quick glance:
+>>>>>>>>
+>>>>>>>> 1) It looks to me that the work could be queued from the path of
+>>>>>>>> vsock_transport_cancel_pkt() . Is that synchronized here?
+>>>>>>>>
+>>>>>>> Both virtio_transport_send_pkt() and vsock_transport_cancel_pkt() can
+>>>>>>> queue work from the upper layer (socket).
+>>>>>>>
+>>>>>>> Setting the_virtio_vsock to NULL, should synchronize, but after a careful look
+>>>>>>> a rare issue could happen:
+>>>>>>> we are setting the_virtio_vsock to NULL at the start of .remove() and we
+>>>>>>> are freeing the object pointed by it at the end of .remove(), so
+>>>>>>> virtio_transport_send_pkt() or vsock_transport_cancel_pkt() may still be
+>>>>>>> running, accessing the object that we are freed.
+>>>>>> Yes, that's my point.
+>>>>>>
+>>>>>>
+>>>>>>> Should I use something like RCU to prevent this issue?
+>>>>>>>
+>>>>>>>         virtio_transport_send_pkt() and vsock_transport_cancel_pkt()
+>>>>>>>         {
+>>>>>>>             rcu_read_lock();
+>>>>>>>             vsock = rcu_dereference(the_virtio_vsock_mutex);
+>>>>>> RCU is probably a way to go. (Like what vhost_transport_send_pkt() did).
+>>>>>>
+>>>>> Okay, I'm going this way.
+>>>>>
+>>>>>>>             ...
+>>>>>>>             rcu_read_unlock();
+>>>>>>>         }
+>>>>>>>
+>>>>>>>         virtio_vsock_remove()
+>>>>>>>         {
+>>>>>>>             rcu_assign_pointer(the_virtio_vsock_mutex, NULL);
+>>>>>>>             synchronize_rcu();
+>>>>>>>
+>>>>>>>             ...
+>>>>>>>
+>>>>>>>             free(vsock);
+>>>>>>>         }
+>>>>>>>
+>>>>>>> Could there be a better approach?
+>>>>>>>
+>>>>>>>
+>>>>>>>> 2) If we decide to flush after dev_vqs(), is tx_run/rx_run/event_run still
+>>>>>>>> needed? It looks to me we've already done except that we need flush rx_work
+>>>>>>>> in the end since send_pkt_work can requeue rx_work.
+>>>>>>> The main reason of tx_run/rx_run/event_run is to prevent that a worker
+>>>>>>> function is running while we are calling config->reset().
+>>>>>>>
+>>>>>>> E.g. if an interrupt comes between virtio_vsock_flush_works() and
+>>>>>>> config->reset(), it can queue new works that can access the device while
+>>>>>>> we are in config->reset().
+>>>>>>>
+>>>>>>> IMHO they are still needed.
+>>>>>>>
+>>>>>>> What do you think?
+>>>>>> I mean could we simply do flush after reset once and without tx_rx/rx_run
+>>>>>> tricks?
+>>>>>>
+>>>>>> rest();
+>>>>>>
+>>>>>> virtio_vsock_flush_work();
+>>>>>>
+>>>>>> virtio_vsock_free_buf();
+>>>>> My only doubt is:
+>>>>> is it safe to call config->reset() while a worker function could access
+>>>>> the device?
+>>>>>
+>>>>> I had this doubt reading the Michael's advice[1] and looking at
+>>>>> virtnet_remove() where there are these lines before the config->reset():
+>>>>>
+>>>>> 	/* Make sure no work handler is accessing the device. */
+>>>>> 	flush_work(&vi->config_work);
+>>>>>
+>>>>> Thanks,
+>>>>> Stefano
+>>>>>
+>>>>> [1] https://lore.kernel.org/netdev/20190521055650-mutt-send-email-mst@kernel.org
+>>>> Good point. Then I agree with you. But if we can use the RCU to detect the
+>>>> detach of device from socket for these, it would be even better.
+>>>>
+>>> What about checking 'the_virtio_vsock' in the worker functions in a RCU
+>>> critical section?
+>>> In this way, I can remove the rx_run/tx_run/event_run.
+>>>
+>>> Do you think it's cleaner?
+>>
+>> Yes, I think so.
+>>
+> Hi Jason,
+> while I was trying to use RCU also for workers, I discovered that it can
+> not be used if we can sleep. (Workers have mutex, memory allocation, etc.).
+> There is SRCU, but I think the rx_run/tx_run/event_run is cleaner.
 >
-> The linux-next "tpm: Reserve the TPM final events table" [1] introduced
-> a compilation warning,
+> So, if you agree I'd send a v2 using RCU only for the
+> virtio_transport_send_pkt() or vsock_transport_cancel_pkt(), and leave
+> this patch as is to be sure that no one is accessing the device while we
+> call config->reset().
 >
-> drivers/firmware/efi/tpm.c: In function 'efi_tpm_eventlog_init':
-> drivers/firmware/efi/tpm.c:80:10: warning: passing argument 1 of
-> 'tpm2_calc_event_log_size' makes pointer from integer without a cast
-> [-Wint-conversion]
->   tbl_size = tpm2_calc_event_log_size(efi.tpm_final_log
-> drivers/firmware/efi/tpm.c:19:43: note: expected 'void *' but argument
-> is of type 'long unsigned int'
->
-> Fix it by making a necessary cast for the argument 1 of
-> tpm2_calc_event_log_size().
->
-> [1] https://lore.kernel.org/linux-efi/20190520205501.177637-3-matthewgarrett@google.com/
->
-> Signed-off-by: Qian Cai <cai@lca.pw>
+> Thanks,
+> Stefano
 
-I see the same build warning, but I don't think adding a cast here
-solves the problem:
 
-- efi.tpm_final_log is a physical address that gets passed into
-  memremap() to return a pointer
-- tpm2_calc_event_log_size() takes a pointer argument and
-  dereferences it.
+If it work, I don't object to use that consider it was suggested by 
+Michael. You can go this way and let's see.
 
-My best guess is that we should pass the output of memremap()
-here rather than the input:
+Personally I would like something more cleaner. E.g RCU + some kind of 
+reference count (kref?).
 
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -75,7 +75,7 @@ int __init efi_tpm_eventlog_init(void)
-                goto out;
-        }
+Thanks
 
--       tbl_size = tpm2_calc_event_log_size(efi.tpm_final_log
-+       tbl_size = tpm2_calc_event_log_size(final_tbl
-                                            + sizeof(final_tbl->version)
-                                            + sizeof(final_tbl->nr_events),
-                                            final_tbl->nr_events,
-
-No idea if that is actually what was intended here, but it makes
-the code look more plausible.
-
-        Arnd
