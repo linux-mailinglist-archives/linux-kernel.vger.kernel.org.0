@@ -2,101 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DCF143EEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF83443EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbfFMPxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:53:50 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:39147 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731595AbfFMI52 (ORCPT
+        id S1732233AbfFMPxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:53:42 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37646 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731599AbfFMI7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:57:28 -0400
-Received: by mail-wm1-f47.google.com with SMTP id z23so9215603wma.4;
-        Thu, 13 Jun 2019 01:57:27 -0700 (PDT)
+        Thu, 13 Jun 2019 04:59:55 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 186so8033922ywo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 01:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iTc7pkQE7oYIi5Tpm8V4ZpSzYMCgq4jwm9PdqCuT8KQ=;
-        b=bF0VHOhiXklHX7toUG8Z6iKgvhfsMkGA7P/ETJzRztQ/j4qWN3iWThkhFG/qeJ0EPI
-         oEYadE5A+YmD7M54wbT98jsXnhiyWer7EsFpP2IhyFEz64p97i0QisADuCWABntzcmcB
-         tiX5bWPPtxkAqboy5hoNYCQyuo8MYW59KS+ij4As20TJtQoLKXPxGaeG6fwawMG3a0sQ
-         7wbkdG70X/OUpSctSZVfWGYA64YquU3pJTw6IYCB9aYWzGl33ug5V9CpHebckq4T7SLV
-         erV7TGs6pQl9qb8Hlj44CORUO35HHLbqroxTr0s249qYEruEH96rGmiyYIYOlXnY+KSi
-         Zrvw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2+9AWuuxtYq5kDObExhhjKauucpmi9PpKTbQpENwdxw=;
+        b=n6tXgtU9jyCYIoEnopcXb3kvdH3pJPnNaZUgr1h0kYuBqfuVkDfZdhDI0C+M0DShsJ
+         mtpEej7Q7tu2iYouCZdzXTxI9G/6f7S/D8RS8ub9Y5Fyp2eQGzED8xB15X7TvNMjjUTW
+         2WGPWrOH5drqi1Z2nq9jnoeSfhd24IPTN8FDU+Uf4oEDF8jDbTxUAr6k2/pklQYA/cgJ
+         Wo718mB+1Nr1bhMm4baOFs4Ehv107XvmCkzvWQjVfsUwC0xLmmNsTroDwDjM11k8XWe0
+         orlt9dkGJM1m0c/rfBdcQ4mRYIWRKdFar+ydaHnVVN+wHBJVJj+UaZCVtw109orLDmEP
+         MYAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iTc7pkQE7oYIi5Tpm8V4ZpSzYMCgq4jwm9PdqCuT8KQ=;
-        b=WDd9hkvHcX89H1Boumx6P2AcY72mC3ne4R4gyBeZIak+/cTy6vyA2AQ9plMoG5dqwW
-         Y1jK/dAjclNTmZgoRcgEeiY5RRAJLJvM/bH7YtrepKaGhOD3ZxK6pJBgdYr5Wh6kJiPc
-         6xW4N3+kNS1/w7V51nRBzlTU7mjEbh6kqHuLQSZbdr1z5qLpt2x4ceuvYAomQxe4EBGR
-         hnbqXJbDF51r5TOHldvX8k8xjNLjz4oojtuLX1rxCKtRu3blqXYY+VRFcIb0g+Hpwn8F
-         9SU7R1Y3qWNIac+v8gY2srz40wu+u8qT1b4MCvI44JpRvQ2oXh0GLeJRSXZ+VUj5N82v
-         1eqg==
-X-Gm-Message-State: APjAAAWFArgJg71qeZXyFy4we6HN7ur4bkaSzUEK1wGkcEaCNFtdZztb
-        fessBUFLysCAXtnscIhhom4=
-X-Google-Smtp-Source: APXvYqxfKZPFzSQgRbvPc2K4axpRnhCZmruX7sKl8YaXA22qKpUpYCZQPxVeOfMECWNTuV9EPe/+Og==
-X-Received: by 2002:a1c:448b:: with SMTP id r133mr2854522wma.114.1560416246274;
-        Thu, 13 Jun 2019 01:57:26 -0700 (PDT)
-Received: from gmail.com (net-37-119-6-250.cust.vodafonedsl.it. [37.119.6.250])
-        by smtp.gmail.com with ESMTPSA id x129sm2689276wmg.44.2019.06.13.01.57.25
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2+9AWuuxtYq5kDObExhhjKauucpmi9PpKTbQpENwdxw=;
+        b=QYuVacUMCsYmpg8zzBx4U1R+IJCBN277ju0hweVi7jmXuyoj7ouHR8d8GYyH7njmDv
+         LDwNHzk6Byhy+Q3vadEipylS/whRHRkritO+8sXr74+JMQSDVgbiMWwKBB7U9ZDiKHNg
+         o/Ty7X53t+Jdn4guxkSzMK5AdeeAIt2bQzxjnxm2q8PIdCqO5jEEl39b2TbAV91rLbQ9
+         SUWzOciQKF8SqbigJLXSrTiL2xfoLIaJ25OV1IPw1VwCY4x1Na2NBQ1eMJPh8gLDiJS+
+         0momDEewcBslAU7qMxu6hG8Z6y3sfVehZm33Ee58xjRnbqU5zFuHv79vc+5pCUye5IyP
+         JInQ==
+X-Gm-Message-State: APjAAAX0+XshHRlFVdK4/LnRWsxn8oUcJLp9qLMZ73GyIL0JVpC5WLO2
+        zWPYtyQ45CapzcZosjcGerQs7A==
+X-Google-Smtp-Source: APXvYqxCEx653iUhqyan6kGQNPIR/w4+osLNDQGaSLrv8KI2gz87AEfJHMcrWUO3XewvyXWR1KK79g==
+X-Received: by 2002:a81:3494:: with SMTP id b142mr19026909ywa.79.1560416394346;
+        Thu, 13 Jun 2019 01:59:54 -0700 (PDT)
+Received: from [172.20.10.3] (mobile-166-172-57-221.mycingular.net. [166.172.57.221])
+        by smtp.gmail.com with ESMTPSA id l5sm574202ywf.11.2019.06.13.01.59.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 01:57:25 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:57:25 +0200
-From:   Paolo Pisati <p.pisati@gmail.com>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Paolo Pisati <p.pisati@gmail.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: msm8996: qcom-qmp: apq8096-db820c fails to boot, reset back to
- fastboot and locks up
-Message-ID: <20190613085725.GA11403@harukaze>
-References: <20190610134401.GA12964@harukaze>
- <20190611171225.GA21992@centauri.ideon.se>
- <20190612131735.GB11167@centauri>
- <20190612140911.GA16863@harukaze>
- <20190612162048.GA30551@centauri>
+        Thu, 13 Jun 2019 01:59:53 -0700 (PDT)
+Subject: Re: [PATCH] block/switching-sched.txt: Update to blk-mq schedulers
+To:     Andreas Herrmann <aherrmann@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <20190612065009.GA11361@suselix>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a781a669-85ec-6df1-a18d-6d329b2f5ff6@kernel.dk>
+Date:   Thu, 13 Jun 2019 02:59:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612162048.GA30551@centauri>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190612065009.GA11361@suselix>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 06:20:48PM +0200, Niklas Cassel wrote:
+On 6/12/19 12:50 AM, Andreas Herrmann wrote:
 > 
-> Can you still reproduce the reboot?
+> Remove references to CFQ and legacy block layer which are gone.
+> Update example with what's available under blk-mq.
 
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -447,12 +447,12 @@
-                        };
- 
-                        pcie@608000 {
--                               status = "okay";
-+                               status = "disabled";
-                                perst-gpio = <&msmgpio 130 GPIO_ACTIVE_LOW>;
-                        };
- 
-                        pcie@610000 {
--                               status = "okay";
-+                               status = "disabled";
-                                perst-gpio = <&msmgpio 114 GPIO_ACTIVE_LOW>;
-                        };
-                };
+Applied, thanks.
 
-disabling the two other pci controllers (and leaving your previous patch
-applied), made the issue more frequent: i was never able to boot to user space
-three times in a row without experiencing a crash, previously it was more
-sporadic.
-
-On the other hand, now i can reproduce the issue more easily this way.
 -- 
-bye,
-p.
+Jens Axboe
+
