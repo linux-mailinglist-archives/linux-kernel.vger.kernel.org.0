@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91EE54449C
+	by mail.lfdr.de (Postfix) with ESMTP id 289A04449B
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392696AbfFMQhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:37:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41588 "EHLO
+        id S2392687AbfFMQhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:37:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41922 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730622AbfFMHKF (ORCPT
+        with ESMTP id S1730625AbfFMHKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:10:05 -0400
+        Thu, 13 Jun 2019 03:10:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3rmB9mZtF5v1vdin9NeTCejCyapH4H0eIkkGVnBNw6E=; b=cirzpiK4G5e+jr8gW5t+hWpapy
-        iAxTWKRolwqWwcJpN8nTm+SVI94jhE4/O3lF4D3M7CtoCgFJPq48GmcM17OopXqktTzAyQwSME9sI
-        w1SU4LIjwOku5tA+SCxb73hPZTvipgnbEuOumSNUjZBruFQneSGMXoTZdnyhHgIO7wNL3SA1HsJSh
-        xIgK8GmmRHkKUBT+UI6kxmM55LELuEZDNBbVVPJhK5E6quXnPypS/QEwrLWmaGCxgVrtnCCpR/L6u
-        9Q2tMOqVdAMmDEaeq5xXtBTOvVVAXdWn3IIfxAF2HzG4whA8F3djTxqWQ14HHSB/4ZHZv9dbsWFjS
-        rJHmdR/Q==;
+        bh=zrvKpljxrRXoMw3me5BR8AhqFJrBrP/RLB7FSk6JjTg=; b=sym0TmWILor5t14LMyRnRqvkg0
+        EOM5U4fBRbAa0sCPMtQ8ondzb4A68BVEImqRwMpoyI7tlXAKyHWV9CS8ErDRu7VWWa44KABjarLVb
+        VgqTswe7YRcNNyOeDe2IqZcFoRCNaiFQAuVnv1UlipmjTa3S4bZrtHUN4r4kgo0wdhn/oxozXDYay
+        ZTZpyhoPoVnxMUEWo6bbYN5gOkyVrsZM/6ToihFSA/GsfP9iGX8eW2cC8KZGn4tTBMUz3KVZm6Wcx
+        hl6UrDUinSCN0VsCzOGZZw7eXTSdocwgC0nh+6qPuC9EQgUJsuXWFFLvAuBkTi2uwXC7J8+CWk5NK
+        SZYOIDZw==;
 Received: from mpp-cp1-natpool-1-013.ethz.ch ([82.130.71.13] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbJry-0004XS-49; Thu, 13 Jun 2019 07:09:58 +0000
+        id 1hbJs1-0004Zl-6O; Thu, 13 Jun 2019 07:10:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Greg Ungerer <gerg@linux-m68k.org>
 Cc:     Michal Simek <monstr@monstr.eu>,
@@ -35,9 +35,9 @@ Cc:     Michal Simek <monstr@monstr.eu>,
         linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
         linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 16/17] binfmt_flat: don't offset the data start
-Date:   Thu, 13 Jun 2019 09:09:02 +0200
-Message-Id: <20190613070903.17214-17-hch@lst.de>
+Subject: [PATCH 17/17] riscv: add binfmt_flat support
+Date:   Thu, 13 Jun 2019 09:09:03 +0200
+Message-Id: <20190613070903.17214-18-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190613070903.17214-1-hch@lst.de>
 References: <20190613070903.17214-1-hch@lst.de>
@@ -49,84 +49,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ever since the initial commit of the binfmt_flat shared library
-support back in the bitkeeper days we've offset the actual in-memory
-.data start by one field per possible shared library, or 1 in case
-shared library support isn't enabled.  I can't find anything in the
-loader that actually makes use of it, nor was it present before
-shared library support it.
+Just use the generic definitions.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/binfmt_flat.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ arch/riscv/Kconfig            | 1 +
+ arch/riscv/include/asm/Kbuild | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index ccd9843e979e..80d902fb46e3 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -573,7 +573,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 			goto err;
- 		}
- 
--		len = data_len + extra + MAX_SHARED_LIBS * sizeof(unsigned long);
-+		len = data_len + extra;
- 		len = PAGE_ALIGN(len);
- 		realdatastart = vm_mmap(NULL, 0, len,
- 			PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE, 0);
-@@ -587,9 +587,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 			vm_munmap(textpos, text_len);
- 			goto err;
- 		}
--		datapos = ALIGN(realdatastart +
--				MAX_SHARED_LIBS * sizeof(unsigned long),
--				FLAT_DATA_ALIGN);
-+		datapos = ALIGN(realdatastart, FLAT_DATA_ALIGN);
- 
- 		pr_debug("Allocated data+bss+stack (%u bytes): %lx\n",
- 			 data_len + bss_len + stack_len, datapos);
-@@ -619,7 +617,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 		memp_size = len;
- 	} else {
- 
--		len = text_len + data_len + extra + MAX_SHARED_LIBS * sizeof(u32);
-+		len = text_len + data_len + extra;
- 		len = PAGE_ALIGN(len);
- 		textpos = vm_mmap(NULL, 0, len,
- 			PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE, 0);
-@@ -634,9 +632,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 		}
- 
- 		realdatastart = textpos + ntohl(hdr->data_start);
--		datapos = ALIGN(realdatastart +
--				MAX_SHARED_LIBS * sizeof(u32),
--				FLAT_DATA_ALIGN);
-+		datapos = ALIGN(realdatastart, FLAT_DATA_ALIGN);
- 
- 		reloc = (__be32 __user *)
- 			(datapos + (ntohl(hdr->reloc_start) - text_len));
-@@ -653,8 +649,9 @@ static int load_flat_file(struct linux_binprm *bprm,
- 					 (text_len + full_data
- 						  - sizeof(struct flat_hdr)),
- 					 0);
--			memmove((void *) datapos, (void *) realdatastart,
--					full_data);
-+			if (datapos != realdatastart)
-+				memmove((void *)datapos, (void *)realdatastart,
-+						full_data);
- #else
- 			/*
- 			 * This is used on MMU systems mainly for testing.
-@@ -710,8 +707,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 		if (IS_ERR_VALUE(result)) {
- 			ret = result;
- 			pr_err("Unable to read code+data+bss, errno %d\n", ret);
--			vm_munmap(textpos, text_len + data_len + extra +
--				MAX_SHARED_LIBS * sizeof(u32));
-+			vm_munmap(textpos, text_len + data_len + extra);
- 			goto err;
- 		}
- 	}
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0c4b12205632..2c19baa8d6c3 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -17,6 +17,7 @@ config RISCV
+ 	select OF
+ 	select OF_EARLY_FLATTREE
+ 	select OF_IRQ
++	select ARCH_HAS_BINFMT_FLAT
+ 	select ARCH_WANT_FRAME_POINTERS
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
+diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+index 5ee646619cc3..1efaeddf1e4b 100644
+--- a/arch/riscv/include/asm/Kbuild
++++ b/arch/riscv/include/asm/Kbuild
+@@ -5,6 +5,7 @@ generic-y += compat.h
+ generic-y += device.h
+ generic-y += div64.h
+ generic-y += extable.h
++generic-y += flat.h
+ generic-y += dma.h
+ generic-y += dma-contiguous.h
+ generic-y += dma-mapping.h
 -- 
 2.20.1
 
