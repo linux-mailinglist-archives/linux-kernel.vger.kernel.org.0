@@ -2,57 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C387E444E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FAAC444ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392779AbfFMQkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:40:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43160 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730579AbfFMG72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:59:28 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 02FF22EED3A;
-        Thu, 13 Jun 2019 06:59:28 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-33.ams2.redhat.com [10.36.116.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D16E17257;
-        Thu, 13 Jun 2019 06:59:27 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 0322011AB8; Thu, 13 Jun 2019 08:59:26 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 08:59:25 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     davidriley@chromium.org
-Cc:     dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] drm/virtio: Add memory barriers for capset cache.
-Message-ID: <20190613065925.c6c546uyp3n3nqk5@sirius.home.kraxel.org>
-References: <20190605234423.11348-1-davidriley@chromium.org>
- <20190610211810.253227-5-davidriley@chromium.org>
+        id S2392773AbfFMQkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:40:15 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:47408 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730584AbfFMHCT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:02:19 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D6xg5w034858;
+        Thu, 13 Jun 2019 07:02:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=GWkzr3jkawX0jlNx+2BVZb+IG8NfTmELRDy+IBSm2Yg=;
+ b=qKMfWdTBqcBExZ9df8xxGPR6kh7zC1F7ttzJhfJV98th/Vh7U+7vbspfNgXBK7CHxVDA
+ KwcEZwPvA2973aDyk6NA/7Ztc7bIK2qOxUGr1owLoXQQeonDQ9/7mF5PYgcRnQfXI8+6
+ XMg1L8Ma15aY7mfB+brALCksWH1vIaD2Tp5k9k9yAFEYIbqVxYa5T/mG9PYwV2MVKLQm
+ Rw6U9MU+je4/cTMzk4JgOCurZsQzQHq/CgiBMNoUbGy3imBa2Dpf4Si3sVIyTRqh1GJk
+ mG3cUPGc33fOv6w3IvbT3RXt7m9/2LgFb61jQKDzL7KT5sj7gIX6xEmzNXeJjBRQut0p Ww== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 2t02heysv7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 07:02:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D72C0o020953;
+        Thu, 13 Jun 2019 07:02:13 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2t0p9s8b3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jun 2019 07:02:13 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5D728mi015951;
+        Thu, 13 Jun 2019 07:02:09 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Jun 2019 00:02:08 -0700
+Date:   Thu, 13 Jun 2019 10:02:01 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Krzysztof Halasa <khalasa@piap.pl>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] soc: ixp4xx: npe: Fix an IS_ERR() vs NULL check in probe
+Message-ID: <20190613070201.GH16334@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610211810.253227-5-davidriley@chromium.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 13 Jun 2019 06:59:28 +0000 (UTC)
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906130056
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906130056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 02:18:10PM -0700, davidriley@chromium.org wrote:
-> From: David Riley <davidriley@chromium.org>
-> 
-> After data is copied to the cache entry, atomic_set is used indicate
-> that the data is the entry is valid without appropriate memory barriers.
-> Similarly the read side was missing the corresponding memory barriers.
+The devm_ioremap_resource() function doesn't return NULL, it returns
+error pointers.
 
-All pushed to drm-misc-next
+Fixes: 0b458d7b10f8 ("soc: ixp4xx: npe: Pass addresses as resources")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/soc/ixp4xx/ixp4xx-npe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-thanks,
-  Gerd
+diff --git a/drivers/soc/ixp4xx/ixp4xx-npe.c b/drivers/soc/ixp4xx/ixp4xx-npe.c
+index bc10e3194809..ec90b44fa0cd 100644
+--- a/drivers/soc/ixp4xx/ixp4xx-npe.c
++++ b/drivers/soc/ixp4xx/ixp4xx-npe.c
+@@ -695,8 +695,8 @@ static int ixp4xx_npe_probe(struct platform_device *pdev)
+ 			continue; /* NPE already disabled or not present */
+ 		}
+ 		npe->regs = devm_ioremap_resource(dev, res);
+-		if (!npe->regs)
+-			return -ENOMEM;
++		if (IS_ERR(npe->regs))
++			return PTR_ERR(npe->regs);
+ 
+ 		if (npe_reset(npe)) {
+ 			dev_info(dev, "NPE%d at 0x%08x-0x%08x does not reset\n",
+-- 
+2.20.1
 
