@@ -2,91 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 894EC44334
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97EEF4433B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392444AbfFMQ1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:27:43 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34148 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392430AbfFMQ1j (ORCPT
+        id S2391994AbfFMQ14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:27:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54928 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727271AbfFMQ1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:27:39 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p10so5393151pgn.1;
-        Thu, 13 Jun 2019 09:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/p2hCYDhKAJ230l1zBzHnYZFs3VHjVr39XvOIKP4Pys=;
-        b=VEgX2ZhFSzG3BImEi4GH9MUQbh4LnQqPx0JppfXi7XYfJJvmRAB0Db/QKVQQl8qM10
-         SoKlDlc0SaxSrTEDHUtMYjOT11a0Lj5yq8ULKEndaWGWOkhNMNutP6XCaT2Ffliy6EBJ
-         5jQ1g8Pajofj88UF7QvL1nK1FAEH7NLyg8e9QWEleD0lUPmjBavBQJY0q78qlAGQNurb
-         9dqruWp+dSmlVS3sT1CIfM6Oi8H7XanvMOQZ6mbabOL0lGwx8q36/3mrMkLEV/gxHbiY
-         un+NlmZxMI15zJRk9HnXmJzI1lKBdlQNldk07QrTBkVVnjybOiiPxyeHYi4kTRL37lCi
-         W8Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/p2hCYDhKAJ230l1zBzHnYZFs3VHjVr39XvOIKP4Pys=;
-        b=NKMOJcaVEUub4AvHrFKYwFxs4FwR0Uh14RexbRah3VpPgD/jjgkt/mL1rid33YZgZO
-         2rbG/5i6PSjCzACUkk8L/GLPKGKWM/HgNVwkuUTL/759bOu6JwMYpJBS1zidvR7bX/VT
-         oaWNk5rsSIVeaXUcDzgGSo2UXptjzZWCQmkhA24r3ER0BJSx1hL7NSBLrb3fNiIPo4VM
-         ylS7wV74UMe1lFd82mxNBCAiRvqzB+hJLQfHeApt/BqKARSdfp24F0dYgOTC7vmWzb2x
-         ipoP9fz14n8Yk+Pfhp/Ay14diHKAYkweZfN6DOVfa5ld8QCZYWoOXcLH4DLtxqHanTv2
-         mixw==
-X-Gm-Message-State: APjAAAWJ3w9+Cu6cHqNy3BuM6MESL0zI/UZKxKovOUVBsn0lpkw50QdP
-        iqarV90mec1XvhhzjfpbM0E=
-X-Google-Smtp-Source: APXvYqwn2Bb5s9dHHXGu4kP/PrmweWqq9r8gaJuQTaAylLqdC9JMoO2D+zXiDQevAsqwN3NWgk6q+A==
-X-Received: by 2002:a65:60d2:: with SMTP id r18mr31309788pgv.217.1560443259298;
-        Thu, 13 Jun 2019 09:27:39 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id j2sm310930pgq.13.2019.06.13.09.27.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 09:27:38 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     joro@8bytes.org, m.szyprowski@samsung.com, kgene@kernel.org,
-        krzk@kernel.org, will.deacon@arm.com, robin.murphy@arm.com,
-        agross@kernel.org, david.brown@linaro.org, robdclark@gmail.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Thu, 13 Jun 2019 12:27:54 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 2E34F27D7A1
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     devicetree@vger.kernel.org
+Cc:     Collabora Kernel ML <kernel@collabora.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 10/10] iommu/tegra-smmu: convert to SPDX license tags
-Date:   Thu, 13 Jun 2019 12:27:03 -0400
-Message-Id: <20190613162703.986-10-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190613162703.986-1-tiny.windzz@gmail.com>
-References: <20190613162703.986-1-tiny.windzz@gmail.com>
+        Vicente Bergas <vicencb@gmail.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
+        Randy Li <ayaka@soulik.info>,
+        Tony Xie <tony.xie@rock-chips.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: [PATCH] arm64: dts: rockchip: Update DWC3 modules on RK3399 SoCs
+Date:   Thu, 13 Jun 2019 18:27:45 +0200
+Message-Id: <20190613162745.12195-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updates license to use SPDX-License-Identifier.
+As per binding documentation [1], the DWC3 core should have the "ref",
+"bus_early" and "suspend" clocks. As explained in the binding, those
+clocks are required for new platforms but not for existing platforms
+before commit fe8abf332b8f ("usb: dwc3: support clocks and resets for
+DWC3 core").
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+However, as those clocks are really treated as required, this ends with
+having some annoying messages when the "rockchip,rk3399-dwc3" is used:
+
+[    1.724107] dwc3 fe800000.dwc3: Failed to get clk 'ref': -2
+[    1.731893] dwc3 fe900000.dwc3: Failed to get clk 'ref': -2
+[    2.495937] dwc3 fe800000.dwc3: Failed to get clk 'ref': -2
+[    2.647239] dwc3 fe900000.dwc3: Failed to get clk 'ref': -2
+
+In order to remove those annoying messages, update the DWC3 hardware
+module node and add all the required clocks. With this change, both, the
+glue node and the DWC3 core node, have the clocks defined, but that's
+not really a problem and there isn't a side effect on do this. So, we
+can get rid of the annoying get clk error messages.
+
+[1] Documentation/devicetree/bindings/usb/dwc3.txt
+
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- drivers/iommu/tegra-smmu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 463ee08f7d3a..9a50ca4ec65c 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -1,9 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2011-2014 NVIDIA CORPORATION.  All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/bitops.h>
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index 196ac9b78076..a15348d185ce 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -414,6 +414,9 @@
+ 			compatible = "snps,dwc3";
+ 			reg = <0x0 0xfe800000 0x0 0x100000>;
+ 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH 0>;
++			clocks = <&cru SCLK_USB3OTG0_REF>, <&cru ACLK_USB3OTG0>,
++				 <&cru SCLK_USB3OTG0_SUSPEND>;
++			clock-names = "ref", "bus_early", "suspend";
+ 			dr_mode = "otg";
+ 			phys = <&u2phy0_otg>, <&tcphy0_usb3>;
+ 			phy-names = "usb2-phy", "usb3-phy";
+@@ -447,6 +450,9 @@
+ 			compatible = "snps,dwc3";
+ 			reg = <0x0 0xfe900000 0x0 0x100000>;
+ 			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH 0>;
++			clocks = <&cru SCLK_USB3OTG1_REF>, <&cru ACLK_USB3OTG1>,
++				 <&cru SCLK_USB3OTG1_SUSPEND>;
++			clock-names = "ref", "bus_early", "suspend";
+ 			dr_mode = "otg";
+ 			phys = <&u2phy1_otg>, <&tcphy1_usb3>;
+ 			phy-names = "usb2-phy", "usb3-phy";
 -- 
-2.17.0
+2.20.1
 
