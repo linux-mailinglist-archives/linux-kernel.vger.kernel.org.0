@@ -2,93 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2EE843A06
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E1C9439F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:17:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfFMPSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:18:01 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46175 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732170AbfFMNPC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:15:02 -0400
-Received: by mail-lf1-f67.google.com with SMTP id z15so12349747lfh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 06:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IMHi2S1lxrVF5OO8+rdxLqeH/S1duFekzw5Tc0Z2mvY=;
-        b=N4m03+pCMbu9cIv2a7fZuxt+riwezXCHBQP6t+cS21Wl5evRWUUURynTOleWnNYOkE
-         dFh5/zk0/W1w5gUkw7QNUWfnuIG3VFrTzVuighoe0AliaSo/dojrdQiIGzIh4e8gMmA+
-         q1svNoPQueufLPULap69GDUh55Tvk1tsO7+7yDzwUyFvZ0zuUCdw8FPXPzWlBvDypzyB
-         3mHRZQ0gfA06yeWGWX4/6ki5lBx4ckZWjJuATAz5D5bIf+R3SwP1XZSGztwOoZYBjQNf
-         lpWTthgmzLzVSEtDx3Zq73HzFBYtyVhmgtqZm0Q2b5h3a4TUHyaEVthAjKaqv1QIt0iX
-         JG2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IMHi2S1lxrVF5OO8+rdxLqeH/S1duFekzw5Tc0Z2mvY=;
-        b=ORqO/TcyHY+MgKdyTg8R0d8alTnOej8vrhstS5vR07336l2OCdVOM1VDtGgOknjeT3
-         T754O/w3YJD2WNzR1MIcFFEq+c//AZphokOuV+bFiI0otn9GXClnutrEmDEVq9doaVny
-         WPMnhLXcseySrRba77i7DagOa9OF57ErYNIxnji5PDVSC/yQsZl+he6z9GmeY+a7ATIm
-         uEZ4RiEXb59hXu3YTWHeMO9hpRz/TQzCbNsinPDiB+xrVuJcCwiZGIZ/tTw2N/M2uJ7T
-         WC7SEMlJUJEcCU0lOwCCNWXxyaYf82bKBaO/SDH+OX9GlzdhIE9qYg1fhgcgwK7K30oD
-         c9HA==
-X-Gm-Message-State: APjAAAVcczv2AmkucacxIpdg3MAqWt9z3ujDrYy+7kbcqGqbtM+8WdzH
-        qoXXYyC60HXQTGpetpKZ49glOmiiT1V/2A==
-X-Google-Smtp-Source: APXvYqyUnN8Ootc1IkCIbrd0u7tOoLVkGMuoyGHMwUuFSr18enQTcXeLot9OSgv0O7hjR40xj2oipA==
-X-Received: by 2002:ac2:5212:: with SMTP id a18mr38106861lfl.50.1560431699446;
-        Thu, 13 Jun 2019 06:14:59 -0700 (PDT)
-Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id q4sm124563lje.99.2019.06.13.06.14.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 06:14:58 -0700 (PDT)
-From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-Subject: [PATCH] staging: kpc2000: remove dead code in core.c
-Date:   Thu, 13 Jun 2019 15:14:51 +0200
-Message-Id: <20190613131451.21661-1-simon@nikanor.nu>
-X-Mailer: git-send-email 2.20.1
+        id S1733053AbfFMPRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:17:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51928 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732175AbfFMNPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:15:45 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 65491305E244;
+        Thu, 13 Jun 2019 13:15:45 +0000 (UTC)
+Received: from [10.10.120.121] (ovpn-120-121.rdu2.redhat.com [10.10.120.121])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D9B8F1001B04;
+        Thu, 13 Jun 2019 13:15:44 +0000 (UTC)
+Subject: Re: [PATCH v4 00/10] klp-convert livepatch build tooling
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+References: <20190509143859.9050-1-joe.lawrence@redhat.com>
+ <alpine.LSU.2.21.1906131451560.22698@pobox.suse.cz>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <b1a627a4-3702-9689-6c03-0c2123c06a2d@redhat.com>
+Date:   Thu, 13 Jun 2019 09:15:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LSU.2.21.1906131451560.22698@pobox.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Jun 2019 13:15:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes checkpatch warning: "Consider removing the code enclosed by
-this #if 0 and its #endif".
+On 6/13/19 9:00 AM, Miroslav Benes wrote:
+> Hi Joe,
+> 
+> first, I'm sorry for the lack of response so far.
+> 
+> Maybe you've already noticed but the selftests fail. Well, at least in
+> my VM. When test_klp_convert1.ko is loaded, the process is killed with
+> 
+> [  518.041826] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> [  518.042816] #PF: supervisor read access in kernel mode
+> [  518.043393] #PF: error_code(0x0000) - not-present page
+> [  518.043981] PGD 0 P4D 0
+> [  518.044185] Oops: 0000 [#1] SMP PTI
+> [  518.044518] CPU: 2 PID: 2255 Comm: insmod Tainted: G           O  K   5.1.0-klp_convert_v4-193435-g67748576637e #2
+> [  518.045784] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
+> [  518.046940] RIP: 0010:test_klp_convert_init+0x1c/0x40 [test_klp_convert1]
+> [  518.047611] Code: 1b a0 48 89 c6 e9 a8 c0 f4 e0 0f 1f 40 00 0f 1f 44 00 00 53 48 c7 c7 00 30 1b a0 e8 5e 33 f6 e0 85 c0 89 c3 74 04 89 d8 5b c3 <48> 8b 35 5d ef e4 5f 48 c7 c7 28 20 1b a0 e8 75 c0 f4 e0 e8 6c ff
+> [  518.049779] RSP: 0018:ffffc90000f37cc8 EFLAGS: 00010246
+> [  518.050243] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000027de0
+> [  518.050922] RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff88807ab54f40
+> [  518.051619] RBP: ffffffffa01b1080 R08: 0000000096efde7a R09: 0000000000000001
+> [  518.052332] R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffff
+> [  518.053012] R13: 0000000000000000 R14: ffff888078b55000 R15: ffffc90000f37ea0
+> [  518.053714] FS:  00007febece1fb80(0000) GS:ffff88807d400000(0000) knlGS:0000000000000000
+> [  518.054514] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  518.055078] CR2: 0000000000000000 CR3: 000000007a56a000 CR4: 00000000000006e0
+> [  518.055818] Call Trace:
+> [  518.056007]  do_one_initcall+0x6a/0x2da
+> [  518.056340]  ? do_init_module+0x22/0x230
+> [  518.056702]  ? rcu_read_lock_sched_held+0x96/0xa0
+> [  518.057125]  ? kmem_cache_alloc_trace+0x284/0x2e0
+> [  518.057493]  do_init_module+0x5a/0x230
+> [  518.057900]  load_module+0x17bc/0x1f50
+> [  518.058214]  ? __symbol_put+0x40/0x40
+> [  518.058499]  ? vfs_read+0x12d/0x160
+> [  518.058766]  __do_sys_finit_module+0x83/0xc0
+> [  518.059122]  do_syscall_64+0x57/0x190
+> [  518.059407]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> ...
+> 
+> It crashes right in test_klp_convert_init() when print_*() using
+> supposed-to-be-converted symbols are called. I'll debug it next week. Can
+> you reproduce it too?
 
-Signed-off-by: Simon Sandström <simon@nikanor.nu>
----
- drivers/staging/kpc2000/kpc2000/core.c | 6 ------
- 1 file changed, 6 deletions(-)
+Hey, thanks for the report..
 
-diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
-index 6a5999e8ff4e..610ea549d240 100644
---- a/drivers/staging/kpc2000/kpc2000/core.c
-+++ b/drivers/staging/kpc2000/kpc2000/core.c
-@@ -223,15 +223,9 @@ static void wait_and_read_ssid(struct kp2000_device *pcard)
- 
- 	dev_notice(&pcard->pdev->dev, "SSID didn't show up!\n");
- 
--#if 0
--	// Timed out waiting for the SSID to show up, just use the DDNA instead?
--	read_val = readq(pcard->sysinfo_regs_base + REG_FPGA_DDNA);
--	pcard->ssid = read_val;
--#else
- 	// Timed out waiting for the SSID to show up, stick all zeros in the
- 	// value
- 	pcard->ssid = 0;
--#endif
- }
- 
- static int  read_system_regs(struct kp2000_device *pcard)
--- 
-2.20.1
+I don't recall the tests crashing, but I had put this patchset on the 
+side for a few weeks now.  I'll try to fire up a VM and see what happens 
+today.
 
+> Regards,
+> Miroslav
+> 
+> PS: it is probably not a coincidence that I come across selftests failures
+> right before I leave for a holiday...
+> 
+
+Are you volunteering to go on holidays for each patchset until all of 
+the selftests pass? :)
+
+-- Joe
