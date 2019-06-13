@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 810F443FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B81E44428F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390442AbfFMP70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
+        id S1732947AbfFMQXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:23:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731484AbfFMIto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:49:44 -0400
+        id S1731026AbfFMIhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:37:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F00A520851;
-        Thu, 13 Jun 2019 08:49:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F09BD2064A;
+        Thu, 13 Jun 2019 08:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415783;
-        bh=T2Sx5XbxKcUAUg3fm8CFdV0wp8WVisKIMwI4Io0kL08=;
+        s=default; t=1560415060;
+        bh=lLHyH9FgPjztw2NLsdFLkbTreI6zU16PHl8zia8TiL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DQ+KXzWFlB0LTHbHvNS3yYxkrFGqlbgozrgg9yFiIjKngF0bmGuqRD2+ZXnkqBRzP
-         KDUGWKfOCf5wVWbd83cTD3IpbleMpE1YFJf67duE7eBA3u/6EXAYSOJrF/uW9LLKPw
-         gCPv9xy300AAu9L9DrrmG5qMzEsiIopZQ0U/XsNE=
+        b=fdFO15DeiSr/OLw83g5Lp7P8C91hWi0rSC6CKQnyR17Tmuiej8ovdO27Ig2ygW3El
+         fRwdgYNpb3rexGOeZbRMXQGESohPYusV9v55aYGVJqm98zzRHd1Bdk5XfmXmJNseun
+         o9UibfPZXhJA5idnP4AoGhx/zMe1NQ53kTVy9Nfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Enrico Granata <egranata@chromium.org>,
-        Jett Rink <jettrink@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 096/155] platform/chrome: cros_ec_proto: check for NULL transfer function
+Subject: [PATCH 4.14 45/81] vfio: Fix WARNING "do not call blocking ops when !TASK_RUNNING"
 Date:   Thu, 13 Jun 2019 10:33:28 +0200
-Message-Id: <20190613075658.443668307@linuxfoundation.org>
+Message-Id: <20190613075652.609955264@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +44,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 94d4e7af14a1170e34cf082d92e4c02de9e9fb88 ]
+[ Upstream commit 41be3e2618174fdf3361e49e64f2bf530f40c6b0 ]
 
-As new transfer mechanisms are added to the EC codebase, they may
-not support v2 of the EC protocol.
+vfio_dev_present() which is the condition to
+wait_event_interruptible_timeout(), will call vfio_group_get_device
+and try to acquire the mutex group->device_lock.
 
-If the v3 initial handshake transfer fails, the kernel will try
-and call cmd_xfer as a fallback. If v2 is not supported, cmd_xfer
-will be NULL, and the code will end up causing a kernel panic.
+wait_event_interruptible_timeout() will set the state of the current
+task to TASK_INTERRUPTIBLE, before doing the condition check. This
+means that we will try to acquire the mutex while already in a
+sleeping state. The scheduler warns us by giving the following
+warning:
 
-Add a check for NULL before calling the transfer function, along
-with a helpful comment explaining how one might end up in this
-situation.
+[ 4050.264464] ------------[ cut here ]------------
+[ 4050.264508] do not call blocking ops when !TASK_RUNNING; state=1 set at [<00000000b33c00e2>] prepare_to_wait_event+0x14a/0x188
+[ 4050.264529] WARNING: CPU: 12 PID: 35924 at kernel/sched/core.c:6112 __might_sleep+0x76/0x90
+....
 
-Signed-off-by: Enrico Granata <egranata@chromium.org>
-Reviewed-by: Jett Rink <jettrink@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+ 4050.264756] Call Trace:
+[ 4050.264765] ([<000000000017bbaa>] __might_sleep+0x72/0x90)
+[ 4050.264774]  [<0000000000b97edc>] __mutex_lock+0x44/0x8c0
+[ 4050.264782]  [<0000000000b9878a>] mutex_lock_nested+0x32/0x40
+[ 4050.264793]  [<000003ff800d7abe>] vfio_group_get_device+0x36/0xa8 [vfio]
+[ 4050.264803]  [<000003ff800d87c0>] vfio_del_group_dev+0x238/0x378 [vfio]
+[ 4050.264813]  [<000003ff8015f67c>] mdev_remove+0x3c/0x68 [mdev]
+[ 4050.264825]  [<00000000008e01b0>] device_release_driver_internal+0x168/0x268
+[ 4050.264834]  [<00000000008de692>] bus_remove_device+0x162/0x190
+[ 4050.264843]  [<00000000008daf42>] device_del+0x1e2/0x368
+[ 4050.264851]  [<00000000008db12c>] device_unregister+0x64/0x88
+[ 4050.264862]  [<000003ff8015ed84>] mdev_device_remove+0xec/0x130 [mdev]
+[ 4050.264872]  [<000003ff8015f074>] remove_store+0x6c/0xa8 [mdev]
+[ 4050.264881]  [<000000000046f494>] kernfs_fop_write+0x14c/0x1f8
+[ 4050.264890]  [<00000000003c1530>] __vfs_write+0x38/0x1a8
+[ 4050.264899]  [<00000000003c187c>] vfs_write+0xb4/0x198
+[ 4050.264908]  [<00000000003c1af2>] ksys_write+0x5a/0xb0
+[ 4050.264916]  [<0000000000b9e270>] system_call+0xdc/0x2d8
+[ 4050.264925] 4 locks held by sh/35924:
+[ 4050.264933]  #0: 000000001ef90325 (sb_writers#4){.+.+}, at: vfs_write+0x9e/0x198
+[ 4050.264948]  #1: 000000005c1ab0b3 (&of->mutex){+.+.}, at: kernfs_fop_write+0x1cc/0x1f8
+[ 4050.264963]  #2: 0000000034831ab8 (kn->count#297){++++}, at: kernfs_remove_self+0x12e/0x150
+[ 4050.264979]  #3: 00000000e152484f (&dev->mutex){....}, at: device_release_driver_internal+0x5c/0x268
+[ 4050.264993] Last Breaking-Event-Address:
+[ 4050.265002]  [<000000000017bbaa>] __might_sleep+0x72/0x90
+[ 4050.265010] irq event stamp: 7039
+[ 4050.265020] hardirqs last  enabled at (7047): [<00000000001cee7a>] console_unlock+0x6d2/0x740
+[ 4050.265029] hardirqs last disabled at (7054): [<00000000001ce87e>] console_unlock+0xd6/0x740
+[ 4050.265040] softirqs last  enabled at (6416): [<0000000000b8fe26>] __udelay+0xb6/0x100
+[ 4050.265049] softirqs last disabled at (6415): [<0000000000b8fe06>] __udelay+0x96/0x100
+[ 4050.265057] ---[ end trace d04a07d39d99a9f9 ]---
+
+Let's fix this as described in the article
+https://lwn.net/Articles/628628/.
+
+Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+[remove now redundant vfio_dev_present()]
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/chrome/cros_ec_proto.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/vfio/vfio.c | 30 ++++++++++--------------------
+ 1 file changed, 10 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 97a068dff192..3bb954997ebc 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -56,6 +56,17 @@ static int send_command(struct cros_ec_device *ec_dev,
- 	else
- 		xfer_fxn = ec_dev->cmd_xfer;
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index f5a86f651f38..0d73d913c18b 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -34,6 +34,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/vfio.h>
+ #include <linux/wait.h>
++#include <linux/sched/signal.h>
  
-+	if (!xfer_fxn) {
-+		/*
-+		 * This error can happen if a communication error happened and
-+		 * the EC is trying to use protocol v2, on an underlying
-+		 * communication mechanism that does not support v2.
-+		 */
-+		dev_err_once(ec_dev->dev,
-+			     "missing EC transfer API, cannot send command\n");
-+		return -EIO;
-+	}
+ #define DRIVER_VERSION	"0.3"
+ #define DRIVER_AUTHOR	"Alex Williamson <alex.williamson@redhat.com>"
+@@ -909,30 +910,17 @@ void *vfio_device_data(struct vfio_device *device)
+ }
+ EXPORT_SYMBOL_GPL(vfio_device_data);
+ 
+-/* Given a referenced group, check if it contains the device */
+-static bool vfio_dev_present(struct vfio_group *group, struct device *dev)
+-{
+-	struct vfio_device *device;
+-
+-	device = vfio_group_get_device(group, dev);
+-	if (!device)
+-		return false;
+-
+-	vfio_device_put(device);
+-	return true;
+-}
+-
+ /*
+  * Decrement the device reference count and wait for the device to be
+  * removed.  Open file descriptors for the device... */
+ void *vfio_del_group_dev(struct device *dev)
+ {
++	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+ 	struct vfio_device *device = dev_get_drvdata(dev);
+ 	struct vfio_group *group = device->group;
+ 	void *device_data = device->device_data;
+ 	struct vfio_unbound_dev *unbound;
+ 	unsigned int i = 0;
+-	long ret;
+ 	bool interrupted = false;
+ 
+ 	/*
+@@ -969,6 +957,8 @@ void *vfio_del_group_dev(struct device *dev)
+ 	 * interval with counter to allow the driver to take escalating
+ 	 * measures to release the device if it has the ability to do so.
+ 	 */
++	add_wait_queue(&vfio.release_q, &wait);
 +
- 	ret = (*xfer_fxn)(ec_dev, msg);
- 	if (msg->result == EC_RES_IN_PROGRESS) {
- 		int i;
+ 	do {
+ 		device = vfio_group_get_device(group, dev);
+ 		if (!device)
+@@ -980,12 +970,10 @@ void *vfio_del_group_dev(struct device *dev)
+ 		vfio_device_put(device);
+ 
+ 		if (interrupted) {
+-			ret = wait_event_timeout(vfio.release_q,
+-					!vfio_dev_present(group, dev), HZ * 10);
++			wait_woken(&wait, TASK_UNINTERRUPTIBLE, HZ * 10);
+ 		} else {
+-			ret = wait_event_interruptible_timeout(vfio.release_q,
+-					!vfio_dev_present(group, dev), HZ * 10);
+-			if (ret == -ERESTARTSYS) {
++			wait_woken(&wait, TASK_INTERRUPTIBLE, HZ * 10);
++			if (signal_pending(current)) {
+ 				interrupted = true;
+ 				dev_warn(dev,
+ 					 "Device is currently in use, task"
+@@ -994,8 +982,10 @@ void *vfio_del_group_dev(struct device *dev)
+ 					 current->comm, task_pid_nr(current));
+ 			}
+ 		}
+-	} while (ret <= 0);
+ 
++	} while (1);
++
++	remove_wait_queue(&vfio.release_q, &wait);
+ 	/*
+ 	 * In order to support multiple devices per group, devices can be
+ 	 * plucked from the group while other devices in the group are still
 -- 
 2.20.1
 
