@@ -2,125 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92B2944412
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E47D944437
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403956AbfFMQel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:34:41 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:47195 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731756AbfFMQej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:34:39 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 09586188
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Jun 2019 16:02:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=c/eyrUJezLRYTiw4Eryys2G0hdk=; b=SaNMUR
-        8dxlSg05aOsn1QKtKkBKUdMdK8gMYebNjFybPIi9hVW6rLxPXtwpxXdDgvF0uGQ0
-        aJlUjaG35jvcOako3xdi97qgtanV58Gj9fj8prqPR3+UnwKIt2kL/V1X4owm9CEY
-        HHSXu/rARuLQh9TqMhnZvZWzoe7w0LprPNpkO1IEBH59T0uIsyEkBfccT11nxbxw
-        KteiZv8aBWp6nPSDeyDwflusxC6jtZqMDmaP3KTuR5Dl7VvTZx4pJw7q0IU1SRvv
-        goFWitoOyIpHobevfIe+QpLbH9J/La46dbRSQUc93R9cKZCLlRgsCbJGbbnZb6xM
-        AjOTdILpFHY+Z+YQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d8c7f97c (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Jun 2019 16:02:13 +0000 (UTC)
-Received: by mail-oi1-f176.google.com with SMTP id t76so14908051oih.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 09:34:36 -0700 (PDT)
-X-Gm-Message-State: APjAAAWkJAl13bX2XDv9UZeIIGB2DimcQ80wRknoalna6u1weNPPU9Oc
-        JpVJySJhykDVl4p8gMneCtD3lXt6E/qFuOP3BVg=
-X-Google-Smtp-Source: APXvYqwC+nqFzkn2Q40sbQCLZoiY0VYjrSoazuOA0QTmo/6ZcGWAyjlwk8rP2gYJSz4p8qVbezASwWK+9BVIOL/mHBE=
-X-Received: by 2002:aca:ac4d:: with SMTP id v74mr3473955oie.66.1560443675408;
- Thu, 13 Jun 2019 09:34:35 -0700 (PDT)
+        id S2389679AbfFMQfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:35:41 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39067 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404046AbfFMQf3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:35:29 -0400
+Received: by mail-wm1-f66.google.com with SMTP id z23so10797361wma.4;
+        Thu, 13 Jun 2019 09:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CdU3AkHiGyVIlUJsXB82LDChYizZRFvTCAKkkb1a9Bo=;
+        b=d21HABiSP22hYq6h2HqZvldGkD4KwFsLbe2nO07JgkifWj0n4vD0ejq10JdusropKA
+         YP96a/ggrRLmwTlidX1zYOwLTTXsiJH551QUJmoK4cBh4WpCxGKz8Kn/uYGhb06UfZ6N
+         j4RdWgRKhPgN188N8oiDPBv7oyI+9je3uKohQdNf8sDXc3H4AbKIcuQ78mwtlfjhhR3B
+         zzFLHCGl6Fo1DTuchVDz1NHIjsQaDgroHBpaqatm9Se8lPtL4zAs0xVTjn3sgeW9GJn3
+         iB9UyijNjXwP/DSzbp2aWx+gJ6Z0MzidOSvO9rdIx9m/7DS/nsMx/v6vhYTVOkMvACWL
+         mNMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CdU3AkHiGyVIlUJsXB82LDChYizZRFvTCAKkkb1a9Bo=;
+        b=h9Volw+ShA/ku7NZl+wH3H5+RfenS5bYObJrpy2D8J7PNtZQ5IFNg9aXgUFmaB93KT
+         QiYdh++8uo/Y7biC77TFHDXN34JGSUNh7kGP4JbKOERMDfNodocBsaOO2GfH5z0oGW8r
+         mMIiOVn+IZBz0Kqkd6WLCqs4zI9t2fOhB42Urp0WYD8cMFSmsbN5/C/X6wQLbr47WRkk
+         nz2UlC+Tjx+zeKtt/63bDdcjR/CZhh+RJz2+/MIw3f8YdZkq3Fex0hGSddrLjK6Y1FGW
+         LA6BHKZsK58+k60T9/Wqgulh5v7EoX2r7kkZhRMMojkOqKtCVpYvGGj4w66WKSIXR5lE
+         XIyA==
+X-Gm-Message-State: APjAAAUZNd9vm0VTW7x1CAkK1z6DXsFhe1kf+Sq+JGmAKcDXWiWpKQ7m
+        yRmEbc/ouRey7h4b5TXA6Vk=
+X-Google-Smtp-Source: APXvYqzTMsGQ5gi7WuA5z1F9IWEkNjr/KmvxNpinkh3KQ2V8PASKooKQ8TQ9V8D6BrB+t6HYIGVZmQ==
+X-Received: by 2002:a7b:c251:: with SMTP id b17mr4698049wmj.143.1560443726939;
+        Thu, 13 Jun 2019 09:35:26 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id d18sm223569wrn.26.2019.06.13.09.35.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 09:35:26 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 18:35:25 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     joro@8bytes.org, m.szyprowski@samsung.com, kgene@kernel.org,
+        krzk@kernel.org, will.deacon@arm.com, robin.murphy@arm.com,
+        agross@kernel.org, david.brown@linaro.org, robdclark@gmail.com,
+        heiko@sntech.de, jonathanh@nvidia.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 10/10] iommu/tegra-smmu: convert to SPDX license tags
+Message-ID: <20190613163525.GB3258@ulmo>
+References: <20190613162703.986-1-tiny.windzz@gmail.com>
+ <20190613162703.986-10-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
- <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
- <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
- <CAK8P3a15NTV=njOjz-ccYL8=_q_MdEru0A+jeE=f7ufUTOOTgw@mail.gmail.com>
- <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com>
- <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com>
- <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com> <alpine.DEB.2.21.1906131822300.1791@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1906131822300.1791@nanos.tec.linutronix.de>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 13 Jun 2019 18:34:22 +0200
-X-Gmail-Original-Message-ID: <CAHmME9q1ihF617=Gjw9k9BK7OC9Ghnzfnfi6LfvJ8DG+vrQOqA@mail.gmail.com>
-Message-ID: <CAHmME9q1ihF617=Gjw9k9BK7OC9Ghnzfnfi6LfvJ8DG+vrQOqA@mail.gmail.com>
-Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Sultan Alsawaf <sultan@kerneltoast.com>,
-        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
+Content-Disposition: inline
+In-Reply-To: <20190613162703.986-10-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 6:26 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> That does not make sense. The coarse time getters use
-> tk->tkr_mono.base. base is updated every tick (or if the machine is
-> completely idle right when the first CPU wakes up again).
 
-Sense or not, it seems to be happening, at least on 5.2-rc4:
+--xgyAXRrhYN0wYx8y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-int __init mod_init(void)
-{
-      for (;;) {
-              pr_err("%llu %llu %llu\n", get_jiffies_64(),
-ktime_get_coarse_boottime(), local_clock());
-              msleep(200);
-      }
-      return 0;
-}
+On Thu, Jun 13, 2019 at 12:27:03PM -0400, Yangtao Li wrote:
+> Updates license to use SPDX-License-Identifier.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/iommu/tegra-smmu.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 
-[    0.308166] wireguard: 4294892358 270211253 308165785
-[    0.512931] wireguard: 4294892410 270211253 512926052
-[    0.720930] wireguard: 4294892462 270211253 720925707
-[    0.928995] wireguard: 4294892514 270211253 928990019
-[    1.137011] wireguard: 4294892566 270211253 1137005585
-[    1.344948] wireguard: 4294892618 1270211253 1344943311
-[    1.552942] wireguard: 4294892670 1270211253 1552937363
-[    1.760963] wireguard: 4294892722 1270211253 1760957241
-[    1.969092] wireguard: 4294892774 1270211253 1969087174
-[    2.176951] wireguard: 4294892826 1270211253 2176946130
-[    2.385073] wireguard: 4294892878 2270211253 2385068075
-[    2.593033] wireguard: 4294892930 2270211253 2593025847
-[    2.801071] wireguard: 4294892982 2270211253 2801066369
-[    3.008895] wireguard: 4294893034 2270211253 3008892169
-[    3.216956] wireguard: 4294893086 2270211253 3216951160
-[    3.424965] wireguard: 4294893138 3270211253 3424960158
-[    3.632942] wireguard: 4294893190 3270211253 3632937133
-[    3.840947] wireguard: 4294893242 3270211253 3840942470
-[    4.048950] wireguard: 4294893294 3270211253 4048945319
-[    4.257078] wireguard: 4294893346 3270211253 4257072850
-[    4.464943] wireguard: 4294893398 4270211253 4464938724
-[    4.672934] wireguard: 4294893450 4270211253 4672929572
-[    4.880939] wireguard: 4294893502 4270211253 4880933901
-[    5.089015] wireguard: 4294893554 4270211253 5089010190
-[    5.297072] wireguard: 4294893606 4270211253 5297067556
-[    5.504935] wireguard: 4294893658 5270211253 5504929920
-[    5.712963] wireguard: 4294893710 5270211253 5712957452
-[    5.920949] wireguard: 4294893762 5270211253 5920944292
-[    6.128959] wireguard: 4294893814 5270211253 6128954684
-[    6.336968] wireguard: 4294893866 6270211253 6336962979
-[    6.544945] wireguard: 4294893918 6270211253 6544931514
-[    6.752963] wireguard: 4294893970 6270211253 6752958001
-[    6.961008] wireguard: 4294894022 6270211253 6961003309
-[    7.169073] wireguard: 4294894074 6270211253 7169068202
-[    7.376936] wireguard: 4294894126 7270211253 7376931429
-[    7.585022] wireguard: 4294894178 7270211253 7585016996
-[    7.793004] wireguard: 4294894230 7270211253 7792999324
-[    8.000953] wireguard: 4294894282 7270211253 8000947668
-[    8.208949] wireguard: 4294894334 7270211253 8208943630
-[    8.417090] wireguard: 4294894386 8270211253 8417085802
-[    8.625071] wireguard: 4294894438 8270211253 8625066012
-[    8.833086] wireguard: 4294894490 8270211253 8833081441
-[    9.041032] wireguard: 4294894542 8270211253 9041027362
-[    9.248948] wireguard: 4294894594 8270211253 9248943016
-[    9.456968] wireguard: 4294894646 9270211253 9456963019
-[    9.664955] wireguard: 4294894698 9270211253 9664950178
-[    9.872935] wireguard: 4294894750 9270211253 9872929704
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--xgyAXRrhYN0wYx8y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0Ce00ACgkQ3SOs138+
+s6FKzA//cTztUQT0grkWSjIr7uw4dhz8d4QkKoLpgJNMBy86/9lW7oGsYjGSTQd8
+TElU4HT1/mbjm22/k8CS7uzTkDVIzJpLTMWIsvzJ8xlBD81/lnzau+NgzFxbCe+D
+4FwpGJd9wsi1b3h1eWFzxsrY8xi17liG26hKPMl5I0uvPs0XXgIJxLvxshpwU5IH
+p+Q7EDpSkcbtyxJCFcVNWQsAi0SsDawMHk42EHYEZYqgywlMfWqW/nisTODLcQGy
+dWKABd5zclXza3ISw77plAvPu/7XZ79QGOLVadS2qEydL2Ec8cJg2JZovnn3hl3U
+5Q7R7dq+3ArKEQXYiUhUNxNJ+pjiusO2mgn2elLB8gMcf3UehFZ6lVhFbkOete7H
+rA5gaZhZd1nDC9J3wuTnCjlLDvWB/IcapgPLEiP1rvvAUJCgaQmAWgzsJs8wXm1B
+robCwCzXX9q7ktjBLpeVGrrFtPDruXHWC1qcQI//nJdr7QPhliTbgrSt5+H83eY/
+07UXShb9r+n+v4j8slwC6G9uuMZzq0o0OowDC3PXc5S+GXruiyVt1wB2+Z6RTvbF
+P0mHLRfpPnsxC9YBejsrhVCRWHS71CQc9xuuRczo0smJXlmb3sU5KGZhZJaHWNTs
+nPbGRR7vEW3lhNbSpACEZzLweA6/ALaRgri+qx3cHHnx6biX+A4=
+=nAP7
+-----END PGP SIGNATURE-----
+
+--xgyAXRrhYN0wYx8y--
