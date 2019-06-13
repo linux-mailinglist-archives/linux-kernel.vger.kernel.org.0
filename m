@@ -2,73 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1631A441B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:16:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D24144137
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391928AbfFMQQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:16:10 -0400
-Received: from mga14.intel.com ([192.55.52.115]:34431 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731158AbfFMIlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:41:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 01:41:31 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Jun 2019 01:41:28 -0700
-Subject: Re: [PATCH 2/3] mmc: sdhci: sdhci-pci-o2micro: Check if controller
- supports 8-bit width
-To:     Raul Rangel <rrangel@chromium.org>
-Cc:     linux-mmc@vger.kernel.org, ernest.zhang@bayhubtech.com,
-        djkurtz@chromium.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <20190610185354.35310-1-rrangel@chromium.org>
- <20190610185354.35310-2-rrangel@chromium.org>
- <d4939761-317c-ee78-b1e5-c2cdd86a12b4@intel.com>
- <20190612150832.GB27989@google.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <94fa2a5e-e96d-acb3-46c2-5f6b1dea6711@intel.com>
-Date:   Thu, 13 Jun 2019 11:40:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2391657AbfFMQMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:12:42 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47162 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731218AbfFMInI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:43:08 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 67F28FAF1D69440836FB;
+        Thu, 13 Jun 2019 16:43:05 +0800 (CST)
+Received: from HGHY4L002753561.china.huawei.com (10.133.215.186) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 13 Jun 2019 16:42:58 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        John Garry <john.garry@huawei.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        x86 <x86@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH v9 0/7] iommu: enhance IOMMU default DMA mode build options
+Date:   Thu, 13 Jun 2019 16:42:33 +0800
+Message-ID: <20190613084240.16768-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20190612150832.GB27989@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.133.215.186]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/19 6:08 PM, Raul Rangel wrote:
-> On Wed, Jun 12, 2019 at 04:09:47PM +0300, Adrian Hunter wrote:
->> On 10/06/19 9:53 PM, Raul E Rangel wrote:
->>> The O2 controller supports 8-bit EMMC access. mmc_select_bus_width()
->>> will be used to determine if the MMC supports 8-bit or 4-bit access.
->>
->> The problem is that the bit indicates a host controller capability, not how
->> many data lines there actually are on the board.  Will this break something
->> that does not have 8 lines?
-> 
-> So I asked the controller vendor about that:
->> The capability shows the host controller can support 1,4,and 8 bit bus
->> data transfer but it also depends on if HW can support it. Driver or FW
->> should implement the bus testing procedure that is defined in A.6.3.a
->> in JESD84-B51 spec to decide the real bus width that is supported in HW.
-> 
-> This seems to be what `mmc_select_bus_width()` is doing.
+v8--> v9
+1. Fix some text editing errors
 
-Good point.  Can you add this information to the commit message and add a
-comment in the code.
+v7--> v8
+1. Split into multiple small patches base on ARCHs or IOMMU drivers.
+2. Hide the unsupported build options on the related ARCH or IOMMU.
 
-> 
-> I don't actually have any 4-bit hardware to test with though.
-> 
-> Thanks for the review!
-> 
+v6 --> v7:
+1. Fix some text editing errors
+
+v5 --> v6:
+1. give up adding boot option iommu.dma_mode
+
+v4 --> v5:
+As Hanjun and Thomas Gleixner's suggestion:
+1. Keep the old ARCH specific boot options no change.
+2. Keep build option CONFIG_IOMMU_DEFAULT_PASSTHROUGH no change.
+
+v4:
+As Robin Murphy's suggestion:
+"It's also not necessarily obvious to the user how this interacts with
+IOMMU_DEFAULT_PASSTHROUGH, so if we really do go down this route, maybe it
+would be better to refactor the whole lot into a single selection of something
+like IOMMU_DEFAULT_MODE anyway."
+
+In this version, I tried to normalize the IOMMU dma mode boot options for all
+ARCHs. When IOMMU is enabled, there are 3 dma modes: paasthrough(bypass),
+lazy(mapping but defer the IOTLB invalidation), strict. But currently each
+ARCHs defined their private boot options, different with each other. For
+example, to enable/disable "passthrough", ARM64 use iommu.passthrough=1/0,
+X86 use iommu=pt/nopt, PPC/POWERNV use iommu=nobypass.
+
+Zhen Lei (7):
+  iommu: enhance IOMMU default DMA mode build options
+  x86/dma: use IS_ENABLED() to simplify the code
+  s390/pci: add support for IOMMU default DMA mode build options
+  powernv/iommu: add support for IOMMU default DMA mode build options
+  iommu/vt-d: add support for IOMMU default DMA mode build options
+  iommu/amd: add support for IOMMU default DMA mode build options
+  ia64: hide build option IOMMU_DEFAULT_PASSTHROUGH
+
+ arch/powerpc/platforms/powernv/pci-ioda.c |  3 +-
+ arch/s390/pci/pci_dma.c                   |  2 +-
+ arch/x86/kernel/pci-dma.c                 |  6 +---
+ drivers/iommu/Kconfig                     | 48 +++++++++++++++++++++++++------
+ drivers/iommu/amd_iommu_init.c            |  2 +-
+ drivers/iommu/intel-iommu.c               |  2 +-
+ drivers/iommu/iommu.c                     |  3 +-
+ 7 files changed, 48 insertions(+), 18 deletions(-)
+
+-- 
+1.8.3
+
 
