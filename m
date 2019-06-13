@@ -2,108 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A4B444E4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4046344E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbfFMVVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:21:17 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38575 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfFMVVQ (ORCPT
+        id S1727782AbfFMVYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:24:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33385 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfFMVYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:21:16 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n11so124442qtl.5;
-        Thu, 13 Jun 2019 14:21:16 -0700 (PDT)
+        Thu, 13 Jun 2019 17:24:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x15so65821pfq.0;
+        Thu, 13 Jun 2019 14:24:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0v9rxXyrt/oumJFTrMOMHu3FGLQRsByRDgIPJ5m2WUM=;
-        b=Me7H5hQMJp+1aqQY871nL/yGYHiEW3+3jRaGCeh7r+zYK3eiFxCnxKRX/upZFMVYPH
-         NteppeHTQhEa3ig7TTzs4yNey69twkZqavgykh02bU0dXhKJl8A0x9bOcRa1hLYjQrIv
-         ABytd1Ba79nQ563JVsuf/6H0WItrCf87YPqskbKzxXhGSVcvCzP285AtXvXAkZ8Ppbou
-         z+ILwFeQqPOe/SgatiHuX75oZUlzHzLh7JhWayOsgRyvDOmta+RMKRzS38f7SoV9DqpL
-         IiQScCueUo3LYPTW9KAMm1ufW10vyHpUqX7K/HvFtXxzExQrSLvBVczilDphPTczzn9C
-         6Atw==
+        h=from:to:cc:subject:date:message-id;
+        bh=rsm7LFvuu37y6FQOrHWabqcTTRVTcTtnFhU4W3/jN+c=;
+        b=jECBnQ21l+bqPpGeJbtj0FnDphGNxH9f9w5tr6ajlf3vI/HhRgN8/AO+O+Ty127Gow
+         ws7t8aD0r0aGSnTt/cJ1pGC090MqhVSexfvjbpRtgPVNCJrwsKXvB0w0kth8+20n9PXd
+         HjIHj3gPhTqo5+K0Tg4vy1i1T4L8J1Sa9iuPzpuTnLNuVoUERWr3aWYaMyDMB5ro+ZUy
+         P5HdB/NYYIrpDlDTIvNJxCDWOxWfKTV2OADf9rVLGyi3C2FoZ8ovf/rtWsN+dSatdatz
+         0jqtjjT0PFBIrsQzO41AI+zs2Yl6umhm5pxndx/iobXphSfmBbDUzNcXwBHYSGCKLsNG
+         d32w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0v9rxXyrt/oumJFTrMOMHu3FGLQRsByRDgIPJ5m2WUM=;
-        b=nmMlq3QpnuJBCCZL3u/D9niKqFivQFnCuQwNGdGqywj6OpphJOKgX8bNilW5SRA+At
-         3wLu4lhSM+CEe+nRMvUCnuKHO6Jxfp7RNtmsrNWx0Ed+QvW8zK6Cy8BTAghyEdPG4hI4
-         hEVSLSOefCJ3V0lH7EI1JCnVegMayWi1lmLGppEbBHdD9czOo9kP+uPjIYohPoaXI+zw
-         PSqZTGops/VXj49yuhtWUNt5RY0lz6yAs3UjNL3iiKGcTVjGca3PIKNI0muvd/dT8GsW
-         z7VFAX5iAoQRqCoyxCVOweGhJehSstyCWaKEshmh7UaU2DsyfJ4x1h2SJJ/jpPUqyF+8
-         Tbqw==
-X-Gm-Message-State: APjAAAXZKpPMo9aLn3bh+adg3NB93uwh3gExXy7k5DQW/Uu/kB/U+UAY
-        TxIT9VmlEQN8gPQD84lMag==
-X-Google-Smtp-Source: APXvYqzkZ3YHHNI5sQCGFJfB3JVDieHfRZzEtq80wOh7IQh3p4yzZG5ow375+4MQgtf2N1HoAkHMow==
-X-Received: by 2002:ac8:70cd:: with SMTP id g13mr9927363qtp.325.1560460875422;
-        Thu, 13 Jun 2019 14:21:15 -0700 (PDT)
-Received: from kmo-pixel (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id y20sm551232qka.14.2019.06.13.14.21.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 14:21:14 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 17:21:12 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: pagecache locking (was: bcachefs status update) merged)
-Message-ID: <20190613212112.GB28171@kmo-pixel>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
- <20190613183625.GA28171@kmo-pixel>
- <AE838C22-1A11-4F93-AB88-80CF009BD301@dilger.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AE838C22-1A11-4F93-AB88-80CF009BD301@dilger.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rsm7LFvuu37y6FQOrHWabqcTTRVTcTtnFhU4W3/jN+c=;
+        b=AU7p3IGEZCrdPgyMdJYtMATlv5WolEQkNYamO2m37FkSKt8R60AQJ1rNzvVhSahKp/
+         wdQOLbqXnT31h770JBEMCY5vkHSbY/t+TBsd6KW7En5fSDjlDJEePXns6O9N6tjB6sqD
+         5w/3/iMScIkAvfLid64rsNi6X292m2jGbc67ROV8ds7KrU3D+9QQBoPrzD6elqJ8ZCR6
+         u+64qtGRpl5L8raqFL/cAZ0jxrdU0cVRL7U5jF24yged7KTk+tFv2PEofKdWGbARft/N
+         kdyoAZ8ZssSs/VOdComad50viF7e7AJJm1qCISCvamLj+AiExdZFKWyTFr2YuhFbSpHG
+         C9Rw==
+X-Gm-Message-State: APjAAAVcXu5D1fxmi8xNCNN/a7Hsn2FoCxjMWBOkRf77w7enH2m5JDDk
+        EVyLG+5fBFVYQH0FTCkmsIE=
+X-Google-Smtp-Source: APXvYqwiMa+oL9IoDF5KcSiQc6XmV+Wm+okhHVwqSeWnqgbf0LOpJuNn7trSBQ4cqOW7Z+xFO2a/AQ==
+X-Received: by 2002:aa7:8ecb:: with SMTP id b11mr55175552pfr.220.1560461080859;
+        Thu, 13 Jun 2019 14:24:40 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id x66sm575791pfx.139.2019.06.13.14.24.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 14:24:40 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v4 0/7] PM8005 and PMS405 regulator support
+Date:   Thu, 13 Jun 2019 14:24:36 -0700
+Message-Id: <20190613212436.6940-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 03:13:40PM -0600, Andreas Dilger wrote:
-> There are definitely workloads that require multiple threads doing non-overlapping
-> writes to a single file in HPC.  This is becoming an increasingly common problem
-> as the number of cores on a single client increase, since there is typically one
-> thread per core trying to write to a shared file.  Using multiple files (one per
-> core) is possible, but that has file management issues for users when there are a
-> million cores running on the same job/file (obviously not on the same client node)
-> dumping data every hour.
+The MSM8998 MTP reference platform supplies VDD_GFX from s1 of the
+pm8005 PMIC.  VDD_GFX is needed to turn on the GPU.  As we are looking
+to bring up the GPU, add the support for pm8005 and wire up s1 in a
+basic manner so that we have this dependency out of the way and can
+focus on enabling the GPU driver.
 
-Mixed buffered and O_DIRECT though? That profile looks like just buffered IO to
-me.
+The s3 regulator of PMS405 is used for voltage scaling of the CPU on
+QCS404.
 
-> We were just looking at this exact problem last week, and most of the threads are
-> spinning in grab_cache_page_nowait->add_to_page_cache_lru() and set_page_dirty()
-> when writing at 1.9GB/s when they could be writing at 5.8GB/s (when threads are
-> writing O_DIRECT instead of buffered).  Flame graph is attached for 16-thread case,
-> but high-end systems today easily have 2-4x that many cores.
+Both PMICs are very similar in design, so add the base support with one,
+and trivially add the support for the other on top.
 
-Yeah I've been spending some time on buffered IO performance too - 4k page
-overhead is a killer.
+v4:
+-fix the linear range change to use the correct implementation
+-mask out the non-mode bits when reading the hardware reg
+-correct the pms405 supply pins listing
+-correct the pms405 s3 supply name in the match struct
+-correct subject names to be more aligned with the subsystem history
 
-bcachefs has a buffered write path that looks up multiple pages at a time and
-locks them, and then copies the data to all the pages at once (I stole the idea
-from btrfs). It was a very significant performance increase.
+v3:
+-Allow PMS405 regulators to be enabled and disabled, instead of the
+outdated "always on" concept
 
-https://evilpiepirate.org/git/bcachefs.git/tree/fs/bcachefs/fs-io.c#n1498
+v2:
+-Perform if statement cleanups per review discussion
+-Pull in linear range support since its related, and simple
+-Rework the PM8005 to minimize special cases in the driver
+-"common2" is now ftsmps426 since that design first implemented it
+-Reworked the PMS405 changes on top, since they are related to pm8005
+and
+trivial
+
+Jeffrey Hugo (4):
+  drivers: regulator: qcom_spmi: Refactor get_mode/set_mode
+  dt-bindings: qcom_spmi: Document PM8005 regulators
+  regulator: qcom_spmi: Add support for PM8005
+  arm64: dts: msm8998-mtp: Add pm8005_s1 regulator
+
+Jorge Ramirez (2):
+  dt-bindings: qcom_spmi: Document pms405 support
+  drivers: regulator: qcom: add PMS405 SPMI regulator
+
+Jorge Ramirez-Ortiz (1):
+  drivers: regulator: qcom_spmi: enable linear range info
+
+ .../regulator/qcom,spmi-regulator.txt         |  22 ++
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi     |  17 ++
+ drivers/regulator/qcom_spmi-regulator.c       | 237 +++++++++++++++++-
+ 3 files changed, 269 insertions(+), 7 deletions(-)
+
+-- 
+2.17.1
+
