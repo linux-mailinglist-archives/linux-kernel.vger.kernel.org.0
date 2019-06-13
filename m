@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 170724425A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1ECF4409C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392204AbfFMQVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:21:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56260 "EHLO mail.kernel.org"
+        id S1732739AbfFMQHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:07:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731058AbfFMIiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:46 -0400
+        id S1731301AbfFMIp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:45:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3613B20851;
-        Thu, 13 Jun 2019 08:38:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C96CD21743;
+        Thu, 13 Jun 2019 08:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415125;
-        bh=GSTTpigTR+QKB1kZBNgiJYTC8qGHTEziFPt1bj0+VAI=;
+        s=default; t=1560415527;
+        bh=Q9uG9TijeqznwzAyRj4c59Zw+iKYFG9CMGH4OdKPW+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a27DKpFSs9qZScUk+D9LaOSeU+PkDc8B9Pk19JkQoIo8HHEMxcnvuEQGlPEPNJYYY
-         cpS8Syd4uIJ2be9xm7OA9wtorAD1gdYAwQNsyTS87VY/L+9LVFQhNBkVZi5fnM82nN
-         MBYxI82QyrbDVIHhpALa67mFwWsEtQ5/Lqqrmn7Q=
+        b=YkmxgnlxVUJWKQ78xyW5oVHuL/NZ20GeIsStnqU57tqya7biBs25Sb3nkAbGuyCs7
+         xz0xiFPzraST0KDb1BlZSK0ZzA+Ol5C1La4VOUnIwMKxyrev8TQbyeexFb8yJC1FWG
+         05b3Pq+keH8dP3SORkcaOHYerMFPOzbEcTeSwCpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 005/118] drm/pl111: Initialize clock spinlock early
-Date:   Thu, 13 Jun 2019 10:32:23 +0200
-Message-Id: <20190613075643.985340438@linuxfoundation.org>
+Subject: [PATCH 5.1 032/155] drm/nouveau/kms/gf119-gp10x: push HeadSetControlOutputResource() mthd when encoders change
+Date:   Thu, 13 Jun 2019 10:32:24 +0200
+Message-Id: <20190613075654.788007417@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3e01ae2612bdd7975c74ec7123d7f8f5e6eed795 ]
+[ Upstream commit a0b694d0af21c9993d1a39a75fd814bd48bf7eb4 ]
 
-The following warning is seen on systems with broken clock divider.
+HW has error checks in place which check that pixel depth is explicitly
+provided on DP, while HDMI has a "default" setting that we use.
 
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 0 PID: 1 Comm: swapper Not tainted 5.1.0-09698-g1fb3b52 #1
-Hardware name: ARM Integrator/CP (Device Tree)
-[<c0011be8>] (unwind_backtrace) from [<c000ebb8>] (show_stack+0x10/0x18)
-[<c000ebb8>] (show_stack) from [<c07d3fd0>] (dump_stack+0x18/0x24)
-[<c07d3fd0>] (dump_stack) from [<c0060d48>] (register_lock_class+0x674/0x6f8)
-[<c0060d48>] (register_lock_class) from [<c005de2c>]
-	(__lock_acquire+0x68/0x2128)
-[<c005de2c>] (__lock_acquire) from [<c0060408>] (lock_acquire+0x110/0x21c)
-[<c0060408>] (lock_acquire) from [<c07f755c>] (_raw_spin_lock+0x34/0x48)
-[<c07f755c>] (_raw_spin_lock) from [<c0536c8c>]
-	(pl111_display_enable+0xf8/0x5fc)
-[<c0536c8c>] (pl111_display_enable) from [<c0502f54>]
-	(drm_atomic_helper_commit_modeset_enables+0x1ec/0x244)
+In multi-display configurations with identical modelines, but different
+protocols (HDMI + DP, in this case), it was possible for the DP head to
+get swapped to the head which previously drove the HDMI output, without
+updating HeadSetControlOutputResource(), triggering the error check and
+hanging the core update.
 
-Since commit eedd6033b4c8 ("drm/pl111: Support variants with broken clock
-divider"), the spinlock is not initialized if the clock divider is broken.
-Initialize it earlier to fix the problem.
-
-Fixes: eedd6033b4c8 ("drm/pl111: Support variants with broken clock divider")
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/1557758781-23586-1-git-send-email-linux@roeck-us.net
+Reported-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/pl111/pl111_display.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/head.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
-index 754f6b25f265..6d9f78612dee 100644
---- a/drivers/gpu/drm/pl111/pl111_display.c
-+++ b/drivers/gpu/drm/pl111/pl111_display.c
-@@ -531,14 +531,15 @@ pl111_init_clock_divider(struct drm_device *drm)
- 		dev_err(drm->dev, "CLCD: unable to get clcdclk.\n");
- 		return PTR_ERR(parent);
- 	}
-+
-+	spin_lock_init(&priv->tim2_lock);
-+
- 	/* If the clock divider is broken, use the parent directly */
- 	if (priv->variant->broken_clockdivider) {
- 		priv->clk = parent;
- 		return 0;
- 	}
- 	parent_name = __clk_get_name(parent);
--
--	spin_lock_init(&priv->tim2_lock);
- 	div->init = &init;
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/head.c b/drivers/gpu/drm/nouveau/dispnv50/head.c
+index 2e7a0c347ddb..8efb778a3b20 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/head.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
+@@ -306,7 +306,7 @@ nv50_head_atomic_check(struct drm_crtc *crtc, struct drm_crtc_state *state)
+ 			asyh->set.or = head->func->or != NULL;
+ 		}
  
- 	ret = devm_clk_hw_register(drm->dev, div);
+-		if (asyh->state.mode_changed)
++		if (asyh->state.mode_changed || asyh->state.connectors_changed)
+ 			nv50_head_atomic_check_mode(head, asyh);
+ 
+ 		if (asyh->state.color_mgmt_changed ||
 -- 
 2.20.1
 
