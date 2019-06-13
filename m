@@ -2,155 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C92943BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A07F243C01
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731165AbfFMPcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:32:52 -0400
-Received: from mail-eopbgr50072.outbound.protection.outlook.com ([40.107.5.72]:55105
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726773AbfFMPcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:32:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uQIiHoxFuhWL5xQCcL23HsooGu/TPVjlJNUJdPXXg28=;
- b=a2KwrV1STRGRMuKvQcvB8oZuK+gqOCVAhfntNm0qjCm4TVPxrSwVhjdWn521LPdm3zlfTxGwef5AeXsv/UsvAHzzB76h75h2RA+Dz36F0Uv92I/+DsvlX02kPxLHWozhACUEQbt48ToiV49QP4jYyWS/uU7y34lunta754lq95k=
-Received: from VE1PR08MB4637.eurprd08.prod.outlook.com (10.255.27.14) by
- VE1PR08MB5247.eurprd08.prod.outlook.com (20.179.31.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Thu, 13 Jun 2019 15:32:42 +0000
-Received: from VE1PR08MB4637.eurprd08.prod.outlook.com
- ([fe80::6574:1efb:6972:2b37]) by VE1PR08MB4637.eurprd08.prod.outlook.com
- ([fe80::6574:1efb:6972:2b37%6]) with mapi id 15.20.1965.017; Thu, 13 Jun 2019
- 15:32:42 +0000
-From:   Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-To:     Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>
-CC:     nd <nd@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v4 1/2] arm64: Define
- Documentation/arm64/tagged-address-abi.txt
-Thread-Topic: [PATCH v4 1/2] arm64: Define
- Documentation/arm64/tagged-address-abi.txt
-Thread-Index: AQHVIS/jNTMPiNHftkW5Mto9lMl3oKaYRrOAgAEJjYCAAA78gIAAEUMAgAAkzACAAAnOAIAAGP8A
-Date:   Thu, 13 Jun 2019 15:32:42 +0000
-Message-ID: <ba822b33-a822-02ef-9b85-725f4353596a@arm.com>
-References: <cover.1560339705.git.andreyknvl@google.com>
- <20190612142111.28161-1-vincenzo.frascino@arm.com>
- <20190612142111.28161-2-vincenzo.frascino@arm.com>
- <a90da586-8ff6-4bed-d940-9306d517a18c@arm.com>
- <20190613092054.GO28951@C02TF0J2HF1T.local>
- <dee7f192-d0f0-558e-3007-eba805c6f2da@arm.com>
- <6ebbda37-5dd9-d0d5-d9cb-286c7a5b7f8e@arm.com>
- <8e3c9537-de10-0d0d-f5bb-c33bde92443f@arm.com>
- <5963d144-be9b-78d8-9130-ef92bc66b1fd@arm.com>
-In-Reply-To: <5963d144-be9b-78d8-9130-ef92bc66b1fd@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-x-originating-ip: [217.140.106.51]
-x-clientproxiedby: LNXP265CA0018.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5e::30) To VE1PR08MB4637.eurprd08.prod.outlook.com
- (2603:10a6:802:b1::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Szabolcs.Nagy@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8ec55c83-d349-48b3-152c-08d6f014601e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB5247;
-x-ms-traffictypediagnostic: VE1PR08MB5247:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <VE1PR08MB5247C1B5EF80C97DB7F49188EDEF0@VE1PR08MB5247.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(376002)(136003)(346002)(189003)(199004)(476003)(26005)(66946007)(2616005)(65826007)(6246003)(25786009)(53936002)(65956001)(65806001)(66066001)(31686004)(8936002)(11346002)(66446008)(66476007)(64756008)(6506007)(73956011)(486006)(81156014)(186003)(53546011)(229853002)(478600001)(5660300002)(66556008)(2906002)(72206003)(86362001)(6636002)(386003)(31696002)(52116002)(8676002)(446003)(44832011)(4326008)(99286004)(102836004)(68736007)(256004)(71200400001)(64126003)(316002)(58126008)(7736002)(54906003)(71190400001)(3846002)(305945005)(6512007)(110136005)(36756003)(76176011)(14454004)(14444005)(6436002)(6486002)(81166006)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5247;H:VE1PR08MB4637.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9ZUd4le6lIhT2Zk8V//g6Vd6uo9Z23/KavAhSwjbuDtv9G5m+9zOrCH1HP/nXdSTQJlODuTWPmQlu6ToAJ42fluyO9UyHZ5E3qp2temFJVDJ4IjqqsIWD5e4IseNvc0JoIjHxtsb+0b5+80WDkrX/W5kn5WUPppYFaK2GVNVykhBhpbS/h2+fLOBe3dc81EOz8zZyEUV0Rq0L8wi/gU5/7+fZDMrosVGxC9YwDe0EIgU24HSAK/QViTuQI5uoTOxT4WjbIinYAbeeeg4IrIGh8KoZxdnkc2ewQOWujLjGXqJ+wOwtrtHvDixz6XQAFSBDXSgAclvJ7hRgYk8NwFapGApuG3SiOuCQVieoLqXaNIWj6w12Tz1IHKN+lHDqixs5KPPSLMiWj9w6IHLoRW9cpyvlpypk8X6+ApqADpCcc4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F7B0C8D67B5DD5449F2A217A59B054BE@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732658AbfFMPdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:33:24 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46736 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728656AbfFMPdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:33:20 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v9so9445899pgr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7C1f1C5uhHgrsCyslhIHxZEDisNbcyzQwjds3pYprRw=;
+        b=N7sbRlvDX4SDO0+K68ItEnXY8fSYiXCSdNUVA+g9o87sdLJRL+xldFdZ3LctZFLO/9
+         47vQYKlqGpknu37lJnhmLR38SUFk2uCG7Ps5L/Q5aCtNeMZczF+LVPKKPDbW8VaeL7WI
+         CZtN6dN09nfE6hSRbkEzbIv9Xts6tolEHB6biiE/P463ykfCrMw99cdLHSs5Pv6Zgrnm
+         OdoqqlAkgHd0Nz5cwRyl3M+81Szrrqxn6cRe+Y1g0ke1swc/KpTVLF3qrcnHGPgv0B+B
+         DoZVWM0gAsQUjHuBGO0fdY4CSffZ2oRPq2et87I3Eo5NCgcms1xPZLWNsD04qcleRH6D
+         TjMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7C1f1C5uhHgrsCyslhIHxZEDisNbcyzQwjds3pYprRw=;
+        b=MPcRf6dhPTk7oY5irqtXw06l9ErtVVEDDMd6tR/65OoE0yyYhLNjooR3llUdqRqS66
+         bKG9XBeunPVhuFtGhGhux0/EfKKxsr5/FR2Nnz10ZhDjKY3oucUUfmzlbVkFjF0ZTbjJ
+         hAvYgxtYUTVQ7ufEmp6NyyxGTNSxQChE108LSvE3xSgcxuf4tPULnSS9abDR/kiHGPWn
+         l5uYZ1gxo9NoiH5Hz3LxVZhMCDd2DBQ5tEtOoBaMoeKDgdurGb2AdOHIzBGMt907g53C
+         N9J+Z081jq2CMuN3MxaiGC9IhWk60v7+GFXfv+kg7THqZdEft17AjUEJricPZoUE/HZF
+         wH4A==
+X-Gm-Message-State: APjAAAVvYknEMxJvqIbLmcfmFipZkn5W8D7fivG7Ps9A2wZ3ZuO6PtGm
+        pBcZVvkWapvWsFZoZHQH7NikhA==
+X-Google-Smtp-Source: APXvYqyA/IMQ4v74PvaT1O81Pu4QVkZmpbfKJ38ReyWVQDkM5h8Bqq0eH6icu1+9y/fCF4fE6m2u9A==
+X-Received: by 2002:a63:fc61:: with SMTP id r33mr31334396pgk.294.1560439999108;
+        Thu, 13 Jun 2019 08:33:19 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l1sm170783pgj.67.2019.06.13.08.33.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 08:33:18 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 08:33:16 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Subject: Re: [PATCH v3 7/7] drivers: regulator: qcom: add PMS405 SPMI
+ regulator
+Message-ID: <20190613153316.GE6792@builder>
+References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
+ <20190613142425.9036-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ec55c83-d349-48b3-152c-08d6f014601e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 15:32:42.6357
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Szabolcs.Nagy@arm.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5247
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613142425.9036-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTMvMDYvMjAxOSAxNTowMywgVmluY2Vuem8gRnJhc2Npbm8gd3JvdGU6DQo+IE9uIDEzLzA2
-LzIwMTkgMTM6MjgsIFN6YWJvbGNzIE5hZ3kgd3JvdGU6DQo+PiBPbiAxMy8wNi8yMDE5IDEyOjE2
-LCBWaW5jZW56byBGcmFzY2lubyB3cm90ZToNCj4+PiBPbiAxMy8wNi8yMDE5IDExOjE0LCBTemFi
-b2xjcyBOYWd5IHdyb3RlOg0KPj4+PiBPbiAxMy8wNi8yMDE5IDEwOjIwLCBDYXRhbGluIE1hcmlu
-YXMgd3JvdGU6DQo+Pj4+PiBPbiBXZWQsIEp1biAxMiwgMjAxOSBhdCAwNTozMDozNFBNICswMTAw
-LCBTemFib2xjcyBOYWd5IHdyb3RlOg0KPj4+Pj4+IE9uIDEyLzA2LzIwMTkgMTU6MjEsIFZpbmNl
-bnpvIEZyYXNjaW5vIHdyb3RlOg0KPj4+Pj4+PiArICAtIGEgbWFwcGluZyBiZWxvdyBzYnJrKDAp
-IGRvbmUgYnkgdGhlIHByb2Nlc3MgaXRzZWxmDQo+Pj4+Pj4NCj4+Pj4+PiBkb2Vzbid0IHRoZSBt
-bWFwIHJ1bGUgY292ZXIgdGhpcz8NCj4+Pj4+DQo+Pj4+PiBJSVVDIGl0IGRvZXNuJ3QgY292ZXIg
-aXQgYXMgdGhhdCdzIG1lbW9yeSBtYXBwZWQgYnkgdGhlIGtlcm5lbA0KPj4+Pj4gYXV0b21hdGlj
-YWxseSBvbiBhY2Nlc3MgdnMgYSBwb2ludGVyIHJldHVybmVkIGJ5IG1tYXAoKS4gVGhlIHN0YXRl
-bWVudA0KPj4+Pj4gYWJvdmUgdGFsa3MgYWJvdXQgaG93IHRoZSBhZGRyZXNzIGlzIG9idGFpbmVk
-IGJ5IHRoZSB1c2VyLg0KPj4+Pg0KPj4+PiBvayBpIHJlYWQgJ21hcHBpbmcgYmVsb3cgc2Jyaycg
-YXMgYW4gbW1hcCAocG9zc2libHkgTUFQX0ZJWEVEKQ0KPj4+PiB0aGF0IGhhcHBlbnMgdG8gYmUg
-YmVsb3cgdGhlIGhlYXAgYXJlYS4NCj4+Pj4NCj4+Pj4gaSB0aGluayAiYmVsb3cgc2JyaygwKSIg
-aXMgbm90IHRoZSBiZXN0IHRlcm0gdG8gdXNlOiB0aGVyZQ0KPj4+PiBtYXkgYmUgYWRkcmVzcyBy
-YW5nZSBiZWxvdyB0aGUgaGVhcCBhcmVhIHRoYXQgY2FuIGJlIG1tYXBwZWQNCj4+Pj4gYW5kIHRo
-dXMgYmVsb3cgc2JyaygwKSBhbmQgc2JyayBpcyBhIHBvc2l4IGFwaSBub3QgYSBsaW51eA0KPj4+
-PiBzeXNjYWxsLCB0aGUgbGliYyBjYW4gaW1wbGVtZW50IGl0IHdpdGggbW1hcCBvciB3aGF0ZXZl
-ci4NCj4+Pj4NCj4+Pj4gaSdtIG5vdCBzdXJlIHdoYXQgdGhlIHJpZ2h0IHRlcm0gZm9yICdoZWFw
-IGFyZWEnIGlzDQo+Pj4+ICh0aGUgYWRkcmVzcyByYW5nZSBiZXR3ZWVuIHN5c2NhbGwoX19OUl9i
-cmssMCkgYXQNCj4+Pj4gcHJvZ3JhbSBzdGFydHVwIGFuZCBpdHMgY3VycmVudCB2YWx1ZT8pDQo+
-Pj4+DQo+Pj4NCj4+PiBJIHVzZWQgc2JyaygwKSB3aXRoIHRoZSBtZWFuaW5nIG9mICJlbmQgb2Yg
-dGhlIHByb2Nlc3MncyBkYXRhIHNlZ21lbnQiIG5vdA0KPj4+IGltcGx5aW5nIHRoYXQgdGhpcyBp
-cyBhIHN5c2NhbGwsIGJ1dCBqdXN0IGFzIGEgdXNlZnVsIHdheSB0byBpZGVudGlmeSB0aGUgbWFw
-cGluZy4NCj4+PiBJIGFncmVlIHRoYXQgaXQgaXMgYSBwb3NpeCBmdW5jdGlvbiBpbXBsZW1lbnRl
-ZCBieSBsaWJjIGJ1dCB3aGVuIGl0IGlzIHVzZWQgd2l0aA0KPj4+IDAgZmluZHMgdGhlIGN1cnJl
-bnQgbG9jYXRpb24gb2YgdGhlIHByb2dyYW0gYnJlYWssIHdoaWNoIGNhbiBiZSBjaGFuZ2VkIGJ5
-IGJyaygpDQo+Pj4gYW5kIGRlcGVuZGluZyBvbiB0aGUgbmV3IGFkZHJlc3MgcGFzc2VkIHRvIHRo
-aXMgc3lzY2FsbCBjYW4gaGF2ZSB0aGUgZWZmZWN0IG9mDQo+Pj4gYWxsb2NhdGluZyBvciBkZWFs
-bG9jYXRpbmcgbWVtb3J5Lg0KPj4+DQo+Pj4gV2lsbCBjaGFuZ2luZyBzYnJrKDApIHdpdGggImVu
-ZCBvZiB0aGUgcHJvY2VzcydzIGRhdGEgc2VnbWVudCIgbWFrZSBpdCBtb3JlIGNsZWFyPw0KPj4N
-Cj4+IGkgZG9uJ3QgdW5kZXJzdGFuZCB3aGF0J3MgdGhlIHJlbGV2YW5jZSBvZiB0aGUgKmVuZCoN
-Cj4+IG9mIHRoZSBkYXRhIHNlZ21lbnQuDQo+Pg0KPj4gaSdkIGV4cGVjdCB0aGUgdGV4dCB0byBz
-YXkgc29tZXRoaW5nIGFib3V0IHRoZSBhZGRyZXNzDQo+PiByYW5nZSBvZiB0aGUgZGF0YSBzZWdt
-ZW50Lg0KPj4NCj4+IGkgY2FuIGRvDQo+Pg0KPj4gbW1hcCgodm9pZCopNjU1MzYsIDY1NTM2LCBQ
-Uk9UX1JFQUR8UFJPVF9XUklURSwgTUFQX0ZJWEVEfE1BUF9TSEFSRUR8TUFQX0FOT04sIC0xLCAw
-KTsNCj4+DQo+PiBhbmQgaXQgd2lsbCBiZSBiZWxvdyB0aGUgZW5kIG9mIHRoZSBkYXRhIHNlZ21l
-bnQuDQo+Pg0KPiANCj4gQXMgZmFyIGFzIEkgdW5kZXJzdGFuZCB0aGUgZGF0YSBzZWdtZW50ICJs
-aXZlcyIgYmVsb3cgdGhlIHByb2dyYW0gYnJlYWssIGhlbmNlDQo+IGl0IGlzIGEgd2F5IG9mIGRl
-c2NyaWJpbmcgdGhlIHJhbmdlIGZyb20gd2hpY2ggdGhlIHVzZXIgY2FuIG9idGFpbiBhIHZhbGlk
-DQo+IHRhZ2dlZCBwb2ludGVyLj4NCj4gU2FpZCB0aGF0LCBJIGFtIG5vdCByZWFsbHkgc3VyZSBv
-biBob3cgZG8geW91IHdhbnQgbWUgdG8gZG9jdW1lbnQgdGhpcyAobXkgYWltDQo+IGlzIGZvciB0
-aGlzIHRvIGJlIGNsZWFyIHRvIHRoZSB1c2Vyc3BhY2UgZGV2ZWxvcGVycykuIENvdWxkIHlvdSBw
-bGVhc2UgcHJvcG9zZQ0KPiBzb21ldGhpbmc/DQoNClsuLi5dLCBpdCBpcyBpbiB0aGUgbWVtb3J5
-IHJhbmdlcyBwcml2YXRlbHkgb3duZWQgYnkgYQ0KdXNlcnNwYWNlIHByb2Nlc3MgYW5kIGl0IGlz
-IG9idGFpbmVkIGluIG9uZSBvZiB0aGUNCmZvbGxvd2luZyB3YXlzOg0KDQotIG1tYXAgZG9uZSBi
-eSB0aGUgcHJvY2VzcyBpdHNlbGYsIFsuLi5dDQoNCi0gYnJrIHN5c2NhbGwgZG9uZSBieSB0aGUg
-cHJvY2VzcyBpdHNlbGYuDQogIChpLmUuIHRoZSBoZWFwIGFyZWEgYmV0d2VlbiB0aGUgaW5pdGlh
-bCBsb2NhdGlvbg0KICBvZiB0aGUgcHJvZ3JhbSBicmVhayBhdCBwcm9jZXNzIGNyZWF0aW9uIGFu
-ZCBpdHMNCiAgY3VycmVudCBsb2NhdGlvbi4pDQoNCi0gYW55IG1lbW9yeSBtYXBwZWQgYnkgdGhl
-IGtlcm5lbCBbLi4uXQ0KDQp0aGUgZGF0YSBzZWdtZW50IHRoYXQncyBwYXJ0IG9mIHRoZSBwcm9j
-ZXNzIGltYWdlIGlzDQphbHJlYWR5IGNvdmVyZWQgYnkgdGhlIGxhc3QgcG9pbnQuDQo=
+On Thu 13 Jun 07:24 PDT 2019, Jeffrey Hugo wrote:
+
+> From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+> 
+> The PMS405 has 5 HFSMPS and 13 LDO regulators,
+> 
+> This commit adds support for one of the 5 HFSMPS regulators (s3) to
+> the spmi regulator driver.
+> 
+> The PMIC HFSMPS 430 regulators have 8 mV step size and a voltage
+> control scheme consisting of two  8-bit registers defining a 16-bit
+> voltage set point in units of millivolts
+> 
+> S3 controls the cpu voltages (s3 is a buck regulator of type HFS430);
+> it is therefore required so we can enable voltage scaling for safely
+> running cpufreq.
+> 
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+>  drivers/regulator/qcom_spmi-regulator.c | 41 +++++++++++++++++++++++--
+>  1 file changed, 38 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+> index c7880c1d4bcd..975655e787fe 100644
+> --- a/drivers/regulator/qcom_spmi-regulator.c
+> +++ b/drivers/regulator/qcom_spmi-regulator.c
+> @@ -105,6 +105,7 @@ enum spmi_regulator_logical_type {
+>  	SPMI_REGULATOR_LOGICAL_TYPE_ULT_HO_SMPS,
+>  	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LDO,
+>  	SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426,
+> +	SPMI_REGULATOR_LOGICAL_TYPE_HFS430,
+>  };
+>  
+>  enum spmi_regulator_type {
+> @@ -157,6 +158,7 @@ enum spmi_regulator_subtype {
+>  	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL2	= 0x0e,
+>  	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL3	= 0x0f,
+>  	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL4	= 0x10,
+> +	SPMI_REGULATOR_SUBTYPE_HFS430		= 0x0a,
+>  };
+>  
+>  enum spmi_common_regulator_registers {
+> @@ -302,6 +304,8 @@ enum spmi_common_control_register_index {
+>  /* Clock rate in kHz of the FTSMPS426 regulator reference clock. */
+>  #define SPMI_FTSMPS426_CLOCK_RATE		4800
+>  
+> +#define SPMI_HFS430_CLOCK_RATE			1600
+> +
+>  /* Minimum voltage stepper delay for each step. */
+>  #define SPMI_FTSMPS426_STEP_DELAY		2
+>  
+> @@ -515,6 +519,10 @@ static struct spmi_voltage_range ult_pldo_ranges[] = {
+>  	SPMI_VOLTAGE_RANGE(0, 1750000, 1750000, 3337500, 3337500, 12500),
+>  };
+>  
+> +static struct spmi_voltage_range hfs430_ranges[] = {
+> +	SPMI_VOLTAGE_RANGE(0, 320000, 320000, 2040000, 2040000, 8000),
+> +};
+> +
+>  static DEFINE_SPMI_SET_POINTS(pldo);
+>  static DEFINE_SPMI_SET_POINTS(nldo1);
+>  static DEFINE_SPMI_SET_POINTS(nldo2);
+> @@ -530,6 +538,7 @@ static DEFINE_SPMI_SET_POINTS(ult_lo_smps);
+>  static DEFINE_SPMI_SET_POINTS(ult_ho_smps);
+>  static DEFINE_SPMI_SET_POINTS(ult_nldo);
+>  static DEFINE_SPMI_SET_POINTS(ult_pldo);
+> +static DEFINE_SPMI_SET_POINTS(hfs430);
+>  
+>  static inline int spmi_vreg_read(struct spmi_regulator *vreg, u16 addr, u8 *buf,
+>  				 int len)
+> @@ -1397,12 +1406,24 @@ static struct regulator_ops spmi_ftsmps426_ops = {
+>  	.set_pull_down		= spmi_regulator_common_set_pull_down,
+>  };
+>  
+> +static struct regulator_ops spmi_hfs430_ops = {
+> +	/* always on regulators */
+> +	.set_voltage_sel	= spmi_regulator_ftsmps426_set_voltage,
+> +	.set_voltage_time_sel	= spmi_regulator_set_voltage_time_sel,
+> +	.get_voltage		= spmi_regulator_ftsmps426_get_voltage,
+> +	.map_voltage		= spmi_regulator_single_map_voltage,
+> +	.list_voltage		= spmi_regulator_common_list_voltage,
+> +	.set_mode		= spmi_regulator_ftsmps426_set_mode,
+> +	.get_mode		= spmi_regulator_ftsmps426_get_mode,
+> +};
+> +
+>  /* Maximum possible digital major revision value */
+>  #define INF 0xFF
+>  
+>  static const struct spmi_regulator_mapping supported_regulators[] = {
+>  	/*           type subtype dig_min dig_max ltype ops setpoints hpm_min */
+>  	SPMI_VREG(BUCK,  GP_CTL,   0, INF, SMPS,   smps,   smps,   100000),
+> +	SPMI_VREG(BUCK,  HFS430,   0, INF, HFS430, hfs430, hfs430,  10000),
+>  	SPMI_VREG(LDO,   N300,     0, INF, LDO,    ldo,    nldo1,   10000),
+>  	SPMI_VREG(LDO,   N600,     0,   0, LDO,    ldo,    nldo2,   10000),
+>  	SPMI_VREG(LDO,   N1200,    0,   0, LDO,    ldo,    nldo2,   10000),
+> @@ -1570,7 +1591,8 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
+>  	return ret;
+>  }
+>  
+> -static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
+> +static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg,
+> +						   int clock_rate)
+>  {
+>  	int ret;
+>  	u8 reg = 0;
+> @@ -1587,7 +1609,7 @@ static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
+>  	delay >>= SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT;
+>  
+>  	/* slew_rate has units of uV/us */
+> -	slew_rate = SPMI_FTSMPS426_CLOCK_RATE * range->step_uV;
+> +	slew_rate = clock_rate * range->step_uV;
+>  	slew_rate /= 1000 * (SPMI_FTSMPS426_STEP_DELAY << delay);
+>  	slew_rate *= SPMI_FTSMPS426_STEP_MARGIN_NUM;
+>  	slew_rate /= SPMI_FTSMPS426_STEP_MARGIN_DEN;
+> @@ -1739,7 +1761,14 @@ static int spmi_regulator_of_parse(struct device_node *node,
+>  			return ret;
+>  		break;
+>  	case SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426:
+> -		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg);
+> +		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg,
+> +						SPMI_FTSMPS426_CLOCK_RATE);
+> +		if (ret)
+> +			return ret;
+> +		break;
+> +	case SPMI_REGULATOR_LOGICAL_TYPE_HFS430:
+> +		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg,
+> +							SPMI_HFS430_CLOCK_RATE);
+>  		if (ret)
+>  			return ret;
+>  		break;
+> @@ -1907,6 +1936,11 @@ static const struct spmi_regulator_data pm8005_regulators[] = {
+>  	{ }
+>  };
+>  
+> +static const struct spmi_regulator_data pms405_regulators[] = {
+> +	{ "s3", 0x1a00, }, /* supply name in the dts only */
+
+Not sure what this comment is trying to say. The third element here
+should be the string that is used to find the supply as specified in DT.
+For s3 this is "vdd_s3".
+
+
+So please drop the comment and make this:
+	{ "s3", 0x1a00, "s3" },
+
+Regards,
+Bjorn
+
+> +	{ }
+> +};
+> +
+>  static const struct of_device_id qcom_spmi_regulator_match[] = {
+>  	{ .compatible = "qcom,pm8005-regulators", .data = &pm8005_regulators },
+>  	{ .compatible = "qcom,pm8841-regulators", .data = &pm8841_regulators },
+> @@ -1914,6 +1948,7 @@ static const struct of_device_id qcom_spmi_regulator_match[] = {
+>  	{ .compatible = "qcom,pm8941-regulators", .data = &pm8941_regulators },
+>  	{ .compatible = "qcom,pm8994-regulators", .data = &pm8994_regulators },
+>  	{ .compatible = "qcom,pmi8994-regulators", .data = &pmi8994_regulators },
+> +	{ .compatible = "qcom,pms405-regulators", .data = &pms405_regulators },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, qcom_spmi_regulator_match);
+> -- 
+> 2.17.1
+> 
