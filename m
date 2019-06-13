@@ -2,87 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A897B43C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AAC143C5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732406AbfFMPgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:36:20 -0400
-Received: from app2.whu.edu.cn ([202.114.64.89]:50524 "EHLO whu.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727379AbfFMKUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:20:09 -0400
-Received: from localhost (unknown [111.202.192.3])
-        by email2 (Coremail) with SMTP id AgBjCgBHTvZJIwJdy3VkAQ--.48697S2;
-        Thu, 13 Jun 2019 18:19:59 +0800 (CST)
-From:   Peng Wang <rocking@whu.edu.cn>
-To:     peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com
-Cc:     linux-kernel@vger.kernel.org, Peng Wang <rocking@whu.edu.cn>
-Subject: [PATCH] locking/rwsem: save unnecessary rwsem_set_owner() after slow path
-Date:   Thu, 13 Jun 2019 18:18:09 +0800
-Message-Id: <20190613101809.16231-1-rocking@whu.edu.cn>
-X-Mailer: git-send-email 2.19.1
+        id S1733185AbfFMPff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:35:35 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2637 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbfFMKVv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:21:51 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0223bf0000>; Thu, 13 Jun 2019 03:21:51 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 13 Jun 2019 03:21:50 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 13 Jun 2019 03:21:50 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 10:21:48 +0000
+Subject: Re: [PATCH v3 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+To:     Sameer Pujar <spujar@nvidia.com>, <thierry.reding@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1560417053-2966-1-git-send-email-spujar@nvidia.com>
+ <8a71e670-7943-6bce-ba61-3f020fd9450d@nvidia.com>
+ <6a4b5fac-68cd-542a-a907-0d80713f9d82@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <7a8426e9-a2c3-5cf6-9088-8ad81f558488@nvidia.com>
+Date:   Thu, 13 Jun 2019 11:21:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AgBjCgBHTvZJIwJdy3VkAQ--.48697S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4ftr17GFWDCrWxJr4kCrg_yoW8JFy7pr
-        1FkFyqkr9FqFy7WrZrJa10va15Aw10yr97GanxCrW8AFnxAF4xJFs8Wr17tFy8GFyIkrWY
-        qF4fCFWF9ayxKrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkq14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-        JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_Gw1l
-        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
-        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-        0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUboKZJUUUUU==
-X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
+In-Reply-To: <6a4b5fac-68cd-542a-a907-0d80713f9d82@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560421311; bh=iFkZqe5rMtibcofnVbf+47xZPC5Xxy4wl7HLwK+mfZk=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Zsnuif08gCsNzH5xlIZ9xgBZY1smO8FcZDt9qpu5enC2fLBjVKg6i+TjlJWXSlRqz
+         a8mu0jG635NLs8XlpkY3hbiVqvc3PVcZ0v4COg6LVIT5nEGBOBSkwnMgBHaoa7sWse
+         b8TGwokYGGmfoaE5TnaLnAkA4Nj+hy2U+ZS8CEscrAyf2+E5dMiu89VXXnGzZ54TYn
+         RNeDXyCpfUT4MyVSbCdbY8ActWGm3hAkZpjbriK1mdlyjda8G1zgPsyesPBFiHNA04
+         o6CmARCA9WsLiswQT9PQRY7ApL9GlzfKrmYrqHyNqj0GM0LIgezfsK4iURc94+7nRG
+         stcB3ppiWxQwg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rwsem_down_write_failed() and rwsem_down_write_failed_killable() return
-with sem->owner set if acquire semaphore successfully, so we can skip
-rwsem_set_owner() to keep pace with reading.
 
-Signed-off-by: Peng Wang <rocking@whu.edu.cn>
----
- kernel/locking/rwsem.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+On 13/06/2019 10:47, Sameer Pujar wrote:
+>=20
+> On 6/13/2019 3:12 PM, Jon Hunter wrote:
+>> On 13/06/2019 10:10, Sameer Pujar wrote:
+>>> Add DT nodes for following devices on Tegra186 and Tegra194
+>>> =C2=A0 * ACONNECT
+>>> =C2=A0 * ADMA
+>>> =C2=A0 * AGIC
+>>>
+>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>> ---
+>>> =C2=A0 changes in current revision
+>>> =C2=A0=C2=A0 * use single address range for all APE modules
+>>> =C2=A0=C2=A0 * fix address range for agic
+>>>
+>>> =C2=A0 arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67
+>>> ++++++++++++++++++++++++++++++++
+>>> =C2=A0 arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67
+>>> ++++++++++++++++++++++++++++++++
+>>> =C2=A0 2 files changed, 134 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> index 426ac0b..b4d735e 100644
+>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+>>> @@ -1295,4 +1295,71 @@
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_=
+LOW)>;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupt-parent=
+ =3D <&gic>;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 aconnect@2a41000 {
+>> This address does not look correct. This appears to be the address of
+>> the AGIC. I think it should be 2900000, however, I also wonder if we
+>> should even bother with an address for the aconnect as this is just a
+>> bus and we don't specific a 'reg' property.
+> Do you mean, should be ok to just mention "aconnect {"?
 
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index 64877f5294e3..4fa21f737151 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -225,7 +225,8 @@ static inline void __down_write(struct rw_semaphore *sem)
- 					     &sem->count);
- 	if (unlikely(tmp != RWSEM_ACTIVE_WRITE_BIAS))
- 		rwsem_down_write_failed(sem);
--	rwsem_set_owner(sem);
-+	else
-+		rwsem_set_owner(sem);
- }
- 
- static inline int __down_write_killable(struct rw_semaphore *sem)
-@@ -234,10 +235,12 @@ static inline int __down_write_killable(struct rw_semaphore *sem)
- 
- 	tmp = atomic_long_add_return_acquire(RWSEM_ACTIVE_WRITE_BIAS,
- 					     &sem->count);
--	if (unlikely(tmp != RWSEM_ACTIVE_WRITE_BIAS))
-+	if (unlikely(tmp != RWSEM_ACTIVE_WRITE_BIAS)) {
- 		if (IS_ERR(rwsem_down_write_failed_killable(sem)))
- 			return -EINTR;
--	rwsem_set_owner(sem);
-+	} else {
-+		rwsem_set_owner(sem);
-+	}
- 	return 0;
- }
- 
--- 
-2.19.1
+I did a bit more reading and for Tegra186 there are no registers
+implement for the aconnect (which is different from Tegra210) and so in
+this case we should just have ...
 
+	aconnect {
+		...
+
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "nvidia,tegr=
+a210-aconnect";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&bpmp TEGRA186_=
+CLK_APE>,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 <&bpmp TEGRA186_CLK_APB2APE>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "ape", "apb=
+2ape";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 power-domains =3D <&bpmp TE=
+GRA186_POWER_DOMAIN_AUD>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <1>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ranges =3D <0x02900000 0x0 =
+0x02900000 0x1FFFFF>;
+>> This should be 0x1fffff.
+> done
+
+Sorry this should be 0x200000.
+
+Cheers
+Jon
+
+--=20
+nvpublic
