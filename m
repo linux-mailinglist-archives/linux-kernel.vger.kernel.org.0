@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6769F447F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A2A144841
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393250AbfFMRDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:03:30 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:58443 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729473AbfFMRD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:03:28 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 7b528bc5
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Jun 2019 16:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=eQU47tAOAY4Ww+Qu6JsBiSiAKA8=; b=xZWG9B
-        bjHaQeuqbz4sI0NoFYNsm6CSlN9RmsZPoxfj+xDIbapZbChbjilJ2m7GGncMs20N
-        Jk3phLBQIRRHb3dAZtZL6zoF6QlbL3y6lZ2AnklPSwrB2xz2YcwdiEgwp02w5uXu
-        qvrC5uw1lUeLSVWHuwQ55AXFfz5zOinmXvQgAXZHqfvTW3/WVZlol2YIWPE4vR0J
-        tpkuj9lug1NBzBJn/yQIy+o2SMA3JClJThONIoMZSdGlnypeyyz1XNZLLhdIZH+1
-        BMZGhuzkOUx9NYzWDecJsdchfvyxrZ9IpuAUpvm/0vP+z2UkIwgg0j0PjtiV3FaT
-        niCmGtG5nYujcRAw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 074da687 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Jun 2019 16:31:01 +0000 (UTC)
-Received: by mail-ot1-f52.google.com with SMTP id l15so19655683otn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 10:03:25 -0700 (PDT)
-X-Gm-Message-State: APjAAAW7Q0/feFHrSzwzrS/hPP+A5C09AdXtVck5S+odJfbcauJKlUSi
-        Z04W/epMixDGfFySAn2f0mQSaqRmS8PGD6Oha28=
-X-Google-Smtp-Source: APXvYqwtl2JJDkqI30n4+ANYJzLJ6c7AVUpnMwMaCK8MzFG1h4OwexbwbWd6Bq6YlRzQ8yXFmAud0QT72VNsUE9HX+k=
-X-Received: by 2002:a9d:5a88:: with SMTP id w8mr6898138oth.369.1560445404784;
- Thu, 13 Jun 2019 10:03:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190529182324.8140-1-Jason@zx2c4.com>
-In-Reply-To: <20190529182324.8140-1-Jason@zx2c4.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 13 Jun 2019 19:03:13 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rXqA3AwM0=RVMQ0-WFN5OUw_wMvWLOV+6jCDZ6zt51BA@mail.gmail.com>
-Message-ID: <CAHmME9rXqA3AwM0=RVMQ0-WFN5OUw_wMvWLOV+6jCDZ6zt51BA@mail.gmail.com>
-Subject: Re: [PATCH] arm: vdso: pass --be8 to linker if necessary
-To:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729639AbfFMRGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:06:15 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52771 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404537AbfFMRED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:04:03 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s3so10999425wms.2;
+        Thu, 13 Jun 2019 10:04:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=w6bG0pJ76K9bXtOea02n5IpzqcS7M9AOgHnuTysxzu8=;
+        b=tWssK9rY785TD06VtGe9Pjy5hEzYB8vYCR4vdT/SHvmDW8UdX3XI2LvQrW/hcdxFCR
+         njoQi0g4Rkj/tBD4Ey9lPEUeDoUCDSiK20+2IcW+Rgva2tt7VDR0eHnk18fyq6oqJRVm
+         SqqHnbDlS/2v7uFlYooXRcTTObPl3IAXKSNZvsJV99A4OXG9hhgE/2exyvNwy0zi3Ers
+         inBwIFFWv7GFDLR9eMEGd0dV2KoiAmxUV9RMM8OEgGNparzsaBIbUqAc1JjyHWP9kOhH
+         FFsN3umXXOyTs/UoM9GXoqdf0jKkAqRQa8SpFIZ6vstWwR55ACUeOUEERDonszIAAQeW
+         wC7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=w6bG0pJ76K9bXtOea02n5IpzqcS7M9AOgHnuTysxzu8=;
+        b=L+VTjOSu8aqkpGdvfx+kFBO8/n29uU/im7UezCk9di0BuBkaC3b6K3x86Y8ffQ8O0b
+         GDt5RGt2uuYOSH7YcBTV+WCc/0lqZLHTEFpbzvZEh1BgDJj6rWwa8Iau57UDDX3SYY4k
+         9+LADIg+ABhyG0Z4ZcsfqWE4BjP4+Qg/zjK6//jzA4BvfxTvLqjg65uEYhCGBlw9x0mH
+         dEQthKC5PzJxOkecyBq1w1+2wXQyKjXV2uzSxndCb7rpmxXYKvcKFW4twD9XNgs4266c
+         Ec04nhDddAVmYrxWfD2+n2L4uvsYjPyQSM0WZmNVKfcxhW2b5bM4YiwCfIfrg05J3ZPu
+         P2Ng==
+X-Gm-Message-State: APjAAAX/Rhp9TGFz7KC3W8lGEY24x6JuNRDJIxwa3OjTLPsho7ZxNPOy
+        FigQducMm0DdgyFZCY4/5OGd1ip2
+X-Google-Smtp-Source: APXvYqwwpPLK0ZK8ICO5YzewDN1wtSzywWsI8uUqk+TR385jGDycsCTW0B2xoMG0UjBqzqYwJT9qxw==
+X-Received: by 2002:a7b:c5d1:: with SMTP id n17mr4648266wmk.84.1560445441231;
+        Thu, 13 Jun 2019 10:04:01 -0700 (PDT)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id a10sm341856wrx.17.2019.06.13.10.04.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 10:04:00 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        vkuznets@redhat.com
+Subject: [PATCH 28/43] KVM: nVMX: Don't update GUEST_BNDCFGS if it's clean in HV eVMCS
+Date:   Thu, 13 Jun 2019 19:03:14 +0200
+Message-Id: <1560445409-17363-29-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1560445409-17363-1-git-send-email-pbonzini@redhat.com>
+References: <1560445409-17363-1-git-send-email-pbonzini@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Masahiro,
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Considering ARM big endian userland is pretty badly broken without
-this, we should probably have this merged in the next rc or rather
-soon. Was there additional information you needed? Would you prefer
-Russell queues up my patch or did you want to make further build
-system changes?
+L1 is responsible for dirtying GUEST_GRP1 if it writes GUEST_BNDCFGS.
 
-Jason
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx/nested.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 138f27597c91..d5bfe0cbc4fb 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -2197,6 +2197,10 @@ static void prepare_vmcs02_rare(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ 			vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
+ 			vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
+ 		}
++
++		if (kvm_mpx_supported() && vmx->nested.nested_run_pending &&
++		    (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS))
++			vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
+ 	}
+ 
+ 	if (nested_cpu_has_xsaves(vmcs12))
+@@ -2232,10 +2236,6 @@ static void prepare_vmcs02_rare(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
+ 
+ 	set_cr4_guest_host_mask(vmx);
+-
+-	if (kvm_mpx_supported() && vmx->nested.nested_run_pending &&
+-	    (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS))
+-		vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
+ }
+ 
+ /*
+-- 
+1.8.3.1
+
+
