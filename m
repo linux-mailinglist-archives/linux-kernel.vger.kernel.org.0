@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24F144171
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF32643FC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391818AbfFMQOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:14:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59440 "EHLO mail.kernel.org"
+        id S1731679AbfFMQAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:00:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731187AbfFMImQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:16 -0400
+        id S1731473AbfFMIt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:49:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 707C12147A;
-        Thu, 13 Jun 2019 08:42:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ED1120851;
+        Thu, 13 Jun 2019 08:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415335;
-        bh=/xsKunJb0b7JNI+hxbSs2B2m7XRoClfEzzm84fBCY4s=;
+        s=default; t=1560415766;
+        bh=gvNTGMetgZrxKRD7wjxmPiYEtOnGN4ElSH6eR00rTic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G0R3ww2q310bufO2v/P3vRARdIy2WZ9LPsuSa8NOiND1bUC3ka5DD9Hxgislj+qSm
-         GX3G5ZKGfVWpftNRkIRT/V+I7P9G7FBeOB88p6S0nfhF+Pgr2GEPwmUEwGQVUMI/wl
-         eI8gTykos4Xnt/a2n3R3Lp/AKpmtztYW1zsGHsDU=
+        b=yviVbGCcCyfapYnTHmGyXKYjpK+xtIwxNFkN3PS+OVplUcnyo4o1U4Nsv05d5dMC9
+         q0rPN0J2kryHe629cLE5cIdRUqb+j2T8ZblOxWDczCJ1UvY1ih04chPnIjmHyt44ov
+         09sXvIgRMWVDvMD67WSCPJNAsv01l+lnepIAqM4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Adam Ford <aford173@gmail.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/118] ARM: dts: imx6qdl: Specify IMX6QDL_CLK_IPG as "ipg" clock to SDMA
-Date:   Thu, 13 Jun 2019 10:33:46 +0200
-Message-Id: <20190613075648.954823832@linuxfoundation.org>
+        stable@vger.kernel.org, Anthony Koo <Anthony.Koo@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 115/155] drm/amd/display: disable link before changing link settings
+Date:   Thu, 13 Jun 2019 10:33:47 +0200
+Message-Id: <20190613075659.358473914@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,46 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b14c872eebc501b9640b04f4a152df51d6eaf2fc ]
+[ Upstream commit 15ae3b28f8ca406b449d36d36021e96b66aedb5d ]
 
-Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
-clock to determine if it needs to configure the IP block as operating
-at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
-clocks as IMX6QDL_CLK_SDMA results in driver incorrectly thinking that
-ratio is 1:1 which results in broken SDMA funtionality(this at least
-breaks RAVE SP serdev driver on RDU2). Fix the code to specify
-IMX6QDL_CLK_IPG as "ipg" clock for SDMA, to avoid detecting incorrect
-clock ratio.
+[Why]
+If link is already enabled at a different rate (for example 5.4 Gbps)
+then calling VBIOS command table to switch to a new rate
+(for example 2.7 Gbps) will not take effect.
+This can lead to link training failure to occur.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Tested-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+[How]
+If the requested link rate is different than the current link rate,
+the link must be disabled in order to re-enable at the new
+link rate.
+
+In today's logic it is currently only impacting eDP since DP
+connection types will always disable the link during display
+detection, when initial link verification occurs.
+
+Signed-off-by: Anthony Koo <Anthony.Koo@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Acked-by: Tony Cheng <Tony.Cheng@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index 61d2d26afbf4..00d44a60972f 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -905,7 +905,7 @@
- 				compatible = "fsl,imx6q-sdma", "fsl,imx35-sdma";
- 				reg = <0x020ec000 0x4000>;
- 				interrupts = <0 2 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX6QDL_CLK_SDMA>,
-+				clocks = <&clks IMX6QDL_CLK_IPG>,
- 					 <&clks IMX6QDL_CLK_SDMA>;
- 				clock-names = "ipg", "ahb";
- 				#dma-cells = <3>;
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+index 419e8de8c0f4..6072636da388 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+@@ -1399,6 +1399,15 @@ static enum dc_status enable_link_dp(
+ 	/* get link settings for video mode timing */
+ 	decide_link_settings(stream, &link_settings);
+ 
++	/* If link settings are different than current and link already enabled
++	 * then need to disable before programming to new rate.
++	 */
++	if (link->link_status.link_active &&
++		(link->cur_link_settings.lane_count != link_settings.lane_count ||
++		 link->cur_link_settings.link_rate != link_settings.link_rate)) {
++		dp_disable_link_phy(link, pipe_ctx->stream->signal);
++	}
++
+ 	pipe_ctx->stream_res.pix_clk_params.requested_sym_clk =
+ 			link_settings.link_rate * LINK_RATE_REF_FREQ_IN_KHZ;
+ 	state->dccg->funcs->update_clocks(state->dccg, state, false);
 -- 
 2.20.1
 
