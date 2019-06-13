@@ -2,139 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F167443C61
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA90643C94
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733273AbfFMPfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:35:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:42986 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727564AbfFMPfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:35:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42C42A78;
-        Thu, 13 Jun 2019 08:35:38 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 458113F718;
-        Thu, 13 Jun 2019 08:35:36 -0700 (PDT)
-Subject: Re: [PATCH v4 1/2] arm64: Define
- Documentation/arm64/tagged-address-abi.txt
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>
-Cc:     nd <nd@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <cover.1560339705.git.andreyknvl@google.com>
- <20190612142111.28161-1-vincenzo.frascino@arm.com>
- <20190612142111.28161-2-vincenzo.frascino@arm.com>
- <a90da586-8ff6-4bed-d940-9306d517a18c@arm.com>
- <20190613092054.GO28951@C02TF0J2HF1T.local>
- <dee7f192-d0f0-558e-3007-eba805c6f2da@arm.com>
- <6ebbda37-5dd9-d0d5-d9cb-286c7a5b7f8e@arm.com>
- <8e3c9537-de10-0d0d-f5bb-c33bde92443f@arm.com>
- <5963d144-be9b-78d8-9130-ef92bc66b1fd@arm.com>
- <ba822b33-a822-02ef-9b85-725f4353596a@arm.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <a05a2dfb-3398-455d-8586-b79dfb7a772f@arm.com>
-Date:   Thu, 13 Jun 2019 16:35:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731110AbfFMPgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:36:40 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40426 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727757AbfFMPgg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:36:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id p184so8783547pfp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dIxmbqoHolBJ5JcAhkZwY20MNsxdVQHEXSvHFfDlnuo=;
+        b=T1xzSsA9CWPyw7MWBoY1BkfuWJPaojXzqycfSspyble27NyBTeDRkcyEZlH3+A5O3T
+         Z6NEGv0WS/CcB1j1VNYkJchhJJ9R9qZXDRNePgDjSugQ1t0q8105sxVsOZRxc+TLwaqs
+         7kV//PH0M1EB4KS7oeLAVuKDggdnPQjpP8SIC2JqHFNKJG42LdxB9rFX6PDVXIKLsRT0
+         6ULmpK6ETnJzaxuVhH0qZBw3k4cP2Za66kFl4eSE8OeQt0XCpjtZUKr+pjRA8J0H0usm
+         QCJAafRqj3DAkuKtPOiLbmIvPRSGJTbM3N4gy3M8+ZeF1U2doaNJUOH0OO+R0Rz64xah
+         d8oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dIxmbqoHolBJ5JcAhkZwY20MNsxdVQHEXSvHFfDlnuo=;
+        b=IxUh5mjSvTONTyXgv/XTbmEFZHBWp8NxtoICZCh/ViDaeysn60mOphAzA2pQKFm996
+         QePHSn2vtjM0vg9amBE8mOKZNPbA/08TQLEoXrWnagaEs7Eh8+gb6oqjaV4xzxHHh6x4
+         fzJTI4v06bReATm6LGYulKd695G+Tfli6kZO+jz8ripOd+DqHy2BpcKwpCZBbDJ3TRX3
+         bohO7gwi6K0M0Bk6Fy6C2RAHIZhbVt1rpkqtHAv2ph0yvJhqpf8ol/aBSemHo7xK/53m
+         /sXdUF8YVgRFH7AT2WKf/paLHV8sKjyzdNzFnc14Wj2C8ck5pBe5dPLEU8K+ppwKkCD2
+         8G2A==
+X-Gm-Message-State: APjAAAX/6K3eiQY6VO9FbggqOJfgtevFcRIqG6W7YSGamc9B2DzEx3NI
+        EUilNslSkrEcblTdsG+EV+C9uw==
+X-Google-Smtp-Source: APXvYqzi2uLTJsw+edMFJq+DNQyvGd0PcsK9UYvnv+v8xA1dRESupytCXLoyfUCnalLWUD65g6ISdQ==
+X-Received: by 2002:a63:52:: with SMTP id 79mr30999563pga.381.1560440195944;
+        Thu, 13 Jun 2019 08:36:35 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t13sm276008pjo.13.2019.06.13.08.36.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 08:36:35 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 08:36:33 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Subject: Re: [PATCH v3 6/7] dt-bindings: qcom_spmi: Document pms405 support
+Message-ID: <20190613153633.GF6792@builder>
+References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
+ <20190613142416.8985-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ba822b33-a822-02ef-9b85-725f4353596a@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613142416.8985-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 13 Jun 07:24 PDT 2019, Jeffrey Hugo wrote:
 
-On 13/06/2019 16:32, Szabolcs Nagy wrote:
-> On 13/06/2019 15:03, Vincenzo Frascino wrote:
->> On 13/06/2019 13:28, Szabolcs Nagy wrote:
->>> On 13/06/2019 12:16, Vincenzo Frascino wrote:
->>>> On 13/06/2019 11:14, Szabolcs Nagy wrote:
->>>>> On 13/06/2019 10:20, Catalin Marinas wrote:
->>>>>> On Wed, Jun 12, 2019 at 05:30:34PM +0100, Szabolcs Nagy wrote:
->>>>>>> On 12/06/2019 15:21, Vincenzo Frascino wrote:
->>>>>>>> +  - a mapping below sbrk(0) done by the process itself
->>>>>>>
->>>>>>> doesn't the mmap rule cover this?
->>>>>>
->>>>>> IIUC it doesn't cover it as that's memory mapped by the kernel
->>>>>> automatically on access vs a pointer returned by mmap(). The statement
->>>>>> above talks about how the address is obtained by the user.
->>>>>
->>>>> ok i read 'mapping below sbrk' as an mmap (possibly MAP_FIXED)
->>>>> that happens to be below the heap area.
->>>>>
->>>>> i think "below sbrk(0)" is not the best term to use: there
->>>>> may be address range below the heap area that can be mmapped
->>>>> and thus below sbrk(0) and sbrk is a posix api not a linux
->>>>> syscall, the libc can implement it with mmap or whatever.
->>>>>
->>>>> i'm not sure what the right term for 'heap area' is
->>>>> (the address range between syscall(__NR_brk,0) at
->>>>> program startup and its current value?)
->>>>>
->>>>
->>>> I used sbrk(0) with the meaning of "end of the process's data segment" not
->>>> implying that this is a syscall, but just as a useful way to identify the mapping.
->>>> I agree that it is a posix function implemented by libc but when it is used with
->>>> 0 finds the current location of the program break, which can be changed by brk()
->>>> and depending on the new address passed to this syscall can have the effect of
->>>> allocating or deallocating memory.
->>>>
->>>> Will changing sbrk(0) with "end of the process's data segment" make it more clear?
->>>
->>> i don't understand what's the relevance of the *end*
->>> of the data segment.
->>>
->>> i'd expect the text to say something about the address
->>> range of the data segment.
->>>
->>> i can do
->>>
->>> mmap((void*)65536, 65536, PROT_READ|PROT_WRITE, MAP_FIXED|MAP_SHARED|MAP_ANON, -1, 0);
->>>
->>> and it will be below the end of the data segment.
->>>
->>
->> As far as I understand the data segment "lives" below the program break, hence
->> it is a way of describing the range from which the user can obtain a valid
->> tagged pointer.>
->> Said that, I am not really sure on how do you want me to document this (my aim
->> is for this to be clear to the userspace developers). Could you please propose
->> something?
+> From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
 > 
-> [...], it is in the memory ranges privately owned by a
-> userspace process and it is obtained in one of the
-> following ways:
+> The PMS405 supports 5 SMPS and 13 LDO regulators.
 > 
-> - mmap done by the process itself, [...]
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+>  .../regulator/qcom,spmi-regulator.txt         | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
-> - brk syscall done by the process itself.
->   (i.e. the heap area between the initial location
->   of the program break at process creation and its
->   current location.)
-> 
-> - any memory mapped by the kernel [...]
-> 
-> the data segment that's part of the process image is
-> already covered by the last point.
-> 
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> index ba94bc2d407a..19cffb239094 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> @@ -10,6 +10,7 @@ Qualcomm SPMI Regulators
+>  			"qcom,pm8941-regulators"
+>  			"qcom,pm8994-regulators"
+>  			"qcom,pmi8994-regulators"
+> +			"qcom,pms405-regulators"
+>  
+>  - interrupts:
+>  	Usage: optional
+> @@ -111,6 +112,29 @@ Qualcomm SPMI Regulators
+>  	Definition: Reference to regulator supplying the input pin, as
+>  		    described in the data sheet.
+>  
+> +- vdd_s1-supply:
+> +- vdd_s2-supply:
+> +- vdd_s3-supply:
+> +- vdd_s4-supply:
+> +- vdd_s5-supply:
+> +- vdd_l1-supply:
+> +- vdd_l2-supply:
+> +- vdd_l3-supply:
+> +- vdd_l4-supply:
+> +- vdd_l5-supply:
+> +- vdd_l6-supply:
+> +- vdd_l7-supply:
+> +- vdd_l8-supply:
+> +- vdd_l9-supply:
+> +- vdd_l10-supply:
+> +- vdd_l11-supply:
+> +- vdd_l12-supply:
+> +- vdd_l13-supply:
 
-Thanks Szabolcs, I will update the document accordingly.
+No, the supply pins are as follows:
 
--- 
+- vdd_l1_l2-supply:
+- vdd_l3_l8-supply:
+- vdd_l4-supply:
+- vdd_l5_l6-supply:
+- vdd_l10_l11_l12_l13-supply:
+- vdd_l7-supply:
+- vdd_l9-supply:
+- vdd_s1-supply:
+- vdd_s2-supply:
+- vdd_s3-supply:
+- vdd_s4-supply:
+- vdd_s5-supply:
+
+
 Regards,
-Vincenzo
+Bjorn
+
+> +	Usage: optional (pms405 only)
+> +	Value type: <phandle>
+> +	Definition: Reference to regulator supplying the input pin, as
+> +		    described in the data sheet.
+> +
+>  - qcom,saw-reg:
+>  	Usage: optional
+>  	Value type: <phandle>
+> -- 
+> 2.17.1
+> 
