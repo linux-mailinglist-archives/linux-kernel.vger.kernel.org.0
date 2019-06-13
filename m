@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2945E44224
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C65D544050
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391805AbfFMQTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57224 "EHLO mail.kernel.org"
+        id S2390588AbfFMQFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731090AbfFMIjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:39:46 -0400
+        id S1731349AbfFMIqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:46:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC13621479;
-        Thu, 13 Jun 2019 08:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AB142147A;
+        Thu, 13 Jun 2019 08:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415185;
-        bh=1PMS6hWWvz97HOrPx6qSXzxl5RAi/lk5B02P33A59Ms=;
+        s=default; t=1560415603;
+        bh=TYF2Drt0TR0zCYl1jjNwj7exb6MRjHYIwFmoMxGlS+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZZZiuinkxq8NEwTgJBtbmm/5qs1wTCQ8P1zAxTzX7HWSB2MNEInoDwmqfOSXwWjxh
-         rhsOCgipkwvW4CZSLRqHV/b+3gaZ20etQOzy/ITfMWnxn3/C7WnPuDttiR87AVtfws
-         Jct6+k0BFYL9c9NyTQy3dDIocQShWnbIw1i2ikPw=
+        b=iDxNLNlG4xRfmeaDtbHqc2jqXRq8O5xFXujgaJiKEN/Ppg09MXOsQ1u8k7aL3u8jT
+         mKhk8fDO2HLHgg8j7vq1gQMfUA8hvuTedTjnoroLTNRq500SENNkWPmAWGukgDcyv/
+         Cm8nFyEI+hJbYeKwGktSsrTafJe9pjZNXVR4b9dc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/118] f2fs: fix to avoid panic in do_recover_data()
-Date:   Thu, 13 Jun 2019 10:32:51 +0200
-Message-Id: <20190613075645.411184691@linuxfoundation.org>
+Subject: [PATCH 5.1 060/155] PCI: dwc: Free MSI IRQ page in dw_pcie_free_msi()
+Date:   Thu, 13 Jun 2019 10:32:52 +0200
+Message-Id: <20190613075656.430953358@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,76 +47,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 22d61e286e2d9097dae36f75ed48801056b77cac ]
+[ Upstream commit dc69a3d567941784c3d00e1d0834582b42b0b3e7 ]
 
-As Jungyeon reported in bugzilla:
+To avoid a memory leak, free the page allocated for MSI IRQ in
+dw_pcie_free_msi().
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203227
-
-- Overview
-When mounting the attached crafted image, following errors are reported.
-Additionally, it hangs on sync after trying to mount it.
-
-The image is intentionally fuzzed from a normal f2fs image for testing.
-Compile options for F2FS are as follows.
-CONFIG_F2FS_FS=y
-CONFIG_F2FS_STAT_FS=y
-CONFIG_F2FS_FS_XATTR=y
-CONFIG_F2FS_FS_POSIX_ACL=y
-CONFIG_F2FS_CHECK_FS=y
-
-- Reproduces
-mkdir test
-mount -t f2fs tmp.img test
-sync
-
-- Messages
- kernel BUG at fs/f2fs/recovery.c:549!
- RIP: 0010:recover_data+0x167a/0x1780
- Call Trace:
-  f2fs_recover_fsync_data+0x613/0x710
-  f2fs_fill_super+0x1043/0x1aa0
-  mount_bdev+0x16d/0x1a0
-  mount_fs+0x4a/0x170
-  vfs_kern_mount+0x5d/0x100
-  do_mount+0x200/0xcf0
-  ksys_mount+0x79/0xc0
-  __x64_sys_mount+0x1c/0x20
-  do_syscall_64+0x43/0xf0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-During recovery, if ofs_of_node is inconsistent in between recovered
-node page and original checkpointed node page, let's just fail recovery
-instead of making kernel panic.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 12 ++++++++----
+ drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index ae0e5f2e67b4..bf5c5f4fa77e 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -485,7 +485,15 @@ retry_dn:
- 		goto err;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index acd185b4661e..9d22b19b76f2 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -303,20 +303,24 @@ void dw_pcie_free_msi(struct pcie_port *pp)
  
- 	f2fs_bug_on(sbi, ni.ino != ino_of_node(page));
--	f2fs_bug_on(sbi, ofs_of_node(dn.node_page) != ofs_of_node(page));
+ 	irq_domain_remove(pp->msi_domain);
+ 	irq_domain_remove(pp->irq_domain);
 +
-+	if (ofs_of_node(dn.node_page) != ofs_of_node(page)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
-+			inode->i_ino, ofs_of_node(dn.node_page),
-+			ofs_of_node(page));
-+		err = -EFAULT;
-+		goto err;
-+	}
++	if (pp->msi_page)
++		__free_page(pp->msi_page);
+ }
  
- 	for (; start < end; start++, dn.ofs_in_node++) {
- 		block_t src, dest;
+ void dw_pcie_msi_init(struct pcie_port *pp)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+ 	struct device *dev = pci->dev;
+-	struct page *page;
+ 	u64 msi_target;
+ 
+-	page = alloc_page(GFP_KERNEL);
+-	pp->msi_data = dma_map_page(dev, page, 0, PAGE_SIZE, DMA_FROM_DEVICE);
++	pp->msi_page = alloc_page(GFP_KERNEL);
++	pp->msi_data = dma_map_page(dev, pp->msi_page, 0, PAGE_SIZE,
++				    DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(dev, pp->msi_data)) {
+ 		dev_err(dev, "Failed to map MSI data\n");
+-		__free_page(page);
++		__free_page(pp->msi_page);
++		pp->msi_page = NULL;
+ 		return;
+ 	}
+ 	msi_target = (u64)pp->msi_data;
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 377f4c0b52da..6fb0a1879932 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -179,6 +179,7 @@ struct pcie_port {
+ 	struct irq_domain	*irq_domain;
+ 	struct irq_domain	*msi_domain;
+ 	dma_addr_t		msi_data;
++	struct page		*msi_page;
+ 	u32			num_vectors;
+ 	u32			irq_mask[MAX_MSI_CTRLS];
+ 	raw_spinlock_t		lock;
 -- 
 2.20.1
 
