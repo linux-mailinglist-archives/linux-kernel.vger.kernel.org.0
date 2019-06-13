@@ -2,92 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB03E44733
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FBA44728
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393224AbfFMQ5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:57:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58306 "EHLO mail.kernel.org"
+        id S2393218AbfFMQ5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:57:32 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:56294 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbfFMBAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:00:33 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80DD520B7C;
-        Thu, 13 Jun 2019 01:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560387632;
-        bh=WUexA2+dp05oChEUY0hVcSnJGehxfowRO2+SZ2+eUDI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=03XL9DAVVWVD08SCihXoCb+VMg14Qe4N0JjLvI2qz6yWLN8k3lI5jhzDJ4oQpOh73
-         ODhE/FDdjsYf0cN14H2V8IPabHV05TMOWNJnCPwwOCy0nrZ1Q/384BAQ5PcqarQ/gU
-         KnjV1EfqhlRVRJ0s3WFfskPMF5KWnCWHeROGM/ZQ=
-Date:   Wed, 12 Jun 2019 18:00:31 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Joel Savitz <jsavitz@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>,
-        David Rientjes <rientjes@google.com>, linux-mm@kvack.org
-Subject: Re: [RESEND PATCH v2] mm/oom_killer: Add task UID to info message
- on an oom kill
-Message-Id: <20190612180031.e9314711c9d0c77ba915d977@linux-foundation.org>
-In-Reply-To: <1560362273-534-1-git-send-email-jsavitz@redhat.com>
-References: <1560362273-534-1-git-send-email-jsavitz@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729922AbfFMBBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 21:01:03 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C392D1A0E14;
+        Thu, 13 Jun 2019 03:01:01 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E60AB1A0E1A;
+        Thu, 13 Jun 2019 03:00:54 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 411CD402E6;
+        Thu, 13 Jun 2019 09:00:46 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        l.stach@pengutronix.de, ccaione@baylibre.com, abel.vesa@nxp.com,
+        baruch@tkos.co.il, daniel.baluta@nxp.com, andrew.smirnov@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] arm64: dts: imx8mq-evk: Enable SNVS power key
+Date:   Thu, 13 Jun 2019 09:02:27 +0800
+Message-Id: <20190613010227.46860-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Jun 2019 13:57:53 -0400 Joel Savitz <jsavitz@redhat.com>
-wrote:
+From: Anson Huang <Anson.Huang@nxp.com>
 
-> In the event of an oom kill, useful information about the killed
-> process is printed to dmesg. Users, especially system administrators,
-> will find it useful to immediately see the UID of the process.
-> 
-> In the following example, abuse_the_ram is the name of a program
-> that attempts to iteratively allocate all available memory until it is
-> stopped by force.
-> 
-> Current message:
-> 
-> Out of memory: Killed process 35389 (abuse_the_ram)
-> total-vm:133718232kB, anon-rss:129624980kB, file-rss:0kB,
-> shmem-rss:0kB
-> 
-> Patched message:
-> 
-> Out of memory: Killed process 2739 (abuse_the_ram),
-> total-vm:133880028kB, anon-rss:129754836kB, file-rss:0kB,
-> shmem-rss:0kB, UID 0
+Enable SNVS power key for i.MX8MQ EVK board.
 
-The other fields are name:value so it seems better to make the UID
-field conform.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Also, there's no typesafe way of printing a uid_t (using the printk %p trick)
-so yes, we have to assume its type.  But assuming unsigned int is
-better than assuming int!
-
-So...
-
-
-
-s/UID %d/UID:%u/ in printk
-
---- a/mm/oom_kill.c~mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix
-+++ a/mm/oom_kill.c
-@@ -876,7 +876,7 @@ static void __oom_kill_process(struct ta
- 	 */
- 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
- 	mark_oom_victim(victim);
--	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID %d\n",
-+	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID:%u\n",
- 		message, task_pid_nr(victim), victim->comm,
- 		K(victim->mm->total_vm),
- 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
-_
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+index b2038be..e3df9b8 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+@@ -242,6 +242,10 @@
+ 	power-supply = <&sw1a_reg>;
+ };
+ 
++&snvs_pwrkey {
++	status = "okay";
++};
++
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart1>;
+-- 
+2.7.4
 
