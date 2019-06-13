@@ -2,157 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C3D343D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D3443D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbfFMPni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:43:38 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17385 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731835AbfFMJrL (ORCPT
+        id S2389078AbfFMPnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:43:03 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:40494 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731836AbfFMJrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:47:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d021b9d0001>; Thu, 13 Jun 2019 02:47:09 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Jun 2019 02:47:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Jun 2019 02:47:09 -0700
-Received: from [10.25.72.199] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
- 2019 09:47:06 +0000
-Subject: Re: [PATCH v3 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
-To:     Jon Hunter <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1560417053-2966-1-git-send-email-spujar@nvidia.com>
- <8a71e670-7943-6bce-ba61-3f020fd9450d@nvidia.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <6a4b5fac-68cd-542a-a907-0d80713f9d82@nvidia.com>
-Date:   Thu, 13 Jun 2019 15:17:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Jun 2019 05:47:22 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 007F825B7FA;
+        Thu, 13 Jun 2019 19:47:20 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 0E5E0940483; Thu, 13 Jun 2019 11:47:18 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 11:47:17 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/34] media: i2c: ak881x: simplify getting the adapter
+ of a client
+Message-ID: <20190613094717.c7vc52wx5gax7psn@verge.net.au>
+References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
+ <20190608105619.593-7-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <8a71e670-7943-6bce-ba61-3f020fd9450d@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560419230; bh=YU12ByuLCH7tZ1jS2msDQtEv9owNHhqfDpUOtnT0e+w=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=lgD4LhRd5386YjyITaBcYVW7w+koRR5FhTSRvhJkhUtDceodU4cowkY/Rj6o8pzXr
-         uEJ8gzziTbeCtV4wcPmDTNyGukE9dAAANUIC9dPv9uiLDuhudhoE6VWmRxR8/3rFMQ
-         2s5ha6EoUSkxbLpz0Hfsq7arNlTBJscLFmaCFIBL/ewCGIcdBJtJ2RSuStLr9R6Adu
-         R/DqwY5zX2uhUMGkEqHiV/XhM1lKDufOmkI7V+MnX0zbVKpYW8hmP76QfZIuykiy2P
-         fV4O+i3hGYojK3N1JdF6KIL1C2lnIo4wMwAEOPizdMq3fdm9JZXUXSi+c0pjW7W4PY
-         nug4WV+hXY0BQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190608105619.593-7-wsa+renesas@sang-engineering.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jun 08, 2019 at 12:55:45PM +0200, Wolfram Sang wrote:
+> We have a dedicated pointer for that, so use it. Much easier to read and
+> less computation involved.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On 6/13/2019 3:12 PM, Jon Hunter wrote:
-> On 13/06/2019 10:10, Sameer Pujar wrote:
->> Add DT nodes for following devices on Tegra186 and Tegra194
->>   * ACONNECT
->>   * ADMA
->>   * AGIC
->>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> ---
->>   changes in current revision
->>    * use single address range for all APE modules
->>    * fix address range for agic
->>
->>   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
->>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
->>   2 files changed, 134 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> index 426ac0b..b4d735e 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
->> @@ -1295,4 +1295,71 @@
->>   				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->>   		interrupt-parent = <&gic>;
->>   	};
->> +
->> +	aconnect@2a41000 {
-> This address does not look correct. This appears to be the address of
-> the AGIC. I think it should be 2900000, however, I also wonder if we
-> should even bother with an address for the aconnect as this is just a
-> bus and we don't specific a 'reg' property.
-Do you mean, should be ok to just mention "aconnect {"?
->
->> +		compatible = "nvidia,tegra210-aconnect";
->> +		clocks = <&bpmp TEGRA186_CLK_APE>,
->> +			 <&bpmp TEGRA186_CLK_APB2APE>;
->> +		clock-names = "ape", "apb2ape";
->> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x02900000 0x0 0x02900000 0x1FFFFF>;
-> This should be 0x1fffff.
-done
->
->> +		status = "disabled";
->> +
->> +		dma-controller@2930000 {
->> +			compatible = "nvidia,tegra186-adma";
->> +			reg = <0x02930000 0x50000>;
->> +			interrupt-parent = <&agic>;
->> +			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
->> +				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
->> +			#dma-cells = <1>;
->> +			clocks = <&bpmp TEGRA186_CLK_AHUB>;
->> +			clock-names = "d_audio";
->> +			status = "disabled";
->> +		};
->> +
->> +		agic: agic@2a41000 {
-> I think that this should also be "agic: interrupt-controller@xxxx" to
-> conform with standard names. Sorry the Tegra210 version is not the best
-> reference!
-will change
-> Cheers
-> Jon
->
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+> 
+> Please apply to your subsystem tree.
+> 
+>  drivers/media/i2c/ak881x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ak881x.c b/drivers/media/i2c/ak881x.c
+> index 30f9db1351b9..09860603da64 100644
+> --- a/drivers/media/i2c/ak881x.c
+> +++ b/drivers/media/i2c/ak881x.c
+> @@ -232,7 +232,7 @@ static const struct v4l2_subdev_ops ak881x_subdev_ops = {
+>  static int ak881x_probe(struct i2c_client *client,
+>  			const struct i2c_device_id *did)
+>  {
+> -	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+> +	struct i2c_adapter *adapter = client->adapter;
+>  	struct ak881x *ak881x;
+>  	u8 ifmode, data;
+>  
+> -- 
+> 2.19.1
+> 
