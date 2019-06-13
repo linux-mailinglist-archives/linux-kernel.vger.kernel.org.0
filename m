@@ -2,219 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18EB8439BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7605E4399C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388246AbfFMPPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:15:39 -0400
-Received: from foss.arm.com ([217.140.110.172]:39842 "EHLO foss.arm.com"
+        id S1732260AbfFMPPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:15:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:39908 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732218AbfFMNYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:24:39 -0400
+        id S1732241AbfFMN0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:26:30 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 973282B;
-        Thu, 13 Jun 2019 06:24:38 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BD033F73C;
-        Thu, 13 Jun 2019 06:24:38 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 1DEE2682412; Thu, 13 Jun 2019 14:24:37 +0100 (BST)
-Date:   Thu, 13 Jun 2019 14:24:37 +0100
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH v2 2/2] drm/komeda: Adds komeda_kms_drop_master
-Message-ID: <20190613132436.GN4173@e110455-lin.cambridge.arm.com>
-References: <1560251589-31827-1-git-send-email-lowry.li@arm.com>
- <1560251589-31827-3-git-send-email-lowry.li@arm.com>
- <20190611123038.GC2458@phenom.ffwll.local>
- <20190612022617.GA8595@james-ThinkStation-P300>
- <20190613081727.GE23020@phenom.ffwll.local>
- <20190613082813.GM4173@e110455-lin.cambridge.arm.com>
- <20190613090814.GJ23020@phenom.ffwll.local>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7478D2B;
+        Thu, 13 Jun 2019 06:26:29 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD1273F73C;
+        Thu, 13 Jun 2019 06:26:25 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 14:26:23 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     Florian Weimer <fweimer@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
+ ELF file
+Message-ID: <20190613132623.GA28398@e103592.cambridge.arm.com>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+ <20190606200646.3951-23-yu-cheng.yu@intel.com>
+ <20190607180115.GJ28398@e103592.cambridge.arm.com>
+ <94b9c55b3b874825fda485af40ab2a6bc3dad171.camel@intel.com>
+ <87lfy9cq04.fsf@oldenburg2.str.redhat.com>
+ <20190611114109.GN28398@e103592.cambridge.arm.com>
+ <031bc55d8dcdcf4f031e6ff27c33fd52c61d33a5.camel@intel.com>
+ <20190612093238.GQ28398@e103592.cambridge.arm.com>
+ <b8fb6626a6ae415fac4d5daa86225e4c68d56673.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190613090814.GJ23020@phenom.ffwll.local>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <b8fb6626a6ae415fac4d5daa86225e4c68d56673.camel@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 11:08:14AM +0200, Daniel Vetter wrote:
-> On Thu, Jun 13, 2019 at 09:28:13AM +0100, Liviu Dudau wrote:
-> > On Thu, Jun 13, 2019 at 10:17:27AM +0200, Daniel Vetter wrote:
-> > > On Wed, Jun 12, 2019 at 02:26:24AM +0000, james qian wang (Arm Technology China) wrote:
-> > > > On Tue, Jun 11, 2019 at 02:30:38PM +0200, Daniel Vetter wrote:
-> > > > > On Tue, Jun 11, 2019 at 11:13:45AM +0000, Lowry Li (Arm Technology China) wrote:
-> > > > > > From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-> > > > > >
-> > > > > > The komeda internal resources (pipelines) are shared between crtcs,
-> > > > > > and resources release by disable_crtc. This commit is working for once
-> > > > > > user forgot disabling crtc like app quit abnomally, and then the
-> > > > > > resources can not be used by another crtc. Adds drop_master to
-> > > > > > shutdown the device and make sure all the komeda resources have been
-> > > > > > released and can be used for the next usage.
-> > > > > >
-> > > > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 13 +++++++++++++
-> > > > > >  1 file changed, 13 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > > > > index 8543860..647bce5 100644
-> > > > > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > > > > @@ -54,11 +54,24 @@ static irqreturn_t komeda_kms_irq_handler(int irq, void *data)
-> > > > > >  return status;
-> > > > > >  }
-> > > > > >
-> > > > > > +/* Komeda internal resources (pipelines) are shared between crtcs, and resources
-> > > > > > + * are released by disable_crtc. But if user forget disabling crtc like app quit
-> > > > > > + * abnormally, the resources can not be used by another crtc.
-> > > > > > + * Use drop_master to shutdown the device and make sure all the komeda resources
-> > > > > > + * have been released, and can be used for the next usage.
-> > > > > > + */
-> > > > >
-> > > > > No. If we want this, we need to implement this across drivers, not with
-> > > > > per-vendor hacks.
-> > > > >
-> > > > > The kerneldoc should have been a solid hint: "Only used by vmwgfx."
-> > > > > -Daniel
+On Wed, Jun 12, 2019 at 12:04:01PM -0700, Yu-cheng Yu wrote:
+> On Wed, 2019-06-12 at 10:32 +0100, Dave Martin wrote:
+> > On Tue, Jun 11, 2019 at 12:31:34PM -0700, Yu-cheng Yu wrote:
+> > > On Tue, 2019-06-11 at 12:41 +0100, Dave Martin wrote:
+> > > > On Mon, Jun 10, 2019 at 07:24:43PM +0200, Florian Weimer wrote:
+> > > > > * Yu-cheng Yu:
+> > > > > 
+> > > > > > To me, looking at PT_GNU_PROPERTY and not trying to support anything
+> > > > > > is a
+> > > > > > logical choice.  And it breaks only a limited set of toolchains.
+> > > > > > 
+> > > > > > I will simplify the parser and leave this patch as-is for anyone who
+> > > > > > wants
+> > > > > > to
+> > > > > > back-port.  Are there any objections or concerns?
+> > > > > 
+> > > > > Red Hat Enterprise Linux 8 does not use PT_GNU_PROPERTY and is probably
+> > > > > the largest collection of CET-enabled binaries that exists today.
 > > > > 
-> > > > Hi Daniel:
-> > > > This drop_master is really what we want, can we update the doc and
-> > > > add komeda as a user of this hacks like "used by vmwfgx and komeda",
-> > > > or maybe directly promote this per-vendor hacks as an optional chip
-> > > > function ?
-> > > 
-> > > Still no, because it would mean different behaviour for arm/komeda
-> > > compared to everyone else. And we really don't want this, because this
-> > > would completely break flicker-less vt-switching.
-> > > 
-> > > Currently the only fallback for this case is the lastclose handler, which
-> > > atm just restores fbcon/fbdev. If you want to change/extend that to work
-> > > without fbdev, then that's the place to do the change. And across _all_
-> > > drm kms drivers, so that we have consistent behaviour.
-> > 
-> > Slightly unrelated, just thinking of a solution and wanted confirmation/double
-> > checking: can a CRTC be instantiated without any planes (or without a primary
-> > plane)?
-> 
-> Without a primary plane maybe not so recommended, because it would break
-> all the legacy userspace. Might even result in some oopses, not sure we
-> check for crtc->primary != NULL.
-> 
-> I'm not sure what you mean about instantiating it without any plane at
-> all. That would be rather useless.
-
-Agree, and I think I have one way of solving the scenario Lowry and James are
-trying to cover. Basically, komeda has 2 pipelines that are exposed as 2 crtcs.
-However, layers (planes in DRM) can be associated with any of the pipelines and
-it is possible to have a DRM master open up crtc0 and enable all possible planes,
-which would leave crtc1 with no available layer to use (but technically still visible to
-userspace, as it has been drm_crtc_init-ed. James and Lowry are trying to give
-another master a chance of enabling crtc1 if previous master drops the
-ownership of crtc0 without disabling it. So one solution I'm thinking of is to
-tie one of the layers/planes to crtc1 regardless if that pipeline is enabled or
-not.
-
-Alternatively, we need a more generic solution for re-allocating resources
-between CRTCs that might be enabled at different times. Ideas on how userspace
-should handle it first are welcome as well.
-
-Best regards,
-Liviu
-
-> -Daniel
-> 
-> > 
-> > Best regards,
-> > Liviu
-> > 
-> > > 
-> > > kms is a cross-vendor api, vendor hacks are very, very much not cool.
-> > > -Daniel
-> > > 
+> > > > For clarity, RHEL is actively parsing these properties today?
 > > > > 
-> > > > James
+> > > > > My hope was that we would backport the upstream kernel patches for CET,
+> > > > > port the glibc dynamic loader to the new kernel interface, and be ready
+> > > > > to run with CET enabled in principle (except that porting userspace
+> > > > > libraries such as OpenSSL has not really started upstream, so many
+> > > > > processes where CET is particularly desirable will still run without
+> > > > > it).
+> > > > > 
+> > > > > I'm not sure if it is a good idea to port the legacy support if it's not
+> > > > > part of the mainline kernel because it comes awfully close to creating
+> > > > > our own private ABI.
 > > > > 
-> > > > > > +static void komeda_kms_drop_master(struct drm_device *dev,
-> > > > > > +   struct drm_file *file_priv)
-> > > > > > +{
-> > > > > > +drm_atomic_helper_shutdown(dev);
-> > > > > > +}
-> > > > > > +
-> > > > > >  static struct drm_driver komeda_kms_driver = {
-> > > > > >  .driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
-> > > > > >     DRIVER_PRIME | DRIVER_HAVE_IRQ,
-> > > > > >  .lastclose= drm_fb_helper_lastclose,
-> > > > > >  .irq_handler= komeda_kms_irq_handler,
-> > > > > > +.master_drop= komeda_kms_drop_master,
-> > > > > >  .gem_free_object_unlocked= drm_gem_cma_free_object,
-> > > > > >  .gem_vm_ops= &drm_gem_cma_vm_ops,
-> > > > > >  .dumb_create= komeda_gem_cma_dumb_create,
-> > > > > > --
-> > > > > > 1.9.1
-> > > > > >
-> > > > > > _______________________________________________
-> > > > > > dri-devel mailing list
-> > > > > > dri-devel@lists.freedesktop.org
-> > > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > > >
-> > > > > --
-> > > > > Daniel Vetter
-> > > > > Software Engineer, Intel Corporation
-> > > > > http://blog.ffwll.ch
-> > > > IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > > I guess we can aim to factor things so that PT_NOTE scanning is
+> > > > available as a fallback on arches for which the absence of
+> > > > PT_GNU_PROPERTY is not authoritative.
 > > > 
-> > > -- 
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > http://blog.ffwll.ch
+> > > We can probably check PT_GNU_PROPERTY first, and fallback (based on ld-linux
+> > > version?) to PT_NOTE scanning?
 > > 
-> > -- 
-> > ====================
-> > | I would like to |
-> > | fix the world,  |
-> > | but they're not |
-> > | giving me the   |
-> >  \ source code!  /
-> >   ---------------
-> >     ¯\_(ツ)_/¯
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > For arm64, we can check for PT_GNU_PROPERTY and then give up
+> > unconditionally.
+> > 
+> > For x86, we would fall back to PT_NOTE scanning, but this will add a bit
+> > of cost to binaries that don't have NT_GNU_PROPERTY_TYPE_0.  The ld.so
+> > version doesn't tell you what ELF ABI a given executable conforms to.
+> > 
+> > Since this sounds like it's largely a distro-specific issue, maybe there
+> > could be a Kconfig option to turn the fallback PT_NOTE scanning on?
 > 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+> Yes, I will make it a Kconfig option.
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+OK, that works for me.  This would also help keep the PT_NOTE scanning
+separate from the rest of the code.
+
+For arm64 we could then unconditionally select/deselect that option,
+where x86 could leave it configurable either way.
+
+Cheers
+---Dave
