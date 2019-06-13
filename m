@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ADB54452F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5F544529
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392929AbfFMQmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:42:37 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45321 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfFMGsU (ORCPT
+        id S1726847AbfFMQme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:42:34 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:37507 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730509AbfFMGs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:48:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m23so17351568lje.12
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 23:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lv9nqSLtCZiZ8ahiodoBv8WyJCmSbiyt0thoq18zE4o=;
-        b=nZ7PQjewhkNFLJJFS9CWkoOR/2SEzVmnFe8JrDQZP9WGcZpfUm4TWzaVR34kqgOkM6
-         PSejsxPi0NXyf4QlD5sX4JIbnQfXedVnig36j74X1SFYqDWGSabvXNjxjGVLIXkawcuU
-         FLxHCMmbItnJk/+HFhcv2buBYqTCBeda6PFTmID1zVJDHxvH+2FvmDkY//qUdtytA1rY
-         XAU372/eZO1vArF8Nvb3ESlmzJwhIz6vNWOMU+IhBUUih36nYQRORDh23Fhe5qPHSqz9
-         W5zZSLTxbnEjMPo5VqL3HJlKMAhbO5g/ZW2HDfLWl0duR2ldpc2FeL0NApW675/Lripg
-         kkbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lv9nqSLtCZiZ8ahiodoBv8WyJCmSbiyt0thoq18zE4o=;
-        b=FzuLvKCG9ECr7y2LfWAZZPa7TCXF9BUM4Zpq2CCzwpuymtVAui3ql/Hj7HGTsqZi7I
-         SWRqJl/VOOfvnkaOSD0XeajS+8tbfjoJ/xqCa24fWpMezHVMZDYg0J0ruzFC7W3gaeyf
-         gSWCXgt29xIRYAUMFA5tMtbjyssD9SK6pr8PwhguGr0Z/9ZY54dEyCDzTN3ODiAO8084
-         vSpLfgkGMM72Zx6/wkiGtTyUFCCIKoAXDXl+d2GDtgnj6wf6AXu7cz7h039SAjciQ0MA
-         uyLG4H4UiUe8DJPBa08dRpDaDN6lTUCZUtAcxXAlJcPpqfxIF6pMZ2U3taELr9c7o/8t
-         TQYw==
-X-Gm-Message-State: APjAAAWdEWfqq8SluT/OPYpfTbOtxDhhXF5tl2vL49uk915qaocVKwF3
-        tIiuqD1zF9qyBLT09tEXQr8=
-X-Google-Smtp-Source: APXvYqy6FpZw7RE8ERzs0oPq21ly6eN+8mWADKZTvCK7LLigk9bmBzrjxoFEZnOBRpHWrUPHGL4mfA==
-X-Received: by 2002:a2e:2c07:: with SMTP id s7mr6057511ljs.44.1560408498002;
-        Wed, 12 Jun 2019 23:48:18 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.102.224])
-        by smtp.gmail.com with ESMTPSA id y18sm396934ljh.1.2019.06.12.23.48.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 23:48:17 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id D702646019C; Thu, 13 Jun 2019 09:48:16 +0300 (MSK)
-Date:   Thu, 13 Jun 2019 09:48:16 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>
-Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for
- /proc/pid/map_files
-Message-ID: <20190613064816.GF23535@uranus.lan>
-References: <156007465229.3335.10259979070641486905.stgit@buzz>
- <156007493995.3335.9595044802115356911.stgit@buzz>
- <20190612231426.GA3639@gmail.com>
+        Thu, 13 Jun 2019 02:48:27 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id bJX2hLTZJ5qKabJX5hEEZ8; Thu, 13 Jun 2019 08:48:25 +0200
+Subject: Re: [PATCHv4 0/2] Document memory-to-memory video codec interfaces
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To:     linux-media@vger.kernel.org
+Cc:     Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Pawel Osciak <posciak@chromium.org>
+References: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
+Message-ID: <259bb812-9cc9-8fe7-8fc6-2cbd5ef44ac3@xs4all.nl>
+Date:   Thu, 13 Jun 2019 08:48:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612231426.GA3639@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190603112835.19661-1-hverkuil-cisco@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfBCxlUJmg0N4Q2GZyAqhrK28SVHEKjholBSkcw0ri9bw/4dzuQ6WLxdOkaY5QJhKT0zRJOS3uHj/eYNmaeeEd4Ntdvjp+hSVMACqP4G2VehyWwS7LffX
+ WLvBeAxh/OZHl5XXelSW9XYy2hQMjgsD4B/oQGt22WTlo/nxj/qgoeGJ7ZGZNmrQn19oMAFoP42UBJ80/eTDP9+SgBcKk2zsdCb8NH4ohcsBf4x6f6WSYLZq
+ x509Z7B+g+2ZT826iSTaXj5BJn1qQYwaKfVoqz6f3hhxyPVn8C8raJd+at+hs0c4wDI1v+CTgBZnqJ2tFsrIpW4MkCg8g3S4FnYxHlRxDbPS9JhEyxGN1Qi3
+ /QAdo9ZXRph+Np6JyVIWgZxBJaiQYM4FywX21BHNbjlKcqmr+hybLBGpA/4jYxVyWimN4wMHjSwV7BauBCKY6UM88w8MY6HwMMhgoT+stF3q1FRxgtuuiXwg
+ BATUeIxK9k96WB5T
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 04:14:28PM -0700, Andrei Vagin wrote:
-> On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
-> > Do not stuck forever if something wrong.
-> > Killable lock allows to cleanup stuck tasks and simplifies investigation.
+On 6/3/19 1:28 PM, Hans Verkuil wrote:
+> Since Tomasz was very busy with other things, I've taken over this
+> patch series. This v4 includes his draft changes and additional changes
+> from me.
 > 
-> This patch breaks the CRIU project, because stat() returns EINTR instead
-> of ENOENT:
+> This series attempts to add the documentation of what was discussed
+> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
+> later Embedded Linux Conference Europe 2014 in Düsseldorf and then
+> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
+> video team (but mostly in a cosmetic way or making the document more
+> precise), during the several years of Chrome OS using the APIs in
+> production.
 > 
-> [root@fc24 criu]# stat /proc/self/map_files/0-0
-> stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
+> Note that most, if not all, of the API is already implemented in
+> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
+> this series is just to formalize what we already have.
 > 
-> Here is one inline comment with the fix for this issue.
+> Thanks everyone for the huge amount of useful comments to previous
+> versions of this series. Much of the credits should go to Pawel Osciak
+> too, for writing most of the original text of the initial RFC.
 > 
-> > 
-> > It seems ->d_revalidate() could return any error (except ECHILD) to
-> > abort validation and pass error as result of lookup sequence.
-> > 
-> > Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> > Reviewed-by: Roman Gushchin <guro@fb.com>
-> > Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
-> > Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> This v4 incorporates all known comments (let me know if I missed
+> something!) and should be complete for the decoder.
 > 
-> It was nice to see all four of you in one place :).
+> For the encoder there are two remaining TODOs for the API:
+> 
+> 1) Setting the frame rate so bitrate control can make sense, since
+>    they need to know this information.
+> 
+>    Suggested solution: require support for ENUM_FRAMEINTERVALS for the
+>    coded pixelformats and S_PARM(OUTPUT). Open question: some drivers
+>    (mediatek, hva, coda) require S_PARM(OUTPUT), some (venus) allow both
+>    S_PARM(CAPTURE) and S_PARM(OUTPUT). I am inclined to allow both since
+>    this is not a CAPTURE vs OUTPUT thing, it is global to both queues.
 
-Holymoly ;) And we all managed to miss this error code.
-Thanks, Andrew!
+Alternative proposal:
+
+1) Add support for fractions (struct v4l2_fract) as a control type:
+   V4L2_CTRL_TYPE_FRACT.
+
+2) Add a new V4L2_CID_MPEG_FRAME_INTERVAL control.
+
+Encoders shall support this control.
+
+3) For backwards compatibility reasons encoder drivers still have to
+support G/S_PARM, but this can now be implemented by standard helpers
+that query this control. Drivers also have to implement ENUM_FRAMEINTERVALS.
+If the range of intervals is always the same regardless of the frame size,
+then a helper can be used that queries the min/max/step of the control, but
+if it is dependent on the frame size, then it has to be implemented in the
+driver itself.
+
+I'm sticking to frame intervals instead of frame rates for the simple reason
+that that's what V4L2 has used since the beginning. I think it is too confusing
+to change this to a frame rate. This is just my opinion, though.
+
+I also chose to make this a codec control, not a generic user control: this
+value together with the bit rate control(s) determine the compression size,
+it does not determine the actual time it takes for the encoder to compress
+the raw frames. Hence it is really not the same thing as the frame interval
+of a video capture device. If we want to use a control for that as well in
+the future as a replacement for G/S_PARM, then that should be a new control.
+And we would like need per-pad controls as well in order to implement that.
+Which is a lot more work.
+
+Regards,
+
+	Hans
