@@ -2,129 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F15C64442E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEAC14441E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404041AbfFMQfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:35:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38932 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730730AbfFMHoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:44:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 920EBAB91;
-        Thu, 13 Jun 2019 07:44:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B5C631E4328; Thu, 13 Jun 2019 09:43:59 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 09:43:59 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613074359.GB26505@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
- <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz>
- <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
- <20190612102917.GB14578@quack2.suse.cz>
- <CAPcyv4jSyTjC98UsWb3-FnZekV0oyboiSe9n1NYDC2TSKAqiqw@mail.gmail.com>
+        id S2404015AbfFMQez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:34:55 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55032 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730746AbfFMHrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:47:17 -0400
+Received: from zn.tnic (p4FED33E6.dip0.t-ipconnect.de [79.237.51.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 41E811EC0467;
+        Thu, 13 Jun 2019 09:47:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560412035;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=cLB+4gRke9C3b3E7syS14drpp+imhytrTs84H2cq9QA=;
+        b=EuWG6v2v9iwz/FPBTrezV2bIJ67quXws3z4Ak4mdc40Tguqu7d/8Wh4Mwn6do7y4ZLCCPe
+        rMVMT//1awaGZ8QuWP6Nop4PcSac6TPtYoQFWFPQpUjMSkeGY1GoKQKQT0NChLNqK08ZeT
+        oBMn1cwYRyY7P8z6+XauL4qptEUOVmA=
+Date:   Thu, 13 Jun 2019 09:44:57 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     James Morse <james.morse@arm.com>,
+        "Hawa, Hanna" <hhhawa@amazon.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Shenhar, Talel" <talel@amazon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chocron, Jonathan" <jonnyc@amazon.com>,
+        "Krupnik, Ronen" <ronenk@amazon.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "Hanoch, Uri" <hanochu@amazon.com>
+Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
+Message-ID: <20190613074457.GB11598@zn.tnic>
+References: <9a2aaf4a9545ed30568a0613e64bc3f57f047799.camel@kernel.crashing.org>
+ <20190608090556.GA32464@zn.tnic>
+ <1ae5e7a3464f9d8e16b112cd371957ea20472864.camel@kernel.crashing.org>
+ <68446361fd1e742b284555b96b638fe6b5218b8b.camel@kernel.crashing.org>
+ <20190611115651.GD31772@zn.tnic>
+ <6df5a17bb1c900dc69b991171e55632f40d9426f.camel@kernel.crashing.org>
+ <20190612034813.GA32652@zn.tnic>
+ <08bd58dc0045670223f8d3bbc8be774505bd3ddf.camel@kernel.crashing.org>
+ <20190612104238.GG32652@zn.tnic>
+ <2a53690aa81a406b9a6290f70e47470d0f698f00.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jSyTjC98UsWb3-FnZekV0oyboiSe9n1NYDC2TSKAqiqw@mail.gmail.com>
+In-Reply-To: <2a53690aa81a406b9a6290f70e47470d0f698f00.camel@kernel.crashing.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-06-19 11:49:52, Dan Williams wrote:
-> On Wed, Jun 12, 2019 at 3:29 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 07-06-19 07:52:13, Ira Weiny wrote:
-> > > On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
-> > > > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
-> > > >
-> > > > > Because the pins would be invisible to sysadmin from that point on.
-> > > >
-> > > > It is not invisible, it just shows up in a rdma specific kernel
-> > > > interface. You have to use rdma netlink to see the kernel object
-> > > > holding this pin.
-> > > >
-> > > > If this visibility is the main sticking point I suggest just enhancing
-> > > > the existing MR reporting to include the file info for current GUP
-> > > > pins and teaching lsof to collect information from there as well so it
-> > > > is easy to use.
-> > > >
-> > > > If the ownership of the lease transfers to the MR, and we report that
-> > > > ownership to userspace in a way lsof can find, then I think all the
-> > > > concerns that have been raised are met, right?
-> > >
-> > > I was contemplating some new lsof feature yesterday.  But what I don't
-> > > think we want is sysadmins to have multiple tools for multiple
-> > > subsystems.  Or even have to teach lsof something new for every potential
-> > > new subsystem user of GUP pins.
-> >
-> > Agreed.
-> >
-> > > I was thinking more along the lines of reporting files which have GUP
-> > > pins on them directly somewhere (dare I say procfs?) and teaching lsof to
-> > > report that information.  That would cover any subsystem which does a
-> > > longterm pin.
-> >
-> > So lsof already parses /proc/<pid>/maps to learn about files held open by
-> > memory mappings. It could parse some other file as well I guess. The good
-> > thing about that would be that then "longterm pin" structure would just hold
-> > struct file reference. That would avoid any needs of special behavior on
-> > file close (the file reference in the "longterm pin" structure would make
-> > sure struct file and thus the lease stays around, we'd just need to make
-> > explicit lease unlock block until the "longterm pin" structure is freed).
-> > The bad thing is that it requires us to come up with a sane new proc
-> > interface for reporting "longterm pins" and associated struct file. Also we
-> > need to define what this interface shows if the pinned pages are in DRAM
-> > (either page cache or anon) and not on NVDIMM.
+On Thu, Jun 13, 2019 at 09:54:18AM +1000, Benjamin Herrenschmidt wrote:
+> It tends to be a slippery slope. Also in the ARM world, most SoC tend
+> to re-use IP blocks, so you get a lot of code duplication, bug fixed in
+> one and not the other etc...
+
+Yes, I'd like to be able to reuse EDAC drivers if they're for single IP
+blocks and those IP blocks get integrated by multiple vendors.
+
+> I don't necessarily mind having a "platform" component that handles
+> policies in case where userspace is really not an option, but it
+> shouldn't be doing it by containing the actual drivers for the
+> individual IP block error collection. It could however "use" them via
+> in-kernel APIs.
+
+Ok, sounds good.
+
+> Those are rare. At the end of the day, if you have a UE on memory, it's
+> a matter of luck. It could have hit your kernel as well. You get lucky
+> it only hit userspace but you can't make a general statement you "can't
+> trust userspace".
+
+I'm not saying that - I'm saying that if we're going to do a
+comprehensive solution we better address all possible error severities
+with adequate handling.
+
+> Cache errors tend to be the kind that tend to have to be addressed
+> immediately, but even then, that's often local to some architecture
+> machine check handling, not even in EDAC.
+
+That's true.
+
+> Do you have a concrete example of a type of error that
 > 
-> The anon vs shared detection case is important because a longterm pin
-> might be blocking a memory-hot-unplug operation if it is pinning
-> ZONE_MOVABLE memory, but I don't think we want DRAM vs NVDIMM to be an
-> explicit concern of the interface. For the anon / cached case I expect
-> it might be useful to put that communication under the memory-blocks
-> sysfs interface. I.e. a list of pids that are pinning that
-> memory-block from being hot-unplugged.
+>  - Must be addressed in the kernel
+> 
+>  - Relies on coordinating drivers for more than one IP block
+> 
+> ?
 
-Yes, I was thinking of memory hotplug as well. But I don't think the
-distinction is really shared vs anon - a pinned page cache page can be
-blocking your memory unplug / migration the same way as a pinned anon page.
-So the information for a pin we need to convey is the "location of
-resources" being pinned - that is pfn (both for DRAM and NVDIMM) - but then
-also additional mapping information (which is filename for DAX page, not
-sure about DRAM). Also a separate question is how to expose this
-information so that it is efficiently usable by userspace. For lsof, a file
-in /proc/<pid>/xxx with information would be probably the easiest to use
-plus all the issues with file access permissions and visibility among
-different user namespaces is solved out of the box. And I believe it would
-be reasonably usable for memory hotplug usecase as well. A file in sysfs
-would be OK for memory hotplug I guess, but not really usable for lsof and
-so I'm not sure we really need it when we are going to have one in procfs.
+My usual example at the end of the #MC handler on x86, do_machine_check():
 
-								Honza
+        /* Fault was in user mode and we need to take some action */
+        if ((m.cs & 3) == 3) {
+                ist_begin_non_atomic(regs);
+                local_irq_enable();
+
+                if (kill_it || do_memory_failure(&m))
+                        force_sig(SIGBUS, current);
+
+we try to poison and if we fail or have to kill the process anyway, off
+it goes.
+
+Yes, this is not talking to EDAC drivers yet but is exemplary for a more
+involved recovery action.
+
+> Even then though, my argument would be that the right way to do that,
+> assuming that's even platform specific, would be to have then the
+> "platform RAS driver" just layout on top of the individual EDAC drivers
+> and consume their output. Not contain the drivers themselves.
+
+Ok, that's a fair point and I like the design of that.
+
+> Using machine checks, not EDAC. It's completely orghogonal at this
+> point at least.
+
+No, it is using errors reported through the Machine Check Architecture.
+EDAC uses the same DRAM error reports. They all come from MCA on x86. It
+is a whole notifier chain which gets to see those errors but they all
+come from MCA.
+
+PCI errors get reported differently, of course.
+
+EDAC is just a semi-dumb layer around some of those error reporting
+mechanisms.
+
+> That said, it would make sense to have an EDAC API to match that
+> address back into a DIMM location and give user an informational
+> message about failures happening on that DIMM. But that could be done
+> via core EDAC MC APIs.
+
+That's what the EDAC drivers on x86 do. All of them :-)
+
+> Here too, no need for having an over-arching platform driver.
+
+Yes, the EDAC drivers which implement all the memory controller
+functionality, already do that mapping back. Or at least try to. There's
+firmware doing that on x86 too but that's a different story.
+
+<will reply to the rest later in another mail as this one is becoming
+too big anyway>.
+
+Thx.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
