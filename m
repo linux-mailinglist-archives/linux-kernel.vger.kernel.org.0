@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A76B843ABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3759D43AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389142AbfFMPXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:23:17 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:61639 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731880AbfFMM24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:28:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45Pjhg5Y5nz9tyyr;
-        Thu, 13 Jun 2019 14:28:51 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=jjVrlzgZ; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id t1FmrBA-mTCn; Thu, 13 Jun 2019 14:28:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45Pjhg4W1Fz9tyyq;
-        Thu, 13 Jun 2019 14:28:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560428931; bh=2lgTds9Ez+Act/eI3r7EuN8KPltls6Liv5UATwaFdA8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jjVrlzgZziKbmWxq5pBLawp4u/+Sg06uDLfo9+LyyaU+ZuT6B3XImtsNMkkViP7ye
-         d4a3GOPqNr40JYGgAnJV0ZWBL4uKzi2lnfDx4gnUneZ/VhRilPO08zvcQetBEi3ZEl
-         loAfBcsePZojPB2MRZ86WxmtOfxd1JcPxfYjKUk0=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F0E208B8E3;
-        Thu, 13 Jun 2019 14:28:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id A89TBiKKs0oV; Thu, 13 Jun 2019 14:28:52 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 49A128B8B9;
-        Thu, 13 Jun 2019 14:28:52 +0200 (CEST)
-Subject: Re: [PATCH v2 4/4] crypto: talitos - drop icv_ool
-To:     Horia Geanta <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1560263641.git.christophe.leroy@c-s.fr>
- <39be46fb40ad77e40ae5c1a979ca6a2ccfab244a.1560263641.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB34852F501B30A09A4E515B4798EF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <b2db68d5-d89b-2f38-d5b4-7b7eccf68204@c-s.fr>
-Date:   Thu, 13 Jun 2019 14:28:51 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB34852F501B30A09A4E515B4798EF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S2388201AbfFMPXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:23:05 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:50851 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731945AbfFMMdk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:33:40 -0400
+Received: by mail-qt1-f201.google.com with SMTP id g30so17306230qtm.17
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 05:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=hR/rel8D4gBiToxcZ/kWhC4zY96wRtLwSvBkxQ4V8Fg=;
+        b=vMwEtqzM11ZDYbxg3IuXNuB/bsH8Fggv3MeD3vzVsIqAPesB8sArdWifMXfLgIG4NM
+         LKslpGkbYufQ9y2r3lINgugJro+63B7oTJN/g5EikB1ZJGpZvZtAi7Vkud5BnJ8dEm1F
+         cFX7OacjFj4EWaBYSbaZ7TpjBs2pMWAXdrP8o9CJuByMAH13OVxImx5HQenwYzhG1jfl
+         fWTs2IF7Rd+9scxlHkPTN1IQXTcviFJbrJT9wpG9/PiPivDghlafXY/iCkJ+0dd69EM7
+         NXp0sSqLMZ+4yfB1hzsv3yvx8EB/6hQjV2zGZ9QTO90uHzdNxIjxFp0Xh4uzEfNsMxVn
+         D6hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=hR/rel8D4gBiToxcZ/kWhC4zY96wRtLwSvBkxQ4V8Fg=;
+        b=Mkg5UdV7qoAqNnwykAXORJmlGd8XgyBifZjdDNXAVWFAsybSEUz+XOxII8s6Ftig8n
+         RLZoQCglFewz09RP8+/VslT/hke1Cc6q8sjQl0rYnugShAT1fLEsXu1+o4Bkskl8B/fF
+         oPjN200ZUiETaV5Suzb6IaQ6QHzwIy0Dbj04P6O8Z6s+hIs8Du0zY7S244x47ZY/usd/
+         I1whHwlKWI5AM4GVmoHdVsM0yOPAznHSvC7a8sMjK36nv6oFVZElEVB/8ifKiKNizhix
+         J/UDq3VR1yTTd/vf3ATqXgr5fOnbWk1x7VymkPDFq1UDpH/eElKrYmg6ffnmYdmx3xos
+         6xbQ==
+X-Gm-Message-State: APjAAAXaSOjBojTJGM1xD9gYjL2O70GTSKj2HWG/bVbIVzue7C1fFADQ
+        QgOps9bMTsxbaiIzMz9oSICgGXZGUw==
+X-Google-Smtp-Source: APXvYqwDOFO/TXAwxDgGXuhGAv16VtS2A0XMMDggMph3dbT9XaDKtbaa2+7NijtPy2Mna6BI/pjimZ5Cxw==
+X-Received: by 2002:a0c:888a:: with SMTP id 10mr3409777qvn.0.1560429218725;
+ Thu, 13 Jun 2019 05:33:38 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 14:30:25 +0200
+Message-Id: <20190613123028.179447-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+Subject: [PATCH v4 0/3] Bitops instrumentation for KASAN
+From:   Marco Elver <elver@google.com>
+To:     peterz@infradead.org, aryabinin@virtuozzo.com, dvyukov@google.com,
+        glider@google.com, andreyknvl@google.com, mark.rutland@arm.com,
+        hpa@zytor.com
+Cc:     corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        x86@kernel.org, arnd@arndb.de, jpoimboe@redhat.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Previous version:
+http://lkml.kernel.org/r/20190531150828.157832-1-elver@google.com
 
+* This version only changes lib/test_kasan.c.
+* Remaining files are identical to v3.
 
-Le 13/06/2019 à 14:21, Horia Geanta a écrit :
-> On 6/11/2019 5:39 PM, Christophe Leroy wrote:
->> icv_ool is not used anymore, drop it.
->>
->> Fixes: 9cc87bc3613b ("crypto: talitos - fix AEAD processing")
-> I can't find this SHA1.
-> 
-> Are you referring to commit e345177ded17 ("crypto: talitos - fix AEAD processing.")?
-> 
-> Horia
-> 
+Marco Elver (3):
+  lib/test_kasan: Add bitops tests
+  x86: Use static_cpu_has in uaccess region to avoid instrumentation
+  asm-generic, x86: Add bitops instrumentation for KASAN
 
-Oops yes, that's the sha1 it had in my tree before it got merged.
+ Documentation/core-api/kernel-api.rst     |   2 +-
+ arch/x86/ia32/ia32_signal.c               |   2 +-
+ arch/x86/include/asm/bitops.h             | 189 ++++------------
+ arch/x86/kernel/signal.c                  |   2 +-
+ include/asm-generic/bitops-instrumented.h | 263 ++++++++++++++++++++++
+ lib/test_kasan.c                          |  82 ++++++-
+ 6 files changed, 383 insertions(+), 157 deletions(-)
+ create mode 100644 include/asm-generic/bitops-instrumented.h
 
-Do I have to resend it or can Herbert just drop the wrong reference and 
-take the following one:
+-- 
+2.22.0.rc2.383.gf4fbbf30c2-goog
 
-Fixes: e345177ded17 ("crypto: talitos - fix AEAD processing.")
-
-
-Christophe
