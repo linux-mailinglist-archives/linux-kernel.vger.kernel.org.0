@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5878C45000
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B91D34500C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 01:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfFMXaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 19:30:01 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:40670 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725789AbfFMXaB (ORCPT
+        id S1727730AbfFMXa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 19:30:56 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:55390 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726635AbfFMXa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:30:01 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TU6DYEz_1560468591;
+        Thu, 13 Jun 2019 19:30:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TU6DYEz_1560468591;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TU6DYEz_1560468591)
           by smtp.aliyun-inc.com(127.0.0.1);
           Fri, 14 Jun 2019 07:29:59 +0800
@@ -24,9 +24,9 @@ To:     mhocko@suse.com, mgorman@techsingularity.net, riel@surriel.com,
         ying.huang@intel.com, ziy@nvidia.com
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 2/9] mm: Introduce migrate target nodemask
-Date:   Fri, 14 Jun 2019 07:29:30 +0800
-Message-Id: <1560468577-101178-3-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [v3 PATCH 3/9] mm: page_alloc: make find_next_best_node find return migration target node
+Date:   Fri, 14 Jun 2019 07:29:31 +0800
+Message-Id: <1560468577-101178-4-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1560468577-101178-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -35,90 +35,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With more memory types are invented, the system may have heterogeneous
-memory hierarchy, i.e. DRAM and PMEM.  Some of them are cheaper and
-slower than DRAM, may be good candidates to be used as secondary memory
-to store not recently or frequently used data.
-
-Introduce the "migrate target" nodemask for such memory nodes.  The
-migrate target could be any memory types which are cheaper and/or
-slower than DRAM.  Currently PMEM is one of such memory.
+Need find the cloest migration target node to demote DRAM pages.  Add
+"migration" parameter to find_next_best_node() to skip DRAM node on
+demand.
 
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- drivers/acpi/numa.c      | 12 ++++++++++++
- drivers/base/node.c      |  2 ++
- include/linux/nodemask.h |  1 +
- mm/page_alloc.c          |  1 +
- 4 files changed, 16 insertions(+)
+ mm/internal.h   | 11 +++++++++++
+ mm/page_alloc.c | 14 ++++++++++----
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 3099583..f75adba 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -296,6 +296,18 @@ void __init acpi_numa_slit_init(struct acpi_table_slit *slit)
- 		goto out_err_bad_srat;
- 	}
+diff --git a/mm/internal.h b/mm/internal.h
+index 9eeaf2b..a3181e2 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -292,6 +292,17 @@ static inline bool is_data_mapping(vm_flags_t flags)
+ 	return (flags & (VM_WRITE | VM_SHARED | VM_STACK)) == VM_WRITE;
+ }
  
-+	/*
-+	 * The system may have memory hierarchy, some memory may be good
-+	 * candidate for migration target, i.e. PMEM is one of them.  Mark
-+	 * such memory as migration target.
-+	 *
-+	 * It may be better to retrieve such information from HMAT, but
-+	 * SRAT sounds good enough for now.  May switch to HMAT in the
-+	 * future.
-+	 */ 
-+	if (ma->flags & ACPI_SRAT_MEM_NON_VOLATILE)
-+		node_set_state(node, N_MIGRATE_TARGET);
++#ifdef CONFIG_NUMA
++extern int find_next_best_node(int node, nodemask_t *used_node_mask,
++			       bool migration);
++#else
++static inline int find_next_best_node(int node, nodemask_t *used_node_mask,
++				      bool migtation)
++{
++	return 0;
++}
++#endif
 +
- 	node_set(node, numa_nodes_parsed);
- 
- 	pr_info("SRAT: Node %u PXM %u [mem %#010Lx-%#010Lx]%s%s\n",
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 4d80fc8..351b694 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -985,6 +985,7 @@ static ssize_t show_node_state(struct device *dev,
- 	[N_MEMORY] = _NODE_ATTR(has_memory, N_MEMORY),
- 	[N_CPU] = _NODE_ATTR(has_cpu, N_CPU),
- 	[N_CPU_MEM] = _NODE_ATTR(primary, N_CPU_MEM),
-+	[N_MIGRATE_TARGET] = _NODE_ATTR(migrate_target, N_MIGRATE_TARGET),
- };
- 
- static struct attribute *node_state_attrs[] = {
-@@ -997,6 +998,7 @@ static ssize_t show_node_state(struct device *dev,
- 	&node_state_attr[N_MEMORY].attr.attr,
- 	&node_state_attr[N_CPU].attr.attr,
- 	&node_state_attr[N_CPU_MEM].attr.attr,
-+	&node_state_attr[N_MIGRATE_TARGET].attr.attr,
- 	NULL
- };
- 
-diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-index 66a8964..411618c 100644
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -400,6 +400,7 @@ enum node_states {
- 	N_MEMORY,		/* The node has memory(regular, high, movable) */
- 	N_CPU,			/* The node has one or more cpus */
- 	N_CPU_MEM,		/* The node has both cpus and memory */
-+	N_MIGRATE_TARGET,	/* The node is suitable migrate target */
- 	NR_NODE_STATES
- };
- 
+ /* mm/util.c */
+ void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		struct vm_area_struct *prev, struct rb_node *rb_parent);
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 757db89e..3b37c71 100644
+index 3b37c71..917f64d 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -125,6 +125,7 @@ struct pcpu_drain {
- 	[N_MEMORY] = { { [0] = 1UL } },
- 	[N_CPU] = { { [0] = 1UL } },
- 	[N_CPU_MEM] = { { [0] = 1UL } },
-+	[N_MIGRATE_TARGET] = { { [0] = 1UL } },
- #endif	/* NUMA */
- };
- EXPORT_SYMBOL(node_states);
+@@ -5425,6 +5425,7 @@ int numa_zonelist_order_handler(struct ctl_table *table, int write,
+  * find_next_best_node - find the next node that should appear in a given node's fallback list
+  * @node: node whose fallback list we're appending
+  * @used_node_mask: nodemask_t of already used nodes
++ * @migration: find next best migration target node
+  *
+  * We use a number of factors to determine which is the next node that should
+  * appear on a given node's fallback list.  The node should not have appeared
+@@ -5436,7 +5437,8 @@ int numa_zonelist_order_handler(struct ctl_table *table, int write,
+  *
+  * Return: node id of the found node or %NUMA_NO_NODE if no node is found.
+  */
+-static int find_next_best_node(int node, nodemask_t *used_node_mask)
++int find_next_best_node(int node, nodemask_t *used_node_mask,
++			bool migration)
+ {
+ 	int n, val;
+ 	int min_val = INT_MAX;
+@@ -5444,13 +5446,18 @@ static int find_next_best_node(int node, nodemask_t *used_node_mask)
+ 	const struct cpumask *tmp = cpumask_of_node(0);
+ 
+ 	/* Use the local node if we haven't already */
+-	if (!node_isset(node, *used_node_mask)) {
++	if (!node_isset(node, *used_node_mask) &&
++	    !migration) {
+ 		node_set(node, *used_node_mask);
+ 		return node;
+ 	}
+ 
+ 	for_each_node_state(n, N_MEMORY) {
+ 
++		/* Find next best migration target node */
++		if (migration && !node_state(n, N_MIGRATE_TARGET))
++			continue;
++
+ 		/* Don't want a node to appear more than once */
+ 		if (node_isset(n, *used_node_mask))
+ 			continue;
+@@ -5482,7 +5489,6 @@ static int find_next_best_node(int node, nodemask_t *used_node_mask)
+ 	return best_node;
+ }
+ 
+-
+ /*
+  * Build zonelists ordered by node and zones within node.
+  * This results in maximum locality--normal zone overflows into local
+@@ -5544,7 +5550,7 @@ static void build_zonelists(pg_data_t *pgdat)
+ 	nodes_clear(used_mask);
+ 
+ 	memset(node_order, 0, sizeof(node_order));
+-	while ((node = find_next_best_node(local_node, &used_mask)) >= 0) {
++	while ((node = find_next_best_node(local_node, &used_mask, false)) >= 0) {
+ 		/*
+ 		 * We don't want to pressure a particular node.
+ 		 * So adding penalty to the first node in same
 -- 
 1.8.3.1
 
