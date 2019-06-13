@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B9A445C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F31445BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfFMQq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:46:26 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:16972 "EHLO mx1.mailbox.org"
+        id S2392699AbfFMQqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:46:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:34580 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730307AbfFMFdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:33:18 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id AE6674FFC4;
-        Thu, 13 Jun 2019 07:33:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id x8XDMHiD5zbs; Thu, 13 Jun 2019 07:32:48 +0200 (CEST)
-Subject: Re: [PATCH 2/2 v5] tty/serial/8250: use mctrl_gpio helpers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20190611105603.4435-1-sr@denx.de>
- <20190611105603.4435-2-sr@denx.de> <20190611124415.GT9224@smile.fi.intel.com>
- <85f0d39c-e5d8-320b-e611-d956630a629f@denx.de>
- <20190611144828.GX9224@smile.fi.intel.com>
- <12e5180e-b4a0-e5fa-bcad-ddc8103d644c@denx.de>
- <20190612091621.GA9224@smile.fi.intel.com>
-From:   Stefan Roese <sr@denx.de>
-Message-ID: <6a4f1001-b023-c972-7b36-6d2f8f9a3fa8@denx.de>
-Date:   Thu, 13 Jun 2019 07:32:39 +0200
+        id S1730311AbfFMFhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 01:37:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C1A428;
+        Wed, 12 Jun 2019 22:37:15 -0700 (PDT)
+Received: from [10.162.40.191] (p8cg001049571a15.blr.arm.com [10.162.40.191])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5673F73C;
+        Wed, 12 Jun 2019 22:37:11 -0700 (PDT)
+Subject: Re: [PATCH V5 - Rebased] mm/hotplug: Reorder memblock_[free|remove]()
+ calls in try_remove_memory()
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, ard.biesheuvel@arm.com, osalvador@suse.de,
+        mhocko@suse.com, mark.rutland@arm.com
+References: <36e0126f-e2d1-239c-71f3-91125a49e019@redhat.com>
+ <1560252373-3230-1-git-send-email-anshuman.khandual@arm.com>
+ <20190611151908.cdd6b73fd17fda09b1b3b65b@linux-foundation.org>
+ <5b4f1f19-2f8d-9b8f-4240-7b728952b6fe@arm.com>
+ <67f5c5ad-d753-77d8-8746-96cf4746b3e0@redhat.com>
+ <20190612185450.73841b9f5af3a4189de6f910@linux-foundation.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <92ce901d-42dc-6872-1ff0-0ca13d5cefbe@arm.com>
+Date:   Thu, 13 Jun 2019 11:07:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190612091621.GA9224@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190612185450.73841b9f5af3a4189de6f910@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,112 +46,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.06.19 11:16, Andy Shevchenko wrote:
-> On Wed, Jun 12, 2019 at 10:13:05AM +0200, Stefan Roese wrote:
->> On 11.06.19 16:48, Andy Shevchenko wrote:
->>> On Tue, Jun 11, 2019 at 04:02:54PM +0200, Stefan Roese wrote:
->>>> On 11.06.19 14:44, Andy Shevchenko wrote:
->>>>> On Tue, Jun 11, 2019 at 12:56:03PM +0200, Stefan Roese wrote:
->>>
->>>>>>     static inline void serial8250_out_MCR(struct uart_8250_port *up, int value)
->>>>>>     {
->>>>>>     	serial_out(up, UART_MCR, value);
->>>>>> +
->>>>>> +	if (up->gpios) {
->>>>>> +		int mctrl_gpio = 0;
->>>>>> +
->>>>>> +		if (value & UART_MCR_RTS)
->>>>>> +			mctrl_gpio |= TIOCM_RTS;
->>>>>> +		if (value & UART_MCR_DTR)
->>>>>> +			mctrl_gpio |= TIOCM_DTR;
->>>>>> +
->>>>>> +		mctrl_gpio_set(up->gpios, mctrl_gpio);
->>>>>> +	}
->>>>>>     }
->>>
->>>>>>     static inline int serial8250_in_MCR(struct uart_8250_port *up)
->>>>>>     {
->>>>>> -	return serial_in(up, UART_MCR);
->>>>>> +	int mctrl;
->>>>>> +
->>>>>> +	mctrl = serial_in(up, UART_MCR);
->>>>>> +
->>>>>> +	if (up->gpios) {
->>>>>> +		int mctrl_gpio = 0;
->>>>>> +
->>>>>> +		/* save current MCR values */
->>>>>> +		if (mctrl & UART_MCR_RTS)
->>>>>> +			mctrl_gpio |= TIOCM_RTS;
->>>>>> +		if (mctrl & UART_MCR_DTR)
->>>>>> +			mctrl_gpio |= TIOCM_DTR;
->>>>>> +
->>>>>> +		mctrl_gpio = mctrl_gpio_get_outputs(up->gpios, &mctrl_gpio);
->>>>>> +		if (mctrl_gpio & TIOCM_RTS)
->>>>>> +			mctrl |= UART_MCR_RTS;
->>>>>> +		else
->>>>>> +			mctrl &= ~UART_MCR_RTS;
->>>>>> +
->>>>>> +		if (mctrl_gpio & TIOCM_DTR)
->>>>>> +			mctrl |= UART_MCR_DTR;
->>>>>> +		else
->>>>>> +			mctrl &= ~UART_MCR_DTR;
->>>>>> +	}
->>>>>> +
->>>>>> +	return mctrl;
->>>>>>     }
+
+
+On 06/13/2019 07:24 AM, Andrew Morton wrote:
+> On Wed, 12 Jun 2019 08:53:33 +0200 David Hildenbrand <david@redhat.com> wrote:
+> 
+>>>>> ...
 >>>>>
->>>>> These are using OR logic with potentially volatile data. Shouldn't we mask
->>>>> unused bits in UART_MCR in case of up->gpios != NULL?
+>>>>>
+>>>>> - Rebased on linux-next (next-20190611)
 >>>>
->>>> Sorry, I don't see, which bits you are referring to? Could you please be
->>>> a bit more specific with the variable / macro meant (example)?
+>>>> Yet the patch you've prepared is designed for 5.3.  Was that
+>>>> deliberate, or should we be targeting earlier kernels?
 >>>
->>> I meant that we double write values in the out() which might have some
->>> consequences, though I hope nothing wrong with it happens.
->>
->> Where is the double write to a register? Sorry, I fail to spot it.
-> 
-> Not to the one register. From the functional point of view the same signal is
-> set up twice: once per UART register, once per GPIO pins.
-> 
->>> In the in() we read the all bits in the register.
+>>> It was deliberate for 5.3 as a preparation for upcoming reworked arm64 hot-remove.
 >>>
->>> As now I look at the implementation of mctrl_gpio_get_outputs(),
->>> I think we rather get helpers for conversion between TIOCM and UART_MCR values,
->>> so, they can be used in get_mctrl() / set_mctrl() and above.
 >>
->> Do you something like this in mind?
+>> We should probably add to the patch description something like "This is
+>> a preparation for arm64 memory hotremove. The described issue is not
+>> relevant on other architectures."
 > 
-> More likely
-> 
-> static inline int serial8250_MCR_to_TIOCM(int mcr)
+> Please.  And is there any reason to merge it separately?  Can it be
+> [patch 1/3] in the "arm64/mm: Enable memory hot remove" series?
 
-MSR_to_TIOCM (see below) ...
-
-> {
-> 	int tiocm = 0;
-> 
-> 	if (mcr & ...)
-> 		tiocm |= ...;
-> 	...
-> 
-> 	return tiocm;
-> }
-> 
-> static inline int serial8250_TIOCM_to_MCR(int tiocm)
-> {
-> 	... in a similar way ...
-> }
-
-While implementing such wrapper functions I noticed, that get_mctrl() /
-set_mctrl() need TIOCM->MCR and MSR->TIOCM (notice MSR vs MCR here) but
-serial8250_in_MCR() needs MCR->TIOCM. So there is not that much
-overlay here. Additionally the wrappers would need to handle all bits
-and only some of them are needed in serial8250_in/out_MCR(), so I would
-need to add masking here as well.
-
-For my taste its not really worth adding these wrappers as they won't
-make things much clearer (if at all).
-
-Thanks,
-Stefan
+Sure it can be. I will make this [patch 1/3] in the next version for
+"arm64/mm: Enable memory hot remove". Apologies for the noise here.
