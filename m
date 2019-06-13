@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A805F438FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D39BF43905
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387696AbfFMPKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:10:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54606 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732304AbfFMNvV (ORCPT
+        id S1733096AbfFMPLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:11:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49580 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732303AbfFMNvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Jun 2019 09:51:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=gyYwmo558t82wMk+Xft5j1Hxt2su0A1y8PA29lib60Q=; b=eFMTChXBq8CHJMY5xViVNER5Mt
-        sklSYe3EDfMih33t1zyXOKDvVW6d1BwWUWbLeTMRDXwrWZsi5EPAnE/v2O+2vKEJmWiStx5lW3VsM
-        eMFy0Gq2h1P/zlb8Lud6h1hZvJ98e5WQYhx4+wQI1mNc2NWI6BWucDFbBX0OJx2ntA9AS5Wef0nyv
-        0l1CSd482xtaMzDCA2/keAT0UcVR4YjWcxpfrFx42dxNgOMg0Wtb4ONqk71m554i/18kEVBSQE4Jc
-        HSlvWUdv8jk1pii8siEsE8NcL3JULowFo5Kdu1e0pz07UYrukZNWctF4PxgybzCc5OS1AhlcqAa1V
-        j/0v9cHQ==;
+        bh=HRF/3AX8o8Cht6q46ZJt/8caFnGvzQXVBegIDPyawvg=; b=JiOGmKzoZYrFvFX2yZnHmwoEOg
+        TxOlMehL5LWbqXnXEG79sqHkBay/tCwJdA83i38WaxXRexPGL0aLnJxnatA5Q4Vh+4C4NVz2jI/FD
+        v92gWbhKBu2bN+Dhp8HyNQYrJokQzcjcI5Ai4Pugeezw38cCMJweDcB3SVk6j3NrFnlCbjm1w6NZi
+        lyrA2xIexfr8TJLIzbCP5Gvphv75QMD84j/+NyKTvVMdCSXI09GakWywLoEooOywKgje8Bzf6kyTa
+        zRzdJ385piS+5XkMWL8ruVeG+gpargHi97aM/sAwTJEozKDhk/blNxgySp3k1kxh9xfwgpoOYZDte
+        JlPYSqeQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbQ80-0001GT-2y; Thu, 13 Jun 2019 13:50:56 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbQ7z-0004Bm-KI; Thu, 13 Jun 2019 13:50:55 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 08B4B20435AA8; Thu, 13 Jun 2019 15:50:54 +0200 (CEST)
-Message-Id: <20190613134933.048961704@infradead.org>
+        id 0EDC220435AA9; Thu, 13 Jun 2019 15:50:54 +0200 (CEST)
+Message-Id: <20190613134933.141230706@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 13 Jun 2019 15:43:20 +0200
+Date:   Thu, 13 Jun 2019 15:43:21 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     stern@rowland.harvard.edu, akiyks@gmail.com,
         andrea.parri@amarulasolutions.com, boqun.feng@gmail.com,
@@ -39,7 +39,7 @@ To:     stern@rowland.harvard.edu, akiyks@gmail.com,
         luc.maranget@inria.fr, npiggin@gmail.com, paulmck@linux.ibm.com,
         peterz@infradead.org, will.deacon@arm.com, paul.burton@mips.com
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: [PATCH v2 3/4] mips/atomic: Fix smp_mb__{before,after}_atomic()
+Subject: [PATCH v2 4/4] x86/atomic: Fix smp_mb__{before,after}_atomic()
 References: <20190613134317.734881240@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,8 +51,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Recent probing at the Linux Kernel Memory Model uncovered a
 'surprise'. Strongly ordered architectures where the atomic RmW
 primitive implies full memory ordering and
-smp_mb__{before,after}_atomic() are a simple barrier() (such as MIPS
-without WEAK_REORDERING_BEYOND_LLSC) fail for:
+smp_mb__{before,after}_atomic() are a simple barrier() (such as x86)
+fail for:
 
 	*x = 1;
 	atomic_inc(u);
@@ -77,291 +77,118 @@ Which the CPU is then allowed to re-order (under TSO rules) like:
 And this very much was not intended. Therefore strengthen the atomic
 RmW ops to include a compiler barrier.
 
+NOTE: atomic_{or,and,xor} and the bitops already had the compiler
+barrier.
+
 Reported-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/mips/include/asm/atomic.h  |   14 ++++++-------
- arch/mips/include/asm/barrier.h |   12 +++++++++--
- arch/mips/include/asm/bitops.h  |   42 +++++++++++++++++++++++-----------------
- arch/mips/include/asm/cmpxchg.h |    6 ++---
- 4 files changed, 45 insertions(+), 29 deletions(-)
+ Documentation/atomic_t.txt         |    3 +++
+ arch/x86/include/asm/atomic.h      |    8 ++++----
+ arch/x86/include/asm/atomic64_64.h |    8 ++++----
+ arch/x86/include/asm/barrier.h     |    4 ++--
+ 4 files changed, 13 insertions(+), 10 deletions(-)
 
---- a/arch/mips/include/asm/atomic.h
-+++ b/arch/mips/include/asm/atomic.h
-@@ -68,7 +68,7 @@ static __inline__ void atomic_##op(int i
- 		"\t" __scbeqz "	%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (v->counter)	      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -98,7 +98,7 @@ static __inline__ int atomic_##op##_retu
- 		"	.set	pop					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -132,7 +132,7 @@ static __inline__ int atomic_fetch_##op#
- 		"	move	%0, %1					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -210,7 +210,7 @@ static __inline__ int atomic_sub_if_posi
- 		"	.set	pop					\n"
- 		: "=&r" (result), "=&r" (temp),
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)
--		: "Ir" (i));
-+		: "Ir" (i) : __LLSC_CLOBBER);
- 	} else {
- 		unsigned long flags;
+--- a/Documentation/atomic_t.txt
++++ b/Documentation/atomic_t.txt
+@@ -194,6 +194,9 @@ These helper barriers exist because arch
+ ordering on their SMP atomic primitives. For example our TSO architectures
+ provide full ordered atomics and these barriers are no-ops.
  
-@@ -270,7 +270,7 @@ static __inline__ void atomic64_##op(s64
- 		"\t" __scbeqz "	%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (v->counter)	      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -300,7 +300,7 @@ static __inline__ s64 atomic64_##op##_re
- 		"	.set	pop					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -334,7 +334,7 @@ static __inline__ s64 atomic64_fetch_##o
- 		"	.set	pop					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
---- a/arch/mips/include/asm/barrier.h
-+++ b/arch/mips/include/asm/barrier.h
-@@ -211,14 +211,22 @@
- #define __smp_wmb()	barrier()
- #endif
++NOTE: when the atomic RmW ops are fully ordered, they should also imply a
++compiler barrier.
++
+ Thus:
  
-+/*
-+ * When LL/SC does imply order, it must also be a compiler barrier to avoid the
-+ * compiler from reordering where the CPU will not. When it does not imply
-+ * order, the compiler is also free to reorder across the LL/SC loop and
-+ * ordering will be done by smp_llsc_mb() and friends.
-+ */
- #if defined(CONFIG_WEAK_REORDERING_BEYOND_LLSC) && defined(CONFIG_SMP)
- #define __WEAK_LLSC_MB		"	sync	\n"
-+#define smp_llsc_mb()		__asm__ __volatile__(__WEAK_LLSC_MB : : :"memory")
-+#define __LLSC_CLOBBER
- #else
- #define __WEAK_LLSC_MB		"		\n"
-+#define smp_llsc_mb()		do { } while (0)
-+#define __LLSC_CLOBBER		"memory"
- #endif
+   atomic_fetch_add();
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -54,7 +54,7 @@ static __always_inline void arch_atomic_
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0"
+ 		     : "+m" (v->counter)
+-		     : "ir" (i));
++		     : "ir" (i) : "memory");
+ }
  
--#define smp_llsc_mb()	__asm__ __volatile__(__WEAK_LLSC_MB : : :"memory")
--
- #ifdef CONFIG_CPU_CAVIUM_OCTEON
- #define smp_mb__before_llsc() smp_wmb()
- #define __smp_mb__before_llsc() __smp_wmb()
---- a/arch/mips/include/asm/bitops.h
-+++ b/arch/mips/include/asm/bitops.h
-@@ -66,7 +66,8 @@ static inline void set_bit(unsigned long
- 		"	beqzl	%0, 1b					\n"
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "=" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit), GCC_OFF_SMALL_ASM() (*m));
-+		: "ir" (1UL << bit), GCC_OFF_SMALL_ASM() (*m)
-+		: __LLSC_CLOBBER);
- #if defined(CONFIG_CPU_MIPSR2) || defined(CONFIG_CPU_MIPSR6)
- 	} else if (kernel_uses_llsc && __builtin_constant_p(bit)) {
- 		loongson_llsc_mb();
-@@ -76,7 +77,8 @@ static inline void set_bit(unsigned long
- 			"	" __INS "%0, %3, %2, 1			\n"
- 			"	" __SC "%0, %1				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (bit), "r" (~0));
-+			: "ir" (bit), "r" (~0)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- #endif /* CONFIG_CPU_MIPSR2 || CONFIG_CPU_MIPSR6 */
- 	} else if (kernel_uses_llsc) {
-@@ -90,7 +92,8 @@ static inline void set_bit(unsigned long
- 			"	" __SC	"%0, %1				\n"
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (1UL << bit));
-+			: "ir" (1UL << bit)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- 	} else
- 		__mips_set_bit(nr, addr);
-@@ -122,7 +125,8 @@ static inline void clear_bit(unsigned lo
- 		"	beqzl	%0, 1b					\n"
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (~(1UL << bit)));
-+		: "ir" (~(1UL << bit))
-+		: __LLSC_CLOBBER);
- #if defined(CONFIG_CPU_MIPSR2) || defined(CONFIG_CPU_MIPSR6)
- 	} else if (kernel_uses_llsc && __builtin_constant_p(bit)) {
- 		loongson_llsc_mb();
-@@ -132,7 +136,8 @@ static inline void clear_bit(unsigned lo
- 			"	" __INS "%0, $0, %2, 1			\n"
- 			"	" __SC "%0, %1				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (bit));
-+			: "ir" (bit)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- #endif /* CONFIG_CPU_MIPSR2 || CONFIG_CPU_MIPSR6 */
- 	} else if (kernel_uses_llsc) {
-@@ -146,7 +151,8 @@ static inline void clear_bit(unsigned lo
- 			"	" __SC "%0, %1				\n"
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (~(1UL << bit)));
-+			: "ir" (~(1UL << bit))
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- 	} else
- 		__mips_clear_bit(nr, addr);
-@@ -192,7 +198,8 @@ static inline void change_bit(unsigned l
- 		"	beqzl	%0, 1b				\n"
- 		"	.set	pop				\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit));
-+		: "ir" (1UL << bit)
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -207,7 +214,8 @@ static inline void change_bit(unsigned l
- 			"	" __SC	"%0, %1				\n"
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (1UL << bit));
-+			: "ir" (1UL << bit)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- 	} else
- 		__mips_change_bit(nr, addr);
-@@ -244,7 +252,7 @@ static inline int test_and_set_bit(unsig
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -260,7 +268,7 @@ static inline int test_and_set_bit(unsig
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
+ /**
+@@ -68,7 +68,7 @@ static __always_inline void arch_atomic_
+ {
+ 	asm volatile(LOCK_PREFIX "subl %1,%0"
+ 		     : "+m" (v->counter)
+-		     : "ir" (i));
++		     : "ir" (i) : "memory");
+ }
  
- 		res = temp & (1UL << bit);
-@@ -301,7 +309,7 @@ static inline int test_and_set_bit_lock(
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+m" (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -317,7 +325,7 @@ static inline int test_and_set_bit_lock(
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
+ /**
+@@ -95,7 +95,7 @@ static __always_inline bool arch_atomic_
+ static __always_inline void arch_atomic_inc(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0"
+-		     : "+m" (v->counter));
++		     : "+m" (v->counter) :: "memory");
+ }
+ #define arch_atomic_inc arch_atomic_inc
  
- 		res = temp & (1UL << bit);
-@@ -360,7 +368,7 @@ static inline int test_and_clear_bit(uns
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- #if defined(CONFIG_CPU_MIPSR2) || defined(CONFIG_CPU_MIPSR6)
- 	} else if (kernel_uses_llsc && __builtin_constant_p(nr)) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
-@@ -375,7 +383,7 @@ static inline int test_and_clear_bit(uns
- 			"	" __SC	"%0, %1				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "ir" (bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- #endif
- 	} else if (kernel_uses_llsc) {
-@@ -394,7 +402,7 @@ static inline int test_and_clear_bit(uns
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
+@@ -108,7 +108,7 @@ static __always_inline void arch_atomic_
+ static __always_inline void arch_atomic_dec(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0"
+-		     : "+m" (v->counter));
++		     : "+m" (v->counter) :: "memory");
+ }
+ #define arch_atomic_dec arch_atomic_dec
  
- 		res = temp & (1UL << bit);
-@@ -437,7 +445,7 @@ static inline int test_and_change_bit(un
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -453,7 +461,7 @@ static inline int test_and_change_bit(un
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -45,7 +45,7 @@ static __always_inline void arch_atomic6
+ {
+ 	asm volatile(LOCK_PREFIX "addq %1,%0"
+ 		     : "=m" (v->counter)
+-		     : "er" (i), "m" (v->counter));
++		     : "er" (i), "m" (v->counter) : "memory");
+ }
  
- 		res = temp & (1UL << bit);
---- a/arch/mips/include/asm/cmpxchg.h
-+++ b/arch/mips/include/asm/cmpxchg.h
-@@ -61,7 +61,7 @@ extern unsigned long __xchg_called_with_
- 		"	.set	pop				\n"	\
- 		: "=&r" (__ret), "=" GCC_OFF_SMALL_ASM() (*m)		\
- 		: GCC_OFF_SMALL_ASM() (*m), "Jr" (val)			\
--		: "memory");						\
-+		: __LLSC_CLOBBER);					\
- 	} else {							\
- 		unsigned long __flags;					\
- 									\
-@@ -134,8 +134,8 @@ static inline unsigned long __xchg(volat
- 		"	.set	pop				\n"	\
- 		"2:						\n"	\
- 		: "=&r" (__ret), "=" GCC_OFF_SMALL_ASM() (*m)		\
--		: GCC_OFF_SMALL_ASM() (*m), "Jr" (old), "Jr" (new)		\
--		: "memory");						\
-+		: GCC_OFF_SMALL_ASM() (*m), "Jr" (old), "Jr" (new)	\
-+		: __LLSC_CLOBBER);					\
- 		loongson_llsc_mb();					\
- 	} else {							\
- 		unsigned long __flags;					\
+ /**
+@@ -59,7 +59,7 @@ static inline void arch_atomic64_sub(lon
+ {
+ 	asm volatile(LOCK_PREFIX "subq %1,%0"
+ 		     : "=m" (v->counter)
+-		     : "er" (i), "m" (v->counter));
++		     : "er" (i), "m" (v->counter) : "memory");
+ }
+ 
+ /**
+@@ -87,7 +87,7 @@ static __always_inline void arch_atomic6
+ {
+ 	asm volatile(LOCK_PREFIX "incq %0"
+ 		     : "=m" (v->counter)
+-		     : "m" (v->counter));
++		     : "m" (v->counter) : "memory");
+ }
+ #define arch_atomic64_inc arch_atomic64_inc
+ 
+@@ -101,7 +101,7 @@ static __always_inline void arch_atomic6
+ {
+ 	asm volatile(LOCK_PREFIX "decq %0"
+ 		     : "=m" (v->counter)
+-		     : "m" (v->counter));
++		     : "m" (v->counter) : "memory");
+ }
+ #define arch_atomic64_dec arch_atomic64_dec
+ 
+--- a/arch/x86/include/asm/barrier.h
++++ b/arch/x86/include/asm/barrier.h
+@@ -80,8 +80,8 @@ do {									\
+ })
+ 
+ /* Atomic operations are already serializing on x86 */
+-#define __smp_mb__before_atomic()	barrier()
+-#define __smp_mb__after_atomic()	barrier()
++#define __smp_mb__before_atomic()	do { } while (0)
++#define __smp_mb__after_atomic()	do { } while (0)
+ 
+ #include <asm-generic/barrier.h>
+ 
 
 
