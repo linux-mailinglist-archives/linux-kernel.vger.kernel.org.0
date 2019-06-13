@@ -2,76 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3ACD4387E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF7BD4386F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732828AbfFMPGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:06:13 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37684 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732419AbfFMOJ2 (ORCPT
+        id S1733259AbfFMPFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:05:55 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43380 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732433AbfFMOMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:09:28 -0400
-Received: by mail-io1-f66.google.com with SMTP id e5so17173202iok.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:09:28 -0700 (PDT)
+        Thu, 13 Jun 2019 10:12:37 -0400
+Received: by mail-qt1-f194.google.com with SMTP id z24so9464701qtj.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=83MgpFqstoIbN2h097UMIW82eqxdq2d6GocHKpd3o5g=;
-        b=AIWFV38iCZCRS4/8auyY2F95vvHW0rx+RAeLomC5b/c81/CgnmgNLCfJaXLyojN0DC
-         8TJCQXBkP4gbno+hFyAre6hK+GHeFWE4MZgjEy8Gif3PLaHHGf+axro9PKXmLk4CEPVf
-         zac5AvD98GyCppzssN7PfIYnlspTI3wyj+B6QJSaI3q9zodb7yJTe6i31AlyYCN81/gE
-         WM2updd7zf73UHtJ3wz15Irq1k5phOhl6ps1403X8Lakhgjuh6NoaBK+yOJ0StKX6smY
-         d9t9Z2H4CtJzAmGXJrQzB6A+MRm1LYFvavE/PYpvLj1cg4wwIj1Fuw2CpVMv+OarTGca
-         Od4Q==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GDhqdSFdNrJkUzLZKLANjMrDzCWc+1BFxgZR9EoSJWc=;
+        b=o9ysYyAYYAkKDCEjOpEcA8dHcyUIgiishqyzWE+RGyB0CPD0qX9BMV8V2Ph7rpuhQ2
+         K8NR9n3H2e8PDC40efcl/XPNsZvrJzaA26yNoknpyzgEflgHS0LCRUJZDIxSiwaskZOx
+         wVtjRQyVJFXdvVLENdH2e5X3E+kNGZusxml91Hhgrxkdi0137ew7YVLbQca3LK9zF88/
+         ajD2LpyQ70yJdzGRaInaMTvnMegeomU9tWJ7wrO/cd9dwWrkG3s41kbgxjMsoVvaBYhS
+         JdQZnPb7pa+AfGg8+n8JdN/2O+vKRsl7thrK0YyHBoE/x0JUOpZD1nFq32wrn+4+Pmlh
+         8wdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=83MgpFqstoIbN2h097UMIW82eqxdq2d6GocHKpd3o5g=;
-        b=TimBeZsh2KRQTS6Ax8+FytjhAm4RQdk1+ndkmYV3DKsO9ames1TEb6zIYCKmJDI7m/
-         oQlcO4Y95uUHKyYNZCYVBuWtFAk6YupkQUwmoWqn/iPMIn7mkXC4ZYTI4xZFYabI8GG4
-         IYzOT+ssXl59bV2W2CDGELBcUT9rz3BMXURESePHl8Gkmu1rvaIrVOl3++KIdRSyKYU0
-         G+4S0pArAHdHTOqPilPOvv+3u8udrhelwNkKtbIQg1MTR2QLZjmCOd4Y3BpFaIhEtVSQ
-         Zf4rgJZamwun4lTx7eOOrSBneQmqLPoXSBSxYK4Cr0Buae8ZvS8E3vlVxLJ7Yd+/qbE1
-         yIDw==
-X-Gm-Message-State: APjAAAURsj3UaBhgjgXo7v00T65NUHSCwRxvlpi7eCd07qseCXgQi2tN
-        TDAEiGcFCag7V+Uy5aqh7AyB9hRmqePWePlhZ9U=
-X-Google-Smtp-Source: APXvYqy9Ss10j73DrIEp1rIMX3zuAiE2eh4Zx/WF0mg1PxTUwSPjQb1QDXrXb7qmYZQ2MHsw3jQXJZur4jGU8l5tLmA=
-X-Received: by 2002:a6b:ed01:: with SMTP id n1mr23549791iog.255.1560434967928;
- Thu, 13 Jun 2019 07:09:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GDhqdSFdNrJkUzLZKLANjMrDzCWc+1BFxgZR9EoSJWc=;
+        b=THrHL3inc6BlTBo4HqxaSULG0Cl0yQjRlx6/tK9GQdnw/wusq4XQfQoGdhQ8Ndk2IC
+         3RgJglqibhlDvwOqe0NLbGXUMXzD+IFKdND0DlXHFzrJlRG5fQcQIU/XQhtiRgZtyEj1
+         /UZ9w2keg1OUVy8fTNUTNP0c7kdKEKcPGmqQk8t6kZl1ichZXo30jwdzPCwliqnmDiT/
+         nEM92X4QlovPyyhoMG8txr5kZVv/GkdMYpL18tUR1JXP0sqVUcRUQ39uwSCImzZXw9+c
+         DoZ8CmdDWB81Cw+xT24lUAQAGyNplmotAsb2Uf64fqNC5MidG7rJwkH8xk9Qt3DICDaQ
+         8Uyg==
+X-Gm-Message-State: APjAAAWsUtGn1/ok9ek4ixTPdZVmV/uRmo0JPXbxAWoa6sExiqX0rG69
+        j+lZdQaa6mtr00mYx7uCVDv0pw==
+X-Google-Smtp-Source: APXvYqxb/kePzso30q0J3LDebGmnh0NZA/pxwsejwKpoIHkaoRXf9QORb3+scacfUjYllSbAb0hUTg==
+X-Received: by 2002:ac8:18f0:: with SMTP id o45mr74804877qtk.273.1560435156338;
+        Thu, 13 Jun 2019 07:12:36 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::9d6b])
+        by smtp.gmail.com with ESMTPSA id k15sm1394975qtg.22.2019.06.13.07.12.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 07:12:35 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:12:34 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 09/19] btrfs: limit super block locations in HMZONED mode
+Message-ID: <20190613141232.nud7gqz622ewcyzp@MacBook-Pro-91.local>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-10-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Received: by 2002:a02:852a:0:0:0:0:0 with HTTP; Thu, 13 Jun 2019 07:09:25
- -0700 (PDT)
-Reply-To: noura_gazi@live.fr
-From:   NOTIFICATION <florencegbewani4@gmail.com>
-Date:   Thu, 13 Jun 2019 14:09:25 +0000
-Message-ID: <CANeg+2Z0Cbxg3r28K_96D0JL=YzsRX7hyPTRwiu_RfZ3a1ZnwA@mail.gmail.com>
-Subject: NOTIFICATION
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607131025.31996-10-naohiro.aota@wdc.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Good day
+On Fri, Jun 07, 2019 at 10:10:15PM +0900, Naohiro Aota wrote:
+> When in HMZONED mode, make sure that device super blocks are located in
+> randomly writable zones of zoned block devices. That is, do not write super
+> blocks in sequential write required zones of host-managed zoned block
+> devices as update would not be possible.
+> 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/disk-io.c     | 11 +++++++++++
+>  fs/btrfs/disk-io.h     |  1 +
+>  fs/btrfs/extent-tree.c |  4 ++++
+>  fs/btrfs/scrub.c       |  2 ++
+>  4 files changed, 18 insertions(+)
+> 
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 7c1404c76768..ddbb02906042 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -3466,6 +3466,13 @@ struct buffer_head *btrfs_read_dev_super(struct block_device *bdev)
+>  	return latest;
+>  }
+>  
+> +int btrfs_check_super_location(struct btrfs_device *device, u64 pos)
+> +{
+> +	/* any address is good on a regular (zone_size == 0) device */
+> +	/* non-SEQUENTIAL WRITE REQUIRED zones are capable on a zoned device */
 
-It is with tears that i am writing to you i need your help and
-assistance am an aging widow suffering from long time cancer of the
-throat and I inherited from my late husband,and I need someone like
-you a foreign partner that will withdraw this money then use for
-better investments and charity in your country , i contacted you to do
-this because i am seriously sick and i will not have time to do all i
-have stated because of my health and the doctors have already told me
-that i have few time to live so please if you are interested kindly
-let me know immediately so that we can proceed because i am really
-suffering from this illness cancer so please have mercy and pity on me
-and help me get my funds transferred use it for Charity works or any
-profitable venture that can help the poor and street children
-especially, I accept this decision because I do not have any child who
-will inherit  this money after I die.
+This is not how you do multi-line comments in the kernel.  Thanks,
 
-Warmest Regards,
-
-Mme.Noura
+Josef
