@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D42544215
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6915744040
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392038AbfFMQTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:19:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
+        id S2391165AbfFMQE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:04:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731099AbfFMIkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:40:04 -0400
+        id S1731354AbfFMIq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:46:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93237215EA;
-        Thu, 13 Jun 2019 08:40:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C274521743;
+        Thu, 13 Jun 2019 08:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415204;
-        bh=r5986k0DGRy7Q+m9nV0Kq6GGrPaodpuicTzsg33PoW0=;
+        s=default; t=1560415618;
+        bh=LoeZwMdx8lyEmitXs28F03cf04OY7TJPSfs/FF3NIJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2tPPcZFkVToHrgZWIOzShbDagFXzuty/LxNz5fcDUYoF+tQKWigChMX0zdcUEr+VB
-         bZRYkFia6oa6Wpsm3fSUcUSoya4r8T4SzrgB1kjVMOWc0Jvc5UHn0WzvCerRkp2yVq
-         oaUkKbaKHq5rNk3/Th34fu87xpNyGVMg59APDd4k=
+        b=M7On0Ekx01vB7MHDpYcohNVHU9IkEVUp4gld2sSQt+bsCWM7UcIig7eltuhnrmIsE
+         OvhzlqkCLt+zxEJ7leKERqD+jBDu/Ccobu+3qY/rFTEgSA6JchCENp1LbAdie7OrOq
+         k6oGdsM0Ld54umCSUq6eGn0iLZT+LT1rfcdkqNRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Joe Perches <joe@perches.com>,
-        David Rientjes <rientjes@google.com>,
-        Dmitry Safonov <d.safonov@partner.samsung.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 014/118] mm/cma_debug.c: fix the break condition in cma_maxchunk_get()
-Date:   Thu, 13 Jun 2019 10:32:32 +0200
-Message-Id: <20190613075644.490063763@linuxfoundation.org>
+Subject: [PATCH 5.1 041/155] ntp: Allow TAI-UTC offset to be set to zero
+Date:   Thu, 13 Jun 2019 10:32:33 +0200
+Message-Id: <20190613075655.401187746@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,42 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f0fd50504a54f5548eb666dc16ddf8394e44e4b7 ]
+[ Upstream commit fdc6bae940ee9eb869e493990540098b8c0fd6ab ]
 
-If not find zero bit in find_next_zero_bit(), it will return the size
-parameter passed in, so the start bit should be compared with bitmap_maxno
-rather than cma->count.  Although getting maxchunk is working fine due to
-zero value of order_per_bit currently, the operation will be stuck if
-order_per_bit is set as non-zero.
+The ADJ_TAI adjtimex mode sets the TAI-UTC offset of the system clock.
+It is typically set by NTP/PTP implementations and it is automatically
+updated by the kernel on leap seconds. The initial value is zero (which
+applications may interpret as unknown), but this value cannot be set by
+adjtimex. This limitation seems to go back to the original "nanokernel"
+implementation by David Mills.
 
-Link: http://lkml.kernel.org/r/20190319092734.276-1-zbestahu@gmail.com
-Signed-off-by: Yue Hu <huyue2@yulong.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Dmitry Safonov <d.safonov@partner.samsung.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Change the ADJ_TAI check to accept zero as a valid TAI-UTC offset in
+order to allow setting it back to the initial value.
+
+Fixes: 153b5d054ac2 ("ntp: support for TAI")
+Suggested-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Link: https://lkml.kernel.org/r/20190417084833.7401-1-mlichvar@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/cma_debug.c | 2 +-
+ kernel/time/ntp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index ad6723e9d110..3e0415076cc9 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -58,7 +58,7 @@ static int cma_maxchunk_get(void *data, u64 *val)
- 	mutex_lock(&cma->lock);
- 	for (;;) {
- 		start = find_next_zero_bit(cma->bitmap, bitmap_maxno, end);
--		if (start >= cma->count)
-+		if (start >= bitmap_maxno)
- 			break;
- 		end = find_next_bit(cma->bitmap, bitmap_maxno, start);
- 		maxchunk = max(end - start, maxchunk);
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index 92a90014a925..f43d47c8c3b6 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -690,7 +690,7 @@ static inline void process_adjtimex_modes(const struct __kernel_timex *txc,
+ 		time_constant = max(time_constant, 0l);
+ 	}
+ 
+-	if (txc->modes & ADJ_TAI && txc->constant > 0)
++	if (txc->modes & ADJ_TAI && txc->constant >= 0)
+ 		*time_tai = txc->constant;
+ 
+ 	if (txc->modes & ADJ_OFFSET)
 -- 
 2.20.1
 
