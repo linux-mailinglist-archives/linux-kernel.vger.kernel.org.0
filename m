@@ -2,65 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E96B5445D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A279A445D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404179AbfFMQq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:46:59 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33492 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730273AbfFMFIA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:08:00 -0400
-Received: by mail-io1-f68.google.com with SMTP id u13so14989852iop.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 22:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=45UZxQiFbq2zrCxPgxX4tICqpmAKAWmhy8nY0NTFEHI=;
-        b=IvYoPJ2rqlgBJSEkbOmPNQ4T8snci1aUDjP4i5ni+v01yQixr/haGHMN5XMfefgp+o
-         gA0/P7geGywk6GcvfeUiGnP1d9Kos6X5Sq+Cb81jepNDhUktjLmGirOoRjK1zb4hlJ9r
-         89GJZKKLJeP4aRL67BpWfB2AFd69jTLo/hU9bjcij9zRQ+JMMYCC8u5CexJc1J4D7ouk
-         675vvxvoWNWgrfNmwBTRUcnY6Dp9A/paKyMN3REfKtmlz2tPgGL9ETDDtP8tKYYFeSYT
-         FGbk4S3rWYDi9qWs1/WlkIMoD3BQ1odSc7LE+RJJhmFeJGjWCrii1/PZmlxyPd9qoCKf
-         ZXrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=45UZxQiFbq2zrCxPgxX4tICqpmAKAWmhy8nY0NTFEHI=;
-        b=a7uFPDC0GVxUZ5NhD3NchpiUHCPsqTlffmlcsPx7NQoLPFw2NTkNUZf53mSkjY72SL
-         MTu5Atjv4pLYsvUVbhPDp+Tpuise9Sj07xXyyJ5e/845cJ5mgwTOFoBVt6SkODtMSjnB
-         +sP38TumXrjkDXd21gwS9I62lkMmhtNKH5p0j3UDIU0XlY6I0yKZDtJceZPBpkEa1le8
-         qOHPBwr6IQbMmugrnjqdZkTQj11OaxdbTh839Ps1alHCyqoOwW8IyQBlfEoRGPgNnJJS
-         RO8qpwYBbRvlD5LQrrOi/+y/nRTbNOocgZfxRLkLvqcEGYAHX+sIIwJYNszFDIX478mk
-         TiwQ==
-X-Gm-Message-State: APjAAAUksQvipYoFpB9NV5I6cPYg88G4GPkyc8fXpRSjJgGwVrL8NZHN
-        1D1drYuchH3sKebwO3EgFe0JnJZQh3jaUvkj2bk=
-X-Google-Smtp-Source: APXvYqxgNqmJzhCqu6nDA9Brh2cCec6hf5hucJv8U2qn/eilNBnXWBblhSJbLBujjG0hmPsx9vn0S7Vv2H3Cq8FtQu8=
-X-Received: by 2002:a05:6602:1d2:: with SMTP id w18mr11313080iot.157.1560402479580;
- Wed, 12 Jun 2019 22:07:59 -0700 (PDT)
-MIME-Version: 1.0
-Reply-To: ste1959bury@gmail.com
-Received: by 2002:a6b:4e0b:0:0:0:0:0 with HTTP; Wed, 12 Jun 2019 22:07:55
- -0700 (PDT)
-From:   Steven Utonbury <stev1959bury@gmail.com>
-Date:   Thu, 13 Jun 2019 06:07:55 +0100
-X-Google-Sender-Auth: I0ZtVHmzy7pSCCKHdUpX4uqDIRA
-Message-ID: <CAGn4Caj-vkVruo5W3Bof3qFYk=1ijZcC9NcEittLVjOpNYpgPg@mail.gmail.com>
-Subject: =?UTF-8?B?16nXnNeV150=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+        id S2404167AbfFMQqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:46:47 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:52866 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730283AbfFMFMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 01:12:13 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6520B200DDA;
+        Thu, 13 Jun 2019 07:12:11 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3DC492000AF;
+        Thu, 13 Jun 2019 07:12:01 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DAD164029F;
+        Thu, 13 Jun 2019 13:11:48 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        andrew.smirnov@gmail.com, manivannan.sadhasivam@linaro.org,
+        Michal.Vokac@ysoft.com, marex@denx.de, leoyang.li@nxp.com,
+        aisheng.dong@nxp.com, l.stach@pengutronix.de, ping.bai@nxp.com,
+        pankaj.bansal@nxp.com, bhaskar.upadhaya@nxp.com,
+        pramod.kumar_1@nxp.com, vabhav.sharma@nxp.com,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/4] dt-bindings: arm: imx: Add the soc binding for i.MX8MN
+Date:   Thu, 13 Jun 2019 13:13:41 +0800
+Message-Id: <20190613051344.1170-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-16nXnNeV150sDQoNCtee16bXpNeUINec16nXnteV16Ig157XnteaINei15wg15TXk9eV15Ai15wg
-16nXnNeX16rXmSDXnNeaINen15XXk9edINec15vXnyDXnNeS15HXmSDXlNeU16TXp9eT15Qg16nX
-oNei16nXlSDXkdeR16DXpyDXm9eQ158NCtei15wg15nXk9eZINeU15zXp9eV15cg16nXnNeZINee
-15DXldeX16gsINeQ16DXmSDXpteo15nXmiDXnNeq16og15zXmiDXkNeqINeU157XmdeT16Ig16LX
-nCDXkNeZ15og15zXlNep15nXkiDXnteY16jXlCDXlteVLg0K15DXoNeQINeg16HXlCDXnNeX15bX
-ldeoINeQ15zXmS4NCg0K15HXkdeo15vXlA0K16HXmNeZ15HXnw0K
+From: Anson Huang <Anson.Huang@nxp.com>
+
+This patch adds the soc & board binding for i.MX8MN.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes since V2:
+	- sort it with alphabet order, no content change.
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 407138e..b35abb1 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -177,6 +177,12 @@ properties:
+               - fsl,imx8mm-evk            # i.MX8MM EVK Board
+           - const: fsl,imx8mm
+ 
++      - description: i.MX8MN based Boards
++        items:
++          - enum:
++              - fsl,imx8mn-ddr4-evk            # i.MX8MN DDR4 EVK Board
++          - const: fsl,imx8mn
++
+       - description: i.MX8QXP based Boards
+         items:
+           - enum:
+-- 
+2.7.4
+
