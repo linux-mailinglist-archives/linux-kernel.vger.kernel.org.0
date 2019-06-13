@@ -2,117 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A896B44E22
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BEA944E2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:12:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbfFMVJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:09:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4042 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfFMVJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:09:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:09:29 -0700
-X-ExtLoop1: 1
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Jun 2019 14:09:28 -0700
-Received: from orsmsx116.amr.corp.intel.com ([169.254.7.166]) by
- ORSMSX108.amr.corp.intel.com ([169.254.2.211]) with mapi id 14.03.0415.000;
- Thu, 13 Jun 2019 14:09:28 -0700
-From:   "Xing, Cedric" <cedric.xing@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Stephen Smalley" <sds@tycho.nsa.gov>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "pmccallum@redhat.com" <pmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: RE: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Thread-Topic: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks
- in SELinux
-Thread-Index: AQHVH1ilvNGS2ZisK0eWTCWidam/YaaW7RmA///+7GCAA25ngIAAHjKA//+fg4A=
-Date:   Thu, 13 Jun 2019 21:09:27 +0000
-Message-ID: <960B34DE67B9E140824F1DCDEC400C0F65503E13@ORSMSX116.amr.corp.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
- <960B34DE67B9E140824F1DCDEC400C0F65502A85@ORSMSX116.amr.corp.intel.com>
- <b7f3decf-b1d2-01b1-6294-ccf9ba2d5df4@tycho.nsa.gov>
- <20190613194833.GB18385@linux.intel.com>
-In-Reply-To: <20190613194833.GB18385@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOGUwZGZjY2YtYTUwNi00ODI2LTg0ZjMtYTBhM2YwY2UwYmM5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMVNLeVlodVhoQXZPXC9kZmxOb3dydVFtWmZYYm5McWZEeGxXRHByM1dBOWlaS3Nwa1FJMHNHdmgxZmxtMUE5akoifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1730281AbfFMVMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:12:47 -0400
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:48110 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729897AbfFMVMr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 17:12:47 -0400
+Received: by mail-oi1-f202.google.com with SMTP id s197so67194oih.14
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 14:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=F73bmQBhyaZz/5F17E2exd9oLZdsZmUd/nxm20yXKlg=;
+        b=Hij3glu7oVn6Nsh5fxHUC/N4NPmbOfTsM/VYNb2Mvft11iu54EgM7k60O66qA27nVh
+         ISUgkj8FrqcrAF2PUFq2tFhX/5Im0sDyDJltDfHuh1oETDJrPJp4wHPQKmUpt2ZqARB7
+         PHjkdJ1wYYh1iymPNM/P/tai3tBrTM04A77wfGwUfOLEs0wmbm4gz+hKFEuvSiPWrtaw
+         m9sVU/lIU0IDaLmnlcHmmbowws2YSoZHBk08hs2GRZSxkoDBqAt/wjDPV6dwRIjwj0UN
+         rvHmRtjI1HWDfikevKttQqWLwmxKGsVa1OCqsOen0tnvhsylB7T8xYvwYzycgqBKoOP0
+         3jwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=F73bmQBhyaZz/5F17E2exd9oLZdsZmUd/nxm20yXKlg=;
+        b=MpFXNrwoVQ6QTJFMunAyr9cgzZVU8evKPKKuKkY+FNRlcjqZXErcnbQu2U/LTjllc7
+         s0c6r7TFEr28LvppjV9EAARc+3umuIRJafZnNimc4Qcy43448qxcA48USHDajGBTel64
+         drnL/c96TmNA4njXTc0uyMTt/QBywPGu/TgiEF+8WSWWxYrBfkdxzjnfXG1qCK0UBZXr
+         SWQfccVDadprCJb4o96Y1qYSZl8J7ppqecCPK4QvXYkr9+olbcZjTJbxG4gmK23NNWQ9
+         0ATAlO435ZJHNkgNKV4FafIFPARG6+3lyda2e5nGJMZsqmkaW5a4U8G/6tuOzKuT6x02
+         OxpA==
+X-Gm-Message-State: APjAAAWLWdlSbpr/Bv6FDtYhA2Mdmy37RKIW6IM5fNLN7JtrdZFyBNhl
+        7Ghl4OREWicsXzfRLSSOqrEfBPEBVw==
+X-Google-Smtp-Source: APXvYqxfw1+oe9SB9sZWxTOs5duv5rsHABMQo1lxHtq8x0EYHKRS9MoXIIXHqukewEL4qOtgROYiw+b2AA==
+X-Received: by 2002:a9d:222c:: with SMTP id o41mr43289722ota.19.1560460366502;
+ Thu, 13 Jun 2019 14:12:46 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 14:12:28 -0700
+Message-Id: <20190613211228.34092-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+Subject: [PATCH] thermal: rcar_gen3_thermal: Fix Wshift-negative-value
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBDaHJpc3RvcGhlcnNvbiwgU2VhbiBKDQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDEz
-LCAyMDE5IDEyOjQ5IFBNDQo+IA0KPiA+ID5CeSAiU0dYIiwgZGlkIHlvdSBtZWFuIHRoZSBTR1gg
-c3Vic3lzdGVtIGJlaW5nIHVwc3RyZWFtZWQ/IEl0IGRvZXNu4oCZdA0KPiA+ID50cmFjayB0aGF0
-IHN0YXRlLiBJbiBwcmFjdGljZSwgdGhlcmUncyBubyB3YXkgZm9yIFNHWCB0byB0cmFjayBpdA0K
-PiA+ID5iZWNhdXNlIHRoZXJlJ3Mgbm8gdm1fb3BzLT5tYXlfbXByb3RlY3QoKSBjYWxsYmFjay4g
-SXQgZG9lc24ndCBmb2xsb3cNCj4gPiA+dGhlIHBoaWxvc29waHkgb2YgTGludXggZWl0aGVyLCBh
-cyBtcHJvdGVjdCgpIGRvZXNuJ3QgdHJhY2sgaXQgZm9yDQo+ID4gPnJlZ3VsYXIgbWVtb3J5LiBB
-bmQgaXQgZG9lc24ndCBoYXZlIGEgdXNlIHdpdGhvdXQgTFNNLCBzbyBJIGJlbGlldmUNCj4gPiA+
-aXQgbWFrZXMgbW9yZSBzZW5zZSB0byB0cmFjayBpdCBpbnNpZGUgTFNNLg0KPiA+DQo+ID4gWWVz
-LCB0aGUgU0dYIGRyaXZlci9zdWJzeXN0ZW0uICBJIGhhZCB0aGUgaW1wcmVzc2lvbiBmcm9tIFNl
-YW4gdGhhdCBpdA0KPiA+IGRvZXMgdHJhY2sgdGhpcyBraW5kIG9mIHBlci1wYWdlIHN0YXRlIGFs
-cmVhZHkgaW4gc29tZSBtYW5uZXIsIGJ1dA0KPiA+IHBvc3NpYmx5IGhlIG1lYW5zIGl0IGRvZXMg
-dW5kZXIgYSBnaXZlbiBwcm9wb3NhbCBhbmQgbm90IGluIHRoZQ0KPiBjdXJyZW50IGRyaXZlci4N
-Cj4gDQo+IFllYWgsIHVuZGVyIGEgZ2l2ZW4gcHJvcG9zYWwuICBTR1ggaGFzIHBlci1wYWdlIHRy
-YWNraW5nLCBhZGRpbmcgbmV3DQo+IGZsYWdzIGlzIGZhaXJseSBlYXN5LiAgUGhpbG9zb3BoaWNh
-bCBvYmplY3Rpb25zIGFzaWRlLA0KPiBhZGRpbmcgLm1heV9tcHJvdGVjdCgpIGlzIHRyaXZpYWwu
-DQoNCkFzIEkgcG9pbnRlZCBvdXQgaW4gYW4gZWFybGllciBlbWFpbCwgcHJvdGVjdGlvbiBmbGFn
-cyBhcmUgYXNzb2NpYXRlZCB3aXRoIHJhbmdlcy4gVGhleSBjb3VsZCBvZiBjb3Vyc2UgYmUgZHVw
-bGljYXRlZCB0byBldmVyeSBwYWdlIGJ1dCB0aGF0IHdpbGwgaHVydCBwZXJmb3JtYW5jZSBiZWNh
-dXNlIGV2ZXJ5IHBhZ2Ugd2l0aGluIHRoZSByYW5nZSB3b3VsZCBoYXZlIHRvIGJlIHRlc3RlZCBp
-bmRpdmlkdWFsbHkuDQoNCkZ1cnRoZXJtb3JlLCB0aG91Z2ggLm1heV9wcm90ZWN0KClpcyBhYmxl
-IHRvIG1ha2UgdGhlIGRlY2lzaW9uLCBJIGRvbid0IHRoaW5rIGl0IGNhbiBkbyB0aGUgYXVkaXQg
-bG9nIGFzIHdlbGwsIHVubGVzcyBpdCBpcyBjb2RlZCBpbiBhbiBTRUxpbnV4IHNwZWNpZmljIHdh
-eS4gVGhlbiBJIHdvbmRlciBob3cgaXQgY291bGQgd29yayB3aXRoIExTTSBtb2R1bGVzIG90aGVy
-IHRoYW4gU0VMaW51eC4NCg0KPiANCj4gPiBFdmVuIHRoZSAjYiByZW1lbWJlcmluZyBtaWdodCBl
-bmQgdXAgYmVpbmcgU0VMaW51eC1zcGVjaWZpYyBpZiB3ZSBhbHNvDQo+ID4gaGF2ZSB0byByZW1l
-bWJlciB0aGUgb3JpZ2luYWwgaW5wdXRzIHVzZWQgdG8gY29tcHV0ZSB0aGUgYW5zd2VyIHNvDQo+
-ID4gdGhhdCB3ZSBjYW4gYXVkaXQgdGhhdCBpbmZvcm1hdGlvbiB3aGVuIGFjY2VzcyBpcyBkZW5p
-ZWQgbGF0ZXIgdXBvbg0KPiA+IG1wcm90ZWN0KCkuICBBdCB0aGUgbGVhc3Qgd2UnZCBuZWVkIGl0
-IHRvIHNhdmUgc29tZSBvcGFxdWUgZGF0YSBhbmQNCj4gPiBwYXNzIGl0IHRvIGEgY2FsbGJhY2sg
-aW50byBTRUxpbnV4IHRvIHBlcmZvcm0gdGhhdCBhdWRpdGluZy4NCg==
+Clang produces the following warning
+
+vers/thermal/rcar_gen3_thermal.c:147:33: warning: shifting a negative
+signed value is undefined [-Wshift-negative-value] / (ptat[0] - ptat[2])) +
+FIXPT_INT(TJ_3); ^~~~~~~~~~~~~~~ drivers/thermal/rcar_gen3_thermal.c:126:29
+note: expanded from macro 'FIXPT_INT' #define FIXPT_INT(_x) ((_x) <<
+FIXPT_SHIFT) ~~~~ ^ drivers/thermal/rcar_gen3_thermal.c:150:18: warning:
+shifting a negative signed value is undefined [-Wshift-negative-value]
+tsc->tj_t - FIXPT_INT(TJ_3)); ~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+
+Upon further investigating it looks like there is no real reason for
+TJ_3 to be -41. Usages subtract -41, code would be cleaner to just add.
+
+Fixes: 4eb39f79ef44 ("thermal: rcar_gen3_thermal: Update value of Tj_1")
+Cc: clang-built-linux@googlegroups.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/531
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index a56463308694..f4b4558c08e9 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -131,7 +131,7 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
+ #define RCAR3_THERMAL_GRAN 500 /* mili Celsius */
+ 
+ /* no idea where these constants come from */
+-#define TJ_3 -41
++#define TJ_3 41
+ 
+ static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
+ 					 int *ptat, const int *thcode,
+@@ -144,11 +144,11 @@ static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
+ 	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
+ 	 */
+ 	tsc->tj_t = (FIXPT_INT((ptat[1] - ptat[2]) * 157)
+-		     / (ptat[0] - ptat[2])) + FIXPT_INT(TJ_3);
++		     / (ptat[0] - ptat[2])) - FIXPT_INT(TJ_3);
+ 
+ 	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
+-				 tsc->tj_t - FIXPT_INT(TJ_3));
+-	tsc->coef.b1 = FIXPT_INT(thcode[2]) - tsc->coef.a1 * TJ_3;
++				 tsc->tj_t + FIXPT_INT(TJ_3));
++	tsc->coef.b1 = FIXPT_INT(thcode[2]) + tsc->coef.a1 * TJ_3;
+ 
+ 	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
+ 				 tsc->tj_t - FIXPT_INT(ths_tj_1));
+-- 
+2.22.0.rc2.383.gf4fbbf30c2-goog
+
