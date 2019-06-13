@@ -2,73 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E7843935
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4434392E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733215AbfFMPMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:12:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50584 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732286AbfFMNtM (ORCPT
+        id S2388116AbfFMPMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:12:10 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12784 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732289AbfFMNuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:49:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K3KSbmQVJmhgaolOXqN5jC7ueDvgBWUaym2beuTKQRM=; b=DinTrsufwYtZHErmCGkaFeASA
-        aVkny4bZYVbium2ZfOuKEEE8OUINrp31PJgKc09WyfN5syWyQ4Qzkqoc+9Di1xO0MTtqT7I2bdpHb
-        ZKg1Xg5iQ4S9MAWHCVzYTlQSMheCPUDg3SXhw3EjhdpMJdzvON1dcduU4J+tvwFlFzsqBPs1TGcYR
-        bHxcRRlD7nZR3eSlt2t7jUyYXhnLsY3Q1Fpjm+CayodVN3GTNDdWoMha9z/WwcjcdUgx2DXscNCKP
-        yMkr41g4hi9aHKTWebr9a0O6qr2afDMgiqKJYGFmOkSJ3gg6Rx5N1fKcs5ocDBIt5Hz4zTUPlZFzX
-        9Wg4OiTCw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbQ68-0007xY-J5; Thu, 13 Jun 2019 13:49:00 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D892420316592; Thu, 13 Jun 2019 15:48:58 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 15:48:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCHv2 0/3] improve wait logic of stop_machine
-Message-ID: <20190613134858.GL3436@hirez.programming.kicks-ass.net>
-References: <20190613103510.60529-1-heiko.carstens@de.ibm.com>
+        Thu, 13 Jun 2019 09:50:22 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DDkNs6010989;
+        Thu, 13 Jun 2019 15:50:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=5gqbigQzuPm78gX6OwWptVfTPVoyB0SK+37QgGiOQ8o=;
+ b=Ue87XHvD5ZKIXu6PdZuN239KmgTduC8gejRAYkFkvfwojL9J57hHlgZBKo5PsLmrW3j0
+ pcORKZuIIkSE0HQeNcsaAH2k0JakIIGhef2Xb8qblyKU+Qor45JuCUMdhp/Unv0NsPKI
+ xZKYTst+hHzM5S/TIMAbAS+QDqLVpG7nQ8zZsyPI4Bi/mOM7XmyBoz9EzDiySOBJVoO/
+ XWGY/IGjQ4hJaaibCL6PDrWS8B+Qp6yyRNN/qWG8dw6VKQN6EdbodfP14L7oWk27gsAT
+ aNOVid0gtvqUN7ppYoRfS22IvyFBF/GdZY+1CLzDnrgrbGAWlHgj956WjWKY3yPVMnmP dQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2t2f8ecgqn-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 13 Jun 2019 15:50:06 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B91BE34;
+        Thu, 13 Jun 2019 13:50:05 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 94B2F2BC0;
+        Thu, 13 Jun 2019 13:50:05 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
+ 2019 15:50:05 +0200
+Received: from localhost (10.201.23.31) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun 2019 15:50:04
+ +0200
+From:   Erwan Le Ray <erwan.leray@st.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>
+CC:     <linux-serial@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Erwan Le Ray <erwan.leray@st.com>,
+        "Fabrice Gasnier" <fabrice.gasnier@st.com>
+Subject: [PATCH v3 00/10] STM32 usart power improvements
+Date:   Thu, 13 Jun 2019 15:49:50 +0200
+Message-ID: <1560433800-12255-1-git-send-email-erwan.leray@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613103510.60529-1-heiko.carstens@de.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.31]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 12:35:07PM +0200, Heiko Carstens wrote:
-> Heiko Carstens (2):
->   processor: remove spin_cpu_yield
->   processor: get rid of cpu_relax_yield
-> 
-> Martin Schwidefsky (1):
->   s390: improve wait logic of stop_machine
-> 
->  arch/powerpc/include/asm/processor.h |  2 --
->  arch/s390/include/asm/processor.h    |  7 +------
->  arch/s390/kernel/processor.c         | 19 +++++++++++++------
->  arch/s390/kernel/smp.c               |  2 +-
->  include/linux/processor.h            |  9 ---------
->  include/linux/sched.h                |  4 ----
->  include/linux/stop_machine.h         |  1 +
->  kernel/stop_machine.c                | 19 ++++++++++++++-----
->  8 files changed, 30 insertions(+), 33 deletions(-)
+This series delivers power improvements for stm32-usart driver.
 
-Seems sensible to me.
+Changes in v3:
+Move pinctrl/consumer.h include from "add support for no_console_suspend"
+patch to "select pinctrl state" patch in order to solve a compilation 
+issue.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Bich Hemon (3):
+  dt-bindings: serial: add optional pinctrl states
+  ARM: dts: stm32: Update pin states for uart4 on stm32mp157c-ed1
+  ARM: dts: stm32: Update UART4 pin states on stm32mp157a-dk1
+
+Erwan Le Ray (7):
+  dt-bindings: serial: stm32: add wakeup option
+  serial: stm32: select pinctrl state in each suspend/resume function
+  serial: stm32: add pm_runtime support
+  serial: stm32: Use __maybe_unused instead of #if CONFIG_PM_SLEEP
+  serial: stm32: add support for no_console_suspend
+  ARM: dts: stm32: update uart4 pin configurations for low power
+  ARM: dts: stm32: add wakeup capability on each usart/uart on
+    stm32mp157c
+
+ .../devicetree/bindings/serial/st,stm32-usart.txt  | 19 ++++-
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi          | 17 +++++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts              |  5 +-
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |  5 +-
+ arch/arm/boot/dts/stm32mp157c.dtsi                 | 40 ++++++++--
+ drivers/tty/serial/stm32-usart.c                   | 88 ++++++++++++++++++++--
+ drivers/tty/serial/stm32-usart.h                   |  1 +
+ 7 files changed, 155 insertions(+), 20 deletions(-)
+
+-- 
+1.9.1
+
