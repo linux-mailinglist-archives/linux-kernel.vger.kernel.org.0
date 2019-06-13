@@ -2,115 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E5144680
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B37244467C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:52:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393045AbfFMQwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:52:19 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32991 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730125AbfFMDW4 (ORCPT
+        id S2393042AbfFMQwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:52:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730127AbfFMDX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:22:56 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x2so20056581qtr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 20:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LMV8qmRyYz+ACjw7vTpB3a3X9PpgtIV1RY8/GE0Ksi8=;
-        b=PlAlSnaOIx0F1iguX+ksulHPvQfnoA0CZXjUwI7XykDfXBWZ/5Amzv7U06xkkG8gi+
-         a25nxcJm27v1g4+k/29+6WjsC1A8RNJBXl3x61IxxPFl7bghmocNeNLpTsQDAdmkwQMF
-         Etv46nTQ3rmCcAw0p/wBiNsdIKsFRaqI6wYvs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LMV8qmRyYz+ACjw7vTpB3a3X9PpgtIV1RY8/GE0Ksi8=;
-        b=elWP43nIoOxhu+GtSpKwwrK1IsPW3txnJPReD+quJuhpkpzGb6JATwMZEG3u0ACkng
-         c0o9POq0qw+y68RiVZxC75inZzi5qr+zgOWOzfIx/S0JYUeF5787J2JerN2x2XuFSpwT
-         547FqUyJhNSud/rCJboEKSLpy6Y142yYQ0IQZT1r1kOyAcslb38kxlSIeHQfE8S4R9U+
-         +S+G6stNldGAa/EjiYwWus3cSZ/6D8WdceLic2yDzKm8e7PhMh9dI/nPrw3wXZcVTlRq
-         YInGiKPV2sW2zIuR7O7+PNjcZV1z0/EjL+Ac04IdeSuxCWIhcB1q4VCFmMf1hQC4/rAp
-         VuMA==
-X-Gm-Message-State: APjAAAUxounOECxkcGpPKZBwuUNYS3+MPkVFvgX/3PysZbtpS8ZtqUDz
-        eHaJvEvk1CuXrig3szQIzu1AYQ==
-X-Google-Smtp-Source: APXvYqxdXwLzWyJ+c5OXEKgknoAOryleJkXq2q5AFQQ7yCUAvCLeH3gEQi5b/debrhh4XH9r+YIZPQ==
-X-Received: by 2002:ac8:26dc:: with SMTP id 28mr71243705qtp.88.1560396175685;
-        Wed, 12 Jun 2019 20:22:55 -0700 (PDT)
-Received: from sinkpad (192-222-189-155.qc.cable.ebox.net. [192.222.189.155])
-        by smtp.gmail.com with ESMTPSA id r5sm871085qkc.42.2019.06.12.20.22.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 20:22:54 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 23:22:46 -0400
-From:   Julien Desfossez <jdesfossez@digitalocean.com>
-To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Cc:     Aaron Lu <aaron.lu@linux.alibaba.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20190613032246.GA17752@sinkpad>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com>
- <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com>
- <20190531210816.GA24027@sinkpad>
- <20190606152637.GA5703@sinkpad>
- <20190612163345.GB26997@sinkpad>
- <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
+        Wed, 12 Jun 2019 23:23:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QaIPZk5fG08PMipK2ZOjFgNMkP7/mE5EU+2hsa7y6lY=; b=VCF/wqwvWCkPBIrvCaL/D3G8l
+        tHqc/P5TR0jF4odv4tFa+eZycXtANJYw8npQGw1u7+6Uv8D3dPL6PSPWSss02vOD3RMl8SN9UE9tE
+        pgdev89Cvk50mX8MdLQMFzWKjT9ybPnHlvymKlhrDcAdtq9BjKibIVkW+vernB9b/39/CVM/w8KPZ
+        7eNO6yjjUerdEhluGAkQcubSLK9G/8N4d5w54XxHTAPHR/5HqmRB4lPvHLnyja2+Z1QV2Pr2MBWyz
+        OHrDRVCwX8aCx5s1LcyskUetCbhRrlq1e3Hk4+o+Gp2Qi2Fokqvsf6H+CAZFG91Ylp4HPDaT6v01i
+        r9dkL+CUQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbGKe-0003os-RJ; Thu, 13 Jun 2019 03:23:20 +0000
+Date:   Wed, 12 Jun 2019 20:23:20 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613032320.GG32656@bombadil.infradead.org>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
+ <20190613002555.GH14363@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190613002555.GH14363@dread.disaster.area>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-Jun-2019 05:03:08 PM, Subhra Mazumdar wrote:
+On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
+> On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
+> > That's rather different from the normal meaning of 'exclusive' in the
+> > context of locks, which is "only one user can have access to this at
+> > a time".
 > 
-> On 6/12/19 9:33 AM, Julien Desfossez wrote:
-> >After reading more traces and trying to understand why only untagged
-> >tasks are starving when there are cpu-intensive tasks running on the
-> >same set of CPUs, we noticed a difference in behavior in ‘pick_task’. In
-> >the case where ‘core_cookie’ is 0, we are supposed to only prefer the
-> >tagged task if it’s priority is higher, but when the priorities are
-> >equal we prefer it as well which causes the starving. ‘pick_task’ is
-> >biased toward selecting its first parameter in case of equality which in
-> >this case was the ‘class_pick’ instead of ‘max’. Reversing the order of
-> >the parameter solves this issue and matches the expected behavior.
-> >
-> >So we can get rid of this vruntime_boost concept.
-> >
-> >We have tested the fix below and it seems to work well with
-> >tagged/untagged tasks.
-> >
-> My 2 DB instance runs with this patch are better with CORESCHED_STALL_FIX
-> than NO_CORESCHED_STALL_FIX in terms of performance, std deviation and
-> idleness. May be enable it by default?
+> Layout leases are not locks, they are a user access policy object.
+> It is the process/fd which holds the lease and it's the process/fd
+> that is granted exclusive access.  This is exactly the same semantic
+> as O_EXCL provides for granting exclusive access to a block device
+> via open(), yes?
 
-Yes if the fix is approved, we will just remove the option and it will
-always be enabled.
+This isn't my understanding of how RDMA wants this to work, so we should
+probably clear that up before we get too far down deciding what name to
+give it.
 
-Thanks,
+For the RDMA usage case, it is entirely possible that both process A
+and process B which don't know about each other want to perform RDMA to
+file F.  So there will be two layout leases active on this file at the
+same time.  It's fine for IOs to simultaneously be active to both leases.
+But if the filesystem wants to move blocks around, it has to break
+both leases.
 
-Julien
+If Process C tries to do a write to file F without a lease, there's no
+problem, unless a side-effect of the write would be to change the block
+mapping, in which case either the leases must break first, or the write
+must be denied.
+
+Jason, please correct me if I've misunderstood the RDMA needs here.
