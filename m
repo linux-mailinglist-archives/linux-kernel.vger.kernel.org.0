@@ -2,166 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBCB443A66
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 343B543A6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732160AbfFMPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:20:59 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:58650 "EHLO pegase1.c-s.fr"
+        id S1732091AbfFMPU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:20:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:39440 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732005AbfFMMuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:50:44 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45Pk9r1GVwz9v00L;
-        Thu, 13 Jun 2019 14:50:40 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=NyjBpczB; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id SVtYa9beBncy; Thu, 13 Jun 2019 14:50:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45Pk9q752Dz9v00J;
-        Thu, 13 Jun 2019 14:50:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560430240; bh=pTwwRiZdJKJ6tY+T10JSotQr5almlLpVgBNMt/5ukTg=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=NyjBpczBJ59J8xTZ+BnVahuln2IIek0w4aqoEqv560r/EO4MxtGOWUsT9o+Upsl27
-         S3/kNEon/ZpKRC46mLcrQkDYcIvTU/J+KPfcZ2hGGZ9EwkDbzeM4USNrgYZ2ERNqjB
-         ae8pW/yDaqCZ8T19xIwbZ7ztlX0jd8tF5GzYN7zA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EF4688B8B9;
-        Thu, 13 Jun 2019 14:50:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id z2IbEDTJueAY; Thu, 13 Jun 2019 14:50:40 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C94EA8B8E4;
-        Thu, 13 Jun 2019 14:50:39 +0200 (CEST)
-Subject: Re: [PATCH v3 1/4] crypto: talitos - move struct talitos_edesc into
- talitos.h
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <cover.1560429844.git.christophe.leroy@c-s.fr>
- <0ada8523d5765391ddc6899815e0e1eb511bcb7d.1560429844.git.christophe.leroy@c-s.fr>
-Message-ID: <eb4463ff-04aa-fc47-e126-c15f39062686@c-s.fr>
-Date:   Thu, 13 Jun 2019 14:50:39 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1732009AbfFMMvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:51:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BF2C2B;
+        Thu, 13 Jun 2019 05:51:12 -0700 (PDT)
+Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432713F694;
+        Thu, 13 Jun 2019 05:51:11 -0700 (PDT)
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] clocksource/arm_arch_timer: extract elf_hwcap use to arch-helper
+Date:   Thu, 13 Jun 2019 13:51:02 +0100
+Message-Id: <20190613125102.23879-1-andrew.murray@arm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <0ada8523d5765391ddc6899815e0e1eb511bcb7d.1560429844.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Different mechanisms are used to test and set elf_hwcaps between ARM
+and ARM64, this results in the use of ifdeferry in this file when
+setting/testing for the EVTSTRM hwcap.
 
+Let's improve readability by extracting this to an arch helper.
 
-Le 13/06/2019 à 14:48, Christophe Leroy a écrit :
-> Moves it into talitos.h so that it can be used
-> from any place in talitos.c
-> 
-> This will be required for next
-> patch ("crypto: talitos - fix hash on SEC1")
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm/include/asm/arch_timer.h    | 10 ++++++++++
+ arch/arm64/include/asm/arch_timer.h  | 13 +++++++++++++
+ drivers/clocksource/arm_arch_timer.c | 15 ++-------------
+ 3 files changed, 25 insertions(+), 13 deletions(-)
 
-Cc: stable@vger.kernel.org
+diff --git a/arch/arm/include/asm/arch_timer.h b/arch/arm/include/asm/arch_timer.h
+index 4b66ecd6be99..ae533caec1e9 100644
+--- a/arch/arm/include/asm/arch_timer.h
++++ b/arch/arm/include/asm/arch_timer.h
+@@ -4,6 +4,7 @@
+ 
+ #include <asm/barrier.h>
+ #include <asm/errno.h>
++#include <asm/hwcap.h>
+ #include <linux/clocksource.h>
+ #include <linux/init.h>
+ #include <linux/types.h>
+@@ -124,6 +125,15 @@ static inline void arch_timer_set_cntkctl(u32 cntkctl)
+ 	isb();
+ }
+ 
++static inline bool arch_timer_set_evtstrm_feature(void)
++{
++	elf_hwcap |= HWCAP_EVTSTRM;
++}
++
++static inline bool arch_timer_have_evtstrm_feature(void)
++{
++	return elf_hwcap & HWCAP_EVTSTRM;
++}
+ #endif
+ 
+ #endif
+diff --git a/arch/arm64/include/asm/arch_timer.h b/arch/arm64/include/asm/arch_timer.h
+index 50b3ab7ded4f..a847a3ee6cab 100644
+--- a/arch/arm64/include/asm/arch_timer.h
++++ b/arch/arm64/include/asm/arch_timer.h
+@@ -20,6 +20,7 @@
+ #define __ASM_ARCH_TIMER_H
+ 
+ #include <asm/barrier.h>
++#include <asm/hwcap.h>
+ #include <asm/sysreg.h>
+ 
+ #include <linux/bug.h>
+@@ -240,4 +241,16 @@ static inline int arch_timer_arch_init(void)
+ 	return 0;
+ }
+ 
++static inline void arch_timer_set_evtstrm_feature(void)
++{
++	cpu_set_named_feature(EVTSTRM);
++#ifdef CONFIG_COMPAT
++	compat_elf_hwcap |= COMPAT_HWCAP_EVTSTRM;
++#endif
++}
++
++static inline bool arch_timer_have_evtstrm_feature(void)
++{
++	return cpu_have_named_feature(EVTSTRM);
++}
+ #endif
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index b2a951a798e2..3583a92ad960 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -804,14 +804,7 @@ static void arch_timer_evtstrm_enable(int divider)
+ 	cntkctl |= (divider << ARCH_TIMER_EVT_TRIGGER_SHIFT)
+ 			| ARCH_TIMER_VIRT_EVT_EN;
+ 	arch_timer_set_cntkctl(cntkctl);
+-#ifdef CONFIG_ARM64
+-	cpu_set_named_feature(EVTSTRM);
+-#else
+-	elf_hwcap |= HWCAP_EVTSTRM;
+-#endif
+-#ifdef CONFIG_COMPAT
+-	compat_elf_hwcap |= COMPAT_HWCAP_EVTSTRM;
+-#endif
++	arch_timer_set_evtstrm_feature();
+ 	cpumask_set_cpu(smp_processor_id(), &evtstrm_available);
+ }
+ 
+@@ -1040,11 +1033,7 @@ static int arch_timer_cpu_pm_notify(struct notifier_block *self,
+ 	} else if (action == CPU_PM_ENTER_FAILED || action == CPU_PM_EXIT) {
+ 		arch_timer_set_cntkctl(__this_cpu_read(saved_cntkctl));
+ 
+-#ifdef CONFIG_ARM64
+-		if (cpu_have_named_feature(EVTSTRM))
+-#else
+-		if (elf_hwcap & HWCAP_EVTSTRM)
+-#endif
++		if (arch_timer_have_evtstrm_feature())
+ 			cpumask_set_cpu(smp_processor_id(), &evtstrm_available);
+ 	}
+ 	return NOTIFY_OK;
+-- 
+2.21.0
 
-> ---
->   drivers/crypto/talitos.c | 30 ------------------------------
->   drivers/crypto/talitos.h | 30 ++++++++++++++++++++++++++++++
->   2 files changed, 30 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-> index 3b3e99f1cddb..5b401aec6c84 100644
-> --- a/drivers/crypto/talitos.c
-> +++ b/drivers/crypto/talitos.c
-> @@ -951,36 +951,6 @@ static int aead_des3_setkey(struct crypto_aead *authenc,
->   	goto out;
->   }
->   
-> -/*
-> - * talitos_edesc - s/w-extended descriptor
-> - * @src_nents: number of segments in input scatterlist
-> - * @dst_nents: number of segments in output scatterlist
-> - * @icv_ool: whether ICV is out-of-line
-> - * @iv_dma: dma address of iv for checking continuity and link table
-> - * @dma_len: length of dma mapped link_tbl space
-> - * @dma_link_tbl: bus physical address of link_tbl/buf
-> - * @desc: h/w descriptor
-> - * @link_tbl: input and output h/w link tables (if {src,dst}_nents > 1) (SEC2)
-> - * @buf: input and output buffeur (if {src,dst}_nents > 1) (SEC1)
-> - *
-> - * if decrypting (with authcheck), or either one of src_nents or dst_nents
-> - * is greater than 1, an integrity check value is concatenated to the end
-> - * of link_tbl data
-> - */
-> -struct talitos_edesc {
-> -	int src_nents;
-> -	int dst_nents;
-> -	bool icv_ool;
-> -	dma_addr_t iv_dma;
-> -	int dma_len;
-> -	dma_addr_t dma_link_tbl;
-> -	struct talitos_desc desc;
-> -	union {
-> -		struct talitos_ptr link_tbl[0];
-> -		u8 buf[0];
-> -	};
-> -};
-> -
->   static void talitos_sg_unmap(struct device *dev,
->   			     struct talitos_edesc *edesc,
->   			     struct scatterlist *src,
-> diff --git a/drivers/crypto/talitos.h b/drivers/crypto/talitos.h
-> index 32ad4fc679ed..95f78c6d9206 100644
-> --- a/drivers/crypto/talitos.h
-> +++ b/drivers/crypto/talitos.h
-> @@ -42,6 +42,36 @@ struct talitos_desc {
->   
->   #define TALITOS_DESC_SIZE	(sizeof(struct talitos_desc) - sizeof(__be32))
->   
-> +/*
-> + * talitos_edesc - s/w-extended descriptor
-> + * @src_nents: number of segments in input scatterlist
-> + * @dst_nents: number of segments in output scatterlist
-> + * @icv_ool: whether ICV is out-of-line
-> + * @iv_dma: dma address of iv for checking continuity and link table
-> + * @dma_len: length of dma mapped link_tbl space
-> + * @dma_link_tbl: bus physical address of link_tbl/buf
-> + * @desc: h/w descriptor
-> + * @link_tbl: input and output h/w link tables (if {src,dst}_nents > 1) (SEC2)
-> + * @buf: input and output buffeur (if {src,dst}_nents > 1) (SEC1)
-> + *
-> + * if decrypting (with authcheck), or either one of src_nents or dst_nents
-> + * is greater than 1, an integrity check value is concatenated to the end
-> + * of link_tbl data
-> + */
-> +struct talitos_edesc {
-> +	int src_nents;
-> +	int dst_nents;
-> +	bool icv_ool;
-> +	dma_addr_t iv_dma;
-> +	int dma_len;
-> +	dma_addr_t dma_link_tbl;
-> +	struct talitos_desc desc;
-> +	union {
-> +		struct talitos_ptr link_tbl[0];
-> +		u8 buf[0];
-> +	};
-> +};
-> +
->   /**
->    * talitos_request - descriptor submission request
->    * @desc: descriptor pointer (kernel virtual)
-> 
