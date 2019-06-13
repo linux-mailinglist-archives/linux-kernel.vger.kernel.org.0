@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 749A74429A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7EB444138
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403805AbfFMQXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:23:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54930 "EHLO mail.kernel.org"
+        id S2391672AbfFMQMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:12:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731010AbfFMIhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:37:32 -0400
+        id S1731220AbfFMInI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:43:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F69B2064A;
-        Thu, 13 Jun 2019 08:37:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB4820851;
+        Thu, 13 Jun 2019 08:43:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415051;
-        bh=ZGndjzQpcAoCRxlon7DC+AkKBhels1jY8c0itpcF84g=;
+        s=default; t=1560415387;
+        bh=R+J2GFuWWAezQyQpmaUHq2znXbw+AdAzBsI4QI5nUWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ln2ptqPeNxJqyuGDAXEaxAI8AJImNOK/ec2qB8w07BAkhEyPbyvxJ7BWycxm6zR44
-         g2+oZSO+n2BasIpdKpQcIfAYJlJEVg0oRecfKH+07B5u9RPQw8wTGZrYd4KLQPbcbd
-         1I0uaDjsFcwL0VNPzGMHISHgKeXD5K6rP8/MRABk=
+        b=Gsxc4NkMoH5iSllwy4WkSOOKTmQCkur2mPeZ0Qlig9n2bjcSTD1gghSvk6XjNEyf6
+         VrkDo3OLdyjW8iNMeLiRjAvZE2WN6INskzszHjJPrvh8fTMEsxU7F5du6dZJkRBEER
+         ZTY8mk/plD/5EsuNQCRdn9bcEF4L+3mOhgh1oVsE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 42/81] nvmem: core: fix read buffer in place
+Subject: [PATCH 4.19 067/118] nfsd: allow fh_want_write to be called twice
 Date:   Thu, 13 Jun 2019 10:33:25 +0200
-Message-Id: <20190613075652.424569646@linuxfoundation.org>
+Message-Id: <20190613075647.736790333@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2fe518fecb3a4727393be286db9804cd82ee2d91 ]
+[ Upstream commit 0b8f62625dc309651d0efcb6a6247c933acd8b45 ]
 
-When the bit_offset in the cell is zero, the pointer to the msb will
-not be properly initialized (ie, will still be pointing to the first
-byte in the buffer).
+A fuzzer recently triggered lockdep warnings about potential sb_writers
+deadlocks caused by fh_want_write().
 
-This being the case, if there are bits to clear in the msb, those will
-be left untouched while the mask will incorrectly clear bit positions
-on the first byte.
+Looks like we aren't careful to pair each fh_want_write() with an
+fh_drop_write().
 
-This commit also makes sure that any byte unused in the cell is
-cleared.
+It's not normally a problem since fh_put() will call fh_drop_write() for
+us.  And was OK for NFSv3 where we'd do one operation that might call
+fh_want_write(), and then put the filehandle.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+But an NFSv4 protocol fuzzer can do weird things like call unlink twice
+in a compound, and then we get into trouble.
+
+I'm a little worried about this approach of just leaving everything to
+fh_put().  But I think there are probably a lot of
+fh_want_write()/fh_drop_write() imbalances so for now I think we need it
+to be more forgiving.
+
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvmem/core.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/nfsd/vfs.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 635886e4835c..dba3f4d0a63d 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -954,7 +954,7 @@ static inline void nvmem_shift_read_buffer_in_place(struct nvmem_cell *cell,
- 						    void *buf)
- {
- 	u8 *p, *b;
--	int i, bit_offset = cell->bit_offset;
-+	int i, extra, bit_offset = cell->bit_offset;
+diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+index a7e107309f76..db351247892d 100644
+--- a/fs/nfsd/vfs.h
++++ b/fs/nfsd/vfs.h
+@@ -120,8 +120,11 @@ void		nfsd_put_raparams(struct file *file, struct raparms *ra);
  
- 	p = b = buf;
- 	if (bit_offset) {
-@@ -969,11 +969,16 @@ static inline void nvmem_shift_read_buffer_in_place(struct nvmem_cell *cell,
- 			p = b;
- 			*b++ >>= bit_offset;
- 		}
--
--		/* result fits in less bytes */
--		if (cell->bytes != DIV_ROUND_UP(cell->nbits, BITS_PER_BYTE))
--			*p-- = 0;
-+	} else {
-+		/* point to the msb */
-+		p += cell->bytes - 1;
- 	}
-+
-+	/* result fits in less bytes */
-+	extra = cell->bytes - DIV_ROUND_UP(cell->nbits, BITS_PER_BYTE);
-+	while (--extra >= 0)
-+		*p-- = 0;
-+
- 	/* clear msb bits if any leftover in the last byte */
- 	*p &= GENMASK((cell->nbits%BITS_PER_BYTE) - 1, 0);
- }
+ static inline int fh_want_write(struct svc_fh *fh)
+ {
+-	int ret = mnt_want_write(fh->fh_export->ex_path.mnt);
++	int ret;
+ 
++	if (fh->fh_want_write)
++		return 0;
++	ret = mnt_want_write(fh->fh_export->ex_path.mnt);
+ 	if (!ret)
+ 		fh->fh_want_write = true;
+ 	return ret;
 -- 
 2.20.1
 
