@@ -2,105 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6173C43FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74BFD44006
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbfFMP7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:59:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbfFMP7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:59:10 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95A0E20679;
-        Thu, 13 Jun 2019 15:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560441549;
-        bh=RRQxcgXUwrlkOVPgdav87tLtU/bhO27ihR80lUwUJfs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ey/FNBRLnuJkhNyrtcLH90wayHk3JFGzz8AGMAyrZDdtJSKcGmEk5yEeEcF6MiSiP
-         ZrNCqdAhnO0/R0+icfLLyvfUwex/fahV/Nve4/pJYsG2JDfYObNCA06N8WlRh47n3+
-         kOsjcyfYNs1CYndsxJWG7U88K4bP6uCVfoxwveB8=
-Date:   Thu, 13 Jun 2019 17:59:06 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jason Baron <jbaron@akamai.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib: dynamic_debug: no need to check return value of
- debugfs_create functions
-Message-ID: <20190613155906.GB4632@kroah.com>
-References: <20190612153534.GA21141@kroah.com>
- <4936c8d8-9b69-1385-1bbf-9d19ac08d061@akamai.com>
+        id S2390955AbfFMQCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:02:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46783 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731409AbfFMQCO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:02:14 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so21335056wrw.13;
+        Thu, 13 Jun 2019 09:02:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Nd6aCrSjzkm1aMj9lM4ssykkYiRccO6zWy49Uehvbco=;
+        b=CSkroNIttf5ygpwSln0gQNWe5WrdTUnKsWGQygY3KEMqhMwh3P134Gc2auf/eb4mBx
+         LisWgeOU85BPWmvQPgkxLPQFf1rHZtl/OuOJIFDzgNf4DOff+pVvSFehTEd5EaHF92fo
+         tr/YC+MER9kS+oAnHJsy92hT+BeBXsKIY+w1lXfG+V300DwROLHFa8/AF4EcgAFmuldZ
+         6efyDI9zq5ja1+FWDA1zIvC5VHAzEeFBQapVtTHLLAa4+IDEbMSA1/kcoOo3Ldbqeqts
+         Om8CvV5KGB2rbs8My7Vod1OlIkxH8gTecLwfDYIJLspPGjtO0NPQiL/iddPgQfcD37ZN
+         6P3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Nd6aCrSjzkm1aMj9lM4ssykkYiRccO6zWy49Uehvbco=;
+        b=lEHwJ7/MZxdePV/b18QyGSm7qzF/5TKRaLMJd/0fUzysL9+UN3X+ZnaOQjxQqwOqZ2
+         8vGSAe3qzHw2O/23T9fpfB+LNGyazZUoKD9IBH67rI970OoZMIcvRU3E0U4DvWqkcdXN
+         1KxxiyqO/wvcb99wlLeWdG6KVeo7wYiaJ9NqVtsqHpY4XBuR80L/gSPCadBpB7dHAzpH
+         kx8kOc7kS5lLJ6d4u2HM1XjSAWt15gOOE+Ve7texGT4Pqc9pbkeNtupR/njU7+QsUBXn
+         HK0PgnWFaPm2tZAftID3aY2HwuGKNIcb8/ZEtSFUzoOUdyx7vPs5YRx8ZMBL125ye1gF
+         ttLQ==
+X-Gm-Message-State: APjAAAWIUMuJDBjE1nuYgffNmsYxvpEUe7KZE4JnUbWEptD/UB4/A6Lf
+        VDFBMTGUrisymnSWZ4vPUnfCEHoI9d/hb0gYpFgLdZeS+fs=
+X-Google-Smtp-Source: APXvYqxklstUrCVZEl1VUef3v/R6i7njg2hNjeLXXhKtOb8qhxhCjhXDazqTZogY3rUjkKvHqdX1ZOlDh6IiYA968oU=
+X-Received: by 2002:adf:f68f:: with SMTP id v15mr10246252wrp.4.1560441732659;
+ Thu, 13 Jun 2019 09:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4936c8d8-9b69-1385-1bbf-9d19ac08d061@akamai.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190612170027.13dbb84b@canb.auug.org.au> <9b4f8e15-8f9f-51d9-c355-9c2e453921e3@infradead.org>
+In-Reply-To: <9b4f8e15-8f9f-51d9-c355-9c2e453921e3@infradead.org>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 13 Jun 2019 12:02:00 -0400
+Message-ID: <CADnq5_PRoeCdriQgzV6yKUpFHxpWfHL2Xwd9VW=FRoNYj7H_kQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jun 12 (amdgpu: dcn10_hw_sequencer)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:33:23AM -0400, Jason Baron wrote:
-> On 6/12/19 11:35 AM, Greg Kroah-Hartman wrote:
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> > 
-> > Cc: Jason Baron <jbaron@akamai.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  lib/dynamic_debug.c | 12 +++---------
-> >  1 file changed, 3 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> > index 8a16c2d498e9..c60409138e13 100644
-> > --- a/lib/dynamic_debug.c
-> > +++ b/lib/dynamic_debug.c
-> > @@ -993,20 +993,14 @@ static __initdata int ddebug_init_success;
-> >  
-> >  static int __init dynamic_debug_init_debugfs(void)
-> >  {
-> > -	struct dentry *dir, *file;
-> > +	struct dentry *dir;
-> >  
-> >  	if (!ddebug_init_success)
-> >  		return -ENODEV;
-> >  
-> >  	dir = debugfs_create_dir("dynamic_debug", NULL);
-> > -	if (!dir)
-> > -		return -ENOMEM;
-> > -	file = debugfs_create_file("control", 0644, dir, NULL,
-> > -					&ddebug_proc_fops);
-> > -	if (!file) {
-> > -		debugfs_remove(dir);
-> > -		return -ENOMEM;
-> > -	}
-> > +	debugfs_create_file("control", 0644, dir, NULL, &ddebug_proc_fops);
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > 
-> 
-> Looks like debugfs_create_dir() can return NULL,
+On Thu, Jun 13, 2019 at 3:27 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 6/12/19 12:00 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20190611:
+> >
+>
+> on x86_64:
+>
+> ../drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: I=
+n function =E2=80=98dcn10_apply_ctx_for_surface=E2=80=99:
+> ../drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:23=
+78:3: error: implicit declaration of function =E2=80=98udelay=E2=80=99 [-We=
+rror=3Dimplicit-function-declaration]
+>    udelay(underflow_check_delay_us);
+>    ^
 
-No it can not.
+Fixed with:
+https://patchwork.freedesktop.org/patch/310016/
 
-> and in that case if its passed to debugfs_create_file() then the
-> 'control' file ends up in the root of debugfs?
-
-If it could, yes, that is what would happen.
-
-> I think its better to just not create the file then have it in the
-> wrong place so maybe the file creation should be guarded by
-> if(IS_ERR_OR_NULL(dir)).
-
-As debugfs_create_dir() can not return NULL, you don't have to worry
-about this :)
-
-thanks,
-
-greg k-h
+>
+>
+>
+> --
+> ~Randy
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
