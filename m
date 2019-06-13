@@ -2,97 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DA044B38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60CC44B21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:52:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfFMSx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 14:53:56 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44707 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729462AbfFMSxw (ORCPT
+        id S1728910AbfFMSwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 14:52:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42790 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfFMSws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:53:52 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t16so12370843pfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 11:53:52 -0700 (PDT)
+        Thu, 13 Jun 2019 14:52:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x17so6605122wrl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 11:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T43YpeB6KPwzAeP2AJF/MUSVY3ntDzP4uFwV6vk6NQg=;
-        b=j9mr7D0Q6WW70PaeAtZuQL8G13f13pQs9IWPwKl+tPlMpbbUYNHSA7/2znZNRp4i6f
-         xuPGM5N8BaXMZD4k9kcCOJvheE6bxtkD9vhqrtzOQlUR2aj++rY26vh/QPKy1Nx4sSA1
-         k6tcIi7x5mhhp3NQyTlU98pZFu5OqX4r0AHls=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wF2lkDhjSFApoIX2SzKaCuD9I+vf8Vpj5caLDxf35+o=;
+        b=AKeuB0I58ke460ynxyqX4+mFv2g4TegQbeImOxNCfMfyFsDied0f2UkwWeSUzabyxL
+         XN4/m+xKjVR2ysnHrDJhul5Ezm6ZNBX0sNHXzUcrn8/Om/ayxXPeQKR6C8DzXSUwBOIi
+         BxW28g4p2jpnLM6+DphXrs6V1LAi4d00MesmFGsBroqcJ/yT9HIfIfu9f4WwtVvhsW9p
+         PaSpOCjpMWgWYBtZIR0nSJ8fRPP9cvokb2vDJqm/kHSpejndIsa+O/i9TvnawipNO9q+
+         X51wWbjK5F22t0ic653gOiEOxyVVJAqbV69W0+6xOvnelXd8GxCioB9EAnuHVYp4zLjX
+         d7Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T43YpeB6KPwzAeP2AJF/MUSVY3ntDzP4uFwV6vk6NQg=;
-        b=C0uZJcm1/0iW9R00DIHuwvbhsuZN0dMq2CMYf6FvwJ5AOOGU/kErcsqxqBkI74/SRy
-         IGYYLhnAvkwSdpPwZQCRHly4LqmSt5AmqvUCsZDXm+pHz94hXtD/4O9oCigHimcVz56B
-         O08R54k0Mc5UWBomCngJcGMCDWSbgdu15ewJ1jNeBrHb7UxNrmmdwRdFu9e4CZZU5qj9
-         e4qxSTYuwnVt6F5uxvOpZTXNI4MRJSTlXSaeQncj3szkcjkROMcif3jzugbUQpfU6BFl
-         qZcDSXYxL1/v9/rfaj5bhi5T7Vp3umX0C5S4BHPmTQPkncyial4dwv6m4YtYaL7hWgH5
-         sP9g==
-X-Gm-Message-State: APjAAAXpD4FoJfX0YXDf9ZRB0V0VG0jT+jmdbPt4outyYAoaIuZXUndM
-        A6iktapWJ2biKHYmXBjsFAKhLJvMSd0=
-X-Google-Smtp-Source: APXvYqyVfFXF+RWaOpNVOg11XNoCvv+xPHrf1CT9JUGH0iqGtinHj2ErGGLnXkVZWEBC2hZlm3HTDg==
-X-Received: by 2002:a63:d008:: with SMTP id z8mr32305004pgf.335.1560452031872;
-        Thu, 13 Jun 2019 11:53:51 -0700 (PDT)
-Received: from localhost.localdomain ([115.97.180.18])
-        by smtp.gmail.com with ESMTPSA id p43sm946314pjp.4.2019.06.13.11.53.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 11:53:51 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 1/9] dt-bindings: display: Add TCON LCD compatible for R40
-Date:   Fri, 14 Jun 2019 00:22:33 +0530
-Message-Id: <20190613185241.22800-2-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190613185241.22800-1-jagan@amarulasolutions.com>
-References: <20190613185241.22800-1-jagan@amarulasolutions.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wF2lkDhjSFApoIX2SzKaCuD9I+vf8Vpj5caLDxf35+o=;
+        b=Rj4Qjm5iBSZE6nXvLrxlyANlnOXzev+W+OEJs69nkv2HKK6JdwgMGZTVVZyf8tQrrC
+         ByjsztziWL48o+Qwed79hcd7FMD1ONDCm9PZEYs7kJ1I++Yqh9ZgAN+R7o7hosiuHCZX
+         a5O3zc3ikzks1D44LjC5UC4H+2pnzzQaHDrswka8SxIpHATbbAaOfz5K8Rorrf2mjMZR
+         KP8mmubj/G4nK21pxvS3WZGusivCgz6Mtbe4Pn3dk4B/AFNBXQL0LIlG8KQoyJPiWCN0
+         8IjLYNG/3lvroeZMI4ZI7kRAC2nkoPHW9Sz6lXMSIauVT1fntUgvG/SDnp1K9lDxehQt
+         wfiA==
+X-Gm-Message-State: APjAAAUVr4YrDtXXqW31U2DydquPEW9L507vplf85OChEYAkKO18sB3S
+        rvidmcd7sm+ToSyabUqXOBdxGr2yKJde0+Itk+I=
+X-Google-Smtp-Source: APXvYqz65TzXVExemKM65WYyNEKOoA5AJHrWLhsVDtVW9SOWURsb3zfBCUNgnQbyfrShxmr87zPG9wDFtS2xCWSEGOk=
+X-Received: by 2002:adf:f68f:: with SMTP id v15mr10763850wrp.4.1560451966892;
+ Thu, 13 Jun 2019 11:52:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190613023208.GA29690@hari-Inspiron-1545> <CADnq5_PU_jvOskC-=+oRQdvYXZvu_n26ogoWTxLRxnW+ke4wDw@mail.gmail.com>
+ <20190613184217.GA2385@ravnborg.org>
+In-Reply-To: <20190613184217.GA2385@ravnborg.org>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 13 Jun 2019 14:52:34 -0400
+Message-ID: <CADnq5_OSjJad7QGOCrWQL+LcjtCHQsCefpJ=K0mYUayFe9bUAA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: fix compilation error
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yongqiang Sun <yongqiang.sun@amd.com>,
+        Charlene Liu <charlene.liu@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Gloria Li <geling.li@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Tony Cheng <tony.cheng@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like TCON TV0, TV1 allwinner R40 has TCON LCD0, LCD1 which
-are managed via TCON TOP.
+On Thu, Jun 13, 2019 at 2:42 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Alex.
+>
+> On Wed, Jun 12, 2019 at 10:35:26PM -0400, Alex Deucher wrote:
+> > On Wed, Jun 12, 2019 at 10:34 PM Hariprasad Kelam
+> > <hariprasad.kelam@gmail.com> wrote:
+> > >
+> > > this patch fixes below compilation error
+> > >
+> > > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: =
+In
+> > > function =E2=80=98dcn10_apply_ctx_for_surface=E2=80=99:
+> > > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2=
+378:3:
+> > > error: implicit declaration of function =E2=80=98udelay=E2=80=99
+> > > [-Werror=3Dimplicit-function-declaration]
+> > >    udelay(underflow_check_delay_us);
+> > >
+> > > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+>
+> Am I right in assuming you took this patch?
+>
+> I expect that new code using udelay was added to the amd tree,
+> and when merged with drm-misc-next it failed, because drm-misc-next no
+> longer had drmP.h included so no implicit include of delay.h
+>
+> The root cause was that my original patchset should have been based
+> on the amd tree, and applied there :-(
 
-Add tcon lcd compatible R40, the same compatible can handle
-TCON LCD0, LCD1.
+No worries.  I've picked it up.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 31ab72cba3d4..9e9c7f934202 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -160,6 +160,7 @@ Required properties:
-    * allwinner,sun8i-a33-tcon
-    * allwinner,sun8i-a83t-tcon-lcd
-    * allwinner,sun8i-a83t-tcon-tv
-+   * allwinner,sun8i-r40-tcon-lcd
-    * allwinner,sun8i-r40-tcon-tv
-    * allwinner,sun8i-v3s-tcon
-    * allwinner,sun9i-a80-tcon-lcd
--- 
-2.18.0.321.gffc6fa0e3
-
+Alex
