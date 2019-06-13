@@ -2,113 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC4A44820
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6769F447F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:03:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbfFMRET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:04:19 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45829 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393371AbfFMREC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:04:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id f9so21543741wre.12;
-        Thu, 13 Jun 2019 10:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LrsdwY5oeKnCEzpxEpH2pMSwNmXiuq/c8to0EOSJdAw=;
-        b=i4YhAVe8Qi4Qs5oPDdcySnM088oH4WdO9dqUWtrO637Uq3eQmNM6oGgjpRP4j9bIP0
-         oV/LtUO+3iikkJYJ9EW+vUM1SjUgobPybdK41hzOe4/SYzpZcfxm+/74gQ6tcW9ymyxT
-         1K7DgAb13dc2lpGxMVVgy48EOwsWp7r/6dRiuMRH731ODirFOGcgdVeX8ZMceVDxPx+3
-         uYKAtGTi/s2yb3A86EZlroJVDh+wLzvSD2OxResnp3S1p9gOfEMDCoeAI7nR4GRk2lMe
-         jGfw41cKKDn4jowhjZpLMKMlDRNVyuSzhAF25K6VmEMgTKpbHNg6VPUJP0OW4HqWQXeY
-         IXIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=LrsdwY5oeKnCEzpxEpH2pMSwNmXiuq/c8to0EOSJdAw=;
-        b=gQRlREIE83J+3BzFDVze52Xqtz1qsD7nhKxkDCHvWO417ZEND0YkRU06ErxsNU3v4T
-         Xylc4NP5O/XhaZaPLnaMkC4ufBysu0fyF2v+S9ahTbYX2cD259yeva6tvhlaEy3XNrPB
-         xZWrqFdX0aHX2Vy7T3XltZYIp7VO6km8P6y3fsLmNfuoKm3D4gAm+8MLNwwuwaWTKC6E
-         4eD5ml0aRBMVAmb9dI1Fs/yG7/LDpBaS0iLBTXgBxfBKtW6YGMDfYKPw2nZBOQ+3mUJp
-         RfpH/u0EpM2cl3B624SgcyFf+q2ELgwI1KoYfzMwFHzW/xJGvrwjBvN0/7wx0Bf7+5ho
-         i/bA==
-X-Gm-Message-State: APjAAAXDsP+Cpg1T978J2Mr6wnsyjGQsUb1tTYrYypn3Anmw2txAF9m6
-        cqGL500XVnEnCVVKsf5W1uSRwk47
-X-Google-Smtp-Source: APXvYqxARXtkNdCcBtlyjbs1jKCmTWAlnWJ47Uqs+Trbh1paf715xSsyrQ2yWJoykr9/GSbnSzkgng==
-X-Received: by 2002:a05:6000:4b:: with SMTP id k11mr9222858wrx.82.1560445440327;
-        Thu, 13 Jun 2019 10:04:00 -0700 (PDT)
-Received: from 640k.localdomain ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id a10sm341856wrx.17.2019.06.13.10.03.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 10:03:59 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        vkuznets@redhat.com
-Subject: [PATCH 27/43] KVM: nVMX: Update vmcs12 for MSR_IA32_DEBUGCTLMSR when it's written
+        id S2393250AbfFMRDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:03:30 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:58443 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729473AbfFMRD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:03:28 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 7b528bc5
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 13 Jun 2019 16:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=eQU47tAOAY4Ww+Qu6JsBiSiAKA8=; b=xZWG9B
+        bjHaQeuqbz4sI0NoFYNsm6CSlN9RmsZPoxfj+xDIbapZbChbjilJ2m7GGncMs20N
+        Jk3phLBQIRRHb3dAZtZL6zoF6QlbL3y6lZ2AnklPSwrB2xz2YcwdiEgwp02w5uXu
+        qvrC5uw1lUeLSVWHuwQ55AXFfz5zOinmXvQgAXZHqfvTW3/WVZlol2YIWPE4vR0J
+        tpkuj9lug1NBzBJn/yQIy+o2SMA3JClJThONIoMZSdGlnypeyyz1XNZLLhdIZH+1
+        BMZGhuzkOUx9NYzWDecJsdchfvyxrZ9IpuAUpvm/0vP+z2UkIwgg0j0PjtiV3FaT
+        niCmGtG5nYujcRAw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 074da687 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 13 Jun 2019 16:31:01 +0000 (UTC)
+Received: by mail-ot1-f52.google.com with SMTP id l15so19655683otn.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 10:03:25 -0700 (PDT)
+X-Gm-Message-State: APjAAAW7Q0/feFHrSzwzrS/hPP+A5C09AdXtVck5S+odJfbcauJKlUSi
+        Z04W/epMixDGfFySAn2f0mQSaqRmS8PGD6Oha28=
+X-Google-Smtp-Source: APXvYqwtl2JJDkqI30n4+ANYJzLJ6c7AVUpnMwMaCK8MzFG1h4OwexbwbWd6Bq6YlRzQ8yXFmAud0QT72VNsUE9HX+k=
+X-Received: by 2002:a9d:5a88:: with SMTP id w8mr6898138oth.369.1560445404784;
+ Thu, 13 Jun 2019 10:03:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190529182324.8140-1-Jason@zx2c4.com>
+In-Reply-To: <20190529182324.8140-1-Jason@zx2c4.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
 Date:   Thu, 13 Jun 2019 19:03:13 +0200
-Message-Id: <1560445409-17363-28-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1560445409-17363-1-git-send-email-pbonzini@redhat.com>
-References: <1560445409-17363-1-git-send-email-pbonzini@redhat.com>
+X-Gmail-Original-Message-ID: <CAHmME9rXqA3AwM0=RVMQ0-WFN5OUw_wMvWLOV+6jCDZ6zt51BA@mail.gmail.com>
+Message-ID: <CAHmME9rXqA3AwM0=RVMQ0-WFN5OUw_wMvWLOV+6jCDZ6zt51BA@mail.gmail.com>
+Subject: Re: [PATCH] arm: vdso: pass --be8 to linker if necessary
+To:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Hey Masahiro,
 
-KVM unconditionally intercepts WRMSR to MSR_IA32_DEBUGCTLMSR.  In the
-unlikely event that L1 allows L2 to write L1's MSR_IA32_DEBUGCTLMSR, but
-but saves L2's value on VM-Exit, update vmcs12 during L2's WRMSR so as
-to eliminate the need to VMREAD the value from vmcs02 on nested VM-Exit.
+Considering ARM big endian userland is pretty badly broken without
+this, we should probably have this merged in the next rc or rather
+soon. Was there additional information you needed? Would you prefer
+Russell queues up my patch or did you want to make further build
+system changes?
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/nested.c | 4 +---
- arch/x86/kvm/vmx/vmx.c    | 8 ++++++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 68c031e2cc4d..138f27597c91 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3563,10 +3563,8 @@ static void sync_vmcs02_to_vmcs12(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
- 		(vmcs12->vm_entry_controls & ~VM_ENTRY_IA32E_MODE) |
- 		(vm_entry_controls_get(to_vmx(vcpu)) & VM_ENTRY_IA32E_MODE);
- 
--	if (vmcs12->vm_exit_controls & VM_EXIT_SAVE_DEBUG_CONTROLS) {
-+	if (vmcs12->vm_exit_controls & VM_EXIT_SAVE_DEBUG_CONTROLS)
- 		kvm_get_dr(vcpu, 7, (unsigned long *)&vmcs12->guest_dr7);
--		vmcs12->guest_ia32_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
--	}
- 
- 	if (vmcs12->vm_exit_controls & VM_EXIT_SAVE_IA32_EFER)
- 		vmcs12->guest_ia32_efer = vcpu->arch.efer;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index ede2ac670f5b..975b2705c5b2 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1845,6 +1845,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			get_vmcs12(vcpu)->guest_sysenter_esp = data;
- 		vmcs_writel(GUEST_SYSENTER_ESP, data);
- 		break;
-+	case MSR_IA32_DEBUGCTLMSR:
-+		if (is_guest_mode(vcpu) && get_vmcs12(vcpu)->vm_exit_controls &
-+						VM_EXIT_SAVE_DEBUG_CONTROLS)
-+			get_vmcs12(vcpu)->guest_ia32_debugctl = data;
-+
-+		ret = kvm_set_msr_common(vcpu, msr_info);
-+		break;
-+
- 	case MSR_IA32_BNDCFGS:
- 		if (!kvm_mpx_supported() ||
- 		    (!msr_info->host_initiated &&
--- 
-1.8.3.1
-
-
+Jason
