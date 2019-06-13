@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECBF944472
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 569AF444A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392069AbfFMQhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:37:18 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:47284 "EHLO ns.iliad.fr"
+        id S2404080AbfFMQij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:38:39 -0400
+Received: from smtp3-g21.free.fr ([212.27.42.3]:11951 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727831AbfFMQg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:36:59 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 3CC0420A52;
-        Thu, 13 Jun 2019 18:36:57 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 248BF20163;
-        Thu, 13 Jun 2019 18:36:57 +0200 (CEST)
-Subject: Re: [PATCH v1] iopoll: Tweak readx_poll_timeout sleep range
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Helgaas <helgaas@kernel.org>
-References: <c2e6af51-5676-3715-6666-c3f18df7b992@free.fr>
- <CAK8P3a1_WvHYW243MR5-NdFm3cSt+cVGM5EJmOM8uiQMQ3vQjQ@mail.gmail.com>
- <a732f522-5e65-3ac4-de04-802ef5455747@free.fr>
- <CAD=FV=U+Ky1bAuAuuY+eBdTP9U3kbuH0tfwyN0Zs-iw0GNUFyQ@mail.gmail.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <13cb7357-0d10-fe43-bee1-b2142d01684c@free.fr>
-Date:   Thu, 13 Jun 2019 18:36:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2392729AbfFMQic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:38:32 -0400
+Received: from anisse-station.iliad.local (unknown [213.36.7.13])
+        by smtp3-g21.free.fr (Postfix) with ESMTPS id 3D8A813F8F2;
+        Thu, 13 Jun 2019 18:38:05 +0200 (CEST)
+From:   Anisse Astier <aastier@freebox.fr>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Rich Felker <dalias@aerifal.cx>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Ricardo Salveti <ricardo@foundries.io>,
+        Anisse Astier <aastier@freebox.fr>
+Subject: [PATCH] arm64/sve: <uapi/asm/ptrace.h> should not depend on <uapi/linux/prctl.h>
+Date:   Thu, 13 Jun 2019 18:38:01 +0200
+Message-Id: <20190613163801.21949-1-aastier@freebox.fr>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=U+Ky1bAuAuuY+eBdTP9U3kbuH0tfwyN0Zs-iw0GNUFyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun 13 18:36:57 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2019 18:11, Doug Anderson wrote:
+Otherwise this will create userspace build issues for any program
+(strace, qemu) that includes both <sys/prctl.h> (with musl libc) and
+<linux/ptrace.h> (which then includes <asm/ptrace.h>), like this:
 
-> On Thu, Jun 13, 2019 at 9:04 AM Marc Gonzalez wrote:
->
->> Hmmm, I expect the typical use-case to be:
->> "HW manual states operation X completes in 100 µs.
->> Let's call usleep_range(100, foo); before hitting the reg."
->>
->> And foo needs to be a "reasonable" value: big enough to be able
->> to merge several requests, low enough not to wait too long after
->> the HW is ready.
->>
->> In this case, I'd say usleep_range(100, 200); makes sense.
->>
->> Come to think of it, I'm not sure min=26 (or min=50) makes sense...
->> Why wait *less* than what the user specified?
-> 
-> IIRC usleep_range() nearly always tries to sleep for the max.  My
-> recollection of the design is that you only end up with something less
-> than the max if the system was going to wake up anyway.  In such a
-> case it seems like it wouldn't be insane to go and check if the
-> condition is already true if 25% of the time has passed.  Maybe you'll
-> get lucky and you can return early.
-> 
-> Are you actually seeing problems with the / 4, or is this patch just a
-> result of code inspection?
+	error: redefinition of 'struct prctl_mm_map'
+	 struct prctl_mm_map {
 
-No actual issue. I just ran into a driver calling:
+See https://github.com/foundriesio/meta-lmp/commit/6d4a106e191b5d79c41b9ac78fd321316d3013c0
+for a public example of people working around this issue.
 
-	readl_poll_timeout(status, val, val & mask, 1, 1000);
+This fixes an UAPI regression introduced in commit 43d4da2c45b2
+("arm64/sve: ptrace and ELF coredump support").
 
-and it seemed... unwise(?) to call usleep_range(1, 1);
+Cc: stable@vger.kernel.org
+Signed-off-by: Anisse Astier <aastier@freebox.fr>
+---
+ arch/arm64/include/uapi/asm/ptrace.h | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-But if, as you say, usleep_range() aims for the max, then I guess it's
-not a big deal to issue an early read or 3... Meh
+diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+index d78623acb649..03b6d6f029fc 100644
+--- a/arch/arm64/include/uapi/asm/ptrace.h
++++ b/arch/arm64/include/uapi/asm/ptrace.h
+@@ -65,8 +65,6 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
+-#include <linux/prctl.h>
+-
+ /*
+  * User structures for general purpose, floating point and debug registers.
+  */
+@@ -113,10 +111,10 @@ struct user_sve_header {
+ 
+ /*
+  * Common SVE_PT_* flags:
+- * These must be kept in sync with prctl interface in <linux/ptrace.h>
++ * These must be kept in sync with prctl interface in <linux/prctl.h>
+  */
+-#define SVE_PT_VL_INHERIT		(PR_SVE_VL_INHERIT >> 16)
+-#define SVE_PT_VL_ONEXEC		(PR_SVE_SET_VL_ONEXEC >> 16)
++#define SVE_PT_VL_INHERIT		(1 << 1) /* PR_SVE_VL_INHERIT */
++#define SVE_PT_VL_ONEXEC		(1 << 2) /* PR_SVE_SET_VL_ONEXEC */
+ 
+ 
+ /*
+-- 
+2.19.1
 
-Regards.
