@@ -2,160 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BBD437F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BDAD437F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733035AbfFMPC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:02:29 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34109 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732513AbfFMO1e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:27:34 -0400
-Received: by mail-qk1-f194.google.com with SMTP id t8so9172859qkt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zpqnm/x/AdsYycdl11Nd+V+IfO9WFcP66DZDngrAd9E=;
-        b=vIdt/h5+tPMSzsO2WKNiQQDQMPwbBZbBm9OHyAHyx4n4yPEPu33aL/2jtnT9p70MVL
-         F+qhjp0HOftKSWyWCPGK+P2vNwSwohfNdHX/LcHmc5kAQu0QsNp7he5b4V312LKw+B43
-         y9krIVhmC8HG4q8LZM91gw8AN/Zq2CpBcY8tFJtHMQPB1he2syEi85gzP+vydfgrEXsA
-         o728y38cWbkN6/T0fVNcWbX87K728NKLE4BuAEY8gvdrbrTLI5w5Cx+3W90amkL9VBMV
-         z16Tu4jECWiEGPEow45o7izIqWeGmBToyagWwpaEUaScJjq93T1uyPEdpSWoLV2QKN0D
-         otKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zpqnm/x/AdsYycdl11Nd+V+IfO9WFcP66DZDngrAd9E=;
-        b=HmVOLdCQCQpJo85Y7pa7pMFcXbXFN6zv1t4QN9VdCGz+FP8yIO3ZXd+yDcwXjdASUA
-         ftgNQFqTj3ioD1oBFgReCWIcuCQDRRmko/r1hCVlydEM4wuWt4qZHQLZHlQu2i/H3s5C
-         5bkvK3Jr4DYCbnyHidDP28TpmDf+gQg2AQaKqPiwEpF1l5+tCgPd7Ft71iUVHBljzPoB
-         YOJnf1t/oqHB+J6bLiTFDaKAZSTpne2cJ8g3OaQf20fakY3FhD7/JczbfFCNQIiems11
-         w9ys/7b2ywxZpluRfHTUEjPw/dVgqv7GqisPJQXYGxw6NH4W9lUan14Ipbof2PrIXQU8
-         5Fkw==
-X-Gm-Message-State: APjAAAWidAnra59UTJeeGYvL1dfXT2YN9h4QyZUbH454l4ETxzEaGZIa
-        8ZNauFKnKQWfQk0uAz//2GTVbg==
-X-Google-Smtp-Source: APXvYqxlxUbFUomnC9jt1Ud6035b35BwuPIkorhnO2Uqejg7ZM5g6I6GS7yNiFHC3c23lchL6G6ZhQ==
-X-Received: by 2002:a05:620a:14a1:: with SMTP id x1mr71416914qkj.164.1560436053376;
-        Thu, 13 Jun 2019 07:27:33 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::9d6b])
-        by smtp.gmail.com with ESMTPSA id x7sm1732042qth.37.2019.06.13.07.27.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 07:27:33 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:27:31 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 17/19] btrfs: shrink delayed allocation size in HMZONED
- mode
-Message-ID: <20190613142731.mgitehmuyz2566no@MacBook-Pro-91.local>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-18-naohiro.aota@wdc.com>
+        id S1733154AbfFMPCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:02:17 -0400
+Received: from mail-eopbgr10053.outbound.protection.outlook.com ([40.107.1.53]:47938
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732517AbfFMO1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 10:27:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YtBIuhBXRVlxxD+ll8fmCwqj4wgCi6dpMg6N1Cr03BE=;
+ b=QTCbjZMiiY06q08WZDr9b5a8MLgaod64YaRTLmJrYtD1h5jjmBadtbL5UrOS+lUEiDBQOI4aMCx+Z/QTHff/RPyQrnfw6OD4l8H5ImYVZOYWQfqBKsIugg55bxXklA8RJYZYDMvuLjyqdoHSwEeQ5QBf2DD6NUcN/PEoFOTelZA=
+Received: from AM0PR08MB4226.eurprd08.prod.outlook.com (20.179.36.17) by
+ AM0PR08MB5393.eurprd08.prod.outlook.com (52.132.213.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Thu, 13 Jun 2019 14:27:41 +0000
+Received: from AM0PR08MB4226.eurprd08.prod.outlook.com
+ ([fe80::bc0c:5148:629e:1a31]) by AM0PR08MB4226.eurprd08.prod.outlook.com
+ ([fe80::bc0c:5148:629e:1a31%6]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
+ 14:27:41 +0000
+From:   Ayan Halder <Ayan.Halder@arm.com>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH] drm/komeda: Enable/Disable vblank interrupts
+Thread-Topic: [PATCH] drm/komeda: Enable/Disable vblank interrupts
+Thread-Index: AQHVHUIw9rNeEORvRUuKBGT248hnN6aQgGsAgAktYAA=
+Date:   Thu, 13 Jun 2019 14:27:41 +0000
+Message-ID: <20190613142740.GA32394@arm.com>
+References: <20190607150323.20395-1-ayan.halder@arm.com>
+ <20190607181856.GK21222@phenom.ffwll.local>
+In-Reply-To: <20190607181856.GK21222@phenom.ffwll.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LNXP265CA0007.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5e::19) To AM0PR08MB4226.eurprd08.prod.outlook.com
+ (2603:10a6:208:147::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [217.140.106.51]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ff2ace66-3059-4dee-b6fa-08d6f00b4b0e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR08MB5393;
+x-ms-traffictypediagnostic: AM0PR08MB5393:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM0PR08MB5393E97FC979225C44697FC6E4EF0@AM0PR08MB5393.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(366004)(40434004)(189003)(199004)(476003)(2616005)(44832011)(8676002)(81156014)(11346002)(2501003)(446003)(6486002)(8936002)(486006)(81166006)(6436002)(72206003)(966005)(14454004)(478600001)(6306002)(53936002)(6512007)(305945005)(7736002)(68736007)(86362001)(2201001)(229853002)(2906002)(6116002)(3846002)(5660300002)(66446008)(64756008)(66556008)(66476007)(73956011)(110136005)(6636002)(53386004)(6246003)(25786009)(66066001)(66946007)(587094005)(99286004)(71190400001)(71200400001)(386003)(6506007)(102836004)(26005)(186003)(1076003)(52116002)(76176011)(14444005)(5024004)(33656002)(36756003)(256004)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB5393;H:AM0PR08MB4226.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 1oX8Cwi+vN+Wo3865LYNyyo0lRKJUGBLx7d3A2Gf3bXWHDuHtKByDtpt4dWD3tNWSReyCiEPjl4mMrbYR5siUTRMc/wa4V1M7X8rxI/QCiOMFyCtU+pJYWz/6e3QSUGqCI58EE0qm8IsFEKjGTyjdyHiW4oeHdmkHIK8ZgP5Ek5F6Jdau+OsyiwM2yoxxtThAYwTyE/12OxPq1HhuYhTjzE04AsdvaTwL2dzlCQbNl/iBTD/8ydkUbebspPcBCelioMHhi03OAP/V459dpyLdqp6uEzgGdfQl14fQ7EwGwxxt1awJET9/e0gQ4NKO78lexyEUeYPswlWZtTzeUjPQ3mmozhCHZVH7jChAxfw6Tfshbo8ptQV0YLXRz7E5zaclnUdN9Ru12j0Nt4sUXfAZlwyH/yT8F0bAVaPs9BYDrw=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DBCC2575CF0E6F489A9EC8C188EF6B4F@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-18-naohiro.aota@wdc.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff2ace66-3059-4dee-b6fa-08d6f00b4b0e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 14:27:41.7793
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ayan.Halder@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5393
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:23PM +0900, Naohiro Aota wrote:
-> In a write heavy workload, the following scenario can occur:
-> 
-> 1. mark page #0 to page #2 (and their corresponding extent region) as dirty
->    and candidate for delayed allocation
-> 
-> pages    0 1 2 3 4
-> dirty    o o o - -
-> towrite  - - - - -
-> delayed  o o o - -
-> alloc
-> 
-> 2. extent_write_cache_pages() mark dirty pages as TOWRITE
-> 
-> pages    0 1 2 3 4
-> dirty    o o o - -
-> towrite  o o o - -
-> delayed  o o o - -
-> alloc
-> 
-> 3. Meanwhile, another write dirties page #3 and page #4
-> 
-> pages    0 1 2 3 4
-> dirty    o o o o o
-> towrite  o o o - -
-> delayed  o o o o o
-> alloc
-> 
-> 4. find_lock_delalloc_range() decide to allocate a region to write page #0
->    to page #4
-> 5. but, extent_write_cache_pages() only initiate write to TOWRITE tagged
->    pages (#0 to #2)
-> 
-> So the above process leaves page #3 and page #4 behind. Usually, the
-> periodic dirty flush kicks write IOs for page #3 and #4. However, if we try
-> to mount a subvolume at this timing, mount process takes s_umount write
-> lock to block the periodic flush to come in.
-> 
-> To deal with the problem, shrink the delayed allocation region to have only
-> expected to be written pages.
-> 
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  fs/btrfs/extent_io.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index c73c69e2bef4..ea582ff85c73 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -3310,6 +3310,33 @@ static noinline_for_stack int writepage_delalloc(struct inode *inode,
->  			delalloc_start = delalloc_end + 1;
->  			continue;
->  		}
-> +
-> +		if (btrfs_fs_incompat(btrfs_sb(inode->i_sb), HMZONED) &&
-> +		    (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages) &&
-> +		    ((delalloc_start >> PAGE_SHIFT) <
-> +		     (delalloc_end >> PAGE_SHIFT))) {
-> +			unsigned long i;
-> +			unsigned long end_index = delalloc_end >> PAGE_SHIFT;
-> +
-> +			for (i = delalloc_start >> PAGE_SHIFT;
-> +			     i <= end_index; i++)
-> +				if (!xa_get_mark(&inode->i_mapping->i_pages, i,
-> +						 PAGECACHE_TAG_TOWRITE))
-> +					break;
-> +
-> +			if (i <= end_index) {
-> +				u64 unlock_start = (u64)i << PAGE_SHIFT;
-> +
-> +				if (i == delalloc_start >> PAGE_SHIFT)
-> +					unlock_start += PAGE_SIZE;
-> +
-> +				unlock_extent(tree, unlock_start, delalloc_end);
-> +				__unlock_for_delalloc(inode, page, unlock_start,
-> +						      delalloc_end);
-> +				delalloc_end = unlock_start - 1;
-> +			}
-> +		}
-> +
+On Fri, Jun 07, 2019 at 08:18:56PM +0200, Daniel Vetter wrote:
 
-Helper please.  Really for all this hmzoned stuff I want it segregated as much
-as possible so when I'm debugging or cleaning other stuff up I want to easily be
-able to say "oh this is for zoned devices, it doesn't matter."  Thanks,
+Hi Daniel,
 
-Josef
+> On Fri, Jun 07, 2019 at 03:03:39PM +0000, Ayan Halder wrote:
+> > One needs to set "(struct drm_device *)->irq_enabled =3D true" to signa=
+l drm core
+> > to enable vblank interrupts after the hardware has been initialized.
+> > Correspondingly, one needs to disable vblank interrupts by setting
+> > "(struct drm_device *)->irq_enabled =3D false" at the beginning of the
+> > de-initializing routine.
+>
+> Only if you don't use the drm_irq_install helper. Quoting the kerneldoc i=
+n
+> full:
+>
+> /**
+>  * @irq_enabled:
+>  *
+>  * Indicates that interrupt handling is enabled, specifically vblank
+>  * handling. Drivers which don't use drm_irq_install() need to set this
+>  * to true manually.
+>  */
+> bool irq_enabled;
+>
+> Not entirely sure where you've found your quote, but it's not complete.
+>
+> Cheers, Daniel
+
+Thanks for your review.
+
+That was my quote which reflects my half-baked understanding of the
+issue :(. I had missed reading the header files.
+
+That said, I will squash my previous patch "drm/komeda: Avoid using
+DRIVER_IRQ_SHARED" into this one as the current patch is a consequence
+of the changes made in the previous patch.
+
+Regards,
+Ayan Kumar Halder
+>
+> >
+> > Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> > ---
+> >  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/=
+gpu/drm/arm/display/komeda/komeda_kms.c
+> > index 7b5cde14e3ba..b4fd8ee0d05f 100644
+> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > @@ -204,6 +204,8 @@ struct komeda_kms_dev *komeda_kms_attach(struct kom=
+eda_dev *mdev)
+> >  if (err)
+> >  goto uninstall_irq;
+> >
+> > +drm->irq_enabled =3D true;
+> > +
+> >  err =3D drm_dev_register(drm, 0);
+> >  if (err)
+> >  goto uninstall_irq;
+> > @@ -211,6 +213,7 @@ struct komeda_kms_dev *komeda_kms_attach(struct kom=
+eda_dev *mdev)
+> >  return kms;
+> >
+> >  uninstall_irq:
+> > +drm->irq_enabled =3D false;
+> >  drm_irq_uninstall(drm);
+> >  cleanup_mode_config:
+> >  drm_mode_config_cleanup(drm);
+> > @@ -225,6 +228,7 @@ void komeda_kms_detach(struct komeda_kms_dev *kms)
+> >  struct drm_device *drm =3D &kms->base;
+> >  struct komeda_dev *mdev =3D drm->dev_private;
+> >
+> > +drm->irq_enabled =3D false;
+> >  mdev->funcs->disable_irq(mdev);
+> >  drm_dev_unregister(drm);
+> >  drm_irq_uninstall(drm);
+> > --
+> > 2.21.0
+> >
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+IMPORTANT NOTICE: The contents of this email and any attachments are confid=
+ential and may also be privileged. If you are not the intended recipient, p=
+lease notify the sender immediately and do not disclose the contents to any=
+ other person, use it for any purpose, or store or copy the information in =
+any medium. Thank you.
