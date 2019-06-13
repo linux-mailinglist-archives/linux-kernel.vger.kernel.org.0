@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1563E43867
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B334743862
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732680AbfFMPFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:05:35 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41802 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732444AbfFMOPB (ORCPT
+        id S1733309AbfFMPFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:05:23 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34592 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732446AbfFMOPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:15:01 -0400
-Received: by mail-qt1-f196.google.com with SMTP id 33so14546539qtr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:15:00 -0700 (PDT)
+        Thu, 13 Jun 2019 10:15:52 -0400
+Received: by mail-qk1-f193.google.com with SMTP id t8so9143010qkt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OdDaHrZjCVjfx0F7I84Ms3iqXEsw9YFLBG1e37K/zSk=;
-        b=sYqQ6uKns66zBU93j9yEeT/LvK5SGvAWuiWz7tHFKP7mn86ErCaTm0z6ueEaaYTBtg
-         dppoEWF3t5KwmGEiTyNyELHfy/K4HBjO63VBJld10Wczby5Bgw0JqRryBbLcTInMngZF
-         sP9X0zKnUXr6BFW7dvX+xwYtaeoQpjJAJggqP317rGAKYhQtp+saVK4UXI3ItKnbhCoA
-         hU9taLmEZSCOBzlLEaGANGcNtWJISSQt/5H+szYc4JyKWmFRwxx/WK/9aEzTWn1UGDte
-         qjTdAr4LhHnD/vXiT4bAdYs4gHhceTk9y66k9SNnyJAQEtt21xVoHV5QE13CHyrq6LlU
-         p0oA==
+        bh=sbvrt5MZdKQZtIDBTdvl9Mov/hKhPttcrBddG8hlTHo=;
+        b=U4iRJrkgboqXD/9ecVEMGKPpyhkTFeK6mRiuk3Hy6ZSjwXCUQjTvFcN1/3TbP0NwfD
+         Cc0zRy15Gx4ZrC16COD805lwAeHf+qTzSuM79QtyZaBjBOLBNYC4OcekJA1r2UIVSfCF
+         d7WXvg5HrlhBXYtFb5VvFctZCG/Ixpw8iY5IcU88+E9uOEfz1mmm4oqCAf/PiZySI+WX
+         zEsdmJ64iKb2T8hzeutqLaiWHI3UhHek9Rp74I2YSN7P2KgZU/L9RdBvxkx4IV/qxmSt
+         AGAkIzRqZ8bwB2xirmaAcULCaO3AAs2Bs0nonS+DUCjHnU1NBiJuLN34fx159zgfGaVJ
+         GVgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OdDaHrZjCVjfx0F7I84Ms3iqXEsw9YFLBG1e37K/zSk=;
-        b=aM1780KFESYKYJwwfZSxXO0pMlvemyCoQB3YaHGZVd6DasdAmDWZ4dRG6LeNKkiQ9I
-         YY2TDA5uj1Zy5ahaYWPl6IYm0c7esvqF6wJuyRZdJwknZRcKwmureq5BH+DBEP2EouAH
-         qJYvbgTrS40xRyuD2yQCIfW6SxIjXHCJVZyoSM9MpAYqTwHam96lMaD2mVUZoYIiCJe/
-         N56z2QJjFmdyrKcxW8A5ytORvKQmw4yxUPelYaVioVz1LpzHGZqKwIBn1S3GTu5KnK78
-         c1tqXwzS3ZYuwWzz0MuwYYZ/g1nLWPijAeHIKQARHZfvBoxoPdRkWK4Nj3WIjjxvrgiB
-         I87w==
-X-Gm-Message-State: APjAAAXvHfq0+ElqluEHGZWUjIBtk0xiHWz4vmY1HUOTPO0hNXKDZnp/
-        0xvfkT19y0BSK0N4/oKJTq9C+w==
-X-Google-Smtp-Source: APXvYqwfgzv3MjJXLyZteAyuEZAIwVB7UsULqWyzo3LfoE3U2tnrGhHZdPH8Rlk1v5y4hE8yrkdv2w==
-X-Received: by 2002:a0c:9891:: with SMTP id f17mr790499qvd.49.1560435300381;
-        Thu, 13 Jun 2019 07:15:00 -0700 (PDT)
+        bh=sbvrt5MZdKQZtIDBTdvl9Mov/hKhPttcrBddG8hlTHo=;
+        b=PmG+bjeIfdXbNYrLVHfJ7PyEWq1qG4aVvqxsbb1ISYTpEnhaVsPEBDC5XJ8PejyLsS
+         vWJsVFLYgeEOJOQCKIOz8JG561eBzEXeNNqi9uZiQKUn1HzxCSFgUcey9aXKI135IPP+
+         379m0fBNWV9e1KZAF2F08MzyYQSP91L+brZsdL2qsuInS4bQyU88csoAiv+icDQbXpMQ
+         2igEd9LP3AEi9/KN4YIwY7oXY5qaZ47llm1ku18adPDJi+9F8T6szR1MWL8C7JvyBA6U
+         NGHwiLAo+qbxFhtz4BWgOy7GbH6z3DHKJ+KvP3zScziPlL64Q8kCnb64TQdpa3/4sOdi
+         eRtQ==
+X-Gm-Message-State: APjAAAXUUPMB9TGxS8GQHl/zggavTBK46bi4/Xlnel+pIhz8rYGuEB1v
+        7DzcIp9MHgmAQE82HEZjGM81cQ==
+X-Google-Smtp-Source: APXvYqwg9ItFMlhHRYGvsdkND+NywXN/99yJ/OfGCgepby4UQnidXK6DCCbLqQXc5D4yRoAVhsjoyA==
+X-Received: by 2002:a05:620a:16cc:: with SMTP id a12mr13267398qkn.256.1560435351183;
+        Thu, 13 Jun 2019 07:15:51 -0700 (PDT)
 Received: from localhost ([2620:10d:c091:480::9d6b])
-        by smtp.gmail.com with ESMTPSA id w16sm1898172qtc.41.2019.06.13.07.14.59
+        by smtp.gmail.com with ESMTPSA id t29sm2155361qtt.42.2019.06.13.07.15.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 07:14:59 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:14:58 -0400
+        Thu, 13 Jun 2019 07:15:50 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:15:49 -0400
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     Naohiro Aota <naohiro.aota@wdc.com>
 Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
@@ -57,33 +57,29 @@ Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
         Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 11/19] btrfs: introduce submit buffer
-Message-ID: <20190613141457.jws5ca63wfgjf7da@MacBook-Pro-91.local>
+Subject: Re: [PATCH 12/19] btrfs: expire submit buffer on timeout
+Message-ID: <20190613141548.vlczaxiqqzbxgtzk@MacBook-Pro-91.local>
 References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-12-naohiro.aota@wdc.com>
+ <20190607131025.31996-13-naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-12-naohiro.aota@wdc.com>
+In-Reply-To: <20190607131025.31996-13-naohiro.aota@wdc.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:17PM +0900, Naohiro Aota wrote:
-> Sequential allocation is not enough to maintain sequential delivery of
-> write IOs to the device. Various features (async compress, async checksum,
-> ...) of btrfs affect ordering of the IOs. This patch introduces submit
-> buffer to sort WRITE bios belonging to a block group and sort them out
-> sequentially in increasing block address to achieve sequential write
-> sequences with __btrfs_map_bio().
+On Fri, Jun 07, 2019 at 10:10:18PM +0900, Naohiro Aota wrote:
+> It is possible to have bios stalled in the submit buffer due to some bug or
+> device problem. In such situation, btrfs stops working waiting for buffered
+> bios completions. To avoid such hang, add a worker that will cancel the
+> stalled bios after a timeout.
 > 
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I hate everything about this.  Can't we just use the plugging infrastructure for
-this and then make sure it re-orders the bios before submitting them?  Also
-what's to prevent the block layer scheduler from re-arranging these io's?
-Thanks,
+The block layer does this with it's request timeouts right?  So it'll timeout
+and we'll get an EIO?  If that's not working then we need to fix the block
+layer.  Thanks,
 
 Josef
