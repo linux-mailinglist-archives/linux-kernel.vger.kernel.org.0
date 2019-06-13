@@ -2,89 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B073C43794
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D8543790
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732840AbfFMPAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:00:07 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35012 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732593AbfFMOu1 (ORCPT
+        id S1732798AbfFMPAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:00:03 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35413 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732598AbfFMOul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:50:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m3so2135328wrv.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=+RVryizvvLr6nOq3Y01zEZUNig98tyiJRX4i4NCALjE=;
-        b=xBJv0v0TSyN8bw8PWIksiodNdVnS0bNOdkdaPCTrqfBtTUc/nGc7nWBbWif5k6JkXq
-         usFYBwUlCOyMbDlh/FoSW9XPYjS4T230SW6n9glJj8zd5JdGL+GgQWRqNOvfecnA76gv
-         6eOjIzXDXOs+yI9wxF61TSNQmk+Dle+G2T5o8kb0NZrAzMmngu8iOLmOkjEK49lMI4Io
-         zdnTk84Bb3fx69dbQ9/Fn2Z2FpdvWpDdh+x02D6nyiegk/N69uYDNWkhDxMEvBPqyiDz
-         FDXbZFHu8L6A4PJ4w7kFm8OQCfuuagTkO4ZSAHMS/2hCdvSIAqCXPk4TiTg+2fd06jFg
-         yAXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=+RVryizvvLr6nOq3Y01zEZUNig98tyiJRX4i4NCALjE=;
-        b=n3zib1zGAxk6dUTeEgIkBK5Dvhw7iXNUIGzJe/rBGeDS3ixAgSC0OXRkvj2D3b9kpg
-         rqTfkeVgjrFWGznmSdhpHOzy13oegiRC+rypTv2wP3l5tBYpN7xAWGZYMagiWmsNIzP0
-         cr9NtsFTiRQfBClFzaq5ddRJYA/48jQG6GuccG2Gj+6ffg1dMdYoKN49DQrsd7120h8t
-         8DQiSRs3KOXMSUDvt5fKDOdStp8ki/ShHbYBR8Dq63rqefZ+lzuBdUdGNhOqAIpM73ym
-         G8EcC18L/q2Oc1ZW/KBnGR89zk7iJ+2UfplOWM6D0pDjcQPWL6mflViDMwIdNJReAf5m
-         Xy7g==
-X-Gm-Message-State: APjAAAWTxW4vymb0jyR7fdhMT4O4rALSp3Nx0RyxCu3Xu6jA3lrsxnG7
-        v3FstbjhXeO3iPjNeKThX9wrpQ==
-X-Google-Smtp-Source: APXvYqy/bH48WG2Ohg8ojqkK4a5frK9X1C6pgGv/KXkJRNWsBDmprDYicYLILR5YpvGxfREuljEXdg==
-X-Received: by 2002:adf:f709:: with SMTP id r9mr28995624wrp.281.1560437425787;
-        Thu, 13 Jun 2019 07:50:25 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id j7sm5185106wru.54.2019.06.13.07.50.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 07:50:24 -0700 (PDT)
-Message-ID: <5d0262b0.1c69fb81.7fca4.cf70@mx.google.com>
-Date:   Thu, 13 Jun 2019 07:50:24 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 13 Jun 2019 10:50:41 -0400
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hbR3m-0002Ty-4J; Thu, 13 Jun 2019 16:50:38 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 3/6] workqueue: Don't assume that the callback has interrupts disabled
+Date:   Thu, 13 Jun 2019 16:50:24 +0200
+Message-Id: <20190613145027.27753-4-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190613145027.27753-1-bigeasy@linutronix.de>
+References: <20190613145027.27753-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v5.1.9-156-g10f90b20eaf9
-X-Kernelci-Branch: linux-5.1.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
-Subject: Re: [PATCH 5.1 000/155] 5.1.10-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-5.1.y boot: 59 boots: 0 failed, 59 passed (v5.1.9-156-g10f9=
-0b20eaf9)
+Due to the TIMER_IRQSAFE flag, the timer callback is invoked with
+disabled interrupts. On -RT the callback is invoked in softirq context
+with enabled interrupts. Since the interrupts are threaded, there are
+are no in_irq() users. The local_bh_disable() around the threaded
+handler ensures that there is either a timer or a threaded handler
+active on the CPU.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--5.1.y/kernel/v5.1.9-156-g10f90b20eaf9/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-5.1.y=
-/kernel/v5.1.9-156-g10f90b20eaf9/
+Disable interrupts before __queue_work() is invoked from the timer
+callback.
 
-Tree: stable-rc
-Branch: linux-5.1.y
-Git Describe: v5.1.9-156-g10f90b20eaf9
-Git Commit: 10f90b20eaf9cf31c4ea0cbaf10dfdd807834a6c
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 29 unique boards, 14 SoC families, 11 builds out of 209
-
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
-For more info write to <info@kernelci.org>
+ kernel/workqueue.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 601d61150b65d..a3c2959e5c4f0 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1611,9 +1611,11 @@ EXPORT_SYMBOL_GPL(queue_work_node);
+ void delayed_work_timer_fn(struct timer_list *t)
+ {
+ 	struct delayed_work *dwork = from_timer(dwork, t, timer);
++	unsigned long flags;
+ 
+-	/* should have been called from irqsafe timer with irq already off */
++	local_irq_save(flags);
+ 	__queue_work(dwork->cpu, dwork->wq, &dwork->work);
++	local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL(delayed_work_timer_fn);
+ 
+-- 
+2.20.1
+
