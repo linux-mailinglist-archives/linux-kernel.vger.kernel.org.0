@@ -2,163 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A63D43EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:52:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F086743E98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:52:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731879AbfFMPwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:52:21 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:58270 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731649AbfFMJKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:10:42 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 84C7C20AC3;
-        Thu, 13 Jun 2019 11:10:39 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 6B7F0207ED;
-        Thu, 13 Jun 2019 11:10:39 +0200 (CEST)
-Subject: Re: [PATCH] phy: qcom-qmp: Correct READY_STATUS poll break condition
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>
-References: <20190604232443.3417-1-bjorn.andersson@linaro.org>
- <619d2559-6d88-e795-76e0-3078236933ef@free.fr>
- <20190612172501.GY4814@minitux>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <3570d880-2b76-88ae-8721-e75cf5acec4c@free.fr>
-Date:   Thu, 13 Jun 2019 11:10:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2389757AbfFMPv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:51:56 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15420 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731643AbfFMJLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:11:05 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0213270000>; Thu, 13 Jun 2019 02:11:03 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 13 Jun 2019 02:11:03 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 13 Jun 2019 02:11:03 -0700
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 09:11:02 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
+ 2019 09:11:02 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 13 Jun 2019 09:11:02 +0000
+Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d0213230000>; Thu, 13 Jun 2019 02:11:01 -0700
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v3 1/2] arm64: tegra: add ACONNECT, ADMA and AGIC nodes
+Date:   Thu, 13 Jun 2019 14:40:52 +0530
+Message-ID: <1560417053-2966-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190612172501.GY4814@minitux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun 13 11:10:39 2019 +0200 (CEST)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560417063; bh=+UsIbPXEU7o7Q9N0VjfbZfSRnd5ySYXk8L3qdCKEejI=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=RQamS7nKJy8R93Us1IuUZsaserzqaRFsAwbpfhlLiwsZ5CrEPV+J5gAoSkXB6LGP4
+         VeJB+VV/KqUdhi5ptYTkE11uZTxI4MTByafCz9UluYGu/KxE1LRTgIixlpbqX3Lizq
+         D97mGODRVhOQqXvA9IfnD/OebMJarH0YGlFxd7LYX+2xpe6DywQ2aGEqK2kborp0Wd
+         s4k7vjyS5SAYTj9Af4Xayyz1e/R36vTzf5zugWjftGbKyPEdaVYv0unfGhkw6QviDM
+         sf8uA7VMbxc000On6erz2BwdMIAQJsKAYnTNQeo54l/TYz5dNDdn0h/G2H1KDb9ZBa
+         VXhNqrkEKSx/Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2019 19:25, Bjorn Andersson wrote:
+Add DT nodes for following devices on Tegra186 and Tegra194
+ * ACONNECT
+ * ADMA
+ * AGIC
 
-> On Wed 12 Jun 09:24 PDT 2019, Marc Gonzalez wrote:
-> 
->> On 05/06/2019 01:24, Bjorn Andersson wrote:
->>
->>> After issuing a PHY_START request to the QMP, the hardware documentation
->>> states that the software should wait for the PCS_READY_STATUS to become 1.
->>>
->>> With the introduction of c9b589791fc1 ("phy: qcom: Utilize UFS reset
->>> controller") an additional 1ms delay was introduced between the start
->>> request and the check of the status bit. This greatly increases the
->>> chances for the hardware to actually becoming ready before the status
->>> bit is read.
->>>
->>> The result can be seen in that UFS PHY enabling is now reported as a
->>> failure in 10% of the boots on SDM845, which is a clear regression from
->>> the previous rare/occasional failure.
->>>
->>> This patch fixes the "break condition" of the poll to check for the
->>> correct state of the status bit.
->>>
->>> Unfortunately PCIe on 8996 and 8998 does not specify the mask_pcs_ready
->>> register, which means that the code checks a bit that's always 0. So the
->>> patch also fixes these, in order to not regress these targets.
->>>
->>> Cc: stable@vger.kernel.org
->>> Cc: Evan Green <evgreen@chromium.org>
->>> Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
->>> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> Fixes: 73d7ec899bd8 ("phy: qcom-qmp: Add msm8998 PCIe QMP PHY support")
->>> Fixes: e78f3d15e115 ("phy: qcom-qmp: new qmp phy driver for qcom-chipsets")
->>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>> ---
->>>
->>> @Kishon, this is a regression spotted in v5.2-rc1, so please consider applying
->>> this towards v5.2.
->>>
->>>  drivers/phy/qualcomm/phy-qcom-qmp.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
->>> index cd91b4179b10..43abdfd0deed 100644
->>> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
->>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
->>> @@ -1074,6 +1074,7 @@ static const struct qmp_phy_cfg msm8996_pciephy_cfg = {
->>>  
->>>  	.start_ctrl		= PCS_START | PLL_READY_GATE_EN,
->>>  	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
->>> +	.mask_pcs_ready		= PHYSTATUS,
->>>  	.mask_com_pcs_ready	= PCS_READY,
->>>  
->>>  	.has_phy_com_ctrl	= true,
->>> @@ -1253,6 +1254,7 @@ static const struct qmp_phy_cfg msm8998_pciephy_cfg = {
->>>  
->>>  	.start_ctrl             = SERDES_START | PCS_START,
->>>  	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
->>> +	.mask_pcs_ready		= PHYSTATUS,
->>>  	.mask_com_pcs_ready	= PCS_READY,
->>>  };
->>>  
->>> @@ -1547,7 +1549,7 @@ static int qcom_qmp_phy_enable(struct phy *phy)
->>>  	status = pcs + cfg->regs[QPHY_PCS_READY_STATUS];
->>>  	mask = cfg->mask_pcs_ready;
->>>  
->>> -	ret = readl_poll_timeout(status, val, !(val & mask), 1,
->>> +	ret = readl_poll_timeout(status, val, val & mask, 1,
->>>  				 PHY_INIT_COMPLETE_TIMEOUT);
->>>  	if (ret) {
->>>  		dev_err(qmp->dev, "phy initialization timed-out\n");
->>
->> Your patch made me realize that:
->> msm8998_pciephy_cfg.has_phy_com_ctrl = false
->> thus
->> msm8998_pciephy_cfg.mask_com_pcs_ready is useless, AFAICT.
-> 
-> While 8998 has a COM block, it does (among other things) not have a
-> ready bit. So afaict has_phy_com_ctrl = false is correct.
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ changes in current revision
+  * use single address range for all APE modules
+  * fix address range for agic
 
-Pfff... Working blind without the HPG sucks...
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 67 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 67 ++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
 
-> The addition of mask_pcs_ready is part of resolving the regression in
-> 5.2, so I suggest that we remove mask_com_pcs_ready separately.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 426ac0b..b4d735e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1295,4 +1295,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect@2a41000 {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA186_CLK_APE>,
++			 <&bpmp TEGRA186_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_AUD>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x02900000 0x0 0x02900000 0x1FFFFF>;
++		status = "disabled";
++
++		dma-controller@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x02930000 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA186_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: agic@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x02a41000 0x1000>,
++			      <0x02a42000 0x2000>;
++			interrupts = <GIC_SPI 145
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA186_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c77ca21..60ef2a6 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1054,4 +1054,71 @@
+ 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		interrupt-parent = <&gic>;
+ 	};
++
++	aconnect@2a41000 {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&bpmp TEGRA194_CLK_APE>,
++			 <&bpmp TEGRA194_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_AUD>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x02900000 0x0 0x02900000 0x1FFFFF>;
++		status = "disabled";
++
++		dma-controller@2930000 {
++			compatible = "nvidia,tegra186-adma";
++			reg = <0x02930000 0x50000>;
++			interrupt-parent = <&agic>;
++			interrupts =  <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
++				      <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			clocks = <&bpmp TEGRA194_CLK_AHUB>;
++			clock-names = "d_audio";
++			status = "disabled";
++		};
++
++		agic: agic@2a41000 {
++			compatible = "nvidia,tegra210-agic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x02a41000 0x1000>,
++			      <0x02a42000 0x2000>;
++			interrupts = <GIC_SPI 145
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&bpmp TEGRA194_CLK_APE>;
++			clock-names = "clk";
++			status = "disabled";
++		};
++	};
+ };
+-- 
+2.7.4
 
-I agree that it should be done separately.
-I'll send a patch on top of yours.
-
->> (I copied msm8996_pciephy_cfg for msm8998_pciephy_cfg)
->>
->> Does msm8996_pciephy_cfg really need both mask_pcs_ready AND
->> mask_com_pcs_ready?
-> 
-> 8996 has a COM block and it contains both the control bits and the
-> status bits, so that looks correct.
-
-Thanks for checking.
-
->> I'll test your patch tomorrow.
-> 
-> I appreciate that.
-
-Here are my observations for a 8998 board:
-
-1) If I apply only the readl_poll_timeout() fix (not the mask_pcs_ready fixup)
-qcom_pcie_probe() fails with a timeout in phy_init.
-=> this is in line with your regression analysis.
-
-2) Your patch also fixes a long-standing bug in UFS init whereby sending
-lots of information to the console during phy init would lead to an
-incorrectly diagnosed time-out.
-
-Good stuff!
-
-Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-
-Regards.
