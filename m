@@ -2,141 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 563BC44DB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D58844DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbfFMUla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:41:30 -0400
-Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:56317
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726177AbfFMUla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:41:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PX9Eys8Q8xmnOpn1Ekl1bpVYtyk5txyOqqCNrhyPFYU=;
- b=URF2uSJYN6xjfsDoOg3OcSWCsk/8ctWmC21ScNLKDpkwEtHJ77Vj0z41hA5Ec74JGDldBLZArLu5+S1sKmWbY1DMZNe7mhUfYpp2fx5Q/f3aOCCLDECz4wNM3EafC1Z9gcgvAOWNOJa9Jk5hWMKGL/4tbDvR5wOkPbeaKzUyz1g=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5455.eurprd05.prod.outlook.com (20.177.201.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Thu, 13 Jun 2019 20:40:46 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1%6]) with mapi id 15.20.1987.012; Thu, 13 Jun 2019
- 20:40:46 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Christoph Hellwig <hch@lst.de>,
-        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>, Linux MM <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: dev_pagemap related cleanups
-Thread-Topic: dev_pagemap related cleanups
-Thread-Index: AQHVIcx5DdVrUhs/HUiF5V2FmmsvzKaZ58OAgAAlLoA=
-Date:   Thu, 13 Jun 2019 20:40:46 +0000
-Message-ID: <20190613204043.GD22062@mellanox.com>
-References: <20190613094326.24093-1-hch@lst.de>
- <CAPcyv4jBdwYaiVwkhy6kP78OBAs+vJme1UTm47dX4Eq_5=JgSg@mail.gmail.com>
-In-Reply-To: <CAPcyv4jBdwYaiVwkhy6kP78OBAs+vJme1UTm47dX4Eq_5=JgSg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0602CA0012.eurprd06.prod.outlook.com
- (2603:10a6:203:a3::22) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: de96dcdd-fcb6-4b31-c96c-08d6f03f6962
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR05MB5455;
-x-ms-traffictypediagnostic: VI1PR05MB5455:
-x-microsoft-antispam-prvs: <VI1PR05MB5455783021F6B9AAA05E7D83CFEF0@VI1PR05MB5455.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1751;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(39860400002)(136003)(346002)(199004)(189003)(68736007)(53936002)(7116003)(14454004)(476003)(486006)(76176011)(1076003)(2616005)(256004)(14444005)(229853002)(8676002)(66476007)(66946007)(6436002)(66556008)(7416002)(6116002)(64756008)(446003)(81166006)(81156014)(11346002)(73956011)(6512007)(3846002)(8936002)(6486002)(66066001)(86362001)(2906002)(102836004)(6246003)(6916009)(478600001)(6506007)(66446008)(186003)(4326008)(52116002)(33656002)(36756003)(5660300002)(66574012)(99286004)(26005)(7736002)(71200400001)(71190400001)(316002)(25786009)(305945005)(54906003)(53546011)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5455;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VOUbwNTtQRybG06If3HGlhEeAdyRzVHyFE1PeYAnM2YST+XoV0HGXZmSRan2NLI4WzAL1uZHMOtxy2X19FOcN+ugIzEDUFaX/y9lsF432qn7eSAyrVCYonDHrej64NV4alsmCSSJokb9RspANzH4x63s7VqvMHLgzo59lUHDsWdAEVbzpL7WQ18EWRni5TbqLfFiUPRVpSCZGqmJDVxOTingKPJqTbNp+v0SquuxNy3Mex+3+W3QOi7ysRhyLQb0zSCh5J5QVp0cRn132iQGoWMQelu0ugQqizw44PX87UzQ2V2o6rwl6/4Hnvt21dLXxJjYf8VqxNV1nOX9BSxMnePDL//+83pg+owX+oZg6X73UgwJVYNPVw4bnFul+YoMR4T2/va4ViKQdFdOkUW3qT7Y3anPGP/LSkSZAo/2xrw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <865564E19763524E9F69913C820BFA34@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1730088AbfFMUkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:40:42 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57582 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726490AbfFMUkm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 16:40:42 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5DKeUoq096121;
+        Thu, 13 Jun 2019 15:40:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560458430;
+        bh=FysKhzbKOR7uj5LpXOJJioOxhLSk0M4xDu0X02P9DxY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NfHR0+7sPDQvmtmzgY2D2NVhY+63nsSu9wwwe3vSb0JbciESg2oXlXYIHzC5J4sOq
+         hU/72SzuVKOXt4UKJMETuPSWgkaCbflX/RwDgCkJBbNGDMr+DvXb+VcgX3wKg81Lz7
+         d9ClHKQal5ZgK6a8ekKyYih680QWQweMbpdt550I=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5DKeU0M091536
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Jun 2019 15:40:30 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 13
+ Jun 2019 15:40:29 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 13 Jun 2019 15:40:29 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5DKeRrZ120151;
+        Thu, 13 Jun 2019 15:40:27 -0500
+Subject: Re: [PATCH 10/16] dmaengine: ti: New driver for K3 UDMA - split#1:
+ defines, structs, io func
+To:     Rob Herring <robh@kernel.org>
+CC:     <vkoul@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
+        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
+        <t-kristo@ti.com>, <tony@atomide.com>
+References: <20190506123456.6777-1-peter.ujfalusi@ti.com>
+ <20190506123456.6777-11-peter.ujfalusi@ti.com> <20190613184324.GA26206@bogus>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <7229677c-29c5-8c1f-2218-ff51ed57b8d0@ti.com>
+Date:   Thu, 13 Jun 2019 23:40:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de96dcdd-fcb6-4b31-c96c-08d6f03f6962
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 20:40:46.4819
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5455
+In-Reply-To: <20190613184324.GA26206@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCBKdW4gMTMsIDIwMTkgYXQgMTE6Mjc6MzlBTSAtMDcwMCwgRGFuIFdpbGxpYW1zIHdy
-b3RlOg0KPiBPbiBUaHUsIEp1biAxMywgMjAxOSBhdCAyOjQzIEFNIENocmlzdG9waCBIZWxsd2ln
-IDxoY2hAbHN0LmRlPiB3cm90ZToNCj4gPg0KPiA+IEhpIERhbiwgSsOpcsO0bWUgYW5kIEphc29u
-LA0KPiA+DQo+ID4gYmVsb3cgaXMgYSBzZXJpZXMgdGhhdCBjbGVhbnMgdXAgdGhlIGRldl9wYWdl
-bWFwIGludGVyZmFjZSBzbyB0aGF0DQo+ID4gaXQgaXMgbW9yZSBlYXNpbHkgdXNhYmxlLCB3aGlj
-aCByZW1vdmVzIHRoZSBuZWVkIHRvIHdyYXAgaXQgaW4gaG1tDQo+ID4gYW5kIHRodXMgYWxsb3dp
-bmcgdG8ga2lsbCBhIGxvdCBvZiBjb2RlDQo+ID4NCj4gPiBEaWZmc3RhdDoNCj4gPg0KPiA+ICAy
-MiBmaWxlcyBjaGFuZ2VkLCAyNDUgaW5zZXJ0aW9ucygrKSwgODAyIGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gSG9vcmF5IQ0KPiANCj4gPiBHaXQgdHJlZToNCj4gPg0KPiA+ICAgICBnaXQ6Ly9naXQuaW5m
-cmFkZWFkLm9yZy91c2Vycy9oY2gvbWlzYy5naXQgaG1tLWRldm1lbS1jbGVhbnVwDQo+IA0KPiBJ
-IGp1c3QgcmVhbGl6ZWQgdGhpcyBjb2xsaWRlcyB3aXRoIHRoZSBkZXZfcGFnZW1hcCByZWxlYXNl
-IHJld29yayBpbg0KPiBBbmRyZXcncyB0cmVlIChjb21taXQgaWRzIGJlbG93IGFyZSBmcm9tIG5l
-eHQuZ2l0IGFuZCBhcmUgbm90IHN0YWJsZSkNCj4gDQo+IDQ0MjJlZTg0NzZmMCBtbS9kZXZtX21l
-bXJlbWFwX3BhZ2VzOiBmaXggZmluYWwgcGFnZSBwdXQgcmFjZQ0KPiA3NzFmMDcxNGQwZGMgUENJ
-L1AyUERNQTogdHJhY2sgcGdtYXAgcmVmZXJlbmNlcyBwZXIgcmVzb3VyY2UsIG5vdCBnbG9iYWxs
-eQ0KPiBhZjM3MDg1ZGU5MDYgbGliL2dlbmFsbG9jOiBpbnRyb2R1Y2UgY2h1bmsgb3duZXJzDQo+
-IGUwMDQ3ZmY4YWE3NyBQQ0kvUDJQRE1BOiBmaXggdGhlIGdlbl9wb29sX2FkZF92aXJ0KCkgZmFp
-bHVyZSBwYXRoDQo+IDAzMTVkNDdkNmFlOSBtbS9kZXZtX21lbXJlbWFwX3BhZ2VzOiBpbnRyb2R1
-Y2UgZGV2bV9tZW11bm1hcF9wYWdlcw0KPiAyMTY0NzVjN2VhYTggZHJpdmVycy9iYXNlL2RldnJl
-czogaW50cm9kdWNlIGRldm1fcmVsZWFzZV9hY3Rpb24oKQ0KPiANCj4gQ09ORkxJQ1QgKGNvbnRl
-bnQpOiBNZXJnZSBjb25mbGljdCBpbiB0b29scy90ZXN0aW5nL252ZGltbS90ZXN0L2lvbWFwLmMN
-Cj4gQ09ORkxJQ1QgKGNvbnRlbnQpOiBNZXJnZSBjb25mbGljdCBpbiBtbS9obW0uYw0KPiBDT05G
-TElDVCAoY29udGVudCk6IE1lcmdlIGNvbmZsaWN0IGluIGtlcm5lbC9tZW1yZW1hcC5jDQo+IENP
-TkZMSUNUIChjb250ZW50KTogTWVyZ2UgY29uZmxpY3QgaW4gaW5jbHVkZS9saW51eC9tZW1yZW1h
-cC5oDQo+IENPTkZMSUNUIChjb250ZW50KTogTWVyZ2UgY29uZmxpY3QgaW4gZHJpdmVycy9wY2kv
-cDJwZG1hLmMNCj4gQ09ORkxJQ1QgKGNvbnRlbnQpOiBNZXJnZSBjb25mbGljdCBpbiBkcml2ZXJz
-L252ZGltbS9wbWVtLmMNCj4gQ09ORkxJQ1QgKGNvbnRlbnQpOiBNZXJnZSBjb25mbGljdCBpbiBk
-cml2ZXJzL2RheC9kZXZpY2UuYw0KPiBDT05GTElDVCAoY29udGVudCk6IE1lcmdlIGNvbmZsaWN0
-IGluIGRyaXZlcnMvZGF4L2RheC1wcml2YXRlLmgNCj4gDQo+IFBlcmhhcHMgd2Ugc2hvdWxkIHB1
-bGwgdGhvc2Ugb3V0IGFuZCByZXNlbmQgdGhlbSB0aHJvdWdoIGhtbS5naXQ/DQoNCkl0IGNvdWxk
-IGJlIGRvbmUgLSBidXQgaG93IGJhZCBpcyB0aGUgY29uZmxpY3QgcmVzb2x1dGlvbj8NCg0KSSdk
-IGJlIG1vcmUgY29tZm9ydGFibGUgdG8gdGFrZSBhIFBSIGZyb20geW91IHRvIG1lcmdlIGludG8g
-aG1tLmdpdCwNCnJhdGhlciB0aGFuIHJhdyBwYXRjaGVzLCB0aGVuIGFwcGx5IENIJ3Mgc2VyaWVz
-IG9uIHRvcC4gSSB0aGluay4NCg0KVGhhdCB3YXkgaWYgc29tZXRoaW5nIGdvZXMgd3JvbmcgeW91
-IGNhbiBzZW5kIHlvdXIgUFIgdG8gTGludXMNCmRpcmVjdGx5Lg0KDQo+IEl0IGFsc28gdHVybnMg
-b3V0IHRoZSBudmRpbW0gdW5pdCB0ZXN0cyBjcmFzaCB3aXRoIHRoaXMgc2lnbmF0dXJlIG9uDQo+
-IHRoYXQgYnJhbmNoIHdoZXJlIGJhc2UgdjUuMi1yYzMgcGFzc2VzOg0KPiANCj4gICAgIEJVRzog
-a2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSwgYWRkcmVzczogMDAwMDAwMDAwMDAwMDAw
-OA0KPiAgICAgWy4uXQ0KPiAgICAgQ1BVOiAxNSBQSUQ6IDE0MTQgQ29tbTogbHQtbGlibmRjdGwg
-VGFpbnRlZDogRyAgICAgICAgICAgT0UNCj4gNS4yLjAtcmMzKyAjMzM5OQ0KPiAgICAgSGFyZHdh
-cmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMC4w
-LjAgMDIvMDYvMjAxNQ0KPiAgICAgUklQOiAwMDEwOnBlcmNwdV9yZWZfa2lsbF9hbmRfY29uZmly
-bSsweDFlLzB4MTgwDQo+ICAgICBbLi5dDQo+ICAgICBDYWxsIFRyYWNlOg0KPiAgICAgIHJlbGVh
-c2Vfbm9kZXMrMHgyMzQvMHgyODANCj4gICAgICBkZXZpY2VfcmVsZWFzZV9kcml2ZXJfaW50ZXJu
-YWwrMHhlOC8weDFiMA0KPiAgICAgIGJ1c19yZW1vdmVfZGV2aWNlKzB4ZjIvMHgxNjANCj4gICAg
-ICBkZXZpY2VfZGVsKzB4MTY2LzB4MzcwDQo+ICAgICAgdW5yZWdpc3Rlcl9kZXZfZGF4KzB4MjMv
-MHg1MA0KPiAgICAgIHJlbGVhc2Vfbm9kZXMrMHgyMzQvMHgyODANCj4gICAgICBkZXZpY2VfcmVs
-ZWFzZV9kcml2ZXJfaW50ZXJuYWwrMHhlOC8weDFiMA0KPiAgICAgIHVuYmluZF9zdG9yZSsweDk0
-LzB4MTIwDQo+ICAgICAga2VybmZzX2ZvcF93cml0ZSsweGYwLzB4MWEwDQo+ICAgICAgdmZzX3dy
-aXRlKzB4YjcvMHgxYjANCj4gICAgICBrc3lzX3dyaXRlKzB4NWMvMHhkMA0KPiAgICAgIGRvX3N5
-c2NhbGxfNjQrMHg2MC8weDI0MA0KDQpUb28gYmFkIHRoZSB0cmFjZSBkaWRuJ3Qgc2F5IHdoaWNo
-IGRldm0gY2xlYW51cCB0cmlnZ2VyZWQgaXQuLiBEaWQNCmRldl9wYWdlbWFwX3BlcmNwdV9leGl0
-IGdldCBjYWxsZWQgd2l0aCBhIE5VTEwgcGdtYXAtPnJlZiA/DQoNCkphc29uDQo=
+Rob,
+
+On 13/06/2019 21.43, Rob Herring wrote:
+> On Mon, May 06, 2019 at 03:34:50PM +0300, Peter Ujfalusi wrote:
+>> Split patch for review containing: defines, structs, io and low level
+>> functions and interrupt callbacks.
+> 
+> Not a useful comment for upstream.
+
+Vinod asked me to split the patch to smaller pieces for review. This is
+just a short note on what this part covers. The real commit message
+follows under.
+
+>> DMA driver for
+>> Texas Instruments K3 NAVSS Unified DMA – Peripheral Root Complex (UDMA-P)
+>>
+>> The UDMA-P is intended to perform similar (but significantly upgraded) functions
+>> as the packet-oriented DMA used on previous SoC devices. The UDMA-P module
+>> supports the transmission and reception of various packet types. The UDMA-P is
+>> architected to facilitate the segmentation and reassembly of SoC DMA data
+>> structure compliant packets to/from smaller data blocks that are natively
+>> compatible with the specific requirements of each connected peripheral. Multiple
+>> Tx and Rx channels are provided within the DMA which allow multiple segmentation
+>> or reassembly operations to be ongoing. The DMA controller maintains state
+>> information for each of the channels which allows packet segmentation and
+>> reassembly operations to be time division multiplexed between channels in order
+>> to share the underlying DMA hardware. An external DMA scheduler is used to
+>> control the ordering and rate at which this multiplexing occurs for Transmit
+>> operations. The ordering and rate of Receive operations is indirectly controlled
+>> by the order in which blocks are pushed into the DMA on the Rx PSI-L interface.
+>>
+>> The UDMA-P also supports acting as both a UTC and UDMA-C for its internal
+>> channels. Channels in the UDMA-P can be configured to be either Packet-Based or
+>> Third-Party channels on a channel by channel basis.
+>>
+>> The initial driver supports:
+>> - MEM_TO_MEM (TR mode)
+>> - DEV_TO_MEM (Packet / TR mode)
+>> - MEM_TO_DEV (Packet / TR mode)
+>> - Cyclic (Packet / TR mode)
+>> - Metadata for descriptors
+>>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> ---
+>>  drivers/dma/ti/k3-udma.c          | 1008 +++++++++++++++++++++++++++++
+>>  drivers/dma/ti/k3-udma.h          |  129 ++++
+>>  include/dt-bindings/dma/k3-udma.h |   26 +
+> 
+> This belongs in the binding patch.
+
+OK, I'll move it.
+
+> 
+>>  3 files changed, 1163 insertions(+)
+>>  create mode 100644 drivers/dma/ti/k3-udma.c
+>>  create mode 100644 drivers/dma/ti/k3-udma.h
+>>  create mode 100644 include/dt-bindings/dma/k3-udma.h
+> 
+>> diff --git a/include/dt-bindings/dma/k3-udma.h b/include/dt-bindings/dma/k3-udma.h
+>> new file mode 100644
+>> index 000000000000..89ba6a9d4a8f
+>> --- /dev/null
+>> +++ b/include/dt-bindings/dma/k3-udma.h
+>> @@ -0,0 +1,26 @@
+>> +#ifndef __DT_TI_UDMA_H
+>> +#define __DT_TI_UDMA_H
+>> +
+>> +#define UDMA_TR_MODE		0
+>> +#define UDMA_PKT_MODE		1
+>> +
+>> +#define UDMA_DIR_TX		0
+>> +#define UDMA_DIR_RX		1
+>> +
+>> +#define PSIL_STATIC_TR_NONE	0
+>> +#define PSIL_STATIC_TR_XY	1
+>> +#define PSIL_STATIC_TR_MCAN	2
+>> +
+>> +#define UDMA_PDMA_TR_XY(id)				\
+>> +	ti,psil-config##id {				\
+>> +		linux,udma-mode = <UDMA_TR_MODE>;	\
+>> +		statictr-type = <PSIL_STATIC_TR_XY>;	\
+>> +	}
+> 
+> We don't accept this kind of complex macros in dts files. It obfuscates 
+> reading dts files.
+
+I see. I agree that it obfuscates things as you need to look it up in
+the header, but as I mentioned regarding to patch 9 we have PDMAs with
+22 threads needing 22 psil-config section for the threads. It makes the
+reading of the DT a bit hard and also error prone when you populate things.
+
+But I can drop the macro and write all psil-config0...22
+
+Hrm, so we have 23 threads in some PDMA...
+
+Thanks,
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
