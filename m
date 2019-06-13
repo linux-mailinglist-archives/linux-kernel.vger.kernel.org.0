@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5102E44511
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 674BB4450F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731247AbfFMQl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:41:29 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18142 "EHLO huawei.com"
+        id S1730543AbfFMQl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:41:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18562 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730544AbfFMGwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:52:51 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 752E458E9C515F587F46;
-        Thu, 13 Jun 2019 14:52:45 +0800 (CST)
+        id S1730546AbfFMGxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 02:53:16 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 518A76E69A3BD068B9B5;
+        Thu, 13 Jun 2019 14:53:14 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
- 2019 14:52:44 +0800
-Subject: Re: [PATCH] f2fs: fix is_idle() check for discard type
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1559813893-23452-1-git-send-email-stummala@codeaurora.org>
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 13 Jun
+ 2019 14:53:10 +0800
+Subject: Re: [PATCH] f2fs: replace ktype default_attrs with default_groups
+To:     Kimberly Brown <kimbrownkd@gmail.com>, <jaegeuk@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20190607174041.11201-1-kimbrownkd@gmail.com>
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <d3b4b733-78ab-29bb-9441-c6e4e7efaea9@huawei.com>
-Date:   Thu, 13 Jun 2019 14:52:43 +0800
+Message-ID: <907b6488-e214-1543-28db-20f9f9d01557@huawei.com>
+Date:   Thu, 13 Jun 2019 14:53:09 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1559813893-23452-1-git-send-email-stummala@codeaurora.org>
+In-Reply-To: <20190607174041.11201-1-kimbrownkd@gmail.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -40,42 +40,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/6/6 17:38, Sahitya Tummala wrote:
-> The discard thread should issue upto dpolicy->max_requests at once
-> and wait for all those discard requests at once it reaches
-> dpolicy->max_requests. It should then sleep for dpolicy->min_interval
-> timeout before issuing the next batch of discard requests. But in the
-> current code of is_idle(), it checks for dcc_info->queued_discard and
-> aborts issuing the discard batch of max_requests. This
-> dcc_info->queued_discard will be true always once one discard command
-> is issued.
+On 2019/6/8 1:40, Kimberly Brown wrote:
+> The kobj_type default_attrs field is being replaced by the
+> default_groups field. Replace the default_attrs fields in f2fs_sb_ktype
+> and f2fs_feat_ktype with default_groups. Use the ATTRIBUTE_GROUPS macro
+> to create f2fs_groups and f2fs_feat_groups.
 > 
-> It is thus resulting into this type of discard request pattern -
-> 
-> - Issue discard request#1
-> - is_idle() returns false, discard thread waits for request#1 and then
->   sleeps for min_interval 50ms.
-> - Issue discard request#2
-> - is_idle() returns false, discard thread waits for request#2 and then
->   sleeps for min_interval 50ms.
-> - and so on for all other discard requests, assuming f2fs is idle w.r.t
->   other conditions.
-> 
-> With this fix, the pattern will look like this -
-> 
-> - Issue discard request#1
-> - Issue discard request#2
->   and so on upto max_requests of 8
-> - Issue discard request#8
-> - wait for min_interval 50ms.
-> 
-
-Fixes: fef4129ec2e6 ("f2fs: fix to be aware discard/preflush/dio command in
-is_idle()")
-
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-
-Ah, thanks for fixing this bug.
+> Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
