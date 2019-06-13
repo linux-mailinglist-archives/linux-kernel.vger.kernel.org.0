@@ -2,150 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBA443932
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5136D43937
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388147AbfFMPMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:12:14 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35629 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732330AbfFMPMM (ORCPT
+        id S2388214AbfFMPMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:12:25 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46306 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388158AbfFMPMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:12:12 -0400
-Received: by mail-pl1-f194.google.com with SMTP id p1so8292504plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:12:12 -0700 (PDT)
+        Thu, 13 Jun 2019 11:12:21 -0400
+Received: by mail-qk1-f194.google.com with SMTP id x18so975562qkn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=whmO4VHJLH3yhLw88WoBAtjYDYrD7FKUhcW2qIhfTgQ=;
-        b=tlOOQm+9yvPlQK5EZ1zeDGAddCr36NZ94jYyPKZ2ztLXivCoKRdHBC4dlDcTC1Kgyu
-         7wUgtEAItK8J1ttV38DaXqd1byZFOAlM3SOVfIhRI87d8nVKSamRrYK/633Yoc3gOwYv
-         6K1MvQl0ZwpenunM3yUjBHCbWwLtr/cArA3DdXKVRtquu4ggCw3uFe6dDA0Ox1IQ0fq6
-         8KIvoLHQL0h3iVJrtkjs+HTv3CsLOkbQysUKhYw9b7qq9+FlZ9jS4l3cEfRL+4QfkA+U
-         CdUw8GAVk/5jcOTaxtyXMQjnGWNPM/D0H8KoEd52ir+7EhvqwI7XmxhwXYfypKtPBCB2
-         +RYA==
+        bh=R4sEx9DRCkbOcqkLsi6Jkv1GflPMZb75UMnrOJnbtJI=;
+        b=JRz6imxOTGsNuMS76M162KvumiMVyYkKXhz/IAFwKjp3Igi0hICl/m4BUGOuw61YG6
+         Pf3He7hg9Kt6x6X1WZuq8bUrqc1a1W2UmAo8VaUwVPA2GdvPEx7a5YMbLY0nfJoFWaQM
+         YEbV9dRjW/drtmRraCujxYyThEP6QtwiSJs3iYcbutlXVk7Z5dASy1/Oy0G/oorjue0j
+         RzaH6Drn7BTg39I+BUiwTL6fije0cyR1reQqzW1AIca5v1agyVprI5RgkLHLmKlYW9Fi
+         0n1zTcJtV1luwZoUboeqFK2xDSzt81BhwHG/KONzmn78w16+WuqvsJOUxxwdcX8amTie
+         g0WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=whmO4VHJLH3yhLw88WoBAtjYDYrD7FKUhcW2qIhfTgQ=;
-        b=lK5bFHWcQwobDeIWYk1lnKJzC1+GuScxEPLqA73VOhX3WU10Jf+OIXOe33g2hc4atr
-         UrPkdJVghKBc6IViEQVkHI1WvRuTrGDhYl2U3H7SYGdmah0rajieSgAu/V4nQqUwoxur
-         ElJGvXPvIQi4HRUXQQgKf4mLyhq2uH1h61VwRSzPyBDTD6f4bdL6sJNFGUZGs9e2hhwI
-         ifZ6oBA2vvIaD9lCAAkOZIDHItaHCh94kI179cU24DDQS99+7p7NQqQCan0MgCGUzVMU
-         //ARMzLuJ5d8x7CGM2QPEP5aVXruxLEsQNpvx2A3uRusi4KTTJn7tfFARCqC3NjGasTP
-         nZSw==
-X-Gm-Message-State: APjAAAUKuqObNG9ugRpNv5XHpUjZBTywf9GdMIo6ABJ6RyXaFtPrWS5O
-        Zu7D86nqMXENjf8x5CGfNMXZE0WI4xI=
-X-Google-Smtp-Source: APXvYqzoiQTYF5wmclAxV+dqIhBAbzCFcTV5+wZZW09rVWJlA/V7DDkAGzQio4XBdDOyOMf2OvBGdA==
-X-Received: by 2002:a17:902:868b:: with SMTP id g11mr85657934plo.183.1560438732172;
-        Thu, 13 Jun 2019 08:12:12 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m24sm117215pgh.75.2019.06.13.08.12.11
+        bh=R4sEx9DRCkbOcqkLsi6Jkv1GflPMZb75UMnrOJnbtJI=;
+        b=XXXXCzVEkrtDz1iFPu7QFUDTWwNMRFsQSS6N8nIaY7R0UsFo1yZV5yio17/MLaUy8C
+         QdfXewudFIDpJxEVISbeoGy0xvNuO+1sQvh9ugCiehq9dq492wE/ShHxIsVwIoA+aJ24
+         2THISNkbmm3Qi7DVq3TfPHKh8KUwOjOC5pIRwN2qOf5NnoTecYyfCSG72R40kKWzGt4Z
+         hdS55m6RAMSiIKzPcZ3wvHK62HK6/weQzX+pKEg263CjzYFLD+VnnjJ9xniWoXcNswNW
+         942pzCLO4ptfZdUq1CwzLXYUS1swwZUSO9WPe9IPbUylEqCD+jOAVIlGQx4suTqIhRG3
+         z4Rw==
+X-Gm-Message-State: APjAAAWxD4ON0KYKdAumiO5sEqyU2GZnb59rwxUwWfuuL+FTthuUOpPA
+        5SSsKeei2heCXM/oWYRmVK0mLR90EuHSXg==
+X-Google-Smtp-Source: APXvYqzM9yCChTgMP3KlIhiG1BK19OOrfQlMOx6JZlNrolhLErYOjGfGuCWD8w4PBuxWllsDgHA6QA==
+X-Received: by 2002:a37:e506:: with SMTP id e6mr3810214qkg.229.1560438740039;
+        Thu, 13 Jun 2019 08:12:20 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id n10sm1577550qke.72.2019.06.13.08.12.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 08:12:11 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 08:12:09 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] drivers: regulator: qcom_spmi: Refactor
- get_mode/set_mode
-Message-ID: <20190613151209.GB6792@builder>
-References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
- <20190613142239.8779-1-jeffrey.l.hugo@gmail.com>
+        Thu, 13 Jun 2019 08:12:19 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hbROk-0001qR-Po; Thu, 13 Jun 2019 12:12:18 -0300
+Date:   Thu, 13 Jun 2019 12:12:18 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613151218.GB22901@ziepe.ca>
+References: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz>
+ <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+ <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca>
+ <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca>
+ <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613142239.8779-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13 Jun 07:22 PDT 2019, Jeffrey Hugo wrote:
-
-> spmi_regulator_common_get_mode and spmi_regulator_common_set_mode use
-> multi-level ifs which mirror a switch statement.  Refactor to use a switch
-> statement to make the code flow more clear.
+On Wed, Jun 12, 2019 at 03:54:19PM -0700, Dan Williams wrote:
+> > > My preference would be to avoid this scenario, but if it is really
+> > > necessary, we could probably build it with some work.
+> > >
+> > > The only case we use it today is forced HW hot unplug, so it is rarely
+> > > used and only for an 'emergency' like use case.
+> >
+> > I'd really like to avoid this as well.  I think it will be very confusing for
+> > RDMA apps to have their context suddenly be invalid.  I think if we have a way
+> > for admins to ID who is pinning a file the admin can take more appropriate
+> > action on those processes.   Up to and including killing the process.
 > 
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  drivers/regulator/qcom_spmi-regulator.c | 28 ++++++++++++++++---------
->  1 file changed, 18 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-> index fd55438c25d6..1c18fe5969b5 100644
-> --- a/drivers/regulator/qcom_spmi-regulator.c
-> +++ b/drivers/regulator/qcom_spmi-regulator.c
-> @@ -911,13 +911,14 @@ static unsigned int spmi_regulator_common_get_mode(struct regulator_dev *rdev)
->  
->  	spmi_vreg_read(vreg, SPMI_COMMON_REG_MODE, &reg, 1);
->  
-> -	if (reg & SPMI_COMMON_MODE_HPM_MASK)
-> +	switch (reg) {
-> +	case SPMI_COMMON_MODE_HPM_MASK:
->  		return REGULATOR_MODE_NORMAL;
-> -
-> -	if (reg & SPMI_COMMON_MODE_AUTO_MASK)
-> +	case SPMI_COMMON_MODE_AUTO_MASK:
->  		return REGULATOR_MODE_FAST;
-> -
-> -	return REGULATOR_MODE_IDLE;
-> +	default:
-> +		return REGULATOR_MODE_IDLE;
-> +	}
->  }
->  
->  static int
-> @@ -925,12 +926,19 @@ spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
->  {
->  	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
->  	u8 mask = SPMI_COMMON_MODE_HPM_MASK | SPMI_COMMON_MODE_AUTO_MASK;
-> -	u8 val = 0;
-> +	u8 val;
->  
-> -	if (mode == REGULATOR_MODE_NORMAL)
-> +	switch (mode) {
-> +	case REGULATOR_MODE_NORMAL:
->  		val = SPMI_COMMON_MODE_HPM_MASK;
-> -	else if (mode == REGULATOR_MODE_FAST)
-> +		break;
-> +	case REGULATOR_MODE_FAST:
->  		val = SPMI_COMMON_MODE_AUTO_MASK;
-> +		break;
-> +	default:
-> +		val = 0;
-> +		break;
-> +	}
+> Can RDMA context invalidation, "device disassociate", be inflicted on
+> a process from the outside? 
 
-For this part:
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->  
->  	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
->  }
-> @@ -1834,9 +1842,9 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
->  			}
->  		}
->  
-> -		if (vreg->logical_type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430) {
+Yes, but it is currently only applied to the entire device - ie you do
+'rmmod mlx5_ib' and all the running user space process see that their
+FD has moved to some error and the device is broken.
 
-Squash this into patch 1.
+Targetting the disassociate of only a single FD would be a new thing.
 
-Regards,
-Bjorn
-
-> +		if (vreg->set_points->count == 1) {
->  			/* since there is only one range */
-> -			range = spmi_regulator_find_range(vreg);
-> +			range = vreg->set_points->range;
->  			vreg->desc.uV_step = range->step_uV;
->  		}
->  
-> -- 
-> 2.17.1
-> 
+Jason
