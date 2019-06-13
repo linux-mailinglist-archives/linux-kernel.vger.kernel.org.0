@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C27B4442E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E587243FEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392346AbfFMQ0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:26:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53700 "EHLO mail.kernel.org"
+        id S1732004AbfFMQB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:01:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730956AbfFMIgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:36:08 -0400
+        id S1731440AbfFMIsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:48:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EDC721473;
-        Thu, 13 Jun 2019 08:36:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8F06206BA;
+        Thu, 13 Jun 2019 08:48:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560414967;
-        bh=ilvYRAJYmWHo2bclhcV1IruziHE7tfIfJ0nMbVRPb0E=;
+        s=default; t=1560415713;
+        bh=7IybN8Nha+uXU8W7xnlveY2BYrbSDvSR5HmEzqawZPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WEb/GiPrPJ6J72n8+oiL6k34WabbkqbwpUEv1ovjtNrX4TUbb1KLCIJ6z+YNnMcLq
-         KLNjOFEaOibr94OLmHooKCf00xDnBZKUUGR8JfHFlCsK1OYwdGOEgz+WW/tv7zvKWQ
-         kOtpuyBM4w8k5EQAMpqoeetlBcgxx1oiVPobot+o=
+        b=1qD690R6YTM7Zy9J+qzIomdhSaw/Wg5ZBNjMJ7W1f6zdj3mryT9d+I0BpKh3AORs7
+         A4hJinAnR75ZuF27Woujbso7kScSnD01SRcDV4qaYsjpdKe6kNqZhTnoptdng/8xx9
+         7W9l/mQTMdKKZqP9jVPGAi/bgXhg5XeCw+/4h3qc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiada Wang <jiada_wang@mentor.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Jakub Jankowski <shasta@toxcorp.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 14/81] thermal: rcar_gen3_thermal: disable interrupt in .remove
+Subject: [PATCH 5.1 065/155] netfilter: nf_conntrack_h323: restore boundary check correctness
 Date:   Thu, 13 Jun 2019 10:32:57 +0200
-Message-Id: <20190613075650.123146008@linuxfoundation.org>
+Message-Id: <20190613075656.656317226@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 63f55fcea50c25ae5ad45af92d08dae3b84534c2 ]
+[ Upstream commit f5e85ce8e733c2547827f6268136b70b802eabdb ]
 
-Currently IRQ remains enabled after .remove, later if device is probed,
-IRQ is requested before .thermal_init, this may cause IRQ function be
-called before device is initialized.
+Since commit bc7d811ace4a ("netfilter: nf_ct_h323: Convert
+CHECK_BOUND macro to function"), NAT traversal for H.323
+doesn't work, failing to parse H323-UserInformation.
+nf_h323_error_boundary() compares contents of the bitstring,
+not the addresses, preventing valid H.323 packets from being
+conntrack'd.
 
-this patch disables interrupt in .remove, to ensure irq function
-only be called after device is fully initialized.
+This looks like an oversight from when CHECK_BOUND macro was
+converted to a function.
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+To fix it, stop dereferencing bs->cur and bs->end.
+
+Fixes: bc7d811ace4a ("netfilter: nf_ct_h323: Convert CHECK_BOUND macro to function")
+Signed-off-by: Jakub Jankowski <shasta@toxcorp.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/netfilter/nf_conntrack_h323_asn1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 203aca44a2bb..0afdda2db3a0 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -342,6 +342,9 @@ MODULE_DEVICE_TABLE(of, rcar_gen3_thermal_dt_ids);
- static int rcar_gen3_thermal_remove(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
-+
-+	rcar_thermal_irq_set(priv, false);
+diff --git a/net/netfilter/nf_conntrack_h323_asn1.c b/net/netfilter/nf_conntrack_h323_asn1.c
+index 1601275efe2d..4c2ef42e189c 100644
+--- a/net/netfilter/nf_conntrack_h323_asn1.c
++++ b/net/netfilter/nf_conntrack_h323_asn1.c
+@@ -172,7 +172,7 @@ static int nf_h323_error_boundary(struct bitstr *bs, size_t bytes, size_t bits)
+ 	if (bits % BITS_PER_BYTE > 0)
+ 		bytes++;
  
- 	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
+-	if (*bs->cur + bytes > *bs->end)
++	if (bs->cur + bytes > bs->end)
+ 		return 1;
+ 
+ 	return 0;
 -- 
 2.20.1
 
