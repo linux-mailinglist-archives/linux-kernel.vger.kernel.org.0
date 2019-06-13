@@ -2,167 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1ED44DFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182BD44E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbfFMVAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:00:39 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42589 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730173AbfFMVAj (ORCPT
+        id S1728543AbfFMVC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:02:26 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39078 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfFMVCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:00:39 -0400
-Received: by mail-ua1-f68.google.com with SMTP id a97so84626uaa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 14:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ANvjNrcE6QQq73dnlL+mZyHS0xmMxjzetcJMdK2W1jQ=;
-        b=CXaGzb143DooLWuwJbQV6crBWgqXBWrbK4+440tGPl1wKAyG8snXREUHW1cU4JZmsm
-         FByj4Hbh/N7MYr7J1mbnB5t09OsVMCB1N4NOkq7QEs9SD5IFkvvlk2kM4aqXonR4pgZ7
-         0hbbny8wK43pD9gCj8eWhwnzsqv2xTicEtM7Y=
+        Thu, 13 Jun 2019 17:02:25 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i34so59056qta.6;
+        Thu, 13 Jun 2019 14:02:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ANvjNrcE6QQq73dnlL+mZyHS0xmMxjzetcJMdK2W1jQ=;
-        b=Ld+Luvcz48V1iRV2FmOy9lug7Sak5yVU8uWVCuRu24dST1WM09wKxh1maceIB5FnPv
-         iLYE+34GVC5Y5feyGc78lxm1bluh2LzZfe7oGIWXQy0ZRIb8uUOSnS/SzwmI+Ng212pQ
-         VpOI6yLYvWLHnIgKb3aaCkkNCVZ2+wfZitSOtmCbD6LK5b5LLCZDcp3C62sgTyClhtnI
-         5fAlGphZ6uB589wsY1j0AxGXe5xs00pw8JGjY6OWJIQE94DJe/bIKRmU8fzgZtkqn6PO
-         +53SgYLhgN3z8sprEV/XjPIt4Ya79exSwsvWynQEzTPEykvPo3yJ1jg7Q9Muq0GJoE8M
-         eVFQ==
-X-Gm-Message-State: APjAAAWfXlaqOZ1tDVRVVtJuboQFDh/rzNNBWN+RFoD1g6cP5y/+CxeT
-        PRikXWLKq2bZl5r4cKa03nLoWKbHjby0engfjhNcpeJc2V0=
-X-Google-Smtp-Source: APXvYqzlG0QFlUSsjLJYtq2bSsXOqJPxL2qmav8y+XGpEorpyChcZ6aWL5jxAoS7c6ipQTO+UOtbuYWiPAgZ4BuXj/Q=
-X-Received: by 2002:ab0:3d2:: with SMTP id 76mr17494821uau.12.1560459637540;
- Thu, 13 Jun 2019 14:00:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=S4D3K00XMnwOrgjwZ4txSn7Ot39nTRqP9zyoKgXBDU8=;
+        b=sr2GHgj2JaKIofB2P5//4hs9oLdSOV0JCUgQrcVopn8XmZJewxZbZc4f77RPNIeThF
+         qWZ9i6wVw5tl+CoAYZDuK83XiZbSnAXL/aAMfs4Q8PvOtUYa+ZPm81eFU/vc/DrJif3V
+         o0uKbDVG1DOOyzPeLpTFvb1Ro2Qu7ist1z/7y6v9mNVF7esqgre2nDgD94/6QZWMaIpm
+         e4QNnO5VPLJyyWlF/I7qvd3ROYL6q7IQa1Vtq/EMbjFeE7kCq9iAjHZN6NY9EQ8dcL9d
+         +DeglQiEZOd2a/l92BHJoHYWdicaSVOGQnG2NAXxll0a2vSvHRximKOFTC+5PWybi2S4
+         fEdQ==
+X-Gm-Message-State: APjAAAV7qkJQpwkYgtrNQLtL7shiCHJjbK/BxZCNETZb7MajJ8hcJvtU
+        UjssgTomVUihD4IJSinCf2pLONY=
+X-Google-Smtp-Source: APXvYqw3jpkOGC7fTi2PVz55HQGHU7E+aqDfj1jMVMm3+mwsQghkEuDi28fcljJXyO7U9oxR7j/0YA==
+X-Received: by 2002:ac8:431e:: with SMTP id z30mr77044173qtm.291.1560459744579;
+        Thu, 13 Jun 2019 14:02:24 -0700 (PDT)
+Received: from localhost ([64.188.179.243])
+        by smtp.gmail.com with ESMTPSA id 102sm313401qte.52.2019.06.13.14.02.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 14:02:23 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 15:02:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Han Nandor <nandor.han@vaisala.com>
+Cc:     "sre@kernel.org" <sre@kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Han Nandor <nandor.han@vaisala.com>
+Subject: Re: [PATCH v4 2/2] dt-bindings: power: reset: add document for NVMEM
+  based reboot-mode
+Message-ID: <20190613210221.GA13947@bogus>
+References: <20190515104658.25535-1-nandor.han@vaisala.com>
+ <20190515104658.25535-3-nandor.han@vaisala.com>
 MIME-Version: 1.0
-References: <20190611040350.90064-1-dbasehore@chromium.org>
- <20190611040350.90064-3-dbasehore@chromium.org> <CAL_JsqLM1CikZ8+NPjLk2CEW-z9vPynZpVG20x0jsa7hVq0LvA@mail.gmail.com>
- <CAGAzgsoWGqf0JQPNyRFnv2xZTMxje6idce7Dy5FZzuxj30mQyw@mail.gmail.com> <CAL_Jsq+9K764hFT6GG=4paumGaxOUbnts4VJvTZ9a8Y-YPWdhg@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+9K764hFT6GG=4paumGaxOUbnts4VJvTZ9a8Y-YPWdhg@mail.gmail.com>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Thu, 13 Jun 2019 14:00:26 -0700
-Message-ID: <CAGAzgsrNhumP2DEOff34cZ3UY=CV-EG1RM06Uf_tX3gdUMeSQg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] dt-bindings: display/panel: Expand rotation documentation
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190515104658.25535-3-nandor.han@vaisala.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 5:52 AM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Tue, Jun 11, 2019 at 4:02 PM dbasehore . <dbasehore@chromium.org> wrote:
-> >
-> > On Tue, Jun 11, 2019 at 8:25 AM Rob Herring <robh+dt@kernel.org> wrote:
-> > >
-> > > On Mon, Jun 10, 2019 at 10:03 PM Derek Basehore <dbasehore@chromium.org> wrote:
-> > > >
-> > > > This adds to the rotation documentation to explain how drivers should
-> > > > use the property and gives an example of the property in a devicetree
-> > > > node.
-> > > >
-> > > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > > > ---
-> > > >  .../bindings/display/panel/panel.txt          | 32 +++++++++++++++++++
-> > > >  1 file changed, 32 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/display/panel/panel.txt b/Documentation/devicetree/bindings/display/panel/panel.txt
-> > > > index e2e6867852b8..f35d62d933fc 100644
-> > > > --- a/Documentation/devicetree/bindings/display/panel/panel.txt
-> > > > +++ b/Documentation/devicetree/bindings/display/panel/panel.txt
-> > > > @@ -2,3 +2,35 @@ Common display properties
-> > > >  -------------------------
-> > > >
-> > > >  - rotation:    Display rotation in degrees counter clockwise (0,90,180,270)
-> > > > +
-> > > > +Property read from the device tree using of of_drm_get_panel_orientation
-> > >
-> > > Don't put kernel specifics into bindings.
-> >
-> > Will remove that. I'll clean up the documentation to indicate that
-> > this binding creates a panel orientation property unless the rotation
-> > is handled in the Timing Controller on the panel if that sounds fine.
->
-> Even if the timing ctrlr handles it, don't you still need to know what
-> the native orientation is?
+On Wed, 15 May 2019 10:47:15 +0000, Han Nandor wrote:
+> Add the device tree bindings document for the NVMEM based reboot-mode
+> driver.
+> 
+> Signed-off-by: Nandor Han <nandor.han@vaisala.com>
+> ---
+>  .../power/reset/nvmem-reboot-mode.txt         | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.txt
+> 
 
-Not really. For all intents and purposes, the orientation of the panel
-has changed.
-
->
-> > > > +
-> > > > +The panel driver may apply the rotation at the TCON level, which will
-> > >
-> > > What's TCON? Something Mediatek specific IIRC.
-> >
-> > The TCON is the Timing controller, which is on the panel. Every panel
-> > has one. I'll add to the doc that the TCON is in the panel, etc.
-> >
-> > >
-> > > > +make the panel look like it isn't rotated to the kernel and any other
-> > > > +software.
-> > > > +
-> > > > +If not, a panel orientation property should be added through the SoC
-> > > > +vendor DRM code using the drm_connector_init_panel_orientation_property
-> > > > +function.
-> > >
-> > > The 'rotation' property should be defined purely based on how the
-> > > panel is mounted relative to a device's orientation. If the display
-> > > pipeline has some ability to handle rotation, that's a feature of the
-> > > display pipeline and not the panel.
-> >
-> > This is how the panel orientation property is already handled in the
-> > kernel. See drivers/gpu/drm/i915/vlv_dsi.c for more details.
->
-> The point is your description is all about the kernel. This is a
-> binding which is not kernel specific.
-
-Ah, I see. I thought you were saying what the implementation should be.
-
->
-> > > > +
-> > > > +Example:
-> > >
-> > > This file is a collection of common properties. It shouldn't have an
-> > > example especially as this example is mostly non-common properties.
-> >
-> > Just copied one of our DTS entries that uses the property. I'll remove
-> > everything under compatible except for rotation and status.
->
-> Just remove the example or add what you want to the "boe,himax8279d8p"
-> binding doc. We are moving towards examples being compiled and
-> validated, so incomplete ones won't work.
-
-Ok, will do.
-
->
-> Rob
-
-Thanks for the quick reviews.
+Reviewed-by: Rob Herring <robh@kernel.org>
