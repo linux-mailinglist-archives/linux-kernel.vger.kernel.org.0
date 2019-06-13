@@ -2,172 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE82B44A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E8D44A41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:05:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbfFMS0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 14:26:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727314AbfFMS0j (ORCPT
+        id S1727280AbfFMSFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 14:05:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38361 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfFMSFp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:26:39 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DIHFP6118168;
-        Thu, 13 Jun 2019 14:26:16 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t3ufr0pha-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jun 2019 14:26:16 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5DI9IQD019216;
-        Thu, 13 Jun 2019 18:10:09 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma01dal.us.ibm.com with ESMTP id 2t1x6t00yc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jun 2019 18:10:09 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5DIQEjo7733510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 18:26:14 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E0CF112065;
-        Thu, 13 Jun 2019 18:26:14 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4164B112061;
-        Thu, 13 Jun 2019 18:26:13 +0000 (GMT)
-Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.170])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Jun 2019 18:26:13 +0000 (GMT)
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] Replaces long number representation by BIT() macro
-Date:   Thu, 13 Jun 2019 15:02:27 -0300
-Message-Id: <20190613180227.29558-1-leonardo@linux.ibm.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 13 Jun 2019 14:05:45 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v11so11387411pgl.5;
+        Thu, 13 Jun 2019 11:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6EdW1zQmAAxK0Wa2ppkGhsrx4V+WLwXRsMm+jl3+ewo=;
+        b=CY4EEIKXVyaEX9Q2YU2gGkUHWd0Pp+IvLWSb6NtU47cM2RbPyozw/YKui7GvEIcwXu
+         HKkMgmbcBo1EaMxgNpnwOvJZ6rOOjaKXtTQDMI18ftK6UlsiXnX69m3EuC4g+DFjMEP8
+         /Y5jh4IvbkOXkTlRmwSGNP92wjUu191GVcrBMWSmso443/L3e96pZUErlVAOEZLit1tu
+         71LtfO2NSARBP+p6M9M6EryIuIBu3VhwHn7lqcexvjPCcNB7rzothPlLhXbadTR04wqT
+         z7t9JiGqQKfncKIS0AxAEC+07IoUXybdLqMag/zqJROoNbpYwOTXOWl6Hy8i2X1DyHWS
+         VWcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6EdW1zQmAAxK0Wa2ppkGhsrx4V+WLwXRsMm+jl3+ewo=;
+        b=B329nxDxhP8B7FCzNqdtX7Jedvy47klGNjcJI+FLEqUs2xT9T5+M3qD8mebSUR0OJP
+         xaT/CD4tqj7SMl3ChawQp0RGOh+LSBpkqZpedlrbgSl5xwQn2zVhs4w7YFWALDRZDkrb
+         nSHaIgOEVtES1i9GLWS5yR8vbIgV6/TfhQEwi8Af4Gf3Sz5uN7fjg0f9DxGGsQU90G6v
+         02iGAC9PxHFGg9s6i9BQUZ9VaKTrYf5zFC6sh7smxrnoiQKz+K/BJiiRjbAi5K/At5eS
+         mT1uP63aKFNVUEqULfLGgLT4CKwqXbsBWIIXs0sUDXXpvCwcOuRSawkJwmBulhS7PIam
+         ssQw==
+X-Gm-Message-State: APjAAAX3bPM22rkAsv20az3oxmpOUW75etHs8vh5jQzWnJPD6cHFHEBG
+        zE0fE33+qSgFpB2rdU8aZ3w=
+X-Google-Smtp-Source: APXvYqw1YQzFVkNF9Msoqos5HCsJR3CRbWRv0JJz9cZgpC8b19GXB02dTSyHEal1BUYRQWmrQUAang==
+X-Received: by 2002:a17:90a:2648:: with SMTP id l66mr6718507pje.65.1560449144861;
+        Thu, 13 Jun 2019 11:05:44 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 16sm343780pfo.65.2019.06.13.11.05.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 11:05:43 -0700 (PDT)
+Subject: Re: [PATCH v7 3/5] usb: host: ohci-sm501: init genalloc for local
+ memory
+To:     Fredrik Noring <noring@nocrew.org>
+Cc:     laurentiu.tudor@nxp.com, hch@lst.de, stern@rowland.harvard.edu,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        marex@denx.de, leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com, JuergenUrban@gmx.de
+References: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
+ <20190529102843.13174-4-laurentiu.tudor@nxp.com>
+ <20190605214622.GA22254@roeck-us.net> <20190611133223.GA30054@roeck-us.net>
+ <20190611172654.GA2602@sx9> <20190611190343.GA18459@roeck-us.net>
+ <20190613134033.GA2489@sx9>
+ <bdfd2178-9e3c-dc15-6aa1-ec1f1fbcb191@roeck-us.net>
+ <20190613153414.GA909@sx9>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <3f2164cd-7655-b7cc-ec57-d8751886728c@roeck-us.net>
+Date:   Thu, 13 Jun 2019 11:05:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906130134
+In-Reply-To: <20190613153414.GA909@sx9>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The main reason of this change is to make these bitmasks more readable.
+On 6/13/19 8:34 AM, Fredrik Noring wrote:
+> Hi Guenter,
+> 
+>> Thanks for the confirmation. Do you see the problem only with the
+>> ohci-sm501 driver or also with others ?
+> 
+> All are likely affected, but it depends, because I believe the problem is
+> that the USB subsystem runs out of memory. Please try the attached patch!
+> 
+> The pool assumed 4096 byte page alignment for every allocation, which is
+> excessive given that many requests are for 16 and 32 bytes. In the patch
+> below, I have turned down the order to 5, which is good enough for the ED
+> and TD structures of the OHCI, but not enough for the HCCA that needs 256
+> byte alignment. With some luck, the WARN_ON_ONCE will not trigger in your
+> test, though. If it does, you may try to increase the order from 5 to 8.
+> 
 
-The macro ASM_CONST() just appends an UL to it's parameter, so it can be
-easily replaced by BIT_MASK, that already uses a UL representation.
+You are right, the patch below fixes the problem. I did not get the warning
+with order==5. Nevertheless, I also tested with order==8; that works as well.
 
-ASM_CONST() in this file may behave different if __ASSEMBLY__ is defined,
-as it is used on .S files, just leaving the parameter as is.
+Thanks a lot for tracking this down!
+Guenter
 
-However, I have noticed no difference in the generated binary after this
-change.
-
-Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
----
- arch/powerpc/include/asm/firmware.h | 75 ++++++++++++++---------------
- 1 file changed, 37 insertions(+), 38 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/firmware.h b/arch/powerpc/include/asm/firmware.h
-index 00bc42d95679..7a5b0cc0bc85 100644
---- a/arch/powerpc/include/asm/firmware.h
-+++ b/arch/powerpc/include/asm/firmware.h
-@@ -14,46 +14,45 @@
- 
- #ifdef __KERNEL__
- 
--#include <asm/asm-const.h>
--
-+#include <linux/bits.h>
- /* firmware feature bitmask values */
- 
--#define FW_FEATURE_PFT		ASM_CONST(0x0000000000000001)
--#define FW_FEATURE_TCE		ASM_CONST(0x0000000000000002)
--#define FW_FEATURE_SPRG0	ASM_CONST(0x0000000000000004)
--#define FW_FEATURE_DABR		ASM_CONST(0x0000000000000008)
--#define FW_FEATURE_COPY		ASM_CONST(0x0000000000000010)
--#define FW_FEATURE_ASR		ASM_CONST(0x0000000000000020)
--#define FW_FEATURE_DEBUG	ASM_CONST(0x0000000000000040)
--#define FW_FEATURE_TERM		ASM_CONST(0x0000000000000080)
--#define FW_FEATURE_PERF		ASM_CONST(0x0000000000000100)
--#define FW_FEATURE_DUMP		ASM_CONST(0x0000000000000200)
--#define FW_FEATURE_INTERRUPT	ASM_CONST(0x0000000000000400)
--#define FW_FEATURE_MIGRATE	ASM_CONST(0x0000000000000800)
--#define FW_FEATURE_PERFMON	ASM_CONST(0x0000000000001000)
--#define FW_FEATURE_CRQ		ASM_CONST(0x0000000000002000)
--#define FW_FEATURE_VIO		ASM_CONST(0x0000000000004000)
--#define FW_FEATURE_RDMA		ASM_CONST(0x0000000000008000)
--#define FW_FEATURE_LLAN		ASM_CONST(0x0000000000010000)
--#define FW_FEATURE_BULK_REMOVE	ASM_CONST(0x0000000000020000)
--#define FW_FEATURE_XDABR	ASM_CONST(0x0000000000040000)
--#define FW_FEATURE_MULTITCE	ASM_CONST(0x0000000000080000)
--#define FW_FEATURE_SPLPAR	ASM_CONST(0x0000000000100000)
--#define FW_FEATURE_LPAR		ASM_CONST(0x0000000000400000)
--#define FW_FEATURE_PS3_LV1	ASM_CONST(0x0000000000800000)
--#define FW_FEATURE_HPT_RESIZE	ASM_CONST(0x0000000001000000)
--#define FW_FEATURE_CMO		ASM_CONST(0x0000000002000000)
--#define FW_FEATURE_VPHN		ASM_CONST(0x0000000004000000)
--#define FW_FEATURE_XCMO		ASM_CONST(0x0000000008000000)
--#define FW_FEATURE_OPAL		ASM_CONST(0x0000000010000000)
--#define FW_FEATURE_SET_MODE	ASM_CONST(0x0000000040000000)
--#define FW_FEATURE_BEST_ENERGY	ASM_CONST(0x0000000080000000)
--#define FW_FEATURE_TYPE1_AFFINITY ASM_CONST(0x0000000100000000)
--#define FW_FEATURE_PRRN		ASM_CONST(0x0000000200000000)
--#define FW_FEATURE_DRMEM_V2	ASM_CONST(0x0000000400000000)
--#define FW_FEATURE_DRC_INFO	ASM_CONST(0x0000000800000000)
--#define FW_FEATURE_BLOCK_REMOVE ASM_CONST(0x0000001000000000)
--#define FW_FEATURE_PAPR_SCM 	ASM_CONST(0x0000002000000000)
-+#define FW_FEATURE_PFT		BIT(0)
-+#define FW_FEATURE_TCE		BIT(1)
-+#define FW_FEATURE_SPRG0		BIT(2)
-+#define FW_FEATURE_DABR		BIT(3)
-+#define FW_FEATURE_COPY		BIT(4)
-+#define FW_FEATURE_ASR		BIT(5)
-+#define FW_FEATURE_DEBUG		BIT(6)
-+#define FW_FEATURE_TERM		BIT(7)
-+#define FW_FEATURE_PERF		BIT(8)
-+#define FW_FEATURE_DUMP		BIT(9)
-+#define FW_FEATURE_INTERRUPT	BIT(10)
-+#define FW_FEATURE_MIGRATE	BIT(11)
-+#define FW_FEATURE_PERFMON	BIT(12)
-+#define FW_FEATURE_CRQ		BIT(13)
-+#define FW_FEATURE_VIO		BIT(14)
-+#define FW_FEATURE_RDMA		BIT(15)
-+#define FW_FEATURE_LLAN		BIT(16)
-+#define FW_FEATURE_BULK_REMOVE	BIT(17)
-+#define FW_FEATURE_XDABR		BIT(18)
-+#define FW_FEATURE_MULTITCE	BIT(19)
-+#define FW_FEATURE_SPLPAR	BIT(20)
-+#define FW_FEATURE_LPAR		BIT(22)
-+#define FW_FEATURE_PS3_LV1	BIT(23)
-+#define FW_FEATURE_HPT_RESIZE	BIT(24)
-+#define FW_FEATURE_CMO		BIT(25)
-+#define FW_FEATURE_VPHN		BIT(26)
-+#define FW_FEATURE_XCMO		BIT(27)
-+#define FW_FEATURE_OPAL		BIT(28)
-+#define FW_FEATURE_SET_MODE	BIT(30)
-+#define FW_FEATURE_BEST_ENERGY	BIT(31)
-+#define FW_FEATURE_TYPE1_AFFINITY BIT(32)
-+#define FW_FEATURE_PRRN		BIT(33)
-+#define FW_FEATURE_DRMEM_V2	BIT(34)
-+#define FW_FEATURE_DRC_INFO	BIT(35)
-+#define FW_FEATURE_BLOCK_REMOVE	BIT(36)
-+#define FW_FEATURE_PAPR_SCM	BIT(37)
- 
- #ifndef __ASSEMBLY__
- 
--- 
-2.17.1
+> I have observed strange things happen when the USB subsystem runs out of
+> memory. The mass storage drivers often seem to busy-wait on -ENOMEM,
+> consuming a lot of processor resources. It would be much more efficient
+> to sleep waiting for memory to become available.
+> 
+> In your case I suspect that allocation failures are not correctly
+> attributed. Certain kinds of temporary freezes may also occur, as the
+> various devices are reset due to host memory allocation errors.
+>  > Fredrik
+> 
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -3011,7 +3011,7 @@ int usb_hcd_setup_local_mem(struct usb_hcd *hcd, phys_addr_t phys_addr,
+>   	int err;
+>   	void __iomem *local_mem;
+>   
+> -	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, PAGE_SHIFT,
+> +	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, 5,
+>   						  dev_to_node(hcd->self.sysdev),
+>   						  dev_name(hcd->self.sysdev));
+>   	if (IS_ERR(hcd->localmem_pool))
+> diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+> --- a/drivers/usb/host/ohci-hcd.c
+> +++ b/drivers/usb/host/ohci-hcd.c
+> @@ -517,6 +517,7 @@ static int ohci_init (struct ohci_hcd *ohci)
+>   						GFP_KERNEL);
+>   	if (!ohci->hcca)
+>   		return -ENOMEM;
+> +	WARN_ON_ONCE(ohci->hcca_dma & 0xff);
+>   
+>   	if ((ret = ohci_mem_init (ohci)) < 0)
+>   		ohci_stop (hcd);
+> 
 
