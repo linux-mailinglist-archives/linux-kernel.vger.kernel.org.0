@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E5044029
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 271FC4435D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391102AbfFMQD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:03:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35698 "EHLO mail.kernel.org"
+        id S2392289AbfFMQ24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:28:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731384AbfFMIr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:27 -0400
+        id S1730940AbfFMIff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:35:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AB472147A;
-        Thu, 13 Jun 2019 08:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E4EC20851;
+        Thu, 13 Jun 2019 08:35:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415646;
-        bh=3E7zvyKMEjD+t36Er0289E2wlAmli+NDn+SyiAea6Xg=;
+        s=default; t=1560414935;
+        bh=JOdPkZMXMgwO6O1h6lMEJ/M1YMy4O+fPqZFYh3kUhcE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HwOTAI5gbf9t8Anhy57M4YTimFM0FYz4vrJ6svCZtZaXp1WOqYWRujXQWDhvPOEuv
-         fnUh/FpLvdrgwF3mXe4g4nSbr8dtTUNUnSo+azC2Rtdl2zUwHgSqy4DBxstyoI0ano
-         5nZxPhqt600YmWg66wBZwny7JWJ7EvKid9m68Yg8=
+        b=NUMklaLukLVmjn92vD/Z5eNqSmtL5i+bP25M2Fgy5V7Jg7k8fBjEnRX4X/8oTnztK
+         nXk1uH7Nu4Cvjflv3VMM2EWfo5+REEiuQMkY5Hk7WpjcAVgLz4Dkga+22v9xUzmNt8
+         CRC+YQehYIJk0dsTfLKxon4HFPRFKwEaAvF7hHS4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 076/155] nvme-pci: shutdown on timeout during deletion
-Date:   Thu, 13 Jun 2019 10:33:08 +0200
-Message-Id: <20190613075657.247721523@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 26/81] f2fs: fix to avoid panic in do_recover_data()
+Date:   Thu, 13 Jun 2019 10:33:09 +0200
+Message-Id: <20190613075651.058547062@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9dc1a38ef1925d23c2933c5867df816386d92ff8 ]
+[ Upstream commit 22d61e286e2d9097dae36f75ed48801056b77cac ]
 
-We do not restart a controller in a deleting state for timeout errors.
-When in this state, unblock potential request dispatchers with failed
-completions by shutting down the controller on timeout detection.
+As Jungyeon reported in bugzilla:
 
-Reported-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+https://bugzilla.kernel.org/show_bug.cgi?id=203227
+
+- Overview
+When mounting the attached crafted image, following errors are reported.
+Additionally, it hangs on sync after trying to mount it.
+
+The image is intentionally fuzzed from a normal f2fs image for testing.
+Compile options for F2FS are as follows.
+CONFIG_F2FS_FS=y
+CONFIG_F2FS_STAT_FS=y
+CONFIG_F2FS_FS_XATTR=y
+CONFIG_F2FS_FS_POSIX_ACL=y
+CONFIG_F2FS_CHECK_FS=y
+
+- Reproduces
+mkdir test
+mount -t f2fs tmp.img test
+sync
+
+- Messages
+ kernel BUG at fs/f2fs/recovery.c:549!
+ RIP: 0010:recover_data+0x167a/0x1780
+ Call Trace:
+  f2fs_recover_fsync_data+0x613/0x710
+  f2fs_fill_super+0x1043/0x1aa0
+  mount_bdev+0x16d/0x1a0
+  mount_fs+0x4a/0x170
+  vfs_kern_mount+0x5d/0x100
+  do_mount+0x200/0xcf0
+  ksys_mount+0x79/0xc0
+  __x64_sys_mount+0x1c/0x20
+  do_syscall_64+0x43/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+During recovery, if ofs_of_node is inconsistent in between recovered
+node page and original checkpointed node page, let's just fail recovery
+instead of making kernel panic.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/f2fs/recovery.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index e5dcc769ab8f..372d3f4a106a 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1271,6 +1271,7 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
- 	struct nvme_dev *dev = nvmeq->dev;
- 	struct request *abort_req;
- 	struct nvme_command cmd;
-+	bool shutdown = false;
- 	u32 csts = readl(dev->bar + NVME_REG_CSTS);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 6ea445377767..65a82c5bafcb 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -445,7 +445,15 @@ retry_dn:
  
- 	/* If PCI error recovery process is happening, we cannot reset or
-@@ -1307,12 +1308,14 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
- 	 * shutdown, so we return BLK_EH_DONE.
- 	 */
- 	switch (dev->ctrl.state) {
-+	case NVME_CTRL_DELETING:
-+		shutdown = true;
- 	case NVME_CTRL_CONNECTING:
- 	case NVME_CTRL_RESETTING:
- 		dev_warn_ratelimited(dev->ctrl.device,
- 			 "I/O %d QID %d timeout, disable controller\n",
- 			 req->tag, nvmeq->qid);
--		nvme_dev_disable(dev, false);
-+		nvme_dev_disable(dev, shutdown);
- 		nvme_req(req)->flags |= NVME_REQ_CANCELLED;
- 		return BLK_EH_DONE;
- 	default:
+ 	get_node_info(sbi, dn.nid, &ni);
+ 	f2fs_bug_on(sbi, ni.ino != ino_of_node(page));
+-	f2fs_bug_on(sbi, ofs_of_node(dn.node_page) != ofs_of_node(page));
++
++	if (ofs_of_node(dn.node_page) != ofs_of_node(page)) {
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
++			inode->i_ino, ofs_of_node(dn.node_page),
++			ofs_of_node(page));
++		err = -EFAULT;
++		goto err;
++	}
+ 
+ 	for (; start < end; start++, dn.ofs_in_node++) {
+ 		block_t src, dest;
 -- 
 2.20.1
 
