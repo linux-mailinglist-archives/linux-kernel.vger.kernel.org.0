@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27B2440E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE5543F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391438AbfFMQKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:10:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32872 "EHLO mail.kernel.org"
+        id S2390371AbfFMP6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:58:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731251AbfFMIny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:43:54 -0400
+        id S1731493AbfFMIuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:50:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70F5C2063F;
-        Thu, 13 Jun 2019 08:43:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7655220851;
+        Thu, 13 Jun 2019 08:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415433;
-        bh=iQ2VT1anwge2rriW/Lu1HmpTUu/MZTagc0jkhnacppQ=;
+        s=default; t=1560415809;
+        bh=jUnIi8qxGVzrWiwwjjzyY15R8iihMx4ycck8fUcRCTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f+Ww15Qsxvxnfw15e5QHYdE6EbLqKixpLtS6SJpbWjabK3BTr1r6ZkyhYn/mepQtM
-         7UvZ5fyEqNycpE7fKZ0uBrQkkVT6uStkiTyahA2j0QoBTAhEan898n6lDShtI5DA6u
-         uecxdGfZdZlK24vl1cC2JNCaO7HWO9HSq35nlUvs=
+        b=k3qeS0m4/l7/BCmI0NmCCf6ctqJqc455202AE+tzG9usgIJrshEMmG7UuCk7AP7cK
+         3RwhuiDdoKEDfZRT16C6od3V70UVRCVsm/ar6ui8ptItXc98XdjHQAo+PGKz8VS3v9
+         bGV+adY+D+ewc8sbsUgQoC9h0vRdTIxwN4dcjknc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 105/118] dmaengine: idma64: Use actual device for DMA transfers
+        =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= 
+        <holger@applied-asynchrony.com>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 131/155] block, bfq: increase idling for weight-raised queues
 Date:   Thu, 13 Jun 2019 10:34:03 +0200
-Message-Id: <20190613075650.164719995@linuxfoundation.org>
+Message-Id: <20190613075700.105303320@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,129 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5ba846b1ee0792f5a596b9b0b86d6e8cdebfab06 ]
+[ Upstream commit 778c02a236a8728bb992de10ed1f12c0be5b7b0e ]
 
-Intel IOMMU, when enabled, tries to find the domain of the device,
-assuming it's a PCI one, during DMA operations, such as mapping or
-unmapping. Since we are splitting the actual PCI device to couple of
-children via MFD framework (see drivers/mfd/intel-lpss.c for details),
-the DMA device appears to be a platform one, and thus not an actual one
-that performs DMA. In a such situation IOMMU can't find or allocate
-a proper domain for its operations. As a result, all DMA operations are
-failed.
+If a sync bfq_queue has a higher weight than some other queue, and
+remains temporarily empty while in service, then, to preserve the
+bandwidth share of the queue, it is necessary to plug I/O dispatching
+until a new request arrives for the queue. In addition, a timeout
+needs to be set, to avoid waiting for ever if the process associated
+with the queue has actually finished its I/O.
 
-In order to fix this, supply parent of the platform device
-to the DMA engine framework and fix filter functions accordingly.
+Even with the above timeout, the device is however not fed with new
+I/O for a while, if the process has finished its I/O. If this happens
+often, then throughput drops and latencies grow. For this reason, the
+timeout is kept rather low: 8 ms is the current default.
 
-We may rely on the fact that parent is a real PCI device, because no
-other configuration is present in the wild.
+Unfortunately, such a low value may cause, on the opposite end, a
+violation of bandwidth guarantees for a process that happens to issue
+new I/O too late. The higher the system load, the higher the
+probability that this happens to some process. This is a problem in
+scenarios where service guarantees matter more than throughput. One
+important case are weight-raised queues, which need to be granted a
+very high fraction of the bandwidth.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org> [for tty parts]
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+To address this issue, this commit lower-bounds the plugging timeout
+for weight-raised queues to 20 ms. This simple change provides
+relevant benefits. For example, on a PLEXTOR PX-256M5S, with which
+gnome-terminal starts in 0.6 seconds if there is no other I/O in
+progress, the same applications starts in
+- 0.8 seconds, instead of 1.2 seconds, if ten files are being read
+  sequentially in parallel
+- 1 second, instead of 2 seconds, if, in parallel, five files are
+  being read sequentially, and five more files are being written
+  sequentially
+
+Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/idma64.c              | 6 ++++--
- drivers/dma/idma64.h              | 2 ++
- drivers/spi/spi-pxa2xx.c          | 7 +------
- drivers/tty/serial/8250/8250_dw.c | 4 ++--
- 4 files changed, 9 insertions(+), 10 deletions(-)
+ block/bfq-iosched.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
-index 1fbf9cb9b742..89c5e5b46068 100644
---- a/drivers/dma/idma64.c
-+++ b/drivers/dma/idma64.c
-@@ -597,7 +597,7 @@ static int idma64_probe(struct idma64_chip *chip)
- 	idma64->dma.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
- 	idma64->dma.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 5ba1e0d841b4..679d608347ea 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -2545,6 +2545,8 @@ static void bfq_arm_slice_timer(struct bfq_data *bfqd)
+ 	if (BFQQ_SEEKY(bfqq) && bfqq->wr_coeff == 1 &&
+ 	    bfq_symmetric_scenario(bfqd))
+ 		sl = min_t(u64, sl, BFQ_MIN_TT);
++	else if (bfqq->wr_coeff > 1)
++		sl = max_t(u32, sl, 20ULL * NSEC_PER_MSEC);
  
--	idma64->dma.dev = chip->dev;
-+	idma64->dma.dev = chip->sysdev;
- 
- 	dma_set_max_seg_size(idma64->dma.dev, IDMA64C_CTLH_BLOCK_TS_MASK);
- 
-@@ -637,6 +637,7 @@ static int idma64_platform_probe(struct platform_device *pdev)
- {
- 	struct idma64_chip *chip;
- 	struct device *dev = &pdev->dev;
-+	struct device *sysdev = dev->parent;
- 	struct resource *mem;
- 	int ret;
- 
-@@ -653,11 +654,12 @@ static int idma64_platform_probe(struct platform_device *pdev)
- 	if (IS_ERR(chip->regs))
- 		return PTR_ERR(chip->regs);
- 
--	ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	ret = dma_coerce_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
- 	if (ret)
- 		return ret;
- 
- 	chip->dev = dev;
-+	chip->sysdev = sysdev;
- 
- 	ret = idma64_probe(chip);
- 	if (ret)
-diff --git a/drivers/dma/idma64.h b/drivers/dma/idma64.h
-index 6b816878e5e7..baa32e1425de 100644
---- a/drivers/dma/idma64.h
-+++ b/drivers/dma/idma64.h
-@@ -216,12 +216,14 @@ static inline void idma64_writel(struct idma64 *idma64, int offset, u32 value)
- /**
-  * struct idma64_chip - representation of iDMA 64-bit controller hardware
-  * @dev:		struct device of the DMA controller
-+ * @sysdev:		struct device of the physical device that does DMA
-  * @irq:		irq line
-  * @regs:		memory mapped I/O space
-  * @idma64:		struct idma64 that is filed by idma64_probe()
-  */
- struct idma64_chip {
- 	struct device	*dev;
-+	struct device	*sysdev;
- 	int		irq;
- 	void __iomem	*regs;
- 	struct idma64	*idma64;
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index 729be74621e3..f41333817c50 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1416,12 +1416,7 @@ static const struct pci_device_id pxa2xx_spi_pci_compound_match[] = {
- 
- static bool pxa2xx_spi_idma_filter(struct dma_chan *chan, void *param)
- {
--	struct device *dev = param;
--
--	if (dev != chan->device->dev->parent)
--		return false;
--
--	return true;
-+	return param == chan->device->dev;
- }
- 
- static struct pxa2xx_spi_master *
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index d31b975dd3fd..284e8d052fc3 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -365,7 +365,7 @@ static bool dw8250_fallback_dma_filter(struct dma_chan *chan, void *param)
- 
- static bool dw8250_idma_filter(struct dma_chan *chan, void *param)
- {
--	return param == chan->device->dev->parent;
-+	return param == chan->device->dev;
- }
- 
- /*
-@@ -434,7 +434,7 @@ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
- 		data->uart_16550_compatible = true;
- 	}
- 
--	/* Platforms with iDMA */
-+	/* Platforms with iDMA 64-bit */
- 	if (platform_get_resource_byname(to_platform_device(p->dev),
- 					 IORESOURCE_MEM, "lpss_priv")) {
- 		data->dma.rx_param = p->dev->parent;
+ 	bfqd->last_idling_start = ktime_get();
+ 	hrtimer_start(&bfqd->idle_slice_timer, ns_to_ktime(sl),
 -- 
 2.20.1
 
