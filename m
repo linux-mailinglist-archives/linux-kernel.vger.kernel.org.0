@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F02D4430B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB966441DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732872AbfFMQ1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:27:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53672 "EHLO mail.kernel.org"
+        id S2391990AbfFMQRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730955AbfFMIgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:36:05 -0400
+        id S1731146AbfFMIlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:41:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 710622146F;
-        Thu, 13 Jun 2019 08:36:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6A8121473;
+        Thu, 13 Jun 2019 08:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560414964;
-        bh=KFmKbMzbqMdgqSnxRIGjU1wMXvOhDCsWyJDQCxjA+KM=;
+        s=default; t=1560415271;
+        bh=MMu2sKMseQSw+TUl2Yw6NE1r/e8x0b/7CHCq+cul2ww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0CpMoadIFDbbr+w4pR0ax1HqWr7q83w6/6VS9l0oDbwYFLbr0+kDnitDF8FA/ZXoY
-         vD96Sm/RtW8JB7a7D8mtqwqXHRCFwfwNWm5Oa7HILI6etRaVzvgdV9CR6RGJMTM2zj
-         mLxGl8edBRB2Drcu8HJQsiJAsns8OyS5/0s0WQF4=
+        b=nhwPaCGEQpU5D+kh5cfGJX3j4LJWQbJMppg3Nr8N+l7pj3/Y0MSKdbYe1VyByvl57
+         gOAMNu+n6BWLuztf9lPSekXMJFesqp1/8Hj9nV9cG7IksZNYwcyDzd1XNRWoyqNS2e
+         HPy30EtezZOv4hSlhJ8dARWfORq/jGR3+RYKZkPQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cyrill Gorcunov <gorcunov@gmail.com>,
-        Andrey Vagin <avagin@gmail.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 13/81] kernel/sys.c: prctl: fix false positive in validate_prctl_map()
+Subject: [PATCH 4.19 038/118] f2fs: fix to avoid panic in dec_valid_block_count()
 Date:   Thu, 13 Jun 2019 10:32:56 +0200
-Message-Id: <20190613075650.048932735@linuxfoundation.org>
+Message-Id: <20190613075645.712097097@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,52 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a9e73998f9d705c94a8dca9687633adc0f24a19a ]
+[ Upstream commit 5e159cd349bf3a31fb7e35c23a93308eb30f4f71 ]
 
-While validating new map we require the @start_data to be strictly less
-than @end_data, which is fine for regular applications (this is why this
-nit didn't trigger for that long).  These members are set from executable
-loaders such as elf handers, still it is pretty valid to have a loadable
-data section with zero size in file, in such case the start_data is equal
-to end_data once kernel loader finishes.
+As Jungyeon reported in bugzilla:
 
-As a result when we're trying to restore such programs the procedure fails
-and the kernel returns -EINVAL.  From the image dump of a program:
+https://bugzilla.kernel.org/show_bug.cgi?id=203209
 
- | "mm_start_code": "0x400000",
- | "mm_end_code": "0x8f5fb4",
- | "mm_start_data": "0xf1bfb0",
- | "mm_end_data": "0xf1bfb0",
+- Overview
+When mounting the attached crafted image and running program, I got this error.
+Additionally, it hangs on sync after the this script.
 
-Thus we need to change validate_prctl_map from strictly less to less or
-equal operator use.
+The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
 
-Link: http://lkml.kernel.org/r/20190408143554.GY1421@uranus.lan
-Fixes: f606b77f1a9e3 ("prctl: PR_SET_MM -- introduce PR_SET_MM_MAP operation")
-Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Andrey Vagin <avagin@gmail.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+- Reproduces
+cc poc_01.c
+./run.sh f2fs
+sync
+
+ kernel BUG at fs/f2fs/f2fs.h:1788!
+ RIP: 0010:f2fs_truncate_data_blocks_range+0x342/0x350
+ Call Trace:
+  f2fs_truncate_blocks+0x36d/0x3c0
+  f2fs_truncate+0x88/0x110
+  f2fs_setattr+0x3e1/0x460
+  notify_change+0x2da/0x400
+  do_truncate+0x6d/0xb0
+  do_sys_ftruncate+0xf1/0x160
+  do_syscall_64+0x43/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The reason is dec_valid_block_count() will trigger kernel panic due to
+inconsistent count in between inode.i_blocks and actual block.
+
+To avoid panic, let's just print debug message and set SBI_NEED_FSCK to
+give a hint to fsck for latter repairing.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+[Jaegeuk Kim: fix build warning and add unlikely]
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sys.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/f2fs.h | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index e25ec93aea22..ab96b9882347 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1861,7 +1861,7 @@ static int validate_prctl_map(struct prctl_mm_map *prctl_map)
- 	((unsigned long)prctl_map->__m1 __op				\
- 	 (unsigned long)prctl_map->__m2) ? 0 : -EINVAL
- 	error  = __prctl_check_order(start_code, <, end_code);
--	error |= __prctl_check_order(start_data, <, end_data);
-+	error |= __prctl_check_order(start_data,<=, end_data);
- 	error |= __prctl_check_order(start_brk, <=, brk);
- 	error |= __prctl_check_order(arg_start, <=, arg_end);
- 	error |= __prctl_check_order(env_start, <=, env_end);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a4b6eacf22ea..64f970cca1b4 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1744,6 +1744,7 @@ enospc:
+ 	return -ENOSPC;
+ }
+ 
++void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+ 						struct inode *inode,
+ 						block_t count)
+@@ -1752,13 +1753,21 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+ 
+ 	spin_lock(&sbi->stat_lock);
+ 	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
+-	f2fs_bug_on(sbi, inode->i_blocks < sectors);
+ 	sbi->total_valid_block_count -= (block_t)count;
+ 	if (sbi->reserved_blocks &&
+ 		sbi->current_reserved_blocks < sbi->reserved_blocks)
+ 		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+ 					sbi->current_reserved_blocks + count);
+ 	spin_unlock(&sbi->stat_lock);
++	if (unlikely(inode->i_blocks < sectors)) {
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"Inconsistent i_blocks, ino:%lu, iblocks:%llu, sectors:%llu",
++			inode->i_ino,
++			(unsigned long long)inode->i_blocks,
++			(unsigned long long)sectors);
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		return;
++	}
+ 	f2fs_i_blocks_write(inode, count, false, true);
+ }
+ 
+@@ -2727,7 +2736,6 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
+ 
+ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type);
+-void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+ static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type)
+ {
 -- 
 2.20.1
 
