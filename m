@@ -2,128 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3459644D1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E670844D27
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbfFMUNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:13:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56212 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfFMUNQ (ORCPT
+        id S1729723AbfFMUNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:13:53 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37161 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbfFMUNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:13:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bKMWCvMopA9EQ8AelBJcmdTvyJTL93JTREGP6k5ibdU=; b=G/wqaOYFUB3TMjUpS3ONKm6h2
-        NN3wE402X9P0slndGVuuqdBym+wP9BG81c6LZYuPXZOaFeLMzRGpaMd2xUUqtOmCCV8FaBOLVbtDP
-        dBxeG0ztr6bYJdWoek1hsvgU9EwPKuEIFZk9ASjgChEgXovvBXHOW9pp5PwWge3ocoO0mzGSurPsz
-        6uGLk5FSz/TieWTB9yB8nNJC5okV7oYWfpoRhKGky95UO9peXc6tzxtVGkfdcWHFc1j9lntOgW8oU
-        bMV3PwYjHc5kl+M1wyiKrGhpQRZak9OlavimRnGHtYyXYRSh8XCvDQoJFa4yit2sca5SOtVmeWrWg
-        hsK/KHoww==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbW5z-0002lr-Bx; Thu, 13 Jun 2019 20:13:15 +0000
-Subject: Re: linux-next: Tree for Jun 13 (drivers/soc/qcom/Kconfig)
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        bjorn.andersson@linaro.org
-References: <20190613193054.37bde7fa@canb.auug.org.au>
- <00d6da06-1316-6560-5541-0caf8ea5084b@infradead.org>
- <2480052.F5ZUPELBQ8@kreacher>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9dd920db-f1c9-d5b7-dc01-aa0e0e70df0e@infradead.org>
-Date:   Thu, 13 Jun 2019 13:13:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Jun 2019 16:13:52 -0400
+Received: by mail-ot1-f68.google.com with SMTP id s20so437589otp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 13:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DdSbzBj3GN9lmFE97uLhhDp9bhFpPD/Ri2wBNX09PfQ=;
+        b=OSBqGRX5/KZ8rtnYLy8/+VzWXJoy8dOkJHihIoyUXY2eP7FoiV7nziOVkOw4+nZKoB
+         8BX3vQfUbWi26DrxuPJOZQTkwLvG8bcvI5bR3K46S8XaTPV6uYDB19u7pEoWDIMGVXIT
+         76Gat4HdmnE0UfZtW6tDnTRkZMx/UjOMIIhYc/M0re4EVEJMI//Xgzy79OcW2RngZAFY
+         Ex/a+k84aj46psorP2SyODhm0RWUknVG0v09x5bcP8Nl31V8edNccp6WpICo1yfvAEqk
+         4PlHWylrgwZOgDTADWj7FVO4iX7LA9uouJaVlZvN2+vo54OtBLhCAxLVmuocFehTb/fy
+         IX0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DdSbzBj3GN9lmFE97uLhhDp9bhFpPD/Ri2wBNX09PfQ=;
+        b=I03T199idDCgdjBXVK7X2ZPoG+yTQCl2/0z6EBLhffSMzx/NbHBNA/hsI9W/R+8piO
+         VtF6cYk2KVwFV3A3SqWYuSl90CmRk/dgHFeqQweva/9LcWjrWU6o6Bp4m7K8iAf4Bfr0
+         /fDKZMhy7jBXGE0OKNtPuk6D92EKyojTh63PuldnvQbRhIzx13gsX4M0fgxSFpx+2W0n
+         J910Rkx7UCsWaxWCPDnegV5wUMi8pDzPESIblYlXZ9RJnQGYjJI9cdAi30H43wKUAFnf
+         wjlM26pCLXGJeYJ6S14cmnnEzXjkGFhV0uu37CdIWWm8jhh+euz8bahpmIqSI2GY9g39
+         /Kew==
+X-Gm-Message-State: APjAAAXCvuUp2rSsLogNhUMktKe8/trrXPh0sMCHkXZesnHdDuWiL6t3
+        QDWQT5cZLcfQrZ4fZCoTwuvEGHYFMKXdkOxitB78Wg==
+X-Google-Smtp-Source: APXvYqykaGayuOdeZmPun6lqMah28WqyaWO5bFenPtOzBFg0qXVTvO/T6gfkniMpvZVUXEcVxeJc+t1pW1I4QrwLh2Q=
+X-Received: by 2002:a9d:7a9a:: with SMTP id l26mr37784514otn.71.1560456832159;
+ Thu, 13 Jun 2019 13:13:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2480052.F5ZUPELBQ8@kreacher>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190613094326.24093-1-hch@lst.de> <20190613094326.24093-10-hch@lst.de>
+ <20190613193427.GU22062@mellanox.com>
+In-Reply-To: <20190613193427.GU22062@mellanox.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 13 Jun 2019 13:13:41 -0700
+Message-ID: <CAPcyv4iwVPm2XBviR8E32VJG+ZZTHZLGxDdXS3et22CTT_3qNA@mail.gmail.com>
+Subject: Re: [PATCH 09/22] memremap: lift the devmap_enable manipulation into devm_memremap_pages
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/13/19 11:27 AM, Rafael J. Wysocki wrote:
-> On Thursday, June 13, 2019 6:12:43 PM CEST Randy Dunlap wrote:
->>  This is a multi-part message in MIME format.
->> --------------D4992319A3EA7FFA5EF515C6
->> Content-Type: text/plain; charset=windows-1252
->> Content-Transfer-Encoding: 8bit
->>
->> On 6/13/19 2:30 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20190612:
->>>
->>
->>
->> on x86_64:
->>
->> ../drivers/base/power/domain.c: In function �genpd_queue_power_off_work�:
->> ../drivers/base/power/domain.c:485:13: error: �pm_wq� undeclared (first use in this function)
->>   queue_work(pm_wq, &genpd->power_off_work);
->>              ^
->> ../drivers/base/power/domain.c:485:13: note: each undeclared identifier is reported only once for each function it appears in
->> ../drivers/base/power/domain.c: In function �genpd_dev_pm_qos_notifier�:
->> ../drivers/base/power/domain.c:675:25: error: �struct dev_pm_info� has no member named �ignore_children�
->>    if (!dev || dev->power.ignore_children)
->>                          ^
->> ../drivers/base/power/domain.c: In function �rtpm_status_str�:
->> ../drivers/base/power/domain.c:2754:16: error: �struct dev_pm_info� has no member named �runtime_error�
->>   if (dev->power.runtime_error)
->>                 ^
->> ../drivers/base/power/domain.c:2756:21: error: �struct dev_pm_info� has no member named �disable_depth�
->>   else if (dev->power.disable_depth)
->>                      ^
->> ../drivers/base/power/domain.c:2758:21: error: �struct dev_pm_info� has no member named �runtime_status�
->>   else if (dev->power.runtime_status < ARRAY_SIZE(status_lookup))
->>                      ^
->> ../drivers/base/power/domain.c:2759:31: error: �struct dev_pm_info� has no member named �runtime_status�
->>    p = status_lookup[dev->power.runtime_status];
->>                                ^
->>
->>
->> Full randconfig file is attached.
-> 
-> PM_GENERIC_DOMAINS, which is set, depend on PM, which is not set.
+On Thu, Jun 13, 2019 at 12:35 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> On Thu, Jun 13, 2019 at 11:43:12AM +0200, Christoph Hellwig wrote:
+> > Just check if there is a ->page_free operation set and take care of the
+> > static key enable, as well as the put using device managed resources.
+> > diff --git a/mm/hmm.c b/mm/hmm.c
+> > index c76a1b5defda..6dc769feb2e1 100644
+> > +++ b/mm/hmm.c
+> > @@ -1378,8 +1378,6 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+> >       void *result;
+> >       int ret;
+> >
+> > -     dev_pagemap_get_ops();
+> > -
+>
+> Where was the matching dev_pagemap_put_ops() for this hmm case? This
+> is a bug fix too?
+>
 
-Thanks for that.  (I changed the subject to indicate the errant entity.)
+It never existed. HMM turned on the facility and made everyone's
+put_page() operations slower regardless of whether HMM was in active
+use.
 
-> Looks like an impossible configuration to me.
+> The nouveau driver is the only one to actually call this hmm function
+> and it does it as part of a probe function.
+>
+> Seems reasonable, however, in the unlikely event that it fails to init
+> 'dmem' the driver will retain a dev_pagemap_get_ops until it unloads.
+> This imbalance doesn't seem worth worrying about.
 
-It's what happens when a driver selects PM_GENERIC_DOMAINS when PM is not set/enabled.
+Right, unless/until the overhead of checking for put_page() callbacks
+starts to hurt leaving pagemap_ops tied to lifetime of the driver load
+seems acceptable because who unbinds their GPU device at runtime? On
+the other hand it was simple enough for the pmem driver to drop the
+reference each time a device was unbound just to close the loop.
 
-From drivers/soc/qcom/Kconfig:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-config QCOM_AOSS_QMP
-	tristate "Qualcomm AOSS Driver"
-	depends on ARCH_QCOM || COMPILE_TEST
-	depends on MAILBOX
-	depends on COMMON_CLK
-	select PM_GENERIC_DOMAINS
-
-In my test case, COMPILE_TEST=y.  ARCH_QCOM is not set.
-
-And kconfig does warn:
-
-WARNING: unmet direct dependencies detected for PM_GENERIC_DOMAINS
-  Depends on [n]: PM [=n]
-  Selected by [m]:
-  - QCOM_AOSS_QMP [=m] && (ARCH_QCOM || COMPILE_TEST [=y]) && MAILBOX [=y] && COMMON_CLK [=y]
-
-
-Who is responsible for that Kconfig segment?
-Ah, Bjorn.  Cc-ed.
-
--- 
-~Randy
+...minor typo.
