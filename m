@@ -2,121 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C639543A89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E6E43B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbfFMPV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:21:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47402 "EHLO huawei.com"
+        id S1728583AbfFMP3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:29:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48982 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731992AbfFMPVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:21:55 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5B032930F6C48A56E290;
-        Thu, 13 Jun 2019 23:21:51 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
- 23:21:42 +0800
-Subject: Re: [PATCH v4 1/3] lib: logic_pio: Use logical PIO low-level
- accessors for !CONFIG_INDIRECT_PIO
-To:     Bjorn Helgaas <helgaas@kernel.org>
-References: <1560262374-67875-1-git-send-email-john.garry@huawei.com>
- <1560262374-67875-2-git-send-email-john.garry@huawei.com>
- <20190613135825.GG13533@google.com>
-CC:     <lorenzo.pieralisi@arm.com>, <arnd@arndb.de>,
-        <linux-pci@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <linux-arm-kernel@lists.infradead.org>, <will.deacon@arm.com>,
-        <wangkefeng.wang@huawei.com>, <linuxarm@huawei.com>,
-        <andriy.shevchenko@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, <catalin.marinas@arm.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5b03c093-26fb-0e01-6104-5f92eef7956e@huawei.com>
-Date:   Thu, 13 Jun 2019 16:21:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1727226AbfFMP3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:29:21 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DD32B84DFAD0ADBD21A3;
+        Thu, 13 Jun 2019 23:28:59 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
+ 23:28:49 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mchehab@kernel.org>, <tglx@linutronix.de>, <corbet@lwn.net>,
+        <gregkh@linuxfoundation.org>, <sean@mess.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2] media: ttpci: Fix build error without RC_CORE
+Date:   Thu, 13 Jun 2019 23:23:19 +0800
+Message-ID: <20190613152319.30076-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190612152531.624cfba4@coco.lan>
+References: <20190612152531.624cfba4@coco.lan>
 MIME-Version: 1.0
-In-Reply-To: <20190613135825.GG13533@google.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2019 14:58, Bjorn Helgaas wrote:
-> On Tue, Jun 11, 2019 at 10:12:52PM +0800, John Garry wrote:
-> Another thought here:
->
->>  	if (addr < MMIO_UPPER_LIMIT) {					\
->>  		ret = read##bw(PCI_IOBASE + addr);			\
->>  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) { \
->> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
->> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
->> +		size_t sz = sizeof(type);				\
->>  									\
->> -		if (entry && entry->ops)				\
->> -			ret = entry->ops->in(entry->hostdata,		\
->> -					addr, sizeof(type));		\
->> +		if (range && range->ops)				\
->> +			ret = range->ops->in(range->hostdata, addr, sz);\
->>  		else							\
->>  			WARN_ON_ONCE(1);
+If RC_CORE is not set, building fails:
 
-Hi Bjorn,
-				\
->
-> Could this be simplified a little by requiring callers to set
-> range->ops for LOGIC_PIO_INDIRECT ranges *before* calling
-> logic_pio_register_range()?  E.g.,
->
->   hisi_lpc_probe(...)
->   {
->     range = devm_kzalloc(...);
->     range->flags = LOGIC_PIO_INDIRECT;
->     range->ops = &hisi_lpc_ops;
->     logic_pio_register_range(range);
->     ...
->
-> and
->
->   logic_pio_register_range(struct logic_pio_hwaddr *new_range)
->   {
->     if (new_range->flags == LOGIC_PIO_INDIRECT && !new_range->ops)
->       return -EINVAL;
->     ...
->
-> Then maybe you wouldn't need to check range->ops in the accessors.
->
+drivers/media/pci/ttpci/av7110_ir.o: In function `av7110_ir_init':
+av7110_ir.c:(.text+0x1b0): undefined reference to `rc_allocate_device'
+av7110_ir.c:(.text+0x2c1): undefined reference to `rc_register_device'
+av7110_ir.c:(.text+0x2dc): undefined reference to `rc_free_device'
 
-I think I know the reason why it was done this way.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Sean Young <sean@mess.org>
+Fixes: 71f49a8bf5c5 ("media: ttpci: use rc-core for the IR receiver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use depends on DVB_AV7110_IR instead of select as Sean Young's suggestion
+---
+ drivers/media/pci/ttpci/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So currently there is no method to unregister a logical PIO region (the 
-old code leaked ranges as well). As such, if hisi_lpc_probe() fails 
-after we register the logical PIO range, there would be a range 
-registered but no actual host backing it. So we set the ops at the point 
-at which the probe cannot fail to avoid a potential problem.
-
-And now I realise that there is a bug in the code - range is allocated 
-with devm_kzalloc and is passed to logic_pio_register_range(). As such, 
-if the hisi_lpc_probe() goes on to fail, then this memory would be 
-free'd and we have an issue.
-
-PCI code should be ok as it uses kzalloc().
-
-The simplest solution is to not change the logical PIO API to allocate 
-this memory itself, but rather make hisi_lpc_probe() use kzalloc(). And, 
-if we go this way, we can use your idea to set the ops.
-
-I'll spin a separate patch for this.
-
-Thanks,
-John
-
-> Bjorn
->
-> .
->
+diff --git a/drivers/media/pci/ttpci/Kconfig b/drivers/media/pci/ttpci/Kconfig
+index d96d4fa..8a362ee 100644
+--- a/drivers/media/pci/ttpci/Kconfig
++++ b/drivers/media/pci/ttpci/Kconfig
+@@ -1,13 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DVB_AV7110_IR
+ 	bool
++	depends on RC_CORE=y || RC_CORE = DVB_AV7110
++	default DVB_AV7110
+ 
+ config DVB_AV7110
+ 	tristate "AV7110 cards"
+ 	depends on DVB_CORE && PCI && I2C
+ 	select TTPCI_EEPROM
+ 	select VIDEO_SAA7146_VV
+-	select DVB_AV7110_IR if INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110
+ 	depends on VIDEO_DEV	# dependencies of VIDEO_SAA7146_VV
+ 	select DVB_VES1820 if MEDIA_SUBDRV_AUTOSELECT
+ 	select DVB_VES1X93 if MEDIA_SUBDRV_AUTOSELECT
+-- 
+2.7.4
 
 
