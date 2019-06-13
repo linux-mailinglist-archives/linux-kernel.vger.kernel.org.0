@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75D7F43FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D2E5442A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733138AbfFMQAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:00:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37158 "EHLO mail.kernel.org"
+        id S2403853AbfFMQYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:24:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731472AbfFMItY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:49:24 -0400
+        id S1731000AbfFMIhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:37:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91ABB206BA;
-        Thu, 13 Jun 2019 08:49:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B813D20851;
+        Thu, 13 Jun 2019 08:37:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415764;
-        bh=FqB2sW4I88mMRD+an2qENvPRlgF/xlPY1pCFRwpWm+Q=;
+        s=default; t=1560415040;
+        bh=ZPH16qG/Ca5t+j0juJTeNqQ9wDqZdh+nyOxINpzAyb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2DIlxt5Yb/5T5bNr4zLqKbqwS48ImRuiHMhrlznNYGZ4TXS1P1H6hybND11RtzOpb
-         nssQslR0R1P3pZTfsIwsEQsHmeg9H/zdyHAJK1NU0iTly88WKX4wW/KF8Q2JT/9n7g
-         INYJpjmYKgwRxb+WuHHm01NcYAX8YxkoXyC3DD4Y=
+        b=j6/EOqZ6DH5BsfSdm+eKplUlTasolbIOmOhMvMIq404xJq7yh4DI9yJHBErS8CmiZ
+         62hlkVDSrufsscw4k1xIs1+MgHVsYLueNVsL7lxAsJZMyY7aD5iATKqAavIn3bZgyA
+         XQlPZ22r6upbDHRyXBwWRavBO/3Z+Skl9gZbGxQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org, Alexander Kurz <akurz@blala.de>,
+        Sven Van Asbroeck <TheSven73@gmail.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 114/155] PCI: rpadlpar: Fix leaked device_node references in add/remove paths
+Subject: [PATCH 4.14 63/81] power: supply: max14656: fix potential use-before-alloc
 Date:   Thu, 13 Jun 2019 10:33:46 +0200
-Message-Id: <20190613075659.315771293@linuxfoundation.org>
+Message-Id: <20190613075653.690359440@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fb26228bfc4ce3951544848555c0278e2832e618 ]
+[ Upstream commit 0cd0e49711556d2331a06b1117b68dd786cb54d2 ]
 
-The find_dlpar_node() helper returns a device node with its reference
-incremented.  Both the add and remove paths use this helper for find the
-appropriate node, but fail to release the reference when done.
+Call order on probe():
+- max14656_hw_init() enables interrupts on the chip
+- devm_request_irq() starts processing interrupts, isr
+  could be called immediately
+-    isr: schedules delayed work (irq_work)
+-    irq_work: calls power_supply_changed()
+- devm_power_supply_register() registers the power supply
 
-Annotate the find_dlpar_node() helper with a comment about the incremented
-reference count and call of_node_put() on the obtained device_node in the
-add and remove paths.  Also, fixup a reference leak in the find_vio_slot()
-helper where we fail to call of_node_put() on the vdevice node after we
-iterate over its children.
+Depending on timing, it's possible that power_supply_changed()
+is called on an unregistered power supply structure.
 
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fix by registering the power supply before requesting the irq.
+
+Cc: Alexander Kurz <akurz@blala.de>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/hotplug/rpadlpar_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/power/supply/max14656_charger_detector.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/hotplug/rpadlpar_core.c b/drivers/pci/hotplug/rpadlpar_core.c
-index e2356a9c7088..182f9e3443ee 100644
---- a/drivers/pci/hotplug/rpadlpar_core.c
-+++ b/drivers/pci/hotplug/rpadlpar_core.c
-@@ -51,6 +51,7 @@ static struct device_node *find_vio_slot_node(char *drc_name)
- 		if (rc == 0)
- 			break;
+diff --git a/drivers/power/supply/max14656_charger_detector.c b/drivers/power/supply/max14656_charger_detector.c
+index b91b1d2999dc..d19307f791c6 100644
+--- a/drivers/power/supply/max14656_charger_detector.c
++++ b/drivers/power/supply/max14656_charger_detector.c
+@@ -280,6 +280,13 @@ static int max14656_probe(struct i2c_client *client,
+ 
+ 	INIT_DELAYED_WORK(&chip->irq_work, max14656_irq_worker);
+ 
++	chip->detect_psy = devm_power_supply_register(dev,
++		       &chip->psy_desc, &psy_cfg);
++	if (IS_ERR(chip->detect_psy)) {
++		dev_err(dev, "power_supply_register failed\n");
++		return -EINVAL;
++	}
++
+ 	ret = devm_request_irq(dev, chip->irq, max14656_irq,
+ 			       IRQF_TRIGGER_FALLING,
+ 			       MAX14656_NAME, chip);
+@@ -289,13 +296,6 @@ static int max14656_probe(struct i2c_client *client,
  	}
-+	of_node_put(parent);
+ 	enable_irq_wake(chip->irq);
  
- 	return dn;
- }
-@@ -71,6 +72,7 @@ static struct device_node *find_php_slot_pci_node(char *drc_name,
- 	return np;
- }
+-	chip->detect_psy = devm_power_supply_register(dev,
+-		       &chip->psy_desc, &psy_cfg);
+-	if (IS_ERR(chip->detect_psy)) {
+-		dev_err(dev, "power_supply_register failed\n");
+-		return -EINVAL;
+-	}
+-
+ 	schedule_delayed_work(&chip->irq_work, msecs_to_jiffies(2000));
  
-+/* Returns a device_node with its reference count incremented */
- static struct device_node *find_dlpar_node(char *drc_name, int *node_type)
- {
- 	struct device_node *dn;
-@@ -306,6 +308,7 @@ int dlpar_add_slot(char *drc_name)
- 			rc = dlpar_add_phb(drc_name, dn);
- 			break;
- 	}
-+	of_node_put(dn);
- 
- 	printk(KERN_INFO "%s: slot %s added\n", DLPAR_MODULE_NAME, drc_name);
- exit:
-@@ -439,6 +442,7 @@ int dlpar_remove_slot(char *drc_name)
- 			rc = dlpar_remove_pci_slot(drc_name, dn);
- 			break;
- 	}
-+	of_node_put(dn);
- 	vm_unmap_aliases();
- 
- 	printk(KERN_INFO "%s: slot %s removed\n", DLPAR_MODULE_NAME, drc_name);
+ 	return 0;
 -- 
 2.20.1
 
