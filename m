@@ -2,96 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FAAC444ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6AB444DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:40:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392773AbfFMQkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:40:15 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47408 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730584AbfFMHCT (ORCPT
+        id S2392729AbfFMQkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:40:05 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46832 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730522AbfFMHC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:02:19 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D6xg5w034858;
-        Thu, 13 Jun 2019 07:02:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=GWkzr3jkawX0jlNx+2BVZb+IG8NfTmELRDy+IBSm2Yg=;
- b=qKMfWdTBqcBExZ9df8xxGPR6kh7zC1F7ttzJhfJV98th/Vh7U+7vbspfNgXBK7CHxVDA
- KwcEZwPvA2973aDyk6NA/7Ztc7bIK2qOxUGr1owLoXQQeonDQ9/7mF5PYgcRnQfXI8+6
- XMg1L8Ma15aY7mfB+brALCksWH1vIaD2Tp5k9k9yAFEYIbqVxYa5T/mG9PYwV2MVKLQm
- Rw6U9MU+je4/cTMzk4JgOCurZsQzQHq/CgiBMNoUbGy3imBa2Dpf4Si3sVIyTRqh1GJk
- mG3cUPGc33fOv6w3IvbT3RXt7m9/2LgFb61jQKDzL7KT5sj7gIX6xEmzNXeJjBRQut0p Ww== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 2t02heysv7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 07:02:13 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5D72C0o020953;
-        Thu, 13 Jun 2019 07:02:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2t0p9s8b3s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 07:02:13 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5D728mi015951;
-        Thu, 13 Jun 2019 07:02:09 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Jun 2019 00:02:08 -0700
-Date:   Thu, 13 Jun 2019 10:02:01 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Krzysztof Halasa <khalasa@piap.pl>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] soc: ixp4xx: npe: Fix an IS_ERR() vs NULL check in probe
-Message-ID: <20190613070201.GH16334@mwanda>
+        Thu, 13 Jun 2019 03:02:28 -0400
+Received: by mail-ed1-f65.google.com with SMTP id d4so6284759edr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 00:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hEIAcCGP/z08es9NPtS+WIS/044Mw9yHEo/3xcrUrOQ=;
+        b=aSm9LhD41KyVNm1kAG5u34+mKwpYwx5XNhQDDw9zsJO6CA9/ZrTjwnq03lmLGckAgV
+         WB/Jufh/GaG7HI2DNmiZwwhCjV2CdQJTnimi+UiV2BU3nNGzYaO8EJQAELkQsWbdWzhj
+         b06A1fi9dwGfA9OR0dJ0ZINqm/Zhg1X39GkGXb5IQXrN1QJM/AIkHv61ErcuitnDvW4S
+         E9SjotrvOzO7iCyKwCroJgD0iRa2jeRGWe0cn1vb0w54JDzXDEDi1NMcAXXhcgG401il
+         sQR8j7go+2RXq+kFYhM3xXz5GDtwGAzFxEXajV1UdVOi/H5DYC8JsebbyXhZEnW3WF8b
+         frcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hEIAcCGP/z08es9NPtS+WIS/044Mw9yHEo/3xcrUrOQ=;
+        b=p5Q9VqqfMADw4V2wcVJcFQvBKyIFzbNTIxNREHdpKDJ7Img3lAGxX9O4knf646DzyW
+         CFB6ILIkOjyXw3cIrQBFtEfaXE48JCySnoNTAzHwm4yzcfBevd+1o5eXcRRPAVB22oPB
+         f3NQm53b+HVuRTNpKryEtKuDX3sLUbvrj218rY1OxCiRzF1WFoYCfKUTzNuDoQMoWMxa
+         +QAOUfcAYGqIQj5MOVZdf4pGZNdbuVzaco4JaW8D+Pguct7YNpdBPMHl/3r2QJyM6bFX
+         1UpevOkzDofQrYCccuf6Bt9oPAUeW9Gubaqqvd7lQthMrsCejpqlD88WMoJ68fNlWCHp
+         SorQ==
+X-Gm-Message-State: APjAAAWLznqtJuroiMrjNSVEJIioNATxUvVCc60ZnkUMtGgoZg4pxPpa
+        0SUXPbnnVhc+koPsTx7ELOp7bgqh16U=
+X-Google-Smtp-Source: APXvYqza3mLrvU3YM5VyMqSx78u2vQxPUBVN06/agdAfqU+pu5LLY6r5sM67YvsmtZPlzjyIyXLBHw==
+X-Received: by 2002:a17:906:d549:: with SMTP id gk9mr58363207ejb.268.1560409346566;
+        Thu, 13 Jun 2019 00:02:26 -0700 (PDT)
+Received: from viisi.d.ethz.ch (mpp-cp1-natpool-1-013.ethz.ch. [82.130.71.13])
+        by smtp.gmail.com with ESMTPSA id e23sm383626ejj.13.2019.06.13.00.02.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 00:02:26 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     palmer@sifive.com
+Subject: [PATCH] MAINTAINERS: don't automatically patches involving SiFive to the linux-riscv list
+Date:   Thu, 13 Jun 2019 00:02:25 -0700
+Message-Id: <20190613070225.7209-1-paul.walmsley@sifive.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906130056
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9286 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906130056
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The devm_ioremap_resource() function doesn't return NULL, it returns
-error pointers.
+The current K: entry in the "SIFIVE DRIVERS" section causes
+scripts/get_maintainer.pl to recommend that all patches that originate
+from, or are sent or copied to, anyone with a @sifive.com E-mail
+address to be copied to the linux-riscv@lists.infradead.org mailing
+list:
 
-Fixes: 0b458d7b10f8 ("soc: ixp4xx: npe: Pass addresses as resources")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+https://lore.kernel.org/linux-riscv/CABEDWGxKCqCq2HBU8u1-=QgmMCdb69oXxN5rz65nxNODxdCAnw@mail.gmail.com/
+
+This is undesirable, since not all of these patches may be relevant to
+the linux-riscv@ mailing list.  Fix by excluding K: matches that look
+like a sifive.com E-mail address.
+
+Based on the following patch from Palmer Dabbelt <palmer@sifive.com>:
+
+https://lore.kernel.org/linux-riscv/mhng-2a897a66-1f3d-4878-ba47-1ae36b555540@palmer-si-x1e/
+
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
 ---
- drivers/soc/ixp4xx/ixp4xx-npe.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/ixp4xx/ixp4xx-npe.c b/drivers/soc/ixp4xx/ixp4xx-npe.c
-index bc10e3194809..ec90b44fa0cd 100644
---- a/drivers/soc/ixp4xx/ixp4xx-npe.c
-+++ b/drivers/soc/ixp4xx/ixp4xx-npe.c
-@@ -695,8 +695,8 @@ static int ixp4xx_npe_probe(struct platform_device *pdev)
- 			continue; /* NPE already disabled or not present */
- 		}
- 		npe->regs = devm_ioremap_resource(dev, res);
--		if (!npe->regs)
--			return -ENOMEM;
-+		if (IS_ERR(npe->regs))
-+			return PTR_ERR(npe->regs);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 57f496cff999..66d23856781d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14332,7 +14332,7 @@ M:	Paul Walmsley <paul.walmsley@sifive.com>
+ L:	linux-riscv@lists.infradead.org
+ T:	git git://github.com/sifive/riscv-linux.git
+ S:	Supported
+-K:	sifive
++K:	[^@]sifive
+ N:	sifive
  
- 		if (npe_reset(npe)) {
- 			dev_info(dev, "NPE%d at 0x%08x-0x%08x does not reset\n",
+ SILEAD TOUCHSCREEN DRIVER
 -- 
 2.20.1
 
