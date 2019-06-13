@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18F2444261
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1711440AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388872AbfFMQVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:21:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56120 "EHLO mail.kernel.org"
+        id S2390251AbfFMQIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:08:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731053AbfFMIih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:38:37 -0400
+        id S1731293AbfFMIpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:45:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C522F21479;
-        Thu, 13 Jun 2019 08:38:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FC5020851;
+        Thu, 13 Jun 2019 08:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415117;
-        bh=aDPUmGYA4iLb9ZP7GEHdFdls6Iuzsq1XRDoInvDGYKg=;
+        s=default; t=1560415515;
+        bh=RyQfi8PifalqsZTXPrVVALQ1aLa+4Pwc5y07uBkObAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZvrYLbhItoQCYG+bCOkgLceSN6R/HO662cJyZMHSMKrVR9eriUmOUAzK+4FRIwwUt
-         5G+VGI1aUvPixaVx4vb8SuSJIFif8PD2bxwZf6rtqcIQ6FOgeruHfICohG8309ajSb
-         e51MghFPbyNjQ+zMNy1TQXRBDcaAj8JQBYy/tCcQ=
+        b=i+8S2E0Gr+a5W6xQ7ZEqFhD+poyJgE4wLMHm8cNdje6O0Alg36uGzudKMHzqqemZt
+         EFEEhgptgRqbLpUjZ2OgE6aPKRx7iNTBTMH+xQd2CtHuDBmPMPD6UtZdZNySLALsDy
+         g6SExICAZkt9b0UtU2glfJn2pOhPKA4RcTaefKf0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 002/118] fs/fat/file.c: issue flush after the writeback of FAT
-Date:   Thu, 13 Jun 2019 10:32:20 +0200
-Message-Id: <20190613075643.802892063@linuxfoundation.org>
+Subject: [PATCH 5.1 029/155] drm/nouveau/disp/dp: respect sink limits when selecting failsafe link configuration
+Date:   Thu, 13 Jun 2019 10:32:21 +0200
+Message-Id: <20190613075654.544378169@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,52 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bd8309de0d60838eef6fb575b0c4c7e95841cf73 ]
+[ Upstream commit 13d03e9daf70dab032c03dc172e75bb98ad899c4 ]
 
-fsync() needs to make sure the data & meta-data of file are persistent
-after the return of fsync(), even when a power-failure occurs later.  In
-the case of fat-fs, the FAT belongs to the meta-data of file, so we need
-to issue a flush after the writeback of FAT instead before.
+Where possible, we want the failsafe link configuration (one which won't
+hang the OR during modeset because of not enough bandwidth for the mode)
+to also be supported by the sink.
 
-Also bail out early when any stage of fsync fails.
+This prevents "link rate unsupported by sink" messages when link training
+fails.
 
-Link: http://lkml.kernel.org/r/20190409030158.136316-1-houtao1@huawei.com
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fat/file.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 4f3d72fb1e60..f86ea08bd6ce 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -193,12 +193,17 @@ static int fat_file_release(struct inode *inode, struct file *filp)
- int fat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
- {
- 	struct inode *inode = filp->f_mapping->host;
--	int res, err;
-+	int err;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
+index 5f301e632599..818d21bd28d3 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
+@@ -365,8 +365,15 @@ nvkm_dp_train(struct nvkm_dp *dp, u32 dataKBps)
+ 	 * and it's better to have a failed modeset than that.
+ 	 */
+ 	for (cfg = nvkm_dp_rates; cfg->rate; cfg++) {
+-		if (cfg->nr <= outp_nr && cfg->nr <= outp_bw)
+-			failsafe = cfg;
++		if (cfg->nr <= outp_nr && cfg->nr <= outp_bw) {
++			/* Try to respect sink limits too when selecting
++			 * lowest link configuration.
++			 */
++			if (!failsafe ||
++			    (cfg->nr <= sink_nr && cfg->bw <= sink_bw))
++				failsafe = cfg;
++		}
 +
-+	err = __generic_file_fsync(filp, start, end, datasync);
-+	if (err)
-+		return err;
- 
--	res = generic_file_fsync(filp, start, end, datasync);
- 	err = sync_mapping_buffers(MSDOS_SB(inode->i_sb)->fat_inode->i_mapping);
-+	if (err)
-+		return err;
- 
--	return res ? res : err;
-+	return blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
- }
- 
- 
+ 		if (failsafe && cfg[1].rate < dataKBps)
+ 			break;
+ 	}
 -- 
 2.20.1
 
