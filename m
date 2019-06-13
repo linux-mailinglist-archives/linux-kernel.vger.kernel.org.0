@@ -2,190 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3B043B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5878543AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbfFMPZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:25:33 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58174 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732020AbfFMPZa (ORCPT
+        id S1727668AbfFMPYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:24:47 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37450 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbfFMPYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:25:30 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5DFGUqo030339;
-        Thu, 13 Jun 2019 08:24:07 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=5upTGPFsqkaNgj1lgYq0xrYnDw/z1eQKH2p21LD4RJw=;
- b=AwqPgJ4ittIgsIWi/jCa/WQ6GEnwl0Y6g95/jk5rdPePOTM5EBBdUrPaOFH/toZo4bRr
- gqUGU6T0BuCQd2+DA6Z2wEe4fZJGhfepLcjEgXEVXpomQplmEsUq6Z+JNYuc4tb7I5gS
- sqRPvBrXzEvJ1m32q+RLIfwQzW7DLP1mrG8= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2t3qmj0bex-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 13 Jun 2019 08:24:07 -0700
-Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
- prn-hub02.TheFacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Thu, 13 Jun 2019 08:24:05 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Thu, 13 Jun 2019 08:24:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5upTGPFsqkaNgj1lgYq0xrYnDw/z1eQKH2p21LD4RJw=;
- b=ZNz2GTn4OWPcEoVSxI95MdoYpFe7F1h3iDHQsMXVGL+aeVtinsJg6Xa0UxDsK1yaSHfCY6wO9PES+QaC4ctni7WoXg/7TUVEJ1QQFN/+OFOlOtnNcU/TzOimTITl5wC/jDky4mQK8Bec05OaY+nwFXu78Bii7B93Gen1hnfDhGY=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1437.namprd15.prod.outlook.com (10.173.234.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Thu, 13 Jun 2019 15:24:04 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.1987.012; Thu, 13 Jun 2019
- 15:24:04 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-CC:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "namit@vmware.com" <namit@vmware.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v3 3/5] mm, thp: introduce FOLL_SPLIT_PMD
-Thread-Topic: [PATCH v3 3/5] mm, thp: introduce FOLL_SPLIT_PMD
-Thread-Index: AQHVIWtWTe7ps5z8rEO6sAR2s+F9WKaZjDkAgAAQ0ICAAAU/gIAADRAAgAADJ4CAAAK6gA==
-Date:   Thu, 13 Jun 2019 15:24:04 +0000
-Message-ID: <F711F5A6-8822-4EE5-B7F8-0A9D5007CAB9@fb.com>
-References: <20190612220320.2223898-1-songliubraving@fb.com>
- <20190612220320.2223898-4-songliubraving@fb.com>
- <20190613125718.tgplv5iqkbfhn6vh@box>
- <5A80A2B9-51C3-49C4-97B6-33889CC47F08@fb.com>
- <20190613141615.yvmckzi3fac4qjag@box>
- <32E15B93-24B9-4DBB-BDD4-DDD8537C7CE0@fb.com>
- <20190613151417.7cjxwudjssl5h2pf@black.fi.intel.com>
-In-Reply-To: <20190613151417.7cjxwudjssl5h2pf@black.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:180::1:7078]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 20555ca9-9841-49a8-4261-08d6f0132bbf
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1437;
-x-ms-traffictypediagnostic: MWHPR15MB1437:
-x-microsoft-antispam-prvs: <MWHPR15MB14371465193428533D2231FCB3EF0@MWHPR15MB1437.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(346002)(376002)(366004)(396003)(189003)(199004)(7416002)(5660300002)(6506007)(53546011)(102836004)(46003)(6512007)(476003)(11346002)(446003)(2616005)(53936002)(68736007)(2906002)(99286004)(186003)(6436002)(6916009)(76176011)(229853002)(6116002)(33656002)(57306001)(486006)(54906003)(14454004)(86362001)(25786009)(36756003)(71190400001)(71200400001)(4326008)(305945005)(7736002)(76116006)(478600001)(8676002)(6246003)(6486002)(316002)(8936002)(81166006)(81156014)(50226002)(66446008)(64756008)(66556008)(14444005)(66946007)(66476007)(256004)(73956011);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1437;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: cVUdMAju7C9HoBdVDE96XRFUhLjLOi/CYsB5I9Jp2s9PviHT+OYET71zA6Il/qKewnZeUsXHkaGQXF4U4nMebQWanRYAwuTPPzFg0FjeQeRaChFBBPAlJ8iY23kLuELglK5Y44gEsNICydcAAlBlJE9dExDqE4fvelL/6qN6dj8PjgsG8qwPf4tDeR72ouQZNRaHya0hB030khe8r7407tq8VoRT1N6f+AyUclmyY+GCTyr4tGXAKQUSw4cWISPgyF8MxAxxgQx75fxqxh5zE+Vz/rtblzEa8vw/WT3IsEvQyKiLi2qdbwl4BKJ07/7N3IZllsoJQFkQNeXrrwhjZWyZAY6YuX5YGwWv0uvwzHXflmDjANxMfUy6rHIAwRPN3jdMHdvR2z4l+DgmcBhNY9wbsIbso9N7Nho68QGYlUE=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0D44160B39BFE9428279B658D1C56286@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 13 Jun 2019 11:24:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 19so11224797pfa.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 08:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UhkxS9OzbQDJW8EmelqSilqPcjj3tM4tLTV73e7d2yw=;
+        b=dzKFboS9GO1hDmlm9GccLJ3JLpjQDc/PCv8UzpB/mtMxyIqA2B4c0jEhTsRq3dS+Pw
+         3OH3S9ZWwN191V8aO4SrYk/U+ugTOq3+d3oBnBYUHH3ZMNikRQARD079yVR+1lrb4pjJ
+         YZg4HDp0qFkB3nAuRt9UVPV322Ne054lKEyvyeaFZISy6fxVTXPHHiZ/5B7XQRz2Df74
+         NfAYxnn5RWzPJE0+S1KQA4WGD/FTIOtrHEZzPHA6Va87X7vkY2nn/vWh6XqDReVbAzyR
+         F7hQkH0TOTOYgwCIls/RcI0yYQtfJkQ7wAoRnNIq0AZSxD/N7z9IoysNJSo0ZaxrUY9Q
+         EQYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UhkxS9OzbQDJW8EmelqSilqPcjj3tM4tLTV73e7d2yw=;
+        b=WBwMh+/8xj5vVx+1kWT0YeKk0TAQ3GO+AgsbqqmKuZTiH8lkRQc8RIPtKCiu2HLUZ5
+         nHT0zVzOhCTxWua1RotY6vMD733cVeD7EQUwEf5b/jbwbyasAFERaYpB/nzDX/dw3pQJ
+         Rt+z1J+yYa4Mpd9Y1s4zuPaZX4mmfRNuzb5104D7iIYggXFEqC9xSHHRqN/XaBUP52EX
+         u1FaXIAPcCOOAAiszlDsYYmvBEMjPVcIdIH47DwqxeQrQl0KpZ5yO1BqDpVIVCs+Us7I
+         BC6M59hk1/CzE8thX9uttNER5IkfPlocqTkLMYWhGL4UvLk4OBYqKVv5f/sCUDeUl4re
+         NpqA==
+X-Gm-Message-State: APjAAAUMnoNEFXGSsyHrbz8B+L38dEPrFsTCXpBgGaCsJg5rxmGmvPGG
+        OA4G+NI1T6q3ZBh/+uyDzKIGoA==
+X-Google-Smtp-Source: APXvYqxMD0WyAu536v6hFZOJpJWEQhXFLgxLRnrqc2RoymF6h5pR+QF0Lh6Ev5dKcm9cjbMfXygFkA==
+X-Received: by 2002:a17:90a:f498:: with SMTP id bx24mr6275180pjb.91.1560439473353;
+        Thu, 13 Jun 2019 08:24:33 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id a13sm119140pgl.84.2019.06.13.08.24.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 08:24:32 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 08:24:30 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, agross@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] drivers: regulator: qcom_spmi: Refactor
+ get_mode/set_mode
+Message-ID: <20190613152430.GC6792@builder>
+References: <20190613142157.8674-1-jeffrey.l.hugo@gmail.com>
+ <20190613142239.8779-1-jeffrey.l.hugo@gmail.com>
+ <20190613151209.GB6792@builder>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20555ca9-9841-49a8-4261-08d6f0132bbf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 15:24:04.7122
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1437
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-13_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906130114
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613151209.GB6792@builder>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 13 Jun 08:12 PDT 2019, Bjorn Andersson wrote:
 
+> On Thu 13 Jun 07:22 PDT 2019, Jeffrey Hugo wrote:
+> 
+> > spmi_regulator_common_get_mode and spmi_regulator_common_set_mode use
+> > multi-level ifs which mirror a switch statement.  Refactor to use a switch
+> > statement to make the code flow more clear.
+> > 
+> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > ---
+> >  drivers/regulator/qcom_spmi-regulator.c | 28 ++++++++++++++++---------
+> >  1 file changed, 18 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+> > index fd55438c25d6..1c18fe5969b5 100644
+> > --- a/drivers/regulator/qcom_spmi-regulator.c
+> > +++ b/drivers/regulator/qcom_spmi-regulator.c
+> > @@ -911,13 +911,14 @@ static unsigned int spmi_regulator_common_get_mode(struct regulator_dev *rdev)
+> >  
+> >  	spmi_vreg_read(vreg, SPMI_COMMON_REG_MODE, &reg, 1);
+> >  
+> > -	if (reg & SPMI_COMMON_MODE_HPM_MASK)
 
-> On Jun 13, 2019, at 8:14 AM, Kirill A. Shutemov <kirill.shutemov@linux.in=
-tel.com> wrote:
->=20
-> On Thu, Jun 13, 2019 at 03:03:01PM +0000, Song Liu wrote:
->>=20
->>=20
->>> On Jun 13, 2019, at 7:16 AM, Kirill A. Shutemov <kirill@shutemov.name> =
-wrote:
->>>=20
->>> On Thu, Jun 13, 2019 at 01:57:30PM +0000, Song Liu wrote:
->>>>> And I'm not convinced that it belongs here at all. User requested PMD
->>>>> split and it is done after split_huge_pmd(). The rest can be handled =
-by
->>>>> the caller as needed.
->>>>=20
->>>> I put this part here because split_huge_pmd() for file-backed THP is
->>>> not really done after split_huge_pmd(). And I would like it done befor=
-e
->>>> calling follow_page_pte() below. Maybe we can still do them here, just=
-=20
->>>> for file-backed THPs?
->>>>=20
->>>> If we would move it, shall we move to callers of follow_page_mask()?=20
->>>> In that case, we will probably end up with similar code in two places:
->>>> __get_user_pages() and follow_page().=20
->>>>=20
->>>> Did I get this right?
->>>=20
->>> Would it be enough to replace pte_offset_map_lock() in follow_page_pte(=
-)
->>> with pte_alloc_map_lock()?
->>=20
->> This is similar to my previous version:
->>=20
->> +		} else {  /* flags & FOLL_SPLIT_PMD */
->> +			pte_t *pte;
->> +			spin_unlock(ptl);
->> +			split_huge_pmd(vma, pmd, address);
->> +			pte =3D get_locked_pte(mm, address, &ptl);
->> +			if (!pte)
->> +				return no_page_table(vma, flags);
->> +			spin_unlock(ptl);
->> +			ret =3D 0;
->> +		}
->>=20
->> I think this is cleaner than use pte_alloc_map_lock() in follow_page_pte=
-().=20
->> What's your thought on these two versions (^^^ vs. pte_alloc_map_lock)?
->=20
-> It's additional lock-unlock cycle and few more lines of code...
->=20
->>> This will leave bunch not populated PTE entries, but it is fine: they w=
-ill
->>> be populated on the next access to them.
->>=20
->> We need to handle page fault during next access, right? Since we already
->> allocated everything, we can just populate the PTE entries and saves a
->> lot of page faults (assuming we will access them later).=20
->=20
-> Not a lot due to faultaround and they may never happen, but you need to
-> tear down the mapping any way.
+Sorry, didn't see the & here. Don't you need to mask out the mode bits
+before turning this into a switch?
 
-I see. Let me try this way.=20
-
-Thanks,
-Song
-
->=20
-> --=20
-> Kirill A. Shutemov
-
+> > +	switch (reg) {
+> > +	case SPMI_COMMON_MODE_HPM_MASK:
+> >  		return REGULATOR_MODE_NORMAL;
+> > -
+> > -	if (reg & SPMI_COMMON_MODE_AUTO_MASK)
+> > +	case SPMI_COMMON_MODE_AUTO_MASK:
+> >  		return REGULATOR_MODE_FAST;
+> > -
+> > -	return REGULATOR_MODE_IDLE;
+> > +	default:
+> > +		return REGULATOR_MODE_IDLE;
+> > +	}
+> >  }
+> >  
+> >  static int
+> > @@ -925,12 +926,19 @@ spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
+> >  {
+> >  	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
+> >  	u8 mask = SPMI_COMMON_MODE_HPM_MASK | SPMI_COMMON_MODE_AUTO_MASK;
+> > -	u8 val = 0;
+> > +	u8 val;
+> >  
+> > -	if (mode == REGULATOR_MODE_NORMAL)
+> > +	switch (mode) {
+> > +	case REGULATOR_MODE_NORMAL:
+> >  		val = SPMI_COMMON_MODE_HPM_MASK;
+> > -	else if (mode == REGULATOR_MODE_FAST)
+> > +		break;
+> > +	case REGULATOR_MODE_FAST:
+> >  		val = SPMI_COMMON_MODE_AUTO_MASK;
+> > +		break;
+> > +	default:
+> > +		val = 0;
+> > +		break;
+> > +	}
+> 
+> For this part:
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >  
+> >  	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
+> >  }
+> > @@ -1834,9 +1842,9 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+> >  			}
+> >  		}
+> >  
+> > -		if (vreg->logical_type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430) {
+> 
+> Squash this into patch 1.
+> 
+> Regards,
+> Bjorn
+> 
+> > +		if (vreg->set_points->count == 1) {
+> >  			/* since there is only one range */
+> > -			range = spmi_regulator_find_range(vreg);
+> > +			range = vreg->set_points->range;
+> >  			vreg->desc.uV_step = range->step_uV;
+> >  		}
+> >  
+> > -- 
+> > 2.17.1
+> > 
