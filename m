@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 238634437B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 041E444057
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392382AbfFMQ34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:29:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52908 "EHLO mail.kernel.org"
+        id S2390976AbfFMQFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:05:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730920AbfFMIfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:35:10 -0400
+        id S1731348AbfFMIql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:46:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C54A2146F;
-        Thu, 13 Jun 2019 08:35:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C63D6215EA;
+        Thu, 13 Jun 2019 08:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560414908;
-        bh=k4KIIKBmTdJpZsgj98E2YxWt84jw6FsN7REwjULm4SA=;
+        s=default; t=1560415601;
+        bh=kr4WLHb8ykzlmdHs3+5pe59y2Z1G3RHQQ5ZQEnni65A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tFdyArpRYQr9yC3OV6oXdloKjXlGYd96B94rjoM1nSUiGY7SlNtusGHMd5Eb3KpaH
-         /3WPhFK5MEZe9yAhHj0EK6DwKwsUc9TRnhY4RrlPgQYHOpJF98f21UYkuPiRvPPJMR
-         W2Xy6EW+FIlgg/XqgJGvfM8vnCRFJuPO/1X1COh4=
+        b=chZhQ8rp7iqoRZkyQiDMwD+QQeqlvM6e4d0NSv/VkYwAcYahl4ifOZ+Y85v+5Pi0L
+         YXnf6jncCt1zqnyPCUg6SMhrPw7b0XMMUnIrppHiIGJXpyP4tG1FXXDL+oX1q7khQn
+         x37A42fE+deKTE/sds04Xf7DCfMJ1TWb/7aUbEaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linxu Fang <fanglinxu@huawei.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        Xishi Qiu <qiuxishi@huawei.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 08/81] mem-hotplug: fix node spanned pages when we have a node with only ZONE_MOVABLE
+Subject: [PATCH 5.1 059/155] PCI: dwc: Free MSI in dw_pcie_host_init() error path
 Date:   Thu, 13 Jun 2019 10:32:51 +0200
-Message-Id: <20190613075649.663475244@linuxfoundation.org>
+Message-Id: <20190613075656.383108747@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,109 +47,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 299c83dce9ea3a79bb4b5511d2cb996b6b8e5111 ]
+[ Upstream commit 9e2b5de5604a6ff2626c51e77014d92c9299722c ]
 
-342332e6a925 ("mm/page_alloc.c: introduce kernelcore=mirror option") and
-later patches rewrote the calculation of node spanned pages.
+If we ever did MSI-related initializations, we need to call
+dw_pcie_free_msi() in the error code path.
 
-e506b99696a2 ("mem-hotplug: fix node spanned pages when we have a movable
-node"), but the current code still has problems,
+Remove the IS_ENABLED(CONFIG_PCI_MSI) check for MSI init because
+pci_msi_enabled() already has a stub for !CONFIG_PCI_MSI.
 
-When we have a node with only zone_movable and the node id is not zero,
-the size of node spanned pages is double added.
-
-That's because we have an empty normal zone, and zone_start_pfn or
-zone_end_pfn is not between arch_zone_lowest_possible_pfn and
-arch_zone_highest_possible_pfn, so we need to use clamp to constrain the
-range just like the commit <96e907d13602> (bootmem: Reimplement
-__absent_pages_in_range() using for_each_mem_pfn_range()).
-
-e.g.
-Zone ranges:
-  DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-  DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
-  Normal   [mem 0x0000000100000000-0x000000023fffffff]
-Movable zone start for each node
-  Node 0: 0x0000000100000000
-  Node 1: 0x0000000140000000
-Early memory node ranges
-  node   0: [mem 0x0000000000001000-0x000000000009efff]
-  node   0: [mem 0x0000000000100000-0x00000000bffdffff]
-  node   0: [mem 0x0000000100000000-0x000000013fffffff]
-  node   1: [mem 0x0000000140000000-0x000000023fffffff]
-
-node 0 DMA	spanned:0xfff   present:0xf9e   absent:0x61
-node 0 DMA32	spanned:0xff000 present:0xbefe0	absent:0x40020
-node 0 Normal	spanned:0	present:0	absent:0
-node 0 Movable	spanned:0x40000 present:0x40000 absent:0
-On node 0 totalpages(node_present_pages): 1048446
-node_spanned_pages:1310719
-node 1 DMA	spanned:0	    present:0		absent:0
-node 1 DMA32	spanned:0	    present:0		absent:0
-node 1 Normal	spanned:0x100000    present:0x100000	absent:0
-node 1 Movable	spanned:0x100000    present:0x100000	absent:0
-On node 1 totalpages(node_present_pages): 2097152
-node_spanned_pages:2097152
-Memory: 6967796K/12582392K available (16388K kernel code, 3686K rwdata,
-4468K rodata, 2160K init, 10444K bss, 5614596K reserved, 0K
-cma-reserved)
-
-It shows that the current memory of node 1 is double added.
-After this patch, the problem is fixed.
-
-node 0 DMA	spanned:0xfff   present:0xf9e   absent:0x61
-node 0 DMA32	spanned:0xff000 present:0xbefe0	absent:0x40020
-node 0 Normal	spanned:0	present:0	absent:0
-node 0 Movable	spanned:0x40000 present:0x40000 absent:0
-On node 0 totalpages(node_present_pages): 1048446
-node_spanned_pages:1310719
-node 1 DMA	spanned:0	    present:0		absent:0
-node 1 DMA32	spanned:0	    present:0		absent:0
-node 1 Normal	spanned:0	    present:0		absent:0
-node 1 Movable	spanned:0x100000    present:0x100000	absent:0
-On node 1 totalpages(node_present_pages): 1048576
-node_spanned_pages:1048576
-memory: 6967796K/8388088K available (16388K kernel code, 3686K rwdata,
-4468K rodata, 2160K init, 10444K bss, 1420292K reserved, 0K
-cma-reserved)
-
-Link: http://lkml.kernel.org/r/1554178276-10372-1-git-send-email-fanglinxu@huawei.com
-Signed-off-by: Linxu Fang <fanglinxu@huawei.com>
-Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
-Cc: Xishi Qiu <qiuxishi@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page_alloc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 923deb33bf34..6f71518a4558 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5727,13 +5727,15 @@ static unsigned long __meminit zone_spanned_pages_in_node(int nid,
- 					unsigned long *zone_end_pfn,
- 					unsigned long *ignored)
- {
-+	unsigned long zone_low = arch_zone_lowest_possible_pfn[zone_type];
-+	unsigned long zone_high = arch_zone_highest_possible_pfn[zone_type];
- 	/* When hotadd a new node from cpu_up(), the node should be empty */
- 	if (!node_start_pfn && !node_end_pfn)
- 		return 0;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 25087d3c9a82..acd185b4661e 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -439,7 +439,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	if (ret)
+ 		pci->num_viewport = 2;
  
- 	/* Get the start and end of the zone */
--	*zone_start_pfn = arch_zone_lowest_possible_pfn[zone_type];
--	*zone_end_pfn = arch_zone_highest_possible_pfn[zone_type];
-+	*zone_start_pfn = clamp(node_start_pfn, zone_low, zone_high);
-+	*zone_end_pfn = clamp(node_end_pfn, zone_low, zone_high);
- 	adjust_zone_range_for_zone_movable(nid, zone_type,
- 				node_start_pfn, node_end_pfn,
- 				zone_start_pfn, zone_end_pfn);
+-	if (IS_ENABLED(CONFIG_PCI_MSI) && pci_msi_enabled()) {
++	if (pci_msi_enabled()) {
+ 		/*
+ 		 * If a specific SoC driver needs to change the
+ 		 * default number of vectors, it needs to implement
+@@ -477,7 +477,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	if (pp->ops->host_init) {
+ 		ret = pp->ops->host_init(pp);
+ 		if (ret)
+-			goto error;
++			goto err_free_msi;
+ 	}
+ 
+ 	pp->root_bus_nr = pp->busn->start;
+@@ -491,7 +491,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 
+ 	ret = pci_scan_root_bus_bridge(bridge);
+ 	if (ret)
+-		goto error;
++		goto err_free_msi;
+ 
+ 	bus = bridge->bus;
+ 
+@@ -507,6 +507,9 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	pci_bus_add_devices(bus);
+ 	return 0;
+ 
++err_free_msi:
++	if (pci_msi_enabled() && !pp->ops->msi_host_init)
++		dw_pcie_free_msi(pp);
+ error:
+ 	pci_free_host_bridge(bridge);
+ 	return ret;
 -- 
 2.20.1
 
