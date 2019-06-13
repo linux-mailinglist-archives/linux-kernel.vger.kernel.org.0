@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF3E44166
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 251FC43FBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:00:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391789AbfFMQOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:14:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59672 "EHLO mail.kernel.org"
+        id S1731726AbfFMP7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:59:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731198AbfFMImb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:31 -0400
+        id S1731481AbfFMIti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:49:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1B392063F;
-        Thu, 13 Jun 2019 08:42:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C582206BA;
+        Thu, 13 Jun 2019 08:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415350;
-        bh=fMyvAqWhEet+kqapguNtwwh+UxadFguoNUCNXp7W0XU=;
+        s=default; t=1560415777;
+        bh=YL8MIoVT72q5kWa4/vm5yvnqtrpUHTG172GFL97hqFA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NHAI3qjktJRQcY7k1QnAxnryYdizZL59blaGKDFd49fk2WE/rLxRjkZGzslpt9NJS
-         SoUntoifRzR9JG/laAFrxfxKF6l7p38SmIIH+icOFQdySBofmI/WHUQIK8RTMnqeSZ
-         uDOIUWK8tTKtlMsicysxV2Lv0c3TWONxKQYHTNkY=
+        b=EbuOSLg4fECNBEAaHFhCC2HVVaYWK95fl4uWPdkwFdCcNlvv6bahllZcfpiSLdsnI
+         6fzuYrYbL8QmVmE83rtYfzGqvOkxocxV2NMJcJH0b/lW1RebmFK4w69vFsC4QRQIyg
+         rW0QuyEP7d7Djf0xbu/Bn37QldizRGRHFDArHNQg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Chang <junxiao.chang@intel.com>,
+        stable@vger.kernel.org, Binbin Wu <binbin.wu@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/118] platform/x86: intel_pmc_ipc: adding error handling
+Subject: [PATCH 5.1 119/155] pinctrl: pinctrl-intel: move gpio suspend/resume to noirq phase
 Date:   Thu, 13 Jun 2019 10:33:51 +0200
-Message-Id: <20190613075649.300207286@linuxfoundation.org>
+Message-Id: <20190613075659.546693851@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e61985d0550df8c2078310202aaad9b41049c36c ]
+[ Upstream commit 2fef32766861c6e171f436ab99c89198cf0ca6e1 ]
 
-If punit or telemetry device initialization fails, pmc driver should
-unregister and return failure.
+In current driver, SET_LATE_SYSTEM_SLEEP_PM_OPS is used to install the
+callbacks for suspend/resume.
+GPIO pin may be used as the interrupt pin by some device. However, using
+SET_LATE_SYSTEM_SLEEP_PM_OPS() to install the callbacks, the resume
+callback is called after resume_device_irqs(). Unintended interrupts may
+arrive due to resuming device irqs first, but the GPIO controller is not
+properly restored.
 
-This change is to fix a kernel panic when removing kernel module
-intel_pmc_ipc.
+Normally, for a SMP system, there are multiple cores, so even when there are
+unintended interrupts, BSP gets the chance to initialize the GPIO chip soon.
+But when there is only 1 core is active (other cores are offlined or
+single core) during resume, it is more easily to observe the unintended
+interrupts.
 
-Fixes: 48c1917088ba ("platform:x86: Add Intel telemetry platform device")
-Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+This patch renames the suspend/resume function by adding suffix "_noirq",
+and installs the callbacks using SET_NOIRQ_SYSTEM_SLEEP_PM_OPS().
+
+Signed-off-by: Binbin Wu <binbin.wu@intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/intel/pinctrl-intel.c |  8 ++++----
+ drivers/pinctrl/intel/pinctrl-intel.h | 11 ++++++-----
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index e7edc8c63936..4ad9d127f2f5 100644
---- a/drivers/platform/x86/intel_pmc_ipc.c
-+++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -776,13 +776,17 @@ static int ipc_create_pmc_devices(void)
- 	if (ret) {
- 		dev_err(ipcdev.dev, "Failed to add punit platform device\n");
- 		platform_device_unregister(ipcdev.tco_dev);
-+		return ret;
- 	}
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 3b1818184207..70638b74f9d6 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1466,7 +1466,7 @@ static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned int
+ 	return false;
+ }
  
- 	if (!ipcdev.telem_res_inval) {
- 		ret = ipc_create_telemetry_device();
--		if (ret)
-+		if (ret) {
- 			dev_warn(ipcdev.dev,
- 				"Failed to add telemetry platform device\n");
-+			platform_device_unregister(ipcdev.punit_dev);
-+			platform_device_unregister(ipcdev.tco_dev);
-+		}
- 	}
+-int intel_pinctrl_suspend(struct device *dev)
++int intel_pinctrl_suspend_noirq(struct device *dev)
+ {
+ 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	struct intel_community_context *communities;
+@@ -1505,7 +1505,7 @@ int intel_pinctrl_suspend(struct device *dev)
  
- 	return ret;
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(intel_pinctrl_suspend);
++EXPORT_SYMBOL_GPL(intel_pinctrl_suspend_noirq);
+ 
+ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+ {
+@@ -1527,7 +1527,7 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+ 	}
+ }
+ 
+-int intel_pinctrl_resume(struct device *dev)
++int intel_pinctrl_resume_noirq(struct device *dev)
+ {
+ 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	const struct intel_community_context *communities;
+@@ -1589,7 +1589,7 @@ int intel_pinctrl_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(intel_pinctrl_resume);
++EXPORT_SYMBOL_GPL(intel_pinctrl_resume_noirq);
+ #endif
+ 
+ MODULE_AUTHOR("Mathias Nyman <mathias.nyman@linux.intel.com>");
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index b8a07d37d18f..a8e958f1dcf5 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -177,13 +177,14 @@ int intel_pinctrl_probe_by_hid(struct platform_device *pdev);
+ int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
+ 
+ #ifdef CONFIG_PM_SLEEP
+-int intel_pinctrl_suspend(struct device *dev);
+-int intel_pinctrl_resume(struct device *dev);
++int intel_pinctrl_suspend_noirq(struct device *dev);
++int intel_pinctrl_resume_noirq(struct device *dev);
+ #endif
+ 
+-#define INTEL_PINCTRL_PM_OPS(_name)						  \
+-const struct dev_pm_ops _name = {						  \
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend, intel_pinctrl_resume) \
++#define INTEL_PINCTRL_PM_OPS(_name)					\
++const struct dev_pm_ops _name = {					\
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend_noirq,	\
++				      intel_pinctrl_resume_noirq)	\
+ }
+ 
+ #endif /* PINCTRL_INTEL_H */
 -- 
 2.20.1
 
