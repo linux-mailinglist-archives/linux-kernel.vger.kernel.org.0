@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A648244035
+	by mail.lfdr.de (Postfix) with ESMTP id 324CF44034
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbfFMQD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:03:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35488 "EHLO mail.kernel.org"
+        id S2389663AbfFMQDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:03:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731373AbfFMIrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:13 -0400
+        id S1731374AbfFMIrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:47:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F410B2147A;
-        Thu, 13 Jun 2019 08:47:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 101DB20851;
+        Thu, 13 Jun 2019 08:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415632;
-        bh=EFuefgkk3y0ZXHnkLQX7Tj/A14qq9Kx55hAdXvkexwA=;
+        s=default; t=1560415635;
+        bh=vwBCA/RMQG6LIebGglkzXim1j1W+F/5GA0rzavP5IsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WrqwzYiXzwTjKJfJ1lEazqKEs/RInDtTe3A0aTFYpBLbLY5OYgcfSp2LmaoFe0ifs
-         M7NrkgKW9icNtkexP+xAqum0ceLin1jXebMH8ODcmcg7YMwniz1FUXN2h6NPqXtJQ+
-         0kFuVVAIyTPcWHwxN09adMfMWWeiz3NLtf0qQvG8=
+        b=0w3oHXbeOUIFgr3I1kQLMIU8NUpse8dYYTj53kqcyZ2TDZ8Yj3hC0olbxlKzAiOXd
+         /70oq4epoHoMWPb2bRA+4ekgq1jpo88k/XQXfgUXLLTL2e8HmK+KEqXF0zvh6/vLmM
+         iE1jmvHKLIwBIdEbW7hc5wtYhybIezW8Jl9qamF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 046/155] f2fs: fix to do sanity check on free nid
-Date:   Thu, 13 Jun 2019 10:32:38 +0200
-Message-Id: <20190613075655.696316634@linuxfoundation.org>
+Subject: [PATCH 5.1 047/155] f2fs: fix to clear dirty inode in error path of f2fs_iget()
+Date:   Thu, 13 Jun 2019 10:32:39 +0200
+Message-Id: <20190613075655.744498594@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
 References: <20190613075652.691765927@linuxfoundation.org>
@@ -44,75 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 626bcf2b7ce87211dba565f2bfa7842ba5be5c1b ]
+[ Upstream commit 546d22f070d64a7b96f57c93333772085d3a5e6d ]
 
 As Jungyeon reported in bugzilla:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203225
+https://bugzilla.kernel.org/show_bug.cgi?id=203217
 
 - Overview
-When mounting the attached crafted image and unmounting it, following errors are reported.
-Additionally, it hangs on sync after unmounting.
+When mounting the attached crafted image and running program, I got this error.
+Additionally, it hangs on sync after running the program.
 
-The image is intentionally fuzzed from a normal f2fs image for testing.
-Compile options for F2FS are as follows.
-CONFIG_F2FS_FS=y
-CONFIG_F2FS_STAT_FS=y
-CONFIG_F2FS_FS_XATTR=y
-CONFIG_F2FS_FS_POSIX_ACL=y
-CONFIG_F2FS_CHECK_FS=y
+The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
 
 - Reproduces
+cc poc_test_05.c
 mkdir test
 mount -t f2fs tmp.img test
-touch test/t
-umount test
+sudo ./a.out
 sync
 
 - Messages
- kernel BUG at fs/f2fs/node.c:3073!
- RIP: 0010:f2fs_destroy_node_manager+0x2f0/0x300
+ kernel BUG at fs/f2fs/inode.c:707!
+ RIP: 0010:f2fs_evict_inode+0x33f/0x3a0
  Call Trace:
-  f2fs_put_super+0xf4/0x270
-  generic_shutdown_super+0x62/0x110
-  kill_block_super+0x1c/0x50
-  kill_f2fs_super+0xad/0xd0
-  deactivate_locked_super+0x35/0x60
-  cleanup_mnt+0x36/0x70
-  task_work_run+0x75/0x90
-  exit_to_usermode_loop+0x93/0xa0
-  do_syscall_64+0xba/0xf0
+  evict+0xba/0x180
+  f2fs_iget+0x598/0xdf0
+  f2fs_lookup+0x136/0x320
+  __lookup_slow+0x92/0x140
+  lookup_slow+0x30/0x50
+  walk_component+0x1c1/0x350
+  path_lookupat+0x62/0x200
+  filename_lookup+0xb3/0x1a0
+  do_readlinkat+0x56/0x110
+  __x64_sys_readlink+0x16/0x20
+  do_syscall_64+0x43/0xf0
   entry_SYSCALL_64_after_hwframe+0x44/0xa9
- RIP: 0010:f2fs_destroy_node_manager+0x2f0/0x300
 
-NAT table is corrupted, so reserved meta/node inode ids were added into
-free list incorrectly, during file creation, since reserved id has cached
-in inode hash, so it fails the creation and preallocated nid can not be
-released later, result in kernel panic.
+During inode loading, __recover_inline_status() can recovery inode status
+and set inode dirty, once we failed in following process, it will fail
+the check in f2fs_evict_inode, result in trigger BUG_ON().
 
-To fix this issue, let's do nid boundary check during free nid loading.
+Let's clear dirty inode in error path of f2fs_iget() to avoid panic.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/node.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index d45ecef75116..63bb6134d39a 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2082,6 +2082,9 @@ static bool add_free_nid(struct f2fs_sb_info *sbi,
- 	if (unlikely(nid == 0))
- 		return false;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index e7f2e8759315..4edd6f2bb491 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -488,6 +488,7 @@ make_now:
+ 	return inode;
  
-+	if (unlikely(f2fs_check_nid_range(sbi, nid)))
-+		return false;
-+
- 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
- 	i->nid = nid;
- 	i->state = FREE_NID;
+ bad_inode:
++	f2fs_inode_synced(inode);
+ 	iget_failed(inode);
+ 	trace_f2fs_iget_exit(inode, ret);
+ 	return ERR_PTR(ret);
 -- 
 2.20.1
 
