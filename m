@@ -2,116 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB2C43C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AFFB43BFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732684AbfFMPda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:33:30 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4698 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728396AbfFMKlj (ORCPT
+        id S1727472AbfFMPdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:33:17 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42622 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbfFMKpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:41:39 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0228620000>; Thu, 13 Jun 2019 03:41:38 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Jun 2019 03:41:38 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Jun 2019 03:41:38 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Jun
- 2019 10:41:37 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 13 Jun 2019 10:41:37 +0000
-Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d02285f0000>; Thu, 13 Jun 2019 03:41:37 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <mkumard@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v5 2/2] arm64: tegra: enable ACONNECT, ADMA and AGIC
-Date:   Thu, 13 Jun 2019 16:11:17 +0530
-Message-ID: <1560422477-11242-2-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560422477-11242-1-git-send-email-spujar@nvidia.com>
-References: <1560422477-11242-1-git-send-email-spujar@nvidia.com>
+        Thu, 13 Jun 2019 06:45:04 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q10so11576882pff.9;
+        Thu, 13 Jun 2019 03:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=xTm8k6po7bjp3Ha8AosDhse0S/jiEFLFTIo5UOLT5jg=;
+        b=qMKJ1Nu0C1R8lwpK0IQ9vBQMP6/MGgzUZrbQqi8zl8uAjAjOSTpBUrS0ostsbDH2Nn
+         FoCnkKfzbCaQd5zNxOWhfwWwFJaSY1kc6OPZsIxrCzhYNXjdgeWIRshLbi+1gZki1WQC
+         tdXUazIntJ4w+8FKx6SOf3Jh9EkFJ8HoWzDXakbL5oTgiO0CvjCFx9JjHeOFYlHbzmWt
+         c3PKW23lGhSRwnnLw4M+ogCQvH4X/ZkGFtwGW12moRmVROJzkF5leihb8djdaIKJgm2i
+         x/K2+wUFVlOIiqzP6oUuRQRwoHyN42EKBIDCFER59PUSs49nA3SyFoo4DgdCMpdJrRv6
+         q5sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xTm8k6po7bjp3Ha8AosDhse0S/jiEFLFTIo5UOLT5jg=;
+        b=s9Y+Y2FFYvie7FZfFw5D9WuvOTpsSrBb/ZRD7uP0j5TSJ3BwvUI2jg6chpdVh89HET
+         sX45oF1g9ZqF7sqx+dp9wtBUSlrPbojBjx8ls7GZ3ZpirIclxJh64cutZ+VwWg91trQ1
+         ZpnDmCaQAS7/IPZnxk4SPM2pYdKl7oWfmQlH6HNruNV4C9GxKNB6O6NYFHvVf+OUxhhw
+         GNPks7pGuTV33A2ZZZboVbyM/2Pld8blvc8IXBV5v/0F98sXmUeXYg5D1KZLCjhBrluO
+         9VbEs12hCIzS2smD0K753tuy1EqYn8Src7NlpatuKZjShhtc/VNHDvzb+JhQl80WVPtn
+         sQkA==
+X-Gm-Message-State: APjAAAWqC4eb6GnBd8OkQMa+4JmTfmwRZ48z4RxwTjoDcbAgrBFdek7r
+        QtTT+AIsbBE6F/8ssgEbjKKICoAeJe/C5g==
+X-Google-Smtp-Source: APXvYqyoFTjHlG0lG+mwUb84qwW3ZXILCiRfHcDzlhE9hUfa7FT3F5ONsJ527thEIuo3Y9HEf5dmBg==
+X-Received: by 2002:a63:5207:: with SMTP id g7mr29149456pgb.356.1560422703319;
+        Thu, 13 Jun 2019 03:45:03 -0700 (PDT)
+Received: from hjy-HP-Notebook ([2409:8900:2650:d5a2:b9ff:4ab3:d77c:10b3])
+        by smtp.gmail.com with ESMTPSA id m24sm2161452pgh.75.2019.06.13.03.45.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 03:45:02 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 18:44:57 +0800
+From:   JingYi Hou <houjingyi647@gmail.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fix double-fetch bug in sock_getsockopt()
+Message-ID: <20190613104457.GA6296@hjy-HP-Notebook>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560422498; bh=h0MaxZLn1gCammi36WIV34/VM6M3T83VjRf/fNijC1k=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:Content-Type;
-        b=I2p1zMAjFxfvzB8iuptMoL9+fyiu9AdjtOtcNUDuF6nWpCC0j+72atwXxoWYcGvI+
-         6xWkd7FpxdtBodXKWPrDmkAqcVO4Vh1LwyWgFX42JFMwP4ddbAW1uWFkXYUXU82v0U
-         i4hzDaGeu+apCVU9l7Xf1Jf/4k29DVOvVXNBw0/z05vzH21jl4UaGGJ86nns69s0ky
-         DCyq4tRnG/W8GC9sEj3Y9UpYcQnJpI1JNSkcV628AAwBfcEB3V95GLpvfTCM5T/THJ
-         /Hr5Lm8R3JTTBu+0fEEnFWRdx61pLp1+tR1Tf9jr/It2yVddIvIGJ4LJeNPsbLANXb
-         EReCCTTZehxGA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable ACONNECT, ADMA and AGIC devices for following platforms
-  * Jetson TX2
-  * Jetson Xavier
+In sock_getsockopt(), 'optlen' is fetched the first time from userspace.
+'len < 0' is then checked. Then in condition 'SO_MEMINFO', 'optlen' is
+fetched the second time from userspace without check.
 
-Verified driver probe path and devices get registered fine.
+if a malicious user can change it between two fetches may cause security
+problems or unexpected behaivor.
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+To fix this, we need to recheck it in the second fetch.
+
+Signed-off-by: JingYi Hou <houjingyi647@gmail.com>
 ---
- changes from previous revision - None
+ net/core/sock.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 12 ++++++++++++
- 2 files changed, 24 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 5102de1..d055913 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -298,4 +298,16 @@
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
- 	};
-+
-+	aconnect {
-+		status = "okay";
-+
-+		dma-controller@2930000 {
-+			status = "okay";
-+		};
-+
-+		interrupt-controller@2a41000 {
-+			status = "okay";
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 6e6df65..c4a57959 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -167,4 +167,16 @@
- 			};
- 		};
- 	};
-+
-+	aconnect {
-+		status = "okay";
-+
-+		dma-controller@2930000 {
-+			status = "okay";
-+		};
-+
-+		interrupt-controller@2a41000 {
-+			status = "okay";
-+		};
-+	};
- };
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 2b3701958486..577780c935ee 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1479,6 +1479,8 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
+ 
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
++		if (len < 0)
++			return -EINVAL;
+ 
+ 		sk_get_meminfo(sk, meminfo);
+ 
 -- 
-2.7.4
+2.20.1
 
