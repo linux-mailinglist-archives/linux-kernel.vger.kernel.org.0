@@ -2,112 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF16343F16
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0CC43F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389971AbfFMPy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:54:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:44042 "EHLO foss.arm.com"
+        id S2389579AbfFMPzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:55:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:44084 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732092AbfFMPyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:54:55 -0400
+        id S1731540AbfFMPze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:55:34 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E882367;
-        Thu, 13 Jun 2019 08:54:54 -0700 (PDT)
-Received: from C02TF0J2HF1T.local (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 81AD83F246;
-        Thu, 13 Jun 2019 08:54:50 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 16:54:35 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org,
-        Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>,
-        Zhang Lei <zhang.lei@jp.fujitsu.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH 1/2] arm64/mm: check cpu cache line size with
- non-coherent device
-Message-ID: <20190613155434.GW28951@C02TF0J2HF1T.local>
-References: <20190611151731.6135-1-msys.mizuma@gmail.com>
- <20190611151731.6135-2-msys.mizuma@gmail.com>
- <20190611180007.him7md7gdcjs5cg6@mbp>
- <20190611220246.lyhcqahsxyxuhqjk@gabell>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45004367;
+        Thu, 13 Jun 2019 08:55:33 -0700 (PDT)
+Received: from [10.1.196.120] (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 410F63F246;
+        Thu, 13 Jun 2019 08:55:32 -0700 (PDT)
+Subject: Re: [RFC V2 00/16] objtool: Add support for Arm64
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Julien Thierry <Julien.Thierry@arm.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+References: <20190516103655.5509-1-raphael.gault@arm.com>
+ <20190516142917.nuhh6dmfiufxqzls@treble>
+ <26692833-0e5b-cfe0-0ffd-c2c2f0815935@arm.com>
+ <20190528222415.x63qw55ujm33dozb@treble>
+From:   Raphael Gault <raphael.gault@arm.com>
+Message-ID: <09745535-2782-fa11-ed65-3119b9455e79@arm.com>
+Date:   Thu, 13 Jun 2019 16:55:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611220246.lyhcqahsxyxuhqjk@gabell>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190528222415.x63qw55ujm33dozb@treble>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 06:02:47PM -0400, Masayoshi Mizuma wrote:
-> On Tue, Jun 11, 2019 at 07:00:07PM +0100, Catalin Marinas wrote:
-> > On Tue, Jun 11, 2019 at 11:17:30AM -0400, Masayoshi Mizuma wrote:
-> > > --- a/arch/arm64/mm/dma-mapping.c
-> > > +++ b/arch/arm64/mm/dma-mapping.c
-> > > @@ -91,10 +91,6 @@ static int __swiotlb_mmap_pfn(struct vm_area_struct *vma,
-> > >  
-> > >  static int __init arm64_dma_init(void)
-> > >  {
-> > > -	WARN_TAINT(ARCH_DMA_MINALIGN < cache_line_size(),
-> > > -		   TAINT_CPU_OUT_OF_SPEC,
-> > > -		   "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
-> > > -		   ARCH_DMA_MINALIGN, cache_line_size());
-> > >  	return dma_atomic_pool_init(GFP_DMA32, __pgprot(PROT_NORMAL_NC));
-> > >  }
-> > >  arch_initcall(arm64_dma_init);
-> > > @@ -473,6 +469,11 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-> > >  			const struct iommu_ops *iommu, bool coherent)
-> > >  {
-> > >  	dev->dma_coherent = coherent;
-> > > +
-> > > +	if (!coherent && (cache_line_size() > ARCH_DMA_MINALIGN))
-> > > +		dev_WARN(dev, "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
-> > > +				ARCH_DMA_MINALIGN, cache_line_size());
-> > 
-> > I'm ok in principle with this patch, with the minor issue that since
-> > commit 7b8c87b297a7 ("arm64: cacheinfo: Update cache_line_size detected
-> > from DT or PPTT") queued for 5.3 cache_line_size() gets the information
-> > from DT or ACPI. The reason for this change is that the information is
-> > used for performance tuning rather than DMA coherency.
-> > 
-> > You can go for a direct cache_type_cwg() check in here, unless Robin
-> > (cc'ed) has a better idea.
+Hi Josh,
+
+On 5/28/19 11:24 PM, Josh Poimboeuf wrote:
+> On Tue, May 21, 2019 at 12:50:57PM +0000, Raphael Gault wrote:
+>> Hi Josh,
+>>
+>> Thanks for offering your help and sorry for the late answer.
+>>
+>> My understanding is that a table of offsets is built by GCC, those
+>> offsets being scaled by 4 before adding them to the base label.
+>> I believe the offsets are stored in the .rodata section. To find the
+>> size of that table, it is needed to find a comparison, which can be
+>> optimized out apprently. In that case the end of the array can be found
+>> by locating labels pointing to data behind it (which is not 100% safe).
+>>
+>> On 5/16/19 3:29 PM, Josh Poimboeuf wrote:
+>>> On Thu, May 16, 2019 at 11:36:39AM +0100, Raphael Gault wrote:
+>>>> Noteworthy points:
+>>>> * I still haven't figured out how to detect switch-tables on arm64. I
+>>>> have a better understanding of them but still haven't implemented checks
+>>>> as it doesn't look trivial at all.
+>>>
+>>> Switch tables were tricky to get right on x86.  If you share an example
+>>> (or even just a .o file) I can take a look.  Hopefully they're somewhat
+>>> similar to x86 switch tables.  Otherwise we may want to consider a
+>>> different approach (for example maybe a GCC plugin could help annotate
+>>> them).
+>>>
+>>
+>> The case which made me realize the issue is the one of
+>> arch/arm64/kernel/module.o:apply_relocate_add:
+>>
+>> ```
+>> What seems to happen in the case of module.o is:
+>>    334:   90000015        adrp    x21, 0 <do_reloc>
+>> which retrieves the location of an offset in the rodata section, and a
+>> bit later we do some extra computation with it in order to compute the
+>> jump destination:
+>>    3e0:   78625aa0        ldrh    w0, [x21, w2, uxtw #1]
+>>    3e4:   10000061        adr     x1, 3f0 <apply_relocate_add+0xf8>
+>>    3e8:   8b20a820        add     x0, x1, w0, sxth #2
+>>    3ec:   d61f0000        br      x0
+>> ```
+>>
+>> Please keep in mind that the actual offsets might vary.
+>>
+>> I'm happy to provide more details about what I have identified if you
+>> want me to.
 > 
-> Got it, thanks.
-> I believe coherency_max_size is zero in case of coherent is false,
-> so I'll modify the patch as following. Does it make sense?
-
-The coherency_max_size gives you the largest cache line in the system,
-independent of whether a device is coherent or not. You may have a
-device that does not snoop L1/L2 but there is a transparent L3 (system
-cache) with a larger cache line that the device may be able to snoop.
-The coherency_max_size and therefore cache_line_size() would give you
-this L3 value but the device would work fine since CWG <=
-ARCH_DMA_MINALIGN.
-
+> I get the feeling this is going to be trickier than x86 switch tables
+> (which have already been tricky enough).
 > 
-> @@ -57,6 +53,11 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->                         const struct iommu_ops *iommu, bool coherent)
->  {
->         dev->dma_coherent = coherent;
-> +
-> +       if (!coherent && (cache_line_size() > ARCH_DMA_MINALIGN))
-> +               dev_WARN(dev, "ARCH_DMA_MINALIGN smaller than CTR_EL0.CWG (%d < %d)",
-> +                               ARCH_DMA_MINALIGN, (4 << cache_type_cwg()));
-> +
->         if (iommu)
->                 iommu_setup_dma_ops(dev, dma_base, size);
+> On x86, there's a .rela.rodata section which applies relocations to
+> .rodata.  The presence of those relocations makes it relatively easy to
+> differentiate switch tables from other read-only data.  For example, we
+> can tell that a switch table ends when either a) there's not a text
+> relocation or b) another switch table begins.
+> 
+> But with arm64 I don't see a deterministic way to do that, because the
+> table offsets are hard-coded in .rodata, with no relocations.
+> 
+>  From talking with Kamalesh I got the impression that we might have a
+> similar issue for powerpc.
+> 
+> So I'm beginning to think we'll need compiler help.  Like a GCC plugin
+> that annotates at least the following switch table metadata:
+> 
+> - Branch instruction address
+> - Switch table address
+> - Switch table entry size
+> - Switch table size
+> 
+> The GCC plugin could write all the above metadata into a special section
+> which gets discarded at link time.  I can look at implementing it,
+> though I'll be traveling for two out of the next three weeks so it may
+> be a while before I can get to it.
+> 
 
-I think the easiest here is to add a local variable:
+I am completely new to GCC plugins but I had a look and I think I found 
+a possible solution to retrieve at least part of this information using 
+the RTL representation in GCC. I can't say it will work for sure but I 
+would be happy to discuss it with you if you want.
+Although there are still some area I need to investigate related to 
+interacting with the RTL representation and storing info into the ELF
+I'd be interested in giving it a try, if you are okay with that.
 
-	int cls = 4 << cache_type_cwg();
-
-and check it against ARCH_DMA_MINALIGN.
-
+Thanks,
 -- 
-Catalin
+Raphael Gault
