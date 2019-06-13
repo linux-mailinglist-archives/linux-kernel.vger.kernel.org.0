@@ -2,101 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F154377D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 16:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA024377B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 16:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732725AbfFMO72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 10:59:28 -0400
-Received: from mail-vs1-f44.google.com ([209.85.217.44]:43510 "EHLO
-        mail-vs1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732608AbfFMOxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:53:24 -0400
-Received: by mail-vs1-f44.google.com with SMTP id j26so892628vsn.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 07:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V+yDsP1w6a5l/+u0u89gIJIvGqAKvFSmmikVgpJYGog=;
-        b=ZtbU3TV6qSNoRMZ2VnMKPMX/QZnnX8rJS1W4M8+Htte8DT5AAsttsM1tHdg8+BHLng
-         oRWe7/VsZa9BRMDJ70ll3bHt6WYPd3jjKXj9UindCIGByvsyyfkJJugAf/EtZxlKAP43
-         2z4Xdpl+9HknjyJ9A6T+JLEJRaicMDSE2HP6j1369/Km8WOLPZDMOnF+88slRyvZf81z
-         FG85xbJnW9pFc72eAePnMM/robHwdfcvlMgDMTVTTOyGRZxvqLagIN6YV4qx6EuXUNQC
-         fCSTYSpqSrnLUH6EB64cnbFDTLC8wRG9ka3gJ8TSWgHzXRtjgGX9M/eXkfbN+wEx6afE
-         kgkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V+yDsP1w6a5l/+u0u89gIJIvGqAKvFSmmikVgpJYGog=;
-        b=HQp+7Jl6t3KL6vxy7t0wihNjtHowpCh5qji6KumJnrsocPxWDXpkUgpTFHMhsSFuwi
-         +4Ra/HRT8q02n90mJLiDR9xW72b8TS3RScD58LIOBYwkiczAL7b6YKJCFWVbjBnvoLCt
-         xlu0jhNWZpxfGU6aDpq46uKJzTADSmVBXmWh2J9rc0yysgEyPKzC33men0YP9dLstr/K
-         c0ImcxlmyVJZQd/TA8v/b7XFuWqKYZkckTVoj7Q72aFUOn5L4Gh7P64UwZTpCUMwNHyl
-         2JdxTF6BnqDrD7T/jqvFm+VQOnynCLhGIdIPhgdyaXDDMrB0hMLnt4LT2Wdsb324gYP0
-         IiHQ==
-X-Gm-Message-State: APjAAAX+t1JteL1MqOR09lQ5xmeaOsVAAWSqmZPAJOMFleT4Ry3Hf0GK
-        g2il55oZrSm/quZ7i7xy6CarPZxA6jmRjesvxvg=
-X-Google-Smtp-Source: APXvYqwVT15ISeE4OXEf4ZSfeyzhYmABcdFuToe5TYa1G3vEVUfB92ABTVALFEFgx+FGgdMYYjyenT0Fh1nciagkB4I=
-X-Received: by 2002:a67:e419:: with SMTP id d25mr19945168vsf.196.1560437602879;
- Thu, 13 Jun 2019 07:53:22 -0700 (PDT)
+        id S1732710AbfFMO70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 10:59:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732611AbfFMOyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 10:54:07 -0400
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D82BB2175B;
+        Thu, 13 Jun 2019 14:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560437647;
+        bh=GYf/+gkGyncHp31uy7FPojBQ7mL+yl6nzbXTfvhlMGc=;
+        h=References:In-Reply-To:From:Date:Subject:To:From;
+        b=TcJCjqavWAlojNJrYEhlAxJC2cZ5+UcNQ+J8ry2eA6PDcyKHn5GTWrvlFPceYjtSN
+         fNESd+v8TcrthsynLoOq6/UUiPKuYYYpkBjUXEUYtQvUnIEhzpGldliabELRtYoQf4
+         H75jbCoov7obKq4HVZrmdfy9zEZ/PwTSrtP3JxCc=
+Received: by mail-lj1-f182.google.com with SMTP id k18so18822574ljc.11;
+        Thu, 13 Jun 2019 07:54:06 -0700 (PDT)
+X-Gm-Message-State: APjAAAV6XUq9F9E39O5SnpoMeGacdv0A3u8+bNEknKmJ8R7Hq8pUXmxb
+        zRI4+rKoLbLikeEtjCjloRJ44nNXNOhJlB2X4sE=
+X-Google-Smtp-Source: APXvYqxHuV7Q03SqzPQJxsXIaEVNMtkbU1nrHhyj83hOaQCq0FDxpomV2Y8SgjCcQw0UPaOf6ZfRnkeRkUssQQzCFAM=
+X-Received: by 2002:a2e:124b:: with SMTP id t72mr39255568lje.143.1560437645055;
+ Thu, 13 Jun 2019 07:54:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOuPNLifSHQmi+jCMzRGYz3kzct+NB_vyv-yiwL91adRZPkTrQ@mail.gmail.com>
- <CAOfkYf7BZ1Ttrm7iVioq4mxZcJy7V44gNmusavPzgi=59=TY6g@mail.gmail.com>
-In-Reply-To: <CAOfkYf7BZ1Ttrm7iVioq4mxZcJy7V44gNmusavPzgi=59=TY6g@mail.gmail.com>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Thu, 13 Jun 2019 20:23:11 +0530
-Message-ID: <CAOuPNLivFg5jnhzz7GaUjz6Sd5+-3aNeUhbPbnMTBnumpPgSvA@mail.gmail.com>
-Subject: Re: Pause a process execution from external program
-To:     Shyam Saini <mayhs11saini@gmail.com>
-Cc:     Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        open list <linux-kernel@vger.kernel.org>, pedro@palves.net
+References: <20190604185229.7393-1-krzk@kernel.org>
+In-Reply-To: <20190604185229.7393-1-krzk@kernel.org>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 13 Jun 2019 16:53:53 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd4LVFGgonbsuxii-5Fu5wWhxU9yotLHw+OXsPcxYw_3g@mail.gmail.com>
+Message-ID: <CAJKOXPd4LVFGgonbsuxii-5Fu5wWhxU9yotLHw+OXsPcxYw_3g@mail.gmail.com>
+Subject: Re: [PATCH v3] ARM: configs: Remove useless UEVENT_HELPER_PATH
+To:     arm@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 1:22 PM Shyam Saini <mayhs11saini@gmail.com> wrote:
+On Tue, 4 Jun 2019 at 20:52, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> Hi Pintu,
+> Remove the CONFIG_UEVENT_HELPER_PATH because:
+> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
+>    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
+>    made default to 'n',
+> 2. It is not recommended (help message: "This should not be used today
+>    [...] creates a high system load") and was kept only for ancient
+>    userland,
+> 3. Certain userland specifically requests it to be disabled (systemd
+>    README: "Legacy hotplug slows down the system and confuses udev").
 >
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> For vexpress:
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 >
-> > Hi All,
-> > I was just wondering if this is possible in the Linux world.
-> > My requirement is:
-> > For some reason, I want to halt/pause the execution (for some
-> > specified time) of a running process/thread (at some location),
-> > without modified the source, may be by firing some events/signals from
-> > an another external program, by specifying the address location or a
-> > line number.
-> >
-> > Is this possible ?
-> > May be by using some system call, or other mechanism using the process PID.
-> > Assume that its a debugging system with all root privileges.
-> >
-> > Basically, its just like how "gdb" is able to set the break-point in a
-> > program, and able to stop its execution exactly at that location.
-> > I am wondering what mechanism "gdb" uses to do this?
+> ---
 >
-> gdb uses ptrace system call, may you can explore ptrace?
+> Changes since v2:
+> 1. Remove unrelated files.
+> 2. Add Geert's ack.
 >
-oh thank you so much.
-Yes, ptrace is going to be very helpful. I will explore more on this
-and come back if required.
+> Changes sice v3:
+> 1. Change also mini2440_defconfig.
+> 2. Add more acks.
 
-> > I tried to check here, but could find the exact place, where this is handled:
-> > https://github.com/bminor/binutils-gdb/blob/master/gdb/breakpoint.c
->
-> from command line we use ctrl-z to stop execution of a foreground
-> process but you can program
-> SIGTSTP signal handler in your application code to do the same.
->
-> is that you want ?
->
-This required source code modification in the target program, so I
-don't want this.
+Hi Arnd and Olof,
 
-> Thanks a lot,
-> Shyam
+Do you want to apply it directly or maybe I can send it along with
+other my defconfig pull request?
+
+Best regards,
+Krzysztof
