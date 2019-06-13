@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C371A44009
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 054AC4430C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:29:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390957AbfFMQC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:02:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35998 "EHLO mail.kernel.org"
+        id S2391951AbfFMQ1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:27:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731407AbfFMIr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:56 -0400
+        id S1730954AbfFMIgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:36:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6CB6206BA;
-        Thu, 13 Jun 2019 08:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B407520851;
+        Thu, 13 Jun 2019 08:36:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415675;
-        bh=uwVshWOluPUjLM4fSWWgcdbrPcHDFtlVUyODm2FjKHw=;
+        s=default; t=1560414962;
+        bh=gZWrYGruu5U/CADA8WM2KdoZ5CPFKIrqP3iR77YIUcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EOniGk+p0abkaoVyhd5how3McCv6rMLjryzrHO27OPhMcD8xG7DuZRnIgM9hFe8vX
-         /QnGSYc/MJ7RvKxiJ/MeDrLzg5M+juXpXDPWhImQuAdKbviss1kCGwAK06vQPT1X0a
-         mv+AgZL3RpBaMj9JWSOZxJaCO5m3ZgjdXrgim0eo=
+        b=Z0z3TBW/PMri0FbLP3SnjEpHIoNXJLCat0cwWqqL9MCWxF/Bhnpwo99sUbC4fBFyQ
+         NQG0wlUw7pjlsLFC6FE19uPfmvZnpyTGiRJtYIlkYL2tbuStxNNSL97eJdEKPMHEiK
+         2XzL/ZkeaMi3e6Cg4cnhoifd8kQ7XLN1cf2vYsL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>,
-        Han-Wen Nienhuys <hanwen@google.com>,
-        Jakob Unterwurzacher <jakobunt@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org, Georg Hofmann <georg@hofmannsweb.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 085/155] fuse: retrieve: cap requested size to negotiated max_write
-Date:   Thu, 13 Jun 2019 10:33:17 +0200
-Message-Id: <20190613075657.843759297@linuxfoundation.org>
+Subject: [PATCH 4.14 35/81] watchdog: imx2_wdt: Fix set_timeout for big timeout values
+Date:   Thu, 13 Jun 2019 10:33:18 +0200
+Message-Id: <20190613075651.951767855@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
-References: <20190613075652.691765927@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,61 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7640682e67b33cab8628729afec8ca92b851394f ]
+[ Upstream commit b07e228eee69601addba98b47b1a3850569e5013 ]
 
-FUSE filesystem server and kernel client negotiate during initialization
-phase, what should be the maximum write size the client will ever issue.
-Correspondingly the filesystem server then queues sys_read calls to read
-requests with buffer capacity large enough to carry request header + that
-max_write bytes. A filesystem server is free to set its max_write in
-anywhere in the range between [1*page, fc->max_pages*page]. In particular
-go-fuse[2] sets max_write by default as 64K, wheres default fc->max_pages
-corresponds to 128K. Libfuse also allows users to configure max_write, but
-by default presets it to possible maximum.
+The documentated behavior is: if max_hw_heartbeat_ms is implemented, the
+minimum of the set_timeout argument and max_hw_heartbeat_ms should be used.
+This patch implements this behavior.
+Previously only the first 7bits were used and the input argument was
+returned.
 
-If max_write is < fc->max_pages*page, and in NOTIFY_RETRIEVE handler we
-allow to retrieve more than max_write bytes, corresponding prepared
-NOTIFY_REPLY will be thrown away by fuse_dev_do_read, because the
-filesystem server, in full correspondence with server/client contract, will
-be only queuing sys_read with ~max_write buffer capacity, and
-fuse_dev_do_read throws away requests that cannot fit into server request
-buffer. In turn the filesystem server could get stuck waiting indefinitely
-for NOTIFY_REPLY since NOTIFY_RETRIEVE handler returned OK which is
-understood by clients as that NOTIFY_REPLY was queued and will be sent
-back.
-
-Cap requested size to negotiate max_write to avoid the problem.  This
-aligns with the way NOTIFY_RETRIEVE handler works, which already
-unconditionally caps requested retrieve size to fuse_conn->max_pages.  This
-way it should not hurt NOTIFY_RETRIEVE semantic if we return less data than
-was originally requested.
-
-Please see [1] for context where the problem of stuck filesystem was hit
-for real, how the situation was traced and for more involving patch that
-did not make it into the tree.
-
-[1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
-[2] https://github.com/hanwen/go-fuse
-
-Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
-Cc: Han-Wen Nienhuys <hanwen@google.com>
-Cc: Jakob Unterwurzacher <jakobunt@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Georg Hofmann <georg@hofmannsweb.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/imx2_wdt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1749,7 +1749,7 @@ static int fuse_retrieve(struct fuse_con
- 	offset = outarg->offset & ~PAGE_MASK;
- 	file_size = i_size_read(inode);
+diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
+index 518dfa1047cb..5098982e1a58 100644
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -181,8 +181,10 @@ static void __imx2_wdt_set_timeout(struct watchdog_device *wdog,
+ static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
+ 				unsigned int new_timeout)
+ {
+-	__imx2_wdt_set_timeout(wdog, new_timeout);
++	unsigned int actual;
  
--	num = outarg->size;
-+	num = min(outarg->size, fc->max_write);
- 	if (outarg->offset > file_size)
- 		num = 0;
- 	else if (outarg->offset + num > file_size)
++	actual = min(new_timeout, wdog->max_hw_heartbeat_ms * 1000);
++	__imx2_wdt_set_timeout(wdog, actual);
+ 	wdog->timeout = new_timeout;
+ 	return 0;
+ }
+-- 
+2.20.1
+
 
 
