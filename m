@@ -2,134 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B4744766
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 209204476E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393148AbfFMQ71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:59:27 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:53087 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729825AbfFMA0K (ORCPT
+        id S1729838AbfFMQ7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:59:21 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:36961 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729826AbfFMA1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:26:10 -0400
-Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hbDYq-000Xfo-J5; Wed, 12 Jun 2019 20:25:48 -0400
-Subject: Re: [PATCH v4 18/28] docs: convert docs to ReST and rename to *.rst
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <cover.1560361364.git.mchehab+samsung@kernel.org>
- <fac44e1fbab5ea755a93601a4fdfa34fcc57ae9e.1560361364.git.mchehab+samsung@kernel.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <7dc94cb4-ebf1-22ab-29c9-fcb2b875a9ac@csail.mit.edu>
-Date:   Wed, 12 Jun 2019 17:25:39 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        Wed, 12 Jun 2019 20:27:01 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id D76D33DB9FA;
+        Thu, 13 Jun 2019 10:26:52 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hbDYx-00046z-Ci; Thu, 13 Jun 2019 10:25:55 +1000
+Date:   Thu, 13 Jun 2019 10:25:55 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613002555.GH14363@dread.disaster.area>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <fac44e1fbab5ea755a93601a4fdfa34fcc57ae9e.1560361364.git.mchehab+samsung@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612123751.GD32656@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=0tDtZe7MyfZ8QGwI5qwA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/19 10:52 AM, Mauro Carvalho Chehab wrote:
-> Convert the PM documents to ReST, in order to allow them to
-> build with Sphinx.
+On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
+> On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
+> > On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
+> > > Are you suggesting that we have something like this from user space?
+> > > 
+> > > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
+> > 
+> > Rather than "unbreakable", perhaps a clearer description of the
+> > policy it entails is "exclusive"?
+> > 
+> > i.e. what we are talking about here is an exclusive lease that
+> > prevents other processes from changing the layout. i.e. the
+> > mechanism used to guarantee a lease is exclusive is that the layout
+> > becomes "unbreakable" at the filesystem level, but the policy we are
+> > actually presenting to uses is "exclusive access"...
 > 
-> The conversion is actually:
->   - add blank lines and identation in order to identify paragraphs;
->   - fix tables markups;
->   - add some lists markups;
->   - mark literal blocks;
->   - adjust title markups.
-> 
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> ---
+> That's rather different from the normal meaning of 'exclusive' in the
+> context of locks, which is "only one user can have access to this at
+> a time".
 
-[...]
 
-> diff --git a/Documentation/power/suspend-and-cpuhotplug.txt b/Documentation/power/suspend-and-cpuhotplug.rst
-> similarity index 90%
-> rename from Documentation/power/suspend-and-cpuhotplug.txt
-> rename to Documentation/power/suspend-and-cpuhotplug.rst
-> index a8751b8df10e..9df664f5423a 100644
-> --- a/Documentation/power/suspend-and-cpuhotplug.txt
-> +++ b/Documentation/power/suspend-and-cpuhotplug.rst
-> @@ -1,10 +1,15 @@
-> +====================================================================
->  Interaction of Suspend code (S3) with the CPU hotplug infrastructure
-> +====================================================================
->  
-> -     (C) 2011 - 2014 Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
-> +(C) 2011 - 2014 Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
->  
->  
-> -I. How does the regular CPU hotplug code differ from how the Suspend-to-RAM
-> -   infrastructure uses it internally? And where do they share common code?
-> +I. Differences between CPU hotplug and Suspend-to-RAM
-> +======================================================
-> +
-> +How does the regular CPU hotplug code differ from how the Suspend-to-RAM
-> +infrastructure uses it internally? And where do they share common code?
->  
->  Well, a picture is worth a thousand words... So ASCII art follows :-)
->  
+Layout leases are not locks, they are a user access policy object.
+It is the process/fd which holds the lease and it's the process/fd
+that is granted exclusive access.  This is exactly the same semantic
+as O_EXCL provides for granting exclusive access to a block device
+via open(), yes?
 
-[...]
+> As I understand it, this is rather more like a 'shared' or
+> 'read' lock.  The filesystem would be the one which wants an exclusive
+> lock, so it can modify the mapping of logical to physical blocks.
 
-> @@ -101,7 +108,7 @@ execution during resume):
->  
->  It is to be noted here that the system_transition_mutex lock is acquired at the very
->  beginning, when we are just starting out to suspend, and then released only
-> -after the entire cycle is complete (i.e., suspend + resume).
-> +after the entire cycle is complete (i.e., suspend + resume)::
->  
+ISTM that you're conflating internal filesystem implementation with
+application visible semantics. Yes, the filesystem uses internal
+locks to serialise the modification of the things the lease manages
+access too, but that has nothing to do with the access policy the
+lease provides to users.
 
-I think that should be a period, not a colon, because it is clarifying
-the text above it (as opposed to referring to the example below it).
+e.g. Process A has an exclusive layout lease on file F. It does an
+IO to file F. The filesystem IO path checks that Process A owns the
+lease on the file and so skips straight through layout breaking
+because it owns the lease and is allowed to modify the layout. It
+then takes the inode metadata locks to allocate new space and write
+new data.
 
-Other than that, for suspend-and-cpuhotplug.txt:
+Process B now tries to write to file F. The FS checks whether
+Process B owns a layout lease on file F. It doesn't, so then it
+tries to break the layout lease so the IO can proceed. The layout
+breaking code sees that process A has an exclusive layout lease
+granted, and so returns -ETXTBSY to process B - it is not allowed to
+break the lease and so the IO fails with -ETXTBSY.
 
-Acked-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
- 
-Regards,
-Srivatsa
-VMware Photon OS
+i.e. the exclusive layout lease prevents other processes from
+performing operations that may need to modify the layout from
+performing those operations. It does not "lock" the file/inode in
+any way, it just changes how the layout lease breaking behaves.
+
+Further, the "exclusiveness" of a layout lease is completely
+irrelevant to the filesystem that is indicating that an operation
+that may need to modify the layout is about to be performed. All the
+filesystem has to do is handle failures to break the lease
+appropriately.  Yes, XFS serialises the layout lease validation
+against other IO to the same file via it's IO locks, but that's an
+internal data IO coherency requirement, not anything to do with
+layout lease management.
+
+Note that I talk about /writes/ here. This is interchangable with
+any other operation that may need to modify the extent layout of the
+file, be it truncate, fallocate, etc: the attempt to break the
+layout lease by a non-owner should fail if the lease is "exclusive"
+to the owner.
+
+> The complication being that by default the filesystem has an exclusive
+> lock on the mapping, and what we're trying to add is the ability for
+> readers to ask the filesystem to give up its exclusive lock.
+
+The filesystem doesn't even lock the "mapping" until after the
+layout lease has been validated or broken.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
