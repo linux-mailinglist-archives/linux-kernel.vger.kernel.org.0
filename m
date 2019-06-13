@@ -2,108 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E60CC44B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89FE244B3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 20:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfFMSwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 14:52:49 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42790 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfFMSws (ORCPT
+        id S1729682AbfFMSx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 14:53:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41520 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729643AbfFMSx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:52:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x17so6605122wrl.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 11:52:47 -0700 (PDT)
+        Thu, 13 Jun 2019 14:53:57 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 83so25853pgg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 11:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wF2lkDhjSFApoIX2SzKaCuD9I+vf8Vpj5caLDxf35+o=;
-        b=AKeuB0I58ke460ynxyqX4+mFv2g4TegQbeImOxNCfMfyFsDied0f2UkwWeSUzabyxL
-         XN4/m+xKjVR2ysnHrDJhul5Ezm6ZNBX0sNHXzUcrn8/Om/ayxXPeQKR6C8DzXSUwBOIi
-         BxW28g4p2jpnLM6+DphXrs6V1LAi4d00MesmFGsBroqcJ/yT9HIfIfu9f4WwtVvhsW9p
-         PaSpOCjpMWgWYBtZIR0nSJ8fRPP9cvokb2vDJqm/kHSpejndIsa+O/i9TvnawipNO9q+
-         X51wWbjK5F22t0ic653gOiEOxyVVJAqbV69W0+6xOvnelXd8GxCioB9EAnuHVYp4zLjX
-         d7Mg==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Z0BqE/PvwTCOuDfT7ziZnBtJoPRweQQwkvxwrMq6Xa0=;
+        b=aiVm+Ij7KcL3D/0YWJ8nXlH+dgfcDlsdPwTvVK7cZVI0JKLrd/YYhm2+Cq76YkYLL5
+         +phoUjSXOTIFC6r/5BNh/LSGecRqCp5OmsC+IYPu1fqgZLYit3+9HgiLNkwfgHCj0V7q
+         RmkSuKtICHPNKPfeEpAIaKJAo9jVsCTYxn+ek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wF2lkDhjSFApoIX2SzKaCuD9I+vf8Vpj5caLDxf35+o=;
-        b=Rj4Qjm5iBSZE6nXvLrxlyANlnOXzev+W+OEJs69nkv2HKK6JdwgMGZTVVZyf8tQrrC
-         ByjsztziWL48o+Qwed79hcd7FMD1ONDCm9PZEYs7kJ1I++Yqh9ZgAN+R7o7hosiuHCZX
-         a5O3zc3ikzks1D44LjC5UC4H+2pnzzQaHDrswka8SxIpHATbbAaOfz5K8Rorrf2mjMZR
-         KP8mmubj/G4nK21pxvS3WZGusivCgz6Mtbe4Pn3dk4B/AFNBXQL0LIlG8KQoyJPiWCN0
-         8IjLYNG/3lvroeZMI4ZI7kRAC2nkoPHW9Sz6lXMSIauVT1fntUgvG/SDnp1K9lDxehQt
-         wfiA==
-X-Gm-Message-State: APjAAAUVr4YrDtXXqW31U2DydquPEW9L507vplf85OChEYAkKO18sB3S
-        rvidmcd7sm+ToSyabUqXOBdxGr2yKJde0+Itk+I=
-X-Google-Smtp-Source: APXvYqz65TzXVExemKM65WYyNEKOoA5AJHrWLhsVDtVW9SOWURsb3zfBCUNgnQbyfrShxmr87zPG9wDFtS2xCWSEGOk=
-X-Received: by 2002:adf:f68f:: with SMTP id v15mr10763850wrp.4.1560451966892;
- Thu, 13 Jun 2019 11:52:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190613023208.GA29690@hari-Inspiron-1545> <CADnq5_PU_jvOskC-=+oRQdvYXZvu_n26ogoWTxLRxnW+ke4wDw@mail.gmail.com>
- <20190613184217.GA2385@ravnborg.org>
-In-Reply-To: <20190613184217.GA2385@ravnborg.org>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 13 Jun 2019 14:52:34 -0400
-Message-ID: <CADnq5_OSjJad7QGOCrWQL+LcjtCHQsCefpJ=K0mYUayFe9bUAA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: fix compilation error
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yongqiang Sun <yongqiang.sun@amd.com>,
-        Charlene Liu <charlene.liu@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Gloria Li <geling.li@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Z0BqE/PvwTCOuDfT7ziZnBtJoPRweQQwkvxwrMq6Xa0=;
+        b=svbbZMuT/FTexLKpnyS16z3RYe+E5uOVStTo/83R8YG8JdJ2185tDTaRHJPDYr64qn
+         VA5rI1/f26UkzoPuHbf16xyduBaq8RGM7IiG6fCGlxHUSv+8XRfLHtVPPS3OynSxEz9T
+         hYQIpSSpPCt7ovE2wyeBoBtK580eWQfK3Ru8+v/ai11yU3Q1DrZe/0QOUktlQtHGs3e4
+         bLK8VgilIcrm//pO3NCx7EY13bpEDX7x87a61+EEQvXJ+A3ZVqpvWXhpOQuQXUkS/Dq5
+         ngFHGh1sHFhLVsFNDpM+MPK/DScCJyZykKxqzJVEz+AtN03pZJpGEwMMQX8HQy7VHnVj
+         Rn3w==
+X-Gm-Message-State: APjAAAWBW4CsWFSS3qQX4BgdfsWtJjIGkgUorfDuZncYht/LYY8q4EjZ
+        /+7ZjeKCa9tcBmo+kA6mTHmASA==
+X-Google-Smtp-Source: APXvYqwjcj/D4tJfxviPJ3DAP+ga6noWng4Pb876f1LgU512Tm5hDPwAQYW1f6WUhPSgbRzbYQRvtw==
+X-Received: by 2002:a17:90a:a10f:: with SMTP id s15mr7164601pjp.30.1560452036899;
+        Thu, 13 Jun 2019 11:53:56 -0700 (PDT)
+Received: from localhost.localdomain ([115.97.180.18])
+        by smtp.gmail.com with ESMTPSA id p43sm946314pjp.4.2019.06.13.11.53.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 11:53:56 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
-        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
-        Tony Cheng <tony.cheng@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 2/9] drm/sun4i: tcon: Add TCON LCD support for R40
+Date:   Fri, 14 Jun 2019 00:22:34 +0530
+Message-Id: <20190613185241.22800-3-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20190613185241.22800-1-jagan@amarulasolutions.com>
+References: <20190613185241.22800-1-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 2:42 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Alex.
->
-> On Wed, Jun 12, 2019 at 10:35:26PM -0400, Alex Deucher wrote:
-> > On Wed, Jun 12, 2019 at 10:34 PM Hariprasad Kelam
-> > <hariprasad.kelam@gmail.com> wrote:
-> > >
-> > > this patch fixes below compilation error
-> > >
-> > > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: =
-In
-> > > function =E2=80=98dcn10_apply_ctx_for_surface=E2=80=99:
-> > > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2=
-378:3:
-> > > error: implicit declaration of function =E2=80=98udelay=E2=80=99
-> > > [-Werror=3Dimplicit-function-declaration]
-> > >    udelay(underflow_check_delay_us);
-> > >
-> > > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
->
-> Am I right in assuming you took this patch?
->
-> I expect that new code using udelay was added to the amd tree,
-> and when merged with drm-misc-next it failed, because drm-misc-next no
-> longer had drmP.h included so no implicit include of delay.h
->
-> The root cause was that my original patchset should have been based
-> on the amd tree, and applied there :-(
+TCON LCD0, LCD1 in allwinner R40, are used for managing
+LCD interfaces like RGB, LVDS and DSI.
 
-No worries.  I've picked it up.
+Like TCON TV0, TV1 these LCD0, LCD1 are also managed via
+tcon top.
 
-Alex
+Add support for it, in tcon driver.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 9e9d08ee8387..8553066e7bed 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1471,6 +1471,12 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
+ 	.has_channel_1		= true,
+ };
+ 
++static const struct sun4i_tcon_quirks sun8i_r40_lcd_quirks = {
++	.supports_lvds		= true,
++	.has_channel_0		= true,
++	.set_mux		= sun8i_r40_tcon_tv_set_mux,
++};
++
+ static const struct sun4i_tcon_quirks sun8i_r40_tv_quirks = {
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun8i_r40_tcon_tv_set_mux,
+@@ -1501,6 +1507,7 @@ const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
++	{ .compatible = "allwinner,sun8i-r40-tcon-lcd", .data = &sun8i_r40_lcd_quirks },
+ 	{ .compatible = "allwinner,sun8i-r40-tcon-tv", .data = &sun8i_r40_tv_quirks },
+ 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ .compatible = "allwinner,sun9i-a80-tcon-lcd", .data = &sun9i_a80_tcon_lcd_quirks },
+-- 
+2.18.0.321.gffc6fa0e3
+
