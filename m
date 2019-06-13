@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9145A442C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE73643FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392238AbfFMQZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:25:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
+        id S2390798AbfFMQBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:01:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730979AbfFMIgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:36:43 -0400
+        id S1731443AbfFMIsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:48:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA42D20851;
-        Thu, 13 Jun 2019 08:36:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DC64206BA;
+        Thu, 13 Jun 2019 08:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415003;
-        bh=Qp5Wd0ROX/RHBmbhi3RKPN5/Lw9BqNZEdXAlSwvVVNY=;
+        s=default; t=1560415718;
+        bh=lCtMrz1Mq5QbCuKsABMwSIKB8Wsbk8DG8I3IpegZgsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i2alHauzqkANmJO2yEZ3R4cUhtiJxwFrEJDQzuaqz7YA/F02xJlm6nXybEAeTfqlv
-         rmNdN4aWIJIgUt8h4MCg0f97wK2hHJz9NFudvmkbzAhu/+0HUehwVcvCVFGIsqcz8D
-         c9NaOU4PjBhkA6tddTBoGvS23hQ0NXtsUtJURmUk=
+        b=hGUOEpKcS7o9ZwUU8Vey5+mOhleQltgz5kmFGUOkZifY6Bh2p5kSqbBr9MlFxEI+I
+         JFbJSvLV6TwhP+NpZUVR4I6Zgaednxv3vJuAmubeJ1BuO0f4vRRNnwB9Ig2a26e1Hy
+         eoSN/vfdrF5sqiotHDUyr6kb84GVMlpH3gOU9xO4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 51/81] soc: rockchip: Set the proper PWM for rk3288
+        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Xu Pengfei <pengfei.xu@intel.com>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 102/155] iommu/vt-d: Flush IOTLB for untrusted device in time
 Date:   Thu, 13 Jun 2019 10:33:34 +0200
-Message-Id: <20190613075653.003195266@linuxfoundation.org>
+Message-Id: <20190613075658.741939038@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +47,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bbdc00a7de24cc90315b1775fb74841373fe12f7 ]
+[ Upstream commit f7b0c4ce8cb3c09cb3cbfc0c663268bf99e5fa9c ]
 
-The rk3288 SoC has two PWM implementations available, the "old"
-implementation and the "new" one.  You can switch between the two of
-them by flipping a bit in the grf.
+By default, for performance consideration, Intel IOMMU
+driver won't flush IOTLB immediately after a buffer is
+unmapped. It schedules a thread and flushes IOTLB in a
+batched mode. This isn't suitable for untrusted device
+since it still can access the memory even if it isn't
+supposed to do so.
 
-The "old" implementation is the default at chip power up but isn't the
-one that's officially supposed to be used.  ...and, in fact, the
-driver that gets selected in Linux using the rk3288 device tree only
-supports the "new" implementation.
-
-Long ago I tried to get a switch to the right IP block landed in the
-PWM driver (search for "rk3288: Switch to use the proper PWM IP") but
-that got rejected.  In the mean time the grf has grown a full-fledged
-driver that already sets other random bits like this.  That means we
-can now get the fix landed.
-
-For those wondering how things could have possibly worked for the last
-4.5 years, folks have mostly been relying on the bootloader to set
-this bit.  ...but occasionally folks have pointed back to my old patch
-series [1] in downstream kernels.
-
-[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1391597.html
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Tested-by: Xu Pengfei <pengfei.xu@intel.com>
+Tested-by: Mika Westerberg <mika.westerberg@intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/rockchip/grf.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/intel-iommu.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/rockchip/grf.c b/drivers/soc/rockchip/grf.c
-index 15e71fd6c513..0931ddb0b384 100644
---- a/drivers/soc/rockchip/grf.c
-+++ b/drivers/soc/rockchip/grf.c
-@@ -44,9 +44,11 @@ static const struct rockchip_grf_info rk3036_grf __initconst = {
- };
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index cb656f503604..0feb3f70da16 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -3736,6 +3736,7 @@ static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
+ 	unsigned long iova_pfn;
+ 	struct intel_iommu *iommu;
+ 	struct page *freelist;
++	struct pci_dev *pdev = NULL;
  
- #define RK3288_GRF_SOC_CON0		0x244
-+#define RK3288_GRF_SOC_CON2		0x24c
+ 	if (iommu_no_mapping(dev))
+ 		return;
+@@ -3751,11 +3752,14 @@ static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
+ 	start_pfn = mm_to_dma_pfn(iova_pfn);
+ 	last_pfn = start_pfn + nrpages - 1;
  
- static const struct rockchip_grf_value rk3288_defaults[] __initconst = {
- 	{ "jtag switching", RK3288_GRF_SOC_CON0, HIWORD_UPDATE(0, 1, 12) },
-+	{ "pwm select", RK3288_GRF_SOC_CON2, HIWORD_UPDATE(1, 1, 0) },
- };
++	if (dev_is_pci(dev))
++		pdev = to_pci_dev(dev);
++
+ 	dev_dbg(dev, "Device unmapping: pfn %lx-%lx\n", start_pfn, last_pfn);
  
- static const struct rockchip_grf_info rk3288_grf __initconst = {
+ 	freelist = domain_unmap(domain, start_pfn, last_pfn);
+ 
+-	if (intel_iommu_strict) {
++	if (intel_iommu_strict || (pdev && pdev->untrusted)) {
+ 		iommu_flush_iotlb_psi(iommu, domain, start_pfn,
+ 				      nrpages, !freelist, 0);
+ 		/* free iova */
 -- 
 2.20.1
 
