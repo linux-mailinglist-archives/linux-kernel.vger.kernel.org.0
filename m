@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5518442A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1232C44193
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391806AbfFMQYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:24:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54618 "EHLO mail.kernel.org"
+        id S2391830AbfFMQPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:15:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730998AbfFMIhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:37:15 -0400
+        id S1731182AbfFMImI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:42:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2A4220851;
-        Thu, 13 Jun 2019 08:37:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27CC721479;
+        Thu, 13 Jun 2019 08:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415034;
-        bh=01JgqLU+q/jditVF0XnE6iIetBdTeaxf7YEBoD9AiAg=;
+        s=default; t=1560415327;
+        bh=0NP3m5N8hUwnAnrMaptmgdmdiwHOiq/EkYyzRnMF+EQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eX4NWguhGPmp13Bg2zpyUchZM2MIOiSwTATH0CP6i6bURb5zN1jQAf3CmJZ/czOtc
-         6o45FiXsUCTY9U/itTs3uQBERr46GN+fWHUWyICYw9QPNJkDQw2nZhsvB4fRUFn14C
-         PN3P8ACUgNtl+BvLtRuhvZz+/KMhWp8abWR5LTTk=
+        b=FXs/Pt9jPBNM+L0New346tz5qF88p/apT0U9fekGWOv3wkRnUCQfe6p246j6uKoVm
+         hcRuuFiZgKOeXvNdGBQ5IZz87dv+v7DprqmtS0fishys6HScoxj6/sucikdPNAh/dk
+         gAqSOehnqFP+rEspg6jjEJVFAJVnd/M2OxTD1R4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 61/81] ALSA: seq: Protect in-kernel ioctl calls with mutex
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 086/118] ARM: dts: imx6ul: Specify IMX6UL_CLK_IPG as "ipg" clock to SDMA
 Date:   Thu, 13 Jun 2019 10:33:44 +0200
-Message-Id: <20190613075653.581995283@linuxfoundation.org>
+Message-Id: <20190613075648.825619386@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
+References: <20190613075643.642092651@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,51 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit feb689025fbb6f0aa6297d3ddf97de945ea4ad32 ]
+[ Upstream commit 7b3132ecefdd1fcdf6b86e62021d0e55ea8034db ]
 
-ALSA OSS sequencer calls the ioctl function indirectly via
-snd_seq_kernel_client_ctl().  While we already applied the protection
-against races between the normal ioctls and writes via the client's
-ioctl_mutex, this code path was left untouched.  And this seems to be
-the cause of still remaining some rare UAF as spontaneously triggered
-by syzkaller.
+Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
+clock to determine if it needs to configure the IP block as operating
+at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
+clocks as IMX6UL_CLK_SDMA results in driver incorrectly thinking that
+ratio is 1:1 which results in broken SDMA funtionality. Fix the code
+to specify IMX6UL_CLK_IPG as "ipg" clock for SDMA, to avoid detecting
+incorrect clock ratio.
 
-For the sake of robustness, wrap the ioctl_mutex also for the call via
-snd_seq_kernel_client_ctl(), too.
-
-Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Angus Ainslie (Purism) <angus@akkea.ca>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/seq/seq_clientmgr.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx6ul.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/core/seq/seq_clientmgr.c b/sound/core/seq/seq_clientmgr.c
-index 3bcd7a2f0394..692631bd4a35 100644
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -2348,14 +2348,19 @@ int snd_seq_kernel_client_ctl(int clientid, unsigned int cmd, void *arg)
- {
- 	const struct ioctl_handler *handler;
- 	struct snd_seq_client *client;
-+	int err;
- 
- 	client = clientptr(clientid);
- 	if (client == NULL)
- 		return -ENXIO;
- 
- 	for (handler = ioctl_handlers; handler->cmd > 0; ++handler) {
--		if (handler->cmd == cmd)
--			return handler->func(client, arg);
-+		if (handler->cmd == cmd) {
-+			mutex_lock(&client->ioctl_mutex);
-+			err = handler->func(client, arg);
-+			mutex_unlock(&client->ioctl_mutex);
-+			return err;
-+		}
- 	}
- 
- 	pr_debug("ALSA: seq unknown ioctl() 0x%x (type='%c', number=0x%02x)\n",
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 6dc0b569acdf..2366f093cc76 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -707,7 +707,7 @@
+ 					     "fsl,imx35-sdma";
+ 				reg = <0x020ec000 0x4000>;
+ 				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks IMX6UL_CLK_SDMA>,
++				clocks = <&clks IMX6UL_CLK_IPG>,
+ 					 <&clks IMX6UL_CLK_SDMA>;
+ 				clock-names = "ipg", "ahb";
+ 				#dma-cells = <3>;
 -- 
 2.20.1
 
