@@ -2,329 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0339446C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAC0446C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbfFMQy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:54:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730051AbfFMCjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 22:39:54 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A0A2208CA;
-        Thu, 13 Jun 2019 02:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560393592;
-        bh=IITyHjiv62SNhJ4yXoRzm4f7+2+5GIlSE+irIAPOEwI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OAZN3L4pHvi36KeY3wFF29+S+Rf1vVorb8eMMyYAEdD89hesFlqveQcV376mHhamQ
-         5btlDzDL6f2O89IrmMl3lGt+06Zf83DuFF3JD9kBn41bB1gMw8wy0U8POMNRIXBuoP
-         T8jfC3V0Lq5yhgm7EZN2qo3QwgHqWFedHrKm/xrk=
-Date:   Wed, 12 Jun 2019 21:39:47 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        linux-pci@vger.kernel.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, will.deacon@arm.com,
-        wangkefeng.wang@huawei.com, linuxarm@huawei.com,
-        andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com
-Subject: Re: [PATCH v4 1/3] lib: logic_pio: Use logical PIO low-level
- accessors for !CONFIG_INDIRECT_PIO
-Message-ID: <20190613023947.GD13533@google.com>
-References: <1560262374-67875-1-git-send-email-john.garry@huawei.com>
- <1560262374-67875-2-git-send-email-john.garry@huawei.com>
+        id S1730199AbfFMQyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:54:20 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45925 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730063AbfFMCtC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 22:49:02 -0400
+Received: by mail-pf1-f196.google.com with SMTP id s11so10798284pfm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 19:49:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2kfw74gaPiQLBivN6WnAdASClOTarpBowH5hE17A4dU=;
+        b=mlff+T0EI3xPNdUTq8+8uEb3J8W+RDh37tnQqBQJXniyQlQ9E+5o/Zv7YgMkxdBb/e
+         V/9kn+Z4oq7ipWZSeVf/S7tAdZzMryM/tIeV8BNnJShHmE1QEm8dLZiiHnuhdajxwwuI
+         boACWHwcLQUTS/4l11AC8ZQcwniFXKKQH0J8SHKF9M+c+TLLlVQ4ni3xRWq2/U9njKkr
+         CUPrnaIw/0FBBiljnWpU8pTgoZGeb/b8Z9Gt5nfPX/YV3IsgRNNyq/tuQ1Ey/eXMKy9X
+         NHOqoVmk+Yr19mGOTiRBel66idcIpQP8lL1chpDXGMCksduSYpj/o5lx6q772k6Vm0s8
+         oVJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2kfw74gaPiQLBivN6WnAdASClOTarpBowH5hE17A4dU=;
+        b=bgpfmQb1sy/Kz5chxJOCft+n0v6KHApR2UUcKxqA0dk3EyCi2VPNZDVydOiNBPFVvr
+         AGfnOJnXK6qU8AhQyLN9OuouR3TzMydGKmp36d4nF7J079a9QrAiKpkoxNEBXXK0rJQd
+         uu35C/P7k02JhL+khhqWybpnEQio2Ee7H9vj4wL4kaDwqBqB6onlY0Xfa7cxANKiPchU
+         TmlGaAU8napV5plmgRcYp0InH166qOCc6Ekn8RjPZXvwmjwT2Za/IfWl0iJRR/jmqLuQ
+         ua7jVOtFbSfSUGHgH8kK5wWyHqCqGUHlRaYwndo1T9gYeZY0kPe/H7UqiqTE5bInPGmU
+         zv6g==
+X-Gm-Message-State: APjAAAWYoDLH3Tvr2wpyClOB7QBEmPz4aIlGCNUQQ8Zh7guG01jEgwlW
+        UhKuKtK7U77HaWJS+WxRdH0=
+X-Google-Smtp-Source: APXvYqy7N3/apEzke72gAXr2P0AbPFJhZcmBqH52rWR9JzsFn/eGdg3Ub81yBSOKIDg4uEckTBEePw==
+X-Received: by 2002:a65:4306:: with SMTP id j6mr27990148pgq.418.1560394141664;
+        Wed, 12 Jun 2019 19:49:01 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.89.153])
+        by smtp.gmail.com with ESMTPSA id y5sm781057pgv.12.2019.06.12.19.48.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 19:49:01 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 08:18:54 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Alex Deucher <alexdeucher@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Tony Cheng <tony.cheng@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>,
+        Charlene Liu <charlene.liu@amd.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Yongqiang Sun <yongqiang.sun@amd.com>,
+        Gloria Li <geling.li@amd.com>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/amd/display: fix compilation error
+Message-ID: <20190613024854.GA25104@hari-Inspiron-1545>
+References: <20190613023208.GA29690@hari-Inspiron-1545>
+ <CADnq5_PU_jvOskC-=+oRQdvYXZvu_n26ogoWTxLRxnW+ke4wDw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1560262374-67875-2-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_PU_jvOskC-=+oRQdvYXZvu_n26ogoWTxLRxnW+ke4wDw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:12:52PM +0800, John Garry wrote:
-> Currently we only use logical PIO low-level accessors for when
-> CONFIG_INDIRECT_PIO is enabled.
+On Wed, Jun 12, 2019 at 10:35:26PM -0400, Alex Deucher wrote:
+> On Wed, Jun 12, 2019 at 10:34 PM Hariprasad Kelam
+> <hariprasad.kelam@gmail.com> wrote:
+> >
+> > this patch fixes below compilation error
+> >
+> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In
+> > function ‘dcn10_apply_ctx_for_surface’:
+> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2378:3:
+> > error: implicit declaration of function ‘udelay’
+> > [-Werror=implicit-function-declaration]
+> >    udelay(underflow_check_delay_us);
+> >
+> > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 > 
-> Otherwise we just use inb/out et all directly.
+> What branch is this patch based on?
 > 
-> It is useful to now use logical PIO accessors for all cases, so we can add
-> legality checks to accesses. Such a check would be for ensuring that the
-> PCI IO port has been IO remapped prior to the access.
+> Alex
 
-IIUC, *this* patch doesn't actually add any additional checks, so no
-need to mention that in this commit log.
+Hi Alex,
 
-One thing this patch *does* do is "#define inb logic_inb" whenever
-PCI_IOBASE is defined (we used to do that #define only when
-CONFIG_INDIRECT_PIO was defined).  That's a pretty important change
-and needs to be very clear in the commit log.
+It is on linux-next
 
-I'm not sure it's even safe, because CONFIG_INDIRECT_PIO depends on
-ARM64, but PCI_IOBASE is defined on most arches via asm-generic/io.h,
-so this potentially affects arches other than ARM64.
-
-If possible, split out the cleanup patches as below and make the patch
-that does this PCI_IOBASE change as small as possible so we can
-evaluate that change by itself.
-
-> Using the logical PIO accesses will add a little processing overhead, but
-> that's ok as IO port accesses are relatively slow anyway.
-> 
-> Some changes are also made to stop spilling so many lines under
-> CONFIG_INDIRECT_PIO.
-
-"Some changes are also made" is a good hint to me that this patch
-might be able to be split up :)
-
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->  include/linux/logic_pio.h |  7 ++--
->  lib/logic_pio.c           | 83 ++++++++++++++++++++++++++++-----------
->  2 files changed, 63 insertions(+), 27 deletions(-)
-> 
-> diff --git a/include/linux/logic_pio.h b/include/linux/logic_pio.h
-> index cbd9d8495690..06d22b2ec99f 100644
-> --- a/include/linux/logic_pio.h
-> +++ b/include/linux/logic_pio.h
-> @@ -37,7 +37,7 @@ struct logic_pio_host_ops {
->  		     size_t dwidth, unsigned int count);
->  };
->  
-> -#ifdef CONFIG_INDIRECT_PIO
-> +#if defined(PCI_IOBASE)
-
-Why change the #ifdef style?  I understand these are equivalent, but
-unless there's a movement to change from "#ifdef X" to "#if defined(X)"
-I wouldn't bother.
-
->  u8 logic_inb(unsigned long addr);
->  void logic_outb(u8 value, unsigned long addr);
->  void logic_outw(u16 value, unsigned long addr);
-> @@ -102,6 +102,7 @@ void logic_outsl(unsigned long addr, const void *buffer, unsigned int count);
->  #define outsl logic_outsl
->  #endif
->  
-> +#if defined(CONFIG_INDIRECT_PIO)
->  /*
->   * We reserve 0x4000 bytes for Indirect IO as so far this library is only
->   * used by the HiSilicon LPC Host. If needed, we can reserve a wider IO
-> @@ -109,10 +110,10 @@ void logic_outsl(unsigned long addr, const void *buffer, unsigned int count);
->   */
->  #define PIO_INDIRECT_SIZE 0x4000
->  #define MMIO_UPPER_LIMIT (IO_SPACE_LIMIT - PIO_INDIRECT_SIZE)
-> -#else
-> +#else /* CONFIG_INDIRECT_PIO */
->  #define MMIO_UPPER_LIMIT IO_SPACE_LIMIT
->  #endif /* CONFIG_INDIRECT_PIO */
-> -
-> +#endif /* PCI_IOBASE */
->  struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode);
->  unsigned long logic_pio_trans_hwaddr(struct fwnode_handle *fwnode,
->  			resource_size_t hw_addr, resource_size_t size);
-> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-> index feea48fd1a0d..40d9428010e1 100644
-> --- a/lib/logic_pio.c
-> +++ b/lib/logic_pio.c
-> @@ -191,7 +191,8 @@ unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
->  	return ~0UL;
->  }
->  
-> -#if defined(CONFIG_INDIRECT_PIO) && defined(PCI_IOBASE)
-> +#if defined(PCI_IOBASE)
-> +#if defined(CONFIG_INDIRECT_PIO)
->  #define BUILD_LOGIC_IO(bw, type)					\
->  type logic_in##bw(unsigned long addr)					\
->  {									\
-> @@ -200,11 +201,11 @@ type logic_in##bw(unsigned long addr)					\
->  	if (addr < MMIO_UPPER_LIMIT) {					\
->  		ret = read##bw(PCI_IOBASE + addr);			\
->  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) { \
-> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
-> +		size_t sz = sizeof(type);				\
-
-I don't mind changing "entry" to "range" and adding "sz".  But that
-could be done in a separate "no functional change" patch that is
-trivial to review, which would make *this* patch smaller and easier to
-review.
-
-Another "no functional change" simplification patch would be to
-replace this:
-
-  type ret = (type)~0;
-
-  if (addr < MMIO_UPPER_LIMIT) {
-    ret = read##bw(...);
-  } else if (...) {
-    if (range && range->ops)
-      ret = range->ops->in(...);
-    else
-      WARN_ON_ONCE();
-  }
-  return ret;
-
-with this:
-
-  if (addr < MMIO_UPPER_LIMIT)
-    return read##bw(...);
-
-  if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {
-    if (range && range->ops)
-      return range->ops->in(...);
-    else
-      WARN_ON_ONCE();
-  }
-
-  return (type)~0;
-
-Finally, I think the end result would be a little easier to read if
-you restructured the #ifdefs like this:
-
-  #ifdef PCI_IOBASE
-  #define BUILD_LOGIC_IO(...)
-  type logic_in##bw(...)
-  {
-    if (addr < MMIO_UPPER_LIMIT)
-      return read##bw(...);
-
-  #ifdef CONFIG_INDIRECT_PIO
-    if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {
-      if (range && range->ops)
-	return range->ops->in(...);
-      else
-	WARN_ON_ONCE();
-    }
-  #endif
-
-    return (type)~0;
-  }
-
-That does mean a CONFIG_INDIRECT_PIO #ifdef in each in/out/ins/outs
-builder, but it's more localized so I think it's easier to understand
-that INDIRECT_PIO is just adding a new case to the default path.
-
-> -		if (entry && entry->ops)				\
-> -			ret = entry->ops->in(entry->hostdata,		\
-> -					addr, sizeof(type));		\
-> +		if (range && range->ops)				\
-> +			ret = range->ops->in(range->hostdata, addr, sz);\
->  		else							\
->  			WARN_ON_ONCE(1);				\
->  	}								\
-> @@ -216,49 +217,83 @@ void logic_out##bw(type value, unsigned long addr)			\
->  	if (addr < MMIO_UPPER_LIMIT) {					\
->  		write##bw(value, PCI_IOBASE + addr);			\
->  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
-> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
-> +		size_t sz = sizeof(type);				\
->  									\
-> -		if (entry && entry->ops)				\
-> -			entry->ops->out(entry->hostdata,		\
-> -					addr, value, sizeof(type));	\
-> +		if (range && range->ops)				\
-> +			range->ops->out(range->hostdata,		\
-> +					addr, value, sz);		\
->  		else							\
->  			WARN_ON_ONCE(1);				\
->  	}								\
->  }									\
->  									\
-> -void logic_ins##bw(unsigned long addr, void *buffer,		\
-> -		   unsigned int count)					\
-> +void logic_ins##bw(unsigned long addr, void *buf, unsigned int cnt)	\
->  {									\
->  	if (addr < MMIO_UPPER_LIMIT) {					\
-> -		reads##bw(PCI_IOBASE + addr, buffer, count);		\
-> +		reads##bw(PCI_IOBASE + addr, buf, cnt);			\
->  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
-> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
-> +		size_t sz = sizeof(type);				\
->  									\
-> -		if (entry && entry->ops)				\
-> -			entry->ops->ins(entry->hostdata,		\
-> -				addr, buffer, sizeof(type), count);	\
-> +		if (range && range->ops)				\
-> +			range->ops->ins(range->hostdata,		\
-> +					addr, buf, sz, cnt);		\
->  		else							\
->  			WARN_ON_ONCE(1);				\
->  	}								\
->  									\
->  }									\
->  									\
-> -void logic_outs##bw(unsigned long addr, const void *buffer,		\
-> -		    unsigned int count)					\
-> +void logic_outs##bw(unsigned long addr, const void *buf,		\
-> +		    unsigned int cnt)					\
->  {									\
->  	if (addr < MMIO_UPPER_LIMIT) {					\
-> -		writes##bw(PCI_IOBASE + addr, buffer, count);		\
-> +		writes##bw(PCI_IOBASE + addr, buf, cnt);		\
->  	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
-> -		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-> +		struct logic_pio_hwaddr *range = find_io_range(addr);	\
-> +		size_t sz = sizeof(type);				\
->  									\
-> -		if (entry && entry->ops)				\
-> -			entry->ops->outs(entry->hostdata,		\
-> -				addr, buffer, sizeof(type), count);	\
-> +		if (range && range->ops)				\
-> +			range->ops->outs(range->hostdata,		\
-> +					 addr, buf, sz, cnt);		\
->  		else							\
->  			WARN_ON_ONCE(1);				\
->  	}								\
->  }
->  
-> +#else /* CONFIG_INDIRECT_PIO */
-> +
-> +#define BUILD_LOGIC_IO(bw, type)					\
-> +type logic_in##bw(unsigned long addr)					\
-> +{									\
-> +	type ret = (type)~0;						\
-> +									\
-> +	if (addr < MMIO_UPPER_LIMIT)					\
-> +		ret = read##bw(PCI_IOBASE + addr);			\
-> +	return ret;							\
-> +}									\
-> +									\
-> +void logic_out##bw(type value, unsigned long addr)			\
-> +{									\
-> +	if (addr < MMIO_UPPER_LIMIT)					\
-> +		write##bw(value, PCI_IOBASE + addr);			\
-> +}									\
-> +									\
-> +void logic_ins##bw(unsigned long addr, void *buf, unsigned int cnt)	\
-> +{									\
-> +	if (addr < MMIO_UPPER_LIMIT)					\
-> +		reads##bw(PCI_IOBASE + addr, buf, cnt);			\
-> +}									\
-> +									\
-> +void logic_outs##bw(unsigned long addr, const void *buf,		\
-> +		    unsigned int cnt)					\
-> +{									\
-> +	if (addr < MMIO_UPPER_LIMIT)					\
-> +		writes##bw(PCI_IOBASE + addr, buf, cnt);		\
-> +}
-> +#endif /* CONFIG_INDIRECT_PIO */
-> +
->  BUILD_LOGIC_IO(b, u8)
->  EXPORT_SYMBOL(logic_inb);
->  EXPORT_SYMBOL(logic_insb);
-> @@ -277,4 +312,4 @@ EXPORT_SYMBOL(logic_insl);
->  EXPORT_SYMBOL(logic_outl);
->  EXPORT_SYMBOL(logic_outsl);
->  
-> -#endif /* CONFIG_INDIRECT_PIO && PCI_IOBASE */
-> +#endif /* PCI_IOBASE */
-> -- 
-> 2.17.1
-> 
+Thanks,
+Hariprasad k
+> > ---
+> >  drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> > index d2352949..1ac9a4f 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> > @@ -23,6 +23,7 @@
+> >   *
+> >   */
+> >
+> > +#include <linux/delay.h>
+> >  #include "dm_services.h"
+> >  #include "core_types.h"
+> >  #include "resource.h"
+> > --
+> > 2.7.4
+> >
+> > _______________________________________________
+> > amd-gfx mailing list
+> > amd-gfx@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/amd-gfx
