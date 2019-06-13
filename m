@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 079CB44136
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2808244287
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391646AbfFMQMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:12:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60290 "EHLO mail.kernel.org"
+        id S2392070AbfFMQXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:23:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731221AbfFMInK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:43:10 -0400
+        id S1731031AbfFMIhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:37:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B07B720851;
-        Thu, 13 Jun 2019 08:43:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC23E20896;
+        Thu, 13 Jun 2019 08:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415390;
-        bh=kAAQKtoG+USt9cQRx2wt5ixhKJIQMiQ89q4Psb23634=;
+        s=default; t=1560415070;
+        bh=ul88zqCaYr7ovYFiiC9o1KT/VUSn4iqxBNJi5MNADcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2DABscV9BIpkJaAuAXNFydptirz8yqIEMprVWl4ptUhCBQ5Y2qGtGMv8Qq3xTiJAQ
-         +9B7rVS1YCiDtSKP7PGoF5Hz0pSRbmpkx9nfpBLIBnmvWFncaNYpbn/cr6nZejrM9w
-         mxuJ0fWJIbAk+hFtuzfR/ZjYMdQHzy6zQ6mQ+xWE=
+        b=iGkzuwpXPdIpqYRwDLp5BCHDi5SUsL8BPfZwr+iPA06EOYN4jhFBVWrg9UpawEmHg
+         2agZEg860bXq5jh5uwIclRfW0aueSfiGTjgv7mjVthdU4K/XI92OOx6ZaaZZdwzKUo
+         184WfxQPg29nSgMX2eA+W74kp7clSvrl+oda9jL4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Aditya Pakki <pakki001@umn.edu>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Rob Herring <robh@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/118] video: imsttfb: fix potential NULL pointer dereferences
+Subject: [PATCH 4.14 75/81] ARM: exynos: Fix undefined instruction during Exynos5422 resume
 Date:   Thu, 13 Jun 2019 10:33:58 +0200
-Message-Id: <20190613075649.807252255@linuxfoundation.org>
+Message-Id: <20190613075654.480884888@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,39 +45,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1d84353d205a953e2381044953b7fa31c8c9702d ]
+[ Upstream commit 4d8e3e951a856777720272ce27f2c738a3eeef8c ]
 
-In case ioremap fails, the fix releases resources and returns
--ENOMEM to avoid NULL pointer dereferences.
+During early system resume on Exynos5422 with performance counters enabled
+the following kernel oops happens:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Cc: Aditya Pakki <pakki001@umn.edu>
-Cc: Finn Thain <fthain@telegraphics.com.au>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[b.zolnierkie: minor patch summary fixup]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+    Internal error: Oops - undefined instruction: 0 [#1] PREEMPT SMP ARM
+    Modules linked in:
+    CPU: 0 PID: 1433 Comm: bash Tainted: G        W         5.0.0-rc5-next-20190208-00023-gd5fb5a8a13e6-dirty #5480
+    Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+    ...
+    Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+    Control: 10c5387d  Table: 4451006a  DAC: 00000051
+    Process bash (pid: 1433, stack limit = 0xb7e0e22f)
+    ...
+    (reset_ctrl_regs) from [<c0112ad0>] (dbg_cpu_pm_notify+0x1c/0x24)
+    (dbg_cpu_pm_notify) from [<c014c840>] (notifier_call_chain+0x44/0x84)
+    (notifier_call_chain) from [<c014cbc0>] (__atomic_notifier_call_chain+0x7c/0x128)
+    (__atomic_notifier_call_chain) from [<c01ffaac>] (cpu_pm_notify+0x30/0x54)
+    (cpu_pm_notify) from [<c055116c>] (syscore_resume+0x98/0x3f4)
+    (syscore_resume) from [<c0189350>] (suspend_devices_and_enter+0x97c/0xe74)
+    (suspend_devices_and_enter) from [<c0189fb8>] (pm_suspend+0x770/0xc04)
+    (pm_suspend) from [<c0187740>] (state_store+0x6c/0xcc)
+    (state_store) from [<c09fa698>] (kobj_attr_store+0x14/0x20)
+    (kobj_attr_store) from [<c030159c>] (sysfs_kf_write+0x4c/0x50)
+    (sysfs_kf_write) from [<c0300620>] (kernfs_fop_write+0xfc/0x1e0)
+    (kernfs_fop_write) from [<c0282be8>] (__vfs_write+0x2c/0x160)
+    (__vfs_write) from [<c0282ea4>] (vfs_write+0xa4/0x16c)
+    (vfs_write) from [<c0283080>] (ksys_write+0x40/0x8c)
+    (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+
+Undefined instruction is triggered during CP14 reset, because bits: #16
+(Secure privileged invasive debug disabled) and #17 (Secure privileged
+noninvasive debug disable) are set in DSCR. Those bits depend on SPNIDEN
+and SPIDEN lines, which are provided by Secure JTAG hardware block. That
+block in turn is powered from cluster 0 (big/Eagle), but the Exynos5422
+boots on cluster 1 (LITTLE/KFC).
+
+To fix this issue it is enough to turn on the power on the cluster 0 for
+a while. This lets the Secure JTAG block to propagate the needed signals
+to LITTLE/KFC cores and change their DSCR.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/imsttfb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-exynos/suspend.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
-index ecdcf358ad5e..ffcf553719a3 100644
---- a/drivers/video/fbdev/imsttfb.c
-+++ b/drivers/video/fbdev/imsttfb.c
-@@ -1516,6 +1516,11 @@ static int imsttfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	info->fix.smem_start = addr;
- 	info->screen_base = (__u8 *)ioremap(addr, par->ramdac == IBM ?
- 					    0x400000 : 0x800000);
-+	if (!info->screen_base) {
-+		release_mem_region(addr, size);
-+		framebuffer_release(info);
-+		return -ENOMEM;
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 9be92073f847..1c17d991bcde 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -441,8 +441,27 @@ early_wakeup:
+ 
+ static void exynos5420_prepare_pm_resume(void)
+ {
++	unsigned int mpidr, cluster;
++
++	mpidr = read_cpuid_mpidr();
++	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
++
+ 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
+ 		WARN_ON(mcpm_cpu_powered_up());
++
++	if (IS_ENABLED(CONFIG_HW_PERF_EVENTS) && cluster != 0) {
++		/*
++		 * When system is resumed on the LITTLE/KFC core (cluster 1),
++		 * the DSCR is not properly updated until the power is turned
++		 * on also for the cluster 0. Enable it for a while to
++		 * propagate the SPNIDEN and SPIDEN signals from Secure JTAG
++		 * block and avoid undefined instruction issue on CP14 reset.
++		 */
++		pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
++				EXYNOS_COMMON_CONFIGURATION(0));
++		pmu_raw_writel(0,
++				EXYNOS_COMMON_CONFIGURATION(0));
 +	}
- 	info->fix.mmio_start = addr + 0x800000;
- 	par->dc_regs = ioremap(addr + 0x800000, 0x1000);
- 	par->cmap_regs_phys = addr + 0x840000;
+ }
+ 
+ static void exynos5420_pm_resume(void)
 -- 
 2.20.1
 
