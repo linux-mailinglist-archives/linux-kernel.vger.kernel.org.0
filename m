@@ -2,107 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5328448D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB2D448E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 19:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbfFMRL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 13:11:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54514 "EHLO mail.kernel.org"
+        id S2393424AbfFMRLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 13:11:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729166AbfFMRLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:11:24 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2392711AbfFMRLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:11:42 -0400
+Received: from localhost (unknown [131.107.160.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3C3C217D9;
-        Thu, 13 Jun 2019 17:11:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0248C205ED;
+        Thu, 13 Jun 2019 17:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560445883;
-        bh=zXxn0DZZzDqw7OoZuqRBZa3+NRFbt9j4/8PtEklx0ks=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=z6QX77MEL+lVTwICJFn4lx/RYfLqUuktVzenVzi/xypIH3UcvaG4r71l7+wQ0UtEQ
-         77w8cr+DCRXNO+kGefwibUjePyZcggjFxjb/OyjvBNs0qX/ZCCaagbGAGepZh82Fb8
-         78Fi+KGZAlC2CadDDN6Mv/Pcqz8geGb2RALiMIUU=
-Received: by mail-qt1-f169.google.com with SMTP id 33so15260222qtr.8;
-        Thu, 13 Jun 2019 10:11:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAUea2kZ2y2Pe/A/Yq8z9AOb7fC+1WMXG/ZEO/VDzH0I8ocpYILl
-        xoJTY2WsKz+H+srGn/wBhHZNmdWE/pr7QTwUPA==
-X-Google-Smtp-Source: APXvYqxPx+RzHImrfYff7rhrQ4nBX3av55NJRHWJ45TzZYNcBbf30JPqZBJ3v2N/ISXb3erZEUw1S75dSeXuFTMiFz8=
-X-Received: by 2002:aed:3b33:: with SMTP id p48mr69738055qte.143.1560445882940;
- Thu, 13 Jun 2019 10:11:22 -0700 (PDT)
+        s=default; t=1560445902;
+        bh=no9PMWb5VDOx7ySl5Q7f0oB1g4k565KdjFHzM77TOLg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pwobQrn2aoQYIN1bzYPeE5Ko11Ur0FE4EXjws5h5FTkyrG4Rm77bvEnzXFBjvcjPp
+         /xjX3Xawq2DH3fe4mM55XcblmrXZTA/Op+UQVzyL1/o0OrLAknvnr0ybQvzBKWlEnS
+         t9RrtqaDbsvYLAiE/D8WMC2Zd3a7/dIb4ESmg2CY=
+Date:   Thu, 13 Jun 2019 13:11:41 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     peterhuewe@gmx.de,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        jgg@ziepe.ca, corbet@lwn.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Microsoft Linux Kernel List <linux-kernel@microsoft.com>,
+        Thirupathaiah Annapureddy <thiruan@microsoft.com>,
+        "Bryan Kelly (CSI)" <bryankel@microsoft.com>,
+        tee-dev@lists.linaro.org
+Subject: Re: [PATCH v4 1/2] fTPM: firmware TPM running in TEE
+Message-ID: <20190613171141.GL1513@sasha-vm>
+References: <20190530152758.16628-1-sashal@kernel.org>
+ <20190530152758.16628-2-sashal@kernel.org>
+ <CAFA6WYM1NrghG9qxUhrm76kopvBx9nmCL9XnRs11ysb2Yr0+Qw@mail.gmail.com>
+ <20190604200951.GB29739@sasha-vm>
+ <CAFA6WYMOjgHRw9RVrjherNo0ZNbTtEonPwSFFC0dT4CZO=A1NQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190613170011.9647-1-thierry.reding@gmail.com>
-In-Reply-To: <20190613170011.9647-1-thierry.reding@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 13 Jun 2019 11:11:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKiFzED-YaBFQ-PBnBBbDaC5yeri+pLG-PX=-wpaFfb=A@mail.gmail.com>
-Message-ID: <CAL_JsqKiFzED-YaBFQ-PBnBBbDaC5yeri+pLG-PX=-wpaFfb=A@mail.gmail.com>
-Subject: Re: [PATCH v2] driver: core: Allow subsystems to continue deferring probe
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYMOjgHRw9RVrjherNo0ZNbTtEonPwSFFC0dT4CZO=A1NQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 11:00 AM Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Wed, Jun 05, 2019 at 04:39:36PM +0530, Sumit Garg wrote:
+>On Wed, 5 Jun 2019 at 01:39, Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> On Tue, Jun 04, 2019 at 11:45:52AM +0530, Sumit Garg wrote:
+>> >On Thu, 30 May 2019 at 20:58, Sasha Levin <sashal@kernel.org> wrote:
+>> >> +       /* Open context with TEE driver */
+>> >> +       pvt_data->ctx = tee_client_open_context(NULL, ftpm_tee_match, NULL,
+>> >> +                                               NULL);
+>> >> +       if (IS_ERR(pvt_data->ctx)) {
+>> >> +               dev_err(dev, "%s:tee_client_open_context failed\n", __func__);
+>> >
+>> >Is this well tested? I see this misleading error multiple times as
+>> >follows although TEE driver works pretty well.
+>>
+>> Yes, this was all functionally tested.
 >
-> From: Thierry Reding <treding@nvidia.com>
->
-> Some subsystems, such as pinctrl, allow continuing to defer probe
-> indefinitely. This is useful for devices that depend on resources
-> provided by devices that are only probed after the init stage.
->
-> One example of this can be seen on Tegra, where the DPAUX hardware
-> contains pinmuxing controls for pins that it shares with an I2C
-> controller. The I2C controller is typically used for communication
-> with a monitor over HDMI (DDC). However, other instances of the I2C
-> controller are used to access system critical components, such as a
-> PMIC. The I2C controller driver will therefore usually be a builtin
-> driver, whereas the DPAUX driver is part of the display driver that
-> is loaded from a module to avoid bloating the kernel image with all
-> of the DRM/KMS subsystem.
->
-> In this particular case the pins used by this I2C/DDC controller
-> become accessible very late in the boot process. However, since the
-> controller is only used in conjunction with display, that's not an
-> issue.
->
-> Unfortunately the driver core currently outputs a warning message
-> when a device fails to get the pinctrl before the end of the init
-> stage. That can be confusing for the user because it may sound like
-> an unwanted error occurred, whereas it's really an expected and
-> harmless situation.
->
-> In order to eliminate this warning, this patch allows callers of the
-> driver_deferred_probe_check_state() helper to specify that they want
-> to continue deferring probe, regardless of whether we're past the
-> init stage or not. All of the callers of that function are updated
-> for the new signature, but only the pinctrl subsystem passes a true
-> value in the new persist parameter if appropriate.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - pass persist flag via flags parameter to make the function call easier
->   to understand
->
->  drivers/base/dd.c            | 19 ++++++++++++++-----
->  drivers/base/power/domain.c  |  2 +-
->  drivers/iommu/of_iommu.c     |  2 +-
->  drivers/pinctrl/devicetree.c |  9 +++++----
->  include/linux/device.h       | 18 +++++++++++++++++-
->  5 files changed, 38 insertions(+), 12 deletions(-)
+>Can you share your build instructions and testing approach?
 
-Acked-by: Rob Herring <robh@kernel.org>
+Yes: it looks like you got all the kernel bits, but not the firmware.
+There are instructions for it here: https://github.com/microsoft/ms-tpm-20-ref
+
+Once it's running, you can test it by running your favorite TPM usecases
+through /dev/tpm0.
+
+--
+Thanks,
+Sasha
