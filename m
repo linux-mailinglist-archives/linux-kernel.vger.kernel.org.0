@@ -2,80 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B4F442E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E23144313
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:29:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392360AbfFMQ0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:26:41 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35773 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733022AbfFMQ00 (ORCPT
+        id S2392330AbfFMQ1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:27:13 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39970 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731011AbfFMQ1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:26:26 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hbSYP-0001xt-72; Thu, 13 Jun 2019 18:26:21 +0200
-Date:   Thu, 13 Jun 2019 18:26:14 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Sultan Alsawaf <sultan@kerneltoast.com>,
-        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
-Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
-In-Reply-To: <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1906131822300.1791@nanos.tec.linutronix.de>
-References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com> <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de> <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
- <CAK8P3a15NTV=njOjz-ccYL8=_q_MdEru0A+jeE=f7ufUTOOTgw@mail.gmail.com> <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com> <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com>
- <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 13 Jun 2019 12:27:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p184so8868333pfp.7;
+        Thu, 13 Jun 2019 09:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=v6vzilPAtj2ODZwSW8fHlBGBIGUDcN2J3Si9o5NBA3E=;
+        b=kAXXgwoguPvU4cAuhcaUgbXJuBSrc4pXZ01mFgLMVTiAUcb3NIkvnGdriEvuRYpcS4
+         KCkN0/7AHFbsRxOm8x2szfUod289BCzSUB2ccFOtOVvhKdOyGMzy87Zl4dSeFroG+guL
+         esu84wiMoP6w/H+9AVYLyYbjuEGjHZzfZcq2VaqLVuBVPuF438x9B/V4m6ISqtGWYOQM
+         8j/Kz0duNoACz0A3QT+4bKsgCn6EYE+p503sKJ0P7oLkeyri1jHoyoEfTeT7CCHRCAYz
+         W6zqItpX7twXVXqsYxk+Veh+fw38UvbAkJGCbeVSGbdwoGav2hPr0WylW6UZnDsmRVLn
+         tv3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=v6vzilPAtj2ODZwSW8fHlBGBIGUDcN2J3Si9o5NBA3E=;
+        b=V5VfdJ+hsQp4sMWKz4YXl9AaCAZioIlF6glvMh1tN60KWYJ8d71Cw/fy3uTv7opZLd
+         3NRMBe1Mw/hkEC3MnAjz0zhvaxIflKxMbi03bD4omVg29k0swBuyFW1T4vxFte1GvND2
+         FBndOQps1zcFHWZqvbKFMV8Yp8n3L3+3hgfx36QKH0BPKPhe/WoedsACXLJ7W5Vf5GCi
+         V8Wmwap7B3gOrQPRGSUek2dKOxxT7kfbzqXpK2bZTZ0Nxvg3CuG5qEB2fewexrQhb2lY
+         5P5Ha7eyLaUaA3iUrTBNv9axVwadTi9yNfJTF/FTwYb8aI+InKEh+WaFvHqQOsCrexL1
+         DvFQ==
+X-Gm-Message-State: APjAAAVYdx8XN/38i1QfHzVtvoRA0xgYes0bMSE0RiWAkA7BBOKX7Utw
+        YH8sS5jp7V1FbvgIP3URfVI=
+X-Google-Smtp-Source: APXvYqzPxG4x6iJ3bSwjicFDgP/gbJZePtynT5+d9Kai+1QhkL96mw1oCJcSqEHcntuvftQRVXyDCg==
+X-Received: by 2002:a17:90a:db52:: with SMTP id u18mr6471125pjx.107.1560443229896;
+        Thu, 13 Jun 2019 09:27:09 -0700 (PDT)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z186sm185768pfz.7.2019.06.13.09.27.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 09:27:09 -0700 (PDT)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     joro@8bytes.org, m.szyprowski@samsung.com, kgene@kernel.org,
+        krzk@kernel.org, will.deacon@arm.com, robin.murphy@arm.com,
+        agross@kernel.org, david.brown@linaro.org, robdclark@gmail.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 01/10] iommu/exynos: convert to SPDX license tags
+Date:   Thu, 13 Jun 2019 12:26:54 -0400
+Message-Id: <20190613162703.986-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Jun 2019, Jason A. Donenfeld wrote:
-> Hey Arnd,
-> 
-> On Thu, Jun 13, 2019 at 5:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > A seqlock is a very cheap synchronization primitive, I would actually
-> > guess that this is faster than most implementations of sched_clock()
-> > that access a hardware register for reading the time.
-> 
-> It appears to me that ktime_get_coarse_boottime() has a granularity of
-> a whole second, which is a lot worse than jiffies. Looking at the
-> source, you assign base but don't then add ns like the other
-> functions. At first I thought this was an intentional quirk to avoid
-> hitting the slow hardware paths. But noticing this poor granularity
-> now and observing that there's actually a blank line (\n\n) where the
-> nanosecond addition normally would be, I wonder if something was lost
-> in cut-and-paste?
-> 
-> I'm still poking around trying to see what's up. As a quick test,
-> running this on every packet during a high speed test shows the left
-> incrementing many times per second, whereas the right increments once
-> per second:
-> 
-> static int x = 0;
-> if (!(x++ % 30000))
->      pr_err("%llu %llu\n", local_clock(), ktime_get_coarse_boottime());
+Updates license to use SPDX-License-Identifier.
 
-That does not make sense. The coarse time getters use
-tk->tkr_mono.base. base is updated every tick (or if the machine is
-completely idle right when the first CPU wakes up again).
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/iommu/exynos-iommu.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-timekeeping_get_ns() which is added in ktime_get_boottime() is the time in
-ns elapsed since base was updated last, which is less than a tick.
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 05c6bc099d62..938a33d2f89d 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1,10 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2011,2016 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #ifdef CONFIG_EXYNOS_IOMMU_DEBUG
+-- 
+2.17.0
 
-Thanks,
-
-	tglx
