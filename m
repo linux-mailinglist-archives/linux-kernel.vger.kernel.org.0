@@ -2,218 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 599DF44E72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8E544E6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 23:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbfFMV1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 17:27:15 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44982 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfFMV1P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 17:27:15 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t7so58575plr.11;
-        Thu, 13 Jun 2019 14:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IUjO1pR1uIH5yko1XbRBF4PHb6nz15fqs0FzmtDMeKI=;
-        b=Lb2BMnHzhaYzABgkPrHMnYgpaFUJiBR0PnwOVdlHX4WA85/W84SdMLuzwls/tSU2Zf
-         GH7c2szW4Tv3RmMagAb1KMYRBUNRvmKhj7vegFpMhavrnrdywi132QQrTs0gDKGB8C5j
-         7ey0AyrrpqYCY9rVkUUZ90JAP4x3y2Ya2QlX1Knb6vXdgXfu4aP1vtQ8BsyxnFd+MQ3s
-         3EgwoAEt4+HFYuOorjEIAp2X84r553TBeAqVHHqRM9NlZ1e0UMIMSNy4chijAG5G5bv4
-         I3TcT8st7MTKWSe1wCLQHB9aYjpqy7UhqE5qTcCtRv7IbsjCJMmvRbnFmXN2Fl4itHl2
-         LsyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IUjO1pR1uIH5yko1XbRBF4PHb6nz15fqs0FzmtDMeKI=;
-        b=H98pnWJpyqyK0vJsUv7KVqebtB+qpfc5lZdNAOhO7ZhKg4+aD0XMr1CQrqsPmY+NK+
-         qfIN8i1RV0GRO7Tt6Okk+ehenN/Chko2YIyMxIPWN5sz+R/JyVTe5ZOCPlLSW1xzzk/U
-         NpbGl/Tb0ripvbnXiku3BGtj/GlzkXXqyjyHEpAGy2vtumyYFVJkQt3NLH71KQFgQ8NY
-         M64OoRs0FaNdfrjBlHNVhC9g++k60frhZAU//fIsfaMJij+Isq3ETMX5uh9ajT27tUag
-         JVzfSvIpFXs3PJXlp67eZ1a41++RUTUmrmrUWCo1oJkaTEYX1xHNyQxPHNJArduoHMte
-         dXOA==
-X-Gm-Message-State: APjAAAUHdQ0wqJdykd4li0kn7JopH7g7IlwXVbFOpJJfZIbPIqIkOCTI
-        ip88ItCgiBAf2yZ6FHby7LY=
-X-Google-Smtp-Source: APXvYqyotze5mV/JUNyv6s4N2pL/WdH6ewvdLcZdLkgyZg1qNUkWRrI5BWMJbnObH8L+gfk1/GtWeA==
-X-Received: by 2002:a17:902:1e6:: with SMTP id b93mr46330936plb.295.1560461234380;
-        Thu, 13 Jun 2019 14:27:14 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id j14sm613798pfn.120.2019.06.13.14.27.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 14:27:13 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v4 7/7] regulator: qcom_spmi: add PMS405 SPMI regulator
-Date:   Thu, 13 Jun 2019 14:27:07 -0700
-Message-Id: <20190613212707.5966-2-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190613212707.5966-1-jeffrey.l.hugo@gmail.com>
-References: <20190613212436.6940-1-jeffrey.l.hugo@gmail.com>
- <20190613212707.5966-1-jeffrey.l.hugo@gmail.com>
+        id S1729653AbfFMV0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 17:26:40 -0400
+Received: from mga07.intel.com ([134.134.136.100]:43502 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbfFMV0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 17:26:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 14:26:39 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Jun 2019 14:26:38 -0700
+Date:   Thu, 13 Jun 2019 14:28:01 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 1/3] mm/gup: rename nr as nr_pinned in
+ get_user_pages_fast()
+Message-ID: <20190613212800.GD32404@iweiny-DESK2.sc.intel.com>
+References: <1560422702-11403-1-git-send-email-kernelfans@gmail.com>
+ <1560422702-11403-2-git-send-email-kernelfans@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560422702-11403-2-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+On Thu, Jun 13, 2019 at 06:45:00PM +0800, Pingfan Liu wrote:
+> To better reflect the held state of pages and make code self-explaining,
+> rename nr as nr_pinned.
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 
-The PMS405 has 5 HFSMPS and 13 LDO regulators,
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-This commit adds support for one of the 5 HFSMPS regulators (s3) to
-the spmi regulator driver.
-
-The PMIC HFSMPS 430 regulators have 8 mV step size and a voltage
-control scheme consisting of two  8-bit registers defining a 16-bit
-voltage set point in units of millivolts
-
-S3 controls the cpu voltages (s3 is a buck regulator of type HFS430);
-it is therefore required so we can enable voltage scaling for safely
-running cpufreq.
-
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- drivers/regulator/qcom_spmi-regulator.c | 43 +++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-index c8791b036c53..debe4dc74d27 100644
---- a/drivers/regulator/qcom_spmi-regulator.c
-+++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -105,6 +105,7 @@ enum spmi_regulator_logical_type {
- 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_HO_SMPS,
- 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LDO,
- 	SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426,
-+	SPMI_REGULATOR_LOGICAL_TYPE_HFS430,
- };
- 
- enum spmi_regulator_type {
-@@ -157,6 +158,7 @@ enum spmi_regulator_subtype {
- 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL2	= 0x0e,
- 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL3	= 0x0f,
- 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL4	= 0x10,
-+	SPMI_REGULATOR_SUBTYPE_HFS430		= 0x0a,
- };
- 
- enum spmi_common_regulator_registers {
-@@ -302,6 +304,8 @@ enum spmi_common_control_register_index {
- /* Clock rate in kHz of the FTSMPS426 regulator reference clock. */
- #define SPMI_FTSMPS426_CLOCK_RATE		4800
- 
-+#define SPMI_HFS430_CLOCK_RATE			1600
-+
- /* Minimum voltage stepper delay for each step. */
- #define SPMI_FTSMPS426_STEP_DELAY		2
- 
-@@ -515,6 +519,10 @@ static struct spmi_voltage_range ult_pldo_ranges[] = {
- 	SPMI_VOLTAGE_RANGE(0, 1750000, 1750000, 3337500, 3337500, 12500),
- };
- 
-+static struct spmi_voltage_range hfs430_ranges[] = {
-+	SPMI_VOLTAGE_RANGE(0, 320000, 320000, 2040000, 2040000, 8000),
-+};
-+
- static DEFINE_SPMI_SET_POINTS(pldo);
- static DEFINE_SPMI_SET_POINTS(nldo1);
- static DEFINE_SPMI_SET_POINTS(nldo2);
-@@ -530,6 +538,7 @@ static DEFINE_SPMI_SET_POINTS(ult_lo_smps);
- static DEFINE_SPMI_SET_POINTS(ult_ho_smps);
- static DEFINE_SPMI_SET_POINTS(ult_nldo);
- static DEFINE_SPMI_SET_POINTS(ult_pldo);
-+static DEFINE_SPMI_SET_POINTS(hfs430);
- 
- static inline int spmi_vreg_read(struct spmi_regulator *vreg, u16 addr, u8 *buf,
- 				 int len)
-@@ -1399,12 +1408,26 @@ static struct regulator_ops spmi_ftsmps426_ops = {
- 	.set_pull_down		= spmi_regulator_common_set_pull_down,
- };
- 
-+static struct regulator_ops spmi_hfs430_ops = {
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.set_voltage_sel	= spmi_regulator_ftsmps426_set_voltage,
-+	.set_voltage_time_sel	= spmi_regulator_set_voltage_time_sel,
-+	.get_voltage		= spmi_regulator_ftsmps426_get_voltage,
-+	.map_voltage		= spmi_regulator_single_map_voltage,
-+	.list_voltage		= spmi_regulator_common_list_voltage,
-+	.set_mode		= spmi_regulator_ftsmps426_set_mode,
-+	.get_mode		= spmi_regulator_ftsmps426_get_mode,
-+};
-+
- /* Maximum possible digital major revision value */
- #define INF 0xFF
- 
- static const struct spmi_regulator_mapping supported_regulators[] = {
- 	/*           type subtype dig_min dig_max ltype ops setpoints hpm_min */
- 	SPMI_VREG(BUCK,  GP_CTL,   0, INF, SMPS,   smps,   smps,   100000),
-+	SPMI_VREG(BUCK,  HFS430,   0, INF, HFS430, hfs430, hfs430,  10000),
- 	SPMI_VREG(LDO,   N300,     0, INF, LDO,    ldo,    nldo1,   10000),
- 	SPMI_VREG(LDO,   N600,     0,   0, LDO,    ldo,    nldo2,   10000),
- 	SPMI_VREG(LDO,   N1200,    0,   0, LDO,    ldo,    nldo2,   10000),
-@@ -1572,7 +1595,8 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
- 	return ret;
- }
- 
--static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
-+static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg,
-+						   int clock_rate)
- {
- 	int ret;
- 	u8 reg = 0;
-@@ -1589,7 +1613,7 @@ static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
- 	delay >>= SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT;
- 
- 	/* slew_rate has units of uV/us */
--	slew_rate = SPMI_FTSMPS426_CLOCK_RATE * range->step_uV;
-+	slew_rate = clock_rate * range->step_uV;
- 	slew_rate /= 1000 * (SPMI_FTSMPS426_STEP_DELAY << delay);
- 	slew_rate *= SPMI_FTSMPS426_STEP_MARGIN_NUM;
- 	slew_rate /= SPMI_FTSMPS426_STEP_MARGIN_DEN;
-@@ -1741,7 +1765,14 @@ static int spmi_regulator_of_parse(struct device_node *node,
- 			return ret;
- 		break;
- 	case SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426:
--		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg);
-+		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg,
-+						SPMI_FTSMPS426_CLOCK_RATE);
-+		if (ret)
-+			return ret;
-+		break;
-+	case SPMI_REGULATOR_LOGICAL_TYPE_HFS430:
-+		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg,
-+							SPMI_HFS430_CLOCK_RATE);
- 		if (ret)
- 			return ret;
- 		break;
-@@ -1909,6 +1940,11 @@ static const struct spmi_regulator_data pm8005_regulators[] = {
- 	{ }
- };
- 
-+static const struct spmi_regulator_data pms405_regulators[] = {
-+	{ "s3", 0x1a00, "vdd_s3"},
-+	{ }
-+};
-+
- static const struct of_device_id qcom_spmi_regulator_match[] = {
- 	{ .compatible = "qcom,pm8005-regulators", .data = &pm8005_regulators },
- 	{ .compatible = "qcom,pm8841-regulators", .data = &pm8841_regulators },
-@@ -1916,6 +1952,7 @@ static const struct of_device_id qcom_spmi_regulator_match[] = {
- 	{ .compatible = "qcom,pm8941-regulators", .data = &pm8941_regulators },
- 	{ .compatible = "qcom,pm8994-regulators", .data = &pm8994_regulators },
- 	{ .compatible = "qcom,pmi8994-regulators", .data = &pmi8994_regulators },
-+	{ .compatible = "qcom,pms405-regulators", .data = &pms405_regulators },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_spmi_regulator_match);
--- 
-2.17.1
-
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mike Rapoport <rppt@linux.ibm.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  mm/gup.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index f173fcb..766ae54 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2216,7 +2216,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
+>  			unsigned int gup_flags, struct page **pages)
+>  {
+>  	unsigned long addr, len, end;
+> -	int nr = 0, ret = 0;
+> +	int nr_pinned = 0, ret = 0;
+>  
+>  	start &= PAGE_MASK;
+>  	addr = start;
+> @@ -2231,25 +2231,25 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
+>  
+>  	if (gup_fast_permitted(start, nr_pages)) {
+>  		local_irq_disable();
+> -		gup_pgd_range(addr, end, gup_flags, pages, &nr);
+> +		gup_pgd_range(addr, end, gup_flags, pages, &nr_pinned);
+>  		local_irq_enable();
+> -		ret = nr;
+> +		ret = nr_pinned;
+>  	}
+>  
+> -	if (nr < nr_pages) {
+> +	if (nr_pinned < nr_pages) {
+>  		/* Try to get the remaining pages with get_user_pages */
+> -		start += nr << PAGE_SHIFT;
+> -		pages += nr;
+> +		start += nr_pinned << PAGE_SHIFT;
+> +		pages += nr_pinned;
+>  
+> -		ret = __gup_longterm_unlocked(start, nr_pages - nr,
+> +		ret = __gup_longterm_unlocked(start, nr_pages - nr_pinned,
+>  					      gup_flags, pages);
+>  
+>  		/* Have to be a bit careful with return values */
+> -		if (nr > 0) {
+> +		if (nr_pinned > 0) {
+>  			if (ret < 0)
+> -				ret = nr;
+> +				ret = nr_pinned;
+>  			else
+> -				ret += nr;
+> +				ret += nr_pinned;
+>  		}
+>  	}
+>  
+> -- 
+> 2.7.5
+> 
