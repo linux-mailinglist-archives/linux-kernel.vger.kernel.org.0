@@ -2,142 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A7EB440E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E4A644118
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391433AbfFMQKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:10:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:24684 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391415AbfFMQKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:10:05 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6D35681DEB;
-        Thu, 13 Jun 2019 16:09:52 +0000 (UTC)
-Received: from treble (ovpn-121-232.rdu2.redhat.com [10.10.121.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 28DD919700;
-        Thu, 13 Jun 2019 16:09:49 +0000 (UTC)
-Date:   Thu, 13 Jun 2019 11:09:47 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Julien Thierry <Julien.Thierry@arm.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: [RFC V2 00/16] objtool: Add support for Arm64
-Message-ID: <20190613160947.vlysyfmwuo3xshsc@treble>
-References: <20190516103655.5509-1-raphael.gault@arm.com>
- <20190516142917.nuhh6dmfiufxqzls@treble>
- <26692833-0e5b-cfe0-0ffd-c2c2f0815935@arm.com>
- <20190528222415.x63qw55ujm33dozb@treble>
- <09745535-2782-fa11-ed65-3119b9455e79@arm.com>
+        id S2391260AbfFMQLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:11:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48460 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391587AbfFMQLb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:11:31 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AA45452B;
+        Thu, 13 Jun 2019 18:11:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1560442290;
+        bh=MaF7TDloZgBgF7rWBELeUNc1VaEnB2RDm5tUeyg06EE=;
+        h=Subject:To:Cc:References:From:Reply-To:Date:In-Reply-To:From;
+        b=R9RMC0+/8VswNPTW7Ozc26K3zG813e59Y876RK3lY+HbNNLyKs1sDQqPDgrCo/rtB
+         tTHTz/laKJPEFPwHOyioaK2hZQtxN6PH9FjxKPVzKVJMSZUcOotZwqLBu2VTfZ03Ed
+         pXsiv/3RqzaBBr5D0MKdUf7K808QkN+zt0nBO0bQ=
+Subject: Re: [PATCH 2/4] media: mn88472: don't check retval after our own
+ assignemt
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
+ <20190613155421.16408-3-wsa+renesas@sang-engineering.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Organization: Ideas on Board
+Message-ID: <55afdf32-68a8-c754-152a-2e80a686bde4@ideasonboard.com>
+Date:   Thu, 13 Jun 2019 17:11:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190613155421.16408-3-wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <09745535-2782-fa11-ed65-3119b9455e79@arm.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 13 Jun 2019 16:10:04 +0000 (UTC)
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 04:55:31PM +0100, Raphael Gault wrote:
-> Hi Josh,
-> 
-> On 5/28/19 11:24 PM, Josh Poimboeuf wrote:
-> > On Tue, May 21, 2019 at 12:50:57PM +0000, Raphael Gault wrote:
-> > > Hi Josh,
-> > > 
-> > > Thanks for offering your help and sorry for the late answer.
-> > > 
-> > > My understanding is that a table of offsets is built by GCC, those
-> > > offsets being scaled by 4 before adding them to the base label.
-> > > I believe the offsets are stored in the .rodata section. To find the
-> > > size of that table, it is needed to find a comparison, which can be
-> > > optimized out apprently. In that case the end of the array can be found
-> > > by locating labels pointing to data behind it (which is not 100% safe).
-> > > 
-> > > On 5/16/19 3:29 PM, Josh Poimboeuf wrote:
-> > > > On Thu, May 16, 2019 at 11:36:39AM +0100, Raphael Gault wrote:
-> > > > > Noteworthy points:
-> > > > > * I still haven't figured out how to detect switch-tables on arm64. I
-> > > > > have a better understanding of them but still haven't implemented checks
-> > > > > as it doesn't look trivial at all.
-> > > > 
-> > > > Switch tables were tricky to get right on x86.  If you share an example
-> > > > (or even just a .o file) I can take a look.  Hopefully they're somewhat
-> > > > similar to x86 switch tables.  Otherwise we may want to consider a
-> > > > different approach (for example maybe a GCC plugin could help annotate
-> > > > them).
-> > > > 
-> > > 
-> > > The case which made me realize the issue is the one of
-> > > arch/arm64/kernel/module.o:apply_relocate_add:
-> > > 
-> > > ```
-> > > What seems to happen in the case of module.o is:
-> > >    334:   90000015        adrp    x21, 0 <do_reloc>
-> > > which retrieves the location of an offset in the rodata section, and a
-> > > bit later we do some extra computation with it in order to compute the
-> > > jump destination:
-> > >    3e0:   78625aa0        ldrh    w0, [x21, w2, uxtw #1]
-> > >    3e4:   10000061        adr     x1, 3f0 <apply_relocate_add+0xf8>
-> > >    3e8:   8b20a820        add     x0, x1, w0, sxth #2
-> > >    3ec:   d61f0000        br      x0
-> > > ```
-> > > 
-> > > Please keep in mind that the actual offsets might vary.
-> > > 
-> > > I'm happy to provide more details about what I have identified if you
-> > > want me to.
-> > 
-> > I get the feeling this is going to be trickier than x86 switch tables
-> > (which have already been tricky enough).
-> > 
-> > On x86, there's a .rela.rodata section which applies relocations to
-> > .rodata.  The presence of those relocations makes it relatively easy to
-> > differentiate switch tables from other read-only data.  For example, we
-> > can tell that a switch table ends when either a) there's not a text
-> > relocation or b) another switch table begins.
-> > 
-> > But with arm64 I don't see a deterministic way to do that, because the
-> > table offsets are hard-coded in .rodata, with no relocations.
-> > 
-> >  From talking with Kamalesh I got the impression that we might have a
-> > similar issue for powerpc.
-> > 
-> > So I'm beginning to think we'll need compiler help.  Like a GCC plugin
-> > that annotates at least the following switch table metadata:
-> > 
-> > - Branch instruction address
-> > - Switch table address
-> > - Switch table entry size
-> > - Switch table size
-> > 
-> > The GCC plugin could write all the above metadata into a special section
-> > which gets discarded at link time.  I can look at implementing it,
-> > though I'll be traveling for two out of the next three weeks so it may
-> > be a while before I can get to it.
-> > 
-> 
-> I am completely new to GCC plugins but I had a look and I think I found a
-> possible solution to retrieve at least part of this information using the
-> RTL representation in GCC. I can't say it will work for sure but I would be
-> happy to discuss it with you if you want.
-> Although there are still some area I need to investigate related to
-> interacting with the RTL representation and storing info into the ELF
-> I'd be interested in giving it a try, if you are okay with that.
+Hi Wolfram,
 
-Sounds promising.  I've been stretched thin lately with other work, and
-I'll be out again next week, so please go ahead :-)
+Same comment in title (on all 4 patches in fact)
+	s/assignemt/assignment/
 
--- 
-Josh
+
+On 13/06/2019 16:54, Wolfram Sang wrote:
+> No need to check a retval after we assigned a constant to it.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/media/dvb-frontends/mn88472.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/mn88472.c b/drivers/media/dvb-frontends/mn88472.c
+> index 731b44b9b74c..0a4d0d5fb4b6 100644
+> --- a/drivers/media/dvb-frontends/mn88472.c
+> +++ b/drivers/media/dvb-frontends/mn88472.c
+> @@ -616,8 +616,7 @@ static int mn88472_probe(struct i2c_client *client,
+>  	if (!dev->client[1]) {
+>  		ret = -ENODEV;
+>  		dev_err(&client->dev, "I2C registration failed\n");
+> -		if (ret)
+> -			goto err_regmap_0_regmap_exit;
+> +		goto err_regmap_0_regmap_exit;
+
+Ack
+
+>  	}
+>  	dev->regmap[1] = regmap_init_i2c(dev->client[1], &regmap_config);
+>  	if (IS_ERR(dev->regmap[1])) {
+> @@ -630,8 +629,7 @@ static int mn88472_probe(struct i2c_client *client,
+>  	if (!dev->client[2]) {
+>  		ret = -ENODEV;
+>  		dev_err(&client->dev, "2nd I2C registration failed\n");
+> -		if (ret)
+> -			goto err_regmap_1_regmap_exit;
+> +		goto err_regmap_1_regmap_exit;
+
+Ack.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+>  	}
+>  	dev->regmap[2] = regmap_init_i2c(dev->client[2], &regmap_config);
+>  	if (IS_ERR(dev->regmap[2])) {
+> 
+
