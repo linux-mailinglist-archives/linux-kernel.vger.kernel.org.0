@@ -2,114 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297354470A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3E4F44705
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391075AbfFMQ4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:56:39 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53446 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729963AbfFMB1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:27:08 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4BA17D24DE5DE46CF656;
-        Thu, 13 Jun 2019 09:27:05 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 13 Jun 2019
- 09:27:01 +0800
-Subject: Re: [PATCH] media: ttpci: Fix build error without RC_CORE
-To:     Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20190612034310.4640-1-yuehaibing@huawei.com>
- <20190612074254.eky2xo7bajorkhfy@gofer.mess.org>
- <20190612063708.64498b44@coco.lan>
- <20190612175629.srfw7ybr256se5rt@gofer.mess.org>
-CC:     <tglx@linutronix.de>, <corbet@lwn.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <78f4a71f-8311-7c1b-c1a4-69624a92add4@huawei.com>
-Date:   Thu, 13 Jun 2019 09:27:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S2388082AbfFMQ42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:56:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729968AbfFMBaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Jun 2019 21:30:18 -0400
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE7AA217F4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 01:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560389416;
+        bh=245hSvEJ1fyVQ/NUoZsypuMJ69r/WWckga7/iHsIA6Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2ZR5cg5qXeIW8QeSueU+v+XoVtJwJqgh/zbPK+Vh23DiNB76z6igVBk5QmFjC4Q/b
+         GYn8i0J6URP72JalBhebTaSz6TzlBV+Qnr5O7B+twJgiUQVPaKaKwsqofehUrHIiSR
+         AYRWMsmaxcXIZJR9IifMDN2N37eieMRhYyWPJmug=
+Received: by mail-wr1-f52.google.com with SMTP id v14so18849243wrr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2019 18:30:16 -0700 (PDT)
+X-Gm-Message-State: APjAAAW3P+YraFRiuQ0VLKCaXLD9t1HzyYC9AShdb+HpWDyx3GQdjtW4
+        gvVvY/Z9Gio9alC/+53ZUiZOsdmrgGyUGbEEoYKJhw==
+X-Google-Smtp-Source: APXvYqy3xOlRMyGf+QmnX5kkUuMj4E/JOwcOVlo4m18xwdccaTtfWmajwtmET8pdpGl6blYVFY3m4ysGcKL2J5xWm7w=
+X-Received: by 2002:adf:ef48:: with SMTP id c8mr35692572wrp.352.1560389415200;
+ Wed, 12 Jun 2019 18:30:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612175629.srfw7ybr256se5rt@gofer.mess.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190612170834.14855-1-mhillenb@amazon.de> <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
+ <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
+In-Reply-To: <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 12 Jun 2019 18:30:03 -0700
+X-Gmail-Original-Message-ID: <CALCETrXHbS9VXfZ80kOjiTrreM2EbapYeGp68mvJPbosUtorYA@mail.gmail.com>
+Message-ID: <CALCETrXHbS9VXfZ80kOjiTrreM2EbapYeGp68mvJPbosUtorYA@mail.gmail.com>
+Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM secrets
+To:     Dave Hansen <dave.hansen@intel.com>, Nadav Amit <namit@vmware.com>
+Cc:     Marius Hillenbrand <mhillenb@amazon.de>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 12, 2019 at 1:27 PM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+>
+>
+>
+> > On Jun 12, 2019, at 12:55 PM, Dave Hansen <dave.hansen@intel.com> wrote=
+:
+> >
+> >> On 6/12/19 10:08 AM, Marius Hillenbrand wrote:
+> >> This patch series proposes to introduce a region for what we call
+> >> process-local memory into the kernel's virtual address space.
+> >
+> > It might be fun to cc some x86 folks on this series.  They might have
+> > some relevant opinions. ;)
+> >
+> > A few high-level questions:
+> >
+> > Why go to all this trouble to hide guest state like registers if all th=
+e
+> > guest data itself is still mapped?
+> >
+> > Where's the context-switching code?  Did I just miss it?
+> >
+> > We've discussed having per-cpu page tables where a given PGD is only in
+> > use from one CPU at a time.  I *think* this scheme still works in such =
+a
+> > case, it just adds one more PGD entry that would have to context-switch=
+ed.
+>
+> Fair warning: Linus is on record as absolutely hating this idea. He might=
+ change his mind, but it=E2=80=99s an uphill battle.
 
-On 2019/6/13 1:56, Sean Young wrote:
-> On Wed, Jun 12, 2019 at 06:37:08AM -0300, Mauro Carvalho Chehab wrote:
->> Em Wed, 12 Jun 2019 08:42:55 +0100
->> Sean Young <sean@mess.org> escreveu:
->>
->>> On Wed, Jun 12, 2019 at 11:43:10AM +0800, YueHaibing wrote:
->>>> If RC_CORE is not set, building fails:
->>>>
->>>> drivers/media/pci/ttpci/av7110_ir.o: In function `av7110_ir_init':
->>>> av7110_ir.c:(.text+0x1b0): undefined reference to `rc_allocate_device'
->>>> av7110_ir.c:(.text+0x2c1): undefined reference to `rc_register_device'
->>>> av7110_ir.c:(.text+0x2dc): undefined reference to `rc_free_device'
->>>>
->>>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>>> Fixes: 71f49a8bf5c5 ("media: ttpci: use rc-core for the IR receiver")
->>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>  
->>>
->>> Thank you for spotting this and writing a patch.
->>>
->>>> ---
->>>>  drivers/media/pci/ttpci/Kconfig | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/media/pci/ttpci/Kconfig b/drivers/media/pci/ttpci/Kconfig
->>>> index d96d4fa..b705631 100644
->>>> --- a/drivers/media/pci/ttpci/Kconfig
->>>> +++ b/drivers/media/pci/ttpci/Kconfig
->>>> @@ -7,7 +7,7 @@ config DVB_AV7110
->>>>  	depends on DVB_CORE && PCI && I2C
->>>>  	select TTPCI_EEPROM
->>>>  	select VIDEO_SAA7146_VV
->>>> -	select DVB_AV7110_IR if INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110  
->>>
->>> This says if
->>>  - select DVB_AV7110_IR if INPUT_EVDEV and DVB_AV7110 are both y or m
->>>  - select DVB_AV7110_IR if INPUT_EVDEV=y
->>>    This exists for the case when INPUT_EVDEV=y and DVB_AV7110=m, which is fine
->>>
->>>> +	select DVB_AV7110_IR if RC_CORE=DVB_AV7110 && (INPUT_EVDEV=y || INPUT_EVDEV=DVB_AV7110)  
->>>
->>> That's not exactly the same. For one thing it should not longer depend on
->>> INPUT_EVDEV=y.
->>>
->>> Now if DVB_AV7110=m and RC_CORE=y is not allowed which should be (this is
->>> the case in Fedora default kernel config for example).
->>
->> My suggestion here is to stop using select here, using, instead
->> a depends on for DVB_AV7110_IR, e. g. something like (untested):
->>
->> config DVB_AV7110_IR
->> 	bool
->> 	depends on RC_CORE && DVB_AV7110
->> 	default DVB_AV7110
-> 
-> Build will fail if RC_CORE=m && DVB_AV7110=y. So it should be
-> 
->         depends on RC_CORE=y || RC_CORE = DVB_AV7110
+I looked at the patch, and it (sensibly) has nothing to do with
+per-cpu PGDs.  So it's in great shape!
 
-Thanks, will test and send v2 as your suggestion.
+Seriously, though, here are some very high-level review comments:
 
-> 
-> 
-> Thanks,
-> 
-> Sean
-> 
-> .
-> 
+Please don't call it "process local", since "process" is meaningless.
+Call it "mm local" or something like that.
 
+We already have a per-mm kernel mapping: the LDT.  So please nix all
+the code that adds a new VA region, etc, except to the extent that
+some of it consists of valid cleanups in and of itself.  Instead,
+please refactor the LDT code (arch/x86/kernel/ldt.c, mainly) to make
+it use a more general "mm local" address range, and then reuse the
+same infrastructure for other fancy things.  The code that makes it
+KASLR-able should be in its very own patch that applies *after* the
+code that makes it all work so that, when the KASLR part causes a
+crash, we can bisect it.
+
++ /*
++ * Faults in process-local memory may be caused by process-local
++ * addresses leaking into other contexts.
++ * tbd: warn and handle gracefully.
++ */
++ if (unlikely(fault_in_process_local(address))) {
++ pr_err("page fault in PROCLOCAL at %lx", address);
++ force_sig_fault(SIGSEGV, SEGV_MAPERR, (void __user *)address, current);
++ }
++
+
+Huh?  Either it's an OOPS or you shouldn't print any special
+debugging.  As it is, you're just blatantly leaking the address of the
+mm-local range to malicious user programs.
+
+Also, you should IMO consider using this mechanism for kmap_atomic().
+Hi, Nadav!
