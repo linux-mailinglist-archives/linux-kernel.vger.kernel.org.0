@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A25D442E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E712B43EFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392308AbfFMQ0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:26:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53828 "EHLO mail.kernel.org"
+        id S1733014AbfFMPyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:54:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730964AbfFMIgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:36:18 -0400
+        id S1731569AbfFMIx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:53:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68D652146F;
-        Thu, 13 Jun 2019 08:36:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EC5D215EA;
+        Thu, 13 Jun 2019 08:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560414977;
-        bh=YCT7ioCTMlfSNqJdXxS/UUxBZzG++8zttWVLIz3vY/w=;
+        s=default; t=1560416008;
+        bh=id9fzv7nyH1zGmy4h3HEUh/wcEv+8VdU11in07z9XYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LlNOZSS0xV1+nCkp/7dWSUv2gGBA9NFbIdHnIG6GsyjB/jvxKwY6yNgCjgy7fy4hK
-         xv2h+yoTxbMmmw4LgOA2CablMg8bqkTZXx0itPw1ZlEJSV39fwMYoEVC7ooT4Y/ewh
-         j45+V9erFA7NKlMEaJHl8GaTm9Az6RIaFToqRZp4=
+        b=W605ZCzfzg5X2UVloHAskRMdeqLYvM86aLzb7QNZYXkePZuGqf2AkhGJugu2MNPJr
+         jWUUnLvqm/qFA7JgfoSKDbTQQ6Gtb5BgYDDesZd6/lhZqSfa8AC3y9QjrDs6hP31cn
+         IPbRKaoJPsqSOPESmvJlqDJuAGXHeFB1mW8yAMKg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/81] drm/nouveau/disp/dp: respect sink limits when selecting failsafe link configuration
+Subject: [PATCH 5.1 069/155] watchdog: fix compile time error of pretimeout governors
 Date:   Thu, 13 Jun 2019 10:33:01 +0200
-Message-Id: <20190613075650.410787319@linuxfoundation.org>
+Message-Id: <20190613075656.842528232@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 13d03e9daf70dab032c03dc172e75bb98ad899c4 ]
+[ Upstream commit a223770bfa7b6647f3a70983257bd89f9cafce46 ]
 
-Where possible, we want the failsafe link configuration (one which won't
-hang the OR during modeset because of not enough bandwidth for the mode)
-to also be supported by the sink.
+CONFIG_WATCHDOG_PRETIMEOUT_GOV build symbol adds watchdog_pretimeout.o
+object to watchdog.o, the latter is compiled only if CONFIG_WATCHDOG_CORE
+is selected, so it rightfully makes sense to add it as a dependency.
 
-This prevents "link rate unsupported by sink" messages when link training
-fails.
+The change fixes the next compilation errors, if CONFIG_WATCHDOG_CORE=n
+and CONFIG_WATCHDOG_PRETIMEOUT_GOV=y are selected:
 
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+  drivers/watchdog/pretimeout_noop.o: In function `watchdog_gov_noop_register':
+  drivers/watchdog/pretimeout_noop.c:35: undefined reference to `watchdog_register_governor'
+  drivers/watchdog/pretimeout_noop.o: In function `watchdog_gov_noop_unregister':
+  drivers/watchdog/pretimeout_noop.c:40: undefined reference to `watchdog_unregister_governor'
+
+  drivers/watchdog/pretimeout_panic.o: In function `watchdog_gov_panic_register':
+  drivers/watchdog/pretimeout_panic.c:35: undefined reference to `watchdog_register_governor'
+  drivers/watchdog/pretimeout_panic.o: In function `watchdog_gov_panic_unregister':
+  drivers/watchdog/pretimeout_panic.c:40: undefined reference to `watchdog_unregister_governor'
+
+Reported-by: Kuo, Hsuan-Chi <hckuo2@illinois.edu>
+Fixes: ff84136cb6a4 ("watchdog: add watchdog pretimeout governor framework")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/watchdog/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-index 6160a6158cf2..5e51a5c1eb01 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/dp.c
-@@ -364,8 +364,15 @@ nvkm_dp_train(struct nvkm_dp *dp, u32 dataKBps)
- 	 * and it's better to have a failed modeset than that.
- 	 */
- 	for (cfg = nvkm_dp_rates; cfg->rate; cfg++) {
--		if (cfg->nr <= outp_nr && cfg->nr <= outp_bw)
--			failsafe = cfg;
-+		if (cfg->nr <= outp_nr && cfg->nr <= outp_bw) {
-+			/* Try to respect sink limits too when selecting
-+			 * lowest link configuration.
-+			 */
-+			if (!failsafe ||
-+			    (cfg->nr <= sink_nr && cfg->bw <= sink_bw))
-+				failsafe = cfg;
-+		}
-+
- 		if (failsafe && cfg[1].rate < dataKBps)
- 			break;
- 	}
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 1d3b4bfbbc4d..d4d6c5b2bef3 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -2028,6 +2028,7 @@ comment "Watchdog Pretimeout Governors"
+ 
+ config WATCHDOG_PRETIMEOUT_GOV
+ 	bool "Enable watchdog pretimeout governors"
++	depends on WATCHDOG_CORE
+ 	help
+ 	  The option allows to select watchdog pretimeout governors.
+ 
 -- 
 2.20.1
 
