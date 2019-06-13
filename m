@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF2D4418B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DCF143FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391841AbfFMQPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:15:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59226 "EHLO mail.kernel.org"
+        id S1728932AbfFMQAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:00:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731180AbfFMImC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:02 -0400
+        id S1731465AbfFMItE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:49:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8531521479;
-        Thu, 13 Jun 2019 08:42:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07F7A206BA;
+        Thu, 13 Jun 2019 08:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560415322;
-        bh=9bU3FBkkKJqRG76BpYTOuOR3wfcjYADSUF92fscmwUE=;
+        s=default; t=1560415743;
+        bh=JRsUTwz51DTYuVKxaSW4tNqWcZDbdHFid2P6ie/a+ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UhLC3JCRQtoavtQWj0YkrqE+P99EiuMpFDoNXP2IXIdyb1hVg+kzh/cze1Q7kmU1f
-         fNiUPs+/Oex2nWJrzz6wBQPNwPfUtSMRtCh77KIVjKkZTkdiOujc/7cJ4dP/pRtVSC
-         L7Q9JB3k1F/5FF0A+Mx+6Xk/LM9//+DYpA/n+Ygw=
+        b=TN0Me5dc2Wf6SU5zsr6mTz4Pt10R0nuT9fiTBaolIoWylzVQH6IHQfEO6td4lQ27C
+         gIvnsyvS+lplBTO/o5kEYB+B+XMIQ6aU5aISVssaoMSsTDcZHs0KTfAYaEkxTrykdk
+         SBjjWZ5L+0EpsCAlzhVwyy1FcQ3wFGU920Bi6KIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,12 +34,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Shawn Guo <shawnguo@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 084/118] ARM: dts: imx6sll: Specify IMX6SLL_CLK_IPG as "ipg" clock to SDMA
-Date:   Thu, 13 Jun 2019 10:33:42 +0200
-Message-Id: <20190613075648.698134567@linuxfoundation.org>
+Subject: [PATCH 5.1 111/155] ARM: dts: imx6ul: Specify IMX6UL_CLK_IPG as "ipg" clock to SDMA
+Date:   Thu, 13 Jun 2019 10:33:43 +0200
+Message-Id: <20190613075659.178190351@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,14 +49,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c5ed5daa65d5f665e666b76c3dbfa503066defde ]
+[ Upstream commit 7b3132ecefdd1fcdf6b86e62021d0e55ea8034db ]
 
 Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
 clock to determine if it needs to configure the IP block as operating
 at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
-clocks as IMX6SLL_CLK_SDMA result in driver incorrectly thinking that
+clocks as IMX6UL_CLK_SDMA results in driver incorrectly thinking that
 ratio is 1:1 which results in broken SDMA funtionality. Fix the code
-to specify IMX6SLL_CLK_IPG as "ipg" clock for SDMA, to avoid detecting
+to specify IMX6UL_CLK_IPG as "ipg" clock for SDMA, to avoid detecting
 incorrect clock ratio.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
@@ -70,20 +70,20 @@ Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6sll.dtsi | 2 +-
+ arch/arm/boot/dts/imx6ul.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
-index 3e6ffaf5f104..7c7d5c47578e 100644
---- a/arch/arm/boot/dts/imx6sll.dtsi
-+++ b/arch/arm/boot/dts/imx6sll.dtsi
-@@ -591,7 +591,7 @@
- 				compatible = "fsl,imx6sll-sdma", "fsl,imx35-sdma";
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 62ed30c781ed..facd65602c2d 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -708,7 +708,7 @@
+ 					     "fsl,imx35-sdma";
  				reg = <0x020ec000 0x4000>;
  				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX6SLL_CLK_SDMA>,
-+				clocks = <&clks IMX6SLL_CLK_IPG>,
- 					 <&clks IMX6SLL_CLK_SDMA>;
+-				clocks = <&clks IMX6UL_CLK_SDMA>,
++				clocks = <&clks IMX6UL_CLK_IPG>,
+ 					 <&clks IMX6UL_CLK_SDMA>;
  				clock-names = "ipg", "ahb";
  				#dma-cells = <3>;
 -- 
