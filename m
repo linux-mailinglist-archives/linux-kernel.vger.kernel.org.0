@@ -2,76 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB6F43C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6DD43C11
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 17:33:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733000AbfFMPfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 11:35:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34868 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfFMKXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:23:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CdLBRYvVCv2xx4Vg1tCPu4Ijl4wJSy52l8LQrHW+nC8=; b=GSsdZ1Y5MZw/OjXYzrBWk48S8
-        R7BngR9n5IYQ9US97kiU0fNOPMhtuX1EDvR/dZQQYus890Vb1LJa+GY/UGV0MZnKIG1s8xhjFoVwO
-        nepPgfFS1rpqCZ+pP7LT2Ca6spc/tENjWg2gPP7CSrjyLLBqZKVTWLI+Flqy73mz+P2WsEi6w/SHv
-        p008o3wO1/FshcgdBxInZS7VUJEJ2UtVED0XKqoqvg+QqW+GXB4CjYd4LGhYPzhZETwskmb/IYCWe
-        LqvcoCRGSvssbMEgwQGAuoS+usllbHwlHSGyZQTJM2JREUrd2iaHWgzlSEN0jaLuePc4fS0kjEA4E
-        UNrwtyj0g==;
-Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbMt9-0005fa-93; Thu, 13 Jun 2019 10:23:23 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbMt7-0005lq-9g; Thu, 13 Jun 2019 07:23:21 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH] dt: leds-lm36274.txt: fix a broken reference to ti-lmu.txt
-Date:   Thu, 13 Jun 2019 07:23:15 -0300
-Message-Id: <79b9bf3388eb231da77c6a804862d21339262d0a.1560421387.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1732885AbfFMPdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 11:33:44 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:40766 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728361AbfFMKfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 06:35:52 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BFD9B1A0113;
+        Thu, 13 Jun 2019 12:35:49 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C74081A038B;
+        Thu, 13 Jun 2019 12:35:46 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C6079402A0;
+        Thu, 13 Jun 2019 18:35:42 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     dan.j.williams@intel.com, vkoul@kernel.org, leoyang.li@nxp.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [V2] dmaengine: fsl-edma: support little endian for edma driver
+Date:   Thu, 13 Jun 2019 10:27:08 +0000
+Message-Id: <20190613102708.21606-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a typo there:
-	ti_lmu.txt -> ti-lmu.txt
+Our platforms with below registers(CHCFG0 - CHCFG15) of eDMA
+*-----------------------------------------------------------*
+|     Offset   | Big endian Register| Little endian Register|
+|--------------|--------------------|-----------------------|
+|     0x0      |        CHCFG0      |           CHCFG3      |
+|--------------|--------------------|-----------------------|
+|     0x1      |        CHCFG1      |           CHCFG2      |
+|--------------|--------------------|-----------------------|
+|     0x2      |        CHCFG2      |           CHCFG1      |
+|--------------|--------------------|-----------------------|
+|     0x3      |        CHCFG3      |           CHCFG0      |
+|--------------|--------------------|-----------------------|
+|     ...      |        ......      |           ......      |
+|--------------|--------------------|-----------------------|
+|     0xC      |        CHCFG12     |           CHCFG15     |
+|--------------|--------------------|-----------------------|
+|     0xD      |        CHCFG13     |           CHCFG14     |
+|--------------|--------------------|-----------------------|
+|     0xE      |        CHCFG14     |           CHCFG13     |
+|--------------|--------------------|-----------------------|
+|     0xF      |        CHCFG15     |           CHCFG12     |
+*-----------------------------------------------------------*
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Current eDMA driver does not support Little endian, so this
+patch is to improve edma driver to support little endian.
+
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lm36274.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changed fo v2:
+	- Add details fo comments.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-index 456a589c65f0..39c230d59a4d 100644
---- a/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-@@ -6,7 +6,7 @@ up to 29V total output voltage. The 11-bit LED current is programmable via
- the I2C bus and/or controlled via a logic level PWM input from 60 uA to 30 mA.
+ drivers/dma/fsl-edma-common.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 680b2a0..6bf238e 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -83,9 +83,14 @@ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+ 	u32 ch = fsl_chan->vchan.chan.chan_id;
+ 	void __iomem *muxaddr;
+ 	unsigned int chans_per_mux, ch_off;
++	int endian_diff[4] = {3, 1, -1, -3};
  
- Parent device properties are documented in
--Documentation/devicetree/bindings/mfd/ti_lmu.txt
-+Documentation/devicetree/bindings/mfd/ti-lmu.txt
+ 	chans_per_mux = fsl_chan->edma->n_chans / DMAMUX_NR;
+ 	ch_off = fsl_chan->vchan.chan.chan_id % chans_per_mux;
++
++	if (!fsl_chan->edma->big_endian)
++		ch_off += endian_diff[ch_off % 4];
++
+ 	muxaddr = fsl_chan->edma->muxbase[ch / chans_per_mux];
+ 	slot = EDMAMUX_CHCFG_SOURCE(slot);
  
- Regulator properties are documented in
- Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
 -- 
-2.21.0
+1.7.1
 
