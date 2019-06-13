@@ -2,188 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CE4844D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C4C944D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 22:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfFMUco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 16:32:44 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:44441 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfFMUco (ORCPT
+        id S1730029AbfFMUdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 16:33:17 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36268 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbfFMUdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 16:32:44 -0400
-Received: by mail-ua1-f65.google.com with SMTP id 8so48555uaz.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 13:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XnwdqEB/zxSUoi8AX3TTUKJIQzqvpn/EDnWBDbRAeC0=;
-        b=mh0Rc495xOBUVTnnEmr4AY5NBwVSaqzX7zqV6Dc0pZhAdBBMh97ij8pz/2/iyufp6F
-         ooJ45PQgHYRytRZez//z7awy8/LfcteuyU4iQPzoIaxepq7w2liWukbsUhe7AVsGV2m4
-         cGRVK2X2wHvYVrnO3N3b1vRlOqgAy1SA4v+7JmfMJIywOp9HK3ygvJWCv7tbo6q745j4
-         w7aNSUQU4VPwQ+rzdjFOPSxICgPxP25z9gSYvI9Fr4DHolTZx7l7s1QyHkMnZG2KUxWG
-         2/hwjxPew43xbKjCW3en5tfPSloSM/x9hxBFVQ0j+Y7gNVoK1FrgVaKF+OIkIdmaZH4p
-         Ua2A==
+        Thu, 13 Jun 2019 16:33:16 -0400
+Received: by mail-qt1-f194.google.com with SMTP id p15so4792006qtl.3;
+        Thu, 13 Jun 2019 13:33:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XnwdqEB/zxSUoi8AX3TTUKJIQzqvpn/EDnWBDbRAeC0=;
-        b=GrlLopzh1nLW/kZjJkdPRR/i0Hu/qzkAaywNsuQpY6wT3Jd6qyu+MWaRbTdy6x+pKU
-         ebLDyGKDxRKrGa3zGnElQnGxpKky6CuCHDxCEW+OcbHP3D91X2wy/V9KOfNKnGCu8lFG
-         Ia+homfY7fKWQU6quu9FWtVhMR70c0PHxzAB3JHMxyg8U9pdmexovYVvaTEcEtywSR5I
-         xxpEzWJyLzrny9PDe7RvVdXsE0hdJGKa1NGFocbpdH4rL+jOOFv39v10+yt+Wub6pMI5
-         pzzfVDaYfFwD1G9NSAsQ8iqrgcuf6yiDO8dRZeX32uMSqQ5Q7VuLVKIwxJu4QUyr7UY5
-         qN7g==
-X-Gm-Message-State: APjAAAXkk5CIz3EX1Wofft1MkxhM/bV52/gMnJdr9UsYmWtowHdaAGiW
-        0m1uBlR6u/FnJEkRgH6INGifuCboMz32Rw4r7VvxZr/zJt7bSQ==
-X-Google-Smtp-Source: APXvYqwYSC5celn0/YY56qS1Ya7QSTRLAhhjVJF5SlLdd0JuZboIS3qB8YqgOjoOCvVdt0mtU6tXdL4lZWb7/Se6XdM=
-X-Received: by 2002:ab0:6619:: with SMTP id r25mr3232042uam.33.1560457962568;
- Thu, 13 Jun 2019 13:32:42 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R2FstjYRqQg59DXy+7LjAPTotoewKiLMGMYZxUsswDg=;
+        b=slXjkj1j5Jm7zPn/DBlhDdXtqvGdl5k2k1Vc9O+nBLlxdfjSRYODAuHyOVgKkFYzxh
+         vp7TBDYBmQV/SF7e4gpa52WkRlEqvCtkxyzPBnLYNNHCQc5ISp7MrCHqhKlQySTkRS+D
+         cK+xlSOasWhT+qWKPcUHD3lDddzb0JLK7QIAlVwSrNyGxHbE8wdNHXL1zcfR/mPZ6hVe
+         SyV+fPQBNAiWSmIEocUb8DSLtvEu7n3wbVBIEpTIUjWym1LHsDXWjcz1+XKyLTdM2kUL
+         iVZxl70Ah7J1S1g8YonLd1bwB2t7p/O725vgTxX2DJ42kLwjAF30ualKT/NyVDqyQyOk
+         Z4qg==
+X-Gm-Message-State: APjAAAXdy2T2hFZC0+J4w2mc3Ls4aE1x7WIyvxeyj1oq1DsA05PQax3Y
+        vDaF/ADNTLo2Kwb2QwmlVw==
+X-Google-Smtp-Source: APXvYqz/AjvzkvNZlLu61SiHZDfFw95Oeihx85WNdMpZRhlJlbJo2We6Ewob7bP6MREJhRmhkvqgzQ==
+X-Received: by 2002:a0c:887c:: with SMTP id 57mr4994570qvm.192.1560457995500;
+        Thu, 13 Jun 2019 13:33:15 -0700 (PDT)
+Received: from localhost ([64.188.179.243])
+        by smtp.gmail.com with ESMTPSA id l88sm423749qte.33.2019.06.13.13.33.14
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 13:33:14 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 14:33:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Serge Semin <Sergey.Semin@t-platforms.ru>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Add DT bindings for TI
+ ads1000/ads1100 ADCs
+Message-ID: <20190613203313.GA23102@bogus>
+References: <20190514225810.12591-1-fancer.lancer@gmail.com>
+ <20190514225810.12591-2-fancer.lancer@gmail.com>
 MIME-Version: 1.0
-References: <156007465229.3335.10259979070641486905.stgit@buzz>
- <156007493995.3335.9595044802115356911.stgit@buzz> <20190612231426.GA3639@gmail.com>
- <f15478b5-098f-e1be-0928-62f46cff77e7@yandex-team.ru>
-In-Reply-To: <f15478b5-098f-e1be-0928-62f46cff77e7@yandex-team.ru>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Thu, 13 Jun 2019 13:32:31 -0700
-Message-ID: <CANaxB-xUADVJx7HL6uHNRLDLNC19urcp-NY6RnyrckuH2neaAw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] proc: use down_read_killable mmap_sem for /proc/pid/map_files
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Roman Gushchin <guro@fb.com>, Dmitry Safonov <dima@arista.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190514225810.12591-2-fancer.lancer@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 1:15 AM Konstantin Khlebnikov
-<khlebnikov@yandex-team.ru> wrote:
->
-> On 13.06.2019 2:14, Andrei Vagin wrote:
-> > On Sun, Jun 09, 2019 at 01:09:00PM +0300, Konstantin Khlebnikov wrote:
-> >> Do not stuck forever if something wrong.
-> >> Killable lock allows to cleanup stuck tasks and simplifies investigation.
-> >
-> > This patch breaks the CRIU project, because stat() returns EINTR instead
-> > of ENOENT:
-> >
-> > [root@fc24 criu]# stat /proc/self/map_files/0-0
-> > stat: cannot stat '/proc/self/map_files/0-0': Interrupted system call
->
-> Good catch.
->
-> It seems CRIU tests has good coverage for darkest corners of kernel API.
-> Kernel CI projects should use it. I suppose you know how to promote this. =)
+On Wed, May 15, 2019 at 01:58:08AM +0300, Serge Semin wrote:
+> Add dt-binding documentation for the Texas Instruments ads1000/ads1100 ADCs
+> driver.
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+>  .../devicetree/bindings/hwmon/ads1000.txt     | 61 ++++++++++++++++
 
-I remember Mike was trying to add the CRIU test suite into kernel-ci,
-but it looks like this ended up with nothing.
+Bindings should be separate patch.
 
-The good thing here is that we have our own kernel-ci:
-https://travis-ci.org/avagin/linux/builds
+>  Documentation/hwmon/ads1000.rst               | 72 +++++++++++++++++++
+>  2 files changed, 133 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/ads1000.txt
+>  create mode 100644 Documentation/hwmon/ads1000.rst
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/ads1000.txt b/Documentation/devicetree/bindings/hwmon/ads1000.txt
+> new file mode 100644
+> index 000000000000..3907b7da9b33
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/ads1000.txt
+> @@ -0,0 +1,61 @@
+> +ADS1000/ADS1100 (I2C)
+> +
+> +This device is a 12-16 bit A-D converter with 1 input.
 
-Travis-CI doesn't allow to replace the kernel, so we use CRIU to
-dump/restore a ssh session and travis doesn't notice when we kexec a
-new kernel.
+ADC's should be in bindings/iio/adc/
 
->
-> >
-> > Here is one inline comment with the fix for this issue.
-> >
-> >>
-> >> It seems ->d_revalidate() could return any error (except ECHILD) to
-> >> abort validation and pass error as result of lookup sequence.
-> >>
-> >> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> >> Reviewed-by: Roman Gushchin <guro@fb.com>
-> >> Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
-> >> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> >
-> > It was nice to see all four of you in one place :).
-> >
-> >> Acked-by: Michal Hocko <mhocko@suse.com>
-> >> ---
-> >>   fs/proc/base.c |   27 +++++++++++++++++++++------
-> >>   1 file changed, 21 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> >> index 9c8ca6cd3ce4..515ab29c2adf 100644
-> >> --- a/fs/proc/base.c
-> >> +++ b/fs/proc/base.c
-> >> @@ -1962,9 +1962,12 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
-> >>              goto out;
-> >>
-> >>      if (!dname_to_vma_addr(dentry, &vm_start, &vm_end)) {
-> >> -            down_read(&mm->mmap_sem);
-> >> -            exact_vma_exists = !!find_exact_vma(mm, vm_start, vm_end);
-> >> -            up_read(&mm->mmap_sem);
-> >> +            status = down_read_killable(&mm->mmap_sem);
-> >> +            if (!status) {
-> >> +                    exact_vma_exists = !!find_exact_vma(mm, vm_start,
-> >> +                                                        vm_end);
-> >> +                    up_read(&mm->mmap_sem);
-> >> +            }
-> >>      }
-> >>
-> >>      mmput(mm);
-> >> @@ -2010,8 +2013,11 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
-> >>      if (rc)
-> >>              goto out_mmput;
-> >>
-> >> +    rc = down_read_killable(&mm->mmap_sem);
-> >> +    if (rc)
-> >> +            goto out_mmput;
-> >> +
-> >>      rc = -ENOENT;
-> >> -    down_read(&mm->mmap_sem);
-> >>      vma = find_exact_vma(mm, vm_start, vm_end);
-> >>      if (vma && vma->vm_file) {
-> >>              *path = vma->vm_file->f_path;
-> >> @@ -2107,7 +2113,10 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
-> >>      if (!mm)
-> >>              goto out_put_task;
-> >>
-> >> -    down_read(&mm->mmap_sem);
-> >> +    result = ERR_PTR(-EINTR);
-> >> +    if (down_read_killable(&mm->mmap_sem))
-> >> +            goto out_put_mm;
-> >> +
-> >
-> >       result = ERR_PTR(-ENOENT);
-> >
-> >>      vma = find_exact_vma(mm, vm_start, vm_end);
-> >>      if (!vma)
-> >>              goto out_no_vma;
-> >> @@ -2118,6 +2127,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
-> >>
-> >>   out_no_vma:
-> >>      up_read(&mm->mmap_sem);
-> >> +out_put_mm:
-> >>      mmput(mm);
-> >>   out_put_task:
-> >>      put_task_struct(task);
-> >> @@ -2160,7 +2170,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
-> >>      mm = get_task_mm(task);
-> >>      if (!mm)
-> >>              goto out_put_task;
-> >> -    down_read(&mm->mmap_sem);
-> >> +
-> >> +    ret = down_read_killable(&mm->mmap_sem);
-> >> +    if (ret) {
-> >> +            mmput(mm);
-> >> +            goto out_put_task;
-> >> +    }
-> >>
-> >>      nr_files = 0;
-> >>
+> +
+> +The inputs can be used either as a differential pair of Vin+ Vin- or as a single
+> +ended sensor for Vin+ GND. The inputs mode is platform-dependent and isn't
+> +configured by software in any case.
+> +
+> +Device A-D converter sensitivity can be configured using two parameters:
+> + - pga is the programmable gain amplifier
+> +    0: x1 (default) 
+> +    1: x2
+> +    2: x4
+> +    3: x8
+> + - data_rate in samples per second also affecting the output code accuracy
+> +    0: 128SPS - +/- Vdd*0.488mV (default, ads1000 accepts this rate only)
+> +    1: 32SPS  - +/- Vdd*0.122mV
+> +    2: 16SPS  - +/- Vdd*0.061mV
+> +    3: 8SPS   - +/- Vdd*0.030mV
+> +   Since this parameter also affects the output accuracy, be aware the greater
+> +   SPS the worse accuracy.
+> +
+> +As a result the output value is calculated by the next formulae:
+> +dVin = Cod * Vdd / (PGA * max(|Cod|)), where
+> +max(|Cod|) - maximum possible value of the output code, which depends on the SPS
+> +setting from the table above.
+> +
+> +The ADS1000/ADS1100 dts-node:
+> +
+> +  Required properties:
+> +   - compatible : must be "ti,ads1000" or "ti,ads1100"
+> +   - reg : I2C bus address of the device
+> +   - #address-cells : must be <1>
+> +   - #size-cells : must be <0>
+> +   - vdd-supply : regulator for reference supply voltage (usually fixed)
+> +
+> +  Optional properties:
+> +   - ti,gain : the programmable gain amplifier setting
+> +   - ti,datarate : the converter data rate
+
+IIRC, we have standard properties for these.
+
+> +   - ti,voltage-divider : <R1 R2> Ohms inbound voltage dividers,
+> +     so dVin = (R1 + R2)/R2 * dVin
+> +
+> +Example:
+> +
+> +vdd_5v0: fixedregulator@0 {
+> +	compatible = "regulator-fixed";
+> +	regulator-name = "vdd-ref";
+> +	regulator-min-microvolt = <5000000>;
+> +	regulator-max-microvolt = <5000000>;
+> +	regulator-always-on;
+> +};
+> +
+> +tiadc: ads1000@48 {
+
+adc@48
+
+> +	compatible = "ti,ads1000";
+> +	reg = <0x48>;
+> +
+> +	vdd-supply = <&vdd_5v0>;
+> +	ti,gain = <0>;
+> +	ti,voltage-divider = <31600 3600>;
+> +};
+> +
