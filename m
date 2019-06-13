@@ -2,86 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C53AD444DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A68444CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2019 18:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392597AbfFMQkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 12:40:02 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44399 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730588AbfFMHHZ (ORCPT
+        id S2392631AbfFMQjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 12:39:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726581AbfFMHJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:07:25 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k8so29610959edr.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 00:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3XH+XvSSdt+0M6n67F8uO788uZlWAtnvxIXQiaw/IR4=;
-        b=DELSMDQe7XJ0TMJ6DnlL7AW8Brl4v7z7Y0Q+xvU5Ivd8ijh98pvN6mWR5TIpo6T9pR
-         6EZvcsHpt/j2NMRM9Xz/kYDzUGw7NFXyku81YdVCy9C++GvT/b/t3V1/rCd7ptrRwQKe
-         mnCKEE0lBPYwioRciPNmpOZxSzSw246ydf5zK2QwxTMu+2FR22ogFse3RJ1AZsPOSSxP
-         iZHxqjIJN0H85XJSr0mSmy6BH1iwAXJoOKAeosA4y2WqMVQi4hh/ZEZloBmbkm4iqdxl
-         wCUsNRb4pn5U0T71n/Lgst/h+wZ3P7NaAb6AAF5gRksrQvZuJa6GZVbvXflbaZAwpPNI
-         vFdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3XH+XvSSdt+0M6n67F8uO788uZlWAtnvxIXQiaw/IR4=;
-        b=Pg+wDNvAlR5avWiJkFnIzHZ02iEcL0A3lhj9NZXHFtx9uuoXmR0CMydtVKy87WSVN0
-         5KGSWEDQP4FTur7LSTXsQ5Kmz6uK8UP2aR/pgbZNtR20JlPLSZLpRsoR+yH9Q9K8NtY+
-         8J4y+rDEC4T7s3ku5V4nPdStFWruw5EQgVg5VJLCT9H+3OXjgI+a+4Stxgytz3+KWooS
-         7oZ1cgcJdnYlKvvWXxUC2ZCAIRanqTpdw3pOPI6Hiv2u1aHGSybiL3qYTdO2XTIreZDn
-         ew7y7LSV6UKkoI4gHTc8u85+WVsxH+sVGhq+bwVEScQD4k2/tBz6iRNEVCWyVF/2Ob3L
-         nhIQ==
-X-Gm-Message-State: APjAAAU6kW0aYI4+WCJ2yDzB/rLz2eF4r2p+R9Lt1eRCQjgxyb6TwtjR
-        2Y46A5W/uepkitXfGUylXT41IanNjDw=
-X-Google-Smtp-Source: APXvYqzr2SStLNdfff6Ri34lOVzhgnk6X0VViA/E/OlTxqB7DK5t8gFHo7O2fVrIoWf1NQJawd8iTg==
-X-Received: by 2002:a50:a205:: with SMTP id 5mr8215024edl.211.1560409643481;
-        Thu, 13 Jun 2019 00:07:23 -0700 (PDT)
-Received: from viisi.d.ethz.ch (mpp-cp1-natpool-1-013.ethz.ch. [82.130.71.13])
-        by smtp.gmail.com with ESMTPSA id b53sm641976edd.45.2019.06.13.00.07.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 00:07:22 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org
-Subject: [PATCH] MAINTAINERS: change the arch/riscv git tree to the new shared tree
-Date:   Thu, 13 Jun 2019 00:07:21 -0700
-Message-Id: <20190613070721.8341-1-paul.walmsley@sifive.com>
+        Thu, 13 Jun 2019 03:09:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MzWuvFZ+lpFRWxyb8Xqi32aPdYJB0lJW3Q3yHOMsMHI=; b=frwbTaE/RTeW2oLPedYgORYSw
+        ZeiXllpoUuj9f1okPCW97TOmCGkq42ZsRmf/frpvMTXZJVnUsTuQ3i2CpQAOEzTm3kQr3EhW8jgH4
+        UZr6JOD3GpATRzVNfaTY0CbwKibMTIEG1TSesIkEB5ZQ7b6O+Xg18Nq13PEv0cBZeRjJUvq7SObqj
+        aZFok3gZFSfCj6QTERa3GZrUb9GA6yRKM6P6yUmHdzu1CWxvr3j1ykjjOlnkVIp191JAt8/u7lnRv
+        VTvOi0+kJqunvDJ6HHjN1ITkEOcG6jLU2zBBo6viw96QnY/0RWBRfGn6s7ydui1E8nqhvK3SG4eO9
+        V5eBGcAKw==;
+Received: from mpp-cp1-natpool-1-013.ethz.ch ([82.130.71.13] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbJr8-000494-05; Thu, 13 Jun 2019 07:09:06 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: binfmt_flat cleanups and RISC-V support v2
+Date:   Thu, 13 Jun 2019 09:08:46 +0200
+Message-Id: <20190613070903.17214-1-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Palmer, with Konstantin's gracious help, set up a shared kernel.org
-git tree for arch/riscv patches going forward.  Change the MAINTAINERS
-file accordingly.
+Hi Greg,
 
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+below is a larger stash of cleanups for the binfmt_misc code,
+preparing for the last patch that now trivially adds RISC-V
+support, which will be used for the RISC-V nommu series I am
+about to post.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 57f496cff999..290359a46bbe 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13476,7 +13476,7 @@ RISC-V ARCHITECTURE
- M:	Palmer Dabbelt <palmer@sifive.com>
- M:	Albert Ou <aou@eecs.berkeley.edu>
- L:	linux-riscv@lists.infradead.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
- S:	Supported
- F:	arch/riscv/
- K:	riscv
--- 
-2.20.1
-
+Changes since v2:
+ - fix the handling of old format flags
+ - don't pass arguments on stack for RISC-V
+ - small cleanups for flat_v2_reloc_t
