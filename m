@@ -2,167 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B8445937
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64EFE4594D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbfFNJuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:50:02 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:52005 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfFNJuB (ORCPT
+        id S1727236AbfFNJvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:51:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37232 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfFNJvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:50:01 -0400
-X-Originating-IP: 37.177.88.254
-Received: from uno.localdomain (unknown [37.177.88.254])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2184FC000A;
-        Fri, 14 Jun 2019 09:49:45 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 11:50:58 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v5 01/10] media: dt-bindings: marvell,mmp2-ccic: Add
- Marvell MMP2 camera
-Message-ID: <20190614094921.tf4nqgszhg7pxzft@uno.localdomain>
-References: <20190505140031.9636-1-lkundrak@v3.sk>
- <20190505140031.9636-2-lkundrak@v3.sk>
+        Fri, 14 Jun 2019 05:51:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eyC03vikXiwWfawO7Qlmx4pYoHpj/VV0tTc9G1eO/2M=; b=W4N6jtac4NDjjqmz5HnAxAouh
+        InHuflpblor7GHBWlLRdnNuT+ez7uTV5koHf3E14IuTEfmEj/L809EEQc/yLOHQhar2VHzWpgkzh3
+        Buzls+HHqkjXm+FiA2UAibkmrYNt/auf+rnYm7aG+UhusetsJSmeKWZPpMQsrISdsaQzoYGHdoOpM
+        qOjcb8wb2uhGYCWSjf/EFgVFzgUH3MUxM2i/Z9TcGfc/a1WdFwvDL8Ouem6Ou5YMjsU3X2yaVOmOL
+        /cSIaAAlXxDZz1t8vlgF14JmpQeGTd/ZoREYDN4MZvmXwoqSU/OoAxEiQdENGWRIwoEawlIZ0ZyLK
+        ItPRrqLYA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbirt-0000GE-T3; Fri, 14 Jun 2019 09:51:34 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1254E20A26CE6; Fri, 14 Jun 2019 11:51:32 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 11:51:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH, RFC 18/62] x86/mm: Implement syncing per-KeyID direct
+ mappings
+Message-ID: <20190614095131.GY3436@hirez.programming.kicks-ass.net>
+References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
+ <20190508144422.13171-19-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kj5s4had2x4icus2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190505140031.9636-2-lkundrak@v3.sk>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190508144422.13171-19-kirill.shutemov@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 08, 2019 at 05:43:38PM +0300, Kirill A. Shutemov wrote:
+> For MKTME we use per-KeyID direct mappings. This allows kernel to have
+> access to encrypted memory.
+> 
+> sync_direct_mapping() sync per-KeyID direct mappings with a canonical
+> one -- KeyID-0.
+> 
+> The function tracks changes in the canonical mapping:
+>  - creating or removing chunks of the translation tree;
+>  - changes in mapping flags (i.e. protection bits);
+>  - splitting huge page mapping into a page table;
+>  - replacing page table with a huge page mapping;
+> 
+> The function need to be called on every change to the direct mapping:
+> hotplug, hotremove, changes in permissions bits, etc.
 
---kj5s4had2x4icus2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+And yet I don't see anything in pageattr.c.
 
-Hi Lubomir,
+Also, this seems like an expensive scheme; if you know where the changes
+where, a more fine-grained update would be faster.
 
-On Sun, May 05, 2019 at 04:00:22PM +0200, Lubomir Rintel wrote:
-> Add Marvell MMP2 camera host interface.
->
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
->
+> The function is nop until MKTME is enabled.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > ---
-> Changes since v4:
-> - s/Nust/Must/
-> - Documented required endpoint properties; bus-type, hsync-active,
->   vsync-active and pclk-sample.
->
-> Changes since v3:
-> - Dropped the video-interfaces.txt reference
-> - Clarify "clocks", "clock-names" and "clock-output-names" descriptions
-> - Refer to other documentation by full path
->
-> Changes since v2:
-> - Added #clock-cells, clock-names, port
->
->  .../bindings/media/marvell,mmp2-ccic.txt      | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
->
-> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> new file mode 100644
-> index 0000000000000..7ec2c8c8a3b98
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> @@ -0,0 +1,50 @@
-> +Marvell MMP2 camera host interface
-> +
-> +Required properties:
-> + - compatible: Should be "marvell,mmp2-ccic".
-> + - reg: Register base and size.
-> + - interrupts: The interrupt number.
-> + - #clock-cells: Must be 0.
-> +
-> +Optional properties:
-> + - clocks: Reference to the input clock as specified by
-> +           Documentation/devicetree/bindings/clock/clock-bindings.txt.
-> + - clock-names: Names of the clocks used; "axi" for the AXI bus interface,
-> +                "func" for the peripheral clock and "phy" for the parallel
-> +                video bus interface.
-> + - clock-output-names: Optional clock source for sensors. Shall be "mclk".
-> +
-> +Required subnodes:
-> + - port: The parallel bus interface port with a single endpoint linked to
-> +         the sensor's endpoint as described in
-> +         Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +Required endpoint properties:
-> + - bus-type: data bus type, <5> or <6> for Parallel or Bt.656 respectively
-> + - pclk-sample: pixel clock polarity
-> + - hsync-active: horizontal synchronization polarity (only required for
-> +   parallel bus)
-> + - vsync-active: vertical synchronization polarity (only required for
-> +   parallel bus)
+>  arch/x86/include/asm/mktme.h |   6 +
+>  arch/x86/mm/init_64.c        |  10 +
+>  arch/x86/mm/mktme.c          | 441 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 457 insertions(+)
 
-Minor nit: if you don't want to specify what maps to 0/1 in the
-properties, could you add "as defined in video-interfaces.txt" after
-each property?
 
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+> @@ -1247,6 +1254,7 @@ void mark_rodata_ro(void)
+>  	unsigned long text_end = PFN_ALIGN(&__stop___ex_table);
+>  	unsigned long rodata_end = PFN_ALIGN(&__end_rodata);
+>  	unsigned long all_end;
+> +	int ret;
+>  
+>  	printk(KERN_INFO "Write protecting the kernel read-only data: %luk\n",
+>  	       (end - start) >> 10);
+> @@ -1280,6 +1288,8 @@ void mark_rodata_ro(void)
+>  	free_kernel_image_pages((void *)text_end, (void *)rodata_start);
+>  	free_kernel_image_pages((void *)rodata_end, (void *)_sdata);
+>  
+> +	ret = sync_direct_mapping();
+> +	WARN_ON(ret);
+>  	debug_checkwx();
+>  }
+>  
 
-Thanks
-  j
-
-> +
-> +Example:
-> +
-> +	camera0: camera@d420a000 {
-> +		compatible = "marvell,mmp2-ccic";
-> +		reg = <0xd420a000 0x800>;
-> +		interrupts = <42>;
-> +		clocks = <&soc_clocks MMP2_CLK_CCIC0>;
-> +		clock-names = "axi";
-> +		#clock-cells = <0>;
-> +		clock-output-names = "mclk";
-> +
-> +		port {
-> +			camera0_0: endpoint {
-> +				remote-endpoint = <&ov7670_0>;
-> +                                bus-type = <5>;      /* Parallel */
-> +                                hsync-active = <1>;  /* Active high */
-> +                                vsync-active = <1>;  /* Active high */
-> +                                pclk-sample = <0>;   /* Falling */
-> +			};
-> +		};
-> +	};
-> --
-> 2.21.0
->
-
---kj5s4had2x4icus2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DbgIACgkQcjQGjxah
-Vjyzcg//clH4UtRYjsI86mItIoXCvJcGZTdFoZ/gLPd5Di9SslN9R2iMjN3VAY2f
-48IBTCCE9shwey6dCHak6yLlgvlH2DUaXG6o9E7t92ryxnYt3ydTEG4Jtq6X97MU
-xNRHPWcdBxpt3UNFUgkPol2iXX9mjltw9QhR+SNb2pBrOwHfU3JXQI1tTWvUkw8S
-7M1ajKUW3/fAVhaOKWKTfwU5Tov0IZaDBXLS7wRuQ5CI06ebk//yCjy/2dNTE1q4
-EWoXD/Fl/S0Z7nAmtn2eQG3H2ezlkIrEIi0wZXckgBOXHUe8D+8pqQE8Q6PQeFhA
-CxVXquKIa7MQfqY1Mybu7Wa9o99Xt0Jjaxtfp9Sy+mEb4gABA2WALwFn2SOscJbY
-YdN2wJmbr7+cwJ1720dDEA21/Vwc95S/UEiZji3BxnU+oEFOL1NUbxlDS6E8HMfp
-F0R7xUrCkjU1bcTfigzOJ/uGC4Mnm/vbgft18mK+uZSj4U6+sDvfMNYGMSLFzjmK
-7nA+8uOALWCoji7VMU+nlqAmxxxw7LL/T/mD8GA2n3S+wW2VIPZA2G6z3Xt59HYw
-neZJXsk/JaamauA4iIRAHi1nnOVSPVO2O0BE16tO+ALL/r7HJxUzgwjExmkEQHu6
-5lrtTA1XVqxWPndB0ODL/YTtzROZ5r7mCKC0uSVAMz8LEb1mggY=
-=ENUC
------END PGP SIGNATURE-----
-
---kj5s4had2x4icus2--
+If you'd done pageattr, the above would not be needed.
