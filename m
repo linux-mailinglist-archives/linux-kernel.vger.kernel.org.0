@@ -2,99 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53704523F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82B3345247
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 05:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbfFNC7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 22:59:44 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46547 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfFNC7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 22:59:43 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v9so635525pgr.13;
-        Thu, 13 Jun 2019 19:59:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=DyBxcguYr0pwpEA8xS0kQBgyqMMk8fvfBxMPOX56hn4=;
-        b=DSTLds/txoUxikicIxk+jfatAZ00LsbrrYlHf84ZuDRVrDCmIpKEfeqvv86Q1AIdsq
-         lqvNt9+50ZRdjJdo71qYg/DMVOXQ/BFWWOpNsiXs3oTh6JpnzeGs+0lAafUT2td/x0/N
-         SpKEZiwmZLt2pJBl0DKRRXo8SJBeCKRHsrN6PYf/lZjqWHosb4ca1+HDIPTT1Bz2wKfL
-         5jqgut1Ai65s9HvDwVHdE/xODUiQCSBfWQXlvf37w+oiy85av3c8VyOJeGE/aZN0ppay
-         DHHiYsbdlAZeudIBec1hVdNaL5sgCkJZb0KqSNdAvQQIH/U6rAHztznpVA8z5OmaZV9x
-         CxKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DyBxcguYr0pwpEA8xS0kQBgyqMMk8fvfBxMPOX56hn4=;
-        b=nM2nIboDahc6Xx06854Io8lV0W26ipKy/u2/yDDxRuGzOKdQspo7vP/hD2GNhmKknv
-         6c2ljMfM+k/fT/16iVpB+a4CK4Nr2dALf6QnWoZH6NuSJWLA45HkjorHv8TIjRHHybDW
-         FmR8SbVwJV4KWWShgEjxEQO4En0S5JJub5upBRyBNynaKb/p2GBj7jJ738wXiGsNTMm/
-         0nCOuPoM6Pc9CY9t+yvrtgkesfUIxx839pWdKDTp0SucHjF3NmK67GsLO0G/qUICZqnX
-         cTgLMN4Qd+LxF4Qs6G+oEWMQogVUMwZKX81YumqFnlZnbvRZqnBPZfm+y/crT8Gj0JdY
-         h2Iw==
-X-Gm-Message-State: APjAAAVDkM1RBGmvrDt0zuqovoKTOlGKPnCmPVxBYdj8o64J6ZFykPq9
-        hiXt10FX05AmPG8ydojKOYh33p5M
-X-Google-Smtp-Source: APXvYqxrzBOrrex6Zoyo5EefrUU1+d4fKYIriMstlsBiwbRJ/sVc+YWrkgnxy6eAX9OWatQGJLeMHw==
-X-Received: by 2002:a63:8449:: with SMTP id k70mr34549119pgd.208.1560481182361;
-        Thu, 13 Jun 2019 19:59:42 -0700 (PDT)
-Received: from localhost.localdomain ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id l21sm1051079pff.40.2019.06.13.19.59.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 19:59:41 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@vger.kernel.org
-Cc:     bcm-kernel-feedback-list@Broadcom.com, ard.biesheuvel@linaro.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] arm64: Allow user selection of ARM64_MODULE_PLTS
-Date:   Thu, 13 Jun 2019 19:59:32 -0700
-Message-Id: <20190614025932.533-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726653AbfFNDAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 23:00:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:57793 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbfFNDAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 23:00:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Q52f6kgHz9sBb;
+        Fri, 14 Jun 2019 13:00:42 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560481243;
+        bh=m5X7GsQjj0dXlpKQUTPtE8A9eyH0F52zKw87lwG2hI0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JOAyb+WXUCCeOFSBUbYupotwV4ebSFtNAJP3Wvps6OvboKnaHVVleHJzuln+m7a1e
+         4pzzLz2JhxPeTqEU+H6LpkTm6BHMh+DD34SpjTWhFSkMvfGY5O8A6WjEvYgcclp26L
+         DEkz3NiewpNG+N7txc4rnZDab9Erz6p+1rG3STWgSC2AP+0q5rv2n6NCu7BKPijBMg
+         t1i4x7Dg85m4qD6RXenlVSr7WsIjsQKscG+z877difF3dIX7JwMbxDHk9a0ddLf8zG
+         vNRFhX+I0loruqPjOPJEJx9p19zgca0dRcxRnlTy+uoX4rczE+TjktGkm91kSpt4h7
+         uYBzOxyi2D7mQ==
+Date:   Fri, 14 Jun 2019 13:00:33 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Gal Pressman <galpress@amazon.com>
+Subject: linux-next: manual merge of the rdma tree with Linus' tree
+Message-ID: <20190614130033.2d50bc2e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EPAqQI1YF8isUvvVdnEK_20"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make ARM64_MODULE_PLTS a selectable Kconfig symbol, since some people
-might have very big modules spilling out of the dedicated module area
-into vmalloc. Help text is copied from the ARM 32-bit counterpart.
+--Sig_/EPAqQI1YF8isUvvVdnEK_20
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/arm64/Kconfig | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Hi all,
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 697ea0510729..36befe987b73 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1418,8 +1418,20 @@ config ARM64_SVE
- 	  KVM in the same kernel image.
- 
- config ARM64_MODULE_PLTS
--	bool
-+	bool "Use PLTs to allow module memory to spill over into vmalloc area"
- 	select HAVE_MOD_ARCH_SPECIFIC
-+	help
-+	  Allocate PLTs when loading modules so that jumps and calls whose
-+	  targets are too far away for their relative offsets to be encoded
-+	  in the instructions themselves can be bounced via veneers in the
-+	  module's PLT. This allows modules to be allocated in the generic
-+	  vmalloc area after the dedicated module memory area has been
-+	  exhausted. The modules will use slightly more memory, but after
-+	  rounding up to page size, the actual memory footprint is usually
-+	  the same.
-+
-+	  Disabling this is usually safe for small single-platform
-+	  configurations. If unsure, say y.
- 
- config ARM64_PSEUDO_NMI
- 	bool "Support for NMI-like interrupts"
--- 
-2.17.1
+Today's linux-next merge of the rdma tree got conflicts in:
 
+  drivers/infiniband/core/uverbs_cmd.c
+  drivers/infiniband/core/uverbs_std_types_cq.c
+
+between commit:
+
+  6876aaedc8a1 ("RDMA/uverbs: Pass udata on uverbs error unwind")
+
+from Linus' tree and commit:
+
+  e39afe3d6dbd ("RDMA: Convert CQ allocations to be under core responsibili=
+ty")
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/infiniband/core/uverbs_cmd.c
+index 63fe14c7c68f,5c00d9a5698a..000000000000
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@@ -1053,8 -1045,10 +1056,10 @@@ static struct ib_ucq_object *create_cq(
+  	return obj;
+ =20
+  err_cb:
+ -	ib_destroy_cq(cq);
+ +	ib_destroy_cq_user(cq, uverbs_get_cleared_udata(attrs));
+-=20
++ 	cq =3D NULL;
++ err_free:
++ 	kfree(cq);
+  err_file:
+  	if (ev_file)
+  		ib_uverbs_release_ucq(attrs->ufile, ev_file, obj);
+diff --cc drivers/infiniband/core/uverbs_std_types_cq.c
+index 07ea4e3c4566,06b8c7d017b7..000000000000
+--- a/drivers/infiniband/core/uverbs_std_types_cq.c
++++ b/drivers/infiniband/core/uverbs_std_types_cq.c
+@@@ -135,8 -140,10 +140,10 @@@ static int UVERBS_HANDLER(UVERBS_METHOD
+ =20
+  	return 0;
+  err_cq:
+ -	ib_destroy_cq(cq);
+ +	ib_destroy_cq_user(cq, uverbs_get_cleared_udata(attrs));
+-=20
++ 	cq =3D NULL;
++ err_free:
++ 	kfree(cq);
+  err_event_file:
+  	if (ev_file)
+  		uverbs_uobject_put(ev_file_uobj);
+
+--Sig_/EPAqQI1YF8isUvvVdnEK_20
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0DDdEACgkQAVBC80lX
+0GzZrwgAoJBhYFviY55t2R8SCHHVHhCeQeA16nGse9fCe1xU1qZpGg3eNPHd+IJ4
+Q/+HGWrCL+99CG8cLl6jZoH7E3OCx2x0drlwIXGbLH+Gg7WN66r7DJpkDD6yBGpu
+cNeZbH3DD7DBZRN5M6YSyyzQgMVPwOvHcob4XKCTyoYqudM7OQMcj9vl5ZeytkcF
+9QgQv5gG7M9wt3up4RKytL8xSkIZuq2skhlFAzRlTSYuvhupyyiPq5U9AGJavVk1
+u0hat8mkpOMY7CkvXWQmOQN4ksNj2nIgT6F/fGl1YZsuD13i1O9PooaIE6zjtqqs
+QHYCA3CIS0k4d6Ii7x+d8b2Mp+8Tiw==
+=fwNT
+-----END PGP SIGNATURE-----
+
+--Sig_/EPAqQI1YF8isUvvVdnEK_20--
