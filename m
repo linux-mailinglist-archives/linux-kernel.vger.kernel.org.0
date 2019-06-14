@@ -2,143 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF8B746099
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4A846062
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbfFNOYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:24:47 -0400
-Received: from mga18.intel.com ([134.134.136.126]:60424 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727979AbfFNOYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:24:46 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 07:24:45 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2019 07:24:45 -0700
-Date:   Fri, 14 Jun 2019 07:15:20 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
- scattered features word 11
-Message-ID: <20190614141519.GC198207@romley-ivt3.sc.intel.com>
-References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
- <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
- <20190614114410.GD2586@zn.tnic>
- <20190614122749.GE2586@zn.tnic>
- <20190614131701.GA198207@romley-ivt3.sc.intel.com>
- <20190614134123.GF2586@zn.tnic>
- <20190614141424.GA12191@linux.intel.com>
+        id S1728816AbfFNOPs convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Jun 2019 10:15:48 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:49727 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728268AbfFNOPr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:15:47 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-171-6ZL5OlDfPHWG6RvRpXiEQg-1; Fri, 14 Jun 2019 15:15:45 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 14 Jun 2019 15:15:44 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 14 Jun 2019 15:15:44 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@lst.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        "Ian Abbott" <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>
+CC:     Intel Linux Wireless <linuxwifi@intel.com>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 16/16] dma-mapping: use exact allocation in
+ dma_alloc_contiguous
+Thread-Topic: [PATCH 16/16] dma-mapping: use exact allocation in
+ dma_alloc_contiguous
+Thread-Index: AQHVIrfpTFjppS25RkWUhwqPPyqZ4qabLzdw
+Date:   Fri, 14 Jun 2019 14:15:44 +0000
+Message-ID: <a90cf7ec5f1c4166b53c40e06d4d832a@AcuMS.aculab.com>
+References: <20190614134726.3827-1-hch@lst.de>
+ <20190614134726.3827-17-hch@lst.de>
+In-Reply-To: <20190614134726.3827-17-hch@lst.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190614141424.GA12191@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-MC-Unique: 6ZL5OlDfPHWG6RvRpXiEQg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 07:14:24AM -0700, Sean Christopherson wrote:
-> On Fri, Jun 14, 2019 at 03:41:23PM +0200, Borislav Petkov wrote:
-> > + Radim and Paolo. See upthread for context.
-> > 
-> > On Fri, Jun 14, 2019 at 06:17:02AM -0700, Fenghua Yu wrote:
-> > > > Alternatively - and what I think is the better solution - would be to
-> > > > remove those BUILD_BUG_ONs in x86_feature_cpuid and filter out the
-> > > > Linux-defined leafs dynamically. This way the array won't have holes in
-> > > > it.
-> > > 
-> > > Maybe adding a dummy slot in cpuid_leafs in patch 0002 to avoid the
-> > > compilation errors?
-> > 
-> > Maybe you didn't read what you're replying to: "This way the array
-> > won't have holes in it". Ontop of yours:
-> > 
-> > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> > index d78a61408243..03d6f3f7b27c 100644
-> > --- a/arch/x86/kvm/cpuid.h
-> > +++ b/arch/x86/kvm/cpuid.h
-> > @@ -47,6 +47,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
-> >  	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
-> >  	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
-> >  	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
-> > +	[CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX},
-> >  	[CPUID_8000_0008_EBX] = {0x80000008, 0, CPUID_EBX},
-> >  	[CPUID_6_EAX]         = {         6, 0, CPUID_EAX},
-> >  	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
-> > @@ -59,8 +60,9 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
-> >  {
-> >  	unsigned x86_leaf = x86_feature / 32;
-> >  
-> > -	BUILD_BUG_ON(x86_leaf >= ARRAY_SIZE(reverse_cpuid));
-> > -	BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
-> > +	if (x86_leaf == CPUID_LNX_1 ||
-> > +	    x86_leaf == CPUID_LNX_4)
-> > +		return NULL;
-> >  
-> >  	return reverse_cpuid[x86_leaf];
-> >  }
-> > 
-> > That's what I mean with filter out dynamically.
+From: Christoph Hellwig
+> Sent: 14 June 2019 14:47
 > 
-> This is wrong.  KVM isn't complaining about shuffling the order of feature
-> words, it's complaining that code is trying to do a reverse CPUID lookup
-> to a feature that isn't in the reverse_cpuid table.   Filtering out
-> checks dynamically is just hiding bugs.
+> Many architectures (e.g. arm, m68 and sh) have always used exact
+> allocation in their dma coherent allocator, which avoids a lot of
+> memory waste especially for larger allocations.  Lift this behavior
+> into the generic allocator so that dma-direct and the generic IOMMU
+> code benefit from this behavior as well.
 > 
-> >In function ‘x86_feature_cpuid’,
-> >     inlined from ‘guest_cpuid_get_register’ at arch/x86/kvm/cpuid.h:71:33,
-> >     inlined from ‘guest_cpuid_has’ at arch/x86/kvm/cpuid.h:100:8,
-> >     inlined from ‘kvm_get_msr_common’ at arch/x86/kvm/x86.c:2804:8:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/dma-contiguous.h |  8 +++++---
+>  kernel/dma/contiguous.c        | 17 +++++++++++------
+>  2 files changed, 16 insertions(+), 9 deletions(-)
 > 
-> This corresponds to "guest_cpuid_has(vcpu, X86_FEATURE_ARCH_CAPABILITIES)",
-> i.e. KVM is trying to query X86_FEATURE_ARCH_CAPABILITIES and is yelling
-> that there is no reverse_cpuid entry for CPUID_7_EDX.
+> diff --git a/include/linux/dma-contiguous.h b/include/linux/dma-contiguous.h
+> index c05d4e661489..2e542e314acf 100644
+> --- a/include/linux/dma-contiguous.h
+> +++ b/include/linux/dma-contiguous.h
+> @@ -161,15 +161,17 @@ static inline struct page *dma_alloc_contiguous(struct device *dev, size_t size,
+>  		gfp_t gfp)
+>  {
+>  	int node = dev ? dev_to_node(dev) : NUMA_NO_NODE;
+> -	size_t align = get_order(PAGE_ALIGN(size));
+> +	void *cpu_addr = alloc_pages_exact_node(node, size, gfp);
 > 
-> The problem is that 'enum cpuid_leafs' no longer matches up with the
-> word numbers defined in cpufeatures.h, e.g. CPUID_7_EDX == 17 or so, but
-> the entries in cpufeatures.h defined CPUID_7_EDX flags using word 18.
-> 
-> This patch also needs to modify NCAPINTS.
+> -	return alloc_pages_node(node, gfp, align);
+> +	if (!cpu_addr)
+> +		return NULL;
+> +	return virt_to_page(p);
+>  }
 
-Changing NCAPINTS is heavy lifting to only solve this biset issue. After
-applying patch 0003, the word 12 hole generated in patch 0002 is filled
-in and no issue reported. If changing NCAPINTS in patch 0002, it needs to
-be changed back again after applying 0003.
+Does this still guarantee that requests for 16k will not cross a 16k boundary?
+It looks like you are losing the alignment parameter.
 
-How about add this patch in patch 0002? I posted this patch in this thread
-just now and post it here again:
+There may be drivers and hardware that also require 12k allocates
+to not cross 16k boundaries (etc).
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 526619906305..403f70c2e431 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -23,6 +23,7 @@ enum cpuid_leafs
- 	CPUID_7_0_EBX,
- 	CPUID_D_1_EAX,
- 	CPUID_LNX_4,
-+	CPUID_DUMMY,
- 	CPUID_8000_0008_EBX,
- 	CPUID_6_EAX,
- 	CPUID_8000_000A_EDX,
+	David
 
-Adding this small patch into patch 0002 will solve the build errors without
-changing the build checks.
-
-Thanks.
-
--Fenghua
-
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
