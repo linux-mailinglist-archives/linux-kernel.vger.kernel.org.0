@@ -2,29 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A80504667C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 894AC4667E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfFNRzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:55:22 -0400
-Received: from foss.arm.com ([217.140.110.172]:39612 "EHLO foss.arm.com"
+        id S1727662AbfFNRzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:55:24 -0400
+Received: from foss.arm.com ([217.140.110.172]:39624 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727326AbfFNRzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:55:20 -0400
+        id S1727611AbfFNRzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:55:22 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4175106F;
-        Fri, 14 Jun 2019 10:55:19 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3124DCFC;
+        Fri, 14 Jun 2019 10:55:21 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EC49C3F718;
-        Fri, 14 Jun 2019 10:55:18 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1358C3F718;
+        Fri, 14 Jun 2019 10:55:19 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, "David S. Miller" <davem@davemloft.net>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH v2 18/28] drivers: Introduce bus_find_device_by_fwnode() helper
-Date:   Fri, 14 Jun 2019 18:54:13 +0100
-Message-Id: <1560534863-15115-19-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com, linux-usb@vger.kernel.org,
+        Oliver Neukum <oneukum@suse.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v2 19/28] drivers: Introduce bus_find_device_by_devt() helper
+Date:   Fri, 14 Jun 2019 18:54:14 +0100
+Message-Id: <1560534863-15115-20-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
@@ -34,112 +36,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Add a wrapper to bus_find_device() to search for a device
-by the fwnode pointer, reusing the generic match function.
+by the device type, reusing the generic match function.
 Also convert the existing users to make use of the new helper.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Doug Ledford <dledford@redhat.com>
+Cc: linux-usb@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/base/devcon.c                              |  8 +-------
- drivers/infiniband/hw/hns/hns_roce_hw_v1.c         |  8 +-------
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c |  8 +-------
- include/linux/device.h                             | 12 ++++++++++++
- 4 files changed, 15 insertions(+), 21 deletions(-)
+ drivers/hwtracing/intel_th/core.c | 10 +---------
+ drivers/usb/core/devio.c          |  8 +-------
+ include/linux/device.h            | 12 ++++++++++++
+ 3 files changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index ac026d5..5a888eaa 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -107,19 +107,13 @@ static struct bus_type *generic_match_buses[] = {
- 	NULL,
- };
- 
--static int device_fwnode_match(struct device *dev, const void *fwnode)
--{
--	return dev_fwnode(dev) == fwnode;
--}
--
- static void *device_connection_fwnode_match(struct device_connection *con)
- {
- 	struct bus_type *bus;
- 	struct device *dev;
- 
- 	for (bus = generic_match_buses[0]; bus; bus++) {
--		dev = bus_find_device(bus, NULL, (void *)con->fwnode,
--				      device_fwnode_match);
-+		dev = bus_find_device_by_fwnode(bus, con->fwnode);
- 		if (dev && !strncmp(dev_name(dev), con->id, strlen(con->id)))
- 			return dev;
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-index 3afd3e9..6779b7d 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
-@@ -4498,19 +4498,13 @@ static const struct acpi_device_id hns_roce_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, hns_roce_acpi_match);
- 
--static int hns_roce_node_match(struct device *dev, const void *fwnode)
--{
--	return dev->fwnode == fwnode;
--}
--
- static struct
- platform_device *hns_roce_find_pdev(struct fwnode_handle *fwnode)
- {
- 	struct device *dev;
- 
- 	/* get the 'device' corresponding to the matching 'fwnode' */
--	dev = bus_find_device(&platform_bus_type, NULL,
--			      fwnode, hns_roce_node_match);
-+	dev = bus_find_device_by_fwnode(&platform_bus_type, fwnode);
- 	/* get the platform device */
- 	return dev ? to_platform_device(dev) : NULL;
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
-index bb6586d..ed3829a 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
-@@ -754,17 +754,11 @@ struct dsaf_misc_op *hns_misc_op_get(struct dsaf_device *dsaf_dev)
- 	return (void *)misc_op;
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index 5592289..d5c1821 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -789,12 +789,6 @@ static int intel_th_populate(struct intel_th *th)
+ 	return 0;
  }
  
--static int hns_dsaf_dev_match(struct device *dev, const void *fwnode)
+-static int match_devt(struct device *dev, const void *data)
 -{
--	return dev->fwnode == fwnode;
+-	dev_t devt = (dev_t)(unsigned long)(void *)data;
+-	return dev->devt == devt;
 -}
 -
- struct
- platform_device *hns_dsaf_find_platform_device(struct fwnode_handle *fwnode)
+ static int intel_th_output_open(struct inode *inode, struct file *file)
+ {
+ 	const struct file_operations *fops;
+@@ -802,9 +796,7 @@ static int intel_th_output_open(struct inode *inode, struct file *file)
+ 	struct device *dev;
+ 	int err;
+ 
+-	dev = bus_find_device(&intel_th_bus, NULL,
+-			      (void *)(unsigned long)inode->i_rdev,
+-			      match_devt);
++	dev = bus_find_device_by_devt(&intel_th_bus, inode->i_rdev);
+ 	if (!dev || !dev->driver)
+ 		return -ENODEV;
+ 
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 7bd7de7..4e83623 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -947,17 +947,11 @@ static int parse_usbdevfs_streams(struct usb_dev_state *ps,
+ 	return ret;
+ }
+ 
+-static int match_devt(struct device *dev, const void *data)
+-{
+-	return dev->devt == (dev_t)(unsigned long)(void *)data;
+-}
+-
+ static struct usb_device *usbdev_lookup_by_devt(dev_t devt)
  {
  	struct device *dev;
  
--	dev = bus_find_device(&platform_bus_type, NULL,
--			      fwnode, hns_dsaf_dev_match);
-+	dev = bus_find_device_by_fwnode(&platform_bus_type, fwnode);
- 	return dev ? to_platform_device(dev) : NULL;
- }
+-	dev = bus_find_device(&usb_bus_type, NULL,
+-			      (void *) (unsigned long) devt, match_devt);
++	dev = bus_find_device_by_devt(&usb_bus_type, devt);
+ 	if (!dev)
+ 		return NULL;
+ 	return to_usb_device(dev);
 diff --git a/include/linux/device.h b/include/linux/device.h
-index 35f51d6..576d84f 100644
+index 576d84f..3c244ac 100644
 --- a/include/linux/device.h
 +++ b/include/linux/device.h
-@@ -201,6 +201,18 @@ bus_find_device_by_of_node(struct bus_type *bus, const struct device_node *np)
- 	return bus_find_device(bus, NULL, np, device_match_of_node);
+@@ -213,6 +213,18 @@ bus_find_device_by_fwnode(struct bus_type *bus, const struct fwnode_handle *fwno
+ 	return bus_find_device(bus, NULL, fwnode, device_match_fwnode);
  }
  
 +/**
-+ * bus_find_device_by_fwnode : device iterator for locating a particular device
-+ * matching the fwnode.
++ * bus_find_device_by_devt : device iterator for locating a particular device
++ * matching the device type.
 + * @bus: bus type
-+ * @fwnode: fwnode of the device to match.
++ * @devt: device type of the device to match.
 + */
-+static inline struct device *
-+bus_find_device_by_fwnode(struct bus_type *bus, const struct fwnode_handle *fwnode)
++static inline struct device *bus_find_device_by_devt(struct bus_type *bus,
++						     dev_t devt)
 +{
-+	return bus_find_device(bus, NULL, fwnode, device_match_fwnode);
++	return bus_find_device(bus, NULL, &devt, device_match_devt);
 +}
 +
  struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
