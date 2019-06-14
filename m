@@ -2,112 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFDA4600C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA654601E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbfFNOHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:07:11 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43485 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbfFNOHK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:07:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so1520525pfg.10;
-        Fri, 14 Jun 2019 07:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LJg9268+LDPIRhGrkFTLGpEAlX1lCnLtO8bJQ4QN05M=;
-        b=QJy/6MnsHsECy1HYz/rqZ3HHq3OQroAc6nX9BCwm9YFf2YbvaicxGQ6bvxsH5aqSZa
-         6yEn9yuIgjL95131ax2bk6Pe0PoU3AeVPdqf2QS1c19ftcVhh5zHh1wq7wvqwGxu4MvP
-         O4s1ytatGdrM1WwgTMFFgxxyEVplOnOrE3ydAcx+o9F1Dw3n5E4uHMbJqtLK8zKEJjmY
-         42i0Umlo3Z+ig8IkvNchp8izRNDzR4Mr6YoT9wb5iO+PuscND4uR+e/Fq6S8mKsFykpB
-         bInllyf25qaS7Vgi5WvgHtvepVsxg+HmjvOEycPObi0biMGp1BsUEqhg0MSF2oaKEN8V
-         hpOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LJg9268+LDPIRhGrkFTLGpEAlX1lCnLtO8bJQ4QN05M=;
-        b=rRQfi4eOIYRHtLcmGARFp/JWGvoHqxOQRTz86tUVhFb+u4Qcrg3pMLjDcYQbW33Yy7
-         ZbOA4fyGxmcFwGSTh1oLMOFUnNuIqJESZWJS80zwsiY+ojaOojy0RijuqCJO0JUTaSpE
-         jD+hjQ5RLW1n5ANg0dR0UhRMBP85kQEfmNJDd3qUC2LOKKb4FZcEzUwCUGg/ne8ANJuy
-         NUKGl7Dch5/doIInl0fpBAyk+u4eSO+jLr8xFNmSONIKnkjTnrJZZiY4xN6DQfTbuj54
-         RdE8v8j8UMtvRINRp6l6aIaiD4BPGcI3Rq0T3CTeerX5d4o/KhcEjARjvBX9t1JiayGC
-         IZLg==
-X-Gm-Message-State: APjAAAVX8iLJT+MShvgQ3lgQbOPReFpzKupXw13BNhUXCUi89dkCea6x
-        SyryCSsUjuzbTnttIVdwMH+SXWoZQ9U=
-X-Google-Smtp-Source: APXvYqzcEOiZIn73KTG+EBoUQLrcnli4yGKqfYpCbo2WD10sB9flhtjQ3YZWE5gdb0osUBpoEcTbUA==
-X-Received: by 2002:a62:1ec1:: with SMTP id e184mr8001336pfe.185.1560521229311;
-        Fri, 14 Jun 2019 07:07:09 -0700 (PDT)
-Received: from [172.27.227.167] ([216.129.126.118])
-        by smtp.googlemail.com with ESMTPSA id i3sm3418766pfo.138.2019.06.14.07.07.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:07:08 -0700 (PDT)
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>
-Cc:     Matteo Croce <mcroce@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-References: <20190608125019.417-1-mcroce@redhat.com>
- <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
- <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
- <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
- <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
-Date:   Fri, 14 Jun 2019 08:07:06 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        id S1728830AbfFNOJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:09:38 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48066 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728734AbfFNOJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:09:34 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D91F2BC617D8266AF79E;
+        Fri, 14 Jun 2019 22:09:29 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 14 Jun 2019 22:09:22 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <tmricht@linux.ibm.com>,
+        <brueckner@linux.ibm.com>, <kan.liang@linux.intel.com>,
+        <ben@decadent.org.uk>, <mathieu.poirier@linaro.org>,
+        <mark.rutland@arm.com>, <will.deacon@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <zhangshaokun@hisilicon.com>, "John Garry" <john.garry@huawei.com>
+Subject: [PATCH v2 0/5] Perf uncore PMU event alias support for Hisi hip08 ARM64 platform
+Date:   Fri, 14 Jun 2019 22:07:58 +0800
+Message-ID: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/14/19 8:01 AM, Arnd Bergmann wrote:
-> On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 6/11/19 5:08 PM, Matteo Croce wrote:
->>> On Wed, Jun 12, 2019 at 1:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>> * Configure standard kernel features (expert users)
->>> *
->>> Configure standard kernel features (expert users) (EXPERT) [Y/?] y
->>>   Multiple users, groups and capabilities support (MULTIUSER) [Y/n/?] y
->>>   sgetmask/ssetmask syscalls support (SGETMASK_SYSCALL) [N/y/?] n
->>>   Sysfs syscall support (SYSFS_SYSCALL) [N/y/?] n
->>>   Sysctl syscall support (SYSCTL_SYSCALL) [N/y/?] (NEW)
->>
->> So I still say that MPLS_ROUTING should depend on PROC_SYSCTL,
->> not select it.
-> 
-> It clearly shouldn't select PROC_SYSCTL, but I think it should not
-> have a 'depends on' statement either. I think the correct fix for the
-> original problem would have been something like
-> 
-> --- a/net/mpls/af_mpls.c
-> +++ b/net/mpls/af_mpls.c
-> @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
->         net->mpls.ip_ttl_propagate = 1;
->         net->mpls.default_ttl = 255;
-> 
-> +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
-> +               return 0;
-> +
->         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
->         if (table == NULL)
->                 return -ENOMEM;
-> 
+This patchset adds support for uncore PMU event aliasing for HiSilicon
+hip08 ARM64 platform.
 
-Without sysctl, the entire mpls_router code is disabled. So if sysctl is
-not enabled there is no point in building this file.
+We can now get proper event description for uncore events for the
+perf tool.
+
+For HHA, DDRC, and L3C JSONs, we don't have all the event info yet, so
+I will seek it out to update the JSONs later.
+
+Changes to v2:
+- Use strtok_r() in pmu_uncore_alias_match()
+- from "sccl" from uncore aliases
+
+John Garry (5):
+  perf pmu: Fix uncore PMU alias list for ARM64
+  perf pmu: Support more complex PMU event aliasing
+  perf jevents: Add support for Hisi hip08 DDRC PMU aliasing
+  perf jevents: Add support for Hisi hip08 HHA PMU aliasing
+  perf jevents: Add support for Hisi hip08 L3C PMU aliasing
+
+ .../arm64/hisilicon/hip08/uncore-ddrc.json    | 44 ++++++++++++++
+ .../arm64/hisilicon/hip08/uncore-hha.json     | 51 +++++++++++++++++
+ .../arm64/hisilicon/hip08/uncore-l3c.json     | 37 ++++++++++++
+ tools/perf/pmu-events/jevents.c               |  3 +
+ tools/perf/util/pmu.c                         | 57 +++++++++++++------
+ 5 files changed, 176 insertions(+), 16 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
+
+-- 
+2.17.1
+
