@@ -2,485 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F0046B5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F26C46B59
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfFNU5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:57:19 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46869 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbfFNU5T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:57:19 -0400
-Received: by mail-io1-f66.google.com with SMTP id i10so8600837iol.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iPg0lIIe6K89aSri59WYf2ayY/gVCvf9KmNmO4zP65M=;
-        b=W5uEVe2MGoDjrrWoPFTjUmg+WwojDbSt7Lbgv6SBD7/FejY7O+mgthPkhxED5/1iBX
-         LELIQxgp41P9Xd11spsXPQYwebNEqAyCUNIFXQLfx1GbwKRe2gaDE6edc0pUNojV63tD
-         yvLliUffJOlxvJ7o9hpeokWOUAUHoshzO+0F8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iPg0lIIe6K89aSri59WYf2ayY/gVCvf9KmNmO4zP65M=;
-        b=UG5S4pbt8J4xL5Euy1D5X/+SatbRGMzELP1iUsVONUNfB2qbb+0FtwsA/DfxHcI69n
-         7BARu7vXGWEwUdta1jF9wpQsUKRt88roxoWyOXu0Y1mKXSOcHSrhJfHIkWhjnWFuALG5
-         eh7pfqMzk+NoS3vikJnfhACGfNUMW/NG5yYI/E6i4tLaJRVEKjuMXPzCeADdpMeLIeAw
-         y5NPkHgBBg1um3LrQJWD0+TCz3sC7jNdJ5AlCO2bQMJyS9vyEjt4xj6fWUo90Z7kpvcy
-         aQ24hqnTbZpCjptzlUL3XPVlBDdiUduRD6jcyWXNYf0eH2uBD91zE5YmC9xUpXu88nfa
-         DxMw==
-X-Gm-Message-State: APjAAAWYQkCVRwghVocgECrUN5x24GrNzd3O7zuQpdwdWcX+glU04i6M
-        Ct5Ukswqsyj9CVCudZvv5pUtrg==
-X-Google-Smtp-Source: APXvYqyLy3bICAe3IYHe8Op+VrL754TlitQ7udsIsllTPskwVWN927jTE9TqFYr2q08HHTCgMqVmWA==
-X-Received: by 2002:a6b:2bcd:: with SMTP id r196mr66779295ior.73.1560545837906;
-        Fri, 14 Jun 2019 13:57:17 -0700 (PDT)
-Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:cb43:2cd4:65f5:5c84])
-        by smtp.gmail.com with ESMTPSA id e22sm2947351iob.66.2019.06.14.13.57.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Jun 2019 13:57:17 -0700 (PDT)
-From:   Nick Crews <ncrews@chromium.org>
-To:     enric.balletbo@collabora.com, bleung@chromium.org
-Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
-        djkurtz@chromium.org, dtor@google.com, sjg@chromium.org,
-        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com,
-        Nick Crews <ncrews@chromium.org>
-Subject: [PATCH 2/2] platform/chrome: wilco_ec: Add circular buffer as event queue
-Date:   Fri, 14 Jun 2019 14:56:33 -0600
-Message-Id: <20190614205631.90222-2-ncrews@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190614205631.90222-1-ncrews@chromium.org>
-References: <20190614205631.90222-1-ncrews@chromium.org>
+        id S1726473AbfFNU5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:57:02 -0400
+Received: from mail-eopbgr710094.outbound.protection.outlook.com ([40.107.71.94]:6160
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725809AbfFNU5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:57:02 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=sjYcMrvmmrQ7/f8D77CR1WuoSf5zLN3wTVX4kwKGuY6m+rcxvuRTBBkC6M1vV0T5ZZSPgHOnrgE+0gYZe9Dl4TfUeRWM/4Z8zYpKtIZ2IcUVXelTXK7sJ0sBwnZkHZjThAaA974V+8R3J4yVGZKND2pZZTWt8wNDVscSqBQ+u5o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LmfOtzyYWqnXIj9uQmg//i58SVuDotkk6P5iMP4YSg4=;
+ b=GmuKjnbaF0rfZBPJi3KPK47lvO5oQHx57eFWWVlgFK7zql0kslNHP/xMfMeIHO+7TKQoOYewiJKbkJHCdPpwdBL0WVyHZWkbBNYG57nMiL5KgdvCMEOvocPZYKCgnodeSXthTXqmHt6bTgSRalwZO2CmvzVfUvfqtyMACQT8cP8=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LmfOtzyYWqnXIj9uQmg//i58SVuDotkk6P5iMP4YSg4=;
+ b=LcvpPyUl9xizch5CbXDYSqWh3bXsLo52uYsVmHeFEwEoFVbloAZjT++t4DBMd3HXurRyzVfikZ8JlShFkWgzXQ5tSdqPmzCm1XGXrpWLae1qnweJw9hYMzg3/9z39druPdtV0QSYnzCRA+BkYQ0Pt/l3eOJqiNsHD3O1VmrPiS8=
+Received: from BL0PR2101MB1348.namprd21.prod.outlook.com
+ (2603:10b6:208:92::22) by BL0PR2101MB1075.namprd21.prod.outlook.com
+ (2603:10b6:207:37::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.1; Fri, 14 Jun
+ 2019 20:56:57 +0000
+Received: from BL0PR2101MB1348.namprd21.prod.outlook.com
+ ([fe80::ec20:70a:433e:a052]) by BL0PR2101MB1348.namprd21.prod.outlook.com
+ ([fe80::ec20:70a:433e:a052%2]) with mapi id 15.20.2008.007; Fri, 14 Jun 2019
+ 20:56:57 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Dexuan Cui <decui@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>
+CC:     "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+Subject: RE: [PATCH 1/2] hv_balloon: Use a static page for the balloon_up send
+ buffer
+Thread-Topic: [PATCH 1/2] hv_balloon: Use a static page for the balloon_up
+ send buffer
+Thread-Index: AQHVIuDkOmV0qWRnFkKsFEp6e9leVqaboWbw
+Date:   Fri, 14 Jun 2019 20:56:57 +0000
+Message-ID: <BL0PR2101MB13483325CF3D57CBAF578691D7EE0@BL0PR2101MB1348.namprd21.prod.outlook.com>
+References: <1560537692-37400-1-git-send-email-decui@microsoft.com>
+In-Reply-To: <1560537692-37400-1-git-send-email-decui@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-06-14T20:56:54.2477622Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0f3f3e3a-4dc5-423f-8203-d240c39c407d;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7ad6fd25-f9be-456f-d12d-08d6f10ad6aa
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BL0PR2101MB1075;
+x-ms-traffictypediagnostic: BL0PR2101MB1075:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <BL0PR2101MB10755403F856763D6DFE4D74D7EE0@BL0PR2101MB1075.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:345;
+x-forefront-prvs: 0068C7E410
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(376002)(136003)(39860400002)(199004)(189003)(2906002)(6116002)(3846002)(558084003)(186003)(26005)(68736007)(8936002)(10090500001)(1511001)(8676002)(476003)(486006)(446003)(2201001)(52536014)(5660300002)(86362001)(11346002)(256004)(71200400001)(71190400001)(76116006)(73956011)(66946007)(66476007)(66556008)(64756008)(66446008)(14454004)(6636002)(22452003)(110136005)(74316002)(8990500004)(33656002)(4326008)(99286004)(54906003)(6246003)(55016002)(6436002)(25786009)(102836004)(53936002)(9686003)(316002)(52396003)(478600001)(81166006)(81156014)(66066001)(7736002)(305945005)(229853002)(7696005)(10290500003)(2501003)(6506007)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1075;H:BL0PR2101MB1348.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ktdeuZ9EZWUc4oxfn8tyMbRSwBZ+NHdcV8b/c5ov+wNr1ubsC8bh6zJgbxqV36QTUH/VeWfXe8A1ZYL+4Sb00ctqoExl4IvzWIEIg73mNmp2wEyrPj+6+saWicqH7xqhqrfw9BFuXasv/06g89elUj+FRRyZikpj4PWKCJjUCUcHKwMuHbNFh9txjtDEurNv4wffZdFHEnPRRuHtAIiDLRGGXPco1geR/h0W6ADMfsSKoXFSGhb3YMIaq3Or0S1H5oencDnWr5urhZk7/0TVLRUqc0GIRkOgFvlTz2p0Ig8OjWKgW+pi2uhFLG8LgAfkey/s1S6ZNpQirm9jQE5itj91HJGe/fKEQw+PK1e5MIbphh3iLGc8D2gu2giYpuSEeONxP60kJV9On1NO8P2cJ4ee50cE+JVvR6clJ+FDn/s=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ad6fd25-f9be-456f-d12d-08d6f10ad6aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2019 20:56:57.1348
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mikelley@ntdev.microsoft.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current implementation of the event queue both
-wastes space using a doubly linked list and isn't super
-obvious in how it behaves. This converts the queue to an
-actual circular buffer. The size of the queue is a
-tunable module parameter. This also moves the lock
-inside the queue, so the users of the queue don't have
-to deal with it. In addition, this fixes a memory leak
-that occurred when the ACPI device was removed, but the
-events were not freed from the queue.
-
-It also fixes a bug in event_read() where the queue
-readers would not wake when the ACPI device was removed.
-This also fixes some logging, removes an unneeded lock()
-from around a check for dev_data->exist in
-hangup_device(), removes an unneeded null event pointer
-check in enqueue_events(), adds some helper macros to
-calculate the size of events, and corrects some
-comments.
-
-Signed-off-by: Nick Crews <ncrews@chromium.org>
----
- drivers/platform/chrome/wilco_ec/event.c | 246 +++++++++++++----------
- 1 file changed, 143 insertions(+), 103 deletions(-)
-
-diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
-index 1eed55681598..c975b76e6255 100644
---- a/drivers/platform/chrome/wilco_ec/event.c
-+++ b/drivers/platform/chrome/wilco_ec/event.c
-@@ -39,6 +39,7 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/poll.h>
-+#include <linux/spinlock.h>
- #include <linux/uaccess.h>
- #include <linux/wait.h>
- 
-@@ -69,12 +70,120 @@ static DEFINE_IDA(event_ida);
- /* Size of circular queue of events. */
- #define MAX_NUM_EVENTS 64
- 
-+/**
-+ * struct ec_event - Extended event returned by the EC.
-+ * @size: Number of 16bit words in structure after the size word.
-+ * @type: Extended event type, meaningless for us.
-+ * @event: Event data words.  Max count is %EC_ACPI_MAX_EVENT_WORDS.
-+ */
-+struct ec_event {
-+	u16 size;
-+	u16 type;
-+	u16 event[0];
-+} __packed;
-+
-+#define ec_event_num_words(ev) (ev->size - 1)
-+#define ec_event_size(ev) (sizeof(*ev) + (ec_event_num_words(ev) * sizeof(u16)))
-+
-+/**
-+ * struct ec_event_queue - Circular queue for events
-+ * @capacity: Number of elements the queue cab hold.
-+ * @head: Next index to write to.
-+ * @tail: Next index to read from.
-+ * @full: head==tail when both full and empty, so use this to differentiate.
-+ * @lock: Protect the queue from simultaneous read/writes.
-+ * @entries: Array of events.
-+ *
-+ * If an event is added when the queue is full, the oldest event is overwritten.
-+ */
-+struct ec_event_queue {
-+	int capacity;
-+	int head;
-+	int tail;
-+	bool full;
-+	spinlock_t lock;
-+	struct ec_event *entries[0];
-+};
-+
-+/* Maximum number of events to store in ec_event_queue */
-+static int queue_size = 64;
-+module_param(queue_size, int, 0644);
-+
-+static struct ec_event_queue *event_queue_new(int capacity)
-+{
-+	size_t entries_size = sizeof(struct ec_event *) * capacity;
-+	struct ec_event_queue *q = kzalloc(sizeof(*q) + entries_size,
-+					   GFP_KERNEL);
-+
-+	q->capacity = capacity;
-+	spin_lock_init(&q->lock);
-+
-+	return q;
-+}
-+
-+static bool event_queue_empty(struct ec_event_queue *q)
-+{
-+	bool empty;
-+
-+	if (q->full)
-+		return false;
-+
-+	spin_lock(&q->lock);
-+	empty = q->head == q->tail;
-+	spin_unlock(&q->lock);
-+
-+	return empty;
-+}
-+
-+/* If full, free and overwrite the oldest event */
-+static void event_queue_push(struct ec_event_queue *q, struct ec_event *ev)
-+{
-+	spin_lock(&q->lock);
-+	if (q->full) {
-+		kfree(q->entries[q->head]);
-+		q->entries[q->head] = ev;
-+		q->head = (q->head + 1) % q->capacity;
-+	} else {
-+		q->entries[q->head] = ev;
-+		q->head = (q->head + 1) % q->capacity;
-+		q->full = q->head == q->tail;
-+	}
-+	if (q->full)
-+		q->tail = q->head;
-+	spin_unlock(&q->lock);
-+
-+}
-+
-+static struct ec_event *event_queue_pop(struct ec_event_queue *q)
-+{
-+	struct ec_event *ev;
-+
-+	if (event_queue_empty(q))
-+		return NULL;
-+
-+	spin_lock(&q->lock);
-+	ev = q->entries[q->tail];
-+	q->tail = (q->tail + 1) % q->capacity;
-+	q->full = false;
-+	spin_unlock(&q->lock);
-+
-+	return ev;
-+}
-+
-+static void event_queue_free(struct ec_event_queue *q)
-+{
-+	struct ec_event *event;
-+
-+	while ((event = event_queue_pop(q)) != NULL)
-+		kfree(event);
-+
-+	kfree(q);
-+}
-+
- /**
-  * struct event_device_data - Data for a Wilco EC device that responds to ACPI.
-  * @events: Circular queue of EC events to be provided to userspace.
-- * @num_events: Number of events in the queue.
-- * @lock: Mutex to guard the queue.
-- * @wq: Wait queue to notify processes when events or available or the
-+ * @wq: Wait queue to notify processes when events are available or the
-  *	device has been removed.
-  * @cdev: Char dev that userspace reads() and polls() from.
-  * @dev: Device associated with the %cdev.
-@@ -84,14 +193,12 @@ static DEFINE_IDA(event_ida);
-  *
-  * There will be one of these structs for each ACPI device registered. This data
-  * is the queue of events received from ACPI that still need to be read from
-- * userspace (plus a supporting lock and wait queue), as well as the device and
-- * char device that userspace is using, plus a flag on whether the ACPI device
-- * has been removed.
-+ * userspace, the device and char device that userspace is using, a wait queue
-+ * used to notify different threads when something has changed, plus a flag
-+ * on whether the ACPI device has been removed.
-  */
- struct event_device_data {
--	struct list_head events;
--	size_t num_events;
--	struct mutex lock;
-+	struct ec_event_queue *events;
- 	wait_queue_head_t wq;
- 	struct device dev;
- 	struct cdev cdev;
-@@ -99,31 +206,6 @@ struct event_device_data {
- 	atomic_t available;
- };
- 
--/**
-- * struct ec_event - Extended event returned by the EC.
-- * @size: Number of words in structure after the size word.
-- * @type: Extended event type from &enum ec_event_type.
-- * @event: Event data words.  Max count is %EC_ACPI_MAX_EVENT_WORDS.
-- */
--struct ec_event {
--	u16 size;
--	u16 type;
--	u16 event[0];
--} __packed;
--
--/**
-- * struct ec_event_entry - Event queue entry.
-- * @list: List node.
-- * @size: Number of bytes in event structure.
-- * @event: Extended event returned by the EC.  This should be the last
-- *         element because &struct ec_event includes a zero length array.
-- */
--struct ec_event_entry {
--	struct list_head list;
--	size_t size;
--	struct ec_event event;
--};
--
- /**
-  * enqueue_events() - Place EC events in queue to be read by userspace.
-  * @adev: Device the events came from.
-@@ -132,7 +214,7 @@ struct ec_event_entry {
-  *
-  * %buf contains a number of ec_event's, packed one after the other.
-  * Each ec_event is of variable length. Start with the first event, copy it
-- * into a containing ev_event_entry, store that entry in a list, move on
-+ * into a persistent ec_event, store that entry in the queue, move on
-  * to the next ec_event in buf, and repeat.
-  *
-  * Return: 0 on success or negative error code on failure.
-@@ -140,20 +222,15 @@ struct ec_event_entry {
- static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
- {
- 	struct event_device_data *dev_data = adev->driver_data;
--	struct ec_event *event;
--	struct ec_event_entry *entry, *oldest_entry;
--	size_t event_size, num_words, word_size;
-+	struct ec_event *event, *queue_event;
-+	size_t num_words, event_size;
- 	u32 offset = 0;
- 
- 	while (offset < length) {
- 		event = (struct ec_event *)(buf + offset);
--		if (!event)
--			return -EINVAL;
- 
--		/* Number of 16bit event data words is size - 1 */
--		num_words = event->size - 1;
--		word_size = num_words * sizeof(u16);
--		event_size = sizeof(*event) + word_size;
-+		num_words = ec_event_num_words(event);
-+		event_size = ec_event_size(event);
- 		if (num_words > EC_ACPI_MAX_EVENT_WORDS) {
- 			dev_err(&adev->dev, "Too many event words: %zu > %d\n",
- 				num_words, EC_ACPI_MAX_EVENT_WORDS);
-@@ -170,31 +247,12 @@ static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
- 		/* Point to the next event in the buffer */
- 		offset += event_size;
- 
--		/* Create event entry for the queue */
--		entry = kzalloc(sizeof(struct ec_event_entry) + word_size,
--				GFP_KERNEL);
--		if (!entry)
-+		/* Copy event into the queue */
-+		queue_event = kzalloc(event_size, GFP_KERNEL);
-+		if (!queue_event)
- 			return -ENOMEM;
--		entry->size = event_size;
--		memcpy(&entry->event, event, entry->size);
--
--		mutex_lock(&dev_data->lock);
--
--		/* If the queue is full, delete the oldest event */
--		if (dev_data->num_events >= MAX_NUM_EVENTS) {
--			oldest_entry = list_first_entry(&dev_data->events,
--						      struct ec_event_entry,
--						      list);
--			list_del(&oldest_entry->list);
--			kfree(oldest_entry);
--			dev_data->num_events--;
--		}
--
--		/* Add this event to the queue */
--		list_add_tail(&entry->list, &dev_data->events);
--		dev_data->num_events++;
--
--		mutex_unlock(&dev_data->lock);
-+		memcpy(queue_event, event, event_size);
-+		event_queue_push(dev_data->events, queue_event);
- 	}
- 
- 	return 0;
-@@ -250,7 +308,7 @@ static void event_device_notify(struct acpi_device *adev, u32 value)
- 	enqueue_events(adev, obj->buffer.pointer, obj->buffer.length);
- 	kfree(obj);
- 
--	if (dev_data->num_events)
-+	if (!event_queue_empty(dev_data->events))
- 		wake_up_interruptible(&dev_data->wq);
- }
- 
-@@ -281,7 +339,7 @@ static __poll_t event_poll(struct file *filp, poll_table *wait)
- 	poll_wait(filp, &dev_data->wq, wait);
- 	if (!dev_data->exist)
- 		return EPOLLHUP;
--	if (dev_data->num_events)
-+	if (!event_queue_empty(dev_data->events))
- 		mask |= EPOLLIN | EPOLLRDNORM | EPOLLPRI;
- 	return mask;
- }
-@@ -293,8 +351,7 @@ static __poll_t event_poll(struct file *filp, poll_table *wait)
-  * @count: Number of bytes requested. Must be at least EC_ACPI_MAX_EVENT_SIZE.
-  * @pos: File position pointer, irrelevant since we don't support seeking.
-  *
-- * Fills the passed buffer with the data from the first event in the queue,
-- * removes that event from the queue. On error, the event remains in the queue.
-+ * Removes the first event from the queue, places it in the passed buffer.
-  *
-  * If there are no events in the the queue, then one of two things happens,
-  * depending on if the file was opened in nonblocking mode: If in nonblocking
-@@ -307,7 +364,7 @@ static ssize_t event_read(struct file *filp, char __user *buf, size_t count,
- 			  loff_t *pos)
- {
- 	struct event_device_data *dev_data = filp->private_data;
--	struct ec_event_entry *entry;
-+	struct ec_event *event;
- 	ssize_t n_bytes_written = 0;
- 	int err;
- 
-@@ -315,39 +372,25 @@ static ssize_t event_read(struct file *filp, char __user *buf, size_t count,
- 	if (count != 0 && count < EC_ACPI_MAX_EVENT_SIZE)
- 		return -EINVAL;
- 
--	mutex_lock(&dev_data->lock);
--
--	while (dev_data->num_events == 0) {
--		if (filp->f_flags & O_NONBLOCK) {
--			mutex_unlock(&dev_data->lock);
-+	while ((event = event_queue_pop(dev_data->events)) == NULL) {
-+		if (filp->f_flags & O_NONBLOCK)
- 			return -EAGAIN;
--		}
--		/* Need to unlock so that data can actually get added to the
--		 * queue, and since we recheck before use and it's just
--		 * comparing pointers, this is safe unlocked.
--		 */
--		mutex_unlock(&dev_data->lock);
-+
- 		err = wait_event_interruptible(dev_data->wq,
--					       dev_data->num_events);
-+					!event_queue_empty(dev_data->events) ||
-+					!dev_data->exist);
- 		if (err)
- 			return err;
- 
- 		/* Device was removed as we waited? */
- 		if (!dev_data->exist)
- 			return -ENODEV;
--		mutex_lock(&dev_data->lock);
- 	}
- 
--	entry = list_first_entry(&dev_data->events,
--				 struct ec_event_entry, list);
--	n_bytes_written = entry->size;
--	if (copy_to_user(buf, &entry->event, n_bytes_written))
-+	n_bytes_written = ec_event_size(event);
-+	if (copy_to_user(buf, event, n_bytes_written))
- 		n_bytes_written = -EFAULT;
--	list_del(&entry->list);
--	kfree(entry);
--	dev_data->num_events--;
--
--	mutex_unlock(&dev_data->lock);
-+	kfree(event);
- 
- 	return n_bytes_written;
- }
-@@ -384,15 +427,13 @@ static void free_device_data(struct device *d)
- 	struct event_device_data *dev_data;
- 
- 	dev_data = container_of(d, struct event_device_data, dev);
-+	event_queue_free(dev_data->events);
- 	kfree(dev_data);
- }
- 
- static void hangup_device(struct event_device_data *dev_data)
- {
--	mutex_lock(&dev_data->lock);
- 	dev_data->exist = false;
--	mutex_unlock(&dev_data->lock);
--
- 	/* Wake up the waiting processes so they can close. */
- 	wake_up_interruptible(&dev_data->wq);
- 	put_device(&dev_data->dev);
-@@ -420,7 +461,7 @@ static int event_device_add(struct acpi_device *adev)
- 	minor = ida_alloc_max(&event_ida, EVENT_MAX_DEV-1, GFP_KERNEL);
- 	if (minor < 0) {
- 		error = minor;
--		dev_err(&adev->dev, "Failed to find minor number: %d", error);
-+		dev_err(&adev->dev, "Failed to find minor number: %d\n", error);
- 		return error;
- 	}
- 
-@@ -432,8 +473,7 @@ static int event_device_add(struct acpi_device *adev)
- 
- 	/* Initialize the device data. */
- 	adev->driver_data = dev_data;
--	INIT_LIST_HEAD(&dev_data->events);
--	mutex_init(&dev_data->lock);
-+	dev_data->events = event_queue_new(queue_size);
- 	init_waitqueue_head(&dev_data->wq);
- 	dev_data->exist = true;
- 	atomic_set(&dev_data->available, 1);
-@@ -496,14 +536,14 @@ static int __init event_module_init(void)
- 
- 	ret = class_register(&event_class);
- 	if (ret) {
--		pr_err(DRV_NAME ": Failed registering class: %d", ret);
-+		pr_err(DRV_NAME ": Failed registering class: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* Request device numbers, starting with minor=0. Save the major num. */
- 	ret = alloc_chrdev_region(&dev_num, 0, EVENT_MAX_DEV, EVENT_DEV_NAME);
- 	if (ret) {
--		pr_err(DRV_NAME ": Failed allocating dev numbers: %d", ret);
-+		pr_err(DRV_NAME ": Failed allocating dev numbers: %d\n", ret);
- 		goto destroy_class;
- 	}
- 	event_major = MAJOR(dev_num);
--- 
-2.20.1
-
+RnJvbTogRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9zb2Z0LmNvbT4gIFNlbnQ6IEZyaWRheSwgSnVu
+ZSAxNCwgMjAxOSAxMTo0MiBBTQ0KPiANCj4gSXQncyB1bm5lY2Vzc2FyeSB0byBkeW5hbWljYWxs
+eSBhbGxvY2F0ZSB0aGUgYnVmZmVyLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRGV4dWFuIEN1aSA8
+ZGVjdWlAbWljcm9zb2Z0LmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2h2L2h2X2JhbGxvb24uYyB8
+IDE5ICsrKystLS0tLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMo
+KyksIDE1IGRlbGV0aW9ucygtKQ0KPiANCg0KUmV2aWV3ZWQtYnk6IE1pY2hhZWwgS2VsbGV5IDxt
+aWtlbGxleUBtaWNyb3NvZnQuY29tPg0K
