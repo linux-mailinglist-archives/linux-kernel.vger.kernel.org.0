@@ -2,85 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C87B7464CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE8BB464DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfFNQqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:46:01 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:32810 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbfFNQp7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:45:59 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x2so3252507qtr.0;
-        Fri, 14 Jun 2019 09:45:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tkF76/YWyBi2DNFHRTKUkXkyJ1fsnWPr1qR9pgyZkc0=;
-        b=Mku7dyw/bXMHmtwe4LUJnaWM8TvuklyT+rjoYtjSN8wpTxJdYq7SJkCeF4kaaoIO62
-         tFmVNrisEtRJBDWvPW5Q7OSR2cJueYZ+Hvza7y93BFD6lrGtzOit+X2MR/KziHN7ztY0
-         K/S6s1e/+ps7PfELjDUe8WGL3w+XydtLc0pw1x2AgU2bE6abGAK1uxRDNmHV/aSXTXWs
-         0Y92+CallBlu+mgN8klmGIOZDadLCEloE7kQ6CMocRrxR/3dOp5kqVubP1IK+TXxCSip
-         /pvHC83V6vhFNHcvzJRf9c6SAuzfkllWyAY7mTdqHk88iooefBZm1sLLarK9+2PDccOV
-         1YOg==
-X-Gm-Message-State: APjAAAUqsJNU5b4SVF0/ncWEPQwd5kyQI22pfdh5I4q0BZS6zNpgQOri
-        X8VQ+Wcd2nfpJnmbIYOA9w==
-X-Google-Smtp-Source: APXvYqzeZjnaIMhoekYjI1KAjGSgD0u8xfYWVwEDuon+Prg33JgQL/mvg90QKAMLqnJN9uLyklsNNw==
-X-Received: by 2002:a0c:ae5a:: with SMTP id z26mr9212014qvc.65.1560530757901;
-        Fri, 14 Jun 2019 09:45:57 -0700 (PDT)
-Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id e8sm1819685qkn.95.2019.06.14.09.45.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 09:45:57 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 10:45:55 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726551AbfFNQqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:46:32 -0400
+Received: from smtp3-g21.free.fr ([212.27.42.3]:42108 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725801AbfFNQqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 12:46:32 -0400
+Received: from anisse-station.iliad.local (unknown [213.36.7.13])
+        by smtp3-g21.free.fr (Postfix) with ESMTPS id 2882B13F8B6;
+        Fri, 14 Jun 2019 18:46:03 +0200 (CEST)
+From:   Anisse Astier <aastier@freebox.fr>
+To:     Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>
-Subject: Re: [PATCH 2/6] dt-bindings: serial: 8250_omap: Add compatible for
- J721E UART controller
-Message-ID: <20190614164555.GA18636@bogus>
-References: <20190522161921.20750-1-nm@ti.com>
- <20190522161921.20750-3-nm@ti.com>
+        linux-kernel@vger.kernel.org, Rich Felker <dalias@aerifal.cx>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Ricardo Salveti <ricardo@foundries.io>,
+        Anisse Astier <aastier@freebox.fr>
+Subject: [PATCH v2] arm64/sve: <uapi/asm/ptrace.h> should not depend on <uapi/linux/prctl.h>
+Date:   Fri, 14 Jun 2019 18:46:00 +0200
+Message-Id: <20190614164600.36966-1-aastier@freebox.fr>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190613163801.21949-1-aastier@freebox.fr>
+References: <20190613163801.21949-1-aastier@freebox.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522161921.20750-3-nm@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 May 2019 11:19:17 -0500, Nishanth Menon wrote:
-> J721e uses a UART controller that is compatible with AM654 UART.
-> Introduce a specific compatible to help handle the differences if
-> necessary.
-> 
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Vignesh R <vigneshr@ti.com>
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
-> NOTE:
->  - If Greg is ok, we can pick up the uart compatibility via the k3 tree,
->    else, I can spawn it off the series into it's own patch, but it
->    seemed better in a logical order.
-> 
->  Documentation/devicetree/bindings/serial/omap_serial.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Otherwise this will create userspace build issues for any program
+(strace, qemu) that includes both <sys/prctl.h> (with musl libc) and
+<linux/ptrace.h> (which then includes <asm/ptrace.h>), like this:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+	error: redefinition of 'struct prctl_mm_map'
+	 struct prctl_mm_map {
+
+See https://github.com/foundriesio/meta-lmp/commit/6d4a106e191b5d79c41b9ac78fd321316d3013c0
+for a public example of people working around this issue.
+
+Copying the defines is a bit imperfect here, but better than creating a
+whole other header for just two defines that would never change, as part
+of the kernel ABI.
+
+Fixes: 43d4da2c45b2 ("arm64/sve: ptrace and ELF coredump support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Anisse Astier <aastier@freebox.fr>
+---
+Changes since v1:
+ - made a bit more explicit that we copied defined symbols, in commit
+   and code.
+ - Use Fixes: tag in commit message
+
+Thanks to Dave Martin and Will Deacon for the review.
+
+---
+ arch/arm64/include/uapi/asm/ptrace.h | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+index d78623acb649..438759e7e8a7 100644
+--- a/arch/arm64/include/uapi/asm/ptrace.h
++++ b/arch/arm64/include/uapi/asm/ptrace.h
+@@ -65,8 +65,6 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
+-#include <linux/prctl.h>
+-
+ /*
+  * User structures for general purpose, floating point and debug registers.
+  */
+@@ -113,10 +111,10 @@ struct user_sve_header {
+ 
+ /*
+  * Common SVE_PT_* flags:
+- * These must be kept in sync with prctl interface in <linux/ptrace.h>
++ * These must be kept in sync with prctl interface in <linux/prctl.h>
+  */
+-#define SVE_PT_VL_INHERIT		(PR_SVE_VL_INHERIT >> 16)
+-#define SVE_PT_VL_ONEXEC		(PR_SVE_SET_VL_ONEXEC >> 16)
++#define SVE_PT_VL_INHERIT		((1 << 17) /* PR_SVE_VL_INHERIT */ >> 16)
++#define SVE_PT_VL_ONEXEC		((1 << 18) /* PR_SVE_SET_VL_ONEXEC */ >> 16)
+ 
+ 
+ /*
+-- 
+2.19.1
+
