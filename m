@@ -2,162 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89C6A45DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C79B945E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbfFNNO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:14:57 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41378 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfFNNO4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:14:56 -0400
-Received: by mail-ed1-f67.google.com with SMTP id p15so3437534eds.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 06:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lo8jzIeEl3qvMScl2nYeZEzcklK1JpdjNABkHh1fbHg=;
-        b=eFeAcZtgO0/eRC+taEsG3o/626r+gJzLYZLu6JCyggVrs1QqMuSldztZimYV/jdkJJ
-         KpqfmnAYmMswNNumhYoKPsqVbi6oXCsorOhOJsdBSnOChpopGRX1/ui0nf+Nlcf6FXPr
-         gGpw+PJGJIdyx5tMB8ohHf7Qp8YL0Pn4pTIC3KYego9Ujsgpyiq4SkfHbxvn1Rplq1Pp
-         IoST/0AGJDllFkhSDArOhMHcOdLQczefbj/Em08KjBQgqt7nPa6It4nRH8wS9yRppE3g
-         SyL/Y8mhbNTD3QF8XNH0x1JlkrNyAot22I9vIuPdXcIIAhttxk+quH+74xWONAEiEFsY
-         kixQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lo8jzIeEl3qvMScl2nYeZEzcklK1JpdjNABkHh1fbHg=;
-        b=asYUK+eMAZJo7SRD2+aeLAg6CCRuvrYu6NZr08fVvCTqXM1aD+a5wpSrQggXjfTq4/
-         O333emWncafII73K5SVzD26aanybhYsMA/6FLkbQJHD2LwQJBp7KVPOtK+WCwkmE81vn
-         gkioFlbHHMqoOJ8kthggrkr9BSS3h6O8NjaKw2XGtZL974jmOVYSc/T4R/Ko1OLQL7qD
-         35l8UQVjjqBHuLPXHmwD/lCWnTW6NfdmPjwee2tZQBN1hkiONdEIy1KfSrgIpwtKktKf
-         Kvt3hcQUR5ZICmVvxJfF/DZEly4PCI6oKhKxij5mlA6rNUMCD9aw1G7h329QSeX7CJmt
-         KV0A==
-X-Gm-Message-State: APjAAAUxC1BrsvRFLFaCHdDpBhjDins6rHhszPBODuQ4LXe8HghXqb/w
-        9IQfIImpicuForDMDXfbXbNSLg==
-X-Google-Smtp-Source: APXvYqys9UpU3EDiYN8BSuwDi62d18/VihRzxeEm4B3CXY1/sZgOqGoIC2XqSZyXoR/BuWpsRnWF+g==
-X-Received: by 2002:aa7:c619:: with SMTP id h25mr39051647edq.295.1560518094495;
-        Fri, 14 Jun 2019 06:14:54 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id t3sm593997ejk.56.2019.06.14.06.14.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 06:14:53 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id BB20210086F; Fri, 14 Jun 2019 16:14:53 +0300 (+03)
-Date:   Fri, 14 Jun 2019 16:14:53 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH, RFC 13/62] x86/mm: Add hooks to allocate and free
- encrypted pages
-Message-ID: <20190614131453.ludfm4ufzqwa326k@box>
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
- <20190508144422.13171-14-kirill.shutemov@linux.intel.com>
- <20190614093409.GX3436@hirez.programming.kicks-ass.net>
+        id S1728063AbfFNN03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:26:29 -0400
+Received: from mga17.intel.com ([192.55.52.151]:23651 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727737AbfFNN03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:26:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 06:26:28 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jun 2019 06:26:27 -0700
+Date:   Fri, 14 Jun 2019 06:17:02 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
+ scattered features word 11
+Message-ID: <20190614131701.GA198207@romley-ivt3.sc.intel.com>
+References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
+ <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
+ <20190614114410.GD2586@zn.tnic>
+ <20190614122749.GE2586@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190614093409.GX3436@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190614122749.GE2586@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 11:34:09AM +0200, Peter Zijlstra wrote:
-> On Wed, May 08, 2019 at 05:43:33PM +0300, Kirill A. Shutemov wrote:
+On Fri, Jun 14, 2019 at 02:27:50PM +0200, Borislav Petkov wrote:
+> On Fri, Jun 14, 2019 at 01:44:10PM +0200, Borislav Petkov wrote:
+> > On Thu, Jun 13, 2019 at 01:51:03PM -0700, Fenghua Yu wrote:
+> > > It's a waste for the four X86_FEATURE_CQM_* features to occupy two
+> > > pure feature bits words. To better utilize feature words, re-define
+> > > word 11 to host scattered features and move the four X86_FEATURE_CQM_*
+> > > features into word 11. More scattered features can be added in word 11
+> > > in the future.
+> > > 
+> > > KVM doesn't support resctrl now. So it's safe to move the
+> > > X86_FEATURE_CQM_* features to scattered features word 11 for KVM.
+> > > 
+> > > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> > 
+> > ...
+> > 
+> > > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> > > index 9a327d5b6d1f..d78a61408243 100644
+> > > --- a/arch/x86/kvm/cpuid.h
+> > > +++ b/arch/x86/kvm/cpuid.h
+> > > @@ -47,8 +47,6 @@ static const struct cpuid_reg reverse_cpuid[] = {
+> > >  	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
+> > >  	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
+> > >  	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
+> > > -	[CPUID_F_0_EDX]       = {       0xf, 0, CPUID_EDX},
+> > > -	[CPUID_F_1_EDX]       = {       0xf, 1, CPUID_EDX},
+> > 
+> > I think you're going to have to change those to:
+> > 
+> >         [CPUID_LNX_4]         = {         0, 0, 0},
+> >         [CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX },
+> > 
+> > instead of removing them because kvm is basically hardcoding the feature
+> > words and then bitches when array elements in the middle get removed:
 > 
-> > +/* Prepare page to be used for encryption. Called from page allocator. */
-> > +void __prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
-> > +{
-> > +	int i;
-> > +
-> > +	/*
-> > +	 * The hardware/CPU does not enforce coherency between mappings
-> > +	 * of the same physical page with different KeyIDs or
-> > +	 * encryption keys. We are responsible for cache management.
-> > +	 */
-> 
-> On alloc we should flush the unencrypted (key=0) range, while on free
-> (below) we should flush the encrypted (key!=0) range.
-> 
-> But I seem to have missed where page_address() does the right thing
-> here.
+> Alternatively - and what I think is the better solution - would be to
+> remove those BUILD_BUG_ONs in x86_feature_cpuid and filter out the
+> Linux-defined leafs dynamically. This way the array won't have holes in
+> it.
 
-As you've seen by now, it will be addressed later in the patchset. I'll
-update the changelog to indicate that page_address() handles KeyIDs
-correctly.
+Maybe adding a dummy slot in cpuid_leafs in patch 0002 to avoid the
+compilation errors?
 
-> > +	clflush_cache_range(page_address(page), PAGE_SIZE * (1UL << order));
-> > +
-> > +	for (i = 0; i < (1 << order); i++) {
-> > +		/* All pages coming out of the allocator should have KeyID 0 */
-> > +		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
-> > +		lookup_page_ext(page)->keyid = keyid;
-> > +
-> 
-> So presumably page_address() is affected by this keyid, and the below
-> clear_highpage() then accesses the 'right' location?
+Those KVM BUILD_BUG_ON() want to find out any empty leaf in
+reverse_cpuid (and also cpuid_leafs).
 
-Yes. clear_highpage() -> kmap_atomic() -> page_address().
+The patch 0002 actually creates such empty leaf 12 in cpuid_leafs. So
+CPUID_7_EDX=17 instead of NCAPINTS-1=18 in cpuid_leafs. It's not
+desired.
 
-> > +		/* Clear the page after the KeyID is set. */
-> > +		if (zero)
-> > +			clear_highpage(page);
-> > +
-> > +		page++;
-> > +	}
-> > +}
-> > +
-> > +/*
-> > + * Handles freeing of encrypted page.
-> > + * Called from page allocator on freeing encrypted page.
-> > + */
-> > +void free_encrypted_page(struct page *page, int order)
-> > +{
-> > +	int i;
-> > +
-> > +	/*
-> > +	 * The hardware/CPU does not enforce coherency between mappings
-> > +	 * of the same physical page with different KeyIDs or
-> > +	 * encryption keys. We are responsible for cache management.
-> > +	 */
-> 
-> I still don't like that comment much; yes the hardware doesn't do it,
-> and yes we have to do it, but it doesn't explain the actual scheme
-> employed to do so.
+After applying patch 0003, the hole is filled in and there is no
+compilation error from the KVM BUILD_BUG_ON() checks. So the compilation
+errors only happens in bisect.
 
-Fair enough. I'll do better.
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 526619906305..403f70c2e431 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -23,6 +23,7 @@ enum cpuid_leafs
+        CPUID_7_0_EBX,
+        CPUID_D_1_EAX,
+        CPUID_LNX_4,
++       CPUID_DUMMY,
+        CPUID_8000_0008_EBX,
+        CPUID_6_EAX,
+        CPUID_8000_000A_EDX,
 
-> > +	clflush_cache_range(page_address(page), PAGE_SIZE * (1UL << order));
-> > +
-> > +	for (i = 0; i < (1 << order); i++) {
-> > +		/* Check if the page has reasonable KeyID */
-> > +		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids);
-> 
-> It should also check keyid > 0, so maybe:
-> 
-> 	(unsigned)(keyid - 1) > keyids-1
-> 
-> instead?
+Is it OK to add the above patch to the patch 0002 to solve the
+compilation errors? If it's ok, I will explain in commit message why add
+CPUID_DUMMY.
 
-Makes sense.
+Thanks.
 
--- 
- Kirill A. Shutemov
+-Fenghua
