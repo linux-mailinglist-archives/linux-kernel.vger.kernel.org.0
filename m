@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EFC0455EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08BEB455E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfFNHYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 03:24:12 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44339 "EHLO
+        id S1726333AbfFNHX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 03:23:57 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59537 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfFNHYL (ORCPT
+        with ESMTP id S1725845AbfFNHX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 03:24:11 -0400
+        Fri, 14 Jun 2019 03:23:56 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1hbgYz-0000qU-R9; Fri, 14 Jun 2019 09:23:53 +0200
+        id 1hbgYz-0000qV-R7; Fri, 14 Jun 2019 09:23:53 +0200
 Received: from sha by dude.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1hbgYz-0006Nj-35; Fri, 14 Jun 2019 09:23:53 +0200
+        id 1hbgYz-0006Nl-3b; Fri, 14 Jun 2019 09:23:53 +0200
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-bluetooth@vger.kernel.org
 Cc:     Marcel Holtmann <marcel@holtmann.org>,
@@ -27,9 +27,9 @@ Cc:     Marcel Holtmann <marcel@holtmann.org>,
         linux-kernel@vger.kernel.org,
         Loic Poulain <loic.poulain@intel.com>, kernel@pengutronix.de,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 1/3] Bluetooth: hci_ldisc: Add function to wait for characters to be sent
-Date:   Fri, 14 Jun 2019 09:23:49 +0200
-Message-Id: <20190614072351.17390-2-s.hauer@pengutronix.de>
+Subject: [PATCH 2/3] Bluetooth: hci_mrvl: Wait for final ack before switching baudrate
+Date:   Fri, 14 Jun 2019 09:23:50 +0200
+Message-Id: <20190614072351.17390-3-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190614072351.17390-1-s.hauer@pengutronix.de>
 References: <20190614072351.17390-1-s.hauer@pengutronix.de>
@@ -44,55 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hci UART line discipline sends its characters in a workqueue. Some
-devices like the Marvell Bluetooth chips need to make sure that all
-queued characters are sent before switching the baudrate. This adds
-a function to synchronize with the workqueue.
+For the Marvell HCI UART we have to upload two firmware files. The first
+one is only for switching the baudrate of the device to a higher
+baudrate. After the baudrate switching firmware has been uploaded the
+device waits for a final ack (0x5a) before actually switching the
+baudrate. To send this final ack with the old baudrate give the hci
+ldisc workqueue a chance to run before switching the baudrate. Without
+this the final ack will never be received by the device and firmware
+upload fails.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/bluetooth/hci_ldisc.c | 8 ++++++++
- drivers/bluetooth/hci_uart.h  | 1 +
- 2 files changed, 9 insertions(+)
+ drivers/bluetooth/hci_mrvl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-index c84f985f348d..8950e07889fe 100644
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -178,6 +178,7 @@ static void hci_uart_write_work(struct work_struct *work)
- 		goto restart;
+diff --git a/drivers/bluetooth/hci_mrvl.c b/drivers/bluetooth/hci_mrvl.c
+index 50212ac629e3..a0a74362455e 100644
+--- a/drivers/bluetooth/hci_mrvl.c
++++ b/drivers/bluetooth/hci_mrvl.c
+@@ -339,6 +339,9 @@ static int mrvl_setup(struct hci_uart *hu)
+ 		return -EINVAL;
+ 	}
  
- 	clear_bit(HCI_UART_SENDING, &hu->tx_state);
-+	wake_up_bit(&hu->tx_state, HCI_UART_SENDING);
- }
- 
- void hci_uart_init_work(struct work_struct *work)
-@@ -213,6 +214,13 @@ int hci_uart_init_ready(struct hci_uart *hu)
- 	return 0;
- }
- 
-+int hci_uart_wait_until_sent(struct hci_uart *hu)
-+{
-+	return wait_on_bit_timeout(&hu->tx_state, HCI_UART_SENDING,
-+				   TASK_INTERRUPTIBLE,
-+				   msecs_to_jiffies(2000));
-+}
++	/* Let the final ack go out before switching the baudrate */
++	hci_uart_wait_until_sent(hu);
 +
- /* ------- Interface to HCI layer ------ */
- /* Reset device */
- static int hci_uart_flush(struct hci_dev *hdev)
-diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-index d8cf005e3c5d..f11af3912ce6 100644
---- a/drivers/bluetooth/hci_uart.h
-+++ b/drivers/bluetooth/hci_uart.h
-@@ -100,6 +100,7 @@ int hci_uart_register_device(struct hci_uart *hu, const struct hci_uart_proto *p
- void hci_uart_unregister_device(struct hci_uart *hu);
+ 	hci_uart_set_baudrate(hu, 3000000);
+ 	hci_uart_set_flow_control(hu, false);
  
- int hci_uart_tx_wakeup(struct hci_uart *hu);
-+int hci_uart_wait_until_sent(struct hci_uart *hu);
- int hci_uart_init_ready(struct hci_uart *hu);
- void hci_uart_init_work(struct work_struct *work);
- void hci_uart_set_baudrate(struct hci_uart *hu, unsigned int speed);
 -- 
 2.20.1
 
