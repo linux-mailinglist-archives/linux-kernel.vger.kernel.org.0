@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9974613B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E25F4613F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbfFNOo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:44:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38394 "EHLO
+        id S1728706AbfFNOpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:45:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38828 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728532AbfFNOo4 (ORCPT
+        with ESMTP id S1728392AbfFNOpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:44:56 -0400
+        Fri, 14 Jun 2019 10:45:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FikfEnli7xC3lWxMo+lrSP8bukYq9kMRpBEiMtrt4/8=; b=jMCi+UGNulu+sLWA3p7lmnVzIu
-        8tg1b4N89gHYYqIp7VN1qjjGT1kdHaoXPo9PFciOiveCQKhbEZ0HwwLdHN/lfh8BsC2KDllTyxWVt
-        /WBG8sXigMo3SZb6jMSGAul5g1Rtpxf58hNKCxmDLHTap+JOkoMX8CX5U46kQp818Yc7zxT449bvt
-        WPetfy9Mvq5j0wl+sIaUvALnCf9h5pWCEh4fVtPmAtdzLFlAa981kSK7S2iOBnEkLI2mxdP+kuege
-        d37W3Oqew9mcoHxcxKMWWbymrqJWuTGGPk13ipyllLMxtA7t++cJWoHEQXa/NoOE24CeA9wQZH1ia
-        eSBCHtOg==;
+        bh=XBS/c6aAhCoK2T6+N2wWDRsaGJYTqp8SPA32e8G5Vls=; b=tQ3Dza/QcBJcS38+zf1dMFcwCR
+        wOWrL7rj6nwYDGt7VTXJkayT9/vZ1B1x4y6D+70rRKXSK0Keg6en3t+OTABeFd2MpMr6pi86RsaVv
+        piVg2obLpRIoHvWzGLid0ELT35b1jqNF8QOOvwr8qGwZL0fdgp7LNTCL5filwC7OjiebCX4sthC0R
+        LoS2RmnWVPXEnO4xRcoY5OEvzqNgteFFeh0MPXGj/XsEnq99n4pB4DCMv1lJmzwZmadHpw25t0mwr
+        l2JSMDIinJkBK1eMoahM70H9Du6SxZPPEN9FotSUwUszwxcjBfNcWhcuX+BBsRZNYIAsJs9aPJrRy
+        4Dbh4RGg==;
 Received: from 213-225-9-13.nat.highway.a1.net ([213.225.9.13] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbnRb-0005pn-PS; Fri, 14 Jun 2019 14:44:44 +0000
+        id 1hbnRf-0005uj-AL; Fri, 14 Jun 2019 14:44:47 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Vineet Gupta <vgupta@synopsys.com>
 Cc:     Jonas Bonn <jonas@southpole.se>,
@@ -39,9 +39,9 @@ Cc:     Jonas Bonn <jonas@southpole.se>,
         openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] arc: remove the partial DMA_ATTR_NON_CONSISTENT support
-Date:   Fri, 14 Jun 2019 16:44:26 +0200
-Message-Id: <20190614144431.21760-3-hch@lst.de>
+Subject: [PATCH 3/7] openrisc: remove the partial DMA_ATTR_NON_CONSISTENT support
+Date:   Fri, 14 Jun 2019 16:44:27 +0200
+Message-Id: <20190614144431.21760-4-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190614144431.21760-1-hch@lst.de>
 References: <20190614144431.21760-1-hch@lst.de>
@@ -53,69 +53,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The arc DMA code supports DMA_ATTR_NON_CONSISTENT allocations, but does
-not provide a cache_sync operation.  This means any user of it will
-never be able to actually transfer cache ownership and thus cause
+The openrisc DMA code supports DMA_ATTR_NON_CONSISTENT allocations, but
+does not provide a cache_sync operation.  This means any user of it
+will never be able to actually transfer cache ownership and thus cause
 coherency bugs.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/arc/mm/dma.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ arch/openrisc/kernel/dma.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
-index 1525ac00fd02..9832928f896d 100644
---- a/arch/arc/mm/dma.c
-+++ b/arch/arc/mm/dma.c
-@@ -24,7 +24,6 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	struct page *page;
- 	phys_addr_t paddr;
- 	void *kvaddr;
--	bool need_coh = !(attrs & DMA_ATTR_NON_CONSISTENT);
+diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
+index f79457cb3741..9f25fd0fbb5d 100644
+--- a/arch/openrisc/kernel/dma.c
++++ b/arch/openrisc/kernel/dma.c
+@@ -98,15 +98,13 @@ arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
  
- 	/*
- 	 * __GFP_HIGHMEM flag is cleared by upper layer functions
-@@ -46,14 +45,10 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	 * A coherent buffer needs MMU mapping to enforce non-cachability.
- 	 * kvaddr is kernel Virtual address (0x7000_0000 based).
- 	 */
--	if (need_coh) {
--		kvaddr = ioremap_nocache(paddr, size);
--		if (kvaddr == NULL) {
--			__free_pages(page, order);
+ 	va = (unsigned long)page;
+ 
+-	if ((attrs & DMA_ATTR_NON_CONSISTENT) == 0) {
+-		/*
+-		 * We need to iterate through the pages, clearing the dcache for
+-		 * them and setting the cache-inhibit bit.
+-		 */
+-		if (walk_page_range(va, va + size, &walk)) {
+-			free_pages_exact(page, size);
 -			return NULL;
 -		}
--	} else {
--		kvaddr = (void *)(u32)paddr;
-+	kvaddr = ioremap_nocache(paddr, size);
-+	if (kvaddr == NULL) {
-+		__free_pages(page, order);
++	/*
++	 * We need to iterate through the pages, clearing the dcache for
++	 * them and setting the cache-inhibit bit.
++	 */
++	if (walk_page_range(va, va + size, &walk)) {
++		free_pages_exact(page, size);
 +		return NULL;
  	}
  
- 	/*
-@@ -66,9 +61,7 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	 * Currently flush_cache_vmap nukes the L1 cache completely which
- 	 * will be optimized as a separate commit
- 	 */
--	if (need_coh)
--		dma_cache_wback_inv(paddr, size);
--
-+	dma_cache_wback_inv(paddr, size);
- 	return kvaddr;
+ 	return (void *)va;
+@@ -122,10 +120,8 @@ arch_dma_free(struct device *dev, size_t size, void *vaddr,
+ 		.mm = &init_mm
+ 	};
+ 
+-	if ((attrs & DMA_ATTR_NON_CONSISTENT) == 0) {
+-		/* walk_page_range shouldn't be able to fail here */
+-		WARN_ON(walk_page_range(va, va + size, &walk));
+-	}
++	/* walk_page_range shouldn't be able to fail here */
++	WARN_ON(walk_page_range(va, va + size, &walk));
+ 
+ 	free_pages_exact(vaddr, size);
  }
- 
-@@ -78,9 +71,7 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
- 	phys_addr_t paddr = dma_handle;
- 	struct page *page = virt_to_page(paddr);
- 
--	if (!(attrs & DMA_ATTR_NON_CONSISTENT))
--		iounmap((void __force __iomem *)vaddr);
--
-+	iounmap((void __force __iomem *)vaddr);
- 	__free_pages(page, get_order(size));
- }
- 
 -- 
 2.20.1
 
