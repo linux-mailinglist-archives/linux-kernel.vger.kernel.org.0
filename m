@@ -2,87 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3434665A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28074666B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:55:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfFNRxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:53:42 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53258 "EHLO mga06.intel.com"
+        id S1727066AbfFNRyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:54:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:39234 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbfFNRxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:53:40 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 10:53:39 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga001.jf.intel.com with ESMTP; 14 Jun 2019 10:53:39 -0700
-Date:   Fri, 14 Jun 2019 10:53:39 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Xing, Cedric" <cedric.xing@intel.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "eparis@parisplace.org" <eparis@parisplace.org>,
-        "jethro@fortanix.com" <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "pmccallum@redhat.com" <pmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        "Tricca, Philip B" <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Message-ID: <20190614175339.GA29126@linux.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
- <20190611220243.GB3416@linux.intel.com>
- <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
- <20190614004600.GF18385@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F65504665@ORSMSX116.amr.corp.intel.com>
- <20190614174556.GJ12191@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614174556.GJ12191@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726693AbfFNRyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:54:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3577346;
+        Fri, 14 Jun 2019 10:54:44 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F05FA3F718;
+        Fri, 14 Jun 2019 10:54:43 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        suzuki.poulose@arm.com,
+        Christian Gromm <christian.gromm@microchip.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH v2 01/28] staging: most-core: Use bus_find_device_by_name
+Date:   Fri, 14 Jun 2019 18:53:56 +0100
+Message-Id: <1560534863-15115-2-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 10:45:56AM -0700, Sean Christopherson wrote:
-> The state tracking of #2/#3 doesn't scare me, it's purely the auditing.
-> Holding an audit message for an indeterminate amount of time is a
-> nightmare.
-> 
-> Here's a thought.  What if we simply require FILE__EXECUTE or AA_EXEC_MAP
-> to load any enclave page from a file?  Alternatively, we could add an SGX
-> specific file policity, e.g. FILE__ENCLAVELOAD and AA_MAY_LOAD_ENCLAVE.
-> As in my other email, SELinux's W^X restrictions can be tied to the process,
-> i.e. they can be checked at mmap()/mprotect() without throwing a wrench in
-> auditing.
+Use bus_find_device_by_name() helper instead of writing our
+own helper.
 
-We would also need to require VM_MAYEXEC on all enclave pages, or forego
-enforcing path_noexec() for enclaves.
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Gromm <christian.gromm@microchip.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+---
+Hi,
+
+This patch can be split from the series. But it will eventually
+conflict with the series. Hence included it here.
+---
+ drivers/staging/most/core.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+index 86a8545..b9841adb 100644
+--- a/drivers/staging/most/core.c
++++ b/drivers/staging/most/core.c
+@@ -561,13 +561,6 @@ static int split_string(char *buf, char **a, char **b, char **c, char **d)
+ 	return 0;
+ }
+ 
+-static int match_bus_dev(struct device *dev, void *data)
+-{
+-	char *mdev_name = data;
+-
+-	return !strcmp(dev_name(dev), mdev_name);
+-}
+-
+ /**
+  * get_channel - get pointer to channel
+  * @mdev: name of the device interface
+@@ -579,7 +572,7 @@ static struct most_channel *get_channel(char *mdev, char *mdev_ch)
+ 	struct most_interface *iface;
+ 	struct most_channel *c, *tmp;
+ 
+-	dev = bus_find_device(&mc.bus, NULL, mdev, match_bus_dev);
++	dev = bus_find_device_by_name(&mc.bus, NULL, mdev);
+ 	if (!dev)
+ 		return NULL;
+ 	iface = to_most_interface(dev);
+-- 
+2.7.4
+
