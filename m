@@ -2,76 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 475E645B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C706945B8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbfFNLgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 07:36:07 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:39458 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfFNLgG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 07:36:06 -0400
-Received: by mail-qt1-f182.google.com with SMTP id i34so2007631qta.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 04:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=iYWTfHNOGy0zCm7qjiECEcfyYn0UNGZv0fcAcGdSdgg=;
-        b=o6LPSm3YPDMrL/3E2NtKGfuENLZmMWBdAt0M2fXDRjTnM/hpNZZD+gQx4nuzZRErRi
-         OOXafc/BXwn0ssoqtMNrRgteXvsZ9xAn9QCgJjykO7RCluQFxU248dF6f0gsXfVgDHhP
-         trxyZq65xhrp0csV+D/zOKyYqleu7RIq0madxSfNVQW1qIL/UK4qUV1OFM0dwJf4YXvR
-         bI5jwS6oaZJ3+a3+myzITXwleNevb9W5SCrLkZM05SU8z3xCk3LixFOIvODGbEXUMe0Y
-         Hbl5Q0UCcaVzqBAHmIEpHRa57mo6U0i5aO1uDLd2NJTI9uLJ1jQ8pufjjrNYqf7PyLNr
-         KWxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iYWTfHNOGy0zCm7qjiECEcfyYn0UNGZv0fcAcGdSdgg=;
-        b=sP+H4DDqiqG7FS1tJ7l452Vq210TfJaUIx6UmehKIsm+UIvne7Lum5v7wuqaIktBGj
-         6BVyeW5QEY5Sdr9sadlYQQXYJr9c2D1zSwgXb4c0hpkicgIc4Bhj14t3OoiJtMBjhtTP
-         Tq4Xzh6ZI0MT8u9CKHmT2nOztzgvAjwoASSPY5C2RCfFr7nNsolWgHWlSVlyLjoVPS11
-         vgVCNT8pQ6ev/SLrIDPAKtPOEOpqG93EXnhSyKLYW7SMRgcERyHrOmgczaabtkpeJ9Mb
-         Ib5lYmKb7n1bb6hU1U0Gu335Q8KSaELWAVBC1/gRKQ7sRGp3A5W35UQdWjC+JbndoPZ+
-         LT6g==
-X-Gm-Message-State: APjAAAUWM/8dCJPXIzwr0hYnh6o2I+UszbvKfNU9NKlRSEgxzuh1fO8i
-        9PXN9bexl6EiZ7K0WWOaAAoH6ZiDo3XjdaujCyc=
-X-Google-Smtp-Source: APXvYqw4LNT9mOOlCh6RRAJMYCnVol0xQsRuD2GZQqReLTW7gc+Qtdxocgbn/MDYypq5T/Qb1tgZsEIDbXySavtO6ts=
-X-Received: by 2002:a05:6214:2b0:: with SMTP id m16mr7805135qvv.23.1560512165862;
- Fri, 14 Jun 2019 04:36:05 -0700 (PDT)
+        id S1727567AbfFNLf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 07:35:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58272 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbfFNLf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 07:35:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 981DA5945B;
+        Fri, 14 Jun 2019 11:35:58 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (dhcp-192-180.str.redhat.com [10.33.192.180])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A5EA5D9D2;
+        Fri, 14 Jun 2019 11:35:52 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup and thread creation (v10)
+References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com>
+        <87o93d4lqb.fsf@oldenburg2.str.redhat.com>
+        <117220011.27079.1559663870037.JavaMail.zimbra@efficios.com>
+        <87wohzorj0.fsf@oldenburg2.str.redhat.com>
+        <c16c9785-7f8c-430b-a4df-a53e47bf1600@redhat.com>
+        <914051741.43025.1560348011775.JavaMail.zimbra@efficios.com>
+        <802638054.3032.1560506584705.JavaMail.zimbra@efficios.com>
+        <87ftocwkei.fsf@oldenburg2.str.redhat.com>
+        <1635690189.3049.1560507249693.JavaMail.zimbra@efficios.com>
+Date:   Fri, 14 Jun 2019 13:35:51 +0200
+In-Reply-To: <1635690189.3049.1560507249693.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Fri, 14 Jun 2019 06:14:09 -0400
+        (EDT)")
+Message-ID: <87tvcsv1pk.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-References: <20190614100928.9791-1-hch@lst.de>
-In-Reply-To: <20190614100928.9791-1-hch@lst.de>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Fri, 14 Jun 2019 19:35:29 +0800
-Message-ID: <CAEbi=3dnZNfMeLeuf9Y-d0HxTe_v1F_45Tb_TZwaat_LJq66SQ@mail.gmail.com>
-Subject: Re: [RFC] switch nds32 to use the generic remapping DMA allocator
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Vincent Chen <deanbo422@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 14 Jun 2019 11:35:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> =E6=96=BC 2019=E5=B9=B46=E6=9C=8814=E6=97=A5=
- =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=886:09=E5=AF=AB=E9=81=93=EF=BC=9A
+* Mathieu Desnoyers:
+
+> * Makefile:
 >
-> Hi Greentime and Vicent,
+> LIBCPATH=/home/efficios/glibc-test/lib
+> KERNEL_HEADERS=/home/efficios/git/linux-percpu-dev/usr/include
+> CFLAGS=-I${KERNEL_HEADERS} -L${LIBCPATH} -Wl,--rpath=${LIBCPATH} -Wl,--dynamic-linker=${LIBCPATH}/ld-linux-x86-64.so.2
 >
-> can you take a look at the (untested) patch below?  It converts nds32
-> to use the generic remapping DMA allocator, which is also used by
-> arm64 and csky.
+> all:
+> 	gcc ${CFLAGS} -o a a.c
+> 	gcc ${CFLAGS} -shared -fPIC -o s.so s.c
 
-Hi Christoph,
+For me, that does not correctly link against the built libc because the
+system dynamic loader seeps into the link.
 
-It looks good to me. I just verified in nds32 platform and it works fine.
-Should I put it in my next-tree or you will pick it up in your tree? :)
+> specifically this commit:
+> https://github.com/compudj/glibc-dev/commit/c49a286497d065a7fc00aafd846e6edce14f97fc
 
-Tested-by: Greentime Hu <greentime@andestech.com>
-Reviewed-by: Greentime Hu <greentime@andestech.com>
+This commit links __rseq_handled into libc.so.6 via rseq-sym.c, but does
+not export it from there.
+
+Thanks,
+Florian
