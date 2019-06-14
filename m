@@ -2,71 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6A145C69
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1157445C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfFNMO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:14:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52478 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727544AbfFNMO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:14:26 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4CD46B2AEDDC10E6B47A;
-        Fri, 14 Jun 2019 20:14:24 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
- 20:14:18 +0800
-From:   <chengzhihao1@huawei.com>
-To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
-        <boris.brezillon@bootlin.com>, <david@sigma-star.at>,
-        <artem.bityutskiy@linux.intel.com>, <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH mtd-utils] ubi-tests: fm_param: Replace 'fm_auto' with 'fm_autoconvert'
-Date:   Fri, 14 Jun 2019 20:19:50 +0800
-Message-ID: <1560514790-55222-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727721AbfFNMTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:19:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:60964 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727362AbfFNMTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:19:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E2DA3EF;
+        Fri, 14 Jun 2019 05:19:18 -0700 (PDT)
+Received: from [192.168.1.18] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C24183F246;
+        Fri, 14 Jun 2019 05:19:15 -0700 (PDT)
+Subject: Re: [PATCH v6 00/19] Unify vDSOs across more architectures
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mips@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <CAK8P3a11DE0sXteZoaP_N=mDhx3tXitGKddn1ogtFqJBYO-SCA@mail.gmail.com>
+ <d96667d5-e43b-d33a-fbd0-5acfb4904316@arm.com>
+ <alpine.DEB.2.21.1906141413070.1722@nanos.tec.linutronix.de>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <6f3bcd07-6eb4-53d6-d209-de42396a4ee2@arm.com>
+Date:   Fri, 14 Jun 2019 13:19:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <alpine.DEB.2.21.1906141413070.1722@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
 
-The value of fm_param should be 'fm_autoconvert' rather than 'fm_auto' when
-fastmap is supported by kernel. Currently, following verbose will appear in
-dmesg when fm_param is set to 'fm_auto':
+On 6/14/19 1:16 PM, Thomas Gleixner wrote:
+> On Tue, 4 Jun 2019, Vincenzo Frascino wrote:
+>> On 31/05/2019 09:46, Arnd Bergmann wrote:
+>>> One open question I touched in my review is whether we want to
+>>> have a vdso version of clock_getres() in all architectures or not.
+>>> I'd prefer to leave it out because there is very little advantage to
+>>> it over the system call (the results don't change at runtime and
+>>> can easily be cached by libc if performance ever matters), and
+>>> it takes up a small amount of memory for the implementation.
+>>>
+>>
+>> I thought about it and I ended up with what proposed in this patchset mainly for
+>> symmetry across all the architectures since in the end they use the same common
+>> code.
+>>
+>> It seems also that there is some performance impact (i.e.):
+>>
+>> clock-getres-monotonic:    libc(system call): 296 nsec/call
+>> clock-getres-monotonic:    libc(vdso): 5 nsec/call
+> 
+> clock_getres() is usually not a hot path operation.
+> 
+>> I agree with you though when you say that caching it in the libc is a
+>> possibility to overcome the performance impact.
+>>
+>>> We shouldn't just need it for consistency because all callers
+>>> would require implementing a fallback to the system call
+>>> anyway, to deal with old kernels.
+> 
+> libc has the fallback already. Let's aim for 1:1 replacement of the
+> architecture code first and then add the extra bits in separate patches.
+>
 
-  ubi: unknown parameter 'fm_auto' ignored
+Ok, thanks Thomas, I will split the patches accordingly.
 
-This patch replace 'fm_auto' with 'fm_autoconvert' for fm_param, so ubi
-kernel module can receive correct parameters.
+> Thanks,
+> 
+> 	tglx
+> 
 
-----------------------------------------
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- tests/ubi-tests/ubi-stress-test.sh.in | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tests/ubi-tests/ubi-stress-test.sh.in b/tests/ubi-tests/ubi-stress-test.sh.in
-index 42ccec5..657ef4b 100755
---- a/tests/ubi-tests/ubi-stress-test.sh.in
-+++ b/tests/ubi-tests/ubi-stress-test.sh.in
-@@ -117,7 +117,7 @@ run_test()
- 		fm_param=
- 	elif [ "$fm_supported" = "yes" ]; then
- 		fastmap="disabled"
--		fm_param="fm_auto"
-+		fm_param="fm_autoconvert"
- 	else
- 		echo "Fastmap is not supported, skip"
- 		return 0
 -- 
-2.7.4
-
+Regards,
+Vincenzo
