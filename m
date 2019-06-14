@@ -2,78 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085B845A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F042A45A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfFNKRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:17:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51090 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfFNKRK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:17:10 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5EAGObb038267;
-        Fri, 14 Jun 2019 19:16:24 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Fri, 14 Jun 2019 19:16:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5EAGHsZ038230
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 14 Jun 2019 19:16:24 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: [PATCH] kexec: Bail out upon SIGKILL when allocating memory.
-To:     Eric Biederman <ebiederm@xmission.com>
-References: <000000000000a861f6058b2699e0@google.com>
- <000000000000c0103a058b2ba0ec@google.com>
-Cc:     syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp>
-Date:   Fri, 14 Jun 2019 19:16:18 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <000000000000c0103a058b2ba0ec@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727361AbfFNKQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:16:28 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:17591 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbfFNKQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:16:27 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45QGjM1H2Jz9vDbj;
+        Fri, 14 Jun 2019 12:16:23 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=sX7cDuPN; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id RsZZFblO1owP; Fri, 14 Jun 2019 12:16:23 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45QGjL6tmgz9vDbh;
+        Fri, 14 Jun 2019 12:16:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560507383; bh=TY2dCqN2e9LwCfIjpEtnXQ6QZOx6P42BO2JkGX44zKo=;
+        h=From:Subject:To:Cc:Date:From;
+        b=sX7cDuPNCOH3k1NV5WEEAQVIfWziAd8Yttao5/aoEyBT0eSlXHRjPskvTVdPr820M
+         GMCllAQp+pwfGchnsGUjQ24zxvechvXUsYdfgm90jqvm2kG6mvV2/nyUMo0fQ1Awme
+         5YfAXVzfmyFBYJsQRM+ClutAhF5IvooTaDlCYPGw=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2C4018B7AD;
+        Fri, 14 Jun 2019 12:16:24 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id b9t6QDuhCvSj; Fri, 14 Jun 2019 12:16:24 +0200 (CEST)
+Received: from PO15451.localdomain (po15451.idsi0.si.c-s.fr [172.25.230.107])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 08F808B7AC;
+        Fri, 14 Jun 2019 12:16:24 +0200 (CEST)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id DF66968D78; Fri, 14 Jun 2019 10:16:23 +0000 (UTC)
+Message-Id: <1b4946c9e580b51b6ca2ddc5963d66406c013c2d.1560507284.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 1/3] powerpc/boot: don't force gzipped uImage
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 14 Jun 2019 10:16:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot found that a thread can stall for minutes inside kexec_load() after
-that thread was killed by SIGKILL [1]. It turned out that the reproducer
-was trying to allocate 2408MB of memory using kimage_alloc_page() from
-kimage_load_normal_segment(). Let's check for SIGKILL before doing memory
-allocation.
+This patch modifies the generation of uImage by handing over
+the selected compression type instead of forcing gzip
 
-[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
 ---
- kernel/kexec_core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ v3: no change
+ v2: no change
+---
+ arch/powerpc/boot/wrapper | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index fd5c95f..2b25d95 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -302,6 +302,8 @@ static struct page *kimage_alloc_pages(gfp_t gfp_mask, unsigned int order)
- {
- 	struct page *pages;
+diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
+index 532d45833396..85d97360b1c9 100755
+--- a/arch/powerpc/boot/wrapper
++++ b/arch/powerpc/boot/wrapper
+@@ -40,6 +40,7 @@ dts=
+ cacheit=
+ binary=
+ compression=.gz
++uboot_comp=gzip
+ pie=
+ format=
  
-+	if (fatal_signal_pending(current))
-+		return NULL;
- 	pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
- 	if (pages) {
- 		unsigned int count, i;
+@@ -130,6 +131,7 @@ while [ "$#" -gt 0 ]; do
+ 	;;
+     -z)
+ 	compression=.gz
++	uboot_comp=gzip
+ 	;;
+     -Z)
+ 	shift
+@@ -137,15 +139,21 @@ while [ "$#" -gt 0 ]; do
+         [ "$1" != "gz" -o "$1" != "xz" -o "$1" != "none" ] || usage
+ 
+ 	compression=".$1"
++	uboot_comp=$1
+ 
+         if [ $compression = ".none" ]; then
+                 compression=
++		uboot_comp=none
+         fi
++	if [ $uboot_comp = "gz" ]; then
++		uboot_comp=gzip
++	fi
+ 	;;
+     --no-gzip)
+         # a "feature" of the the wrapper script is that it can be used outside
+         # the kernel tree. So keeping this around for backwards compatibility.
+         compression=
++	uboot_comp=none
+         ;;
+     -?)
+ 	usage
+@@ -368,6 +376,7 @@ if [ -z "$cacheit" -o ! -f "$vmz$compression" -o "$vmz$compression" -ot "$kernel
+     *)
+         # drop the compression suffix so the stripped vmlinux is used
+         compression=
++	uboot_comp=none
+ 	;;
+     esac
+ 
+@@ -411,7 +420,7 @@ membase=`${CROSS}objdump -p "$kernel" | grep -m 1 LOAD | awk '{print $7}'`
+ case "$platform" in
+ uboot)
+     rm -f "$ofile"
+-    ${MKIMAGE} -A ppc -O linux -T kernel -C gzip -a $membase -e $membase \
++    ${MKIMAGE} -A ppc -O linux -T kernel -C $uboot_comp -a $membase -e $membase \
+ 	$uboot_version -d "$vmz" "$ofile"
+     if [ -z "$cacheit" ]; then
+ 	rm -f "$vmz"
 -- 
-1.8.3.1
+2.13.3
 
