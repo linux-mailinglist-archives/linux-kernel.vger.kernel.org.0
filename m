@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2772460D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25376460DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfFNOcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728728AbfFNOcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 14 Jun 2019 10:32:31 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33281 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbfFNOc0 (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46427 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728592AbfFNOc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:32:26 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h19so9039239wme.0
+        Fri, 14 Jun 2019 10:32:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so2743546wrw.13
         for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 07:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WIDNLxvx2Bg+Xgh8nVseVRfmZdFzioXB6+MHqeHMXN8=;
-        b=Xdf26WClNJVQ4j+yzbieeYmXLJIS0PH9WbLs+DGLAWoHTWRqhPy+xzf0sAiW6qz7fI
-         lMyhsnqPKVsVl4xQT3PU0H/7MqvtfIvML5c1GaXj1A8hj2xhE+DpGt+oE7EiXlrhY9jb
-         Ec04RqaqQxXoPkZWH/5msBaG8z1jhamSOo/vK0WZdT+E+2XJsSRZS1tXKKe+rso85tIa
-         gEKIHmrYCnBuLX9wRbvPtSBQ7HuqaK3KhT3d8qWk+iFtBGYL6Xy3oT36b9mslsz+Pqcj
-         X6B5bdawFenfPTuGNhdoyyZT2n8s8yRFg5wnj5SfGOqyQ3qWjrfFR3BOXo+qppdN35qS
-         VzoQ==
+        bh=dEGsv1xt89okLqG46teao5LGbBhh1cK6PExvsJ89WBk=;
+        b=JNnlqtg5TB2uvQJRhyzLfO8Insof31JtdxXMjKf4hY8C9fJfTRLifW5Kr+CZeEq2SL
+         +vFgde0iTTnKb/Utb/PKv6MdEsiwAHgVXTZzg+AxAt47RM80XNsdG3CjFDfIoPfSnHxV
+         cvbdnVFkzQHsEx2bhKZ6hK5FWL2/Pz/3MQkyBu2QyrcvtdT5g/dJ0N0WbMqZsu1i54/r
+         KTHJxZt5pSw8JF1oeiOE5Nwtw5Jm9DGZhzDqiDkOngZVujT+yg9vfrZ3e9P+jcz/rrMY
+         mlKLXIRYaCxjKmDgfqGoSmVYLOJgxeYWIyqFoFCj0loWxY6zdkvcu47GIdAn56y8WyjH
+         /1eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WIDNLxvx2Bg+Xgh8nVseVRfmZdFzioXB6+MHqeHMXN8=;
-        b=gmITRro1ZTW0ewoBBiGH6JqEO0cyQtmh6DYSynIo7KBOa0s3ekz9cHXicxhQZSi1I2
-         52j0qufSbNYaDabFVN9T+yh3SniSDrqmc5tlYAGElqJxapvhWm4amwgDbzq00AxwhHJf
-         qDxTr4n9zdgdRFFmBtFSu5gtp8TirSg8GyLeKfH4F3eHUHYxPbQ01cffoLVCaFQ3eBYM
-         bGC5xhWUdl6SF5UjxlDPsnZIzfG52IfTbd9MnvTa37Jrh8dfvqlZSVxx3hq/gbfyok+G
-         PcIjKS+9FzEf4p1qR+Fzi4ALgv8T1YiOTyJBD+Alrggd6yfzAdHjbIRxFbqBayC0caxj
-         X8ig==
-X-Gm-Message-State: APjAAAXqxbp4oeNltWriFTNI1nj+piOftIJzo5KJ/q5GiCh51mKXc3GM
-        Tb7+C0qg/fFCwSoNjSp7S/s2jA==
-X-Google-Smtp-Source: APXvYqwm3Z8NWHgBu+fES+7FIXc8nJCYY1rc/h6q7wpReBYsJoqLiHc7cIbe5Kw3GTSlmj5KQiwe+Q==
-X-Received: by 2002:a1c:1fc2:: with SMTP id f185mr8641809wmf.154.1560522745307;
-        Fri, 14 Jun 2019 07:32:25 -0700 (PDT)
+        bh=dEGsv1xt89okLqG46teao5LGbBhh1cK6PExvsJ89WBk=;
+        b=skoN+tXeOwsdIkRYdIqrUCNAWlh0iZ5Rr+RF+nhhWpTiB2r98SrB88M6RrkwkC1wmM
+         cTKgsNz/+7f5ih7ERCXXhFXXSOELLLJYtljXaDGo7rqnmtx+bWz9EGKSnFRo538sItPJ
+         o90LLlCNFIXP/VCk0z2mJd9zjpMbsZBeNWmwXsFM1EBet9rU/GloZM0LhzhvzrhyK+Fb
+         5YEuH1NArLoz386BsWbjCzl9TETZdNsnc1AWfikKPgopT8GoyuGZJvBRsu7k5Dy1twBs
+         stc8Xqca8he2kdpTp0FELHDIYQbqCqWgm0SBnuG+C5vyZrOTAtBppgfB5pz3IzCFH5ra
+         ssZg==
+X-Gm-Message-State: APjAAAXNJCeGkwx8GQSEbEl1zmzl0le4QbuLZlnW5NwZB4lVM+SzH9VW
+        bokDikhn8JaoQKS95xZqcqV5uQ==
+X-Google-Smtp-Source: APXvYqyuKVlYbA/gO/jV0TOhappla7urZF2qZpwFEIFS+3B9kmYiHjcMQGCZe64JSTYa6NMP7rK8uQ==
+X-Received: by 2002:adf:e34e:: with SMTP id n14mr45219052wrj.169.1560522746259;
+        Fri, 14 Jun 2019 07:32:26 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id t6sm4738007wmb.29.2019.06.14.07.32.24
+        by smtp.gmail.com with ESMTPSA id t6sm4738007wmb.29.2019.06.14.07.32.25
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 07:32:24 -0700 (PDT)
+        Fri, 14 Jun 2019 07:32:25 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] nvmem: meson-mx-efuse: update with SPDX Licence identifier
-Date:   Fri, 14 Jun 2019 15:32:17 +0100
-Message-Id: <20190614143221.32035-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 3/6] dt-bindings: fsl: scu: add ocotp binding
+Date:   Fri, 14 Jun 2019 15:32:18 +0100
+Message-Id: <20190614143221.32035-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190614143221.32035-1-srinivas.kandagatla@linaro.org>
 References: <20190614143221.32035-1-srinivas.kandagatla@linaro.org>
@@ -61,37 +61,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller(SCU), the ocotp controller is being controlled
+by the SCU, so Linux need use RPC to SCU for ocotp handling. This
+patch adds binding doc for i.MX8 SCU OCOTP driver.
+
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: devicetree@vger.kernel.org
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/meson-mx-efuse.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ .../bindings/arm/freescale/fsl,scu.txt        | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
-index a085563e39e3..2976aef87c82 100644
---- a/drivers/nvmem/meson-mx-efuse.c
-+++ b/drivers/nvmem/meson-mx-efuse.c
-@@ -1,16 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Amlogic Meson6, Meson8 and Meson8b eFuse Driver
-  *
-  * Copyright (c) 2017 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-- * more details.
-  */
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index 5d7dbabbb784..f378922906f6 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -133,6 +133,18 @@ RTC bindings based on SCU Message Protocol
+ Required properties:
+ - compatible: should be "fsl,imx8qxp-sc-rtc";
  
- #include <linux/bitfield.h>
++OCOTP bindings based on SCU Message Protocol
++------------------------------------------------------------
++Required properties:
++- compatible:		Should be "fsl,imx8qxp-scu-ocotp"
++- #address-cells:	Must be 1. Contains byte index
++- #size-cells:		Must be 1. Contains byte length
++
++Optional Child nodes:
++
++- Data cells of ocotp:
++  Detailed bindings are described in bindings/nvmem/nvmem.txt
++
+ Example (imx8qxp):
+ -------------
+ aliases {
+@@ -177,6 +189,16 @@ firmware {
+ 			...
+ 		};
+ 
++		ocotp: imx8qx-ocotp {
++			compatible = "fsl,imx8qxp-scu-ocotp";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			fec_mac0: mac@2c4 {
++				reg = <0x2c4 8>;
++			};
++		};
++
+ 		pd: imx8qx-pd {
+ 			compatible = "fsl,imx8qxp-scu-pd", "fsl,scu-pd";
+ 			#power-domain-cells = <1>;
 -- 
 2.21.0
 
