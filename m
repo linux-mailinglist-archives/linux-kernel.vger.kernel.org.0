@@ -2,80 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE06945E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F0345E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfFNNmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:42:39 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:22443 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727918AbfFNNmi (ORCPT
+        id S1728368AbfFNNmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:42:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46848 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727918AbfFNNmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:42:38 -0400
-Received: from localhost (varun.asicdesigners.com [10.193.190.56])
-        by stargate.chelsio.com (8.13.8/8.13.8) with ESMTP id x5EDfkhn025181;
-        Fri, 14 Jun 2019 06:41:47 -0700
-Date:   Fri, 14 Jun 2019 19:11:44 +0530
-From:   Varun Prakash <varun@chelsio.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mike Christie <mchristi@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        varun@chelsio.com
-Subject: Re: [PATCH -next] cxgbit: remove set but not used variable 'ppmax'
-Message-ID: <20190614134143.GA1630@chelsio.com>
-References: <20190614024413.110449-1-yuehaibing@huawei.com>
+        Fri, 14 Jun 2019 09:42:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=p3fdSrD6/f8+J2jfdFQoF6CbHZtdUBeGJFTtmYRKwYs=; b=C/ulpoOj8tF0DMXgykNNOW20X
+        4Mzm4QmvDAn+j9P8nuhJeRygIqeHOjSWDJY+0+OzKZ1QOxCd16AZBN9sn99xoafwCYsf0SxCAHd1A
+        5kjiC6LnXF8NWX9MRaaHLXEQtSc9mwQ2izH24oV42RKxLUWNbRkwBv0evHaMj4mAHfsOJWq/plo5j
+        c0YcPHAbAKviEhOul5kKUn8wvhSx2e1cRWynTF38u8QKSf61Y8QRiK3tgX92QtBeOrAr6sXrG97P6
+        l+62k64V9qA6RAM5SGJaJWO6SQnHIs6xo4GyoGp4XiUwjTllRucUNGOQaV5yoLXL9aV1vtwrDFKFh
+        1iC6nF3Lw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbmTE-0000Vp-AX; Fri, 14 Jun 2019 13:42:20 +0000
+Date:   Fri, 14 Jun 2019 06:42:20 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Roman Penyaev <rpenyaev@suse.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm/vmalloc: Check absolute error return from
+ vmap_[p4d|pud|pmd|pte]_range()
+Message-ID: <20190614134220.GL32656@bombadil.infradead.org>
+References: <1560413551-17460-1-git-send-email-anshuman.khandual@arm.com>
+ <7cc6a46c50c2008bfb968c5e48af5a49@suse.de>
+ <406afc57-5a77-a77c-7f71-df1e6837dae1@arm.com>
+ <20190613153141.GJ32656@bombadil.infradead.org>
+ <4b5c0b18-c670-3631-f47f-3f80bae8fe4b@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190614024413.110449-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <4b5c0b18-c670-3631-f47f-3f80bae8fe4b@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 02:44:13AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, Jun 14, 2019 at 10:57:42AM +0530, Anshuman Khandual wrote:
 > 
-> drivers/target/iscsi/cxgbit/cxgbit_ddp.c: In function 'cxgbit_ddp_init':
-> drivers/target/iscsi/cxgbit/cxgbit_ddp.c:303:15: warning:
->  variable 'ppmax' set but not used [-Wunused-but-set-variable]
 > 
-> It's not used since commit a248384e6420 ("cxgb4/libcxgb/cxgb4i/cxgbit:
-> enable eDRAM page pods for iSCSI")
+> On 06/13/2019 09:01 PM, Matthew Wilcox wrote:
+> > On Thu, Jun 13, 2019 at 08:51:17PM +0530, Anshuman Khandual wrote:
+> >> acceptable ? What we have currently is wrong where vmap_pmd_range() could
+> >> just wrap EBUSY as ENOMEM and send up the call chain.
+> > 
+> > It's not wrong.  We do it in lots of places.  Unless there's a caller
+> > which really needs to know the difference, it's often better than
+> > returning the "real error".
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/target/iscsi/cxgbit/cxgbit_ddp.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
-> index 1443ef045a5f..fe1be5feaf21 100644
-> --- a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
-> +++ b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
-> @@ -300,7 +300,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
->  	struct cxgb4_lld_info *lldi = &cdev->lldi;
->  	struct net_device *ndev = cdev->lldi.ports[0];
->  	struct cxgbi_tag_format tformat;
-> -	unsigned int ppmax;
->  	int ret, i;
->  
->  	if (!lldi->vr->iscsi.size) {
-> @@ -308,8 +307,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
->  		return -EACCES;
->  	}
->  
-> -	ppmax = lldi->vr->iscsi.size >> PPOD_SIZE_SHIFT;
-> -
->  	memset(&tformat, 0, sizeof(struct cxgbi_tag_format));
->  	for (i = 0; i < 4; i++)
->  		tformat.pgsz_order[i] = (lldi->iscsi_pgsz_order >> (i << 3))
-> 
+> I can understand the fact that because there are no active users of this
+> return code, the current situation has been alright. But then I fail to
+> understand how can EBUSY be made ENOMEM and let the caller to think that
+> vmap_page_rage() failed because of lack of memory when it is clearly not
+> the case. It is really surprising how it can be acceptable inside kernel
+> (init_mm) page table functions which need to be thorough enough.
 
-Acked-by: Varun Prakash <varun@chelsio.com>
-
-This patch is for net-next tree.
+It's a corollary of Steinbach's Guideline for Systems Programming.
+There is no possible way to handle this error because this error is
+never supposed to happen.  So we may as well return a different error
+that will still lead to the caller doing the right thing.
