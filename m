@@ -2,81 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFE24699C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ED20469AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:34:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbfFNUdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:33:42 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:56883 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbfFNUdh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:33:37 -0400
-Received: from localhost (unknown [37.205.120.66])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id B9D67200009;
-        Fri, 14 Jun 2019 20:33:30 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 22:33:27 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Ken Sloat <KSloat@aampglobal.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] watchdog: atmel: atmel-sama5d4-wdt: Disable
- watchdog on system suspend
-Message-ID: <20190614203327.GE3369@piout.net>
-References: <20190614125310.29458-1-ksloat@aampglobal.com>
- <20190614164609.GA29814@roeck-us.net>
- <BL0PR07MB4115E99D065FD9BEA4C43BB5ADEE0@BL0PR07MB4115.namprd07.prod.outlook.com>
- <20190614180826.GD3369@piout.net>
- <BL0PR07MB4115D5ECDEDCC028197637E5ADEE0@BL0PR07MB4115.namprd07.prod.outlook.com>
+        id S1727963AbfFNUed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:34:33 -0400
+Received: from ms.lwn.net ([45.79.88.28]:54026 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbfFNUeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:34:31 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 20793128A;
+        Fri, 14 Jun 2019 20:34:30 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 14:34:29 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org
+Subject: Re: [PATCH v4 02/28] docs: arm64: convert docs to ReST and rename
+ to .rst
+Message-ID: <20190614143429.640226ec@lwn.net>
+In-Reply-To: <20190614141041.335a76e5@lwn.net>
+References: <cover.1560361364.git.mchehab+samsung@kernel.org>
+        <8320e8e871660bf9fc426bc688f4808a1a7aa031.1560361364.git.mchehab+samsung@kernel.org>
+        <20190614141041.335a76e5@lwn.net>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL0PR07MB4115D5ECDEDCC028197637E5ADEE0@BL0PR07MB4115.namprd07.prod.outlook.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/2019 18:43:22+0000, Ken Sloat wrote:
-> Well I'm a little confused still because there are two separate comments
-> in these statements. The first within resume implies that the init should
-> be called because we might have lost register values for some reason
-> unexplained.
+On Fri, 14 Jun 2019 14:10:41 -0600
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-The sama5d2 has a suspend mode where power to the core is completely
-cut. Only a few IPs remain powered (in the backup power domain).
-Unfortunately, the watchdog is not in that domain and may lose its
-registers.
-
-> Then within the init it says that the bootloader might have
-> modified the registers so we should check them and then update it or
-> otherwise disable it. I'm not trying to pick apart the logic or anything, 
-> I'm just readily assuming it is good as it was already reviewed before. 
+> On Wed, 12 Jun 2019 14:52:38 -0300
+> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 > 
-
-The bootloaders may have started the watchdog (this makes sense if you
-really care about reliability) and so we need to be careful to keep the
-proper parameters.
-
-> So without digging into that too much, if we don't know if any of the runtime
-> situations above might have occurred, then isn't it best to leave my patch
-> as is? Yes this has the side effect of resetting the timer count, but if 
-> the init call is needed and we don't have any way to know if any
-> of the situations occurred, then we have no choice right?
+> > The documentation is in a format that is very close to ReST format.
+> > 
+> > The conversion is actually:
+> >   - add blank lines in order to identify paragraphs;
+> >   - fixing tables markups;
+> >   - adding some lists markups;
+> >   - marking literal blocks;
+> >   - adjust some title markups.
+> > 
+> > At its new index.rst, let's add a :orphan: while this is not linked to
+> > the main index.rst file, in order to avoid build warnings.  
 > 
+> This one doesn't apply to docs-next, since there's a bunch of stuff in
+> linux-next that I don't have.  I'd suggest that it either go by way of an
+> ARM tree or send it my way again after the ARM changes go upstream.
 
-Until we can differentiate between suspend modes, we have no other
-choice.
+Actually, nevermind.  Pulling my tree forward to 5.2-rc4 resolved the
+issues here.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+
+jon
