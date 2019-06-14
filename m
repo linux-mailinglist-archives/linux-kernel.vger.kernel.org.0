@@ -2,60 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D966D46547
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C044654C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfFNRCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:02:42 -0400
-Received: from ms.lwn.net ([45.79.88.28]:53200 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725814AbfFNRCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:02:41 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 38613128A;
-        Fri, 14 Jun 2019 17:02:41 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 11:02:40 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Documentation: Remove duplicate x86 index entry
-Message-ID: <20190614110240.4a69fd6e@lwn.net>
-In-Reply-To: <alpine.DEB.2.21.1906140902050.1791@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1906140902050.1791@nanos.tec.linutronix.de>
-Organization: LWN.net
+        id S1726475AbfFNRE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:04:59 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46509 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfFNRE6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:04:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v9so1867892pgr.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 10:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=GRNhWBdNTilur/4Qu0VKxMp8RHH2Xu/iee1oWBanHcQ=;
+        b=Qnx/fCIVfWiWASj1BfPRmpagCrJESCLnbzOnBc+UHuB7cHWif0IVEz9Scq1PY4sOPa
+         LYsNN2IgRPUMtrZYbx4LxU6tScbnCsCWPDXg65TkQ1LzaWJ7mMsI+pnfUBAdU/vmxW5K
+         XU6T/Ku592e7S9+k0xRE5vsFZxS04ZzR/EY/pjIGGs0iSxzw1rbdWZOYaTCPM2jqJ4Qg
+         nbqVm2/XlJY3x1/5lmX4rDO3jNiPEnKC9n3rz0YEiW4Rasx3YTPVGbCwCd4txEMzqu8p
+         Iqo9+V9U/472EEGlT2arMhZDYMBQkiA33FRYpciTYnUb6ok6MYm3syLElTOzoVzKykSL
+         lMPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=GRNhWBdNTilur/4Qu0VKxMp8RHH2Xu/iee1oWBanHcQ=;
+        b=AaFJR7ueNdUrjqqNM00DUXR3lFioAdKhtaJzmvEfM2RhfHa0l4eXLQ88pHXVAdnzXS
+         5VtLrCxB9pwxx6bS/SrIi+qJVMf+XW9vjcgxWyXcESBE080nXchlbW2ONcGMtoy9LV3/
+         hoT5Ci2BABZVTRj3mKK1L3iPIRhzD1/yb6oaGuzzigl6+DBV/2wUmOaSkv7d7mEq5qlP
+         EFNi8Hk90AEjOmyu1170Zaru7Y/TdW5rI/Pgc+/2YU4w5HyMMgGfLxM5nArJAbAVjueV
+         eCAskW62C1yeHueSAjYE7WTJ04DdfnwoqQCC9jDHVCH2sZ6F4AeWEzVSnRWIuZAtpw9Z
+         ea+A==
+X-Gm-Message-State: APjAAAUaCS8wcQBz6YlWTmLj434S7uMQtbfowrj2K93wjl2Wur2Xe0yX
+        KYsryfhiXSTHDd1Ud8hPz/yt
+X-Google-Smtp-Source: APXvYqydptQgfMZN2eXp0DabgkT3g1XVFZjDoA9VlZwMca7DYvYxnhdTYKAHeYylQKIGsw2h9X4FtA==
+X-Received: by 2002:a62:1515:: with SMTP id 21mr21874961pfv.100.1560531898101;
+        Fri, 14 Jun 2019 10:04:58 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:6298:46a1:bdd9:1134:3bdd:7ab4])
+        by smtp.gmail.com with ESMTPSA id n1sm3061706pgv.15.2019.06.14.10.04.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Jun 2019 10:04:57 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 22:34:50 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: arm: Convert Actions Semi bindings to
+ jsonschema
+Message-ID: <20190614170450.GA29654@Mani-XPS-13-9360>
+References: <20190517153223.7650-1-robh@kernel.org>
+ <20190613224435.GA32572@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613224435.GA32572@bogus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Jun 2019 09:02:49 +0200 (CEST)
-Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> x86 got added twice to the index via the RST conversion and the MDS
-> documentation changes. Remove one instance.
+On Thu, Jun 13, 2019 at 04:44:35PM -0600, Rob Herring wrote:
+> On Fri, May 17, 2019 at 10:32:23AM -0500, Rob Herring wrote:
+> > Convert Actions Semi SoC bindings to DT schema format using json-schema.
+> > 
+> > Cc: "Andreas Färber" <afaerber@suse.de>
+> > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> > v3:
+> > - update MAINTAINERS
+> > 
+> >  .../devicetree/bindings/arm/actions.txt       | 56 -------------------
+> >  .../devicetree/bindings/arm/actions.yaml      | 38 +++++++++++++
+> >  MAINTAINERS                                   |  2 +-
+> >  3 files changed, 39 insertions(+), 57 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/arm/actions.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/actions.yaml
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  Documentation/index.rst |    1 -
->  1 file changed, 1 deletion(-)
+> Ping. Please apply or modify this how you'd prefer. I'm not going to 
+> keep respinning this.
 > 
-> --- a/Documentation/index.rst
-> +++ b/Documentation/index.rst
-> @@ -112,7 +112,6 @@ implementation.
->  .. toctree::
->     :maxdepth: 2
->  
-> -   x86/index
->     sh/index
->     x86/index
 
-If one is good, two must be better, right? :)
+Sorry for that Rob.
 
-Applied, thanks.
+Andreas, are you going to take this patch? Else I'll pick it up (If you
+want me to do the PR for next cycle)
 
-jon
+Thanks,
+Mani
+
+> Rob
