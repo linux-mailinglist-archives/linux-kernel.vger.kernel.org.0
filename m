@@ -2,91 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B2045726
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 539664574E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfFNIP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 04:15:57 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51294 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfFNIPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:15:54 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1AE631A05E2;
-        Fri, 14 Jun 2019 10:15:52 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0ABC71A05EF;
-        Fri, 14 Jun 2019 10:15:46 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 536DB4029F;
-        Fri, 14 Jun 2019 16:15:38 +0800 (SGT)
-From:   yibin.gong@nxp.com
-To:     robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com, mark.rutland@arm.com, vkoul@kernel.org,
-        dan.j.williams@intel.com, angelo@sysam.it
-Cc:     linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH v4 6/6] ARM: dts: imx7ulp: add edma device node
-Date:   Fri, 14 Jun 2019 16:17:24 +0800
-Message-Id: <20190614081724.13366-7-yibin.gong@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614081724.13366-1-yibin.gong@nxp.com>
-References: <20190614081724.13366-1-yibin.gong@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726581AbfFNISZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 04:18:25 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37557 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfFNISZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:18:25 -0400
+X-Originating-IP: 37.177.88.254
+Received: from uno.localdomain (unknown [37.177.88.254])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 3EF2DE0005;
+        Fri, 14 Jun 2019 08:18:07 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 10:19:13 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/20] drm: rcar-du: kms: Update CMM in atomic commit tail
+Message-ID: <20190614081913.n5yxpotto5fzl7sh@uno.localdomain>
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
+ <20190606142220.1392-21-jacopo+renesas@jmondi.org>
+ <20190607120633.GI7593@pendragon.ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cvgh7guoqqbi6mcf"
+Content-Disposition: inline
+In-Reply-To: <20190607120633.GI7593@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robin Gong <yibin.gong@nxp.com>
 
-Add edma device node in dts.
+--cvgh7guoqqbi6mcf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
----
- arch/arm/boot/dts/imx7ulp.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Hi Laurent,
 
-diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
-index 8fb9559..2221c95 100644
---- a/arch/arm/boot/dts/imx7ulp.dtsi
-+++ b/arch/arm/boot/dts/imx7ulp.dtsi
-@@ -100,6 +100,34 @@
- 		reg = <0x40000000 0x800000>;
- 		ranges;
- 
-+		edma1: dma-controller@40080000 {
-+			#dma-cells = <2>;
-+			compatible = "fsl,imx7ulp-edma";
-+			reg = <0x40080000 0x2000>,
-+				<0x40210000 0x1000>;
-+			dma-channels = <32>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "dma", "dmamux0";
-+			clocks = <&pcc2 IMX7ULP_CLK_DMA1>,
-+				 <&pcc2 IMX7ULP_CLK_DMA_MUX1>;
-+		};
-+
- 		lpuart4: serial@402d0000 {
- 			compatible = "fsl,imx7ulp-lpuart";
- 			reg = <0x402d0000 0x1000>;
--- 
-2.7.4
+On Fri, Jun 07, 2019 at 03:06:33PM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
+>
+> On Thu, Jun 06, 2019 at 04:22:20PM +0200, Jacopo Mondi wrote:
+> > Update CMM settings at in the atomic commit tail helper method.
+> >
+> > The CMM is updated with new gamma values provided to the driver
+> > in the GAMMA_LUT blob property.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 36 +++++++++++++++++++++++++++
+> >  1 file changed, 36 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > index 5a910a04e1d9..29a2020a46b5 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > @@ -21,6 +21,7 @@
+> >  #include <linux/of_platform.h>
+> >  #include <linux/wait.h>
+> >
+> > +#include "rcar_cmm.h"
+> >  #include "rcar_du_crtc.h"
+> >  #include "rcar_du_drv.h"
+> >  #include "rcar_du_encoder.h"
+> > @@ -367,6 +368,38 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+> >   * Atomic Check and Update
+> >   */
+> >
+> > +static void rcar_du_atomic_commit_update_cmm(struct drm_crtc *crtc,
+> > +					     struct drm_crtc_state *old_state)
+> > +{
+> > +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+> > +	struct rcar_cmm_config cmm_config = {};
+> > +
+> > +	if (!rcrtc->cmm || !crtc->state->color_mgmt_changed)
+> > +		return;
+> > +
+> > +	if (!crtc->state->gamma_lut) {
+> > +		cmm_config.lut.enable = false;
+> > +		rcar_cmm_setup(rcrtc->cmm, &cmm_config);
+> > +
+> > +		return;
+> > +	}
+> > +
+> > +	cmm_config.lut.enable = true;
+> > +	cmm_config.lut.table = (struct drm_color_lut *)
+> > +			       crtc->state->gamma_lut->data;
+> > +
+> > +	/* Set LUT table size to 0 if entries should not be updated. */
+> > +	if (!old_state->gamma_lut ||
+> > +	    (old_state->gamma_lut->base.id !=
+> > +	    crtc->state->gamma_lut->base.id))
+> > +		cmm_config.lut.size = crtc->state->gamma_lut->length
+> > +				    / sizeof(cmm_config.lut.table[0]);
+>
+> Do you need to call rcar_cmm_setup() at all in this case ?
+>
 
+Do you mean in case the lut.size field is set to 0 ?
+I considered it useful when the CMM has to be re-enabled without
+updateing the LUT table entries? It is not required in your opinion?
+
+Thanks
+   j
+
+> > +	else
+> > +		cmm_config.lut.size = 0;
+> > +
+> > +	rcar_cmm_setup(rcrtc->cmm, &cmm_config);
+> > +}
+> > +
+> >  static int rcar_du_atomic_check(struct drm_device *dev,
+> >  				struct drm_atomic_state *state)
+> >  {
+> > @@ -409,6 +442,9 @@ static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
+> >  			rcdu->dpad1_source = rcrtc->index;
+> >  	}
+> >
+> > +	for_each_old_crtc_in_state(old_state, crtc, crtc_state, i)
+> > +		rcar_du_atomic_commit_update_cmm(crtc, crtc_state);
+> > +
+> >  	/* Apply the atomic update. */
+> >  	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+> >  	drm_atomic_helper_commit_planes(dev, old_state,
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--cvgh7guoqqbi6mcf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DWIEACgkQcjQGjxah
+VjzwpQ//WMAXXg0Iqe84pOeR3FpXuQ4vkqCDArzdNFG5VcdNm4npoe6ZnjnSy7Ae
+dPhB8oQVdcRmjmGbNvre5amsEmxONrfcGwiyzCJhoW8T28sztdv0LGzSoTHV6ejt
+0xY2qG02Ek0UPOWwiCMzvfxCK+hJEbXEukD31pDOoVc1EoB3P7FEI1NLe5MJZVKD
+Encdf+0v8nCnbrRG2oWCvBp3CJy5UuBLbu+EuAr6rawekdHYulJCjtolDqKQO7jr
+fPMR5vfNm2MsWr7em2vdeI2O/zmPw5ixIWyauAz4Kzz2CC+7elXSFona/gMYpry0
+xKKJso48zJ3NcZlwjDhXDtKuu5vE21r4qmvVmxGFFphxGdXIIudOWqIUo+0N+2Jr
+fQKK7HpGK4XsG7Vv/lJkgDEntZYBRj99QqE+2u0fzbAryUv9Sl//RlHBxUZRGdl7
+Vbp3QdCgJZvS7qGsR6s1dMi5lCfWbiP8k3nQGb7MaW1hWmjTeUSswSCdorOxWSfZ
+y4SVNfGKP7g+gWaeBZidUrDiveV8hz8RaB3a84LTPC0UYd78VYJLHUwmgKGtd1Ti
+ipIfzhCoY8UcHJn/3EiiuiQJMd4tiw6b/vkB79fdPp8lMTDlAaglS3uPSW1REsAc
+OS0k2lCyh+L/sW0um5QPM8DeLUa3psCuDgzi0u043tLe1pqFnDk=
+=jqfj
+-----END PGP SIGNATURE-----
+
+--cvgh7guoqqbi6mcf--
