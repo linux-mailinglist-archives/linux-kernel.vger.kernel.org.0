@@ -2,85 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74BA3458A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC26458AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfFNJ3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:29:50 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:37878 "EHLO gloria.sntech.de"
+        id S1726930AbfFNJcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:32:48 -0400
+Received: from verein.lst.de ([213.95.11.211]:45475 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbfFNJ3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:29:49 -0400
-Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hbiWc-00044s-Js; Fri, 14 Jun 2019 11:29:34 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "wens@csie.org" <wens@csie.org>,
-        "hjc@rock-chips.com" <hjc@rock-chips.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] drm/rockchip: Enable DRM InfoFrame support on RK3328 and RK3399
-Date:   Fri, 14 Jun 2019 11:29:33 +0200
-Message-ID: <4131981.039HHiXCja@phil>
-In-Reply-To: <VI1PR03MB42062F51FD88AEB6DADD8734AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
-References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com> <VI1PR03MB42062F51FD88AEB6DADD8734AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
+        id S1726083AbfFNJcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:32:48 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id F075D227A82; Fri, 14 Jun 2019 11:32:18 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 11:32:18 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Ungerer <gerg@snapgear.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ m68knommu tree
+Message-ID: <20190614093218.GA17214@lst.de>
+References: <20190614190606.559dc8dc@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614190606.559dc8dc@canb.auug.org.au>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sonntag, 26. Mai 2019, 23:20:05 CEST schrieb Jonas Karlman:
-> This patch enables Dynamic Range and Mastering InfoFrame on RK3328 and RK3399.
+On Fri, Jun 14, 2019 at 07:06:06PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Cc: Sandy Huang <hjc@rock-chips.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-> ---
->  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Today's linux-next merge of the akpm-current tree got a conflict in:
 > 
-> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> index 4cdc9f86c2e5..1f31f3726f04 100644
-> --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> @@ -405,6 +405,7 @@ static const struct dw_hdmi_plat_data rk3328_hdmi_drv_data = {
->  	.phy_ops = &rk3328_hdmi_phy_ops,
->  	.phy_name = "inno_dw_hdmi_phy2",
->  	.phy_force_vendor = true,
-> +	.drm_infoframe = true,
->  };
->  
->  static struct rockchip_hdmi_chip_data rk3399_chip_data = {
-> @@ -419,6 +420,7 @@ static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
->  	.cur_ctr    = rockchip_cur_ctr,
->  	.phy_config = rockchip_phy_config,
->  	.phy_data = &rk3399_chip_data,
-> +	.drm_infoframe = true,
->  };
->  
->  static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
-> -- 
-> 2.17.1
+>   fs/binfmt_flat.c
 > 
+> between commit:
 > 
+>   6071ecd874ac ("binfmt_flat: add endianess annotations")
+> 
+> from the m68knommu tree and commit:
+> 
+>   db543c385059 ("fs/binfmt_flat.c: remove set but not used variable 'inode'")
 
-
-
-
+Maybe this should better be added to the maintainer tree as well..
