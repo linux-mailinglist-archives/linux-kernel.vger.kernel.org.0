@@ -2,105 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 047F1459DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EABB7459C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfFNKCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:02:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59352 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727498AbfFNKCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:02:10 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 057EB3087930;
-        Fri, 14 Jun 2019 10:02:10 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-252.ams2.redhat.com [10.36.116.252])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 58EA85D9C3;
-        Fri, 14 Jun 2019 10:02:04 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>
-Subject: [PATCH v1 6/6] drivers/base/memory.c: Get rid of find_memory_block_hinted()
-Date:   Fri, 14 Jun 2019 12:01:14 +0200
-Message-Id: <20190614100114.311-7-david@redhat.com>
-In-Reply-To: <20190614100114.311-1-david@redhat.com>
-References: <20190614100114.311-1-david@redhat.com>
+        id S1727348AbfFNKA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:00:27 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56833 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfFNKA0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:00:26 -0400
+X-Originating-IP: 37.177.88.254
+Received: from uno.localdomain (unknown [37.177.88.254])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id CD4C9C0002;
+        Fri, 14 Jun 2019 10:00:20 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 12:01:33 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v5 03/10] [media] marvell-ccic: don't generate EOF on
+ parallel bus
+Message-ID: <20190614100133.euxhdaktlemnd2ep@uno.localdomain>
+References: <20190505140031.9636-1-lkundrak@v3.sk>
+ <20190505140031.9636-4-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 14 Jun 2019 10:02:10 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mmzrrql2dydy5u5w"
+Content-Disposition: inline
+In-Reply-To: <20190505140031.9636-4-lkundrak@v3.sk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No longer needed, let's remove it.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- drivers/base/memory.c  | 12 +++---------
- include/linux/memory.h |  2 --
- 2 files changed, 3 insertions(+), 11 deletions(-)
+--mmzrrql2dydy5u5w
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 4f2e2f3b3d78..42e5a7493fe8 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -606,14 +606,6 @@ static struct memory_block *find_memory_block_by_id(unsigned long block_id,
- 	return to_memory_block(dev);
- }
- 
--struct memory_block *find_memory_block_hinted(struct mem_section *section,
--					      struct memory_block *hint)
--{
--	unsigned long block_id = base_memory_block_id(__section_nr(section));
--
--	return find_memory_block_by_id(block_id, hint);
--}
--
- /*
-  * For now, we have a linear search to go find the appropriate
-  * memory_block corresponding to a particular phys_index. If
-@@ -624,7 +616,9 @@ struct memory_block *find_memory_block_hinted(struct mem_section *section,
-  */
- struct memory_block *find_memory_block(struct mem_section *section)
- {
--	return find_memory_block_hinted(section, NULL);
-+	unsigned long block_id = base_memory_block_id(__section_nr(section));
-+
-+	return find_memory_block_by_id(block_id, hint);
- }
- 
- static struct attribute *memory_memblk_attrs[] = {
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index b3b388775a30..02e633f3ede0 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -116,8 +116,6 @@ void remove_memory_block_devices(unsigned long start, unsigned long size);
- extern int memory_dev_init(void);
- extern int memory_notify(unsigned long val, void *v);
- extern int memory_isolate_notify(unsigned long val, void *v);
--extern struct memory_block *find_memory_block_hinted(struct mem_section *,
--							struct memory_block *);
- extern struct memory_block *find_memory_block(struct mem_section *);
- typedef int (*walk_memory_blocks_func_t)(struct memory_block *, void *);
- extern int walk_memory_blocks(unsigned long start, unsigned long size,
--- 
-2.21.0
+Hi Lubomir,
 
+On Sun, May 05, 2019 at 04:00:24PM +0200, Lubomir Rintel wrote:
+> The commit 05fed81625bf ("[media] marvell-ccic: add MIPI support for
+> marvell-ccic driver") that claimed to add CSI2 turned on C0_EOF_VSYNC for
+> parallel bus without a very good explanation.
+>
+> That broke camera on OLPC XO-1.75 which precisely uses a sensor on a
+> parallel bus. Revert that chunk.
+>
+> Tested on an OLPC XO-1.75.
+>
+> Fixes: 05fed81625bf755cc67c5864cdfd18b69ea828d1
+
+Use the proper fixes format here
+Fixes: 05fed81625bf ("[media] marvell-ccic: add MIPI support for marvell-ccic driver")
+
+I have this simple entry in my git config:
+
+[pretty]
+	fixes = Fixes: %h (\"%s\")
+
+With
+        abbrev=12
+
+in the [core] section.
+
+You can now
+$git show 05fed81625bf755cc67c5864cdfd18b69ea828d1 --pretty=fixes
+
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  drivers/media/platform/marvell-ccic/mcam-core.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>
+> diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/media/platform/marvell-ccic/mcam-core.c
+> index d97f39bde9bd6..d24e5b7a3bc52 100644
+> --- a/drivers/media/platform/marvell-ccic/mcam-core.c
+> +++ b/drivers/media/platform/marvell-ccic/mcam-core.c
+> @@ -792,12 +792,6 @@ static void mcam_ctlr_image(struct mcam_camera *cam)
+>  	 * Make sure it knows we want to use hsync/vsync.
+>  	 */
+>  	mcam_reg_write_mask(cam, REG_CTRL0, C0_SIF_HVSYNC, C0_SIFM_MASK);
+> -	/*
+> -	 * This field controls the generation of EOF(DVP only)
+> -	 */
+> -	if (cam->bus_type != V4L2_MBUS_CSI2_DPHY)
+> -		mcam_reg_set_bit(cam, REG_CTRL0,
+> -				C0_EOF_VSYNC | C0_VEDGE_CTRL);
+
+This change seems in facts unrelated to the original patch. As you
+remove all usages of C0_EOF_VSYNC and C0_VEDGE_CTRL you can drop their
+definition in mcam-core.h.
+
+As I've said, the change seems unrelated to CSI-2 support and could
+probably be salfey dropped, but pay attention, you're also dropping
+C0_VEDGE_CTRL, which seems to enable VSYNC detection on the signal
+falling edge. Is this intentional ?
+
+Thanks
+   j
+
+>  }
+>
+>
+> --
+> 2.21.0
+>
+
+--mmzrrql2dydy5u5w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DcH0ACgkQcjQGjxah
+VjyxcRAAoBs1nLSqKz9dDuh1ExoER+gBlhUSp11xMqI770WvPzLLiSgVImxYpd3f
+JfLjOEzypnmiitZ8+V6+erHY0uTNnQaVgeaZpkLSe+uLBNqxzcMioFWoxBEgPDSq
+Uo1GYLMJ/bXEb2gmgH2/5EOjLME6fGyOlsUbU//ft0eAvOmS8qTA3z1cmvpRfume
+a+e2qav1MUXZ5EoImgWSSjn6YS8Epr96uKWg+lmoYzUaSuFJ8MvY7dc9Cq+yn5lz
+EVDCHkA7JMvfA6j1sbiPMwN+kB1QCKp8c2+IfQFQAo2A/M7MyYOl9oz45YOkqNKL
+Ub6olMo3EN6ZRePt2ooFLOuUJNLwnbgB4g4TQ8QlNW1dMrT0D2eRZw01sw6Sh6Qu
+xqmfrf9Jgjei1epV1/8KPNBUOTs/tr/AJGn00SSgpd/TcSnXTguPGZbkhvxs/1Un
+8A2pF8y1pR8l3FDbGkwWg1HzcbReyVrPmpTG2F+Z72SGAVsDDmOfapRi9++1owNf
+DTNjRshLw2fjmjFvrTgdyKEPJ7ENv1I57CLC7OdkdPf4uISeXfvuMkU2OIgP5j9x
+3Wf2WGumaR8U1uMQy98V5JYJzA+pNKhgzSlK6TWQQDCdpUt+LwlWFVjv4LmT1EQ/
+BnSdMDXuA1rBQ32TtrBIqVk9oDOrk51uXGuo5c48wz7htS8Tu4M=
+=DOfD
+-----END PGP SIGNATURE-----
+
+--mmzrrql2dydy5u5w--
