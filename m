@@ -2,200 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB1D346242
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B24546249
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbfFNPNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:13:53 -0400
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:50852 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725808AbfFNPNx (ORCPT
+        id S1726366AbfFNPOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:14:39 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52440 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725822AbfFNPOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:13:53 -0400
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5EF3R82019686;
-        Fri, 14 Jun 2019 08:13:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=proofpoint;
- bh=EvtLGW0QPy8bCBPyv9XjVufr+PVjVP0YmApk8hR39II=;
- b=RacRPZB6foCOx40nQWGMJgoji2r+YILZGdqquwKm+yzz6Hb0g1LNX5FLYoO7zospny/R
- zCQaNFFTWIEfjHELdl4rvLCeOID+9DI9lMq37ytAzbptlBax5ksSrTE4LIrB3SApwkG0
- i4dXH1pTOn+w1c1MCc/Za6nVknMYcWTICorsfGpQJuemwiGwUiZXYgjR87NQjHAXYneX
- pNi7ka3cLTY+e2v9aXc6TMvr2JLBHKZR4WgAbi1yJn9hx2E6FayswH8wXv9UO1sXi8ld
- Cu5n5g0TAI4DjkCqT6P+qso/SLVEKJ2ZB9fWkPXM33gWS05bq5Hkuj58rTqAAOJKqRjK RA== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=piotrs@cadence.com
-Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp2052.outbound.protection.outlook.com [104.47.34.52])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2t33th1w81-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Jun 2019 08:13:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
+        Fri, 14 Jun 2019 11:14:37 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5EF49Zk022999;
+        Fri, 14 Jun 2019 08:13:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=yryuILdBwZnK1CyKNgOJsebOGk8n7E1Kyf0D5bEn2Mw=;
+ b=d5LN2vyrypTLi75HEw6JkGoef7T87KdMGcTlHwxT513JsnymgUnrRg2JI4UyjfISLFa+
+ 2pgxKD3ZQTP2xyF+5rpgnkzD04z/q+bMS6WyHgzUIsglkQx/gmjEbHy6mjtrTRJEb+Tk
+ V0oguA5UebTojN3zxMuL1eQlejX5JB+Nu9Q= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t4ds0r2aw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 14 Jun 2019 08:13:25 -0700
+Received: from ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) by
+ ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 14 Jun 2019 08:13:24 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Fri, 14 Jun 2019 08:13:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EvtLGW0QPy8bCBPyv9XjVufr+PVjVP0YmApk8hR39II=;
- b=pbKdAEYb2zPzfzWa9Cx9LSrn9xFCdlBIGZfRZPFcwC5C1eHVxWDcQZsVaPaQBTOu7rKnYpfV5KvjIxOBSjBe1BtYNP01TAHIe66CcseSovpotMc6En4OqKPnbPq6ufHXvRxyWUoR1vsidrmPzwiihawkkZlxsInvXLy2DEk2cng=
-Received: from BN8PR07CA0003.namprd07.prod.outlook.com (2603:10b6:408:ac::16)
- by BY5PR07MB6966.namprd07.prod.outlook.com (2603:10b6:a03:1e7::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1987.11; Fri, 14 Jun
- 2019 15:13:26 +0000
-Received: from CO1NAM05FT039.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::205) by BN8PR07CA0003.outlook.office365.com
- (2603:10b6:408:ac::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1965.12 via Frontend
- Transport; Fri, 14 Jun 2019 15:13:25 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 199.43.4.28 as permitted sender)
-Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- CO1NAM05FT039.mail.protection.outlook.com (10.152.96.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2008.7 via Frontend Transport; Fri, 14 Jun 2019 15:13:23 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x5EFDIUh009921
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 14 Jun 2019 11:13:20 -0400
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Fri, 14 Jun 2019 17:13:17 +0200
-Received: from lvlogina.cadence.com (10.165.176.102) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Fri, 14 Jun 2019 17:13:17 +0200
-Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x5EFDH45006464;
-        Fri, 14 Jun 2019 16:13:17 +0100
-Received: (from piotrs@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x5EFDGen006413;
-        Fri, 14 Jun 2019 16:13:16 +0100
-From:   Piotr Sroka <piotrs@cadence.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     David Woodhouse <dwmw2@infradead.org>,
-        BrianNorris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        "Marek Vasut" <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Piotr Sroka <piotrs@cadence.com>
-Subject: [v3 2/2] dt-bindings: nand: Add Cadence NAND controller driver
-Date:   Fri, 14 Jun 2019 16:13:01 +0100
-Message-ID: <20190614151301.5371-1-piotrs@cadence.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20190614150956.31244-1-piotrs@cadence.com>
-References: <20190614150956.31244-1-piotrs@cadence.com>
+ bh=yryuILdBwZnK1CyKNgOJsebOGk8n7E1Kyf0D5bEn2Mw=;
+ b=dbBmwI8obqTc+QVopdmIMII1d1jfkYO/6+GXwmioxqMGuXrE8gHW+fWFvHmwWb3JcczdIo92Shn+L6n/gK7h1F7JXAsVziPbLX5ZqwIJHfOQCSoy9x1miyMws6/n9+2LlDuEpHdpUHtgA95ls8oknYAAZJ0wyW0bB2Yvv/djyX0=
+Received: from DM5PR15MB1163.namprd15.prod.outlook.com (10.173.215.141) by
+ DM5PR15MB1706.namprd15.prod.outlook.com (10.174.108.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Fri, 14 Jun 2019 15:13:23 +0000
+Received: from DM5PR15MB1163.namprd15.prod.outlook.com
+ ([fe80::38aa:95ca:d50f:9745]) by DM5PR15MB1163.namprd15.prod.outlook.com
+ ([fe80::38aa:95ca:d50f:9745%3]) with mapi id 15.20.1987.012; Fri, 14 Jun 2019
+ 15:13:23 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Josh Poimboeuf <jpoimboe@redhat.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Kairui Song <kasong@redhat.com>
+Subject: Re: [PATCH 8/9] x86/bpf: Convert asm comments to AT&T syntax
+Thread-Topic: [PATCH 8/9] x86/bpf: Convert asm comments to AT&T syntax
+Thread-Index: AQHVIetLPIU2acwXW0W72I9U+7dGQaaZ7m6AgADXPYCAAH3nAA==
+Date:   Fri, 14 Jun 2019 15:13:23 +0000
+Message-ID: <38F47DBB-F98F-4C12-B7D0-A363085065F3@fb.com>
+References: <cover.1560431531.git.jpoimboe@redhat.com>
+ <77fe02f7d575091b06f68f8eed256da94aee653f.1560431531.git.jpoimboe@redhat.com>
+ <E8372F56-269A-48A4-B80B-14FA664F8D41@fb.com>
+ <20190614074245.GS3436@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190614074245.GS3436@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::2:e3f9]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9f9e4c4c-e9a3-4751-f78e-08d6f0dad7e8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM5PR15MB1706;
+x-ms-traffictypediagnostic: DM5PR15MB1706:
+x-microsoft-antispam-prvs: <DM5PR15MB17065AAF7DB3C386288FD2CEB3EE0@DM5PR15MB1706.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0068C7E410
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(366004)(346002)(396003)(136003)(199004)(189003)(6916009)(2616005)(305945005)(476003)(11346002)(46003)(71200400001)(71190400001)(486006)(54906003)(14454004)(446003)(316002)(81156014)(36756003)(68736007)(25786009)(2906002)(81166006)(8676002)(33656002)(6246003)(6436002)(256004)(229853002)(5660300002)(53936002)(57306001)(99286004)(50226002)(4326008)(6116002)(6486002)(6512007)(4744005)(91956017)(186003)(86362001)(7736002)(8936002)(76176011)(66446008)(66476007)(64756008)(53546011)(102836004)(478600001)(66946007)(73956011)(66556008)(6506007)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1706;H:DM5PR15MB1163.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UOGSl6SMQCB63dXemZtpAuYVDTrfircjD8Qe550uKjvR77DeuFnM2qdxMLM9ZS53wf4wfQ1e7+K91gx4Ph1G4KsXXUOx20aNrlHyqTAiwhkPJ9I7MTawHzYuC2CotYFU627B5DpVYbYo+R2c63nacj0CrU3zskiZqcCL84PPE5Fnra2CK5EpRo1w/P4v3vZiyvjQKJ2sQeS0vjue9CZKTu5KEllsY+XN6myd0d8ElbYJHuXhO3COKqSdKAxX24lxBgFLLKfeLzrEcMSB+15ndtWQC9q6oycVZnndfAqp2X9SOoBIqiAB+bAOm/tLBGyLD3tuJehq3DKCFG1lCh8W/6GiemwKGrKgnXzLzEwQel+PSKakzUAz2748Zzh7Tsi/FR9Alrt45wd84xcrY0YrPI7TQ7JnIb5+KSeMfXd0PRc=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2A1DC0A2427F574BB2C824E37D7C26A4@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(396003)(39850400004)(136003)(346002)(376002)(2980300002)(36092001)(199004)(189003)(6916009)(50466002)(70206006)(86362001)(305945005)(107886003)(5660300002)(4326008)(70586007)(50226002)(8676002)(81156014)(81166006)(8936002)(1076003)(87636003)(26005)(51416003)(26826003)(478600001)(53936002)(186003)(76176011)(126002)(2906002)(2351001)(48376002)(76130400001)(2616005)(476003)(11346002)(446003)(426003)(36756003)(486006)(7416002)(336012)(16586007)(316002)(42186006)(54906003)(69596002)(6666004)(356004)(47776003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR07MB6966;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 97527be1-c8bc-473b-3c44-08d6f0dad802
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:BY5PR07MB6966;
-X-MS-TrafficTypeDiagnostic: BY5PR07MB6966:
-X-Microsoft-Antispam-PRVS: <BY5PR07MB6966525A36486F1ECDC92F76DDEE0@BY5PR07MB6966.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
-X-Forefront-PRVS: 0068C7E410
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: oJMaZHg3xjt//VC+Kb+oCN+Yiizz2yYoWvq5054qWCtYS8Azy1UWZh9hX4R0LU14YpatpIcEExBqMVtY09ndFwPcPxB/PyDlyMV2D4XD+ifo8qklMnFEsjSyapmtObGtJxwf9RnzxmzgzLUuoog/gBegQql5r35nzXN/Gtr7uRr+SesC4Fj/btD07E4bj2BoBYCrp+RbvwX5ggrFUf/t+EvEY1IN9NbtmYJKerGK/DI5CHil7gelcEaoLSCD6ZuGjBAEc6NZ1k/FEzxxCAq82zx3+78amPRap57at9ZEYCHW2ndR3wSOebvpqfEo7A30WsOM11AwbQtgd/ASspy2fduaeT4BCn+HCBHSyW012QESMSW3W35UunTDFqcwAX0iMqa86gx3FM9ZIm/QPIX56B198Tm5ADFuZWvKKZkCTrA=
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2019 15:13:23.2542
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f9e4c4c-e9a3-4751-f78e-08d6f0dad7e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2019 15:13:23.4008
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97527be1-c8bc-473b-3c44-08d6f0dad802
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR07MB6966
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1706
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-14_07:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=958 adultscore=0 classifier=spam adjust=0 reason=mlx
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=785 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906140125
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Piotr Sroka <piotrs@cadence.com>
----
-Changes for v3:
-- add unit suffix for board_delay 
-- move child description to proper place
-- remove prefix cadence_ for reg and sdma fields
-Changes for v2:
-- remove chip dependends parameters from dts bindings
-- add names for register ranges in dts bindings
-- add generic bindings to describe NAND chip representation
----
- .../bindings/mtd/cadence-nand-controller.txt       | 51 ++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
 
-diff --git a/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt b/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
-new file mode 100644
-index 000000000000..e485b87075bd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
-@@ -0,0 +1,51 @@
-+* Cadence NAND controller
-+
-+Required properties:
-+  - compatible : "cdns,hpnfc"
-+  - reg : Contains two entries, each of which is a tuple consisting of a
-+	  physical address and length. The first entry is the address and
-+	  length of the controller register set. The second entry is the
-+	  address and length of the Slave DMA data port.
-+  - reg-names: should contain "reg" and "sdma"
-+  - interrupts : The interrupt number.
-+  - clocks: phandle of the controller core clock (nf_clk).
-+
-+Optional properties:
-+  - dmas: shall reference DMA channel associated to the NAND controller
-+  - cdns,board-delay_ps : Estimated Board delay. The value includes the total
-+    round trip delay for the signals and is used for deciding on values
-+    associated with data read capture. The example formula for SDR mode is
-+    the following:
-+    board_delay = RE#PAD_delay + PCB trace to device + PCB trace from device
-+    + DQ PAD delay
-+
-+Children nodes represent the available NAND chips.
-+
-+Required properties of NAND chips:
-+  - reg: shall contain the native Chip Select ids from 0 to max supported by
-+    the cadence nand flash controller
-+
-+
-+See Documentation/devicetree/bindings/mtd/nand.txt for more details on
-+generic bindings.
-+
-+Example:
-+
-+nand_controller: nand-controller @60000000 {
-+
-+	  compatible = "cdns,hpnfc";
-+	  reg = <0x60000000 0x10000>, <0x80000000 0x10000>;
-+	  reg-names = "reg", "sdma";
-+	  clocks = <&nf_clk>;
-+	  cdns,board-delay_ps = <4830>;
-+	  interrupts = <2 0>;
-+	  nand@0 {
-+	      reg = <0>;
-+	      label = "nand-1";
-+	  };
-+	  nand@1 {
-+	      reg = <1>;
-+	      label = "nand-2";
-+	  };
-+
-+};
--- 
-2.15.0
 
+> On Jun 14, 2019, at 12:42 AM, Peter Zijlstra <peterz@infradead.org> wrote=
+:
+>=20
+> On Thu, Jun 13, 2019 at 06:52:24PM +0000, Song Liu wrote:
+>>> On Jun 13, 2019, at 6:21 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote=
+:
+>=20
+>>> @@ -403,11 +403,11 @@ static void emit_mov_imm64(u8 **pprog, u32 dst_re=
+g,
+>>> 		 * For emitting plain u32, where sign bit must not be
+>>> 		 * propagated LLVM tends to load imm64 over mov32
+>>> 		 * directly, so save couple of bytes by just doing
+>>> -		 * 'mov %eax, imm32' instead.
+>>> +		 * 'mov imm32, %eax' instead.
+>>> 		 */
+>>> 		emit_mov_imm32(&prog, false, dst_reg, imm32_lo);
+>>> 	} else {
+>>> -		/* movabsq %rax, imm64 */
+>>> +		/* movabs imm64, %rax */
+>>=20
+>> 		^^^^^ Should this be moveabsq?=20
+>>=20
+>>> 		EMIT2(add_1mod(0x48, dst_reg), add_1reg(0xB8, dst_reg));
+>>> 		EMIT(imm32_lo, 4);
+>>> 		EMIT(imm32_hi, 4);
+>=20
+> Song, can you please trim replies; I only found what you said because of
+> Josh's reply.
+
+Sorry for the problem. I will trim in the future.=20
+
+Song
