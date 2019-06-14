@@ -2,207 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB14F45878
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35AA54589B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfFNJVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:21:14 -0400
-Received: from mga05.intel.com ([192.55.52.43]:62342 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbfFNJVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:21:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 02:21:13 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Jun 2019 02:21:12 -0700
-Message-ID: <5D036843.2010607@intel.com>
-Date:   Fri, 14 Jun 2019 17:26:27 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1727053AbfFNJ0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:26:40 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:40387 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFNJ0j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:26:39 -0400
+X-Originating-IP: 37.177.88.254
+Received: from uno.localdomain (unknown [37.177.88.254])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 1B0CBC0019;
+        Fri, 14 Jun 2019 09:26:34 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 11:27:45 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 19/20] drm: rcar-du: crtc: Register GAMMA_LUT properties
+Message-ID: <20190614092745.wznk3iv5dgehmjsb@uno.localdomain>
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
+ <20190606142220.1392-20-jacopo+renesas@jmondi.org>
+ <20190607120304.GH7593@pendragon.ideasonboard.com>
+ <20190614081507.3ky4pcyijjxnr7mp@uno.localdomain>
+ <20190614084251.GW23020@phenom.ffwll.local>
 MIME-Version: 1.0
-To:     Eric Hankland <ehankland@google.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
-In-Reply-To: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sj54nnncvdq22ppw"
+Content-Disposition: inline
+In-Reply-To: <20190614084251.GW23020@phenom.ffwll.local>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2019 06:23 AM, Eric Hankland wrote:
-> - Add a VCPU ioctl that can control which events the guest can monitor.
+
+--sj54nnncvdq22ppw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Daniel,
+
+On Fri, Jun 14, 2019 at 10:42:51AM +0200, Daniel Vetter wrote:
+> On Fri, Jun 14, 2019 at 10:15:52AM +0200, Jacopo Mondi wrote:
+> > Hi Laurent,
+> >    thanks for review
+> >
+> > On Fri, Jun 07, 2019 at 03:03:04PM +0300, Laurent Pinchart wrote:
+> > > Hi Jacopo,
+> > >
+> > > Thank you for the patch.
+> > >
+> > > On Thu, Jun 06, 2019 at 04:22:19PM +0200, Jacopo Mondi wrote:
+> > > > Enable the GAMMA_LUT KMS property using the framework helpers to
+> > > > register the proeprty and the associated gamma table size maximum size.
+> > > >
+> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > > ---
+> > > >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> > > > index e6d3df37c827..c920fb5dba65 100644
+> > > > --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> > > > +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> > > > @@ -1207,6 +1207,9 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+> > > >  	    rcdu->cmms[swindex]) {
+> > > >  		rcrtc->cmm = rcdu->cmms[swindex];
+> > > >  		rgrp->cmms_mask |= BIT(hwindex % 2);
+> > > > +
+> > > > +		drm_mode_crtc_set_gamma_size(crtc, CMM_GAMMA_LUT_SIZE);
+> > > > +		drm_crtc_enable_color_mgmt(crtc, 0, false, CMM_GAMMA_LUT_SIZE);
+> > >
+> > > This change looks good, but you also need to add support for legacy API.
+> > > According to the function's documentation,
+> > >
+> > >  * Drivers should use drm_atomic_helper_legacy_gamma_set() to implement the
+> > >  * legacy &drm_crtc_funcs.gamma_set callback.
+> > >
+> >
+> > Drivers 'shuld' or drivers 'shall' ?
+> > Isn't this required only to support the 'legacy APIs' ? Do we want that?
 >
-> Signed-off-by: ehankland <ehankland@google.com>
-> ---
-> Some events can provide a guest with information about other guests or the
-> host (e.g. L3 cache stats); providing the capability to restrict access
-> to a "safe" set of events would limit the potential for the PMU to be used
-> in any side channel attacks. This change introduces a new vcpu ioctl that
-> sets an event whitelist. If the guest attempts to program a counter for
-> any unwhitelisted event, the kernel counter won't be created, so any
-> RDPMC/RDMSR will show 0 instances of that event.
-> ---
->   Documentation/virtual/kvm/api.txt | 16 +++++++++++
->   arch/x86/include/asm/kvm_host.h   |  1 +
->   arch/x86/include/uapi/asm/kvm.h   |  7 +++++
->   arch/x86/kvm/pmu.c                | 44 +++++++++++++++++++++++++++++++
->   arch/x86/kvm/pmu.h                |  3 +++
->   arch/x86/kvm/pmu_amd.c            | 16 +++++++++++
->   arch/x86/kvm/vmx/pmu_intel.c      | 16 +++++++++++
->   arch/x86/kvm/x86.c                |  7 +++++
->   include/uapi/linux/kvm.h          |  4 +++
->   9 files changed, 114 insertions(+)
+> You're calling drm_mode_crtc_set_gamma_size, which is only useful for the
+> legacy ioctls. should here = assuming your hw supports something that
+> legacy gamma ioctl can use. Feel free to patch up the docs.
+
+Oh, I see. I should either leave the old API alone without calling
+drm_mode_crtc_set_gamma_size(), or set the .gamma_set callback to
+point to drm_atomic_helper_legacy_gamma_set(), which translates the
+old gamma table interface to a blob property and attach it to a crtc
+state which is then commited and applied through the atomic helpers.
+
+So I would change the doc to prescribe that if the driver intends to
+support the legacy SETGAMMA/GETGAMMA IOCTLs it should declare the
+gamma table size with drm_mode_crtc_set_gamma_size() first, and set
+the .gamma_set crtc callback to drm_atomic_helper_legacy_gamma_set(),
+which translates the legacy interface to a GAMMA_LUT property blob
+and commit it.
+
+If that works, I'll make a small patch to the documentation in v2.
+
+Thanks
+  j
+
+
+> -Daniel
 >
-> diff --git a/Documentation/virtual/kvm/api.txt
-> b/Documentation/virtual/kvm/api.txt
-> index ba6c42c576dd..79cbe7339145 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -4065,6 +4065,22 @@ KVM_ARM_VCPU_FINALIZE call.
->   See KVM_ARM_VCPU_INIT for details of vcpu features that require finalization
->   using this ioctl.
+> >
+> > Thanks
+> >    j
+> >
+> > > >  	}
+> > > >
+> > > >  	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
+> > > >
+> > >
+> > > --
+> > > Regards,
+> > >
+> > > Laurent Pinchart
 >
-> +4.120 KVM_SET_PMU_WHITELIST
-> +
-> +Capability: KVM_CAP_PMU_WHITELIST
-> +Architectures: x86
-> +Type: vm ioctl
-> +Parameters: struct kvm_pmu_whitelist (in)
-> +Returns: 0 on success, -1 on error
-> +
-> +struct kvm_pmu_whitelist {
-> +       __u64 event_mask;
-
-Is this "ARCH_PERFMON_EVENTSEL_EVENT | ARCH_PERFMON_EVENTSEL_UMASK"?
-
-
-> +       __u16 num_events;
-> +       __u64 events[0];
-
-Can this be __u16?
-The lower 16 bits (umask+eventsel) already determines what the event is.
-
-
-> +};
-> +This ioctl restricts the set of PMU events that the guest can program to the
-> +set of whitelisted events.
-> +
->   5. The kvm_run structure
->   ------------------------
 >
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 450d69a1e6fa..942647475999 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -477,6 +477,7 @@ struct kvm_pmu {
->          struct kvm_pmc fixed_counters[INTEL_PMC_MAX_FIXED];
->          struct irq_work irq_work;
->          u64 reprogram_pmi;
-> +       struct kvm_pmu_whitelist *whitelist;
-
-This could be per-VM and under rcu?
-
->   };
 >
->   struct kvm_pmu_ops;
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index 7a0e64ccd6ff..2633b48b75cd 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -421,4 +421,11 @@ struct kvm_nested_state {
->          __u8 data[0];
->   };
->
-> +/* for KVM_SET_PMU_WHITELIST */
-> +struct kvm_pmu_whitelist {
-> +       __u64 event_mask;
-> +       __u16 num_events;
-> +       __u64 events[0];
-> +};
-> +
->   #endif /* _ASM_X86_KVM_H */
-> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-> index e39741997893..d0d81cd3626d 100644
-> --- a/arch/x86/kvm/pmu.c
-> +++ b/arch/x86/kvm/pmu.c
-> @@ -101,6 +101,9 @@ static void pmc_reprogram_counter(struct kvm_pmc
-> *pmc, u32 type,
->                                    bool exclude_kernel, bool intr,
->                                    bool in_tx, bool in_tx_cp)
->   {
-> +       struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-> +       int i;
-> +       u64 event_config;
->          struct perf_event *event;
->          struct perf_event_attr attr = {
->                  .type = type,
-> @@ -127,6 +130,19 @@ static void pmc_reprogram_counter(struct kvm_pmc
-> *pmc, u32 type,
->                  attr.config |= HSW_IN_TX_CHECKPOINTED;
->          }
->
-> +       if (pmu->whitelist) {
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-Why not moving this filter to reprogram_gp_counter?
+--sj54nnncvdq22ppw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You could directly compare "unit_mask, event_sel"  with whitelist->events[i]
+-----BEGIN PGP SIGNATURE-----
 
-> +               event_config = attr.config;
-> +               if (type == PERF_TYPE_HARDWARE)
-> +                       event_config = kvm_x86_ops->pmu_ops->get_event_code(
-> +                               attr.config);
-> +               event_config &= pmu->whitelist->event_mask;
-> +               for (i = 0; i < pmu->whitelist->num_events; i++)
-> +                       if (event_config == pmu->whitelist->events[i])
-> +                               break;
-> +               if (i == pmu->whitelist->num_events)
-> +                       return;
-> +       }
-> +
->          event = perf_event_create_kernel_counter(&attr, -1, current,
->                                                   intr ? kvm_perf_overflow_intr :
->                                                   kvm_perf_overflow, pmc);
-> @@ -244,6 +260,34 @@ int kvm_pmu_is_valid_msr_idx(struct kvm_vcpu
-> *vcpu, unsigned idx)
->          return kvm_x86_ops->pmu_ops->is_valid_msr_idx(vcpu, idx);
->   }
->
-> +int kvm_vcpu_ioctl_set_pmu_whitelist(struct kvm_vcpu *vcpu,
-> +                                    struct kvm_pmu_whitelist __user *whtlst)
-> +{
-> +       struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +       struct kvm_pmu_whitelist *old = pmu->whitelist;
-> +       struct kvm_pmu_whitelist *new = NULL;
-> +       struct kvm_pmu_whitelist tmp;
-> +       int r;
-> +       size_t size;
-> +
-> +       r = -EFAULT;
-> +       if (copy_from_user(&tmp, whtlst, sizeof(struct kvm_pmu_whitelist)))
-> +               goto err;
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DaJEACgkQcjQGjxah
+VjyZGw//cZKIgD3YBAnD/okoI7Ik01icCdrGdWWeIC9/Z0xJL8Dby8DaDoHJqfoS
+A8QEj+V8gJKXy5NBC2OUScmMxIHV1bR05HrMd11+sVHlcGdt/g9c/A5BRVG8R0P9
+V4SKMzy9foDWYr6weedp6+PKpV0rV3BoexzpEAU7Op6rd+foNuxSH9tKaabzWcfs
+C+zK4ptII8U4eNZUf7bAuLojs8PdZFTwfMyTwdeztmUg9KvQIZvUTkPNdIOA41kj
+R5joK3EOA5El7uKl/L9kJbRnpiNlJJoihNtc2bO8i7ApzX6hNods2nj0ackJTnlM
+0/VUceYdSFCwAypt8fBAUBVy9HfG1MhQnEGW3rvlgm46yzHytSVo8Mz8vTFOYN+p
+hQG8FE822naJpMITM4aAddW/LKkKUXKyYNkn9Fvf+8EjGgXMBgEauQ56WUlxXKrk
+YpslnrXSzWJrmtGnshFgsnbM95zJ3TB9YtuVzVl++M5yAv8fMo2JC8Q8PROy/+S1
+B5sltyBaoA9SZPJ7y88JoEZCsT20f+1UfXch4kkP32BIm54IlCF7vDe99/WTsfCQ
+nqNBg1M5QZt4g3OLy/mVXMoZ/mZAV3XrSmXBSKjPaHr7l5Yz8n8eAeh7QzIJWc/C
+cui0ZFX8PCPJOsI+wDPggV/Tc8/OuJ4qaMLAPvoIces8BA2M6I8=
+=jBlM
+-----END PGP SIGNATURE-----
 
-I would directly return -EFAULT here.
-
-> +
-> +       size = sizeof(tmp) + sizeof(tmp.events[0]) * tmp.num_events;
-> +       new = kvzalloc(size, GFP_KERNEL_ACCOUNT);
-> +       r = -ENOMEM;
-> +       if (!new)
-> +               goto err;
-
-Same here.
-
-> +       pmu->whitelist = new;
-
-Forgot to copy the whitelist-ed events to new?
-
-
-Best,
-Wei
+--sj54nnncvdq22ppw--
